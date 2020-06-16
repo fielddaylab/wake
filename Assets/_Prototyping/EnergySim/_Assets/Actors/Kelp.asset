@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 652f3d4ec52d3d048a206e8136663bd7, type: 3}
+  m_Name: Kelp
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Value: 1262832720
+  m_Flags: 1
+  m_ResourceRequirements:
+    DesiredResources:
+    - ResourceId:
+        m_Value: 1331190087
+      BaseValue: 1
+      MassValue: 0.05
+    - ResourceId:
+        m_Value: 1129263616
+      BaseValue: 1
+      MassValue: 0.05
+    DesiredProperties:
+    - PropertyId:
+        m_Value: 1279739988
+      Comparison: 2
+      BaseValue: 3
+      MassValue: 0.05
+    ProducingResources:
+    - ResourceId:
+        m_Value: 1331190087
+      BaseValue: 4
+      MassValue: 0.05
+  m_EatingSettings:
+    EdibleActors: []
+    BaseEatSize: 0
+    MassEatSize: 0
+    MaxSizeMultiplier: 0
+  m_GrowthSettings:
+    StartingMass: 10
+    MaxMass: 65535
+    Frequency: 1
+    MinGrowth: 5
+    ImprovedGrowthResourceThresholds: []
+    ImprovedGrowthPropertyThresholds:
+    - PropertyId:
+        m_Value: 1279739988
+      Comparison: 2
+      BaseValue: 5
+      MassValue: 0.05
+    ImprovedGrowth: 15
+  m_ReproductionSettings:
+    Frequency: 4
+    Count: 1
+    MinAge: 1
+    MinMass: 0
+    ResourceThresholds: []
+    PropertyThresholds:
+    - PropertyId:
+        m_Value: 1279739988
+      Comparison: 2
+      BaseValue: 4
+      MassValue: 0
+    MinActorMass:
+      Id:
+        m_Value: 0
+      Count: 25
+  m_DeathSettings:
+    Age: 0
+    ResourceStarvation:
+    - Id:
+        m_Value: 1331190087
+      Value: 2
+    - Id:
+        m_Value: 1129263616
+      Value: 2
+    PropertyStarvation:
+    - Id:
+        m_Value: 1279739988
+      Value: 3
+    MassAgeThreshold: 0
+    Mass: 0
+  m_ExtraData:
+    m_Fields:
+    - Key: Color
+      Type: 2
+      m_IntValue: 0
+      m_NumberValue: 0
+      m_StringValue: 
+      m_VectorValue: {x: 0.48850912, y: 0.59607846, z: 0.07450981, w: 1}
+      m_UnityObjectValue: {fileID: 0}
