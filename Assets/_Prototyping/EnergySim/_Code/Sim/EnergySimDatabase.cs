@@ -23,15 +23,18 @@ namespace ProtoAqua.Energy
         
         #endregion // Inspector
 
-        private Dictionary<FourCC, ActorType> m_ActorMap;
+        [NonSerialized] private Dictionary<FourCC, ActorType> m_ActorMap;
         [NonSerialized] private FourCC[] m_ActorIds;
+        [NonSerialized] private Dictionary<string, FourCC> m_ActorTypeScriptNames;
 
-        private Dictionary<FourCC, EnvironmentType> m_EnvMap;
+        [NonSerialized] private Dictionary<FourCC, EnvironmentType> m_EnvMap;
         [NonSerialized] private FourCC[] m_EnvIds;
+        [NonSerialized] private Dictionary<string, FourCC> m_EnvTypeScriptNames;
 
-        private Dictionary<FourCC, VarType> m_VarMap;
+        [NonSerialized] private Dictionary<FourCC, VarType> m_VarMap;
         [NonSerialized] private FourCC[] m_ResourceIds;
         [NonSerialized] private FourCC[] m_PropertyIds;
+        [NonSerialized] private Dictionary<string, FourCC> m_VarTypeScriptNames;
 
         [NonSerialized] private bool m_Initialized;
 
@@ -44,33 +47,43 @@ namespace ProtoAqua.Energy
 
             m_ActorMap = KeyValueUtils.CreateMap<FourCC, ActorType, ActorType>(m_ActorTypes);
             m_ActorIds = new FourCC[m_ActorTypes.Length];
+            m_ActorTypeScriptNames = new Dictionary<string, FourCC>(m_ActorTypes.Length, StringComparer.Ordinal);
             for(int i = m_ActorIds.Length - 1; i >= 0; --i)
             {
-                m_ActorIds[i] = m_ActorTypes[i].Id();
+                ActorType type = m_ActorTypes[i];
+                m_ActorIds[i] = type.Id();
+                m_ActorTypeScriptNames[type.ScriptName()] = type.Id();
             }
 
             m_EnvMap = KeyValueUtils.CreateMap<FourCC, EnvironmentType, EnvironmentType>(m_EnvironmentTypes);
             m_EnvIds = new FourCC[m_EnvironmentTypes.Length];
+            m_EnvTypeScriptNames = new Dictionary<string, FourCC>(m_EnvironmentTypes.Length, StringComparer.Ordinal);
             for(int i = m_EnvIds.Length - 1; i >= 0; --i)
             {
-                m_EnvIds[i] = m_EnvironmentTypes[i].Id();
+                EnvironmentType type = m_EnvironmentTypes[i];
+                m_EnvIds[i] = type.Id();
+                m_EnvTypeScriptNames[type.ScriptName()] = type.Id();
             }
 
             m_VarMap = KeyValueUtils.CreateMap<FourCC, VarType, VarType>(m_VarTypes);
+            m_VarTypeScriptNames = new Dictionary<string, FourCC>(m_VarTypes.Length, StringComparer.Ordinal);
             using(PooledList<FourCC> resourceIds = PooledList<FourCC>.Create())
             using(PooledList<FourCC> propertyIds = PooledList<FourCC>.Create())
             {
                 for(int i = 0, len = m_VarTypes.Length; i < len; ++i)
                 {
-                    switch(m_VarTypes[i].CalcType())
+                    VarType type = m_VarTypes[i];
+                    m_VarTypeScriptNames[type.ScriptName()] = type.Id();
+
+                    switch(type.CalcType())
                     {
                         case VarCalculationType.Resource:
-                            resourceIds.Add(m_VarTypes[i].Id());
+                            resourceIds.Add(type.Id());
                             break;
 
                         case VarCalculationType.Derived:
                         case VarCalculationType.Extern:
-                            propertyIds.Add(m_VarTypes[i].Id());
+                            propertyIds.Add(type.Id());
                             break;
                     }
                 }
@@ -100,6 +113,16 @@ namespace ProtoAqua.Energy
             if (!m_Initialized)
                 Initialize();
             return Array.IndexOf(m_ActorIds, inType);
+        }
+
+        public FourCC ActorScriptNameToType(string inScriptName)
+        {
+            if (!m_Initialized)
+                Initialize();
+            
+            FourCC type;
+            m_ActorTypeScriptNames.TryGetValue(inScriptName, out type);
+            return type;
         }
 
         public ActorType ActorType(FourCC inActorTypeId)
@@ -134,6 +157,16 @@ namespace ProtoAqua.Energy
             return Array.IndexOf(m_EnvironmentTypes, inType);
         }
 
+        public FourCC EnvironmentScriptNameToType(string inScriptName)
+        {
+            if (!m_Initialized)
+                Initialize();
+
+            FourCC type;
+            m_EnvTypeScriptNames.TryGetValue(inScriptName, out type);
+            return type;
+        }
+
         public EnvironmentType EnvironmentType(FourCC inEnvironmentTypeId)
         {
             if (!m_Initialized)
@@ -152,14 +185,14 @@ namespace ProtoAqua.Energy
 
         public int VarCount() { return m_VarTypes.Length; }
         
-        public int ResourceCount()
+        public int ResourceTypeCount()
         {
             if (!m_Initialized)
                 Initialize();
             return m_ResourceIds.Length;
         }
 
-        public int PropertyCount()
+        public int PropertyTypeCount()
         {
             if (!m_Initialized)
                 Initialize();
@@ -213,6 +246,16 @@ namespace ProtoAqua.Energy
             if (!m_Initialized)
                 Initialize();
             return m_VarMap[m_ResourceIds[inIndex]];
+        }
+
+        public FourCC VarScriptNameToType(string inScriptName)
+        {
+            if (!m_Initialized)
+                Initialize();
+
+            FourCC type;
+            m_VarTypeScriptNames.TryGetValue(inScriptName, out type);
+            return type;
         }
 
         #endregion // Variables

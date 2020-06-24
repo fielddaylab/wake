@@ -32,6 +32,7 @@ namespace ProtoAqua.Energy
         #region Inspector
 
         [SerializeField, EnvironmentTypeId] private FourCC m_Id = FourCC.Zero;
+        [SerializeField] private string m_ScriptName = null;
 
         [Header("Variables")]
         [SerializeField] private ResourceConfig[] m_ResourcesPerTick = null;
@@ -53,6 +54,7 @@ namespace ProtoAqua.Energy
         #region Accessors
 
         public FourCC Id() { return m_Id; }
+        public string ScriptName() { return m_ScriptName; }
 
         public PropertyBlock ExtraData() { return m_ExtraData; }
 

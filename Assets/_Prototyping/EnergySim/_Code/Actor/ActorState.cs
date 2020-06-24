@@ -6,7 +6,7 @@ using BeauUtil;
 
 namespace ProtoAqua.Energy
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ActorState
     {
         public ushort Id;

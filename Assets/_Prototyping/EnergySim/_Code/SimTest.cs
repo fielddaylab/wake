@@ -1,78 +1,71 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using BeauUtil;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace ProtoAqua.Energy
 {
-    public class SimTest : MonoBehaviour, IEnergySimScenario
+    public class SimTest : MonoBehaviour
     {
         public EnergySimDatabase database;
+        public EnergySimScenario scenario;
+        public EnergySimScenario scenario2;
         public SimDisplay display;
 
-        [Header("Species")]
-
-        public int kelpCount;
-        public int urchinCount;
-        public int otterCount;
-
-        [Header("Chem")]
-
-        public int oxygen;
-        public int co2;
-
         private EnergySimContext simContext;
+        private EnergySimContext dataContext;
         private EnergySim sim;
+
+        public bool debug = true;
 
         public void Start()
         {
             LogSize<ActorState>();
+            LogSize<EnvironmentState>();
+            LogSize<VarPair>();
+            LogSize<VarPairF>();
+            LogSize<ActorCount>();
+            LogSize<VarState<ushort>>();
+            LogSize<VarState<float>>();
 
             simContext.Database = database;
-            simContext.Scenario = this;
-            simContext.Start = new EnergySimState();
-            simContext.Logger = new BatchedUnityDebugLogger();
+            simContext.Scenario = scenario;
 
-            simContext.Start.AddActors(database.ActorType(ActorTypeId.Kelp), kelpCount);
-            simContext.Start.AddActors(database.ActorType(ActorTypeId.Urchin), urchinCount);
-            simContext.Start.AddActors(database.ActorType(ActorTypeId.SeaOtter), otterCount);
-            simContext.Start.Environment.Type = EnvironmentTypeId.KelpForest;
+            dataContext.Database = database;
+            dataContext.Scenario = scenario2;
 
-            simContext.Start.AddResourceToEnvironment(database, VarTypeId.Oxygen, (ushort) oxygen);
-            simContext.Start.AddResourceToEnvironment(database, VarTypeId.CarbonDioxide, (ushort) co2);
+            if (debug)
+            {
+                simContext.Logger = new BatchedUnityDebugLogger();
+                dataContext.Logger = new BatchedUnityDebugLogger();
+            }
 
             sim = new EnergySim();
 
             sim.Setup(ref simContext);
-            display.Sync(simContext);
+            sim.Setup(ref dataContext);
+            display.Sync(simContext, dataContext);
+
+            display.Ticker.OnTickChanged += UpdateTick;
         }
 
-        private void Update()
+        private void UpdateTick(uint inTick)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            Stopwatch watch = Stopwatch.StartNew();
             {
-                sim.Tick(ref simContext);
-                display.Sync(simContext);
+                sim.Scrub(ref simContext, inTick);
+                sim.Scrub(ref dataContext, inTick);
             }
+            watch.Stop();
+            Debug.LogFormat("Simulation took {0}ms", watch.ElapsedMilliseconds);
+            
+            display.Sync(simContext, dataContext);
         }
 
         static private void LogSize<T>()
         {
             Debug.LogFormat("sizeof({0}) = {1}", typeof(T).FullName, Marshal.SizeOf<T>());
-        }
-
-        ushort IEnergySimScenario.TotalTicks()
-        {
-            return 32;
-        }
-
-        int IEnergySimScenario.TickActionCount()
-        {
-            return 5;
-        }
-
-        int IEnergySimScenario.TickScale()
-        {
-            return 1;
         }
     }
 }

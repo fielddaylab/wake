@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    public sealed class EnergySimState
+    public sealed class EnergySimState : IEnergySimStateReader
     {
         public const int MaxActors = 256;
 
@@ -20,6 +20,18 @@ namespace ProtoAqua.Energy
         public ushort Timestamp;
         public uint NextSeed;
         public ushort NextActorId;
+
+        public void Reset(in EnergySimContext inContext)
+        {
+            Environment = default(EnvironmentState);
+            Array.Clear(Actors, 0, Actors.Length);
+            ActorCount = 0;
+            Timestamp = 0;
+            NextSeed = 0;
+            NextActorId = 0;
+
+            Configure(inContext);
+        }
 
         public void CopyFrom(in EnergySimState inState)
         {
@@ -103,5 +115,49 @@ namespace ProtoAqua.Energy
             int idx = inDatabase.ResourceVarToIndex(inResourceType);
             Environment.OwnedResources[idx] += inCount;
         }
+
+        public void SetPropertyInEnvironment(EnergySimDatabase inDatabase, FourCC inPropertyType, float inValue)
+        {
+            int idx = inDatabase.PropertyVarToIndex(inPropertyType);
+            Environment.Properties[idx] = inValue;
+        }
+
+        #region IEnergySimStateReader
+
+        ushort IEnergySimStateReader.GetEnvironmentResource(FourCC inResourceId, EnergySimDatabase inDatabase)
+        {
+            int idx = inDatabase.ResourceVarToIndex(inResourceId);
+            return Environment.OwnedResources[idx];
+        }
+
+        float IEnergySimStateReader.GetEnvironmentProperty(FourCC inPropertyId, EnergySimDatabase inDatabase)
+        {
+            int idx = inDatabase.PropertyVarToIndex(inPropertyId);
+            return Environment.Properties[idx];
+        }
+
+        ushort IEnergySimStateReader.GetActorCount(FourCC inActorId, EnergySimDatabase inDatabase)
+        {
+            int idx = inDatabase.ActorTypeToIndex(inActorId);
+            return Populations[idx];
+        }
+
+        uint IEnergySimStateReader.GetActorMass(FourCC inActorId, EnergySimDatabase inDatabase)
+        {
+            int idx = inDatabase.ActorTypeToIndex(inActorId);
+            return Masses[idx];
+        }
+
+        FourCC IEnergySimStateReader.GetEnvironmentType()
+        {
+            return Environment.Type;
+        }
+
+        ushort IEnergySimStateReader.GetTickId()
+        {
+            return Timestamp;
+        }
+
+        #endregion // IEnergySimStateReader
     }
 }

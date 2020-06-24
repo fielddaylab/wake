@@ -96,11 +96,20 @@ namespace ProtoAqua.Energy
             public ushort Mass;
         }
 
+        [Serializable]
+        public class DisplayConfig
+        {
+            public Sprite Image;
+            public ushort MassScale;
+            public Color Color = Color.white;
+        }
+
         #endregion // Types
 
         #region Inspector
 
         [SerializeField, ActorTypeId] private FourCC m_Id = FourCC.Zero;
+        [SerializeField] private string m_ScriptName = null;
         [SerializeField, AutoEnum] private ActorTypeFlags m_Flags = default(ActorTypeFlags);
 
         [Header("Resources")]
@@ -113,6 +122,7 @@ namespace ProtoAqua.Energy
         [SerializeField] private DeathConfig m_DeathSettings = default(DeathConfig);
 
         [Header("Other")]
+        [SerializeField] private DisplayConfig m_DisplaySettings = default(DisplayConfig);
         [SerializeField] private PropertyBlock m_ExtraData = default(PropertyBlock);
 
         #endregion // Inspector
@@ -128,6 +138,7 @@ namespace ProtoAqua.Energy
         #region Accessors
 
         public FourCC Id() { return m_Id; }
+        public string ScriptName() { return m_ScriptName; }
         public ActorTypeFlags Flags() { return m_Flags; }
 
         public RequirementsConfig Requirements() { return m_ResourceRequirements; }
@@ -137,6 +148,7 @@ namespace ProtoAqua.Energy
         public ReproductionConfig ReproductionSettings() { return m_ReproductionSettings; }
         public DeathConfig DeathSettings() { return m_DeathSettings; }
 
+        public DisplayConfig DisplaySettings() { return m_DisplaySettings; }
         public PropertyBlock ExtraData() { return m_ExtraData; }
 
         #endregion // Accessors

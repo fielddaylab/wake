@@ -16,6 +16,7 @@ namespace ProtoAqua.Energy
         #region Inspector
 
         [SerializeField, VarTypeId] private FourCC m_Id = FourCC.Zero;
+        [SerializeField] private string m_ScriptName = null;
         [SerializeField, AutoEnum] private VarTypeFlags m_Flags = default(VarTypeFlags);
 
         [Header("Settings")]
@@ -28,7 +29,6 @@ namespace ProtoAqua.Energy
         #endregion // Inspector
 
         [NonSerialized] private DerivedVarCalculationDelegate m_DerivedDelegate;
-        [NonSerialized] private ExternVarCalculationDelegate m_ExternDelegate;
 
         #region KeyValuePair
 
@@ -41,6 +41,7 @@ namespace ProtoAqua.Energy
         #region Accessors
 
         public FourCC Id() { return m_Id; }
+        public string ScriptName() { return m_ScriptName; }
         public VarTypeFlags Flags() { return m_Flags; }
 
         public VarCalculationType CalcType() { return m_Calculation; }
@@ -85,9 +86,4 @@ namespace ProtoAqua.Energy
     /// Delegate for deriving a variable value.
     /// </summary>
     public delegate float DerivedVarCalculationDelegate(IEnergySimStateReader inReader);
-    
-    /// <summary>
-    /// Delegate for driving a variable's value from an external source.
-    /// </summary>
-    public delegate float ExternVarCalculationDelegate(IEnergySimStateReader inReader, IEnergySimScenario inContext);
 }

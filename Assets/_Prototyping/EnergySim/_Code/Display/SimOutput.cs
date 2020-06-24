@@ -3,6 +3,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using BeauPools;
+using BeauRoutine;
+using BeauUtil;
 
 namespace ProtoAqua.Energy
 {
@@ -21,6 +23,7 @@ namespace ProtoAqua.Energy
         [Header("Populations")]
 
         [SerializeField] private ImagePool m_ActorPool = null;
+        [SerializeField] private Sprite m_DefaultActorSprite = null;
 
         #endregion // Inspector
 
@@ -35,14 +38,17 @@ namespace ProtoAqua.Energy
 
         public void Display(in EnergySimContext inContext)
         {
-            DisplayEnvVars(inContext);
-            DisplayActorCounts(inContext);
+            System.Random random = new System.Random((int) (inContext.Current.NextSeed ^ uint.MaxValue));
+
+            DisplayEnvVars(inContext, random);
+            DisplayActorCounts(inContext, random);
+            DisplayActorDots(inContext, random);
         }
 
-        private void DisplayEnvVars(in EnergySimContext inContext)
+        private void DisplayEnvVars(in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
-            int resCount = inContext.Database.ResourceCount();
+            int resCount = inContext.Database.ResourceTypeCount();
             for(int i = 0; i < resCount; ++i)
             {
                 TMP_Text element = m_EnvVarCounts[textIdx++];
@@ -52,7 +58,7 @@ namespace ProtoAqua.Energy
                 element.gameObject.SetActive(true);
             }
 
-            int propCount = inContext.Database.PropertyCount();
+            int propCount = inContext.Database.PropertyTypeCount();
             for(int i = 0; i < propCount; ++i)
             {
                 TMP_Text element = m_EnvVarCounts[textIdx++];
@@ -70,7 +76,7 @@ namespace ProtoAqua.Energy
             }
         }
 
-        private void DisplayActorCounts(in EnergySimContext inContext)
+        private void DisplayActorCounts(in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
             int actorCount = inContext.Database.ActorTypeCount();
@@ -90,6 +96,79 @@ namespace ProtoAqua.Energy
                 element.SetText(string.Empty);
                 element.gameObject.SetActive(false);
             }
+        }
+
+        private void DisplayActorDots(in EnergySimContext inContext, System.Random inRandom)
+        {
+            m_ActorPool.Reset();
+
+            int actorCount = inContext.Database.ActorTypeCount();
+            for(int i = 0; i < actorCount; ++i)
+            {
+                ActorType type = inContext.Database.ActorType(i);
+                ushort count = inContext.Current.Populations[i];
+                ActorType.DisplayConfig display = type.DisplaySettings();
+
+                if (count == 0)
+                    continue;
+
+                bool bHerd = (type.Flags() & ActorTypeFlags.TreatAsHerd) == ActorTypeFlags.TreatAsHerd;
+                for(int actorIdx = 0; actorIdx < inContext.Current.ActorCount; ++actorIdx)
+                {
+                    ref ActorState actor = ref inContext.Current.Actors[actorIdx];
+                    if (actor.Type != type.Id())
+                        continue;
+
+                    ushort mass = actor.Mass;
+                    if (mass == 0)
+                        continue;
+
+                    if (bHerd)
+                    {
+                        int fullHerds = mass / display.MassScale;
+                        int partialHerd = mass % display.MassScale;
+                        
+                        while(--fullHerds >= 0)
+                        {
+                            SpawnActor(display, display.MassScale, inRandom);
+                        }
+
+                        if (partialHerd > 0)
+                        {
+                            SpawnActor(display, (ushort) partialHerd, inRandom);
+                        }
+                    }
+                    else
+                    {
+                        SpawnActor(display, mass, inRandom);
+                    }
+                }
+            }
+        }
+
+        private Image SpawnActor(ActorType.DisplayConfig inConfig, ushort inMass, System.Random inRandom)
+        {
+            Image img = m_ActorPool.InnerPool.Alloc();
+            
+            Sprite spr = inConfig.Image;
+            if (spr == null)
+                spr = m_DefaultActorSprite;
+            
+            img.sprite = spr;
+            img.color = inConfig.Color;
+
+            RectTransform rect = img.rectTransform;
+
+            float scale = (float) inMass / inConfig.MassScale;
+            rect.SetScale(scale, Axis.XY);
+
+            Vector2 pos = inRandom.NextVector2(Vector2.zero, Vector2.one);
+            rect.anchorMin = rect.anchorMax = pos;
+            rect.anchoredPosition = Vector2.zero;
+
+            rect.gameObject.SetActive(true);
+
+            return img;
         }
     }
 }

@@ -6,11 +6,14 @@ using BeauPools;
 using BeauUtil;
 using System;
 using BeauRoutine;
+using System.Collections;
 
 namespace ProtoAqua.Energy
 {
     public class SimTicker : MonoBehaviour
     {
+        public delegate void TickChangedDelegate(uint inTick);
+
         #region Inspector
 
         [SerializeField]
@@ -25,18 +28,69 @@ namespace ProtoAqua.Energy
         [SerializeField]
         private RectTransformPool m_TickMarkPool = null;
 
+        [SerializeField]
+        private float m_ChangeBufferedDelay = 0.3f;
+
         #endregion // Inspector
 
         [NonSerialized] private int m_LastMaxTicks = -1;
+        [NonSerialized] private int m_LastTick = -1;
+        [NonSerialized] private Routine m_BufferedBroadcast;
+        [NonSerialized] private float m_CurrentBufferDelay;
+
+        public event TickChangedDelegate OnTickChanged;
 
         #region Unity Events
 
         private void Awake()
         {
             m_TickMarkPool.Initialize();
+
+            m_Slider.onValueChanged.AddListener(OnSliderValueChanged);
         }
 
         #endregion // Unity Events
+
+        #region Handlers
+
+        private void OnSliderValueChanged(float inNewValue)
+        {
+            if (!m_BufferedBroadcast)
+            {
+                m_BufferedBroadcast.Replace(this, DoBufferedBroadcast());
+            }
+
+            int currentTick = (int) inNewValue;
+
+            m_CurrentBufferDelay = m_ChangeBufferedDelay;
+            m_CurrentTickCounter.SetText(currentTick.ToStringLookup());
+        }
+
+        #endregion // Handlers
+
+        #region Routines
+
+        private IEnumerator DoBufferedBroadcast()
+        {
+            while(Input.GetMouseButton(0))
+            {
+                yield return null;
+            }
+
+            while(m_CurrentBufferDelay > 0)
+            {
+                m_CurrentBufferDelay -= Routine.DeltaTime;
+                yield return null;
+            }
+
+            if (m_Slider.value != m_LastTick)
+            {
+                m_LastTick = (int) m_Slider.value;
+                OnTickChanged?.Invoke((uint) m_LastTick);
+            }
+        }
+
+        #endregion // Routines
 
         public void Sync(in EnergySimContext inContext)
         {

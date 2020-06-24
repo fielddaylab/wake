@@ -92,10 +92,14 @@ namespace ProtoAqua.Energy
 
         public void Setup(ref EnergySimContext ioContext)
         {
+            if (ioContext.Start == null)
+            {
+                ioContext.Start = new EnergySimState();
+            }
+            
             if (ioContext.Current == null)
             {
                 ioContext.Current = new EnergySimState();
-                ioContext.Current.CopyFrom(ioContext.Start);
             }
 
             AcquireBufferAndSetup(ref ioContext);
@@ -109,13 +113,13 @@ namespace ProtoAqua.Energy
                 ioContext.Current.CopyFrom(ioContext.Start);
             }
 
-            int distance = (int)inDesiredTick - (int)ioContext.Current.Timestamp;
+            int distance = (int) inDesiredTick - (int)ioContext.Current.Timestamp;
             if (distance == 0)
                 return false;
 
             if (distance < 0)
             {
-                distance = (int)inDesiredTick;
+                distance = (int) inDesiredTick;
                 ioContext.Current.CopyFrom(ioContext.Start);
             }
 
@@ -172,27 +176,17 @@ namespace ProtoAqua.Energy
 
         static private void SetupBuffer(ref EnergySimContext ioContext, Buffer inBuffer)
         {
+            ioContext.Current.CopyFrom(ioContext.Start);
+            
             inBuffer.Init(ioContext);
 
-             // initial population count
-            for (int actorIdx = inBuffer.State.ActorCount - 1; actorIdx >= 0; --actorIdx)
-            {
-                inBuffer.TurnOrder.Add((ushort)actorIdx);
-                ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
-                FourCC actorType = actor.Type;
-                int typeIdx = inBuffer.Context.Database.ActorTypeToIndex(actorType);
-                inBuffer.ActorLists[typeIdx].Add((ushort)actorIdx);
-                inBuffer.ActorMasses[typeIdx] += actor.Mass;
-            }
+            inBuffer.State.Reset(ioContext);
+            ioContext.Scenario.Initialize(inBuffer.State, ioContext.Database);
 
-            // copy population counts
-            for (int i = 0; i < inBuffer.ActorLists.Length; ++i)
-            {
-                inBuffer.State.Populations[i] = (ushort)inBuffer.ActorLists[i].Count;
-                inBuffer.State.Masses[i] = inBuffer.ActorMasses[i];
-            }
+            CollectPopulationStats(inBuffer);
 
             inBuffer.Flush(ref ioContext.Current);
+            inBuffer.Flush(ref ioContext.Start);
         }
 
         #endregion // Setup Logic
@@ -204,6 +198,12 @@ namespace ProtoAqua.Energy
             inBuffer.Context.Logger?.Reset();
 
             inBuffer.Init(ioContext);
+
+            if (inTicks == 0)
+            {
+                inBuffer.Context.Logger?.Log("PERFORMING NO TICKS");
+                CollectPopulationStats(inBuffer);
+            }
 
             for (int tickCount = 0; tickCount < inTicks; ++tickCount)
             {
@@ -220,6 +220,27 @@ namespace ProtoAqua.Energy
             inBuffer.Flush(ref ioContext.Current);
 
             inBuffer.Context.Logger?.Flush();
+        }
+
+        static private void CollectPopulationStats(Buffer inBuffer)
+        {
+            // initial population count
+            for (int actorIdx = inBuffer.State.ActorCount - 1; actorIdx >= 0; --actorIdx)
+            {
+                inBuffer.TurnOrder.Add((ushort)actorIdx);
+                ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
+                FourCC actorType = actor.Type;
+                int typeIdx = inBuffer.Context.Database.ActorTypeToIndex(actorType);
+                inBuffer.ActorLists[typeIdx].Add((ushort)actorIdx);
+                inBuffer.ActorMasses[typeIdx] += actor.Mass;
+            }
+
+            // copy population counts
+            for (int i = 0; i < inBuffer.ActorLists.Length; ++i)
+            {
+                inBuffer.State.Populations[i] = (ushort)inBuffer.ActorLists[i].Count;
+                inBuffer.State.Masses[i] = inBuffer.ActorMasses[i];
+            }
         }
 
         static private void TickBufferPrep(Buffer inBuffer)
@@ -264,12 +285,12 @@ namespace ProtoAqua.Energy
             // log resources
             if (inBuffer.Context.Logger != null)
             {
-                for (int i = 0; i < inBuffer.Context.Database.ResourceCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.ResourceTypeCount(); ++i)
                 {
                     inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.ResourceVarIds()[i], inBuffer.State.Environment.OwnedResources[i]);
                 }
 
-                for (int i = 0; i < inBuffer.Context.Database.PropertyCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.PropertyTypeCount(); ++i)
                 {
                     inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.PropertyVarIds()[i], inBuffer.State.Environment.Properties[i]);
                 }
@@ -353,12 +374,12 @@ namespace ProtoAqua.Energy
             // log resources
             if (inBuffer.Context.Logger != null)
             {
-                for (int i = 0; i < inBuffer.Context.Database.ResourceCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.ResourceTypeCount(); ++i)
                 {
                     inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.ResourceVarIds()[i], inBuffer.State.Environment.OwnedResources[i]);
                 }
 
-                for (int i = 0; i < inBuffer.Context.Database.PropertyCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.PropertyTypeCount(); ++i)
                 {
                     inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.PropertyVarIds()[i], inBuffer.State.Environment.Properties[i]);
                 }
@@ -405,7 +426,7 @@ namespace ProtoAqua.Energy
             bool bTookAction = false;
             bool bDone = false;
 
-            int resCount = inBuffer.Context.Database.ResourceCount();
+            int resCount = inBuffer.Context.Database.ResourceTypeCount();
             int actionsRemaining = inAllowedActions;
 
             while (actionsRemaining > 0 && !bDone)
@@ -578,7 +599,7 @@ namespace ProtoAqua.Energy
             ++ioState.Age;
 
             // starvation counters
-            for (int i = inBuffer.Context.Database.ResourceCount() - 1; i >= 0; --i)
+            for (int i = inBuffer.Context.Database.ResourceTypeCount() - 1; i >= 0; --i)
             {
                 if (ioState.DesiredResources[i] > 0)
                 {
@@ -593,7 +614,7 @@ namespace ProtoAqua.Energy
                 }
             }
 
-            for (int i = inBuffer.Context.Database.PropertyCount() - 1; i >= 0; --i)
+            for (int i = inBuffer.Context.Database.PropertyTypeCount() - 1; i >= 0; --i)
             {
                 ushort mask = (ushort)(1U << i);
                 if ((ioState.MetPropertyRequirements & mask) == 0)
@@ -682,7 +703,7 @@ namespace ProtoAqua.Energy
                 targetMass = targetActor.Mass;
             }
 
-            int resCount = inBuffer.Context.Database.ResourceCount();
+            int resCount = inBuffer.Context.Database.ResourceTypeCount();
 
             for (int i = 0; i < resCount; ++i)
             {
@@ -740,5 +761,51 @@ namespace ProtoAqua.Energy
         }
 
         #endregion // Cleanup Steps
+
+        #region Error
+
+        static public float CalculateError(in EnergySimState inStateA, in EnergySimState inStateB, EnergySimDatabase inDatabase)
+        {
+            int actorTypeCount = inDatabase.ActorTypeCount();
+            int resTypeCount = inDatabase.ResourceTypeCount();
+            int propTypeCount = inDatabase.PropertyTypeCount();
+
+            float errorAccum = 0;
+            int errorCounter = 0;
+            for(int i = 0; i < actorTypeCount; ++i)
+            {
+                errorAccum += RPD(inStateA.Populations[i], inStateB.Populations[i]);
+                errorAccum += RPD(inStateA.Masses[i], inStateB.Masses[i]);
+                errorCounter += 2;
+            }
+
+            for(int i = 0; i < resTypeCount; ++i)
+            {
+                errorAccum += RPD(inStateA.Environment.OwnedResources[i], inStateB.Environment.OwnedResources[i]);
+                ++errorCounter;
+            }
+
+            for(int i = 0; i < propTypeCount; ++i)
+            {
+                errorAccum += RPD(inStateA.Environment.Properties[i], inStateB.Environment.Properties[i]);
+                ++errorCounter;
+            }
+
+            if (errorCounter == 0)
+                return 0;
+            
+            return errorAccum / errorCounter;
+        }
+
+        static public float RPD(float inA, float inB)
+        {
+            float delta = Math.Abs(inA - inB);
+            float avg = (Math.Abs(inA) + Math.Abs(inB)) / 2f;
+            if (avg == 0)
+                return 0;
+            return delta / avg;
+        }
+
+        #endregion // Error
     }
 }
