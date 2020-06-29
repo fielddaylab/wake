@@ -230,7 +230,7 @@ namespace ProtoAqua.Energy
                 inBuffer.TurnOrder.Add((ushort)actorIdx);
                 ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                 FourCC actorType = actor.Type;
-                int typeIdx = inBuffer.Context.Database.ActorTypeToIndex(actorType);
+                int typeIdx = inBuffer.Context.Database.Actors.IdToIndex(actorType);
                 inBuffer.ActorLists[typeIdx].Add((ushort)actorIdx);
                 inBuffer.ActorMasses[typeIdx] += actor.Mass;
             }
@@ -258,7 +258,7 @@ namespace ProtoAqua.Energy
                 inBuffer.TurnOrder.Add((ushort)actorIdx);
                 ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                 FourCC actorType = actor.Type;
-                int typeIdx = inBuffer.Context.Database.ActorTypeToIndex(actorType);
+                int typeIdx = inBuffer.Context.Database.Actors.IdToIndex(actorType);
                 inBuffer.ActorLists[typeIdx].Add((ushort)actorIdx);
                 inBuffer.ActorMasses[typeIdx] += actor.Mass;
             }
@@ -268,31 +268,31 @@ namespace ProtoAqua.Energy
             {
                 inBuffer.State.Populations[i] = (ushort)inBuffer.ActorLists[i].Count;
                 inBuffer.State.Masses[i] = inBuffer.ActorMasses[i];
-                inBuffer.Context.Logger?.Log("Population {0}: pop {1} mass {2}", inBuffer.Context.Database.ActorTypeIds()[i], inBuffer.State.Populations[i], inBuffer.State.Masses[i]);
+                inBuffer.Context.Logger?.Log("Population {0}: pop {1} mass {2}", inBuffer.Context.Database.Actors.IndexToId(i), inBuffer.State.Populations[i], inBuffer.State.Masses[i]);
             }
 
             // environment tick
             ref EnvironmentState env = ref inBuffer.State.Environment;
-            EnvironmentPreTick(inBuffer, ref env, inBuffer.Context.Database.EnvironmentType(env.Type));
+            EnvironmentPreTick(inBuffer, ref env, inBuffer.Context.Database.Envs.Get(env.Type));
 
             // actor type tick
-            for (int i = 0, length = inBuffer.Context.Database.ActorTypeCount(); i < length; ++i)
+            for (int i = 0, length = inBuffer.Context.Database.Actors.Count(); i < length; ++i)
             {
-                ActorType type = inBuffer.Context.Database.ActorType(i);
+                ActorType type = inBuffer.Context.Database.Actors.Get(i);
                 // TODO: modify environment resources based on population counts?
             }
 
             // log resources
             if (inBuffer.Context.Logger != null)
             {
-                for (int i = 0; i < inBuffer.Context.Database.ResourceTypeCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.Resources.Count(); ++i)
                 {
-                    inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.ResourceVarIds()[i], inBuffer.State.Environment.OwnedResources[i]);
+                    inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.Resources.IndexToId(i), inBuffer.State.Environment.OwnedResources[i]);
                 }
 
-                for (int i = 0; i < inBuffer.Context.Database.PropertyTypeCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.Properties.Count(); ++i)
                 {
-                    inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.PropertyVarIds()[i], inBuffer.State.Environment.Properties[i]);
+                    inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.Properties.IndexToId(i), inBuffer.State.Environment.Properties[i]);
                 }
             }
 
@@ -300,7 +300,7 @@ namespace ProtoAqua.Energy
             for (int actorIdx = inBuffer.State.ActorCount - 1; actorIdx >= 0; --actorIdx)
             {
                 ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
-                ActorPreTick(inBuffer, ref actor, inBuffer.Context.Database.ActorType(actor.Type));
+                ActorPreTick(inBuffer, ref actor, inBuffer.Context.Database.Actors.Get(actor.Type));
             }
 
             // shuffle turn order
@@ -329,7 +329,7 @@ namespace ProtoAqua.Energy
                     ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                     if ((actor.Flags & ActorStateFlags.Alive) == ActorStateFlags.Alive)
                     {
-                        bTookAction |= ActorTick(inBuffer, (ushort) actorIdx, ref actor, inBuffer.Context.Database.ActorType(actor.Type), ref inBuffer.State.Environment, actionCount);
+                        bTookAction |= ActorTick(inBuffer, (ushort) actorIdx, ref actor, inBuffer.Context.Database.Actors.Get(actor.Type), ref inBuffer.State.Environment, actionCount);
 
                         if ((actor.Flags & ActorStateFlags.DoneForTick) != ActorStateFlags.DoneForTick)
                         {
@@ -349,7 +349,7 @@ namespace ProtoAqua.Energy
             {
                 ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                 if ((actor.Flags & ActorStateFlags.Alive) == ActorStateFlags.Alive)
-                    ActorPostTick_Death(inBuffer, (ushort)actorIdx, ref actor, inBuffer.Context.Database.ActorType(actor.Type));
+                    ActorPostTick_Death(inBuffer, (ushort)actorIdx, ref actor, inBuffer.Context.Database.Actors.Get(actor.Type));
             }
 
             // cleanup dead actors
@@ -360,7 +360,7 @@ namespace ProtoAqua.Energy
             {
                 ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                 // Debug.LogFormat("living actor at {0} {1}:{2}", actorIdx, actor.Type, actor.Id);
-                ActorPostTick_Life(inBuffer, ref actor, inBuffer.Context.Database.ActorType(actor.Type));
+                ActorPostTick_Life(inBuffer, ref actor, inBuffer.Context.Database.Actors.Get(actor.Type));
             }
 
             // copy population stats
@@ -368,20 +368,20 @@ namespace ProtoAqua.Energy
             {
                 inBuffer.State.Populations[i] = (ushort)inBuffer.ActorLists[i].Count;
                 inBuffer.State.Masses[i] = inBuffer.ActorMasses[i];
-                inBuffer.Context.Logger?.Log("Population {0}: pop {1} mass {2}", inBuffer.Context.Database.ActorTypeIds()[i], inBuffer.State.Populations[i], inBuffer.State.Masses[i]);
+                inBuffer.Context.Logger?.Log("Population {0}: pop {1} mass {2}", inBuffer.Context.Database.Actors.IndexToId(i), inBuffer.State.Populations[i], inBuffer.State.Masses[i]);
             }
 
             // log resources
             if (inBuffer.Context.Logger != null)
             {
-                for (int i = 0; i < inBuffer.Context.Database.ResourceTypeCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.Resources.Count(); ++i)
                 {
-                    inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.ResourceVarIds()[i], inBuffer.State.Environment.OwnedResources[i]);
+                    inBuffer.Context.Logger.Log("Resource {0}: {1}", inBuffer.Context.Database.Resources.IndexToId(i), inBuffer.State.Environment.OwnedResources[i]);
                 }
 
-                for (int i = 0; i < inBuffer.Context.Database.PropertyTypeCount(); ++i)
+                for (int i = 0; i < inBuffer.Context.Database.Properties.Count(); ++i)
                 {
-                    inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.PropertyVarIds()[i], inBuffer.State.Environment.Properties[i]);
+                    inBuffer.Context.Logger.Log("Property {0}: {1}", inBuffer.Context.Database.Properties.IndexToId(i), inBuffer.State.Environment.Properties[i]);
                 }
             }
 
@@ -426,7 +426,7 @@ namespace ProtoAqua.Energy
             bool bTookAction = false;
             bool bDone = false;
 
-            int resCount = inBuffer.Context.Database.ResourceTypeCount();
+            int resCount = inBuffer.Context.Database.Resources.Count();
             int actionsRemaining = inAllowedActions;
 
             while (actionsRemaining > 0 && !bDone)
@@ -452,7 +452,7 @@ namespace ProtoAqua.Energy
                     --actionsRemaining;
 
                     inBuffer.Context.Logger?.Log("Actor {0}:{1} produced 1 resource {2}",
-                        ioState.Type, ioState.Id, inBuffer.Context.Database.ResourceVarIds()[toProduce]);
+                        ioState.Type, ioState.Id, inBuffer.Context.Database.Resources.IndexToId(toProduce));
                 }
 
                 if (actionsRemaining <= 0)
@@ -480,7 +480,7 @@ namespace ProtoAqua.Energy
                     --actionsRemaining;
 
                     inBuffer.Context.Logger?.Log("Actor {0}:{1} consumed 1 resource {2}",
-                        ioState.Type, ioState.Id, inBuffer.Context.Database.ResourceVarIds()[toConsume]);
+                        ioState.Type, ioState.Id, inBuffer.Context.Database.Resources.IndexToId(toConsume));
                 }
 
                 if (actionsRemaining <= 0)
@@ -494,7 +494,7 @@ namespace ProtoAqua.Energy
                     for (int i = 0; i < resCount && !bNeedsToEat; ++i)
                     {
                         ushort demand = ioState.DesiredResources[i];
-                        if (demand > 0 && inBuffer.Context.Database.ResourceType(i).HasFlags(VarTypeFlags.ConvertFromMass))
+                        if (demand > 0 && inBuffer.Context.Database.Resources.Get(i).HasFlags(VarTypeFlags.ConvertFromMass))
                         {
                             bNeedsToEat = true;
                             break;
@@ -505,13 +505,13 @@ namespace ProtoAqua.Energy
                     {
                         inBuffer.ActorTypeChoice.Clear();
 
-                        int actCount = inBuffer.Context.Database.ActorTypeCount();
+                        int actCount = inBuffer.Context.Database.Actors.Count();
                         for (int i = 0; i < actCount; ++i)
                         {
                             ushort popCount = (ushort)inBuffer.ActorLists[i].Count;
                             uint mass = inBuffer.ActorMasses[i];
 
-                            FourCC actorType = inBuffer.Context.Database.ActorTypeIds()[i];
+                            FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(i);
                             if (actorType == ioState.Type)
                             {
                                 --popCount;
@@ -540,7 +540,7 @@ namespace ProtoAqua.Energy
                                 int actorIdx = inBuffer.Context.RNG.Choose(inBuffer.ActorTypeChoice);
                                 inBuffer.ActorTypeChoice.Remove(actorIdx);
 
-                                FourCC actorType = inBuffer.Context.Database.ActorTypeIds()[actorIdx];
+                                FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(actorIdx);
 
                                 inBuffer.ActorChoice.Clear();
                                 inBuffer.ActorChoice.AddRange(inBuffer.ActorLists[actorIdx]);
@@ -599,14 +599,14 @@ namespace ProtoAqua.Energy
             ++ioState.Age;
 
             // starvation counters
-            for (int i = inBuffer.Context.Database.ResourceTypeCount() - 1; i >= 0; --i)
+            for (int i = inBuffer.Context.Database.Resources.Count() - 1; i >= 0; --i)
             {
                 if (ioState.DesiredResources[i] > 0)
                 {
                     ++ioState.ResourceStarvation[i];
                     inBuffer.Context.Logger?.Log("Actor {0}:{1} could not satisfy resource {2} by {3} ({4} ticks)",
                         ioState.Type, ioState.Id,
-                        inBuffer.Context.Database.ResourceVarIds()[i], ioState.DesiredResources[i], ioState.ResourceStarvation[i]);
+                        inBuffer.Context.Database.Resources.IndexToId(i), ioState.DesiredResources[i], ioState.ResourceStarvation[i]);
                 }
                 else
                 {
@@ -614,7 +614,7 @@ namespace ProtoAqua.Energy
                 }
             }
 
-            for (int i = inBuffer.Context.Database.PropertyTypeCount() - 1; i >= 0; --i)
+            for (int i = inBuffer.Context.Database.Properties.Count() - 1; i >= 0; --i)
             {
                 ushort mask = (ushort)(1U << i);
                 if ((ioState.MetPropertyRequirements & mask) == 0)
@@ -622,7 +622,7 @@ namespace ProtoAqua.Energy
                     ++ioState.PropertyStarvation[i];
                     inBuffer.Context.Logger?.Log("Actor {0}:{1} could not satisfy property {2} ({3} ticks)",
                         ioState.Type, ioState.Id,
-                        inBuffer.Context.Database.PropertyVarIds()[i], ioState.PropertyStarvation[i]);
+                        inBuffer.Context.Database.Properties.IndexToId(i), ioState.PropertyStarvation[i]);
                 }
                 else
                 {
@@ -666,7 +666,7 @@ namespace ProtoAqua.Energy
                 return false;
 
             actor.Flags &= ~ActorStateFlags.Alive;
-            int actorTypeIdx = inBuffer.Context.Database.ActorTypeToIndex(actor.Type);
+            int actorTypeIdx = inBuffer.Context.Database.Actors.IdToIndex(actor.Type);
             inBuffer.ActorLists[actorTypeIdx].Remove(inActorIdx);
             inBuffer.ActorMasses[actorTypeIdx] -= actor.Mass;
 
@@ -689,7 +689,7 @@ namespace ProtoAqua.Energy
 
             ushort targetMass = inBiteSize;
 
-            bool bCanEatPartial = (inBuffer.Context.Database.ActorType(targetActor.Type).Flags() & ActorTypeFlags.AllowPartialConsumption) != 0;
+            bool bCanEatPartial = (inBuffer.Context.Database.Actors.Get(targetActor.Type).Flags() & ActorTypeFlags.AllowPartialConsumption) != 0;
             if (!bCanEatPartial)
             {
                 // if we can't take partial bites, and this is too big, don't eat it
@@ -703,20 +703,20 @@ namespace ProtoAqua.Energy
                 targetMass = targetActor.Mass;
             }
 
-            int resCount = inBuffer.Context.Database.ResourceTypeCount();
+            int resCount = inBuffer.Context.Database.Resources.Count();
 
             for (int i = 0; i < resCount; ++i)
             {
-                VarType resType = inBuffer.Context.Database.ResourceType(i);
+                VarType resType = inBuffer.Context.Database.Resources.Get(i);
                 if (resType.HasFlags(VarTypeFlags.ConvertFromMass))
                 {
-                    ushort contribution = (ushort)Math.Ceiling(conversion * targetMass);
-                    ioState.DesiredResources[i] = (ushort)Math.Max(ioState.DesiredResources[i] - contribution, 0);
+                    ushort contribution = (ushort) Math.Ceiling(conversion * targetMass);
+                    ioState.DesiredResources[i] = (ushort) Math.Max(ioState.DesiredResources[i] - contribution, 0);
                 }
             }
 
             targetActor.Mass -= targetMass;
-            int targetActorTypeIdx = inBuffer.Context.Database.ActorTypeToIndex(targetActor.Type);
+            int targetActorTypeIdx = inBuffer.Context.Database.Actors.IdToIndex(targetActor.Type);
 
             if (targetActor.Mass == 0)
             {
@@ -736,7 +736,7 @@ namespace ProtoAqua.Energy
 
         static private ref ActorState CreateActor(Buffer inBuffer, FourCC inActorType)
         {
-            ref ActorState actor = ref inBuffer.State.AddActor(inBuffer.Context.Database.ActorType(inActorType));
+            ref ActorState actor = ref inBuffer.State.AddActor(inBuffer.Context.Database.Actors.Get(inActorType));
             actor.OffsetA = (byte)inBuffer.Context.RNG.Next(3);
             actor.OffsetB = (byte)inBuffer.Context.RNG.Next(17);
             inBuffer.Context.Logger?.Log("Actor {0}:{1} created", actor.Type, actor.Id);
@@ -764,11 +764,11 @@ namespace ProtoAqua.Energy
 
         #region Error
 
-        static public float CalculateError(in EnergySimState inStateA, in EnergySimState inStateB, EnergySimDatabase inDatabase)
+        static public float CalculateError(in EnergySimState inStateA, in EnergySimState inStateB, ISimDatabase inDatabase)
         {
-            int actorTypeCount = inDatabase.ActorTypeCount();
-            int resTypeCount = inDatabase.ResourceTypeCount();
-            int propTypeCount = inDatabase.PropertyTypeCount();
+            int actorTypeCount = inDatabase.Actors.Count();
+            int resTypeCount = inDatabase.Resources.Count();
+            int propTypeCount = inDatabase.Properties.Count();
 
             float errorAccum = 0;
             int errorCounter = 0;

@@ -7,11 +7,11 @@ namespace ProtoAqua.Energy
 {
     public interface IEnergySimStateReader
     {
-        ushort GetEnvironmentResource(FourCC inResourceId, EnergySimDatabase inDatabase);
-        float GetEnvironmentProperty(FourCC inPropertyId, EnergySimDatabase inDatabase);
+        ushort GetEnvironmentResource(FourCC inResourceId, ISimDatabase inDatabase);
+        float GetEnvironmentProperty(FourCC inPropertyId, ISimDatabase inDatabase);
 
-        ushort GetActorCount(FourCC inActorId, EnergySimDatabase inDatabase);
-        uint GetActorMass(FourCC inActorId, EnergySimDatabase inDatabase);
+        ushort GetActorCount(FourCC inActorId, ISimDatabase inDatabase);
+        uint GetActorMass(FourCC inActorId, ISimDatabase inDatabase);
 
         FourCC GetEnvironmentType();
         ushort GetTickId();

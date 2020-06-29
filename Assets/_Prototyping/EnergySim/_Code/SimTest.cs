@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using BeauUtil;
@@ -10,7 +11,6 @@ namespace ProtoAqua.Energy
     {
         public EnergySimDatabase database;
         public EnergySimScenario scenario;
-        public EnergySimScenario scenario2;
         public SimDisplay display;
 
         private EnergySimContext simContext;
@@ -18,6 +18,10 @@ namespace ProtoAqua.Energy
         private EnergySim sim;
 
         public bool debug = true;
+
+        [NonSerialized] private int m_SimDBVersion;
+        [NonSerialized] private int m_DataDBVersion;
+        [NonSerialized] private SimDatabaseOverride m_DatabaseOverride;
 
         public void Start()
         {
@@ -29,11 +33,13 @@ namespace ProtoAqua.Energy
             LogSize<VarState<ushort>>();
             LogSize<VarState<float>>();
 
-            simContext.Database = database;
+            m_DatabaseOverride = new SimDatabaseOverride(database);
+
+            simContext.Database = m_DatabaseOverride;
             simContext.Scenario = scenario;
 
             dataContext.Database = database;
-            dataContext.Scenario = scenario2;
+            dataContext.Scenario = scenario;
 
             if (debug)
             {
@@ -48,6 +54,40 @@ namespace ProtoAqua.Energy
             display.Sync(simContext, dataContext);
 
             display.Ticker.OnTickChanged += UpdateTick;
+        }
+
+        private void OnDestroy()
+        {
+            Ref.Dispose(ref m_DatabaseOverride);
+        }
+
+        private void Update()
+        {
+            bool bSimRequestsRefresh = simContext.Database.HasChanged(ref m_SimDBVersion);
+            bool bDataRequestsRefresh = dataContext.Database.HasChanged(ref m_DataDBVersion);
+
+            if (bSimRequestsRefresh || bDataRequestsRefresh)
+            {
+                uint tick = simContext.Current.Timestamp;
+
+                if (bSimRequestsRefresh)
+                {
+                    Debug.Log("resimulating sim");
+                    
+                    sim.Setup(ref simContext);
+                    sim.Scrub(ref simContext, tick);
+                }
+
+                if (bDataRequestsRefresh)
+                {
+                    Debug.Log("resimulating data");
+
+                    sim.Setup(ref dataContext);
+                    sim.Scrub(ref dataContext, tick);
+                }
+
+                display.Sync(simContext, dataContext);
+            }
         }
 
         private void UpdateTick(uint inTick)

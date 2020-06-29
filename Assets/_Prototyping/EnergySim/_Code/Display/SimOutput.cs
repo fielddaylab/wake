@@ -48,23 +48,23 @@ namespace ProtoAqua.Energy
         private void DisplayEnvVars(in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
-            int resCount = inContext.Database.ResourceTypeCount();
+            int resCount = inContext.Database.Resources.Count();
             for(int i = 0; i < resCount; ++i)
             {
                 TMP_Text element = m_EnvVarCounts[textIdx++];
 
                 ushort count = inContext.Current.Environment.OwnedResources[i];
-                element.SetText(string.Format("{0}: {1}", inContext.Database.ResourceVarIds()[i].ToString(), count));
+                element.SetText(string.Format("{0}: {1}", inContext.Database.Resources.IndexToId(i).ToString(), count));
                 element.gameObject.SetActive(true);
             }
 
-            int propCount = inContext.Database.PropertyTypeCount();
+            int propCount = inContext.Database.Properties.Count();
             for(int i = 0; i < propCount; ++i)
             {
                 TMP_Text element = m_EnvVarCounts[textIdx++];
 
                 float value = inContext.Current.Environment.Properties[i];
-                element.SetText(string.Format("{0}: {1}", inContext.Database.PropertyVarIds()[i].ToString(), value));
+                element.SetText(string.Format("{0}: {1}", inContext.Database.Properties.IndexToId(i).ToString(), value));
                 element.gameObject.SetActive(true);
             }
 
@@ -79,14 +79,14 @@ namespace ProtoAqua.Energy
         private void DisplayActorCounts(in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
-            int actorCount = inContext.Database.ActorTypeCount();
+            int actorCount = inContext.Database.Actors.Count();
             for(int i = 0; i < actorCount; ++i)
             {
                 TMP_Text element = m_ActorCounts[textIdx++];
 
                 ushort count = inContext.Current.Populations[i];
                 uint mass = inContext.Current.Masses[i];
-                element.SetText(string.Format("{0}: {1} ({2})", inContext.Database.ActorTypeIds()[i], count, mass));
+                element.SetText(string.Format("{0}: {1} ({2})", inContext.Database.Actors.IndexToId(i), count, mass));
                 element.gameObject.SetActive(true);
             }
 
@@ -102,10 +102,10 @@ namespace ProtoAqua.Energy
         {
             m_ActorPool.Reset();
 
-            int actorCount = inContext.Database.ActorTypeCount();
+            int actorCount = inContext.Database.Actors.Count();
             for(int i = 0; i < actorCount; ++i)
             {
-                ActorType type = inContext.Database.ActorType(i);
+                ActorType type = inContext.Database.Actors.Get(i);
                 ushort count = inContext.Current.Populations[i];
                 ActorType.DisplayConfig display = type.DisplaySettings();
 

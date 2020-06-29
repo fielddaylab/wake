@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ProtoAqua.Energy
 {
     [CreateAssetMenu(menuName = "Prototype/Energy/Variable Type")]
-    public class VarType : ScriptableObject, IKeyValuePair<FourCC, VarType>
+    public class VarType : ScriptableObject, ISimType<VarType>, IKeyValuePair<FourCC, VarType>
     {
         #region Types
 
@@ -30,6 +30,8 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private DerivedVarCalculationDelegate m_DerivedDelegate;
 
+        [NonSerialized] private VarTypeDatabase m_Database;
+
         #region KeyValuePair
 
         FourCC IKeyValuePair<FourCC, VarType>.Key { get { return m_Id; } }
@@ -37,6 +39,26 @@ namespace ProtoAqua.Energy
         VarType IKeyValuePair<FourCC, VarType>.Value { get { return this; } }
 
         #endregion // KeyValuePair
+
+        #region ISimType
+
+        void ISimType<VarType>.Hook(SimTypeDatabase<VarType> inDatabase)
+        {
+            if (inDatabase is VarTypeDatabase)
+            {
+                m_Database = (VarTypeDatabase) inDatabase;
+            }
+        }
+
+        void ISimType<VarType>.Unhook(SimTypeDatabase<VarType> inDatabase)
+        {
+            if (m_Database == inDatabase)
+            {
+                m_Database = null;
+            }
+        }
+
+        #endregion // ISimType
 
         #region Accessors
 
@@ -52,6 +74,27 @@ namespace ProtoAqua.Energy
         #endregion // Accessors
 
         public bool HasFlags(VarTypeFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
+
+        /// <summary>
+        /// Sets this VarType configuration as dirty.
+        /// </summary>
+        public void Dirty()
+        {
+            m_Database?.Dirty();
+        }
+
+        #region Unity Events
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            Dirty();
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Unity Events
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ProtoAqua.Energy
 {
     [CreateAssetMenu(menuName = "Prototype/Energy/Environment Type")]
-    public class EnvironmentType : ScriptableObject, IKeyValuePair<FourCC, EnvironmentType>
+    public class EnvironmentType : ScriptableObject, ISimType<EnvironmentType>, IKeyValuePair<FourCC, EnvironmentType>
     {
         #region Types
 
@@ -43,6 +43,8 @@ namespace ProtoAqua.Energy
 
         #endregion // Inspector
 
+        [NonSerialized] private SimTypeDatabase<EnvironmentType> m_Database;
+
         #region KeyValuePair
 
         FourCC IKeyValuePair<FourCC, EnvironmentType>.Key { get { return m_Id; } }
@@ -50,6 +52,23 @@ namespace ProtoAqua.Energy
         EnvironmentType IKeyValuePair<FourCC, EnvironmentType>.Value { get { return this; } }
 
         #endregion // KeyValuePair
+
+        #region ISimType
+
+        void ISimType<EnvironmentType>.Hook(SimTypeDatabase<EnvironmentType> inDatabase)
+        {
+            m_Database = inDatabase;
+        }
+
+        void ISimType<EnvironmentType>.Unhook(SimTypeDatabase<EnvironmentType> inDatabase)
+        {
+            if (m_Database == inDatabase)
+            {
+                m_Database = null;
+            }
+        }
+
+        #endregion // ISimType
 
         #region Accessors
 
@@ -67,7 +86,7 @@ namespace ProtoAqua.Energy
             for(int resAddIdx = 0; resAddIdx < m_ResourcesPerTick.Length; ++resAddIdx)
             {
                 ResourceConfig config = m_ResourcesPerTick[resAddIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(config.ResourceId);
+                int resIdx = inContext.Database.Resources.IdToIndex(config.ResourceId);
                 ioState.OwnedResources[resIdx] += (ushort) (config.Base + inContext.RNG.Next(config.Random + 1));
             }
         }
@@ -77,11 +96,32 @@ namespace ProtoAqua.Energy
             for(int propAddIdx = 0; propAddIdx < m_DefaultProperties.Length; ++propAddIdx)
             {
                 DefaultPropertyConfig config = m_DefaultProperties[propAddIdx];
-                int propIdx = inContext.Database.PropertyVarToIndex(config.PropertyId);
+                int propIdx = inContext.Database.Properties.IdToIndex(config.PropertyId);
                 ioState.Properties[propIdx] = config.Base + inContext.RNG.NextFloat(-config.Random, config.Random);
             }
         }
 
+        /// <summary>
+        /// Sets this EnvironmentType configuration as dirty.
+        /// </summary>
+        public void Dirty()
+        {
+            m_Database?.Dirty();
+        }
+
         #endregion // Operations
+
+        #region Unity Events
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            Dirty();
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Unity Events
     }
 }

@@ -21,6 +21,8 @@ namespace ProtoAqua.Energy
         public uint NextSeed;
         public ushort NextActorId;
 
+        public bool RequestResimulate;
+
         public void Reset(in EnergySimContext inContext)
         {
             Environment = default(EnvironmentState);
@@ -29,6 +31,7 @@ namespace ProtoAqua.Energy
             Timestamp = 0;
             NextSeed = 0;
             NextActorId = 0;
+            RequestResimulate = false;
 
             Configure(inContext);
         }
@@ -55,11 +58,12 @@ namespace ProtoAqua.Energy
             Timestamp = inState.Timestamp;
             NextSeed = inState.NextSeed;
             NextActorId = inState.NextActorId;
+            RequestResimulate = inState.RequestResimulate;
         }
 
         public void Configure(in EnergySimContext inContext)
         {
-            FourCC[] actorTypeIds = inContext.Database.ActorTypeIds();
+            FourCC[] actorTypeIds = inContext.Database.Actors.Ids();
             
             Array.Resize(ref Populations, actorTypeIds.Length);
             Array.Resize(ref Masses, actorTypeIds.Length);
@@ -110,41 +114,41 @@ namespace ProtoAqua.Energy
             --ActorCount;
         }
     
-        public void AddResourceToEnvironment(EnergySimDatabase inDatabase, FourCC inResourceType, ushort inCount)
+        public void AddResourceToEnvironment(ISimDatabase inDatabase, FourCC inResourceType, ushort inCount)
         {
-            int idx = inDatabase.ResourceVarToIndex(inResourceType);
+            int idx = inDatabase.Resources.IdToIndex(inResourceType);
             Environment.OwnedResources[idx] += inCount;
         }
 
-        public void SetPropertyInEnvironment(EnergySimDatabase inDatabase, FourCC inPropertyType, float inValue)
+        public void SetPropertyInEnvironment(ISimDatabase inDatabase, FourCC inPropertyType, float inValue)
         {
-            int idx = inDatabase.PropertyVarToIndex(inPropertyType);
+            int idx = inDatabase.Properties.IdToIndex(inPropertyType);
             Environment.Properties[idx] = inValue;
         }
 
         #region IEnergySimStateReader
 
-        ushort IEnergySimStateReader.GetEnvironmentResource(FourCC inResourceId, EnergySimDatabase inDatabase)
+        ushort IEnergySimStateReader.GetEnvironmentResource(FourCC inResourceId, ISimDatabase inDatabase)
         {
-            int idx = inDatabase.ResourceVarToIndex(inResourceId);
+            int idx = inDatabase.Resources.IdToIndex(inResourceId);
             return Environment.OwnedResources[idx];
         }
 
-        float IEnergySimStateReader.GetEnvironmentProperty(FourCC inPropertyId, EnergySimDatabase inDatabase)
+        float IEnergySimStateReader.GetEnvironmentProperty(FourCC inPropertyId, ISimDatabase inDatabase)
         {
-            int idx = inDatabase.PropertyVarToIndex(inPropertyId);
+            int idx = inDatabase.Properties.IdToIndex(inPropertyId);
             return Environment.Properties[idx];
         }
 
-        ushort IEnergySimStateReader.GetActorCount(FourCC inActorId, EnergySimDatabase inDatabase)
+        ushort IEnergySimStateReader.GetActorCount(FourCC inActorId, ISimDatabase inDatabase)
         {
-            int idx = inDatabase.ActorTypeToIndex(inActorId);
+            int idx = inDatabase.Actors.IdToIndex(inActorId);
             return Populations[idx];
         }
 
-        uint IEnergySimStateReader.GetActorMass(FourCC inActorId, EnergySimDatabase inDatabase)
+        uint IEnergySimStateReader.GetActorMass(FourCC inActorId, ISimDatabase inDatabase)
         {
-            int idx = inDatabase.ActorTypeToIndex(inActorId);
+            int idx = inDatabase.Actors.IdToIndex(inActorId);
             return Masses[idx];
         }
 

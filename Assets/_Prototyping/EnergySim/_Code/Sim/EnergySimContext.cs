@@ -4,7 +4,7 @@ namespace ProtoAqua.Energy
 {
     public struct EnergySimContext
     {
-        public EnergySimDatabase Database;
+        public ISimDatabase Database;
         public IEnergySimScenario Scenario;
         public EnergySimState Start;
         public ILogger Logger;

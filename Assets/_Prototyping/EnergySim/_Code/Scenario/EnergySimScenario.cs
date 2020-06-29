@@ -41,13 +41,13 @@ namespace ProtoAqua.Energy
 
         #region IEnergySimScenario
 
-        public void Initialize(EnergySimState ioState, EnergySimDatabase inDatabase)
+        public void Initialize(EnergySimState ioState, ISimDatabase inDatabase)
         {
             ioState.Environment.Type = m_EnvType;
 
             for(int i = 0; i < m_InitialActors.Length; ++i)
             {
-                ActorType type = inDatabase.ActorType(m_InitialActors[i].Id);
+                ActorType type = inDatabase.Actors.Get(m_InitialActors[i].Id);
                 ioState.AddActors(type, (int) m_InitialActors[i].Count);
             }
 
@@ -77,7 +77,7 @@ namespace ProtoAqua.Energy
             return m_Duration;
         }
 
-        public bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, EnergySimDatabase inDatabase, out float outValue)
+        public bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, out float outValue)
         {
             // throw new NotImplementedException();
 

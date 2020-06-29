@@ -28,5 +28,22 @@ namespace ProtoAqua.Energy
                     throw new ArgumentException("Unrecognized value", nameof(inOp));
             }
         }
+
+        static public bool Evaluate(this CompareOp inOp, int inLeft, int inRight)
+        {
+            switch(inOp)
+            {
+                case CompareOp.LessThan:
+                    return inLeft < inRight;
+                case CompareOp.LessThanOrEqualTo:
+                    return inLeft <= inRight;
+                case CompareOp.GreaterThan:
+                    return inLeft > inRight;
+                case CompareOp.GreaterThanOrEqualTo:
+                    return inLeft >= inRight;
+                default:
+                    throw new ArgumentException("Unrecognized value", nameof(inOp));
+            }
+        }
     }
 }

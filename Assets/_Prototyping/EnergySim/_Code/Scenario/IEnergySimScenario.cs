@@ -11,7 +11,7 @@ namespace ProtoAqua.Energy
         int TickActionCount();
         int TickScale();
 
-        void Initialize(EnergySimState ioState, EnergySimDatabase inDatabase);
-        bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, EnergySimDatabase inDatabase, out float outValue);
+        void Initialize(EnergySimState ioState, ISimDatabase inDatabase);
+        bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, out float outValue);
     }
 }

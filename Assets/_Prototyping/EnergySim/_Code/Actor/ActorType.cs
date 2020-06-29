@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ProtoAqua.Energy
 {
     [CreateAssetMenu(menuName = "Prototype/Energy/Actor Type")]
-    public class ActorType : ScriptableObject, IKeyValuePair<FourCC, ActorType>
+    public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>
     {
         #region Types
 
@@ -127,6 +127,8 @@ namespace ProtoAqua.Energy
 
         #endregion // Inspector
 
+        [NonSerialized] private SimTypeDatabase<ActorType> m_Database;
+
         #region KeyValuePair
 
         FourCC IKeyValuePair<FourCC, ActorType>.Key { get { return m_Id; } }
@@ -134,6 +136,23 @@ namespace ProtoAqua.Energy
         ActorType IKeyValuePair<FourCC, ActorType>.Value { get { return this; } }
 
         #endregion // KeyValuePair
+
+        #region ISimType
+
+        void ISimType<ActorType>.Hook(SimTypeDatabase<ActorType> inDatabase)
+        {
+            m_Database = inDatabase;
+        }
+
+        void ISimType<ActorType>.Unhook(SimTypeDatabase<ActorType> inDatabase)
+        {
+            if (m_Database == inDatabase)
+            {
+                m_Database = null;
+            }
+        }
+
+        #endregion // ISimType
 
         #region Accessors
 
@@ -180,7 +199,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < m_ResourceRequirements.DesiredResources.Length; ++reqIdx)
             {
                 ResourceRequirementConfig req = m_ResourceRequirements.DesiredResources[reqIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(req.ResourceId);
+                int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
                 ioState.DesiredResources[resIdx] += (ushort)(req.BaseValue + req.MassValue * ioState.Mass);
             }
 
@@ -189,7 +208,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < m_ResourceRequirements.ProducingResources.Length; ++reqIdx)
             {
                 ResourceRequirementConfig req = m_ResourceRequirements.ProducingResources[reqIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(req.ResourceId);
+                int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
                 ioState.ProducingResources[resIdx] += (ushort)(req.BaseValue + req.MassValue * ioState.Mass);
             }
         }
@@ -204,7 +223,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < m_ResourceRequirements.DesiredProperties.Length; ++reqIdx)
             {
                 PropertyCompareConfig req = m_ResourceRequirements.DesiredProperties[reqIdx];
-                int propIdx = inContext.Database.PropertyVarToIndex(req.PropertyId);
+                int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
                 float threshold = req.BaseValue + req.MassValue * ioState.Mass;
                 bool bMet = req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], threshold);
                 if (!bMet)
@@ -222,6 +241,22 @@ namespace ProtoAqua.Energy
             ushort growth = PredictGrowth(ioState, inContext);
             ioState.Mass += growth;
             return growth;
+        }
+
+        /// <summary>
+        /// Sets this ActorType configuration as dirty.
+        /// </summary>
+        public void Dirty()
+        {
+            m_Database?.Dirty();
+        }
+
+        /// <summary>
+        /// Creates a clone of this ActorType.
+        /// </summary>
+        public ActorType Clone()
+        {
+            return Instantiate(this);
         }
 
         #endregion // Operations
@@ -289,7 +324,7 @@ namespace ProtoAqua.Energy
             // actor count
             if (m_ReproductionSettings.MinActorMass.Id != FourCC.Zero && inContext.Current.Masses != null)
             {
-                int actorIdx = inContext.Database.ActorTypeToIndex(m_ReproductionSettings.MinActorMass.Id);
+                int actorIdx = inContext.Database.Actors.IdToIndex(m_ReproductionSettings.MinActorMass.Id);
                 if (inContext.Current.Masses[actorIdx] < m_ReproductionSettings.MinActorMass.Count)
                 {
                     return false;
@@ -304,7 +339,7 @@ namespace ProtoAqua.Energy
         /// </summary>
         public float GetEatTargetWeight(in ActorState inActorState, FourCC inTargetType, in EnergySimContext inContext)
         {
-            for(int i = m_EatingSettings.EdibleActors.Length - 1; i >= 0; --i)
+            for (int i = m_EatingSettings.EdibleActors.Length - 1; i >= 0; --i)
             {
                 if (m_EatingSettings.EdibleActors[i].ActorType == inTargetType)
                     return m_EatingSettings.EdibleActors[i].ConversionRate;
@@ -318,8 +353,8 @@ namespace ProtoAqua.Energy
         /// </summary>
         public void GetEatSize(in ActorState inActorState, in EnergySimContext inContext, out ushort outBiteSize, out ushort outMaxSize)
         {
-            outBiteSize = (ushort) (m_EatingSettings.BaseEatSize + (inActorState.Mass * m_EatingSettings.MassEatSize));
-            outMaxSize = (ushort) (outBiteSize * m_EatingSettings.MaxSizeMultiplier);
+            outBiteSize = (ushort)(m_EatingSettings.BaseEatSize + (inActorState.Mass * m_EatingSettings.MassEatSize));
+            outMaxSize = (ushort)(outBiteSize * m_EatingSettings.MaxSizeMultiplier);
         }
 
         /// <summary>
@@ -342,7 +377,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < m_DeathSettings.ResourceStarvation.Length; ++reqIdx)
             {
                 VarPair req = m_DeathSettings.ResourceStarvation[reqIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(req.Id);
+                int resIdx = inContext.Database.Resources.IdToIndex(req.Id);
                 if (inState.ResourceStarvation[resIdx] >= req.Value)
                     return true;
             }
@@ -350,7 +385,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < m_DeathSettings.PropertyStarvation.Length; ++reqIdx)
             {
                 VarPair req = m_DeathSettings.PropertyStarvation[reqIdx];
-                int propIdx = inContext.Database.PropertyVarToIndex(req.Id);
+                int propIdx = inContext.Database.Properties.IdToIndex(req.Id);
                 if (inState.PropertyStarvation[propIdx] >= req.Value)
                     return true;
             }
@@ -367,7 +402,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < inResources.Length; ++reqIdx)
             {
                 ResourceRequirementConfig req = inResources[reqIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(req.ResourceId);
+                int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
                 if (inContext.Current.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
                     return true;
             }
@@ -380,7 +415,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < inResources.Length; ++reqIdx)
             {
                 ResourceRequirementConfig req = inResources[reqIdx];
-                int resIdx = inContext.Database.ResourceVarToIndex(req.ResourceId);
+                int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
                 if (inContext.Current.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
                     return false;
             }
@@ -397,7 +432,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < inProperties.Length; ++reqIdx)
             {
                 PropertyCompareConfig req = inProperties[reqIdx];
-                int propIdx = inContext.Database.PropertyVarToIndex(req.PropertyId);
+                int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
                 if (req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
                     return true;
             }
@@ -410,7 +445,7 @@ namespace ProtoAqua.Energy
             for (int reqIdx = 0; reqIdx < inProperties.Length; ++reqIdx)
             {
                 PropertyCompareConfig req = inProperties[reqIdx];
-                int propIdx = inContext.Database.PropertyVarToIndex(req.PropertyId);
+                int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
                 if (req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
                     return false;
             }
@@ -419,6 +454,19 @@ namespace ProtoAqua.Energy
         }
 
         #endregion // Properties
+
+        #region Unity Events
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            Dirty();
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Unity Events
     }
 
     [LabeledEnum, Flags]
