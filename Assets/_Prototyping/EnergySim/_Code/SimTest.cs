@@ -25,14 +25,6 @@ namespace ProtoAqua.Energy
 
         public void Start()
         {
-            LogSize<ActorState>();
-            LogSize<EnvironmentState>();
-            LogSize<VarPair>();
-            LogSize<VarPairF>();
-            LogSize<ActorCount>();
-            LogSize<VarState<ushort>>();
-            LogSize<VarState<float>>();
-
             m_DatabaseOverride = new SimDatabaseOverride(database);
 
             simContext.Database = m_DatabaseOverride;
@@ -101,11 +93,6 @@ namespace ProtoAqua.Energy
             Debug.LogFormat("Simulation took {0}ms", watch.ElapsedMilliseconds);
             
             display.Sync(simContext, dataContext);
-        }
-
-        static private void LogSize<T>()
-        {
-            Debug.LogFormat("sizeof({0}) = {1}", typeof(T).FullName, Marshal.SizeOf<T>());
         }
     }
 }

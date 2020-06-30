@@ -73,6 +73,7 @@ namespace ProtoAqua.Energy
 
         #region IUpdateVersioned
 
+        [UnityEngine.Scripting.Preserve]
         int IUpdateVersioned.GetUpdateVersion()
         {
             return m_Version;
