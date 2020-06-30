@@ -39,6 +39,21 @@ namespace ProtoAqua.Energy
 
         #endregion // Inspector
 
+        [NonSerialized] private int m_Version;
+
+        public RuntimeSimScenario CreateRuntime()
+        {
+            RuntimeSimScenario runtime = new RuntimeSimScenario();
+            runtime.EnvType = m_EnvType;
+            runtime.InitialResources = (VarPair[]) m_InitialResources.Clone();
+            runtime.InitialProperties = (VarPairF[]) m_InitialProperties.Clone();
+            runtime.InitialActors = (ActorCount[]) m_InitialActors.Clone();
+            runtime.TickActionCount = m_TickActionCount;
+            runtime.TickScale = m_TickScale;
+            runtime.Duration = m_Duration;
+            return runtime;
+        }
+
         #region IEnergySimScenario
 
         public void Initialize(EnergySimState ioState, ISimDatabase inDatabase)
@@ -86,5 +101,28 @@ namespace ProtoAqua.Energy
         }
 
         #endregion // IEnergySimScenario
+
+        #region IUpdateVersion
+
+        [UnityEngine.Scripting.Preserve]
+        int IUpdateVersioned.GetUpdateVersion()
+        {
+            return m_Version;
+        }
+
+        #endregion // IUpdateVersion
+
+        #region Unity Events
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            UpdateVersion.Increment(ref m_Version);
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Unity Events
     }
 }

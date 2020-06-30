@@ -7,6 +7,7 @@ using BeauUtil;
 using System;
 using BeauRoutine;
 using System.Collections;
+using BeauRoutine.Extensions;
 
 namespace ProtoAqua.Energy
 {
@@ -31,6 +32,12 @@ namespace ProtoAqua.Energy
         [SerializeField]
         private float m_ChangeBufferedDelay = 0.3f;
 
+        [SerializeField]
+        private Button m_PrevButton = null;
+
+        [SerializeField]
+        private Button m_NextButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private int m_LastMaxTicks = -1;
@@ -47,6 +54,8 @@ namespace ProtoAqua.Energy
             m_TickMarkPool.Initialize();
 
             m_Slider.onValueChanged.AddListener(OnSliderValueChanged);
+            m_PrevButton.onClick.AddListener(OnPrevButton);
+            m_NextButton.onClick.AddListener(OnNextButton);
         }
 
         #endregion // Unity Events
@@ -64,6 +73,7 @@ namespace ProtoAqua.Energy
 
             m_CurrentBufferDelay = m_ChangeBufferedDelay;
             m_CurrentTickCounter.SetText(currentTick.ToStringLookup());
+            UpdateButtons();
         }
 
         #endregion // Handlers
@@ -72,14 +82,12 @@ namespace ProtoAqua.Energy
 
         private IEnumerator DoBufferedBroadcast()
         {
-            while(Input.GetMouseButton(0))
-            {
-                yield return null;
-            }
-
             while(m_CurrentBufferDelay > 0)
             {
-                m_CurrentBufferDelay -= Routine.DeltaTime;
+                if (!Input.GetMouseButton(0))
+                {
+                    m_CurrentBufferDelay -= Routine.DeltaTime;
+                }
                 yield return null;
             }
 
@@ -108,6 +116,7 @@ namespace ProtoAqua.Energy
             m_CurrentTickCounter.SetText(currentTick.ToStringLookup());
 
             m_Slider.SetValueWithoutNotify(currentTick);
+            UpdateButtons();
         }
 
         private void InitTickMarks()
@@ -129,6 +138,22 @@ namespace ProtoAqua.Energy
 
                 mark.gameObject.SetActive(true);
             }
+        }
+
+        private void UpdateButtons()
+        {
+            m_PrevButton.interactable = m_Slider.value > m_Slider.minValue;
+            m_NextButton.interactable = m_Slider.value < m_Slider.maxValue;
+        }
+
+        private void OnPrevButton()
+        {
+            m_Slider.value -= 1;
+        }
+
+        private void OnNextButton()
+        {
+            m_Slider.value += 1;
         }
     }
 }

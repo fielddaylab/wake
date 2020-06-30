@@ -21,17 +21,20 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private int m_SimDBVersion;
         [NonSerialized] private int m_DataDBVersion;
+        [NonSerialized] private int m_ScenarioVersion;
+        [NonSerialized] private RuntimeSimScenario m_RuntimeScenario;
         [NonSerialized] private SimDatabaseOverride m_DatabaseOverride;
 
         public void Start()
         {
             m_DatabaseOverride = new SimDatabaseOverride(database);
+            m_RuntimeScenario = scenario.CreateRuntime();
 
             simContext.Database = m_DatabaseOverride;
-            simContext.Scenario = scenario;
+            simContext.Scenario = m_RuntimeScenario;
 
             dataContext.Database = database;
-            dataContext.Scenario = scenario;
+            dataContext.Scenario = m_RuntimeScenario;
 
             if (debug)
             {
@@ -55,8 +58,9 @@ namespace ProtoAqua.Energy
 
         private void Update()
         {
-            bool bSimRequestsRefresh = simContext.Database.HasChanged(ref m_SimDBVersion);
-            bool bDataRequestsRefresh = dataContext.Database.HasChanged(ref m_DataDBVersion);
+            bool bScenarioRefresh = m_RuntimeScenario.HasChanged(ref m_ScenarioVersion);
+            bool bSimRequestsRefresh = simContext.Database.HasChanged(ref m_SimDBVersion) || bScenarioRefresh;
+            bool bDataRequestsRefresh = dataContext.Database.HasChanged(ref m_DataDBVersion) || bScenarioRefresh;
 
             if (bSimRequestsRefresh || bDataRequestsRefresh)
             {

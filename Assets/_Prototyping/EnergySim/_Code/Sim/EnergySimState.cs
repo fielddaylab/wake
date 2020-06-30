@@ -7,7 +7,7 @@ namespace ProtoAqua.Energy
 {
     public sealed class EnergySimState : IEnergySimStateReader
     {
-        public const int MaxActors = 256;
+        public const int MaxActors = 512;
 
         public EnvironmentState Environment;
         

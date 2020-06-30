@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    public interface IEnergySimScenario
+    public interface IEnergySimScenario : IUpdateVersioned
     {
         ushort TotalTicks();
         int TickActionCount();
