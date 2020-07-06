@@ -11,6 +11,14 @@ namespace ProtoAqua.Energy
     {
         #region Types
 
+        [Serializable]
+        public struct ConfigRange
+        {
+            public float Min;
+            public float Max;
+            public float Increment;
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -24,6 +32,7 @@ namespace ProtoAqua.Energy
         [SerializeField] private sbyte m_Priority = 0;
 
         [Header("Other")]
+        [SerializeField] private ConfigRange m_ConfigSettings = default(ConfigRange);
         [SerializeField] private PropertyBlock m_ExtraData = default(PropertyBlock);
 
         #endregion // Inspector
@@ -69,6 +78,7 @@ namespace ProtoAqua.Energy
         public VarCalculationType CalcType() { return m_Calculation; }
         public sbyte Priority() { return m_Priority; }
 
+        public ConfigRange ConfigSettings() { return m_ConfigSettings; }
         public PropertyBlock ExtraData() { return m_ExtraData; }
 
         #endregion // Accessors

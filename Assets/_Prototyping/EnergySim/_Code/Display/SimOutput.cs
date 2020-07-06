@@ -105,7 +105,7 @@ namespace ProtoAqua.Energy
             int actorCount = inContext.Database.Actors.Count();
             for(int i = 0; i < actorCount; ++i)
             {
-                ActorType type = inContext.Database.Actors.Get(i);
+                ActorType type = inContext.Database.Actors[i];
                 ushort count = inContext.Current.Populations[i];
                 ActorType.DisplayConfig display = type.DisplaySettings();
 

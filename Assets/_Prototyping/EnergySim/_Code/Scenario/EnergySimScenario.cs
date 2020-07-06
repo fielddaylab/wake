@@ -10,6 +10,9 @@ namespace ProtoAqua.Energy
     {
         #region Inspector
 
+        [SerializeField]
+        private ScenarioPackageHeader m_Header = null;
+
         [Header("Environment")]
 
         [SerializeField, EnvironmentTypeId]
@@ -41,7 +44,7 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private int m_Version;
 
-        public RuntimeSimScenario CreateRuntime()
+        public ScenarioPackage CreateRuntimePackage()
         {
             RuntimeSimScenario runtime = new RuntimeSimScenario();
             runtime.EnvType = m_EnvType;
@@ -51,10 +54,24 @@ namespace ProtoAqua.Energy
             runtime.TickActionCount = m_TickActionCount;
             runtime.TickScale = m_TickScale;
             runtime.Duration = m_Duration;
-            return runtime;
+
+            ScenarioPackageHeader header = new ScenarioPackageHeader();
+            header.Id = m_Header.Id;
+            header.LastUpdated = m_Header.LastUpdated;
+            header.DatabaseId = m_Header.DatabaseId;
+            header.Name = m_Header.Name;
+            header.Author = m_Header.Author;
+            header.Description = m_Header.Description;
+
+            ScenarioPackage package = new ScenarioPackage();
+            package.Header = header;
+            package.Scenario = runtime;
+            return package;
         }
 
         #region IEnergySimScenario
+
+        public string Id() { return m_Header.Id; }
 
         public void Initialize(EnergySimState ioState, ISimDatabase inDatabase)
         {
@@ -62,7 +79,7 @@ namespace ProtoAqua.Energy
 
             for(int i = 0; i < m_InitialActors.Length; ++i)
             {
-                ActorType type = inDatabase.Actors.Get(m_InitialActors[i].Id);
+                ActorType type = inDatabase.Actors[m_InitialActors[i].Id];
                 ioState.AddActors(type, (int) m_InitialActors[i].Count);
             }
 

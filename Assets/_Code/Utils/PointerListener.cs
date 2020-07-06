@@ -29,8 +29,8 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private readonly HashSet<int> m_EnteredPointers;
-        [NonSerialized] private readonly HashSet<int> m_PressedPointers;
+        [NonSerialized] private bool m_Entered;
+        [NonSerialized] private bool m_Pressed;
         [NonSerialized] private bool m_Selected;
 
         public PointerEvent onPointerEnter { get { return m_OnPointerEnter; } }
@@ -41,37 +41,45 @@ namespace Aqua
         public BaseEvent onSelect { get { return m_OnSelect; } }
         public BaseEvent onDeselect { get { return m_OnDeselect; } }
 
+        public bool IsEntered() { return m_Entered; }
+        public bool IsPressed() { return m_Pressed; }
+        public bool IsSelected() { return m_Selected; }
+
         #region Handlers
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
-            if (!m_PressedPointers.Add(eventData.pointerId))
+            if (m_Pressed)
                 return;
-            
+
+            m_Pressed = true;
             m_OnPointerDown.Invoke(eventData);
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
         {
-            if (!m_PressedPointers.Remove(eventData.pointerId))
+            if (!m_Pressed)
                 return;
 
+            m_Pressed = false;
             m_OnPointerUp.Invoke(eventData);
         }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
-            if (!m_EnteredPointers.Add(eventData.pointerId))
+            if (m_Entered)
                 return;
 
+            m_Entered = true;
             m_OnPointerEnter.Invoke(eventData);
         }
 
         void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
         {
-            if (!m_EnteredPointers.Remove(eventData.pointerId))
+            if (!m_Entered)
                 return;
 
+            m_Entered = false;
             m_OnPointerExit.Invoke(eventData);
         }
 

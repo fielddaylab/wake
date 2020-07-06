@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    public class RuntimeSimScenario : IEnergySimScenario
+    public class RuntimeSimScenario : IEnergySimScenario, ISerializedObject, ISerializedVersion
     {
         // TODO: Improve access pattern
 
@@ -27,7 +27,7 @@ namespace ProtoAqua.Energy
 
             for(int i = 0; i < InitialActors.Length; ++i)
             {
-                ActorType type = inDatabase.Actors.Get(InitialActors[i].Id);
+                ActorType type = inDatabase.Actors[InitialActors[i].Id];
                 ioState.AddActors(type, (int) InitialActors[i].Count);
             }
 
@@ -81,5 +81,22 @@ namespace ProtoAqua.Energy
         }
 
         #endregion // IUpdateVersion
+
+        #region ISerializedObject
+
+        ushort ISerializedVersion.Version { get { return 1; } }
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("envType", ref EnvType);
+            ioSerializer.ObjectArray("resources", ref InitialResources);
+            ioSerializer.ObjectArray("properties", ref InitialProperties);
+            ioSerializer.ObjectArray("actors", ref InitialActors);
+            ioSerializer.Serialize("tickActionCount", ref TickActionCount);
+            ioSerializer.Serialize("tickScale", ref TickScale);
+            ioSerializer.Serialize("duration", ref Duration);
+        }
+
+        #endregion // ISerializedObject
     }
 }

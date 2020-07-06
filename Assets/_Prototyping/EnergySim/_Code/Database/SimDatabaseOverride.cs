@@ -9,20 +9,20 @@ namespace ProtoAqua.Energy
 {
     public class SimDatabaseOverride : ISimDatabase
     {
-        private EnergySimDatabase m_Source;
+        private ISimDatabase m_Source;
         private SimTypeDatabase<ActorType> m_ActorOverrides;
         
         private Action m_CachedDirtyDelegate;
         private int m_Version;
 
-        public SimDatabaseOverride(EnergySimDatabase inSimDatabase)
+        public SimDatabaseOverride(ISimDatabase inSimDatabase)
         {
             m_Source = inSimDatabase;
 
             ActorType[] overrideActorTypes = new ActorType[m_Source.Actors.Count()];
             for(int i = 0; i < overrideActorTypes.Length; ++i)
             {
-                overrideActorTypes[i] = m_Source.Actors.Get(i).Clone();
+                overrideActorTypes[i] = m_Source.Actors[i].Clone();
             }
 
             m_ActorOverrides = new SimTypeDatabase<ActorType>(overrideActorTypes);

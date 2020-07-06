@@ -13,6 +13,9 @@ namespace ProtoAqua.Energy
         #region Inspector
 
         [SerializeField]
+        private string m_Id = null;
+
+        [SerializeField]
         private ActorType[] m_ActorTypes = null;
 
         [SerializeField]
@@ -38,7 +41,7 @@ namespace ProtoAqua.Energy
             if (m_Initialized)
                 return;
 
-            m_CachedDirtyDelegate = this.Dirty;
+            m_CachedDirtyDelegate = ((ISimDatabase) this).Dirty;
 
             m_ActorDatabase = new SimTypeDatabase<ActorType>(m_ActorTypes);
             m_EnvDatabase = new SimTypeDatabase<EnvironmentType>(m_EnvironmentTypes);
@@ -64,6 +67,8 @@ namespace ProtoAqua.Energy
             Dispose();
         }
 
+        public string Id() { return m_Id; }
+
         public SimTypeDatabase<ActorType> Actors { get { return m_ActorDatabase; } }
         public SimTypeDatabase<EnvironmentType> Envs { get { return m_EnvDatabase; } }
         
@@ -79,7 +84,7 @@ namespace ProtoAqua.Energy
             return m_Version;
         }
 
-        private void Dirty()
+        void ISimDatabase.Dirty()
         {
             UpdateVersion.Increment(ref m_Version);
         }

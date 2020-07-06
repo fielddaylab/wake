@@ -111,6 +111,16 @@ namespace ProtoAqua.Energy
             return m_Types[inIndex];
         }
 
+        public T this[int inIndex]
+        {
+            get { return Get(inIndex); }
+        }
+
+        public T this[FourCC inId]
+        {
+            get { return Get(inId); }
+        }
+
         #endregion // Retrieval
     }
 }

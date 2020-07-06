@@ -104,6 +104,13 @@ namespace ProtoAqua.Energy
             public Color Color = Color.white;
         }
 
+        [Serializable]
+        public struct ConfigRange
+        {
+            public ushort SoftCap;
+            public ushort Increment;
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -111,6 +118,7 @@ namespace ProtoAqua.Energy
         [SerializeField, ActorTypeId] private FourCC m_Id = FourCC.Zero;
         [SerializeField] private string m_ScriptName = null;
         [SerializeField, AutoEnum] private ActorTypeFlags m_Flags = default(ActorTypeFlags);
+        [SerializeField] private ushort m_MaxActors = 0;
 
         [Header("Resources")]
         [SerializeField] private RequirementsConfig m_ResourceRequirements = default(RequirementsConfig);
@@ -122,6 +130,7 @@ namespace ProtoAqua.Energy
         [SerializeField] private DeathConfig m_DeathSettings = default(DeathConfig);
 
         [Header("Other")]
+        [SerializeField] private ConfigRange m_ConfigSettings = default(ConfigRange);
         [SerializeField] private DisplayConfig m_DisplaySettings = default(DisplayConfig);
         [SerializeField] private PropertyBlock m_ExtraData = default(PropertyBlock);
 
@@ -159,6 +168,7 @@ namespace ProtoAqua.Energy
         public FourCC Id() { return m_Id; }
         public string ScriptName() { return m_ScriptName; }
         public ActorTypeFlags Flags() { return m_Flags; }
+        public ushort MaxActors() { return m_MaxActors; }
 
         public RequirementsConfig Requirements() { return m_ResourceRequirements; }
 
@@ -167,6 +177,7 @@ namespace ProtoAqua.Energy
         public ReproductionConfig ReproductionSettings() { return m_ReproductionSettings; }
         public DeathConfig DeathSettings() { return m_DeathSettings; }
 
+        public ConfigRange ConfigSettings() { return m_ConfigSettings; }
         public DisplayConfig DisplaySettings() { return m_DisplaySettings; }
         public PropertyBlock ExtraData() { return m_ExtraData; }
 

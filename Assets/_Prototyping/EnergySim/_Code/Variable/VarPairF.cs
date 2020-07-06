@@ -6,7 +6,7 @@ using BeauUtil;
 namespace ProtoAqua.Energy
 {
     [Serializable]
-    public struct VarPairF : IKeyValuePair<FourCC, float>
+    public struct VarPairF : IKeyValuePair<FourCC, float>, ISerializedObject
     {
         [VarTypeId] public FourCC Id;
         public float Value;
@@ -18,5 +18,15 @@ namespace ProtoAqua.Energy
         float IKeyValuePair<FourCC, float>.Value { get { return Value; } }
 
         #endregion // KeyValuePair
+
+        #region ISerializedObject
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("id", ref Id);
+            ioSerializer.Serialize("value", ref Value);
+        }
+
+        #endregion // ISerializedObject
     }
 }
