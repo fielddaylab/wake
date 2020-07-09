@@ -96,7 +96,7 @@ namespace ProtoAqua.Energy
             {
                 ioContext.Start = new EnergySimState();
             }
-            
+
             if (ioContext.Current == null)
             {
                 ioContext.Current = new EnergySimState();
@@ -113,13 +113,13 @@ namespace ProtoAqua.Energy
                 ioContext.Current.CopyFrom(ioContext.Start);
             }
 
-            int distance = (int) inDesiredTick - (int)ioContext.Current.Timestamp;
+            int distance = (int)inDesiredTick - (int)ioContext.Current.Timestamp;
             if (distance == 0)
                 return false;
 
             if (distance < 0)
             {
-                distance = (int) inDesiredTick;
+                distance = (int)inDesiredTick;
                 ioContext.Current.CopyFrom(ioContext.Start);
             }
 
@@ -177,7 +177,7 @@ namespace ProtoAqua.Energy
         static private void SetupBuffer(ref EnergySimContext ioContext, Buffer inBuffer)
         {
             ioContext.Current.CopyFrom(ioContext.Start);
-            
+
             inBuffer.Init(ioContext);
 
             inBuffer.State.Reset(ioContext);
@@ -329,7 +329,7 @@ namespace ProtoAqua.Energy
                     ref ActorState actor = ref inBuffer.State.Actors[actorIdx];
                     if ((actor.Flags & ActorStateFlags.Alive) == ActorStateFlags.Alive)
                     {
-                        bTookAction |= ActorTick(inBuffer, (ushort) actorIdx, ref actor, inBuffer.Context.Database.Actors[actor.Type], ref inBuffer.State.Environment, actionCount);
+                        bTookAction |= ActorTick(inBuffer, (ushort)actorIdx, ref actor, inBuffer.Context.Database.Actors[actor.Type], ref inBuffer.State.Environment, actionCount);
 
                         if ((actor.Flags & ActorStateFlags.DoneForTick) != ActorStateFlags.DoneForTick)
                         {
@@ -505,79 +505,88 @@ namespace ProtoAqua.Energy
                     {
                         inBuffer.ActorTypeChoice.Clear();
 
-                        int actCount = inBuffer.Context.Database.Actors.Count();
-                        for (int i = 0; i < actCount; ++i)
-                        {
-                            ushort popCount = (ushort)inBuffer.ActorLists[i].Count;
-                            uint mass = inBuffer.ActorMasses[i];
+                        ushort biteSize, maxSize;
+                        inType.GetEatSize(ioState, inBuffer.Context, out biteSize, out maxSize);
 
-                            FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(i);
-                            if (actorType == ioState.Type)
+                        if (biteSize > 0 && maxSize > 0)
+                        {
+                            int actCount = inBuffer.Context.Database.Actors.Count();
+                            for (int i = 0; i < actCount; ++i)
                             {
-                                --popCount;
-                                mass -= ioState.Mass;
+                                ushort popCount = (ushort)inBuffer.ActorLists[i].Count;
+                                uint mass = inBuffer.ActorMasses[i];
+
+                                FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(i);
+                                if (actorType == ioState.Type)
+                                {
+                                    --popCount;
+                                    mass -= ioState.Mass;
+                                }
+
+                                if (popCount <= 0 || mass <= 0)
+                                    continue;
+
+                                float weightCo = inType.GetEatTargetWeight(ioState, actorType, inBuffer.Context);
+                                if (weightCo <= 0)
+                                    continue;
+
+                                float totalWeight = mass * weightCo;
+                                inBuffer.ActorTypeChoice.Add(i, totalWeight);
                             }
 
-                            if (popCount <= 0 || mass <= 0)
-                                continue;
-
-                            float weightCo = inType.GetEatTargetWeight(ioState, actorType, inBuffer.Context);
-                            if (weightCo <= 0)
-                                continue;
-
-                            float totalWeight = mass * weightCo;
-                            inBuffer.ActorTypeChoice.Add(i, totalWeight);
-                        }
-
-                        if (inBuffer.ActorTypeChoice.Count > 0)
-                        {
-                            ushort biteSize, maxSize;
-                            inType.GetEatSize(ioState, inBuffer.Context, out biteSize, out maxSize);
-
-                            bool bEaten = false;
-                            do
+                            if (inBuffer.ActorTypeChoice.Count > 0)
                             {
-                                int actorIdx = inBuffer.Context.RNG.Choose(inBuffer.ActorTypeChoice);
-                                inBuffer.ActorTypeChoice.Remove(actorIdx);
-
-                                FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(actorIdx);
-
-                                inBuffer.ActorChoice.Clear();
-                                inBuffer.ActorChoice.AddRange(inBuffer.ActorLists[actorIdx]);
-
-                                inBuffer.Context.RNG.Shuffle(inBuffer.ActorChoice);
-
-                                for(int i = inBuffer.ActorChoice.Count - 1; i >= 0; --i)
+                                bool bEaten = false;
+                                do
                                 {
-                                    ushort targetIdx = inBuffer.ActorChoice[i];
-                                    if (inBuffer.State.Actors[targetIdx].Id == ioState.Id)
-                                        continue;
-                                    
-                                    if (EatActor(inBuffer, ref ioState, inType, targetIdx, biteSize, maxSize))
+                                    int actorIdx = inBuffer.Context.RNG.Choose(inBuffer.ActorTypeChoice);
+                                    inBuffer.ActorTypeChoice.Remove(actorIdx);
+
+                                    FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(actorIdx);
+
+                                    inBuffer.ActorChoice.Clear();
+                                    inBuffer.ActorChoice.AddRange(inBuffer.ActorLists[actorIdx]);
+
+                                    inBuffer.Context.RNG.Shuffle(inBuffer.ActorChoice);
+
+                                    for (int i = inBuffer.ActorChoice.Count - 1; i >= 0; --i)
                                     {
-                                        bEaten = true;
-                                        break;
+                                        ushort targetIdx = inBuffer.ActorChoice[i];
+                                        if (inBuffer.State.Actors[targetIdx].Id == ioState.Id)
+                                            continue;
+
+                                        if (EatActor(inBuffer, ref ioState, inType, targetIdx, biteSize, maxSize))
+                                        {
+                                            bEaten = true;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            while (!bEaten && inBuffer.ActorTypeChoice.Count > 0);
+                                while (!bEaten && inBuffer.ActorTypeChoice.Count > 0);
 
-                            if (!bEaten)
-                            {
-                                inBuffer.Context.Logger?.Log("Actor {0}:{1} tried and failed to eat",
-                                    ioState.Type, ioState.Id);
-                                ioState.Flags |= ActorStateFlags.FailedToEat;
+                                if (!bEaten)
+                                {
+                                    inBuffer.Context.Logger?.Log("Actor {0}:{1} tried and failed to eat",
+                                        ioState.Type, ioState.Id);
+                                    ioState.Flags |= ActorStateFlags.FailedToEat;
+                                }
+                                else
+                                {
+                                    bTookAction = true;
+                                    bDone = false;
+                                    --actionsRemaining;
+                                }
                             }
                             else
                             {
-                                bTookAction = true;
-                                bDone = false;
-                                --actionsRemaining;
+                                inBuffer.Context.Logger?.Log("Actor {0}:{1} wanted to eat but nothing was around",
+                                    ioState.Type, ioState.Id);
+                                ioState.Flags |= ActorStateFlags.FailedToEat;
                             }
                         }
                         else
                         {
-                            inBuffer.Context.Logger?.Log("Actor {0}:{1} wanted to eat but nothing was around",
+                            inBuffer.Context.Logger?.Log("Actor {0}:{1} wanted to eat but its bite size was zero",
                                 ioState.Type, ioState.Id);
                             ioState.Flags |= ActorStateFlags.FailedToEat;
                         }
@@ -732,8 +741,8 @@ namespace ProtoAqua.Energy
                 VarType resType = inBuffer.Context.Database.Resources[i];
                 if (resType.HasFlags(VarTypeFlags.ConvertFromMass))
                 {
-                    ushort contribution = (ushort) Math.Ceiling(conversion * targetMass);
-                    ioState.DesiredResources[i] = (ushort) Math.Max(ioState.DesiredResources[i] - contribution, 0);
+                    ushort contribution = (ushort)Math.Ceiling(conversion * targetMass);
+                    ioState.DesiredResources[i] = (ushort)Math.Max(ioState.DesiredResources[i] - contribution, 0);
                 }
             }
 
@@ -777,7 +786,7 @@ namespace ProtoAqua.Energy
                 if ((actor.Flags & ActorStateFlags.Alive) == 0)
                 {
                     inLogger?.Log("Cleaning up dead actor {0}:{1}", actor.Type, actor.Id);
-                    inState.DeleteActor((ushort) actorIdx);
+                    inState.DeleteActor((ushort)actorIdx);
                 }
             }
         }
@@ -794,20 +803,20 @@ namespace ProtoAqua.Energy
 
             float errorAccum = 0;
             int errorCounter = 0;
-            for(int i = 0; i < actorTypeCount; ++i)
+            for (int i = 0; i < actorTypeCount; ++i)
             {
                 errorAccum += RPD(inStateA.Populations[i], inStateB.Populations[i]);
                 errorAccum += RPD(inStateA.Masses[i], inStateB.Masses[i]);
                 errorCounter += 2;
             }
 
-            for(int i = 0; i < resTypeCount; ++i)
+            for (int i = 0; i < resTypeCount; ++i)
             {
                 errorAccum += RPD(inStateA.Environment.OwnedResources[i], inStateB.Environment.OwnedResources[i]);
                 ++errorCounter;
             }
 
-            for(int i = 0; i < propTypeCount; ++i)
+            for (int i = 0; i < propTypeCount; ++i)
             {
                 errorAccum += RPD(inStateA.Environment.Properties[i], inStateB.Environment.Properties[i]);
                 ++errorCounter;
@@ -815,7 +824,7 @@ namespace ProtoAqua.Energy
 
             if (errorCounter == 0)
                 return 0;
-            
+
             return errorAccum / errorCounter;
         }
 

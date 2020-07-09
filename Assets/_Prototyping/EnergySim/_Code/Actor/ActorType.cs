@@ -7,18 +7,32 @@ using UnityEngine;
 namespace ProtoAqua.Energy
 {
     [CreateAssetMenu(menuName = "Prototype/Energy/Actor Type")]
-    public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>
+    public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>, ICopyCloneable<ActorType>
     {
         #region Types
 
         [Serializable]
-        public class EatingConfig
+        public class EatingConfig : ICopyCloneable<EatingConfig>
         {
             public EdibleConfig[] EdibleActors;
 
             public ushort BaseEatSize;
             public float MassEatSize;
             public float MaxSizeMultiplier;
+
+            public EatingConfig Clone()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CopyFrom(EatingConfig inClone)
+            {
+                CloneUtils.CopyFrom(ref EdibleActors, inClone.EdibleActors);
+                
+                BaseEatSize = inClone.BaseEatSize;
+                MassEatSize = inClone.MassEatSize;
+                MaxSizeMultiplier = inClone.MaxSizeMultiplier;
+            }
         }
 
         [Serializable]
@@ -46,15 +60,27 @@ namespace ProtoAqua.Energy
         }
 
         [Serializable]
-        public class RequirementsConfig
+        public class RequirementsConfig : ICopyCloneable<RequirementsConfig>
         {
             public ResourceRequirementConfig[] DesiredResources;
             public PropertyCompareConfig[] DesiredProperties;
             public ResourceRequirementConfig[] ProducingResources;
+
+            public RequirementsConfig Clone()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CopyFrom(RequirementsConfig inClone)
+            {
+                CloneUtils.CopyFrom(ref DesiredResources, inClone.DesiredResources);
+                CloneUtils.CopyFrom(ref DesiredProperties, inClone.DesiredProperties);
+                CloneUtils.CopyFrom(ref ProducingResources, inClone.ProducingResources);
+            }
         }
 
         [Serializable]
-        public class ReproductionConfig
+        public class ReproductionConfig : ICopyCloneable<ReproductionConfig>
         {
             // when/children count
             public ushort Frequency;
@@ -68,10 +94,29 @@ namespace ProtoAqua.Energy
             public PropertyCompareConfig[] PropertyThresholds;
 
             public ActorCount MinActorMass;
+
+            public ReproductionConfig Clone()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CopyFrom(ReproductionConfig inClone)
+            {
+                Frequency = inClone.Frequency;
+                Count = inClone.Count;
+
+                MinAge = inClone.MinAge;
+                MinMass = inClone.MinMass;
+
+                CloneUtils.CopyFrom(ref ResourceThresholds, inClone.ResourceThresholds);
+                CloneUtils.CopyFrom(ref PropertyThresholds, inClone.PropertyThresholds);
+
+                MinActorMass = inClone.MinActorMass;
+            }
         }
 
         [Serializable]
-        public class GrowthConfig
+        public class GrowthConfig : ICopyCloneable<GrowthConfig>
         {
             public ushort StartingMass;
             public ushort MaxMass;
@@ -82,10 +127,28 @@ namespace ProtoAqua.Energy
             public ResourceRequirementConfig[] ImprovedGrowthResourceThresholds;
             public PropertyCompareConfig[] ImprovedGrowthPropertyThresholds;
             public ushort ImprovedGrowth;
+
+            public GrowthConfig Clone()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CopyFrom(GrowthConfig inClone)
+            {
+                StartingMass = inClone.StartingMass;
+                MaxMass = inClone.MaxMass;
+
+                Frequency = inClone.Frequency;
+                MinGrowth = inClone.MinGrowth;
+
+                CloneUtils.CopyFrom(ref ImprovedGrowthResourceThresholds, inClone.ImprovedGrowthResourceThresholds);
+                CloneUtils.CopyFrom(ref ImprovedGrowthPropertyThresholds, inClone.ImprovedGrowthPropertyThresholds);
+                ImprovedGrowth = inClone.ImprovedGrowth;
+            }
         }
 
         [Serializable]
-        public class DeathConfig
+        public class DeathConfig : ICopyCloneable<DeathConfig>
         {
             public ushort Age;
 
@@ -94,6 +157,20 @@ namespace ProtoAqua.Energy
 
             public ushort MassAgeThreshold;
             public ushort Mass;
+
+            public DeathConfig Clone()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void CopyFrom(DeathConfig inClone)
+            {
+                Age = inClone.Age;
+                CloneUtils.CopyFrom(ref ResourceStarvation, inClone.ResourceStarvation);
+                CloneUtils.CopyFrom(ref PropertyStarvation, inClone.PropertyStarvation);
+                MassAgeThreshold = inClone.MassAgeThreshold;
+                Mass = inClone.Mass;
+            }
         }
 
         [Serializable]
@@ -162,6 +239,30 @@ namespace ProtoAqua.Energy
         }
 
         #endregion // ISimType
+
+        #region ICopyCloneable
+
+        /// <summary>
+        /// Creates a clone of this ActorType.
+        /// </summary>
+        public ActorType Clone()
+        {
+            return Instantiate(this);
+        }
+
+        /// <summary>
+        /// Copies data from the given ActorType.
+        /// </summary>
+        public void CopyFrom(ActorType inType)
+        {
+            m_ResourceRequirements.CopyFrom(inType.m_ResourceRequirements);
+            m_EatingSettings.CopyFrom(inType.m_EatingSettings);
+            m_GrowthSettings.CopyFrom(inType.m_GrowthSettings);
+            m_ReproductionSettings.CopyFrom(inType.m_ReproductionSettings);
+            m_DeathSettings.CopyFrom(inType.m_DeathSettings);
+        }
+
+        #endregion // ICopyCloneable
 
         #region Accessors
 
@@ -260,14 +361,6 @@ namespace ProtoAqua.Energy
         public void Dirty()
         {
             m_Database?.Dirty();
-        }
-
-        /// <summary>
-        /// Creates a clone of this ActorType.
-        /// </summary>
-        public ActorType Clone()
-        {
-            return Instantiate(this);
         }
 
         #endregion // Operations

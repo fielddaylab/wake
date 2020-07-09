@@ -217,7 +217,7 @@ namespace ProtoAqua.Energy
                 VarType varType = m_Database.Vars[amount.Id];
                 VarType.ConfigRange config = varType.ConfigSettings();
 
-                float randomVal = RNG.Instance.NextFloat(config.Min, config.Max);
+                float randomVal = Mathf.Round(RNG.Instance.NextFloat(config.Min, config.Max) / 0.1f) * 0.1f;
                 amount.Value = randomVal;
             }
 
@@ -237,6 +237,10 @@ namespace ProtoAqua.Energy
 
             string url = GetBaseURL() + urlParams.Encode();
             GUIUtility.systemCopyBuffer = url;
+
+            // #if !UNITY_EDITOR
+            Application.OpenURL(url);
+            // #endif // !UNITY_EDITOR
 
             Debug.LogFormat("Exported scenario to '{0}'", url);
         }
@@ -264,7 +268,7 @@ namespace ProtoAqua.Energy
             }
             return baseUrl;
             #else
-            return string.Empty;
+            return "http://localhost/";
             #endif // UNITY_EDITOR
         }
     }

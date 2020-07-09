@@ -16,8 +16,8 @@ namespace ProtoAqua.Energy
         [Header("Panel")]
 
         [SerializeField] private CanvasGroup m_PanelGroup = null;
-        [SerializeField] private ConfigTab m_ScenarioTab = null;
-        [SerializeField] private ConfigTab m_RulesTab = null;
+        [SerializeField] private ConfigTab[] m_Tabs = null;
+        [SerializeField] private ToggleGroup m_TabGroup = null;
         [SerializeField] private ScenarioConfigPanel m_ScenarioPanel = null;
         [SerializeField] private RulesConfigPanel m_RulesPanel = null;
 
@@ -35,8 +35,15 @@ namespace ProtoAqua.Energy
         private void Awake()
         {
             m_ConfigButtion.onClick.AddListener(OnConfigClicked);
-            m_ScenarioTab.Button.onClick.AddListener(OnScenarioClicked);
-            m_RulesTab.Button.onClick.AddListener(OnRulesClicked);
+            foreach(var tab in m_Tabs)
+            {
+                tab.RegisterGroup(m_TabGroup);
+            }
+
+            if (m_Tabs.Length > 0)
+            {
+                m_Tabs[0].Select();
+            }
         }
 
         #endregion // Unity Events
@@ -45,9 +52,6 @@ namespace ProtoAqua.Energy
         {
             m_Scenario = inScenario;
             m_Database = inDatabase;
-
-            m_ScenarioTab.SetSelected(true);
-            m_RulesTab.SetSelected(false);
         }
 
         #region Listeners
@@ -67,18 +71,6 @@ namespace ProtoAqua.Energy
                 m_ScenarioPanel.Populate(m_Scenario, m_Database);
                 m_RulesPanel.Populate(m_Database);
             }
-        }
-
-        private void OnScenarioClicked()
-        {
-            m_ScenarioTab.SetSelected(true);
-            m_RulesTab.SetSelected(false);
-        }
-
-        private void OnRulesClicked()
-        {
-            m_ScenarioTab.SetSelected(false);
-            m_RulesTab.SetSelected(true);
         }
 
         #endregion // Listeners

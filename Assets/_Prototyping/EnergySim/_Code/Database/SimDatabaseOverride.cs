@@ -52,12 +52,29 @@ namespace ProtoAqua.Energy
             return m_Version;
         }
 
+        #endregion // IUpdateVersioned
+
+        #region ISimDatabase
+
+        public void ClearOverrides()
+        {
+            if (m_ActorOverrides != null)
+            {
+                for(int i = m_ActorOverrides.Count() - 1; i >= 0; --i)
+                {
+                    ActorType overrideType = m_ActorOverrides[i];
+                    ActorType sourceType = m_Source.Actors[i];
+                    overrideType.CopyFrom(sourceType);
+                }
+            }
+        }
+
         public void Dirty()
         {
             UpdateVersion.Increment(ref m_Version);
         }
 
-        #endregion // IUpdateVersioned
+        #endregion // ISimDatabase
 
         #region IDisposable
 

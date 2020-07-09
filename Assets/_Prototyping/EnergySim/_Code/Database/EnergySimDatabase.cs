@@ -84,12 +84,20 @@ namespace ProtoAqua.Energy
             return m_Version;
         }
 
+        #endregion // IUpdateVersioned
+
+        #region ISimDatabase
+
+        void ISimDatabase.ClearOverrides()
+        {
+        }
+
         void ISimDatabase.Dirty()
         {
             UpdateVersion.Increment(ref m_Version);
         }
 
-        #endregion // IUpdateVersioned
+        #endregion // ISimDatabase
 
         #region IDisposable
 

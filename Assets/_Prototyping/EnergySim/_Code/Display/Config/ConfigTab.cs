@@ -9,18 +9,35 @@ namespace ProtoAqua.Energy
     {
         #region Inspector
 
-        [SerializeField] private Button m_Button = null;
-        [SerializeField] private Graphic m_SelectedGraphic = null;
+        [SerializeField] private Toggle m_Toggle = null;
         [SerializeField] private GameObject m_Content = null;
 
         #endregion // Inspector
 
-        public Button Button { get { return m_Button; } }
-
-        public void SetSelected(bool inbSelected)
+        private void Awake()
         {
-            m_SelectedGraphic.gameObject.SetActive(inbSelected);
+            m_Toggle.onValueChanged.AddListener(OnValueChanged);
+            OnValueChanged(m_Toggle.isOn);
+        }
+
+        public void RegisterGroup(ToggleGroup inGroup)
+        {
+            m_Toggle.group = inGroup;
+        }
+
+        private void OnValueChanged(bool inbSelected)
+        {
             m_Content.gameObject.SetActive(inbSelected);
+        }
+
+        public void Select()
+        {
+            m_Toggle.isOn = true;
+        }
+
+        public void Deselect()
+        {
+            m_Toggle.isOn = false;
         }
     }
 }

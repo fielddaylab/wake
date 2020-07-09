@@ -13,6 +13,7 @@ namespace ProtoAqua.Energy
         SimTypeDatabase<VarType> Resources { get; }
         SimTypeDatabase<VarType> Properties { get; }
 
+        void ClearOverrides();
         void Dirty();
     }
 }

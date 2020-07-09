@@ -36,7 +36,7 @@ namespace ProtoAqua.Energy
             m_BaseDatabase = loader.LoadDatabase(m_ScenarioPackage.Header.DatabaseId);
 
             m_DatabaseOverride = new SimDatabaseOverride(m_BaseDatabase);
-            // RulesConfigPanel.RandomizeDatabase(m_DatabaseOverride);
+            RulesConfigPanel.RandomizeDatabase(m_DatabaseOverride, 1);
 
             config.Initialize(m_ScenarioPackage, m_DatabaseOverride);
 
