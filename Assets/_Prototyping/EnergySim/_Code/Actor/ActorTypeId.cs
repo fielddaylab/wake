@@ -15,6 +15,7 @@ namespace ProtoAqua.Energy
         static public readonly FourCC Kelp = Register("KELP", "Kelp");
         static public readonly FourCC Urchin = Register("URCH", "Urchin");
         static public readonly FourCC SeaOtter = Register("SOTT", "Sea Otter");
+        static public readonly FourCC SeaStar = Register("STAR", "Sea Star");
     }
 
     public sealed class ActorTypeIdAttribute : FourCCSelectorAttribute

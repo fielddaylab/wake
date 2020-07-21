@@ -26,6 +26,7 @@ namespace ProtoAqua.Energy
         [SerializeField, VarTypeId] private FourCC m_Id = FourCC.Zero;
         [SerializeField] private string m_ScriptName = null;
         [SerializeField, AutoEnum] private VarTypeFlags m_Flags = default(VarTypeFlags);
+        [SerializeField, AutoEnum] private ContentArea m_ContentAreas = default(ContentArea);
 
         [Header("Settings")]
         [SerializeField] private VarCalculationType m_Calculation = VarCalculationType.Resource;
@@ -74,6 +75,7 @@ namespace ProtoAqua.Energy
         public FourCC Id() { return m_Id; }
         public string ScriptName() { return m_ScriptName; }
         public VarTypeFlags Flags() { return m_Flags; }
+        public ContentArea ContentAreas() { return m_ContentAreas; }
 
         public VarCalculationType CalcType() { return m_Calculation; }
         public sbyte Priority() { return m_Priority; }
@@ -84,6 +86,9 @@ namespace ProtoAqua.Energy
         #endregion // Accessors
 
         public bool HasFlags(VarTypeFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
+        public bool HasAnyFlags(VarTypeFlags inFlags) { return (m_Flags & inFlags) != 0; }
+        public bool HasContentArea(ContentArea inContentArea) { return (m_ContentAreas & inContentArea) == inContentArea; }
+        public bool HasAnyContentArea(ContentArea inContentArea) { return (m_ContentAreas & inContentArea) != 0; }
 
         /// <summary>
         /// Sets this VarType configuration as dirty.
@@ -133,6 +138,12 @@ namespace ProtoAqua.Energy
 
         [Label("Food/Convert From Mass")]
         ConvertFromMass = 0x001,
+
+        [Label("Visibility/Always Hide")]
+        HideAlways = 0x002,
+
+        [Label("Visibility/Hide If Zero")]
+        HideIfZero = 0x004,
     }
 
     /// <summary>

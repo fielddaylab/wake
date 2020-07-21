@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
 using UnityEngine;
@@ -11,7 +12,11 @@ namespace ProtoAqua.Energy
         int TickActionCount();
         int TickScale();
 
-        void Initialize(EnergySimState ioState, ISimDatabase inDatabase);
-        bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, out float outValue);
+        ushort Seed();
+
+        IEnumerable<FourCC> StartingActorIds();
+
+        void Initialize(EnergySimState ioState, ISimDatabase inDatabase, System.Random inRandom);
+        bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, System.Random inRandom, out float outValue);
     }
 }

@@ -5,11 +5,10 @@ namespace ProtoAqua.Energy
     public struct EnergySimContext
     {
         public ISimDatabase Database;
-        public IEnergySimScenario Scenario;
-        public EnergySimState Start;
+        public ScenarioPackage Scenario;
+        public SimStateCache Cache;
         public ILogger Logger;
 
-        public EnergySimState Current;
-        public System.Random RNG;
+        public EnergySimState CachedCurrent;
     }
 }

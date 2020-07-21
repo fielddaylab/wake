@@ -13,7 +13,7 @@ namespace ProtoAqua.Energy
 {
     public class SimTicker : MonoBehaviour
     {
-        public delegate void TickChangedDelegate(uint inTick);
+        public delegate void TickChangedDelegate(ushort inTick);
 
         #region Inspector
 
@@ -94,16 +94,18 @@ namespace ProtoAqua.Energy
             if (m_Slider.value != m_LastTick)
             {
                 m_LastTick = (int) m_Slider.value;
-                OnTickChanged?.Invoke((uint) m_LastTick);
+                OnTickChanged?.Invoke((ushort) m_LastTick);
             }
+
+            yield break;
         }
 
         #endregion // Routines
 
         public void Sync(in EnergySimContext inContext)
         {
-            int currentTick = inContext.Current.Timestamp;
-            int maxTicks = inContext.Scenario.TotalTicks();
+            int currentTick = inContext.CachedCurrent.Timestamp;
+            int maxTicks = inContext.Scenario.Data.TotalTicks();
 
             if (m_LastMaxTicks != maxTicks)
             {
@@ -127,7 +129,7 @@ namespace ProtoAqua.Energy
             for(int i = 0; i < ticksToAlloc; ++i)
             {
                 float pos = (float) (i + 1) / m_LastMaxTicks;
-                RectTransform mark = m_TickMarkPool.InnerPool.Alloc();
+                RectTransform mark = m_TickMarkPool.Alloc();
                 
                 Vector2 min = mark.anchorMin, max = mark.anchorMax;
                 min.x = max.x = pos;

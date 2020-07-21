@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
 using UnityEngine;
@@ -40,6 +41,9 @@ namespace ProtoAqua.Energy
         [SerializeField]
         private ushort m_Duration = 60;
 
+        [SerializeField]
+        private ushort m_Seed = 0;
+
         #endregion // Inspector
 
         [NonSerialized] private int m_Version;
@@ -54,6 +58,7 @@ namespace ProtoAqua.Energy
             runtime.TickActionCount = m_TickActionCount;
             runtime.TickScale = m_TickScale;
             runtime.Duration = m_Duration;
+            runtime.Seed = m_Seed;
 
             ScenarioPackageHeader header = new ScenarioPackageHeader();
             header.Id = m_Header.Id;
@@ -62,10 +67,12 @@ namespace ProtoAqua.Energy
             header.Name = m_Header.Name;
             header.Author = m_Header.Author;
             header.Description = m_Header.Description;
+            header.ContentAreas = m_Header.ContentAreas;
+            header.Difficulty = m_Header.Difficulty;
 
             ScenarioPackage package = new ScenarioPackage();
             package.Header = header;
-            package.Scenario = runtime;
+            package.Data = runtime;
             return package;
         }
 
@@ -73,14 +80,14 @@ namespace ProtoAqua.Energy
 
         public string Id() { return m_Header.Id; }
 
-        public void Initialize(EnergySimState ioState, ISimDatabase inDatabase)
+        public void Initialize(EnergySimState ioState, ISimDatabase inDatabase, System.Random inRandom)
         {
             ioState.Environment.Type = m_EnvType;
 
             for(int i = 0; i < m_InitialActors.Length; ++i)
             {
                 ActorType type = inDatabase.Actors[m_InitialActors[i].Id];
-                ioState.AddActors(type, (int) m_InitialActors[i].Count);
+                ioState.AddActors(type, (int) m_InitialActors[i].Count, inRandom);
             }
 
             for(int i = 0; i < m_InitialResources.Length; ++i)
@@ -109,12 +116,28 @@ namespace ProtoAqua.Energy
             return m_Duration;
         }
 
-        public bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, out float outValue)
+        public ushort Seed()
+        {
+            return m_Seed;
+        }
+
+        public bool TryCalculateProperty(FourCC inPropertyId, IEnergySimStateReader inReader, ISimDatabase inDatabase, System.Random inRandom, out float outValue)
         {
             // throw new NotImplementedException();
 
             outValue = default(float);
             return false;
+        }
+
+        public IEnumerable<FourCC> StartingActorIds()
+        {
+            foreach(var actorPair in m_InitialActors)
+            {
+                if (actorPair.Count > 0)
+                {
+                    yield return actorPair.Id;
+                }
+            }
         }
 
         #endregion // IEnergySimScenario

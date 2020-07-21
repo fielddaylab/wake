@@ -10,69 +10,72 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 652f3d4ec52d3d048a206e8136663bd7, type: 3}
-  m_Name: Kelp
+  m_Name: SeaStar
   m_EditorClassIdentifier: 
   m_Id:
-    m_Value: 1262832720
-  m_ScriptName: Kelp
-  m_Flags: 3
-  m_MaxActors: 300
+    m_Value: 1398030674
+  m_ScriptName: SeaStar
+  m_Flags: 0
+  m_MaxActors: 40
   m_ResourceRequirements:
-    DesiredResources: []
+    DesiredResources:
+    - ResourceId:
+        m_Value: 1179602756
+      BaseValue: 10
+      MassValue: 0
     DesiredProperties: []
     ProducingResources: []
   m_EatingSettings:
-    EdibleActors: []
-    BaseEatSize: 0
+    EdibleActors:
+    - ActorType:
+        m_Value: 1431454536
+      ConversionRate: 1
+    - ActorType:
+        m_Value: 1262832720
+      ConversionRate: 0
+    - ActorType:
+        m_Value: 1398030674
+      ConversionRate: 0
+    BaseEatSize: 8
     MassEatSize: 0
-    MaxSizeMultiplier: 0
+    MaxSizeMultiplier: 1.5
   m_GrowthSettings:
-    StartingMass: 10
-    MaxMass: 65535
-    Frequency: 1
-    MinGrowth: 5
+    StartingMass: 20
+    MaxMass: 20
+    Frequency: 0
+    MinGrowth: 0
     ImprovedGrowthResourceThresholds: []
-    ImprovedGrowthPropertyThresholds:
-    - PropertyId:
-        m_Value: 1279739988
-      Comparison: 2
-      BaseValue: 5
-      MassValue: 0.05
-    ImprovedGrowth: 15
+    ImprovedGrowthPropertyThresholds: []
+    ImprovedGrowth: 0
   m_ReproductionSettings:
-    Frequency: 4
+    Frequency: 6
     Count: 1
-    MinAge: 1
+    MinAge: 0
     MinMass: 0
     ResourceThresholds: []
-    PropertyThresholds:
-    - PropertyId:
-        m_Value: 1279739988
-      Comparison: 2
-      BaseValue: 4
-      MassValue: 0
+    PropertyThresholds: []
     MinActorMass:
       Id:
         m_Value: 0
-      Count: 25
+      Count: 0
   m_DeathSettings:
-    Age: 0
+    Age: 12
     ResourceStarvation:
     - Id:
-        m_Value: 1129263616
+        m_Value: 1179602756
       Value: 2
-    PropertyStarvation:
     - Id:
-        m_Value: 1279739988
-      Value: 3
+        m_Value: 1331190087
+      Value: 1
+    PropertyStarvation: []
     MassAgeThreshold: 0
     Mass: 0
   m_ConfigSettings:
-    SoftCap: 200
-    Increment: 10
+    SoftCap: 20
+    Increment: 1
   m_DisplaySettings:
     Image: {fileID: 0}
     MassScale: 5
-    Color: {r: 0.4901961, g: 0.59607846, b: 0.07450981, a: 1}
+    Color: {r: 0.8018868, g: 0.5473535, b: 0.13995194, a: 1}
   m_ExtraData:
     m_Fields: []

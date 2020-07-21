@@ -63,7 +63,7 @@ namespace ProtoAqua.Energy
                 for(int i = m_ActorOverrides.Count() - 1; i >= 0; --i)
                 {
                     ActorType overrideType = m_ActorOverrides[i];
-                    ActorType sourceType = m_Source.Actors[i];
+                    ActorType sourceType = overrideType.OriginalType();
                     overrideType.CopyFrom(sourceType);
                 }
             }

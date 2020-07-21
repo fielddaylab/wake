@@ -22,7 +22,7 @@ namespace ProtoAqua.Energy
 
             public EatingConfig Clone()
             {
-                throw new NotImplementedException();
+                return CloneUtils.DefaultClone(this);
             }
 
             public void CopyFrom(EatingConfig inClone)
@@ -39,7 +39,7 @@ namespace ProtoAqua.Energy
         public struct EdibleConfig
         {
             [ActorTypeId] public FourCC ActorType;
-            public float ConversionRate;
+            [UnityEngine.Serialization.FormerlySerializedAs("ConversionRate")] public float Rate;
         }
 
         [Serializable]
@@ -68,7 +68,7 @@ namespace ProtoAqua.Energy
 
             public RequirementsConfig Clone()
             {
-                throw new NotImplementedException();
+                return CloneUtils.DefaultClone(this);
             }
 
             public void CopyFrom(RequirementsConfig inClone)
@@ -83,7 +83,7 @@ namespace ProtoAqua.Energy
         public class ReproductionConfig : ICopyCloneable<ReproductionConfig>
         {
             // when/children count
-            public ushort Frequency;
+            [UnityEngine.Serialization.FormerlySerializedAs("Frequency")] public ushort Interval;
             public ushort Count;
 
             // prerequisites
@@ -97,12 +97,12 @@ namespace ProtoAqua.Energy
 
             public ReproductionConfig Clone()
             {
-                throw new NotImplementedException();
+                return CloneUtils.DefaultClone(this);
             }
 
             public void CopyFrom(ReproductionConfig inClone)
             {
-                Frequency = inClone.Frequency;
+                Interval = inClone.Interval;
                 Count = inClone.Count;
 
                 MinAge = inClone.MinAge;
@@ -121,7 +121,7 @@ namespace ProtoAqua.Energy
             public ushort StartingMass;
             public ushort MaxMass;
 
-            public ushort Frequency;
+            [UnityEngine.Serialization.FormerlySerializedAs("Frequency")] public ushort Interval;
             public ushort MinGrowth;
 
             public ResourceRequirementConfig[] ImprovedGrowthResourceThresholds;
@@ -130,7 +130,7 @@ namespace ProtoAqua.Energy
 
             public GrowthConfig Clone()
             {
-                throw new NotImplementedException();
+                return CloneUtils.DefaultClone(this);
             }
 
             public void CopyFrom(GrowthConfig inClone)
@@ -138,7 +138,7 @@ namespace ProtoAqua.Energy
                 StartingMass = inClone.StartingMass;
                 MaxMass = inClone.MaxMass;
 
-                Frequency = inClone.Frequency;
+                Interval = inClone.Interval;
                 MinGrowth = inClone.MinGrowth;
 
                 CloneUtils.CopyFrom(ref ImprovedGrowthResourceThresholds, inClone.ImprovedGrowthResourceThresholds);
@@ -160,7 +160,7 @@ namespace ProtoAqua.Energy
 
             public DeathConfig Clone()
             {
-                throw new NotImplementedException();
+                return CloneUtils.DefaultClone(this);
             }
 
             public void CopyFrom(DeathConfig inClone)
@@ -214,6 +214,7 @@ namespace ProtoAqua.Energy
         #endregion // Inspector
 
         [NonSerialized] private SimTypeDatabase<ActorType> m_Database;
+        [NonSerialized] private ActorType m_Original;
 
         #region KeyValuePair
 
@@ -247,7 +248,9 @@ namespace ProtoAqua.Energy
         /// </summary>
         public ActorType Clone()
         {
-            return Instantiate(this);
+            ActorType clone = Instantiate(this);
+            clone.m_Original = this;
+            return clone;
         }
 
         /// <summary>
@@ -281,6 +284,8 @@ namespace ProtoAqua.Energy
         public ConfigRange ConfigSettings() { return m_ConfigSettings; }
         public DisplayConfig DisplaySettings() { return m_DisplaySettings; }
         public PropertyBlock ExtraData() { return m_ExtraData; }
+
+        public ActorType OriginalType() { return m_Original; }
 
         #endregion // Accessors
 
@@ -337,7 +342,7 @@ namespace ProtoAqua.Energy
                 PropertyCompareConfig req = m_ResourceRequirements.DesiredProperties[reqIdx];
                 int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
                 float threshold = req.BaseValue + req.MassValue * ioState.Mass;
-                bool bMet = req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], threshold);
+                bool bMet = req.Comparison.Evaluate(inContext.CachedCurrent.Environment.Properties[propIdx], threshold);
                 if (!bMet)
                 {
                     ioState.MetPropertyRequirements &= (ushort)(~(1 << propIdx));
@@ -383,7 +388,7 @@ namespace ProtoAqua.Energy
                 return 0;
 
             // frequency check
-            if (((inActorState.Age + inActorState.OffsetA) % m_GrowthSettings.Frequency) != 0)
+            if (((inActorState.Age + inActorState.OffsetA) % m_GrowthSettings.Interval) != 0)
                 return 0;
 
             ushort growth = m_GrowthSettings.MinGrowth;
@@ -406,10 +411,10 @@ namespace ProtoAqua.Energy
         public bool ShouldReproduce(in ActorState inActorState, in EnergySimContext inContext)
         {
             // age/frequency
-            if (inActorState.Age == 0 || m_ReproductionSettings.Frequency == 0 || inActorState.Age < m_ReproductionSettings.MinAge)
+            if (inActorState.Age == 0 || m_ReproductionSettings.Interval == 0 || inActorState.Age < m_ReproductionSettings.MinAge)
                 return false;
 
-            if (((inActorState.Age + inActorState.OffsetB) % m_ReproductionSettings.Frequency) != 0)
+            if (((inActorState.Age + inActorState.OffsetB) % m_ReproductionSettings.Interval) != 0)
                 return false;
 
             // mass
@@ -426,10 +431,10 @@ namespace ProtoAqua.Energy
             }
 
             // actor count
-            if (m_ReproductionSettings.MinActorMass.Id != FourCC.Zero && inContext.Current.Masses != null)
+            if (m_ReproductionSettings.MinActorMass.Id != FourCC.Zero && inContext.CachedCurrent.Masses != null)
             {
                 int actorIdx = inContext.Database.Actors.IdToIndex(m_ReproductionSettings.MinActorMass.Id);
-                if (inContext.Current.Masses[actorIdx] < m_ReproductionSettings.MinActorMass.Count)
+                if (inContext.CachedCurrent.Masses[actorIdx] < m_ReproductionSettings.MinActorMass.Count)
                 {
                     return false;
                 }
@@ -441,12 +446,12 @@ namespace ProtoAqua.Energy
         /// <summary>
         /// Returns the weight for an eating target.
         /// </summary>
-        public float GetEatTargetWeight(in ActorState inActorState, FourCC inTargetType, in EnergySimContext inContext)
+        public float GetEatTargetRate(in ActorState inActorState, FourCC inTargetType, in EnergySimContext inContext)
         {
             for (int i = m_EatingSettings.EdibleActors.Length - 1; i >= 0; --i)
             {
                 if (m_EatingSettings.EdibleActors[i].ActorType == inTargetType)
-                    return m_EatingSettings.EdibleActors[i].ConversionRate;
+                    return m_EatingSettings.EdibleActors[i].Rate;
             }
 
             return 0;
@@ -507,7 +512,7 @@ namespace ProtoAqua.Energy
             {
                 ResourceRequirementConfig req = inResources[reqIdx];
                 int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
-                if (inContext.Current.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
+                if (inContext.CachedCurrent.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
                     return true;
             }
 
@@ -520,7 +525,7 @@ namespace ProtoAqua.Energy
             {
                 ResourceRequirementConfig req = inResources[reqIdx];
                 int resIdx = inContext.Database.Resources.IdToIndex(req.ResourceId);
-                if (inContext.Current.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
+                if (inContext.CachedCurrent.Environment.OwnedResources[resIdx] >= (req.BaseValue + req.MassValue * inMass))
                     return false;
             }
 
@@ -537,7 +542,7 @@ namespace ProtoAqua.Energy
             {
                 PropertyCompareConfig req = inProperties[reqIdx];
                 int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
-                if (req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
+                if (req.Comparison.Evaluate(inContext.CachedCurrent.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
                     return true;
             }
 
@@ -550,7 +555,7 @@ namespace ProtoAqua.Energy
             {
                 PropertyCompareConfig req = inProperties[reqIdx];
                 int propIdx = inContext.Database.Properties.IdToIndex(req.PropertyId);
-                if (req.Comparison.Evaluate(inContext.Current.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
+                if (req.Comparison.Evaluate(inContext.CachedCurrent.Environment.Properties[propIdx], (req.BaseValue + req.MassValue * inMass)))
                     return false;
             }
 

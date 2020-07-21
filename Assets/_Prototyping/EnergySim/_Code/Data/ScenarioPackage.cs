@@ -8,7 +8,7 @@ namespace ProtoAqua.Energy
     public class ScenarioPackage : ISerializedObject, ISerializedVersion
     {
         public ScenarioPackageHeader Header;
-        public RuntimeSimScenario Scenario;
+        public RuntimeSimScenario Data;
         
         // non-serialized
         internal EnergySimScenario Source;
@@ -20,7 +20,7 @@ namespace ProtoAqua.Energy
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.Object("header", ref Header);
-            ioSerializer.Object("scenario", ref Scenario);
+            ioSerializer.Object("data", ref Data);
         }
 
         #endregion // ISerializedObject
@@ -43,7 +43,7 @@ namespace ProtoAqua.Energy
                 }
                 else
                 {
-                    Debug.Log("Loaded scenario package from string");
+                    Debug.LogFormat("Loaded scenario package '{0}' from string", scenario.Header.Id);
                     outPackage = scenario;
                     return true;
                 }

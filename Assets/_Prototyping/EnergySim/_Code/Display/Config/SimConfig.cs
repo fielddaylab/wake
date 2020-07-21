@@ -44,6 +44,8 @@ namespace ProtoAqua.Energy
             {
                 m_Tabs[0].Select();
             }
+
+            m_ScenarioPanel.OnScenarioActorsChanged += (s) => m_RulesPanel.Repopulate();
         }
 
         #endregion // Unity Events
@@ -69,7 +71,7 @@ namespace ProtoAqua.Energy
                 m_Open = true;
 
                 m_ScenarioPanel.Populate(m_Scenario, m_Database);
-                m_RulesPanel.Populate(m_Database);
+                m_RulesPanel.Populate(m_Scenario, m_Database);
             }
         }
 

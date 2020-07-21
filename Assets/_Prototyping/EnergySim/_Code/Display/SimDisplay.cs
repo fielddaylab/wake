@@ -26,10 +26,10 @@ namespace ProtoAqua.Energy
         public SimTicker Ticker { get { return m_Ticker; } }
         public SimSync Syncer { get { return m_Syncer; } }
 
-        public void Sync(in EnergySimContext inSimContext, in EnergySimContext inDataContext)
+        public void Sync(in ScenarioPackageHeader inHeader, in EnergySimContext inSimContext, in EnergySimContext inDataContext)
         {
-            m_SimOutput?.Display(inSimContext);
-            m_DataOutput?.Display(inDataContext);
+            m_SimOutput?.Display(inHeader, inSimContext);
+            m_DataOutput?.Display(inHeader, inDataContext);
             m_Ticker.Sync(inDataContext);
             m_Syncer.Sync(inSimContext, inDataContext);
         }

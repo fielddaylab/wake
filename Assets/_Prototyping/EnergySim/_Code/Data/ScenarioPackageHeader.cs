@@ -16,9 +16,12 @@ namespace ProtoAqua.Energy
         public string Author;
         public string Description;
 
+        [AutoEnum] public ContentArea ContentAreas;
+        [Range(0, 3)] public int Difficulty;
+
         #region ISerializedObject
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -29,6 +32,12 @@ namespace ProtoAqua.Energy
             ioSerializer.Serialize("name", ref Name, string.Empty, FieldOptions.Optional);
             ioSerializer.Serialize("author", ref Author, string.Empty, FieldOptions.Optional);
             ioSerializer.Serialize("description", ref Description, string.Empty, FieldOptions.Optional);
+
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Enum("contentAreas", ref ContentAreas);
+                ioSerializer.Serialize("difficulty", ref Difficulty, 1);
+            }
         }
 
         #endregion // ISerializedObject

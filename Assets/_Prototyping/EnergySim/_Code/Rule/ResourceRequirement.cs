@@ -16,7 +16,7 @@ namespace ProtoAqua.Energy
         public bool Evaluate(ushort inMass, in EnergySimContext inContext)
         {
             int resIdx = inContext.Database.Properties.IdToIndex(ResourceId);
-            return Comparison.Evaluate(inContext.Current.Environment.OwnedResources[resIdx], (BaseValue + MassValue * inMass));
+            return Comparison.Evaluate(inContext.CachedCurrent.Environment.OwnedResources[resIdx], (BaseValue + MassValue * inMass));
         }
 
         static public bool Any(IReadOnlyList<ResourceRequirement> inRequirements, ushort inMass, in EnergySimContext inContext)

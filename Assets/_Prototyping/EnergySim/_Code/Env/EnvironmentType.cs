@@ -81,23 +81,23 @@ namespace ProtoAqua.Energy
 
         #region Operations
 
-        public void AddResources(ref EnvironmentState ioState, in EnergySimContext inContext)
+        public void AddResources(ref EnvironmentState ioState, in EnergySimContext inContext, in System.Random inRandom)
         {
             for(int resAddIdx = 0; resAddIdx < m_ResourcesPerTick.Length; ++resAddIdx)
             {
                 ResourceConfig config = m_ResourcesPerTick[resAddIdx];
                 int resIdx = inContext.Database.Resources.IdToIndex(config.ResourceId);
-                ioState.OwnedResources[resIdx] += (ushort) (config.Base + inContext.RNG.Next(config.Random + 1));
+                ioState.OwnedResources[resIdx] += (ushort) (config.Base + inRandom.Next(config.Random + 1));
             }
         }
 
-        public void DefaultProperties(ref EnvironmentState ioState, in EnergySimContext inContext)
+        public void DefaultProperties(ref EnvironmentState ioState, in EnergySimContext inContext, in System.Random inRandom)
         {
             for(int propAddIdx = 0; propAddIdx < m_DefaultProperties.Length; ++propAddIdx)
             {
                 DefaultPropertyConfig config = m_DefaultProperties[propAddIdx];
                 int propIdx = inContext.Database.Properties.IdToIndex(config.PropertyId);
-                ioState.Properties[propIdx] = config.Base + inContext.RNG.NextFloat(-config.Random, config.Random);
+                ioState.Properties[propIdx] = config.Base + inRandom.NextFloat(-config.Random, config.Random);
             }
         }
 

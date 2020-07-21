@@ -36,24 +36,37 @@ namespace ProtoAqua.Energy
 
         #endregion // Unity Events
 
-        public void Display(in EnergySimContext inContext)
+        public void Display(ScenarioPackageHeader inHeader, in EnergySimContext inContext)
         {
-            System.Random random = new System.Random((int) (inContext.Current.NextSeed ^ uint.MaxValue));
+            System.Random random = new System.Random((int) (inContext.CachedCurrent.NextSeedA ^ uint.MaxValue));
 
-            DisplayEnvVars(inContext, random);
-            DisplayActorCounts(inContext, random);
-            DisplayActorDots(inContext, random);
+            DisplayEnvVars(inHeader, inContext, random);
+            DisplayActorCounts(inHeader, inContext, random);
+            DisplayActorDots(inHeader, inContext, random);
         }
 
-        private void DisplayEnvVars(in EnergySimContext inContext, System.Random inRandom)
+        private void DisplayEnvVars(ScenarioPackageHeader inHeader, in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
             int resCount = inContext.Database.Resources.Count();
             for(int i = 0; i < resCount; ++i)
             {
-                TMP_Text element = m_EnvVarCounts[textIdx++];
+                VarType type = inContext.Database.Resources[i];
+                ushort count = inContext.CachedCurrent.Environment.OwnedResources[i];
 
-                ushort count = inContext.Current.Environment.OwnedResources[i];
+                if (type.HasFlags(VarTypeFlags.HideAlways))
+                    continue;
+
+                if (type.HasFlags(VarTypeFlags.HideIfZero) && count <= 0)
+                    continue;
+
+                if (inHeader != null)
+                {
+                    if (!type.HasAnyContentArea(inHeader.ContentAreas))
+                        continue;
+                }
+                
+                TMP_Text element = m_EnvVarCounts[textIdx++];
                 element.SetText(string.Format("{0}: {1}", inContext.Database.Resources.IndexToId(i).ToString(), count));
                 element.gameObject.SetActive(true);
             }
@@ -61,9 +74,22 @@ namespace ProtoAqua.Energy
             int propCount = inContext.Database.Properties.Count();
             for(int i = 0; i < propCount; ++i)
             {
-                TMP_Text element = m_EnvVarCounts[textIdx++];
+                VarType type = inContext.Database.Properties[i];
+                float value = inContext.CachedCurrent.Environment.Properties[i];
 
-                float value = inContext.Current.Environment.Properties[i];
+                if (type.HasFlags(VarTypeFlags.HideAlways))
+                    continue;
+
+                if (type.HasFlags(VarTypeFlags.HideIfZero) && value == 0)
+                    continue;
+
+                if (inHeader != null)
+                {
+                    if (!type.HasAnyContentArea(inHeader.ContentAreas))
+                        continue;
+                }
+                
+                TMP_Text element = m_EnvVarCounts[textIdx++];
                 element.SetText(string.Format("{0}: {1}", inContext.Database.Properties.IndexToId(i).ToString(), value));
                 element.gameObject.SetActive(true);
             }
@@ -76,7 +102,7 @@ namespace ProtoAqua.Energy
             }
         }
 
-        private void DisplayActorCounts(in EnergySimContext inContext, System.Random inRandom)
+        private void DisplayActorCounts(ScenarioPackageHeader inHeader, in EnergySimContext inContext, System.Random inRandom)
         {
             int textIdx = 0;
             int actorCount = inContext.Database.Actors.Count();
@@ -84,8 +110,8 @@ namespace ProtoAqua.Energy
             {
                 TMP_Text element = m_ActorCounts[textIdx++];
 
-                ushort count = inContext.Current.Populations[i];
-                uint mass = inContext.Current.Masses[i];
+                ushort count = inContext.CachedCurrent.Populations[i];
+                uint mass = inContext.CachedCurrent.Masses[i];
                 element.SetText(string.Format("{0}: {1} ({2})", inContext.Database.Actors.IndexToId(i), count, mass));
                 element.gameObject.SetActive(true);
             }
@@ -98,7 +124,7 @@ namespace ProtoAqua.Energy
             }
         }
 
-        private void DisplayActorDots(in EnergySimContext inContext, System.Random inRandom)
+        private void DisplayActorDots(ScenarioPackageHeader inHeader, in EnergySimContext inContext, System.Random inRandom)
         {
             m_ActorPool.Reset();
 
@@ -106,16 +132,16 @@ namespace ProtoAqua.Energy
             for(int i = 0; i < actorCount; ++i)
             {
                 ActorType type = inContext.Database.Actors[i];
-                ushort count = inContext.Current.Populations[i];
+                ushort count = inContext.CachedCurrent.Populations[i];
                 ActorType.DisplayConfig display = type.DisplaySettings();
 
                 if (count == 0)
                     continue;
 
                 bool bHerd = (type.Flags() & ActorTypeFlags.TreatAsHerd) == ActorTypeFlags.TreatAsHerd;
-                for(int actorIdx = 0; actorIdx < inContext.Current.ActorCount; ++actorIdx)
+                for(int actorIdx = 0; actorIdx < inContext.CachedCurrent.ActorCount; ++actorIdx)
                 {
-                    ref ActorState actor = ref inContext.Current.Actors[actorIdx];
+                    ref ActorState actor = ref inContext.CachedCurrent.Actors[actorIdx];
                     if (actor.Type != type.Id())
                         continue;
 
@@ -125,12 +151,14 @@ namespace ProtoAqua.Energy
 
                     if (bHerd)
                     {
-                        int fullHerds = mass / display.MassScale;
-                        int partialHerd = mass % display.MassScale;
+                        ushort scaledScale = (ushort) (display.MassScale * 8);
+
+                        int fullHerds = mass / scaledScale;
+                        int partialHerd = mass % scaledScale;
                         
                         while(--fullHerds >= 0)
                         {
-                            SpawnActor(display, display.MassScale, inRandom);
+                            SpawnActor(display, scaledScale, inRandom);
                         }
 
                         if (partialHerd > 0)
@@ -148,7 +176,7 @@ namespace ProtoAqua.Energy
 
         private Image SpawnActor(ActorType.DisplayConfig inConfig, ushort inMass, System.Random inRandom)
         {
-            Image img = m_ActorPool.InnerPool.Alloc();
+            Image img = m_ActorPool.Alloc();
             
             Sprite spr = inConfig.Image;
             if (spr == null)

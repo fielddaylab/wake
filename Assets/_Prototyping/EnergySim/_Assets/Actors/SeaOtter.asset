@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Id:
     m_Value: 1397707860
-  m_ScriptName: seaOtter
+  m_ScriptName: SeaOtter
   m_Flags: 0
   m_MaxActors: 20
   m_ResourceRequirements:
@@ -23,16 +23,8 @@ MonoBehaviour:
         m_Value: 1179602756
       BaseValue: 25
       MassValue: 0
-    - ResourceId:
-        m_Value: 1331190087
-      BaseValue: 10
-      MassValue: 0
     DesiredProperties: []
-    ProducingResources:
-    - ResourceId:
-        m_Value: 1129263616
-      BaseValue: 10
-      MassValue: 0
+    ProducingResources: []
   m_EatingSettings:
     EdibleActors:
     - ActorType:
@@ -40,6 +32,9 @@ MonoBehaviour:
       ConversionRate: 1
     - ActorType:
         m_Value: 1262832720
+      ConversionRate: 0
+    - ActorType:
+        m_Value: 1398030674
       ConversionRate: 0
     BaseEatSize: 10
     MassEatSize: 0
@@ -53,8 +48,8 @@ MonoBehaviour:
     ImprovedGrowthPropertyThresholds: []
     ImprovedGrowth: 0
   m_ReproductionSettings:
-    Frequency: 0
-    Count: 0
+    Frequency: 8
+    Count: 1
     MinAge: 0
     MinMass: 0
     ResourceThresholds: []
@@ -64,7 +59,7 @@ MonoBehaviour:
         m_Value: 0
       Count: 0
   m_DeathSettings:
-    Age: 0
+    Age: 16
     ResourceStarvation:
     - Id:
         m_Value: 1179602756

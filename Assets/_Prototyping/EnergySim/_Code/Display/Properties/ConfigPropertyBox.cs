@@ -48,8 +48,6 @@ namespace ProtoAqua.Energy
 
         public void Clear()
         {
-            Awake();
-            
             m_HeaderPool.Reset();
             m_SpinnerPool.Reset();
             m_TextPool.Reset();
@@ -57,7 +55,7 @@ namespace ProtoAqua.Energy
 
         public ConfigPropertyBox BeginGroup(string inHeader)
         {
-            var header = m_HeaderPool.InnerPool.Alloc();
+            var header = m_HeaderPool.Alloc();
             header.Configure(inHeader, m_CurrentIndent++);
             return this;
         }
@@ -70,7 +68,7 @@ namespace ProtoAqua.Energy
 
         public ConfigPropertyBox Spinner(in ConfigPropertySpinner.Configuration inConfiguration)
         {
-            var spinner = m_SpinnerPool.InnerPool.Alloc();
+            var spinner = m_SpinnerPool.Alloc();
             spinner.Configure(inConfiguration);
             spinner.IndentGroup.SetIndent(m_CurrentIndent);
             return this;
@@ -78,7 +76,7 @@ namespace ProtoAqua.Energy
 
         public ConfigPropertyBox Text(in ConfigPropertyText.Configuration inConfiguration)
         {
-            var text = m_TextPool.InnerPool.Alloc();
+            var text = m_TextPool.Alloc();
             text.Configure(inConfiguration);
             text.IndentGroup.SetIndent(m_CurrentIndent);
             return this;

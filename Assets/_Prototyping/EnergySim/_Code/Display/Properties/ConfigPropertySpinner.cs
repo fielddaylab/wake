@@ -24,6 +24,10 @@ namespace ProtoAqua.Energy
             public float Max;
             public float Increment;
             public bool WholeNumbers;
+            public bool SnapToIncrement;
+
+            public string Suffix;
+            public string SingularText;
 
             public Func<float> Get;
             public Action<float> Set;
@@ -136,7 +140,12 @@ namespace ProtoAqua.Energy
             {
                 ioNewValue = m_Configuration.Max;
             }
-            if (m_Configuration.WholeNumbers)
+
+            if (m_Configuration.SnapToIncrement && m_Configuration.Increment > 0)
+            {
+                ioNewValue = (float) Math.Round(ioNewValue / m_Configuration.Increment) * m_Configuration.Increment;
+            }
+            else if (m_Configuration.WholeNumbers)
             {
                 ioNewValue = (float) Math.Round(ioNewValue);
             }
@@ -155,6 +164,15 @@ namespace ProtoAqua.Energy
             {
                 val = m_CurrentValue.ToString();
             }
+            if (val == "1" && !string.IsNullOrEmpty(m_Configuration.SingularText))
+            {
+                val = m_Configuration.SingularText;
+            }
+            else if (!string.IsNullOrEmpty(m_Configuration.Suffix))
+            {
+                val += m_Configuration.Suffix;
+            }
+
             m_Input.SetTextWithoutNotify(val);
         }
 
@@ -211,6 +229,22 @@ namespace ProtoAqua.Energy
 
         private void OnTextEndEdit(string inText)
         {
+            if (!string.IsNullOrEmpty(m_Configuration.SingularText))
+            {
+                if (inText.Equals(m_Configuration.SingularText, StringComparison.OrdinalIgnoreCase))
+                {
+                    TrySetValue(1);
+                    return;
+                }
+            }
+            if (!string.IsNullOrEmpty(m_Configuration.Suffix))
+            {
+                if (inText.EndsWith(m_Configuration.Suffix, StringComparison.OrdinalIgnoreCase))
+                {
+                    inText = inText.Substring(0, inText.Length - m_Configuration.Suffix.Length);
+                }
+            }
+            
             if (m_Configuration.WholeNumbers)
             {
                 int newValI;

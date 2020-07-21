@@ -12,6 +12,12 @@ namespace ProtoAqua.Energy
         public const int MaxResources = 16;
         public const int MaxProperties = 16;
 
+        [Flags]
+        public enum SimFlags : byte
+        {
+            DoNotWriteToCache = 0x01,
+        }
+
         #region Buffer
 
         private class Buffer : IPooledObject<Buffer>
@@ -26,19 +32,25 @@ namespace ProtoAqua.Energy
             public uint[] ActorMasses;
 
             public EnergySimContext Context;
+            public System.Random RandomA;
+            public System.Random RandomB;
 
-            public void Init(in EnergySimContext inContext)
+            public SimFlags Flags;
+
+            public void Init(in EnergySimContext inContext, SimFlags inFlags)
             {
                 Context = inContext;
-                State.CopyFrom(inContext.Current);
-                Context.Current = State;
+                State.CopyFrom(inContext.CachedCurrent);
+                Context.CachedCurrent = State;
+                Flags = inFlags;
 
                 InitFromSelf();
             }
 
             public void InitFromSelf()
             {
-                Context.RNG = new System.Random((int)State.NextSeed);
+                RandomA = new System.Random((int) State.NextSeedA);
+                RandomB = new System.Random((int) State.NextSeedB);
                 State.Configure(Context);
 
                 Array.Resize(ref ActorLists, State.Populations.Length);
@@ -57,9 +69,28 @@ namespace ProtoAqua.Energy
                 ActorChoice.Clear();
             }
 
-            public void Flush(ref EnergySimState outState)
+            public void SetRandomSeeds(uint inSeedA, uint inSeedB)
+            {
+                State.NextSeedA = inSeedA;
+                State.NextSeedB = inSeedB;
+                RandomA = new System.Random((int) inSeedA);
+                RandomB = new System.Random((int) inSeedB);
+            }
+
+            public EnergySimState Flush(ref EnergySimState outState)
             {
                 outState.CopyFrom(State);
+                return outState;
+            }
+
+            public EnergySimState Flush(SimStateCache outStateCache)
+            {
+                if ((Flags & SimFlags.DoNotWriteToCache) != 0)
+                {
+                    return outStateCache.StoreTemp(State);
+                }
+                
+                return outStateCache.Store(State);
             }
 
             #region IPooledObject
@@ -92,64 +123,56 @@ namespace ProtoAqua.Energy
 
         public void Setup(ref EnergySimContext ioContext)
         {
-            if (ioContext.Start == null)
+            if (ioContext.Cache == null)
             {
-                ioContext.Start = new EnergySimState();
-            }
-
-            if (ioContext.Current == null)
-            {
-                ioContext.Current = new EnergySimState();
+                ioContext.Cache = new SimStateCache();
+                ioContext.CachedCurrent = ioContext.Cache.StartingState();
             }
 
             AcquireBufferAndSetup(ref ioContext);
         }
 
-        public bool Scrub(ref EnergySimContext ioContext, uint inDesiredTick)
+        public bool Scrub(ref EnergySimContext ioContext, ushort inDesiredTick, SimFlags inFlags = 0)
         {
-            if (ioContext.Current == null)
-            {
-                ioContext.Current = new EnergySimState();
-                ioContext.Current.CopyFrom(ioContext.Start);
-            }
-
-            int distance = (int)inDesiredTick - (int)ioContext.Current.Timestamp;
+            int distance = (int)inDesiredTick - (int)ioContext.CachedCurrent.Timestamp;
             if (distance == 0)
                 return false;
 
-            if (distance < 0)
-            {
-                distance = (int)inDesiredTick;
-                ioContext.Current.CopyFrom(ioContext.Start);
-            }
+            EnergySimState cachedState = ioContext.Cache.FindClosest(inDesiredTick);
+            ioContext.CachedCurrent = cachedState;
+            distance = (int)inDesiredTick - (int)cachedState.Timestamp;
 
-            AcquireBufferAndPerformTicks(ref ioContext, (uint)distance);
+            if (distance == 0)
+                return true;
+
+            AcquireBufferAndPerformTicks(ref ioContext, (ushort) distance, inFlags);
 
             return true;
         }
 
-        public bool Tick(ref EnergySimContext ioContext, uint inIncrement = 1)
+        public bool Tick(ref EnergySimContext ioContext, ushort inIncrement = 1, SimFlags inFlags = 0)
         {
-            if (ioContext.Current == null)
-            {
-                ioContext.Current = new EnergySimState();
-                ioContext.Current.CopyFrom(ioContext.Start);
-            }
-
             if (inIncrement == 0)
                 return false;
 
-            AcquireBufferAndPerformTicks(ref ioContext, inIncrement);
+            EnergySimState cachedState = ioContext.Cache.Find(ioContext.CachedCurrent.Timestamp);
+            if (cachedState != null)
+            {
+                ioContext.CachedCurrent = cachedState;
+                return true;
+            }
+
+            AcquireBufferAndPerformTicks(ref ioContext, inIncrement, inFlags);
 
             return true;
         }
 
-        private void AcquireBufferAndPerformTicks(ref EnergySimContext ioContext, uint inIncrements)
+        private void AcquireBufferAndPerformTicks(ref EnergySimContext ioContext, ushort inIncrements, SimFlags inFlags)
         {
             Buffer buffer = m_BufferPool.Alloc();
             try
             {
-                PerformTicksOnBuffer(ref ioContext, buffer, inIncrements);
+                PerformTicksOnBuffer(ref ioContext, buffer, inIncrements, inFlags);
             }
             finally
             {
@@ -176,28 +199,33 @@ namespace ProtoAqua.Energy
 
         static private void SetupBuffer(ref EnergySimContext ioContext, Buffer inBuffer)
         {
-            ioContext.Current.CopyFrom(ioContext.Start);
+            ioContext.Cache.Invalidate();
 
-            inBuffer.Init(ioContext);
+            ioContext.CachedCurrent = ioContext.Cache.StartingState();
+
+            inBuffer.Init(ioContext, 0);
 
             inBuffer.State.Reset(ioContext);
-            ioContext.Scenario.Initialize(inBuffer.State, ioContext.Database);
+            inBuffer.SetRandomSeeds(ioContext.Scenario.Data.Seed, ioContext.Scenario.Data.Seed ^ uint.MaxValue);
+            ioContext.Scenario.Data.Initialize(inBuffer.State, ioContext.Database, inBuffer.RandomA);
+
+            inBuffer.State.NextSeedA = (uint) inBuffer.RandomA.Next();
+            inBuffer.State.NextSeedB = (uint) inBuffer.RandomB.Next();
 
             CollectPopulationStats(inBuffer);
 
-            inBuffer.Flush(ref ioContext.Current);
-            inBuffer.Flush(ref ioContext.Start);
+            ioContext.CachedCurrent = inBuffer.Flush(ref ioContext.CachedCurrent);
         }
 
         #endregion // Setup Logic
 
         #region Tick Logic
 
-        static private void PerformTicksOnBuffer(ref EnergySimContext ioContext, Buffer inBuffer, uint inTicks)
+        static private void PerformTicksOnBuffer(ref EnergySimContext ioContext, Buffer inBuffer, ushort inTicks, SimFlags inFlags)
         {
             inBuffer.Context.Logger?.Reset();
 
-            inBuffer.Init(ioContext);
+            inBuffer.Init(ioContext, inFlags);
 
             if (inTicks == 0)
             {
@@ -215,9 +243,9 @@ namespace ProtoAqua.Energy
                 TickBufferPrep(inBuffer);
                 TickBuffer(inBuffer);
                 TickBufferPost(inBuffer);
-            }
 
-            inBuffer.Flush(ref ioContext.Current);
+                ioContext.CachedCurrent = inBuffer.Flush(ioContext.Cache);
+            }
 
             inBuffer.Context.Logger?.Flush();
         }
@@ -304,7 +332,7 @@ namespace ProtoAqua.Energy
             }
 
             // shuffle turn order
-            inBuffer.Context.RNG.Shuffle(inBuffer.TurnOrder);
+            inBuffer.RandomA.Shuffle(inBuffer.TurnOrder);
 
             inBuffer.Context.Logger?.Log("Shuffled turn order");
         }
@@ -313,7 +341,7 @@ namespace ProtoAqua.Energy
         {
             inBuffer.Context.Logger?.Log("-- TICK -- ");
 
-            int actionCount = inBuffer.Context.Scenario.TickActionCount();
+            int actionCount = inBuffer.Context.Scenario.Data.TickActionCount;
 
             int actorCount = inBuffer.State.ActorCount;
             int unfinishedCount = actorCount;
@@ -386,8 +414,9 @@ namespace ProtoAqua.Energy
             }
 
             // copy seed
-            inBuffer.State.NextSeed = (uint)inBuffer.Context.RNG.Next();
-            inBuffer.Context.Logger?.Log("Finishing tick with random seed {0}", inBuffer.State.NextSeed);
+            inBuffer.State.NextSeedA = (uint)inBuffer.RandomA.Next();
+            inBuffer.State.NextSeedB = (uint)inBuffer.RandomB.Next();
+            inBuffer.Context.Logger?.Log("Finishing tick with random seeds {0} and {1}", inBuffer.State.NextSeedA, inBuffer.State.NextSeedB);
 
             inBuffer.Context.Logger?.Log("<--- FINISHED TICK {0} --->", inBuffer.State.Timestamp);
         }
@@ -398,8 +427,8 @@ namespace ProtoAqua.Energy
 
         static private void EnvironmentPreTick(Buffer inBuffer, ref EnvironmentState ioState, EnvironmentType inType)
         {
-            inType.AddResources(ref ioState, inBuffer.Context);
-            inType.DefaultProperties(ref ioState, inBuffer.Context);
+            inType.AddResources(ref ioState, inBuffer.Context, inBuffer.RandomB);
+            inType.DefaultProperties(ref ioState, inBuffer.Context, inBuffer.RandomB);
         }
 
         #endregion // Environment Ticks
@@ -444,7 +473,7 @@ namespace ProtoAqua.Energy
 
                 if (inBuffer.VarTypeChoice.Count > 0)
                 {
-                    int toProduce = inBuffer.Context.RNG.Choose(inBuffer.VarTypeChoice);
+                    int toProduce = inBuffer.RandomA.Choose(inBuffer.VarTypeChoice);
                     --ioState.ProducingResources[toProduce];
                     ++ioEnv.OwnedResources[toProduce];
                     bDone = false;
@@ -472,7 +501,7 @@ namespace ProtoAqua.Energy
 
                 if (inBuffer.VarTypeChoice.Count > 0)
                 {
-                    int toConsume = inBuffer.Context.RNG.Choose(inBuffer.VarTypeChoice);
+                    int toConsume = inBuffer.RandomA.Choose(inBuffer.VarTypeChoice);
                     --ioState.DesiredResources[toConsume];
                     --ioEnv.OwnedResources[toConsume];
                     bDone = false;
@@ -526,7 +555,7 @@ namespace ProtoAqua.Energy
                                 if (popCount <= 0 || mass <= 0)
                                     continue;
 
-                                float weightCo = inType.GetEatTargetWeight(ioState, actorType, inBuffer.Context);
+                                float weightCo = inType.GetEatTargetRate(ioState, actorType, inBuffer.Context);
                                 if (weightCo <= 0)
                                     continue;
 
@@ -539,7 +568,7 @@ namespace ProtoAqua.Energy
                                 bool bEaten = false;
                                 do
                                 {
-                                    int actorIdx = inBuffer.Context.RNG.Choose(inBuffer.ActorTypeChoice);
+                                    int actorIdx = inBuffer.RandomA.Choose(inBuffer.ActorTypeChoice);
                                     inBuffer.ActorTypeChoice.Remove(actorIdx);
 
                                     FourCC actorType = inBuffer.Context.Database.Actors.IndexToId(actorIdx);
@@ -547,7 +576,7 @@ namespace ProtoAqua.Energy
                                     inBuffer.ActorChoice.Clear();
                                     inBuffer.ActorChoice.AddRange(inBuffer.ActorLists[actorIdx]);
 
-                                    inBuffer.Context.RNG.Shuffle(inBuffer.ActorChoice);
+                                    inBuffer.RandomA.Shuffle(inBuffer.ActorChoice);
 
                                     for (int i = inBuffer.ActorChoice.Count - 1; i >= 0; --i)
                                     {
@@ -714,9 +743,11 @@ namespace ProtoAqua.Energy
                 return false;
 
             // if no nutritional value, do not eat
-            float conversion = inActorType.GetEatTargetWeight(ioState, targetActor.Type, inBuffer.Context);
-            if (conversion <= 0)
+            float weight = inActorType.GetEatTargetRate(ioState, targetActor.Type, inBuffer.Context);
+            if (weight <= 0)
                 return false;
+
+            float conversion = 1f / weight;
 
             ushort targetMass = inBiteSize;
 
@@ -768,8 +799,8 @@ namespace ProtoAqua.Energy
         static private ref ActorState CreateActor(Buffer inBuffer, FourCC inActorType)
         {
             ref ActorState actor = ref inBuffer.State.AddActor(inBuffer.Context.Database.Actors[inActorType]);
-            actor.OffsetA = (byte)inBuffer.Context.RNG.Next(3);
-            actor.OffsetB = (byte)inBuffer.Context.RNG.Next(17);
+            actor.OffsetA = (byte)inBuffer.RandomA.Next(3);
+            actor.OffsetB = (byte)inBuffer.RandomA.Next(17);
             inBuffer.Context.Logger?.Log("Actor {0}:{1} created", actor.Type, actor.Id);
             return ref actor;
         }

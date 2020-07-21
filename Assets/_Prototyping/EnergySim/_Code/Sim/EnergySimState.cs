@@ -18,20 +18,27 @@ namespace ProtoAqua.Energy
         public uint[] Masses;
         
         public ushort Timestamp;
-        public uint NextSeed;
+        public uint NextSeedA;
+        public uint NextSeedB;
         public ushort NextActorId;
 
         public bool RequestResimulate;
 
-        public void Reset(in EnergySimContext inContext)
+        public void Reset()
         {
             Environment = default(EnvironmentState);
             Array.Clear(Actors, 0, Actors.Length);
             ActorCount = 0;
             Timestamp = 0;
-            NextSeed = 0;
+            NextSeedA = 0;
+            NextSeedB = 0;
             NextActorId = 0;
             RequestResimulate = false;
+        }
+
+        public void Reset(in EnergySimContext inContext)
+        {
+            Reset();
 
             Configure(inContext);
         }
@@ -56,7 +63,8 @@ namespace ProtoAqua.Energy
             }
             
             Timestamp = inState.Timestamp;
-            NextSeed = inState.NextSeed;
+            NextSeedA = inState.NextSeedA;
+            NextSeedB = inState.NextSeedB;
             NextActorId = inState.NextActorId;
             RequestResimulate = inState.RequestResimulate;
         }
@@ -87,7 +95,7 @@ namespace ProtoAqua.Energy
             return ref state;
         }
 
-        public void AddActors(ActorType inType, int inCount)
+        public void AddActors(ActorType inType, int inCount, System.Random inRandom)
         {
             if (ActorCount >= MaxActors)
             {
@@ -96,9 +104,32 @@ namespace ProtoAqua.Energy
             
             while(--inCount >= 0)
             {
-                ref ActorState state = ref Actors[ActorCount++];
-                state.Id = NextActorId++;
-                inType.CreateActor(ref state);
+                ref ActorState actor = ref Actors[ActorCount++];
+                actor.Id = NextActorId++;
+                inType.CreateActor(ref actor);
+
+                actor.OffsetA = (byte) inRandom.Next(3);
+                actor.OffsetB = (byte) inRandom.Next(17);
+
+                var growthSettings = inType.GrowthSettings();
+                ushort maxAge = inType.DeathSettings().Age;
+                if (maxAge > 0)
+                {
+                    actor.Age = (ushort) inRandom.Next(0, maxAge / 2);
+                }
+                else
+                {
+                    actor.Age = (ushort) inRandom.Next(0, 5);
+                }
+
+                if (actor.Age > 0 && growthSettings.Interval > 0 && growthSettings.MaxMass > growthSettings.StartingMass)
+                {
+                    ushort minMass = growthSettings.StartingMass;
+                    ushort maxMass = growthSettings.MaxMass;
+
+                    ushort estimatedGrowth = (ushort) ((actor.Age / growthSettings.Interval) * growthSettings.MinGrowth);
+                    actor.Mass = (ushort) Math.Min(minMass + estimatedGrowth, maxMass);
+                }
             }
         }
 

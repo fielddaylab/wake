@@ -21,7 +21,7 @@ namespace ProtoAqua.Energy
             public bool Evaluate(ushort inMass, in EnergySimContext inContext)
             {
                 int actorIdx = inContext.Database.Actors.IdToIndex(ActorId);
-                return Comparison.Evaluate(inContext.Current.Masses[actorIdx], BaseValue + MassValue * inMass);
+                return Comparison.Evaluate(inContext.CachedCurrent.Masses[actorIdx], BaseValue + MassValue * inMass);
             }
         }
 

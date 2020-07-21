@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using BeauData;
 using BeauPools;
 using BeauUtil;
 using UnityEngine;
@@ -23,6 +24,8 @@ namespace ProtoAqua.Energy
         #endregion // Inspector
 
         [NonSerialized] private ISimDatabase m_Database;
+        [NonSerialized] private ScenarioPackage m_Scenario;
+        [NonSerialized] private ContentArea m_ContentMask;
 
         #region Unity Events
 
@@ -37,69 +40,81 @@ namespace ProtoAqua.Energy
 
         #endregion // Unity Events
 
-        public void Populate(ISimDatabase inDatabase)
+        public void Repopulate()
         {
-            m_Database = inDatabase;
-
             m_Properties.Clear();
 
-            foreach(var type in m_Database.Actors.Types())
+            IEnumerable<ActorType> targetTypes = m_Database.Actors.GetAll(m_Scenario.Data.StartingActorIds());
+            foreach(var type in targetTypes)
             {
                 PopulateActorType(type);
             }
+        }
+
+        public void Populate(ScenarioPackage inScenario, ISimDatabase inDatabase)
+        {
+            m_Scenario = inScenario;
+            m_Database = inDatabase;
+            m_ContentMask = m_Scenario.Header.ContentAreas;
+
+            Repopulate();
         }
 
         private void PopulateActorType(ActorType inType)
         {
             m_Properties.BeginGroup(inType.ScriptName());
             {
-                m_Properties.BeginGroup("Resources");
+                if ((m_ContentMask & ContentArea.Photosynthesis) != 0)
                 {
-                    // resources
-                    var resourceSettings = inType.Requirements();
-                    for(int i = 0; i < resourceSettings.DesiredResources.Length; ++i)
+                    m_Properties.BeginGroup("Resources");
                     {
-                        int cachedIdx = i;
-                        var req = resourceSettings.DesiredResources[cachedIdx];
-                        VarType reqVar = m_Database.Vars[req.ResourceId];
-                        ConfigPropertySpinner.Configuration reqConfig = new ConfigPropertySpinner.Configuration()
+                        // resources
+                        var resourceSettings = inType.Requirements();
+                        for(int i = 0; i < resourceSettings.DesiredResources.Length; ++i)
                         {
-                            Name = "Consume: " + reqVar.ScriptName(),
+                            int cachedIdx = i;
+                            var req = resourceSettings.DesiredResources[cachedIdx];
+                            VarType reqVar = m_Database.Vars[req.ResourceId];
+                            ConfigPropertySpinner.Configuration reqConfig = new ConfigPropertySpinner.Configuration()
+                            {
+                                Name = "Consumes " + reqVar.ScriptName(),
 
-                            Min = reqVar.ConfigSettings().Min,
-                            Max = reqVar.ConfigSettings().Max,
-                            Increment = Mathf.Max(reqVar.ConfigSettings().Increment / 10, 1),
-                            WholeNumbers = true,
+                                Min = reqVar.ConfigSettings().Min,
+                                Max = reqVar.ConfigSettings().Max,
+                                Increment = Mathf.Max(reqVar.ConfigSettings().Increment / 10, 1),
+                                WholeNumbers = true,
 
-                            Get = () => resourceSettings.DesiredResources[cachedIdx].BaseValue,
-                            Set = (v) => { resourceSettings.DesiredResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
-                        };
-                        
-                        m_Properties.Spinner(reqConfig);
-                    }
-                    for(int i = 0; i < resourceSettings.ProducingResources.Length; ++i)
-                    {
-                        int cachedIdx = i;
-                        var req = resourceSettings.ProducingResources[cachedIdx];
-                        VarType reqVar = m_Database.Vars[req.ResourceId];
-                        ConfigPropertySpinner.Configuration reqConfig = new ConfigPropertySpinner.Configuration()
+                                Get = () => resourceSettings.DesiredResources[cachedIdx].BaseValue,
+                                Set = (v) => { resourceSettings.DesiredResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
+                            };
+                            
+                            m_Properties.Spinner(reqConfig);
+                        }
+                        for(int i = 0; i < resourceSettings.ProducingResources.Length; ++i)
                         {
-                            Name = "Produce: " + reqVar.ScriptName(),
+                            int cachedIdx = i;
+                            var req = resourceSettings.ProducingResources[cachedIdx];
+                            VarType reqVar = m_Database.Vars[req.ResourceId];
+                            ConfigPropertySpinner.Configuration reqConfig = new ConfigPropertySpinner.Configuration()
+                            {
+                                Name = "Produces " + reqVar.ScriptName(),
 
-                            Min = reqVar.ConfigSettings().Min,
-                            Max = reqVar.ConfigSettings().Max,
-                            Increment = Mathf.Max(reqVar.ConfigSettings().Increment / 10, 1),
-                            WholeNumbers = true,
+                                Min = reqVar.ConfigSettings().Min,
+                                Max = reqVar.ConfigSettings().Max,
+                                Increment = Mathf.Max(reqVar.ConfigSettings().Increment / 10, 1),
+                                WholeNumbers = true,
 
-                            Get = () => resourceSettings.ProducingResources[cachedIdx].BaseValue,
-                            Set = (v) => { resourceSettings.ProducingResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
-                        };
-                        
-                        m_Properties.Spinner(reqConfig);
+                                Get = () => resourceSettings.ProducingResources[cachedIdx].BaseValue,
+                                Set = (v) => { resourceSettings.ProducingResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
+                            };
+                            
+                            m_Properties.Spinner(reqConfig);
+                        }
                     }
+                    m_Properties.EndGroup();
                 }
-                m_Properties.EndGroup();
 
+                if ((m_ContentMask & ContentArea.FoodWeb) != 0)
                 {
                     // eating
                     var eatSettings = inType.EatSettings();
@@ -114,15 +129,18 @@ namespace ProtoAqua.Energy
                             var conversion = eatSettings.EdibleActors[i];
                             ConfigPropertySpinner.Configuration conversionConfig = new ConfigPropertySpinner.Configuration()
                             {
-                                Name = "Conversion: " + m_Database.Actors[conversion.ActorType].ScriptName(),
+                                Name = "Preference for " + m_Database.Actors[conversion.ActorType].ScriptName(),
 
                                 Min = 0,
                                 Max = 2,
                                 Increment = 0.1f,
+                                SnapToIncrement = true,
                                 WholeNumbers = false,
 
-                                Get = () => eatSettings.EdibleActors[cachedIdx].ConversionRate,
-                                Set = (v) => { eatSettings.EdibleActors[cachedIdx].ConversionRate = v; Dirty(); }
+                                Suffix = "x",
+
+                                Get = () => eatSettings.EdibleActors[cachedIdx].Rate,
+                                Set = (v) => { eatSettings.EdibleActors[cachedIdx].Rate = v; Dirty(); }
                             };
 
                             m_Properties.Spinner(conversionConfig);
@@ -140,15 +158,18 @@ namespace ProtoAqua.Energy
                     {
                         ConfigPropertySpinner.Configuration growthFrequencyConfig = new ConfigPropertySpinner.Configuration()
                         {
-                            Name = "Growth Frequency",
+                            Name = "Growth Interval",
+
+                            Suffix = " ticks",
+                            SingularText = "1 tick",
 
                             Min = 0,
                             Max = 64,
                             Increment = 1,
                             WholeNumbers = true,
 
-                            Get = () => growthSettings.Frequency,
-                            Set = (v) => { growthSettings.Frequency = (ushort) v; Dirty(); }
+                            Get = () => growthSettings.Interval,
+                            Set = (v) => { growthSettings.Interval = (ushort) v; Dirty(); }
                         };
                         m_Properties.Spinner(growthFrequencyConfig);
                     }
@@ -159,35 +180,43 @@ namespace ProtoAqua.Energy
                     {
                         ConfigPropertySpinner.Configuration reproFrequencyConfig = new ConfigPropertySpinner.Configuration()
                         {
-                            Name = "Reproduction Frequency",
+                            Name = "Reproduction Interval",
+
+                            Suffix = " ticks",
+                            SingularText = "1 tick",
 
                             Min = 0,
                             Max = 64,
                             Increment = 1,
                             WholeNumbers = true,
 
-                            Get = () => reproSettings.Frequency,
-                            Set = (v) => { reproSettings.Frequency = (ushort) v; Dirty(); }
+                            Get = () => reproSettings.Interval,
+                            Set = (v) => { reproSettings.Interval = (ushort) v; Dirty(); }
                         };
                         m_Properties.Spinner(reproFrequencyConfig);
                     }
 
                     // death
                     var deathSettings = inType.DeathSettings();
-
-                    ConfigPropertySpinner.Configuration deathAgeConfig = new ConfigPropertySpinner.Configuration()
+                    if (deathSettings.Age > 0)
                     {
-                        Name = "Death Age",
+                        ConfigPropertySpinner.Configuration deathAgeConfig = new ConfigPropertySpinner.Configuration()
+                        {
+                            Name = "Death Age",
 
-                        Min = 0,
-                        Max = 64,
-                        Increment = 1,
-                        WholeNumbers = true,
+                            Suffix = " ticks",
+                            SingularText = "1 tick",
 
-                        Get = () => deathSettings.Age,
-                        Set = (v) => { deathSettings.Age = (ushort) v; Dirty(); }
-                    };
-                    m_Properties.Spinner(deathAgeConfig);
+                            Min = 1,
+                            Max = 64,
+                            Increment = 1,
+                            WholeNumbers = true,
+
+                            Get = () => deathSettings.Age,
+                            Set = (v) => { deathSettings.Age = (ushort) v; Dirty(); }
+                        };
+                        m_Properties.Spinner(deathAgeConfig);
+                    }
                 }
                 m_Properties.EndGroup();
             }
@@ -196,28 +225,28 @@ namespace ProtoAqua.Energy
 
         private void RandomizeAll()
         {
-            RandomizeDatabase(m_Database);
+            RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds());
             m_Properties.SyncAll();
             Dirty();
         }
 
         private void RandomizeEasy()
         {
-            RandomizeDatabase(m_Database, 1);
+            RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 1);
             m_Properties.SyncAll();
             Dirty();
         }
 
         private void RandomizeMedium()
         {
-            RandomizeDatabase(m_Database, 2);
+            RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 2);
             m_Properties.SyncAll();
             Dirty();
         }
 
         private void RandomizeHard()
         {
-            RandomizeDatabase(m_Database, 3);
+            RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 3);
             m_Properties.SyncAll();
             Dirty();
         }
@@ -240,8 +269,10 @@ namespace ProtoAqua.Energy
             m_Database?.Dirty();
         }
 
-        static public void RandomizeDatabase(ISimDatabase inDatabase, int inRulesToRandomize = -1)
+        static public void RandomizeDatabase(ISimDatabase inDatabase, ContentArea inContentMask, IEnumerable<FourCC> inAllowedActorTypes, int inRulesToRandomize = -1)
         {
+            Debug.LogFormat("[RulesConfigPanel] Randomizing {0} rules", inRulesToRandomize);
+
             inDatabase.ClearOverrides();
 
             if (inRulesToRandomize == 0)
@@ -254,7 +285,7 @@ namespace ProtoAqua.Energy
 
             if (inRulesToRandomize > 0)
             {
-                int totalRules = CountRules(inDatabase);
+                int totalRules = CountRules(inDatabase, inContentMask, inAllowedActorTypes);
                 if (inRulesToRandomize < totalRules)
                 {
                     indices = new HashSet<int>();
@@ -272,42 +303,67 @@ namespace ProtoAqua.Energy
                 }
             }
 
-            foreach(var type in inDatabase.Actors.Types())
+            IEnumerable<ActorType> targetTypes;
+            if (inAllowedActorTypes != null)
             {
-                RandomizeActorType(type, inDatabase, ref idx, indices);
+                targetTypes = inDatabase.Actors.GetAll(inAllowedActorTypes);
+            }
+            else
+            {
+                targetTypes = inDatabase.Actors.Types();
+            }
+
+            foreach(var type in targetTypes)
+            {
+                RandomizeActorType(type, inDatabase, inContentMask, ref idx, indices);
             }
         }
 
-        static private void RandomizeActorType(ActorType inType, ISimDatabase inDatabase, ref int ioRuleIteratorIndex, ICollection<int> inRandomRuleIndices)
+        static private void RandomizeActorType(ActorType inType, ISimDatabase inDatabase, ContentArea inContentMask, ref int ioRuleIteratorIndex, ICollection<int> inRandomRuleIndices)
         {
-            // resources
-            var resourceSettings = inType.Requirements();
-            for(int i = 0; i < resourceSettings.DesiredResources.Length; ++i)
+            if ((inContentMask & ContentArea.Photosynthesis) != 0)
             {
-                if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                // resources
+                var resourceSettings = inType.Requirements();
+                for(int i = 0; i < resourceSettings.DesiredResources.Length; ++i)
                 {
-                    resourceSettings.DesiredResources[i].BaseValue = (ushort) RNG.Instance.Next(1, 16);
+                    if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                    {
+                        ref ushort val = ref resourceSettings.DesiredResources[i].BaseValue;
+                        ushort oldVal = val;
+                        Randomize(ref val, 1, 16);
+                        Debug.LogFormat("[RulesConfigPanel] {0}: Randomized desired resource {1} from {2} to {3}", inType.Id(), resourceSettings.DesiredResources[i].ResourceId, oldVal, val);
+                    }
+                    ++ioRuleIteratorIndex;
                 }
-                ++ioRuleIteratorIndex;
-            }
-            for(int i = 0; i < resourceSettings.ProducingResources.Length; ++i)
-            {
-                if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                for(int i = 0; i < resourceSettings.ProducingResources.Length; ++i)
                 {
-                    resourceSettings.ProducingResources[i].BaseValue = (ushort) RNG.Instance.Next(1, 16);
+                    if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                    {
+                        ref ushort val = ref resourceSettings.ProducingResources[i].BaseValue;
+                        ushort oldVal = val;
+                        Randomize(ref val, 1, 16);
+                        Debug.LogFormat("[RulesConfigPanel] {0}: Randomized producing resource {1} from {2} to {3}", inType.Id(), resourceSettings.DesiredResources[i].ResourceId, oldVal, val);
+                    }
+                    ++ioRuleIteratorIndex;
                 }
-                ++ioRuleIteratorIndex;
             }
 
-            // eating
-            var eatSettings = inType.EatSettings();
-            for(int i = 0; i < eatSettings.EdibleActors.Length; ++i)
+            if ((inContentMask & ContentArea.FoodWeb) != 0)
             {
-                if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                // eating
+                var eatSettings = inType.EatSettings();
+                for(int i = 0; i < eatSettings.EdibleActors.Length; ++i)
                 {
-                    eatSettings.EdibleActors[i].ConversionRate = Mathf.Round(RNG.Instance.NextFloat(0f, 2f) / 0.1f) * 0.1f;
+                    if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                    {
+                        ref float val = ref eatSettings.EdibleActors[i].Rate;
+                        float oldVal = val;
+                        Randomize(ref val, 0, 2, 0.25f);
+                        Debug.LogFormat("[RulesConfigPanel] {0}: Randomized eating rate {1} from {2} to {3}", inType.Id(), eatSettings.EdibleActors[i].ActorType, oldVal, val);
+                    }
+                    ++ioRuleIteratorIndex;
                 }
-                ++ioRuleIteratorIndex;
             }
 
             // growth
@@ -316,7 +372,10 @@ namespace ProtoAqua.Energy
             {
                 if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
                 {
-                    growthSettings.Frequency = (ushort) RNG.Instance.Next(1, 4);
+                    ref ushort val = ref growthSettings.Interval;
+                    ushort oldVal = val;
+                    Randomize(ref val, 1, 4);
+                    Debug.LogFormat("[RulesConfigPanel] {0}: Randomized growth interval from {1} to {2}", inType.Id(), oldVal, val);
                 }
                 ++ioRuleIteratorIndex;
             }
@@ -327,38 +386,97 @@ namespace ProtoAqua.Energy
             {
                 if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
                 {
-                    reproSettings.Frequency = (ushort) RNG.Instance.Next(0, 8);
+                    ref ushort val = ref reproSettings.Interval;
+                    ushort oldVal = val;
+                    Randomize(ref val, 1, 8);
+                    Debug.LogFormat("[RulesConfigPanel] {0}: Randomized reproduction interval from {1} to {2}", inType.Id(), oldVal, val);
                 }
                 ++ioRuleIteratorIndex;
             }
 
             // death
             var deathSettings = inType.DeathSettings();
-            if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+            if (deathSettings.Age > 0)
             {
-                deathSettings.Age = (ushort) RNG.Instance.Next(4, 10);
+                if (ShouldRandomize(ioRuleIteratorIndex, inRandomRuleIndices))
+                {
+                    ref ushort val = ref deathSettings.Age;
+                    ushort oldVal = val;
+                    Randomize(ref val, 4, 10);
+                    Debug.LogFormat("[RulesConfigPanel] {0}: Randomized death age from {1} to {2}", inType.Id(), oldVal, val);
+                }
+                ++ioRuleIteratorIndex;
             }
-            ++ioRuleIteratorIndex;
         }
 
         static private bool ShouldRandomize(int inIndex, ICollection<int> inIndices)
         {
             return inIndices == null || inIndices.Contains(inIndex);
         }
+
+        #region Randomization
+
+        static private void Randomize(ref ushort ioVal, ushort inMin, ushort inMax)
+        {
+            ushort old = ioVal;
+            while(ioVal == old)
+            {
+                ioVal = (ushort) RNG.Instance.Next(inMin, inMax);
+            }
+        }
+
+        static private void Randomize(ref int ioVal, int inMin, int inMax)
+        {
+            int old = ioVal;
+            while(ioVal == old)
+            {
+                ioVal = (int) RNG.Instance.Next(inMin, inMax);
+            }
+        }
+
+        static private void Randomize(ref float ioVal, float inMin, float inMax, float inIncrement)
+        {
+            float old = ioVal;
+            while(ioVal == old)
+            {
+                float val = RNG.Instance.NextFloat(inMin, inMax);
+                if (inIncrement > 0)
+                    val = Mathf.Round(val / inIncrement) * inIncrement;
+                ioVal = val;
+            }
+        }
+
+        #endregion // Randomization
     
-        static private int CountRules(ISimDatabase inDatabase)
+        static private int CountRules(ISimDatabase inDatabase, ContentArea inContentMask, IEnumerable<FourCC> inAllowedActorTypes)
         {
             int totalCount = 0;
-            foreach(var type in inDatabase.Actors.Types())
+            IEnumerable<ActorType> targetTypes;
+            if (inAllowedActorTypes != null)
+            {
+                targetTypes = inDatabase.Actors.GetAll(inAllowedActorTypes);
+            }
+            else
+            {
+                targetTypes = inDatabase.Actors.Types();
+            }
+
+            foreach(var type in targetTypes)
             {
                 int countForType = 0;
 
-                var resourceSettings = type.Requirements();
-                countForType += resourceSettings.DesiredResources.Length;
-                countForType += resourceSettings.ProducingResources.Length;
+                if ((inContentMask & ContentArea.Photosynthesis) != 0)
+                {
+                    var resourceSettings = type.Requirements();
+                    countForType += resourceSettings.DesiredResources.Length;
+                    countForType += resourceSettings.ProducingResources.Length;
+                }
 
-                var eatSettings = type.EatSettings();
-                countForType += eatSettings.EdibleActors.Length;
+                if ((inContentMask & ContentArea.FoodWeb) != 0)
+                {
+                    var eatSettings = type.EatSettings();
+                    countForType += eatSettings.EdibleActors.Length;
+                }
 
                 var growthSettings = type.GrowthSettings();
                 if (growthSettings.MinGrowth > 0 && growthSettings.StartingMass < growthSettings.MaxMass)
@@ -368,7 +486,9 @@ namespace ProtoAqua.Energy
                 if (reproSettings.Count > 0)
                     countForType += 1;
 
-                countForType += 1;
+                var deathSettings = type.DeathSettings();
+                if (deathSettings.Age > 0)
+                    countForType += 1;
 
                 totalCount += countForType;
             }

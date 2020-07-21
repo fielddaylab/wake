@@ -121,6 +121,16 @@ namespace ProtoAqua.Energy
             get { return Get(inId); }
         }
 
+        public IEnumerable<T> GetAll(IEnumerable<FourCC> inIds)
+        {
+            foreach(var id in inIds)
+            {
+                T val;
+                if (m_IdMap.TryGetValue(id, out val))
+                    yield return val;
+            }
+        }
+
         #endregion // Retrieval
     }
 }
