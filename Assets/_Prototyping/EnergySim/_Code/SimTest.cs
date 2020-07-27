@@ -34,8 +34,14 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private Routine m_CalculateTotalRoutine;
 
+        [NonSerialized] private EnergyConfig m_GlobalSettings;
+
         public void Start()
         {
+            m_GlobalSettings = Services.Tweaks.Get<EnergyConfig>();
+
+            Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);
+
             m_ScenarioPackage = loader.LoadStartingScenario(GetQueryParams());
             m_BaseDatabase = loader.LoadDatabase(m_ScenarioPackage.Header.DatabaseId);
 
@@ -135,14 +141,19 @@ namespace ProtoAqua.Energy
 
             int startingFrameCount = Time.frameCount;
 
+            float[] allSyncs = new float[inTotalTicks + 1];
+
             yield return Routine.ForAmortize(0, inTotalTicks + 1, (i) => {
                 sim.Scrub(ref inData, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
                 sim.Scrub(ref inModel, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
-                syncAccum += display.Syncer.CalculateSync(inData, inModel);
+                float sync = m_GlobalSettings.CalculateSync(inData, inModel);
+                syncAccum += sync;
+                allSyncs[i] = sync;
             }, 8);
 
             float avgSync = (float) Math.Round(syncAccum / (inTotalTicks + 1));
             display.Syncer.ShowTotalSync(avgSync);
+            display.Ticker.UpdateTickSync(allSyncs);
 
             int endingFrameCount = Time.frameCount;
 

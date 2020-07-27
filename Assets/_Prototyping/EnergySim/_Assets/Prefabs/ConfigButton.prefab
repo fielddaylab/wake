@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1857161223483615814}
   - component: {fileID: 1857161223483615815}
   - component: {fileID: 1857161223483615813}
+  - component: {fileID: 3675017061720831867}
   m_Layer: 5
   m_Name: ConfigButton
   m_TagString: Untagged
@@ -89,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -119,6 +120,24 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3675017061720831867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857161223483616697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 1857161223483615813}
+  m_EnterEvent: ui_hover
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: ui_click
 --- !u!1 &1857161225079463296
 GameObject:
   m_ObjectHideFlags: 0

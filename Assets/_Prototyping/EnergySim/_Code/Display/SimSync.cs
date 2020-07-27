@@ -16,11 +16,21 @@ namespace ProtoAqua.Energy
 
         #region Inspector
 
+        [Header("Current Sync")]
+
+        [SerializeField]
+        private RectTransform m_CurrentSyncGroup = null;
+
         [SerializeField]
         private TMP_Text m_CurrentSyncDisplay = null;
 
         [SerializeField]
         private Image m_CurrentSyncBackground = null;
+
+        [Header("Total Sync")]
+
+        [SerializeField]
+        private RectTransform m_TotalSyncGroup = null;
 
         [SerializeField]
         private TMP_Text m_TotalSyncDisplay = null;
@@ -30,15 +40,6 @@ namespace ProtoAqua.Energy
 
         [SerializeField]
         private Image m_TotalSyncBackground = null;
-
-        [SerializeField]
-        private Gradient m_SyncGradient = null;
-
-        [SerializeField]
-        private Color m_TotalSyncLoadingColor = Color.gray;
-
-        [SerializeField]
-        private float m_ErrorScale = 1;
 
         #endregion // Inspector
 
@@ -59,7 +60,7 @@ namespace ProtoAqua.Energy
 
         public void Sync(in EnergySimContext inContextA, in EnergySimContext inContextB)
         {
-            float localSync = CalculateSync(inContextA, inContextB);
+            float localSync = Services.Tweaks.Get<EnergyConfig>().CalculateSync(inContextA, inContextB);
             UpdateLocalSync(localSync, false);
         }
 
@@ -80,7 +81,13 @@ namespace ProtoAqua.Energy
                 
             m_LastKnownSync = inSync;
             m_CurrentSyncDisplay.text = inSync.ToString();
-            m_CurrentSyncBackground.color = m_SyncGradient.Evaluate(inSync / 100f);
+            m_CurrentSyncBackground.color = Services.Tweaks.Get<EnergyConfig>().EvaluateSyncGradientBold(inSync, false);
+            
+            Color textColor = Services.Tweaks.Get<EnergyConfig>().EvaluateSyncGradientBold(inSync, true);
+            foreach(var text in m_CurrentSyncGroup.gameObject.GetComponentsInChildren<TMP_Text>())
+            {
+                text.color = textColor;
+            }
 
             OnLocalSyncChanged?.Invoke(inSync);
         }
@@ -90,29 +97,30 @@ namespace ProtoAqua.Energy
             if (!inbForce && m_LastKnownTotalSync == inSync)
                 return;
                 
+            Color textColor;
             m_LastKnownTotalSync = inSync;
             if (inSync >= 0)
             {
                 m_TotalSyncDisplay.text = inSync.ToString();
-                m_TotalSyncBackground.color = m_SyncGradient.Evaluate(inSync / 100f);
+                m_TotalSyncBackground.color = Services.Tweaks.Get<EnergyConfig>().EvaluateSyncGradientBold(inSync, false);
                 m_TotalSyncLoadingText.gameObject.SetActive(false);
                 m_TotalSyncDisplay.gameObject.SetActive(true);
+                textColor = Services.Tweaks.Get<EnergyConfig>().EvaluateSyncGradientBold(inSync, true);
             }
             else
             {
-                m_TotalSyncBackground.color = m_TotalSyncLoadingColor;
+                m_TotalSyncBackground.color = Services.Tweaks.Get<EnergyConfig>().SyncLoadingColor();
                 m_TotalSyncLoadingText.gameObject.SetActive(true);
                 m_TotalSyncDisplay.gameObject.SetActive(false);
+                textColor = ColorBank.LightGray;
+            }
+
+            foreach(var text in m_CurrentSyncGroup.gameObject.GetComponentsInChildren<TMP_Text>())
+            {
+                text.color = textColor;
             }
 
             OnTotalSyncChanged?.Invoke(inSync);
-        }
-
-        public float CalculateSync(in EnergySimContext inContextA, in EnergySimContext inContextB)
-        {
-            float error = 100 * EnergySim.CalculateError(inContextA.CachedCurrent, inContextB.CachedCurrent, inContextA.Database);
-            float sync = 100 - (float) Math.Min(Math.Round(error * m_ErrorScale), 100);
-            return sync;
         }
     }
 }

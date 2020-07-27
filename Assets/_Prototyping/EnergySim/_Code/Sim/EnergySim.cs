@@ -772,8 +772,8 @@ namespace ProtoAqua.Energy
                 VarType resType = inBuffer.Context.Database.Resources[i];
                 if (resType.HasFlags(VarTypeFlags.ConvertFromMass))
                 {
-                    ushort contribution = (ushort)Math.Ceiling(conversion * targetMass);
-                    ioState.DesiredResources[i] = (ushort)Math.Max(ioState.DesiredResources[i] - contribution, 0);
+                    ushort contribution = (ushort) Math.Ceiling(conversion * targetMass);
+                    ioState.DesiredResources[i] = (ushort) Math.Max(ioState.DesiredResources[i] - contribution, 0);
                 }
             }
 

@@ -40,6 +40,10 @@ namespace ProtoAqua.Energy
         {
             [ActorTypeId] public FourCC ActorType;
             [UnityEngine.Serialization.FormerlySerializedAs("ConversionRate")] public float Rate;
+
+            public float QualitativeSmall;
+            public float QualitativeMed;
+            public float QualitativeHigh;
         }
 
         [Serializable]

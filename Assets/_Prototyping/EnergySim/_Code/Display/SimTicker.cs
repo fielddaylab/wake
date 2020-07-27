@@ -38,6 +38,12 @@ namespace ProtoAqua.Energy
         [SerializeField]
         private Button m_NextButton = null;
 
+        [SerializeField]
+        private Graphic m_StartCap = null;
+
+        [SerializeField]
+        private Graphic m_EndCap = null;
+
         #endregion // Inspector
 
         [NonSerialized] private int m_LastMaxTicks = -1;
@@ -119,6 +125,17 @@ namespace ProtoAqua.Energy
 
             m_Slider.SetValueWithoutNotify(currentTick);
             UpdateButtons();
+        }
+
+        public void UpdateTickSync(float[] inSyncs)
+        {
+            var config = Services.Tweaks.Get<EnergyConfig>();
+            m_StartCap.color = config.EvaluateSyncGradientSubdued(inSyncs[0], false);
+            for(int i = 0; i < m_TickMarkPool.ActiveObjects.Count; ++i)
+            {
+                m_TickMarkPool.ActiveObjects[i].GetComponent<Graphic>().color = config.EvaluateSyncGradientSubdued(inSyncs[i + 1], false);
+            }
+            m_EndCap.color = config.EvaluateSyncGradientSubdued(inSyncs[inSyncs.Length - 1], false);
         }
 
         private void InitTickMarks()

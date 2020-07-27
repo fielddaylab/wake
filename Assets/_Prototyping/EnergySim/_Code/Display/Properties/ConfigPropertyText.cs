@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Energy
 {
-    public class ConfigPropertyText : MonoBehaviour, IPooledObject<ConfigPropertyText>
+    public class ConfigPropertyText : ConfigPropertyControl
     {
         #region Types
 
@@ -29,8 +29,6 @@ namespace ProtoAqua.Energy
         #endregion // Types
 
         #region Inspector
-        
-        [SerializeField] private IndentGroup m_Indent = null;
 
         [Header("Controls")]
         [SerializeField] private TMP_Text m_Label = null;
@@ -40,8 +38,6 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private string m_CurrentValue = string.Empty;
         [NonSerialized] private Configuration m_Configuration;
-
-        public IndentGroup IndentGroup { get { return m_Indent; } }
 
         #region Unity Events
 
@@ -73,15 +69,8 @@ namespace ProtoAqua.Energy
             get { return m_CurrentValue; }
             set
             {
-                TrySetValue(m_CurrentValue);
+                TrySetValue(value);
             }
-        }
-
-        public void SyncValue()
-        {
-            string val = m_Configuration.Get();
-            m_CurrentValue = val;
-            UpdateText();
         }
 
         #region Updates
@@ -132,30 +121,21 @@ namespace ProtoAqua.Energy
 
         #endregion // Listeners
 
-        #region IPooledObject
-
-        void IPooledObject<ConfigPropertyText>.OnAlloc()
+        public override void Sync()
         {
-            // throw new NotImplementedException();
+            base.Sync();
+
+            string val = m_Configuration.Get();
+            m_CurrentValue = val;
+            UpdateText();
         }
 
-        void IPooledObject<ConfigPropertyText>.OnConstruct(IPool<ConfigPropertyText> inPool)
+        protected override void OnFree()
         {
-            // throw new NotImplementedException();
-        }
+            base.OnFree();
 
-        void IPooledObject<ConfigPropertyText>.OnDestruct()
-        {
-            // throw new NotImplementedException();
-        }
-
-        void IPooledObject<ConfigPropertyText>.OnFree()
-        {
             m_Label.SetText(string.Empty);
-            m_Indent.SetIndent(0);
             m_Configuration = default(Configuration);
         }
-
-        #endregion // IPooledObject
     }
 }

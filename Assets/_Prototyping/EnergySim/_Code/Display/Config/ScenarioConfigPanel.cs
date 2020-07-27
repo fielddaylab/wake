@@ -38,9 +38,9 @@ namespace ProtoAqua.Energy
             m_Target = inScenario;
             m_Database = inDatabase;
 
-            m_Properties.Clear();
+            m_Properties.BeginControls();
 
-            m_Properties.BeginGroup("Info");
+            m_Properties.BeginGroup("info", "Info");
             {
                 ConfigPropertyText.Configuration idConfig = new ConfigPropertyText.Configuration()
                 {
@@ -49,7 +49,7 @@ namespace ProtoAqua.Energy
                     Get = () => m_Target.Header.Id,
                     Set = (v) => { m_Target.Header.Id = v; OnScenarioHeaderChanged?.Invoke(m_Target); }
                 };
-                m_Properties.Text(idConfig);
+                m_Properties.Text("id", idConfig);
 
                 ConfigPropertyText.Configuration nameConfig = new ConfigPropertyText.Configuration()
                 {
@@ -58,7 +58,7 @@ namespace ProtoAqua.Energy
                     Get = () => m_Target.Header.Name,
                     Set = (v) => { m_Target.Header.Name = v; OnScenarioHeaderChanged?.Invoke(m_Target); }
                 };
-                m_Properties.Text(nameConfig);
+                m_Properties.Text("name", nameConfig);
 
                 ConfigPropertyText.Configuration authorConfig = new ConfigPropertyText.Configuration()
                 {
@@ -67,7 +67,7 @@ namespace ProtoAqua.Energy
                     Get = () => m_Target.Header.Author,
                     Set = (v) => { m_Target.Header.Author = v; OnScenarioHeaderChanged?.Invoke(m_Target); }
                 };
-                m_Properties.Text(authorConfig);
+                m_Properties.Text("author", authorConfig);
 
                 ConfigPropertyText.Configuration descriptionConfig = new ConfigPropertyText.Configuration()
                 {
@@ -76,25 +76,28 @@ namespace ProtoAqua.Energy
                     Get = () => m_Target.Header.Description,
                     Set = (v) => { m_Target.Header.Description = v; OnScenarioHeaderChanged?.Invoke(m_Target); }
                 };
-                m_Properties.Text(descriptionConfig);
+                m_Properties.Text("description", descriptionConfig);
 
-                ConfigPropertySpinner.Configuration difficultyConfig = new ConfigPropertySpinner.Configuration()
+                ConfigPropertyEnum.Configuration difficultyConfig = new ConfigPropertyEnum.Configuration()
                 {
-                    Name = "Rules to Randomize",
+                    Name = "Difficulty",
 
-                    Suffix = " rules",
-                    SingularText = "1 rule",
-
-                    Min = 1,
-                    Max = 3,
-                    Increment = 1,
-                    WholeNumbers = true,
+                    Values = new LabeledValue[] { LabeledValue.Make((ushort) 1, "Easy"), LabeledValue.Make((ushort) 2, "Medium"), LabeledValue.Make((ushort) 3, "Hard") },
+                    DefaultValue = 1,
 
                     Get = () => m_Target.Header.Difficulty,
-                    Set = (v) => { m_Target.Header.Difficulty = (ushort)v; OnScenarioHeaderChanged?.Invoke(m_Target); Dirty(); }
+                    Set = (v) => { m_Target.Header.Difficulty = (ushort) v; OnScenarioHeaderChanged?.Invoke(m_Target); Dirty(); }
                 };
+                m_Properties.Enum("difficulty", difficultyConfig);
 
-                m_Properties.Spinner(difficultyConfig);
+                ConfigPropertyToggle.Configuration qualitativeConfig = new ConfigPropertyToggle.Configuration()
+                {
+                    Name = "Qualitative Mode",
+
+                    Get = () => m_Target.Header.Qualitative,
+                    Set = (v) => { m_Target.Header.Qualitative = v; OnScenarioActorsChanged?.Invoke(m_Target); Dirty(); }
+                };
+                m_Properties.Toggle("qualitative", qualitativeConfig);
 
                 ConfigPropertySpinner.Configuration randomConfig = new ConfigPropertySpinner.Configuration()
                 {
@@ -105,14 +108,14 @@ namespace ProtoAqua.Energy
                     WholeNumbers = true,
 
                     Get = () => m_Target.Data.Seed,
-                    Set = (v) => { m_Target.Data.Seed = (ushort)v; Dirty(); }
+                    Set = (v) => { m_Target.Data.Seed = (ushort) v; Dirty(); }
                 };
 
-                m_Properties.Spinner(randomConfig);
+                m_Properties.Spinner("randomSeed", randomConfig);
             }
             m_Properties.EndGroup();
 
-            m_Properties.BeginGroup("Actors");
+            m_Properties.BeginGroup("actors", "Actors");
             {
                 for (int i = 0; i < m_Target.Data.InitialActors.Length; ++i)
                 {
@@ -134,66 +137,72 @@ namespace ProtoAqua.Energy
                         Set = (v) => { m_Target.Data.InitialActors[cachedIdx].Count = (ushort)v;  OnScenarioActorsChanged?.Invoke(m_Target); Dirty(); }
                     };
 
-                    m_Properties.Spinner(spinnerConfig);
+                    m_Properties.Spinner(actorType.Id().ToString(true), spinnerConfig);
                 }
             }
             m_Properties.EndGroup();
 
-            m_Properties.BeginGroup("Resources");
+            if (m_Target.Data.InitialResources.Length > 0)
             {
-                for (int i = 0; i < m_Target.Data.InitialResources.Length; ++i)
+                m_Properties.BeginGroup("resources", "Resources");
                 {
-                    int cachedIdx = i;
-                    VarPair amount = m_Target.Data.InitialResources[cachedIdx];
-                    VarType varType = inDatabase.Vars[amount.Id];
-                    VarType.ConfigRange config = varType.ConfigSettings();
-
-                    ConfigPropertySpinner.Configuration spinnerConfig = new ConfigPropertySpinner.Configuration()
+                    for (int i = 0; i < m_Target.Data.InitialResources.Length; ++i)
                     {
-                        Name = varType.ScriptName().ToString(),
+                        int cachedIdx = i;
+                        VarPair amount = m_Target.Data.InitialResources[cachedIdx];
+                        VarType varType = inDatabase.Vars[amount.Id];
+                        VarType.ConfigRange config = varType.ConfigSettings();
 
-                        Min = config.Min,
-                        Max = config.Max,
-                        Increment = config.Increment,
-                        WholeNumbers = true,
+                        ConfigPropertySpinner.Configuration spinnerConfig = new ConfigPropertySpinner.Configuration()
+                        {
+                            Name = varType.ScriptName().ToString(),
 
-                        Get = () => m_Target.Data.InitialResources[cachedIdx].Value,
-                        Set = (v) => { m_Target.Data.InitialResources[cachedIdx].Value = (short)v; Dirty(); }
-                    };
+                            Min = config.Min,
+                            Max = config.Max,
+                            Increment = config.Increment,
+                            WholeNumbers = true,
 
-                    m_Properties.Spinner(spinnerConfig);
+                            Get = () => m_Target.Data.InitialResources[cachedIdx].Value,
+                            Set = (v) => { m_Target.Data.InitialResources[cachedIdx].Value = (short)v; Dirty(); }
+                        };
+
+                        m_Properties.Spinner(varType.Id().ToString(true), spinnerConfig);
+                    }
                 }
+                m_Properties.EndGroup();
             }
-            m_Properties.EndGroup();
 
-            m_Properties.BeginGroup("Properties");
+            if (m_Target.Data.InitialProperties.Length > 0)
             {
-                for (int i = 0; i < m_Target.Data.InitialProperties.Length; ++i)
+                m_Properties.BeginGroup("properties", "Properties");
                 {
-                    int cachedIdx = i;
-                    VarPairF amount = m_Target.Data.InitialProperties[cachedIdx];
-                    VarType varType = inDatabase.Vars[amount.Id];
-                    VarType.ConfigRange config = varType.ConfigSettings();
-
-                    ConfigPropertySpinner.Configuration spinnerConfig = new ConfigPropertySpinner.Configuration()
+                    for (int i = 0; i < m_Target.Data.InitialProperties.Length; ++i)
                     {
-                        Name = varType.ScriptName().ToString(),
+                        int cachedIdx = i;
+                        VarPairF amount = m_Target.Data.InitialProperties[cachedIdx];
+                        VarType varType = inDatabase.Vars[amount.Id];
+                        VarType.ConfigRange config = varType.ConfigSettings();
 
-                        Min = config.Min,
-                        Max = config.Max,
-                        Increment = config.Increment,
-                        WholeNumbers = false,
+                        ConfigPropertySpinner.Configuration spinnerConfig = new ConfigPropertySpinner.Configuration()
+                        {
+                            Name = varType.ScriptName().ToString(),
 
-                        Get = () => m_Target.Data.InitialProperties[cachedIdx].Value,
-                        Set = (v) => { m_Target.Data.InitialProperties[cachedIdx].Value = v; Dirty(); }
-                    };
+                            Min = config.Min,
+                            Max = config.Max,
+                            Increment = config.Increment,
+                            WholeNumbers = false,
 
-                    m_Properties.Spinner(spinnerConfig);
+                            Get = () => m_Target.Data.InitialProperties[cachedIdx].Value,
+                            Set = (v) => { m_Target.Data.InitialProperties[cachedIdx].Value = v; Dirty(); }
+                        };
+
+                        m_Properties.Spinner(varType.Id().ToString(true), spinnerConfig);
+                    }
                 }
+                m_Properties.EndGroup();
             }
-            m_Properties.EndGroup();
 
-            m_Properties.BeginGroup("Time");
+            m_Properties.BeginGroup("time", "Time");
             {
                 // ConfigPropertySpinner.Configuration actionCountConfig = new ConfigPropertySpinner.Configuration()
                 // {
@@ -206,7 +215,7 @@ namespace ProtoAqua.Energy
                 //     Get = () => m_Target.Data.TickActionCount,
                 //     Set = (v) => { m_Target.Data.TickActionCount = (int)v; Dirty(); }
                 // };
-                // m_Properties.Spinner(actionCountConfig);
+                // m_Properties.Spinner("actionCount", actionCountConfig);
 
                 ConfigPropertySpinner.Configuration durationConfig = new ConfigPropertySpinner.Configuration()
                 {
@@ -223,9 +232,11 @@ namespace ProtoAqua.Energy
                     Get = () => m_Target.Data.Duration,
                     Set = (v) => { m_Target.Data.Duration = (ushort)v; Dirty(); }
                 };
-                m_Properties.Spinner(durationConfig);
+                m_Properties.Spinner("duration", durationConfig);
             }
             m_Properties.EndGroup();
+
+            m_Properties.EndControls();
         }
 
         private void Randomize()

@@ -69,6 +69,7 @@ namespace ProtoAqua.Energy
             header.Description = m_Header.Description;
             header.ContentAreas = m_Header.ContentAreas;
             header.Difficulty = m_Header.Difficulty;
+            header.Qualitative = m_Header.Qualitative;
 
             ScenarioPackage package = new ScenarioPackage();
             package.Header = header;

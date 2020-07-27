@@ -42,13 +42,15 @@ namespace ProtoAqua.Energy
 
         public void Repopulate()
         {
-            m_Properties.Clear();
+            m_Properties.BeginControls();
 
             IEnumerable<ActorType> targetTypes = m_Database.Actors.GetAll(m_Scenario.Data.StartingActorIds());
             foreach(var type in targetTypes)
             {
                 PopulateActorType(type);
             }
+
+            m_Properties.EndControls();
         }
 
         public void Populate(ScenarioPackage inScenario, ISimDatabase inDatabase)
@@ -62,14 +64,15 @@ namespace ProtoAqua.Energy
 
         private void PopulateActorType(ActorType inType)
         {
-            m_Properties.BeginGroup(inType.ScriptName());
+            m_Properties.BeginGroup(inType.Id().ToString(), inType.ScriptName());
             {
                 if ((m_ContentMask & ContentArea.Photosynthesis) != 0)
                 {
-                    m_Properties.BeginGroup("Resources");
+                    m_Properties.BeginGroup("resources", "Resources");
                     {
-                        // resources
                         var resourceSettings = inType.Requirements();
+
+                        // resources
                         for(int i = 0; i < resourceSettings.DesiredResources.Length; ++i)
                         {
                             int cachedIdx = i;
@@ -88,7 +91,7 @@ namespace ProtoAqua.Energy
                                 Set = (v) => { resourceSettings.DesiredResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
                             };
                             
-                            m_Properties.Spinner(reqConfig);
+                            m_Properties.Spinner("consume:" + reqVar.Id().ToString(true), reqConfig);
                         }
                         for(int i = 0; i < resourceSettings.ProducingResources.Length; ++i)
                         {
@@ -108,7 +111,7 @@ namespace ProtoAqua.Energy
                                 Set = (v) => { resourceSettings.ProducingResources[cachedIdx].BaseValue = (ushort) v; Dirty(); }
                             };
                             
-                            m_Properties.Spinner(reqConfig);
+                            m_Properties.Spinner("produce:" + reqVar.Id().ToString(true), reqConfig);
                         }
                     }
                     m_Properties.EndGroup();
@@ -121,36 +124,56 @@ namespace ProtoAqua.Energy
 
                     if (eatSettings.EdibleActors.Length > 0)
                     {
-                        m_Properties.BeginGroup("Eating");
+                        m_Properties.BeginGroup("eating", "Eating");
 
                         for(int i = 0; i < eatSettings.EdibleActors.Length; ++i)
                         {
                             int cachedIdx = i;
                             var conversion = eatSettings.EdibleActors[i];
-                            ConfigPropertySpinner.Configuration conversionConfig = new ConfigPropertySpinner.Configuration()
+                            ActorType actorType = m_Database.Actors[conversion.ActorType];
+                            if (m_Scenario.Header.Qualitative)
                             {
-                                Name = "Preference for " + m_Database.Actors[conversion.ActorType].ScriptName(),
+                                ConfigPropertyEnum.Configuration conversionConfig = new ConfigPropertyEnum.Configuration()
+                                {
+                                    Name = "Eats How Much " + actorType.ScriptName(),
 
-                                Min = 0,
-                                Max = 2,
-                                Increment = 0.1f,
-                                SnapToIncrement = true,
-                                WholeNumbers = false,
+                                    Values = new LabeledValue[] { LabeledValue.Make(0, "None"), LabeledValue.Make(conversion.QualitativeSmall, "A Little"),
+                                        LabeledValue.Make(conversion.QualitativeMed, "Some"), LabeledValue.Make(conversion.QualitativeHigh, "A Lot")},
+                                    DefaultValue = 0,
 
-                                Suffix = "x",
+                                    Get = () => eatSettings.EdibleActors[cachedIdx].Rate,
+                                    Set = (v) => { eatSettings.EdibleActors[cachedIdx].Rate = (float) v; Dirty(); }
+                                };
 
-                                Get = () => eatSettings.EdibleActors[cachedIdx].Rate,
-                                Set = (v) => { eatSettings.EdibleActors[cachedIdx].Rate = v; Dirty(); }
-                            };
+                                m_Properties.Enum(actorType.Id().ToString(), conversionConfig);
+                            }
+                            else
+                            {
+                                ConfigPropertySpinner.Configuration conversionConfig = new ConfigPropertySpinner.Configuration()
+                                {
+                                    Name = "Preference for " + actorType.ScriptName(),
 
-                            m_Properties.Spinner(conversionConfig);
+                                    Min = 0,
+                                    Max = 2,
+                                    Increment = 0.1f,
+                                    SnapToIncrement = true,
+                                    WholeNumbers = false,
+
+                                    Suffix = "x",
+
+                                    Get = () => eatSettings.EdibleActors[cachedIdx].Rate,
+                                    Set = (v) => { eatSettings.EdibleActors[cachedIdx].Rate = v; Dirty(); }
+                                };
+
+                                m_Properties.Spinner(actorType.Id().ToString(), conversionConfig);
+                            }
                         }
 
                         m_Properties.EndGroup();
                     }
                 }
 
-                m_Properties.BeginGroup("Life Cycle");
+                m_Properties.BeginGroup("lifecycle", "Life Cycle");
                 {
                     // growth
                     var growthSettings = inType.GrowthSettings();
@@ -171,7 +194,7 @@ namespace ProtoAqua.Energy
                             Get = () => growthSettings.Interval,
                             Set = (v) => { growthSettings.Interval = (ushort) v; Dirty(); }
                         };
-                        m_Properties.Spinner(growthFrequencyConfig);
+                        m_Properties.Spinner("growthInterval", growthFrequencyConfig);
                     }
 
                     // repro
@@ -193,7 +216,7 @@ namespace ProtoAqua.Energy
                             Get = () => reproSettings.Interval,
                             Set = (v) => { reproSettings.Interval = (ushort) v; Dirty(); }
                         };
-                        m_Properties.Spinner(reproFrequencyConfig);
+                        m_Properties.Spinner("reproInterval", reproFrequencyConfig);
                     }
 
                     // death
@@ -215,7 +238,7 @@ namespace ProtoAqua.Energy
                             Get = () => deathSettings.Age,
                             Set = (v) => { deathSettings.Age = (ushort) v; Dirty(); }
                         };
-                        m_Properties.Spinner(deathAgeConfig);
+                        m_Properties.Spinner("deathAge", deathAgeConfig);
                     }
                 }
                 m_Properties.EndGroup();
@@ -226,6 +249,7 @@ namespace ProtoAqua.Energy
         private void RandomizeAll()
         {
             RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds());
+            Services.Audio.PostEvent("ImpossibleDifficulty");
             m_Properties.SyncAll();
             Dirty();
         }
@@ -234,12 +258,14 @@ namespace ProtoAqua.Energy
         {
             RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 1);
             m_Properties.SyncAll();
+            Services.Audio.PostEvent("EasyDifficulty");
             Dirty();
         }
 
         private void RandomizeMedium()
         {
             RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 2);
+            Services.Audio.PostEvent("MediumDifficulty");
             m_Properties.SyncAll();
             Dirty();
         }
@@ -247,6 +273,7 @@ namespace ProtoAqua.Energy
         private void RandomizeHard()
         {
             RandomizeDatabase(m_Database, m_ContentMask, m_Scenario.Data.StartingActorIds(), 3);
+            Services.Audio.PostEvent("HardDifficulty");
             m_Properties.SyncAll();
             Dirty();
         }
@@ -254,6 +281,7 @@ namespace ProtoAqua.Energy
         private void ResetRules()
         {
             m_Database.ClearOverrides();
+            Services.Audio.PostEvent("ResetRules");
             m_Properties.SyncAll();
             Dirty();
         }

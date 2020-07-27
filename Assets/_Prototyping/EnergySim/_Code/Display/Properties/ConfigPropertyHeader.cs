@@ -12,44 +12,54 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Energy
 {
-    public class ConfigPropertyHeader : MonoBehaviour, IPooledObject<ConfigPropertyHeader>
+    public class ConfigPropertyHeader : ConfigPropertyControl
     {
         #region Inspector
         
-        [SerializeField] private IndentGroup m_Indent = null;
         [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private Button m_CollapseButton = null;
 
         #endregion // Inspector
 
-        public void Configure(string inLabel, int inIndent)
+        private Routine m_ButtonAnimateRoutine;
+
+        private void Awake()
+        {
+            m_CollapseButton.onClick.AddListener(OnCollapseClicked);
+        }
+
+        public void Configure(string inLabel)
         {
             m_Label.SetText(inLabel);
-            m_Indent.SetIndent(inIndent);
         }
 
-        #region IPooledObject
-
-        void IPooledObject<ConfigPropertyHeader>.OnAlloc()
+        private void OnCollapseClicked()
         {
-            // throw new NotImplementedException();
+            if (Expandable.ChildrenExpanded())
+            {
+                Expandable.CollapseChildren();
+                m_ButtonAnimateRoutine.Replace(this, m_CollapseButton.transform.RotateTo(0, 0.2f, Axis.Z, Space.Self).Ease(Curve.CubeOut)).ExecuteWhileDisabled();
+            }
+            else
+            {
+                Expandable.ExpandChildren();
+                m_ButtonAnimateRoutine.Replace(this, m_CollapseButton.transform.RotateTo(-90, 0.2f, Axis.Z, Space.Self).Ease(Curve.CubeOut)).ExecuteWhileDisabled();
+            }
         }
 
-        void IPooledObject<ConfigPropertyHeader>.OnConstruct(IPool<ConfigPropertyHeader> inPool)
+        protected override void OnFree()
         {
-            // throw new NotImplementedException();
-        }
-
-        void IPooledObject<ConfigPropertyHeader>.OnDestruct()
-        {
-            // throw new NotImplementedException();
-        }
-
-        void IPooledObject<ConfigPropertyHeader>.OnFree()
-        {
+            base.OnFree();
+            
             m_Label.SetText(string.Empty);
-            m_Indent.SetIndent(0);
+            m_ButtonAnimateRoutine.Stop();
         }
 
-        #endregion // IPooledObject
+        public override void Sync()
+        {
+            base.Sync();
+
+            m_CollapseButton.transform.SetRotation(Expandable.ChildrenExpanded() ? -90 : 0, Axis.Z, Space.Self);
+        }
     }
 }

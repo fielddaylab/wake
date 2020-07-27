@@ -18,10 +18,11 @@ namespace ProtoAqua.Energy
 
         [AutoEnum] public ContentArea ContentAreas;
         [Range(0, 3)] public int Difficulty;
+        public bool Qualitative;
 
         #region ISerializedObject
 
-        ushort ISerializedVersion.Version { get { return 2; } }
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -37,6 +38,11 @@ namespace ProtoAqua.Energy
             {
                 ioSerializer.Enum("contentAreas", ref ContentAreas);
                 ioSerializer.Serialize("difficulty", ref Difficulty, 1);
+            }
+
+            if (ioSerializer.ObjectVersion >= 3)
+            {
+                ioSerializer.Serialize("qualitative", ref Qualitative, false);
             }
         }
 

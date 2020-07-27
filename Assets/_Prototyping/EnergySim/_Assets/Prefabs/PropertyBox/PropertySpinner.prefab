@@ -705,6 +705,8 @@ GameObject:
   m_Component:
   - component: {fileID: 703099146733442107}
   - component: {fileID: 2464240983293974444}
+  - component: {fileID: 4316525477301229970}
+  - component: {fileID: 683492744345369833}
   m_Layer: 5
   m_Name: PropertySpinner
   m_TagString: Untagged
@@ -744,6 +746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1749efe4ba5a204d8d2d228200f45b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Expandable: {fileID: 683492744345369833}
   m_Indent: {fileID: 2119440225334644282}
   m_Label: {fileID: 703099145170183766}
   m_Input: {fileID: 703099146608022353}
@@ -751,6 +754,32 @@ MonoBehaviour:
   m_IncrementButton: {fileID: 3877837686689279847}
   m_InitialButtonRepeatDelay: 0.3
   m_ButtonRepeatDelay: 0.1
+--- !u!225 &4316525477301229970
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703099146733442108}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &683492744345369833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703099146733442108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3babce14cd362774ea48822c249b9591, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RectTransform: {fileID: 703099146733442107}
+  m_CanvasGroup: {fileID: 4316525477301229970}
 --- !u!1 &1842906866246632902
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,7 +949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RectTransform: {fileID: 4348540978921725186}
-  m_IndentSize: 16
+  m_IndentSize: 32
 --- !u!1 &7863911017122073738
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,26 +29,35 @@ MonoBehaviour:
     EdibleActors:
     - ActorType:
         m_Value: 1431454536
-      ConversionRate: 1
+      Rate: 1
+      QualitativeSmall: 0.5
+      QualitativeMed: 0.5
+      QualitativeHigh: 1
     - ActorType:
         m_Value: 1262832720
-      ConversionRate: 0
+      Rate: 0
+      QualitativeSmall: 0.2
+      QualitativeMed: 0.5
+      QualitativeHigh: 1
     - ActorType:
         m_Value: 1398030674
-      ConversionRate: 0
+      Rate: 0
+      QualitativeSmall: 0.5
+      QualitativeMed: 1
+      QualitativeHigh: 2
     BaseEatSize: 10
     MassEatSize: 0
     MaxSizeMultiplier: 1.25
   m_GrowthSettings:
     StartingMass: 50
     MaxMass: 50
-    Frequency: 0
+    Interval: 0
     MinGrowth: 0
     ImprovedGrowthResourceThresholds: []
     ImprovedGrowthPropertyThresholds: []
     ImprovedGrowth: 0
   m_ReproductionSettings:
-    Frequency: 8
+    Interval: 8
     Count: 1
     MinAge: 0
     MinMass: 0

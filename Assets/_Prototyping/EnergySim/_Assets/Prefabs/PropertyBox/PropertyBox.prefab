@@ -186,7 +186,7 @@ MonoBehaviour:
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleHeight: 1
 --- !u!114 &2466997551618890137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,32 +497,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HeaderPool:
-    m_Name: Header
     m_Prefab: {fileID: 5841500949905262350, guid: 53462cacf3fd0e24283a693b76df163b,
       type: 3}
+    m_Name: Header
     m_InitialCapacity: 8
-    m_InitialPrewarm: 4
     m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
     m_DefaultPoolRoot: {fileID: 7795886731365502837}
     m_DefaultSpawnRoot: {fileID: 2466997551618890139}
     m_ResetTransformOnAlloc: 1
   m_SpinnerPool:
-    m_Name: Spinner
     m_Prefab: {fileID: 2464240983293974444, guid: 3b325955ecf87c145944c19f7396b1f6,
       type: 3}
+    m_Name: Spinner
     m_InitialCapacity: 8
-    m_InitialPrewarm: 4
     m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
     m_DefaultPoolRoot: {fileID: 7795886731365502837}
     m_DefaultSpawnRoot: {fileID: 2466997551618890139}
     m_ResetTransformOnAlloc: 1
   m_TextPool:
-    m_Name: Text
     m_Prefab: {fileID: 5746350282572348070, guid: 0bc9091f53f7bcf4c80ea9a15248e413,
       type: 3}
+    m_Name: Text
     m_InitialCapacity: 8
-    m_InitialPrewarm: 4
     m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
+    m_DefaultPoolRoot: {fileID: 7795886731365502837}
+    m_DefaultSpawnRoot: {fileID: 2466997551618890139}
+    m_ResetTransformOnAlloc: 1
+  m_EnumPool:
+    m_Prefab: {fileID: 2464240983293974444, guid: 4f919179b61e00b4eadbb52123b99120,
+      type: 3}
+    m_Name: Enum
+    m_InitialCapacity: 8
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
+    m_DefaultPoolRoot: {fileID: 7795886731365502837}
+    m_DefaultSpawnRoot: {fileID: 2466997551618890139}
+    m_ResetTransformOnAlloc: 1
+  m_TogglePool:
+    m_Prefab: {fileID: 2894636657161397274, guid: 44bcf3c85c130c348ac30bac1d1e4b71,
+      type: 3}
+    m_Name: Toggle
+    m_InitialCapacity: 8
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
     m_DefaultPoolRoot: {fileID: 7795886731365502837}
     m_DefaultSpawnRoot: {fileID: 2466997551618890139}
     m_ResetTransformOnAlloc: 1
