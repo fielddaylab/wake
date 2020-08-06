@@ -14,15 +14,20 @@ namespace ProtoAqua.Energy
 
         public string Name;
         public string Author;
+
+        [Multiline]
         public string Description;
 
+        public string PartnerIntroQuote;
+        public string PartnerHelpQuote;
+        public string PartnerCompleteQuote;
+
         [AutoEnum] public ContentArea ContentAreas;
-        [Range(0, 3)] public int Difficulty;
         public bool Qualitative;
 
         #region ISerializedObject
 
-        ushort ISerializedVersion.Version { get { return 3; } }
+        ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -37,12 +42,23 @@ namespace ProtoAqua.Energy
             if (ioSerializer.ObjectVersion >= 2)
             {
                 ioSerializer.Enum("contentAreas", ref ContentAreas);
-                ioSerializer.Serialize("difficulty", ref Difficulty, 1);
+                if (ioSerializer.ObjectVersion < 4)
+                {
+                    int difficulty = 1;
+                    ioSerializer.Serialize("difficulty", ref difficulty, 1);
+                }
             }
 
             if (ioSerializer.ObjectVersion >= 3)
             {
                 ioSerializer.Serialize("qualitative", ref Qualitative, false);
+            }
+
+            if (ioSerializer.ObjectVersion >= 4)
+            {
+                ioSerializer.Serialize("partnerIntroQuote", ref PartnerIntroQuote, string.Empty);
+                ioSerializer.Serialize("partnerHelpQuote", ref PartnerHelpQuote, string.Empty);
+                ioSerializer.Serialize("partnerCompleteQuote", ref PartnerIntroQuote, string.Empty);
             }
         }
 

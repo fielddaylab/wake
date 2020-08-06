@@ -19,7 +19,7 @@ namespace ProtoAudio
         #region Inspector
 
         [SerializeField] private AudioPackage m_DefaultPackage = null;
-        [SerializeField] private AudioPool m_Pool;
+        [SerializeField] private AudioPool m_Pool = null;
 
         #endregion // Inspector
 

@@ -14,7 +14,10 @@ namespace ProtoAudio
 
         #region Inspector
 
-        [SerializeField] private AudioSource m_Source;
+        [SerializeField] private AudioSource m_Source = null;
+
+        [SerializeField, Range(0, 1)] private float m_VolumeMultiplier = 1;
+        [SerializeField, Range(-64, 64)] private float m_PitchMultiplier = 1;
 
         #endregion // Inspector
 
@@ -157,6 +160,11 @@ namespace ProtoAudio
             AudioPropertyBlock.Combine(m_LastKnownSettings, m_EventSettings, ref m_LastKnownSettings);
             AudioPropertyBlock.Combine(m_LastKnownSettings, m_LocalSettings, ref m_LastKnownSettings);
 
+            #if UNITY_EDITOR
+            m_LastKnownSettings.Pitch *= m_PitchMultiplier;
+            m_LastKnownSettings.Volume *= m_VolumeMultiplier;
+            #endif // UNITY_EDITOR
+
             switch(m_CurrentState)
             {
                 case State.PlayRequested:
@@ -277,6 +285,9 @@ namespace ProtoAudio
             m_Source.clip = null;
             m_VolumeRoutine.Stop();
             m_PitchRoutine.Stop();
+
+            m_PitchMultiplier = 1;
+            m_VolumeMultiplier = 1;
 
             #if UNITY_EDITOR
             gameObject.name = "Unused";

@@ -25,5 +25,6 @@ namespace ProtoAqua
         static public readonly FourCC Network = Register("NET", "Network system");
         static public readonly FourCC State = Register("STAT", "State system");
         static public readonly FourCC Tweaks = Register("TWCK", "Tweak system");
+        static public readonly FourCC CommonUI = Register("CMUI", "Common UI");
     }
 }

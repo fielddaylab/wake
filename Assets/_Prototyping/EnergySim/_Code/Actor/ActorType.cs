@@ -40,10 +40,7 @@ namespace ProtoAqua.Energy
         {
             [ActorTypeId] public FourCC ActorType;
             [UnityEngine.Serialization.FormerlySerializedAs("ConversionRate")] public float Rate;
-
-            public float QualitativeSmall;
-            public float QualitativeMed;
-            public float QualitativeHigh;
+            public QualitativeParamsF Qualitative;
         }
 
         [Serializable]
@@ -52,6 +49,8 @@ namespace ProtoAqua.Energy
             [VarTypeId] public FourCC ResourceId;
             public ushort BaseValue;
             public float MassValue;
+
+            public QualitativeParams Qualitative;
         }
 
         [Serializable]
@@ -61,6 +60,8 @@ namespace ProtoAqua.Energy
             public CompareOp Comparison;
             public float BaseValue;
             public float MassValue;
+
+            public QualitativeParamsF Qualitative;
         }
 
         [Serializable]
@@ -90,6 +91,8 @@ namespace ProtoAqua.Energy
             [UnityEngine.Serialization.FormerlySerializedAs("Frequency")] public ushort Interval;
             public ushort Count;
 
+            public QualitativeParams QualitativeInterval;
+
             // prerequisites
             public ushort MinAge;
             public ushort MinMass;
@@ -108,6 +111,7 @@ namespace ProtoAqua.Energy
             {
                 Interval = inClone.Interval;
                 Count = inClone.Count;
+                QualitativeInterval = inClone.QualitativeInterval;
 
                 MinAge = inClone.MinAge;
                 MinMass = inClone.MinMass;
@@ -128,6 +132,8 @@ namespace ProtoAqua.Energy
             [UnityEngine.Serialization.FormerlySerializedAs("Frequency")] public ushort Interval;
             public ushort MinGrowth;
 
+            public QualitativeParams QualitativeInterval;
+
             public ResourceRequirementConfig[] ImprovedGrowthResourceThresholds;
             public PropertyCompareConfig[] ImprovedGrowthPropertyThresholds;
             public ushort ImprovedGrowth;
@@ -142,6 +148,8 @@ namespace ProtoAqua.Energy
                 StartingMass = inClone.StartingMass;
                 MaxMass = inClone.MaxMass;
 
+                QualitativeInterval = inClone.QualitativeInterval;
+
                 Interval = inClone.Interval;
                 MinGrowth = inClone.MinGrowth;
 
@@ -155,6 +163,7 @@ namespace ProtoAqua.Energy
         public class DeathConfig : ICopyCloneable<DeathConfig>
         {
             public ushort Age;
+            public QualitativeParams QualitativeAge;
 
             public VarPair[] ResourceStarvation;
             public VarPair[] PropertyStarvation;
@@ -170,6 +179,7 @@ namespace ProtoAqua.Energy
             public void CopyFrom(DeathConfig inClone)
             {
                 Age = inClone.Age;
+                QualitativeAge = inClone.QualitativeAge;
                 CloneUtils.CopyFrom(ref ResourceStarvation, inClone.ResourceStarvation);
                 CloneUtils.CopyFrom(ref PropertyStarvation, inClone.PropertyStarvation);
                 MassAgeThreshold = inClone.MassAgeThreshold;
@@ -183,6 +193,9 @@ namespace ProtoAqua.Energy
             public Sprite Image;
             public ushort MassScale;
             public Color Color = Color.white;
+            
+            public bool DisplayPopulation;
+            public bool DisplayMass;
         }
 
         [Serializable]
@@ -382,7 +395,7 @@ namespace ProtoAqua.Energy
         public ushort PredictGrowth(in ActorState inActorState, in EnergySimContext inContext)
         {
             // if this never grows, don't do anything
-            if (m_GrowthSettings.MinGrowth == 0 && m_GrowthSettings.ImprovedGrowth == 0)
+            if ((m_GrowthSettings.MinGrowth == 0 && m_GrowthSettings.ImprovedGrowth == 0) || m_GrowthSettings.Interval <= 0)
                 return 0;
 
             ushort remainingMass = (ushort)(m_GrowthSettings.MaxMass - inActorState.Mass);
@@ -580,6 +593,87 @@ namespace ProtoAqua.Energy
         #endif // UNITY_EDITOR
 
         #endregion // Unity Events
+    
+        #region Access by Name
+
+        public bool TryGetProperty(StringSlice inPath, out float outValue)
+        {
+            if (inPath == "lifecycle/growthInterval")
+            {
+                outValue = m_GrowthSettings.Interval;
+                return true;
+            }
+
+            if (inPath == "lifecycle/reproInterval")
+            {
+                outValue = m_ReproductionSettings.Interval;
+                return true;
+            }
+
+            if (inPath == "lifecycle/deathAge")
+            {
+                outValue = m_DeathSettings.Age;
+                return true;
+            }
+
+            if (inPath.StartsWith("eating"))
+            {
+                StringSlice idSlice = inPath.Substring(7);
+                FourCC id = new FourCC(idSlice.ToString());
+                for(int i = 0; i < m_EatingSettings.EdibleActors.Length; ++i)
+                {
+                    if (m_EatingSettings.EdibleActors[i].ActorType == id)
+                    {
+                        outValue = m_EatingSettings.EdibleActors[i].Rate;
+                        return true;
+                    }
+                }
+            }
+
+            outValue = 0;
+            return false;
+        }
+
+        public bool TrySetProperty(StringSlice inPath, float inValue)
+        {
+            if (inPath == "lifecycle/growthInterval")
+            {
+                m_GrowthSettings.Interval = (ushort) inValue;
+                return true;
+            }
+
+            if (inPath == "lifecycle/reproInterval")
+            {
+                m_ReproductionSettings.Interval = (ushort) inValue;
+                return true;
+            }
+
+            if (inPath == "lifecycle/deathAge")
+            {
+                m_DeathSettings.Age = (ushort) inValue;
+                return true;
+            }
+
+            if (inPath.StartsWith("eating"))
+            {
+                StringSlice idSlice = inPath.Substring(7);
+                FourCC id = new FourCC(idSlice.ToString());
+                for(int i = 0; i < m_EatingSettings.EdibleActors.Length; ++i)
+                {
+                    if (m_EatingSettings.EdibleActors[i].ActorType == id)
+                    {
+                        m_EatingSettings.EdibleActors[i].Rate = inValue;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        static private readonly char[] PathSplitChars = new char[] { '/' };
+
+        #endregion // Access by Name
     }
 
     [LabeledEnum, Flags]

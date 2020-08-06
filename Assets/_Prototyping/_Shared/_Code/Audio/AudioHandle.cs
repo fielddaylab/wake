@@ -73,6 +73,12 @@ namespace ProtoAudio
 
         #region Checks
 
+        public bool Exists()
+        {
+            var track = GetTrack();
+            return track != null;
+        }
+
         public bool IsPlaying()
         {
             var track = GetTrack();

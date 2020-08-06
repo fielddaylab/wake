@@ -31,7 +31,7 @@ namespace ProtoAqua.Energy
         [SerializeField] private Gradient m_SyncGradientBoldText = null;
         [SerializeField] private Gradient m_SyncGradientSubdued = null;
         [SerializeField] private Gradient m_SyncGradientSubduedText = null;
-        [SerializeField] private Color m_SyncLoading = Color.gray;
+        [SerializeField] private Gradient m_SyncGradientProgress = null;
 
         [Header("Sync Colors")]
 
@@ -46,7 +46,7 @@ namespace ProtoAqua.Energy
         public float CalculateSync(in EnergySimContext inContextA, in EnergySimContext inContextB)
         {
             float error = 100 * EnergySim.CalculateError(inContextA.CachedCurrent, inContextB.CachedCurrent, inContextA.Database);
-            float sync = 100 - (float) Math.Min(Math.Round(error * m_ErrorScale), 100);
+            float sync = 100 - (float) Math.Min(Math.Ceiling(error * m_ErrorScale), 100);
             return sync;
         }
 
@@ -64,7 +64,10 @@ namespace ProtoAqua.Energy
             return m_SyncGradientSubdued.Evaluate(inSync / 100);
         }
 
-        public Color SyncLoadingColor() { return m_SyncLoading; }
+        public Color EvaluateSyncGradientProgress(float inSync)
+        {
+            return m_SyncGradientProgress.Evaluate(inSync / 100);
+        }
 
         public ColorSpritePair GetLabelSettings(float inDifference)
         {

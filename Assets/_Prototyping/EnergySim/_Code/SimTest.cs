@@ -14,7 +14,6 @@ namespace ProtoAqua.Energy
     {
         public SimLoader loader;
         public SimDisplay display;
-        public SimConfig config;
 
         [Header("Debug")]
         public bool debug = true;
@@ -36,6 +35,12 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private EnergyConfig m_GlobalSettings;
 
+        [NonSerialized] private bool m_Complete = true;
+        [NonSerialized] private bool m_QueuedReset = false;
+        [NonSerialized] private bool m_QueuedRuleRegen = false;
+
+        [NonSerialized] private BatchedUnityDebugLogger m_Logger = new BatchedUnityDebugLogger();
+
         public void Start()
         {
             m_GlobalSettings = Services.Tweaks.Get<EnergyConfig>();
@@ -46,9 +51,11 @@ namespace ProtoAqua.Energy
             m_BaseDatabase = loader.LoadDatabase(m_ScenarioPackage.Header.DatabaseId);
 
             m_DatabaseOverride = new SimDatabaseOverride(m_BaseDatabase);
-            RulesConfigPanel.RandomizeDatabase(m_DatabaseOverride, m_ScenarioPackage.Header.ContentAreas, m_ScenarioPackage.Data.StartingActorIds(), m_ScenarioPackage.Header.Difficulty);
 
-            config.Initialize(m_ScenarioPackage, m_DatabaseOverride);
+            m_ScenarioPackage.ApplyRules(m_DatabaseOverride);
+
+            display.Menus.Initialize(m_ScenarioPackage, m_DatabaseOverride);
+            display.Rules.Populate(m_ScenarioPackage, m_DatabaseOverride);
 
             simContext.Database = m_DatabaseOverride;
             simContext.Scenario = m_ScenarioPackage;
@@ -58,19 +65,56 @@ namespace ProtoAqua.Energy
 
             if (debug)
             {
-                simContext.Logger = new BatchedUnityDebugLogger();
-                dataContext.Logger = new BatchedUnityDebugLogger();
+                simContext.Logger = m_Logger;
+                dataContext.Logger = m_Logger;
             }
 
             sim = new EnergySim();
 
             sim.Setup(ref simContext);
             sim.Setup(ref dataContext);
+
             display.Sync(m_ScenarioPackage.Header, simContext, dataContext);
 
             m_CalculateTotalRoutine.Replace(this, CalculateTotalSync(dataContext, simContext, m_ScenarioPackage.Data.Duration));
 
             display.Ticker.OnTickChanged += UpdateTick;
+
+            display.Menus.EditPanel.OnRuleParametersChanged += QueueRuleRegen;
+            display.Menus.EditPanel.OnRequestLevelRestart += QueueReset;
+
+            display.Menus.ShowIntro();
+        }
+
+        private void QueueRuleRegen()
+        {
+            m_QueuedRuleRegen = true;
+        }
+
+        private void QueueReset()
+        {
+            m_QueuedReset = true;
+        }
+
+        private void ResetScenario()
+        {
+            m_QueuedReset = false;
+            m_QueuedRuleRegen = false;
+
+            m_ScenarioPackage.ApplyRules(m_DatabaseOverride);
+            display.Rules.Populate(m_ScenarioPackage, m_DatabaseOverride);
+
+            sim.Setup(ref simContext);
+            sim.Setup(ref dataContext);
+
+            m_ScenarioPackage.Data.Sync(ref m_ScenarioVersion);
+            m_BaseDatabase.Sync(ref m_DataDBVersion);
+            m_DatabaseOverride.Sync(ref m_SimDBVersion);
+
+            display.Sync(m_ScenarioPackage.Header, simContext, dataContext);
+            display.Ticker.UpdateTickSync(null, 0);
+
+            m_CalculateTotalRoutine.Replace(this, CalculateTotalSync(dataContext, simContext, m_ScenarioPackage.Data.Duration));
         }
 
         private void OnDestroy()
@@ -80,10 +124,22 @@ namespace ProtoAqua.Energy
 
         private void Update()
         {
-            if (config.IsPaused())
+            if (display.Menus.IsOpen())
             {
                 m_CalculateTotalRoutine.Pause();
                 return;
+            }
+
+            if (m_QueuedReset)
+            {
+                ResetScenario();
+                return;
+            }
+
+            if (m_QueuedRuleRegen)
+            {
+                display.Rules.Populate(m_ScenarioPackage, m_DatabaseOverride);
+                m_QueuedRuleRegen = false;
             }
 
             m_CalculateTotalRoutine.Resume();
@@ -117,6 +173,24 @@ namespace ProtoAqua.Energy
             }
         }
 
+        private void LateUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.BackQuote)) 
+            {
+                debug = !debug;
+                if (debug)
+                {
+                    simContext.Logger = dataContext.Logger = m_Logger;
+                    Debug.Log("[SimTest] Debugging turned on");
+                }
+                else
+                {
+                    simContext.Logger = dataContext.Logger = null;
+                    Debug.Log("[SimTest] Debugging turned off");
+                }
+            }
+        }
+
         private void UpdateTick(ushort inTick)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -132,32 +206,47 @@ namespace ProtoAqua.Energy
 
         private IEnumerator CalculateTotalSync(EnergySimContext inData, EnergySimContext inModel, ushort inTotalTicks)
         {
-            display.Syncer.HideTotalSync();
-
-            inData.Logger = null;
-            inModel.Logger = null;
+            // inData.Logger = null;
+            // inModel.Logger = null;
 
             float syncAccum = 0;
 
-            int startingFrameCount = Time.frameCount;
-
+            int syncedFrameCount = 0;
+            int framesWithErrors = 0;
             float[] allSyncs = new float[inTotalTicks + 1];
 
             yield return Routine.ForAmortize(0, inTotalTicks + 1, (i) => {
                 sim.Scrub(ref inData, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
                 sim.Scrub(ref inModel, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
                 float sync = m_GlobalSettings.CalculateSync(inData, inModel);
+                if (sync < 100)
+                {
+                    ++framesWithErrors;
+                }
+                else if (framesWithErrors == 0 && i > 0)
+                {
+                    ++syncedFrameCount;
+                }
                 syncAccum += sync;
                 allSyncs[i] = sync;
             }, 8);
 
-            float avgSync = (float) Math.Round(syncAccum / (inTotalTicks + 1));
-            display.Syncer.ShowTotalSync(avgSync);
-            display.Ticker.UpdateTickSync(allSyncs);
+            float progress = (float) Math.Floor(100f * syncedFrameCount / inTotalTicks);
+            display.Ticker.UpdateTickSync(allSyncs, progress);
 
-            int endingFrameCount = Time.frameCount;
-
-            Debug.LogFormat("[SimTest] Updated total sync ({0}%), took {1} frames", avgSync, endingFrameCount - startingFrameCount);
+            if (progress == 100)
+            {
+                if (!m_Complete)
+                {
+                    m_Complete = true;
+                    Services.Audio.PostEvent("full_sync");
+                    display.Menus.ShowComplete();
+                }
+            }
+            else
+            {
+                m_Complete = false;
+            }
         }
 
         private QueryParams GetQueryParams()

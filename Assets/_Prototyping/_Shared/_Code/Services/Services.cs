@@ -71,6 +71,13 @@ namespace ProtoAqua
             get { return RetrieveOrFind(ref s_CachedTweakMgr, ServiceIds.Tweaks); }
             set { Store(ref s_CachedTweakMgr, value); }
         }
+
+        static private UIMgr s_CachedUIMgr;
+        static public UIMgr UI
+        {
+            get { return RetrieveOrFind(ref s_CachedUIMgr, ServiceIds.CommonUI); }
+            set { Store(ref s_CachedUIMgr, value); }
+        }
     
         #endregion // Accessors
 

@@ -29,8 +29,12 @@ MonoBehaviour:
   m_GrowthSettings:
     StartingMass: 10
     MaxMass: 65535
-    Frequency: 1
+    Interval: 1
     MinGrowth: 5
+    QualitativeInterval:
+      Low: 1
+      Medium: 4
+      High: 7
     ImprovedGrowthResourceThresholds: []
     ImprovedGrowthPropertyThresholds:
     - PropertyId:
@@ -38,25 +42,32 @@ MonoBehaviour:
       Comparison: 2
       BaseValue: 5
       MassValue: 0.05
+      Qualitative:
+        Low: 0
+        Medium: 0
+        High: 0
     ImprovedGrowth: 15
   m_ReproductionSettings:
-    Frequency: 4
+    Interval: 4
     Count: 1
+    QualitativeInterval:
+      Low: 1
+      Medium: 4
+      High: 7
     MinAge: 1
     MinMass: 0
     ResourceThresholds: []
-    PropertyThresholds:
-    - PropertyId:
-        m_Value: 1279739988
-      Comparison: 2
-      BaseValue: 4
-      MassValue: 0
+    PropertyThresholds: []
     MinActorMass:
       Id:
         m_Value: 0
-      Count: 25
+      Count: 0
   m_DeathSettings:
     Age: 0
+    QualitativeAge:
+      Low: 1
+      Medium: 4
+      High: 7
     ResourceStarvation:
     - Id:
         m_Value: 1129263616
@@ -74,5 +85,7 @@ MonoBehaviour:
     Image: {fileID: 0}
     MassScale: 5
     Color: {r: 0.4901961, g: 0.59607846, b: 0.07450981, a: 1}
+    DisplayPopulation: 1
+    DisplayMass: 1
   m_ExtraData:
     m_Fields: []

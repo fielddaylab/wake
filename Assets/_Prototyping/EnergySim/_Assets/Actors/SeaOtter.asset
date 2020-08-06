@@ -23,6 +23,10 @@ MonoBehaviour:
         m_Value: 1179602756
       BaseValue: 25
       MassValue: 0
+      Qualitative:
+        Low: 5
+        Medium: 15
+        High: 25
     DesiredProperties: []
     ProducingResources: []
   m_EatingSettings:
@@ -30,21 +34,24 @@ MonoBehaviour:
     - ActorType:
         m_Value: 1431454536
       Rate: 1
-      QualitativeSmall: 0.5
-      QualitativeMed: 0.5
-      QualitativeHigh: 1
+      Qualitative:
+        Low: 0.33
+        Medium: 0.66
+        High: 1
     - ActorType:
         m_Value: 1262832720
       Rate: 0
-      QualitativeSmall: 0.2
-      QualitativeMed: 0.5
-      QualitativeHigh: 1
+      Qualitative:
+        Low: 0.33
+        Medium: 0.66
+        High: 1
     - ActorType:
         m_Value: 1398030674
       Rate: 0
-      QualitativeSmall: 0.5
-      QualitativeMed: 1
-      QualitativeHigh: 2
+      Qualitative:
+        Low: 0.33
+        Medium: 0.66
+        High: 1
     BaseEatSize: 10
     MassEatSize: 0
     MaxSizeMultiplier: 1.25
@@ -53,12 +60,20 @@ MonoBehaviour:
     MaxMass: 50
     Interval: 0
     MinGrowth: 0
+    QualitativeInterval:
+      Low: 1
+      Medium: 4
+      High: 7
     ImprovedGrowthResourceThresholds: []
     ImprovedGrowthPropertyThresholds: []
     ImprovedGrowth: 0
   m_ReproductionSettings:
-    Interval: 8
+    Interval: 7
     Count: 1
+    QualitativeInterval:
+      Low: 1
+      Medium: 4
+      High: 7
     MinAge: 0
     MinMass: 0
     ResourceThresholds: []
@@ -68,7 +83,11 @@ MonoBehaviour:
         m_Value: 0
       Count: 0
   m_DeathSettings:
-    Age: 16
+    Age: 10
+    QualitativeAge:
+      Low: 4
+      Medium: 7
+      High: 10
     ResourceStarvation:
     - Id:
         m_Value: 1179602756
@@ -86,5 +105,7 @@ MonoBehaviour:
     Image: {fileID: 0}
     MassScale: 5
     Color: {r: 0.5822139, g: 0.58139014, b: 0.6320754, a: 1}
+    DisplayPopulation: 1
+    DisplayMass: 0
   m_ExtraData:
     m_Fields: []
