@@ -7,6 +7,7 @@ namespace ProtoAqua.Energy
 {
     public class SerializedRule : ISerializedObject
     {
+        [UnityEngine.Scripting.Preserve]
         public SerializedRule() { }
 
         public SerializedRule(string inId)

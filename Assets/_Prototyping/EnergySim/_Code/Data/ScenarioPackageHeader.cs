@@ -58,7 +58,7 @@ namespace ProtoAqua.Energy
             {
                 ioSerializer.Serialize("partnerIntroQuote", ref PartnerIntroQuote, string.Empty);
                 ioSerializer.Serialize("partnerHelpQuote", ref PartnerHelpQuote, string.Empty);
-                ioSerializer.Serialize("partnerCompleteQuote", ref PartnerIntroQuote, string.Empty);
+                ioSerializer.Serialize("partnerCompleteQuote", ref PartnerCompleteQuote, string.Empty);
             }
         }
 

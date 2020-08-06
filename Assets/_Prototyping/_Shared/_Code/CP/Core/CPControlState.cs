@@ -29,6 +29,7 @@ namespace ProtoCP
 
         [SerializeField] private RectTransform m_RectTransform = null;
         [SerializeField] private CanvasGroup m_CanvasGroup = null;
+        [SerializeField] private CanvasGroup m_InteractableGroup = null;
         [SerializeField] private ColorGroup m_ColorGroup = null;
 
         #endregion // Inspector
@@ -110,8 +111,8 @@ namespace ProtoCP
         {
             if ((inResult & PropagationResult.UpdateSelf) != 0)
             {
-                m_CanvasGroup.interactable = m_Interactable.PropagatedSelfState;
-                m_CanvasGroup.alpha = m_CanvasGroup.interactable ? 1 : 0.5f;
+                m_InteractableGroup.interactable = m_Interactable.PropagatedSelfState;
+                m_InteractableGroup.alpha = m_InteractableGroup.interactable ? 1 : 0.5f;
             }
 
             if ((inResult & PropagationResult.UpdateChildren) != 0)
@@ -120,7 +121,7 @@ namespace ProtoCP
                 {
                     foreach(var child in m_Children)
                     {
-                        child.PropagateInteractable(m_Expanded, inbForce);
+                        child.PropagateInteractable(m_Interactable, inbForce);
                     }
                 }
             }
@@ -228,7 +229,7 @@ namespace ProtoCP
         public void SetInteractable(bool inbInteractable)
         {
             m_Interactable.Self = inbInteractable;
-            UpdateInteractable(false);
+            UpdateInteractable(true);
         }
 
         #endregion // Interactables
