@@ -74,6 +74,8 @@ namespace ProtoAqua
         [NonSerialized] private AudioHandle m_BGM;
         [NonSerialized] private Routine m_FadeAnim;
 
+        [NonSerialized] private TagStringEventHandler m_EventHandler;
+
         protected override void Start()
         {
             base.Start();
@@ -99,10 +101,73 @@ namespace ProtoAqua
             if (m_Parser == null)
             {
                 m_Parser = new TagStringParser();
-                m_Parser.EventProcessor = new EventParser();
-                m_Parser.ReplaceProcessor = new ReplaceParser();
+                m_Parser.Delimiters = TagStringParser.CurlyBraceDelimiters;
+                m_Parser.EventProcessor = DialogParser.ParserConfig;
+                m_Parser.ReplaceProcessor = DialogParser.ParserConfig;
             }
             return m_Parser;
+        }
+
+        private TagStringEventHandler GetHandler()
+        {
+            if (m_EventHandler == null)
+            {
+                m_EventHandler = new TagStringEventHandler();
+
+                m_EventHandler.Register(DialogParser.Event_Auto, () => m_CurrentState.AutoContinue = true);
+                m_EventHandler.Register(DialogParser.Event_Clear, () => m_TextDisplay.SetText(string.Empty));
+                m_EventHandler.Register(DialogParser.Event_Hide, () => Hide());
+                m_EventHandler.Register(DialogParser.Event_InputContinue, () => WaitForInput());
+                m_EventHandler.Register(DialogParser.Event_PitchBGM, (e, o) => {
+                    float pitch, duration;
+                    if (string.IsNullOrEmpty(e.StringArgument))
+                    {
+                        pitch = 1;
+                        duration = 0.5f;
+                    }
+                    else
+                    {
+                        string[] split = e.StringArgument.Split(' ');
+                        pitch = float.Parse(split[0]);
+                        if (split.Length > 1)
+                        {
+                            duration = float.Parse(split[1]);
+                        }
+                        else
+                        {
+                            duration = 0.5f;
+                        }
+                    }
+
+                    m_BGM.SetPitch(pitch, duration);
+                });
+                m_EventHandler.Register(DialogParser.Event_PlayBGM, (e, o) => {
+                    bool bCrossFade = m_BGM.IsPlaying();
+                    m_BGM.Stop(0.5f);
+
+                    m_BGM = Services.Audio.PostEvent(e.StringArgument);
+                    if (bCrossFade)
+                    {
+                        m_BGM.SetVolume(0).SetVolume(1, 0.5f);
+                    }
+                });
+                m_EventHandler.Register(DialogParser.Event_PlaySound, (e, o) => Services.Audio.PostEvent(e.StringArgument));
+                m_EventHandler.Register(DialogParser.Event_SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.StringArgument);
+                m_EventHandler.Register(DialogParser.Event_Show, () => Show());
+                m_EventHandler.Register(DialogParser.Event_Speaker, (e, o) => SetSpeaker(e.StringArgument));
+                m_EventHandler.Register(DialogParser.Event_Speed, (e, o) => {
+                    m_CurrentState.Speed = e.IsClosing ? 1 : e.NumberArgument;
+                    return Routine.WaitSeconds(0.15f);
+                });
+                m_EventHandler.Register(DialogParser.Event_StopBGM, (e, o) => {
+                    m_BGM.Stop(e.NumberArgument);
+                    m_BGM = AudioHandle.Null;
+                });
+                m_EventHandler.Register(DialogParser.Event_Target, (e, o) => SetTarget(e.StringArgument));
+                m_EventHandler.Register(DialogParser.Event_Wait, (e, o) => Routine.WaitSeconds(e.NumberArgument * GetSkipMultiplier()));
+            }
+
+            return m_EventHandler;
         }
 
         private IEnumerator ProcessSequence(StringSlice inSequence)
@@ -125,6 +190,9 @@ namespace ProtoAqua
         private IEnumerator ProcessLine(StringSlice inSlice)
         {
             GetParser().Parse(inSlice, ref m_CurrentState.Text);
+
+            Debug.LogFormat("[DialogPanel] Parse Results\n - Original Line: {0}\n - Rich Line: {1}\n - Visible Line: {2}\n - Node Count: {3}",
+                inSlice, m_CurrentState.Text.RichText, m_CurrentState.Text.VisibleText, m_CurrentState.Text.Nodes.Length);
 
             m_CurrentState.ResetTemp();
 
@@ -207,8 +275,8 @@ namespace ProtoAqua
 
                     case TagString.NodeType.Event:
                         {
-                            IEnumerator handle = HandleEvent(node.Event);
-                            if (handle != null)
+                            IEnumerator handle;
+                            if (GetHandler().TryEvaluate(node.Event, this, out handle) && handle != null)
                             {
                                 if (bPlayType)
                                 {
@@ -231,7 +299,7 @@ namespace ProtoAqua
                 PlayTypingSound();
             }
 
-            if (IsShowing() && !m_CurrentState.AutoContinue)
+            if (IsShowing() && !m_CurrentState.AutoContinue && !string.IsNullOrEmpty(m_CurrentState.Text.RichText))
             {
                 yield return WaitForInput();
             }
@@ -270,134 +338,29 @@ namespace ProtoAqua
             return inBase / m_CurrentState.Speed * GetSkipMultiplier();
         }
 
-        private IEnumerator HandleEvent(in TagString.EventData inEvent)
+        private void SetTarget(string inTarget)
         {
-            if (inEvent.Type == "speaker")
+            m_CurrentState.TypeSFX = "text_type_" + inTarget;
+            if (inTarget == "kevin")
             {
-                SetSpeaker(inEvent.StringArgument);
-                return null;
+                SetSpeaker("Kevin, Your Science Familiar");
             }
-
-            if (inEvent.Type == "wait")
+            else if (inTarget == "player")
             {
-                return Routine.WaitSeconds(inEvent.NumberArgument * GetSkipMultiplier());
+                SetSpeaker(Environment.UserName);
             }
-
-            if (inEvent.Type == "speed")
+            else if (inTarget == "mechanic")
             {
-                m_CurrentState.Speed = inEvent.NumberArgument;
-                return Routine.WaitSeconds(0.15f);
+                SetSpeaker("Jan, The Mechanic");
             }
-
-            if (inEvent.Type == "input_continue")
+            else if (inTarget == "radio")
             {
-                return WaitForInput();
+                SetSpeaker("Radio");
             }
-
-            if (inEvent.Type == "play_sound")
+            else
             {
-                Services.Audio.PostEvent(inEvent.StringArgument);
-                return null;
+                SetSpeaker("???");
             }
-
-            if (inEvent.Type == "play_bgm")
-            {
-                bool bCrossFade = m_BGM.IsPlaying();
-                m_BGM.Stop(0.5f);
-
-                m_BGM = Services.Audio.PostEvent(inEvent.StringArgument);
-                if (bCrossFade)
-                {
-                    m_BGM.SetVolume(0).SetVolume(1, 0.5f);
-                }
-                return null;
-            }
-
-            if (inEvent.Type == "pitch_bgm")
-            {
-                float pitch, duration;
-                if (string.IsNullOrEmpty(inEvent.StringArgument))
-                {
-                    pitch = 1;
-                    duration = 0.5f;
-                }
-                else
-                {
-                    string[] split = inEvent.StringArgument.Split(' ');
-                    pitch = float.Parse(split[0]);
-                    if (split.Length > 1)
-                    {
-                        duration = float.Parse(split[1]);
-                    }
-                    else
-                    {
-                        duration = 0.5f;
-                    }
-                }
-
-                m_BGM.SetPitch(pitch, duration);
-                return null;
-            }
-
-            if (inEvent.Type == "stop_bgm")
-            {
-                m_BGM.Stop(inEvent.NumberArgument);
-                m_BGM = AudioHandle.Null;
-                return null;
-            }
-
-            if (inEvent.Type == "show")
-            {
-                Show();
-                return null;
-            }
-
-            if (inEvent.Type == "hide")
-            {
-                Hide();
-                return null;
-            }
-
-            if (inEvent.Type == "auto_continue")
-            {
-                m_CurrentState.AutoContinue = true;
-                return null;
-            }
-
-            if (inEvent.Type == "set_type_sfx")
-            {
-                m_CurrentState.TypeSFX = inEvent.StringArgument;
-                return null;
-            }
-
-            if (inEvent.Type == "clear")
-            {
-                m_TextDisplay.SetText(string.Empty);
-                return null;
-            }
-
-            if (inEvent.Type == "target")
-            {
-                if (string.IsNullOrEmpty(inEvent.StringArgument))
-                {
-                    m_CurrentState.TypeSFX = inEvent.StringArgument;
-                }
-                else
-                {
-                    m_CurrentState.TypeSFX = "text_type_" + inEvent.StringArgument;
-                    if (inEvent.StringArgument == "kevin")
-                    {
-                        SetSpeaker("Kevin, Your Science Familiar");
-                    }
-                    else if (inEvent.StringArgument == "player")
-                    {
-                        SetSpeaker("Player");
-                    }
-                }
-                return null;
-            }
-
-            return null;
         }
 
         private bool SetSpeaker(string inSpeaker)
@@ -421,6 +384,8 @@ namespace ProtoAqua
             return true;
         }
 
+        #region Coroutines
+
         private IEnumerator Pulse()
         {
             yield return Routine.Inline(m_RootTransform.ScaleTo(1.03f, 0.04f).RevertOnCancel().Yoyo());
@@ -435,6 +400,10 @@ namespace ProtoAqua
             );
             m_ButtonContainer.gameObject.SetActive(false);
         }
+
+        #endregion // Coroutines
+
+        #region BasePanel
 
         protected override IEnumerator TransitionToShow()
         {
@@ -460,135 +429,7 @@ namespace ProtoAqua
 
             m_RootTransform.gameObject.SetActive(false);
         }
-
-        private class EventParser : TagStringParser.IEventProcessor
-        {
-            public bool TryProcess(TagStringParser.TagData inData, out TagString.EventData outEvent)
-            {
-                if (inData.Id.Equals("wait", true))
-                {
-                    float seconds = float.Parse(inData.Data.ToString());
-                    outEvent = new TagString.EventData("wait", seconds);
-                    return true;
-                }
-
-                if (inData.Id.Equals("speed", true))
-                {
-                    float multiplier;
-                    if (inData.IsEnd())
-                    {
-                        multiplier = 1;
-                    }
-                    else
-                    {
-                        multiplier = float.Parse(inData.Data.ToString());
-                    }
-                    outEvent = new TagString.EventData("speed", multiplier);
-                    return true;
-                }
-
-                if (inData.Id.Equals("input_continue", true))
-                {
-                    outEvent = new TagString.EventData("input_continue");
-                    return true;
-                }
-
-                if (inData.Id.Equals("speaker", true))
-                {
-                    outEvent = new TagString.EventData("speaker", inData.Data);
-                    return true;
-                }
-
-                if (inData.Id.Equals("sfx", true) || inData.Id.Equals("sound", true))
-                {
-                    outEvent = new TagString.EventData("play_sound", inData.Data);
-                    return true;
-                }
-
-                if (inData.Id.Equals("bgm", true))
-                {
-                    outEvent = new TagString.EventData("play_bgm", inData.Data);
-                    return true;
-                }
-
-                if (inData.Id.Equals("bgm_pitch", true))
-                {
-                    outEvent = new TagString.EventData("pitch_bgm", inData.Data);
-                    return true;
-                }
-
-                if (inData.Id.Equals("stop_bgm", true))
-                {
-                    float fadeTime = 0.5f;
-                    if (!inData.Data.IsEmpty)
-                        fadeTime = float.Parse(inData.Data.ToString());
-                    outEvent = new TagString.EventData("stop_bgm", fadeTime);
-                    return true;
-                }
-
-                if (inData.Id.Equals("show", true))
-                {
-                    outEvent = new TagString.EventData("show");
-                    return true;
-                }
-
-                if (inData.Id.Equals("hide", true))
-                {
-                    outEvent = new TagString.EventData("hide");
-                    return true;
-                }
-
-                if (inData.Id.Equals("clear", true))
-                {
-                    outEvent = new TagString.EventData("clear");
-                    return true;
-                }
-
-                if (inData.Id.Equals("auto", true))
-                {
-                    outEvent = new TagString.EventData("auto_continue");
-                    return true;
-                }
-
-                if (inData.Id.Equals("type", true))
-                {
-                    outEvent = new TagString.EventData("set_type_sfx", inData.Data);
-                    return true;
-                }
-
-                if (inData.Id.Equals("target", true) || inData.Id.Equals("t", true))
-                {
-                    outEvent = new TagString.EventData("target", inData.Data);
-                    return true;
-                }
-
-                outEvent = default(TagString.EventData);
-                return false;
-            }
-        }
-
-        private class ReplaceParser : TagStringParser.ITextProcessor
-        {
-            public bool TryReplace(TagStringParser.TagData inData, out string outReplace)
-            {
-                if (inData.Id == "n")
-                {
-                    outReplace = "\n";
-                    return true;
-                }
-
-                if (inData.Id == "highlight")
-                {
-                    if (inData.IsEnd())
-                        outReplace = "</color>";
-                    else
-                        outReplace = "<color=yellow>";
-                    return true;
-                }
-
-                outReplace = null;
-                return false;
-            }
-        }
+    
+        #endregion // BasePanel
     }
 }

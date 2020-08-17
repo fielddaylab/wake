@@ -1,4 +1,124 @@
-// Urchin Merchant Advertisement
-<wait 2>
-<input_continue>
-<t player>
+// Mechanic Advertisement
+{wait 2}
+{input_continue}
+
+// Mechanic First Meeting Prep
+{wait 2}
+{@player}   Okay, we're here.
+{@kevin}    {speed 0.5}Great...{/speed}
+{@player}   You can sit this out if you want.
+{@kevin}    No, no, I'll come along.
+            Gotta see this {speed 0.5}famous{/speed} mechanic.
+{@player}   Look, please just be pleasant{wait 0.2}, alright?
+            I don't want us to get kicked out.
+{@kevin}    {wait 0.2}...How long will we be there for?
+{@player}   Probably an hour or so.
+{@kevin}    {wait 0.5}Fine.
+{@player}   Want to ride in the tank?
+{@kevin}    No, won't need that.
+            Would need to be out a couple hours more for it to be a problem.
+            I'll just float on your shoulder.
+{hide}
+
+// Mechanic First Meeting
+{wait 1}
+{@player}   Hello? Anyone there?
+{@mechanic}{speaker: ???} Wha-{wait 1} who's there?
+{@player}   Customers!
+{@mechanic}{speaker: ???} Oh! Uh... didn't hear you knocking before.
+            Come on in, we're open!
+{@player}   Um,{wait 0.2} the door's locked.
+{@mechanic}{speaker: ???} Ah, whoops. Give me a sec...{wait 0.5} there! Unlocked it for you.
+{@player}   Thanks.
+{hide} {wait 0.5}
+{@mechanic}{speaker: ???} So, have you been here before?
+{@player}   Nope! First time.
+{@mechanic}{speaker: ???} Oh, not often I get new customers!
+{@mechanic} Name's Jan. Best ship mechanic on the island.
+            Probably the best you can find anywhere.
+            Welcome to my Ship Shop.
+{@player}   Nice to meet you. I'm {player_name}.
+            And this is -
+{@kevin}    {speed 0.25}...{/speed}
+{@player}   Haha{wait 0.5}, this is Kevin. They're a little shy today.
+{@kevin}    Hi.
+{@mechanic} ...Hi! Nice to, uh, meet you both!
+            So I figure if you're here, you either want your ship repaired...
+            Or you're looking to commission one.
+            Or{wait 0.5}, in the unlikely event you're looking for trouble, I swear -
+{@player}   No, no, just looking for some repairs!
+{@mechanic} Phew! Just repairs. Good.
+            Sorry, got nervous there for a sec, haha.
+{@player}   Yeah.
+{hide} {wait 0.5}
+{@mechanic} Right{wait 0.5}, so... repairs.
+{@player}   Repairs.
+{@mechanic} Let me see your ship.
+{hide}
+
+// viewing the player's ship
+{wait 2}
+{@mechanic} Huh, this is a pretty nice ship!
+            Looks like... a KP-203? Phobos class?
+{@player}   Yep, that's it. The Carson.
+{@mechanic} Got a couple custom parts. Build them yourself?
+{@player}   Oh, no, I'm not much of a builder.{n}I salvaged them a year ago.
+            Family friend cleaned them up and installed them for me.
+{@mechanic} Did you, uh, pay them or anything?
+{@player}   No, they just owed me a favor.
+{@mechanic} Haha, good.
+            I wouldn't have paid for an install like this.
+{@player}   Wha-{wait 0.2}{auto}
+{@mechanic} Your rudder's misaligned. Can see it breaking a couple months from now.
+            Claw could {speed 0.5}definitely{/speed} use a replacement. The chain's all worn.
+            Based on the discoloration around the back, your engine's about to die.
+            And that decoration you've got...
+            Wait, never mind, that looks intentional.
+{@player}   But-{wait 0.2}{auto}
+{@mechanic} So yeah! I'd say it needs repair.
+{@player}   ...That was a fast assessment.
+{@mechanic} Haven't been working at this for twenty-nine years for nothing.
+{@player}   You said{wait 0.5} the engine's about to die?
+{@mechanic} Give it a week, you'll be dead in the water.
+{@player}   {wait 0.5}Kevin?
+{@kevin}    ...
+{@player}   We can't wait that long, can we?
+{@kevin}    No.
+{@player}   Yeah, thought so.
+            Okay, whatever we need, we'll pay for it.
+{@mechanic} Excellent! Follow me back inside, let's discuss payment.
+{hide}
+
+// back inside
+{wait 1}
+{@mechanic} So with all that, total comes to... {cash}10,000{/cash}.
+{@player}   Wh-{wait 0.2} Ah{wait 0.2}, that's quite a number.
+{@mechanic} Yep.
+{@player}   ...Anything we could skip?
+{@mechanic} Nope. I don't do partial jobs.
+{@player}   Uhhhhhhhh... give me one sec.
+{hide} {wait 0.5}
+{@player}   Kevin, help me out here.
+{@kevin}    What? You want me to {wait 0.2}negotiate?
+{@player}   You said you have some tricks up your sleeve -
+{@kevin}    Metaphorical sleeves, {player_name}
+{@player}   - whatever, just do what you need to do.
+{@kevin}    ...Fine.
+{hide} {wait 0.5}
+{@kevin}    Hi.
+{@mechanic} Hello again, uh... Kevin?
+{@kevin}    Yep, that's correct. Listen, do you do any bartering?
+            Trading? Anything like that?
+{@mechanic} Well... not {speed 0.5}officially{/speed}.
+            But if you have something of interest -
+{@kevin}    Oh, we do. {player_name}?
+{@player}   Take a look at this.
+{hide} {wait 0.5}
+{@mechanic} Is that{wait 0.25} what I think it is?
+            An {highlight}old world pod{/highlight}?
+            I've only seen a handful of those!
+            Where did you get this?
+{@player}   
+
+// Mechanic Debrief
+{wait 2}
