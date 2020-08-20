@@ -1,12 +1,10 @@
-﻿using UnityEngine;
-
-namespace ProtoAqua.Shop
+﻿namespace ProtoAqua.Shop
 {
-    public class Item : MonoBehaviour
+    public class Item
     {
-        public string Name { get; }
-        public string Description { get; }
-        public int Price { get; set; }
-        public bool IsAvailable { get; set; } 
+        public string Name;
+        public string Description;
+        public int Price;
+        public bool IsAvailable = true; 
     }
 }
