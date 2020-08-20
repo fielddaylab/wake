@@ -11,27 +11,59 @@ namespace ProtoAqua.JobBoard
     {
         
 
-        public enum JobName {
-            Job1,
-            Job2,
-            Job3,
-            Job4
+
+        public static string getJobName(string jobId) {
+            switch(jobId) {
+                default:
+                case "job1": return "The first Job";
+                case "job2": return "The second Job";
+                case "job3": return "The third Job";
+                case "job4": return "The fourth Job";
+            }
         }
 
-        public static int getJobReward(JobName jobName) {
-            switch(jobName) {
+        public static int getJobReward(string jobId) {
+            switch(jobId) {
                 default:
-                case JobName.Job1: return 1000;
-                case JobName.Job2: return 100;
-                case JobName.Job3: return 5000;
-                case JobName.Job4: return 1;
+                case "job1": return 1000;
+                case "job2": return 100;
+                case "job3": return 5000;
+                case "job4": return 1;
             }
         } 
 
+        public static string getJobDescription(string jobId) {
+            switch(jobId) {
+                default:
+                case "job1": return "The first Job The first JobThe first Job The first Job The first Job The first Job The first Job The first Job The first Job The first Job";
+                case "job2": return "The second Job The second Job The second Job The second Job The second Job The second Job The second Job The second Job The second Job";
+                case "job3": return "The third Job The third Job The third Job The third Job The third Job The third Job The third Job The third Job The third Job The third Job";
+                case "job4": return "The fourth Job The fourth Job The fourth Job The fourth Job The fourth Job The fourth Job The fourth Job The fourth Job The fourth Job";
+            }
+        }
+
+        public static int getJobDifficulty(string jobId) {
+            switch(jobId) {
+                default:
+                case "job1": return 1;
+                case "job2": return 2;
+                case "job3": return 3;
+                case "job4": return 4;
+            }
+        } 
+
+        public static string getJobPostee(string jobId) {
+            switch(jobId) {
+                default:
+                case "job1": return "Matt";
+                case "job2": return "Autumn";
+                case "job3": return "Nicholas";
+                case "job4": return "Jenn";
+            }
+        }
+        
+
         //Will need sprites
-        //Difficulty
-        //ID?
-        //Description
         
     }
 
