@@ -14,12 +14,15 @@ namespace ProtoAqua.JobBoard
         [SerializeField] private GameObject jobButtonPrefab;
         [SerializeField] private GameObject listHeaderPrefab;
 
+
+        [SerializeField] private GameObject playerObject;
         
 
         private Transform panel;
         private Transform grid;
         private Transform jobButtonTemplate;
         private Transform selectedJob;
+        private Player player;
 
         private Image selectedButton;
 
@@ -29,14 +32,26 @@ namespace ProtoAqua.JobBoard
             panel = transform.Find("jobPanel");
             grid = panel.Find("jobGrid");
             selectedJob = transform.Find("selectedJob");
-            //disablet the right side initially
+            //disable the right side initially
             selectedJob.gameObject.SetActive(false);
-            //jobButtonTemplate = grid.Find("jobButtonTemplate");
-            //jobButtonTemplate.gameObject.SetActive(false);
+
+            player = playerObject.GetComponent<Player>();
+
+            //Add all jobs to available jobs hard coded for now
+            player.addAvailableJob("job1");
+            player.addAvailableJob("job2");
+            player.addAvailableJob("job3");
+            player.addAvailableJob("job4");
 
         }
 
         private void Start() {
+
+            //Add Active Jobs
+
+            //Add Available jobs
+
+            //Add completed jobs
 
             //Create The jobs (Will loop through sometihng later)
             CreateListHeader("Active");
@@ -59,23 +74,40 @@ namespace ProtoAqua.JobBoard
          public void SelectJob(string jobId, Image currentButton) {
             selectedJob.gameObject.SetActive(true);
 
+            //Used to select and deselect buttons. Set the "last selected button" to white if it exists then set the new button to gray
             if(selectedButton) {
                 selectedButton.color = Color.white;
             }
             selectedButton = currentButton;
             selectedButton.color = Color.gray;
 
+            //Change text for the selected side
             selectedJob.Find("selectedJobName").GetComponent<TextMeshProUGUI>().SetText(Job.getJobName(jobId));
             selectedJob.Find("selectedJobPostee").GetComponent<TextMeshProUGUI>().SetText("Posted By: " + Job.getJobPostee(jobId));
             //Set Difficulty ? have to decide how to judge this
             selectedJob.Find("selectedJobReward").GetComponent<TextMeshProUGUI>().SetText(Job.getJobReward(jobId).ToString());
             selectedJob.Find("selectedJobDescription").GetComponent<TextMeshProUGUI>().SetText(Job.getJobDescription(jobId));
-            //Adjust Button if Active job/Available job/Completed Job
+            
 
+            //TODO Adjust Button if Active job/Available job/Completed Job
+            ArrayList availableJobs = player.getAvailableJobs();
+            ArrayList acceptedJobs = player.getAcceptedJobs();
 
+            //Is this the best way to do this?
+            selectedJob.Find("selectedJobButton").GetComponent<Button>().onClick.RemoveAllListeners(); //To make sure it is only listening to the current job
+            selectedJob.Find("selectedJobButton").GetComponent<Button>().onClick.AddListener(() => AcceptJob(jobId));
+           
+            //TODO add functionality to change a "accepted button"
+        
 
         }
 
+        private void AcceptJob(string jobId) {
+            player.acceptAvailableJob(jobId);
+            Debug.Log("Accepted Job" + jobId);
+
+            //Need to reload list after this
+        }
 
         private void CreateListHeader(string listHeader) {
             GameObject listHeaderObject = Instantiate(listHeaderPrefab);
@@ -103,7 +135,7 @@ namespace ProtoAqua.JobBoard
             //Add the listener for selecting a job to show on the right side
             jobButtonTransform.GetComponent<Button>().onClick.AddListener(() => SelectJob(jobId, jobButtonTransform.GetComponent<Image>()));
 
-             jobButtonTransform.gameObject.SetActive(true); 
+            jobButtonTransform.gameObject.SetActive(true); 
 
         
         }
