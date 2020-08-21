@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProtoAudio
 {
-    public class AudioMgr : MonoBehaviour, IService
+    public class AudioMgr : ServiceBehaviour
     {
         #region Types
 
@@ -32,7 +32,7 @@ namespace ProtoAudio
 
         #region IService
 
-        void IService.OnDeregisterService()
+        protected override void OnDeregisterService()
         {
             Debug.LogFormat("[AudioMgr] Unloading...");
 
@@ -42,10 +42,14 @@ namespace ProtoAudio
             m_EventLookup.Clear();
 
             Debug.LogFormat("[AudioMgr] ...done");
+
+            base.OnDeregisterService();
         }
 
-        void IService.OnRegisterService()
+        protected override void OnRegisterService()
         {
+            base.OnRegisterService();
+
             Debug.LogFormat("[AudioMgr] Initializing...");
 
             m_Random = new System.Random(Environment.TickCount ^ ServiceIds.Audio.GetHashCode());
@@ -58,7 +62,7 @@ namespace ProtoAudio
             Debug.LogFormat("[AudioMgr] ...done");
         }
 
-        FourCC IService.ServiceId()
+        public override FourCC ServiceId()
         {
             return ServiceIds.Audio;
         }
@@ -66,17 +70,6 @@ namespace ProtoAudio
         #endregion // IService
 
         #region Unity Events
-
-        private void OnEnable()
-        {
-            Services.Audio = this;
-        }
-
-        private void OnDisable()
-        {
-            if (Services.Audio == this)
-                Services.Audio = null;
-        }
 
         private void LateUpdate()
         {
@@ -103,6 +96,14 @@ namespace ProtoAudio
         #endregion // Unity Events
 
         #region Playback
+
+        public bool HasEvent(string inId)
+        {
+            if (string.IsNullOrEmpty(inId))
+                return false;
+
+            return GetEvent(inId) != null;
+        }
 
         public AudioHandle PostEvent(string inId)
         {
@@ -182,7 +183,7 @@ namespace ProtoAudio
             }
         }
 
-        public void Unload(AudioPackage inPackage)
+        public void Unload(AudioPackage inPackage, bool inbImmediate = false)
         {
             if (!m_LoadedPackages.Contains(inPackage))
                 return;
@@ -190,6 +191,34 @@ namespace ProtoAudio
             if (!inPackage.DecrementRefCount())
                 return;
 
+            if (!inbImmediate)
+                return;
+
+            UnloadPackage(inPackage);
+        }
+
+        public void UnloadUnusedPackages()
+        {
+            if (m_LoadedPackages.Count == 0)
+                return;
+            
+            using(PooledSet<AudioPackage> toUnload = PooledSet<AudioPackage>.Create())
+            {
+                foreach(var package in m_LoadedPackages)
+                {
+                    if (package.ShouldUnload())
+                        toUnload.Add(package);
+                }
+
+                foreach(var package in toUnload)
+                {
+                    UnloadPackage(package);
+                }
+            }
+        }
+
+        private void UnloadPackage(AudioPackage inPackage)
+        {
             m_LoadedPackages.Remove(inPackage);
 
             Debug.LogFormat("[AudioMgr] Unloaded package '{0}'", inPackage.name);

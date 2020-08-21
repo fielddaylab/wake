@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Reflection;
 using BeauData;
+using BeauUtil;
 using ProtoAudio;
 using UnityEngine;
 
@@ -8,9 +11,12 @@ namespace ProtoAqua
     {
         #region Cache
 
-        // prevent instantiation
-        private Services() { }
-
+        static Services()
+        {
+            InitFields();
+        }
+        
+        static private readonly HashSet<FieldInfo> s_ServiceCacheFields = new HashSet<FieldInfo>();
         static private readonly ServiceCache s_ServiceCache = new ServiceCache();
         
         static protected T Retrieve<T>(ref T ioStorage, FourCC inId) where T : IService
@@ -54,6 +60,21 @@ namespace ProtoAqua
             ioStorage = inValue;
         }
 
+        static private void InitFields()
+        {
+            foreach(var type in Reflect.FindDerivedTypes(typeof(Services), Reflect.FindAllAssemblies(0, Reflect.AssemblyType.DefaultNonUserMask)))
+            {
+                foreach(var field in type.GetFields(BindingFlags.Static | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    if (typeof(IService).IsAssignableFrom(field.FieldType))
+                    {
+                        s_ServiceCacheFields.Add(field);
+                        Debug.LogFormat("[Services] Located cached service field '{0}::{1}'", field.DeclaringType.FullName, field.Name);
+                    }
+                }
+            }
+        }
+
         #endregion // Cache
 
         #region Accessors
@@ -62,21 +83,18 @@ namespace ProtoAqua
         static public AudioMgr Audio
         {
             get { return RetrieveOrFind(ref s_CachedAudioMgr, ServiceIds.Audio); }
-            set { Store(ref s_CachedAudioMgr, value); }
         }
 
         static private TweakMgr s_CachedTweakMgr;
         static public TweakMgr Tweaks
         {
             get { return RetrieveOrFind(ref s_CachedTweakMgr, ServiceIds.Tweaks); }
-            set { Store(ref s_CachedTweakMgr, value); }
         }
 
         static private UIMgr s_CachedUIMgr;
         static public UIMgr UI
         {
             get { return RetrieveOrFind(ref s_CachedUIMgr, ServiceIds.CommonUI); }
-            set { Store(ref s_CachedUIMgr, value); }
         }
     
         #endregion // Accessors
@@ -88,6 +106,25 @@ namespace ProtoAqua
             foreach(var service in inRoot.GetComponentsInChildren<IService>())
             {
                 s_ServiceCache.Register(service);
+            }
+        }
+
+        static public void AttemptRegister(IService inService)
+        {
+            s_ServiceCache.Register(inService);
+        }
+
+        static public void AttemptDeregister(IService inService)
+        {
+            if (s_ServiceCache.Deregister(inService))
+            {
+                foreach(var field in s_ServiceCacheFields)
+                {
+                    if (field.GetValue(null) == inService)
+                    {
+                        field.SetValue(null, null);
+                    }
+                }
             }
         }
 

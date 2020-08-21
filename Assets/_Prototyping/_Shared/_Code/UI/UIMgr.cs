@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProtoAqua
 {
-    public class UIMgr : MonoBehaviour, IService
+    public class UIMgr : ServiceBehaviour
     {
         #region Inspector
 
@@ -16,40 +16,25 @@ namespace ProtoAqua
 
         #region IService
 
-        void IService.OnDeregisterService()
+        protected override void OnDeregisterService()
         {
             Debug.LogFormat("[UIMgr] Unloading...");
 
             Debug.LogFormat("[UIMgr] ...done");
         }
 
-        void IService.OnRegisterService()
+        protected override void OnRegisterService()
         {
             Debug.LogFormat("[UIMgr] Initializing...");
 
             Debug.LogFormat("[UIMgr] ...done");
         }
 
-        FourCC IService.ServiceId()
+        public override FourCC ServiceId()
         {
             return ServiceIds.CommonUI;
         }
 
         #endregion // IService
-
-        #region Unity Events
-
-        private void OnEnable()
-        {
-            Services.UI = this;
-        }
-
-        private void OnDisable()
-        {
-            if (Services.UI == this)
-                Services.UI = null;
-        }
-
-        #endregion // Unity Events
     }
 }

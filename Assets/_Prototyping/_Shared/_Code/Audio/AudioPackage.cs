@@ -32,6 +32,11 @@ namespace ProtoAudio
             return --m_RefCount <= 0;
         }
 
+        internal bool ShouldUnload()
+        {
+            return m_RefCount <= 0;
+        }
+
         #if UNITY_EDITOR
 
         private void OnValidate()

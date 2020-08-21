@@ -306,6 +306,11 @@ namespace ProtoAqua.Energy
 
         #endregion // Accessors
 
+        private ActorType()
+        {
+            m_Original = this;
+        }
+
         #region Operations
 
         /// <summary>

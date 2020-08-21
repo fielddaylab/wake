@@ -17,6 +17,7 @@ namespace ProtoAudio
         [SerializeField] private FloatRange m_Pitch = new FloatRange(1);
         [SerializeField] private FloatRange m_Delay = new FloatRange(0);
         [SerializeField] private bool m_Loop = false;
+        [SerializeField, ShowIfField("m_Loop")] private bool m_RandomizeStartingPosition = false;
 
         #endregion // Inspector
 
@@ -78,6 +79,11 @@ namespace ProtoAudio
 
             inSource.clip = GetNextClip(inRandom);
             inSource.loop = m_Loop;
+
+            if (m_Loop && m_RandomizeStartingPosition)
+                inSource.time = inRandom.NextFloat(inSource.clip.length);
+            else
+                inSource.time = 0;
             
             outProperties.Volume = m_Volume.Generate(inRandom);
             outProperties.Pitch = m_Pitch.Generate(inRandom);

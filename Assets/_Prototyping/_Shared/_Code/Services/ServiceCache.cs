@@ -35,40 +35,43 @@ namespace ProtoAqua
         /// <summary>
         /// Deregisters a service.
         /// </summary>
-        public void Deregister(IService inService)
+        public bool Deregister(IService inService)
         {
             FourCC id = inService.ServiceId();
             IService existing;
             if (!m_CachedServices.TryGetValue(id, out existing))
-                return;
+                return false;
             if (existing != inService)
-                return;
+                return false;
 
             m_CachedServices.Remove(id);
             inService.OnDeregisterService();
 
             Debug.LogFormat("[ServiceCache] Deregistered service '{0}' ({1})", id, inService.GetType().Name);
+
+            return true;
         }
 
         /// <summary>
         /// Deregisters the service with the given id.
         /// </summary>
-        public void Deregister(FourCC inId)
+        public bool Deregister(FourCC inId)
         {
             IService existing;
             if (!m_CachedServices.TryGetValue(inId, out existing))
-                return;
+                return false;
             
             m_CachedServices.Remove(inId);
             existing.OnDeregisterService();
 
             Debug.LogFormat("[ServiceCache] Deregistered service '{0}' ({1})", inId, existing.GetType().Name);
+
+            return true;
         }
 
         /// <summary>
         /// Returns all services.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<IService> AllServices()
         {
             return m_CachedServices.Values;

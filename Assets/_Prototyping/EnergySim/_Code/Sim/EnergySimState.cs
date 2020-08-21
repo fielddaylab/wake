@@ -111,8 +111,8 @@ namespace ProtoAqua.Energy
                 actor.OffsetA = (byte) inRandom.Next(3);
                 actor.OffsetB = (byte) inRandom.Next(17);
 
-                var growthSettings = inType.GrowthSettings();
-                ushort maxAge = inType.DeathSettings().Age;
+                var growthSettings = inType.OriginalType().GrowthSettings();
+                ushort maxAge = inType.OriginalType().DeathSettings().Age;
                 if (maxAge > 0)
                 {
                     actor.Age = (ushort) inRandom.Next(0, maxAge / 2);

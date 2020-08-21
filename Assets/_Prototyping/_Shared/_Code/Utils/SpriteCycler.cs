@@ -31,7 +31,7 @@ namespace ProtoAqua
         private void OnEnable()
         {
             Restart();
-            m_Playback = Routine.StartLoop(Animate);
+            m_Playback = Routine.StartLoop(this, Animate);
         }
 
         private void OnDisable()
