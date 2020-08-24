@@ -2,23 +2,28 @@
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 using TMPro;
+using BeauData;
 
 namespace ProtoAqua.Shop
 {
     public class Shop : MonoBehaviour
     {
+        #region Dependencies
+
         [Header("Shop Dependencies")]
         [SerializeField] private PlayerData PlayerData;
         [SerializeField] private Transform ItemButton;
         [SerializeField] private Transform Group;
+        [SerializeField] private TextMeshProUGUI Currency;
         [SerializeField] private NPC NPC;
 
-        [Header("Text Dependencies")]
-        [SerializeField] private TextMeshProUGUI Currency;
+        [Header("Details Panel Dependencies")]
         [SerializeField] private TextMeshProUGUI ItemName;
         [SerializeField] private TextMeshProUGUI ItemDescription;
         [SerializeField] private TextMeshProUGUI ItemPrice;
+        [SerializeField] private Image ItemImage;
         [SerializeField] private TextMeshProUGUI PurchaseButtonText;
 
         [Header("Button Dependencies")]
@@ -30,7 +35,7 @@ namespace ProtoAqua.Shop
         [Header("Animation Dependencies")]
         [SerializeField] private Animator DetailsPanelAnimator;
 
-        private List<Item> Items = new List<Item>();
+        #endregion // Dependencies
 
         private int PlayerCurrency;
         private List<Item> PlayerInventory;
@@ -38,7 +43,7 @@ namespace ProtoAqua.Shop
         private List<GameObject> AvailableItems = new List<GameObject>();
         private List<GameObject> PurchasedItems = new List<GameObject>();
 
-        private void Awake()
+        private void Start()
         {
             PlayerCurrency = PlayerData.PlayerCurrency;
             PlayerInventory = PlayerData.PlayerInventory;
@@ -47,54 +52,30 @@ namespace ProtoAqua.Shop
 
             AvailableItemsButton.onClick.AddListener(() => ToggleItems(PurchasedItems, AvailableItems));
             PurchasedItemsButton.onClick.AddListener(() => ToggleItems(AvailableItems, PurchasedItems));
-            CloseButton.onClick.AddListener(() => DetailsPanelAnimator.SetBool("Open", false));
-            
-            //TestJsonCreate();
-            
+            CloseButton.onClick.AddListener(() => HideDetails());
+
             Populate();
         }
 
-        // Temporary helper
-        private List<Item> CreateItems()
-        {
-            List<Item> tempItems = new List<Item>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                Item temp = new Item();
-                temp.Name = "test" + i;
-                temp.Description = "test" + i;
-                temp.Price = 100;
-                tempItems.Add(temp);
-            }
-
-            return tempItems;
-        }
-
-        // TODO: Properly parse JSON
-        private void TestJsonCreate()
-        {
-            string path = Path.Combine(Application.dataPath, "./_Prototyping/Shop/_Code/Items.json");
-            string json = File.ReadAllText(path);
-            Debug.Log(json);
-            Item item = Item.CreateFromJSON(path);
-            Debug.Log(item.IsAvailable);
-        }
-
-        // TODO: Populate items from JSON input
         private void Populate()
         {
-            Items = CreateItems();
+            string path = Path.Combine(Application.dataPath, "_Prototyping/Shop/_Code/Items.json");
+            string json = File.ReadAllText(path);
+            ItemSet itemSet = Serializer.Read<ItemSet>(json);
 
-            for (int i = 0; i < Items.Count; i++)
+            foreach (Item item in itemSet.ItemData)
             {
-                Item item = Items[i];
+                item.ItemSprite = (Sprite)AssetDatabase.LoadAssetAtPath(item.SpritePath, typeof(Sprite));
+
                 Transform itemButtonTransform = Instantiate(ItemButton, Group);
 
                 itemButtonTransform.Find("Name").GetComponent<TextMeshProUGUI>().SetText(item.Name);
                 itemButtonTransform.Find("Price").GetComponent<TextMeshProUGUI>().SetText(item.Price.ToString());
 
-                itemButtonTransform.GetComponentInChildren<Button>().onClick.AddListener(() => ShowDetails(item, itemButtonTransform.gameObject));
+                itemButtonTransform.Find("Image").GetComponent<Image>().sprite = item.ItemSprite;
+
+                itemButtonTransform.GetComponentInChildren<Button>().onClick.AddListener(
+                    () => ShowDetails(item, itemButtonTransform.gameObject));
 
                 AvailableItems.Add(itemButtonTransform.gameObject);
             }
@@ -107,18 +88,27 @@ namespace ProtoAqua.Shop
             ItemName.SetText(item.Name);
             ItemDescription.SetText(item.Description);
             ItemPrice.SetText(item.Price.ToString());
+            ItemImage.sprite = item.ItemSprite;
 
             if (!item.IsAvailable)
             {
                 PurchaseButtonText.SetText("Purchased");
+                PurchaseButton.GetComponent<Image>().color = Color.grey;
             }
             else
             {
                 PurchaseButtonText.SetText("Purchase");
+                PurchaseButton.GetComponent<Image>().color = Color.white;
                 PurchaseButton.onClick.AddListener(() => Purchase(item, button));
             }
 
             DetailsPanelAnimator.SetBool("Open", true);
+        }
+
+        private void HideDetails()
+        {
+            DetailsPanelAnimator.SetBool("Open", false);
+            NPC.WelcomeDialog();
         }
 
         private void Purchase(Item item, GameObject button)
@@ -126,6 +116,7 @@ namespace ProtoAqua.Shop
             if (PlayerCurrency < item.Price)
             {
                 NPC.NeedMoreCurrencyDialog();
+                PurchaseButton.GetComponent<Image>().color = Color.red;
                 return;
             }
 
@@ -140,6 +131,7 @@ namespace ProtoAqua.Shop
             Currency.SetText(PlayerCurrency.ToString());
 
             PurchaseButtonText.SetText("Purchased");
+            PurchaseButton.GetComponent<Image>().color = Color.grey;
             PurchaseButton.onClick.RemoveAllListeners();
 
             AvailableItems.Remove(button);

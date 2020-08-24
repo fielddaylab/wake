@@ -5,7 +5,13 @@ namespace ProtoAqua.Shop
 {
     public class PlayerData : MonoBehaviour
     {
-        public List<Item> PlayerInventory = new List<Item>();
-        public int PlayerCurrency = 500;
+        public List<Item> PlayerInventory { get; set; }
+        public int PlayerCurrency { get; set; }
+
+        private void Awake()
+        {
+            PlayerInventory = new List<Item>();
+            PlayerCurrency = 1000;
+        }
     }
 }
