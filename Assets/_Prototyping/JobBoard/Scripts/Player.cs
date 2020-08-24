@@ -6,9 +6,12 @@ namespace ProtoAqua.JobBoard
 {
     public class Player : MonoBehaviour
     {
-        ArrayList acceptedJobs = new ArrayList();
-        ArrayList availableJobs = new ArrayList();
-        ArrayList completedJobs = new ArrayList();
+        List<string> activeJobs = new List<string>();
+        List<string> availableJobs = new List<string>();
+        List<string> completedJobs = new List<string>();
+        List<string> lockedJobs = new List<string>();
+
+        //function unlockJob(jobId);
   
         public void addAvailableJob(string jobId) {
             availableJobs.Add(jobId);
@@ -22,27 +25,27 @@ namespace ProtoAqua.JobBoard
             }
 
             availableJobs.Remove(jobId);
-            acceptedJobs.Add(jobId);
+            activeJobs.Add(jobId);
         }
 
         public void completeJob(string jobId) {
             //Check some condition to make sure the job can be completed
 
-            if(!acceptedJobs.Contains(jobId)){
+            if(!activeJobs.Contains(jobId)){
                 Debug.Log("Error: completing unaccepted job");
                 return;
             }
-            acceptedJobs.Remove(jobId);
+            activeJobs.Remove(jobId);
             completedJobs.Add(jobId);
         }
 
-        public ArrayList getAvailableJobs() {
+        public List<string> getAvailableJobs() {
             return availableJobs;
         }
-        public ArrayList getAcceptedJobs() {
-            return acceptedJobs;
+        public List<string> getActiveJobs() {
+            return activeJobs;
         }
-        public ArrayList getCompletedJobs() {
+        public List<string> getCompletedJobs() {
             return completedJobs;
         }
     }
