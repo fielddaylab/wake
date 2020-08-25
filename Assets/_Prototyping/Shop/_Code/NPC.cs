@@ -1,6 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using BeauRoutine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Shop
 {
@@ -10,29 +12,22 @@ namespace ProtoAqua.Shop
         [SerializeField] private TextMeshProUGUI NPCText;
         [SerializeField] private Button NPCButton;
 
+        // Assign Interact method to NPCButton
         private void Awake()
         {
-            NPCButton.onClick.AddListener(() => ToggleDialog());
+            NPCButton.onClick.AddListener(() => Interact());
         }
 
-        public void WelcomeDialog()
+        // Change dialog displayed in speech bubble
+        public void SetDialog(string text)
         {
-            NPCText.SetText("Welcome!");
+            NPCText.SetText(text);
         }
 
-        public void PurchasedDialog(Item item)
+        // Change dialog and animate when clicked
+        public void Interact()
         {
-            NPCText.SetText("Purchased " + item.Name);
-        }
-
-        public void NeedMoreCurrencyDialog()
-        {
-            NPCText.SetText("Need more currency!");
-        }
-
-        // Temporary, for testing interactivity until actual dialog is in place
-        public void ToggleDialog()
-        {
+            // Temporary until actual dialog is in place
             if (NPCText.text.Equals("Welcome!"))
             {
                 NPCText.SetText("Hello!");
@@ -41,6 +36,21 @@ namespace ProtoAqua.Shop
             {
                 NPCText.SetText("Welcome!");
             }
+
+            Routine.Start(this, ScaleIn());
+            Routine.Start(this, ScaleOut());
+        }
+
+        // Squash and stretch inwards
+        private IEnumerator<Tween> ScaleIn()
+        {
+            yield return this.transform.SquashStretchTo(new Vector3(0.5f, 0.5f, 0.5f), 0.25f, Axis.XY).Ease(Curve.CubeOut);
+        }
+        
+        // Squash and stretch back to original scale
+        private IEnumerator<Tween> ScaleOut()
+        {
+            yield return this.transform.SquashStretchTo(new Vector3(1.0f, 1.0f, 1.0f), 0.25f, Axis.XY).Ease(Curve.CubeOut);
         }
     }
 }

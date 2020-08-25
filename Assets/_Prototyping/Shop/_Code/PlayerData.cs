@@ -8,6 +8,7 @@ namespace ProtoAqua.Shop
         public List<Item> PlayerInventory { get; set; }
         public int PlayerCurrency { get; set; }
 
+        // Initialize inventory and currency
         private void Awake()
         {
             PlayerInventory = new List<Item>();

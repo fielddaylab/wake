@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using BeauData;
+using BeauRoutine;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
-using TMPro;
-using BeauData;
 
 namespace ProtoAqua.Shop
 {
@@ -20,6 +20,7 @@ namespace ProtoAqua.Shop
         [SerializeField] private NPC NPC;
 
         [Header("Details Panel Dependencies")]
+        [SerializeField] private RectTransform DetailsPanel;
         [SerializeField] private TextMeshProUGUI ItemName;
         [SerializeField] private TextMeshProUGUI ItemDescription;
         [SerializeField] private TextMeshProUGUI ItemPrice;
@@ -32,41 +33,42 @@ namespace ProtoAqua.Shop
         [SerializeField] private Button PurchasedItemsButton;
         [SerializeField] private Button CloseButton;
 
-        [Header("Animation Dependencies")]
-        [SerializeField] private Animator DetailsPanelAnimator;
-
         #endregion // Dependencies
 
-        private int PlayerCurrency;
-        private List<Item> PlayerInventory;
+        private const string JSON_PATH = "_Prototyping/Shop/_Code/Items.json";
 
-        private List<GameObject> AvailableItems = new List<GameObject>();
-        private List<GameObject> PurchasedItems = new List<GameObject>();
+        private int playerCurrency;
+        private List<Item> playerInventory;
 
+        private List<GameObject> availableItems = new List<GameObject>();
+        private List<GameObject> purchasedItems = new List<GameObject>();
+
+        private Routine dropRoutine;
+
+        // Initialize variables, add listener functions to buttons, call Populate() to add items
         private void Start()
         {
-            PlayerCurrency = PlayerData.PlayerCurrency;
-            PlayerInventory = PlayerData.PlayerInventory;
+            playerCurrency = PlayerData.PlayerCurrency;
+            playerInventory = PlayerData.PlayerInventory;
 
-            Currency.SetText(PlayerCurrency.ToString());
+            Currency.SetText(playerCurrency.ToString());
 
-            AvailableItemsButton.onClick.AddListener(() => ToggleItems(PurchasedItems, AvailableItems));
-            PurchasedItemsButton.onClick.AddListener(() => ToggleItems(AvailableItems, PurchasedItems));
+            AvailableItemsButton.onClick.AddListener(() => ToggleItems(purchasedItems, availableItems));
+            PurchasedItemsButton.onClick.AddListener(() => ToggleItems(availableItems, purchasedItems));
             CloseButton.onClick.AddListener(() => HideDetails());
 
             Populate();
         }
 
+        // Load ItemSet from JSON file, create ItemButtons based on parsed data and populate availableItems
         private void Populate()
         {
-            string path = Path.Combine(Application.dataPath, "_Prototyping/Shop/_Code/Items.json");
+            string path = Path.Combine(Application.dataPath, JSON_PATH);
             string json = File.ReadAllText(path);
             ItemSet itemSet = Serializer.Read<ItemSet>(json);
 
             foreach (Item item in itemSet.ItemData)
             {
-                item.ItemSprite = (Sprite)AssetDatabase.LoadAssetAtPath(item.SpritePath, typeof(Sprite));
-
                 Transform itemButtonTransform = Instantiate(ItemButton, Group);
 
                 itemButtonTransform.Find("Name").GetComponent<TextMeshProUGUI>().SetText(item.Name);
@@ -77,10 +79,13 @@ namespace ProtoAqua.Shop
                 itemButtonTransform.GetComponentInChildren<Button>().onClick.AddListener(
                     () => ShowDetails(item, itemButtonTransform.gameObject));
 
-                AvailableItems.Add(itemButtonTransform.gameObject);
+                availableItems.Add(itemButtonTransform.gameObject);
             }
         }
 
+        #region Details Panel
+
+        // Assign DetailsPanel components with appropriate information and start dropdown routine
         private void ShowDetails(Item item, GameObject button)
         {
             PurchaseButton.onClick.RemoveAllListeners();
@@ -90,6 +95,7 @@ namespace ProtoAqua.Shop
             ItemPrice.SetText(item.Price.ToString());
             ItemImage.sprite = item.ItemSprite;
 
+            // Set functionality of Purchase button based on item's availability
             if (!item.IsAvailable)
             {
                 PurchaseButtonText.SetText("Purchased");
@@ -102,46 +108,61 @@ namespace ProtoAqua.Shop
                 PurchaseButton.onClick.AddListener(() => Purchase(item, button));
             }
 
-            DetailsPanelAnimator.SetBool("Open", true);
+            DetailsPanel.gameObject.SetActive(true);
+            dropRoutine.Replace(this, DetailsPanel.AnchorPosTo(-250, 0.75f, Axis.Y).Ease(Curve.CubeOut));
         }
 
+        // Start HideDetailsRoutine and reset NPC dialog
         private void HideDetails()
         {
-            DetailsPanelAnimator.SetBool("Open", false);
-            NPC.WelcomeDialog();
+            dropRoutine.Replace(this, HideDetailsRoutine());
+            NPC.SetDialog("Welcome!");
         }
 
-        private void Purchase(Item item, GameObject button)
+        // Routine for hiding DetailsPanel
+        private IEnumerator<Tween> HideDetailsRoutine()
         {
-            if (PlayerCurrency < item.Price)
+            yield return DetailsPanel.AnchorPosTo(250, 0.75f, Axis.Y).Ease(Curve.CubeOut);
+            DetailsPanel.gameObject.SetActive(false);
+        }
+
+        #endregion // Details Panel
+
+        // If player has enough currency, perform necessary purchase operations to player and item fields,
+        // and move item to purchasedItems
+        public void Purchase(Item item, GameObject button)
+        {
+            // Check if player is able to purchase the item
+            if (playerCurrency < item.Price)
             {
-                NPC.NeedMoreCurrencyDialog();
+                NPC.SetDialog("Need more currency!");
                 PurchaseButton.GetComponent<Image>().color = Color.red;
                 return;
             }
 
-            PlayerInventory.Add(item);
-            PlayerData.PlayerInventory = PlayerInventory;
+            playerInventory.Add(item);
+            PlayerData.PlayerInventory = playerInventory;
 
-            PlayerCurrency -= item.Price;
-            PlayerData.PlayerCurrency = PlayerCurrency;
+            playerCurrency -= item.Price;
+            PlayerData.PlayerCurrency = playerCurrency;
+
+            Currency.SetText(playerCurrency.ToString());
 
             item.IsAvailable = false;
-
-            Currency.SetText(PlayerCurrency.ToString());
 
             PurchaseButtonText.SetText("Purchased");
             PurchaseButton.GetComponent<Image>().color = Color.grey;
             PurchaseButton.onClick.RemoveAllListeners();
 
-            AvailableItems.Remove(button);
-            PurchasedItems.Add(button);
+            availableItems.Remove(button);
+            purchasedItems.Add(button);
 
             button.SetActive(false);
 
-            NPC.PurchasedDialog(item);
+            NPC.SetDialog($"Purchased {item.Name}");
         }
 
+        // Helper method for switching display between availableItems and purchasedItems
         private void ToggleItems(List<GameObject> hide, List<GameObject> show)
         {
             foreach (GameObject button in hide)

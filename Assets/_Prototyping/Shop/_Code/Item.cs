@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using BeauData;
+﻿using BeauData;
+using UnityEditor;
+using UnityEngine;
 
 namespace ProtoAqua.Shop
 {
@@ -47,6 +48,7 @@ namespace ProtoAqua.Shop
 
         public Sprite ItemSprite { get; set; }
 
+        // Serialize the Item and load the ItemSprite asset from the given path
         public void Serialize(Serializer ioSerializer)
         {
             ioSerializer.Serialize("Name", ref name);
@@ -54,6 +56,8 @@ namespace ProtoAqua.Shop
             ioSerializer.Serialize("Price", ref price);
             ioSerializer.Serialize("IsAvailable", ref isAvailable);
             ioSerializer.Serialize("SpritePath", ref spritePath);
+            
+            ItemSprite = (Sprite)AssetDatabase.LoadAssetAtPath(spritePath, typeof(Sprite));
         }
     }
 }
