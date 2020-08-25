@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using BeauData;
 
 namespace ProtoAqua.JobBoard
 {
     public class JobBoard : MonoBehaviour
     {
         // public Sprite defaultSprite;
+
+        [SerializeField] private TextAsset jobListJSON = null;
 
         //Prefabs
         [SerializeField] private GameObject jobButtonPrefab = null;
@@ -18,6 +20,8 @@ namespace ProtoAqua.JobBoard
         //Player wil be adjusted later
         [SerializeField] private GameObject playerObject = null;
         private Player player;
+
+        private JobList jobList;
 
         private string currentJobId;
 
@@ -51,14 +55,19 @@ namespace ProtoAqua.JobBoard
             player = playerObject.GetComponent<Player>();
 
             //Add all jobs to available jobs hard coded for now
-            player.addAvailableJob("job1");
-            player.addAvailableJob("job2");
-            player.addAvailableJob("job3");
-            player.addAvailableJob("job4");
+            // player.addAvailableJob("job1");
+            // player.addAvailableJob("job2");
+            // player.addAvailableJob("job3");
+            // player.addAvailableJob("job4");
+            
+            loadJobList();
+            populatePlayerJobs();
 
         }
 
         private void Start() {
+
+            //TODO adjust headers if no active jobs/ completed jobs?
 
             //Add Active Jobs
             CreateJobList("Active");
@@ -71,6 +80,21 @@ namespace ProtoAqua.JobBoard
 
             
         }
+
+        //Loads the job list from JSON into the jobLIst object
+        private void loadJobList() {
+            Serializer.Read(ref jobList, jobListJSON);
+            Debug.Log(jobList.findJob("job1"));
+        }
+
+        //TODO add more logic to this
+        //Takes the list of jobs and puts them within the player object
+        private void populatePlayerJobs() {
+            Job[] jobs = jobList.getJobList();
+            for(int i = 0; i < jobs.Length; i++) {
+                player.addAvailableJob(jobs[i].jobId);
+            }
+        }
         
         //Function added as a listener to each of the job buttons
         //Takes in the currentButton that is pressed and what jobId it holds
@@ -78,6 +102,8 @@ namespace ProtoAqua.JobBoard
         //Most importantly changes the information in the selectJob section to reflect that a job was actually selected, and to display more information
          private void SelectJob(string jobId, Transform currentButton) {
             selectedJob.gameObject.SetActive(true); //Set right side to be active
+
+            Job currentJob = jobList.findJob(jobId);
 
             //Assign Global Variables
             selectedButton = currentButton;
@@ -95,11 +121,11 @@ namespace ProtoAqua.JobBoard
 
             
             //Change text for the selected side
-            selectedJob.Find("selectedJobName").GetComponent<TextMeshProUGUI>().SetText(Job.getJobName(jobId));
-            selectedJob.Find("selectedJobPostee").GetComponent<TextMeshProUGUI>().SetText("Posted By: " + Job.getJobPostee(jobId));
+            selectedJob.Find("selectedJobName").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobName);
+            selectedJob.Find("selectedJobPostee").GetComponent<TextMeshProUGUI>().SetText("Posted By: " + currentJob.jobPostee);
             //Set Difficulty ? have to decide how to judge this
-            selectedJob.Find("selectedJobReward").GetComponent<TextMeshProUGUI>().SetText(Job.getJobReward(jobId).ToString());
-            selectedJob.Find("selectedJobDescription").GetComponent<TextMeshProUGUI>().SetText(Job.getJobDescription(jobId));
+            selectedJob.Find("selectedJobReward").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobReward.ToString());
+            selectedJob.Find("selectedJobDescription").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobDescription);
             
 
             //TODO Adjust Button if Active job/Available job/Completed Job
@@ -107,8 +133,6 @@ namespace ProtoAqua.JobBoard
 
             //TODO add functionality to change a "accepted button"
 
-           
-        
 
         }
 
@@ -130,25 +154,38 @@ namespace ProtoAqua.JobBoard
 
             //1. Reorder active jobs
             List<string> activeJobs = player.getActiveJobs();
-            //TODO sort active jobs
+            activeJobs.Sort(SortByJobOrder);
             siblingIdx = UpdateHeaderText("Active", siblingIdx);
             siblingIdx = UpdateJobList(activeJobs, siblingIdx);
 
             //2. Reorder Available jobs
             List<string> availableJobs = player.getAvailableJobs();
-            //TODO sort Available jobs
+            availableJobs.Sort(SortByJobOrder);
             siblingIdx = UpdateHeaderText("Available", siblingIdx);
             siblingIdx = UpdateJobList(availableJobs, siblingIdx);
 
             //3. Reorder Completed Jobs
             List<string> completedJobs = player.getCompletedJobs();
-
-            //TODO sort completed jobs
+            completedJobs.Sort(SortByJobOrder);
             siblingIdx = UpdateHeaderText("Completed", siblingIdx);
             siblingIdx = UpdateJobList(completedJobs, siblingIdx);
 
 
         }
+
+        //Sorts job order
+        private int SortByJobOrder(string left, string right) {
+            int leftOrder = GetJobOrder(left);
+            int rightOrder = GetJobOrder(right);
+            return left.CompareTo(right);
+        }
+
+        //Returns index of job to sort
+        private int GetJobOrder(string jobId) {
+            return jobList.findJob(jobId).jobIndex;
+
+        }
+        
 
         //Helper function to update the index of the header text
         private int UpdateHeaderText(string header, int siblingIdx) {
@@ -215,6 +252,9 @@ namespace ProtoAqua.JobBoard
         //Creates a job button by taking in a jobId and getting the data from "job.cs"
         private void CreateJobButton(string jobId) {
 
+            //Get Job out of jobList
+            Job currentJob = jobList.findJob(jobId);
+
             //Instatiate a new job button and set its parent to the grid
             GameObject jobButton = Instantiate(jobButtonPrefab);
             Transform jobButtonTransform = jobButton.transform;
@@ -222,8 +262,8 @@ namespace ProtoAqua.JobBoard
 
 
             //Find The components to replace their texts
-            jobButtonTransform.Find("jobName").GetComponent<TextMeshProUGUI>().SetText(Job.getJobName(jobId));
-            jobButtonTransform.Find("jobReward").GetComponent<TextMeshProUGUI>().SetText(Job.getJobReward(jobId).ToString());
+            jobButtonTransform.Find("jobName").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobName);
+            jobButtonTransform.Find("jobReward").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobReward.ToString());
             //jobButtonTransform.Find("jobPicture").GetComponent<Image>.sprite = defaultSprite;
     
             //Add the listener for selecting a job to show on the right side
