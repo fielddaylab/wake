@@ -7,7 +7,7 @@ using BeauData;
 
 namespace ProtoAqua.JobBoard
 {
-    public class JobBoard : MonoBehaviour
+    public class JobBoard : MonoBehaviour, ISerializerContext
     {
         // public Sprite defaultSprite;
 
@@ -16,6 +16,7 @@ namespace ProtoAqua.JobBoard
         //Prefabs
         [SerializeField] private GameObject jobButtonPrefab = null;
         [SerializeField] private GameObject listHeaderPrefab = null;
+        [SerializeField] private Sprite[] spriteRefs = null;
 
         //Player wil be adjusted later
         [SerializeField] private GameObject playerObject = null;
@@ -36,6 +37,9 @@ namespace ProtoAqua.JobBoard
         private Transform selectedButton = null;
         private Image selectedButtonImage = null;
 
+        private Transform acceptJobButton = null;
+        private Transform completeJobButton = null;
+
         //Dictionary to match IDs used when updating the lists
         private Dictionary<string, Transform> jobIdToButton = new Dictionary<string, Transform>(); //Used to translate JobId to button transform
         private Dictionary<string, Transform> listHeaderToButton = new Dictionary<string, Transform>(); //Used to translate the listHeaders to buttons
@@ -50,7 +54,11 @@ namespace ProtoAqua.JobBoard
             selectedJob = transform.Find("selectedJob");
             //disable the right side initially
             selectedJob.gameObject.SetActive(false);
-            selectedJob.Find("selectedJobButton").GetComponent<Button>().onClick.AddListener(() => AcceptJob(currentJobId));
+
+            acceptJobButton = selectedJob.Find("acceptJobButton");
+            completeJobButton = selectedJob.Find("completeJobButton");
+            acceptJobButton.GetComponent<Button>().onClick.AddListener(() => AcceptJob(currentJobId));
+            completeJobButton.GetComponent<Button>().onClick.AddListener(() => CompleteJob(currentJobId));
             //Get the player component
             player = playerObject.GetComponent<Player>();
 
@@ -66,25 +74,15 @@ namespace ProtoAqua.JobBoard
         }
 
         private void Start() {
-
             //TODO adjust headers if no active jobs/ completed jobs?
-
-            //Add Active Jobs
             CreateJobList("Active");
-
-            //Add Available jobs
             CreateJobList("Available");
-
-            //Add completed jobs?
             CreateJobList("Completed");
-
-            
         }
 
         //Loads the job list from JSON into the jobLIst object
         private void loadJobList() {
-            Serializer.Read(ref jobList, jobListJSON);
-            Debug.Log(jobList.findJob("job1"));
+            Serializer.Read(ref jobList, jobListJSON, Serializer.Format.JSON, this);
         }
 
         //TODO add more logic to this
@@ -109,7 +107,6 @@ namespace ProtoAqua.JobBoard
             selectedButton = currentButton;
             currentJobId = jobId;
 
-            //TODO better way to do this
             //Used to select and deselect buttons. Set the "last selected button" to white if it exists then set the new button to gray
             if(selectedButtonImage) {
                 selectedButtonImage.color = Color.white;
@@ -123,16 +120,47 @@ namespace ProtoAqua.JobBoard
             //Change text for the selected side
             selectedJob.Find("selectedJobName").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobName);
             selectedJob.Find("selectedJobPostee").GetComponent<TextMeshProUGUI>().SetText("Posted By: " + currentJob.jobPostee);
-            //Set Difficulty ? have to decide how to judge this
             selectedJob.Find("selectedJobReward").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobReward.ToString());
             selectedJob.Find("selectedJobDescription").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobDescription);
+            //Set image
+
+            adjustDifficulty(currentJob.experimentation, currentJob.experimentationDifficulty, selectedJob.Find("difficultyContainer").Find("experimentDifficulty"));
+            adjustDifficulty(currentJob.modeling, currentJob.modelingDifficulty, selectedJob.Find("difficultyContainer").Find("modelDifficulty"));
+            adjustDifficulty(currentJob.argument, currentJob.argumentDifficulty, selectedJob.Find("difficultyContainer").Find("argumentDifficulty"));
+
             
+            updateButton(jobId);
 
-            //TODO Adjust Button if Active job/Available job/Completed Job
 
+        }
 
-            //TODO add functionality to change a "accepted button"
+        //Updates bottom button, depending what state the job is in. Active/Available/Complete
+        private void updateButton(string jobId) {
+            if (player.getActiveJobs().Contains(jobId)) {
+                completeJobButton.gameObject.SetActive(true);
+                acceptJobButton.gameObject.SetActive(false);
+            } else if (player.getAvailableJobs().Contains(jobId)) {
+                acceptJobButton.gameObject.SetActive(true);
+                completeJobButton.gameObject.SetActive(false);
+            } else {
+                acceptJobButton.gameObject.SetActive(false);
+                completeJobButton.gameObject.SetActive(false);
+            }
+        }
 
+        private void adjustDifficulty(bool active, int difficulty, Transform difficultyObject) {
+            difficultyObject.gameObject.SetActive(active);
+            Transform starContainer = difficultyObject.Find("starContainer");
+            
+            for(int i = 1; i <= 5; i++) {
+                Image star = starContainer.Find("star" + i).GetComponent<Image>();
+                if(i <= difficulty) {
+                    star.color = Color.yellow;
+                } else {
+                    star.color = Color.white;
+                }
+            }
+            
 
         }
 
@@ -142,6 +170,12 @@ namespace ProtoAqua.JobBoard
             player.acceptAvailableJob(jobId);
 
             Debug.Log("Accepted Job" + jobId);
+
+            UpdateJobOrders();
+        }
+
+        private void CompleteJob(string jobId) {
+            player.completeJob(jobId);
 
             UpdateJobOrders();
         }
@@ -170,6 +204,7 @@ namespace ProtoAqua.JobBoard
             siblingIdx = UpdateHeaderText("Completed", siblingIdx);
             siblingIdx = UpdateJobList(completedJobs, siblingIdx);
 
+            updateButton(currentJobId);
 
         }
 
@@ -264,7 +299,7 @@ namespace ProtoAqua.JobBoard
             //Find The components to replace their texts
             jobButtonTransform.Find("jobName").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobName);
             jobButtonTransform.Find("jobReward").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobReward.ToString());
-            //jobButtonTransform.Find("jobPicture").GetComponent<Image>.sprite = defaultSprite;
+            jobButtonTransform.Find("jobPicture").GetComponent<Image>().sprite = currentJob.sprite;
     
             //Add the listener for selecting a job to show on the right side
             jobButtonTransform.GetComponent<Button>().onClick.AddListener(() => SelectJob(jobId, jobButtonTransform));
@@ -274,6 +309,29 @@ namespace ProtoAqua.JobBoard
         
         }
 
+        bool ISerializerContext.TryGetAssetId<T>(T inObject, out string outId)
+        { 
+            outId = null;
+            return false;
+        }
+
+        bool ISerializerContext.TryResolveAsset<T>(string inId, out T outObject)
+        {
+            if (typeof(T) == typeof(Sprite))
+            {
+                foreach (var spr in spriteRefs)
+                {
+                    if (spr.name == inId)
+                    {
+                        outObject = spr as T;
+                        return true;
+                    }
+                }
+            }
+
+            outObject = null;
+            return false;
+        }
 
     }
 }
