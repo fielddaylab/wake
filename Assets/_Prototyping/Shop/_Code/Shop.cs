@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Shop
 {
-    public class Shop : MonoBehaviour
+    public class Shop : MonoBehaviour, ISerializerContext
     {
         #region Dependencies
 
@@ -18,6 +18,7 @@ namespace ProtoAqua.Shop
         [SerializeField] private Transform Group;
         [SerializeField] private TextMeshProUGUI Currency;
         [SerializeField] private NPC NPC;
+        [SerializeField] private Sprite[] SpriteRefs;
 
         [Header("Details Panel Dependencies")]
         [SerializeField] private RectTransform DetailsPanel;
@@ -45,7 +46,8 @@ namespace ProtoAqua.Shop
 
         private Routine dropRoutine;
 
-        // Initialize variables, add listener functions to buttons, call Populate() to add items
+        // Initialize variables, add listener functions to buttons, call Populate() to add items,
+        // populate spriteDatabase
         private void Start()
         {
             playerCurrency = PlayerData.PlayerCurrency;
@@ -56,16 +58,45 @@ namespace ProtoAqua.Shop
             AvailableItemsButton.onClick.AddListener(() => ToggleItems(purchasedItems, availableItems));
             PurchasedItemsButton.onClick.AddListener(() => ToggleItems(availableItems, purchasedItems));
             CloseButton.onClick.AddListener(() => HideDetails());
-
+            
             Populate();
         }
+
+        #region Load Sprite Assets
+
+        public bool TryResolveAsset<T>(string inId, out T outObject) where T : class
+        {
+            if (typeof(T) == typeof(Sprite))
+            {
+                foreach (Sprite sprite in SpriteRefs)
+                {
+                    if (sprite.name == inId)
+                    {
+                        outObject = sprite as T;
+                        return true;
+                    }
+                }
+            }
+
+            outObject = null;
+            return false;
+        }
+
+        // Unimplemented for now, as item sprites don't need to be serialized
+        public bool TryGetAssetId<Sprite>(Sprite inObject, out string outId) where Sprite : class
+        {
+            outId = "";
+            return false;
+        }
+
+        #endregion // Load Sprite Assets
 
         // Load ItemSet from JSON file, create ItemButtons based on parsed data and populate availableItems
         private void Populate()
         {
             string path = Path.Combine(Application.dataPath, JSON_PATH);
             string json = File.ReadAllText(path);
-            ItemSet itemSet = Serializer.Read<ItemSet>(json);
+            ItemSet itemSet = Serializer.Read<ItemSet>(json, Serializer.Format.JSON, this);
 
             foreach (Item item in itemSet.ItemData)
             {
