@@ -11,8 +11,8 @@ namespace ProtoAqua.JobBoard
     {
 
 
-        //TODO make private and add getters
-        public string jobId;
+        //TODO make private and add getters?
+        public string jobId; 
         public int jobIndex;
         public string jobName;
         public string jobDescription;

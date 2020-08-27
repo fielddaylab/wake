@@ -9,21 +9,27 @@ namespace ProtoAqua.JobBoard
 {
     public class JobBoard : MonoBehaviour, ISerializerContext
     {
-        // public Sprite defaultSprite;
 
-        [SerializeField] private TextAsset jobListJSON = null;
-
-        //Prefabs
+        #region Serialized Fields
+        [Header("Prefabs")]
         [SerializeField] private GameObject jobButtonPrefab = null;
         [SerializeField] private GameObject listHeaderPrefab = null;
-        [SerializeField] private Sprite[] spriteRefs = null;
 
-        //Player wil be adjusted later
+
+
+        [Header("Player")]
         [SerializeField] private GameObject playerObject = null;
+
+        [Header("Sources")]
+        [SerializeField] private TextAsset jobListJSON = null;
+        [SerializeField] private Sprite[] spriteRefs = null;
+       
+        #endregion
+
+        #region PrivateVariables
+
         private Player player;
-
         private JobList jobList;
-
         private string currentJobId;
 
         //Transforms used in Awake to create Buttons and adjust selectedJob
@@ -37,6 +43,7 @@ namespace ProtoAqua.JobBoard
         private Transform selectedButton = null;
         private Image selectedButtonImage = null;
 
+        //Transforms used for the acccept/complete button
         private Transform acceptJobButton = null;
         private Transform completeJobButton = null;
 
@@ -44,7 +51,7 @@ namespace ProtoAqua.JobBoard
         private Dictionary<string, Transform> jobIdToButton = new Dictionary<string, Transform>(); //Used to translate JobId to button transform
         private Dictionary<string, Transform> listHeaderToButton = new Dictionary<string, Transform>(); //Used to translate the listHeaders to buttons
 
-
+        #endregion //Private Variables
 
         private void Awake() {
 
@@ -68,8 +75,8 @@ namespace ProtoAqua.JobBoard
             // player.addAvailableJob("job3");
             // player.addAvailableJob("job4");
             
-            loadJobList();
-            populatePlayerJobs();
+            LoadJobList();
+            PopulatePlayerJobs();
 
         }
 
@@ -80,25 +87,31 @@ namespace ProtoAqua.JobBoard
             CreateJobList("Completed");
         }
 
+        #region LoadJobs
+
         //Loads the job list from JSON into the jobLIst object
-        private void loadJobList() {
+        private void LoadJobList() {
             Serializer.Read(ref jobList, jobListJSON, Serializer.Format.JSON, this);
         }
 
         //TODO add more logic to this
         //Takes the list of jobs and puts them within the player object
-        private void populatePlayerJobs() {
+        private void PopulatePlayerJobs() {
             Job[] jobs = jobList.getJobList();
             for(int i = 0; i < jobs.Length; i++) {
                 player.addAvailableJob(jobs[i].jobId);
             }
         }
-        
+
+        #endregion //JsonLoadJobs 
+
+        #region SelectJob
+
         //Function added as a listener to each of the job buttons
         //Takes in the currentButton that is pressed and what jobId it holds
         //Updates the global variables and makes the button grey to signify it is selected
         //Most importantly changes the information in the selectJob section to reflect that a job was actually selected, and to display more information
-         private void SelectJob(string jobId, Transform currentButton) {
+        private void SelectJob(string jobId, Transform currentButton) {
             selectedJob.gameObject.SetActive(true); //Set right side to be active
 
             Job currentJob = jobList.findJob(jobId);
@@ -122,20 +135,19 @@ namespace ProtoAqua.JobBoard
             selectedJob.Find("selectedJobPostee").GetComponent<TextMeshProUGUI>().SetText("Posted By: " + currentJob.jobPostee);
             selectedJob.Find("selectedJobReward").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobReward.ToString());
             selectedJob.Find("selectedJobDescription").GetComponent<TextMeshProUGUI>().SetText(currentJob.jobDescription);
-            //Set image
 
-            adjustDifficulty(currentJob.experimentation, currentJob.experimentationDifficulty, selectedJob.Find("difficultyContainer").Find("experimentDifficulty"));
-            adjustDifficulty(currentJob.modeling, currentJob.modelingDifficulty, selectedJob.Find("difficultyContainer").Find("modelDifficulty"));
-            adjustDifficulty(currentJob.argument, currentJob.argumentDifficulty, selectedJob.Find("difficultyContainer").Find("argumentDifficulty"));
+            AdjustDifficulty(currentJob.experimentation, currentJob.experimentationDifficulty, selectedJob.Find("difficultyContainer").Find("experimentDifficulty"));
+            AdjustDifficulty(currentJob.modeling, currentJob.modelingDifficulty, selectedJob.Find("difficultyContainer").Find("modelDifficulty"));
+            AdjustDifficulty(currentJob.argument, currentJob.argumentDifficulty, selectedJob.Find("difficultyContainer").Find("argumentDifficulty"));
 
             
-            updateButton(jobId);
+            UpdateButton(jobId);
 
 
         }
 
         //Updates bottom button, depending what state the job is in. Active/Available/Complete
-        private void updateButton(string jobId) {
+        private void UpdateButton(string jobId) {
             if (player.getActiveJobs().Contains(jobId)) {
                 completeJobButton.gameObject.SetActive(true);
                 acceptJobButton.gameObject.SetActive(false);
@@ -148,7 +160,7 @@ namespace ProtoAqua.JobBoard
             }
         }
 
-        private void adjustDifficulty(bool active, int difficulty, Transform difficultyObject) {
+        private void AdjustDifficulty(bool active, int difficulty, Transform difficultyObject) {
             difficultyObject.gameObject.SetActive(active);
             Transform starContainer = difficultyObject.Find("starContainer");
             
@@ -160,10 +172,11 @@ namespace ProtoAqua.JobBoard
                     star.color = Color.white;
                 }
             }
-            
-
         }
 
+        #endregion //Select Job
+        
+        #region AcceptOrCompleteJob
         //Listener Function added to the button for when a job is accepted
         //Updates the list of jobs as well as the list that the player holds
         private void AcceptJob(string jobId) {
@@ -180,6 +193,10 @@ namespace ProtoAqua.JobBoard
             UpdateJobOrders();
         }
 
+        #endregion //Aceept Complete
+        
+        #region UpdateJobList
+        
         //This function called anytime the lists are updated and will reorder the jobs of each category
         //Will sort the jobs of the lists to ensure that order is maintained
         private void UpdateJobOrders() {
@@ -204,7 +221,7 @@ namespace ProtoAqua.JobBoard
             siblingIdx = UpdateHeaderText("Completed", siblingIdx);
             siblingIdx = UpdateJobList(completedJobs, siblingIdx);
 
-            updateButton(currentJobId);
+            UpdateButton(currentJobId);
 
         }
 
@@ -221,7 +238,6 @@ namespace ProtoAqua.JobBoard
 
         }
         
-
         //Helper function to update the index of the header text
         private int UpdateHeaderText(string header, int siblingIdx) {
             Transform headerText;
@@ -250,6 +266,10 @@ namespace ProtoAqua.JobBoard
             }
             return jobButtonTransform;
         }   
+
+        #endregion //UpdateJobList
+
+        #region ListCreation
 
         //Creates each seperate Job list, depending on what is passed in. Will get the list of jobs of that type and create all the buttons for them
         private void CreateJobList(string type) {
@@ -283,7 +303,6 @@ namespace ProtoAqua.JobBoard
             listHeaderToButton.Add(listHeader,listHeaderTransform); //Add header to dictionary
         }
         
-
         //Creates a job button by taking in a jobId and getting the data from "job.cs"
         private void CreateJobButton(string jobId) {
 
@@ -309,6 +328,10 @@ namespace ProtoAqua.JobBoard
         
         }
 
+        #endregion //List Creation
+
+        #region Iserlializer
+
         bool ISerializerContext.TryGetAssetId<T>(T inObject, out string outId)
         { 
             outId = null;
@@ -333,5 +356,6 @@ namespace ProtoAqua.JobBoard
             return false;
         }
 
+        #endregion //Iserializer
     }
 }
