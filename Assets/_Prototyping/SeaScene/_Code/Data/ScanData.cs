@@ -2,31 +2,67 @@ using System;
 using UnityEngine;
 using BeauData;
 using BeauUtil;
+using BeauUtil.Blocks;
 
 namespace ProtoAqua.Observation
 {
-    [Serializable]
-    public class ScanData
+    public class ScanData : IDataBlock
     {
         static public readonly string NullId = "[null]";
 
-        #region Inspector
+        #region Serialized
 
-        [SerializeField] private string m_BaseId = NullId;
-        [SerializeField, AutoEnum] private ScanDataFlags m_Flags = 0;
+        // Ids
+        private string m_SelfId = null;
+        private string m_FullId = null;
 
-        [Header("Text")]
-        [SerializeField] private string m_HeaderText = null;
-        [SerializeField] private string m_DescText = null;
-        [SerializeField] private string m_DescTextShort = null;
+        // Properties
+        private ScanDataFlags m_Flags = 0;
+        [BlockMeta("scanDuration")] private int m_ScanDuration = 1;
 
-        [Header("Interaction")]
-        [SerializeField, Range(1, 3)] private int m_ScanSpeed = 1;
+        // Text
+        [BlockMeta("header")] private string m_HeaderText = null;
+        [BlockContent] private string m_DescText = null;
 
-        #endregion // Inspector
+        // Links
+        [BlockMeta("spriteId")] private string m_SpriteId = null;
+        [BlockMeta("logbook")] private string m_LogbookId = null;
+        [BlockMeta("eventEntrypoint")] private string m_EventEntrypoint = null;
 
-        public string BaseId() { return m_BaseId; }
+        #endregion // Serialized
+
+        public ScanData(string inSelfId, string inFullId)
+        {
+            m_SelfId = inSelfId;
+            m_FullId = inFullId;
+        }
+
+        public string Id() { return m_FullId; }
+        public string SelfId() { return m_SelfId; }
+
         public ScanDataFlags Flags() { return m_Flags; }
+        public int ScanSpeed() { return m_ScanDuration; }
+
+        public string Header() { return m_HeaderText; }
+        public string Text() { return m_DescText; }
+
+        public string SpriteId() { return m_SpriteId; }
+        public string LogbookId() { return m_LogbookId; }
+
+        public string EventEntrypoint() { return m_EventEntrypoint; }
+
+        #region Scan
+
+        [BlockMeta("important")]
+        private void SetImportant(bool inbImportant = true)
+        {
+            if (inbImportant)
+                m_Flags |= ScanDataFlags.Important;
+            else
+                m_Flags &= ~ScanDataFlags.Important;
+        }
+
+        #endregion // Scan
     }
 
     [Flags]

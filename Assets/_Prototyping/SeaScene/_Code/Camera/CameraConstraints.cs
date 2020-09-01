@@ -11,12 +11,19 @@ namespace ProtoAqua.Observation
 
         public class Bounds
         {
+            public string Name;
             public Rect Region;
-            public RectEdges Edges = RectEdges.All;
+            public RectEdges SoftEdges = RectEdges.All;
+            public RectEdges HardEdges = RectEdges.All;
 
-            public void Constrain(ref Vector2 ioCameraCenter, in Vector2 inCameraSize)
+            public void ConstrainSoft(ref Vector2 ioCameraCenter, in Vector2 inCameraSize)
             {
-                Geom.Constrain(ref ioCameraCenter, inCameraSize, Region, Edges);
+                Geom.Constrain(ref ioCameraCenter, inCameraSize, Region, SoftEdges);
+            }
+
+            public void ConstrainHard(ref Vector2 ioCameraCenter, in Vector2 inCameraSize)
+            {
+                Geom.Constrain(ref ioCameraCenter, inCameraSize, Region, HardEdges);
             }
         }
 
@@ -107,6 +114,7 @@ namespace ProtoAqua.Observation
             protected Vector2 m_FixedPosition;
             protected Transform m_DynamicPosition;
 
+            public string Name;
             public float Zoom = 1;
             public float LerpFactor = 1;
 
@@ -128,6 +136,14 @@ namespace ProtoAqua.Observation
                     return (Vector2) m_DynamicPosition.position + m_FixedPosition;
                 return m_FixedPosition;
             }
+        }
+    
+        public class Drift
+        {
+            public string Name;
+            public Vector2 Distance;
+            public Vector2 Period;
+            public Vector2 Offset;
         }
     }
 }

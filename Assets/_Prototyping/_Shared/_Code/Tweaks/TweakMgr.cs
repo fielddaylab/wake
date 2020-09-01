@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProtoAqua
 {
-    public class TweakMgr : MonoBehaviour, IService
+    public class TweakMgr : ServiceBehaviour
     {
         #region Inspector
 
@@ -21,7 +21,7 @@ namespace ProtoAqua
 
         #region IService
 
-        void IService.OnDeregisterService()
+        protected override void OnDeregisterService()
         {
             Debug.LogFormat("[TweakMgr] Unloading...");
 
@@ -36,7 +36,7 @@ namespace ProtoAqua
             Debug.LogFormat("[TweakMgr] ...done");
         }
 
-        void IService.OnRegisterService()
+        protected override void OnRegisterService()
         {
             Debug.LogFormat("[TweakMgr] Initializing...");
 
@@ -48,7 +48,7 @@ namespace ProtoAqua
             Debug.LogFormat("[TweakMgr] ...done");
         }
 
-        FourCC IService.ServiceId()
+        public override FourCC ServiceId()
         {
             return ServiceIds.Tweaks;
         }

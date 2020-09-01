@@ -24,11 +24,13 @@ namespace ProtoAudio
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
-        private readonly Dictionary<string, AudioEvent> m_EventLookup = new Dictionary<string, AudioEvent>();
+        private readonly Dictionary<string, AudioEvent> m_EventLookup = new Dictionary<string, AudioEvent>(StringComparer.Ordinal);
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
         private uint m_Id;
+
+        private AudioHandle m_BGM;
 
         #region IService
 
@@ -165,6 +167,26 @@ namespace ProtoAudio
         }
 
         #endregion // Playback
+
+        #region Background Music
+
+        public AudioHandle CurrentMusic() { return m_BGM; }
+
+        public AudioHandle SetMusic(string inId, float inCrossFade = 0)
+        {
+            m_BGM.Stop(inCrossFade);
+            m_BGM = PostEvent(inId);
+            if (inCrossFade > 0)
+                m_BGM.SetVolume(0).SetVolume(1, inCrossFade);
+            return m_BGM;
+        }
+
+        public void StopMusic(float inFade = 0)
+        {
+            m_BGM.Stop(inFade);
+        }
+
+        #endregion // Background Music
 
         #region Database
 

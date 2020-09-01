@@ -7,15 +7,22 @@ namespace ProtoAqua.Observation
 {
     public class CameraBoundsConstraint : MonoBehaviour
     {
+        private enum EdgeType : byte
+        {
+            DoNotApply,
+            Soft,
+            Hard
+        }
+
         #region Inspector
 
         [SerializeField] private BoxCollider2D m_Box = null;
 
         [Header("Borders")]
-        [SerializeField] private bool m_ConstrainTop = true;
-        [SerializeField] private bool m_ConstrainBottom = true;
-        [SerializeField] private bool m_ConstrainLeft = true;
-        [SerializeField] private bool m_ConstrainRight = true;
+        [SerializeField, AutoEnum] private EdgeType m_ConstrainTop = EdgeType.Soft;
+        [SerializeField, AutoEnum] private EdgeType m_ConstrainBottom = EdgeType.Soft;
+        [SerializeField, AutoEnum] private EdgeType m_ConstrainLeft = EdgeType.Soft;
+        [SerializeField, AutoEnum] private EdgeType m_ConstrainRight = EdgeType.Soft;
 
         #endregion // Inspector
 
@@ -29,8 +36,9 @@ namespace ProtoAqua.Observation
         private void Awake()
         {
             m_Transform = transform;
-            this.EnsureComponent<TriggerListener2D>(ref m_Listener);
+            m_Box.EnsureComponent<TriggerListener2D>(ref m_Listener);
             m_Listener.SetOccupantTracking(true);
+            m_Listener.FilterByComponent<CameraTargetConstraint>(ComponentLookupDirection.Parent);
             m_Listener.onTriggerEnter.AddListener(OnTargetEnter);
             m_Listener.onTriggerExit.AddListener(OnTargetExit);
         }
@@ -50,25 +58,18 @@ namespace ProtoAqua.Observation
             if (m_BoundsConstraint != null)
                 return;
 
-            if (inCollider.GetComponentInParent<CameraTargetConstraint>())
-            {
-                m_BoundsConstraint = ObservationServices.Camera.AddBounds();
-                PushChanges();
-                Debug.LogFormat("[CameraBoundsConstraint] Added bounding region '{0}'", name);
-            }
+            m_BoundsConstraint = ObservationServices.Camera.AddBounds(name);
+            PushChanges();
         }
 
         private void OnTargetExit(Collider2D inCollider)
         {
-            if (m_BoundsConstraint == null)
+            if (m_BoundsConstraint == null || !ObservationServices.Camera)
                 return;
             
-            if (inCollider.GetComponentInParent<CameraTargetConstraint>())
-            {
-                ObservationServices.Camera.RemoveBounds(m_BoundsConstraint);
-                m_BoundsConstraint = null;
-                Debug.LogFormat("[CameraBoundsConstraint] Removed bounding region '{0}'", name);
-            }
+            ObservationServices.Camera.RemoveBounds(m_BoundsConstraint);
+            m_BoundsConstraint = null;
+            Debug.LogFormat("[CameraBoundsConstraint] Removed bounding region '{0}'", name);
         }
 
         #endregion // Events
@@ -86,7 +87,8 @@ namespace ProtoAqua.Observation
             if (m_BoundsConstraint != null)
             {
                 m_BoundsConstraint.Region = Rect();
-                m_BoundsConstraint.Edges = Edges();
+                m_BoundsConstraint.SoftEdges = SoftEdges();
+                m_BoundsConstraint.HardEdges = HardEdges();
             }
         }
 
@@ -100,16 +102,30 @@ namespace ProtoAqua.Observation
             return rect;
         }
 
-        public RectEdges Edges()
+        public RectEdges SoftEdges()
         {
             RectEdges edges = 0;
-            if (m_ConstrainTop)
+            if (m_ConstrainTop == EdgeType.Soft)
                 edges |= RectEdges.Top;
-            if (m_ConstrainBottom)
+            if (m_ConstrainBottom == EdgeType.Soft)
                 edges |= RectEdges.Bottom;
-            if (m_ConstrainLeft)
+            if (m_ConstrainLeft == EdgeType.Soft)
                 edges |= RectEdges.Left;
-            if (m_ConstrainRight)
+            if (m_ConstrainRight == EdgeType.Soft)
+                edges |= RectEdges.Right;
+            return edges;
+        }
+
+        public RectEdges HardEdges()
+        {
+            RectEdges edges = 0;
+            if (m_ConstrainTop == EdgeType.Hard)
+                edges |= RectEdges.Top;
+            if (m_ConstrainBottom == EdgeType.Hard)
+                edges |= RectEdges.Bottom;
+            if (m_ConstrainLeft == EdgeType.Hard)
+                edges |= RectEdges.Left;
+            if (m_ConstrainRight == EdgeType.Hard)
                 edges |= RectEdges.Right;
             return edges;
         }
@@ -156,13 +172,13 @@ namespace ProtoAqua.Observation
 
             topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 1;
 
-            if (m_ConstrainLeft)
+            if (m_ConstrainLeft != EdgeType.DoNotApply)
                 Gizmos.DrawLine(bottomLeft, topLeft);
-            if (m_ConstrainRight)
+            if (m_ConstrainRight != EdgeType.DoNotApply)
                 Gizmos.DrawLine(bottomRight, topRight);
-            if (m_ConstrainTop)
+            if (m_ConstrainTop != EdgeType.DoNotApply)
                 Gizmos.DrawLine(topLeft, topRight);
-            if (m_ConstrainBottom)
+            if (m_ConstrainBottom != EdgeType.DoNotApply)
                 Gizmos.DrawLine(bottomLeft, bottomRight);
         }
 

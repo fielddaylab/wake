@@ -20,5 +20,10 @@ namespace ProtoAqua
 
         [Header("Limits"), Range(0, 1000)]
         public float MaxSpeed;
+
+        public void ApplyLimits()
+        {
+            KinematicMath2D.IntegrateLimits(ref this);
+        }
     }
 }

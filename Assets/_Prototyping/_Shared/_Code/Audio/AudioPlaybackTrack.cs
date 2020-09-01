@@ -196,7 +196,7 @@ namespace ProtoAudio
 
                         if (!m_Source.isPlaying)
                         {
-                            if (++m_StopCounter > 2)
+                            if (++m_StopCounter > 3)
                             {
                                 m_Source.Stop();
                                 m_CurrentState = State.Stopped;

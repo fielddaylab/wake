@@ -14,7 +14,7 @@ namespace ProtoAqua.Energy
         
         // non-serialized
         internal EnergySimScenario Source;
-        internal Dictionary<string, SerializedRule> RuleMap = new Dictionary<string, SerializedRule>(32);
+        internal Dictionary<string, SerializedRule> RuleMap = new Dictionary<string, SerializedRule>(32, StringComparer.Ordinal);
 
         #region ISerializedObject
 
@@ -131,7 +131,7 @@ namespace ProtoAqua.Energy
         {
             if (RuleMap == null)
             {
-                RuleMap = new Dictionary<string, SerializedRule>(32);
+                RuleMap = new Dictionary<string, SerializedRule>(32, StringComparer.Ordinal);
             }
             else
             {

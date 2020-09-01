@@ -27,7 +27,7 @@ namespace ProtoCP
         [NonSerialized] private readonly List<CPControl> m_RootControls = new List<CPControl>(32);
         [NonSerialized] private readonly List<CPControl> m_AllControls = new List<CPControl>(32);
         [NonSerialized] private readonly Stack<CPHeader> m_HeaderStack = new Stack<CPHeader>(8);
-        [NonSerialized] private readonly Dictionary<string, CPControlState.State> m_PreservedExpansionState = new Dictionary<string, CPControlState.State>(32);
+        [NonSerialized] private readonly Dictionary<string, CPControlState.State> m_PreservedExpansionState = new Dictionary<string, CPControlState.State>(32, StringComparer.Ordinal);
 
         #region Builder
 

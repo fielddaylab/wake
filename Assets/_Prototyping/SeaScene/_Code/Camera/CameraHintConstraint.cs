@@ -33,7 +33,8 @@ namespace ProtoAqua.Observation
         private void Awake()
         {
             m_Transform = transform;
-            this.EnsureComponent<TriggerListener2D>(ref m_Listener);
+            m_Circle.EnsureComponent<TriggerListener2D>(ref m_Listener);
+            m_Listener.FilterByComponent<CameraTargetConstraint>(ComponentLookupDirection.Parent);
             m_Listener.SetOccupantTracking(true);
             m_Listener.onTriggerEnter.AddListener(OnTargetEnter);
             m_Listener.onTriggerExit.AddListener(OnTargetExit);
@@ -54,26 +55,18 @@ namespace ProtoAqua.Observation
             if (m_HintConstraint != null)
                 return;
 
-            if (inCollider.GetComponentInParent<CameraTargetConstraint>())
-            {
-                m_HintConstraint = ObservationServices.Camera.AddHint();
-                m_HintConstraint.SetWeight(CalculateWeight, m_InitialWeight);
-                PushChanges();
-                Debug.LogFormat("[CameraHintConstraint] Added hint '{0}'", name);
-            }
+            m_HintConstraint = ObservationServices.Camera.AddHint(name);
+            m_HintConstraint.SetWeight(CalculateWeight, m_InitialWeight);
+            PushChanges();
         }
 
         private void OnTargetExit(Collider2D inCollider)
         {
-            if (m_HintConstraint == null)
+            if (m_HintConstraint == null || !ObservationServices.Camera)
                 return;
             
-            if (inCollider.GetComponentInParent<CameraTargetConstraint>())
-            {
-                ObservationServices.Camera.RemoveHint(m_HintConstraint);
-                m_HintConstraint = null;
-                Debug.LogFormat("[CameraHintConstraint] Removed hint '{0}'", name);
-            }
+            ObservationServices.Camera.RemoveHint(m_HintConstraint);
+            m_HintConstraint = null;
         }
 
         #endregion // Events

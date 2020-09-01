@@ -14,24 +14,21 @@ namespace ProtoAqua
         static Services()
         {
             InitFields();
+
+            Application.quitting += () => { s_Quitting = true; };
         }
         
         static private readonly HashSet<FieldInfo> s_ServiceCacheFields = new HashSet<FieldInfo>();
         static private readonly ServiceCache s_ServiceCache = new ServiceCache();
-        
-        static protected T Retrieve<T>(ref T ioStorage, FourCC inId) where T : IService
-        {
-            if (object.ReferenceEquals(ioStorage, null))
-            {
-                ioStorage = s_ServiceCache.Get<T>(inId);
-            }
-            return ioStorage;
-        }
+        static private bool s_Quitting;
         
         static protected T RetrieveOrFind<T>(ref T ioStorage, FourCC inId) where T : UnityEngine.Object, IService
         {
             if (object.ReferenceEquals(ioStorage, null))
             {
+                if (s_Quitting)
+                    return null;
+                
                 ioStorage = s_ServiceCache.Get<T>(inId);
                 if (object.ReferenceEquals(ioStorage, null))
                 {
@@ -49,7 +46,7 @@ namespace ProtoAqua
 
         static protected void Store<T>(ref T ioStorage, T inValue) where T : IService
         {
-            if (object.ReferenceEquals(ioStorage, inValue))
+            if (s_Quitting || object.ReferenceEquals(ioStorage, inValue))
                 return;
 
             if (inValue == null)
@@ -83,6 +80,24 @@ namespace ProtoAqua
         static public AudioMgr Audio
         {
             get { return RetrieveOrFind(ref s_CachedAudioMgr, ServiceIds.Audio); }
+        }
+
+        static private EventService s_CachedEventService;
+        static public EventService Events
+        {
+            get { return RetrieveOrFind(ref s_CachedEventService, ServiceIds.Events); }
+        }
+
+        static private InputService s_CachedInputService;
+        static public InputService Input
+        {
+            get { return RetrieveOrFind(ref s_CachedInputService, ServiceIds.Input); }
+        }
+
+        static private ScriptingService s_CachedScripting;
+        static public ScriptingService Script
+        {
+            get { return RetrieveOrFind(ref s_CachedScripting, ServiceIds.Scripting); }
         }
 
         static private TweakMgr s_CachedTweakMgr;

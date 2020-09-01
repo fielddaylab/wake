@@ -28,7 +28,7 @@ namespace ProtoCP
 
             public ControlPoolSet()
             {
-                m_Variants = new Dictionary<string, ControlPool>(3);
+                m_Variants = new Dictionary<string, ControlPool>(3, StringComparer.Ordinal);
             }
 
             public bool TryGetPool(string inVariantId, out ControlPool outPool)

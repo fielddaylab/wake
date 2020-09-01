@@ -12,5 +12,11 @@ namespace ProtoAqua.Observation
         {
             get { return RetrieveOrFind(ref s_CachedCamera, ServiceIds.Camera); }
         }
+
+        static private ObservationUI s_CachedObservationUI;
+        static public ObservationUI SceneUI
+        {
+            get { return RetrieveOrFind(ref s_CachedObservationUI, ObservationUI.Id); }
+        }
     }
 }

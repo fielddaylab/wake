@@ -54,7 +54,7 @@ namespace ProtoAqua.Energy
         {
             m_IdMap = new Dictionary<FourCC, T>(m_Types.Length);
             m_Ids = new FourCC[m_Types.Length];
-            m_ScriptNameMap = new Dictionary<string, FourCC>(m_Types.Length);
+            m_ScriptNameMap = new Dictionary<string, FourCC>(m_Types.Length, StringComparer.Ordinal);
 
             for(int i = 0; i < m_Types.Length; ++i)
             {

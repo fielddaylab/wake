@@ -29,12 +29,16 @@ namespace ProtoAqua
 
         void IService.OnRegisterService()
         {
+            Debug.LogFormat("[{0}] Registering service...", GetType().Name);
             OnRegisterService();
+            Debug.LogFormat("[{0}] Finished registering service.", GetType().Name);
         }
 
         void IService.OnDeregisterService()
         {
+            Debug.LogFormat("[{0}] Deregistering service...", GetType().Name);
             OnDeregisterService();
+            Debug.LogFormat("[{0}] Finished deregistering service.", GetType().Name);
         }
 
         #endregion // Events
