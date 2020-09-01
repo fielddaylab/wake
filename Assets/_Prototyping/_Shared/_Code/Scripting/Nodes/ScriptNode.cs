@@ -1,6 +1,7 @@
 using System;
 using BeauUtil.Blocks;
 using System.Collections.Generic;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua
 {
@@ -39,13 +40,13 @@ namespace ProtoAqua
 
         #region Parser
 
-        [BlockContent(BlockContentMode.LineByLine)]
+        [BlockContent(BlockContentMode.LineByLine), Preserve]
         private void AddContent(string inLine)
         {
             m_Lines.Add(inLine);
         }
 
-        [BlockMeta("cutscene")]
+        [BlockMeta("cutscene"), Preserve]
         private void SetCutscene(bool inbCutscene = true)
         {
             if (inbCutscene)
@@ -54,7 +55,7 @@ namespace ProtoAqua
                 m_Flags &= ~ScriptNodeFlags.Cutscene;
         }
 
-        [BlockMeta("entrypoint")]
+        [BlockMeta("entrypoint"), Preserve]
         private void SetEntrypoint()
         {
             m_Flags |= ScriptNodeFlags.Entrypoint;

@@ -17,8 +17,8 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-        [NonSerialized] private bool m_ToolModeToggle;
-        [NonSerialized] private float m_LastToolModeDown;
+        [NonSerialized] private bool m_ToolModeToggle = false;
+        [NonSerialized] private float m_LastToolModeDown = -1;
         
         #region WorldInput
 

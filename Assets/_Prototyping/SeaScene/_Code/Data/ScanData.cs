@@ -3,6 +3,7 @@ using UnityEngine;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Blocks;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.Observation
 {
@@ -53,7 +54,7 @@ namespace ProtoAqua.Observation
 
         #region Scan
 
-        [BlockMeta("important")]
+        [BlockMeta("important"), Preserve]
         private void SetImportant(bool inbImportant = true)
         {
             if (inbImportant)

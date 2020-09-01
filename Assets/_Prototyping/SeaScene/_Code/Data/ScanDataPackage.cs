@@ -8,7 +8,6 @@ using System.Collections;
 using BeauUtil.Tags;
 using System.Text;
 using System.Threading;
-using UnityEditor.Experimental.AssetImporters;
 using System.IO;
 
 namespace ProtoAqua.Observation
@@ -79,7 +78,7 @@ namespace ProtoAqua.Observation
         [UnityEditor.Experimental.AssetImporters.ScriptedImporter(1, "scan")]
         private class Importer : UnityEditor.Experimental.AssetImporters.ScriptedImporter
         {
-            public override void OnImportAsset(AssetImportContext ctx)
+            public override void OnImportAsset(UnityEditor.Experimental.AssetImporters.AssetImportContext ctx)
             {
                 TextAsset txtAsset = new TextAsset(File.ReadAllText(ctx.assetPath));
                 ctx.AddObjectToAsset("Main Object", txtAsset);
