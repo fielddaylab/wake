@@ -209,14 +209,14 @@ namespace ProtoAqua
         #endregion // Inspector
 
         private Routine m_CleanupRoutine;
-        private readonly Dictionary<PropertyName, HandlerBlock> m_Handlers = new Dictionary<PropertyName, HandlerBlock>(64);
+        private readonly Dictionary<StringHash, HandlerBlock> m_Handlers = new Dictionary<StringHash, HandlerBlock>(64);
 
         #region Registration
 
         /// <summary>
         /// Registers an event handler, optionally bound to a given object.
         /// </summary>
-        public EventService Register(PropertyName inEventId, Action inAction, UnityEngine.Object inBinding = null)
+        public EventService Register(StringHash inEventId, Action inAction, UnityEngine.Object inBinding = null)
         {
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
@@ -232,7 +232,7 @@ namespace ProtoAqua
         /// <summary>
         /// Registers an event handler, optionally bound to a given object.
         /// </summary>
-        public EventService Register(PropertyName inEventId, Action<object> inActionWithContext, UnityEngine.Object inBinding = null)
+        public EventService Register(StringHash inEventId, Action<object> inActionWithContext, UnityEngine.Object inBinding = null)
         {
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
@@ -248,7 +248,7 @@ namespace ProtoAqua
         /// <summary>
         /// Deregisters an event handler.
         /// </summary>
-        public EventService Deregister(PropertyName inEventId, Action inAction)
+        public EventService Deregister(StringHash inEventId, Action inAction)
         {
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
@@ -262,7 +262,7 @@ namespace ProtoAqua
         /// <summary>
         /// Deregisters an event handler.
         /// </summary>
-        public EventService Deregister(PropertyName inEventId, Action<object> inActionWithContext)
+        public EventService Deregister(StringHash inEventId, Action<object> inActionWithContext)
         {
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
@@ -276,7 +276,7 @@ namespace ProtoAqua
         /// <summary>
         /// Deregisters all handlers for the given event.
         /// </summary>
-        public EventService DeregisterAll(PropertyName inEventId)
+        public EventService DeregisterAll(StringHash inEventId)
         {
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
@@ -310,7 +310,7 @@ namespace ProtoAqua
         /// <summary>
         /// Dispatches the given event with an optional argument.
         /// </summary>
-        public void Dispatch(PropertyName inEventId, object inContext = null)
+        public void Dispatch(StringHash inEventId, object inContext = null)
         {
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))

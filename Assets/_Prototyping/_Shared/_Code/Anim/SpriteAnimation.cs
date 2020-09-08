@@ -91,7 +91,7 @@ namespace ProtoAqua
                         }
                         else
                         {
-                            WeightedSet<SpriteAnimation> weightedSet = m_NextSelector ?? new WeightedSet<SpriteAnimation>(m_NextAnimations.Length);
+                            WeightedSet<SpriteAnimation> weightedSet = m_NextSelector ?? (m_NextSelector = new WeightedSet<SpriteAnimation>(m_NextAnimations.Length));
                             weightedSet.Clear();
                             foreach(var choice in m_NextAnimations)
                             {
@@ -121,7 +121,7 @@ namespace ProtoAqua
             return 0;
         }
 
-        private WeightedSet<SpriteAnimation> m_NextSelector;
+        private WeightedSet<SpriteAnimation> m_NextSelector = null;
     }
 
     /// <summary>

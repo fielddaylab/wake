@@ -16,29 +16,30 @@ namespace ProtoAqua
     {
         static public class Global
         {
-            static public readonly PropertyName HideDialog = "hide-dialog";
-            static public readonly PropertyName PitchBGM = "bgm-pitch";
-            static public readonly PropertyName PlayBGM = "bgm-play";
-            static public readonly PropertyName PlaySound = "sound-play";
-            static public readonly PropertyName ShowDialog = "show-dialog";
-            static public readonly PropertyName StopBGM = "bgm-stop";
-            static public readonly PropertyName Wait = "wait";
-            static public readonly PropertyName WaitReal = "wait-real";
-            static public readonly PropertyName LetterboxOn = "letterbox-on";
-            static public readonly PropertyName LetterboxOff = "letterbox-off";
-            static public readonly PropertyName EnableObject = "enable-object";
-            static public readonly PropertyName DisableObject = "disable-object";
+            static public readonly StringHash HideDialog = "hide-dialog";
+            static public readonly StringHash PitchBGM = "bgm-pitch";
+            static public readonly StringHash PlayBGM = "bgm-play";
+            static public readonly StringHash PlaySound = "sound-play";
+            static public readonly StringHash ShowDialog = "show-dialog";
+            static public readonly StringHash StopBGM = "bgm-stop";
+            static public readonly StringHash Wait = "wait";
+            static public readonly StringHash BroadcastEvent = "broadcast-event";
+            static public readonly StringHash WaitAbsolute = "wait-abs";
+            static public readonly StringHash LetterboxOn = "letterbox-on";
+            static public readonly StringHash LetterboxOff = "letterbox-off";
+            static public readonly StringHash EnableObject = "enable-object";
+            static public readonly StringHash DisableObject = "disable-object";
         }
 
         static public class Dialog
         {
-            static public readonly PropertyName Auto = "auto-continue";
-            static public readonly PropertyName Clear = "clear";
-            static public readonly PropertyName InputContinue = "input-continue";
-            static public readonly PropertyName SetTypeSFX = "set-type-sfx";
-            static public readonly PropertyName Speaker = "set-speaker";
-            static public readonly PropertyName Speed = "set-speed";
-            static public readonly PropertyName Target = "set-target";
+            static public readonly StringHash Auto = "auto-continue";
+            static public readonly StringHash Clear = "clear";
+            static public readonly StringHash InputContinue = "input-continue";
+            static public readonly StringHash SetTypeSFX = "set-type-sfx";
+            static public readonly StringHash Speaker = "set-speaker";
+            static public readonly StringHash Speed = "set-speed";
+            static public readonly StringHash Target = "set-target";
         }
     }
 }

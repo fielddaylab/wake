@@ -101,11 +101,11 @@ namespace ProtoAqua
                 m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.StringArgument);
                 m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeaker(e.StringArgument));
                 m_EventHandler.Register(ScriptEvents.Dialog.Speed, (e, o) => {
-                    m_CurrentState.Speed = e.IsClosing ? 1 : e.NumberArgument;
+                    m_CurrentState.Speed = e.IsClosing ? 1 : e.Argument0.AsFloat();
                     return Routine.WaitSeconds(0.15f);
                 });
                 m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.StringArgument));
-                m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Routine.WaitSeconds(e.NumberArgument * GetSkipMultiplier()));
+                m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Routine.WaitSeconds(e.Argument0.AsFloat() * GetSkipMultiplier()));
             }
 
             return m_EventHandler;

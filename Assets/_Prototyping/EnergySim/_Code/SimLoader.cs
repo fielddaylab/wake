@@ -15,8 +15,8 @@ namespace ProtoAqua.Energy
 
         #region Inspector
 
-        [SerializeField] private EnergySimScenario[] m_Scenarios;
-        [SerializeField] private EnergySimDatabase[] m_Databases;
+        [SerializeField] private EnergySimScenario[] m_Scenarios = null;
+        [SerializeField] private EnergySimDatabase[] m_Databases = null;
         
         #endregion // Inspector
 

@@ -9,6 +9,7 @@ namespace ProtoAqua
     {
         private void Awake()
         {
+            BuildInfo.Load();
             Input.multiTouchEnabled = false;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;

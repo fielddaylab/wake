@@ -204,7 +204,7 @@ namespace ProtoAqua
 
             m_LastAppliedFrame = inFrameIdx;
 
-            if (inFrameIdx >= m_Animation.FrameCount())
+            if (m_Animation == null || inFrameIdx >= m_Animation.FrameCount())
                 return false;
 
             SpriteFrame frame = m_Animation.Frame(inFrameIdx);
@@ -227,6 +227,11 @@ namespace ProtoAqua
                 {
                     m_ImageRenderer.rectTransform.pivot = frameSprite.pivot / frameSprite.rect.size;
                 }
+            }
+
+            if (OnFrameChange != null)
+            {
+                OnFrameChange(m_Animation, inFrameIdx);
             }
 
             if (!string.IsNullOrEmpty(frame.ExtraEvents) && OnFrameEvent != null)

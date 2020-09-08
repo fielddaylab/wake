@@ -17,7 +17,6 @@ namespace ProtoAqua.Observation
 
         [Header("Scanner")]
 
-        [SerializeField] private RectTransform m_BounceGroup = null;
         [SerializeField] private Image m_Background = null;
 
         [Header("Scanning")]

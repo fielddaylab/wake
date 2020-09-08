@@ -28,9 +28,11 @@ namespace ProtoAqua
             m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithAliases("sound").WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
             m_TagEventParser.AddEvent("wait", ScriptEvents.Global.Wait).WithFloatData(0.25f);
+            m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
             m_TagEventParser.AddEvent("letterbox", ScriptEvents.Global.LetterboxOn).CloseWith(ScriptEvents.Global.LetterboxOff);
-            m_TagEventParser.AddEvent("enable-gameobject", ScriptEvents.Global.EnableObject).WithStringData();
-            m_TagEventParser.AddEvent("disable-gameobject", ScriptEvents.Global.DisableObject).WithStringData();
+            m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
+            m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
+            m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithStringData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -95,19 +97,18 @@ namespace ProtoAqua
                 })
                 .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.DialogPanel().Show(); } )
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => {
-                    Services.Audio.StopMusic(e.NumberArgument);
+                    Services.Audio.StopMusic(e.Argument0.AsFloat());
                 })
                 .Register(ScriptEvents.Global.Wait, (e, o) => {
-                    return Routine.WaitSeconds(e.NumberArgument);
+                    return Routine.WaitSeconds(e.Argument0.AsFloat());
                 })
-                .Register(ScriptEvents.Global.WaitReal, (e, o) => {
-                    return Routine.WaitSeconds(e.NumberArgument);
+                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => {
+                    return Routine.WaitSeconds(e.Argument0.AsFloat());
                 })
                 .Register(ScriptEvents.Global.EnableObject, (e, o) => {
                     TempList16<StringSlice> args = new TempList16<StringSlice>();
                     int argCount = ExtractArgs(e.StringArgument, ref args);
-                    string objId;
-                    bool all;
+
                 });
         }
 
