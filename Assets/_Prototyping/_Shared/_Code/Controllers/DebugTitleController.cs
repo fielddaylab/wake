@@ -20,7 +20,9 @@ namespace ProtoAqua
         {
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {
-                if (scene.Id == inScene.Id)
+                Debug.LogFormat("[DebugTitleController] Found scene {0}", scene);
+
+                if (scene == inScene)
                     continue;
                 
                 m_SceneButtonPool.Alloc().Initialize(scene);

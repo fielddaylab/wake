@@ -23,17 +23,17 @@ namespace ProtoCP
 
         private class ControlPoolSet
         {
-            private readonly Dictionary<string, ControlPool> m_Variants;
+            private readonly Dictionary<StringHash, ControlPool> m_Variants;
             private ControlPool m_DefaultPool;
 
             public ControlPoolSet()
             {
-                m_Variants = new Dictionary<string, ControlPool>(3, StringComparer.Ordinal);
+                m_Variants = new Dictionary<StringHash, ControlPool>(3);
             }
 
-            public bool TryGetPool(string inVariantId, out ControlPool outPool)
+            public bool TryGetPool(StringHash inVariantId, out ControlPool outPool)
             {
-                if (string.IsNullOrEmpty(inVariantId))
+                if (inVariantId.IsEmpty)
                 {
                     outPool = m_DefaultPool;
                     return outPool != null;
@@ -45,9 +45,9 @@ namespace ProtoCP
             public void AddPool(CPControl inTemplate, Transform inRoot, int inPrewarm)
             {
                 bool bDefault = m_DefaultPool == null;
-                string variantId = inTemplate.VariantId();
+                StringHash variantId = inTemplate.VariantId();
 
-                if (string.IsNullOrEmpty(variantId))
+                if (variantId.IsEmpty)
                 {
                     bDefault = true;
                     variantId = inTemplate.name;
@@ -60,7 +60,7 @@ namespace ProtoCP
                 }
 
                 ControlPool pool = new ControlPool();
-                pool.Name = variantId;
+                pool.Name = variantId.ToDebugString();
                 pool.Prefab = inTemplate;
                 pool.ConfigureTransforms(inRoot, null, true);
                 pool.ConfigureCapacity(inPrewarm * 4, inPrewarm, true);
@@ -73,6 +73,22 @@ namespace ProtoCP
                 }
             }
         
+            public int UnloadFromScene(SceneBinding inBinding)
+            {
+                int count = 0;
+                if (m_DefaultPool != null)
+                {
+                    count += m_DefaultPool.FreeAllInScene(inBinding);
+                }
+
+                foreach(var pool in m_Variants.Values)
+                {
+                    count += pool.FreeAllInScene(inBinding);
+                }
+
+                return count;
+            }
+
             public void Shutdown()
             {
                 m_DefaultPool?.Destroy();
@@ -107,20 +123,22 @@ namespace ProtoCP
         [NonSerialized] private Dictionary<FourCC, ControlPoolSet> m_PoolSets;
 
         [NonSerialized] private readonly Action m_ShutdownDelegate;
+        [NonSerialized] private readonly SceneHelper.SceneLoadAction m_UnloadDelegate;
 
         private CPStyle()
         {
             m_ShutdownDelegate = Shutdown;
+            m_UnloadDelegate = UnloadFromScene;
         }
 
         #region Alloc
 
         public CPControl Alloc(FourCC inControlType, Transform inTarget)
         {
-            return Alloc(inControlType, null, inTarget);
+            return Alloc(inControlType, StringHash.Null, inTarget);
         }
 
-        public CPControl Alloc(FourCC inControlType, string inVariantId, Transform inTarget)
+        public CPControl Alloc(FourCC inControlType, StringHash inVariantId, Transform inTarget)
         {
             Initialize();
 
@@ -152,10 +170,10 @@ namespace ProtoCP
 
         public T Alloc<T>(FourCC inControlType, Transform inTarget) where T : CPControl
         {
-            return Alloc<T>(inControlType, null, inTarget);
+            return Alloc<T>(inControlType, StringHash.Null, inTarget);
         }
 
-        public T Alloc<T>(FourCC inControlType, string inVariantId, Transform inTarget) where T : CPControl
+        public T Alloc<T>(FourCC inControlType, StringHash inVariantId, Transform inTarget) where T : CPControl
         {
             Initialize();
 
@@ -203,6 +221,19 @@ namespace ProtoCP
             Shutdown();
         }
 
+        private void UnloadFromScene(SceneBinding inScene, object inContext)
+        {
+            int recycleCount = 0;
+            foreach(var template in m_PoolSets.Values)
+            {
+                recycleCount += template.UnloadFromScene(inScene);
+            }
+            if (recycleCount > 0)
+            {
+                Debug.LogWarningFormat("[CPStyle] Cleaned up {0} controls on style '{1}' from unloading scene...", recycleCount, name);
+            }
+        }
+
         private void Initialize()
         {
             #if UNITY_EDITOR
@@ -237,6 +268,7 @@ namespace ProtoCP
                 set.AddPool(template, m_PoolRoot, m_Prewarm);
             }
 
+            SceneHelper.OnSceneUnload += m_UnloadDelegate;
             Application.quitting += m_ShutdownDelegate;
             m_Initialized = true;
 
@@ -254,6 +286,7 @@ namespace ProtoCP
                 return;
 
             Application.quitting -= m_ShutdownDelegate;
+            SceneHelper.OnSceneUnload -= m_UnloadDelegate;
 
             Debug.LogFormat("[CPStyle] Unloading style '{0}'...", name);
 

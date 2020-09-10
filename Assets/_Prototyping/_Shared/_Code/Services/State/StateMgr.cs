@@ -81,7 +81,7 @@ namespace ProtoAqua
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.AllLoaded))
             {
                 Debug.LogFormat("[StateMgr] Initial load of '{0}' finished", scene.Path);
-                scene.OnLoaded();
+                scene.BroadcastLoaded();
             }
         }
 
@@ -93,7 +93,7 @@ namespace ProtoAqua
 
                 SceneBinding active = SceneHelper.FindScene(SceneCategories.ActiveOnly);
                 Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
-                active.OnUnload(inContext);
+                active.BroadcastUnload(inContext);
                 
                 AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
                 loadOp.allowSceneActivation = false;
@@ -116,7 +116,7 @@ namespace ProtoAqua
                     Services.UI.HideLoadingScreen();
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
-                inNextScene.OnLoaded(inContext);
+                inNextScene.BroadcastLoaded(inContext);
             }
             finally
             {
