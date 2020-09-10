@@ -22,8 +22,7 @@ namespace ProtoAudio
         #endregion // Inspector
 
         [NonSerialized] private string m_Id;
-        [NonSerialized] private int[] m_Order;
-        [NonSerialized] private int m_OrderIdx = -1;
+        [NonSerialized] private RandomDeck<AudioClip> m_ClipDeck;
 
         #region IKeyValuePair
 
@@ -42,30 +41,10 @@ namespace ProtoAudio
 
         private AudioClip GetNextClip(System.Random inRandom)
         {
-            if (m_Clips.Length <= 0)
-                return null;
+            if (m_ClipDeck == null)
+                m_ClipDeck = new RandomDeck<AudioClip>(m_Clips);
 
-            if (m_Order == null)
-            {
-                m_Order = new int[m_Clips.Length];
-                for(int i = 0; i < m_Order.Length; ++i)
-                    m_Order[i] = i;
-            }
-
-            if (m_OrderIdx < 0)
-            {
-                inRandom.Shuffle(m_Order);
-                m_OrderIdx = 0;
-            }
-            else if (++m_OrderIdx >= m_Order.Length)
-            {
-                inRandom.Shuffle(m_Order, 0, m_Order.Length - 1);
-                inRandom.Shuffle(m_Order, 1, m_Order.Length - 1);
-                m_OrderIdx = 0;
-            }
-
-            int clipIdx = m_Order[m_OrderIdx];
-            return m_Clips[clipIdx];
+            return m_ClipDeck.Next(inRandom);
         }
 
         public bool Load(AudioSource inSource, System.Random inRandom, out AudioPropertyBlock outProperties, out float outDelay)
@@ -96,7 +75,8 @@ namespace ProtoAudio
 
         public void ResetOrdering()
         {
-            m_OrderIdx = -1;
+            if (m_ClipDeck != null)
+                m_ClipDeck.Reset();
         }
     }
 }

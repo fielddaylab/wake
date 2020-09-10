@@ -20,12 +20,12 @@ namespace ProtoAqua
 
         public string Id() { return m_Id; }
 
-        void ISceneLoadHandler.OnSceneLoad(Scene inScene, object inContext)
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
             // throw new NotImplementedException();
         }
 
-        void ISceneUnloadHandler.OnSceneUnload(Scene inScene, object inContext)
+        void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)
         {
             // throw new NotImplementedException();
         }

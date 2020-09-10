@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System.Collections.Generic;
 using System.Reflection;
 using BeauData;
@@ -44,6 +48,19 @@ namespace ProtoAqua
             return ioStorage;
         }
 
+        static protected T Retrieve<T>(ref T ioStorage, FourCC inId) where T : class, IService
+        {
+            if (object.ReferenceEquals(ioStorage, null))
+            {
+                if (s_Quitting)
+                    return null;
+                
+                ioStorage = s_ServiceCache.Get<T>(inId);
+            }
+
+            return ioStorage;
+        }
+
         static protected void Store<T>(ref T ioStorage, T inValue) where T : IService
         {
             if (s_Quitting || object.ReferenceEquals(ioStorage, inValue))
@@ -76,10 +93,22 @@ namespace ProtoAqua
 
         #region Accessors
 
+        static private AnalyticsService s_CachedAnalyticsService;
+        static public AnalyticsService Analytics
+        {
+            get { return RetrieveOrFind(ref s_CachedAnalyticsService, ServiceIds.Analytics); }
+        }
+
         static private AudioMgr s_CachedAudioMgr;
         static public AudioMgr Audio
         {
             get { return RetrieveOrFind(ref s_CachedAudioMgr, ServiceIds.Audio); }
+        }
+
+        static private DataService s_CachedDataService;
+        static public DataService Data
+        {
+            get { return RetrieveOrFind(ref s_CachedDataService, ServiceIds.Data); }
         }
 
         static private EventService s_CachedEventService;
@@ -98,6 +127,12 @@ namespace ProtoAqua
         static public ScriptingService Script
         {
             get { return RetrieveOrFind(ref s_CachedScripting, ServiceIds.Scripting); }
+        }
+
+        static private StateMgr s_CachedStateMgr;
+        static public StateMgr State
+        {
+            get { return RetrieveOrFind(ref s_CachedStateMgr, ServiceIds.State); }
         }
 
         static private TweakMgr s_CachedTweakMgr;
@@ -144,5 +179,14 @@ namespace ProtoAqua
         }
 
         #endregion // Setup
+
+        #region All
+
+        static public IEnumerable<IService> All()
+        {
+            return s_ServiceCache.AllServices();
+        }
+
+        #endregion // All
     }
 }

@@ -27,6 +27,11 @@ namespace ProtoAqua
             Services.AttemptDeregister(this);
         }
 
+        protected virtual bool IsLoading()
+        {
+            return false;
+        }
+
         void IService.OnRegisterService()
         {
             Debug.LogFormat("[{0}] Registering service...", GetType().Name);
@@ -39,6 +44,11 @@ namespace ProtoAqua
             Debug.LogFormat("[{0}] Deregistering service...", GetType().Name);
             OnDeregisterService();
             Debug.LogFormat("[{0}] Finished deregistering service.", GetType().Name);
+        }
+
+        bool IService.IsLoading()
+        {
+            return IsLoading();
         }
 
         #endregion // Events

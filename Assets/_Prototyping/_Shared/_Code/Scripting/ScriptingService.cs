@@ -272,6 +272,26 @@ namespace ProtoAqua
 
         #endregion // Operations
 
+        #region Utils
+
+        /// <summary>
+        /// Parses a string into a TagString.
+        /// </summary>
+        public TagString ParseToTag(string inLine, object inContext = null)
+        {
+            return m_TagStringParser.Parse(inLine, inContext);
+        }
+
+        /// <summary>
+        /// Parses a string into a TagString.
+        /// </summary>
+        public void ParseToTag(ref TagString ioTag, string inLine, object inContext = null)
+        {
+            m_TagStringParser.Parse(ref ioTag, inLine, inContext);
+        }
+
+        #endregion // Utils
+
         #region Internal
 
         // Performs a node
@@ -302,7 +322,7 @@ namespace ProtoAqua
             }
 
             // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.DialogPanel();
+            DialogPanel dialogPanel = Services.UI.Dialog();
             dialogPanel.CompleteSequence();
         }
 
@@ -315,7 +335,7 @@ namespace ProtoAqua
             }
 
             // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.DialogPanel();
+            DialogPanel dialogPanel = Services.UI.Dialog();
             dialogPanel.CompleteSequence();
         }
 
@@ -327,11 +347,11 @@ namespace ProtoAqua
             
             TagString lineEvents = m_TagStrings.Alloc();
             TagStringEventHandler eventHandler = m_TagEventHandler;
-            DialogPanel dialogPanel = Services.UI.DialogPanel();
+            DialogPanel dialogPanel = Services.UI.Dialog();
             
             try
             {
-                m_TagStringParser.Parse(inLine, ref lineEvents, inContext);
+                m_TagStringParser.Parse(ref lineEvents, inLine, inContext);
                 eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler);
 
                 for(int i = 0; i < lineEvents.Nodes.Length; ++i)

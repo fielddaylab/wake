@@ -23,8 +23,6 @@ namespace ProtoAqua
 
         protected override void OnDeregisterService()
         {
-            Debug.LogFormat("[TweakMgr] Unloading...");
-
             foreach(var tweak in m_LoadedTweaks)
             {
                 Unload(tweak, false);
@@ -32,20 +30,14 @@ namespace ProtoAqua
 
             m_LoadedTweaks.Clear();
             m_TweakMap.Clear();
-
-            Debug.LogFormat("[TweakMgr] ...done");
         }
 
         protected override void OnRegisterService()
         {
-            Debug.LogFormat("[TweakMgr] Initializing...");
-
             foreach(var tweak in m_Assets)
             {
                 Load(tweak);
             }
-
-            Debug.LogFormat("[TweakMgr] ...done");
         }
 
         public override FourCC ServiceId()

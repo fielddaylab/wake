@@ -15,6 +15,7 @@ namespace ProtoAqua
 
         [SerializeField] private Camera m_UICamera = null;
         [SerializeField] private DialogPanel m_DialogPanel = null;
+        [SerializeField] private PopupPanel m_PopupPanel = null;
         [SerializeField] private LoadingDisplay m_Loading = null;
         [SerializeField] private LetterboxDisplay m_Letterbox = null;
 
@@ -38,7 +39,16 @@ namespace ProtoAqua
 
         #region Dialog
 
-        public DialogPanel DialogPanel() { return m_DialogPanel; }
+        public DialogPanel Dialog() { return m_DialogPanel; }
+        public PopupPanel Popup() { return m_PopupPanel; }
+
+        public void HideAll()
+        {
+            m_DialogPanel.InstantHide();
+            m_PopupPanel.InstantHide();
+            m_LetterboxCounter = 0;
+            m_Letterbox.InstantHide();
+        }
 
         #endregion // Dialog
 

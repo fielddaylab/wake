@@ -1,7 +1,4 @@
 using UnityEngine;
-using BeauRoutine.Extensions;
-using BeauRoutine;
-using System.Collections;
 using BeauUtil;
 #if UNITY_EDITOR
 using UnityEditor.Experimental.SceneManagement;

@@ -7,7 +7,7 @@ using BeauRoutine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-namespace ProtoAqua.Observation
+namespace ProtoAqua
 {
     public class WorldInput : MonoBehaviour, IInputLayer
     {

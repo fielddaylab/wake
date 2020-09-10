@@ -2,6 +2,8 @@ using System;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Tags;
+using ProtoAqua.Profile;
+using UnityEngine;
 
 namespace ProtoAqua
 {
@@ -16,9 +18,10 @@ namespace ProtoAqua
             // Replace Tags
             m_TagEventParser.AddReplace("n", "\n").WithAliases("newline");
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("player_name", () => Environment.UserName);
+            m_TagEventParser.AddReplace("player_name", () => Services.Data.CurrentCharacterName());
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
+            m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
 
             // Global Events
             m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();
@@ -48,6 +51,50 @@ namespace ProtoAqua
             e.StringArgument = t.Id.Substring(1).ToString();
         };
 
+        static private CustomTagParserConfig.ReplaceWithContextDelegate ReplacePlayerGender = (TagData t, object o) => {
+            TempList16<StringSlice> slices = new TempList16<StringSlice>();
+            int sliceCount = t.Data.Split(ChoiceSplitChars, StringSplitOptions.None, ref slices);
+            Pronouns playerPronouns = Services.Data.CurrentCharacterPronouns();
+            
+            if (sliceCount < 3)
+            {
+                Debug.LogWarningFormat("[ScriptingService] Expected 3 arguments to '{0}' tag", t.Id);
+                if (sliceCount == 0)
+                {
+                    return playerPronouns.ToString();
+                }
+                else if (sliceCount == 1)
+                {
+                    return slices[0].ToString();
+                }
+                else
+                {
+                    switch(playerPronouns)
+                    {
+                        case Pronouns.Masculine:
+                        default:
+                            return slices[0].ToString();
+                        case Pronouns.Feminine:
+                            return slices[1].ToString();
+                    }
+                }
+            }
+            else
+            {
+                switch(playerPronouns)
+                {
+                    case Pronouns.Masculine:
+                        return slices[0].ToString();
+                    case Pronouns.Feminine:
+                        return slices[1].ToString();
+                    default:
+                        return slices[2].ToString();
+                }
+            }
+        };
+
+        static private readonly char[] ChoiceSplitChars = new char[] { '|' };
+
         #endregion // Parser
 
         #region Event Setup
@@ -60,7 +107,7 @@ namespace ProtoAqua
             // m_TagEventHandler.Register()
 
             m_TagEventHandler
-                .Register(ScriptEvents.Global.HideDialog, () => { Services.UI.DialogPanel().Hide(); } )
+                .Register(ScriptEvents.Global.HideDialog, () => { Services.UI.Dialog().Hide(); } )
                 .Register(ScriptEvents.Global.LetterboxOff, () => Services.UI.HideLetterbox() )
                 .Register(ScriptEvents.Global.LetterboxOn, () => Services.UI.ShowLetterbox() )
                 .Register(ScriptEvents.Global.PitchBGM, (e, o) => {
@@ -95,7 +142,7 @@ namespace ProtoAqua
                 .Register(ScriptEvents.Global.PlaySound, (e, o) => {
                     Services.Audio.PostEvent(e.StringArgument);
                 })
-                .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.DialogPanel().Show(); } )
+                .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.Dialog().Show(); } )
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => {
                     Services.Audio.StopMusic(e.Argument0.AsFloat());
                 })

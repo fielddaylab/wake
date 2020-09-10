@@ -115,13 +115,19 @@ namespace ProtoAqua
         private void SetTarget(string inTarget)
         {
             m_CurrentState.TypeSFX = "text_type_" + inTarget;
+            if (!Services.Audio.HasEvent(m_CurrentState.TypeSFX))
+            {
+                Debug.LogErrorFormat("[DialogPanel] No type sfx located for '{0}'", m_CurrentState.TypeSFX);
+                m_CurrentState.TypeSFX = null;
+            }
+
             if (inTarget == "kevin")
             {
                 SetSpeaker("Kevin, Your Science Familiar");
             }
             else if (inTarget == "player")
             {
-                SetSpeaker(Environment.UserName);
+                SetSpeaker(Services.Data.CurrentCharacterName());
             }
             else if (inTarget == "mechanic")
             {

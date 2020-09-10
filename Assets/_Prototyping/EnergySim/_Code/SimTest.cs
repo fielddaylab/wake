@@ -6,11 +6,12 @@ using BeauData;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace ProtoAqua.Energy
 {
-    public class SimTest : MonoBehaviour
+    public class SimTest : MonoBehaviour, ISceneLoadHandler
     {
         public SimLoader loader;
         public SimDisplay display;
@@ -41,13 +42,15 @@ namespace ProtoAqua.Energy
 
         [NonSerialized] private BatchedUnityDebugLogger m_Logger = new BatchedUnityDebugLogger();
 
-        public void Start()
+        public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            Services.UI.HideLoadingScreen();
+
             m_GlobalSettings = Services.Tweaks.Get<EnergyConfig>();
 
             Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);
 
-            m_ScenarioPackage = loader.LoadStartingScenario(GetQueryParams());
+            m_ScenarioPackage = loader.LoadStartingScenario(Services.Data.PopQueryParams());
             m_BaseDatabase = loader.LoadDatabase(m_ScenarioPackage.Header.DatabaseId);
 
             m_DatabaseOverride = new SimDatabaseOverride(m_BaseDatabase);
@@ -124,6 +127,9 @@ namespace ProtoAqua.Energy
 
         private void Update()
         {
+            if (sim == null)
+                return;
+
             if (display.Menus.IsOpen())
             {
                 m_CalculateTotalRoutine.Pause();
@@ -247,20 +253,6 @@ namespace ProtoAqua.Energy
             {
                 m_Complete = false;
             }
-        }
-
-        private QueryParams GetQueryParams()
-        {
-            string url;
-            #if UNITY_EDITOR
-            url = debugUrl;
-            #else
-            url = Application.absoluteURL;
-            #endif // UNITY_EDITOR
-
-            QueryParams qp = new QueryParams();
-            qp.TryParse(url);
-            return qp;
         }
     
         #if UNITY_EDITOR

@@ -5,6 +5,7 @@ using BeauPools;
 using BeauUtil;
 using ProtoAqua;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ProtoAudio
 {
@@ -36,24 +37,16 @@ namespace ProtoAudio
 
         protected override void OnDeregisterService()
         {
-            Debug.LogFormat("[AudioMgr] Unloading...");
-
             DestroyPool();
 
             m_LoadedPackages.Clear();
             m_EventLookup.Clear();
 
-            Debug.LogFormat("[AudioMgr] ...done");
-
-            base.OnDeregisterService();
+            SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
         }
 
         protected override void OnRegisterService()
         {
-            base.OnRegisterService();
-
-            Debug.LogFormat("[AudioMgr] Initializing...");
-
             m_Random = new System.Random(Environment.TickCount ^ ServiceIds.Audio.GetHashCode());
             m_MasterProperties = AudioPropertyBlock.Default;
             
@@ -61,7 +54,7 @@ namespace ProtoAudio
             if (m_DefaultPackage != null)
                 Load(m_DefaultPackage);
 
-            Debug.LogFormat("[AudioMgr] ...done");
+            SceneHelper.OnSceneLoaded += OnGlobalSceneLoaded;
         }
 
         public override FourCC ServiceId()
@@ -279,5 +272,14 @@ namespace ProtoAudio
         }
     
         #endregion // Load/Unload
+
+        #region Callbacks
+
+        private void OnGlobalSceneLoaded(SceneBinding inScene, object inContext)
+        {
+            UnloadUnusedPackages();
+        }
+
+        #endregion // Callbacks
     }
 }
