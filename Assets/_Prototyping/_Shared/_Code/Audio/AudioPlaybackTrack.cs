@@ -251,6 +251,11 @@ namespace ProtoAudio
                 yield return null;
         }
 
+        internal bool IsEvent(AudioEvent inEvent)
+        {
+            return m_CurrentEvent == inEvent;
+        }
+
         #region IPooledObject
 
         void IPooledObject<AudioPlaybackTrack>.OnAlloc()

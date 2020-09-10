@@ -44,8 +44,6 @@ namespace ProtoAqua.Energy
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            Services.UI.HideLoadingScreen();
-
             m_GlobalSettings = Services.Tweaks.Get<EnergyConfig>();
 
             Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);

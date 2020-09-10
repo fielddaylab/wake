@@ -21,7 +21,7 @@ namespace ProtoAqua
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(string inSceneName, object inContext = null)
+        public IEnumerator LoadScene(string inSceneName, object inContext = null, bool inbAutoHideLoading = true)
         {
             if (m_SceneLock)
             {
@@ -37,14 +37,14 @@ namespace ProtoAqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext));
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(SceneBinding inScene, object inContext = null)
+        public IEnumerator LoadScene(SceneBinding inScene, object inContext = null, bool inbAutoHideLoading = true)
         {
             if (m_SceneLock)
             {
@@ -59,7 +59,7 @@ namespace ProtoAqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inContext));
+            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -76,6 +76,7 @@ namespace ProtoAqua
             yield return WaitForAllServicesToFinishLoading();
 
             m_SceneLock = false;
+            Services.UI.HideLoadingScreen();
 
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.AllLoaded))
             {
@@ -84,7 +85,7 @@ namespace ProtoAqua
             }
         }
 
-        private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext)
+        private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, bool inbAutoHideLoading)
         {
             try
             {
@@ -110,6 +111,9 @@ namespace ProtoAqua
                 yield return WaitForAllServicesToFinishLoading();
 
                 m_SceneLock = false;
+
+                if (inbAutoHideLoading)
+                    Services.UI.HideLoadingScreen();
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
                 inNextScene.OnLoaded(inContext);

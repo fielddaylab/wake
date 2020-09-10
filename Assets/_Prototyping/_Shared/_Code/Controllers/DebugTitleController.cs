@@ -20,10 +20,11 @@ namespace ProtoAqua
         {
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {
+                if (scene.Id == inScene.Id)
+                    continue;
+                
                 m_SceneButtonPool.Alloc().Initialize(scene);
             }
-
-            Services.UI.HideLoadingScreen();
         }
     }
 }

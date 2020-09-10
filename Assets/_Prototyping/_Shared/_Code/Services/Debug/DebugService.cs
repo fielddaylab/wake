@@ -45,6 +45,7 @@ namespace ProtoAqua
             {
                 Services.Script.KillAllThreads();
                 Services.UI.HideAll();
+                Services.Audio.StopAll();
                 Services.State.LoadScene("DebugTitle");
             }
         }

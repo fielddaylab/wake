@@ -211,7 +211,6 @@ namespace ProtoAqua.Observation
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            Services.UI.HideLoadingScreen();
             Services.Script.StartNode("testScene.sceneStart");
         }
     }

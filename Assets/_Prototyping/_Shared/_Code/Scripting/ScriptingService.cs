@@ -259,7 +259,7 @@ namespace ProtoAqua
         /// </summary>
         public void KillAllThreads()
         {
-            foreach(var thread in m_ThreadMap.Values)
+            foreach(var thread in m_ThreadList)
             {
                 thread.Routine().Stop();
             }

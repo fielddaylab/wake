@@ -151,6 +151,14 @@ namespace ProtoAudio
             return handle;
         }
 
+        public void StopAll()
+        {
+            foreach(var player in m_Pool.ActiveObjects)
+            {
+                player.Stop();
+            }
+        }
+
         private uint NextId()
         {
             if (m_Id == uint.MaxValue)
@@ -240,6 +248,13 @@ namespace ProtoAudio
             
             foreach(var evt in inPackage.Events())
             {
+                foreach(var player in m_Pool.ActiveObjects)
+                {
+                    if (player.IsEvent(evt))
+                    {
+                        player.Stop();
+                    }
+                }
                 m_EventLookup.Remove(evt.Id());
             }
         }
