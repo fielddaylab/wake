@@ -25,7 +25,7 @@ namespace ProtoAudio
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
-        private readonly Dictionary<string, AudioEvent> m_EventLookup = new Dictionary<string, AudioEvent>(StringComparer.Ordinal);
+        private readonly Dictionary<StringHash, AudioEvent> m_EventLookup = new Dictionary<StringHash, AudioEvent>();
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
@@ -100,15 +100,15 @@ namespace ProtoAudio
             return GetEvent(inId) != null;
         }
 
-        public AudioHandle PostEvent(string inId)
+        public AudioHandle PostEvent(StringHash inId)
         {
-            if (string.IsNullOrEmpty(inId))
+            if (inId.IsEmpty)
                 return AudioHandle.Null;
             
             AudioEvent evt = GetEvent(inId);
             if (evt == null)
             {
-                Debug.LogErrorFormat("[AudioMgr] No event with id '{0}' loaded", inId);
+                Debug.LogErrorFormat("[AudioMgr] No event with id '{0}' loaded", inId.ToDebugString());
                 return AudioHandle.Null;
             }
 
@@ -173,7 +173,7 @@ namespace ProtoAudio
 
         public AudioHandle CurrentMusic() { return m_BGM; }
 
-        public AudioHandle SetMusic(string inId, float inCrossFade = 0)
+        public AudioHandle SetMusic(StringHash inId, float inCrossFade = 0)
         {
             m_BGM.Stop(inCrossFade);
             m_BGM = PostEvent(inId);
@@ -259,7 +259,7 @@ namespace ProtoAudio
             }
         }
 
-        public AudioEvent GetEvent(string inId)
+        public AudioEvent GetEvent(StringHash inId)
         {
             AudioEvent evt;
             m_EventLookup.TryGetValue(inId, out evt);

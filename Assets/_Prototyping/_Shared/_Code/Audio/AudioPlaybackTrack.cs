@@ -54,7 +54,7 @@ namespace ProtoAudio
             m_CurrentId = inId;
 
             #if UNITY_EDITOR
-            gameObject.name = m_CurrentEvent.Id();
+            gameObject.name = m_CurrentEvent.Id().ToDebugString();
             #endif // UNITY_EDITOR
 
             return new AudioHandle(m_CurrentId, this);

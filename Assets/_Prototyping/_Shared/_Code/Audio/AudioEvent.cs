@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ProtoAudio
 {
     [CreateAssetMenu(menuName = "Prototype/Audio/Audio Event")]
-    public class AudioEvent : ScriptableObject, IKeyValuePair<string, AudioEvent>
+    public class AudioEvent : ScriptableObject, IKeyValuePair<StringHash, AudioEvent>
     {
         #region Inspector
 
@@ -21,18 +21,18 @@ namespace ProtoAudio
 
         #endregion // Inspector
 
-        [NonSerialized] private string m_Id;
+        [NonSerialized] private StringHash m_Id;
         [NonSerialized] private RandomDeck<AudioClip> m_ClipDeck;
 
         #region IKeyValuePair
 
-        string IKeyValuePair<string, AudioEvent>.Key { get { return Id(); } }
+        StringHash IKeyValuePair<StringHash, AudioEvent>.Key { get { return Id(); } }
 
-        AudioEvent IKeyValuePair<string, AudioEvent>.Value { get { return this; } }
+        AudioEvent IKeyValuePair<StringHash, AudioEvent>.Value { get { return this; } }
 
         #endregion // IKeyValuePair
 
-        public string Id() { return m_Id ?? (m_Id = name); }
+        public StringHash Id() { return m_Id ? m_Id : (m_Id = name); }
 
         public bool CanPlay()
         {
@@ -78,5 +78,12 @@ namespace ProtoAudio
             if (m_ClipDeck != null)
                 m_ClipDeck.Reset();
         }
+
+        #if UNITY_EDITOR
+
+        // TODO:    Add commands to generate AudioEvent from an AudioClip,
+        //          or combine multiple AudioClips into a single AudioEvent
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -56,6 +56,25 @@ namespace ProtoAudio
             UnityEditor.EditorUtility.SetDirty(this);
         }
 
+        [UnityEditor.CustomEditor(typeof(AudioPackage))]
+        private class Inspector : UnityEditor.Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                base.OnInspectorGUI();
+
+                UnityEditor.EditorGUILayout.Space();
+
+                if (GUILayout.Button("Load All In Directory"))
+                {
+                    foreach(AudioPackage audioPackage in targets)
+                    {
+                        audioPackage.FindAllTweaks();
+                    }
+                }
+            }
+        }
+
         #endif // UNITY_EDITOR
     }
 }
