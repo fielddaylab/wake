@@ -1,0 +1,43 @@
+:: node.invalid
+Invalid
+
+:: node.default
+Default
+
+:: link.text
+@tag behavior
+Test Link
+
+:: node.1
+@rootNode true
+@responseIds link.1, link.2
+node.1
+
+:: link.1
+@tag behavior
+@nextNodeId node.1, node.3
+@nextNodeId node.2, node.3
+link.1
+
+:: link.2
+@tag ecosystem
+@nextNodeId node.1, node.2
+link.2
+
+:: node.2
+@responseIds link.1
+node.2
+
+:: node.3
+@responseIds link.3
+node.3
+
+:: link.3
+@tag model
+@conditions node.2, link.2
+@conditionsNotMetId node.1
+@nextNodeId node.3, node.4
+link.3
+
+:: node.4
+node.4, end
