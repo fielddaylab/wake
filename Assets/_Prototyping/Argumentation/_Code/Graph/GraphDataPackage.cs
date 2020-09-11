@@ -9,8 +9,8 @@ namespace ProtoAqua.Argumentation
     public class GraphDataPackage : IDataBlockPackage<GraphData>
     {
         private readonly Dictionary<string, GraphData> m_Data = new Dictionary<string, GraphData>(32, StringComparer.Ordinal);
-        private readonly Dictionary<string, NodeData> m_Nodes = new Dictionary<string, NodeData>(32, StringComparer.Ordinal);
-        private readonly Dictionary<string, LinkData> m_Links = new Dictionary<string, LinkData>(32, StringComparer.Ordinal);
+        private readonly Dictionary<string, Node> m_Nodes = new Dictionary<string, Node>(32, StringComparer.Ordinal);
+        private readonly Dictionary<string, Link> m_Links = new Dictionary<string, Link>(32, StringComparer.Ordinal);
 
         private string m_Name;
 
@@ -19,16 +19,30 @@ namespace ProtoAqua.Argumentation
             m_Name = inName;
         }
 
+        // Package Ids
+        [BlockMeta("rootNodeId")] private string m_RootNodeId = null;
+        [BlockMeta("endNodeId")] private string m_EndNodeId = null;
+
         #region Accessors
 
-        public Dictionary<string, NodeData> Nodes
+        public Dictionary<string, Node> Nodes
         {
             get { return m_Nodes; }
         }
 
-        public Dictionary<string, LinkData> Links
+        public Dictionary<string, Link> Links
         {
             get { return m_Links; }
+        }
+
+        public string RootNodeId
+        { 
+            get { return m_RootNodeId; }
+        }
+
+        public string EndNodeId
+        { 
+            get { return m_EndNodeId; }
         }
 
         #endregion // Accessors
@@ -65,15 +79,15 @@ namespace ProtoAqua.Argumentation
 
                 if (id.StartsWith("node"))
                 {
-                    outBlock = new NodeData(id);
+                    outBlock = new Node(id);
                     inPackage.m_Data.Add(id, outBlock);
-                    inPackage.m_Nodes.Add(id, (NodeData)outBlock);
+                    inPackage.m_Nodes.Add(id, (Node)outBlock);
                     return true;
                 } else if (id.StartsWith("link"))
                 {
-                    outBlock = new LinkData(id);
+                    outBlock = new Link(id);
                     inPackage.m_Data.Add(id, outBlock);
-                    inPackage.m_Links.Add(id, (LinkData)outBlock);
+                    inPackage.m_Links.Add(id, (Link)outBlock);
                     return true;
                 } else
                 {

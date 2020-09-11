@@ -1,60 +1,53 @@
 ﻿using System.Collections.Generic;
+using BeauUtil.Blocks;
 
 namespace ProtoAqua.Argumentation
 {
-    public class Link
+    public class Link : GraphData
     {
         public static int count = 0;
-
         public int Index { get; set; }
 
-        private string id;
-        private string displayText;
-        private string tag;
-        private string conditionsNotMetId;
         private Dictionary<string, string> nextNodeIds = new Dictionary<string, string>();
         private List<string> requiredVisited = new List<string>();
         private List<string> requiredUsed = new List<string>();
-        private bool used;
 
-        public Link(string inId, string inDisplayText, string inTag, string inConditionsNotMetId, 
-            List<string> inNextNodeIds, string inConditions)
+        #region Serialized
+
+        private List<string> m_InNextNodeIds = new List<string>();
+
+        // Properties
+        [BlockMeta("tag")] private string m_Tag = null;
+        [BlockMeta("conditions")] private string m_Conditions = null;
+
+        // Ids
+        [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
+        [BlockMeta("nextNodeId")]
+        private void AddNextNodeIds(string line)
         {
-            id = inId;
-            displayText = inDisplayText;
-            tag = inTag;
-            conditionsNotMetId = inConditionsNotMetId;
-            
-            ParseNextNodeIds(inNextNodeIds);
-
-            if (inConditions != null)
-            {
-                ParseConditions(inConditions);
-            }
-            
-            Index = ++count;
+            m_InNextNodeIds.Add(line);
         }
-        
+
+        // Text
+        [BlockContent] private string m_DisplayText = null;
+
+        #endregion // Serialized
+
         #region Accessors
-
-        public string Id
-        {
-            get { return id; }
-        }
 
         public string DisplayText
         {
-            get { return displayText; }
+            get { return m_DisplayText; }
         }
 
         public string Tag
         {
-            get { return tag; }
+            get { return m_Tag; }
         }
 
         public string ConditionsNotMetId
         {
-            get { return conditionsNotMetId; }
+            get { return m_ConditionsNotMetId; }
         }
 
         public Dictionary<string, string> NextNodeIds
@@ -71,14 +64,33 @@ namespace ProtoAqua.Argumentation
         {
             get { return requiredUsed; }
         }
-        
-        public bool Used
-        {
-            get { return used; }
-            set { used = value; }
-        }
 
         #endregion // Accessors
+
+        public Link(string inId) : base(inId) { }
+
+        public void InitializeLink()
+        {
+            ParseNextNodeIds(m_InNextNodeIds);
+
+            if (m_Conditions != null)
+            {
+                ParseConditions(m_Conditions);
+            }
+
+            Index = ++count;
+        }
+
+        // Given a node id, return the respsective node id that this link connects it to
+        public string GetNextNodeId(string id)
+        {
+            if (nextNodeIds.TryGetValue(id, out string nextNodeId))
+            {
+                return nextNodeId;
+            }
+
+            return null;
+        }
 
         private void ParseNextNodeIds(List<string> inNextNodeIds)
         {
@@ -104,17 +116,6 @@ namespace ProtoAqua.Argumentation
                     requiredUsed.Add(condition);
                 }
             }
-        }
-
-        // Given a node id, return the respsective node id that this link connects it to
-        public string GetNextNodeId(string id)
-        {
-            if (nextNodeIds.TryGetValue(id, out string nextNodeId))
-            {
-                return nextNodeId;
-            }
-
-            return null;
-        }
+        } 
     }
 }

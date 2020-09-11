@@ -26,32 +26,27 @@ namespace ProtoAqua.Argumentation
             Services.Tweaks.Load(m_GraphDataManager);
             GraphDataPackage data = m_GraphDataManager.MasterPackage;
 
-            foreach (KeyValuePair<string, NodeData> kvp in data.Nodes)
+            foreach (KeyValuePair<string, Node> kvp in data.Nodes)
             {
-                NodeData nodeData = kvp.Value;
-                Node node = new Node(nodeData.Id(), nodeData.RootNode(), nodeData.DisplayText(), "node.invalid", 
-                                        "node.default", nodeData.ResponseIds());
+                Node node = kvp.Value;
+                node.InitializeNode();
                 nodeDictionary.Add(node.Id, node);
-
-                // If node is specified as the root node, set currentNode and initialize conditions
-                if (node.RootNode)
-                {
-                    currentNode = node;
-                    conditions = new ConditionsData(currentNode);
-                }
             }
+
+            currentNode = FindNode(data.RootNodeId);
 
             // Checks if no root node was specified
             if (currentNode == null)
             {
                 throw new System.ArgumentNullException("No root node specified");
             }
+
+            conditions = new ConditionsData(currentNode.Id);
             
-            foreach (KeyValuePair<string, LinkData> kvp in data.Links)
+            foreach (KeyValuePair<string, Link> kvp in data.Links)
             {
-                LinkData linkData = kvp.Value;
-                Link link = new Link(linkData.Id(), linkData.DisplayText(), linkData.Tag(), 
-                                        linkData.ConditionsNotMetId(), linkData.NextNodeIds(), linkData.Conditions());
+                Link link = kvp.Value;
+                link.InitializeLink();
                 linkDictionary.Add(link.Id, link);
             }
         }
@@ -110,14 +105,15 @@ namespace ProtoAqua.Argumentation
                 {
                     // If no nextNodeId, go to default node
                     // TODO: Find better implementation for default node
-                    Node defaultNode = FindNode(currentNode.DefaultNextNodeId);
+                    Node defaultNode = FindNode(currentNode.DefaultNodeId);
                     return defaultNode;
                 }
             }
             else
             {
                 // If id isn't valid, display invalid fact node
-                Node invalidFactNode = FindNode(currentNode.InvalidFactNodeId);
+                Debug.Log("Invalid!");
+                Node invalidFactNode = FindNode(currentNode.InvalidNodeId);
                 return invalidFactNode;
             }
         }

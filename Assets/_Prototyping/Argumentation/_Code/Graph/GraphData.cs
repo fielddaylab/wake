@@ -11,6 +11,9 @@ namespace ProtoAqua.Argumentation
             m_Id = inId;
         }
 
-        public string Id() { return m_Id; }
+        public string Id
+        {
+            get { return m_Id; }
+        }
     }
 }
