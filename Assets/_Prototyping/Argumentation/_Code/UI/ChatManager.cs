@@ -1,24 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-namespace ProtoAqua.Argumentation {
 
+namespace ProtoAqua.Argumentation 
+{
     [RequireComponent(typeof(DropSlot))]
-    public class ChatManager : MonoBehaviour {
-
+    public class ChatManager : MonoBehaviour 
+    {
         [Header("Chat Manager Dependencies")]
         [SerializeField] Graph graph = null;
         [SerializeField] Transform chatGrid = null;
         [SerializeField] GameObject nodePrefab = null;
-        //[SerializeField] GameObject linkPrefab = null;
         [SerializeField] private LinkManager linkManager;
         [SerializeField] private PopupPanel m_EndPopup;
         
-
         private DropSlot dropSlot;
         
-
         // Start is called before the first frame update
         void Start()
         {
@@ -30,25 +26,18 @@ namespace ProtoAqua.Argumentation {
             GameObject newNode = Instantiate(nodePrefab, chatGrid);
             newNode.GetComponent<ChatBubble>().bubbleType = BubbleType.Node;
             newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText("Hello, My name is Kevin. INSERT MESSAGE THAT IS A QUESTION??!?? beep boop bop");
-            
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
         }
 
         //Activates when an item is dropped (called from DropSlot.cs)
-        void OnDrop(GameObject droppedItem) {
+        void OnDrop(GameObject droppedItem) 
+        {
 
             //Make sure the object is draggable (This should never occur that its not)
-            if(droppedItem.GetComponent<DraggableObject>() == null ) {
+            if(droppedItem.GetComponent<DraggableObject>() == null ) 
+            {
                 return;
             }
 
-            
             droppedItem.transform.SetParent(chatGrid); //Set it into the grid 
             droppedItem.GetComponent<DraggableObject>().enabled = false; //Make it no longer able to be dragged
             
@@ -56,12 +45,13 @@ namespace ProtoAqua.Argumentation {
             RespondWithNextNode(linkId); //TODO make sure has this component
 
             // Add response back into list for reuse
-            linkManager.ResetLink(droppedItem, linkId, false);
+            linkManager.ResetLink(droppedItem, linkId);
         }
 
         //Rename, bad naming
         //Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        void RespondWithNextNode(string factId) {
+        void RespondWithNextNode(string factId) 
+        {
             Node nextNode = graph.NextNode(factId); //Get the next node for the factId
 
             if (nextNode.Id.Equals(graph.EndNodeId))
@@ -76,9 +66,6 @@ namespace ProtoAqua.Argumentation {
                 newNode.GetComponent<ChatBubble>().id = nextNode.Id;
                 newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText(nextNode.DisplayText);
             }
-
-            
-
         }
     
         private void EndConversationPopup()
@@ -87,5 +74,4 @@ namespace ProtoAqua.Argumentation {
             Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
         }
     }
-
 }

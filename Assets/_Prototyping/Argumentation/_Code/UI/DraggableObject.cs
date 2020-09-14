@@ -19,7 +19,6 @@ namespace ProtoAqua.Argumentation
         private CanvasGroup canvasGroup;
         private bool dragging = false;
         
-
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -62,8 +61,6 @@ namespace ProtoAqua.Argumentation
             dragging = false;
             //TODO do this more efficiently without destroying objects
             EndDrag.Invoke(eventData.pointerDrag.gameObject);
-            
         }
-        
     }
 }

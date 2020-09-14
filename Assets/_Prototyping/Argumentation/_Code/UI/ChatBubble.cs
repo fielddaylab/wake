@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ProtoAqua.Argumentation {
+namespace ProtoAqua.Argumentation 
+{
     //Enum to know what type of chat bubble it is
-    public enum BubbleType {
+    public enum BubbleType 
+    {
             Node,
             Link
     }
@@ -22,8 +24,6 @@ namespace ProtoAqua.Argumentation {
 
         private DraggableObject draggableObject = null;
 
-
-        // Start is called before the first frame update
         void Start()
         {
             //TODO Ask Autumn script execution order
@@ -34,16 +34,9 @@ namespace ProtoAqua.Argumentation {
             
         }
 
-        // Update is called once per frame
-        void Update()
+        private void EndDrag(GameObject gameObject) 
         {
-            
-        }
-
-        private void EndDrag(GameObject gameObject) {
-            linkManager.ResetLink(gameObject, id, true);
+            linkManager.ResetLink(gameObject, id);
         }
     }
-
 }
-
