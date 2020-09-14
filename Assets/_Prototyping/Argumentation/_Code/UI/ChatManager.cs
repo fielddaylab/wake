@@ -7,11 +7,13 @@ namespace ProtoAqua.Argumentation {
     [RequireComponent(typeof(DropSlot))]
     public class ChatManager : MonoBehaviour {
 
+        [Header("Chat Manager Dependencies")]
         [SerializeField] Graph graph = null;
         [SerializeField] Transform chatGrid = null;
         [SerializeField] GameObject nodePrefab = null;
         //[SerializeField] GameObject linkPrefab = null;
         [SerializeField] private LinkManager linkManager;
+        [SerializeField] private PopupPanel m_EndPopup;
         
 
         private DropSlot dropSlot;
@@ -62,15 +64,28 @@ namespace ProtoAqua.Argumentation {
         void RespondWithNextNode(string factId) {
             Node nextNode = graph.NextNode(factId); //Get the next node for the factId
 
-            //Create the node bubble, and set its properties
-            GameObject newNode = Instantiate(nodePrefab, chatGrid);
-            newNode.GetComponent<ChatBubble>().bubbleType = BubbleType.Node;
-            newNode.GetComponent<ChatBubble>().id = nextNode.Id;
-            newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText(nextNode.DisplayText);
+            if (nextNode.Id.Equals(graph.EndNodeId))
+            {
+                EndConversationPopup();
+            }
+            else
+            {
+                //Create the node bubble, and set its properties
+                GameObject newNode = Instantiate(nodePrefab, chatGrid);
+                newNode.GetComponent<ChatBubble>().bubbleType = BubbleType.Node;
+                newNode.GetComponent<ChatBubble>().id = nextNode.Id;
+                newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText(nextNode.DisplayText);
+            }
+
+            
 
         }
     
-    
+        private void EndConversationPopup()
+        {
+            NamedOption[] options = {new NamedOption("Continue")};
+            Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
+        }
     }
 
 }

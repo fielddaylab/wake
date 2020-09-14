@@ -12,13 +12,22 @@ namespace ProtoAqua.Argumentation
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
 
         private ConditionsData conditions;
-
         private Node currentNode;
+        private string endNodeId;
+
+        #region Accessors
 
         public Dictionary<string, Link> LinkDictionary
         {
             get { return linkDictionary; }
         }
+
+        public string EndNodeId
+        {
+            get { return endNodeId; }
+        }
+
+        #endregion // Accessors
 
         // Load graph data, create nodes and links
         private void Awake()
@@ -42,6 +51,13 @@ namespace ProtoAqua.Argumentation
             }
 
             conditions = new ConditionsData(currentNode.Id);
+
+            endNodeId = data.EndNodeId;
+
+            if (endNodeId == null)
+            {
+                throw new System.ArgumentNullException("No end node specified");
+            }
             
             foreach (KeyValuePair<string, Link> kvp in data.Links)
             {
