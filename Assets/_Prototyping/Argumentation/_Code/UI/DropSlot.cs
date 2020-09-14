@@ -10,22 +10,24 @@ namespace ProtoAqua.Argumentation
     public class DropSlot : MonoBehaviour, IDropHandler
     {
         [Serializable] public class DropEvent : UnityEvent<GameObject> { }
-        public DropEvent OnDropped;
-        
+
+        [Header("Drop Slot Dependencies")]
         [SerializeField] ScrollRect scrollRect;
 
+        public DropEvent OnDropped;
+        
         public void OnDrop(PointerEventData eventData)
         {
             //Fixed a bug where dragging the scroll rect would activate this function
-            if(eventData.pointerDrag.name.Equals("ChatBox")) 
+            if (eventData.pointerDrag.name.Equals("ChatBox")) 
             {
                 return;
             }
+
             if (eventData.pointerDrag != null)
             {
                 OnDropped.Invoke(eventData.pointerDrag.gameObject);
                 StartCoroutine(ScrollToBottom()); //TODO Add this when holding
-                
             }
         }
 

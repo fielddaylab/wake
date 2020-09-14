@@ -54,7 +54,7 @@ namespace ProtoAqua.Argumentation
             // Create the link and get its Transform
             ChatBubble newLink = m_LinkPool.Alloc(linkContainer.transform);
             Transform newLinkTransform = newLink.transform;
-            GameObject go = newLink.gameObject;
+            GameObject newLinkGameObject = newLink.gameObject;
             
             newLinkTransform.SetSiblingIndex(link.Index);
 
@@ -64,7 +64,7 @@ namespace ProtoAqua.Argumentation
             newLinkTransform.GetComponent<ChatBubble>().linkTag = link.Tag;
             newLinkTransform.Find("LinkText").GetComponent<TextMeshProUGUI>().SetText(link.DisplayText);
 
-            responses.Add(go);
+            responses.Add(newLinkGameObject);
         }
 
         private void ToggleTabs(string tagToShow) 
@@ -72,7 +72,7 @@ namespace ProtoAqua.Argumentation
             foreach (GameObject gameObject in responses) 
             {
                 ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
-                
+
                 if (chatBubble.linkTag.Equals(tagToShow)) 
                 {
                     gameObject.SetActive(true);

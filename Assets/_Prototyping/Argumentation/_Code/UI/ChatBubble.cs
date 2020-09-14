@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ProtoAqua.Argumentation 
 {
@@ -16,6 +14,7 @@ namespace ProtoAqua.Argumentation
         //Node: NPC chat bubble
         //Link: User chat response
 
+        [Header("Chat Bubble Dependencies")]
         [SerializeField] LinkManager linkManager = null;
 
         public BubbleType bubbleType { get; set; }
@@ -24,14 +23,15 @@ namespace ProtoAqua.Argumentation
 
         private DraggableObject draggableObject = null;
 
-        void Start()
+        private void Start()
         {
             //TODO Ask Autumn script execution order
             draggableObject = GetComponent<DraggableObject>();
-            if(draggableObject) {
+
+            if (draggableObject) 
+            {
                 draggableObject.EndDrag.AddListener(EndDrag);
             }
-            
         }
 
         private void EndDrag(GameObject gameObject) 

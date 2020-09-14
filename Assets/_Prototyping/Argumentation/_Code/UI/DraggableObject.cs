@@ -14,7 +14,6 @@ namespace ProtoAqua.Argumentation
         [Serializable] public class DragEvent : UnityEvent<GameObject> { }
         public DragEvent EndDrag;
 
-
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
         private bool dragging = false;
@@ -38,7 +37,8 @@ namespace ProtoAqua.Argumentation
         private void HoldMouse() 
         {
             //Don't want to activate the press and hold if dragging
-            if(!dragging) {
+            if (!dragging) 
+            {
                 dropSlot.OnHold(this.gameObject);
             }
         }
@@ -46,8 +46,7 @@ namespace ProtoAqua.Argumentation
         public void OnBeginDrag(PointerEventData eventData)
         {
             canvasGroup.blocksRaycasts = false;
-            dragging = true;
-            
+            dragging = true;  
         }
 
         public void OnDrag(PointerEventData eventData)
