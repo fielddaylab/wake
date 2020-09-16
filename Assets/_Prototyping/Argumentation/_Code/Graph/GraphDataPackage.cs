@@ -83,13 +83,15 @@ namespace ProtoAqua.Argumentation
                     inPackage.m_Data.Add(id, outBlock);
                     inPackage.m_Nodes.Add(id, (Node)outBlock);
                     return true;
-                } else if (id.StartsWith("link"))
+                } 
+                else if (id.StartsWith("link"))
                 {
                     outBlock = new Link(id);
                     inPackage.m_Data.Add(id, outBlock);
                     inPackage.m_Links.Add(id, (Link)outBlock);
                     return true;
-                } else
+                } 
+                else
                 {
                     throw new System.ArgumentException("Invalid id format");
                 }

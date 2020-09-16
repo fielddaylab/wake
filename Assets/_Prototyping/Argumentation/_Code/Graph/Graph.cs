@@ -12,6 +12,7 @@ namespace ProtoAqua.Argumentation
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
 
         private ConditionsData conditions;
+        private Node rootNode;
         private Node currentNode;
         private string endNodeId;
 
@@ -20,6 +21,11 @@ namespace ProtoAqua.Argumentation
         public Dictionary<string, Link> LinkDictionary
         {
             get { return linkDictionary; }
+        }
+
+        public Node RootNode
+        {
+            get { return rootNode; }
         }
 
         public string EndNodeId
@@ -42,14 +48,15 @@ namespace ProtoAqua.Argumentation
                 nodeDictionary.Add(node.Id, node);
             }
 
-            currentNode = FindNode(data.RootNodeId);
+            rootNode = FindNode(data.RootNodeId);
 
             // Checks if no root node was specified
-            if (currentNode == null)
+            if (rootNode == null)
             {
                 throw new System.ArgumentNullException("No root node specified");
             }
 
+            currentNode = rootNode;
             conditions = new ConditionsData(currentNode.Id);
 
             endNodeId = data.EndNodeId;

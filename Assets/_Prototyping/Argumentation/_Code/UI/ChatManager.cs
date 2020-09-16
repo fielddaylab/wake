@@ -1,77 +1,101 @@
-﻿using TMPro;
+﻿using System;
+using System.Collections;
+using BeauPools;
+using BeauRoutine;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation 
 {
     [RequireComponent(typeof(DropSlot))]
     public class ChatManager : MonoBehaviour 
     {
+        [Serializable]
+        public class NodePool : SerializablePool<ChatBubble> { }
+
         [Header("Chat Manager Dependencies")]
-        [SerializeField] Graph graph = null;
-        [SerializeField] Transform chatGrid = null;
-        [SerializeField] GameObject nodePrefab = null;
-        [SerializeField] private LinkManager linkManager;
-        [SerializeField] private PopupPanel m_EndPopup;
+        [SerializeField] private Graph m_Graph = null;
+        [SerializeField] private LinkManager m_LinkManager = null;
+        [SerializeField] private Transform m_ChatGrid = null;
+        [SerializeField] private ScrollRect m_ScrollRect = null;
+        [SerializeField] private NodePool m_NodePool = null;
         
         private DropSlot dropSlot;
         
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
+            m_NodePool.Initialize();
+
             //Set up the listener for Drop Slot
             dropSlot = GetComponent<DropSlot>();
             dropSlot.OnDropped.AddListener(OnDrop);
 
             //Spawn some starting nodes
-            GameObject newNode = Instantiate(nodePrefab, chatGrid);
-            newNode.GetComponent<ChatBubble>().bubbleType = BubbleType.Node;
-            newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText("Hello, My name is Kevin. INSERT MESSAGE THAT IS A QUESTION??!?? beep boop bop");
+            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
+            newNode.bubbleType = BubbleType.Node;
+            newNode.InitializeNodeData(m_Graph.RootNode.Id, m_Graph.RootNode.DisplayText);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
 
         //Activates when an item is dropped (called from DropSlot.cs)
-        void OnDrop(GameObject droppedItem) 
+        private void OnDrop(GameObject droppedItem) 
         {
-
             //Make sure the object is draggable (This should never occur that its not)
-            if(droppedItem.GetComponent<DraggableObject>() == null ) 
+            if (droppedItem.GetComponent<DraggableObject>() == null) 
             {
                 return;
             }
 
-            droppedItem.transform.SetParent(chatGrid); //Set it into the grid 
+            droppedItem.transform.SetParent(m_ChatGrid); //Set it into the grid 
             droppedItem.GetComponent<DraggableObject>().enabled = false; //Make it no longer able to be dragged
-            
-            string linkId = droppedItem.GetComponent<ChatBubble>().id;
-            RespondWithNextNode(linkId); //TODO make sure has this component
 
+            string linkId = droppedItem.GetComponent<ChatBubble>().id;
+            Routine.Start(Scroll(linkId));
+            
             // Add response back into list for reuse
-            linkManager.ResetLink(droppedItem, linkId);
+            m_LinkManager.ResetLink(droppedItem, linkId, false);
         }
 
         //Rename, bad naming
         //Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        void RespondWithNextNode(string factId) 
+        private void RespondWithNextNode(string factId) 
         {
-            Node nextNode = graph.NextNode(factId); //Get the next node for the factId
+            Node nextNode = m_Graph.NextNode(factId); //Get the next node for the factId
 
-            if (nextNode.Id.Equals(graph.EndNodeId))
+            //Create the node bubble, and set its properties
+            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
+            newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+
+            if (newNode.id.Equals(m_Graph.EndNodeId))
             {
+                newNode.ChangeColor(Color.green);
                 EndConversationPopup();
-            }
-            else
+            } 
+            else if (newNode.id.Contains("invalid")) // Change this
             {
-                //Create the node bubble, and set its properties
-                GameObject newNode = Instantiate(nodePrefab, chatGrid);
-                newNode.GetComponent<ChatBubble>().bubbleType = BubbleType.Node;
-                newNode.GetComponent<ChatBubble>().id = nextNode.Id;
-                newNode.transform.Find("NodeText").GetComponent<TextMeshProUGUI>().SetText(nextNode.DisplayText);
+                newNode.ChangeColor(Color.red);
             }
         }
-    
+
         private void EndConversationPopup()
         {
             NamedOption[] options = {new NamedOption("Continue")};
             Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
+        }
+
+        private IEnumerator Scroll(string linkId)
+        {
+            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+
+            yield return 0.25f;
+            RespondWithNextNode(linkId);
+
+            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
     }
 }

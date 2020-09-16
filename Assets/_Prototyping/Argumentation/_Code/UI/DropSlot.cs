@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using BeauRoutine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -13,8 +13,11 @@ namespace ProtoAqua.Argumentation
 
         [Header("Drop Slot Dependencies")]
         [SerializeField] ScrollRect scrollRect;
+        [SerializeField] RectTransform rectTransform;
 
         public DropEvent OnDropped;
+
+        private Routine scrollRoutine;
         
         public void OnDrop(PointerEventData eventData)
         {
@@ -27,22 +30,13 @@ namespace ProtoAqua.Argumentation
             if (eventData.pointerDrag != null)
             {
                 OnDropped.Invoke(eventData.pointerDrag.gameObject);
-                StartCoroutine(ScrollToBottom()); //TODO Add this when holding
             }
         }
-
-        IEnumerator ScrollToBottom() 
-        {
-            yield return new WaitForEndOfFrame();
-            scrollRect.verticalNormalizedPosition = 0;
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)scrollRect.transform);
-        }
-
+        
         //Acts the same as dropping but hold the button
         public void OnHold(GameObject gameObject) 
         {
             OnDropped.Invoke(gameObject);
-            scrollRect.normalizedPosition = new Vector2(0, 0);
         }
     }
 }
