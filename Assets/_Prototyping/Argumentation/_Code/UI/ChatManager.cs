@@ -18,6 +18,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private LinkManager m_LinkManager = null;
         [SerializeField] private Transform m_ChatGrid = null;
         [SerializeField] private ScrollRect m_ScrollRect = null;
+        [SerializeField] private InputRaycasterLayer m_InputRaycasterLayer = null;
         [SerializeField] private NodePool m_NodePool = null;
         
         private DropSlot dropSlot;
@@ -51,7 +52,7 @@ namespace ProtoAqua.Argumentation
             droppedItem.GetComponent<DraggableObject>().enabled = false; //Make it no longer able to be dragged
 
             string linkId = droppedItem.GetComponent<ChatBubble>().id;
-            Routine.Start(Scroll(linkId));
+            Routine.Start(ScrollRoutine(linkId));
             
             // Add response back into list for reuse
             m_LinkManager.ResetLink(droppedItem, linkId, false);
@@ -61,9 +62,12 @@ namespace ProtoAqua.Argumentation
         //Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
         private void RespondWithNextNode(string factId) 
         {
-            Node nextNode = m_Graph.NextNode(factId); //Get the next node for the factId
+            Node nextNode = m_Graph.NextNode(factId);
+            Link currentLink = m_Graph.FindLink(factId);
 
-            //Create the node bubble, and set its properties
+            CheckConditionsMet(nextNode, currentLink);
+
+            // Create the node bubble, and set its properties
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
             newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
 
@@ -80,14 +84,26 @@ namespace ProtoAqua.Argumentation
             }
         }
 
+        private void CheckConditionsMet(Node nextNode, Link currentLink)
+        {
+            if (!m_Graph.Conditions.CheckConditions(nextNode, currentLink))
+            {
+                ChatBubble conditionsNotMetNode = m_NodePool.Alloc(m_ChatGrid);
+                conditionsNotMetNode.InitializeNodeData("conditionsNotMet", "Conditions not met!");
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+            }
+        }
+
         private void EndConversationPopup()
         {
             NamedOption[] options = {new NamedOption("Continue")};
             Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
         }
 
-        private IEnumerator Scroll(string linkId)
+        private IEnumerator ScrollRoutine(string linkId)
         {
+            m_InputRaycasterLayer.OverrideState(false);
+
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
@@ -96,6 +112,8 @@ namespace ProtoAqua.Argumentation
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+
+            m_InputRaycasterLayer.ClearOverride();
         }
     }
 }

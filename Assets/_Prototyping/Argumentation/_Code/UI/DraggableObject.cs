@@ -13,8 +13,8 @@ namespace ProtoAqua.Argumentation
     {
         [Header("Draggable Object Dependencies")]
         [SerializeField] private Canvas m_Canvas = null;
-        [SerializeField] private DropSlot dropSlot;
-        [SerializeField] private Image bubbleImage;
+        [SerializeField] private DropSlot m_DropSlot;
+        [SerializeField] private Image m_BubbleImage;
 
         [Serializable] public class DragEvent : UnityEvent<GameObject> { }
         public DragEvent EndDrag;
@@ -32,10 +32,12 @@ namespace ProtoAqua.Argumentation
             canvasGroup = GetComponent<CanvasGroup>();
 
             m_Canvas = rectTransform.GetCanvas();
+            m_DropSlot = GameObject.Find("ChatBox").GetComponent<DropSlot>();
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            colorRoutine.Replace(this, InitializeColorRoutine());
             holdMouseRoutine = Routine.StartDelay(this, HoldMouse, 1);
         }
 
@@ -70,7 +72,7 @@ namespace ProtoAqua.Argumentation
             //Don't want to activate the press and hold if dragging
             if (!dragging) 
             {
-                dropSlot.OnHold(this.gameObject);
+                m_DropSlot.OnHold(this.gameObject);
             }
         }
 
@@ -82,13 +84,13 @@ namespace ProtoAqua.Argumentation
 
         private IEnumerator OnEndDragColorRoutine()
         {
-            yield return bubbleImage.ColorTo(Color.cyan, 0.1f);
+            yield return m_BubbleImage.ColorTo(Color.cyan, 0.1f);
         }
 
         private IEnumerator InitializeColorRoutine()
         {
-            bubbleImage.SetColor(Color.cyan);
-            yield return bubbleImage.ColorTo(Color.blue, 0.1f);
+            m_BubbleImage.SetColor(Color.cyan);
+            yield return m_BubbleImage.ColorTo(Color.blue, 0.1f);
         }
     }
 }

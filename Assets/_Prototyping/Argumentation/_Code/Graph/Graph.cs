@@ -33,6 +33,11 @@ namespace ProtoAqua.Argumentation
             get { return endNodeId; }
         }
 
+        public ConditionsData Conditions
+        {
+            get { return conditions; }
+        }
+
         #endregion // Accessors
 
         // Load graph data, create nodes and links
