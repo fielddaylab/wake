@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Collections;
 using BeauUtil.Tags;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     public class ScriptNodePackage : IDataBlockPackage<ScriptNode>
     {
-        private readonly Dictionary<string, ScriptNode> m_Nodes = new Dictionary<string, ScriptNode>(32, StringComparer.Ordinal);
+        private readonly Dictionary<StringHash, ScriptNode> m_Nodes = new Dictionary<StringHash, ScriptNode>(32);
 
         private string m_Name;
         [BlockMeta("basePath")] private string m_RootPath;
@@ -28,7 +28,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to retrieve the node with the given id.
         /// </summary>
-        public bool TryGetNode(string inId, out ScriptNode outNode)
+        public bool TryGetNode(StringHash inId, out ScriptNode outNode)
         {
             return m_Nodes.TryGetValue(inId, out outNode);
         }
@@ -36,7 +36,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to retrieve the entrypoint with the given id.
         /// </summary>
-        public bool TryGetEntrypoint(string inId, out ScriptNode outNode)
+        public bool TryGetEntrypoint(StringHash inId, out ScriptNode outNode)
         {
             ScriptNode node;
             if (m_Nodes.TryGetValue(inId, out node))
@@ -60,6 +60,20 @@ namespace ProtoAqua
             foreach(var node in m_Nodes.Values)
             {
                 if ((node.Flags() & ScriptNodeFlags.Entrypoint) != 0)
+                {
+                    yield return node;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns all responses.
+        /// </summary>
+        public IEnumerable<ScriptNode> Responses()
+        {
+            foreach(var node in m_Nodes.Values)
+            {
+                if ((node.Flags() & ScriptNodeFlags.TriggerResponse) != 0)
                 {
                     yield return node;
                 }
@@ -93,16 +107,14 @@ namespace ProtoAqua
 
             public override bool TryCreateBlock(IBlockParserUtil inUtil, ScriptNodePackage inPackage, TagData inId, out ScriptNode outBlock)
             {
-                string selfId = inId.Id.ToString();
-                inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.m_RootPath);
                 if (!inPackage.m_RootPath.EndsWith("."))
                     inUtil.TempBuilder.Append('.');
-                inUtil.TempBuilder.Append(selfId);
+                inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();
-                outBlock = new ScriptNode(inPackage, selfId, fullId);
-                inPackage.m_Nodes.Add(fullId, outBlock);
+                outBlock = new ScriptNode(inPackage, fullId);
+                inPackage.m_Nodes.Add(outBlock.Id(), outBlock);
                 return true;
             }
         }

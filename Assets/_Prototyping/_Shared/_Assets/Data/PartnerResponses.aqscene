@@ -1,0 +1,100 @@
+#basePath   partner.help
+
+// some regular reponses
+
+:: default.1
+@trigger    RequestPartnerHelp
+@repeat     2
+@boostScore -5
+@cutscene
+{set temp:defaultResponseCount + 1}
+{@kevin}    Nope, sorry, got nothing right now.
+
+:: default.2
+@trigger    RequestPartnerHelp
+@repeat     2
+@boostScore -5
+@cutscene
+{set temp:defaultResponseCount + 1}
+{@kevin}    Huh? Sorry, thinking right now.
+
+:: default.3
+@trigger    RequestPartnerHelp
+@repeat     2
+@boostScore -5
+@cutscene
+{set temp:defaultResponseCount + 1}
+{@kevin}    Let's chat later, okay?
+
+:: default.irritated.1
+@trigger    RequestPartnerHelp
+@when       temp:defaultResponseCount >= 4
+@cutscene
+@boostScore -5
+{set temp:defaultResponseCount = 0}
+{@kevin}    I didn't grant you this connection just so you could bother me all the time, you know.
+
+:: default.irritated.2
+@trigger    RequestPartnerHelp
+@when       temp:defaultResponseCount >= 4
+@cutscene
+@boostScore -5
+{set temp:defaultResponseCount = 0}
+{@kevin}    Ugh, please give me some space for a second.
+
+// trust conversations
+
+:: telepathy.first
+@trigger    RequestPartnerHelp
+@when       kevin:help.requests == 1
+@boostScore 1000
+@once       profile
+@cutscene
+{@kevin}    Whoa, hey there!
+{@player}   Is this... we're talking, but I'm not speaking?
+{@kevin}    What did I tell you?
+            It's a Jellyblob thing. We're connected now.
+{@player}   How-{wait 0.5} Why-{wait 0.5}{auto}
+{@kevin}    Eh.{wait 0.25} Rather complicated, and anyways there's time for that later.
+            For now, let's just try getting used to this.
+            We can communicate with each other using our minds.
+{@player}   That's incredible!
+
+:: telepathy.discomfort
+@trigger    RequestPartnerHelp
+@when       kevin:help.requests > 3, kevin:help.comfortTalks == 0
+@once       profile
+@cutscene
+{set kevin:help.comfortTalks + 1}
+{@player}   Is this supposed to be... uncomfortable?
+{@kevin}    What do you mean?
+{@player}   It feels like you're in my head.
+            Is that... supposed to feel weird?
+{@kevin}    Oh. Yeah, that makes sense.
+            This kind of thing is pretty natural for me...
+            ...but I get that humans aren't really familiar with this kind of closeness.
+{@player}   No, we really aren't.
+{@kevin}    Well, good news is we're going to get a lot of practice.
+            So it should only get better from here on out.
+
+:: telepathy.trust
+@trigger    RequestPartnerHelp
+@when       kevin:help.requests > 8, kevin:help.comfortTalks == 1
+@once       profile
+@boostScore 3
+@cutscene
+{set kevin:help.comfortTalks + 1}
+{@player}   Hey Kevin?
+{@kevin}    Yeah?
+{@player}   You haven't been, like, in my thoughts, right?
+            Like my private thoughts?
+{@kevin}    No no, that's not how this works.
+            I can't look anywhere you don't want me to look.
+{@player}   Oh, okay... i-it's not that-{wait 0.5}{auto}
+{@kevin}    -"you don't trust me", right? Yeah{wait 0.25}, don't worry, I get it.
+            This is still new to you.
+            Eventually we'll trust each other more.
+            And we'll be able to help each other more too.
+{@player}   Thanks{wait 0.5} for understanding.
+            ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
+{@kevin}    ...Sure. When I trust you the same way, maybe we can try that.

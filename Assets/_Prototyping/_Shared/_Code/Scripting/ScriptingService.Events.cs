@@ -2,8 +2,10 @@ using System;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Tags;
+using BeauUtil.Variants;
 using ProtoAqua.Profile;
 using UnityEngine;
+using ProtoAqua.Scripting;
 
 namespace ProtoAqua
 {
@@ -18,10 +20,12 @@ namespace ProtoAqua
             // Replace Tags
             m_TagEventParser.AddReplace("n", "\n").WithAliases("newline");
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("player_name", () => Services.Data.CurrentCharacterName());
+            m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
+            m_TagEventParser.AddReplace("var*", ReplaceVariable);
+            m_TagEventParser.AddReplace("switch-var", SwitchOnVariable);
 
             // Global Events
             m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();
@@ -36,6 +40,7 @@ namespace ProtoAqua
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
             m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithStringData();
+            m_TagEventParser.AddEvent("set", ScriptEvents.Global.SetVariable).WithStringData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -93,6 +98,77 @@ namespace ProtoAqua
             }
         };
 
+        static private CustomTagParserConfig.ReplaceWithContextDelegate ReplaceVariable = (TagData t, object o) => {
+            Variant variable = Services.Data.GetVariable(t.Data, o);
+            if (t.Id.EndsWith("-i"))
+            {
+                return variable.AsInt().ToString();
+            }
+            else if (t.Id.EndsWith("-f"))
+            {
+                return variable.AsFloat().ToString();
+            }
+            else if (t.Id.EndsWith("-b"))
+            {
+                return variable.AsBool().ToString();
+            }
+            else
+            {
+                return variable.ToString();
+            }
+        };
+
+        static private CustomTagParserConfig.ReplaceWithContextDelegate SwitchOnVariable = (TagData t, object o) => {
+            int commaIdx = t.Data.IndexOf(',');
+            if (commaIdx > 0)
+            {
+                StringSlice varId = t.Data.Substring(0, commaIdx).TrimEnd();
+                StringSlice args = t.Data.Substring(commaIdx + 1).TrimStart();
+
+                TempList16<StringSlice> slices = new TempList16<StringSlice>();
+                int sliceCount = args.Split(ChoiceSplitChars, StringSplitOptions.None, ref slices);
+
+                if (slices.Count <= 0)
+                {
+                    Debug.LogWarningFormat("[ScriptingService] Fewer than expected arguments provided to '{0}' tag", t.Id);
+                    return varId.ToString();
+                }
+                
+                Variant variable = Services.Data.GetVariable(varId, o);
+                int idx = 0;
+                switch(variable.Type)
+                {
+                    case VariantType.Null:
+                        idx = 0;
+                        break;
+                    case VariantType.Bool:
+                        idx = variable.AsBool() ? 0 : 1;
+                        break;
+                    case VariantType.Int:
+                    case VariantType.Float:
+                    case VariantType.UInt:
+                        idx = variable.AsInt();
+                        break;
+                    default:
+                        Debug.LogWarningFormat("[ScriptingService] Unsupported variable type {0} provided to '{0}' tag", variable.Type, t.Id);
+                        return varId.ToString();
+                }
+
+                if (idx > slices.Count)
+                {
+                    Debug.LogWarningFormat("[ScriptingService] Switched on {0}, but result {1} out of range of provided args (count {2})", varId, idx, slices.Count);
+                    idx = 0;
+                }
+
+                return slices[idx].ToString();
+            }
+            else
+            {
+                Debug.LogWarningFormat("[ScriptingService] Fewer than expected arguments provided to '{0}' tag", t.Id);
+                return string.Empty;
+            }
+        };
+
         static private readonly char[] ChoiceSplitChars = new char[] { '|' };
 
         #endregion // Parser
@@ -107,7 +183,7 @@ namespace ProtoAqua
             // m_TagEventHandler.Register()
 
             m_TagEventHandler
-                .Register(ScriptEvents.Global.HideDialog, () => { Services.UI.Dialog().Hide(); } )
+                .Register(ScriptEvents.Global.HideDialog, () => { Services.UI.Dialog.Hide(); } )
                 .Register(ScriptEvents.Global.LetterboxOff, () => Services.UI.HideLetterbox() )
                 .Register(ScriptEvents.Global.LetterboxOn, () => Services.UI.ShowLetterbox() )
                 .Register(ScriptEvents.Global.PitchBGM, (e, o) => {
@@ -142,7 +218,7 @@ namespace ProtoAqua
                 .Register(ScriptEvents.Global.PlaySound, (e, o) => {
                     Services.Audio.PostEvent(e.StringArgument);
                 })
-                .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.Dialog().Show(); } )
+                .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.Dialog.Show(); } )
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => {
                     Services.Audio.StopMusic(e.Argument0.AsFloat());
                 })
@@ -155,7 +231,12 @@ namespace ProtoAqua
                 .Register(ScriptEvents.Global.EnableObject, (e, o) => {
                     TempList16<StringSlice> args = new TempList16<StringSlice>();
                     int argCount = ExtractArgs(e.StringArgument, ref args);
-
+                })
+                .Register(ScriptEvents.Global.SetVariable, (e, o) => {
+                    if (!Services.Data.VariableResolver.TryModify(o, e.StringArgument))
+                    {
+                        Debug.LogErrorFormat("[ScriptingService] Failed to set variables from string '{0}'", e.StringArgument);
+                    }
                 });
         }
 

@@ -20,7 +20,6 @@ namespace ProtoAqua.Observation
 
             public bool UsePress;
             public bool UseHold;
-            public bool UseRelease;
             
             public bool ToolMode;
         }

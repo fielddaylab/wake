@@ -8,6 +8,8 @@ using BeauUtil;
 using BeauUtil.Tags;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BeauUtil.Debugger;
+using BeauUtil.Variants;
 
 namespace ProtoAqua
 {
@@ -15,6 +17,8 @@ namespace ProtoAqua
     {
         private Routine m_SceneLoadRoutine;
         private bool m_SceneLock;
+
+        private VariantTable m_TempSceneTable;
 
         #region Scene Loading
 
@@ -64,6 +68,29 @@ namespace ProtoAqua
         }
 
         /// <summary>
+        /// Loads to another scene.
+        /// </summary>
+        public IEnumerator LoadScene(StringHash inSceneId, object inContext = null, bool inbAutoHideLoading = true)
+        {
+            if (m_SceneLock)
+            {
+                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                return null;
+            }
+
+            SceneBinding scene = SceneHelper.FindSceneById(inSceneId, SceneCategories.Build);
+            if (!scene.IsValid())
+            {
+                Debug.LogErrorFormat("[StateMgr] No scene found with id '{0}'", inSceneId.ToString());
+                return null;
+            }
+
+            m_SceneLock = true;
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
+            return m_SceneLoadRoutine.Wait();
+        }
+
+        /// <summary>
         /// Returns if loading into another scene.
         /// </summary>
         public bool IsLoadingScene()
@@ -73,10 +100,12 @@ namespace ProtoAqua
 
         private IEnumerator InitialSceneLoad()
         {
-            yield return WaitForAllServicesToFinishLoading();
+            yield return WaitForLoadingAndCleanup();
 
             m_SceneLock = false;
             Services.UI.HideLoadingScreen();
+
+            BindScene(SceneHelper.FindScene(SceneCategories.ActiveOnly));
 
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.AllLoaded))
             {
@@ -108,7 +137,8 @@ namespace ProtoAqua
                 while(!loadOp.isDone)
                     yield return null;
 
-                yield return WaitForAllServicesToFinishLoading();
+                yield return WaitForLoadingAndCleanup();
+                BindScene(inNextScene);
 
                 m_SceneLock = false;
 
@@ -124,7 +154,7 @@ namespace ProtoAqua
             }
         }
 
-        private IEnumerator WaitForAllServicesToFinishLoading()
+        private IEnumerator WaitForLoadingAndCleanup()
         {
             while(BuildInfo.IsLoading())
                 yield return null;
@@ -138,10 +168,36 @@ namespace ProtoAqua
                     yield return null;
             }
 
-            yield return Routine.Command.BreakAndResume;
+            using(Profiling.Time("gc collect"))
+            {
+                GC.Collect();
+            }
+            using(Profiling.Time("unload unused assets"))
+            {
+                yield return Resources.UnloadUnusedAssets();
+            }
         }
 
         #endregion // Scene Loading
+
+        #region Scripting
+
+        private void BindScene(SceneBinding inScene)
+        {
+            if (m_TempSceneTable == null)
+            {
+                m_TempSceneTable = new VariantTable("temp");
+                m_TempSceneTable.Capacity = 64;
+
+                Services.Data.BindTable("temp", m_TempSceneTable);
+            }
+            else
+            {
+                m_TempSceneTable.Clear();
+            }
+        }
+
+        #endregion // Scripting
 
         #region IService
 

@@ -76,7 +76,7 @@ namespace ProtoAqua
 
         static private void InitFields()
         {
-            foreach(var type in Reflect.FindDerivedTypes(typeof(Services), Reflect.FindAllAssemblies(0, Reflect.AssemblyType.DefaultNonUserMask)))
+            foreach(var type in Reflect.FindDerivedTypes(typeof(Services), Reflect.FindAllUserAssemblies()))
             {
                 foreach(var field in type.GetFields(BindingFlags.Static | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic))
                 {

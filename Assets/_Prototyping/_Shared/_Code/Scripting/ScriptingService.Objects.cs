@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
-using ProtoAqua;
 using UnityEngine;
+using ProtoAqua.Scripting;
 
 namespace ProtoAqua
 {
@@ -17,7 +11,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to get a script node, starting from the scope of the given node.
         /// </summary>
-        public bool TryGetScriptNode(ScriptNode inScope, string inId, out ScriptNode outNode)
+        public bool TryGetScriptNode(ScriptNode inScope, StringHash inId, out ScriptNode outNode)
         {
             if (inScope.Package().TryGetNode(inId, out outNode))
             {
@@ -30,7 +24,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to get a publically-exposed script node.
         /// </summary>
-        public bool TryGetEntrypoint(string inId, out ScriptNode outNode)
+        public bool TryGetEntrypoint(StringHash inId, out ScriptNode outNode)
         {
             return m_LoadedEntrypoints.TryGetValue(inId, out outNode);
         }
@@ -38,7 +32,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns if an entrypoint exists for the given id.
         /// </summary>
-        public bool HasEntrypoint(string inId)
+        public bool HasEntrypoint(StringHash inId)
         {
             return m_LoadedEntrypoints.ContainsKey(inId);
         }
@@ -58,11 +52,11 @@ namespace ProtoAqua
             int entrypointCount = 0;
             foreach(var entrypoint in inPackage.Entrypoints())
             {
-                string id = entrypoint.Id();
+                StringHash id = entrypoint.Id();
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint))
                 {
-                    Debug.LogWarningFormat("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id, existingEntrypoint.Package().Name(), entrypoint.Package().Name());
+                    Debug.LogWarningFormat("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id.ToDebugString(), existingEntrypoint.Package().Name(), entrypoint.Package().Name());
                     continue;
                 }
 
@@ -70,7 +64,22 @@ namespace ProtoAqua
                 ++entrypointCount;
             }
 
-            Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' non-errored entrypoints", inPackage.Name(), entrypointCount);
+            int responseCount = 0;
+            foreach(var response in inPackage.Responses())
+            {
+                StringHash triggerId = response.TriggerData.TriggerId;
+                TriggerResponseSet responseSet;
+                if (!m_LoadedResponses.TryGetValue(triggerId, out responseSet))
+                {
+                    responseSet = new TriggerResponseSet();
+                    m_LoadedResponses.Add(triggerId, responseSet);
+                }
+
+                responseSet.AddNode(response);
+                ++responseCount;
+            }
+
+            Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' non-errored entrypoints and '{2}' non-errored responses", inPackage.Name(), entrypointCount, responseCount);
         }
 
         /// <summary>
@@ -83,13 +92,25 @@ namespace ProtoAqua
 
             foreach(var entrypoint in inPackage.Entrypoints())
             {
-                string id = entrypoint.Id();
+                StringHash id = entrypoint.Id();
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint) && existingEntrypoint == entrypoint)
                 {
                     m_LoadedEntrypoints.Remove(id);
                 }
             }
+
+            foreach(var response in inPackage.Responses())
+            {
+                StringHash triggerId = response.TriggerData.TriggerId;
+                TriggerResponseSet responseSet;
+                if (m_LoadedResponses.TryGetValue(triggerId, out responseSet))
+                {
+                    responseSet.RemoveNode(response);
+                }
+            }
+
+            Debug.LogFormat("[ScriptingService] Unloaded package '{0}'", inPackage.Name());
         }
 
         #endregion // Loading

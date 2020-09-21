@@ -7,6 +7,8 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Tags;
 using UnityEngine;
+using ProtoAqua.Scripting;
+using BeauUtil.Variants;
 
 namespace ProtoAqua
 {
@@ -22,15 +24,20 @@ namespace ProtoAqua
         private TagStringParser m_TagStringParser;
         private StringUtils.ArgsList.Splitter m_ArgListSplitter;
 
+        // trigger eval
+        private CustomVariantResolver m_CustomResolver;
+
         // script nodes
         private HashSet<ScriptNodePackage> m_LoadedPackages;
-        private Dictionary<string, ScriptNode> m_LoadedEntrypoints;
+        private Dictionary<StringHash, ScriptNode> m_LoadedEntrypoints;
+        private Dictionary<StringHash, TriggerResponseSet> m_LoadedResponses;
 
         // objects
         private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
 
         // pool
         private IPool<TagString> m_TagStrings;
+        private DynamicPool<VariantTable> m_ContextPool;
 
         #region Operations
 
@@ -47,9 +54,9 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given IEnumerator.
         /// </summary>
-        public ScriptThreadHandle StartThread(string inId, IEnumerator inEnumerator)
+        public ScriptThreadHandle StartThread(string inThreadId, IEnumerator inEnumerator)
         {
-            return StartThreadInternal(inId, null, inEnumerator);
+            return StartThreadInternal(inThreadId, null, inEnumerator);
         }
 
         /// <summary>
@@ -63,9 +70,9 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartThread(string inId, IScriptContext inContext, IEnumerator inEnumerator)
+        public ScriptThreadHandle StartThread(string inThreadId, IScriptContext inContext, IEnumerator inEnumerator)
         {
-            return StartThreadInternal(inId, inContext, inEnumerator);
+            return StartThreadInternal(inThreadId, inContext, inEnumerator);
         }
 
         #endregion // Starting Threads with IEnumerator
@@ -83,9 +90,9 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given ScriptNode.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inId, ScriptNode inNode)
+        public ScriptThreadHandle StartNode(string inThreadId, ScriptNode inNode)
         {
-            return StartThreadInternal(inId, null, ProcessNode(inNode, null));
+            return StartThreadInternal(inThreadId, null, ProcessNode(inNode, null));
         }
 
         /// <summary>
@@ -99,9 +106,9 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inId, IScriptContext inContext, ScriptNode inNode)
+        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, ScriptNode inNode)
         {
-            return StartThreadInternal(inId, inContext, ProcessNode(inNode, inContext));
+            return StartThreadInternal(inThreadId, inContext, ProcessNode(inNode, inContext));
         }
 
         private IEnumerator ProcessNode(ScriptNode inNode, IScriptContext inContext)
@@ -119,12 +126,12 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inEntrypointId)
+        public ScriptThreadHandle StartNode(StringHash inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
+                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
                 return default(ScriptThreadHandle);
             }
 
@@ -134,27 +141,27 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given ScriptNode entrypoint.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inId, string inEntrypointId)
+        public ScriptThreadHandle StartNode(string inThreadId, StringHash inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
+                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(inId, null, ProcessNode(node, null));
+            return StartThreadInternal(inThreadId, null, ProcessNode(node, null));
         }
 
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(IScriptContext inContext, string inEntrypointId)
+        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
+                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
                 return default(ScriptThreadHandle);
             }
 
@@ -164,19 +171,79 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inId, IScriptContext inContext, string inEntrypointId)
+        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, StringHash inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
+                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(inId, inContext, ProcessNode(node, inContext));
+            return StartThreadInternal(inThreadId, inContext, ProcessNode(node, inContext));
         }
 
         #endregion // Starting Threads with Entrypoint
+
+        #region Triggering Responses
+
+        /// <summary>
+        /// Attempts to trigger a response.
+        /// </summary>
+        public ScriptThreadHandle TriggerResponse(StringHash inTriggerId, StringHash inTarget = default(StringHash), IScriptContext inContext = null, VariantTable inContextTable = null)
+        {
+            return TriggerResponse(null, inTriggerId, inTarget, inContext, inContextTable);
+        }
+
+        /// <summary>
+        /// Attempts to trigger a response.
+        /// </summary>
+        public ScriptThreadHandle TriggerResponse(string inThreadId, StringHash inTriggerId, StringHash inTarget = default(StringHash), IScriptContext inContext = null, VariantTable inContextTable = null)
+        {
+            ScriptThreadHandle handle = default(ScriptThreadHandle);
+            IVariantResolver resolver = GetResolver(inContextTable);
+            TriggerResponseSet responseSet;
+            if (m_LoadedResponses.TryGetValue(inTriggerId, out responseSet))
+            {
+                using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
+                {
+                    int minScore = int.MinValue;
+                    int responseCount = responseSet.GetHighestScoringNodes(resolver, inContext, Services.Data.Profile?.Script, inTarget, nodes, ref minScore);
+                    if (responseCount > 0)
+                    {
+                        ScriptNode node = RNG.Instance.Choose(nodes);
+                        handle = StartNode(inThreadId, inContext, node);
+                    }
+                }
+            }
+            ResetCustomResolver();
+            return handle;
+        }
+
+        private IVariantResolver GetResolver(VariantTable inContext)
+        {
+            if (inContext == null || inContext.Count == 0)
+                return Services.Data.VariableResolver;
+            
+            if (m_CustomResolver == null)
+            {
+                m_CustomResolver = new CustomVariantResolver();
+                m_CustomResolver.Base = Services.Data.VariableResolver;
+            }
+
+            m_CustomResolver.SetDefaultTable(inContext);
+            return m_CustomResolver;
+        }
+
+        private void ResetCustomResolver()
+        {
+            if (m_CustomResolver != null)
+            {
+                m_CustomResolver.ClearDefaultTable();
+            }
+        }
+
+        #endregion // Triggering Responses
 
         #region Killing Threads
 
@@ -272,6 +339,25 @@ namespace ProtoAqua
 
         #endregion // Operations
 
+        #region Contexts
+
+        public TempAlloc<VariantTable> GetTempTable()
+        {
+            var table = m_ContextPool.TempAlloc();
+            table.Object.Name = "temp";
+            return table;
+        }
+
+        public TempAlloc<VariantTable> GetTempTable(VariantTable inBase)
+        {
+            var table = m_ContextPool.TempAlloc();
+            table.Object.Name = "temp";
+            table.Object.Base = inBase;
+            return table;
+        }
+
+        #endregion // Contexts
+
         #region Utils
 
         /// <summary>
@@ -303,6 +389,8 @@ namespace ProtoAqua
                 ScriptNode processingNode = currentNode;
                 currentNode = null;
 
+                Services.Data.Profile?.Script.RecordNodeVisit(processingNode.Id(), processingNode.TrackingLevel());
+
                 bool bNodeIsCutscene = (processingNode.Flags() & ScriptNodeFlags.Cutscene) != 0;
                 if (bNodeIsCutscene)
                     Services.UI.ShowLetterbox();
@@ -322,7 +410,7 @@ namespace ProtoAqua
             }
 
             // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.Dialog();
+            DialogPanel dialogPanel = Services.UI.Dialog;
             dialogPanel.CompleteSequence();
         }
 
@@ -335,7 +423,7 @@ namespace ProtoAqua
             }
 
             // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.Dialog();
+            DialogPanel dialogPanel = Services.UI.Dialog;
             dialogPanel.CompleteSequence();
         }
 
@@ -347,7 +435,7 @@ namespace ProtoAqua
             
             TagString lineEvents = m_TagStrings.Alloc();
             TagStringEventHandler eventHandler = m_TagEventHandler;
-            DialogPanel dialogPanel = Services.UI.Dialog();
+            DialogPanel dialogPanel = Services.UI.Dialog;
             
             try
             {
@@ -388,34 +476,34 @@ namespace ProtoAqua
         }
 
         // Starts a scripting thread
-        private ScriptThreadHandle StartThreadInternal(string inId, IScriptContext inContext, IEnumerator inEnumerator)
+        private ScriptThreadHandle StartThreadInternal(string inThreadId, IScriptContext inContext, IEnumerator inEnumerator)
         {
             if (inEnumerator == null)
             {
                 return default(ScriptThreadHandle);
             }
 
-            bool bHasId = !string.IsNullOrEmpty(inId);
+            bool bHasId = !string.IsNullOrEmpty(inThreadId);
             if (bHasId)
             {
-                if (inId.IndexOf('*') >= 0)
+                if (inThreadId.IndexOf('*') >= 0)
                 {
-                    Debug.LogErrorFormat("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inId);
+                    Debug.LogErrorFormat("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadId);
                     return default(ScriptThreadHandle);
                 }
 
                 ScriptThreadHandle current;
-                if (m_ThreadMap.TryGetValue(inId, out current))
+                if (m_ThreadMap.TryGetValue(inThreadId, out current))
                 {
                     current.Routine().Stop();
                 }
             }
 
             Routine routine = Routine.Start(this, inEnumerator);
-            ScriptThreadHandle handle = new ScriptThreadHandle(inId, inContext, routine);
+            ScriptThreadHandle handle = new ScriptThreadHandle(inThreadId, inContext, routine);
             m_ThreadList.Add(handle);
             if (bHasId)
-                m_ThreadMap[inId] = handle;
+                m_ThreadMap[inThreadId] = handle;
 
             return handle;
         }
@@ -466,13 +554,20 @@ namespace ProtoAqua
             m_TagStringParser.ReplaceProcessor = m_TagEventParser;
 
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
-            m_LoadedEntrypoints = new Dictionary<string, ScriptNode>(64, StringComparer.Ordinal);
+            m_LoadedEntrypoints = new Dictionary<StringHash, ScriptNode>(256);
+            m_LoadedResponses = new Dictionary<StringHash, TriggerResponseSet>();
+
+            m_ContextPool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
+            m_ContextPool.Config.RegisterOnFree((p, obj) => { obj.Clear(); obj.Base = null; });
         }
 
         protected override void OnDeregisterService()
         {
             m_TagEventParser = null;
             m_TagEventHandler = null;
+
+            m_ContextPool.Dispose();
+            m_ContextPool = null;
 
             m_ScriptObjects.Clear();
         }

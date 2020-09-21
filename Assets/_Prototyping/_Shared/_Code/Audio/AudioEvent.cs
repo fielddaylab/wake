@@ -32,7 +32,7 @@ namespace ProtoAudio
 
         #endregion // IKeyValuePair
 
-        public StringHash Id() { return m_Id ? m_Id : (m_Id = name); }
+        public StringHash Id() { return !m_Id.IsEmpty ? m_Id : (m_Id = name); }
 
         public bool CanPlay()
         {

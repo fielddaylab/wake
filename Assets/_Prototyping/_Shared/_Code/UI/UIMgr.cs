@@ -1,10 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using BeauData;
-using BeauPools;
-using BeauUtil;
-using ProtoAqua;
 using UnityEngine;
 
 namespace ProtoAqua
@@ -35,12 +30,17 @@ namespace ProtoAqua
             return m_Loading.Hide();
         }
 
+        public bool IsLoadingScreenVisible()
+        {
+            return m_Loading.IsShowing() || m_Loading.IsTransitioning();
+        }
+
         #endregion // Loading Screen
 
         #region Dialog
 
-        public DialogPanel Dialog() { return m_DialogPanel; }
-        public PopupPanel Popup() { return m_PopupPanel; }
+        public DialogPanel Dialog { get { return m_DialogPanel; } }
+        public PopupPanel Popup { get { return m_PopupPanel; } }
 
         public void HideAll()
         {
@@ -66,7 +66,16 @@ namespace ProtoAqua
                 m_Letterbox.Hide();
         }
 
+        public bool IsLetterboxed()
+        {
+            return m_LetterboxCounter > 0;
+        }
+
         #endregion // Letterbox
+
+        #region Pointer
+
+        #endregion // Pointer
 
         #region IService
 

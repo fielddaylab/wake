@@ -6,6 +6,7 @@ using TMPro;
 using System.Collections;
 using System;
 using BeauUtil.Tags;
+using ProtoAqua.Scripting;
 
 namespace ProtoAqua
 {

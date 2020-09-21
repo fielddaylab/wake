@@ -8,7 +8,7 @@ using ProtoAqua;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     // public class ScriptState : IPooledObject<ScriptState>
     // {

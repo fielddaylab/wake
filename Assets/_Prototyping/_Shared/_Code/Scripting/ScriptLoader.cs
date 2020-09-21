@@ -1,15 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Blocks;
-using BeauUtil.Tags;
 using UnityEngine;
+using ProtoAqua.Scripting;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     public class ScriptLoader : MonoBehaviour
     {

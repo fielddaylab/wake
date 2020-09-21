@@ -30,7 +30,7 @@ namespace ProtoAqua
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (!Services.State.IsLoadingScene() && !Services.UI.Popup().IsShowing())
+                if (!Services.State.IsLoadingScene() && !Services.UI.IsLoadingScreenVisible() && !Services.UI.Popup.IsShowing())
                 {
                     Routine.Start(this, RequestQuit());
                 }
@@ -39,9 +39,9 @@ namespace ProtoAqua
 
         private IEnumerator RequestQuit()
         {
-            Future<StringHash> request = Services.UI.Popup().AskYesNo("Quit to Title Screen", "Return to the title screen?");
+            Future<StringHash> request = Services.UI.Popup.AskYesNo("Quit to Title Screen", "Return to the title screen?");
             yield return request;
-            if (request.Get())
+            if (!request.Get().IsEmpty)
             {
                 Services.Script.KillAllThreads();
                 Services.UI.HideAll();

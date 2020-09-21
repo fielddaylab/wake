@@ -14,7 +14,7 @@ namespace ProtoAqua.Observation
 {
     public class ScanDataPackage : IDataBlockPackage<ScanData>
     {
-        private readonly Dictionary<string, ScanData> m_Data = new Dictionary<string, ScanData>(32, StringComparer.Ordinal);
+        private readonly Dictionary<StringHash, ScanData> m_Data = new Dictionary<StringHash, ScanData>(32);
 
         private string m_Name;
         [BlockMeta("basePath")] private string m_RootPath;
@@ -25,7 +25,7 @@ namespace ProtoAqua.Observation
             m_RootPath = inName;
         }
 
-        public bool TryGetScanData(string inId, out ScanData outData)
+        public bool TryGetScanData(StringHash inId, out ScanData outData)
         {
             return m_Data.TryGetValue(inId, out outData);
         }
@@ -57,15 +57,13 @@ namespace ProtoAqua.Observation
 
             public override bool TryCreateBlock(IBlockParserUtil inUtil, ScanDataPackage inPackage, TagData inId, out ScanData outBlock)
             {
-                string selfId = inId.Id.ToString();
-                inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.m_RootPath);
                 if (!inPackage.m_RootPath.EndsWith("."))
                     inUtil.TempBuilder.Append('.');
-                inUtil.TempBuilder.Append(selfId);
+                inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();
-                outBlock = new ScanData(selfId, fullId);
+                outBlock = new ScanData(fullId);
                 inPackage.m_Data.Add(fullId, outBlock);
                 return true;
             }

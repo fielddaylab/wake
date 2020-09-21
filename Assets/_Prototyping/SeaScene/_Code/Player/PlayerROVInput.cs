@@ -19,26 +19,30 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private bool m_ToolModeToggle = false;
         [NonSerialized] private float m_LastToolModeDown = -1;
-        
-        #region WorldInput
 
-        protected override void OnInputDisabled()
+        protected override void Awake()
+        {
+            base.Awake();
+            OnInputDisabled.AddListener(HandleInputDisabled);
+        }
+
+        private void HandleInputDisabled()
         {
             m_ToolModeToggle = false;
             m_LastToolModeDown = -1;
         }
 
-        #endregion // World Input
-
         #region Input Generation
 
         public void GenerateInput(Transform inPlayerTransform, Transform inLockOn, out PlayerROV.InputData outInputData)
         {
-            if (!m_InputEnabled)
+            if (!IsInputEnabled)
             {
                 outInputData = default(PlayerROV.InputData);
                 return;
             }
+
+            bool bAllowLeftClick = !Services.Input.IsPointerOverUI();
 
             if (inLockOn)
             {
@@ -51,9 +55,8 @@ namespace ProtoAqua.Observation
             
             outInputData.Offset = outInputData.Target.Value - (Vector2) inPlayerTransform.position;
 
-            outInputData.UseHold = Input.GetMouseButton(0);
-            outInputData.UsePress = Input.GetMouseButtonDown(0);
-            outInputData.UseRelease = Input.GetMouseButtonUp(0);
+            outInputData.UseHold = bAllowLeftClick && Input.GetMouseButton(0);
+            outInputData.UsePress = bAllowLeftClick && Input.GetMouseButtonDown(0);
 
             bool bRightMouseDown = Input.GetMouseButton(1);
 

@@ -2,8 +2,12 @@ using System;
 using BeauUtil.Blocks;
 using System.Collections.Generic;
 using UnityEngine.Scripting;
+using BeauUtil;
+using BeauPools;
+using BeauUtil.Variants;
+using UnityEngine;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     public class ScriptNode : IDataBlock
     {
@@ -12,38 +16,53 @@ namespace ProtoAqua
         #region Serialized
 
         // Ids
-        private string m_SelfId = null;
-        private string m_FullId = null;
+        private StringHash m_Id = null;
 
         // Properties
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
+        private TriggerNodeData m_TriggerData = null;
+        private HashSet<StringHash> m_Tags = new HashSet<StringHash>();
 
         // Text
         private List<string> m_Lines = new List<string>();
 
         #endregion // Serialized
 
-        public ScriptNode(ScriptNodePackage inPackage, string inSelfId, string inFullId)
+        public ScriptNode(ScriptNodePackage inPackage, StringHash inFullId)
         {
             m_Package = inPackage;
-            m_SelfId = inSelfId;
-            m_FullId = inFullId;
+            m_Id = inFullId;
         }
 
-        public string Id() { return m_FullId; }
-        public string SelfId() { return m_SelfId; }
+        public StringHash Id() { return m_Id; }
         public ScriptNodeFlags Flags() { return m_Flags; }
         public ScriptNodePackage Package() { return m_Package; }
 
+        public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyList<string> Lines() { return m_Lines; }
+        public IReadOnlyCollection<StringHash> Tags() { return m_Tags; }
+
+        public PersistenceLevel TrackingLevel()
+        {
+            if (m_TriggerData != null)
+            {
+                if (m_TriggerData.OnceLevel != PersistenceLevel.Untracked)
+                    return m_TriggerData.OnceLevel;
+                if (m_TriggerData.RepeatDuration > 0)
+                    return PersistenceLevel.Session;
+            }
+
+            return PersistenceLevel.Untracked;
+        }
 
         #region Parser
 
         [BlockContent(BlockContentMode.LineByLine), Preserve]
         private void AddContent(string inLine)
         {
-            m_Lines.Add(inLine);
+            if (!string.IsNullOrEmpty(inLine))
+                m_Lines.Add(inLine);
         }
 
         [BlockMeta("cutscene"), Preserve]
@@ -61,6 +80,87 @@ namespace ProtoAqua
             m_Flags |= ScriptNodeFlags.Entrypoint;
         }
 
+        [BlockMeta("trigger"), Preserve]
+        private void SetTriggerResponse(StringHash inTriggerId)
+        {
+            m_Flags |= ScriptNodeFlags.TriggerResponse;
+            if (m_TriggerData == null)
+            {
+                m_TriggerData = new TriggerNodeData();
+            }
+            m_TriggerData.TriggerId = inTriggerId;
+        }
+
+        [BlockMeta("who"), Preserve]
+        private void SetTriggerTarget(StringHash inTargetId)
+        {
+            if (m_TriggerData != null)
+            {
+                m_TriggerData.TargetId = inTargetId;
+            }
+        }
+
+        [BlockMeta("when"), Preserve]
+        private void SetTriggerConditions(StringSlice inConditionsList)
+        {
+            if (m_TriggerData != null)
+            {
+                using(PooledList<StringSlice> conditions = PooledList<StringSlice>.Create())
+                {
+                    int conditionsCount = inConditionsList.Split(Parsing.QuoteAwareArgSplitter, StringSplitOptions.RemoveEmptyEntries, conditions);
+                    if (conditionsCount > 0)
+                    {
+                        m_TriggerData.Conditions = new VariantComparison[conditionsCount];
+                        for(int i = 0; i < conditionsCount; ++i)
+                        {
+                            if (!VariantComparison.TryParse(conditions[i], out m_TriggerData.Conditions[i]))
+                            {
+                                Debug.LogErrorFormat("[ScriptNode] Unable to parse condition '{0}'", conditions[i]);
+                            }
+                        }
+
+                        m_TriggerData.Score += conditionsCount;
+                    }
+                }
+            }
+        }
+
+        [BlockMeta("boostScore"), Preserve]
+        private void AdjustTriggerScore(int inScore)
+        {
+            if (m_TriggerData != null)
+            {
+                m_TriggerData.Score += inScore;
+            }
+        }
+
+        [BlockMeta("once"), Preserve]
+        private void SetOnce(StringSlice inCategory)
+        {
+            if (m_TriggerData != null)
+            {
+                m_TriggerData.RepeatDuration = 0;
+                m_TriggerData.OnceLevel = inCategory.Equals("session") ? PersistenceLevel.Session : PersistenceLevel.Profile;
+            }
+        }
+
+        [BlockMeta("repeat"), Preserve]
+        private void SetRepeat(uint inDuration)
+        {
+            if (m_TriggerData != null)
+            {
+                m_TriggerData.RepeatDuration = (int) inDuration;
+                m_TriggerData.OnceLevel = PersistenceLevel.Untracked;
+            }
+        }
+
+        [BlockMeta("tags"), Preserve]
+        private void SetTags(StringSlice inTags)
+        {
+            foreach(var tag in inTags.EnumeratedSplit(Parsing.CommaChar, StringSplitOptions.RemoveEmptyEntries))
+                m_Tags.Add(tag.Trim());
+        }
+
         #endregion // Parser
     }
     
@@ -68,6 +168,7 @@ namespace ProtoAqua
     public enum ScriptNodeFlags
     {
         Cutscene = 0x01,
-        Entrypoint = 0x02
+        Entrypoint = 0x02,
+        TriggerResponse = 0x04
     }
 }

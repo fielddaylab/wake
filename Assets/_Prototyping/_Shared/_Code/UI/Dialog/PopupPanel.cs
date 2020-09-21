@@ -222,7 +222,7 @@ namespace ProtoAqua
         protected override void OnShow(bool inbInstant)
         {
             SetInputState(false);
-            m_RaycastBlocker.ClearOverride();
+            m_RaycastBlocker.Override = null;
 
             if (!WasShowing())
             {
@@ -237,7 +237,7 @@ namespace ProtoAqua
             m_BoxAnim.Stop();
             m_DisplayRoutine.Stop();
 
-            m_RaycastBlocker.OverrideState(false);
+            m_RaycastBlocker.Override = false;
 
             if (WasShowing())
             {

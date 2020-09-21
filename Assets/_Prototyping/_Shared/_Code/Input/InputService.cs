@@ -5,16 +5,24 @@ using BeauPools;
 using BeauUtil;
 using ProtoAqua;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace ProtoAqua
 {
     public class InputService : ServiceBehaviour
     {
-        private readonly List<IInputLayer> m_AllInputLayers = new List<IInputLayer>(32);
-        private int m_CurrentPriority;
-        private readonly Stack<int> m_PriorityStack = new Stack<int>(8);
-        private InputLayerFlags m_CurrentFlags = InputLayerFlags.All;
-        private readonly Stack<InputLayerFlags> m_FlagsStack = new Stack<InputLayerFlags>(8);
+        #region Inspector
+
+        [SerializeField] private EventSystem m_EventSystem = null;
+        [SerializeField] private ExposedPointerInputModule m_InputModule = null;
+
+        #endregion // Inspector
+
+        [NonSerialized] private readonly List<IInputLayer> m_AllInputLayers = new List<IInputLayer>(32);
+        [NonSerialized] private int m_CurrentPriority;
+        [NonSerialized] private readonly Stack<int> m_PriorityStack = new Stack<int>(8);
+        [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.All;
+        [NonSerialized] private readonly Stack<InputLayerFlags> m_FlagsStack = new Stack<InputLayerFlags>(8);
 
         #region Input Layers
 
@@ -110,6 +118,15 @@ namespace ProtoAqua
         }
 
         #endregion // Flags
+
+        #region Pointer
+
+        public bool IsPointerOverUI()
+        {
+            return m_InputModule.IsPointerOverCanvas();
+        }
+
+        #endregion // Pointer
 
         #region IService
 

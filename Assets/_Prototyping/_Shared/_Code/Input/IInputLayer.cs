@@ -5,6 +5,7 @@ using BeauPools;
 using BeauUtil;
 using ProtoAqua;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -15,8 +16,14 @@ namespace ProtoAqua
         int Priority { get; }
         InputLayerFlags Flags { get; }
         bool? Override { get; set; }
+
+        bool IsInputEnabled { get; }
+
         void UpdateSystemPriority(int inSystemPriority);
         void UpdateSystemFlags(InputLayerFlags inFlags);
+
+        UnityEvent OnInputEnabled { get; }
+        UnityEvent OnInputDisabled { get; }
     }
 
     [Flags]

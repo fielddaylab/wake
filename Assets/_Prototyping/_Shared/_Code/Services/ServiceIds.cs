@@ -19,6 +19,7 @@ namespace ProtoAqua
 
         #endregion // Shared Interface
 
+        static public readonly FourCC AI = Register("AI", "AI system");
         static public readonly FourCC Analytics = Register("NLYT", "Analytics system");
         static public readonly FourCC Audio = Register("AUD", "Audio system");
         static public readonly FourCC Camera = Register("CAM", "Camera system");

@@ -7,7 +7,7 @@ using BeauUtil;
 using ProtoAqua;
 using UnityEngine;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     /// <summary>
     /// Handle for a scripting thread.

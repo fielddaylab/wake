@@ -45,21 +45,27 @@ namespace ProtoAqua.Observation
         private ScanDataPackage m_MasterPackage = null;
         private ScanDataPackage.Generator m_Generator = new ScanDataPackage.Generator();
 
-        // TODO: Move this out of here!
-        private HashSet<string> m_ScannedIds = new HashSet<string>(StringComparer.Ordinal);
-
-        public bool TryGetScanData(string inId, out ScanData outData)
+        public bool TryGetScanData(StringHash inId, out ScanData outData)
         {
             return m_MasterPackage.TryGetScanData(inId, out outData);
         }
 
-        public bool WasScanned(string inId) { return m_ScannedIds.Contains(inId); }
+        public bool WasScanned(StringHash inId) { return Services.Data.Profile.Inventory.WasScanned(inId); }
 
-        public bool RegisterScanned(string inId)
+        public bool RegisterScanned(ScanData inData)
         {
-            if (m_ScannedIds.Add(inId))
+            if (Services.Data.Profile.Inventory.RegisterScanned(inData.Id()))
             {
-                Services.Events.Dispatch(ObservationEvents.ScannableComplete, inId);
+                Services.Events.Dispatch(ObservationEvents.ScannableComplete, inData.Id());
+
+                // apply variables?
+                var scanModifications = inData.OnScanModifications();
+                if (scanModifications != null && scanModifications.Length > 0)
+                {
+                    for(int i = 0; i < scanModifications.Length; ++i)
+                        scanModifications[i].Execute(Services.Data.VariableResolver, inData);
+                }
+                
                 return true;
             }
 
@@ -79,7 +85,7 @@ namespace ProtoAqua.Observation
             if (inData == null)
                 return m_BaseScanDuration;
 
-            if (m_ScannedIds.Contains(inData.Id()))
+            if (WasScanned(inData.Id()))
                 return m_CompletedScanDuration;
             
             return m_BaseScanDuration * inData.ScanSpeed();
@@ -101,7 +107,6 @@ namespace ProtoAqua.Observation
         protected override void Remove()
         {
             m_MasterPackage = null;
-            m_ScannedIds.Clear();
         }
 
         #endregion // TweakAsset

@@ -155,7 +155,7 @@ namespace ProtoAqua.Observation
                 var mgr = Services.Tweaks.Get<ScanDataMgr>();
                 if (m_ScanData != null)
                 {
-                    mgr.RegisterScanned(m_ScanId);
+                    mgr.RegisterScanned(m_ScanData);
                 }
 
                 UpdateColor();
@@ -261,8 +261,8 @@ namespace ProtoAqua.Observation
 
         private void OnScanComplete(object inScanId)
         {
-            string scanId = (string) inScanId;
-            if (m_ScanId.Equals(scanId, StringComparison.Ordinal))
+            StringHash scanId = (StringHash) inScanId;
+            if (m_ScanId == scanId)
             {
 
             }

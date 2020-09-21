@@ -10,7 +10,7 @@ using System;
 using ProtoAudio;
 using BeauUtil.Tags;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     public interface IScriptContext
     {

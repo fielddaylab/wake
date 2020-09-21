@@ -10,7 +10,7 @@ using System;
 using ProtoAudio;
 using BeauUtil.Tags;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     static public class ScriptEvents
     {
@@ -29,6 +29,7 @@ namespace ProtoAqua
             static public readonly StringHash LetterboxOff = "letterbox-off";
             static public readonly StringHash EnableObject = "enable-object";
             static public readonly StringHash DisableObject = "disable-object";
+            static public readonly StringHash SetVariable = "set-variable";
         }
 
         static public class Dialog
