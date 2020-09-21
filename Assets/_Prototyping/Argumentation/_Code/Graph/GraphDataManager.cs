@@ -1,4 +1,5 @@
-﻿using BeauUtil.Blocks;
+﻿using System.Collections.Generic;
+using BeauUtil.Blocks;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
@@ -8,12 +9,18 @@ namespace ProtoAqua.Argumentation
     {
         [SerializeField] private TextAsset[] m_DefaultAssets = null;
 
-        private GraphDataPackage m_MasterPackage = null;
+        private Dictionary<string, GraphDataPackage> m_Packages = new Dictionary<string, GraphDataPackage>();
+
         private GraphDataPackage.Generator m_Generator = new GraphDataPackage.Generator();
 
-        public GraphDataPackage MasterPackage
+        public GraphDataPackage GetPackage(string name)
         {
-            get { return m_MasterPackage; }
+            if (m_Packages.TryGetValue(name, out GraphDataPackage package))
+            {
+                return package;
+            }
+
+            throw new System.ArgumentNullException($"No package '{name}' was found");
         }
 
         #region TweakAsset
@@ -22,7 +29,7 @@ namespace ProtoAqua.Argumentation
         {
             foreach (var asset in m_DefaultAssets)
             {
-                BlockParser.Parse(ref m_MasterPackage, asset.name, asset.text, BlockParsingRules.Default, m_Generator);
+                m_Packages.Add(asset.name, BlockParser.Parse(asset.name, asset.text, BlockParsingRules.Default, m_Generator));
             }
         }
 

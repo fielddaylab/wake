@@ -39,7 +39,7 @@ namespace ProtoAqua.Argumentation
 
             if (draggableObject) 
             {
-                draggableObject.EndDrag.AddListener(EndDrag);
+                draggableObject.endDrag = EndDrag;
             }
         }
 

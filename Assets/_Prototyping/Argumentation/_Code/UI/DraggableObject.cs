@@ -16,8 +16,8 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private DropSlot m_DropSlot;
         [SerializeField] private Image m_BubbleImage;
 
-        [Serializable] public class DragEvent : UnityEvent<GameObject> { }
-        public DragEvent EndDrag;
+        public delegate void EndDrag(GameObject gameObject);
+        public EndDrag endDrag;
 
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
@@ -25,6 +25,7 @@ namespace ProtoAqua.Argumentation
 
         private Routine holdMouseRoutine;
         private Routine colorRoutine;
+        private Routine endDragRoutine;
         
         private void Awake()
         {
@@ -62,9 +63,9 @@ namespace ProtoAqua.Argumentation
         {
             canvasGroup.blocksRaycasts = true;
             dragging = false;
-            //TODO do this more efficiently without destroying objects
+
             colorRoutine.Replace(this, OnEndDragColorRoutine());
-            EndDrag.Invoke(eventData.pointerDrag.gameObject);
+            endDragRoutine.Replace(this, EndDragRoutine(eventData.pointerDrag.gameObject));
         }
 
         private void HoldMouse() 
@@ -72,6 +73,7 @@ namespace ProtoAqua.Argumentation
             //Don't want to activate the press and hold if dragging
             if (!dragging) 
             {
+                colorRoutine.Replace(this, OnEndDragColorRoutine());
                 m_DropSlot.OnHold(this.gameObject);
             }
         }
@@ -80,6 +82,12 @@ namespace ProtoAqua.Argumentation
         {
             yield return 1.0f;
             HoldMouse();
+        }
+
+        private IEnumerator EndDragRoutine(GameObject gameObject)
+        {
+            yield return 0.1f;
+            endDrag(gameObject);
         }
 
         private IEnumerator OnEndDragColorRoutine()

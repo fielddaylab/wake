@@ -25,6 +25,11 @@ namespace ProtoAqua.Argumentation
 
         #region Accessors
 
+        public string Name
+        {
+            get { return m_Name; }
+        }
+
         public Dictionary<string, Node> Nodes
         {
             get { return m_Nodes; }

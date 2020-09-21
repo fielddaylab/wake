@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using BeauRoutine;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,15 +10,14 @@ namespace ProtoAqua.Argumentation
 {
     public class DropSlot : MonoBehaviour, IDropHandler
     {
-        [Serializable] public class DropEvent : UnityEvent<GameObject> { }
-
         [Header("Drop Slot Dependencies")]
         [SerializeField] ScrollRect scrollRect;
         [SerializeField] RectTransform rectTransform;
 
-        public DropEvent OnDropped;
+        public delegate void OnDropped(GameObject gameObject);
+        public OnDropped onDropped;
 
-        private Routine scrollRoutine;
+        private Routine onDroppedRoutine;
         
         public void OnDrop(PointerEventData eventData)
         {
@@ -29,14 +29,20 @@ namespace ProtoAqua.Argumentation
 
             if (eventData.pointerDrag != null)
             {
-                OnDropped.Invoke(eventData.pointerDrag.gameObject);
+                onDroppedRoutine.Replace(this, OnDroppedRoutine(eventData.pointerDrag.gameObject));
             }
         }
         
         //Acts the same as dropping but hold the button
         public void OnHold(GameObject gameObject) 
         {
-            OnDropped.Invoke(gameObject);
+            onDroppedRoutine.Replace(this, OnDroppedRoutine(gameObject));
+        }
+
+        private IEnumerator OnDroppedRoutine(GameObject gameObject)
+        {
+            yield return 0.1f;
+            onDropped(gameObject);
         }
     }
 }

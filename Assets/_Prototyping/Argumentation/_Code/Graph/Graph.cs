@@ -44,7 +44,14 @@ namespace ProtoAqua.Argumentation
         private void Awake()
         {
             Services.Tweaks.Load(m_GraphDataManager);
-            GraphDataPackage data = m_GraphDataManager.MasterPackage;
+            LoadGraph("Dialogue");
+        }
+
+        public void LoadGraph(string packageName)
+        {
+            ResetGraph();
+            
+            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
 
             foreach (KeyValuePair<string, Node> kvp in data.Nodes)
             {
@@ -144,6 +151,16 @@ namespace ProtoAqua.Argumentation
                 Node invalidFactNode = FindNode(currentNode.InvalidNodeId);
                 return invalidFactNode;
             }
+        }
+
+        private void ResetGraph()
+        {
+            nodeDictionary = new Dictionary<string, Node>();
+            linkDictionary = new Dictionary<string, Link>();
+            rootNode = null;
+            currentNode = null;
+            endNodeId = null;
+            conditions = null;
         }
     }
 }

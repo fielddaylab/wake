@@ -21,6 +21,9 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private InputRaycasterLayer m_InputRaycasterLayer = null;
         [SerializeField] private NodePool m_NodePool = null;
         
+        [Header("Chat Manager Settings")]
+        [SerializeField] private float m_ScrollTime = 0.25f;
+
         private DropSlot dropSlot;
         
         // Start is called before the first frame update
@@ -30,7 +33,7 @@ namespace ProtoAqua.Argumentation
 
             //Set up the listener for Drop Slot
             dropSlot = GetComponent<DropSlot>();
-            dropSlot.OnDropped.AddListener(OnDrop);
+            dropSlot.onDropped += OnDrop;
 
             //Spawn some starting nodes
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
@@ -107,7 +110,7 @@ namespace ProtoAqua.Argumentation
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
-            yield return 0.25f;
+            yield return m_ScrollTime;
             RespondWithNextNode(linkId);
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
