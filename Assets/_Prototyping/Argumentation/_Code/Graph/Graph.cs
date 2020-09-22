@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
@@ -7,6 +8,7 @@ namespace ProtoAqua.Argumentation
     {
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
+        private string m_Script = "Dialogue";
 
         private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
@@ -17,6 +19,17 @@ namespace ProtoAqua.Argumentation
         private string endNodeId;
 
         #region Accessors
+
+        public string Script
+        {
+            get { return m_Script; }
+
+            set 
+            { 
+                m_Script = value; 
+                LoadGraph(m_Script);
+            }
+        }
 
         public Dictionary<string, Link> LinkDictionary
         {
@@ -44,68 +57,17 @@ namespace ProtoAqua.Argumentation
         private void Awake()
         {
             Services.Tweaks.Load(m_GraphDataManager);
-            LoadGraph("Dialogue");
-        }
 
-        public void LoadGraph(string packageName)
-        {
-            ResetGraph();
-            
-            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
+            QueryParams queryParams = Services.Data.PeekQueryParams();
 
-            foreach (KeyValuePair<string, Node> kvp in data.Nodes)
+            if (queryParams.Get("script") == null) 
             {
-                Node node = kvp.Value;
-                node.InitializeNode();
-                nodeDictionary.Add(node.Id, node);
+                LoadGraph("Dialogue");
             }
-
-            rootNode = FindNode(data.RootNodeId);
-
-            // Checks if no root node was specified
-            if (rootNode == null)
+            else
             {
-                throw new System.ArgumentNullException("No root node specified");
+                LoadGraph(queryParams.Get("script"));
             }
-
-            currentNode = rootNode;
-            conditions = new ConditionsData(currentNode.Id);
-
-            endNodeId = data.EndNodeId;
-
-            if (endNodeId == null)
-            {
-                throw new System.ArgumentNullException("No end node specified");
-            }
-            
-            foreach (KeyValuePair<string, Link> kvp in data.Links)
-            {
-                Link link = kvp.Value;
-                link.InitializeLink();
-                linkDictionary.Add(link.Id, link);
-            }
-        }
-
-        // Helper method for finding a node given its id
-        public Node FindNode(string id)
-        {
-            if (nodeDictionary.TryGetValue(id, out Node node))
-            {
-                return node;
-            }
-
-            return null;
-        }
-
-        // Helper method for finding a link given its id
-        public Link FindLink(string id)
-        {
-            if (linkDictionary.TryGetValue(id, out Link link))
-            {
-                return link;
-            }
-
-            return null;
         }
 
         // Given a link id, check if that link is a valid response for the current node.
@@ -153,6 +115,28 @@ namespace ProtoAqua.Argumentation
             }
         }
 
+        // Helper method for finding a node given its id
+        public Node FindNode(string id)
+        {
+            if (nodeDictionary.TryGetValue(id, out Node node))
+            {
+                return node;
+            }
+
+            return null;
+        }
+
+        // Helper method for finding a link given its id
+        public Link FindLink(string id)
+        {
+            if (linkDictionary.TryGetValue(id, out Link link))
+            {
+                return link;
+            }
+
+            return null;
+        }
+
         private void ResetGraph()
         {
             nodeDictionary = new Dictionary<string, Node>();
@@ -161,6 +145,45 @@ namespace ProtoAqua.Argumentation
             currentNode = null;
             endNodeId = null;
             conditions = null;
+        }
+
+        private void LoadGraph(string packageName)
+        {
+            ResetGraph();
+            
+            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
+
+            foreach (KeyValuePair<string, Node> kvp in data.Nodes)
+            {
+                Node node = kvp.Value;
+                node.InitializeNode();
+                nodeDictionary.Add(node.Id, node);
+            }
+
+            rootNode = FindNode(data.RootNodeId);
+
+            // Checks if no root node was specified
+            if (rootNode == null)
+            {
+                throw new System.ArgumentNullException("No root node specified");
+            }
+
+            currentNode = rootNode;
+            conditions = new ConditionsData(currentNode.Id);
+
+            endNodeId = data.EndNodeId;
+
+            if (endNodeId == null)
+            {
+                throw new System.ArgumentNullException("No end node specified");
+            }
+            
+            foreach (KeyValuePair<string, Link> kvp in data.Links)
+            {
+                Link link = kvp.Value;
+                link.InitializeLink();
+                linkDictionary.Add(link.Id, link);
+            }
         }
     }
 }

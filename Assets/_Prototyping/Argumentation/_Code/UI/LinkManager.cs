@@ -44,7 +44,7 @@ namespace ProtoAqua.Argumentation
 
         public void ResetLink(GameObject gameObject, string linkId, bool delete) 
         {
-            responses.Remove(gameObject);
+            RemoveResponse(gameObject);
 
             if (delete)
             {
@@ -53,6 +53,11 @@ namespace ProtoAqua.Argumentation
 
             CreateLink(m_Graph.FindLink(linkId));
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+        }
+
+        public void RemoveResponse(GameObject gameObject)
+        {
+            responses.Remove(gameObject);
         }
 
         private void CreateLink(Link link) 

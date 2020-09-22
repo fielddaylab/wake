@@ -3,6 +3,7 @@ using System.Collections;
 using BeauPools;
 using BeauRoutine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation 
@@ -43,30 +44,27 @@ namespace ProtoAqua.Argumentation
         }
 
         //Activates when an item is dropped (called from DropSlot.cs)
-        private void OnDrop(GameObject droppedItem) 
+        private void OnDrop(GameObject response) 
         {
             //Make sure the object is draggable (This should never occur that its not)
-            if (droppedItem.GetComponent<DraggableObject>() == null) 
+            if (response.GetComponent<DraggableObject>() == null) 
             {
                 return;
             }
 
-            droppedItem.transform.SetParent(m_ChatGrid); //Set it into the grid 
-            droppedItem.GetComponent<DraggableObject>().enabled = false; //Make it no longer able to be dragged
+            response.transform.SetParent(m_ChatGrid); //Set it into the grid 
+            response.GetComponent<DraggableObject>().enabled = false; //Make it no longer able to be dragged
 
-            string linkId = droppedItem.GetComponent<ChatBubble>().id;
-            Routine.Start(ScrollRoutine(linkId));
-            
-            // Add response back into list for reuse
-            m_LinkManager.ResetLink(droppedItem, linkId, false);
+            string linkId = response.GetComponent<ChatBubble>().id;
+            Routine.Start(ScrollRoutine(linkId, response));
         }
 
         //Rename, bad naming
         //Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        private void RespondWithNextNode(string factId) 
+        private void RespondWithNextNode(string linkId, GameObject response) 
         {
-            Node nextNode = m_Graph.NextNode(factId);
-            Link currentLink = m_Graph.FindLink(factId);
+            Node nextNode = m_Graph.NextNode(linkId);
+            Link currentLink = m_Graph.FindLink(linkId);
 
             CheckConditionsMet(nextNode, currentLink);
 
@@ -81,9 +79,16 @@ namespace ProtoAqua.Argumentation
                 newNode.ChangeColor(Color.green);
                 EndConversationPopup();
             } 
-            else if (newNode.id.Contains("invalid")) // Change this
+            
+            if (newNode.id.Contains("invalid")) // Change this
             {
                 newNode.ChangeColor(Color.red);
+                // Add response back into list for reuse
+                m_LinkManager.ResetLink(response, linkId, false);
+            }
+            else
+            {
+                m_LinkManager.RemoveResponse(response);
             }
         }
 
@@ -103,7 +108,7 @@ namespace ProtoAqua.Argumentation
             Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
         }
 
-        private IEnumerator ScrollRoutine(string linkId)
+        private IEnumerator ScrollRoutine(string linkId, GameObject response)
         {
             m_InputRaycasterLayer.OverrideState(false);
 
@@ -111,7 +116,7 @@ namespace ProtoAqua.Argumentation
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
             yield return m_ScrollTime;
-            RespondWithNextNode(linkId);
+            RespondWithNextNode(linkId, response);
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
