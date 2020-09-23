@@ -31,14 +31,12 @@ namespace ProtoAqua.Argumentation
             {
                 if (!usedResponses.Contains(condition))
                 {
-                    Debug.Log("Use requirements not met!");
                     return false;
                 }
             }
 
             // If the conditions are met, mark the current node as visited and the current
             // link as used
-            Debug.Log("Requirements met!");
             visitedNodes.Add(node.Id);
             usedResponses.Add(link.Id);
 

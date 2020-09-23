@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation
 {
-    public class DraggableObject : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
+    public class DraggableObject : MonoBehaviour, IBeginDragHandler, IEndDragHandler, 
+                                    IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         [Header("Draggable Object Dependencies")]
         [SerializeField] private Canvas m_Canvas = null;
         [SerializeField] private DropSlot m_DropSlot;
         [SerializeField] private Image m_BubbleImage;
+
+        [Header("Draggable Object Settings")]
+        [SerializeField] private Color m_DefaultColor = Color.cyan;
+        [SerializeField] private Color m_DragColor = Color.blue;
 
         public delegate void EndDrag(GameObject gameObject);
         public EndDrag endDrag;
@@ -38,7 +41,7 @@ namespace ProtoAqua.Argumentation
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            colorRoutine.Replace(this, InitializeColorRoutine());
+            colorRoutine.Replace(this, OnDragColorRoutine());
             holdMouseRoutine = Routine.StartDelay(this, HoldMouse, 1);
         }
 
@@ -51,7 +54,8 @@ namespace ProtoAqua.Argumentation
         {
             canvasGroup.blocksRaycasts = false;
             dragging = true;
-            colorRoutine.Replace(this, InitializeColorRoutine());
+
+            colorRoutine.Replace(this, OnDragColorRoutine());
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -70,13 +74,15 @@ namespace ProtoAqua.Argumentation
 
         private void HoldMouse() 
         {
-            //Don't want to activate the press and hold if dragging
+            // Don't want to activate the press and hold if dragging
             if (!dragging) 
             {
                 colorRoutine.Replace(this, OnEndDragColorRoutine());
                 m_DropSlot.OnHold(this.gameObject);
             }
         }
+
+        #region Routines
 
         private IEnumerator HoldMouseRoutine()
         {
@@ -90,15 +96,17 @@ namespace ProtoAqua.Argumentation
             endDrag(gameObject);
         }
 
-        private IEnumerator OnEndDragColorRoutine()
+        private IEnumerator OnDragColorRoutine()
         {
-            yield return m_BubbleImage.ColorTo(Color.cyan, 0.1f);
+            m_BubbleImage.SetColor(m_DefaultColor);
+            yield return m_BubbleImage.ColorTo(m_DragColor, 0.1f);
         }
 
-        private IEnumerator InitializeColorRoutine()
+        private IEnumerator OnEndDragColorRoutine()
         {
-            m_BubbleImage.SetColor(Color.cyan);
-            yield return m_BubbleImage.ColorTo(Color.blue, 0.1f);
+            yield return m_BubbleImage.ColorTo(m_DefaultColor, 0.1f);
         }
+
+        #endregion // Routines
     }
 }

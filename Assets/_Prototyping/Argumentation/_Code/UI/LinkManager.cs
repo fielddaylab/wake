@@ -42,6 +42,9 @@ namespace ProtoAqua.Argumentation
             ToggleTabs("behavior");
         }
 
+        // Reset a given response once used. If the response isn't placed in the chat,
+        // delete will be true and the object can be freed from the pool before being
+        // reallocated by CreateLink
         public void ResetLink(GameObject gameObject, string linkId, bool delete) 
         {
             RemoveResponse(gameObject);
@@ -55,11 +58,13 @@ namespace ProtoAqua.Argumentation
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
         }
 
+        // Helper function for removing a response from the responses list
         public void RemoveResponse(GameObject gameObject)
         {
             responses.Remove(gameObject);
         }
 
+        // Allocate a new link from the pool and initialize its fields based on data from the graph
         private void CreateLink(Link link) 
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
@@ -68,10 +73,10 @@ namespace ProtoAqua.Argumentation
             
             newLink.transform.SetSiblingIndex(link.Index);
             
-            GameObject newLinkGameObject = newLink.gameObject;
-            responses.Add(newLinkGameObject);
+            responses.Add(newLink.gameObject);
         }
 
+        // Show responses with a given tag and hide all other responses
         private void ToggleTabs(string tagToShow) 
         {
             foreach (GameObject gameObject in responses) 

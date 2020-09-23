@@ -8,7 +8,6 @@ namespace ProtoAqua.Argumentation
     {
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
-        private string m_Script = "Dialogue";
 
         private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
@@ -19,17 +18,6 @@ namespace ProtoAqua.Argumentation
         private string endNodeId;
 
         #region Accessors
-
-        public string Script
-        {
-            get { return m_Script; }
-
-            set 
-            { 
-                m_Script = value; 
-                LoadGraph(m_Script);
-            }
-        }
 
         public Dictionary<string, Link> LinkDictionary
         {
@@ -75,9 +63,7 @@ namespace ProtoAqua.Argumentation
         // Then check if conditions for traversing to that next node are met.
         public Node NextNode(string id)
         {
-            bool validFact = currentNode.CheckResponse(id);
-
-            if (validFact)
+            if (currentNode.CheckResponse(id))
             {
                 Link response = FindLink(id);
                 string nextNodeId = response.GetNextNodeId(currentNode.Id);
@@ -93,8 +79,7 @@ namespace ProtoAqua.Argumentation
                     else
                     {
                         // If CheckConditions returns false, cycle back to conditions not met node
-                        Node conditionsNotMetNode = FindNode(response.ConditionsNotMetId);
-                        currentNode = conditionsNotMetNode;
+                        currentNode = FindNode(response.ConditionsNotMetId);
                         return currentNode;
                     }
                 }
@@ -102,16 +87,13 @@ namespace ProtoAqua.Argumentation
                 {
                     // If no nextNodeId, go to default node
                     // TODO: Find better implementation for default node
-                    Node defaultNode = FindNode(currentNode.DefaultNodeId);
-                    return defaultNode;
+                    return FindNode(currentNode.DefaultNodeId);
                 }
             }
             else
             {
                 // If id isn't valid, display invalid fact node
-                Debug.Log("Invalid!");
-                Node invalidFactNode = FindNode(currentNode.InvalidNodeId);
-                return invalidFactNode;
+                return FindNode(currentNode.InvalidNodeId);
             }
         }
 

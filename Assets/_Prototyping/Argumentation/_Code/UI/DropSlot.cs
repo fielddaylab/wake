@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using BeauRoutine;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -21,7 +19,7 @@ namespace ProtoAqua.Argumentation
         
         public void OnDrop(PointerEventData eventData)
         {
-            //Fixed a bug where dragging the scroll rect would activate this function
+            // Fixed a bug where dragging the scroll rect would activate this function
             if (eventData.pointerDrag.name.Equals("ChatBox")) 
             {
                 return;
@@ -33,7 +31,7 @@ namespace ProtoAqua.Argumentation
             }
         }
         
-        //Acts the same as dropping but hold the button
+        // Acts the same as dropping but hold the button
         public void OnHold(GameObject gameObject) 
         {
             onDroppedRoutine.Replace(this, OnDroppedRoutine(gameObject));

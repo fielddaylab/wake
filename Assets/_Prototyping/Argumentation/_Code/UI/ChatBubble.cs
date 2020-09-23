@@ -5,13 +5,6 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation 
 {
-    //Enum to know what type of chat bubble it is
-    public enum BubbleType 
-    {
-            Node,
-            Link
-    }
-
     [RequireComponent(typeof(DraggableObject))]
     public class ChatBubble : MonoBehaviour {
         // Node: NPC chat bubble
@@ -24,7 +17,6 @@ namespace ProtoAqua.Argumentation
         private LinkManager linkManager = null;
         private DropSlot dropSlot = null;
 
-        public BubbleType bubbleType { get; set; }
         public string id { get; set; }
         public string linkTag { get; set; }
 
@@ -34,7 +26,6 @@ namespace ProtoAqua.Argumentation
 
         private void Start()
         {
-            //TODO Ask Autumn script execution order
             draggableObject = GetComponent<DraggableObject>();
 
             if (draggableObject) 
@@ -59,14 +50,12 @@ namespace ProtoAqua.Argumentation
             id = inId;
             linkTag = inTag;
             displayText.SetText(inDisplayText);
-            bubbleType = BubbleType.Link;
         }
 
         public void InitializeNodeData(string inId, string inDisplayText)
         {
             id = inId;
             displayText.SetText(inDisplayText);
-            bubbleType = BubbleType.Node;
         }
 
         private void EndDrag(GameObject gameObject) 
