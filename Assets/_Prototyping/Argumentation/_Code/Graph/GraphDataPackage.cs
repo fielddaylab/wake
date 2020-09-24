@@ -22,6 +22,7 @@ namespace ProtoAqua.Argumentation
         // Package Ids
         [BlockMeta("rootNodeId")] private string m_RootNodeId = null;
         [BlockMeta("endNodeId")] private string m_EndNodeId = null;
+        [BlockMeta("defaultInvalidNodeId")] private string m_DefaultInvalidNodeId = null;
 
         #region Accessors
 
@@ -48,6 +49,11 @@ namespace ProtoAqua.Argumentation
         public string EndNodeId
         { 
             get { return m_EndNodeId; }
+        }
+
+        public string DefaultInvalidNodeId
+        {
+            get { return m_DefaultInvalidNodeId; }
         }
 
         #endregion // Accessors

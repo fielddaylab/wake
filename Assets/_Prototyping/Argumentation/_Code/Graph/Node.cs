@@ -10,7 +10,6 @@ namespace ProtoAqua.Argumentation
         #region Serialized
 
         // Ids
-        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = "node.invalid";
         [BlockMeta("defaultNodeId")] private string m_DefaultNodeId = "node.default";
         [BlockMeta("responseIds")] private string m_ResponseIds = null;
 
@@ -24,11 +23,6 @@ namespace ProtoAqua.Argumentation
         public string DisplayText
         {
             get { return m_DisplayText; }
-        }
-
-        public string InvalidNodeId
-        {
-            get { return m_InvalidNodeId; }
         }
 
         public string DefaultNodeId

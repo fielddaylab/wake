@@ -16,6 +16,7 @@ namespace ProtoAqua.Argumentation
         private Node rootNode;
         private Node currentNode;
         private string endNodeId;
+        private string defaultInvalidNodeId;
 
         #region Accessors
 
@@ -47,15 +48,7 @@ namespace ProtoAqua.Argumentation
             Services.Tweaks.Load(m_GraphDataManager);
 
             QueryParams queryParams = Services.Data.PeekQueryParams();
-
-            if (queryParams.Get("script") == null) 
-            {
-                LoadGraph("Dialogue");
-            }
-            else
-            {
-                LoadGraph(queryParams.Get("script"));
-            }
+            LoadGraph(queryParams.Get("script") ?? "Dialogue");
         }
 
         // Given a link id, check if that link is a valid response for the current node.
@@ -63,9 +56,10 @@ namespace ProtoAqua.Argumentation
         // Then check if conditions for traversing to that next node are met.
         public Node NextNode(string id)
         {
+            Link response = FindLink(id);
+
             if (currentNode.CheckResponse(id))
             {
-                Link response = FindLink(id);
                 string nextNodeId = response.GetNextNodeId(currentNode.Id);
                 Node nextNode = FindNode(nextNodeId);
 
@@ -93,7 +87,12 @@ namespace ProtoAqua.Argumentation
             else
             {
                 // If id isn't valid, display invalid fact node
-                return FindNode(currentNode.InvalidNodeId);
+                if (response.InvalidNodeId != null)
+                {
+                    return FindNode(response.InvalidNodeId);
+                }
+
+                return FindNode(defaultInvalidNodeId);
             }
         }
 
@@ -165,6 +164,13 @@ namespace ProtoAqua.Argumentation
                 Link link = kvp.Value;
                 link.InitializeLink();
                 linkDictionary.Add(link.Id, link);
+            }
+
+            defaultInvalidNodeId = data.DefaultInvalidNodeId;
+
+            if (defaultInvalidNodeId == null)
+            {
+                throw new System.ArgumentNullException("No default invalid node specified");
             }
         }
     }

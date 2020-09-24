@@ -1,8 +1,12 @@
 # rootNodeId node.1
 # endNodeId node.4
+# defaultInvalidNodeId node.invalid.default
 
-:: node.invalid
-Invalid
+:: node.invalid.default
+Invalid default
+
+:: node.invalid.1
+Invalid 1
 
 :: node.default
 Default
@@ -17,6 +21,7 @@ node.1
 
 :: link.1
 @tag behavior
+@invalidNodeId node.invalid.1
 @nextNodeId node.1, node.2
 link.1
 

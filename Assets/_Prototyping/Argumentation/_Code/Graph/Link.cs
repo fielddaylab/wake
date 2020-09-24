@@ -21,6 +21,7 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("conditions")] private string m_Conditions = null;
 
         // Ids
+        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
         [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
         [BlockMeta("nextNodeId")]
         private void AddNextNodeIds(string line)
@@ -43,6 +44,11 @@ namespace ProtoAqua.Argumentation
         public string Tag
         {
             get { return m_Tag; }
+        }
+
+        public string InvalidNodeId
+        {
+            get { return m_InvalidNodeId; }
         }
 
         public string ConditionsNotMetId
