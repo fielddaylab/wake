@@ -94,6 +94,11 @@ namespace ProtoAqua.Energy
             string scenarioData = inParams.Get(Param_ScenarioData);
             return ScenarioPackage.TryParse(scenarioData, out outScenario);
         }
+
+        public string[] GetScenarioIds()
+        {
+            return m_ScenarioIds;
+        }
     
         #endregion // Scenarios
 

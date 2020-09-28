@@ -48,7 +48,15 @@ namespace ProtoAqua.Energy
 
             Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);
 
-            m_ScenarioPackage = loader.LoadStartingScenario(Services.Data.PopQueryParams());
+            if (inContext != null && inContext.GetType() == typeof(QueryParams)) 
+            {
+                m_ScenarioPackage = loader.LoadStartingScenario((QueryParams)inContext);
+            } 
+            else
+            {
+                m_ScenarioPackage = loader.LoadStartingScenario(Services.Data.PopQueryParams());
+            }
+
             m_BaseDatabase = loader.LoadDatabase(m_ScenarioPackage.Header.DatabaseId);
 
             m_DatabaseOverride = new SimDatabaseOverride(m_BaseDatabase);
