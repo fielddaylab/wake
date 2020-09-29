@@ -99,6 +99,11 @@ namespace ProtoAqua.Energy
         {
             return m_ScenarioIds;
         }
+
+        public string[] GetDatabaseIds()
+        {
+            return m_DatabaseIds;
+        }
     
         #endregion // Scenarios
 

@@ -1,8 +1,6 @@
-﻿using System;
-using BeauRoutine.Extensions;
+﻿using System.Collections.Generic;
 using BeauUtil;
 using ProtoCP;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,27 +14,32 @@ namespace ProtoAqua.Energy
         [SerializeField] private Button m_ReloadButton = null;
         
         private QueryParams scenarioParams = new QueryParams();
-        private string[] scenarioIds = null;
         private CPLabeledValue[] values = null;
+
+        private Dictionary<string, string> ids = new Dictionary<string, string>();
+        private string[] scenarioIds = null;
+        private string[] databaseIds = null;
         private string scenarioToLoad;
+        private string databaseToLoad;
 
         protected override void Populate()
         {
             m_PropertyBox.BeginControls();
             {
-                m_PropertyBox.BeginGroup("scenarioIds", "ScenarioIds");
+                m_PropertyBox.BeginGroup("scenarioIds", "Ecosystem To Use");
                 {
                     InitializeValues();
 
                     CPEnumSpinner.Configuration scenarioIdConfig = new CPEnumSpinner.Configuration()
                     {
-                        Name = "ScenarioId",
+                        Name = "Ecosystem Name",
                         Values = values,
                         DefaultValue = null,
                         ValueType = typeof(string),
-                        Get = () => scenarioToLoad,
+                        Get = () => databaseToLoad,
                         Set = (v) => { 
-                            scenarioToLoad = (string)v; 
+                            databaseToLoad = (string)v; 
+                            scenarioToLoad = ids[databaseToLoad];
                             scenarioParams.Set("scenarioId", scenarioToLoad);
                             m_ReloadButton.onClick.AddListener(() => Services.State.LoadScene(SceneManager.GetActiveScene().name, scenarioParams));
                         }
@@ -46,7 +49,6 @@ namespace ProtoAqua.Energy
                 m_PropertyBox.EndGroup();
             }
             m_PropertyBox.EndControls();
-
         }
 
         private void InitializeValues()
@@ -54,15 +56,17 @@ namespace ProtoAqua.Energy
             if (scenarioIds == null)
             {
                 scenarioIds = m_SimLoader.GetScenarioIds();
+                databaseIds = m_SimLoader.GetDatabaseIds();
             
                 scenarioParams.Set("scenarioId", scenarioIds[0]);
                 m_ReloadButton.onClick.AddListener(() => Services.State.LoadScene(SceneManager.GetActiveScene().name, scenarioParams));
 
-                values = new CPLabeledValue[scenarioIds.Length];
-                for (int i = 0; i < scenarioIds.Length; ++i)
+                values = new CPLabeledValue[databaseIds.Length];
+                for (int i = 0; i < databaseIds.Length; ++i)
                 {
-                    CPLabeledValue value = CPLabeledValue.Make(scenarioIds[i], scenarioIds[i]);
+                    CPLabeledValue value = CPLabeledValue.Make(databaseIds[i], databaseIds[i]);
                     values[i] = value;
+                    ids[databaseIds[i]] = scenarioIds[i];
                 }
             }
         }
