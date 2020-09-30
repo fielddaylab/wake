@@ -83,7 +83,7 @@ namespace ProtoAqua.Energy
                                         Name = "Consumes " + reqVar.ScriptName(),
 
                                         Values = new CPLabeledValue[] { CPLabeledValue.Make(0, "None"), CPLabeledValue.Make(req.Qualitative.Low, "A Little"),
-                                            CPLabeledValue.Make(req.Qualitative.Low, "Some"), CPLabeledValue.Make(req.Qualitative.High, "A Lot")},
+                                            CPLabeledValue.Make(req.Qualitative.Medium, "Some"), CPLabeledValue.Make(req.Qualitative.High, "A Lot")},
                                         DefaultValue = 0,
                                         ValueType = typeof(ushort),
 
@@ -128,7 +128,7 @@ namespace ProtoAqua.Energy
                                         Name = "Produces " + reqVar.ScriptName(),
 
                                         Values = new CPLabeledValue[] { CPLabeledValue.Make(0, "None"), CPLabeledValue.Make(req.Qualitative.Low, "A Little"),
-                                            CPLabeledValue.Make(req.Qualitative.Low, "Some"), CPLabeledValue.Make(req.Qualitative.High, "A Lot")},
+                                            CPLabeledValue.Make(req.Qualitative.Medium, "Some"), CPLabeledValue.Make(req.Qualitative.High, "A Lot")},
                                         DefaultValue = 0,
                                         ValueType = typeof(ushort),
 
