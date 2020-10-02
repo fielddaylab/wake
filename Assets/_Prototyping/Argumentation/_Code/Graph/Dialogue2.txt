@@ -1,0 +1,21 @@
+# rootNodeId node.a
+# endNodeId node.b
+# defaultInvalidNodeId node.invalid.default
+
+:: node.invalid.default
+Invalid default
+
+:: node.default
+Default
+
+:: node.a
+@responseIds link.a
+node.a
+
+:: link.a
+@tag behavior
+@nextNodeId node.a, node.b
+link.a
+
+:: node.b
+node.b, end
