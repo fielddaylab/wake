@@ -29,7 +29,7 @@
 
 :: whatWereYouLookingAroundFor.Real
 @trigger    RequestPartnerHelp
-@when       seen:partner.help.testScene.whyWereYouHere, !seen:partner.help.testScene.whatWereYouLookingFOr, kevin:testScene.jellyblob.lore.discomfort, seen:partner.help.testScene.lore.jellyblob.1.scanned.final
+@when       seen:partner.help.testScene.whyWereYouHere, !seen:partner.help.testScene.whatWereYouLookingFor, kevin:testScene.jellyblob.lore.discomfort, seen:partner.help.testScene.lore.jellyblob.1.scanned.final
 @once
 @cutscene
 {@player}   Was that... module... thing... what you were looking for?
@@ -47,7 +47,7 @@
 :: backgroundRidgeFish.notScanned
 @trigger    RequestPartnerHelp
 @when       temp:camera.region == "FishRidge", !scanned:testScene.background.ridgeFish
-@once       profile
+@repeat     3
 @cutscene
 {@kevin}    Hmm, that cluster of things in the distance...
 
@@ -72,6 +72,7 @@
 :: backgroundMachine.notScanned
 @trigger    RequestPartnerHelp
 @when       !scanned:testScene.background.machine
+@repeat     3
 @cutscene
 {@kevin}    What's that big thing in the distance there?
             It looks sort of familiar...
@@ -90,8 +91,8 @@
 
 :: lore.jellyblob.1.notScanned.1
 @trigger    RequestPartnerHelp
-@when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort
-@repeat     1
+@when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreDiscomfort > 0
+@repeat     2
 @cutscene
 {set temp:kevin.testScene.loreDiscomfort + 1}
 {@kevin}    Can we just go? Please?
@@ -99,7 +100,7 @@
 :: lore.jellyblob.1.notScanned.2
 @trigger    RequestPartnerHelp
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort
-@repeat     1
+@repeat     2
 @cutscene
 {set temp:kevin.testScene.loreDiscomfort + 1}
 {@kevin}    I really don't want to stick around here.
@@ -107,7 +108,7 @@
 :: lore.jellyblob.1.notScanned.3
 @trigger    RequestPartnerHelp
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort
-@repeat     1
+@repeat     2
 @cutscene
 {set temp:kevin.testScene.loreDiscomfort + 1}
 {@kevin}    I'm not telling you any more about it right now.

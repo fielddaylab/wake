@@ -7,7 +7,7 @@ namespace ProtoAqua
 {
     static public class GameEvents
     {
-        static public readonly StringHash CutsceneStart = "cutscene:start";
-        static public readonly StringHash CutsceneEnd = "cutscene:end";
+        static public readonly StringHash32 CutsceneStart = "cutscene:start";
+        static public readonly StringHash32 CutsceneEnd = "cutscene:end";
     }
 }

@@ -25,10 +25,12 @@ namespace ProtoAudio
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
-        private readonly Dictionary<StringHash, AudioEvent> m_EventLookup = new Dictionary<StringHash, AudioEvent>();
+        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>();
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
+        private AudioPropertyBlock m_MixerProperties;
+        private AudioPropertyBlock m_DebugProperties;
         private uint m_Id;
 
         private AudioHandle m_BGM;
@@ -49,6 +51,8 @@ namespace ProtoAudio
         {
             m_Random = new System.Random(Environment.TickCount ^ ServiceIds.Audio.GetHashCode());
             m_MasterProperties = AudioPropertyBlock.Default;
+            m_MixerProperties = AudioPropertyBlock.Default;
+            m_DebugProperties = AudioPropertyBlock.Default;
             
             InitPool();
             if (m_DefaultPackage != null)
@@ -74,6 +78,9 @@ namespace ProtoAudio
                 int count = playingTracks.Count;
                 
                 AudioPropertyBlock properties = m_MasterProperties;
+                AudioPropertyBlock.Combine(properties, m_MixerProperties, ref properties);
+                AudioPropertyBlock.Combine(properties, m_DebugProperties, ref properties);
+
                 float deltaTime = Time.deltaTime;
                 AudioPlaybackTrack track;
 
@@ -100,7 +107,7 @@ namespace ProtoAudio
             return GetEvent(inId) != null;
         }
 
-        public AudioHandle PostEvent(StringHash inId)
+        public AudioHandle PostEvent(StringHash32 inId)
         {
             if (inId.IsEmpty)
                 return AudioHandle.Null;
@@ -173,7 +180,7 @@ namespace ProtoAudio
 
         public AudioHandle CurrentMusic() { return m_BGM; }
 
-        public AudioHandle SetMusic(StringHash inId, float inCrossFade = 0)
+        public AudioHandle SetMusic(StringHash32 inId, float inCrossFade = 0)
         {
             m_BGM.Stop(inCrossFade);
             m_BGM = PostEvent(inId);
@@ -188,6 +195,20 @@ namespace ProtoAudio
         }
 
         #endregion // Background Music
+
+        #region Properties
+
+        public ref AudioPropertyBlock Mix
+        {
+            get { return ref m_MixerProperties; }
+        }
+
+        internal ref AudioPropertyBlock DebugMix
+        {
+            get { return ref m_DebugProperties; }
+        }
+
+        #endregion // Properties
 
         #region Database
 
@@ -259,7 +280,7 @@ namespace ProtoAudio
             }
         }
 
-        public AudioEvent GetEvent(StringHash inId)
+        public AudioEvent GetEvent(StringHash32 inId)
         {
             AudioEvent evt;
             m_EventLookup.TryGetValue(inId, out evt);

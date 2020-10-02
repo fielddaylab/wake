@@ -30,7 +30,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_UpdateRoutine;
         [NonSerialized] private CameraConstraints.Hint m_HintConstraint;
 
-        public StringHash RegionName() { return m_RegionName; }
+        public StringHash32 RegionName() { return m_RegionName; }
 
         #region Events
 
@@ -63,7 +63,7 @@ namespace ProtoAqua.Observation
             m_HintConstraint.SetWeight(CalculateWeight, m_InitialWeight);
             PushChanges();
 
-            StringHash regionName = RegionName();
+            StringHash32 regionName = RegionName();
             if (!regionName.IsEmpty)
                 Services.Data.SetVariable(GameVars.CameraRegion, regionName);
         }
@@ -78,7 +78,7 @@ namespace ProtoAqua.Observation
 
             if (Services.Data)
             {
-                StringHash regionName = RegionName();
+                StringHash32 regionName = RegionName();
                 if (!regionName.IsEmpty && Services.Data.GetVariable(GameVars.CameraRegion) == regionName)
                     Services.Data.SetVariable(GameVars.CameraRegion, Variant.Null);
             }

@@ -47,7 +47,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Attempts to store a memory.
         /// </summary>
-        public bool TryStore(StringHash inId, float inIntensity, uint inCurrentTime, TimeSpan inDuration = default(TimeSpan), StringHash inTag = default(StringHash), Vector2? inLocation = null, float inPrecision = 0)
+        public bool TryStore(StringHash32 inId, float inIntensity, uint inCurrentTime, TimeSpan inDuration = default(TimeSpan), StringHash32 inTag = default(StringHash32), Vector2? inLocation = null, float inPrecision = 0)
         {
             if (inIntensity < m_MinIntensity || inIntensity > m_MaxIntensity)
                 return false;
@@ -92,7 +92,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Refreshes an existing memory and potentially extends its expiration time.
         /// </summary>
-        public bool RefreshMemory(StringHash inId, uint inCurrentTime, uint inDuration)
+        public bool RefreshMemory(StringHash32 inId, uint inCurrentTime, uint inDuration)
         {
             int existingIdx = IndexOf(inId);
             if (existingIdx >= 0)
@@ -120,7 +120,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Attempts to recall a memory by id.
         /// </summary>
-        public bool TryRecallById(StringHash inId, uint inCurrentTime, out Memory outMemory)
+        public bool TryRecallById(StringHash32 inId, uint inCurrentTime, out Memory outMemory)
         {
             int existingIdx = IndexOf(inId);
             if (existingIdx >= 0)
@@ -144,7 +144,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Attempts to recall the most intense memory with the given tag.
         /// </summary>
-        public bool TryRecallMostIntenseByTag(StringHash inTag, uint inCurrentTime, out Memory outMemory)
+        public bool TryRecallMostIntenseByTag(StringHash32 inTag, uint inCurrentTime, out Memory outMemory)
         {
             int intenseIdx = -1;
             float intensity = float.MinValue;
@@ -181,7 +181,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Attempts to recall all memories with the given tag.
         /// </summary>
-        public int RecallAllByTag<TCollection>(StringHash inTag, uint inCurrentTime, ref TCollection outMemories)
+        public int RecallAllByTag<TCollection>(StringHash32 inTag, uint inCurrentTime, ref TCollection outMemories)
             where TCollection : ICollection<Memory>
         {
             int recalled = 0;
@@ -208,7 +208,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Forgets the memory with the given id.
         /// </summary>
-        public bool Forget(StringHash inId)
+        public bool Forget(StringHash32 inId)
         {
             int existingIdx = IndexOf(inId);
             if (existingIdx >= 0)
@@ -266,7 +266,7 @@ namespace ProtoAqua.Experiment
             }
         }
 
-        private int IndexOf(StringHash inId)
+        private int IndexOf(StringHash32 inId)
         {
             for (int i = 0; i < m_Entries.Count; ++i)
             {

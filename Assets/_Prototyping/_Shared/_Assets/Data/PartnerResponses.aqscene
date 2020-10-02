@@ -50,51 +50,44 @@
 @boostScore 1000
 @once       profile
 @cutscene
-{@kevin}    Whoa, hey there!
-{@player}   Is this... we're talking, but I'm not speaking?
+{@player}   This is so weird. We're talking, but not speaking.
 {@kevin}    What did I tell you?
-            It's a Jellyblob thing. We're connected now.
-{@player}   How-{wait 0.5} Why-{wait 0.5}{auto}
-{@kevin}    Eh.{wait 0.25} Rather complicated, and anyways there's time for that later.
-            For now, let's just try getting used to this.
-            We can communicate with each other using our minds.
-{@player}   That's incredible!
+            It's a jellyblob thing. We're connected now.
+{@player}   How does that work exactly?
+{@kevin}    Eh.{wait 0.25} There's time for that later.
+            For now, let's just try getting used to it.
 
 :: telepathy.discomfort
 @trigger    RequestPartnerHelp
-@when       kevin:help.requests > 3, kevin:help.comfortTalks == 0
+@when       kevin:help.requests >= 15, kevin:help.comfortTalks == 0
 @once       profile
 @cutscene
 {set kevin:help.comfortTalks + 1}
 {@player}   Is this supposed to be... uncomfortable?
 {@kevin}    What do you mean?
 {@player}   It feels like you're in my head.
-            Is that... supposed to feel weird?
 {@kevin}    Oh. Yeah, that makes sense.
             This kind of thing is pretty natural for me...
-            ...but I get that humans aren't really familiar with this kind of closeness.
-{@player}   No, we really aren't.
+            ...but I get that humans aren't familiar with this level of closeness.
+{@player}   No, I was definitely not prepared.
 {@kevin}    Well, good news is we're going to get a lot of practice.
             So it should only get better from here on out.
 
 :: telepathy.trust
 @trigger    RequestPartnerHelp
-@when       kevin:help.requests > 8, kevin:help.comfortTalks == 1
+@when       kevin:help.requests >= 30, kevin:help.comfortTalks == 1
 @once       profile
 @boostScore 3
 @cutscene
 {set kevin:help.comfortTalks + 1}
-{@player}   Hey Kevin?
-{@kevin}    Yeah?
-{@player}   You haven't been, like, in my thoughts, right?
+{@player}   So... You haven't been, like, in my thoughts, right?
             Like my private thoughts?
 {@kevin}    No no, that's not how this works.
             I can't look anywhere you don't want me to look.
-{@player}   Oh, okay... i-it's not that-{wait 0.5}{auto}
+{@player}   Oh, okay... it's not that-{wait 0.5}{auto}
 {@kevin}    -"you don't trust me", right? Yeah{wait 0.25}, don't worry, I get it.
             This is still new to you.
-            Eventually we'll trust each other more.
-            And we'll be able to help each other more too.
-{@player}   Thanks{wait 0.5} for understanding.
+            Eventually we'll trust each other more. {wait 0.5}And we'll be able to help each other more too.
+{@player}   Thanks for understanding.
             ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
 {@kevin}    ...Sure. When I trust you the same way, maybe we can try that.

@@ -19,8 +19,8 @@ namespace ProtoAqua
     
         #endregion // Inspector
 
-        public StringHash Id() { return m_Id; }
-        public StringHash ClassName() { return m_ClassName; }
+        public StringHash32 Id() { return m_Id; }
+        public StringHash32 ClassName() { return m_ClassName; }
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {

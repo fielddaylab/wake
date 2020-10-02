@@ -11,14 +11,14 @@ namespace ProtoAqua
         /// <summary>
         /// Registers a service.
         /// </summary>
-        public void Register(IService inService)
+        public bool Register(IService inService)
         {
             FourCC id = inService.ServiceId();
             IService existing;
             if (m_CachedServices.TryGetValue(id, out existing))
             {
                 if (existing == inService)
-                    return;
+                    return false;
 
                 m_CachedServices.Remove(id);
                 existing.OnDeregisterService();
@@ -30,6 +30,7 @@ namespace ProtoAqua
             inService.OnRegisterService();
 
             Debug.LogFormat("[ServiceCache] Registered service '{0}' ({1})", id, inService.GetType().Name);
+            return true;
         }
 
         /// <summary>

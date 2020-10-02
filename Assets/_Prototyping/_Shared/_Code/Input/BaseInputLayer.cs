@@ -31,8 +31,9 @@ namespace ProtoAqua
         #endregion // Inspector
 
         [NonSerialized] private int m_LastKnownSystemPriority = 0;
-        [NonSerialized] private InputLayerFlags m_LastKnownSystemFlags = InputLayerFlags.All;
+        [NonSerialized] private InputLayerFlags m_LastKnownSystemFlags = InputLayerFlags.Default;
         [NonSerialized] private bool m_LastKnownState;
+        [NonSerialized] private DeviceInput m_DeviceInput;
 
         #region Unity Events
 
@@ -53,7 +54,7 @@ namespace ProtoAqua
             {
                 Services.Input.DeregisterInput(this);
                 if (m_AutoPush)
-                    Services.Input.PopPriority();
+                    Services.Input.PopPriority(this);
             }
             UpdateEnabled(false);
         }
@@ -98,6 +99,11 @@ namespace ProtoAqua
         public bool IsInputEnabled
         {
             get { return m_LastKnownState; }
+        }
+
+        public DeviceInput Device
+        {
+            get { return m_DeviceInput ?? (m_DeviceInput = new DeviceInput(this)); }
         }
 
         public void UpdateSystemPriority(int inSystemPriority)
@@ -151,6 +157,11 @@ namespace ProtoAqua
                 return m_OverrideState;
             else
                 return m_Priority >= m_LastKnownSystemPriority && (m_Flags == 0 || (m_LastKnownSystemFlags & m_Flags) != 0);
+        }
+
+        static public BaseInputLayer Find(Component inComponent)
+        {
+            return inComponent.GetComponentInParent<BaseInputLayer>();
         }
     }
 }

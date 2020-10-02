@@ -11,9 +11,9 @@ namespace ProtoAqua.Experiment
 {
     static public class MemoryTags
     {
-        static public readonly StringHash Home = "Home";
-        static public readonly StringHash Food = "Food";
-        static public readonly StringHash Family = "Family";
-        static public readonly StringHash Danger = "Danger";
+        static public readonly StringHash32 Home = "Home";
+        static public readonly StringHash32 Food = "Food";
+        static public readonly StringHash32 Family = "Family";
+        static public readonly StringHash32 Danger = "Danger";
     }
 }

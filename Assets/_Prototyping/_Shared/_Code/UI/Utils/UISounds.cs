@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -22,37 +23,54 @@ namespace ProtoAqua
 
         #endregion // Inspector
 
-        private void TryPlay(string inEventId)
+        [NonSerialized] private bool m_WasInteractable;
+
+        private void TryPlay(string inEventId, bool inbCheckPrevState)
         {
-            if (!string.IsNullOrEmpty(inEventId) && m_Selectable.IsInteractable())
-                Services.Audio.PostEvent(inEventId);
+            if (string.IsNullOrEmpty(inEventId))
+                return;
+
+            if (inbCheckPrevState)
+            {
+                if (!m_WasInteractable)
+                    return;
+            }
+            else
+            {
+                if (!m_Selectable.IsInteractable())
+                    return;
+            }
+            
+            Services.Audio.PostEvent(inEventId);
         }
 
         #region Handlers
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            TryPlay(m_ClickEvent);
+            TryPlay(m_ClickEvent, true);
+            m_WasInteractable = false;
         }
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
-            TryPlay(m_DownEvent);
+            TryPlay(m_DownEvent, false);
         }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
-            TryPlay(m_EnterEvent);
+            TryPlay(m_EnterEvent, false);
         }
 
         void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
         {
-            TryPlay(m_ExitEvent);
+            TryPlay(m_ExitEvent, false);
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
         {
-            TryPlay(m_UpEvent);
+            m_WasInteractable = m_Selectable.IsInteractable();
+            TryPlay(m_UpEvent, false);
         }
 
         #endregion // Handlers

@@ -64,7 +64,7 @@ namespace ProtoAqua
 
             if (WasShowing())
             {
-                Services.Input?.PopPriority();
+                Services.Input?.PopPriority(m_RaycastBlocker);
             }
         }
 

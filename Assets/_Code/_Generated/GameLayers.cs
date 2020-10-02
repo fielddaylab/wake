@@ -31,4 +31,16 @@ static public class GameLayers
 	// Layer 10: Scannable
 	public const int Scannable_Index = 10;
 	public const int Scannable_Mask = 1024;
+
+	// Layer 11: CreatureSense
+	public const int CreatureSense_Index = 11;
+	public const int CreatureSense_Mask = 2048;
+
+	// Layer 30: SceneClick
+	public const int SceneClick_Index = 30;
+	public const int SceneClick_Mask = 1073741824;
+
+	// Layer 31: LayoutRegion
+	public const int LayoutRegion_Index = 31;
+	public const int LayoutRegion_Mask = -2147483648;
 }

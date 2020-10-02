@@ -22,22 +22,23 @@ namespace ProtoAqua
         #endregion // Inspector
 
         [NonSerialized] private Routine m_ResponseRoutine;
+        [NonSerialized] private BaseInputLayer m_InputLayer;
 
         protected override void Awake()
         {
-            Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd);
+            Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
+                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
             
             m_Button.onClick.AddListener(OnButtonClicked);
+
+            m_InputLayer = BaseInputLayer.Find(this);
+            m_InputLayer.Device.OnUpdate += CheckInput;
         }
 
         private void OnDestroy()
         {
-            if (Services.Events)
-            {
-                Services.Events.Deregister(GameEvents.CutsceneStart, OnCutsceneStart)
-                    .Deregister(GameEvents.CutsceneEnd, OnCutsceneEnd);
-            }
+            Services.Events?.DeregisterAll(this);
+            m_InputLayer.Device.OnUpdate -= CheckInput;
         }
 
         #region Handlers
@@ -55,6 +56,12 @@ namespace ProtoAqua
         private void OnCutsceneEnd()
         {
             Show();
+        }
+
+        private void CheckInput(DeviceInput inDevice)
+        {
+            if (inDevice.KeyPressed(KeyCode.Q) && m_RootGroup.interactable)
+                OnButtonClicked();
         }
 
         #endregion // Handlers

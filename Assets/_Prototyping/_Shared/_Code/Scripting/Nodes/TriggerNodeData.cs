@@ -9,8 +9,8 @@ namespace ProtoAqua.Scripting
 {
     public class TriggerNodeData
     {
-        public StringHash TriggerId;
-        public StringHash TargetId;
+        public StringHash32 TriggerId;
+        public StringHash32 TargetId;
 
         public VariantComparison[] Conditions;
         public int Score;

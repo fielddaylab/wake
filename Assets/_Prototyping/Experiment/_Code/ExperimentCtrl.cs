@@ -1,40 +1,37 @@
-using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
-using ProtoAudio;
-using BeauRoutine;
-using System.Collections;
-using System.Reflection;
 using BeauUtil.Variants;
 
 namespace ProtoAqua.Experiment
 {
-    public class ExperimentCtrl : MonoBehaviour, ISceneLoadHandler
+    public class ExperimentCtrl : MonoBehaviour, ISceneLoadHandler, ISceneUnloadHandler
     {
+        static public readonly StringHash32 TableId = "experiment";
+
+        #region Inspector
+
+        [SerializeField] private ExperimentSettings m_Settings = null;
+
+        #endregion // Inspector
+
+        private VariantTable m_VarTable;
+
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            m_VarTable = new VariantTable("experiment");
+            Services.Data.BindTable(TableId, m_VarTable);
+
+            Services.Audio.SetMusic("ExperimentBGM", 2);
+
+            Services.Tweaks.Load(m_Settings);
         }
 
-        private void LateUpdate()
+        public void OnSceneUnload(SceneBinding inScene, object inContext)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                Services.Data.AddVariable("kevin:help.requests", 1);
-                Services.Script.TriggerResponse("partner", GameTriggers.RequestPartnerHelp);
-            }
-        }
+            Services.Data.UnbindTable(TableId);
+            Ref.Dispose(ref m_VarTable);
 
-        static private void LogSizeOf(Type inType)
-        {
-            try
-            {
-                Debug.LogFormat("sizeof({0})={1}", inType.ToString(), System.Runtime.InteropServices.Marshal.SizeOf(inType));
-            }
-            catch(Exception e)
-            {
-                Debug.LogException(e);
-            }
+            Services.Tweaks.Unload(m_Settings);
         }
     }
 }

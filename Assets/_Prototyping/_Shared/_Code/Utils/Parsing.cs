@@ -1,5 +1,6 @@
 
 using BeauUtil;
+using BeauUtil.Blocks;
 
 namespace ProtoAqua
 {
@@ -7,5 +8,7 @@ namespace ProtoAqua
     {
         static public readonly char[] CommaChar = new char[] { ',' };
         static public StringSlice.ISplitter QuoteAwareArgSplitter = new StringUtils.ArgsList.Splitter(false);
+
+        static public readonly IBlockParsingRules Block = BlockParsingRules.Default;
     }
 }

@@ -15,8 +15,8 @@ namespace ProtoAqua.Experiment
         [Serializable]
         private class ActorPool : SerializablePool<ActorCtrl>
         {
-            [NonSerialized] private StringHash m_Id;
-            public StringHash Id { get { return m_Id.IsEmpty ? (m_Id = Name) : m_Id; } }
+            [NonSerialized] private StringHash32 m_Id;
+            public StringHash32 Id { get { return m_Id.IsEmpty ? (m_Id = Name) : m_Id; } }
         }
 
         #region Inspector
@@ -26,10 +26,10 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
-        [NonSerialized] private Dictionary<StringHash, ActorPool> m_PoolMap;
-        [NonSerialized] private StringHash[] m_AllIds;
+        [NonSerialized] private Dictionary<StringHash32, ActorPool> m_PoolMap;
+        [NonSerialized] private StringHash32[] m_AllIds;
 
-        public IReadOnlyList<StringHash> AllIds()
+        public IReadOnlyList<StringHash32> AllIds()
         {
             return m_AllIds ?? (m_AllIds = ArrayUtils.MapFrom(m_Pools, (p) => p.Id));
         }
@@ -37,7 +37,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Allocates an actor from the pool with the given id.
         /// </summary>
-        public ActorCtrl Alloc(StringHash inId)
+        public ActorCtrl Alloc(StringHash32 inId)
         {
             InitMap();
 
@@ -56,7 +56,7 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Resets the actor pool with the given id.
         /// </summary>
-        public void Reset(StringHash inId)
+        public void Reset(StringHash32 inId)
         {
             if (m_PoolMap != null)
             {
@@ -88,7 +88,7 @@ namespace ProtoAqua.Experiment
             if (m_PoolMap != null)
                 return;
             
-            m_PoolMap = new Dictionary<StringHash, ActorPool>(m_Pools.Length);
+            m_PoolMap = new Dictionary<StringHash32, ActorPool>(m_Pools.Length);
             foreach(var pool in m_Pools)
             {
                 m_PoolMap.Add(pool.Id, pool);

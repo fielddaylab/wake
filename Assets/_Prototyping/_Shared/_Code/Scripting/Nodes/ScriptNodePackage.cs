@@ -4,15 +4,20 @@ using BeauUtil.Blocks;
 using System.Collections.Generic;
 using System.Collections;
 using BeauUtil.Tags;
+using UnityEngine;
+using BeauUtil.IO;
+using System.IO;
 
 namespace ProtoAqua.Scripting
 {
     public class ScriptNodePackage : IDataBlockPackage<ScriptNode>
     {
-        private readonly Dictionary<StringHash, ScriptNode> m_Nodes = new Dictionary<StringHash, ScriptNode>(32);
+        private readonly Dictionary<StringHash32, ScriptNode> m_Nodes = new Dictionary<StringHash32, ScriptNode>(32);
 
         private string m_Name;
-        [BlockMeta("basePath")] private string m_RootPath;
+        [BlockMeta("basePath")] private string m_RootPath = string.Empty;
+
+        private IHotReloadable m_HotReload;
 
         public ScriptNodePackage(string inName)
         {
@@ -28,7 +33,7 @@ namespace ProtoAqua.Scripting
         /// <summary>
         /// Attempts to retrieve the node with the given id.
         /// </summary>
-        public bool TryGetNode(StringHash inId, out ScriptNode outNode)
+        public bool TryGetNode(StringHash32 inId, out ScriptNode outNode)
         {
             return m_Nodes.TryGetValue(inId, out outNode);
         }
@@ -36,7 +41,7 @@ namespace ProtoAqua.Scripting
         /// <summary>
         /// Attempts to retrieve the entrypoint with the given id.
         /// </summary>
-        public bool TryGetEntrypoint(StringHash inId, out ScriptNode outNode)
+        public bool TryGetEntrypoint(StringHash32 inId, out ScriptNode outNode)
         {
             ScriptNode node;
             if (m_Nodes.TryGetValue(inId, out node))
@@ -80,6 +85,104 @@ namespace ProtoAqua.Scripting
             }
         }
 
+        #region Reload
+
+        /// <summary>
+        /// Binds a source asset for hot reloading.
+        /// </summary>
+        public void BindAsset(TextAsset inAsset)
+        {
+            if (m_HotReload != null)
+            {
+                ReloadableAssetCache.Remove(m_HotReload);
+                Ref.TryDispose(ref m_HotReload);
+            }
+
+            if (inAsset != null)
+            {
+                m_HotReload = new HotReloadableAssetProxy<TextAsset>(inAsset, "ScriptNodePackage", ReloadFromAsset);
+                ReloadableAssetCache.Add(m_HotReload);
+            }
+        }
+
+        /// <summary>
+        /// Binds a source asset for hot reloading.
+        /// </summary>
+        public void BindAsset(string inFilePath)
+        {
+            if (m_HotReload != null)
+            {
+                ReloadableAssetCache.Remove(m_HotReload);
+                Ref.TryDispose(ref m_HotReload);
+            }
+
+            if (!string.IsNullOrEmpty(inFilePath))
+            {
+                m_HotReload = new HotReloadableFileProxy(inFilePath, "ScriptNodePackage", ReloadFromFilePath);
+                ReloadableAssetCache.Add(m_HotReload);
+            }
+        }
+
+        private void ReloadFromAsset(TextAsset inAsset, HotReloadOperation inOperation)
+        {
+            var mgr = Services.Script;
+            if (mgr != null)
+            {
+                mgr.Unload(this);
+            }
+
+            m_Nodes.Clear();
+            m_RootPath = string.Empty;
+
+            if (inOperation == HotReloadOperation.Modified)
+            {
+                var self = this;
+                BlockParser.Parse(ref self, null, inAsset.text, Parsing.Block, Generator.Instance);
+
+                if (mgr != null)
+                {
+                    mgr.Load(this);
+                }
+            }
+        }
+
+        private void ReloadFromFilePath(string inFilePath, HotReloadOperation inOperation)
+        {
+            var mgr = Services.Script;
+            if (mgr != null)
+            {
+                mgr.Unload(this);
+            }
+
+            m_Nodes.Clear();
+            m_RootPath = string.Empty;
+
+            if (inOperation == HotReloadOperation.Modified)
+            {
+                var self = this;
+                BlockParser.Parse(ref self, null, File.ReadAllText(inFilePath), Parsing.Block, Generator.Instance);
+
+                if (mgr != null)
+                {
+                    mgr.Load(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Unbinds the source asset.
+        /// </summary>
+        public void UnbindAsset()
+        {
+            if (m_HotReload != null)
+            {
+                ReloadableAssetCache.Remove(m_HotReload);
+                Ref.TryDispose(ref m_HotReload);
+            }
+        }
+
+        #endregion // Reload
+
         #region ICollection
 
         public int Count { get { return m_Nodes.Count; } }
@@ -100,6 +203,8 @@ namespace ProtoAqua.Scripting
 
         public class Generator : AbstractBlockGenerator<ScriptNode, ScriptNodePackage>
         {
+            static public readonly Generator Instance = new Generator();
+
             public override ScriptNodePackage CreatePackage(string inFileName)
             {
                 return new ScriptNodePackage(inFileName);

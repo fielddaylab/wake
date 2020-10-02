@@ -17,6 +17,8 @@ namespace ProtoAqua
     {
         public IVariantResolver VariableResolver { get { return m_VariableResolver; } }
 
+        #region Variables
+
         /// <summary>
         /// Retrieves a variable with the given identifier and an optional context.
         /// </summary>
@@ -50,7 +52,7 @@ namespace ProtoAqua
             if (!TableKeyPair.TryParse(inId, out keyPair)
                 || !VariableResolver.TryModify(inContext, keyPair, VariantModifyOperator.Set, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId, inValue);
+                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId, inValue.ToDebugString());
             }
         }
 
@@ -61,7 +63,7 @@ namespace ProtoAqua
         {
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Set, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId, inValue);
+                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
             }
         }
 
@@ -74,7 +76,7 @@ namespace ProtoAqua
             if (!TableKeyPair.TryParse(inId, out keyPair)
                 || !VariableResolver.TryModify(inContext, keyPair, VariantModifyOperator.Add, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId, inValue);
+                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId, inValue.ToDebugString());
             }
         }
 
@@ -85,27 +87,46 @@ namespace ProtoAqua
         {
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Add, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId, inValue);
+                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
             }
         }
+
+        #endregion // Variables
+
+        #region Tables
 
         /// <summary>
         /// Binds a table.
         /// </summary>
-        public void BindTable(StringHash inId, VariantTable inTable)
+        public void BindTable(StringHash32 inId, VariantTable inTable)
         {
             m_VariableResolver.SetTable(inId, inTable);
-            Debug.LogFormat("[DataService] Bound table '{0}'", inId);
+            Debug.LogFormat("[DataService] Bound table '{0}'", inId.ToDebugString());
         }
 
         /// <summary>
         /// Unbinds a table.
         /// </summary>
-        public void UnbindTable(StringHash inId)
+        public void UnbindTable(StringHash32 inId)
         {
             m_VariableResolver.ClearTable(inId);
-            Debug.LogFormat("[DataService] Unbound table '{0}'", inId);
+            Debug.LogFormat("[DataService] Unbound table '{0}'", inId.ToDebugString());
         }
+
+        #endregion // Tables
+
+        #region Conditions
+
+        /// <summary>
+        /// Checks if the given conditions are true.
+        /// If empty, will also return true.
+        /// </summary>
+        public bool CheckConditions(StringSlice inConditions, object inContext = null)
+        {
+            return VariableResolver.TryEvaluate(inContext, inConditions);
+        }
+
+        #endregion // Conditions
 
         private void InitVariableResolver()
         {

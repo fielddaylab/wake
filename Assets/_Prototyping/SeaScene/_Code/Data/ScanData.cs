@@ -14,7 +14,7 @@ namespace ProtoAqua.Observation
         #region Serialized
 
         // Ids
-        private StringHash m_Id = null;
+        private StringHash32 m_Id = null;
 
         // Properties
         private ScanDataFlags m_Flags = 0;
@@ -37,7 +37,7 @@ namespace ProtoAqua.Observation
             m_Id = inFullId;
         }
 
-        public StringHash Id() { return m_Id; }
+        public StringHash32 Id() { return m_Id; }
 
         public ScanDataFlags Flags() { return m_Flags; }
         public int ScanSpeed() { return m_ScanDuration; }

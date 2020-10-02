@@ -6,16 +6,16 @@ namespace ProtoAqua.Profile
 {
     public class InventoryData : ISerializedObject, ISerializedVersion
     {
-        private HashSet<StringHash> m_ScannerIds = new HashSet<StringHash>();
+        private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
 
         #region Scanner
 
-        public bool WasScanned(StringHash inId)
+        public bool WasScanned(StringHash32 inId)
         {
             return m_ScannerIds.Contains(inId);
         }
 
-        public bool RegisterScanned(StringHash inId)
+        public bool RegisterScanned(StringHash32 inId)
         {
             return m_ScannerIds.Add(inId);
         }

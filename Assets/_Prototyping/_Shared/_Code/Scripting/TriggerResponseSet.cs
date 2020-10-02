@@ -59,7 +59,7 @@ namespace ProtoAqua.Scripting
         /// <summary>
         /// Returns the highest-scoring nodes for this response set.
         /// </summary>
-        public int GetHighestScoringNodes(IVariantResolver inResolver, object inContext, ScriptingData inScriptData, StringHash inTarget, ICollection<ScriptNode> outNodes, ref int ioMinScore)
+        public int GetHighestScoringNodes(IVariantResolver inResolver, object inContext, ScriptingData inScriptData, StringHash32 inTarget, ICollection<ScriptNode> outNodes, ref int ioMinScore)
         {
             Optimize();
 

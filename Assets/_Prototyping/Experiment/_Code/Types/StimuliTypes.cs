@@ -11,10 +11,10 @@ namespace ProtoAqua.Experiment
 {
     static public class StimuliTypes
     {
-        static public readonly StringHash Sleepy = "Sleepy";
-        static public readonly StringHash LowOxygen = "LowOxygen";
-        static public readonly StringHash LowEnergy = "LowEnergy";
-        static public readonly StringHash SensedObject = "SensedObject";
-        static public readonly StringHash LostTrackOfObject = "LostTrackOfObject";
+        static public readonly StringHash32 Sleepy = "Sleepy";
+        static public readonly StringHash32 LowOxygen = "LowOxygen";
+        static public readonly StringHash32 LowEnergy = "LowEnergy";
+        static public readonly StringHash32 SensedObject = "SensedObject";
+        static public readonly StringHash32 LostTrackOfObject = "LostTrackOfObject";
     }
 }

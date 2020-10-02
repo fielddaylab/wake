@@ -68,7 +68,7 @@ namespace ProtoAqua.Editor
                 SceneBinding binding = SceneHelper.FindSceneByPath(scene.path, SceneCategories.AllBuild);
                 string safeName = ObjectNames.NicifyVariableName(binding.Name).Replace("-", "_").Replace(" ", "");
 
-                builder.Append("\n\tstatic public readonly StringHash ").Append(safeName).Append(" = new StringHash(0x").Append(binding.Id.HashValue.ToString("X8")).Append(");");
+                builder.Append("\n\tstatic public readonly StringHash32 ").Append(safeName).Append(" = new StringHash32(0x").Append(binding.Id.HashValue.ToString("X8")).Append(");");
             }
 
             builder.Append("\n}");

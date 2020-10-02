@@ -15,6 +15,12 @@ namespace ProtoAqua
 {
     public partial class StateMgr : ServiceBehaviour
     {
+        #region Inspector
+
+        [SerializeField] private GameObject m_InitialPreloadRoot = null;
+
+        #endregion // Inspector
+
         private Routine m_SceneLoadRoutine;
         private bool m_SceneLock;
 
@@ -70,7 +76,7 @@ namespace ProtoAqua
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(StringHash inSceneId, object inContext = null, bool inbAutoHideLoading = true)
+        public IEnumerator LoadScene(StringHash32 inSceneId, object inContext = null, bool inbAutoHideLoading = true)
         {
             if (m_SceneLock)
             {
@@ -100,18 +106,28 @@ namespace ProtoAqua
 
         private IEnumerator InitialSceneLoad()
         {
-            yield return WaitForLoadingAndCleanup();
+            yield return WaitForServiceLoading();
+            yield return WaitForPreload(m_InitialPreloadRoot, null);
+
+            foreach(var obj in m_InitialPreloadRoot.GetComponentsInChildren<ISceneLoadHandler>(true))
+                obj.OnSceneLoad(m_InitialPreloadRoot.scene, null);
+
+            Debug.LogFormat("[StateMgr] Initial load of preload scene '{0}' finished", m_InitialPreloadRoot.scene.path);
+
+            SceneBinding active = SceneManager.GetActiveScene();
+            BindScene(active);
+
+            yield return WaitForPreload(active, null);
+
+            yield return WaitForCleanup();
 
             m_SceneLock = false;
             Services.UI.HideLoadingScreen();
 
-            BindScene(SceneHelper.FindScene(SceneCategories.ActiveOnly));
+            Debug.LogFormat("[StateMgr] Initial load of '{0}' finished", active.Path);
+            active.BroadcastLoaded();
 
-            foreach(var scene in SceneHelper.FindScenes(SceneCategories.AllLoaded))
-            {
-                Debug.LogFormat("[StateMgr] Initial load of '{0}' finished", scene.Path);
-                scene.BroadcastLoaded();
-            }
+            Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
         private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, bool inbAutoHideLoading)
@@ -121,6 +137,8 @@ namespace ProtoAqua
                 yield return Services.UI.ShowLoadingScreen();
 
                 SceneBinding active = SceneHelper.FindScene(SceneCategories.ActiveOnly);
+
+                // unloading instant
                 Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
                 active.BroadcastUnload(inContext);
                 
@@ -137,8 +155,12 @@ namespace ProtoAqua
                 while(!loadOp.isDone)
                     yield return null;
 
-                yield return WaitForLoadingAndCleanup();
+                yield return WaitForServiceLoading();
                 BindScene(inNextScene);
+
+                yield return WaitForPreload(inNextScene, inContext);
+
+                yield return WaitForCleanup();
 
                 m_SceneLock = false;
 
@@ -147,6 +169,8 @@ namespace ProtoAqua
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
                 inNextScene.BroadcastLoaded(inContext);
+
+                Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
             finally
             {
@@ -154,7 +178,7 @@ namespace ProtoAqua
             }
         }
 
-        private IEnumerator WaitForLoadingAndCleanup()
+        private IEnumerator WaitForServiceLoading()
         {
             while(BuildInfo.IsLoading())
                 yield return null;
@@ -167,7 +191,40 @@ namespace ProtoAqua
                 while(service.IsLoading())
                     yield return null;
             }
+        }
 
+        private IEnumerator WaitForPreload(SceneBinding inScene, object inContext)
+        {
+            using(PooledList<IScenePreloader> allPreloaders = PooledList<IScenePreloader>.Create())
+            {
+                inScene.Scene.GetAllComponents<IScenePreloader>(true, allPreloaders);
+                if (allPreloaders.Count > 0)
+                {
+                    Debug.LogFormat("[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
+                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
+                }
+            }
+
+            return null;
+        }
+
+        private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
+        {
+            using(PooledList<IScenePreloader> allPreloaders = PooledList<IScenePreloader>.Create())
+            {
+                inRoot.GetComponentsInChildren<IScenePreloader>(true, allPreloaders);
+                if (allPreloaders.Count > 0)
+                {
+                    Debug.LogFormat("[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
+                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
+                }
+            }
+
+            return null;
+        }
+
+        private IEnumerator WaitForCleanup()
+        {
             using(Profiling.Time("gc collect"))
             {
                 GC.Collect();

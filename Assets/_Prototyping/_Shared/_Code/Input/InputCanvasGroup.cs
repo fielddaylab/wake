@@ -32,7 +32,7 @@ namespace ProtoAqua
         protected override void Reset()
         {
             this.CacheComponent(ref m_CanvasGroup);
-            Canvas c = GetComponent<Canvas>();
+            Canvas c = GetComponentInParent<Canvas>();
             if (c != null)
             {
                 switch(c.renderMode)

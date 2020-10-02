@@ -16,32 +16,32 @@ namespace ProtoAqua.Scripting
         #region Serialized
 
         // Ids
-        private StringHash m_Id = null;
+        private StringHash32 m_Id = null;
 
         // Properties
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
         private TriggerNodeData m_TriggerData = null;
-        private HashSet<StringHash> m_Tags = new HashSet<StringHash>();
+        private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
 
         // Text
         private List<string> m_Lines = new List<string>();
 
         #endregion // Serialized
 
-        public ScriptNode(ScriptNodePackage inPackage, StringHash inFullId)
+        public ScriptNode(ScriptNodePackage inPackage, StringHash32 inFullId)
         {
             m_Package = inPackage;
             m_Id = inFullId;
         }
 
-        public StringHash Id() { return m_Id; }
+        public StringHash32 Id() { return m_Id; }
         public ScriptNodeFlags Flags() { return m_Flags; }
         public ScriptNodePackage Package() { return m_Package; }
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyList<string> Lines() { return m_Lines; }
-        public IReadOnlyCollection<StringHash> Tags() { return m_Tags; }
+        public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
 
         public PersistenceLevel TrackingLevel()
         {
@@ -74,6 +74,12 @@ namespace ProtoAqua.Scripting
                 m_Flags &= ~ScriptNodeFlags.Cutscene;
         }
 
+        [BlockMeta("important"), Preserve]
+        private void SetImportant()
+        {
+            m_Flags |= ScriptNodeFlags.Important;
+        }
+
         [BlockMeta("entrypoint"), Preserve]
         private void SetEntrypoint()
         {
@@ -81,7 +87,7 @@ namespace ProtoAqua.Scripting
         }
 
         [BlockMeta("trigger"), Preserve]
-        private void SetTriggerResponse(StringHash inTriggerId)
+        private void SetTriggerResponse(StringHash32 inTriggerId)
         {
             m_Flags |= ScriptNodeFlags.TriggerResponse;
             if (m_TriggerData == null)
@@ -92,7 +98,7 @@ namespace ProtoAqua.Scripting
         }
 
         [BlockMeta("who"), Preserve]
-        private void SetTriggerTarget(StringHash inTargetId)
+        private void SetTriggerTarget(StringHash32 inTargetId)
         {
             if (m_TriggerData != null)
             {
@@ -169,6 +175,7 @@ namespace ProtoAqua.Scripting
     {
         Cutscene = 0x01,
         Entrypoint = 0x02,
-        TriggerResponse = 0x04
+        TriggerResponse = 0x04,
+        Important = 0x08
     }
 }

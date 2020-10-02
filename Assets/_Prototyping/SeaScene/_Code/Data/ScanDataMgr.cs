@@ -42,15 +42,15 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-        private ScanDataPackage m_MasterPackage = null;
-        private ScanDataPackage.Generator m_Generator = new ScanDataPackage.Generator();
+        private HashSet<ScanDataPackage> m_Packages = new HashSet<ScanDataPackage>();
+        private Dictionary<StringHash32, ScanData> m_MasterMap = new Dictionary<StringHash32, ScanData>();
 
-        public bool TryGetScanData(StringHash inId, out ScanData outData)
+        public bool TryGetScanData(StringHash32 inId, out ScanData outData)
         {
-            return m_MasterPackage.TryGetScanData(inId, out outData);
+            return m_MasterMap.TryGetValue(inId, out outData);
         }
 
-        public bool WasScanned(StringHash inId) { return Services.Data.Profile.Inventory.WasScanned(inId); }
+        public bool WasScanned(StringHash32 inId) { return Services.Data.Profile.Inventory.WasScanned(inId); }
 
         public bool RegisterScanned(ScanData inData)
         {
@@ -91,22 +91,58 @@ namespace ProtoAqua.Observation
             return m_BaseScanDuration * inData.ScanSpeed();
         }
 
+        #region Register/Unregister
+
+        public void Load(ScanDataPackage inPackage)
+        {
+            if (m_Packages.Add(inPackage))
+            {
+                inPackage.BindManager(this);
+                foreach(var node in inPackage)
+                {
+                    m_MasterMap.Add(node.Id(), node);
+                }
+
+                Debug.LogFormat("[ScanDataMgr] Loaded scan data package '{0}' with {1} nodes", inPackage.Name, inPackage.Count);
+            }
+        }
+
+        public void Unload(ScanDataPackage inPackage)
+        {
+            if (m_Packages.Remove(inPackage))
+            {
+                inPackage.BindManager(null);
+                foreach(var node in inPackage)
+                {
+                    m_MasterMap.Remove(node.Id());
+                }
+                Debug.LogFormat("[ScanDataMgr] Unloaded scan data package '{0}'", inPackage.Name);
+            }
+        }
+
+        #endregion // Register/Unregister
+
         #region TweakAsset
 
         protected override void Apply()
         {
-            m_MasterPackage = new ScanDataPackage("MasterPackage");
             foreach(var asset in m_DefaultAssets)
             {
-                BlockParser.Parse(ref m_MasterPackage, asset.name, asset.text, BlockParsingRules.Default, m_Generator);
+                ScanDataPackage package = BlockParser.Parse(asset.name, asset.text, Parsing.Block, ScanDataPackage.Generator.Instance);
+                package.BindAsset(asset);
+                Load(package);
             }
-
-            Debug.LogFormat("[ScanDataMgr] Loaded {0} scan datas", m_MasterPackage.Count);
         }
 
         protected override void Remove()
         {
-            m_MasterPackage = null;
+            foreach(var package in m_Packages)
+            {
+                package.UnbindAsset();
+                package.BindManager(null);
+            }
+            m_Packages.Clear();
+            m_MasterMap.Clear();
         }
 
         #endregion // TweakAsset

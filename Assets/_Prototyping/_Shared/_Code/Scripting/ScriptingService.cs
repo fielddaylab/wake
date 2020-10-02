@@ -29,14 +29,14 @@ namespace ProtoAqua
 
         // script nodes
         private HashSet<ScriptNodePackage> m_LoadedPackages;
-        private Dictionary<StringHash, ScriptNode> m_LoadedEntrypoints;
-        private Dictionary<StringHash, TriggerResponseSet> m_LoadedResponses;
+        private Dictionary<StringHash32, ScriptNode> m_LoadedEntrypoints;
+        private Dictionary<StringHash32, TriggerResponseSet> m_LoadedResponses;
 
         // objects
         private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
 
         // pool
-        private IPool<TagString> m_TagStrings;
+        private IPool<TagString> m_TagStringPool;
         private DynamicPool<VariantTable> m_ContextPool;
 
         #region Operations
@@ -126,7 +126,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint.
         /// </summary>
-        public ScriptThreadHandle StartNode(StringHash inEntrypointId)
+        public ScriptThreadHandle StartNode(StringHash32 inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -141,7 +141,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given ScriptNode entrypoint.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, StringHash inEntrypointId)
+        public ScriptThreadHandle StartNode(string inThreadId, StringHash32 inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -156,7 +156,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash inEntrypointId)
+        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash32 inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -171,7 +171,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, StringHash inEntrypointId)
+        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, StringHash32 inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -190,7 +190,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash inTriggerId, StringHash inTarget = default(StringHash), IScriptContext inContext = null, VariantTable inContextTable = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
         {
             return TriggerResponse(null, inTriggerId, inTarget, inContext, inContextTable);
         }
@@ -198,7 +198,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(string inThreadId, StringHash inTriggerId, StringHash inTarget = default(StringHash), IScriptContext inContext = null, VariantTable inContextTable = null)
+        public ScriptThreadHandle TriggerResponse(string inThreadId, StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
         {
             ScriptThreadHandle handle = default(ScriptThreadHandle);
             IVariantResolver resolver = GetResolver(inContextTable);
@@ -212,6 +212,7 @@ namespace ProtoAqua
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
+                        Debug.LogFormat("[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId.ToDebugString(), node.Id().ToDebugString());
                         handle = StartNode(inThreadId, inContext, node);
                     }
                 }
@@ -433,7 +434,7 @@ namespace ProtoAqua
             if (inLine.IsEmpty || inLine.IsWhitespace)
                 yield break;
             
-            TagString lineEvents = m_TagStrings.Alloc();
+            TagString lineEvents = m_TagStringPool.Alloc();
             TagStringEventHandler eventHandler = m_TagEventHandler;
             DialogPanel dialogPanel = Services.UI.Dialog;
             
@@ -471,7 +472,7 @@ namespace ProtoAqua
             }
             finally
             {
-                m_TagStrings.Free(lineEvents);
+                m_TagStringPool.Free(lineEvents);
             }
         }
 
@@ -543,9 +544,10 @@ namespace ProtoAqua
 
         protected override void OnRegisterService()
         {
-            m_TagStrings = new DynamicPool<TagString>(16, Pool.DefaultConstructor<TagString>());
+            m_TagStringPool = new DynamicPool<TagString>(16, Pool.DefaultConstructor<TagString>());
+            m_TagStringPool.Config.RegisterOnFree((p, obj) => obj.Clear());
 
-            InitParser();
+            InitParsers();
             InitHandlers();
 
             m_TagStringParser = new TagStringParser();
@@ -554,8 +556,8 @@ namespace ProtoAqua
             m_TagStringParser.ReplaceProcessor = m_TagEventParser;
 
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
-            m_LoadedEntrypoints = new Dictionary<StringHash, ScriptNode>(256);
-            m_LoadedResponses = new Dictionary<StringHash, TriggerResponseSet>();
+            m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
+            m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();
 
             m_ContextPool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
             m_ContextPool.Config.RegisterOnFree((p, obj) => { obj.Clear(); obj.Base = null; });

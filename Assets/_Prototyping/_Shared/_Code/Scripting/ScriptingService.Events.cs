@@ -13,7 +13,7 @@ namespace ProtoAqua
     {
         #region Parser
 
-        private void InitParser()
+        private void InitParsers()
         {
             m_TagEventParser = new CustomTagParserConfig();
 
@@ -26,6 +26,11 @@ namespace ProtoAqua
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("var*", ReplaceVariable);
             m_TagEventParser.AddReplace("switch-var", SwitchOnVariable);
+
+            // Extra Replace Tags (with embedded events)
+
+            m_TagEventParser.AddReplace("slow", "{wait 0.1}{speed 0.5}").CloseWith("{/speed}{wait 0.1}");
+            m_TagEventParser.AddReplace("reallySlow", "{wait 0.1}{speed 0.25}").CloseWith("{/speed}{wait 0.1}");
 
             // Global Events
             m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();
@@ -231,6 +236,7 @@ namespace ProtoAqua
                 .Register(ScriptEvents.Global.EnableObject, (e, o) => {
                     TempList16<StringSlice> args = new TempList16<StringSlice>();
                     int argCount = ExtractArgs(e.StringArgument, ref args);
+                    // TODO: Implement
                 })
                 .Register(ScriptEvents.Global.SetVariable, (e, o) => {
                     if (!Services.Data.VariableResolver.TryModify(o, e.StringArgument))

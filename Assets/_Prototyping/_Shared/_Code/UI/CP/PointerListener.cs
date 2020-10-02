@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace ProtoCP
 {
-    public class PointerListener : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
+    public class PointerListener : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
     {
         #region Types
 
@@ -24,6 +24,7 @@ namespace ProtoCP
         [SerializeField] private PointerEvent m_OnPointerExit = new PointerEvent();
         [SerializeField] private PointerEvent m_OnPointerDown = new PointerEvent();
         [SerializeField] private PointerEvent m_OnPointerUp = new PointerEvent();
+        [SerializeField] private PointerEvent m_OnClick = new PointerEvent();
         [SerializeField] private BaseEvent m_OnSelect = new BaseEvent();
         [SerializeField] private BaseEvent m_OnDeselect = new BaseEvent();
 
@@ -37,6 +38,7 @@ namespace ProtoCP
         public PointerEvent onPointerExit { get { return m_OnPointerExit; } }
         public PointerEvent onPointerDown { get { return m_OnPointerDown; } }
         public PointerEvent onPointerUp { get { return m_OnPointerUp; } }
+        public PointerEvent onClick { get { return m_OnClick; } }
 
         public BaseEvent onSelect { get { return m_OnSelect; } }
         public BaseEvent onDeselect { get { return m_OnDeselect; } }
@@ -99,6 +101,11 @@ namespace ProtoCP
 
             m_Selected = false;
             m_OnDeselect.Invoke(eventData);
+        }
+
+        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+        {
+            m_OnClick.Invoke(eventData);
         }
 
         #endregion // Handlers

@@ -15,7 +15,7 @@ namespace ProtoAqua.Experiment
     /// </summary>
     public struct Stimuli
     {
-        public StringHash Id;
+        public StringHash32 Id;
         public float Intensity;
         public StimuliArgs Arguments;
         
@@ -23,7 +23,7 @@ namespace ProtoAqua.Experiment
         public struct StimuliArgs
         {
             [FieldOffset(0)]
-            public StringHash MemoryId;
+            public StringHash32 MemoryId;
 
             [FieldOffset(0)]
             public Vector2 SensorPosition;

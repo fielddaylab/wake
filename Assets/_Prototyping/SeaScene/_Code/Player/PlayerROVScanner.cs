@@ -23,7 +23,7 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private bool m_ScannerOn = false;
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
-        [NonSerialized] private string m_TargetScanId = null;
+        [NonSerialized] private StringHash32 m_TargetScanId = StringHash32.Null;
         [NonSerialized] private float m_CurrentRange;
 
         [NonSerialized] private Routine m_ScanEnableRoutine;
@@ -143,7 +143,8 @@ namespace ProtoAqua.Observation
             var mgr = Services.Tweaks.Get<ScanDataMgr>();
             var scanUI = ObservationServices.SceneUI.Scanner();
 
-            ScanData data = m_TargetScannable.ScanData();
+            ScanData data;
+            mgr.TryGetScanData(m_TargetScanId, out data);
 
             float progress = 0;
             float duration = mgr.GetScanDuration(data);

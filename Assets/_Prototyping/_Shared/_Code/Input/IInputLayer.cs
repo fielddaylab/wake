@@ -18,6 +18,7 @@ namespace ProtoAqua
         bool? Override { get; set; }
 
         bool IsInputEnabled { get; }
+        DeviceInput Device { get; }
 
         void UpdateSystemPriority(int inSystemPriority);
         void UpdateSystemFlags(InputLayerFlags inFlags);
@@ -29,21 +30,24 @@ namespace ProtoAqua
     [Flags]
     public enum InputLayerFlags : UInt32
     {
-        PlayerControls = 0x01,
+        [Label("World/Player Controls")] PlayerControls = 0x01,
 
-        AllWorld = PlayerControls,
+        [Hidden] AllWorld = PlayerControls,
         
-        WorldUI = 0x100,
-        GameUI = 0x200,
-        TutorialUI = 0x400,
+        [Label("UI/World UI")] WorldUI = 0x100,
+        [Label("UI/Game UI")] GameUI = 0x200,
+        [Label("UI/Tutorial UI")] TutorialUI = 0x400,
 
-        AllUI = WorldUI | GameUI | TutorialUI,
+        [Hidden] AllUI = WorldUI | GameUI | TutorialUI,
 
-        System = 0x100000,
-        SystemError = 0x20000,
+        [Label("System/System")] System = 0x100000,
+        [Label("System/Error")] SystemError = 0x200000,
+        [Label("System/Transition")] Transition = 0x400000,
 
-        AllSystem = System | SystemError,
+        [Hidden] AllSystem = System | SystemError | Transition,
 
-        All = AllWorld | AllUI | AllSystem
+        [Hidden] All = AllWorld | AllUI | AllSystem,
+
+        [Hidden] Default = AllWorld | AllUI | System | SystemError
     }
 }

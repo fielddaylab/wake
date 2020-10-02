@@ -13,6 +13,8 @@ namespace ProtoAqua
         [SerializeField] private PopupPanel m_PopupPanel = null;
         [SerializeField] private LoadingDisplay m_Loading = null;
         [SerializeField] private LetterboxDisplay m_Letterbox = null;
+        [SerializeField] private ScreenFaderDisplay m_WorldFaders = null;
+        [SerializeField] private ScreenFaderDisplay m_ScreenFaders = null;
 
         #endregion // Inspector
 
@@ -48,6 +50,8 @@ namespace ProtoAqua
             m_PopupPanel.InstantHide();
             m_LetterboxCounter = 0;
             m_Letterbox.InstantHide();
+            m_ScreenFaders.StopAll();
+            m_WorldFaders.StopAll();
         }
 
         #endregion // Dialog
@@ -73,9 +77,17 @@ namespace ProtoAqua
 
         #endregion // Letterbox
 
-        #region Pointer
+        #region Screen Effects
 
-        #endregion // Pointer
+        public ScreenFaderDisplay ScreenFaders { get { return m_ScreenFaders; } }
+        public ScreenFaderDisplay WorldFaders { get { return m_WorldFaders; } }
+
+        public ScreenFaderDisplay Faders(ScreenFaderLayer inLayer)
+        {
+            return inLayer == ScreenFaderLayer.Screen ? m_ScreenFaders : m_WorldFaders;
+        }
+
+        #endregion // Screen Effects
 
         #region IService
 

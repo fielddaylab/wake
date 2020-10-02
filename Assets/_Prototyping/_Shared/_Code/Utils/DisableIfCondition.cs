@@ -10,7 +10,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private string m_Condition;
+        [SerializeField] private string m_Condition = null;
         
         #endregion // Inspector
 
@@ -19,7 +19,7 @@ namespace ProtoAqua
             if (!string.IsNullOrEmpty(m_Condition))
                 return;
             
-            if (Services.Data.VariableResolver.TryEvaluate(null, m_Condition))
+            if (Services.Data.CheckConditions(m_Condition))
                 gameObject.SetActive(false);
         }
     }

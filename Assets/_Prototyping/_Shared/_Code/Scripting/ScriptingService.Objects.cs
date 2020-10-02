@@ -11,7 +11,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to get a script node, starting from the scope of the given node.
         /// </summary>
-        public bool TryGetScriptNode(ScriptNode inScope, StringHash inId, out ScriptNode outNode)
+        public bool TryGetScriptNode(ScriptNode inScope, StringHash32 inId, out ScriptNode outNode)
         {
             if (inScope.Package().TryGetNode(inId, out outNode))
             {
@@ -24,7 +24,7 @@ namespace ProtoAqua
         /// <summary>
         /// Attempts to get a publically-exposed script node.
         /// </summary>
-        public bool TryGetEntrypoint(StringHash inId, out ScriptNode outNode)
+        public bool TryGetEntrypoint(StringHash32 inId, out ScriptNode outNode)
         {
             return m_LoadedEntrypoints.TryGetValue(inId, out outNode);
         }
@@ -32,7 +32,7 @@ namespace ProtoAqua
         /// <summary>
         /// Returns if an entrypoint exists for the given id.
         /// </summary>
-        public bool HasEntrypoint(StringHash inId)
+        public bool HasEntrypoint(StringHash32 inId)
         {
             return m_LoadedEntrypoints.ContainsKey(inId);
         }
@@ -52,7 +52,7 @@ namespace ProtoAqua
             int entrypointCount = 0;
             foreach(var entrypoint in inPackage.Entrypoints())
             {
-                StringHash id = entrypoint.Id();
+                StringHash32 id = entrypoint.Id();
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint))
                 {
@@ -67,7 +67,7 @@ namespace ProtoAqua
             int responseCount = 0;
             foreach(var response in inPackage.Responses())
             {
-                StringHash triggerId = response.TriggerData.TriggerId;
+                StringHash32 triggerId = response.TriggerData.TriggerId;
                 TriggerResponseSet responseSet;
                 if (!m_LoadedResponses.TryGetValue(triggerId, out responseSet))
                 {
@@ -79,7 +79,7 @@ namespace ProtoAqua
                 ++responseCount;
             }
 
-            Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' non-errored entrypoints and '{2}' non-errored responses", inPackage.Name(), entrypointCount, responseCount);
+            Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' entrypoints and '{2}' responses", inPackage.Name(), entrypointCount, responseCount);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace ProtoAqua
 
             foreach(var entrypoint in inPackage.Entrypoints())
             {
-                StringHash id = entrypoint.Id();
+                StringHash32 id = entrypoint.Id();
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint) && existingEntrypoint == entrypoint)
                 {
@@ -102,7 +102,7 @@ namespace ProtoAqua
 
             foreach(var response in inPackage.Responses())
             {
-                StringHash triggerId = response.TriggerData.TriggerId;
+                StringHash32 triggerId = response.TriggerData.TriggerId;
                 TriggerResponseSet responseSet;
                 if (m_LoadedResponses.TryGetValue(triggerId, out responseSet))
                 {

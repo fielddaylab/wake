@@ -10,20 +10,35 @@ namespace ProtoAqua.Profile
     {
         // Tables
 
-        public VariantTable GlobalTable = new VariantTable();
+        public VariantTable GlobalTable = new VariantTable("global");
 
-        public VariantTable PlayerTable = new VariantTable();
-        public VariantTable PartnerTable = new VariantTable();
+        public VariantTable PlayerTable = new VariantTable("player");
+        public VariantTable PartnerTable = new VariantTable("partner");
 
         // Conversation History
 
-        private HashSet<StringHash> m_TrackedVisitedNodes = new HashSet<StringHash>();
-        private HashSet<StringHash> m_TrackedVisitedNodesForSession = new HashSet<StringHash>();
-        private RingBuffer<StringHash> m_RecentNodeHistory = new RingBuffer<StringHash>(32, RingBufferMode.Overwrite);
+        private HashSet<StringHash32> m_TrackedVisitedNodes = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_TrackedVisitedNodesForSession = new HashSet<StringHash32>();
+        private RingBuffer<StringHash32> m_RecentNodeHistory = new RingBuffer<StringHash32>(32, RingBufferMode.Overwrite);
+
+        public IReadOnlyCollection<StringHash32> RecentNodeHistory { get { return m_RecentNodeHistory; } }
+        public IReadOnlyCollection<StringHash32> ProfileNodeHistory { get { return m_TrackedVisitedNodes; } }
+        public IReadOnlyCollection<StringHash32> SessionNodeHistory { get { return m_TrackedVisitedNodesForSession; } }
+
+        public void Reset()
+        {
+            GlobalTable.Clear();
+            PlayerTable.Clear();
+            PartnerTable.Clear();
+
+            m_TrackedVisitedNodes.Clear();
+            m_TrackedVisitedNodesForSession.Clear();
+            m_RecentNodeHistory.Clear();
+        }
 
         #region Node Visits
 
-        public bool HasSeen(StringHash inNodeId, PersistenceLevel inPersist = PersistenceLevel.Untracked)
+        public bool HasSeen(StringHash32 inNodeId, PersistenceLevel inPersist = PersistenceLevel.Untracked)
         {
             switch(inPersist)
             {
@@ -39,7 +54,7 @@ namespace ProtoAqua.Profile
             }
         }
 
-        public bool HasRecentlySeen(StringHash inNodeId, int inDuration)
+        public bool HasRecentlySeen(StringHash32 inNodeId, int inDuration)
         {
             for(int i = 0; i < m_RecentNodeHistory.Count && i < inDuration; ++i)
             {
@@ -50,7 +65,7 @@ namespace ProtoAqua.Profile
             return false;
         }
 
-        public void RecordNodeVisit(StringHash inId, PersistenceLevel inPersist = PersistenceLevel.Untracked)
+        public void RecordNodeVisit(StringHash32 inId, PersistenceLevel inPersist = PersistenceLevel.Untracked)
         {
             m_RecentNodeHistory.PushFront(inId);
             switch(inPersist)

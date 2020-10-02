@@ -12,28 +12,7 @@ namespace ProtoAqua
 {
     public class DialogPanel : BasePanel
     {
-        #region Inspector
-
-        [SerializeField] private float m_SpeedUpThreshold = 0.25f;
-
-        [Header("Speaker")]
-        
-        [SerializeField] private RectTransform m_SpeakerContainer = null;
-        [SerializeField] private TMP_Text m_SpeakerLabel = null;
-        [SerializeField] private Graphic m_SpeakerLabelBG = null;
-
-        [Header("Text")]
-
-        [SerializeField] private CanvasGroup m_TextContainer = null;
-        [SerializeField] private TMP_Text m_TextDisplay = null;
-
-        [Header("Button")]
-
-        [SerializeField] private RectTransform m_ButtonContainer = null;
-        [SerializeField] private Button m_Button = null;
-        [SerializeField] private CanvasGroup m_ButtonGroup = null;
-
-        #endregion // Inspector
+        #region Types
 
         private struct TypingState
         {
@@ -64,14 +43,43 @@ namespace ProtoAqua
             }
         }
 
+        #endregion // Types
+
+        #region Inspector
+
+        [SerializeField] private float m_SpeedUpThreshold = 0.25f;
+
+        [Header("Speaker")]
+        
+        [SerializeField] private RectTransform m_SpeakerContainer = null;
+        [SerializeField] private TMP_Text m_SpeakerLabel = null;
+        [SerializeField] private Graphic m_SpeakerLabelBG = null;
+
+        [Header("Text")]
+
+        [SerializeField] private CanvasGroup m_TextContainer = null;
+        [SerializeField] private TMP_Text m_TextDisplay = null;
+
+        [Header("Button")]
+
+        [SerializeField] private RectTransform m_ButtonContainer = null;
+        [SerializeField] private Button m_Button = null;
+        [SerializeField] private CanvasGroup m_ButtonGroup = null;
+
+        #endregion // Inspector
+
         [NonSerialized] private TypingState m_CurrentState;
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
         [NonSerialized] private TagStringEventHandler m_EventHandler;
 
+        [NonSerialized] private BaseInputLayer m_Input;
+
         protected override void Start()
         {
             base.Start();
+
+            m_Input = BaseInputLayer.Find(this);
         }
 
         #region BasePanel
@@ -300,7 +308,7 @@ namespace ProtoAqua
 
         private void UpdateSkipHeld()
         {
-            if (Input.GetMouseButton(0))
+            if (m_Input.Device.MouseDown(0))
             {
                 m_CurrentState.SkipHoldTimer += Routine.DeltaTime;
                 m_CurrentState.SkipHeld = m_CurrentState.SkipHoldTimer >= m_SpeedUpThreshold;
@@ -345,7 +353,7 @@ namespace ProtoAqua
             m_ButtonContainer.gameObject.SetActive(true);
             yield return Routine.Race(
                 m_Button.onClick.WaitForInvoke(),
-                Routine.WaitCondition(() => Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+                Routine.WaitCondition(() => m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
             );
             m_ButtonContainer.gameObject.SetActive(false);
         }

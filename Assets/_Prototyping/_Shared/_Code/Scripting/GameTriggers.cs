@@ -7,6 +7,7 @@ namespace ProtoAqua
 {
     static public class GameTriggers
     {
-        static public readonly StringHash RequestPartnerHelp = "RequestPartnerHelp";
+        static public readonly StringHash32 RequestPartnerHelp = "RequestPartnerHelp";
+        static public readonly StringHash32 SceneStart = "SceneStart";
     }
 }
