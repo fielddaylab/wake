@@ -115,7 +115,7 @@ namespace ProtoAqua.Argumentation
         private void EndConversationPopup()
         {
             NamedOption[] options = { new NamedOption("Continue") };
-            Services.UI.Popup().Present("Congratulations!", "End of conversation", options);
+            Services.UI.Popup.Present("Congratulations!", "End of conversation", options);
         }
 
         // Shake response back and forth in the chat, indicating that the response is invalid
@@ -134,7 +134,7 @@ namespace ProtoAqua.Argumentation
         // the player can't drag in additional responses.
         private IEnumerator ScrollRoutine(string linkId, GameObject response)
         {
-            m_InputRaycasterLayer.OverrideState(false);
+            m_InputRaycasterLayer.Override = false;
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
@@ -145,7 +145,7 @@ namespace ProtoAqua.Argumentation
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
-            m_InputRaycasterLayer.ClearOverride();
+            m_InputRaycasterLayer.Override = null;
         }
     }
 }
