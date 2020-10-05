@@ -6,7 +6,7 @@ namespace ProtoAqua
 {
     public class FastBootController : MonoBehaviour, ISceneLoadHandler
     {
-        [SerializeField] private string m_DefaultScene = "DebugTitle";
+        [SerializeField, Required] private string m_DefaultScene = "DebugTitle";
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {

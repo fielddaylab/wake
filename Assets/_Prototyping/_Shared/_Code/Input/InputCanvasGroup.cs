@@ -42,7 +42,7 @@ namespace ProtoAqua
                         break;
 
                     case RenderMode.ScreenSpaceOverlay:
-                        m_Priority = 1000 + c.renderOrder;
+                        m_Priority = 1000 + c.sortingOrder;
                         break;
                 }
             }
@@ -51,8 +51,10 @@ namespace ProtoAqua
         protected override void OnValidate()
         {
             this.CacheComponent(ref m_CanvasGroup);
-            if (Application.isPlaying)
-                UpdateEnabled(true);
+            // if (Application.isPlaying)
+            // {
+            //     UpdateEnabled(true);
+            // }
         }
 
         #endif // UNITY_EDITOR

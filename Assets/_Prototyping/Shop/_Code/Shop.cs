@@ -19,6 +19,8 @@ namespace ProtoAqua.Shop
         [SerializeField] private TextMeshProUGUI Currency;
         [SerializeField] private NPC NPC;
         [SerializeField] private Sprite[] SpriteRefs;
+        
+        [SerializeField] private TextAsset JobJSON;
 
         [Header("Details Panel Dependencies")]
         [SerializeField] private RectTransform DetailsPanel;
@@ -94,9 +96,7 @@ namespace ProtoAqua.Shop
         // Load ItemSet from JSON file, create ItemButtons based on parsed data and populate availableItems
         private void Populate()
         {
-            string path = Path.Combine(Application.dataPath, JSON_PATH);
-            string json = File.ReadAllText(path);
-            ItemSet itemSet = Serializer.Read<ItemSet>(json, Serializer.Format.JSON, this);
+            ItemSet itemSet = Serializer.Read<ItemSet>(JobJSON, Serializer.Format.JSON, this);
 
             foreach (Item item in itemSet.ItemData)
             {

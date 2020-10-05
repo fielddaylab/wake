@@ -1,11 +1,15 @@
 ﻿
 using BeauData;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.JobBoard{
     public class JobList : ISerializedObject
     {
 
         private Job[] jobList;
+
+        [Preserve]
+        public JobList() { }
         
         public void Serialize(Serializer ioSerializer)
         {

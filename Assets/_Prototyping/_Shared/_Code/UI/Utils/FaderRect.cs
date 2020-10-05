@@ -12,7 +12,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private Graphic m_Graphic = null;
+        [SerializeField, Required] private Graphic m_Graphic = null;
         
         #endregion // Inspector
 

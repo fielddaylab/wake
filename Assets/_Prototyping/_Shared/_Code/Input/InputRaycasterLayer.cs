@@ -42,7 +42,7 @@ namespace ProtoAqua
                         break;
 
                     case RenderMode.ScreenSpaceOverlay:
-                        m_Priority = 1000 + c.renderOrder;
+                        m_Priority = 1000 + c.sortingOrder;
                         break;
                 }
             }

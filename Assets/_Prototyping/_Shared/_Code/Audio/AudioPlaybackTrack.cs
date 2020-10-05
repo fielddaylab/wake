@@ -14,7 +14,7 @@ namespace ProtoAudio
 
         #region Inspector
 
-        [SerializeField] private AudioSource m_Source = null;
+        [SerializeField, Required] private AudioSource m_Source = null;
 
         [SerializeField, Range(0, 1)] private float m_VolumeMultiplier = 1;
         [SerializeField, Range(-64, 64)] private float m_PitchMultiplier = 1;

@@ -45,7 +45,7 @@ namespace ProtoAqua
 
         private void OnButtonClicked()
         {
-            m_ResponseRoutine.Replace(this, ExecuteSequence());
+            m_ResponseRoutine.Replace(this, ExecuteSequence()).TryManuallyUpdate(0);
         }
 
         private void OnCutsceneStart()

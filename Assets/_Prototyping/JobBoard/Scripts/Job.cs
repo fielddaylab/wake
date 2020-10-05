@@ -2,6 +2,7 @@
 using BeauData;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.JobBoard
 {
@@ -31,6 +32,8 @@ namespace ProtoAqua.JobBoard
 
         public Sprite sprite;
         
+        [Preserve]
+        public Job() { }
         
         public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("jobId", ref jobId);

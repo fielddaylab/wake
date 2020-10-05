@@ -10,7 +10,7 @@ namespace ProtoAudio
     {
         #region Inspector
 
-        [SerializeField] private AudioClip[] m_Clips = null;
+        [SerializeField, Required] private AudioClip[] m_Clips = null;
 
         [Header("Playback Settings")]
         [SerializeField] private FloatRange m_Volume = new FloatRange(1);

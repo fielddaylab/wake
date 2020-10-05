@@ -1,3 +1,4 @@
+using BeauUtil;
 using ProtoAqua;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace ProtoAudio
     {
         #region Inspector
 
-        [SerializeField] private AudioPackage[] m_Packages = null;
+        [SerializeField, Required] private AudioPackage[] m_Packages = null;
 
         #endregion // Inspector
 

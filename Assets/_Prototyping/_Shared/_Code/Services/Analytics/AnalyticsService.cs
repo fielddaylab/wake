@@ -15,7 +15,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private string m_AppId = "Aqualab";
+        [SerializeField, Required] private string m_AppId = "Aqualab";
         [SerializeField] private int m_AppVersion = 1;
         
         #endregion // Inspector

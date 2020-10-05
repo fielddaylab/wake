@@ -11,8 +11,8 @@ namespace ProtoAqua
         #region Inspector
 
         [SerializeField] private string m_TargetScene = null;
-        [SerializeField] private Button m_Button = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField, Required] private Button m_Button = null;
+        [SerializeField, Required] private TMP_Text m_Label = null;
 
         #endregion // Inspector
 

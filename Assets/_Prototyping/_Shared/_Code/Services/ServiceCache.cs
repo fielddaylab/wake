@@ -23,7 +23,7 @@ namespace ProtoAqua
                 m_CachedServices.Remove(id);
                 existing.OnDeregisterService();
 
-                Debug.LogFormat("[ServiceCache] Deregistered service '{0}' ({1})", id, existing.GetType().Name);
+                Debug.LogWarningFormat("[ServiceCache] Replacing service '{0}' ({1})", id, existing.GetType().Name);
             }
 
             m_CachedServices.Add(id, inService);

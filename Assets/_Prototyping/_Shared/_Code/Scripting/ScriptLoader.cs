@@ -14,7 +14,7 @@ namespace ProtoAqua.Scripting
     {
         #region Inspector
 
-        [SerializeField] private TextAsset[] m_ScriptFiles = null;
+        [SerializeField, Required] private TextAsset[] m_ScriptFiles = null;
 
         #endregion // Inspector
 

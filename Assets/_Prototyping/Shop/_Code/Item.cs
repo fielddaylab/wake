@@ -1,5 +1,6 @@
 ﻿using BeauData;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.Shop
 {
@@ -11,6 +12,9 @@ namespace ProtoAqua.Shop
         private bool isAvailable;
         private string spritePath;
         private Sprite itemSprite;
+
+        [Preserve]
+        public Item() { }
 
         #region Accessors
 

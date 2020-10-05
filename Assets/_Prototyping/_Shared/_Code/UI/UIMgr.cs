@@ -1,5 +1,6 @@
 using System.Collections;
 using BeauData;
+using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua
@@ -8,13 +9,13 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private Camera m_UICamera = null;
-        [SerializeField] private DialogPanel m_DialogPanel = null;
-        [SerializeField] private PopupPanel m_PopupPanel = null;
-        [SerializeField] private LoadingDisplay m_Loading = null;
-        [SerializeField] private LetterboxDisplay m_Letterbox = null;
-        [SerializeField] private ScreenFaderDisplay m_WorldFaders = null;
-        [SerializeField] private ScreenFaderDisplay m_ScreenFaders = null;
+        [SerializeField, Required] private Camera m_UICamera = null;
+        [SerializeField, Required] private DialogPanel m_DialogPanel = null;
+        [SerializeField, Required] private PopupPanel m_PopupPanel = null;
+        [SerializeField, Required] private LoadingDisplay m_Loading = null;
+        [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
+        [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
+        [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
 
         #endregion // Inspector
 

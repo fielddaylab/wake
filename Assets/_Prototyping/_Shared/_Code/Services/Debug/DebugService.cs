@@ -16,11 +16,11 @@ namespace ProtoAqua.DebugConsole
     {
         #region Inspector
 
-        [SerializeField] private Canvas m_Canvas = null;
+        [SerializeField, Required] private Canvas m_Canvas = null;
         [SerializeField] private KeyCode m_ToggleMinimalKey = KeyCode.BackQuote;
-        [SerializeField] private CanvasGroup m_MinimalLayer = null;
-        [SerializeField] private CanvasGroup m_KeyboardReference = null;
-        [SerializeField] private ConsoleTimeDisplay m_TimeDisplay = null;
+        [SerializeField, Required] private CanvasGroup m_MinimalLayer = null;
+        [SerializeField, Required] private CanvasGroup m_KeyboardReference = null;
+        [SerializeField, Required] private ConsoleTimeDisplay m_TimeDisplay = null;
 
         #endregion // Inspector
 
@@ -198,7 +198,7 @@ namespace ProtoAqua.DebugConsole
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
 
-            m_Input = new DeviceInput();
+            m_Input = BaseInputLayer.Find(this).Device;
         }
 
         protected override void OnDeregisterService()

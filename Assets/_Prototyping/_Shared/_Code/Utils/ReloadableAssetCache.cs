@@ -18,7 +18,7 @@ namespace ProtoAqua
         {
             if (s_AssetCache.Add(inReloadable))
             {
-                Debug.LogFormat("[ReloadableAssetCache] Added IHotReloadable '{0}'", inReloadable.Id.ToDebugString());
+                Debug.LogFormat("[ReloadableAssetCache] Added asset '{0}'", inReloadable.Id.ToDebugString());
                 return true;
             }
 
@@ -29,7 +29,7 @@ namespace ProtoAqua
         {
             if (s_AssetCache.Remove(inReloadable))
             {
-                Debug.LogFormat("[ReloadableAssetCache] Removed IHotReloadable '{0}'", inReloadable.Id.ToDebugString());
+                Debug.LogFormat("[ReloadableAssetCache] Removed asset '{0}'", inReloadable.Id.ToDebugString());
                 return true;
             }
 

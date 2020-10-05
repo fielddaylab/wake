@@ -26,6 +26,15 @@
 {set temp:defaultResponseCount + 1}
 {@kevin}    Let's chat later, okay?
 
+:: default.4
+@trigger    RequestPartnerHelp
+@repeat     2
+@boostScore -5
+@cutscene
+{set temp:defaultResponseCount + 1}
+{@kevin}    Preorder "When the Stones Spoke" on itch.io!
+{@player}   Whoa, I should really do that!
+
 :: default.irritated.1
 @trigger    RequestPartnerHelp
 @when       temp:defaultResponseCount >= 4

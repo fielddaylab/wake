@@ -17,7 +17,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private GameObject m_InitialPreloadRoot = null;
+        [SerializeField, Required] private GameObject m_InitialPreloadRoot = null;
 
         #endregion // Inspector
 

@@ -35,6 +35,8 @@ namespace ProtoAqua
         [NonSerialized] private bool m_LastKnownState;
         [NonSerialized] private DeviceInput m_DeviceInput;
 
+        [NonSerialized] private bool m_PriorityPushed;
+
         #region Unity Events
 
         protected virtual void Awake()
@@ -129,6 +131,30 @@ namespace ProtoAqua
 
         #endregion // IInputLayer
 
+        #region Pushing Priorities
+
+        public bool PushPriority()
+        {
+            if (m_PriorityPushed)
+                return false;
+
+            Services.Input.PushPriority(this);
+            m_PriorityPushed = true;
+            return true;
+        }
+
+        public bool PopPriority()
+        {
+            if (!m_PriorityPushed)
+                return false;
+
+            Services.Input?.PopPriority(this);
+            m_PriorityPushed = false;
+            return true;
+        }
+
+        #endregion // Pushing Priorities
+
         protected abstract void SyncEnabled(bool inbState);
 
         protected void UpdateEnabled(bool inbForce)
@@ -138,6 +164,8 @@ namespace ProtoAqua
 
             if (!inbForce && !bChanged)
                 return;
+
+            Debug.LogFormat("[BaseInputLayer] Set Input Enabled state on '{0}' to {1}", gameObject.FullPath(true), bDesiredState);
 
             m_LastKnownState = bDesiredState;
             SyncEnabled(m_LastKnownState);

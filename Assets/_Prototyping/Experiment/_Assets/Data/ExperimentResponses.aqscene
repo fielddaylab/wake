@@ -2,20 +2,20 @@
 
 // Room Stuff
 
-:: room.open
-@trigger    SceneStart
-@when       !kevin:experiment.intro
-@once
-@cutscene
-{wait 1}
-{@kevin}    So this is your lab?
-{@player}   Yup!
-{@kevin}    ...what's that device in the center?
-{@player}   No idea.
-{@kevin}    Okay, so you have {wait 0.3}no{wait 0.3} idea.
-{@player}   ...Alright, I just know it's supposed to be a lab.
-            My friend cleaned up some of my salvage and put this together.
-            I've never actually used it before.
+// :: room.open
+// @trigger    SceneStart
+// @when       !kevin:experiment.intro
+// @once
+// @cutscene
+// {wait 1}
+// {@kevin}    So this is your lab?
+// {@player}   Yup!
+// {@kevin}    ...what's that device in the center?
+// {@player}   No idea.
+// {@kevin}    Okay, so you have {wait 0.3}no{wait 0.3} idea.
+// {@player}   ...Alright, I just know it's supposed to be a lab.
+//             My friend cleaned up some of my salvage and put this together.
+//             I've never actually used it before.
 
 :: room.wood
 @trigger    RequestPartnerHelp

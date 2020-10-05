@@ -15,8 +15,8 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private TextAsset[] m_GlobalStrings = null;
-        [SerializeField] private TextAsset[] m_EnglishStrings = null;
+        [SerializeField, Required] private TextAsset[] m_GlobalStrings = null;
+        [SerializeField, Required] private TextAsset[] m_EnglishStrings = null;
 
         #endregion // Inspector
 
