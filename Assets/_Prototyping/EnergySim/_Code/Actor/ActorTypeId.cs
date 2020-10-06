@@ -21,6 +21,7 @@ namespace ProtoAqua.Energy
         static public readonly FourCC Algae = Register("ALGE", "Algae");
         static public readonly FourCC Anemone = Register("ANEM", "Anemone");
         static public readonly FourCC Clownfish = Register("CLWN", "Clownfish");
+        static public readonly FourCC Mangrove = Register("MANG", "Mangrove");
     }
 
     public sealed class ActorTypeIdAttribute : FourCCSelectorAttribute

@@ -10,17 +10,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 652f3d4ec52d3d048a206e8136663bd7, type: 3}
-  m_Name: New Actor Type 1
+  m_Name: Algae
   m_EditorClassIdentifier: 
   m_Id:
-    m_Value: 0
-  m_ScriptName: 
-  m_Flags: 0
-  m_MaxActors: 0
+    m_Value: 1095518021
+  m_ScriptName: Algae
+  m_Flags: 3
+  m_MaxActors: 300
   m_ResourceRequirements:
-    DesiredResources: []
-    DesiredProperties: []
-    ProducingResources: []
+    DesiredResources:
+    - ResourceId:
+        m_Value: 1129263616
+      BaseValue: 3
+      MassValue: 0
+      Qualitative:
+        Low: 1
+        Medium: 3
+        High: 5
+    DesiredProperties:
+    - PropertyId:
+        m_Value: 1279739988
+      Comparison: 3
+      BaseValue: 30
+      MassValue: 0
+      Qualitative:
+        Low: 0
+        Medium: 30
+        High: 60
+    ProducingResources:
+    - ResourceId:
+        m_Value: 1331190087
+      BaseValue: 3
+      MassValue: 0
+      Qualitative:
+        Low: 1
+        Medium: 3
+        High: 5
   m_EatingSettings:
     EdibleActors: []
     BaseEatSize: 0
@@ -59,8 +84,14 @@ MonoBehaviour:
       Low: 0
       Medium: 0
       High: 0
-    ResourceStarvation: []
-    PropertyStarvation: []
+    ResourceStarvation:
+    - Id:
+        m_Value: 1129263616
+      Value: 2
+    PropertyStarvation:
+    - Id:
+        m_Value: 1279739988
+      Value: 2
     MassAgeThreshold: 0
     Mass: 0
   m_ConfigSettings:
