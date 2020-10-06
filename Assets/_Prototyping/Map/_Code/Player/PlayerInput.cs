@@ -25,27 +25,46 @@ namespace ProtoAqua.Map {
 
         //Returns the direction the player will move
         //Returns 0 if no input
-        public Vector2 getDirection() {
+        public Vector2 GetDirection() {
             if(Input.GetMouseButton(0)) {
                     mousePosition = cameraController.ScreenToWorldOnPlane(Input.mousePosition, transform);
 
 
                     Vector2 rawDirection = (mousePosition - transform.position);
                     direction = rawDirection.normalized;
-                    
                     //Prevent Boat from actually hitting the mouse, and causing glitches
-                    if(rawDirection.x < 1.0f && rawDirection.x > -1.0f && rawDirection.y < 1.0f && rawDirection.y > -1.0f) {
+                    if(rawDirection.magnitude < 1.2f) {
                         direction = Vector2.zero;
                     }
 
             } else {
-                    direction = Vector2.zero;
+                    //Gradually slow down
+                    if(direction.magnitude > .01f) {
+                        direction = direction * .985f; 
+                    } else {
+                        direction = Vector2.zero;
+                    }
             }
             return direction;
         }
 
-        public float getRotateAngle() {
-            return AngleBetweenTwoPoints(transform.position, mousePosition);
+        //TODO perform better math on this
+        public float GetSpeed(float minSpeed, float maxSpeed) {
+            float speed = 0;
+            if(Input.GetMouseButton(0)) {
+                 Vector2 rawDirection = (mousePosition - transform.position);
+                 speed = Mathf.Clamp(rawDirection.magnitude, minSpeed, maxSpeed);
+            }
+            
+            return speed;
+        }
+
+        public float GetRotateAngle() {
+             if(Input.GetMouseButton(0)) {
+                return AngleBetweenTwoPoints(transform.position, mousePosition);
+             } else {
+                 return 0;
+             }
         }
 
         float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {

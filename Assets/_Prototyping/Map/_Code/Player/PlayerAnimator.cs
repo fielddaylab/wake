@@ -9,7 +9,9 @@ public class PlayerAnimator : MonoBehaviour {
         [SerializeField] Transform boatRenderer = null;
 
         private Routine bobbingRoutine;
+        private Routine drivingRoutine;
         private bool isBobbing = false;
+        private bool isDriving = false;
 
         // Start is called before the first frame update
         void Start() {
@@ -24,8 +26,10 @@ public class PlayerAnimator : MonoBehaviour {
         public void HandleBobbing(Vector2 direction) {
             if(direction == Vector2.zero) {
                 StartBobbing();
+                StopDriving();
             } else {
                 StopBobbing();
+                StartDriving();
             }
         }
 
@@ -43,14 +47,35 @@ public class PlayerAnimator : MonoBehaviour {
                  isBobbing = false; 
              }
         }
+
+
+        private void StartDriving() {
+            if(!isDriving) {
+                drivingRoutine = Routine.Start(this, DrivingRoutine());
+                isDriving = true;
+            }
+        }
+        
+        private void StopDriving() {
+            if(isDriving) {
+                drivingRoutine.Stop();
+                isDriving = false;
+            }
+        }
+                
                 
 
         private IEnumerator BobbingRoutine() {
             while(isBobbing) {
                 //TODO change order of this, based on Z position?
-                yield return boatRenderer.MoveTo(-.4f,1f, Axis.Z).Ease(Curve.Smooth);
-                yield return boatRenderer.MoveTo(0f,1f, Axis.Z).Ease(Curve.Smooth);
+                yield return boatRenderer.MoveTo(0f,2f, Axis.Z).Ease(Curve.Smooth);
+                yield return boatRenderer.MoveTo(-1f,2f, Axis.Z).Ease(Curve.Smooth);
             }
+        }
+
+        
+        private IEnumerator DrivingRoutine() {
+            yield return boatRenderer.MoveTo(-1f,2f, Axis.Z).Ease(Curve.Smooth);
         }
     }
 }
