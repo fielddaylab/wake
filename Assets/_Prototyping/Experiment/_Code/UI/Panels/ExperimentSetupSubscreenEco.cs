@@ -18,9 +18,9 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private ExperimentSettings m_CachedSettings;
-        [NonSerialized] private EcoToggleButton[] m_CachedButtons;
+        [NonSerialized] private SetupToggleButton[] m_CachedButtons;
 
-        [NonSerialized] private TankSelectionData m_CachedData;
+        [NonSerialized] private ExperimentSetupData m_CachedData;
 
         public Action OnSelectContinue;
         public Action OnSelectBack;
@@ -28,7 +28,7 @@ namespace ProtoAqua.Experiment
         protected override void Awake()
         {
             m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
-            m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<EcoToggleButton>();
+            m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 m_CachedButtons[i].Toggle.group = m_ToggleGroup;
@@ -41,9 +41,16 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
-        public void SetData(TankSelectionData inData)
+        public override void SetData(ExperimentSetupData inData)
         {
+            base.SetData(inData);
             m_CachedData = inData;
+        }
+
+        public override void Refresh()
+        {
+            base.Refresh();
+            UpdateButtons();
         }
 
         private void UpdateButtons()
@@ -58,15 +65,14 @@ namespace ProtoAqua.Experiment
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.gameObject.SetActive(true);
                 
                 if (Services.Data.CheckConditions(waterType.Condition))
                 {
-                    button.Load(waterType, true);
+                    button.Load(waterType.Id, waterType.Icon, true);
                 }
                 else
                 {
-                    button.Load(noneWaterType, false);
+                    button.Load(noneWaterType.Id, noneWaterType.Icon, false);
                 }
 
                 ++buttonIdx;
@@ -74,7 +80,7 @@ namespace ProtoAqua.Experiment
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(noneWaterType, false);
+                m_CachedButtons[buttonIdx].Load(noneWaterType.Id, noneWaterType.Icon, false);
             }
         }
 
@@ -92,7 +98,7 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.EcosystemId = active.GetComponent<EcoToggleButton>().EcoId;
+                m_CachedData.EcosystemId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
             }
             else
             {

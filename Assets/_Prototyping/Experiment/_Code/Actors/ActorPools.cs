@@ -37,14 +37,14 @@ namespace ProtoAqua.Experiment
         /// <summary>
         /// Allocates an actor from the pool with the given id.
         /// </summary>
-        public ActorCtrl Alloc(StringHash32 inId)
+        public ActorCtrl Alloc(StringHash32 inId, Transform inTarget)
         {
             InitMap();
 
             ActorPool pool;
             if (m_PoolMap.TryGetValue(inId, out pool))
             {
-                return pool.Alloc();
+                return pool.Alloc(inTarget);
             }
             else
             {
@@ -92,7 +92,7 @@ namespace ProtoAqua.Experiment
             foreach(var pool in m_Pools)
             {
                 m_PoolMap.Add(pool.Id, pool);
-                pool.ConfigureTransforms(null, m_PoolRoot, true);
+                pool.ConfigureTransforms(m_PoolRoot, transform, true);
             }
         }
     }

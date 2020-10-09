@@ -16,13 +16,15 @@ namespace ProtoAqua.Experiment
     {
         #region Inspector
 
-        [SerializeField] private ActorTicker m_Ticker = null;
+        [SerializeField] private ActorTicker m_TimeTicker = null;
+        [SerializeField] private ActorTicker m_ThinkTicker = null;
         [SerializeField] private ActorPools m_Pools = null;
 
         #endregion // Ticker
 
         [NonSerialized] private readonly List<ActorCtrl> m_AllActors = new List<ActorCtrl>();
         [NonSerialized] private DynamicPool<VariantTable> m_VariantTablePool;
+        [NonSerialized] private bool m_Ticking;
 
         #region Register/Deregister
 
@@ -36,18 +38,56 @@ namespace ProtoAqua.Experiment
             m_AllActors.FastRemove(inActor);
         }
 
+        public bool AnyActorsAreAnimating()
+        {
+            foreach(var actor in m_AllActors)
+            {
+                if (actor.Nav.IsAnimating())
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion // Register/Deregister
 
         #region Ticking
 
         private void FixedUpdate()
         {
+            if (!m_Ticking)
+                return;
+
             float dt = Time.deltaTime;
-            m_Ticker.Advance(dt);
+            m_TimeTicker.Advance(dt);
+            m_ThinkTicker.Advance(dt);
+            
             foreach(var actor in m_AllActors)
             {
-                actor.Tick(m_Ticker.CurrentTimeMS());
+                actor.Tick(m_TimeTicker.CurrentTimeMS(), m_ThinkTicker.CurrentTimeMS());
             }
+        }
+
+        public void BeginTicking()
+        {
+            m_Ticking = true;
+            m_TimeTicker.ResetTime();
+            m_ThinkTicker.ResetTime();
+        }
+
+        public void PauseTicking()
+        {
+            m_Ticking = false;
+        }
+
+        public void ResumeTicking()
+        {
+            m_Ticking = true;
+        }
+
+        public void StopTicking()
+        {
+            m_Ticking = false;
         }
 
         #endregion // Ticking
@@ -67,8 +107,11 @@ namespace ProtoAqua.Experiment
 
         protected override void OnRegisterService()
         {
-            m_VariantTablePool = new DynamicPool<VariantTable>(16, (p) => new VariantTable("<ActorCoordinatorPool>"));
+            m_VariantTablePool = new DynamicPool<VariantTable>(16, (p) => new VariantTable());
             m_VariantTablePool.Prewarm();
+
+            m_VariantTablePool.Config.RegisterOnAlloc((p, o) => o.Name = "TempActor");
+            m_VariantTablePool.Config.RegisterOnFree((p, o) => o.Reset());
         }
 
         protected override void OnDeregisterService()

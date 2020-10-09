@@ -27,5 +27,10 @@ namespace ProtoAqua.Experiment
         {
             m_TimeAsDouble += inDeltaTime * m_TimeScale;
         }
+
+        public void ResetTime()
+        {
+            m_TimeAsDouble = 0;
+        }
     }
 }

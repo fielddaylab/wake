@@ -10,7 +10,7 @@
 // {wait 1}
 // {@kevin}    So this is your lab?
 // {@player}   Yup!
-// {@kevin}    ...what's that device in the center?
+// {@kevin}    ...what's that device there?
 // {@player}   No idea.
 // {@kevin}    Okay, so you have {wait 0.3}no{wait 0.3} idea.
 // {@player}   ...Alright, I just know it's supposed to be a lab.
@@ -47,7 +47,7 @@
 
 :: screen.userId.didNotNoteDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, !kevin:experiment.notedTabletDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", !kevin:experiment.notedTabletDamage
 @once
 @cutscene
 {set kevin:experiment.notedTabletDamage = true}
@@ -60,7 +60,7 @@
 
 :: screen.userId.hasNotedDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, kevin:experiment.notedTabletDamage, !seen:partner.help.experiment.screen.userId.didNotNoteDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", kevin:experiment.notedTabletDamage, !seen:partner.help.experiment.screen.userId.didNotNoteDamage
 @once
 @cutscene
 {@kevin}    Looks like there's already someone logged in.

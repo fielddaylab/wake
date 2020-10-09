@@ -12,6 +12,8 @@ namespace ProtoAqua.Experiment
     {
         #region Inspector
 
+        [SerializeField] private float m_MaxEnergy = 100;
+
         #endregion // Inspector
 
         [NonSerialized] private float m_CurrentEnergy = 0;
@@ -20,5 +22,10 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private float m_CurrentFear = 0;
         [NonSerialized] private float m_CurrentDistraction = 0;
+
+        public void Tick(uint inTicks)
+        {
+            
+        }
     }
 }

@@ -105,6 +105,26 @@ namespace ProtoAqua
                 }
             }
 
+            public void Delete(MulticastDelegate inCastedAction)
+            {
+                for(int i = m_Actions.Count - 1; i >= 0; --i)
+                {
+                    ref Handler handler = ref m_Actions[i];
+                    if (handler.Match(inCastedAction))
+                    {
+                        if (m_ExecutionDepth > 0)
+                        {
+                            handler.Delete = true;
+                            m_DeletesQueued = true;
+                        }
+                        else
+                        {
+                            m_Actions.FastRemoveAt(i);
+                        }
+                    }
+                }
+            }
+
             public void Clear()
             {
                 if (m_ExecutionDepth > 0)
@@ -123,8 +143,10 @@ namespace ProtoAqua
                 }
             }
 
-            public void Cleanup()
+            public int Cleanup()
             {
+                int cleanedUpFromDestroy = 0;
+
                 if (m_ExecutionDepth > 0)
                 {
                     m_DeletesQueued = true;
@@ -133,12 +155,17 @@ namespace ProtoAqua
                 {
                     for(int i = m_Actions.Count - 1; i >= 0; --i)
                     {
-                        if (m_Actions[i].ShouldDelete())
+                        bool bindingDestroyed;
+                        if (m_Actions[i].ShouldDelete(out bindingDestroyed))
                         {
+                            if (bindingDestroyed)
+                                ++cleanedUpFromDestroy;
                             m_Actions.FastRemoveAt(i);
                         }
                     }
                 }
+
+                return cleanedUpFromDestroy;
             }
         }
 
@@ -148,6 +175,9 @@ namespace ProtoAqua
             private Action m_Action;
             private Action<object> m_ActionWithContext;
 
+            private MulticastDelegate m_ActionWithCastedContext;
+            private Action<MulticastDelegate, object> m_ActionWithCastedContextCaller;
+
             public bool Delete;
 
             public Handler(Action inAction, UnityEngine.Object inBinding)
@@ -155,6 +185,8 @@ namespace ProtoAqua
                 m_Binding = inBinding;
                 m_Action = inAction;
                 m_ActionWithContext = null;
+                m_ActionWithCastedContext = null;
+                m_ActionWithCastedContextCaller = null;
                 Delete = false;
             }
 
@@ -163,6 +195,18 @@ namespace ProtoAqua
                 m_Binding = inBinding;
                 m_Action = null;
                 m_ActionWithContext = inActionWithContext;
+                m_ActionWithCastedContext = null;
+                m_ActionWithCastedContextCaller = null;
+                Delete = false;
+            }
+
+            private Handler(MulticastDelegate inActionWithCastedContext, Action<MulticastDelegate, object> inActionCaller, UnityEngine.Object inBinding)
+            {
+                m_Binding = inBinding;
+                m_Action = null;
+                m_ActionWithContext = null;
+                m_ActionWithCastedContext = inActionWithCastedContext;
+                m_ActionWithCastedContextCaller = inActionCaller;
                 Delete = false;
             }
 
@@ -181,12 +225,20 @@ namespace ProtoAqua
                 return m_ActionWithContext == inActionWithContext;
             }
 
+            public bool Match(MulticastDelegate inActionWithCastedContext)
+            {
+                return EqualityComparer<MulticastDelegate>.Default.Equals(m_ActionWithCastedContext, inActionWithCastedContext);
+            }
+
             public bool Invoke(object inContext)
             {
-                if (ShouldDelete())
+                bool discard;
+                if (ShouldDelete(out discard))
                     return false;
                 
-                if (m_ActionWithContext != null)
+                if (m_ActionWithCastedContext != null)
+                    m_ActionWithCastedContextCaller(m_ActionWithCastedContext, inContext);
+                else if (m_ActionWithContext != null)
                     m_ActionWithContext(inContext);
                 else if (m_Action != null)
                     m_Action();
@@ -194,9 +246,15 @@ namespace ProtoAqua
                 return !Delete;
             }
 
-            public bool ShouldDelete()
+            public bool ShouldDelete(out bool outReferenceDestroyed)
             {
-                return Delete || m_Binding.IsReferenceDestroyed();
+                outReferenceDestroyed = m_Binding.IsReferenceDestroyed();
+                return Delete || outReferenceDestroyed;
+            }
+
+            static public Handler FromArgumentAction<T>(Action<T> inAction, UnityEngine.Object inBinding)
+            {
+                return new Handler(inAction, CastedInvoke<T>, inBinding);
             }
         }
 
@@ -246,6 +304,22 @@ namespace ProtoAqua
         }
 
         /// <summary>
+        /// Registers an event handler, optionally bound to a given object.
+        /// </summary>
+        public EventService Register<T>(StringHash32 inEventId, Action<T> inActionWithCastedContext, UnityEngine.Object inBinding = null)
+        {
+            HandlerBlock block;
+            if (!m_Handlers.TryGetValue(inEventId, out block))
+            {
+                block = new HandlerBlock();
+                m_Handlers.Add(inEventId, block);
+            }
+            block.Add(Handler.FromArgumentAction<T>(inActionWithCastedContext, inBinding));
+
+            return this;
+        }
+
+        /// <summary>
         /// Deregisters an event handler.
         /// </summary>
         public EventService Deregister(StringHash32 inEventId, Action inAction)
@@ -268,6 +342,20 @@ namespace ProtoAqua
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
                 block.Delete(inActionWithContext);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Deregisters an event handler.
+        /// </summary>
+        public EventService Deregister<T>(StringHash32 inEventId, Action<T> inActionWithCastedContext)
+        {
+            HandlerBlock block;
+            if (m_Handlers.TryGetValue(inEventId, out block))
+            {
+                block.Delete(inActionWithCastedContext);
             }
 
             return this;
@@ -324,9 +412,15 @@ namespace ProtoAqua
         /// </summary>
         public void Cleanup()
         {
+            int cleanedUpFromDestroyed = 0;
             foreach(var block in m_Handlers.Values)
             {
-                block.Cleanup();
+                cleanedUpFromDestroyed += block.Cleanup();
+            }
+
+            if (cleanedUpFromDestroyed > 0)
+            {
+                Debug.LogWarningFormat("[EventService] Cleaned up {0} event listeners whose bindings were destroyed", cleanedUpFromDestroyed);
             }
         }
 
@@ -373,5 +467,10 @@ namespace ProtoAqua
         }
 
         #endregion // IService
+
+        static private void CastedInvoke<T>(MulticastDelegate inDelegate, object inContext)
+        {
+            ((Action<T>) inDelegate).Invoke((T) inContext);
+        }
     }
 }

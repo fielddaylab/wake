@@ -17,40 +17,71 @@ MonoBehaviour:
   m_TankDefs:
   - Tank: 0
     LabelId: experiment.tank.none.label
+    ShortLabelId: 
     Icon: {fileID: -918079985329225978, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: 
   - Tank: 1
     LabelId: experiment.tank.foundational.label
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: 
   - Tank: 2
     LabelId: 
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: player:experiment.unlocked.conditional
   - Tank: 3
     LabelId: 
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: player:experiment.unlocked.choice
   - Tank: 4
     LabelId: 
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: player:experiment.unlocked.speed
-  m_WaterDefs:
+  m_EcoDefs:
   - Id: 
     LabelId: experiment.ecosystem.none.label
+    ShortLabelId: 
     Icon: {fileID: -918079985329225978, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: 
   - Id: default
     LabelId: experiment.ecosystem.default.label
+    ShortLabelId: 
     Icon: {fileID: 5435921867156881161, guid: 8dc5f7a1844dbe8469e7537d956cac48, type: 3}
     Condition: 
   - Id: kelpForest
     LabelId: experiment.ecosystem.kelpForest.label
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: player:discovered.ecosystem.kelpForest
   - Id: everglade
     LabelId: 
+    ShortLabelId: 
     Icon: {fileID: -819448657151061992, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
     Condition: player:discovered.ecosystem.everglade
+  m_ActorDefs:
+  - Id: 
+    LabelId: 
+    ShortLabelId: 
+    Icon: {fileID: -918079985329225978, guid: c1520a959dbea9a4e89c41314ea5a714, type: 3}
+    Condition: 
+  - Id: kelp
+    LabelId: experiment.actor.kelp.label
+    ShortLabelId: 
+    Icon: {fileID: -934795218633191390, guid: e318a8365daac7a4bbb08da2242e7012, type: 3}
+    Condition: 
+  - Id: urchin
+    LabelId: experiment.actor.urchin.label
+    ShortLabelId: 
+    Icon: {fileID: 8284314860745005947, guid: e318a8365daac7a4bbb08da2242e7012, type: 3}
+    Condition: 
+  - Id: seaOtter
+    LabelId: 
+    ShortLabelId: 
+    Icon: {fileID: -470287392025552640, guid: e318a8365daac7a4bbb08da2242e7012, type: 3}
+    Condition: seen-creature:seaOtter
   m_EnabledButtonColor: {r: 1, g: 1, b: 1, a: 1}
   m_DisabledButtonColor: {r: 0, g: 0, b: 0, a: 0.5019608}
+  m_ThinkTickSpacing: 100

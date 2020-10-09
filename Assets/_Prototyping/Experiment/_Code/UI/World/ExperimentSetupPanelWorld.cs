@@ -1,5 +1,7 @@
 using UnityEngine;
 using ProtoCP;
+using System;
+using BeauRoutine;
 
 namespace ProtoAqua.Experiment
 {
@@ -10,7 +12,11 @@ namespace ProtoAqua.Experiment
         [SerializeField] private PointerListener m_Proxy = null;
         [SerializeField] private SpriteAnimator m_Animation = null;
 
+        [SerializeField] private Vector3 m_ExperimentOffset = default(Vector3);
+
         #endregion // Inspector
+
+        [NonSerialized] private Vector3 m_OriginalPosition;
 
         #region Unity Events
 
@@ -20,8 +26,10 @@ namespace ProtoAqua.Experiment
 
             Services.Events.Register(ExperimentEvents.SetupPanelOn, OnPanelOn, this)
                 .Register(ExperimentEvents.SetupPanelOff, OnPanelOff, this)
-                .Register(ExperimentEvents.SetupInitialSubmit, OnSetupSubmit, this)
+                .Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this)
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this);
+
+            m_OriginalPosition = transform.localPosition;
         }
 
         private void OnDestroy()
@@ -41,14 +49,14 @@ namespace ProtoAqua.Experiment
             m_Animation.Restart();
         }
 
-        private void OnSetupSubmit()
+        private void OnExperimentBegin()
         {
-            gameObject.SetActive(false);
+            Routine.Start(this, transform.MoveTo(m_OriginalPosition + m_ExperimentOffset, 0.5f, Axis.XYZ, Space.Self).Ease(Curve.CubeOut));
         }
 
         private void OnExperimentTeardown()
         {
-            gameObject.SetActive(true);
+            transform.localPosition = m_OriginalPosition;
         }
     }
 }

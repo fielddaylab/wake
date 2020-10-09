@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3289614963755835738}
   - component: {fileID: 7588798855290250052}
   - component: {fileID: 7675659673898647955}
+  - component: {fileID: 6879381234148497471}
   - component: {fileID: 6392243174094060075}
   m_Layer: 0
   m_Name: ActorCoordinator
@@ -46,9 +47,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 314ad8bfbad0b2944bb297c0531864ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Ticker: {fileID: 7675659673898647955}
+  m_TimeTicker: {fileID: 7675659673898647955}
+  m_ThinkTicker: {fileID: 6879381234148497471}
   m_Pools: {fileID: 6392243174094060075}
 --- !u!114 &7675659673898647955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5690504099404559817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac18d0d1106be0648874aa35d1f3bee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TimeScale: 1
+--- !u!114 &6879381234148497471
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,7 +88,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc4ceaa05965b7c45a50c1f90aad2ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Pools: []
+  m_Pools:
+  - m_Prefab: {fileID: 7538707802506055080, guid: 88833079e558cbf429654b8764d5143f,
+      type: 3}
+    m_Name: kelp
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 4
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 1
+  - m_Prefab: {fileID: 7538707802506055080, guid: fbda4ffe6a6e44c42844d104ba2713b5,
+      type: 3}
+    m_Name: urchin
+    m_InitialCapacity: 16
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 16
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
   m_PoolRoot: {fileID: 6133645750855071034}
 --- !u!1 &6651932406035407559
 GameObject:

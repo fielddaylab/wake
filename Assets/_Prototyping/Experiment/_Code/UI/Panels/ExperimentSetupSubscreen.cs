@@ -12,6 +12,9 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
+        public virtual void SetData(ExperimentSetupData inData) { }
+        public virtual void Refresh() { }
+
         #region BasePanel
 
         protected override void OnShow(bool inbInstant)

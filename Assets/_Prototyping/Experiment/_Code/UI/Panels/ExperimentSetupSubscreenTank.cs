@@ -17,16 +17,16 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private ExperimentSettings m_CachedSettings;
-        [NonSerialized] private TankToggleButton[] m_CachedButtons;
+        [NonSerialized] private SetupToggleButton[] m_CachedButtons;
 
-        [NonSerialized] private TankSelectionData m_CachedData;
+        [NonSerialized] private ExperimentSetupData m_CachedData;
 
         [NonSerialized] public Action OnSelectContinue;
 
         protected override void Awake()
         {
             m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
-            m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<TankToggleButton>();
+            m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 m_CachedButtons[i].Toggle.group = m_ToggleGroup;
@@ -38,9 +38,16 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
-        public void SetData(TankSelectionData inData)
+        public override void SetData(ExperimentSetupData inData)
         {
+            base.SetData(inData);
             m_CachedData = inData;
+        }
+
+        public override void Refresh()
+        {
+            base.Refresh();
+            UpdateButtons();
         }
 
         private void UpdateButtons()
@@ -55,15 +62,14 @@ namespace ProtoAqua.Experiment
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.gameObject.SetActive(true);
                 
                 if (Services.Data.CheckConditions(tankType.Condition))
                 {
-                    button.Load(tankType, true);
+                    button.Load((int) tankType.Tank, tankType.Icon, true);
                 }
                 else
                 {
-                    button.Load(noneTankType, false);
+                    button.Load((int) noneTankType.Tank, noneTankType.Icon, false);
                 }
 
                 ++buttonIdx;
@@ -71,7 +77,7 @@ namespace ProtoAqua.Experiment
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(noneTankType, false);
+                m_CachedButtons[buttonIdx].Load((int) noneTankType.Tank, noneTankType.Icon, false);
             }
         }
 
@@ -89,7 +95,7 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.Tank = active.GetComponent<TankToggleButton>().Type;
+                m_CachedData.Tank = (TankType) active.GetComponent<SetupToggleButton>().Id.AsInt();
             }
             else
             {

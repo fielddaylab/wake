@@ -16,6 +16,7 @@ namespace ProtoAqua.Experiment
         {
             public TankType Tank;
             public string LabelId;
+            public string ShortLabelId;
             public Sprite Icon;
             public string Condition;
 
@@ -29,6 +30,7 @@ namespace ProtoAqua.Experiment
         {
             public string Id;
             public string LabelId;
+            public string ShortLabelId;
             public Sprite Icon;
             public string Condition;
 
@@ -37,16 +39,34 @@ namespace ProtoAqua.Experiment
             EcoDefinition IKeyValuePair<StringHash32, EcoDefinition>.Value { get { return this; } }
         }
 
+        [Serializable]
+        public class ActorDefinition : IKeyValuePair<StringHash32, ActorDefinition>
+        {
+            public string Id;
+            public string LabelId;
+            public string ShortLabelId;
+            public Sprite Icon;
+            public string Condition;
+
+            StringHash32 IKeyValuePair<StringHash32, ActorDefinition>.Key { get { return Id; } }
+
+            ActorDefinition IKeyValuePair<StringHash32, ActorDefinition>.Value { get { return this; } }
+        }
+
         #endregion // Types
 
         #region Inspector
 
         [SerializeField] private TankDefinition[] m_TankDefs = null;
         [SerializeField, FormerlySerializedAs("m_WaterDefs")] private EcoDefinition[] m_EcoDefs = null;
+        [SerializeField] private ActorDefinition[] m_ActorDefs = null;
 
         [Header("Icon Colors")]
         [SerializeField] private Color m_EnabledButtonColor = Color.white;
         [SerializeField] private Color m_DisabledButtonColor = Color.white;
+        
+        [Header("Timing")]
+        [SerializeField] private uint m_ThinkTickSpacing = 100;
 
         #endregion // Inspector
 
@@ -82,10 +102,28 @@ namespace ProtoAqua.Experiment
             return def;
         }
 
+        public IEnumerable<ActorDefinition> AllNonEmptyActors()
+        {
+            for(int i = 0; i < m_ActorDefs.Length; ++i)
+            {
+                if (!string.IsNullOrEmpty(m_ActorDefs[i].Id))
+                    yield return m_ActorDefs[i];
+            }
+        }
+
+        public ActorDefinition GetActor(StringHash32 inId)
+        {
+            ActorDefinition def;
+            m_ActorDefs.TryGetValue(inId, out def);
+            return def;
+        }
+
         public Color SetupButtonColor(bool inbEnabled)
         {
             return inbEnabled ? m_EnabledButtonColor : m_DisabledButtonColor;
         }
+
+        public uint ThinkSpacing() { return m_ThinkTickSpacing; }
 
         #region TweakAsset
 

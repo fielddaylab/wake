@@ -23,7 +23,8 @@ namespace ProtoAqua.Experiment
         private void Awake()
         {
             Services.Events.Register(ExperimentEvents.SetupInitialSubmit, OnInitialSubmit, this)
-                .Register(ExperimentEvents.ExperimentTeardown, OnTeardown, this);
+                .Register(ExperimentEvents.ExperimentTeardown, OnTeardown, this)
+                .Register(ExperimentEvents.ExperimentBegin, OnBegin);
         }
 
         private void OnDestroy()
@@ -33,21 +34,30 @@ namespace ProtoAqua.Experiment
 
         private void OnInitialSubmit(object inArg)
         {
-            TankSelectionData selectionData = (TankSelectionData) inArg;
+            ExperimentSetupData selectionData = (ExperimentSetupData) inArg;
             ActivateTank(selectionData);
             SetVars(selectionData);
         }
 
+        private void OnBegin()
+        {
+            ExperimentServices.Actors.BeginTicking();
+        }
+
         private void OnTeardown()
         {
+            ExperimentServices.Actors.StopTicking();
+
             foreach(var tank in m_Tanks)
                 tank.Hide();
 
             Services.Data.SetVariable(ExperimentVars.TankType, null);
             Services.Data.SetVariable(ExperimentVars.EcoType, null);
+
+            ExperimentServices.Actors.Pools.ResetAll();
         }
 
-        private void ActivateTank(TankSelectionData inData)
+        private void ActivateTank(ExperimentSetupData inData)
         {
             for(int i = 0; i < m_Tanks.Length; ++i)
             {
@@ -58,7 +68,7 @@ namespace ProtoAqua.Experiment
             Debug.LogErrorFormat("[ExperimentTankSpawner] Unhandled tank selection type {0}+{1}", inData.Tank, inData.EcosystemId.ToDebugString());
         }
 
-        private void SetVars(TankSelectionData inData)
+        private void SetVars(ExperimentSetupData inData)
         {
             Services.Data.SetVariable(ExperimentVars.TankType, inData.Tank.ToString());
             Services.Data.SetVariable(ExperimentVars.EcoType, inData.EcosystemId);
