@@ -1,0 +1,86 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid.default
+
+:: node.invalid.default
+Invalid default
+
+:: node.invalid.1
+Invalid 1
+
+:: node.default
+Hmmm
+
+:: node.intro
+@responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
+So what's going on?
+
+:: node.OtterHelpKelpInquery
+@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+How so?
+
+:: node.OtterEatUrchinInquery
+@responseIds link.UrchinEatKelp
+So why does that help the help?
+
+:: node.UrchinEatKelpInquery
+@responseIds link.OtterEatUrchin
+So what does that have to do with otters?
+
+:: node.end
+Got it! So more otters means less urchins and more kelp!
+
+:: link.OtterHelpKelp
+@tag behavior
+@invalidNodeId node.invalid.1
+@nextNodeId node.intro, node.OtterHelpKelpInquery
+It seems like the otters somehow help the kelp.
+
+
+:: link.OtterEatUrchin
+@tag ecosystem
+@invalidNodeId node.invalid.1
+@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
+@nextNodeId node.UrchinEatKelpInquery, node.end
+Otters eat urchins
+
+:: link.UrchinEatKelp
+@tag ecosystem
+@invalidNodeId node.invalid.1
+@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
+@nextNodeId node.OtterEatUrchinInquery, node.end
+Urchins eat kelp
+
+
+:: node.UrchinsCantSurviveInquery
+@responseIds link.NoUrchins, link.DeadUrchin
+Why not?
+
+:: node.PredatorNode
+@responseIds link.DeadUrchin
+But it could have been a predator or other variable
+
+:: node.BadFinish
+@responseIds link.DeadUrchin
+Ok then.
+
+
+
+:: link.UrchinsCantSurvive
+@tag behavior
+@invalidNodeId node.invalid.1
+@nextNodeId node.intro, node.UrchinsCantSurviveInquery
+Urchins can't survive in this water.
+
+:: link.NoUrchins
+@tag model
+@invalidNodeId node.invalid.1
+@nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
+There were no urchins in the wild env
+
+:: link.DeadUrchin
+@tag model
+@invalidNodeId node.invalid.1
+@nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
+@nextNodeId node.PredatorNode, node.BadFinish
+I dropped an urchin into a tank and it died.
