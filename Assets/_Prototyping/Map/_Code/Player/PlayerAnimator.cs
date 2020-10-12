@@ -69,13 +69,13 @@ public class PlayerAnimator : MonoBehaviour {
             while(isBobbing) {
                 //TODO change order of this, based on Z position?
                 yield return boatRenderer.MoveTo(0f,2f, Axis.Z).Ease(Curve.Smooth);
-                yield return boatRenderer.MoveTo(-1f,2f, Axis.Z).Ease(Curve.Smooth);
+                yield return boatRenderer.MoveTo(-.5f,2f, Axis.Z).Ease(Curve.Smooth);
             }
         }
 
         
         private IEnumerator DrivingRoutine() {
-            yield return boatRenderer.MoveTo(-1f,2f, Axis.Z).Ease(Curve.Smooth);
+            yield return boatRenderer.MoveTo(-.5f,2f, Axis.Z).Ease(Curve.Smooth);
         }
     }
 }
