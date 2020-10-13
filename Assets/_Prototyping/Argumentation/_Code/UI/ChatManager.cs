@@ -60,7 +60,12 @@ namespace ProtoAqua.Argumentation
                 .childAlignment = TextAnchor.UpperRight;
 
             string linkId = response.GetComponent<ChatBubble>().id;
+            string linkTag = response.GetComponent<ChatBubble>().linkTag;
+
+
             Routine.Start(ScrollRoutine(linkId, response));
+
+            
         }
 
         // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
@@ -141,11 +146,22 @@ namespace ProtoAqua.Argumentation
 
             yield return m_ScrollTime;
             RespondWithNextNode(linkId, response);
+            UpdateButtonList(linkId);
+
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
             m_InputRaycasterLayer.ClearOverride();
         }
+
+        private void UpdateButtonList(string linkId) {
+            Link currentLink = m_Graph.FindLink(linkId);
+            if(currentLink.Tag == "claim") {
+                m_LinkManager.SelectClaim(linkId);
+            }
+        }
+
+        
     }
 }

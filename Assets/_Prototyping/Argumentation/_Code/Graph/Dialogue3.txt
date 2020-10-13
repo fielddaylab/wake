@@ -3,16 +3,18 @@
 # defaultInvalidNodeId node.invalid.default
 
 :: node.invalid.default
-Invalid default
+Hmmm I'm not so sure that's right.
 
 :: node.invalid.1
-Invalid 1
+I don't think that makes sense here.
+
 
 :: node.default
 Hmmm
 
 :: node.intro
 @responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
+@invalidNodeId node.invalid.default
 So what's going on?
 
 :: node.OtterHelpKelpInquery
@@ -31,25 +33,33 @@ So what does that have to do with otters?
 Got it! So more otters means less urchins and more kelp!
 
 :: link.OtterHelpKelp
-@tag behavior
+@tag claim
 @invalidNodeId node.invalid.1
 @nextNodeId node.intro, node.OtterHelpKelpInquery
 It seems like the otters somehow help the kelp.
 
 
 :: link.OtterEatUrchin
-@tag ecosystem
+@tag behavior
 @invalidNodeId node.invalid.1
 @nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
 @nextNodeId node.UrchinEatKelpInquery, node.end
 Otters eat urchins
 
 :: link.UrchinEatKelp
-@tag ecosystem
+@tag behavior
 @invalidNodeId node.invalid.1
 @nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
 @nextNodeId node.OtterEatUrchinInquery, node.end
 Urchins eat kelp
+
+
+:: link.OttersDontEatKelp
+@tag behavior
+@invalidNodeId node.invalid.1
+@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
+@nextNodeId node.UrchinEatKelpInquery, node.end
+Otters don't eat kelp.
 
 
 :: node.UrchinsCantSurviveInquery
@@ -67,13 +77,13 @@ Ok then.
 
 
 :: link.UrchinsCantSurvive
-@tag behavior
+@tag claim
 @invalidNodeId node.invalid.1
 @nextNodeId node.intro, node.UrchinsCantSurviveInquery
 Urchins can't survive in this water.
 
 :: link.NoUrchins
-@tag model
+@tag ecosystem
 @invalidNodeId node.invalid.1
 @nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
 There were no urchins in the wild env
@@ -84,3 +94,4 @@ There were no urchins in the wild env
 @nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
 @nextNodeId node.PredatorNode, node.BadFinish
 I dropped an urchin into a tank and it died.
+

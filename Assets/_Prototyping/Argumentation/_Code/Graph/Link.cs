@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BeauUtil.Blocks;
 
+
 namespace ProtoAqua.Argumentation
 {
     public class Link : GraphData
@@ -77,6 +78,7 @@ namespace ProtoAqua.Argumentation
 
         public void InitializeLink()
         {
+            
             ParseNextNodeIds(m_InNextNodeIds);
 
             if (m_Conditions != null)
@@ -85,6 +87,7 @@ namespace ProtoAqua.Argumentation
             }
 
             Index = ++count;
+           
         }
 
         // Given a node id, return the respsective node id that this link connects it to
@@ -109,6 +112,7 @@ namespace ProtoAqua.Argumentation
 
         private void ParseConditions(string inConditions)
         {
+             
             string[] conditions = inConditions.Split(',');
 
             foreach (string condition in conditions)

@@ -12,6 +12,7 @@ namespace ProtoAqua.Argumentation
         // Ids
         [BlockMeta("defaultNodeId")] private string m_DefaultNodeId = "node.default";
         [BlockMeta("responseIds")] private string m_ResponseIds = null;
+        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = "node.default";
 
         // Text
         [BlockContent] private string m_DisplayText = null;

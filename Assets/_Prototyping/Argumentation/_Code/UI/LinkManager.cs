@@ -18,11 +18,14 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private DropSlot m_DropSlot = null;
 
         [Header("Button Dependencies")]
+        [SerializeField] private GameObject m_TagButtons = null;
         [SerializeField] private Button m_BehaviorsButton = null;
         [SerializeField] private Button m_EcosystemsButton = null;
         [SerializeField] private Button m_ModelsButton = null;
 
         private List<GameObject> responses = new List<GameObject>();
+        private string currentClaim = "";
+        private bool claimSelected = false;
 
         private void Start() 
         {
@@ -39,7 +42,9 @@ namespace ProtoAqua.Argumentation
                CreateLink(currLink);
             }
 
-            ToggleTabs("behavior");
+            //Show claims and hide rest of the tabs
+            ToggleTabs("claim");
+            HideTabs();
         }
 
         // Reset a given response once used. If the response isn't placed in the chat,
@@ -94,6 +99,20 @@ namespace ProtoAqua.Argumentation
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+        }
+        
+        public void SelectClaim(string linkId) {
+            currentClaim = linkId;
+            ShowTabs();
+            ToggleTabs("behavior");
+        }        
+
+        private void HideTabs() {
+            m_TagButtons.SetActive(false);
+        }
+
+        private void ShowTabs() {
+            m_TagButtons.SetActive(true);
         }
     }
 }
