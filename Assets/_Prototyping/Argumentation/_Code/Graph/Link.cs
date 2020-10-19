@@ -103,6 +103,7 @@ namespace ProtoAqua.Argumentation
 
         private void ParseNextNodeIds(List<string> inNextNodeIds)
         {
+            nextNodeIds = new Dictionary<string, string>();
             foreach (string ids in inNextNodeIds)
             {
                 string[] parsedIds = ids.Split(',');

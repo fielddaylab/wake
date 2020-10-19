@@ -102,6 +102,19 @@ namespace ProtoAqua.Argumentation
                 // If the response is valid, remove it from the player's available responses
                 m_LinkManager.RemoveResponse(response);
             }
+
+            if(nextNode.NextNodeId != null) {
+                RespondWithAnotherNode(nextNode.NextNodeId);
+            }
+        }
+
+        private void RespondWithAnotherNode(string nextNodeId) {
+            Node nextNode = m_Graph.FindNode(nextNodeId);
+            // Create the node bubble, and set its properties
+            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
+            newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
 
         // Checks if conditions for the next node are met. If not, create and respond with

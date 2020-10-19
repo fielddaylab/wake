@@ -87,9 +87,9 @@ namespace ProtoAqua.Argumentation
             else
             {
                 // If id isn't valid, display invalid fact node
-                if (response.InvalidNodeId != null)
+                if (currentNode.InvalidNodeId != null)
                 {
-                    return FindNode(response.InvalidNodeId);
+                    return FindNode(currentNode.InvalidNodeId);
                 }
 
                 return FindNode(defaultInvalidNodeId);

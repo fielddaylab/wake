@@ -8,47 +8,80 @@ Hmmm I'm not so sure that's right.
 :: node.invalid.1
 I don't think that makes sense here.
 
+:: node.invalid.OtterKelp
+@nextNodeId node.OtterHelpKelpContinue
+I don't think that explains why Otters help the kelp.
+
+:: node.invalid.Kelp
+@nextNodeId node.OtterHelpKelpContinue
+That is not why the otters help the kelp.
+
+:: node.invalid.Otter
+@nextNodeId node.OtterContinue
+That is not the right answer.
+
+:: node.invalid.DeadUrchin
+@nextNodeId node.DeadUrchinContinue
+I don't think this explains why urchins can't survive in this water.
+
+:: node.DeadUrchinContinue
+Why can urchins not survive in this water?
+
+
 
 :: node.default
 Hmmm
 
+:: node.OtterHelpKelpContinue
+@invalidNodeId node.invalid.Kelp
+@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+Do you have any other evidence for how Otters help the kelp?
+
+:: node.OtterContinue
+@invalidNodeId node.invalid.Otter
+@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+So what does that have to do with otters?
+
 :: node.intro
 @responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
-@invalidNodeId node.invalid.default
 So what's going on?
 
 :: node.OtterHelpKelpInquery
+@invalidNodeId node.invalid.OtterKelp
 @responseIds link.OtterEatUrchin, link.UrchinEatKelp
 How so?
 
 :: node.OtterEatUrchinInquery
+@invalidNodeId node.invalid.Kelp
 @responseIds link.UrchinEatKelp
-So why does that help the help?
+So why does that help the kelp?
 
 :: node.UrchinEatKelpInquery
+@invalidNodeId node.invalid.Otter
 @responseIds link.OtterEatUrchin
 So what does that have to do with otters?
+
+:: node.FakePath
+Okay, that makes sense, not quite what I am looking for.
+
 
 :: node.end
 Got it! So more otters means less urchins and more kelp!
 
 :: link.OtterHelpKelp
 @tag claim
-@invalidNodeId node.invalid.1
 @nextNodeId node.intro, node.OtterHelpKelpInquery
 It seems like the otters somehow help the kelp.
 
 
 :: link.OtterEatUrchin
 @tag behavior
-@invalidNodeId node.invalid.1
 @nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
 @nextNodeId node.UrchinEatKelpInquery, node.end
 Otters eat urchins
 
 :: link.UrchinEatKelp
 @tag behavior
-@invalidNodeId node.invalid.1
 @nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
 @nextNodeId node.OtterEatUrchinInquery, node.end
 Urchins eat kelp
@@ -56,13 +89,12 @@ Urchins eat kelp
 
 :: link.OttersDontEatKelp
 @tag behavior
-@invalidNodeId node.invalid.1
-@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
-@nextNodeId node.UrchinEatKelpInquery, node.end
+@nextNodeId node.OtterHelpKelpInquery, node.FakePath
 Otters don't eat kelp.
 
 
 :: node.UrchinsCantSurviveInquery
+@invalidNodeId node.invalid.DeadUrchin
 @responseIds link.NoUrchins, link.DeadUrchin
 Why not?
 
@@ -72,25 +104,22 @@ But it could have been a predator or other variable
 
 :: node.BadFinish
 @responseIds link.DeadUrchin
-Ok then.
+Ok then. Maybe try a new claim?
 
 
 
 :: link.UrchinsCantSurvive
 @tag claim
-@invalidNodeId node.invalid.1
 @nextNodeId node.intro, node.UrchinsCantSurviveInquery
 Urchins can't survive in this water.
 
 :: link.NoUrchins
 @tag ecosystem
-@invalidNodeId node.invalid.1
 @nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
 There were no urchins in the wild env
 
 :: link.DeadUrchin
 @tag model
-@invalidNodeId node.invalid.1
 @nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
 @nextNodeId node.PredatorNode, node.BadFinish
 I dropped an urchin into a tank and it died.
