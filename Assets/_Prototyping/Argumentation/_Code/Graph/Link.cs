@@ -20,6 +20,8 @@ namespace ProtoAqua.Argumentation
         // Properties
         [BlockMeta("tag")] private string m_Tag = null;
         [BlockMeta("conditions")] private string m_Conditions = null;
+        [BlockMeta("type")] private string m_Type = null;
+
 
         // Ids
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
@@ -46,6 +48,11 @@ namespace ProtoAqua.Argumentation
         {
             get { return m_Tag; }
         }
+        public string Type
+        {
+            get { return m_Type; }
+        }
+
 
         public string InvalidNodeId
         {

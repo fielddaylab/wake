@@ -19,6 +19,7 @@ namespace ProtoAqua.Argumentation
 
         public string id { get; set; }
         public string linkTag { get; set; }
+        public string typeTag { get; set; } //Organizes each bubble within the center tab
 
         private DraggableObject draggableObject = null;
 
@@ -32,6 +33,8 @@ namespace ProtoAqua.Argumentation
             {
                 draggableObject.endDrag = EndDrag;
             }
+
+           
         }
 
         public void ChangeColor(Color color)
@@ -45,10 +48,11 @@ namespace ProtoAqua.Argumentation
             dropSlot = inDropSlot;
         }
 
-        public void InitializeLinkData(string inId, string inTag, string inDisplayText)
+        public void InitializeLinkData(string inId, string inTag, string inType, string inDisplayText)
         {
             id = inId;
             linkTag = inTag;
+            typeTag = inType;
             displayText.SetText(inDisplayText);
         }
 

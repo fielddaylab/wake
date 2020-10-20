@@ -16,6 +16,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private GameObject m_LinkContainer = null;
         [SerializeField] private LinkPool m_LinkPool = null;
         [SerializeField] private DropSlot m_DropSlot = null;
+        [SerializeField] private TypeManager m_TypeManager = null;
 
         [Header("Button Dependencies")]
         [SerializeField] private GameObject m_TagButtons = null;
@@ -44,6 +45,8 @@ namespace ProtoAqua.Argumentation
 
             //Show claims and hide rest of the tabs
             ToggleTabs("claim");
+            ToggleType("claim");
+            m_TypeManager.SetupTagButtons(responses);
             HideTabs();
         }
 
@@ -69,12 +72,28 @@ namespace ProtoAqua.Argumentation
             responses.Remove(gameObject);
         }
 
+        public void ToggleType(string type) {
+            foreach (GameObject gameObject in responses) 
+            {
+                ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
+
+                if (chatBubble.typeTag.Equals(type)) 
+                {
+                    gameObject.SetActive(true);
+                }
+                else 
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+        }
+
         // Allocate a new link from the pool and initialize its fields based on data from the graph
         private void CreateLink(Link link) 
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
             newLink.InitializeLinkDependencies(this, m_DropSlot);
-            newLink.InitializeLinkData(link.Id, link.Tag, link.DisplayText);
+            newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
             
             newLink.transform.SetSiblingIndex(link.Index);
             
@@ -84,19 +103,22 @@ namespace ProtoAqua.Argumentation
         // Show responses with a given tag and hide all other responses
         private void ToggleTabs(string tagToShow) 
         {
-            foreach (GameObject gameObject in responses) 
-            {
-                ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
+            // foreach (GameObject gameObject in responses) 
+            // {
+            //     ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
 
-                if (chatBubble.linkTag.Equals(tagToShow)) 
-                {
-                    gameObject.SetActive(true);
-                }
-                else 
-                {
-                    gameObject.SetActive(false);
-                }
-            }
+            //     if (chatBubble.linkTag.Equals(tagToShow)) 
+            //     {
+                   
+            //         gameObject.SetActive(true);
+            //     }
+            //     else 
+            //     {
+            //         gameObject.SetActive(false);
+            //     }
+            // }
+
+            m_TypeManager.ToggleButtons(tagToShow);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
         }
@@ -105,6 +127,7 @@ namespace ProtoAqua.Argumentation
             currentClaim = linkId;
             ShowTabs();
             ToggleTabs("behavior");
+            ToggleType("asdf");
         }        
 
         private void HideTabs() {
