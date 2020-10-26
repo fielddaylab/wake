@@ -14,6 +14,8 @@ namespace ProtoAqua.Argumentation {
 
         [SerializeField] private Button m_OtterButton = null;
         [SerializeField] private Button m_UrchinButton = null;
+        [SerializeField] private Button m_WaterButton = null;
+
 
 
         Dictionary<string,bool> typeList = new Dictionary<string, bool>();
@@ -23,7 +25,7 @@ namespace ProtoAqua.Argumentation {
         {
             m_OtterButton.onClick.AddListener(() => ToggleType("otter"));
             m_UrchinButton.onClick.AddListener(() => ToggleType("urchin"));
-
+            m_WaterButton.onClick.AddListener(() => ToggleType("water"));
         }
 
         // Update is called once per frame
@@ -53,8 +55,7 @@ namespace ProtoAqua.Argumentation {
         }
 
         public void SetupTagButtons(List<GameObject> responses) {
-            foreach (GameObject gameObject in responses) 
-            {
+            foreach (GameObject gameObject in responses) {
                 string typeTag = gameObject.GetComponent<ChatBubble>().typeTag;
                 bool value = false;
                 if(!typeList.TryGetValue(typeTag, out value)) {

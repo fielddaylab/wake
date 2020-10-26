@@ -21,11 +21,12 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("tag")] private string m_Tag = null;
         [BlockMeta("conditions")] private string m_Conditions = null;
         [BlockMeta("type")] private string m_Type = null;
-
+        [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Ids
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
         [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
+        
         [BlockMeta("nextNodeId")]
         private void AddNextNodeIds(string line)
         {
@@ -42,6 +43,11 @@ namespace ProtoAqua.Argumentation
         public string DisplayText
         {
             get { return m_DisplayText; }
+        }
+
+        public string ShortenedText
+        {
+            get { return m_ShortenedText; }
         }
 
         public string Tag

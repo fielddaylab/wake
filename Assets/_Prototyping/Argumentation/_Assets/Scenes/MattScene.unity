@@ -720,6 +720,18 @@ RectTransform:
   m_AnchoredPosition: {x: -478.6, y: -250}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &409768013 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6410112876746750549, guid: b2dc5009f96ee3149aa38f38590a79ba,
+    type: 3}
+  m_PrefabInstance: {fileID: 649415927}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &431715853
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,9 +1240,7 @@ PrefabInstance:
     - target: {fileID: 9045329573618519153, guid: b2dc5009f96ee3149aa38f38590a79ba,
         type: 3}
       propertyPath: m_text
-      value: '@Behavior
-
-'
+      value: Urchins
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2dc5009f96ee3149aa38f38590a79ba, type: 3}
@@ -1436,7 +1446,7 @@ PrefabInstance:
     - target: {fileID: 9045329573618519153, guid: b2dc5009f96ee3149aa38f38590a79ba,
         type: 3}
       propertyPath: m_text
-      value: '@Ecosystem1
+      value: 'Water
 
 '
       objectReference: {fileID: 0}
@@ -2069,6 +2079,41 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96ad8e0c3aa2517488b27f20f2837508, type: 3}
+--- !u!1 &937488325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 937488326}
+  m_Layer: 5
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &937488326
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937488325}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2099750105}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1026477174
 GameObject:
   m_ObjectHideFlags: 0
@@ -2730,6 +2775,7 @@ RectTransform:
   - {fileID: 442709797}
   - {fileID: 1668708151}
   - {fileID: 444066272}
+  - {fileID: 937488326}
   m_Father: {fileID: 1155153774}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2756,6 +2802,7 @@ MonoBehaviour:
   m_ModelButtons: {fileID: 444066271}
   m_OtterButton: {fileID: 1133490994}
   m_UrchinButton: {fileID: 236323666}
+  m_WaterButton: {fileID: 409768013}
 --- !u!1001 &2109409369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3104,7 +3151,7 @@ PrefabInstance:
     - target: {fileID: 9045329573618519153, guid: b2dc5009f96ee3149aa38f38590a79ba,
         type: 3}
       propertyPath: m_text
-      value: '@Behavior1
+      value: 'Otters
 
 '
       objectReference: {fileID: 0}

@@ -40,6 +40,7 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary) 
             {
                Link currLink = link.Value;
+               Debug.Log("VALUE of " + currLink.Id + " " + currLink.ShortenedText);
                CreateLink(currLink);
             }
 
@@ -92,8 +93,14 @@ namespace ProtoAqua.Argumentation
         private void CreateLink(Link link) 
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
-            newLink.InitializeLinkDependencies(this, m_DropSlot);
-            newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
+            newLink.InitializeLinkDependencies(this, m_DropSlot, m_Graph);
+
+            //TODO remove this check, temporary
+            if(link.ShortenedText != null) {
+                 newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.ShortenedText);
+            } else {
+                newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
+            }
             
             newLink.transform.SetSiblingIndex(link.Index);
             

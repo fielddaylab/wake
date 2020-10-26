@@ -16,6 +16,8 @@ namespace ProtoAqua.Argumentation
 
         private LinkManager linkManager = null;
         private DropSlot dropSlot = null;
+        private Graph graph = null;
+        
 
         public string id { get; set; }
         public string linkTag { get; set; }
@@ -42,10 +44,11 @@ namespace ProtoAqua.Argumentation
             bubbleImage.color = color;
         }
 
-        public void InitializeLinkDependencies(LinkManager inLinkManager, DropSlot inDropSlot)
+        public void InitializeLinkDependencies(LinkManager inLinkManager, DropSlot inDropSlot, Graph inGraph)
         {
             linkManager = inLinkManager;
             dropSlot = inDropSlot;
+            graph = inGraph;
         }
 
         public void InitializeLinkData(string inId, string inTag, string inType, string inDisplayText)
@@ -54,6 +57,11 @@ namespace ProtoAqua.Argumentation
             linkTag = inTag;
             typeTag = inType;
             displayText.SetText(inDisplayText);
+        }
+
+        public void SetLongText() {
+            Link currLink = graph.FindLink(id);
+            displayText.SetText(currLink.DisplayText);
         }
 
         public void InitializeNodeData(string inId, string inDisplayText)

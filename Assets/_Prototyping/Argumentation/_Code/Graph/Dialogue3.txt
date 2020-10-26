@@ -114,13 +114,19 @@ Ok then. Maybe try a new claim?
 
 :: link.UrchinsCantSurvive
 @tag claim
-@type Water
+@type claim
 @nextNodeId node.intro, node.UrchinsCantSurviveInquery
 Urchins can't survive in this water.
 
+:: link.WaterTooCold
+@tag ecosystem
+@type water
+@shortenedText Water < 50
+The water was less than 50 degrees, so the urchins died.
+
 :: link.NoUrchins
 @tag ecosystem
-@type Water
+@type water
 @nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
 There were no urchins in the wild env
 

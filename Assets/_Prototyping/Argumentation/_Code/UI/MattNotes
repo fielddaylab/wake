@@ -2,13 +2,23 @@ Notes for working
 
 Add a timer for NPC responding with multiple nodes
 
-Add the ability for a node to not count as previous node, will allow invalid repsonses, but not make them "invalid"?
-
-Maybe add way to combine invalid? if a link has a invalid use it? Not sure
-
 Split up dialogue into different files?
 -nodes
 -links
 Format them better? Difficult to understand currently
 
 Add a "Claim ID" to only show relevant evidence to one claim?
+
+
+@TODO Change Implementation of draggable objects. Change to just clicking the chat bubble, this will simplify lengenthing text too.
+
+
+
+Notes for Type Implementation:
+https://github.com/fielddaylab/aqualab/blob/review/prototypes/Assets/_Prototyping/Experiment/_Code/ExperimentSettings.cs
+ActorDefinition
+
+Pool, use deactivated for default root
+And reset transform on Alloc
+
+Reset pool on switch tabs
