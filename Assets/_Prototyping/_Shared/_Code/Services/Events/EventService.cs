@@ -487,9 +487,6 @@ namespace ProtoAqua
         {
             m_CleanupRoutine.Replace(this, MaintenanceRoutine());
             SceneHelper.OnSceneLoaded += OnSceneLoad;
-
-            int size = System.Runtime.InteropServices.Marshal.SizeOf<ContextCallback>();
-            Debug.LogFormat("sizeof(ActionCallback)={0}", size);
         }
 
         protected override void OnDeregisterService()
