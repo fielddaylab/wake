@@ -10,104 +10,98 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 652f3d4ec52d3d048a206e8136663bd7, type: 3}
-  m_Name: Urchin
+  m_Name: Algae
   m_EditorClassIdentifier: 
   m_Id:
-    m_Value: 1431454536
-  m_ScriptName: Urchin
-  m_Flags: 2
+    m_Value: 1095518021
+  m_ScriptName: Algae
+  m_Flags: 3
   m_MaxActors: 300
   m_ResourceRequirements:
     DesiredResources:
     - ResourceId:
-        m_Value: 1179602756
-      BaseValue: 8
+        m_Value: 1129263616
+      BaseValue: 3
+      MassValue: 0
+      Qualitative:
+        Low: 1
+        Medium: 3
+        High: 5
+    DesiredProperties:
+    - PropertyId:
+        m_Value: 1279739988
+      Comparison: 3
+      BaseValue: 30
       MassValue: 0
       Qualitative:
         Low: 0
-        Medium: 0
-        High: 0
-    - ResourceId:
-        m_Value: 1331190087
-      BaseValue: 5
-      MassValue: 0
-      Qualitative:
-        Low: 1
-        Medium: 5
-        High: 10
-    DesiredProperties: []
+        Medium: 30
+        High: 60
     ProducingResources:
     - ResourceId:
-        m_Value: 1129263616
-      BaseValue: 5
+        m_Value: 1331190087
+      BaseValue: 3
       MassValue: 0
       Qualitative:
         Low: 1
-        Medium: 5
-        High: 10
+        Medium: 3
+        High: 5
   m_EatingSettings:
-    EdibleActors:
-    - ActorType:
-        m_Value: 1262832720
-      Rate: 1
-      Qualitative:
-        Low: 0.5
-        Medium: 1
-        High: 2
-    BaseEatSize: 2
+    EdibleActors: []
+    BaseEatSize: 0
     MassEatSize: 0
-    MaxSizeMultiplier: 1
+    MaxSizeMultiplier: 0
   m_GrowthSettings:
-    StartingMass: 10
-    MaxMass: 10
+    StartingMass: 0
+    MaxMass: 0
     Interval: 0
     MinGrowth: 0
     QualitativeInterval:
-      Low: 1
-      Medium: 4
-      High: 7
+      Low: 0
+      Medium: 0
+      High: 0
     ImprovedGrowthResourceThresholds: []
     ImprovedGrowthPropertyThresholds: []
     ImprovedGrowth: 0
   m_ReproductionSettings:
-    Interval: 4
-    Count: 1
+    Interval: 0
+    Count: 0
     QualitativeInterval:
-      Low: 1
-      Medium: 4
-      High: 7
+      Low: 0
+      Medium: 0
+      High: 0
     MinAge: 0
     MinMass: 0
     ResourceThresholds: []
     PropertyThresholds: []
     MinActorMass:
       Id:
-        m_Value: 1262832720
-      Count: 25
+        m_Value: 0
+      Count: 0
   m_DeathSettings:
-    Age: 7
+    Age: 0
     QualitativeAge:
-      Low: 4
-      Medium: 7
-      High: 10
+      Low: 0
+      Medium: 0
+      High: 0
     ResourceStarvation:
     - Id:
-        m_Value: 1331190087
-      Value: 1
-    - Id:
-        m_Value: 1179602756
+        m_Value: 1129263616
       Value: 2
-    PropertyStarvation: []
+    PropertyStarvation:
+    - Id:
+        m_Value: 1279739988
+      Value: 2
     MassAgeThreshold: 0
     Mass: 0
   m_ConfigSettings:
-    SoftCap: 200
-    Increment: 10
+    SoftCap: 0
+    Increment: 0
   m_DisplaySettings:
     Image: {fileID: 0}
-    MassScale: 5
-    Color: {r: 0.38278383, g: 0.16353686, b: 0.46226418, a: 1}
-    DisplayPopulation: 1
+    MassScale: 0
+    Color: {r: 1, g: 1, b: 1, a: 1}
+    DisplayPopulation: 0
     DisplayMass: 0
   m_ExtraData:
     m_Fields: []

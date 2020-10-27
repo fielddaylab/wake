@@ -11,6 +11,7 @@ namespace ProtoAqua.Energy
         }
 
         static public readonly FourCC KelpForest = Register("KLPF", "Kelp Forest");
+        static public readonly FourCC CoralReef = Register("CLRF", "Coral Reef");
     }
 
     public sealed class EnvironmentTypeIdAttribute : FourCCSelectorAttribute
