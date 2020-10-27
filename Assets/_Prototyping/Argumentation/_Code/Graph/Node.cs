@@ -12,6 +12,8 @@ namespace ProtoAqua.Argumentation
         // Ids
         [BlockMeta("defaultNodeId")] private string m_DefaultNodeId = "node.default";
         [BlockMeta("responseIds")] private string m_ResponseIds = null;
+        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
+        [BlockMeta("nextNodeId")] private string m_NextNodeId = null;
 
         // Text
         [BlockContent] private string m_DisplayText = null;
@@ -33,6 +35,15 @@ namespace ProtoAqua.Argumentation
         public List<string> Responses
         {
             get { return responses; }
+        }
+
+        public string InvalidNodeId
+        {
+            get { return m_InvalidNodeId; }
+        }
+        public string NextNodeId
+        {
+            get { return m_NextNodeId; }
         }
 
         #endregion // Accessors

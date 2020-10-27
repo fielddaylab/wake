@@ -2,6 +2,7 @@
 using BeauUtil.Blocks;
 using UnityEngine.Scripting;
 
+
 namespace ProtoAqua.Argumentation
 {
     public class Link : GraphData
@@ -20,6 +21,8 @@ namespace ProtoAqua.Argumentation
         // Properties
         [BlockMeta("tag")] private string m_Tag = null;
         [BlockMeta("conditions")] private string m_Conditions = null;
+        [BlockMeta("type")] private string m_Type = null;
+        [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Ids
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
@@ -42,10 +45,20 @@ namespace ProtoAqua.Argumentation
             get { return m_DisplayText; }
         }
 
+        public string ShortenedText
+        {
+            get { return m_ShortenedText; }
+        }
+
         public string Tag
         {
             get { return m_Tag; }
         }
+        public string Type
+        {
+            get { return m_Type; }
+        }
+
 
         public string InvalidNodeId
         {
@@ -78,6 +91,7 @@ namespace ProtoAqua.Argumentation
 
         public void InitializeLink()
         {
+            
             ParseNextNodeIds(m_InNextNodeIds);
 
             if (m_Conditions != null)
@@ -86,6 +100,7 @@ namespace ProtoAqua.Argumentation
             }
 
             Index = ++count;
+           
         }
 
         // Given a node id, return the respsective node id that this link connects it to
@@ -101,6 +116,7 @@ namespace ProtoAqua.Argumentation
 
         private void ParseNextNodeIds(List<string> inNextNodeIds)
         {
+            nextNodeIds = new Dictionary<string, string>();
             foreach (string ids in inNextNodeIds)
             {
                 string[] parsedIds = ids.Split(',');
@@ -110,6 +126,7 @@ namespace ProtoAqua.Argumentation
 
         private void ParseConditions(string inConditions)
         {
+             
             string[] conditions = inConditions.Split(',');
 
             foreach (string condition in conditions)

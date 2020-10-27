@@ -27,6 +27,8 @@ namespace ProtoAqua.Argumentation
 
             if (eventData.pointerDrag != null)
             {
+                //@TODO Change the implementation of this (Will remove draggable objects and this will change)
+                eventData.pointerDrag.gameObject.GetComponent<ChatBubble>().SetLongText();
                 onDroppedRoutine.Replace(this, OnDroppedRoutine(eventData.pointerDrag.gameObject));
             }
         }

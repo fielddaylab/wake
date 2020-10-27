@@ -314,6 +314,18 @@ namespace ProtoAudio
         private void OnGlobalSceneLoaded(SceneBinding inScene, object inContext)
         {
             UnloadUnusedPackages();
+
+            List<AudioListener> otherListeners = new List<AudioListener>(1);
+            inScene.Scene.GetAllComponents<AudioListener>(otherListeners);
+
+            if (otherListeners.Count > 0)
+            {
+                Debug.LogWarningFormat("[AudioMgr] Discovered {0} other AudioListeners in the scene. Please delete them as soon as possible.", otherListeners.Count);
+                foreach(var listener in otherListeners)
+                {
+                    GameObject.Destroy(listener);
+                }
+            }
         }
 
         #endregion // Callbacks

@@ -16,13 +16,17 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private GameObject m_LinkContainer = null;
         [SerializeField] private LinkPool m_LinkPool = null;
         [SerializeField] private DropSlot m_DropSlot = null;
+        [SerializeField] private TypeManager m_TypeManager = null;
 
         [Header("Button Dependencies")]
+        [SerializeField] private GameObject m_TagButtons = null;
         [SerializeField] private Button m_BehaviorsButton = null;
         [SerializeField] private Button m_EcosystemsButton = null;
         [SerializeField] private Button m_ModelsButton = null;
 
         private List<GameObject> responses = new List<GameObject>();
+        private string currentClaim = "";
+        private bool claimSelected = false;
 
         private void Start() 
         {
@@ -36,10 +40,15 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary) 
             {
                Link currLink = link.Value;
+               Debug.Log("VALUE of " + currLink.Id + " " + currLink.ShortenedText);
                CreateLink(currLink);
             }
 
-            ToggleTabs("behavior");
+            //Show claims and hide rest of the tabs
+            ToggleTabs("claim");
+            ToggleType("claim");
+            m_TypeManager.SetupTagButtons(responses);
+            HideTabs();
         }
 
         // Reset a given response once used. If the response isn't placed in the chat,
@@ -64,12 +73,34 @@ namespace ProtoAqua.Argumentation
             responses.Remove(gameObject);
         }
 
+        public void ToggleType(string type) {
+            foreach (GameObject gameObject in responses) 
+            {
+                ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
+
+                if (chatBubble.typeTag.Equals(type)) 
+                {
+                    gameObject.SetActive(true);
+                }
+                else 
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+        }
+
         // Allocate a new link from the pool and initialize its fields based on data from the graph
         private void CreateLink(Link link) 
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
-            newLink.InitializeLinkDependencies(this, m_DropSlot);
-            newLink.InitializeLinkData(link.Id, link.Tag, link.DisplayText);
+            newLink.InitializeLinkDependencies(this, m_DropSlot, m_Graph);
+
+            //TODO remove this check, temporary
+            if(link.ShortenedText != null) {
+                 newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.ShortenedText);
+            } else {
+                newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
+            }
             
             newLink.transform.SetSiblingIndex(link.Index);
             
@@ -79,21 +110,39 @@ namespace ProtoAqua.Argumentation
         // Show responses with a given tag and hide all other responses
         private void ToggleTabs(string tagToShow) 
         {
-            foreach (GameObject gameObject in responses) 
-            {
-                ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
+            // foreach (GameObject gameObject in responses) 
+            // {
+            //     ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
 
-                if (chatBubble.linkTag.Equals(tagToShow)) 
-                {
-                    gameObject.SetActive(true);
-                }
-                else 
-                {
-                    gameObject.SetActive(false);
-                }
-            }
+            //     if (chatBubble.linkTag.Equals(tagToShow)) 
+            //     {
+                   
+            //         gameObject.SetActive(true);
+            //     }
+            //     else 
+            //     {
+            //         gameObject.SetActive(false);
+            //     }
+            // }
+
+            m_TypeManager.ToggleButtons(tagToShow);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+        }
+        
+        public void SelectClaim(string linkId) {
+            currentClaim = linkId;
+            ShowTabs();
+            ToggleTabs("behavior");
+            ToggleType("asdf");
+        }        
+
+        private void HideTabs() {
+            m_TagButtons.SetActive(false);
+        }
+
+        private void ShowTabs() {
+            m_TagButtons.SetActive(true);
         }
     }
 }

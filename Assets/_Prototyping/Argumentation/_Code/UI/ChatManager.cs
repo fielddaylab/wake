@@ -60,7 +60,12 @@ namespace ProtoAqua.Argumentation
                 .childAlignment = TextAnchor.UpperRight;
 
             string linkId = response.GetComponent<ChatBubble>().id;
+            string linkTag = response.GetComponent<ChatBubble>().linkTag;
+
+
             Routine.Start(ScrollRoutine(linkId, response));
+
+            
         }
 
         // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
@@ -97,6 +102,19 @@ namespace ProtoAqua.Argumentation
                 // If the response is valid, remove it from the player's available responses
                 m_LinkManager.RemoveResponse(response);
             }
+
+            if(nextNode.NextNodeId != null) {
+                RespondWithAnotherNode(nextNode.NextNodeId);
+            }
+        }
+
+        private void RespondWithAnotherNode(string nextNodeId) {
+            Node nextNode = m_Graph.FindNode(nextNodeId);
+            // Create the node bubble, and set its properties
+            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
+            newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
 
         // Checks if conditions for the next node are met. If not, create and respond with
@@ -141,11 +159,22 @@ namespace ProtoAqua.Argumentation
 
             yield return m_ScrollTime;
             RespondWithNextNode(linkId, response);
+            UpdateButtonList(linkId);
+
 
             yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
             m_InputRaycasterLayer.Override = null;
         }
+
+        private void UpdateButtonList(string linkId) {
+            Link currentLink = m_Graph.FindLink(linkId);
+            if(currentLink.Tag == "claim") {
+                m_LinkManager.SelectClaim(linkId);
+            }
+        }
+
+        
     }
 }
