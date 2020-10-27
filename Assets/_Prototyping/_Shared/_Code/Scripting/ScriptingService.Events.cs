@@ -6,6 +6,7 @@ using BeauUtil.Variants;
 using ProtoAqua.Profile;
 using UnityEngine;
 using ProtoAqua.Scripting;
+using System.Collections;
 
 namespace ProtoAqua
 {
@@ -24,7 +25,8 @@ namespace ProtoAqua
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
-            m_TagEventParser.AddReplace("var*", ReplaceVariable);
+            m_TagEventParser.AddReplace("loc", ReplaceLoc);
+            m_TagEventParser.AddReplace("var", ReplaceVariable).WithAliases("var-i", "var-f", "var-b", "var-s");
             m_TagEventParser.AddReplace("switch-var", SwitchOnVariable);
 
             // Extra Replace Tags (with embedded events)
@@ -44,8 +46,16 @@ namespace ProtoAqua
             m_TagEventParser.AddEvent("letterbox", ScriptEvents.Global.LetterboxOn).CloseWith(ScriptEvents.Global.LetterboxOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
-            m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithStringData();
             m_TagEventParser.AddEvent("set", ScriptEvents.Global.SetVariable).WithStringData();
+            m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithAliases("broadcast").WithStringData();
+            m_TagEventParser.AddEvent("fade-out", ScriptEvents.Global.FadeOut).WithStringData();
+            m_TagEventParser.AddEvent("fade-in", ScriptEvents.Global.FadeIn).WithStringData();
+            m_TagEventParser.AddEvent("wipe-out", ScriptEvents.Global.ScreenWipeOut);
+            m_TagEventParser.AddEvent("wipe-in", ScriptEvents.Global.ScreenWipeIn);
+            m_TagEventParser.AddEvent("screen-flash", ScriptEvents.Global.ScreenFlash).WithStringData();
+            m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
+            m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
+            m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -117,10 +127,18 @@ namespace ProtoAqua
             {
                 return variable.AsBool().ToString();
             }
+            else if (t.Id.EndsWith("-s"))
+            {
+                return Services.Loc.Localize(variable.AsStringHash(), variable.ToDebugString(), o);
+            }
             else
             {
                 return variable.ToString();
             }
+        };
+
+        static private CustomTagParserConfig.ReplaceWithContextDelegate ReplaceLoc = (TagData t, object o) => {
+            return Services.Loc.Localize(t.Data, null, o);
         };
 
         static private CustomTagParserConfig.ReplaceWithContextDelegate SwitchOnVariable = (TagData t, object o) => {
@@ -180,15 +198,23 @@ namespace ProtoAqua
 
         #region Event Setup
 
+        static private ScriptThread Thread(object inObject)
+        {
+            return (ScriptThread) inObject;
+        }
+
         private void InitHandlers()
         {
             m_TagEventHandler = new TagStringEventHandler();
             m_ArgListSplitter = new StringUtils.ArgsList.Splitter();
 
-            // m_TagEventHandler.Register()
-
             m_TagEventHandler
-                .Register(ScriptEvents.Global.HideDialog, () => { Services.UI.Dialog.Hide(); } )
+                .Register(ScriptEvents.Global.HideDialog, (e, o) => {
+                    Thread(o).Dialog?.Hide();
+                })
+                .Register(ScriptEvents.Global.ShowDialog, (e, o) => {
+                    Thread(o).Dialog?.Show();
+                })
                 .Register(ScriptEvents.Global.LetterboxOff, () => Services.UI.HideLetterbox() )
                 .Register(ScriptEvents.Global.LetterboxOn, () => Services.UI.ShowLetterbox() )
                 .Register(ScriptEvents.Global.PitchBGM, (e, o) => {
@@ -223,7 +249,6 @@ namespace ProtoAqua
                 .Register(ScriptEvents.Global.PlaySound, (e, o) => {
                     Services.Audio.PostEvent(e.StringArgument);
                 })
-                .Register(ScriptEvents.Global.ShowDialog, () => { Services.UI.Dialog.Show(); } )
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => {
                     Services.Audio.StopMusic(e.Argument0.AsFloat());
                 })
@@ -242,6 +267,56 @@ namespace ProtoAqua
                     if (!Services.Data.VariableResolver.TryModify(o, e.StringArgument))
                     {
                         Debug.LogErrorFormat("[ScriptingService] Failed to set variables from string '{0}'", e.StringArgument);
+                    }
+                })
+                .Register(ScriptEvents.Global.BroadcastEvent, (e, o) => {
+                    Services.Events.Dispatch(e.StringArgument);
+                })
+                .Register(ScriptEvents.Global.TriggerResponse, (e, o) => {
+                    Services.Script.TriggerResponse(e.StringArgument);
+                })
+                .Register(ScriptEvents.Global.LoadScene, (e, o) => {
+                    TempList16<StringSlice> args = new TempList16<StringSlice>();
+                    int argCount = ExtractArgs(e.StringArgument, ref args);
+                    SceneLoadFlags flags = SceneLoadFlags.Default;
+                    string context = null;
+                    if (argCount >= 2 && args[1] == "no-loading-screen")
+                    {
+                        flags |= SceneLoadFlags.NoLoadingScreen;
+                    }
+                    if (argCount >= 3)
+                    {
+                        context = args[2].ToString();
+                    }
+
+                    return Services.State.LoadScene(args[0].ToString(), context, flags);
+                })
+                .Register(ScriptEvents.Global.BoxStyle, (e, o) => {
+                    Thread(o).Dialog = Services.UI.GetDialog(e.StringArgument);
+                })
+                .Register(ScriptEvents.Global.ScreenWipeOut, (e, o) => {
+                    var thread = Thread(o);
+                    if (thread.ScreenWipe == null)
+                    {
+                        var wipe = Services.UI.WorldFaders.AllocWipe().Object;
+                        thread.ScreenWipe = wipe;
+                        return wipe.Show();
+                    }
+                    return null;
+                })
+                .Register(ScriptEvents.Global.ScreenWipeIn, (e, o) => {
+                    var thread = Thread(o);
+                    if (thread.ScreenWipe != null)
+                    {
+                        IEnumerator hide = thread.ScreenWipe.Hide(true);
+                        thread.ClearWipeWithoutHide();
+                        return hide;
+                    }
+                    else
+                    {
+                        var wipe = Services.UI.WorldFaders.AllocWipe().Object;
+                        wipe.InstantShow();
+                        return wipe.Hide(true);
                     }
                 });
         }

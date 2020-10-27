@@ -16,7 +16,11 @@ namespace ProtoAqua.Experiment
         static public readonly StringHash32 SetupRemoveActor = "experiment:setup-removeActor";
         
         static public readonly StringHash32 ExperimentBegin = "experiment:begin";
+        static public readonly StringHash32 ExperimentRequestSummary = "experiment:request-summary";
         static public readonly StringHash32 ExperimentTeardown = "experiment:teardown";
+
+        static public readonly StringHash32 AttemptObserveBehavior = "experiment:attempt-observe-behavior";
+        static public readonly StringHash32 BehaviorAddedToLog = "experiment:behavior-added-to-log";
     }
 
     static public class ExperimentTriggers
@@ -24,6 +28,11 @@ namespace ProtoAqua.Experiment
         static public readonly StringHash32 TrySubmitHypothesis = "TrySubmitHypothesis";
         static public readonly StringHash32 TrySubmitExperiment = "TrySubmitExperiment";
         static public readonly StringHash32 TryEndExperiment = "TryEndExperiment";
+        static public readonly StringHash32 ExperimentFinished = "ExperimentFinished";
+
+        static public readonly StringHash32 NewBehaviorObserved = "NewBehaviorObserved";
+        static public readonly StringHash32 BehaviorAlreadyObserved = "BehaviorAlreadyObserved";
+        static public readonly StringHash32 ExperimentIdle = "ExperimentIdle";
     }
 
     static public class ExperimentVars
@@ -35,7 +44,12 @@ namespace ProtoAqua.Experiment
         static public readonly TableKeyPair SetupPanelLastActorType = TableKeyPair.Parse("experiment:setup.lastActorType");
 
         static public readonly TableKeyPair TankType = TableKeyPair.Parse("experiment:tankType");
+        static public readonly TableKeyPair TankTypeLabel = TableKeyPair.Parse("experiment:tankTypeLabel");
         static public readonly TableKeyPair EcoType = TableKeyPair.Parse("experiment:ecoType");
+        static public readonly TableKeyPair EcoTypeLabel = TableKeyPair.Parse("experiment:ecoTypeLabel");
+
         static public readonly TableKeyPair ExperimentRunning = TableKeyPair.Parse("experiment:running");
+        static public readonly TableKeyPair ExperimentDuration = TableKeyPair.Parse("experiment:experimentDuration");
+        static public readonly TableKeyPair ExperimentBehaviorCount = TableKeyPair.Parse("experiment:observedBehaviorCount");
     }
 }

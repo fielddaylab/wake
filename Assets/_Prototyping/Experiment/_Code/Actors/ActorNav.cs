@@ -9,27 +9,34 @@ using BeauPools;
 
 namespace ProtoAqua.Experiment
 {
-    public class ActorNav : MonoBehaviour, IPoolAllocHandler, IPoolConstructHandler
+    public class ActorNav : ActorModule
     {
         #region Inspector
-
-        [SerializeField] private ActorTraversalType m_TraversalType = ActorTraversalType.Stationary;
 
         [Header("Spawning")]
         [SerializeField] private ActorSpawnType m_SpawnType = ActorSpawnType.Floor;
         [SerializeField] private float m_FloorOffset = 0.5f;
         [SerializeField] private bool m_IsFixedToFloor = false;
 
+        [Header("Traversal")]
+        [SerializeField] private ActorTraversalType m_TraversalType = ActorTraversalType.Stationary;
+        [SerializeField] private float m_DefaultTraversalSpeed = 5;
+
         #endregion // Inspector
 
-        [NonSerialized] private ActorCtrl m_Actor;
         [NonSerialized] private Transform m_Transform;
         [NonSerialized] private ActorNavHelper m_Helper = null;
         [NonSerialized] private Routine m_MoveRoutine;
 
-        public void SetHelper(ActorNavHelper inHelper)
+        public ActorNavHelper Helper
         {
-            m_Helper = inHelper;
+            get { return m_Helper; }
+            set { m_Helper = value; }
+        }
+
+        public bool IsAnimating()
+        {
+            return m_MoveRoutine;
         }
 
         #region Spawn
@@ -41,7 +48,7 @@ namespace ProtoAqua.Experiment
             {
                 case ActorSpawnType.Floor:
                 default:
-                    targetPos = m_Helper.GetFloorSpawnTarget(m_Actor.Body.BodyRadius, m_FloorOffset);
+                    targetPos = m_Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, m_FloorOffset);
                     spawnOffset = !m_IsFixedToFloor ? m_Helper.GetSpawnOffset() : default(Vector2);
                     break;
             }
@@ -53,26 +60,39 @@ namespace ProtoAqua.Experiment
         {
             yield return inDelay;
 
-            m_Actor.Body.Show();
+            Actor.Callbacks.OnStartSpawn?.Invoke();
+
+            Actor.Body.Show();
             m_Transform.position = inPosition + inSpawnOffset;
 
             if (m_IsFixedToFloor)
             {
-                m_Actor.Body.RenderGroup.transform.SetScale(0, Axis.XY);
-                yield return m_Actor.Body.RenderGroup.transform.ScaleTo(1, 0.2f, Axis.XY).Ease(Curve.CubeOut);
+                Actor.Body.RenderGroup.transform.SetScale(0, Axis.XY);
+                yield return Actor.Body.RenderGroup.transform.ScaleTo(1, 0.2f, Axis.XY).Ease(Curve.CubeOut);
             }
             else
             {
                 yield return m_Transform.MoveTo(inPosition, 0.5f, Axis.XY, Space.World).Ease(Curve.QuadIn);
             }
+
+            Actor.Callbacks.OnFinishSpawn?.Invoke();
         }
 
         #endregion // Spawn
 
-        public bool IsAnimating()
+        #region Swim
+
+        public IEnumerator SwimTo(Vector2 inPosition)
         {
-            return m_MoveRoutine;
+            return m_MoveRoutine.Replace(this, SwimToRoutine(inPosition, m_DefaultTraversalSpeed)).Wait();
         }
+
+        private IEnumerator SwimToRoutine(Vector2 inPosition, float inSpeed)
+        {
+            yield return m_Transform.MoveToWithSpeed(inPosition, inSpeed, Axis.XY, Space.World).Ease(Curve.QuadInOut);
+        }
+
+        #endregion // Swim
 
         #region Listeners
 
@@ -90,24 +110,17 @@ namespace ProtoAqua.Experiment
 
         #region IPool
 
-        void IPoolAllocHandler.OnAlloc()
+        public override void OnConstruct()
         {
-        }
-
-        void IPoolConstructHandler.OnConstruct()
-        {
-            m_Actor = GetComponent<ActorCtrl>();
+            base.OnConstruct();
             m_Transform = transform;
         }
 
-        void IPoolConstructHandler.OnDestruct()
-        {
-        }
-
-        void IPoolAllocHandler.OnFree()
+        public override void OnFree()
         {
             m_MoveRoutine.Stop();
             m_Helper = null;
+            base.OnFree();
         }
 
         #endregion // IPool

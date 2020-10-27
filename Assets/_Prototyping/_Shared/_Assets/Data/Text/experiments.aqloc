@@ -46,3 +46,36 @@ Tiny kelp eater.
 
 :: actor.urchin.label.short
 Urchin
+
+// BEHAVIORS
+
+:: behavior.urchin.eats.kelp.title
+Behavior Observed: Urchin Eats Kelp
+
+:: behavior.urchin.eats.kelp.desc
+Urchins have been observed to eat kelp.
+
+:: behavior.urchin.eats.kelp.short
+Urchin Eats Kelp
+
+// SUMMARY SCREEN
+
+:: summary.tankVarSummary
+{loc experiment.summary.tankType}
+{loc experiment.summary.ecoType}
+
+:: summary.tankType
+{var-s experiment:tankTypeLabel}
+
+:: summary.ecoType
+{var-s experiment:ecoTypeLabel}
+
+:: summary.countableSummary
+{loc experiment.summary.duration}
+{loc experiment.summary.observedBehaviors}
+
+:: summary.duration
+Duration: {var-i experiment:experimentDuration} s.
+
+:: summary.observedBehaviors
+Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)

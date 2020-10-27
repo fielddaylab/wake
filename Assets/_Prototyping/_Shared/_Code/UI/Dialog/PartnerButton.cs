@@ -60,7 +60,7 @@ namespace ProtoAqua
 
         private void CheckInput(DeviceInput inDevice)
         {
-            if (inDevice.KeyPressed(KeyCode.Q) && m_RootGroup.interactable)
+            if (inDevice.KeyPressed(KeyCode.Q) && m_RootGroup.blocksRaycasts)
                 OnButtonClicked();
         }
 
@@ -71,10 +71,10 @@ namespace ProtoAqua
         private IEnumerator ExecuteSequence()
         {
             Services.Data.AddVariable(RequestCounter, 1);
-            var sequence = Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp);
+            var sequence = Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, "kevin");
             SetInputState(false);
-            m_RootGroup.alpha = 0.5f;
-            yield return sequence.Routine();
+            m_RootGroup.alpha = 0.75f;
+            yield return sequence.Wait();
             SetInputState(IsShowing());
             m_RootGroup.alpha = 1;
         }

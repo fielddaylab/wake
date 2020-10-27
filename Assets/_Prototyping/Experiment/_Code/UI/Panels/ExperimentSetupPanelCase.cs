@@ -29,6 +29,7 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ExperimentSetupSubscreenActors m_ActorsScreen = null;
         [SerializeField] private ExperimentSetupSubscreenBegin m_BeginExperimentScreen = null;
         [SerializeField] private ExperimentSetupSubscreenInProgress m_InProgressScreen = null;
+        [SerializeField] private ExperimentSetupSubscreenSummary m_SummaryScreen = null;
 
         #endregion // Inspector
 
@@ -66,6 +67,7 @@ namespace ProtoAqua.Experiment
             m_ActorsScreen.SetData(m_SelectionData);
             m_BeginExperimentScreen.SetData(m_SelectionData);
             m_InProgressScreen.SetData(m_SelectionData);
+            m_SummaryScreen.SetData(m_SelectionData);
         }
 
         private void OnDestroy()
@@ -179,7 +181,13 @@ namespace ProtoAqua.Experiment
 
         private void CancelExperiment()
         {
-            if (m_ExperimentSetup && !m_ExperimentRunning)
+            bool bExit;
+            if (m_CurrentSubscreen != null && m_CurrentSubscreen.ShouldCancelOnExit().HasValue)
+                bExit = m_CurrentSubscreen.ShouldCancelOnExit().Value;
+            else
+                bExit = m_ExperimentSetup && !m_ExperimentRunning;
+            
+            if (bExit)
             {
                 SetInputState(false);
                 Routine.Start(this, ExitExperimentRoutine());
@@ -210,12 +218,28 @@ namespace ProtoAqua.Experiment
         {
             using(var tempFader = Services.UI.ScreenFaders.AllocFader())
             {
+                bool bWasRunning = m_ExperimentRunning;
                 Services.UI.ShowLetterbox();
                 yield return tempFader.Object.Show(Color.black, 0.5f);
+                if (bWasRunning)
+                {
+                    ExperimentResultData result = new ExperimentResultData();
+                    result.Setup = m_SelectionData.Clone();
+                    Services.Events.Dispatch(ExperimentEvents.ExperimentRequestSummary, result);
+                    m_SummaryScreen.Populate(result);
+                }
                 Services.Events.Dispatch(ExperimentEvents.ExperimentTeardown);
                 yield return 0.2f;
                 Services.UI.HideLetterbox();
-                InstantHide();
+                if (!bWasRunning)
+                {
+                    InstantHide();
+                }
+                else
+                {
+                    SetInputState(true);
+                    SetSubscreen(m_SummaryScreen);
+                }
                 yield return tempFader.Object.Hide(0.5f, false);
             }
         }
@@ -286,7 +310,7 @@ namespace ProtoAqua.Experiment
                     oldSub.Hide();
                     if (m_CurrentSubscreen)
                     {
-                        yield return 0.3f;
+                        yield return 0.2f;
                     }
                 }
 

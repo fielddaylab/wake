@@ -9,7 +9,7 @@ using BeauPools;
 
 namespace ProtoAqua.Experiment
 {
-    public class ActorBody : MonoBehaviour, IPoolAllocHandler, IPoolConstructHandler
+    public class ActorBody : ActorModule
     {
         #region Inspector
 
@@ -19,12 +19,10 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
         
-        [NonSerialized] private ActorCtrl m_Actor;
         [NonSerialized] private Transform m_Transform;
-
         [NonSerialized] private TriggerListener2D m_WaterListener;
 
-        public Transform Transform { get { return m_Transform; } }
+        public Transform WorldTransform { get { return m_Transform; } }
         public Rigidbody2D Rigidbody { get { return m_Body; } }
         public float BodyRadius { get { return m_BodyRadius; } }
         public ColorGroup RenderGroup { get { return m_ColorGroup; } }
@@ -59,28 +57,21 @@ namespace ProtoAqua.Experiment
 
         #region IPool
 
-        void IPoolAllocHandler.OnAlloc()
+        public override void OnAlloc()
         {
+            base.OnAlloc();
             Hide();
         }
 
-        void IPoolConstructHandler.OnConstruct()
+        public override void OnConstruct()
         {
-            m_Actor = GetComponent<ActorCtrl>();
+            base.OnConstruct();
             m_Transform = transform;
 
             m_WaterListener = m_Body.gameObject.AddComponent<TriggerListener2D>();
             m_WaterListener.LayerFilter = GameLayers.Water_Mask;
             m_WaterListener.onTriggerEnter.AddListener(OnContactWater);
             m_WaterListener.onTriggerExit.AddListener(OnLeaveWater);
-        }
-
-        void IPoolConstructHandler.OnDestruct()
-        {
-        }
-
-        void IPoolAllocHandler.OnFree()
-        {
         }
 
         #endregion // IPool

@@ -26,6 +26,12 @@ namespace ProtoAqua
             return m_FadeRoutine.Replace(this, ShowRoutine()).Wait();
         }
 
+        public void InstantShow()
+        {
+            m_FadeRoutine.Stop();
+            SetPosition(0);
+        }
+
         private IEnumerator ShowRoutine()
         {
             yield return Tween.Float(-1, 0, SetPosition, 0.25f);
@@ -34,6 +40,14 @@ namespace ProtoAqua
         public IEnumerator Hide(bool inbAutoFree = true)
         {
             return m_FadeRoutine.Replace(this, HideRoutine(inbAutoFree)).Wait();
+        }
+
+        public void InstantHide(bool inbAutoFree = true)
+        {
+            m_FadeRoutine.Stop();
+            SetPosition(1);
+            if (inbAutoFree)
+                m_Pool.Free(this);
         }
 
         private IEnumerator HideRoutine(bool inbAutoFree)

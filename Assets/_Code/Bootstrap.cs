@@ -22,6 +22,7 @@ namespace ProtoAqua
             DestroyImmediate(m_Debug);
             #else
             Debug.Log("[Bootstrap] Debug mode enabled");
+            m_Debug.gameObject.SetActive(true);
             m_Debug = null;
             #endif // !DEVELOPMENT
 

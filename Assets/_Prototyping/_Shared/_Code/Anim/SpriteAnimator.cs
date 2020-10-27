@@ -71,7 +71,7 @@ namespace ProtoAqua
 
         public void Play(SpriteAnimation inAnimation, bool inbRestart = false)
         {
-            TrySetAnimation(m_Animation, inbRestart);
+            TrySetAnimation(inAnimation, inbRestart);
             m_Playing = true;
         }
 

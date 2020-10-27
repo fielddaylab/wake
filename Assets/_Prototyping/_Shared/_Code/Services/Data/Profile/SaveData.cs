@@ -10,10 +10,11 @@ namespace ProtoAqua.Profile
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
         public ScriptingData Script = new ScriptingData();
+        public BestiaryData Bestiary = new BestiaryData();
 
         #region ISerializedData
 
-        ushort ISerializedVersion.Version { get { return 2; } }
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -25,6 +26,11 @@ namespace ProtoAqua.Profile
             {
                 ioSerializer.Object("inventory", ref Inventory);
                 ioSerializer.Object("script", ref Script);
+            }
+
+            if (ioSerializer.ObjectVersion >= 3)
+            {
+                ioSerializer.Object("bestiary", ref Bestiary);
             }
         }
 

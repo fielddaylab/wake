@@ -48,6 +48,7 @@ namespace ProtoAqua
         [NonSerialized] private readonly List<IInputLayer> m_AllInputLayers = new List<IInputLayer>(32);
         [NonSerialized] private int m_CurrentPriority = DefaultPriority;
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
+        [NonSerialized] private int m_PauseAllCounter = 0;
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
@@ -181,9 +182,11 @@ namespace ProtoAqua
 
         private void BroadcastFlagsUpdate()
         {
+            InputLayerFlags flags = m_PauseAllCounter > 0 ? 0 : m_CurrentFlags;
+
             for(int i = m_AllInputLayers.Count - 1; i >= 0; --i)
             {
-                m_AllInputLayers[i].UpdateSystemFlags(m_CurrentFlags);
+                m_AllInputLayers[i].UpdateSystemFlags(flags);
             }
         }
 
@@ -197,6 +200,32 @@ namespace ProtoAqua
         }
 
         #endregion // Pointer
+
+        #region Pause All
+
+        public void PauseAll()
+        {
+            if (++m_PauseAllCounter == 1)
+            {
+                BroadcastFlagsUpdate();
+            }
+        }
+
+        public void ResumeAll()
+        {
+            if (m_PauseAllCounter == 0)
+            {
+                Debug.LogErrorFormat("[InputService] Pause/Resume calls are mismatched");
+                return;
+            }
+
+            if (--m_PauseAllCounter == 0)
+            {
+                BroadcastFlagsUpdate();
+            }
+        }
+
+        #endregion // Pause All
 
         #region Unity Events
 
@@ -218,18 +247,5 @@ namespace ProtoAqua
         }
 
         #endregion // IService
-
-        [ContextMenu("Clear All Stacks")]
-        private void ClearStacks()
-        {
-            m_FlagsStack.Clear();
-            m_PriorityStack.Clear();
-
-            m_CurrentPriority = DefaultPriority;
-            m_CurrentFlags = InputLayerFlags.Default;
-
-            BroadcastFlagsUpdate();
-            BroadcastPriorityUpdate();
-        }
     }
 }

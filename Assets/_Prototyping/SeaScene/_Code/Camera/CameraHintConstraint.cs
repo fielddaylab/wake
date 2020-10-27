@@ -38,7 +38,7 @@ namespace ProtoAqua.Observation
         {
             m_Transform = transform;
             m_Circle.EnsureComponent<TriggerListener2D>(ref m_Listener);
-            m_Listener.FilterByComponent<CameraTargetConstraint>(ComponentLookupDirection.Parent);
+            m_Listener.FilterByComponentInParent<CameraTargetConstraint>();
             m_Listener.SetOccupantTracking(true);
             m_Listener.onTriggerEnter.AddListener(OnTargetEnter);
             m_Listener.onTriggerExit.AddListener(OnTargetExit);

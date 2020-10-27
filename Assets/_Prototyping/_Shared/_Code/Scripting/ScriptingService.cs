@@ -9,20 +9,22 @@ using BeauUtil.Tags;
 using UnityEngine;
 using ProtoAqua.Scripting;
 using BeauUtil.Variants;
+using Leaf.Runtime;
 
 namespace ProtoAqua
 {
     public partial class ScriptingService : ServiceBehaviour
     {
         // thread management
-        private Dictionary<string, ScriptThreadHandle> m_ThreadMap = new Dictionary<string, ScriptThreadHandle>(64, StringComparer.Ordinal);
-        private List<ScriptThreadHandle> m_ThreadList = new List<ScriptThreadHandle>(64);
+        private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
+        private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
+        private List<ScriptThread> m_ThreadList = new List<ScriptThread>(64);
         
         // event parsing
         private TagStringEventHandler m_TagEventHandler;
         private CustomTagParserConfig m_TagEventParser;
-        private TagStringParser m_TagStringParser;
         private StringUtils.ArgsList.Splitter m_ArgListSplitter;
+        private LeafRuntime<ScriptNode> m_ThreadRuntime;
 
         // trigger eval
         private CustomVariantResolver m_CustomResolver;
@@ -36,8 +38,9 @@ namespace ProtoAqua
         private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
 
         // pool
-        private IPool<TagString> m_TagStringPool;
-        private DynamicPool<VariantTable> m_ContextPool;
+        private IPool<VariantTable> m_TablePool;
+        private IPool<ScriptThread> m_ThreadPool;
+        private IPool<TagStringParser> m_ParserPool;
 
         #region Operations
 
@@ -84,7 +87,7 @@ namespace ProtoAqua
         /// </summary>
         public ScriptThreadHandle StartNode(ScriptNode inNode)
         {
-            return StartThreadInternal(null, null, ProcessNode(inNode, null));
+            return StartThreadInternalNode(null, null, inNode, null);
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace ProtoAqua
         /// </summary>
         public ScriptThreadHandle StartNode(string inThreadId, ScriptNode inNode)
         {
-            return StartThreadInternal(inThreadId, null, ProcessNode(inNode, null));
+            return StartThreadInternalNode(inThreadId, null, inNode, null);
         }
 
         /// <summary>
@@ -100,7 +103,7 @@ namespace ProtoAqua
         /// </summary>
         public ScriptThreadHandle StartNode(IScriptContext inContext, ScriptNode inNode)
         {
-            return StartThreadInternal(null, inContext, ProcessNode(inNode, inContext));
+            return StartThreadInternalNode(null, inContext, inNode, null);
         }
 
         /// <summary>
@@ -108,15 +111,7 @@ namespace ProtoAqua
         /// </summary>
         public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, ScriptNode inNode)
         {
-            return StartThreadInternal(inThreadId, inContext, ProcessNode(inNode, inContext));
-        }
-
-        private IEnumerator ProcessNode(ScriptNode inNode, IScriptContext inContext)
-        {
-            if (inNode == null)
-                return null;
-
-            return PerformNodeInternal(inNode, inContext);
+            return StartThreadInternalNode(inThreadId, inContext, inNode, null);
         }
 
         #endregion // Starting Threads with ScriptNode
@@ -135,7 +130,7 @@ namespace ProtoAqua
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(null, null, ProcessNode(node, null));
+            return StartThreadInternalNode(null, null, node, null);
         }
 
         /// <summary>
@@ -150,7 +145,7 @@ namespace ProtoAqua
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(inThreadId, null, ProcessNode(node, null));
+            return StartThreadInternalNode(inThreadId, null, node, null);
         }
 
         /// <summary>
@@ -165,7 +160,7 @@ namespace ProtoAqua
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(null, inContext, ProcessNode(node, inContext));
+            return StartThreadInternalNode(null, inContext, node, null);
         }
 
         /// <summary>
@@ -180,7 +175,7 @@ namespace ProtoAqua
                 return default(ScriptThreadHandle);
             }
 
-            return StartThreadInternal(inThreadId, inContext, ProcessNode(node, inContext));
+            return StartThreadInternalNode(inThreadId, inContext, node, null);
         }
 
         #endregion // Starting Threads with Entrypoint
@@ -216,6 +211,10 @@ namespace ProtoAqua
                         handle = StartNode(inThreadId, inContext, node);
                     }
                 }
+            }
+            if (!handle.IsRunning())
+            {
+                Debug.LogFormat("[ScriptingService] Trigger '{0}' had no valid responses", inTriggerId.ToDebugString());
             }
             ResetCustomResolver();
             return handle;
@@ -253,7 +252,7 @@ namespace ProtoAqua
         /// </summary>
         public bool KillThread(string inThreadId)
         {
-            ScriptThreadHandle handle;
+            ScriptThread thread;
             
             // wildcard id match
             if (inThreadId.IndexOf('*') >= 0)
@@ -261,13 +260,11 @@ namespace ProtoAqua
                 bool bKilled = false;
                 for(int i = m_ThreadList.Count - 1; i >= 0; --i)
                 {
-                    handle = m_ThreadList[i];
-                    string id = handle.Id();
+                    thread = m_ThreadList[i];
+                    string id = thread.Name;
                     if (StringUtils.WildcardMatch(id, inThreadId))
                     {
-                        handle.Routine().Stop();
-                        m_ThreadList.FastRemoveAt(i);
-                        m_ThreadMap.Remove(id);
+                        thread.Kill();
                         bKilled = true;
                     }
                 }
@@ -276,10 +273,9 @@ namespace ProtoAqua
             }
             else
             {
-                if (m_ThreadMap.TryGetValue(inThreadId, out handle))
+                if (m_ThreadMap.TryGetValue(inThreadId, out thread))
                 {
-                    handle.Routine().Stop();
-                    m_ThreadMap.Remove(inThreadId);
+                    thread.Kill();
                     return true;
                 }
             }
@@ -293,16 +289,14 @@ namespace ProtoAqua
         public bool KillThreads(IScriptContext inContext)
         {
             bool bKilled = false;
-            ScriptThreadHandle handle;
+            ScriptThread thread;
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
-                handle = m_ThreadList[i];
-                if (handle.Context() == inContext)
+                thread = m_ThreadList[i];
+                if (thread.Context == inContext)
                 {
-                    string id = handle.Id();
-                    handle.Routine().Stop();
-                    m_ThreadList.FastRemoveAt(i);
-                    m_ThreadMap.Remove(id);
+                    string id = thread.Name;
+                    thread.Kill();
                     bKilled = true;
                 }
             }
@@ -314,12 +308,7 @@ namespace ProtoAqua
         /// </summary>
         public void KillThread(ScriptThreadHandle inThreadHandle)
         {
-            string id = inThreadHandle.Id();
-            inThreadHandle.Routine().Stop();
-            if (!string.IsNullOrEmpty(id))
-            {
-                m_ThreadMap.Remove(id);
-            }
+            inThreadHandle.Kill();
         }
 
         /// <summary>
@@ -327,13 +316,14 @@ namespace ProtoAqua
         /// </summary>
         public void KillAllThreads()
         {
-            foreach(var thread in m_ThreadList)
+            for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
-                thread.Routine().Stop();
+                m_ThreadList[i].Kill();
             }
 
             m_ThreadList.Clear();
             m_ThreadMap.Clear();
+            m_ThreadTargetMap.Clear();
         }
 
         #endregion // Killing Threads
@@ -344,14 +334,14 @@ namespace ProtoAqua
 
         public TempAlloc<VariantTable> GetTempTable()
         {
-            var table = m_ContextPool.TempAlloc();
+            var table = m_TablePool.TempAlloc();
             table.Object.Name = "temp";
             return table;
         }
 
         public TempAlloc<VariantTable> GetTempTable(VariantTable inBase)
         {
-            var table = m_ContextPool.TempAlloc();
+            var table = m_TablePool.TempAlloc();
             table.Object.Name = "temp";
             table.Object.Base = inBase;
             return table;
@@ -364,176 +354,129 @@ namespace ProtoAqua
         /// <summary>
         /// Parses a string into a TagString.
         /// </summary>
-        public TagString ParseToTag(string inLine, object inContext = null)
+        public TagString ParseToTag(StringSlice inLine, object inContext = null)
         {
-            return m_TagStringParser.Parse(inLine, inContext);
+            TagString str = new TagString();
+            ParseToTag(ref str, inLine, inContext);
+            return str;
         }
 
         /// <summary>
         /// Parses a string into a TagString.
         /// </summary>
-        public void ParseToTag(ref TagString ioTag, string inLine, object inContext = null)
+        public void ParseToTag(ref TagString ioTag, StringSlice inLine, object inContext = null)
         {
-            m_TagStringParser.Parse(ref ioTag, inLine, inContext);
+            TagStringParser parser = m_ParserPool.Alloc();
+            parser.Parse(ref ioTag, inLine, inContext);
+            m_ParserPool.Free(parser);
         }
 
         #endregion // Utils
 
         #region Internal
 
-        // Performs a node
-        private IEnumerator PerformNodeInternal(ScriptNode inStartingNode, IScriptContext inContext)
+        internal void UntrackThread(ScriptThread inThread)
         {
-            ScriptNode currentNode = inStartingNode;
-            while(currentNode != null)
-            {
-                ScriptNode processingNode = currentNode;
-                currentNode = null;
+            m_ThreadList.Remove(inThread);
 
-                Services.Data.Profile?.Script.RecordNodeVisit(processingNode.Id(), processingNode.TrackingLevel());
+            string name = inThread.Name;
+            if (!string.IsNullOrEmpty(name))
+                m_ThreadMap.Remove(name);
 
-                bool bNodeIsCutscene = (processingNode.Flags() & ScriptNodeFlags.Cutscene) != 0;
-                if (bNodeIsCutscene)
-                    Services.UI.ShowLetterbox();
-
-                try
-                {
-                    foreach(var line in processingNode.Lines())
-                    {
-                        yield return Routine.Inline(PerformEventLine(line, inContext));
-                    }
-                }
-                finally
-                {
-                    if (bNodeIsCutscene)
-                        Services.UI.HideLetterbox();
-                }
-            }
-
-            // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.Dialog;
-            dialogPanel.CompleteSequence();
-        }
-
-        // Performs a block of event lines
-        private IEnumerator PerformEventLines(IEnumerable<StringSlice> inLines, IScriptContext inContext)
-        {
-            foreach(var line in inLines)
-            {
-                yield return Routine.Inline(PerformEventLine(line, inContext));
-            }
-
-            // TODO: make this work for non-main dialog?
-            DialogPanel dialogPanel = Services.UI.Dialog;
-            dialogPanel.CompleteSequence();
-        }
-
-        // Reads a line of scripting
-        private IEnumerator PerformEventLine(StringSlice inLine, IScriptContext inContext)
-        {
-            if (inLine.IsEmpty || inLine.IsWhitespace)
-                yield break;
-            
-            TagString lineEvents = m_TagStringPool.Alloc();
-            TagStringEventHandler eventHandler = m_TagEventHandler;
-            DialogPanel dialogPanel = Services.UI.Dialog;
-            
-            try
-            {
-                m_TagStringParser.Parse(ref lineEvents, inLine, inContext);
-                eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler);
-
-                for(int i = 0; i < lineEvents.Nodes.Length; ++i)
-                {
-                    TagNodeData node = lineEvents.Nodes[i];
-                    switch(node.Type)
-                    {
-                        case TagNodeType.Event:
-                            {
-                                IEnumerator coroutine;
-                                if (eventHandler.TryEvaluate(node.Event, inContext, out coroutine))
-                                {
-                                    if (coroutine != null)
-                                        yield return coroutine;
-                                    
-                                    dialogPanel.UpdateInput();
-                                }
-                                break;
-                            }
-                        case TagNodeType.Text:
-                            {
-                                yield return Routine.Inline(dialogPanel.TypeLine(node.Text));
-                                break;
-                            }
-                    }
-                }
-
-                yield return dialogPanel.CompleteLine();
-            }
-            finally
-            {
-                m_TagStringPool.Free(lineEvents);
-            }
+            StringHash32 who = inThread.Target();
+            if (!who.IsEmpty)
+                m_ThreadTargetMap.Remove(who);
         }
 
         // Starts a scripting thread
-        private ScriptThreadHandle StartThreadInternal(string inThreadId, IScriptContext inContext, IEnumerator inEnumerator)
+        private ScriptThreadHandle StartThreadInternal(string inThreadName, IScriptContext inContext, IEnumerator inEnumerator)
         {
-            if (inEnumerator == null)
+            if (inEnumerator == null || !FreeName(inThreadName))
             {
                 return default(ScriptThreadHandle);
             }
 
-            bool bHasId = !string.IsNullOrEmpty(inThreadId);
-            if (bHasId)
-            {
-                if (inThreadId.IndexOf('*') >= 0)
-                {
-                    Debug.LogErrorFormat("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadId);
-                    return default(ScriptThreadHandle);
-                }
+            ScriptThread thread = m_ThreadPool.Alloc();
+            ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, null);
+            thread.AttachToRoutine(Routine.Start(this, inEnumerator));
 
-                ScriptThreadHandle current;
-                if (m_ThreadMap.TryGetValue(inThreadId, out current))
-                {
-                    current.Routine().Stop();
-                }
-            }
-
-            Routine routine = Routine.Start(this, inEnumerator);
-            ScriptThreadHandle handle = new ScriptThreadHandle(inThreadId, inContext, routine);
-            m_ThreadList.Add(handle);
-            if (bHasId)
-                m_ThreadMap[inThreadId] = handle;
-
+            m_ThreadList.Add(thread);
+            if (!string.IsNullOrEmpty(inThreadName))
+                m_ThreadMap.Add(inThreadName, thread);
             return handle;
         }
 
-        #endregion // Internal
-
-        #region Unity Events
-
-        private void LateUpdate()
+        private ScriptThreadHandle StartThreadInternalNode(string inThreadName, IScriptContext inContext, ScriptNode inNode, VariantTable inVars)
         {
-            // remove all invalid threads
-            ScriptThreadHandle handle;
-            for(int i = m_ThreadList.Count - 1; i >= 0; --i)
+            if (inNode == null || !FreeName(inThreadName) || !CheckPriority(inNode))
             {
-                handle = m_ThreadList[i];
-                if (!handle.IsRunning())
-                {
-                    m_ThreadList.FastRemoveAt(i);
-
-                    string id = handle.Id();
-                    if (!string.IsNullOrEmpty(id))
-                    {
-                        m_ThreadMap.Remove(id);
-                    }
-                }
+                return default(ScriptThreadHandle);
             }
+
+            TempAlloc<VariantTable> tempVars = m_TablePool.TempAlloc();
+            if (inVars != null && inVars.Count > 0)
+                inVars.CopyTo(tempVars.Object);
+
+            ScriptThread thread = m_ThreadPool.Alloc();
+            ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, tempVars);
+            thread.SyncPriority(inNode);
+            thread.AttachToRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)));
+
+            m_ThreadList.Add(thread);
+            if (!string.IsNullOrEmpty(inThreadName))
+                m_ThreadMap.Add(inThreadName, thread);
+
+            StringHash32 who = thread.Target();
+            if (!who.IsEmpty)
+                m_ThreadTargetMap.Add(who, thread);
+            
+            return handle;
         }
 
-        #endregion // Unity Events
+        private bool FreeName(string inThreadName)
+        {
+            bool bHasId = !string.IsNullOrEmpty(inThreadName);
+            if (bHasId)
+            {
+                if (inThreadName.IndexOf('*') >= 0)
+                {
+                    Debug.LogErrorFormat("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadName);
+                    return false;
+                }
+
+                ScriptThread current;
+                if (m_ThreadMap.TryGetValue(inThreadName, out current))
+                {
+                    current.Kill();
+                }
+            }
+
+            return true;
+        }
+
+        private bool CheckPriority(ScriptNode inNode)
+        {
+            StringHash32 target = inNode.TargetId();
+            if (target.IsEmpty)
+                return true;
+
+            ScriptThread thread;
+            if (m_ThreadTargetMap.TryGetValue(target, out thread))
+            {
+                if (thread.Priority() > inNode.Priority())
+                {
+                    Debug.LogFormat("[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target");
+                    return false;
+                }
+
+                thread.Kill();
+                m_ThreadTargetMap.Remove(target);
+            }
+
+            return true;
+        }
+
+        #endregion // Internal
 
         #region IService
 
@@ -544,23 +487,28 @@ namespace ProtoAqua
 
         protected override void OnRegisterService()
         {
-            m_TagStringPool = new DynamicPool<TagString>(16, Pool.DefaultConstructor<TagString>());
-            m_TagStringPool.Config.RegisterOnFree((p, obj) => obj.Clear());
-
             InitParsers();
             InitHandlers();
 
-            m_TagStringParser = new TagStringParser();
-            m_TagStringParser.Delimiters = TagStringParser.CurlyBraceDelimiters;
-            m_TagStringParser.EventProcessor = m_TagEventParser;
-            m_TagStringParser.ReplaceProcessor = m_TagEventParser;
+            m_ParserPool = new DynamicPool<TagStringParser>(4, (p) => {
+                var parser = new TagStringParser();
+                parser.Delimiters = Parsing.InlineEvent;
+                parser.EventProcessor = m_TagEventParser;
+                parser.ReplaceProcessor = m_TagEventParser;
+                return parser;
+            });
+
+            m_ThreadRuntime = new LeafRuntime<ScriptNode>(this);
 
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
             m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
             m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();
 
-            m_ContextPool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
-            m_ContextPool.Config.RegisterOnFree((p, obj) => { obj.Clear(); obj.Base = null; });
+            m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
+            m_TablePool.Config.RegisterOnFree((p, obj) => { obj.Reset(); });
+
+            m_ThreadPool = new DynamicPool<ScriptThread>(16, Pool.DefaultConstructor<ScriptThread>());
+            m_ThreadPool.Config.RegisterOnConstruct((p, obj) => { obj.Initialize(this, Services.Data.VariableResolver); });
         }
 
         protected override void OnDeregisterService()
@@ -568,8 +516,8 @@ namespace ProtoAqua
             m_TagEventParser = null;
             m_TagEventHandler = null;
 
-            m_ContextPool.Dispose();
-            m_ContextPool = null;
+            m_TablePool.Dispose();
+            m_TablePool = null;
 
             m_ScriptObjects.Clear();
         }

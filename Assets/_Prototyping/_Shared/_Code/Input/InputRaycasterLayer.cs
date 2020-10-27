@@ -15,7 +15,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField, HideInEditor] private BaseRaycaster m_Raycaster = null;
+        [SerializeField, HideInEditor] private BaseRaycaster[] m_Raycasters = null;
 
         #endregion // Inspector
 
@@ -24,14 +24,14 @@ namespace ProtoAqua
         protected override void Awake()
         {
             base.Awake();
-            this.CacheComponent(ref m_Raycaster);
+            CacheRaycasters();
         }
 
         #if UNITY_EDITOR
 
         protected override void Reset()
         {
-            this.CacheComponent(ref m_Raycaster);
+            CacheRaycasters();
             Canvas c = GetComponent<Canvas>();
             if (c != null)
             {
@@ -50,18 +50,25 @@ namespace ProtoAqua
 
         protected override void OnValidate()
         {
-            this.CacheComponent(ref m_Raycaster);
+            CacheRaycasters();
             if (Application.isPlaying)
                 UpdateEnabled(true);
         }
 
         #endif // UNITY_EDITOR
 
+        private void CacheRaycasters()
+        {
+            if (m_Raycasters == null || m_Raycasters.Length == 0)
+                m_Raycasters = GetComponents<BaseRaycaster>();
+        }
+
         #endregion // Unity Events
 
         protected override void SyncEnabled(bool inbEnabled)
         {
-            m_Raycaster.enabled = inbEnabled;
+            for(int i = m_Raycasters.Length - 1; i >= 0; --i)
+                m_Raycasters[i].enabled = inbEnabled;
         }
     }
 }

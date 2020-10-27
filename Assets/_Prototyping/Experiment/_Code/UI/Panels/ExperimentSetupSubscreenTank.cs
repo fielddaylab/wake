@@ -87,7 +87,7 @@ namespace ProtoAqua.Experiment
             m_Label.text = Services.Loc.Localize(def.LabelId);
             m_NextButton.interactable = inTankType != TankType.None;
 
-            Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inTankType.ToString());
+            Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());
         }
     
         private void UpdateFromSelection()

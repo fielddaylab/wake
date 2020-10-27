@@ -71,7 +71,8 @@ namespace ProtoAqua.Observation
             m_TickRoutine.Stop();
 
             Services.Events?.Deregister(ObservationEvents.ScannerOn, OnScannerOn)
-                .Deregister(ObservationEvents.ScannerOff, OnScannerOff);
+                .Deregister(ObservationEvents.ScannerOff, OnScannerOff)
+                .Deregister(ObservationEvents.ScannableComplete, OnScanComplete);
         }
 
         #endregion // Unity Events

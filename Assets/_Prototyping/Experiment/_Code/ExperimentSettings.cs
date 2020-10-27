@@ -53,6 +53,20 @@ namespace ProtoAqua.Experiment
             ActorDefinition IKeyValuePair<StringHash32, ActorDefinition>.Value { get { return this; } }
         }
 
+        [Serializable]
+        public class BehaviorDefinition : IKeyValuePair<StringHash32, BehaviorDefinition>
+        {
+            public string Id;
+            public string ObserveTitleId;
+            public string DescId;
+            public string ShortLabelId;
+            public Sprite Icon;
+
+            StringHash32 IKeyValuePair<StringHash32, BehaviorDefinition>.Key { get { return Id; } }
+
+            BehaviorDefinition IKeyValuePair<StringHash32, BehaviorDefinition>.Value { get { return this; } }
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -60,6 +74,7 @@ namespace ProtoAqua.Experiment
         [SerializeField] private TankDefinition[] m_TankDefs = null;
         [SerializeField, FormerlySerializedAs("m_WaterDefs")] private EcoDefinition[] m_EcoDefs = null;
         [SerializeField] private ActorDefinition[] m_ActorDefs = null;
+        [SerializeField] private BehaviorDefinition[] m_BehaviorDefs = null;
 
         [Header("Icon Colors")]
         [SerializeField] private Color m_EnabledButtonColor = Color.white;
@@ -115,6 +130,13 @@ namespace ProtoAqua.Experiment
         {
             ActorDefinition def;
             m_ActorDefs.TryGetValue(inId, out def);
+            return def;
+        }
+
+        public BehaviorDefinition GetBehavior(StringHash32 inId)
+        {
+            BehaviorDefinition def;
+            m_BehaviorDefs.TryGetValue(inId, out def);
             return def;
         }
 

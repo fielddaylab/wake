@@ -31,7 +31,7 @@ namespace ProtoAqua
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(string inSceneName, object inContext = null, bool inbAutoHideLoading = true)
+        public IEnumerator LoadScene(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -47,14 +47,14 @@ namespace ProtoAqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(SceneBinding inScene, object inContext = null, bool inbAutoHideLoading = true)
+        public IEnumerator LoadScene(SceneBinding inScene, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -69,14 +69,14 @@ namespace ProtoAqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(StringHash32 inSceneId, object inContext = null, bool inbAutoHideLoading = true)
+        public IEnumerator LoadScene(StringHash32 inSceneId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -92,7 +92,7 @@ namespace ProtoAqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inbAutoHideLoading)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -130,11 +130,15 @@ namespace ProtoAqua
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
-        private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, bool inbAutoHideLoading)
+        private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, SceneLoadFlags inFlags)
         {
             try
             {
-                yield return Services.UI.ShowLoadingScreen();
+                bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
+                if (bShowLoading)
+                {
+                    yield return Services.UI.ShowLoadingScreen();
+                }
 
                 SceneBinding active = SceneHelper.FindScene(SceneCategories.ActiveOnly);
 
@@ -164,8 +168,10 @@ namespace ProtoAqua
 
                 m_SceneLock = false;
 
-                if (inbAutoHideLoading)
+                if (bShowLoading)
+                {
                     Services.UI.HideLoadingScreen();
+                }
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
                 inNextScene.BroadcastLoaded(inContext);
@@ -280,5 +286,13 @@ namespace ProtoAqua
         }
 
         #endregion // IService
+    }
+
+    public enum SceneLoadFlags
+    {
+        [Hidden]
+        Default = 0,
+
+        NoLoadingScreen = 0x01
     }
 }

@@ -143,6 +143,7 @@ namespace ProtoAqua
             m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
 
             m_VariableResolver.SetTableVar("scanned", (s) => inData.Inventory.WasScanned(s));
+            m_VariableResolver.SetTableVar("observed.behavior", (s) => inData.Bestiary.WasBehaviorObserved(s));
             m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
         }
 

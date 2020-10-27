@@ -30,7 +30,15 @@ namespace ProtoAqua.Experiment
         {
             Rect r = Rect();
             Vector2 left = new Vector2(r.xMin + inSideOffset, r.yMin + inFloorOffset);
-            Vector2 right = new Vector2(r.xMax - inFloorOffset, left.y);
+            Vector2 right = new Vector2(r.xMax - inSideOffset, left.y);
+            return RNG.Instance.NextVector2(left, right);
+        }
+
+        public Vector2 GetRandomSwimTarget(float inSideOffset, float inFloorOffset, float inCeilingOffset)
+        {
+            Rect r = Rect();
+            Vector2 left = new Vector2(r.xMin + inSideOffset, r.yMin + inFloorOffset);
+            Vector2 right = new Vector2(r.xMax - inSideOffset, r.yMax - inCeilingOffset);
             return RNG.Instance.NextVector2(left, right);
         }
 

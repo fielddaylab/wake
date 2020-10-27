@@ -18,6 +18,12 @@ namespace ProtoAqua
             private RingBuffer<Handler> m_Actions = new RingBuffer<Handler>(8, RingBufferMode.Expand);
             private bool m_DeletesQueued;
             private int m_ExecutionDepth;
+            private StringHash32 m_EventId;
+
+            public HandlerBlock(StringHash32 inEventId)
+            {
+                m_EventId = inEventId;
+            }
 
             public void Invoke(object inContext)
             {
@@ -159,7 +165,13 @@ namespace ProtoAqua
                         if (m_Actions[i].ShouldDelete(out bindingDestroyed))
                         {
                             if (bindingDestroyed)
+                            {
+                                #if UNITY_EDITOR
+                                UnityEngine.Debug.LogWarningFormat("[EventService] Cleaning up binding on event '{0}' for dead object '{1}'",
+                                    m_EventId.ToDebugString(), m_Actions[i].Name);
+                                #endif // UNITY_EDITOR
                                 ++cleanedUpFromDestroy;
+                            }
                             m_Actions.FastRemoveAt(i);
                         }
                     }
@@ -178,6 +190,7 @@ namespace ProtoAqua
             private MulticastDelegate m_ActionWithCastedContext;
             private Action<MulticastDelegate, object> m_ActionWithCastedContextCaller;
 
+            public string Name;
             public bool Delete;
 
             public Handler(Action inAction, UnityEngine.Object inBinding)
@@ -188,6 +201,12 @@ namespace ProtoAqua
                 m_ActionWithCastedContext = null;
                 m_ActionWithCastedContextCaller = null;
                 Delete = false;
+
+                #if UNITY_EDITOR
+                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
+                #else
+                Name = null;
+                #endif // UNITY_EDITOR
             }
 
             public Handler(Action<object> inActionWithContext, UnityEngine.Object inBinding)
@@ -198,6 +217,12 @@ namespace ProtoAqua
                 m_ActionWithCastedContext = null;
                 m_ActionWithCastedContextCaller = null;
                 Delete = false;
+
+                #if UNITY_EDITOR
+                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
+                #else
+                Name = null;
+                #endif // UNITY_EDITOR
             }
 
             private Handler(MulticastDelegate inActionWithCastedContext, Action<MulticastDelegate, object> inActionCaller, UnityEngine.Object inBinding)
@@ -208,6 +233,12 @@ namespace ProtoAqua
                 m_ActionWithCastedContext = inActionWithCastedContext;
                 m_ActionWithCastedContextCaller = inActionCaller;
                 Delete = false;
+
+                #if UNITY_EDITOR
+                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
+                #else
+                Name = null;
+                #endif // UNITY_EDITOR
             }
 
             public bool Match(UnityEngine.Object inBinding)
@@ -279,7 +310,7 @@ namespace ProtoAqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock();
+                block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
             block.Add(new Handler(inAction, inBinding));
@@ -295,7 +326,7 @@ namespace ProtoAqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock();
+                block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
             block.Add(new Handler(inActionWithContext, inBinding));
@@ -311,7 +342,7 @@ namespace ProtoAqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock();
+                block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
             block.Add(Handler.FromArgumentAction<T>(inActionWithCastedContext, inBinding));
@@ -456,6 +487,9 @@ namespace ProtoAqua
         {
             m_CleanupRoutine.Replace(this, MaintenanceRoutine());
             SceneHelper.OnSceneLoaded += OnSceneLoad;
+
+            int size = System.Runtime.InteropServices.Marshal.SizeOf<ContextCallback>();
+            Debug.LogFormat("sizeof(ActionCallback)={0}", size);
         }
 
         protected override void OnDeregisterService()

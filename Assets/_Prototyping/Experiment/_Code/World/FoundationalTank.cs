@@ -20,20 +20,72 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
+        [NonSerialized] private AudioHandle m_AudioLoop;
+
+        [NonSerialized] private Routine m_IdleRoutine;
+        [NonSerialized] private float m_IdleDuration = 0;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            m_BaseInput.OnInputDisabled.AddListener(() => {
+                m_IdleRoutine.Pause();
+            });
+            m_BaseInput.OnInputEnabled.AddListener(() => {
+                m_IdleRoutine.Resume();
+                m_IdleDuration /= 2;
+            });
+        }
+
         protected override void OnEnable()
         {
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
+                .Register(ExperimentEvents.AttemptObserveBehavior, ResetIdle, this);
+
+            m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
 
         protected override void OnDisable()
         {
             base.OnEnable();
 
-            Services.Events?.Deregister<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor)
-                .Deregister<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor);
+            Services.Events?.DeregisterAll(this);
+
+            m_AudioLoop.Stop();
+        }
+
+        public override void OnExperimentStart()
+        {
+            base.OnExperimentStart();
+
+            ResetIdle();
+            m_IdleRoutine.Replace(this, IdleTimer());
+        }
+
+        public override void OnExperimentEnd()
+        {
+            m_IdleRoutine.Stop();
+
+            base.OnExperimentEnd();
+        }
+
+        private IEnumerator IdleTimer()
+        {
+            while(true)
+            {
+                m_IdleDuration += Routine.DeltaTime;
+                if (m_IdleDuration >= 30)
+                {
+                    m_IdleDuration = 0;
+                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentIdle);
+                }
+
+                yield return null;
+            }
         }
 
         public override bool TryHandle(ExperimentSetupData inSelection)
@@ -53,7 +105,7 @@ namespace ProtoAqua.Experiment
             while(spawnCount-- > 0)
             {
                 ActorCtrl actor = ExperimentServices.Actors.Pools.Alloc(inActorId, m_ActorRoot);
-                actor.Nav.SetHelper(m_ActorNavHelper);
+                actor.Nav.Helper = m_ActorNavHelper;
                 actor.Nav.Spawn(spawnCount * RNG.Instance.NextFloat(0.8f, 1.2f) * m_SpawnDelay);
             }
         }
@@ -62,6 +114,11 @@ namespace ProtoAqua.Experiment
         {
             ExperimentServices.Actors.Pools.Reset(inActorId);
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
+        }
+
+        private void ResetIdle()
+        {
+            m_IdleDuration = 0;
         }
     }
 }

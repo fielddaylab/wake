@@ -30,6 +30,14 @@ namespace ProtoAqua.Scripting
             static public readonly StringHash32 EnableObject = "enable-object";
             static public readonly StringHash32 DisableObject = "disable-object";
             static public readonly StringHash32 SetVariable = "set-variable";
+            static public readonly StringHash32 FadeOut = "fade-out";
+            static public readonly StringHash32 FadeIn = "fade-in";
+            static public readonly StringHash32 ScreenWipeOut = "wipe-out";
+            static public readonly StringHash32 ScreenWipeIn = "wipe-in";
+            static public readonly StringHash32 ScreenFlash = "flash";
+            static public readonly StringHash32 TriggerResponse = "trigger-response";
+            static public readonly StringHash32 LoadScene = "load-scene";
+            static public readonly StringHash32 BoxStyle = "box-style";
         }
 
         static public class Dialog

@@ -184,7 +184,7 @@ namespace ProtoAqua
             if (m_Override)
                 return m_OverrideState;
             else
-                return m_Priority >= m_LastKnownSystemPriority && (m_Flags == 0 || (m_LastKnownSystemFlags & m_Flags) != 0);
+                return m_Priority >= m_LastKnownSystemPriority && m_LastKnownSystemFlags != 0 && (m_Flags == 0 || (m_LastKnownSystemFlags & m_Flags) != 0);
         }
 
         static public BaseInputLayer Find(Component inComponent)

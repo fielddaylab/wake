@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
 using UnityEngine;
@@ -17,9 +18,12 @@ namespace ProtoAqua
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
 
+        [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+
         #endregion // Inspector
 
         private int m_LetterboxCounter = 0;
+        private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
 
         #region Loading Screen
 
@@ -53,6 +57,23 @@ namespace ProtoAqua
             m_Letterbox.InstantHide();
             m_ScreenFaders.StopAll();
             m_WorldFaders.StopAll();
+
+            foreach(var panel in m_DialogStyles)
+            {
+                panel.InstantHide();
+            }
+        }
+
+        public DialogPanel GetDialog(StringHash32 inStyleId)
+        {
+            DialogPanel panel;
+            if (!m_DialogStyleMap.TryGetValue(inStyleId, out panel))
+            {
+                panel = m_DialogPanel;
+                Debug.LogErrorFormat("[UIMgr] Unable to retrieve dialog panel with style '{0}'", inStyleId.ToDebugString());
+            }
+
+            return panel;
         }
 
         #endregion // Dialog
@@ -99,6 +120,12 @@ namespace ProtoAqua
         protected override void OnRegisterService()
         {
             m_Loading.InstantShow();
+
+            m_DialogStyleMap = new Dictionary<StringHash32, DialogPanel>(m_DialogStyles.Length);
+            foreach(var panel in m_DialogStyles)
+            {
+                m_DialogStyleMap.Add(panel.StyleId(), panel);
+            }
         }
 
         public override FourCC ServiceId()

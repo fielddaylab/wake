@@ -6,26 +6,19 @@ using BeauUtil;
 using BeauPools;
 using BeauUtil.Variants;
 using UnityEngine;
+using Leaf;
 
 namespace ProtoAqua.Scripting
 {
-    public class ScriptNode : IDataBlock
+    public class ScriptNode : LeafNode
     {
-        static public readonly string NullId = "[null]";
-
         #region Serialized
-
-        // Ids
-        private StringHash32 m_Id = null;
 
         // Properties
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
         private TriggerNodeData m_TriggerData = null;
         private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
-
-        // Text
-        private List<string> m_Lines = new List<string>();
 
         #endregion // Serialized
 
@@ -35,13 +28,16 @@ namespace ProtoAqua.Scripting
             m_Id = inFullId;
         }
 
-        public StringHash32 Id() { return m_Id; }
         public ScriptNodeFlags Flags() { return m_Flags; }
         public ScriptNodePackage Package() { return m_Package; }
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
-        public IReadOnlyList<string> Lines() { return m_Lines; }
         public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
+
+        public override ILeafModule Module()
+        {
+            return m_Package;
+        }
 
         public PersistenceLevel TrackingLevel()
         {
@@ -56,14 +52,25 @@ namespace ProtoAqua.Scripting
             return PersistenceLevel.Untracked;
         }
 
-        #region Parser
-
-        [BlockContent(BlockContentMode.LineByLine), Preserve]
-        private void AddContent(string inLine)
+        public StringHash32 TargetId()
         {
-            if (!string.IsNullOrEmpty(inLine))
-                m_Lines.Add(inLine);
+            return m_TriggerData != null ? m_TriggerData.TargetId : StringHash32.Null;
         }
+
+        public TriggerPriority Priority()
+        {
+            if ((m_Flags & ScriptNodeFlags.Cutscene) != 0)
+                return TriggerPriority.Cutscene;
+
+            if (m_TriggerData != null)
+            {
+                return m_TriggerData.TriggerPriority;
+            }
+
+            return TriggerPriority.Low;
+        }
+
+        #region Parser
 
         [BlockMeta("cutscene"), Preserve]
         private void SetCutscene(bool inbCutscene = true)
@@ -78,6 +85,12 @@ namespace ProtoAqua.Scripting
         private void SetImportant()
         {
             m_Flags |= ScriptNodeFlags.Important;
+        }
+
+        [BlockMeta("chatter"), Preserve]
+        private void SetChatter()
+        {
+            m_Flags |= ScriptNodeFlags.CornerChatter;
         }
 
         [BlockMeta("entrypoint"), Preserve]
@@ -95,6 +108,11 @@ namespace ProtoAqua.Scripting
                 m_TriggerData = new TriggerNodeData();
             }
             m_TriggerData.TriggerId = inTriggerId;
+
+            if (inTriggerId == GameTriggers.RequestPartnerHelp)
+            {
+                m_TriggerData.TargetId = "kevin";
+            }
         }
 
         [BlockMeta("who"), Preserve]
@@ -103,6 +121,15 @@ namespace ProtoAqua.Scripting
             if (m_TriggerData != null)
             {
                 m_TriggerData.TargetId = inTargetId;
+            }
+        }
+
+        [BlockMeta("triggerPriority"), Preserve]
+        private void SetTriggerPriority(TriggerPriority inPriority)
+        {
+            if (m_TriggerData != null)
+            {
+                m_TriggerData.TriggerPriority = inPriority;
             }
         }
 
@@ -176,6 +203,7 @@ namespace ProtoAqua.Scripting
         Cutscene = 0x01,
         Entrypoint = 0x02,
         TriggerResponse = 0x04,
-        Important = 0x08
+        Important = 0x08,
+        CornerChatter = 0x10,
     }
 }

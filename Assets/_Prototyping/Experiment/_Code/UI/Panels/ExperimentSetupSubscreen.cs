@@ -15,6 +15,8 @@ namespace ProtoAqua.Experiment
         public virtual void SetData(ExperimentSetupData inData) { }
         public virtual void Refresh() { }
 
+        public virtual bool? ShouldCancelOnExit() { return null; }
+
         #region BasePanel
 
         protected override void OnShow(bool inbInstant)

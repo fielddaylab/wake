@@ -11,7 +11,7 @@ using BeauRoutine.Extensions;
 
 namespace ProtoAqua.Experiment
 {
-    public class KelpActor : MonoBehaviour, IPoolConstructHandler
+    public class KelpActor : ActorModule
     {
         #region Inspector
 
@@ -23,7 +23,6 @@ namespace ProtoAqua.Experiment
         
         #endregion // Inspector
 
-        [NonSerialized] private ActorCtrl m_ParentActor;
         [NonSerialized] private KelpLeaf[] m_AllLeaves = null;
 
         private void OnCreate()
@@ -38,18 +37,25 @@ namespace ProtoAqua.Experiment
 
             m_HeightOffset.SetPosition(height * 0.5f, Axis.Y, Space.Self);
             m_HeightCapOffset.SetPosition(height * 0.5f + 1, Axis.Y, Space.Self);
+
+            float facing = RNG.Instance.Choose(-1, 1);
+            for(int i = 0, leafCount = m_AllLeaves.Length; i < leafCount; ++i)
+            {
+                float lerp = (i + 0.5f + RNG.Instance.NextFloat(-0.1f, 0.1f)) / leafCount;
+                float leafHeight = height * lerp;
+
+                m_AllLeaves[i].Initialize(leafHeight, facing, Actor.Config);
+                facing = -facing;
+            }
         }
 
-        void IPoolConstructHandler.OnConstruct()
+        public override void OnConstruct()
         {
-            m_ParentActor = GetComponent<ActorCtrl>();
-            m_ParentActor.Callbacks.OnCreate = OnCreate;
+            base.OnConstruct();
+
+            Actor.Callbacks.OnCreate = OnCreate;
 
             m_AllLeaves = GetComponentsInChildren<KelpLeaf>(true);
-        }
-
-        void IPoolConstructHandler.OnDestruct()
-        {
         }
     }
 }

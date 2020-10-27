@@ -53,7 +53,7 @@ namespace ProtoAqua
             if (WasShowing())
             {
                 Services.Input?.PopPriority(m_RaycastBlocker);
-                Services.Events.Dispatch(GameEvents.CutsceneEnd);
+                Services.Events?.Dispatch(GameEvents.CutsceneEnd);
             }
         }
 

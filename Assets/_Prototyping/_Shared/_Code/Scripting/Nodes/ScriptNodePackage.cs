@@ -1,41 +1,22 @@
-using System;
 using BeauUtil;
 using BeauUtil.Blocks;
 using System.Collections.Generic;
-using System.Collections;
-using BeauUtil.Tags;
 using UnityEngine;
 using BeauUtil.IO;
 using System.IO;
+using Leaf;
+using Leaf.Compiler;
+using Leaf.Runtime;
 
 namespace ProtoAqua.Scripting
 {
-    public class ScriptNodePackage : IDataBlockPackage<ScriptNode>
+    public class ScriptNodePackage : LeafNodePackage<ScriptNode>
     {
-        private readonly Dictionary<StringHash32, ScriptNode> m_Nodes = new Dictionary<StringHash32, ScriptNode>(32);
-
-        private string m_Name;
-        [BlockMeta("basePath")] private string m_RootPath = string.Empty;
-
         private IHotReloadable m_HotReload;
 
         public ScriptNodePackage(string inName)
+            : base(inName)
         {
-            m_Name = inName;
-            m_RootPath = inName;
-        }
-
-        /// <summary>
-        /// Name of this package.
-        /// </summary>
-        public string Name() { return m_Name; }
-
-        /// <summary>
-        /// Attempts to retrieve the node with the given id.
-        /// </summary>
-        public bool TryGetNode(StringHash32 inId, out ScriptNode outNode)
-        {
-            return m_Nodes.TryGetValue(inId, out outNode);
         }
 
         /// <summary>
@@ -90,7 +71,7 @@ namespace ProtoAqua.Scripting
         /// <summary>
         /// Binds a source asset for hot reloading.
         /// </summary>
-        public void BindAsset(TextAsset inAsset)
+        public void BindAsset(LeafAsset inAsset)
         {
             if (m_HotReload != null)
             {
@@ -100,7 +81,7 @@ namespace ProtoAqua.Scripting
 
             if (inAsset != null)
             {
-                m_HotReload = new HotReloadableAssetProxy<TextAsset>(inAsset, "ScriptNodePackage", ReloadFromAsset);
+                m_HotReload = new HotReloadableAssetProxy<LeafAsset>(inAsset, "ScriptNodePackage", ReloadFromAsset);
                 ReloadableAssetCache.Add(m_HotReload);
             }
         }
@@ -123,7 +104,7 @@ namespace ProtoAqua.Scripting
             }
         }
 
-        private void ReloadFromAsset(TextAsset inAsset, HotReloadOperation inOperation)
+        private void ReloadFromAsset(LeafAsset inAsset, HotReloadOperation inOperation)
         {
             var mgr = Services.Script;
             if (mgr != null)
@@ -137,7 +118,7 @@ namespace ProtoAqua.Scripting
             if (inOperation == HotReloadOperation.Modified)
             {
                 var self = this;
-                BlockParser.Parse(ref self, null, inAsset.text, Parsing.Block, Generator.Instance);
+                BlockParser.Parse(ref self, m_Name, inAsset.Source(), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {
@@ -154,13 +135,14 @@ namespace ProtoAqua.Scripting
                 mgr.Unload(this);
             }
 
-            m_Nodes.Clear();
+            Clear();
+
             m_RootPath = string.Empty;
 
             if (inOperation == HotReloadOperation.Modified)
             {
                 var self = this;
-                BlockParser.Parse(ref self, null, File.ReadAllText(inFilePath), Parsing.Block, Generator.Instance);
+                BlockParser.Parse(ref self, m_Name, File.ReadAllText(inFilePath), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {
@@ -183,44 +165,30 @@ namespace ProtoAqua.Scripting
 
         #endregion // Reload
 
-        #region ICollection
-
-        public int Count { get { return m_Nodes.Count; } }
-
-        public IEnumerator<ScriptNode> GetEnumerator()
-        {
-            return m_Nodes.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        #endregion // ICollection
-
         #region Generator
 
-        public class Generator : AbstractBlockGenerator<ScriptNode, ScriptNodePackage>
+        public class Generator : LeafParser<ScriptNode, ScriptNodePackage>
         {
             static public readonly Generator Instance = new Generator();
+
+            public override ILeafExpression<ScriptNode> CompileExpression(StringSlice inExpression)
+            {
+                return new ScriptExpression(inExpression.ToString());
+            }
+
+            public override bool IsVerbose
+            {
+                get { return !Application.isPlaying; }
+            }
 
             public override ScriptNodePackage CreatePackage(string inFileName)
             {
                 return new ScriptNodePackage(inFileName);
             }
 
-            public override bool TryCreateBlock(IBlockParserUtil inUtil, ScriptNodePackage inPackage, TagData inId, out ScriptNode outBlock)
+            protected override ScriptNode CreateNode(string inFullId, StringSlice inExtraData, ScriptNodePackage inPackage)
             {
-                inUtil.TempBuilder.Length = 0;
-                inUtil.TempBuilder.Append(inPackage.m_RootPath);
-                if (!inPackage.m_RootPath.EndsWith("."))
-                    inUtil.TempBuilder.Append('.');
-                inUtil.TempBuilder.AppendSlice(inId.Id);
-                string fullId = inUtil.TempBuilder.Flush();
-                outBlock = new ScriptNode(inPackage, fullId);
-                inPackage.m_Nodes.Add(outBlock.Id(), outBlock);
-                return true;
+                return new ScriptNode(inPackage, inFullId);
             }
         }
 

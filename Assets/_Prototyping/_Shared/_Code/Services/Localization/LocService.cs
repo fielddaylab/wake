@@ -75,12 +75,12 @@ namespace ProtoAqua
         /// </summary>
         /// <param name="inKey"></param>
         /// <returns></returns>
-        public string Localize(StringHash32 inKey)
+        public string Localize(StringHash32 inKey, bool inbIgnoreEvents = false)
         {
-            return Localize(inKey, string.Empty, null);
+            return Localize(inKey, string.Empty, null, inbIgnoreEvents);
         }
 
-        public string Localize(StringHash32 inKey, string inDefault, object inContext = null)
+        public string Localize(StringHash32 inKey, string inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
             if (m_LoadRoutine)
             {
@@ -89,7 +89,7 @@ namespace ProtoAqua
             }
 
             if (inKey.IsEmpty)
-                return string.Empty;
+                return inDefault;
 
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
@@ -97,7 +97,8 @@ namespace ProtoAqua
                 Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey.ToDebugString());
                 content = inDefault;
             }
-            if (content.IndexOf('{') >= 0)
+            
+            if (!inbIgnoreEvents && content.IndexOf('{') >= 0)
             {
                 using(var tagAlloc = m_TagStringPool.TempAlloc())
                 {

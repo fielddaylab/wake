@@ -11,6 +11,7 @@ namespace ProtoAqua.Scripting
     {
         public StringHash32 TriggerId;
         public StringHash32 TargetId;
+        public TriggerPriority TriggerPriority;
 
         public VariantComparison[] Conditions;
         public int Score;

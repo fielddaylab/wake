@@ -12,6 +12,8 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
+        public override bool? ShouldCancelOnExit() { return false; }
+
         public Action OnSelectEnd;
 
         protected override void Awake()

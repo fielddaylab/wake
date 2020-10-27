@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using BeauData;
 using BeauPools;
@@ -14,38 +15,41 @@ namespace ProtoAqua.Scripting
     /// </summary>
     public struct ScriptThreadHandle
     {
-        private string m_Id;
-        private IScriptContext m_Context;
-        private Routine m_Routine;
-
-        internal ScriptThreadHandle(string inId, IScriptContext inContext, Routine inRoutine)
+        private ScriptThread m_Thread;
+        private uint m_Id;
+        
+        internal ScriptThreadHandle(ScriptThread inThread, uint inId)
         {
+            m_Thread = inThread;
             m_Id = inId;
-            m_Context = inContext;
-            m_Routine = inRoutine;
+        }
+
+        private ScriptThread GetThread()
+        {
+            if (m_Thread != null && !m_Thread.HasId(m_Id))
+            {
+                m_Thread = null;
+                m_Id = 0;
+            }
+            return m_Thread;
         }
 
         /// <summary>
-        /// Id for this thread.
+        /// Name for this thread.
         /// </summary>
-        public string Id() { return m_Id; }
+        public string Name() { return GetThread()?.Name; }
 
         /// <summary>
         /// Context for the script thread.
         /// </summary>
-        public IScriptContext Context() { return m_Context; }
-
-        /// <summary>
-        /// Currently executing routine.
-        /// </summary>
-        public Routine Routine() { return m_Routine; }
+        public IScriptContext Context() { return GetThread()?.Context; }
 
         /// <summary>
         /// Pauses the thread.
         /// </summary>
         public void Pause()
         {
-            m_Routine.Pause();
+            GetThread()?.Pause();
         }
 
         /// <summary>
@@ -53,7 +57,10 @@ namespace ProtoAqua.Scripting
         /// </summary>
         public bool IsPaused()
         {
-            return m_Routine.GetPaused();
+            var thread = GetThread();
+            if (thread != null)
+                return thread.IsPaused();
+            return false;
         }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace ProtoAqua.Scripting
         /// </summary>
         public void Resume()
         {
-            m_Routine.Resume();
+            GetThread()?.Resume();
         }
 
         /// <summary>
@@ -69,7 +76,15 @@ namespace ProtoAqua.Scripting
         /// </summary>
         public bool IsRunning()
         {
-            return m_Routine.Exists();
+            var thread = GetThread();
+            if (thread != null)
+                return thread.IsRunning();
+            return false;
+        }
+
+        public IEnumerator Wait()
+        {
+            return GetThread()?.Wait();
         }
 
         /// <summary>
@@ -77,10 +92,7 @@ namespace ProtoAqua.Scripting
         /// </summary>
         public void Kill()
         {
-            Services.Script.KillThread(this);
-            m_Id = null;
-            m_Context = null;
-            m_Routine = default(Routine);
+            GetThread()?.Kill();
         }
     }
 }

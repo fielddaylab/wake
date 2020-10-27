@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using BeauRoutine;
 using UnityEngine.Profiling;
 using BeauUtil.Debugger;
+using Leaf;
 
 namespace ProtoAqua.Scripting
 {
@@ -14,7 +15,7 @@ namespace ProtoAqua.Scripting
     {
         #region Inspector
 
-        [SerializeField, Required] private TextAsset[] m_ScriptFiles = null;
+        [SerializeField, Required] private LeafAsset[] m_Scripts = null;
 
         #endregion // Inspector
 
@@ -25,13 +26,13 @@ namespace ProtoAqua.Scripting
             using(Profiling.Time("loading scripts"))
             {
                 m_LoadedPackages = new List<ScriptNodePackage>();
-                for(int i = 0; i < m_ScriptFiles.Length; ++i)
+                for(int i = 0; i < m_Scripts.Length; ++i)
                 {
-                    TextAsset textFile = m_ScriptFiles[i];
+                    LeafAsset file = m_Scripts[i];
                     IEnumerator loader;
-                    ScriptNodePackage package = BlockParser.ParseAsync(textFile.name, textFile.text, Parsing.Block, ScriptNodePackage.Generator.Instance, out loader);
+                    ScriptNodePackage package = BlockParser.ParseAsync(file.name, file.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance, out loader);
                     yield return Async.Schedule(loader);
-                    package.BindAsset(textFile);
+                    package.BindAsset(file);
                     Services.Script.Load(package);
                     m_LoadedPackages.Add(package);
                 }

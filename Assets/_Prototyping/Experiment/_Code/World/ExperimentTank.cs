@@ -24,8 +24,18 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
+        [NonSerialized] protected BaseInputLayer m_BaseInput;
+
+        protected virtual void Awake()
+        {
+            m_BaseInput = BaseInputLayer.Find(this);
+        }
+
         protected virtual void OnEnable() { }
         protected virtual void OnDisable() { }
+
+        public virtual void OnExperimentStart() { }
+        public virtual void OnExperimentEnd() { }
 
         public abstract bool TryHandle(ExperimentSetupData inSelection);
         public virtual void Hide()
