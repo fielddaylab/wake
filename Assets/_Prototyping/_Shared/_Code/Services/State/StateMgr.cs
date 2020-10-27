@@ -107,6 +107,8 @@ namespace ProtoAqua
         private IEnumerator InitialSceneLoad()
         {
             yield return WaitForServiceLoading();
+            
+            Services.Input.PauseAll();
             yield return WaitForPreload(m_InitialPreloadRoot, null);
 
             foreach(var obj in m_InitialPreloadRoot.GetComponentsInChildren<ISceneLoadHandler>(true))
@@ -126,6 +128,7 @@ namespace ProtoAqua
 
             Debug.LogFormat("[StateMgr] Initial load of '{0}' finished", active.Path);
             active.BroadcastLoaded();
+            Services.Input.ResumeAll();
 
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
@@ -134,6 +137,8 @@ namespace ProtoAqua
         {
             try
             {
+                Services.Input.PauseAll();
+
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
                 if (bShowLoading)
                 {
@@ -180,6 +185,7 @@ namespace ProtoAqua
             }
             finally
             {
+                Services.Input.ResumeAll();
                 m_SceneLock = false;
             }
         }
