@@ -25,10 +25,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ github.event.inputs.name }}"
-      
     - name: compile a new string
       env:
         STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', $github.event.inputs.name, 'the', 'Octocat') }}
