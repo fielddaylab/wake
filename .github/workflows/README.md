@@ -19,9 +19,9 @@ created for this feature to work are:
 * VPN_USERNAME
 
 
-The trigger for this action is creating a tag. The easiest way to do this via GitHub is to 
-create a Release and give the tag the version number.  This build artifact is uploaded to a 
-folder specific to this release version.
+The trigger for this action is a push. 
+This build artifact is uploaded to a folder specific to this release version.
+The WebGL build will be placed in DEPLOY_HOST:DEPLOY_DIR/BRANCH
 
 
 ## Unity Activation
