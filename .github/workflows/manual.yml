@@ -30,5 +30,6 @@ jobs:
       run: echo "Hello ${{ github.event.inputs.name }}"
       
     - name: compile a new string
-      STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', $github.event.inputs.name, 'the', 'Octocat') }}
+      env:
+        STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', $github.event.inputs.name, 'the', 'Octocat') }}
       run: echo "$STRING_TEST"
