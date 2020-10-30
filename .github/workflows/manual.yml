@@ -28,5 +28,5 @@ jobs:
     # Runs a single command using the runners shell
     - name: Send greeting
       run: echo "Hello ${{ github.event.inputs.name }}"
-      STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', ${{ github.event.inputs.name }}, 'the', 'Octocat') }}
+      STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', github.event.inputs.name, 'the', 'Octocat') }}
       run: echo "$STRING_TEST"
