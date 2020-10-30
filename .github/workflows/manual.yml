@@ -27,5 +27,5 @@ jobs:
     steps:
     - name: compile a new string
       env:
-        STRING_TEST: ${{ format('{{Hello {0} {1} {2}!}}', ${{github.event.inputs.name}}, 'the', 'Octocat') }}
+        STRING_TEST: ${{github.event.inputs.name}}'/'${{github.event.inputs.name}}
       run: echo "$STRING_TEST"
