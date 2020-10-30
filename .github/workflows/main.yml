@@ -82,7 +82,7 @@ jobs:
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzr --delete
-        path: build/WebGL/WebGL
+        path: build/WebGL/WebGL/*
         remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
         remote_host: ${{ secrets.DEPLOY_HOST }}
         remote_user: ${{ secrets.DEPLOY_USER }}
