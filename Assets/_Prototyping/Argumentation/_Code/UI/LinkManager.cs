@@ -40,7 +40,6 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary) 
             {
                Link currLink = link.Value;
-               Debug.Log("VALUE of " + currLink.Id + " " + currLink.ShortenedText);
                CreateLink(currLink);
             }
 
