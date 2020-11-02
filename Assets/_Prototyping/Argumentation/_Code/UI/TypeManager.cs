@@ -11,15 +11,15 @@ namespace ProtoAqua.Argumentation {
     public class TypeManager : MonoBehaviour {
 
         [Serializable]
-        public class TypeDefinition : IKeyValuePair<StringHash, TypeDefinition>
+        public class TypeDefinition : IKeyValuePair<StringHash32, TypeDefinition>
         {
             public string type;
             public string DisplayLabel;
             public Sprite Icon;
 
-            StringHash IKeyValuePair<StringHash, TypeDefinition>.Key { get { return type; } }
+            StringHash32 IKeyValuePair<StringHash32, TypeDefinition>.Key { get { return type; } }
 
-            TypeDefinition IKeyValuePair<StringHash, TypeDefinition>.Value { get { return this; } }
+            TypeDefinition IKeyValuePair<StringHash32, TypeDefinition>.Value { get { return this; } }
         }
         
         [Serializable]
@@ -68,32 +68,29 @@ namespace ProtoAqua.Argumentation {
                 m_ModelButtons.SetActive(false); 
                 InitializePoolButtons(m_EcosystemButtons, "ecosystem");
             } else if(tab == "model") {
-                 m_BehaviorButtons.SetActive(false);
+                m_BehaviorButtons.SetActive(false);
                 m_EcosystemButtons.SetActive(false);
                 m_ModelButtons.SetActive(true);
+                InitializePoolButtons(m_ModelButtons, "model");
             }
         }
 
         private void InitializePoolButtons(GameObject container, string inType) {
+            Boolean setFirstType = false; //Used to "click" the first type that will appear at the top. This is to load something when switching tabs
             List<String> value;
             typeList.TryGetValue(inType, out value); 
-
-            foreach(var val in value) {
-                Debug.Log("VALUE IS " + val);
-                TypeDefinition newType;
-                StringHash typeHash = new StringHash(inType);
-                foreach(IKeyValuePair<StringHash, TypeDefinition> valuee in m_TypeButtons) {
-                    Debug.Log(valuee.Key);
+            foreach(String val in value) {
+                if(!setFirstType) {
+                    ToggleType(val);
+                    setFirstType = true;
                 }
+
+                TypeDefinition newType;
+                StringHash32 typeHash = new StringHash32(val);
                 if(m_TypeButtons.TryGetValue(typeHash, out newType)) {
-                    Debug.Log("test");
                     TypeButton newButton = m_TypePool.Alloc(container.transform);
                     newButton.InitalizeButton(val, newType.DisplayLabel, newType.Icon, this);
                 }
-                
-                
-
-               
             }
    
         }
@@ -116,12 +113,5 @@ namespace ProtoAqua.Argumentation {
             }
               
         }
-
-        public TypeDefinition GetTypeButton(StringHash inId) {
-            TypeDefinition def;
-            m_TypeButtons.TryGetValue(inId, out def);
-            return def;
-        } 
-        
     }
 }

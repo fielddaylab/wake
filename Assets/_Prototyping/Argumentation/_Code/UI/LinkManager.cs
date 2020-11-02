@@ -109,31 +109,15 @@ namespace ProtoAqua.Argumentation
         // Show responses with a given tag and hide all other responses
         private void ToggleTabs(string tagToShow) 
         {
-            // foreach (GameObject gameObject in responses) 
-            // {
-            //     ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
-
-            //     if (chatBubble.linkTag.Equals(tagToShow)) 
-            //     {
-                   
-            //         gameObject.SetActive(true);
-            //     }
-            //     else 
-            //     {
-            //         gameObject.SetActive(false);
-            //     }
-            // }
-
             m_TypeManager.ToggleButtons(tagToShow);
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform); 
         }
         
         public void SelectClaim(string linkId) {
             currentClaim = linkId;
             ShowTabs();
             ToggleTabs("behavior");
-            ToggleType("asdf");
         }        
 
         private void HideTabs() {

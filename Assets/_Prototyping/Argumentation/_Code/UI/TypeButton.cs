@@ -10,6 +10,7 @@ public class TypeButton : MonoBehaviour, IPoolAllocHandler {
 
     [SerializeField] Button m_button = null;
     [SerializeField] TextMeshProUGUI m_TextMesh = null;
+    [SerializeField] Image m_spriteImage = null;
 
 
 
@@ -28,8 +29,9 @@ public class TypeButton : MonoBehaviour, IPoolAllocHandler {
         }
 
         public void InitalizeButton(string inId, string inDisplayText, Sprite inSprite, TypeManager inTypeManager) {
-            Debug.Log(inDisplayText + " asdfjladsjfdzx");
+            Debug.Log("Making button");
             m_TextMesh.text = inDisplayText;
+            m_spriteImage.sprite = inSprite;
             m_button.onClick.AddListener(() => inTypeManager.ToggleType(inId));
         }
 
