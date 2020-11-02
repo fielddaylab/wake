@@ -1,50 +1,57 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Blocks;
-using BeauUtil.Tags;
 using UnityEngine;
+using ProtoAqua.Scripting;
+using System.Collections;
+using System.Collections.Generic;
+using BeauRoutine;
+using UnityEngine.Profiling;
+using BeauUtil.Debugger;
+using Leaf;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
-    public class ScriptLoader : MonoBehaviour
+    public class ScriptLoader : MonoBehaviour, IScenePreloader, ISceneUnloadHandler
     {
         #region Inspector
 
-        [SerializeField] private TextAsset[] m_ScriptFiles = null;
+        [SerializeField, Required] private LeafAsset[] m_Scripts = null;
 
         #endregion // Inspector
 
-        private ScriptNodePackage[] m_LoadedPackages;
+        private List<ScriptNodePackage> m_LoadedPackages;
 
-        private void OnEnable()
+        public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext)
         {
-            ScriptNodePackage.Generator generator = new ScriptNodePackage.Generator();
-            m_LoadedPackages = new ScriptNodePackage[m_ScriptFiles.Length];
-            for(int i = 0; i < m_ScriptFiles.Length; ++i)
+            using(Profiling.Time("loading scripts"))
             {
-                TextAsset textFile = m_ScriptFiles[i];
-                ScriptNodePackage package = BlockParser.Parse(textFile.name, textFile.text, BlockParsingRules.Default, generator);
-                m_LoadedPackages[i] = package;
-                Services.Script.Load(package);
+                m_LoadedPackages = new List<ScriptNodePackage>();
+                for(int i = 0; i < m_Scripts.Length; ++i)
+                {
+                    LeafAsset file = m_Scripts[i];
+                    IEnumerator loader;
+                    ScriptNodePackage package = BlockParser.ParseAsync(file.name, file.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance, out loader);
+                    yield return Async.Schedule(loader);
+                    package.BindAsset(file);
+                    Services.Script.Load(package);
+                    m_LoadedPackages.Add(package);
+                }
             }
         }
 
-        private void OnDisable()
+        public void OnSceneUnload(SceneBinding inScene, object inContext)
         {
-            if (Services.Script && m_LoadedPackages != null)
+            if (m_LoadedPackages != null)
             {
-                for(int i = 0; i < m_LoadedPackages.Length; ++i)
+                foreach(var package in m_LoadedPackages)
                 {
-                    Services.Script.Unload(m_LoadedPackages[i]);
+                    package.UnbindAsset();
+                    Services.Script?.Unload(package);
                 }
             }
 
-            ArrayUtils.Dispose(ref m_LoadedPackages);
+            m_LoadedPackages.Clear();
+            m_LoadedPackages = null;
         }
     }
 }

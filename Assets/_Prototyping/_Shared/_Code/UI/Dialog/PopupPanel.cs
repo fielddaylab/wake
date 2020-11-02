@@ -12,12 +12,15 @@ namespace ProtoAqua
 {
     public class PopupPanel : BasePanel
     {
-        static public readonly StringHash Option_Okay = "Okay";
-        static public readonly StringHash Option_Yes = "Yes";
-        static public readonly StringHash Option_No = "";
+        static public readonly StringHash32 Option_Okay = "Okay";
+        static public readonly StringHash32 Option_Submit = "Submit";
+        static public readonly StringHash32 Option_Yes = "Yes";
+        static public readonly StringHash32 Option_No = "";
+        static public readonly StringHash32 Option_Cancel = "";
 
         static private readonly NamedOption[] DefaultOkay = new NamedOption[] { new NamedOption(Option_Okay, "Okay") };
         static private readonly NamedOption[] DefaultYesNo = new NamedOption[] { new NamedOption(Option_Yes, "Yes"), new NamedOption(Option_No, "No") };
+        static private readonly NamedOption[] DefaultSubmitCancel = new NamedOption[] { new NamedOption(Option_Submit, "Submit"), new NamedOption(Option_Cancel, "Cancel") };
 
         [Serializable]
         private struct ButtonConfig
@@ -26,7 +29,7 @@ namespace ProtoAqua
             public TMP_Text Text;
             public Button Button;
 
-            [NonSerialized] public StringHash OptionId;
+            [NonSerialized] public StringHash32 OptionId;
         }
 
         #region Inspector
@@ -37,6 +40,7 @@ namespace ProtoAqua
         [Header("Contents")]
         [SerializeField] private TMP_Text m_HeaderText = null;
         [SerializeField] private TMP_Text m_ContentsText = null;
+        [SerializeField] private TMP_InputField m_Input = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;
 
@@ -45,8 +49,9 @@ namespace ProtoAqua
         [NonSerialized] private Routine m_DisplayRoutine;
         [NonSerialized] private Routine m_BoxAnim;
 
-        [NonSerialized] private StringHash m_SelectedOption;
+        [NonSerialized] private StringHash32 m_SelectedOption;
         [NonSerialized] private bool m_OptionWasSelected;
+        [NonSerialized] private int m_OptionCount;
 
         #region Initialization
 
@@ -59,30 +64,56 @@ namespace ProtoAqua
                 int cachedIdx = i;
                 m_Buttons[i].Button.onClick.AddListener(() => OnButtonClicked(cachedIdx));
             }
+
+            m_Input.onSubmit.AddListener((s) => OnTextSubmit());
+
+            m_RaycastBlocker.OnInputDisabled.AddListener(OnInputDisabled);
+        }
+
+        private void OnDestroy()
+        {
+            m_RaycastBlocker.OnInputDisabled.RemoveListener(OnInputDisabled);
         }
 
         #endregion // Initialization
 
         #region Display
 
-        public Future<StringHash> Display(string inHeader, string inText)
+        public Future<StringHash32> Display(string inHeader, string inText)
         {
             return Present(inHeader, inText, DefaultOkay);
         }
 
-        public Future<StringHash> AskYesNo(string inHeader, string inText)
+        public Future<PopupInputResult> ForcedTextEntry(string inHeader, string inText)
+        {
+            return TextEntry(inHeader, inText, DefaultOkay);
+        }
+
+        public Future<StringHash32> AskYesNo(string inHeader, string inText)
         {
             return Present(inHeader, inText, DefaultYesNo);
         }
 
-        public Future<StringHash> Present(string inHeader, string inText, params NamedOption[] inOptions)
+        public Future<PopupInputResult> CancelableTextEntry(string inHeader, string inText)
         {
-            Future<StringHash> future = new Future<StringHash>();
-            m_DisplayRoutine.Replace(this, PresentRoutine(future, inHeader, inText, inOptions));
+            return TextEntry(inHeader, inText, DefaultSubmitCancel);
+        }
+
+        public Future<StringHash32> Present(string inHeader, string inText, params NamedOption[] inOptions)
+        {
+            Future<StringHash32> future = new Future<StringHash32>();
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inOptions));
             return future;
         }
 
-        private void Configure(string inHeader, string inText, NamedOption[] inOptions)
+        public Future<PopupInputResult> TextEntry(string inHeader, string inText, params NamedOption[] inOptions)
+        {
+            Future<PopupInputResult> future = new Future<PopupInputResult>();
+            m_DisplayRoutine.Replace(this, PresentInputRoutine(future, inHeader, inText, inOptions));
+            return future;
+        }
+
+        private void Configure(string inHeader, string inText, bool inbInput, NamedOption[] inOptions)
         {
             if (!string.IsNullOrEmpty(inHeader))
             {
@@ -106,11 +137,15 @@ namespace ProtoAqua
                 m_ContentsText.SetText(string.Empty);
             }
 
+            m_Input.SetTextWithoutNotify(string.Empty);
+            m_Input.gameObject.SetActive(inbInput);
+
+            m_OptionCount = inOptions.Length;
             for(int i = 0; i < m_Buttons.Length; ++i)
             {
                 ref ButtonConfig config = ref m_Buttons[i];
 
-                if (i < inOptions.Length)
+                if (i < m_OptionCount)
                 {
                     NamedOption option = inOptions[i];
                     config.Text.SetText(option.Text);
@@ -125,11 +160,11 @@ namespace ProtoAqua
             }
         }
 
-        private IEnumerator PresentRoutine(Future<StringHash> ioFuture, string inHeader, string inText, NamedOption[] inOptions)
+        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, NamedOption[] inOptions)
         {
             using(ioFuture)
             {
-                Configure(inHeader, inText, inOptions);
+                Configure(inHeader, inText, false, inOptions);
 
                 if (IsShowing())
                 {
@@ -142,11 +177,11 @@ namespace ProtoAqua
 
                 SetInputState(true);
 
-                m_SelectedOption = StringHash.Null;
+                m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
                 while(!m_OptionWasSelected)
                 {
-                    if (inOptions.Length <= 1 && Input.GetKeyDown(KeyCode.Space))
+                    if (inOptions.Length <= 1 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Space))
                     {
                         m_OptionWasSelected = true;
                         if (inOptions.Length == 1)
@@ -160,7 +195,50 @@ namespace ProtoAqua
                 SetInputState(false);
 
                 ioFuture.Complete(m_SelectedOption);
-                m_SelectedOption = StringHash.Null;
+                m_SelectedOption = StringHash32.Null;
+
+                yield return null;
+
+                if (m_AutoCloseDelay > 0)
+                    yield return m_AutoCloseDelay;
+
+                Hide();
+            }
+        }
+
+        private IEnumerator PresentInputRoutine(Future<PopupInputResult> ioFuture, string inHeader, string inText, NamedOption[] inOptions)
+        {
+            using(ioFuture)
+            {
+                Configure(inHeader, inText, true, inOptions);
+
+                if (IsShowing())
+                {
+                    m_BoxAnim.Replace(this, BounceAnim());
+                }
+                else
+                {
+                    Show();
+                }
+
+                SetInputState(true);
+
+                m_SelectedOption = StringHash32.Null;
+                m_OptionWasSelected = false;
+                while(!m_OptionWasSelected)
+                {
+                    for(int i = 0; i < m_OptionCount; ++i)
+                    {
+                        if (!inOptions[i].Id.IsEmpty)
+                            m_Buttons[i].Button.interactable = !string.IsNullOrEmpty(m_Input.text);
+                    }
+                    yield return null;
+                }
+
+                SetInputState(false);
+
+                ioFuture.Complete(new PopupInputResult(m_Input.text, m_SelectedOption));
+                m_SelectedOption = StringHash32.Null;
 
                 yield return null;
 
@@ -215,6 +293,34 @@ namespace ProtoAqua
             m_OptionWasSelected = true;
         }
 
+        private void OnTextSubmit()
+        {
+            if (!string.IsNullOrEmpty(m_Input.text))
+            {
+                int nonEmptyIdx = -1;
+                for(int i = 0; i < m_OptionCount; ++i)
+                {
+                    if (m_Buttons[i].OptionId.IsEmpty)
+                        continue;
+
+                    if (nonEmptyIdx >= 0)
+                        return;
+
+                    nonEmptyIdx = i;
+                }
+
+                if (nonEmptyIdx >= 0)
+                {
+                    OnButtonClicked(nonEmptyIdx);
+                }
+            }
+        }
+
+        private void OnInputDisabled()
+        {
+            m_Input.DeactivateInputField();
+        }
+
         #endregion // Callbacks
 
         #region BasePanel
@@ -222,7 +328,7 @@ namespace ProtoAqua
         protected override void OnShow(bool inbInstant)
         {
             SetInputState(false);
-            m_RaycastBlocker.ClearOverride();
+            m_RaycastBlocker.Override = null;
 
             if (!WasShowing())
             {
@@ -237,14 +343,26 @@ namespace ProtoAqua
             m_BoxAnim.Stop();
             m_DisplayRoutine.Stop();
 
-            m_RaycastBlocker.OverrideState(false);
+            m_RaycastBlocker.Override = false;
 
             if (WasShowing())
             {
-                Services.Input?.PopPriority();
+                Services.Input?.PopPriority(m_RaycastBlocker);
             }
         }
 
         #endregion // BasePanel
+    }
+
+    public struct PopupInputResult
+    {
+        public readonly string Input;
+        public readonly StringHash32 Option;
+
+        public PopupInputResult(string inInput, StringHash32 inOption)
+        {
+            Input = inInput;
+            Option = inOption;
+        }
     }
 }

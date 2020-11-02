@@ -10,36 +10,45 @@ using System;
 using ProtoAudio;
 using BeauUtil.Tags;
 
-namespace ProtoAqua
+namespace ProtoAqua.Scripting
 {
     static public class ScriptEvents
     {
         static public class Global
         {
-            static public readonly StringHash HideDialog = "hide-dialog";
-            static public readonly StringHash PitchBGM = "bgm-pitch";
-            static public readonly StringHash PlayBGM = "bgm-play";
-            static public readonly StringHash PlaySound = "sound-play";
-            static public readonly StringHash ShowDialog = "show-dialog";
-            static public readonly StringHash StopBGM = "bgm-stop";
-            static public readonly StringHash Wait = "wait";
-            static public readonly StringHash BroadcastEvent = "broadcast-event";
-            static public readonly StringHash WaitAbsolute = "wait-abs";
-            static public readonly StringHash LetterboxOn = "letterbox-on";
-            static public readonly StringHash LetterboxOff = "letterbox-off";
-            static public readonly StringHash EnableObject = "enable-object";
-            static public readonly StringHash DisableObject = "disable-object";
+            static public readonly StringHash32 HideDialog = "hide-dialog";
+            static public readonly StringHash32 PitchBGM = "bgm-pitch";
+            static public readonly StringHash32 PlayBGM = "bgm-play";
+            static public readonly StringHash32 PlaySound = "sound-play";
+            static public readonly StringHash32 ShowDialog = "show-dialog";
+            static public readonly StringHash32 StopBGM = "bgm-stop";
+            static public readonly StringHash32 Wait = "wait";
+            static public readonly StringHash32 BroadcastEvent = "broadcast-event";
+            static public readonly StringHash32 WaitAbsolute = "wait-abs";
+            static public readonly StringHash32 LetterboxOn = "letterbox-on";
+            static public readonly StringHash32 LetterboxOff = "letterbox-off";
+            static public readonly StringHash32 EnableObject = "enable-object";
+            static public readonly StringHash32 DisableObject = "disable-object";
+            static public readonly StringHash32 SetVariable = "set-variable";
+            static public readonly StringHash32 FadeOut = "fade-out";
+            static public readonly StringHash32 FadeIn = "fade-in";
+            static public readonly StringHash32 ScreenWipeOut = "wipe-out";
+            static public readonly StringHash32 ScreenWipeIn = "wipe-in";
+            static public readonly StringHash32 ScreenFlash = "flash";
+            static public readonly StringHash32 TriggerResponse = "trigger-response";
+            static public readonly StringHash32 LoadScene = "load-scene";
+            static public readonly StringHash32 BoxStyle = "box-style";
         }
 
         static public class Dialog
         {
-            static public readonly StringHash Auto = "auto-continue";
-            static public readonly StringHash Clear = "clear";
-            static public readonly StringHash InputContinue = "input-continue";
-            static public readonly StringHash SetTypeSFX = "set-type-sfx";
-            static public readonly StringHash Speaker = "set-speaker";
-            static public readonly StringHash Speed = "set-speed";
-            static public readonly StringHash Target = "set-target";
+            static public readonly StringHash32 Auto = "auto-continue";
+            static public readonly StringHash32 Clear = "clear";
+            static public readonly StringHash32 InputContinue = "input-continue";
+            static public readonly StringHash32 SetTypeSFX = "set-type-sfx";
+            static public readonly StringHash32 Speaker = "set-speaker";
+            static public readonly StringHash32 Speed = "set-speed";
+            static public readonly StringHash32 Target = "set-target";
         }
     }
 }

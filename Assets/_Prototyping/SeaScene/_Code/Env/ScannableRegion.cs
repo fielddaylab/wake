@@ -40,8 +40,6 @@ namespace ProtoAqua.Observation
         [NonSerialized] private bool m_Showing;
         [NonSerialized] private bool m_ScanFinished;
 
-        [NonSerialized] private ScanData m_ScanData;
-
         #region Unity Events
 
         private void Awake()
@@ -73,7 +71,8 @@ namespace ProtoAqua.Observation
             m_TickRoutine.Stop();
 
             Services.Events?.Deregister(ObservationEvents.ScannerOn, OnScannerOn)
-                .Deregister(ObservationEvents.ScannerOff, OnScannerOff);
+                .Deregister(ObservationEvents.ScannerOff, OnScannerOff)
+                .Deregister(ObservationEvents.ScannableComplete, OnScanComplete);
         }
 
         #endregion // Unity Events
@@ -81,7 +80,6 @@ namespace ProtoAqua.Observation
         #region Scanning
 
         public string ScanId() { return m_ScanId; }
-        public ScanData ScanData() { return m_ScanData; }
 
         public bool ChangeScanId(string inScanId)
         {
@@ -105,23 +103,24 @@ namespace ProtoAqua.Observation
             return m_ScanFinished;
         }
 
-        private void UpdateData()
+        private ScanData GetScanData()
         {
             var mgr = Services.Tweaks.Get<ScanDataMgr>();
-            ScanDataFlags flags;
-            if (string.IsNullOrEmpty(m_ScanId) || !mgr.TryGetScanData(m_ScanId, out m_ScanData))
+            ScanData data = null;
+            if (string.IsNullOrEmpty(m_ScanId) || !mgr.TryGetScanData(m_ScanId, out data))
             {
                 Debug.LogWarningFormat("[ScannableRegion] Unable to locate ScanData with id '{0}'", m_ScanId);
-                m_ScanFinished = false;
-                flags = 0;
             }
-            else
-            {
-                m_ScanFinished = mgr.WasScanned(m_ScanId);
-                flags = m_ScanData.Flags();
-            }
+            return data;
+        }
 
-            UpdateColor();
+        private ScanData UpdateData()
+        {
+            var mgr = Services.Tweaks.Get<ScanDataMgr>();
+            ScanData data = GetScanData();
+            m_ScanFinished = mgr.WasScanned(m_ScanId);
+            UpdateColor(data);
+            return data;
         }
 
         public void StartScan()
@@ -152,14 +151,14 @@ namespace ProtoAqua.Observation
             {
                 m_ScanFinished = true;
 
+                ScanData data = GetScanData();
                 var mgr = Services.Tweaks.Get<ScanDataMgr>();
-                if (m_ScanData != null)
+                if (data != null)
                 {
-                    mgr.RegisterScanned(m_ScanId);
+                    mgr.RegisterScanned(data);
                 }
 
-                UpdateColor();
-
+                UpdateColor(data);
                 return true;
             }
 
@@ -197,10 +196,10 @@ namespace ProtoAqua.Observation
             m_RootAnim.Replace(this, HideAnim());
         }
 
-        private void UpdateColor()
+        private void UpdateColor(ScanData inData)
         {
             var mgr = Services.Tweaks.Get<ScanDataMgr>();
-            var config = mgr.GetConfig(m_ScanData != null ? m_ScanData.Flags() : 0);
+            var config = mgr.GetConfig(inData != null ? inData.Flags() : 0);
             m_IconGroup.Color = m_ScanFinished ? config.Node.ScannedColor : config.Node.UnscannedColor;
         }
 
@@ -261,8 +260,8 @@ namespace ProtoAqua.Observation
 
         private void OnScanComplete(object inScanId)
         {
-            string scanId = (string) inScanId;
-            if (m_ScanId.Equals(scanId, StringComparison.Ordinal))
+            StringHash32 scanId = (StringHash32) inScanId;
+            if (m_ScanId == scanId)
             {
 
             }

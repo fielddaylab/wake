@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace ProtoAqua.Observation
 {
-    public class PlayerROV : MonoBehaviour, ISceneLoadHandler
+    public class PlayerROV : MonoBehaviour
     {
         #region Types
 
@@ -20,7 +20,6 @@ namespace ProtoAqua.Observation
 
             public bool UsePress;
             public bool UseHold;
-            public bool UseRelease;
             
             public bool ToolMode;
         }
@@ -207,11 +206,6 @@ namespace ProtoAqua.Observation
 
                 m_Kinematic.Properties.Drag = m_DragEngineOff;
             }
-        }
-
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
-        {
-            Services.Script.StartNode("testScene.sceneStart");
         }
     }
 }

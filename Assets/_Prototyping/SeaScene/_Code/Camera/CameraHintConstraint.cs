@@ -2,6 +2,7 @@ using System;
 using BeauUtil;
 using UnityEngine;
 using BeauRoutine;
+using BeauUtil.Variants;
 
 namespace ProtoAqua.Observation
 {
@@ -11,6 +12,7 @@ namespace ProtoAqua.Observation
 
         [SerializeField] private CircleCollider2D m_Circle = null;
         [SerializeField] private float m_InnerRadius = 0;
+        [SerializeField] private string m_RegionName = null;
 
         [Header("Camera Parameters")]
         [SerializeField] private float m_Zoom = 1;
@@ -28,13 +30,15 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_UpdateRoutine;
         [NonSerialized] private CameraConstraints.Hint m_HintConstraint;
 
+        public StringHash32 RegionName() { return m_RegionName; }
+
         #region Events
 
         private void Awake()
         {
             m_Transform = transform;
             m_Circle.EnsureComponent<TriggerListener2D>(ref m_Listener);
-            m_Listener.FilterByComponent<CameraTargetConstraint>(ComponentLookupDirection.Parent);
+            m_Listener.FilterByComponentInParent<CameraTargetConstraint>();
             m_Listener.SetOccupantTracking(true);
             m_Listener.onTriggerEnter.AddListener(OnTargetEnter);
             m_Listener.onTriggerExit.AddListener(OnTargetExit);
@@ -58,6 +62,10 @@ namespace ProtoAqua.Observation
             m_HintConstraint = ObservationServices.Camera.AddHint(name);
             m_HintConstraint.SetWeight(CalculateWeight, m_InitialWeight);
             PushChanges();
+
+            StringHash32 regionName = RegionName();
+            if (!regionName.IsEmpty)
+                Services.Data.SetVariable(GameVars.CameraRegion, regionName);
         }
 
         private void OnTargetExit(Collider2D inCollider)
@@ -67,6 +75,13 @@ namespace ProtoAqua.Observation
             
             ObservationServices.Camera.RemoveHint(m_HintConstraint);
             m_HintConstraint = null;
+
+            if (Services.Data)
+            {
+                StringHash32 regionName = RegionName();
+                if (!regionName.IsEmpty && Services.Data.GetVariable(GameVars.CameraRegion) == regionName)
+                    Services.Data.SetVariable(GameVars.CameraRegion, Variant.Null);
+            }
         }
 
         #endregion // Events

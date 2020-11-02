@@ -5,14 +5,15 @@
 using System.Collections;
 using System.Globalization;
 using BeauUtil;
+using ProtoAqua.DebugConsole;
 using UnityEngine;
 
 namespace ProtoAqua
 {
     public class Bootstrap : MonoBehaviour
     {
-        [SerializeField] private GameObject m_Debug = null;
-        [SerializeField] private string[] m_IgnoredSceneNames = null;
+        [SerializeField, Required] private DebugService m_Debug = null;
+        [SerializeField, Required] private string[] m_IgnoredSceneNames = null;
 
         private void Awake()
         {
@@ -21,6 +22,7 @@ namespace ProtoAqua
             DestroyImmediate(m_Debug);
             #else
             Debug.Log("[Bootstrap] Debug mode enabled");
+            m_Debug.gameObject.SetActive(true);
             m_Debug = null;
             #endif // !DEVELOPMENT
 

@@ -23,15 +23,15 @@ namespace ProtoCP
 
         private class ControlPoolSet
         {
-            private readonly Dictionary<StringHash, ControlPool> m_Variants;
+            private readonly Dictionary<StringHash32, ControlPool> m_Variants;
             private ControlPool m_DefaultPool;
 
             public ControlPoolSet()
             {
-                m_Variants = new Dictionary<StringHash, ControlPool>(3);
+                m_Variants = new Dictionary<StringHash32, ControlPool>(3);
             }
 
-            public bool TryGetPool(StringHash inVariantId, out ControlPool outPool)
+            public bool TryGetPool(StringHash32 inVariantId, out ControlPool outPool)
             {
                 if (inVariantId.IsEmpty)
                 {
@@ -45,7 +45,7 @@ namespace ProtoCP
             public void AddPool(CPControl inTemplate, Transform inRoot, int inPrewarm)
             {
                 bool bDefault = m_DefaultPool == null;
-                StringHash variantId = inTemplate.VariantId();
+                StringHash32 variantId = inTemplate.VariantId();
 
                 if (variantId.IsEmpty)
                 {
@@ -135,10 +135,10 @@ namespace ProtoCP
 
         public CPControl Alloc(FourCC inControlType, Transform inTarget)
         {
-            return Alloc(inControlType, StringHash.Null, inTarget);
+            return Alloc(inControlType, StringHash32.Null, inTarget);
         }
 
-        public CPControl Alloc(FourCC inControlType, StringHash inVariantId, Transform inTarget)
+        public CPControl Alloc(FourCC inControlType, StringHash32 inVariantId, Transform inTarget)
         {
             Initialize();
 
@@ -170,10 +170,10 @@ namespace ProtoCP
 
         public T Alloc<T>(FourCC inControlType, Transform inTarget) where T : CPControl
         {
-            return Alloc<T>(inControlType, StringHash.Null, inTarget);
+            return Alloc<T>(inControlType, StringHash32.Null, inTarget);
         }
 
-        public T Alloc<T>(FourCC inControlType, StringHash inVariantId, Transform inTarget) where T : CPControl
+        public T Alloc<T>(FourCC inControlType, StringHash32 inVariantId, Transform inTarget) where T : CPControl
         {
             Initialize();
 

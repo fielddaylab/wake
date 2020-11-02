@@ -12,7 +12,7 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private TweakAsset[] m_Assets = null;
+        [SerializeField, Required] private TweakAsset[] m_Assets = null;
 
         #endregion // Inspector
 

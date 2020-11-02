@@ -142,7 +142,7 @@ namespace ProtoAqua
     [Serializable]
     public class SpriteAnimTransition
     {
-        public SpriteAnimation Animation;
+        [Required] public SpriteAnimation Animation;
         [Range(0, 100)] public float Weight = 1;
     }
 }

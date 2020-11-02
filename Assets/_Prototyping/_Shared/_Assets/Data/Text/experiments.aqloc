@@ -1,0 +1,81 @@
+#basePath   experiment
+
+// TANKS
+
+:: tank.none.label
+\ -- No Tank Selected --
+
+:: tank.foundational.label
+\ -- Foundational Knowledge Tank --
+Single tank. Use to observe creatures.
+
+:: tank.foundational.label.short
+Foundational Knowledge Tank
+
+// ECOSYSTEMS
+
+:: ecosystem.none.label
+\ -- No Ecosystem Selected --
+
+:: ecosystem.default.label
+\ -- Default --
+Default water settings.
+
+:: ecosystem.default.label.short
+Default Ecosystem
+
+:: ecosystem.kelpForest.label
+\ -- Kelp Forest --
+Ideal for the ecosystem around kelp.
+
+:: ecosystem.kelpForest.label.short
+Kelp Forest Ecosystem
+
+// ACTORS
+
+:: actor.kelp.label
+\ -- Kelp --
+Underrated green "plant" thing.
+
+:: actor.kelp.label.short
+Kelp
+
+:: actor.urchin.label
+\ -- Urchin --
+Tiny kelp eater.
+
+:: actor.urchin.label.short
+Urchin
+
+// BEHAVIORS
+
+:: behavior.urchin.eats.kelp.title
+Behavior Observed: Urchin Eats Kelp
+
+:: behavior.urchin.eats.kelp.desc
+Urchins have been observed to eat kelp.
+
+:: behavior.urchin.eats.kelp.short
+Urchin Eats Kelp
+
+// SUMMARY SCREEN
+
+:: summary.tankVarSummary
+{loc experiment.summary.tankType}
+{loc experiment.summary.ecoType}
+
+:: summary.tankType
+{var-s experiment:tankTypeLabel}
+
+:: summary.ecoType
+{var-s experiment:ecoTypeLabel}
+
+:: summary.countableSummary
+{loc experiment.summary.duration}
+{loc experiment.summary.observedBehaviors}
+
+:: summary.duration
+Duration: {var-i experiment:experimentDuration} s.
+
+:: summary.observedBehaviors
+Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)

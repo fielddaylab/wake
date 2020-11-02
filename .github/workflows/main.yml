@@ -1,0 +1,90 @@
+name: Aqualab Build
+
+# Controls when the action will run. Triggers the workflow on creation of 
+# tags.  Creating new 'versions' via github is the most straightforward 
+# way of doing this.
+on:
+  #create:
+  #  tags:
+  #    - '*'
+   push
+  #   branches: [ develop ] 
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_VERSION: 2019.3.11f1
+  
+jobs:
+  build:
+    name: Build Unity Project
+    runs-on: ubuntu-latest
+
+    # Setup Steps
+
+    steps:
+      
+    - name: Install OpenConnect
+      run: sudo add-apt-repository ppa:phusen/openconnect && sudo apt-get update && sudo apt-get install openconnect
+      
+    - name: Connect to VPN
+      run: echo ${{ secrets.VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
+      
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        lfs: true
+      
+    - name: Checkout submodules
+      uses: srt32/git-actions@v0.0.3
+      with:
+        args: git submodule update --init --recursive
+
+    # Extracts branch name into BRANCH environment variable
+    - name: Extract branch name
+      shell: bash
+      run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
+
+    # Extracts version tag into VERSION environment variable
+    - name: Extract version name
+      shell: bash
+      run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV
+      
+    # Unity Build Steps
+
+    - name: Cache Library folder
+      uses: actions/cache@v1.1.0
+      with:
+        path: Library
+        key: Library
+    
+    #- name: Run tests
+    #  uses: webbertakken/unity-test-runner@v1.3
+    #  with:
+    #    unityVersion: ${{ env.UNITY_VERSION }}
+    
+    - name: Build project
+      uses: webbertakken/unity-builder@v0.10
+      with:
+        unityVersion: ${{ env.UNITY_VERSION }}
+        targetPlatform: WebGL
+        #customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+    
+    
+    # Deploy Steps
+    
+    - name: Upload build as artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: aqualab-webgl_${{ env.VERSION }}
+        path: build/WebGL/WebGL
+    
+    - name: Upload to web server via rsync
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr --delete
+        path: build/WebGL/WebGL/*
+        remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
+        remote_host: ${{ secrets.DEPLOY_HOST }}
+        remote_user: ${{ secrets.DEPLOY_USER }}
+        remote_key: ${{ secrets.DEPLOY_KEY }}
+    

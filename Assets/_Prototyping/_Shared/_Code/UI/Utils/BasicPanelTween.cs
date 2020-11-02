@@ -2,6 +2,7 @@ using UnityEngine;
 using BeauRoutine.Extensions;
 using BeauRoutine;
 using System.Collections;
+using BeauUtil;
 
 namespace ProtoAqua
 {
@@ -9,8 +10,8 @@ namespace ProtoAqua
     {
         #region Inspector
 
-        [SerializeField] private RectTransform m_Transform = null;
-        [SerializeField] private CanvasGroup m_Group = null;
+        [SerializeField, Required] private RectTransform m_Transform = null;
+        [SerializeField, Required] private CanvasGroup m_Group = null;
 
         [Header("Anim Settings")]
 

@@ -46,11 +46,8 @@ namespace ProtoAqua
         protected override void OnShow(bool inbInstant)
         {
             m_Canvas.enabled = true;
-            m_RaycastBlocker.ClearOverride();
-            if (!WasShowing())
-            {
-                Services.Input.PushPriority(m_RaycastBlocker);
-            }
+            m_RaycastBlocker.Override = null;
+            m_RaycastBlocker.PushPriority();
         }
 
         protected override void OnHide(bool inbInstant)
@@ -60,11 +57,8 @@ namespace ProtoAqua
         protected override void OnHideComplete(bool inbInstant)
         {
             m_Canvas.enabled = false;
-            m_RaycastBlocker.OverrideState(false);
-            if (WasShowing())
-            {
-                Services.Input?.PopPriority();
-            }
+            m_RaycastBlocker.Override = false;
+            m_RaycastBlocker.PopPriority();
         }
 
         protected override IEnumerator TransitionToShow()

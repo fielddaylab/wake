@@ -54,5 +54,28 @@ namespace ProtoAqua.Editor
             File.WriteAllText(outputPath, builder.Flush());
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }
+
+        [MenuItem("Aqualab/CodeGen/Regen Scenes")]
+        static private void GenerateSceneConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("using BeauUtil;");
+            builder.Append("\n\nstatic public class GameScenes")
+                .Append("\n{");
+
+            foreach(var scene in EditorBuildSettings.scenes)
+            {
+                SceneBinding binding = SceneHelper.FindSceneByPath(scene.path, SceneCategories.AllBuild);
+                string safeName = ObjectNames.NicifyVariableName(binding.Name).Replace("-", "_").Replace(" ", "");
+
+                builder.Append("\n\tstatic public readonly StringHash32 ").Append(safeName).Append(" = new StringHash32(0x").Append(binding.Id.HashValue.ToString("X8")).Append(");");
+            }
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "GameScenes.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
     }
 }

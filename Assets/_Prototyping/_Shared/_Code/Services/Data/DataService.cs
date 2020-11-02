@@ -6,6 +6,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Tags;
+using BeauUtil.Variants;
 using ProtoAqua.Profile;
 using UnityEngine;
 
@@ -26,6 +27,8 @@ namespace ProtoAqua
 
         [NonSerialized] private SaveData m_CurrentSaveData = new SaveData();
         [NonSerialized] private QueryParams m_QueryParams;
+
+        [NonSerialized] private CustomVariantResolver m_VariableResolver;
 
         #region Query Params
 
@@ -58,9 +61,9 @@ namespace ProtoAqua
 
         #region Save Data
 
-        public SaveData CurrentSaveData()
+        public SaveData Profile
         {
-            return m_CurrentSaveData;
+            get { return m_CurrentSaveData; }
         }
 
         public string CurrentCharacterName()
@@ -80,12 +83,16 @@ namespace ProtoAqua
 
         protected override void OnRegisterService()
         {
+            InitVariableResolver();
+
             SaveData fromPrefs = null;
             if (Serializer.ReadPrefs(ref fromPrefs, DebugUserDataPrefsKey))
             {
                 m_CurrentSaveData = fromPrefs;
             }
             RetrieveQueryParams();
+
+            HookSaveDataToVariableResolver(m_CurrentSaveData);
         }
 
         protected override void OnDeregisterService()

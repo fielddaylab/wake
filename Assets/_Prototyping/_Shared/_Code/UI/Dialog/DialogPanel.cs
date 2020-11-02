@@ -6,33 +6,20 @@ using TMPro;
 using System.Collections;
 using System;
 using BeauUtil.Tags;
+using ProtoAqua.Scripting;
+using BeauUtil;
 
 namespace ProtoAqua
 {
     public class DialogPanel : BasePanel
     {
-        #region Inspector
+        #region Types
 
-        [SerializeField] private float m_SpeedUpThreshold = 0.25f;
-
-        [Header("Speaker")]
-        
-        [SerializeField] private RectTransform m_SpeakerContainer = null;
-        [SerializeField] private TMP_Text m_SpeakerLabel = null;
-        [SerializeField] private Graphic m_SpeakerLabelBG = null;
-
-        [Header("Text")]
-
-        [SerializeField] private CanvasGroup m_TextContainer = null;
-        [SerializeField] private TMP_Text m_TextDisplay = null;
-
-        [Header("Button")]
-
-        [SerializeField] private RectTransform m_ButtonContainer = null;
-        [SerializeField] private Button m_Button = null;
-        [SerializeField] private CanvasGroup m_ButtonGroup = null;
-
-        #endregion // Inspector
+        private enum LineEndBehavior
+        {
+            WaitForInput,
+            WaitFixedDuration
+        }
 
         private struct TypingState
         {
@@ -63,26 +50,71 @@ namespace ProtoAqua
             }
         }
 
+        #endregion // Types
+
+        #region Inspector
+
+        [SerializeField] private string m_StyleId = null;
+        
+        [Header("Behavior")]
+
+        [SerializeField] private string m_DefaultTypeSFX = "text_type";
+        [SerializeField] private float m_SpeedUpThreshold = 0.25f;
+        [SerializeField] private LineEndBehavior m_EndBehavior = LineEndBehavior.WaitForInput;
+        [SerializeField] private float m_NonAutoWaitTimer = 2;
+
+        [Header("Speaker")]
+        
+        [SerializeField] private RectTransform m_SpeakerContainer = null;
+        [SerializeField] private TMP_Text m_SpeakerLabel = null;
+        [SerializeField] private Graphic m_SpeakerLabelBG = null;
+
+        [Header("Text")]
+
+        [SerializeField] private LayoutGroup m_TextLayout = null;
+        [SerializeField] private CanvasGroup m_TextContainer = null;
+        [SerializeField] private TMP_Text m_TextDisplay = null;
+
+        [Header("Button")]
+
+        [SerializeField] private RectTransform m_ButtonContainer = null;
+        [SerializeField] private Button m_Button = null;
+        [SerializeField] private CanvasGroup m_ButtonGroup = null;
+
+        #endregion // Inspector
+
         [NonSerialized] private TypingState m_CurrentState;
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
         [NonSerialized] private TagStringEventHandler m_EventHandler;
 
+        [NonSerialized] private BaseInputLayer m_Input;
+        [NonSerialized] private Routine m_RebuildRoutine;
+
+        public StringHash32 StyleId() { return m_StyleId; }
+
+        #region BasePanel
+
         protected override void Start()
         {
             base.Start();
-        }
 
-        #region BasePanel
+            m_Input = BaseInputLayer.Find(this);
+        }
 
         protected override void OnHideComplete(bool inbInstant)
         {
             m_CurrentState.ResetFull();
 
-            m_SpeakerLabel.SetText(string.Empty);
+            if (m_SpeakerLabel)
+                m_SpeakerLabel.SetText(string.Empty);
+            
             m_TextDisplay.SetText(string.Empty);
-            m_SpeakerContainer.gameObject.SetActive(false);
-            m_ButtonContainer.gameObject.SetActive(false);
+            if (m_SpeakerContainer)
+                m_SpeakerContainer.gameObject.SetActive(false);
+            
+            if (m_ButtonContainer)
+                m_ButtonContainer.gameObject.SetActive(false);
         }
 
         #endregion // BasePanel
@@ -114,6 +146,13 @@ namespace ProtoAqua
         
         private void SetTarget(string inTarget)
         {
+            if (string.IsNullOrEmpty(inTarget))
+            {
+                m_CurrentState.TypeSFX = null;
+                SetSpeaker(null);
+                return;
+            }
+
             m_CurrentState.TypeSFX = "text_type_" + inTarget;
             if (!Services.Audio.HasEvent(m_CurrentState.TypeSFX))
             {
@@ -150,15 +189,18 @@ namespace ProtoAqua
 
             m_CurrentState.SpeakerName = inSpeaker;
 
-            if (string.IsNullOrEmpty(inSpeaker))
+            if (m_SpeakerContainer)
             {
-                m_SpeakerContainer.gameObject.SetActive(false);
-                m_SpeakerLabel.SetText(string.Empty);
-            }
-            else
-            {
-                m_SpeakerLabel.SetText(inSpeaker);
-                m_SpeakerContainer.gameObject.SetActive(true);
+                if (string.IsNullOrEmpty(inSpeaker))
+                {
+                    m_SpeakerContainer.gameObject.SetActive(false);
+                    m_SpeakerLabel.SetText(string.Empty);
+                }
+                else
+                {
+                    m_SpeakerLabel.SetText(inSpeaker);
+                    m_SpeakerContainer.gameObject.SetActive(true);
+                }
             }
 
             return true;
@@ -183,6 +225,8 @@ namespace ProtoAqua
 
                 UpdateSkipHeld();
 
+                RebuildLayout();
+
                 TagStringEventHandler handler = GetHandler();
                 handler.Base = inParentHandler;
                 return handler;
@@ -204,9 +248,24 @@ namespace ProtoAqua
         /// </summary>
         public IEnumerator CompleteLine()
         {
-            if (IsShowing() && !m_CurrentState.AutoContinue && !string.IsNullOrEmpty(m_CurrentState.VisibleText))
+            if (IsShowing() && !string.IsNullOrEmpty(m_CurrentState.VisibleText))
             {
-                return WaitForInput();
+                switch(m_EndBehavior)
+                {
+                    case LineEndBehavior.WaitForInput:
+                        {
+                            if (!m_CurrentState.AutoContinue)
+                                return WaitForInput();
+                            break;
+                        }
+
+                    case LineEndBehavior.WaitFixedDuration:
+                        {
+                            if (!m_CurrentState.AutoContinue)
+                                return Routine.WaitSeconds(m_NonAutoWaitTimer);
+                            break;
+                        }
+                }
             }
 
             return null;
@@ -238,6 +297,8 @@ namespace ProtoAqua
                     Show();
                 else
                     m_BoxAnim.Replace(this, Pulse());
+
+                RebuildLayout();
             }
 
             float timeThisFrame = Routine.DeltaTime;
@@ -299,7 +360,10 @@ namespace ProtoAqua
 
         private void UpdateSkipHeld()
         {
-            if (Input.GetMouseButton(0))
+            if (m_EndBehavior != LineEndBehavior.WaitForInput)
+                return;
+            
+            if (m_Input.Device.MouseDown(0))
             {
                 m_CurrentState.SkipHoldTimer += Routine.DeltaTime;
                 m_CurrentState.SkipHeld = m_CurrentState.SkipHoldTimer >= m_SpeedUpThreshold;
@@ -320,7 +384,7 @@ namespace ProtoAqua
 
         private void PlayTypingSound()
         {
-            string typeSfx = string.IsNullOrEmpty(m_CurrentState.TypeSFX) ? "text_type" : m_CurrentState.TypeSFX;
+            string typeSfx = string.IsNullOrEmpty(m_CurrentState.TypeSFX) ? m_DefaultTypeSFX : m_CurrentState.TypeSFX;
             Services.Audio.PostEvent(typeSfx);
         }
 
@@ -343,8 +407,8 @@ namespace ProtoAqua
         {
             m_ButtonContainer.gameObject.SetActive(true);
             yield return Routine.Race(
-                m_Button.onClick.WaitForInvoke(),
-                Routine.WaitCondition(() => Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+                m_Button == null ? null : m_Button.onClick.WaitForInvoke(),
+                Routine.WaitCondition(() => m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
             );
             m_ButtonContainer.gameObject.SetActive(false);
         }
@@ -376,6 +440,24 @@ namespace ProtoAqua
             );
 
             m_RootTransform.gameObject.SetActive(false);
+        }
+
+        protected override void OnShow(bool inbInstant)
+        {
+            base.OnShow(inbInstant);
+
+            RebuildLayout();
+        }
+
+        private void RebuildLayout()
+        {
+            m_RebuildRoutine.Replace(this, RebuildDelayed());
+        }
+
+        private IEnumerator RebuildDelayed()
+        {
+            yield return null;
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_TextLayout.transform);
         }
     
         #endregion // BasePanel

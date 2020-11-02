@@ -6,11 +6,11 @@ using UnityEngine;
 namespace ProtoAudio
 {
     [CreateAssetMenu(menuName = "Prototype/Audio/Audio Event")]
-    public class AudioEvent : ScriptableObject, IKeyValuePair<StringHash, AudioEvent>
+    public class AudioEvent : ScriptableObject, IKeyValuePair<StringHash32, AudioEvent>
     {
         #region Inspector
 
-        [SerializeField] private AudioClip[] m_Clips = null;
+        [SerializeField, Required] private AudioClip[] m_Clips = null;
 
         [Header("Playback Settings")]
         [SerializeField] private FloatRange m_Volume = new FloatRange(1);
@@ -21,18 +21,18 @@ namespace ProtoAudio
 
         #endregion // Inspector
 
-        [NonSerialized] private StringHash m_Id;
+        [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] private RandomDeck<AudioClip> m_ClipDeck;
 
         #region IKeyValuePair
 
-        StringHash IKeyValuePair<StringHash, AudioEvent>.Key { get { return Id(); } }
+        StringHash32 IKeyValuePair<StringHash32, AudioEvent>.Key { get { return Id(); } }
 
-        AudioEvent IKeyValuePair<StringHash, AudioEvent>.Value { get { return this; } }
+        AudioEvent IKeyValuePair<StringHash32, AudioEvent>.Value { get { return this; } }
 
         #endregion // IKeyValuePair
 
-        public StringHash Id() { return m_Id ? m_Id : (m_Id = name); }
+        public StringHash32 Id() { return !m_Id.IsEmpty ? m_Id : (m_Id = name); }
 
         public bool CanPlay()
         {

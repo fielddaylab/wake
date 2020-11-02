@@ -9,6 +9,8 @@ namespace ProtoAqua
 
         protected virtual void OnDeregisterService() { }
 
+        protected virtual void AfterRegisterService() { }
+
         protected virtual void OnRegisterService() { }
 
         public abstract FourCC ServiceId();
@@ -37,6 +39,11 @@ namespace ProtoAqua
             Debug.LogFormat("[{0}] Registering service...", GetType().Name);
             OnRegisterService();
             Debug.LogFormat("[{0}] Finished registering service.", GetType().Name);
+        }
+
+        void IService.AfterRegisterService()
+        {
+            AfterRegisterService();
         }
 
         void IService.OnDeregisterService()

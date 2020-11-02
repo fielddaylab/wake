@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using BeauData;
+using BeauPools;
 using BeauUtil;
 using ProtoAudio;
 using UnityEngine;
@@ -76,7 +77,7 @@ namespace ProtoAqua
 
         static private void InitFields()
         {
-            foreach(var type in Reflect.FindDerivedTypes(typeof(Services), Reflect.FindAllAssemblies(0, Reflect.AssemblyType.DefaultNonUserMask)))
+            foreach(var type in Reflect.FindDerivedTypes(typeof(Services), Reflect.FindAllUserAssemblies()))
             {
                 foreach(var field in type.GetFields(BindingFlags.Static | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic))
                 {
@@ -88,6 +89,8 @@ namespace ProtoAqua
                 }
             }
         }
+
+        static public bool Valid { get { return !s_Quitting; } }
 
         #endregion // Cache
 
@@ -123,6 +126,12 @@ namespace ProtoAqua
             get { return RetrieveOrFind(ref s_CachedInputService, ServiceIds.Input); }
         }
 
+        static private LocService s_CachedLocService;
+        static public LocService Loc
+        {
+            get { return RetrieveOrFind(ref s_CachedLocService, ServiceIds.Localization); }
+        }
+
         static private ScriptingService s_CachedScripting;
         static public ScriptingService Script
         {
@@ -153,15 +162,29 @@ namespace ProtoAqua
 
         static public void AutoSetup(GameObject inRoot)
         {
-            foreach(var service in inRoot.GetComponentsInChildren<IService>())
+            using(PooledList<IService> newServices = PooledList<IService>.Create())
             {
-                s_ServiceCache.Register(service);
+                foreach(var service in inRoot.GetComponentsInChildren<IService>())
+                {
+                    if (s_ServiceCache.Register(service))
+                    {
+                        newServices.Add(service);
+                    }
+                }
+
+                foreach(var service in newServices)
+                {
+                    service.AfterRegisterService();
+                }
             }
         }
 
         static public void AttemptRegister(IService inService)
         {
-            s_ServiceCache.Register(inService);
+            if (s_ServiceCache.Register(inService))
+            {
+                inService.AfterRegisterService();
+            }
         }
 
         static public void AttemptDeregister(IService inService)

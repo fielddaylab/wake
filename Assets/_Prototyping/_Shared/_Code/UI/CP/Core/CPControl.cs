@@ -40,7 +40,7 @@ namespace ProtoCP
 
         public string Id() { return m_Id; }
         public abstract FourCC Type();
-        public StringHash VariantId() { return m_VariantId; }
+        public StringHash32 VariantId() { return m_VariantId; }
 
         public CPControlState State { get { return m_State; } }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BeauUtil.Blocks;
+using UnityEngine.Scripting;
 
 
 namespace ProtoAqua.Argumentation
@@ -26,8 +27,7 @@ namespace ProtoAqua.Argumentation
         // Ids
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
         [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
-        
-        [BlockMeta("nextNodeId")]
+        [BlockMeta("nextNodeId"), Preserve]
         private void AddNextNodeIds(string line)
         {
             m_InNextNodeIds.Add(line);

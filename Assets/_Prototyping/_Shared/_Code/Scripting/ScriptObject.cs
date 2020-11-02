@@ -14,11 +14,13 @@ namespace ProtoAqua
     {
         #region Inspector
 
+        [SerializeField] private string m_ClassName = "";
         [SerializeField] private string m_Id = "default-object";
     
         #endregion // Inspector
 
-        public string Id() { return m_Id; }
+        public StringHash32 Id() { return m_Id; }
+        public StringHash32 ClassName() { return m_ClassName; }
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {

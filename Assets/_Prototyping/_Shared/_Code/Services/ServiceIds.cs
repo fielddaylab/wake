@@ -19,15 +19,18 @@ namespace ProtoAqua
 
         #endregion // Shared Interface
 
+        static public readonly FourCC AI = Register("AI", "AI system");
         static public readonly FourCC Analytics = Register("NLYT", "Analytics system");
+        static public readonly FourCC Assets = Register("ASST", "Assets system");
         static public readonly FourCC Audio = Register("AUD", "Audio system");
         static public readonly FourCC Camera = Register("CAM", "Camera system");
         static public readonly FourCC CommonUI = Register("CMUI", "Common UI");
         static public readonly FourCC Data = Register("DATA", "Data system");
         static public readonly FourCC Debug = Register("DBG", "Debug system");
-        static public readonly FourCC Events = Register("EVNT", "Event system");
         static public readonly FourCC Effects = Register("EFX", "Effects system");
+        static public readonly FourCC Events = Register("EVNT", "Event system");
         static public readonly FourCC Input = Register("INPT", "Input system");
+        static public readonly FourCC Localization = Register("LOCL", "Localization system");
         static public readonly FourCC Network = Register("NET", "Network system");
         static public readonly FourCC Scripting = Register("SCRP", "Scripting system");
         static public readonly FourCC State = Register("STAT", "State system");

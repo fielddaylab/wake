@@ -7,6 +7,7 @@ namespace ProtoAqua
         FourCC ServiceId();
         bool IsLoading();
         void OnRegisterService();
+        void AfterRegisterService();
         void OnDeregisterService();
     }
 }

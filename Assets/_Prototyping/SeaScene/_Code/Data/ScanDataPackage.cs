@@ -9,15 +9,19 @@ using BeauUtil.Tags;
 using System.Text;
 using System.Threading;
 using System.IO;
+using BeauUtil.IO;
 
 namespace ProtoAqua.Observation
 {
     public class ScanDataPackage : IDataBlockPackage<ScanData>
     {
-        private readonly Dictionary<string, ScanData> m_Data = new Dictionary<string, ScanData>(32, StringComparer.Ordinal);
+        private readonly Dictionary<StringHash32, ScanData> m_Data = new Dictionary<StringHash32, ScanData>(32);
 
         private string m_Name;
-        [BlockMeta("basePath")] private string m_RootPath;
+        [BlockMeta("basePath")] private string m_RootPath = string.Empty;
+
+        private IHotReloadable m_HotReload;
+        private ScanDataMgr m_Mgr;
 
         public ScanDataPackage(string inName)
         {
@@ -25,10 +29,67 @@ namespace ProtoAqua.Observation
             m_RootPath = inName;
         }
 
-        public bool TryGetScanData(string inId, out ScanData outData)
+        public string Name { get { return m_Name; } }
+
+        #region Reload
+
+        public void BindAsset(TextAsset inAsset)
         {
-            return m_Data.TryGetValue(inId, out outData);
+            if (m_HotReload != null)
+            {
+                ReloadableAssetCache.Remove(m_HotReload);
+                Ref.TryDispose(ref m_HotReload);
+            }
+
+            if (inAsset != null)
+            {
+                m_HotReload = new HotReloadableAssetProxy<TextAsset>(inAsset, "ScanDataPackage", Reload);
+                ReloadableAssetCache.Add(m_HotReload);
+            }
         }
+
+        public void UnbindAsset()
+        {
+            if (m_HotReload != null)
+            {
+                ReloadableAssetCache.Remove(m_HotReload);
+                Ref.TryDispose(ref m_HotReload);
+            }
+        }
+
+        private void Reload(TextAsset inAsset, HotReloadOperation inOperation)
+        {
+            var mgr = m_Mgr;
+            if (mgr != null)
+            {
+                mgr.Unload(this);
+            }
+
+            m_Data.Clear();
+            m_RootPath = string.Empty;
+
+            if (inOperation == HotReloadOperation.Modified)
+            {
+                ScanDataPackage self = this;
+                BlockParser.Parse(ref self, null, inAsset.text, Parsing.Block, Generator.Instance);
+
+                if (mgr != null)
+                {
+                    mgr.Load(this);
+                }
+            }
+        }
+
+        #endregion // Reload
+
+        #region Manager
+
+        public void BindManager(ScanDataMgr inMgr)
+        {
+            m_Mgr = inMgr;
+        }
+
+        #endregion // Manager
 
         #region ICollection
 
@@ -50,6 +111,8 @@ namespace ProtoAqua.Observation
 
         public class Generator : AbstractBlockGenerator<ScanData, ScanDataPackage>
         {
+            static public readonly Generator Instance = new Generator();
+
             public override ScanDataPackage CreatePackage(string inFileName)
             {
                 return new ScanDataPackage(inFileName);
@@ -57,15 +120,13 @@ namespace ProtoAqua.Observation
 
             public override bool TryCreateBlock(IBlockParserUtil inUtil, ScanDataPackage inPackage, TagData inId, out ScanData outBlock)
             {
-                string selfId = inId.Id.ToString();
-                inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.m_RootPath);
                 if (!inPackage.m_RootPath.EndsWith("."))
                     inUtil.TempBuilder.Append('.');
-                inUtil.TempBuilder.Append(selfId);
+                inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();
-                outBlock = new ScanData(selfId, fullId);
+                outBlock = new ScanData(fullId);
                 inPackage.m_Data.Add(fullId, outBlock);
                 return true;
             }

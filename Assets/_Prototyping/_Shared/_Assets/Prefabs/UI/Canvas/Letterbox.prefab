@@ -92,7 +92,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4586006936565165038}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
@@ -138,11 +138,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 091fef52bc7859c4d84d6de8d73b46e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Raycaster: {fileID: 7242913358587380868}
   m_Priority: 970
+  m_Flags: 512
+  m_AutoPush: 0
   m_Override: 0
   m_OverrideState: 1
-  m_AutoPush: 0
+  m_OnInputEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnInputDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Raycaster: {fileID: 7242913358587380868}
 --- !u!1 &5884138641843679648
 GameObject:
   m_ObjectHideFlags: 0

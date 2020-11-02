@@ -37,7 +37,7 @@ namespace ProtoAqua.Observation
 
         private void LateUpdate()
         {
-            m_Time += Time.unscaledDeltaTime;
+            m_Time += Time.deltaTime;
             DriveCamera();
         }
 
