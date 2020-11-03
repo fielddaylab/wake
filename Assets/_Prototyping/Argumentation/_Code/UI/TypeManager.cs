@@ -31,8 +31,6 @@ namespace ProtoAqua.Argumentation {
         [SerializeField] private GameObject m_EcosystemButtons = null;
         [SerializeField] private GameObject m_ModelButtons = null;
         [SerializeField] private TypePool m_TypePool = null;
-
-
         [SerializeField] private TypeDefinition[] m_TypeButtons = null;
 
      
