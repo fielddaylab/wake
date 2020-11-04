@@ -6,12 +6,10 @@ namespace ProtoAqua
 {
     public class FastBootController : MonoBehaviour, ISceneLoadHandler
     {
-        [SerializeField, Required] private string m_DefaultScene = "DebugTitle";
-
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
             var queryParams = Services.Data.PeekQueryParams();
-            string targetScene = m_DefaultScene;
+            string targetScene = null;
 
             if (queryParams != null)
             {
@@ -30,7 +28,16 @@ namespace ProtoAqua
                 }
             }
 
-            Services.State.LoadScene("*" + targetScene, null);
+            if (!string.IsNullOrEmpty(targetScene))
+            {
+                Services.State.LoadScene("*" + targetScene, null);
+            }
+            else
+            {
+                int buildIdx = SceneHelper.FindScene(SceneCategories.ActiveOnly).BuildIndex + 1;
+                SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
+                Services.State.LoadScene(nextScene);
+            }
         }
     }
 }

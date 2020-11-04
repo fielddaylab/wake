@@ -145,7 +145,7 @@ namespace ProtoAqua
                     yield return Services.UI.ShowLoadingScreen();
                 }
 
-                SceneBinding active = SceneHelper.FindScene(SceneCategories.ActiveOnly);
+                SceneBinding active = SceneHelper.ActiveScene();
 
                 // unloading instant
                 Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);

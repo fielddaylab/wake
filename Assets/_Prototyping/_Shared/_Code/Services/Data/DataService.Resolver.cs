@@ -188,7 +188,7 @@ namespace ProtoAqua
 
         private Variant GetSceneName()
         {
-            return SceneHelper.FindScene(SceneCategories.ActiveOnly).Name;
+            return SceneHelper.ActiveScene().Name;
         }
 
         #endregion // Callbacks
