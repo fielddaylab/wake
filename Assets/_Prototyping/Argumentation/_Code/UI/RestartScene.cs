@@ -7,7 +7,7 @@ namespace ProtoAqua.Argumentation {
     public class RestartScene : MonoBehaviour {
         
         public void Restart() {
-            SceneManager.LoadScene("MattScene");
+            SceneManager.LoadScene("ArgumentationScene");
         }
     }
 }
