@@ -23,10 +23,10 @@ namespace ProtoAqua
 
         private struct TypingState
         {
-            public string SpeakerName;
+            public StringSlice SpeakerName;
             public float Speed;
             public string VisibleText;
-            public string TypeSFX;
+            public StringHash32 TypeSFX;
 
             public bool AutoContinue;
             public float SkipHoldTimer;
@@ -58,7 +58,7 @@ namespace ProtoAqua
         
         [Header("Behavior")]
 
-        [SerializeField] private string m_DefaultTypeSFX = "text_type";
+        [SerializeField] private SerializedHash32 m_DefaultTypeSFX = "text_type";
         [SerializeField] private float m_SpeedUpThreshold = 0.25f;
         [SerializeField] private LineEndBehavior m_EndBehavior = LineEndBehavior.WaitForInput;
         [SerializeField] private float m_NonAutoWaitTimer = 2;
@@ -130,13 +130,13 @@ namespace ProtoAqua
                 m_EventHandler.Register(ScriptEvents.Dialog.Auto, () => m_CurrentState.AutoContinue = true);
                 m_EventHandler.Register(ScriptEvents.Dialog.Clear, () => m_TextDisplay.SetText(string.Empty));
                 m_EventHandler.Register(ScriptEvents.Dialog.InputContinue, () => WaitForInput());
-                m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.StringArgument);
+                m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.Argument0.AsStringHash());
                 m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeaker(e.StringArgument));
                 m_EventHandler.Register(ScriptEvents.Dialog.Speed, (e, o) => {
                     m_CurrentState.Speed = e.IsClosing ? 1 : e.Argument0.AsFloat();
                     return Routine.WaitSeconds(0.15f);
                 });
-                m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.StringArgument));
+                m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.Argument0.AsStringHash()));
                 m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Routine.WaitSeconds(e.Argument0.AsFloat() * GetSkipMultiplier()));
             }
 
@@ -144,45 +144,29 @@ namespace ProtoAqua
         }
 
         
-        private void SetTarget(string inTarget)
+        private void SetTarget(StringHash32 inTarget)
         {
-            if (string.IsNullOrEmpty(inTarget))
+            if (inTarget.IsEmpty)
             {
                 m_CurrentState.TypeSFX = null;
                 SetSpeaker(null);
                 return;
             }
 
-            m_CurrentState.TypeSFX = "text_type_" + inTarget;
-            if (!Services.Audio.HasEvent(m_CurrentState.TypeSFX))
-            {
-                Debug.LogErrorFormat("[DialogPanel] No type sfx located for '{0}'", m_CurrentState.TypeSFX);
-                m_CurrentState.TypeSFX = null;
-            }
+            ScriptActorDefinition actorDef = Services.Script.Tweaks.ActorDef(inTarget);
 
-            if (inTarget == "kevin")
-            {
-                SetSpeaker("Kevin, Your Science Familiar");
-            }
-            else if (inTarget == "player")
+            m_CurrentState.TypeSFX = actorDef.DefaultTypeSfx();
+            if (actorDef.HasFlags(ScriptActorTypeFlags.IsPlayer))
             {
                 SetSpeaker(Services.Data.CurrentCharacterName());
             }
-            else if (inTarget == "mechanic")
-            {
-                SetSpeaker("Jan, The Mechanic");
-            }
-            else if (inTarget == "radio")
-            {
-                SetSpeaker("Radio");
-            }
             else
             {
-                SetSpeaker("???");
+                SetSpeaker(Services.Loc.Localize(actorDef.NameId()));
             }
         }
 
-        private bool SetSpeaker(string inSpeaker)
+        private bool SetSpeaker(StringSlice inSpeaker)
         {
             if (m_CurrentState.SpeakerName == inSpeaker)
                 return false;
@@ -191,14 +175,14 @@ namespace ProtoAqua
 
             if (m_SpeakerContainer)
             {
-                if (string.IsNullOrEmpty(inSpeaker))
+                if (inSpeaker.IsEmpty)
                 {
                     m_SpeakerContainer.gameObject.SetActive(false);
                     m_SpeakerLabel.SetText(string.Empty);
                 }
                 else
                 {
-                    m_SpeakerLabel.SetText(inSpeaker);
+                    m_SpeakerLabel.SetText(inSpeaker.ToString());
                     m_SpeakerContainer.gameObject.SetActive(true);
                 }
             }
@@ -299,6 +283,8 @@ namespace ProtoAqua
                     m_BoxAnim.Replace(this, Pulse());
 
                 RebuildLayout();
+                while(m_RebuildRoutine)
+                    yield return null;
             }
 
             float timeThisFrame = Routine.DeltaTime;
@@ -384,7 +370,7 @@ namespace ProtoAqua
 
         private void PlayTypingSound()
         {
-            string typeSfx = string.IsNullOrEmpty(m_CurrentState.TypeSFX) ? m_DefaultTypeSFX : m_CurrentState.TypeSFX;
+            StringHash32 typeSfx = m_CurrentState.TypeSFX.IsEmpty ? m_DefaultTypeSFX.Hash() : m_CurrentState.TypeSFX;
             Services.Audio.PostEvent(typeSfx);
         }
 

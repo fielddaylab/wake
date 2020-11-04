@@ -212,9 +212,11 @@ GameObject:
   - component: {fileID: 7135260869252477137}
   - component: {fileID: 7135260869252477151}
   - component: {fileID: 1809099619024997122}
+  - component: {fileID: 4239190790123161061}
+  - component: {fileID: 2619056239447791262}
   m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -317,6 +319,44 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_TapThreshold: 0.5
+--- !u!50 &4239190790123161061
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135260869252477139}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &2619056239447791262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135260869252477139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38729cf6f56f6af4ba801a446b1ebd73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Rigidbody: {fileID: 4239190790123161061}
+  m_KinematicObject: {fileID: 7135260869252477137}
+  m_SolidMask:
+    serializedVersion: 2
+    m_Bits: 536870912
 --- !u!1 &7135260869292614020
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +503,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7135260869759492263}
   - component: {fileID: 7135260869759492262}
-  - component: {fileID: 7135260869759492261}
   m_Layer: 8
   m_Name: Collider
   m_TagString: Player
@@ -501,27 +540,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.45
---- !u!50 &7135260869759492261
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7135260869759492312}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!1001 &4492295168322627189
 PrefabInstance:
   m_ObjectHideFlags: 0

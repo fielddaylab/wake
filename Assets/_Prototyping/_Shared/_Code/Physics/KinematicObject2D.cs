@@ -20,6 +20,12 @@ namespace ProtoAqua
         [NonSerialized] private Transform m_Transform;
         [NonSerialized] private Routine m_TickRoutine;
 
+        public MoveDelegate MoveCallback
+        {
+            get { return m_MoveCallback; }
+            set { m_MoveCallback = value; }
+        }
+
         private void OnEnable()
         {
             this.CacheComponent(ref m_Transform);
@@ -41,9 +47,10 @@ namespace ProtoAqua
             bool bMoveDirect = m_MoveCallback == null;
             if (!bMoveDirect)
             {
-                m_MoveCallback(offset, ref Properties, deltaTime);
+                bMoveDirect = m_MoveCallback(offset, ref Properties, deltaTime);
             }
-            else
+            
+            if (!bMoveDirect)
             {
                 Vector3 pos = m_Transform.localPosition;
                 pos.x += offset.x;

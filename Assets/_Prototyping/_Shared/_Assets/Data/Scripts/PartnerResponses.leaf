@@ -100,19 +100,3 @@
 {@player}   Thanks for understanding.
             ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
 {@kevin}    ...Sure. When I trust you the same way, maybe we can try that.
-
-// :: conditionalTest.1
-// @trigger    RequestPartnerHelp
-// @boostScore 1600000
-// @cutscene 
-// {@player}   Doing stuff...
-// $branch .conditionalTest.2
-// {@player}   And we've returned!
-// {hide-dialog}
-// {load-scene SeaSceneTest}
-// 
-//  :: conditionalTest.2
-// {set temp:tempCounter + 1}
-// {@player}   Doing more stuff {var temp:tempCounter} times...
-// $loop temp:tempCounter < 5
-// {@kevin}    Are we quite finished?

@@ -5,14 +5,16 @@ using BeauUtil;
 using ProtoAudio;
 using BeauRoutine;
 using System.Collections;
+using BeauPools;
 
 namespace ProtoAqua.Observation
 {
-    public class ScannableRegion : MonoBehaviour
+    public class ScannableRegion : MonoBehaviour, IPoolAllocHandler
     {
         #region Inspector
 
         [SerializeField] private string m_ScanId = null;
+        [SerializeField] private Transform m_AttachedTo = null;
         
         [Header("Collisions")]
         [SerializeField] private Collider2D m_Collider = null;
@@ -63,12 +65,15 @@ namespace ProtoAqua.Observation
                 .Register(ObservationEvents.ScannerOff, OnScannerOff, this)
                 .Register(ObservationEvents.ScannableComplete, OnScanComplete, this);
 
+            // TODO: Fix this so we can detect whether or not the scanner is on when we are enabled
+
             UpdateData();
         }
 
         private void OnDisable()
         {
             m_TickRoutine.Stop();
+            m_ScannerOn = false;
 
             Services.Events?.Deregister(ObservationEvents.ScannerOn, OnScannerOn)
                 .Deregister(ObservationEvents.ScannerOff, OnScannerOff)
@@ -172,6 +177,11 @@ namespace ProtoAqua.Observation
         private void Tick()
         {
             m_ScanRadiusListener.ProcessOccupants();
+            if (m_AttachedTo)
+            {
+                transform.position = m_AttachedTo.position;
+            }
+            
             if (m_ScannerOn)
             {
                 m_Collider.transform.position = ObservationServices.Camera.GameplayPlanePosition(transform);
@@ -260,13 +270,31 @@ namespace ProtoAqua.Observation
 
         private void OnScanComplete(object inScanId)
         {
+            if (m_ScanFinished)
+                return;
+
             StringHash32 scanId = (StringHash32) inScanId;
             if (m_ScanId == scanId)
             {
-
+                m_ScanFinished = true;
+                ScanData data = GetScanData();
+                UpdateColor(data);
             }
         }
 
         #endregion // Handlers
+
+        #region IPooledObject
+
+        void IPoolAllocHandler.OnAlloc()
+        {
+        }
+
+        void IPoolAllocHandler.OnFree()
+        {
+            
+        }
+
+        #endregion // IPooledObject
     }
 }

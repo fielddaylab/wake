@@ -194,6 +194,10 @@ namespace ProtoAqua.Experiment
             }
             else
             {
+                if (m_CurrentSubscreen == m_SummaryScreen)
+                {
+                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished);
+                }
                 Hide();
             }
         }

@@ -15,8 +15,9 @@ namespace ProtoAqua.Scripting
 
         public Variant Evaluate(LeafThreadState<ScriptNode> inThreadState, ILeafPlugin<ScriptNode> inPlugin)
         {
-            ScriptThread thread = (ScriptThread) inThreadState;
-            return thread.Resolver.TryEvaluate(thread.Context, m_ExpressionString);
+            var thread = (ScriptThread) inThreadState;
+            var resolver = thread.Resolver ?? Services.Data.VariableResolver;
+            return resolver.TryEvaluate(thread.Context, m_ExpressionString);
         }
     }
 }

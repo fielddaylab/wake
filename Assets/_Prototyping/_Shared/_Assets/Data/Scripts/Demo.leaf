@@ -1,0 +1,107 @@
+#basePath   demo
+
+:: intro
+@trigger SceneStart
+@when scene:name == "DemoStart"
+@cutscene
+{fade-out black, 0}
+{style center}
+{wait 0.5}
+{@narrator}     Hi there, and welcome to the Aqualab demo!
+                I'll be your host today.
+                We're going on a short journey through solving some {slow}{h}ocean crimes{/h}{/slow}!
+                Wait, no,{wait 0.1} not exactly crimes,{wait 0.2} but issues we've been asked to solve.
+                As salvager-turned-scientist October, you and I will search the ocean...
+                Do some experiments...
+                Make some models...
+                And finally discuss our findings!
+{hide-dialog}
+{wait 0.5}
+{load-scene SeaSceneTest, no-loading-screen}
+{wait 0.1}
+{fade-in 0.5}
+
+:: observation
+@trigger    SceneStart
+@when       scene:name == "SeaSceneTest"
+@cutscene
+{wait 1}
+{@demoChar} ...and that's why I need you to investigate here!
+{@kevin}    Because... you don't get why there are {h}urchins{/h} and {h}kelp{/h} here?
+{@demoChar} Exactly! My reports are {slow}very{/slow} accurate!
+            There are kelp and urchins in this sector.
+            But it seems like the urchins would just eat all the kelp.
+            Then there'd be nothing but urchins!
+            And it wouldn't be me calling you then, it'd be my brother.
+{@player}    Your... brother?
+{@kevin}    The{wait 0.2} Urchin Baron?
+{@demoChar} Whoa, you've already met him?
+{@kevin}    Once, yeah.
+{@demoChar} Then be thankful I'm the one talking to you!
+            He has quite a temper.
+{@player}   So you need us to see if there's anything else here that your {wait 0.1}perfect{wait 0.1} report missed?
+{@demoChar} {speed 2}It is perfect!{/speed}{wait 1}{auto}
+{@kevin}    ...Right. Yeah, {player-name} let's go see if there's anything here to explain this.
+            Talk to me at the boat when you think we're done.
+{hide-dialog}
+{fade-out black.50, 0.5, wait}
+{style center}
+{@narrator} Use your {icon mouse}mouse to look about the ocean!
+            Hold the {icon leftMouse}left mouse button to move around.
+            Tap the {icon rightMouse}right mouse button to enter or exit scanning mode.
+            Scan nearby objects by holding the {icon leftMouse}left mouse button.
+{hide-dialog}
+{fade-in 0.5}
+
+:: observationExit
+@cutscene
+@entrypoint
+{wait 1}
+{@player}   So... otters?
+{@kevin}    Seems like it.
+            Karl didn't mention anything about otters....
+            So much for his "perfect" report.
+{@player}   Okay, so otters plus urchins plus kelp equals...
+            All three of the above?
+{@kevin}    ...Your algebra is {wait 0.2}flawless.
+            We don't have enough info to go on.
+            So let's take some of these critters back to the lab.
+{hide-dialog}
+{load-scene DemoTitle}
+
+:: experimentation
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype"
+@cutscene
+{wait 1}
+{@kevin}    Okay, now that we're at the lab...
+            ...hang on, {slow}this{/slow}{wait 0.1} is your lab?
+{@player}   Yeah.
+{@kevin}    Seems... pretty bare-bones.
+{@player}   You're right. It's mostly stuff I salvaged.
+            One of my friends cleaned it up for me.
+            Even arranged this whole space.
+{@kevin}    Well, as long as we can use it...
+{hide-dialog}
+{fade-out black.50, 0.5, wait}
+{style center}
+{@narrator} Use your {icon mouse}mouse and {icon leftMouse} to inspect the screen.
+{hide-dialog}
+{fade-in 0.5}
+
+:: experimentationExit
+@cutscene
+@entrypoint
+{wait 1}
+{@player}   Alright, so urchins eat kelp.
+            That all aligns with what Karl told us.
+{@kevin}    Had to see it ourselves to be sure though.
+{@player}   What, you think he was lying?
+{@kevin}    No, I think there's value in verifying what we think we know.
+{@player}   But we still don't know how otters fit into this.
+{@kevin}    That... is fair.
+            Can't really fit one into this tank.
+            But, maybe we can take a look at some of Karl's reports?
+            See if there are any patterns?
+{hide-dialog}
+{load-scene DemoTitle}

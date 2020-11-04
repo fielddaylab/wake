@@ -33,6 +33,9 @@ namespace ProtoAqua
 
             m_InputLayer = BaseInputLayer.Find(this);
             m_InputLayer.Device.OnUpdate += CheckInput;
+
+            if (Services.UI.IsLetterboxed())
+                Hide();
         }
 
         private void OnDestroy()

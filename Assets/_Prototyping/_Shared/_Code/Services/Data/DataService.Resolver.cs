@@ -134,6 +134,7 @@ namespace ProtoAqua
 
             m_VariableResolver.SetVar(new TableKeyPair("date", "weekday"), GetDayOfWeek);
             m_VariableResolver.SetVar(new TableKeyPair("player", "gender"), GetPlayerGender);
+            m_VariableResolver.SetVar(new TableKeyPair("scene", "name"), GetSceneName);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -183,6 +184,11 @@ namespace ProtoAqua
                 default:
                     return "x";
             }
+        }
+
+        private Variant GetSceneName()
+        {
+            return SceneHelper.FindScene(SceneCategories.ActiveOnly).Name;
         }
 
         #endregion // Callbacks

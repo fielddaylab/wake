@@ -175,6 +175,7 @@ namespace ProtoAqua.Scripting
 
         public string Name { get { return m_Name; } }
         public IScriptContext Context { get { return m_Context; } }
+        public VariantTable Locals { get { return m_TempTable; } }
 
         public bool IsRunning() { return m_RunningRoutine; }
         public void Pause() { m_RunningRoutine.Pause(); }

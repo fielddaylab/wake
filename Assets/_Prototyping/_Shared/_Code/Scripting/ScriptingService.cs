@@ -10,6 +10,7 @@ using UnityEngine;
 using ProtoAqua.Scripting;
 using BeauUtil.Variants;
 using Leaf.Runtime;
+using Leaf;
 
 namespace ProtoAqua
 {
@@ -33,14 +34,32 @@ namespace ProtoAqua
         private HashSet<ScriptNodePackage> m_LoadedPackages;
         private Dictionary<StringHash32, ScriptNode> m_LoadedEntrypoints;
         private Dictionary<StringHash32, TriggerResponseSet> m_LoadedResponses;
+        private HashSet<LeafAsset> m_LoadedPackageSourcesAssets;
 
         // objects
-        private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
+        [NonSerialized] private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
 
         // pool
         private IPool<VariantTable> m_TablePool;
         private IPool<ScriptThread> m_ThreadPool;
         private IPool<TagStringParser> m_ParserPool;
+
+        // cached refs
+        [NonSerialized] private ScriptingTweaks m_CachedTweaks;
+
+        #region Refs
+
+        public ScriptingTweaks Tweaks
+        {
+            get
+            {
+                if (m_CachedTweaks.IsReferenceNull())
+                    m_CachedTweaks = Services.Tweaks.Get<ScriptingTweaks>();
+                return m_CachedTweaks;
+            }
+        }
+
+        #endregion // Refs
 
         #region Operations
 

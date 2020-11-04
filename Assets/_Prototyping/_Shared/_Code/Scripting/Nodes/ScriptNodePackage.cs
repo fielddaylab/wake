@@ -178,7 +178,7 @@ namespace ProtoAqua.Scripting
 
             public override bool IsVerbose
             {
-                get { return !Application.isPlaying; }
+                get { return false; }
             }
 
             public override ScriptNodePackage CreatePackage(string inFileName)

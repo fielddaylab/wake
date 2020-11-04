@@ -72,6 +72,7 @@ namespace ProtoAqua.Energy
             header.PartnerIntroQuote = m_Header.PartnerIntroQuote;
             header.PartnerHelpQuote = m_Header.PartnerHelpQuote;
             header.PartnerCompleteQuote = m_Header.PartnerCompleteQuote;
+            header.SuccessThreshold = m_Header.SuccessThreshold;
 
             ScenarioPackage package = new ScenarioPackage();
             package.Header = header;

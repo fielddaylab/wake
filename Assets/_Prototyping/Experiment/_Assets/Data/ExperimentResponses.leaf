@@ -220,3 +220,15 @@
 @chatter
 {@kevin}    Yep.{wait 0.2} Those are kelp.
             Are we done staring at plants?
+
+// On Complete
+
+:: attemptExit
+@trigger    ExperimentFinished
+@who        Kevin
+$if observed.behavior:Urchin.Eats.Kelp
+    $goto demo.experimentationExit
+$else
+    {@kevin}    I don't know if we got anything out of that experiment.
+    {@player}   Well, maybe I can set it up differently...
+$endif

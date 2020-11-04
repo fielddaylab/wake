@@ -25,9 +25,11 @@ namespace ProtoAqua.Energy
         [AutoEnum] public ContentArea ContentAreas;
         public bool Qualitative;
 
+        [Range(0, 100)] public float SuccessThreshold = 70f;
+
         #region ISerializedObject
 
-        ushort ISerializedVersion.Version { get { return 4; } }
+        ushort ISerializedVersion.Version { get { return 5; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -59,6 +61,11 @@ namespace ProtoAqua.Energy
                 ioSerializer.Serialize("partnerIntroQuote", ref PartnerIntroQuote, string.Empty);
                 ioSerializer.Serialize("partnerHelpQuote", ref PartnerHelpQuote, string.Empty);
                 ioSerializer.Serialize("partnerCompleteQuote", ref PartnerCompleteQuote, string.Empty);
+            }
+
+            if (ioSerializer.ObjectVersion >= 5)
+            {
+                ioSerializer.Serialize("successThreshold", ref SuccessThreshold);
             }
         }
 

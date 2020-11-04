@@ -21,7 +21,13 @@ namespace ProtoAqua.Energy
         {
             base.Start();
             
-            m_ContinueButton.onClick.AddListener(() => Hide());
+            m_ContinueButton.onClick.AddListener(OnContinue);
+        }
+
+        private void OnContinue()
+        {
+            Hide();
+            Services.Script.TriggerResponse(SimTriggers.ModelSynced);
         }
 
         public void Display(ScenarioPackageHeader inHeader)

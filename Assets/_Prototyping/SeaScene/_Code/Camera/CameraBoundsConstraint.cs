@@ -39,6 +39,8 @@ namespace ProtoAqua.Observation
             m_Box.EnsureComponent<TriggerListener2D>(ref m_Listener);
             m_Listener.SetOccupantTracking(true);
             m_Listener.FilterByComponentInParent<CameraTargetConstraint>();
+            m_Listener.LayerFilter = GameLayers.Player_Mask;
+            
             m_Listener.onTriggerEnter.AddListener(OnTargetEnter);
             m_Listener.onTriggerExit.AddListener(OnTargetExit);
         }

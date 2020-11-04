@@ -23,7 +23,24 @@ namespace ProtoAqua.Energy
                 };
                 m_PropertyBox.Toggle("qualitative", qualitativeConfig);
 
-                m_PropertyBox.BeginGroup("respirationRules", "Respiration Rules");
+                CPSpinner.Configuration successThresholdConfig = new CPSpinner.Configuration()
+                {
+                    Name = "Success Threshold",
+
+                    Min = 10,
+                    Max = 100,
+                    Increment = 10,
+                    WholeNumbers = true,
+                    
+                    Get = () => m_Scenario.Header.SuccessThreshold,
+                    Set = (v) => {
+                        m_Scenario.Header.SuccessThreshold = v;
+                        DirtyScenario();
+                    }
+                };
+                m_PropertyBox.NumberSpinner("successThreshold", successThresholdConfig);
+
+                m_PropertyBox.BeginGroup("contentAreas", "Content Areas");
                 {
                     CPToggle.Configuration photosynthesisConfig = new CPToggle.Configuration()
                     {

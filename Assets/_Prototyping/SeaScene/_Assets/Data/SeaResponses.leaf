@@ -69,23 +69,23 @@
 
 // background machine
 
-:: backgroundMachine.notScanned
-@trigger    RequestPartnerHelp
-@when       !scanned:testScene.background.machine
-@repeat     3
-@cutscene
-{@kevin}    What's that big thing in the distance there?
-            It looks sort of familiar...
-
-:: backgroundMachine.scanned
-@trigger    RequestPartnerHelp
-@when       scanned:testScene.background.machine
-@once       profile
-@cutscene
-{@kevin}    That's a pretty big machine.
-            Almost looks like... wait, no{wait 0.5}, probably not.
-{@player}   Looks like what?
-{@kevin}    Eh, forget it. Not worth it now.
+// :: backgroundMachine.notScanned
+// @trigger    RequestPartnerHelp
+// @when       !scanned:testScene.background.machine
+// @repeat     3
+// @cutscene
+// {@kevin}    What's that big thing in the distance there?
+//             It looks sort of familiar...
+// 
+// :: backgroundMachine.scanned
+// @trigger    RequestPartnerHelp
+// @when       scanned:testScene.background.machine
+// @once       profile
+// @cutscene
+// {@kevin}    That's a pretty big machine.
+//             Almost looks like... wait, no{wait 0.5}, probably not.
+// {@player}   Looks like what?
+// {@kevin}    Eh, forget it. Not worth it now.
 
 // the lore
 
@@ -157,21 +157,23 @@
 @when       temp:camera.region == "BoatUnderside"
 @cutscene
 @boostScore 10
-$branch .undersideNotReady, !kevin:testScene.jellyblob.lore.discomfort
-$branch .undersideReady, kevin:testScene.jellyblob.lore.discomfort
+$if scanned:testScene.species.urchin, scanned:testScene.species.kelp, scanned:testScene.species.otter
+    $goto demo.observationExit
+$else
+    $goto .undersideNotReady
+$endif
 
 :: undersideNotReady
+@cutscene
 {@kevin}    Wait, let's not enter the boat yet.
-            We haven't found what I'm looking for yet.
-{@player}   What does it look like again?
-{@kevin}    Should be kinda... fleshy?
-
-:: undersideReady
-{@kevin}    Alright, I'm ready to move on...
-{hide-dialog}
-{wipe-out}
-{style center}
-{@}         And then we went to the lab...
-{hide-dialog}
-{load-scene ExperimentPrototype, no-loading-screen}
-{wipe-in}
+$if scanned:testScene.species.urchin, scanned:testScene.species.kelp
+    {@player}   What are we missing here?
+                We already found the urchins and the kelp...
+    {@kevin}    Maybe there's something else here too?
+$elseif scanned:testScene.species.otter
+    {@player}   I think we found the other factor that Karl's report skipped over.
+    {@kevin}    Should we just check the other creatures to make sure we've got their scans too?
+$else
+    {@player}   What could we be missing?
+    {@kevin}    Let's have a look around.
+$endif

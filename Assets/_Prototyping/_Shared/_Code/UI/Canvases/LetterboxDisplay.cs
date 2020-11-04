@@ -2,6 +2,7 @@ using UnityEngine;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using System.Collections;
+using System;
 
 namespace ProtoAqua
 {
@@ -17,6 +18,8 @@ namespace ProtoAqua
         [SerializeField] private TweenSettings m_TransitionSettings = new TweenSettings(0.2f);
 
         #endregion // Inspector
+
+        [NonSerialized] private bool m_PriorityPushed = false;
 
         protected override void InstantTransitionToShow()
         {
@@ -41,8 +44,9 @@ namespace ProtoAqua
             m_Canvas.enabled = true;
             m_RaycastBlocker.Override = null;
             
-            if (!WasShowing())
+            if (!m_PriorityPushed)
             {
+                m_PriorityPushed = true;
                 Services.Input.PushPriority(m_RaycastBlocker);
                 Services.Events.Dispatch(GameEvents.CutsceneStart);
             }
@@ -50,8 +54,9 @@ namespace ProtoAqua
 
         protected override void OnHide(bool inbInstant)
         {
-            if (WasShowing())
+            if (m_PriorityPushed)
             {
+                m_PriorityPushed = false;
                 Services.Input?.PopPriority(m_RaycastBlocker);
                 Services.Events?.Dispatch(GameEvents.CutsceneEnd);
             }

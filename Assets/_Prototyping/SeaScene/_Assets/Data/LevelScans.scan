@@ -7,33 +7,7 @@
 // \ also block content
 // === block data end (optional)
 
-# basePath testScene
-
-:: background.ridgeFish
-@scanDuration 1
-Analysis complete. Unknown fish detected approximately 100m away.
-
-Fish are swarming around the top of the ridge. Cause of swarming behavior unknown.
-
-:: species.urchin
-@scanDuration 2
-@logbook urchin.spiny
-@important
-Urchin covered in large spines.
-The spines help ward off predators.
-
-:: background.machine
-@scanDuration 1
-Analysis complete. Large machine with a ring-shaped structure.
-
-Machine appears to be embedded in the ocean floor. Surface analysis indicates extensive rusting.
-
-:: lore.jellyblob.unknown
-@scanDuration 2
-@important
-Analysis complete. Structure is a semi-organic network embedded in the cliffside. Material contains embedded data.
-
-Unable to translate with current tools.
+#basePath   testScene
 
 :: lore.jellyblob.1
 @scanDuration 3
@@ -45,3 +19,35 @@ Analysis complete. Structure is a semi-organic network embedded in the cliffside
 "METAL. FLASH. EMPTY. HUDDLE. PEACE. DEFEND. ANGER..."
 
 Remainder of data decoded to logbook.
+
+// SPECIES
+
+:: fish
+@scanDuration 1
+Analysis complete. Object appears to be a fish in suspended animation.
+
+No signs of life detected from within the object.
+
+:: species.urchin
+@scanDuration 2
+@logbook urchin.spiny
+@important
+@header Urchin
+Squishy creature covered in large spines.
+The spines help ward off predators.
+
+:: species.kelp
+@scanDuration 2
+@logbook kelp.bull
+@important
+@header Kelp
+Leafy plant-like creature.
+Essential to many ocean ecosystems.
+
+:: species.otter
+@scanDuration 2
+@logbook otter
+@important
+@header Otter
+Fuzzy nearshore mammal.
+Fur density exceeds that of any other animal.

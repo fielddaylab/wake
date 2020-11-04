@@ -24,7 +24,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Button m_EcosystemsButton = null;
         [SerializeField] private Button m_ModelsButton = null;
 
-        private List<GameObject> responses = new List<GameObject>();
+        [NonSerialized] private List<GameObject> responses = new List<GameObject>();
         private string currentClaim = "";
         private bool claimSelected = false;
 

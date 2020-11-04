@@ -48,7 +48,7 @@ namespace ProtoAqua.Energy
 
             Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);
 
-            if (inContext != null && inContext.GetType() == typeof(QueryParams)) 
+            if (inContext != null && inContext.GetType() == typeof(QueryParams))
             {
                 m_ScenarioPackage = loader.LoadStartingScenario((QueryParams)inContext);
             } 
@@ -231,7 +231,7 @@ namespace ProtoAqua.Energy
                 sim.Scrub(ref inData, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
                 sim.Scrub(ref inModel, (ushort) i, EnergySim.SimFlags.DoNotWriteToCache);
                 float sync = m_GlobalSettings.CalculateSync(inData, inModel);
-                if (sync < 100)
+                if (sync < m_ScenarioPackage.Header.SuccessThreshold)
                 {
                     ++framesWithErrors;
                 }
