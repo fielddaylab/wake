@@ -48,7 +48,7 @@ namespace ProtoAqua.Energy
 
             Services.Audio.PostEvent("energy_bgm").SetVolume(0).SetVolume(1, 3f);
 
-            if (inContext != null && inContext.GetType() == typeof(QueryParams))
+            if (inContext is QueryParams)
             {
                 m_ScenarioPackage = loader.LoadStartingScenario((QueryParams)inContext);
             } 

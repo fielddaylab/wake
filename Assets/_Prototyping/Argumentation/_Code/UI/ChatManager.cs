@@ -133,7 +133,10 @@ namespace ProtoAqua.Argumentation
         private void EndConversationPopup()
         {
             NamedOption[] options = { new NamedOption("Continue") };
-            Services.UI.Popup.Present("Congratulations!", "End of conversation", options);
+            Services.UI.Popup.Present("Congratulations!", "End of conversation", options)
+                .OnComplete((s) => {
+                    Services.Script.TriggerResponse("ArgumentationComplete");
+                });
         }
 
         // Shake response back and forth in the chat, indicating that the response is invalid

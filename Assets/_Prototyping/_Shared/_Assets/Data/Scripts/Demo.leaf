@@ -2,7 +2,7 @@
 
 :: intro
 @trigger SceneStart
-@when scene:name == "DemoStart"
+@when scene:name == "DemoStart", global:demo
 @cutscene
 {fade-out black, 0}
 {style center}
@@ -23,7 +23,7 @@
 
 :: observation
 @trigger    SceneStart
-@when       scene:name == "SeaSceneTest"
+@when       scene:name == "SeaSceneTest", global:demo
 @cutscene
 {wait 1}
 {@demoChar} ...and that's why I need you to investigate here!
@@ -71,7 +71,7 @@
 
 :: experimentation
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype"
+@when       scene:name == "ExperimentPrototype", global:demo
 @cutscene
 {wait 1}
 {@kevin}    Okay, now that we're at the lab...
@@ -104,4 +104,26 @@
             But, maybe we can take a look at some of Karl's reports?
             See if there are any patterns?
 {hide-dialog}
+{bgm-stop 1}
+{load-scene DemoTitle}
+
+:: modelingExit
+@trigger    ModelSynced
+@when       global:demo
+@cutscene
+{wait 1}
+{@player}   Fascinating! So otters seem to keep the urchin population in check.
+{@kevin}    Yeah.
+{hide-dialog}
+{bgm-stop 1}
+{load-scene DemoTitle}
+
+:: argumentationExit
+@trigger    ArgumentationComplete
+@when       global:demo
+@cutscene
+{wait 1}
+{@player}   Guess we convinced Karl!
+{hide-dialog}
+{bgm-stop 1}
 {load-scene DemoTitle}
