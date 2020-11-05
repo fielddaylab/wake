@@ -1,0 +1,19 @@
+#basePath   partner.help.modeling
+
+:: demo.otters.1
+@trigger    RequestPartnerHelp
+@when       global:demo
+@who        kevin
+@repeat     1
+@chatter
+{@kevin}    Otters are the odd ones out here.
+            Do they interact with the kelp or urchins?
+
+:: demo.otters.2
+@trigger    RequestPartnerHelp
+@when       global:demo
+@who        kevin
+@repeat     1
+@chatter
+{@kevin}    Otters are mammals, right?
+            Anything we can take from that?

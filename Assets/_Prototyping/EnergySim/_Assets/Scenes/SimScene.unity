@@ -610,7 +610,8 @@ MonoBehaviour:
   m_OnInputDisabled:
     m_PersistentCalls:
       m_Calls: []
-  m_Raycaster: {fileID: 203593729}
+  m_Raycasters:
+  - {fileID: 203593729}
 --- !u!114 &203593734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,7 +1103,8 @@ MonoBehaviour:
   m_OnInputDisabled:
     m_PersistentCalls:
       m_Calls: []
-  m_Raycaster: {fileID: 352815350}
+  m_Raycasters:
+  - {fileID: 352815350}
 --- !u!224 &361225921 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1857161223483616696, guid: 95b05154a0edd7c4dadcf6c8f7d06d86,
@@ -3664,6 +3666,7 @@ GameObject:
   - component: {fileID: 1292062091}
   - component: {fileID: 1292062093}
   - component: {fileID: 1292062094}
+  - component: {fileID: 1292062095}
   m_Layer: 0
   m_Name: SimTest
   m_TagString: Untagged
@@ -3733,6 +3736,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Packages:
   - {fileID: 11400000, guid: d9e7d57e4a95c2a41be45add719e232b, type: 2}
+--- !u!114 &1292062095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292062090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e11849e344bd4f459ed4868c88fdf50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Scripts:
+  - {fileID: -1942890987711236906, guid: 065a11960ef3bb94a8db9b66df8221c0, type: 3}
 --- !u!224 &1388382120 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7215013773853684124, guid: dcd30016076336349a4bbf72fcf91f05,
@@ -5709,6 +5726,7 @@ MonoBehaviour:
   m_CompletePanel: {fileID: 8454855958899851804}
   m_EditPanel: {fileID: 6557826071228255214}
   m_EditButton: {fileID: 728046594}
+  m_EditSeparator: {fileID: 1493849781}
 --- !u!1 &1803727327
 GameObject:
   m_ObjectHideFlags: 0

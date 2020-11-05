@@ -34,7 +34,7 @@ namespace ProtoAqua
             }
             else
             {
-                int buildIdx = SceneHelper.FindScene(SceneCategories.ActiveOnly).BuildIndex + 1;
+                int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
                 SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
                 Services.State.LoadScene(nextScene);
             }

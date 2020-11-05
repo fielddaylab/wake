@@ -6,7 +6,7 @@
 @trigger    RequestPartnerHelp
 @once
 @cutscene
-{@player}   So why were you out here?
+{@player}   So why were you out here before?
 {@kevin}    I wanted to look around for something.
             But then your boat passed overhead and...
             Well, now we're helping each other out.
@@ -152,11 +152,11 @@
 
 // boat
 
-:: boat.notFinished
+:: boat.check
 @trigger    RequestPartnerHelp
 @when       temp:camera.region == "BoatUnderside"
 @cutscene
-@boostScore 10
+@boostScore 100
 $if scanned:testScene.species.urchin, scanned:testScene.species.kelp, scanned:testScene.species.otter
     $goto demo.observationExit
 $else
@@ -177,3 +177,15 @@ $else
     {@player}   What could we be missing?
     {@kevin}    Let's have a look around.
 $endif
+
+// hint
+
+:: boat.hint
+@trigger    RequestPartnerHelp
+@when       scanned:testScene.species.urchin, scanned:testScene.species.kelp, scanned:testScene.species.otter
+@cutscene
+@repeat     2
+@boostScore 5
+{@kevin}    Kelp, urchins, otters...
+            If you think we're done, why not swim us up back to the boat?
+            Talk to me there.

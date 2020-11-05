@@ -14,6 +14,9 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private Vector3 m_ExperimentOffset = default(Vector3);
 
+        [SerializeField] private SpriteAnimation m_InactiveAnim = null;
+        [SerializeField] private SpriteAnimation m_ActiveAnim = null;
+
         #endregion // Inspector
 
         [NonSerialized] private Vector3 m_OriginalPosition;
@@ -30,6 +33,8 @@ namespace ProtoAqua.Experiment
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this);
 
             m_OriginalPosition = transform.localPosition;
+
+            m_Animation.Play(m_InactiveAnim);
         }
 
         private void OnDestroy()
@@ -51,11 +56,13 @@ namespace ProtoAqua.Experiment
 
         private void OnExperimentBegin()
         {
+            m_Animation.Play(m_ActiveAnim);
             Routine.Start(this, transform.MoveTo(m_OriginalPosition + m_ExperimentOffset, 0.5f, Axis.XYZ, Space.Self).Ease(Curve.CubeOut));
         }
 
         private void OnExperimentTeardown()
         {
+            m_Animation.Play(m_InactiveAnim);
             transform.localPosition = m_OriginalPosition;
         }
     }

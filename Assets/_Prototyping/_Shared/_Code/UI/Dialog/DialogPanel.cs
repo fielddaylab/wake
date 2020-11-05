@@ -277,10 +277,9 @@ namespace ProtoAqua
         {
             if (m_TextDisplay.maxVisibleCharacters == 0)
             {
-                if (!IsShowing())
-                    Show();
-                else
+                if (IsShowing())
                     m_BoxAnim.Replace(this, Pulse());
+                Show();
 
                 RebuildLayout();
                 while(m_RebuildRoutine)

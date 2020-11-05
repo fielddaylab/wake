@@ -18,13 +18,32 @@ namespace ProtoAqua.Editor
         {
             BuildInfoGenerator.Enabled = true;
             BuildInfoGenerator.IdLength = 8;
-        }
 
-        [MenuItem("Aqualab/Log Git Branch", false, 1001)]
-        static private void LogGitBranch()
-        {
+            // TODO: More sophisticated mechanism for controlling development, defines, other flags...
             string branch = BuildUtils.GetSourceControlBranchName();
-            Debug.LogFormat("[BuildSettings] Source control branch is '{0}'", branch);
+            bool bDesiredDevBuild = false;
+            
+            if (branch != null)
+            {
+                if (branch.Contains("dev") || branch.Contains("proto"))
+                {
+                    bDesiredDevBuild = true;
+                }
+            }
+
+            if (bDesiredDevBuild != EditorUserBuildSettings.development)
+            {
+                EditorUserBuildSettings.development = bDesiredDevBuild;
+                Debug.LogFormat("[BuildSettings] Source control branch is '{0}', switched development build to {1}", branch, bDesiredDevBuild);
+                if (bDesiredDevBuild)
+                {
+                    BuildUtils.WriteDefines("DEVELOPMENT");
+                }
+                else
+                {
+                    BuildUtils.WriteDefines(null);
+                } 
+            }
         }
 
         private class BuildPreprocess : IPreprocessBuildWithReport
@@ -33,15 +52,8 @@ namespace ProtoAqua.Editor
 
             public void OnPreprocessBuild(BuildReport report)
             {
-                // TODO: More sophisticated mechanism for controlling development, defines, other flags...
                 string branch = BuildUtils.GetSourceControlBranchName();
-                EditorUserBuildSettings.development = false;
-                
-                if (branch != null)
-                {
-                    if (branch.Contains("dev") || branch.Contains("proto"))
-                        EditorUserBuildSettings.development = true;
-                }
+                Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
             }
         }
     }

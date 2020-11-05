@@ -33,16 +33,13 @@
             But it seems like the urchins would just eat all the kelp.
             Then there'd be nothing but urchins!
             And it wouldn't be me calling you then, it'd be my brother.
-{@player}    Your... brother?
+{@player}   Your... brother?
 {@kevin}    The{wait 0.2} Urchin Baron?
-{@demoChar} Whoa, you've already met him?
-{@kevin}    Once, yeah.
-{@demoChar} Then be thankful I'm the one talking to you!
+{@demoChar} Yes! Be thankful I'm the one talking to you!
             He has quite a temper.
-{@player}   So you need us to see if there's anything else here that your {wait 0.1}perfect{wait 0.1} report missed?
-{@demoChar} {speed 2}It is perfect!{/speed}{wait 1}{auto}
+{@player}   So you need us to see if there's anything else here that your {wait 0.3}perfect{wait 0.3} report missed?
+{@demoChar} {speed 2}It is perfect!{/speed}{wait 0.5}{auto}
 {@kevin}    ...Right. Yeah, {player-name} let's go see if there's anything here to explain this.
-            Talk to me at the boat when you think we're done.
 {hide-dialog}
 {fade-out black.50, 0.5, wait}
 {style center}
@@ -50,6 +47,8 @@
             Hold the {icon leftMouse}left mouse button to move around.
             Tap the {icon rightMouse}right mouse button to enter or exit scanning mode.
             Scan nearby objects by holding the {icon leftMouse}left mouse button.
+            Press "Q" or click the Kevin button in the corner to ask them for help.
+            When you think you've found everything, talk to Kevin by the boat.
 {hide-dialog}
 {fade-in 0.5}
 
@@ -113,17 +112,54 @@
 @cutscene
 {wait 1}
 {@player}   Fascinating! So otters seem to keep the urchin population in check.
-{@kevin}    Yeah.
+{@kevin}    Yeah. Think that has any knock-on effects?
+{@player}   Possibly...
+            Let's bring this back to Karl.
 {hide-dialog}
 {bgm-stop 1}
 {load-scene DemoTitle}
+
+:: argumentation
+@trigger    SceneStart
+@when       scene:name == "ArgumentationScene", global:demo
+@cutscene
+{wait 1}
+{@kevin}    Well, time has come, let's bring our findings to Karl's attention.
+{hide-dialog}
+{fade-out black.50, 0.5, wait}
+{style center}
+{@narrator} Use your {icon mouse}mouse and {icon leftMouse} to interact.
+            Drag responses with the {icon leftMouse} into the chat window to respond with them.
+            Any buttons on the bottom-left will allow you to switch between categories of responses.
+{hide-dialog}
+{fade-in 0.5}
 
 :: argumentationExit
 @trigger    ArgumentationComplete
 @when       global:demo
 @cutscene
 {wait 1}
-{@player}   Guess we convinced Karl!
+{@demoChar} Thank you both for helping me figure this out!
+            Turns out my reports were...
+{@player}   Imperfect?
+{@kevin}    Lousy?
+{@demoChar} They were...
+            Incredibly helpful!
+            Why, without them you wouldn't have been able to solve this!
+{@kevin}    Really? {wait 1}Really?
+{@player}   Kevin... at least we're getting paid here...
+{@kevin}    ...Yeah, they were helpful, thanks.
+            Payment?
+{@demoChar} Ah yes, your payment.
+            Take... {cash}500{/cash}, and...
+            Hmmm, how about this hunk of junk I have lying around?
+{@player}   Sure. Thanks!
+{@demoChar} Let me know if you ever need more work!
+{hide-dialog}
+{wait 1}
+{@kevin}    So otters keep the urchins in check...
+            and that in turn relieves some pressure from the kelp.
+            Very interesting...
 {hide-dialog}
 {bgm-stop 1}
 {load-scene DemoTitle}

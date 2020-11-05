@@ -27,6 +27,7 @@ namespace ProtoAqua.Energy
         [Header("Edit Panel")]
         [SerializeField] private SimEditPanel m_EditPanel = null;
         [SerializeField] private Button m_EditButton = null;
+        [SerializeField] private RectTransform m_EditSeparator = null;
 
         #endregion // Inspector
 
@@ -52,6 +53,14 @@ namespace ProtoAqua.Energy
             RegisterPanelUpdateHandler(m_HelpPanel);
             RegisterPanelUpdateHandler(m_CompletePanel);
             RegisterPanelUpdateHandler(m_EditPanel);
+
+            bool bDevelopment = false;
+            #if DEVELOPMENT
+            bDevelopment = true;
+            #endif // DEVELOPMENT
+
+            m_EditButton.gameObject.SetActive(bDevelopment);
+            m_EditSeparator.gameObject.SetActive(bDevelopment);
         }
 
         private void RegisterPanelUpdateHandler(BasePanel inPanel)
