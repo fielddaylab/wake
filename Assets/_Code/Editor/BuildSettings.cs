@@ -31,10 +31,13 @@ namespace ProtoAqua.Editor
                 }
             }
 
-            if (bDesiredDevBuild != EditorUserBuildSettings.development)
+            bool bApply = bDesiredDevBuild != EditorUserBuildSettings.development || UnityEditorInternal.InternalEditorUtility.inBatchMode;
+
+            if (bApply)
             {
                 EditorUserBuildSettings.development = bDesiredDevBuild;
                 Debug.LogFormat("[BuildSettings] Source control branch is '{0}', switched development build to {1}", branch, bDesiredDevBuild);
+
                 if (bDesiredDevBuild)
                 {
                     BuildUtils.WriteDefines("DEVELOPMENT");
@@ -42,7 +45,7 @@ namespace ProtoAqua.Editor
                 else
                 {
                     BuildUtils.WriteDefines(null);
-                } 
+                }
             }
         }
 
