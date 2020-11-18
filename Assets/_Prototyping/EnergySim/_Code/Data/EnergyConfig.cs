@@ -1,9 +1,10 @@
 using System;
+using Aqua;
 using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Configuration")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Configuration")]
     public class EnergyConfig : TweakAsset
     {
         #region Types

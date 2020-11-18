@@ -3,6 +3,7 @@ using BeauUtil;
 using UnityEngine;
 using BeauRoutine;
 using BeauUtil.Variants;
+using Aqua;
 
 namespace ProtoAqua.Observation
 {

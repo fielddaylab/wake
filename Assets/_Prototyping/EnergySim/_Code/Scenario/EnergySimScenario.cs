@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Scenario")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Scenario")]
     public class EnergySimScenario : ScriptableObject, IEnergySimScenario
     {
         #region Inspector

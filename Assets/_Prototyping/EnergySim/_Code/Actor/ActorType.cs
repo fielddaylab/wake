@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Actor Type")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Actor Type")]
     public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>, ICopyCloneable<ActorType>
     {
         #region Types

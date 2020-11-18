@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Environment Type")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Environment Type")]
     public class EnvironmentType : ScriptableObject, ISimType<EnvironmentType>, IKeyValuePair<FourCC, EnvironmentType>
     {
         #region Types

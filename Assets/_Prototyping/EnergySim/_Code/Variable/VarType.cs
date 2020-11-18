@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Variable Type")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Variable Type")]
     public class VarType : ScriptableObject, ISimType<VarType>, IKeyValuePair<FourCC, VarType>
     {
         #region Types
