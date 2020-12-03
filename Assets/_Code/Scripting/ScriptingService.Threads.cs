@@ -38,6 +38,9 @@ namespace Aqua
             }
         }
 
+        void ILeafPlugin<ScriptNode>.OnEnd(LeafThreadState<ScriptNode> inThreadState)
+        { }
+
         bool ILeafPlugin<ScriptNode>.TryLookupLine(StringHash32 inLineCode, ScriptNode inLocalNode, out string outLine)
         {
             return inLocalNode.Package().TryGetLine(inLineCode, out outLine);
@@ -55,7 +58,7 @@ namespace Aqua
 
         IEnumerator ILeafPlugin<ScriptNode>.ShowOptions(LeafThreadState<ScriptNode> inThreadState, LeafChoice inChoice, ILeafContentResolver inContentResolver)
         {
-            throw new NotImplementedException();
+            return PerformEventChoice((ScriptThread) inThreadState, inChoice, inContentResolver);
         }
 
         #endregion // ILeafPlugin
@@ -65,15 +68,6 @@ namespace Aqua
         {
             yield return m_ThreadRuntime.Execute(inThread, inStartingNode);
             inThread.Kill();
-        }
-
-        // Performs a block of event lines
-        private IEnumerator PerformEventLines(ScriptThread inThread, IEnumerable<StringSlice> inLines)
-        {
-            foreach (var line in inLines)
-            {
-                yield return Routine.Inline(PerformEventLine(inThread, line));
-            }
         }
 
         // Reads a line of scripting
@@ -124,6 +118,12 @@ namespace Aqua
             {
                 yield return inThread.Dialog?.CompleteLine();
             }
+        }
+    
+        private IEnumerator PerformEventChoice(ScriptThread inThread, LeafChoice inChoice, ILeafContentResolver inContentResolver)
+        {
+            DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.GetDialog("center"));
+            return dialogPanel.ShowOptions(inThread.PeekNode(), inChoice, inContentResolver, inThread);
         }
     }
 }

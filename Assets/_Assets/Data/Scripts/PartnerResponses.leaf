@@ -100,3 +100,33 @@ $set kevin:help.comfortTalks + 1
 {@player}   Thanks for understanding.
             ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
 {@kevin}    ...Sure. When I trust you the same way, maybe we can try that.
+
+:: choiceTest
+@trigger    RequestPartnerHelp
+@boostScore 1000000000
+@cutscene
+
+$set saidYes = false
+
+$while !saidYes
+    
+    {@kevin}    How about it? Do you trust me?
+
+    $choice .choiceTest.yes; Yes
+    $choice .choiceTest.no; No
+    $choose branch
+
+    {wait 0.1}
+
+$endwhile
+{@kevin}    This conversation is over.
+
+:: choiceTest.yes
+{@player}   With all my heart!
+{@kevin}    Ugh. Love. Barf.
+$set saidYes = true
+
+:: choiceTest.no
+{@player}   Absolutely not.
+{@kevin}    Really?
+            Nice.

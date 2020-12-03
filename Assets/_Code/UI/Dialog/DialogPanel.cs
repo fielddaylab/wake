@@ -8,6 +8,7 @@ using System;
 using BeauUtil.Tags;
 using Aqua.Scripting;
 using BeauUtil;
+using Leaf;
 
 namespace Aqua
 {
@@ -81,6 +82,14 @@ namespace Aqua
         [SerializeField] private Button m_Button = null;
         [SerializeField] private CanvasGroup m_ButtonGroup = null;
 
+        [Header("Options")]
+
+        [SerializeField] private RectTransform m_OptionContainer = null;
+        [SerializeField] private CanvasGroup m_OptionGroup = null;
+        [SerializeField] private LayoutGroup m_OptionLayout = null;
+        [SerializeField] private ContentSizeFitter m_OptionSizer = null;
+        [SerializeField] private DialogOptionButton[] m_OptionButtons = null;
+
         #endregion // Inspector
 
         [NonSerialized] private TypingState m_CurrentState;
@@ -90,6 +99,8 @@ namespace Aqua
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Routine m_RebuildRoutine;
+
+        [NonSerialized] private TagString m_TempTagString = new TagString();
 
         public StringHash32 StyleId() { return m_StyleId; }
 
@@ -115,6 +126,9 @@ namespace Aqua
             
             if (m_ButtonContainer)
                 m_ButtonContainer.gameObject.SetActive(false);
+
+            if (m_OptionContainer)
+                m_OptionContainer.gameObject.SetActive(false);
         }
 
         #endregion // BasePanel
@@ -361,6 +375,75 @@ namespace Aqua
         }
 
         #endregion // Typing
+
+        #region Options
+
+        public IEnumerator ShowOptions(ScriptNode inNode, LeafChoice inChoice, ILeafContentResolver inResolver, object inContext)
+        {
+            if (!m_OptionContainer)
+                yield break;
+
+            m_OptionContainer.gameObject.SetActive(true);
+            int optionsToShow = inChoice.AvailableCount;
+            if (optionsToShow > m_OptionButtons.Length)
+            {
+                optionsToShow = m_OptionButtons.Length;
+                Debug.LogWarningFormat("[DialogPanel] Too many options - {0}, but only {1} buttons present", inChoice.AvailableCount, optionsToShow);
+            }
+
+            int buttonIdx = 0;
+            string line;
+            foreach(var option in inChoice.AvailableOptions())
+            {
+                DialogOptionButton button = m_OptionButtons[buttonIdx++];
+                button.gameObject.SetActive(true);
+
+                inResolver.TryGetLine(option.LineCode, inNode, out line);
+                Services.Script.ParseToTag(ref m_TempTagString, line, inContext);
+                button.Populate(option.TargetId, m_TempTagString.RichText, inChoice);
+            }
+
+            m_TempTagString.Clear();
+
+            for(int i = optionsToShow; i < m_OptionButtons.Length; ++i)
+            {
+                m_OptionButtons[i].gameObject.SetActive(false);
+            }
+
+            m_OptionLayout.enabled = true;
+            m_OptionSizer.enabled = true;
+            m_OptionLayout.ForceRebuild();
+            yield return null;
+            
+            m_OptionSizer.enabled = false;
+            m_OptionLayout.enabled = false;
+
+            for(int i = 0; i < optionsToShow; ++i)
+            {
+                m_OptionButtons[i].Prep();
+            }
+
+            m_OptionGroup.blocksRaycasts = false;
+            yield return Routine.ForParallel(
+                0, optionsToShow,
+                (i) => m_OptionButtons[i].AnimateOn(i * 0.02f)
+            );
+            m_OptionGroup.blocksRaycasts = true;
+
+            while(!inChoice.HasChosen())
+                yield return null;
+
+            m_OptionGroup.blocksRaycasts = false;
+
+            yield return Routine.ForParallel(
+                0, optionsToShow,
+                (i) => m_OptionButtons[i].AnimateOff(i * 0.02f)
+            );
+
+            m_OptionContainer.gameObject.SetActive(false);
+        }
+
+        #endregion // Options
 
         private float GetSkipMultiplier()
         {

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using BeauPools;
 using System;
+using Aqua;
 
 namespace ProtoAqua.Portable
 {
@@ -15,6 +16,7 @@ namespace ProtoAqua.Portable
         [SerializeField, Required] private Toggle m_Toggle = null;
         [SerializeField, Required] private ColorGroup m_Background = null;
         [SerializeField, Required] private Image m_Icon = null;
+        [SerializeField] private LocText m_Text = null;
 
         #endregion // Inspector
 
@@ -27,13 +29,17 @@ namespace ProtoAqua.Portable
             m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
         }
 
-        public void Initialize(Sprite inIcon, Color inBackgroundColor, ToggleGroup inToggleGroup, object inData, Action<PortableListElement, bool> inCallback)
+        public void Initialize(Sprite inIcon, Color inBackgroundColor, ToggleGroup inToggleGroup, string inText, object inData, Action<PortableListElement, bool> inCallback)
         {
             m_Toggle.SetIsOnWithoutNotify(false);
             m_Toggle.group = inToggleGroup;
             m_Background.Color = inBackgroundColor;
             m_Icon.sprite = inIcon;
             Data = inData;
+            
+            if (m_Text)
+                m_Text.SetText(inText);
+            
             m_Callback = inCallback;
         }
 

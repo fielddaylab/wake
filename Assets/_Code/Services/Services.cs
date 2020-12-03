@@ -102,6 +102,12 @@ namespace Aqua
             get { return RetrieveOrFind(ref s_CachedAnalyticsService, ServiceIds.Analytics); }
         }
 
+        static private AssetsService s_CachedAssetsService;
+        static public AssetsService Assets
+        {
+            get { return RetrieveOrFind(ref s_CachedAssetsService, ServiceIds.Assets); }
+        }
+
         static private AudioMgr s_CachedAudioMgr;
         static public AudioMgr Audio
         {

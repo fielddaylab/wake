@@ -25,6 +25,8 @@ namespace Aqua
 
         private Routine m_LoadRoutine;
         private IPool<TagString> m_TagStringPool;
+
+        private List<LocText> m_ActiveTexts = new List<LocText>(64);
         
         #region Loading
 
@@ -71,15 +73,21 @@ namespace Aqua
         #region Localization
 
         /// <summary>
-        /// Localizes
+        /// Localizes the given key.
         /// </summary>
-        /// <param name="inKey"></param>
-        /// <returns></returns>
         public string Localize(StringHash32 inKey, bool inbIgnoreEvents = false)
         {
             return Localize(inKey, string.Empty, null, inbIgnoreEvents);
         }
 
+        /// <summary>
+        /// Localize the given key.
+        /// </summary>
+        /// <param name="inKey"></param>
+        /// <param name="inDefault"></param>
+        /// <param name="inContext"></param>
+        /// <param name="inbIgnoreEvents"></param>
+        /// <returns></returns>
         public string Localize(StringHash32 inKey, string inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
             if (m_LoadRoutine)

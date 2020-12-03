@@ -140,6 +140,7 @@ namespace Aqua
         private void HookSaveDataToVariableResolver(SaveData inData)
         {
             m_VariableResolver.SetTable("global", inData.Script.GlobalTable);
+            m_VariableResolver.SetTable("jobs", inData.Script.JobsTable);
             m_VariableResolver.SetTable("player", inData.Script.PlayerTable);
             m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
 

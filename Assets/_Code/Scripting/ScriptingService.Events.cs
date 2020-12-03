@@ -122,10 +122,25 @@ namespace Aqua
 
         static private string ReplaceVariable(TagData inTag, object inContext)
         {
-            var thread = Thread(inContext);
-            var resolver = thread?.Resolver ?? Services.Data.VariableResolver;
-            Variant variable;
-            resolver.TryGetVariant(thread?.Context, TableKeyPair.Parse(inTag.Data), out variable);
+            TableKeyPair key = TableKeyPair.Parse(inTag.Data);
+
+            Variant variable = Variant.Null;
+            IVariantTable table;
+            IVariantResolver resolver;
+
+            table = (inContext as IVariantTable);
+            resolver = (inContext as ScriptThread)?.Resolver ?? (inContext as IVariantResolver) ?? Services.Data.VariableResolver;
+
+            bool bFound = false;
+            if (table != null && (key.TableId.IsEmpty || key.TableId == table.Name))
+            {
+                bFound = table.TryLookup(key.VariableId, out variable);
+            }
+
+            if (!bFound)
+            {
+                bFound = resolver.TryGetVariant(inContext, key, out variable);
+            }
             
             if (inTag.Id.EndsWith("-i"))
             {
@@ -251,6 +266,12 @@ namespace Aqua
         static private ScriptThread Thread(object inObject)
         {
             return inObject as ScriptThread;
+        }
+
+        static private IVariantResolver Resolver(object inObject)
+        {
+            IVariantResolver resolver = inObject as IVariantResolver;
+            return resolver ?? Thread(inObject)?.Resolver;
         }
 
         private TempList8<StringSlice> ExtractArgs(StringSlice inString)

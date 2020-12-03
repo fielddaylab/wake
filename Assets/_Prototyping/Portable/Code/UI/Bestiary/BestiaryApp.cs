@@ -36,8 +36,8 @@ namespace ProtoAqua.Portable
         [SerializeField, Required] private RectTransform m_HasSelectionGroup = null;
 
         [Header("Info")]
-        [SerializeField, Required] private TMP_Text m_ScientificNameLabel = null;
-        [SerializeField, Required] private TMP_Text m_CommonNameLabel = null;
+        [SerializeField, Required] private LocText m_ScientificNameLabel = null;
+        [SerializeField, Required] private LocText m_CommonNameLabel = null;
         [SerializeField, Required] private Image m_SketchImage = null;
         [SerializeField, Required] private VerticalLayoutGroup m_FactLayoutGroup = null;
         [SerializeField] private FactPool m_FactPool = null;
@@ -46,7 +46,7 @@ namespace ProtoAqua.Portable
 
         [NonSerialized] private PortableTweaks m_Tweaks = null;
         [NonSerialized] private bool m_ArgumentationMode = false;
-        [NonSerialized] private BestiaryEntryType m_CurrentEntryGroup = BestiaryEntryType.Critter;
+        [NonSerialized] private BestiaryDescCategory m_CurrentEntryGroup = BestiaryDescCategory.Critter;
 
         protected override void Awake()
         {
@@ -59,16 +59,16 @@ namespace ProtoAqua.Portable
         private void OnCritterToggled(bool inbOn)
         {
             if (inbOn)
-                LoadEntryGroup(BestiaryEntryType.Critter, false);
+                LoadEntryGroup(BestiaryDescCategory.Critter, false);
         }
 
         private void OnEcosystemToggled(bool inbOn)
         {
             if (inbOn)
-                LoadEntryGroup(BestiaryEntryType.Ecosystem, false);
+                LoadEntryGroup(BestiaryDescCategory.Ecosystem, false);
         }
 
-        private void LoadEntryGroup(BestiaryEntryType inType, bool inbForce)
+        private void LoadEntryGroup(BestiaryDescCategory inType, bool inbForce)
         {
             if (!inbForce && m_CurrentEntryGroup == inType)
                 return;
@@ -77,10 +77,10 @@ namespace ProtoAqua.Portable
             m_EntryPool.Reset();
 
             Color buttonColor = m_Tweaks.BestiaryListColor(inType);
-            foreach(var entry in m_Tweaks.AllBestiaryEntriesForType(inType))
+            foreach(var entry in Services.Assets.Bestiary.AllEntriesForCategory(inType))
             {
                 PortableListElement button = m_EntryPool.Alloc();
-                button.Initialize(entry.Icon, buttonColor, m_EntryToggleGroup, entry, OnEntryToggled);
+                button.Initialize(entry.Icon, buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_EntryLayoutGroup.transform);
@@ -97,10 +97,10 @@ namespace ProtoAqua.Portable
                 return;
             }
 
-            LoadEntry((BestiaryEntry) inElement.Data);
+            LoadEntry((BestiaryDesc) inElement.Data);
         }
 
-        private void LoadEntry(BestiaryEntry inEntry)
+        private void LoadEntry(BestiaryDesc inEntry)
         {
             m_FactPool.Reset();
 
@@ -114,8 +114,8 @@ namespace ProtoAqua.Portable
             m_NoSelectionGroup.gameObject.SetActive(false);
             m_HasSelectionGroup.gameObject.SetActive(true);
 
-            m_ScientificNameLabel.SetText(inEntry.ScientificName);
-            m_CommonNameLabel.SetText(inEntry.CommonName);
+            m_ScientificNameLabel.SetText(inEntry.ScientificName());
+            m_CommonNameLabel.SetText(inEntry.CommonName());
 
             m_SketchImage.sprite = inEntry.Sketch;
             m_SketchImage.gameObject.SetActive(inEntry.Sketch);
@@ -123,7 +123,7 @@ namespace ProtoAqua.Portable
             foreach(var fact in inEntry.Facts)
             {
                 BestiaryFactButton factButton = m_FactPool.Alloc();
-                factButton.Initialize(fact, m_ArgumentationMode);
+                factButton.Initialize(fact, null, m_ArgumentationMode);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_FactLayoutGroup.transform);
@@ -137,7 +137,7 @@ namespace ProtoAqua.Portable
 
             m_CritterGroupToggle.SetIsOnWithoutNotify(true);
             m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-            LoadEntryGroup(BestiaryEntryType.Critter, true);
+            LoadEntryGroup(BestiaryDescCategory.Critter, true);
 
             LoadEntry(null);
         }

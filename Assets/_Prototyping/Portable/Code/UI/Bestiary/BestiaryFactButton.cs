@@ -3,6 +3,7 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine.UI;
 using TMPro;
+using Aqua;
 
 namespace ProtoAqua.Portable
 {
@@ -13,15 +14,15 @@ namespace ProtoAqua.Portable
         [SerializeField, Required] private Button m_Button = null;
         [SerializeField, Required] private RectTransform m_ButtonTail = null;
         [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private TMP_Text m_Label = null;
+        [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
 
         #endregion // Inspector
 
-        public void Initialize(BestiaryFactBase inFact, bool inbButtonMode)
+        public void Initialize(BestiaryFactBase inFact, PlayerFactParams inParams, bool inbButtonMode)
         {
-            m_Icon.sprite = inFact.Icon;
-            m_Icon.gameObject.SetActive(inFact.Icon);
-            m_Label.SetText(inFact.Label);
+            m_Icon.sprite = inFact.Icon();
+            m_Icon.gameObject.SetActive(inFact.Icon());
+            m_Sentence.Populate(inFact, inParams);
 
             m_Button.targetGraphic.raycastTarget = inbButtonMode;
             m_ButtonTail.gameObject.SetActive(inbButtonMode);
