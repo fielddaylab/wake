@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Aqua;
 using BeauUtil.Blocks;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
 {
-    [CreateAssetMenu(menuName = "Prototype/Argumentation/Graph Data Manager")]
+    [CreateAssetMenu(menuName = "Aqualab/Argumentation/Graph Data Manager")]
     public class GraphDataManager : TweakAsset
     {
         [SerializeField] private TextAsset[] m_DefaultAssets = null;

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Aqua;
 using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine;
 
 namespace ProtoAqua.Observation
 {
-    [CreateAssetMenu(menuName = "Prototype/Observation/Scan Data Manager")]
+    [CreateAssetMenu(menuName = "Aqualab/Observation/Scan Data Manager")]
     public class ScanDataMgr : TweakAsset
     {
         #region Types

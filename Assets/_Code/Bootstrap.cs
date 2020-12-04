@@ -5,10 +5,10 @@
 using System.Collections;
 using System.Globalization;
 using BeauUtil;
-using ProtoAqua.DebugConsole;
+using Aqua.DebugConsole;
 using UnityEngine;
 
-namespace ProtoAqua
+namespace Aqua
 {
     public class Bootstrap : MonoBehaviour
     {

@@ -37,8 +37,8 @@
 @when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos == 0, !player:seen.aqos.experiment.tablet
 @once
 @cutscene
-{set player:seen.aqos + 1}
-{set player:seen.aqos.experiment.tablet = true}
+$set player:seen.aqos + 1
+$set player:seen.aqos.experiment.tablet = true
 {@player}   {speed 0.5}"AQ-OS"{/speed}{wait 0.1}, huh?
             Have you ever heard of this?
 {@kevin}    Hmm{wait 0.2}, nope, nothing comes to mind.
@@ -50,7 +50,7 @@
 @when       experiment:setup.on, experiment:setup.screen == "boot", !kevin:experiment.notedTabletDamage
 @once
 @cutscene
-{set kevin:experiment.notedTabletDamage = true}
+$set kevin:experiment.notedTabletDamage = true
 {@kevin}    Looks like there's already someone logged in.
 {@player}   Wha-{wait 0.5}{auto}
 {@kevin}    Oh, never mind, "recovery". Probably an auto account.
@@ -75,7 +75,7 @@
 @when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos.experiment.tablet, !kevin:experiment.notedTabletDamage
 @once
 @cutscene
-{set kevin:experiment.notedTabletDamage = true}
+$set kevin:experiment.notedTabletDamage = true
 {@kevin}    Surprised this looks as spotless as it does.
 {@player}   What makes you say that?
 {@kevin}    That version number looks like a date.
@@ -132,7 +132,7 @@
 @when       !experiment:setup.on, experiment:tankType == "Foundational", !player:experiment.seenFoundationalIntro
 @once
 @cutscene
-{set player:experiment.seenFoundationalIntro = true}
+$set player:experiment.seenFoundationalIntro = true
 {@kevin}    A foundational tank, huh?
             Guess we can look at what's inside.
 
@@ -143,7 +143,7 @@
 @who        kevin
 @repeat 1
 @chatter
-{set temp:newObservationTimer + 1}
+$set temp:newObservationTimer + 1
 {@kevin}    I think we already got this one.
 
 :: behavior.alreadyObserved.2
@@ -151,7 +151,7 @@
 @who        kevin
 @repeat 1
 @chatter
-{set temp:newObservationTimer + 1}
+$set temp:newObservationTimer + 1
 {@kevin}    We already know this.
 
 :: behavior.newObservation.1
@@ -159,7 +159,7 @@
 @who        kevin
 @repeat 1
 @chatter
-{set temp:newObservationTimer = 0}
+$set temp:newObservationTimer = 0
 {@kevin}    Nice one.
 
 :: behavior.alreadyObserved.exitHint
@@ -169,7 +169,7 @@
 @triggerPriority    High
 @repeat     1
 @chatter
-{set temp:newObservationTimer = 0}
+$set temp:newObservationTimer = 0
 {@kevin}    We might be done here...
             Just use the tablet on the left if you want to stop the experiment.
 
@@ -178,7 +178,7 @@
 @who        kevin
 @repeat 1
 @chatter
-{set temp:newObservationTimer = 0}
+$set temp:newObservationTimer = 0
 {@kevin}    Good catch.
 
 // Attempt Exit

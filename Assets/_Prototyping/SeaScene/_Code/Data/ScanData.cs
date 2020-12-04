@@ -6,6 +6,7 @@ using BeauUtil.Blocks;
 using UnityEngine.Scripting;
 using BeauUtil.Variants;
 using BeauPools;
+using Aqua;
 
 namespace ProtoAqua.Observation
 {

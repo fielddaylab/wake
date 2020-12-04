@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Aqua;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace ProtoAqua.Experiment
 {
-    [CreateAssetMenu(menuName = "Prototype/Experiment/Experiment Settings")]
+    [CreateAssetMenu(menuName = "Aqualab/Experiment/Experiment Settings")]
     public class ExperimentSettings : TweakAsset
     {
         #region Types

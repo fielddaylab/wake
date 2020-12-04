@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using Aqua;
 
 namespace ProtoAqua.Energy
 {

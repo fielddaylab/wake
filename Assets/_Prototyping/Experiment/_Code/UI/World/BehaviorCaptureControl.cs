@@ -6,6 +6,7 @@ using BeauPools;
 using BeauData;
 using BeauUtil;
 using System.Collections.Generic;
+using Aqua;
 
 namespace ProtoAqua.Experiment
 {
@@ -52,7 +53,7 @@ namespace ProtoAqua.Experiment
             Services.UI.WorldFaders.Flash(Color.white.WithAlpha(0.5f), 0.25f);
             Services.Audio.PostEvent("capture_flash");
 
-            if (Services.Data.Profile.Bestiary.RegisterBehaviorObserved(inBehaviorId))
+            if (Services.Data.Profile.Bestiary.RegisterBaseFact(inBehaviorId))
             {
                 var behaviorDef = Services.Tweaks.Get<ExperimentSettings>().GetBehavior(inBehaviorId);
 
@@ -81,7 +82,7 @@ namespace ProtoAqua.Experiment
 
         public bool WasObserved(StringHash32 inBehaviorId)
         {
-            return Services.Data.Profile.Bestiary.WasBehaviorObserved(inBehaviorId);
+            return Services.Data.Profile.Bestiary.HasBaseFact(inBehaviorId);
         }
 
         #region IService
