@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
@@ -7,10 +9,18 @@ namespace Aqua
     {
         #region Inspector
 
+        [SerializeField] private string m_Title = null;
+        [SerializeField] private string m_Description = null;
         [SerializeField] private Sprite m_Icon = null;
 
         #endregion // Inspector
 
+        [NonSerialized] private BestiaryDesc m_Parent;
+
+        public BestiaryDesc Parent() { return m_Parent; }
+
+        public string Title() { return m_Title; }
+        public string Description() { return m_Description; }
         public Sprite Icon() { return m_Icon; }
 
         public virtual void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
@@ -19,5 +29,10 @@ namespace Aqua
         }
 
         public abstract IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null);
+
+        public virtual void Hook(BestiaryDesc inParent)
+        {
+            m_Parent = inParent;
+        }
     }
 }

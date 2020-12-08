@@ -14,8 +14,8 @@ namespace Aqua
 
         #endregion // Inspector
 
-        private bool m_Constructed;
-        private StringHash32[] m_Ids;
+        [NonSerialized] private bool m_Constructed;
+        [NonSerialized] private StringHash32[] m_Ids;
         protected Dictionary<StringHash32, T> m_IdMap;
         protected Dictionary<StringHash32, StringHash32> m_ScriptNameMap;
 

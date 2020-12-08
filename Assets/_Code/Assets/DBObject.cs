@@ -8,7 +8,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_ScriptName;
+        [SerializeField] private SerializedHash32 m_ScriptName = StringHash32.Null;
 
         #endregion // Inspector
 

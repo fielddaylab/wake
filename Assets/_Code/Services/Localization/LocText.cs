@@ -14,6 +14,7 @@ namespace Aqua
 
         #endregion // Inspector
 
+        private StringHash32 m_LastId;
         private string m_CurrentText;
 
         #region Text
@@ -22,6 +23,8 @@ namespace Aqua
 
         public void SetText(StringHash32 inId, object inContext = null)
         {
+            m_LastId = inId;
+
             if (inId.IsEmpty)
             {
                 InternalSetText(string.Empty);
@@ -36,18 +39,22 @@ namespace Aqua
         {
             if (inString.IsEmpty)
             {
+                m_LastId = StringHash32.Null;
                 InternalSetText(string.Empty);
                 return;
             }
 
             if (inString.StartsWith('\''))
             {
-                string localized = Services.Loc.Localize(inString.Substring(1).Hash32(), inString.ToString(), inContext);
+                m_LastId = inString.Substring(1).Hash32();
+
+                string localized = Services.Loc.Localize(m_LastId, inString.ToString(), inContext);
                 InternalSetText(localized);
                 return;
             }
             else
             {
+                m_LastId = StringHash32.Null;
                 InternalSetText(inString.ToString());
             }
         }

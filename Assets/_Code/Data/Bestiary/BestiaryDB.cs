@@ -62,6 +62,8 @@ namespace Aqua
         {
             base.ConstructLookupForItem(inItem, inIndex);
 
+            inItem.Initialize();
+
             foreach(var fact in inItem.Facts)
             {
                 m_FactMap.Add(fact.Id(), fact);

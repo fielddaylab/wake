@@ -12,5 +12,7 @@ namespace Aqua
 
         static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start";
         static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end";
+
+        static public readonly StringHash32 BestiaryUpdated = "bestiary:updated";
     }
 }

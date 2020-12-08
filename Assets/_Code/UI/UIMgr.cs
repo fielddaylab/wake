@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using BeauData;
+using BeauPools;
+using BeauRoutine.Extensions;
 using BeauUtil;
 using UnityEngine;
 
@@ -24,6 +27,7 @@ namespace Aqua
 
         private int m_LetterboxCounter = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
+        private Dictionary<StringHash32, SharedPanel> m_SharedPanels;
 
         #region Loading Screen
 
@@ -111,10 +115,80 @@ namespace Aqua
 
         #endregion // Screen Effects
 
+        #region Additional Panels
+
+        public void RegisterPanel(SharedPanel inPanel)
+        {
+            Type t = inPanel.GetType();
+            StringHash32 key = t.FullName;
+
+            SharedPanel panel;
+            if (m_SharedPanels.TryGetValue(key, out panel))
+            {
+                if (panel != inPanel)
+                    throw new ArgumentException(string.Format("Panel with type {0} already exists", t.FullName), "inPanel");
+
+                return;
+            }
+
+            m_SharedPanels.Add(key, inPanel);
+        }
+
+        public void DeregisterPanel(SharedPanel inPanel)
+        {
+            Type t = inPanel.GetType();
+            StringHash32 key = t.FullName;
+
+            SharedPanel panel;
+            if (m_SharedPanels.TryGetValue(key, out panel) && panel == inPanel)
+            {
+                m_SharedPanels.Remove(key);
+            }
+        }
+
+        public T FindPanel<T>() where T : SharedPanel
+        {
+            StringHash32 key = typeof(T).FullName;
+            SharedPanel panel;
+            if (!m_SharedPanels.TryGetValue(key, out panel))
+            {
+                panel = FindObjectOfType<T>();
+                if (panel != null)
+                {
+                    RegisterPanel(panel);
+                }
+            }
+            return (T) panel;
+        }
+
+        #endregion // Additional Panels
+
+        private void CleanupFromScene(SceneBinding inBinding, object inContext)
+        {
+            int removedPanelCount = 0;
+            using(PooledList<SharedPanel> sharedPanels = PooledList<SharedPanel>.Create(m_SharedPanels.Values))
+            {
+                foreach(var panel in sharedPanels)
+                {
+                    if (panel.gameObject.scene == inBinding.Scene)
+                    {
+                        DeregisterPanel(panel);
+                        ++removedPanelCount;
+                    }
+                }
+            }
+
+            if (removedPanelCount > 0)
+            {
+                Debug.LogWarningFormat("[UIMgr] Unregistered {0} shared panels that were not deregistered at scene unload", removedPanelCount);
+            }
+        }
+
         #region IService
 
         protected override void OnDeregisterService()
         {
+            SceneHelper.OnSceneUnload -= CleanupFromScene;
         }
 
         protected override void OnRegisterService()
@@ -126,6 +200,10 @@ namespace Aqua
             {
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
+
+            m_SharedPanels = new Dictionary<StringHash32, SharedPanel>(16);
+
+            SceneHelper.OnSceneUnload += CleanupFromScene;
         }
 
         public override FourCC ServiceId()

@@ -52,6 +52,10 @@ namespace Aqua
 
         protected override void Apply()
         {
+            if (m_Initialized)
+                return;
+            
+            m_Initialized = true;
             GameObject poolRootGO = new GameObject("FactSentencePool");
             poolRootGO.hideFlags = HideFlags.DontSave;
             poolRootGO.SetActive(false);
@@ -66,6 +70,9 @@ namespace Aqua
 
         protected override void Remove()
         {
+            if (!m_Initialized)
+                return;
+
             UnityHelper.SafeDestroyGO(ref m_PoolRoot);
             m_Default.Dispose();
             SceneHelper.OnSceneUnload -= UnloadFromScene;

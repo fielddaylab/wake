@@ -19,7 +19,23 @@ namespace Aqua.Profile
 
         public bool RegisterEntity(StringHash32 inEntityId)
         {
-            return m_ObservedEntities.Add(inEntityId);
+            if (m_ObservedEntities.Add(inEntityId))
+            {
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
+                return true;
+            }
+
+            return false;
+        }
+
+        public IEnumerable<BestiaryDesc> GetEntities(BestiaryDescCategory inCategory)
+        {
+            foreach(var entity in m_ObservedEntities)
+            {
+                BestiaryDesc desc = Services.Assets.Bestiary.Get(entity);
+                if (desc.Category() == inCategory)
+                    yield return desc;
+            }
         }
 
         #endregion // Observed Entities
@@ -35,7 +51,9 @@ namespace Aqua.Profile
         {
             if (m_ObservedFacts.Add(inBehaviorId))
             {
-                m_Facts.Add(new PlayerFactParams(inBehaviorId));
+                var fact = AddFact(inBehaviorId).Fact;
+                m_ObservedEntities.Add(fact.Parent().Id());
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
                 return true;
             }
 
@@ -43,6 +61,35 @@ namespace Aqua.Profile
         }
 
         #endregion // Observed Behaviors
+
+        #region Facts
+
+        public IEnumerable<PlayerFactParams> GetFactsForEntity(StringHash32 inEntityId)
+        {
+            foreach(var fact in m_Facts)
+            {
+                if (fact.Fact.Parent().Id() == inEntityId)
+                    yield return fact;
+            }
+        }
+
+        public IEnumerable<PlayerFactParams> GetFactsForBaseFact(StringHash32 inFactId)
+        {
+            foreach(var fact in m_Facts)
+            {
+                if (fact.FactId == inFactId)
+                    yield return fact;
+            }
+        }
+
+        public PlayerFactParams AddFact(StringHash32 inBaseFact)
+        {
+            PlayerFactParams fact = new PlayerFactParams(inBaseFact);
+            m_Facts.Add(fact);
+            return fact;
+        }
+
+        #endregion // Facts
 
         #region ISerializedData
 

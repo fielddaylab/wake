@@ -73,6 +73,23 @@ namespace Aqua
         #region Localization
 
         /// <summary>
+        /// Localizes the given text if the given string starts with a ' character.
+        /// Otherwise uses the text as given.
+        /// </summary>
+        public string MaybeLocalize(StringSlice inString, object inContext = null, bool inbIgnoreEvents = false)
+        {
+            if (inString.IsEmpty)
+                return string.Empty;
+
+            if (inString.StartsWith('\''))
+            {
+                return Localize(inString.Substring(1), inString, inContext, inbIgnoreEvents);
+            }
+
+            return inString.ToString();
+        }
+
+        /// <summary>
         /// Localizes the given key.
         /// </summary>
         public string Localize(StringHash32 inKey, bool inbIgnoreEvents = false)
@@ -88,22 +105,22 @@ namespace Aqua
         /// <param name="inContext"></param>
         /// <param name="inbIgnoreEvents"></param>
         /// <returns></returns>
-        public string Localize(StringHash32 inKey, string inDefault, object inContext = null, bool inbIgnoreEvents = false)
+        public string Localize(StringHash32 inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
             if (m_LoadRoutine)
             {
                 Debug.LogErrorFormat("[LocService] Localization is still loading");
-                return inDefault;
+                return inDefault.ToString();
             }
 
             if (inKey.IsEmpty)
-                return inDefault;
+                return inDefault.ToString();
 
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
             {
                 Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey.ToDebugString());
-                content = inDefault;
+                content = inDefault.ToString();
             }
             
             if (!inbIgnoreEvents && content.IndexOf('{') >= 0)

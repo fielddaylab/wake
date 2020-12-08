@@ -85,6 +85,10 @@ namespace Aqua.DebugConsole
                 {
                     TryReloadAssets();
                 }
+                else if (m_Input.KeyPressed(KeyCode.G))
+                {
+                    UnlockAllBestiaryEntries();
+                }
             }
         }
 
@@ -139,6 +143,14 @@ namespace Aqua.DebugConsole
             }
             Services.Data.Profile.Script.Reset();
             Debug.LogWarningFormat("[DebugService] Cleared all scripting state");
+        }
+
+        private void UnlockAllBestiaryEntries()
+        {
+            foreach(var entryId in Services.Assets.Bestiary.Ids)
+            {
+                Services.Data.Profile.Bestiary.RegisterEntity(entryId);
+            }
         }
 
         private IEnumerator RequestQuit()

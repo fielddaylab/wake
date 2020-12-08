@@ -55,11 +55,12 @@ namespace ProtoAqua.Experiment
 
             if (Services.Data.Profile.Bestiary.RegisterBaseFact(inBehaviorId))
             {
-                var behaviorDef = Services.Tweaks.Get<ExperimentSettings>().GetBehavior(inBehaviorId);
+                var factDef = Services.Assets.Bestiary.Fact(inBehaviorId);
 
                 Services.Audio.PostEvent("capture_new");
                 Services.Events.Dispatch(ExperimentEvents.BehaviorAddedToLog, inBehaviorId);
-                Services.UI.Popup.Display(Services.Loc.Localize(behaviorDef.ObserveTitleId, "Behavior Observed!"), Services.Loc.Localize(behaviorDef.DescId, inBehaviorId.ToDebugString()))
+
+                Services.UI.Popup.Display(factDef.Title(), factDef.Description())
                     .OnComplete((r) => {
                         Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
                     });

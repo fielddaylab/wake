@@ -54,16 +54,12 @@ namespace Aqua
 
         public StringHash32 ListenAudio { get { return m_ListenAudioEvent; } }
 
-        protected void OnEnable()
+        public void Initialize()
         {
-            #if UNITY_EDITOR
-            if (!Application.isPlaying)
-                return;
-            #endif // UNITY_EDITOR
-                
             m_FactMap = new Dictionary<StringHash32, BestiaryFactBase>();
             foreach(var fact in m_Facts)
             {
+                fact.Hook(this);
                 m_FactMap.Add(fact.Id(), fact);
             }
         }

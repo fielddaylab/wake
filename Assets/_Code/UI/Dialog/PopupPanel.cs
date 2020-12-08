@@ -38,8 +38,8 @@ namespace Aqua
         [SerializeField] private InputRaycasterLayer m_RaycastBlocker = null;
 
         [Header("Contents")]
-        [SerializeField] private TMP_Text m_HeaderText = null;
-        [SerializeField] private TMP_Text m_ContentsText = null;
+        [SerializeField] private LocText m_HeaderText = null;
+        [SerializeField] private LocText m_ContentsText = null;
         [SerializeField] private TMP_InputField m_Input = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;

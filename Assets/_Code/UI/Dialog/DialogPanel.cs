@@ -473,6 +473,9 @@ namespace Aqua
 
         private IEnumerator WaitForInput()
         {
+            if (!m_ButtonContainer)
+                yield break;
+            
             m_ButtonContainer.gameObject.SetActive(true);
             yield return Routine.Race(
                 m_Button == null ? null : m_Button.onClick.WaitForInvoke(),

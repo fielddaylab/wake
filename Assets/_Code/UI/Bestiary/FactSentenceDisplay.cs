@@ -4,11 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using BeauUtil;
 using BeauUtil.Variants;
+using BeauPools;
 
 namespace Aqua
 {
     public class FactSentenceDisplay : MonoBehaviour
     {
+        [Serializable]
+        public class Pool : SerializablePool<FactSentenceDisplay> { }
+
         #region Inspector
 
         [SerializeField] private bool m_DisplayOptionalFragments = false;
