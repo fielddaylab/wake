@@ -31,6 +31,8 @@ namespace ProtoAqua.Observation
         [BlockMeta("logbook")] private string m_LogbookId = null;
         [BlockMeta("eventEntrypoint")] private string m_EventEntrypoint = null;
 
+        [BlockMeta("inBestiary")] private bool m_InBestiary = false;
+
         #endregion // Serialized
 
         public ScanData(string inFullId)
@@ -51,6 +53,10 @@ namespace ProtoAqua.Observation
         public string LogbookId() { return m_LogbookId; }
 
         public string EventEntrypoint() { return m_EventEntrypoint; }
+
+        public bool InBestiary() { return m_InBestiary; }
+
+
 
         #region Scan
 
