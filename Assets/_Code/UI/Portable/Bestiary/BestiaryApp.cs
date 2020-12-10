@@ -86,7 +86,7 @@ namespace Aqua.Portable
             foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
             {
                 PortableListElement button = m_EntryPool.Alloc();
-                button.Initialize(entry.Icon, buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_EntryLayoutGroup.transform);
@@ -123,8 +123,8 @@ namespace Aqua.Portable
             m_ScientificNameLabel.SetText(inEntry.ScientificName());
             m_CommonNameLabel.SetText(inEntry.CommonName());
 
-            m_SketchImage.sprite = inEntry.Sketch;
-            m_SketchImage.gameObject.SetActive(inEntry.Sketch);
+            m_SketchImage.sprite = inEntry.Sketch();
+            m_SketchImage.gameObject.SetActive(inEntry.Sketch());
 
             foreach(var fact in Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id()))
             {

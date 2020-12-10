@@ -161,9 +161,14 @@ namespace ProtoAqua.Observation
                 yield return null;
             }
 
-            if (m_TargetScannable.CompleteScan())
+            ScanResult result = m_TargetScannable.CompleteScan();
+            if (result != 0)
             {
-                if (data != null && !string.IsNullOrEmpty(data.LogbookId()))
+                if (data != null && !data.BestiaryId().IsEmpty)
+                {
+                    Services.Audio.PostEvent("scan_bestiary");
+                }
+                if (data != null && !data.LogbookId().IsEmpty)
                 {
                     Services.Audio.PostEvent("scan_logbook");
                 }
@@ -172,7 +177,7 @@ namespace ProtoAqua.Observation
                     Services.Audio.PostEvent("scan_complete");
                 }
             }
-            scanUI.ShowScan(data);
+            scanUI.ShowScan(data, result);
         }
 
         #endregion // Scanning

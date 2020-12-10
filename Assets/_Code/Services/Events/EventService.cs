@@ -345,7 +345,7 @@ namespace Aqua
                 block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(Handler.FromArgumentAction<T>(inActionWithCastedContext, inBinding));
+            block.Add(Handler.FromArgumentAction(inActionWithCastedContext, inBinding));
 
             return this;
         }

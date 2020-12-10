@@ -6,7 +6,7 @@ namespace ProtoAqua.Ship
 {
     public class RoomManager : MonoBehaviour
     {
-         public Camera camera;
+         public new Camera camera;
 
         // Start is called before the first frame update
         void Start()

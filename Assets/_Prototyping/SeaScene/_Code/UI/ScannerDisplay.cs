@@ -79,7 +79,7 @@ namespace ProtoAqua.Observation
             m_ScanProgressBar.fillAmount = inProgress;
         }
 
-        public void ShowScan(ScanData inData)
+        public void ShowScan(ScanData inData, ScanResult inResult)
         {
             Show();
 

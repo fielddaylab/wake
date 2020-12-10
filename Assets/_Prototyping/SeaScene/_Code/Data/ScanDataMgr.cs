@@ -53,11 +53,21 @@ namespace ProtoAqua.Observation
 
         public bool WasScanned(StringHash32 inId) { return Services.Data.Profile.Inventory.WasScanned(inId); }
 
-        public bool RegisterScanned(ScanData inData)
+        public ScanResult RegisterScanned(ScanData inData)
         {
             if (Services.Data.Profile.Inventory.RegisterScanned(inData.Id()))
             {
+                ScanResult result = ScanResult.NewScan;
+
                 Services.Events.Dispatch(ObservationEvents.ScannableComplete, inData.Id());
+
+                StringHash32 bestiaryId = inData.BestiaryId();
+                if (!bestiaryId.IsEmpty && Services.Data.Profile.Bestiary.RegisterEntity(bestiaryId))
+                {
+                    result |= ScanResult.NewBestiary;
+                }
+
+                // TODO: Logbook
 
                 // apply variables?
                 var scanModifications = inData.OnScanModifications();
@@ -67,10 +77,10 @@ namespace ProtoAqua.Observation
                         scanModifications[i].Execute(Services.Data.VariableResolver, inData);
                 }
                 
-                return true;
+                return result;
             }
 
-            return false;
+            return ScanResult.NoChange;
         }
 
         public ScanTypeConfig GetConfig(ScanDataFlags inFlags)
@@ -147,5 +157,14 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // TweakAsset
+    }
+
+    [Flags]
+    public enum ScanResult : byte
+    {
+        NoChange =  0x0,
+        NewScan =   0x1,
+        NewLogbook = 0x2,
+        NewBestiary = 0x4
     }
 }

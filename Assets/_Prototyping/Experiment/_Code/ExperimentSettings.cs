@@ -20,38 +20,11 @@ namespace ProtoAqua.Experiment
             public string ShortLabelId;
             public Sprite Icon;
             public string Condition;
+            public BestiaryDescSize MaxSize;
 
             TankType IKeyValuePair<TankType, TankDefinition>.Key { get { return Tank; } }
 
             TankDefinition IKeyValuePair<TankType, TankDefinition>.Value { get { return this; } }
-        }
-
-        [Serializable]
-        public class EcoDefinition : IKeyValuePair<StringHash32, EcoDefinition>
-        {
-            public string Id;
-            public string LabelId;
-            public string ShortLabelId;
-            public Sprite Icon;
-            public string Condition;
-
-            StringHash32 IKeyValuePair<StringHash32, EcoDefinition>.Key { get { return Id; } }
-
-            EcoDefinition IKeyValuePair<StringHash32, EcoDefinition>.Value { get { return this; } }
-        }
-
-        [Serializable]
-        public class ActorDefinition : IKeyValuePair<StringHash32, ActorDefinition>
-        {
-            public string Id;
-            public string LabelId;
-            public string ShortLabelId;
-            public Sprite Icon;
-            public string Condition;
-
-            StringHash32 IKeyValuePair<StringHash32, ActorDefinition>.Key { get { return Id; } }
-
-            ActorDefinition IKeyValuePair<StringHash32, ActorDefinition>.Value { get { return this; } }
         }
 
         #endregion // Types
@@ -59,8 +32,6 @@ namespace ProtoAqua.Experiment
         #region Inspector
 
         [SerializeField] private TankDefinition[] m_TankDefs = null;
-        [SerializeField] private EcoDefinition[] m_EcoDefs = null;
-        [SerializeField] private ActorDefinition[] m_ActorDefs = null;
 
         [Header("Icon Colors")]
         [SerializeField] private Color m_EnabledButtonColor = Color.white;
@@ -84,38 +55,6 @@ namespace ProtoAqua.Experiment
         {
             TankDefinition def;
             m_TankDefs.TryGetValue(inType, out def);
-            return def;
-        }
-
-        public IEnumerable<EcoDefinition> AllNonEmptyEcos()
-        {
-            for(int i = 0; i < m_EcoDefs.Length; ++i)
-            {
-                if (!string.IsNullOrEmpty(m_EcoDefs[i].Id))
-                    yield return m_EcoDefs[i];
-            }
-        }
-
-        public EcoDefinition GetEco(StringHash32 inId)
-        {
-            EcoDefinition def;
-            m_EcoDefs.TryGetValue(inId, out def);
-            return def;
-        }
-
-        public IEnumerable<ActorDefinition> AllNonEmptyActors()
-        {
-            for(int i = 0; i < m_ActorDefs.Length; ++i)
-            {
-                if (!string.IsNullOrEmpty(m_ActorDefs[i].Id))
-                    yield return m_ActorDefs[i];
-            }
-        }
-
-        public ActorDefinition GetActor(StringHash32 inId)
-        {
-            ActorDefinition def;
-            m_ActorDefs.TryGetValue(inId, out def);
             return def;
         }
 

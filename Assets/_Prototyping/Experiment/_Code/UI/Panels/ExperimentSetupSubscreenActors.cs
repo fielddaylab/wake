@@ -14,11 +14,11 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private RectTransform m_ButtonRoot = null;
         [SerializeField] private Button m_NextButton = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Sprite m_EmptyIcon = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private ExperimentSettings m_CachedSettings;
         [NonSerialized] private ActorToggleButton[] m_CachedButtons;
 
         [NonSerialized] private ExperimentSetupData m_CachedData;
@@ -27,7 +27,6 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
-            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ButtonRoot.GetComponentsInChildren<ActorToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -54,8 +53,8 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allActorTypes = m_CachedSettings.AllNonEmptyActors();
-            var noneActorType = m_CachedSettings.GetActor(StringHash32.Null);
+            var tankType = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_CachedData.Tank);
+            var allActorTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Critter);
 
             int buttonIdx = 0;
             foreach(var actorType in allActorTypes)
@@ -64,22 +63,17 @@ namespace ProtoAqua.Experiment
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                
-                if (Services.Data.CheckConditions(actorType.Condition))
-                {
-                    button.Load(actorType.Id, actorType.Icon, true);
-                }
-                else
-                {
-                    button.Load(noneActorType.Id, noneActorType.Icon, false);
-                }
 
+                if (actorType.Size() > tankType.MaxSize || (actorType.Flags() & BestiaryDescFlags.DoNotUseInExperimentation) != 0)
+                    continue;
+                
+                button.Load(actorType.Id(), actorType.Icon(), true);
                 ++buttonIdx;
             }
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(noneActorType.Id, noneActorType.Icon, false);
+                m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
             }
 
             m_NextButton.interactable = false;
@@ -87,7 +81,7 @@ namespace ProtoAqua.Experiment
 
         private void UpdateFromButton(StringHash32 inActorId, bool inbActive)
         {
-            var actorData = m_CachedSettings.GetActor(inActorId);
+            var actorData = Services.Assets.Bestiary.Get(inActorId);
 
             if (inbActive)
             {
@@ -103,13 +97,20 @@ namespace ProtoAqua.Experiment
             m_NextButton.interactable = m_CachedData.ActorIds.Count > 0;
 
             UpdateDisplay(inActorId);
-            Services.Data.SetVariable("experiment:setup." + actorData.Id, inbActive);
+            Services.Data.SetVariable("experiment:setup." + actorData.name, inbActive);
         }
 
         private void UpdateDisplay(StringHash32 inActorId)
         {
-            var def = m_CachedSettings.GetActor(inActorId);
-            m_Label.text = Services.Loc.Localize(def.LabelId);
+            if (inActorId.IsEmpty)
+            {
+                m_Label.SetText(StringHash32.Null);
+            }
+            else
+            {
+                var def = Services.Assets.Bestiary.Get(inActorId);
+                m_Label.SetText(def.CommonName());
+            }
 
             Services.Data.SetVariable(ExperimentVars.SetupPanelLastActorType, inActorId);
         }

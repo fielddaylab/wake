@@ -59,6 +59,8 @@ namespace Aqua
 
         public T Get(StringHash32 inId)
         {
+            EnsureCreated();
+
             T obj;
             m_IdMap.TryGetValue(inId, out obj);
             return obj;

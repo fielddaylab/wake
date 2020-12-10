@@ -14,13 +14,12 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private Button m_BackButton = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Sprite m_EmptyIcon = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private ExperimentSettings m_CachedSettings;
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
-
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
         public Action OnSelectContinue;
@@ -28,7 +27,6 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
-            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -56,8 +54,7 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allWaterTypes = m_CachedSettings.AllNonEmptyEcos();
-            var noneWaterType = m_CachedSettings.GetEco(StringSlice.Empty);
+            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Ecosystem);
 
             int buttonIdx = 0;
             foreach(var waterType in allWaterTypes)
@@ -66,30 +63,30 @@ namespace ProtoAqua.Experiment
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                
-                if (Services.Data.CheckConditions(waterType.Condition))
-                {
-                    button.Load(waterType.Id, waterType.Icon, true);
-                }
-                else
-                {
-                    button.Load(noneWaterType.Id, noneWaterType.Icon, false);
-                }
+                button.Load(waterType.Id(), waterType.Icon(), true);
 
                 ++buttonIdx;
             }
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(noneWaterType.Id, noneWaterType.Icon, false);
+                m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
             }
         }
 
         private void UpdateDisplay(StringHash32 inWaterId)
         {
-            var def = m_CachedSettings.GetEco(inWaterId);
-            m_Label.text = Services.Loc.Localize(def.LabelId);
-            m_NextButton.interactable = !inWaterId.IsEmpty;
+            if (inWaterId.IsEmpty)
+            {
+                m_NextButton.interactable = false;
+                m_Label.SetText(StringHash32.Null);
+            }
+            else
+            {
+                var def = Services.Assets.Bestiary.Get(inWaterId);
+                m_Label.SetText(def.CommonName());
+                m_NextButton.interactable = true;
+            }
 
             Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
         }

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using BeauRoutine;
 using UnityEngine.EventSystems;
+using Aqua;
 
 namespace ProtoAqua.Ship
 {

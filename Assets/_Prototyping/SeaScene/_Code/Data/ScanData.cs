@@ -28,10 +28,11 @@ namespace ProtoAqua.Observation
 
         // Links
         [BlockMeta("spriteId")] private string m_SpriteId = null;
-        [BlockMeta("logbook")] private string m_LogbookId = null;
-        [BlockMeta("eventEntrypoint")] private string m_EventEntrypoint = null;
 
-        [BlockMeta("inBestiary")] private bool m_InBestiary = false;
+        [BlockMeta("logbook")] private string m_LogbookId = null;
+        [BlockMeta("bestiary")] private string m_BestiaryId = null;
+
+        [BlockMeta("eventEntrypoint")] private string m_EventEntrypoint = null;
 
         #endregion // Serialized
 
@@ -50,13 +51,10 @@ namespace ProtoAqua.Observation
         public string Text() { return m_DescText; }
 
         public string SpriteId() { return m_SpriteId; }
-        public string LogbookId() { return m_LogbookId; }
+        public StringHash32 LogbookId() { return m_LogbookId; }
+        public StringHash32 BestiaryId() { return m_BestiaryId; }
 
         public string EventEntrypoint() { return m_EventEntrypoint; }
-
-        public bool InBestiary() { return m_InBestiary; }
-
-
 
         #region Scan
 

@@ -151,24 +151,26 @@ namespace ProtoAqua.Observation
             m_StateTransform.SetScale(1f);
         }
 
-        public bool CompleteScan()
+        public ScanResult CompleteScan()
         {
             if (!m_ScanFinished)
             {
                 m_ScanFinished = true;
 
+                ScanResult result = ScanResult.NoChange;
+
                 ScanData data = GetScanData();
                 var mgr = Services.Tweaks.Get<ScanDataMgr>();
                 if (data != null)
                 {
-                    mgr.RegisterScanned(data);
+                    result = mgr.RegisterScanned(data);
                 }
 
                 UpdateColor(data);
-                return true;
+                return result;
             }
 
-            return false;
+            return ScanResult.NoChange;
         }
 
         #endregion // Scanning

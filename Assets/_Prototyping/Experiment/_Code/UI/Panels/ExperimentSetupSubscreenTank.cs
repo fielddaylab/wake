@@ -13,7 +13,7 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private Button m_NextButton = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private LocText m_Label = null;
 
         #endregion // Inspector
 
@@ -85,7 +85,7 @@ namespace ProtoAqua.Experiment
         private void UpdateDisplay(TankType inTankType)
         {
             var def = m_CachedSettings.GetTank(inTankType);
-            m_Label.text = Services.Loc.Localize(def.LabelId);
+            m_Label.SetText(def.LabelId);
             m_NextButton.interactable = inTankType != TankType.None;
 
             Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());
