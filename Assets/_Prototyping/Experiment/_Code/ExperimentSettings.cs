@@ -16,8 +16,8 @@ namespace ProtoAqua.Experiment
         public class TankDefinition : IKeyValuePair<TankType, TankDefinition>
         {
             public TankType Tank;
-            public string LabelId;
-            public string ShortLabelId;
+            public SerializedHash32 LabelId;
+            public SerializedHash32 ShortLabelId;
             public Sprite Icon;
             public string Condition;
             public BestiaryDescSize MaxSize;

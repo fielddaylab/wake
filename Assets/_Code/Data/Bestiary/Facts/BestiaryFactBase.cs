@@ -29,6 +29,7 @@ namespace Aqua
         }
 
         public abstract IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null);
+        public abstract string GenerateSentence(PlayerFactParams inParams = null);
 
         public virtual void Hook(BestiaryDesc inParent)
         {

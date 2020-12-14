@@ -8,6 +8,16 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
     public class BestiaryDesc : DBObject
     {
+        private struct VariantPair : IKeyValuePair<StringHash32, string>
+        {
+            public SerializedHash32 Id;
+            public string Name;
+
+            public StringHash32 Key { get { return Id; } }
+
+            public string Value { get { return Name; } }
+        }
+
         #region Inspector
 
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Type = BestiaryDescCategory.Critter;
@@ -15,8 +25,11 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescSize m_Size = 0;
 
         [Header("Info")]
-        [SerializeField] private string m_ScientificNameId;
-        [SerializeField] private string m_CommonNameId;
+        [SerializeField] private string m_ScientificNameId = null;
+        [SerializeField] private string m_CommonNameId = null;
+
+        [Space]
+        [SerializeField] private VariantPair[] m_VariantIds = null;
         
         [Space]
         [SerializeField] private BestiaryFactBase[] m_Facts = null;
@@ -24,7 +37,7 @@ namespace Aqua
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private Sprite m_Sketch = null;
-        [SerializeField] private SerializedHash32 m_ListenAudioEvent;
+        [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
         #endregion // Inspector
 
@@ -36,6 +49,16 @@ namespace Aqua
 
         public string ScientificName() { return m_ScientificNameId; }
         public string CommonName() { return m_CommonNameId; }
+
+        public string VariantName(StringHash32 inVariantId)
+        {
+            string value;
+            if (!m_VariantIds.TryGetValue(inVariantId, out value))
+            {
+                Debug.LogErrorFormat("[BestiaryDesc] No variant name for id '{0}' found on bestiary entry '{1}'", inVariantId.ToDebugString(), Id().ToDebugString());
+            }
+            return value;
+        }
 
         public IReadOnlyList<BestiaryFactBase> Facts { get { return m_Facts; } }
 
@@ -102,7 +125,8 @@ namespace Aqua
     {
         Rare = 0x01,
         LargeCreature = 0x02,
-        DoNotUseInExperimentation = 0x04
+        DoNotUseInExperimentation = 0x04,
+        IsVariant = 0x08,
     }
 
     public enum BestiaryDescSize
