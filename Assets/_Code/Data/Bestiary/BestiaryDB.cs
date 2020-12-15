@@ -43,6 +43,11 @@ namespace Aqua
             return (TFact) Fact(inFactId);
         }
 
+        public IEnumerable<BestiaryFactBase> Facts() 
+        {
+            return m_FactMap.Values;
+        }
+
         #endregion // Facts
 
         #region Internal

@@ -151,6 +151,10 @@ namespace Aqua.DebugConsole
             {
                 Services.Data.Profile.Bestiary.RegisterEntity(entryId);
             }
+            foreach(var fact in Services.Assets.Bestiary.Facts())
+            {
+                Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
+            }
         }
 
         private IEnumerator RequestQuit()

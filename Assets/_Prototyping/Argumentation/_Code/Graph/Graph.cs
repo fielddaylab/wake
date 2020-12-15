@@ -178,7 +178,7 @@ namespace ProtoAqua.Argumentation
         private void LoadLinks(string packageName)
         {
             GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
-            AssetsService assets = Services.Assets;
+            DataService dataService = Services.Data;
 
             foreach (KeyValuePair<string, Link> kvp in data.Links)
             {
@@ -188,10 +188,11 @@ namespace ProtoAqua.Argumentation
                 {
                     linkDictionary.Add(link.Id, link);
                 }
-                // else if (assets.Bestiary) Check if factId is in bestiary? Also add factIds to links.txt
-                // { 
-
-                // }
+                else if (dataService.Profile.Bestiary.HasBaseFact(link.factId)) //Check if factId is in bestiary? Also add factIds to links.txt
+                { 
+                    Debug.Log("test");
+                    linkDictionary.Add(link.Id, link);
+                }
                 else if (m_enableAllLinks)
                 {
                     linkDictionary.Add(link.Id, link);
