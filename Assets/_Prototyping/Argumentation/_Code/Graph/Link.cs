@@ -25,6 +25,7 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Ids
+        [BlockMeta("factId")] private string m_factId = null;
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
         [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
         [BlockMeta("nextNodeId"), Preserve]
@@ -39,6 +40,10 @@ namespace ProtoAqua.Argumentation
         #endregion // Serialized
 
         #region Accessors
+         public string factId
+        {
+            get { return m_factId; }
+        }
 
         public string DisplayText
         {
@@ -84,6 +89,7 @@ namespace ProtoAqua.Argumentation
         {
             get { return requiredUsed; }
         }
+
 
         #endregion // Accessors
 

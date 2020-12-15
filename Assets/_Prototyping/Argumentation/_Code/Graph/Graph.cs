@@ -10,6 +10,11 @@ namespace ProtoAqua.Argumentation
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
 
+
+        [Header("Debug Booleans")]
+        [SerializeField] private bool m_enableAllLinks = false;
+
+
         private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
 
@@ -50,6 +55,7 @@ namespace ProtoAqua.Argumentation
 
             QueryParams queryParams = Services.Data.PeekQueryParams();
             LoadGraph(queryParams.Get("script") ?? "Dialogue3");
+            LoadLinks("Links");
         }
 
         // Given a link id, check if that link is a valid response for the current node.
@@ -132,7 +138,7 @@ namespace ProtoAqua.Argumentation
         private void LoadGraph(string packageName)
         {
             ResetGraph();
-            
+
             GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
 
             foreach (KeyValuePair<string, Node> kvp in data.Nodes)
@@ -159,13 +165,7 @@ namespace ProtoAqua.Argumentation
             {
                 throw new System.ArgumentNullException("No end node specified");
             }
-            
-            foreach (KeyValuePair<string, Link> kvp in data.Links)
-            {
-                Link link = kvp.Value;
-                link.InitializeLink();
-                linkDictionary.Add(link.Id, link);
-            }
+
 
             defaultInvalidNodeId = data.DefaultInvalidNodeId;
 
@@ -173,6 +173,32 @@ namespace ProtoAqua.Argumentation
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
+        }
+
+        private void LoadLinks(string packageName)
+        {
+            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
+            AssetsService assets = Services.Assets;
+
+            foreach (KeyValuePair<string, Link> kvp in data.Links)
+            {
+                Link link = kvp.Value;
+                link.InitializeLink();
+                if (link.factId == "claim")
+                {
+                    linkDictionary.Add(link.Id, link);
+                }
+                // else if (assets.Bestiary) Check if factId is in bestiary? Also add factIds to links.txt
+                // { 
+
+                // }
+                else if (m_enableAllLinks)
+                {
+                    linkDictionary.Add(link.Id, link);
+                }
+
+            }
+
         }
     }
 }

@@ -68,34 +68,6 @@ Okay, that makes sense, not quite what I am looking for.
 :: node.end
 Got it! So more otters means less urchins and more kelp!
 
-:: link.OtterHelpKelp
-@tag claim
-@type claim
-@nextNodeId node.intro, node.OtterHelpKelpInquery
-It seems like the otters somehow help the kelp.
-
-
-:: link.OtterEatUrchin
-@tag behavior
-@type otter
-@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
-@nextNodeId node.UrchinEatKelpInquery, node.end
-Otters eat urchins
-
-:: link.UrchinEatKelp
-@tag behavior
-@type urchin
-@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
-@nextNodeId node.OtterEatUrchinInquery, node.end
-Urchins eat kelp
-
-
-:: link.OttersDontEatKelp
-@tag behavior
-@type otter
-@nextNodeId node.OtterHelpKelpInquery, node.FakePath
-Otters don't eat kelp.
-
 
 :: node.UrchinsCantSurviveInquery
 @invalidNodeId node.invalid.DeadUrchin
@@ -111,29 +83,4 @@ But it could have been a predator or other variable
 Ok then. Maybe try a new claim?
 
 
-
-:: link.UrchinsCantSurvive
-@tag claim
-@type claim
-@nextNodeId node.intro, node.UrchinsCantSurviveInquery
-Urchins can't survive in this water.
-
-:: link.WaterTooCold
-@tag ecosystem
-@type water
-@shortenedText Water < 50
-The water was less than 50 degrees, so the urchins died.
-
-:: link.NoUrchins
-@tag ecosystem
-@type water
-@nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
-There were no urchins in the wild env
-
-:: link.DeadUrchin
-@tag model
-@type dead
-@nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
-@nextNodeId node.PredatorNode, node.BadFinish
-I dropped an urchin into a tank and it died.
 
