@@ -6,6 +6,7 @@ using System.Collections;
 using BeauUtil.Tags;
 using System.IO;
 using BeauUtil.IO;
+using Aqua;
 
 namespace ProtoAqua.Observation
 {

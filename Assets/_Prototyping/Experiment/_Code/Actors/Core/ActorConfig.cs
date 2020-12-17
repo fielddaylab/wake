@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using BeauData;
 using BeauUtil;
-using ProtoAudio;
+using AquaAudio;
 using BeauRoutine;
 using System.Collections;
 using BeauPools;
@@ -11,7 +11,7 @@ using BeauUtil.Variants;
 
 namespace ProtoAqua.Experiment
 {
-    [CreateAssetMenu(menuName = "Prototype/Experiment/Actor Config")]
+    [CreateAssetMenu(menuName = "Aqualab/Experiment/Actor Config")]
     public class ActorConfig : ScriptableObject
     {
         #region Inspector

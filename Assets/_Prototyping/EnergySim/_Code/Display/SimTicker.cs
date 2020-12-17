@@ -8,6 +8,7 @@ using System;
 using BeauRoutine;
 using System.Collections;
 using BeauRoutine.Extensions;
+using Aqua;
 
 namespace ProtoAqua.Energy
 {

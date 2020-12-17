@@ -3,51 +3,48 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ProtoAqua.Argumentation 
+namespace ProtoAqua.Argumentation
 {
-    [RequireComponent(typeof(DraggableObject))]
-    public class ChatBubble : MonoBehaviour {
+    [RequireComponent(typeof(ClickableObject))]
+    public class ChatBubble : MonoBehaviour
+    {
         // Node: NPC chat bubble
         // Link: User chat response
 
         [Header("Chat Bubble Dependencies")]
         [SerializeField] private Image bubbleImage;
+        [SerializeField] private Image tailImage;
+
         [SerializeField] private TextMeshProUGUI displayText = null;
 
         private LinkManager linkManager = null;
-        private DropSlot dropSlot = null;
         private Graph graph = null;
-        
+
+
 
         public string id { get; set; }
         public string linkTag { get; set; }
         public string typeTag { get; set; } //Organizes each bubble within the center tab
 
-        private DraggableObject draggableObject = null;
+        private ClickableObject clickableObject = null;
 
         private Routine colorRoutine;
 
         private void Start()
         {
-            draggableObject = GetComponent<DraggableObject>();
+            clickableObject = GetComponent<ClickableObject>();
 
-            if (draggableObject) 
-            {
-                draggableObject.endDrag = EndDrag;
-            }
-
-           
         }
 
         public void ChangeColor(Color color)
         {
             bubbleImage.color = color;
+            tailImage.color = color;
         }
 
-        public void InitializeLinkDependencies(LinkManager inLinkManager, DropSlot inDropSlot, Graph inGraph)
+        public void InitializeLinkDependencies(LinkManager inLinkManager, Graph inGraph)
         {
             linkManager = inLinkManager;
-            dropSlot = inDropSlot;
             graph = inGraph;
         }
 
@@ -59,7 +56,8 @@ namespace ProtoAqua.Argumentation
             displayText.SetText(inDisplayText);
         }
 
-        public void SetLongText() {
+        public void SetLongText()
+        {
             Link currLink = graph.FindLink(id);
             displayText.SetText(currLink.DisplayText);
         }
@@ -70,7 +68,7 @@ namespace ProtoAqua.Argumentation
             displayText.SetText(inDisplayText);
         }
 
-        private void EndDrag(GameObject gameObject) 
+        private void EndDrag(GameObject gameObject)
         {
             linkManager.ResetLink(gameObject, id, true);
         }

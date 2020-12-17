@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using BeauData;
 using BeauUtil;
-using ProtoAudio;
+using AquaAudio;
 using BeauRoutine;
 using System.Collections;
 using System.Reflection;
@@ -10,6 +10,7 @@ using BeauUtil.Variants;
 using BeauRoutine.Extensions;
 using ProtoCP;
 using System.Collections.Generic;
+using Aqua;
 
 namespace ProtoAqua.Experiment
 {
@@ -103,9 +104,9 @@ namespace ProtoAqua.Experiment
             var settings = Services.Tweaks.Get<ExperimentSettings>();
 
             Services.Data.SetVariable(ExperimentVars.TankType, inData.Tank.ToString());
-            Services.Data.SetVariable(ExperimentVars.TankTypeLabel, settings.GetTank(inData.Tank).ShortLabelId);
+            Services.Data.SetVariable(ExperimentVars.TankTypeLabel, settings.GetTank(inData.Tank).ShortLabelId.Hash());
             Services.Data.SetVariable(ExperimentVars.EcoType, inData.EcosystemId);
-            Services.Data.SetVariable(ExperimentVars.EcoTypeLabel, settings.GetEco(inData.EcosystemId).ShortLabelId);
+            Services.Data.SetVariable(ExperimentVars.EcoTypeLabel, Services.Assets.Bestiary.Get(inData.EcosystemId).CommonName());
         }
 
         private void OnBehaviorRecorded(StringHash32 inBehaviorId)

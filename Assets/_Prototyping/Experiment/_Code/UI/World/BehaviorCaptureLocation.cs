@@ -5,6 +5,7 @@ using BeauRoutine;
 using BeauUtil;
 using System.Collections;
 using BeauPools;
+using Aqua;
 
 namespace ProtoAqua.Experiment
 {
@@ -32,10 +33,7 @@ namespace ProtoAqua.Experiment
 
         private void Awake()
         {
-            m_Proxy.onPointerDown.AddListener((p) => {
-                Services.Events.Dispatch(ExperimentEvents.AttemptObserveBehavior, BehaviorId);
-                Kill(false);
-            });
+            m_Proxy.onPointerDown.AddListener((p) => OnClick());
         }
 
         public uint Initialize(StringHash32 inBehaviorId, Transform inParent)
@@ -73,6 +71,15 @@ namespace ProtoAqua.Experiment
                 Tween.Float(m_ColorGroup.GetAlpha(), 1, m_ColorGroup.SetAlpha, 0.25f),
                 m_ScaleTransform.ScaleTo(1, 0.25f).Ease(Curve.BackOut).ForceOnCancel()
             );
+        }
+
+        private void OnClick()
+        {
+            if (!m_Showing)
+                return;
+            
+            Services.Events.Dispatch(ExperimentEvents.AttemptObserveBehavior, BehaviorId);
+            Kill(false);
         }
 
         public void Hide()

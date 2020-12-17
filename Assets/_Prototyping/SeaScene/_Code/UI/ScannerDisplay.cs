@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 using BeauData;
 using BeauUtil;
-using ProtoAudio;
+using AquaAudio;
 using BeauRoutine;
 using System.Collections;
 using BeauRoutine.Extensions;
 using TMPro;
 using UnityEngine.UI;
+using Aqua;
 
 namespace ProtoAqua.Observation
 {
@@ -78,7 +79,7 @@ namespace ProtoAqua.Observation
             m_ScanProgressBar.fillAmount = inProgress;
         }
 
-        public void ShowScan(ScanData inData)
+        public void ShowScan(ScanData inData, ScanResult inResult)
         {
             Show();
 

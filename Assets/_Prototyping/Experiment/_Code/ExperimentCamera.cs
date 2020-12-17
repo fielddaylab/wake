@@ -4,6 +4,7 @@ using BeauUtil.Variants;
 using System.Collections;
 using BeauRoutine;
 using System;
+using Aqua;
 
 namespace ProtoAqua.Experiment
 {
@@ -29,6 +30,11 @@ namespace ProtoAqua.Experiment
 
             Services.Events.Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin)
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown);
+        }
+
+        private void OnDestroy()
+        {
+            Services.Events?.DeregisterAll(this);
         }
 
         private void OnExperimentBegin()

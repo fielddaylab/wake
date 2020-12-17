@@ -94,7 +94,7 @@
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreDiscomfort > 0
 @repeat     2
 @chatter
-{set temp:kevin.testScene.loreDiscomfort + 1}
+$set temp:kevin.testScene.loreDiscomfort + 1
 {@kevin}    Can we just go? Please?
 
 :: lore.jellyblob.1.notScanned.2
@@ -102,7 +102,7 @@
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort
 @repeat     2
 @chatter
-{set temp:kevin.testScene.loreDiscomfort + 1}
+$set temp:kevin.testScene.loreDiscomfort + 1
 {@kevin}    I really don't want to stick around here.
 
 :: lore.jellyblob.1.notScanned.3
@@ -110,14 +110,14 @@
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort
 @repeat     2
 @chatter
-{set temp:kevin.testScene.loreDiscomfort + 1}
+$set temp:kevin.testScene.loreDiscomfort + 1
 {@kevin}    I'm not telling you any more about it right now.
 
 :: lore.jellyblob.1.notScanned.irritated
 @trigger    RequestPartnerHelp
 @when       temp:camera.region = "JellyLore", !scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreDiscomfort > 3
 @chatter
-{set temp:kevin.testScene.loreDiscomfort + 1}
+$set temp:kevin.testScene.loreDiscomfort + 1
 {@kevin}    Please just stop pestering me.
             I don't want to talk about it.
 
@@ -125,7 +125,7 @@
 @trigger    RequestPartnerHelp
 @when       temp:camera.region = "JellyLore", scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreProbing == 0
 @cutscene
-{set temp:kevin.testScene.loreProbing + 1}
+$set temp:kevin.testScene.loreProbing + 1
 {@kevin}    What, did you scan it or something?
 {@player}   Yeah. It says-{wait 0.2}{auto}
 {@kevin}    I {wait 0.2}{speed 0.5}know{/speed}{wait 0.2} what it says.
@@ -135,7 +135,7 @@
 @trigger    RequestPartnerHelp
 @when       temp:camera.region == "JellyLore", scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreProbing == 1
 @cutscene
-{set temp:kevin.testScene.loreProbing + 1}
+$set temp:kevin.testScene.loreProbing + 1
 {@kevin}    Could you not.
 {@player}   ...I'm sorry. It just seemed weird.
             The writing was all stilted.
@@ -145,7 +145,7 @@
 @trigger    RequestPartnerHelp
 @when       temp:camera.region == "JellyLore", scanned:testScene.lore.jellyblob.1, kevin:testScene.jellyblob.lore.discomfort, temp:kevin.testScene.loreProbing == 2
 @cutscene
-{set temp:kevin.testScene.loreProbing + 1}
+$set temp:kevin.testScene.loreProbing + 1
 {@kevin}    Are you {wait 0.1}that{wait 0.1} dense? Really?
             Fine.
 {@player}   ...And then the developer didn't write the big reveal. Sorry :P

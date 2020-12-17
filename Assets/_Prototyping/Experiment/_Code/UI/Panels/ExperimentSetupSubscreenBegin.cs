@@ -1,4 +1,5 @@
 using System;
+using Aqua;
 using BeauPools;
 using TMPro;
 using UnityEngine;
@@ -41,7 +42,7 @@ namespace ProtoAqua.Experiment
                     if (psb.Builder.Length > 0)
                         psb.Builder.Append('\n');
                     
-                    string label = Services.Loc.Localize(experimentSettings.GetActor(actor).ShortLabelId);
+                    string label = Services.Loc.MaybeLocalize(Services.Assets.Bestiary.Get(actor).CommonName());
                     psb.Builder.Append(label);
                 }
 

@@ -5,7 +5,7 @@ namespace ProtoAqua.Map {
     public class PlayerInput : MonoBehaviour {
 
         [SerializeField] CameraController cameraController = null;
-        [SerializeField] Renderer renderer;
+        [SerializeField] new Renderer renderer;
 
 
         private Vector3 mousePosition;

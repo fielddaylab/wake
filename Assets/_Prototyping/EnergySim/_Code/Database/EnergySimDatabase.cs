@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Energy
 {
-    [CreateAssetMenu(menuName = "Prototype/Energy/Sim Database")]
+    [CreateAssetMenu(menuName = "Aqualab/Energy/Sim Database")]
     public class EnergySimDatabase : ScriptableObject, ISimDatabase
     {
         #region Inspector
