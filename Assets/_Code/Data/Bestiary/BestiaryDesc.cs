@@ -102,7 +102,7 @@ namespace Aqua
                         break;
                     }
 
-                case BestiaryDescCategory.Ecosystem:
+                case BestiaryDescCategory.Environment:
                     {
                         if (m_Size != BestiaryDescSize.Ecosystem)
                             m_Size = BestiaryDescSize.Ecosystem;
@@ -117,7 +117,7 @@ namespace Aqua
     public enum BestiaryDescCategory
     {
         Critter,
-        Ecosystem
+        Environment
     }
 
     [Flags]

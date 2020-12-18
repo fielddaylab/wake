@@ -87,7 +87,11 @@ namespace Aqua.DebugConsole
                 }
                 else if (m_Input.KeyPressed(KeyCode.G))
                 {
-                    UnlockAllBestiaryEntries();
+                    UnlockAllBestiaryEntries(false);
+                }
+                else if (m_Input.KeyPressed(KeyCode.H))
+                {
+                    UnlockAllBestiaryEntries(true);
                 }
             }
         }
@@ -145,11 +149,16 @@ namespace Aqua.DebugConsole
             Debug.LogWarningFormat("[DebugService] Cleared all scripting state");
         }
 
-        private void UnlockAllBestiaryEntries()
+        private void UnlockAllBestiaryEntries(bool inbIncludeFacts)
         {
-            foreach(var entryId in Services.Assets.Bestiary.Ids)
+            foreach(var entry in Services.Assets.Bestiary.Objects)
             {
-                Services.Data.Profile.Bestiary.RegisterEntity(entryId);
+                Services.Data.Profile.Bestiary.RegisterEntity(entry.Id());
+                if (inbIncludeFacts)
+                {
+                    foreach(var fact in entry.Facts)
+                        Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
+                }
             }
         }
 

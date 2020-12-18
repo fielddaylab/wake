@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Aqua;
-using BeauData;
 using BeauUtil;
-using UnityEngine;
 
 namespace Aqua.Portable
 {
-    public interface IPortableRequest
+    public interface IPortableRequest : IDisposable
     {
         StringHash32 AppId();
         bool CanNavigateApps();
