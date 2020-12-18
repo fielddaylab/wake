@@ -25,11 +25,15 @@ namespace Aqua.Portable
         [Header("Bottom Buttons")]
         [SerializeField, Required] private Button m_CloseButton = null;
         [Space]
+        [SerializeField, Required] private CanvasGroup m_AppNavigationGroup = null;
         [SerializeField, Required] private PortableAppButton[] m_AppButtons = null;
 
         #endregion // Inspector
 
         [NonSerialized] private BaseInputLayer m_Input;
+        [NonSerialized] private IPortableRequest m_Request;
+
+        #region Unity Events
 
         protected override void Awake()
         {
@@ -48,6 +52,52 @@ namespace Aqua.Portable
             base.OnDisable();
         }
 
+        #endregion // Unity Events
+
+        #region Requests
+
+        public void Open(IPortableRequest inRequest = null)
+        {
+            m_Request = inRequest;
+            
+            OnRequest();
+            Show();
+        }
+
+        private void OnRequest()
+        {
+            if (m_Request != null)
+            {
+                m_AppNavigationGroup.interactable = m_Request.CanNavigateApps();
+                m_CloseButton.interactable = m_Request.CanClose();
+                for(int i = 0; i < m_AppButtons.Length; ++i)
+                {
+                    var button = m_AppButtons[i];
+                    if (button.Id() == m_Request.AppId())
+                    {
+                        button.Toggle.isOn = true;
+                        button.App.TryHandle(m_Request);
+                    }
+                    else
+                    {
+                        button.Toggle.isOn = false;
+                    }
+                }
+            }
+            else
+            {
+                m_AppNavigationGroup.interactable = true;
+                m_CloseButton.interactable = true;
+                m_AppButtons[0].Toggle.group.SetAllTogglesOff(true);
+            }
+
+            Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
+        }
+
+        #endregion // Requests
+
+        #region BasePanel
+
         protected override void OnShow(bool inbInstant)
         {
             m_Canvas.enabled = true;
@@ -57,6 +107,12 @@ namespace Aqua.Portable
         protected override void OnHide(bool inbInstant)
         {
             m_Input.PopPriority();
+
+            m_Request = null;
+            m_CloseButton.interactable = true;
+            m_AppNavigationGroup.interactable = true;
+
+            Services.Events?.Dispatch(GameEvents.PortableClosed);
         }
 
         protected override void OnHideComplete(bool inbInstant)
@@ -105,5 +161,7 @@ namespace Aqua.Portable
             m_RootTransform.gameObject.SetActive(false);
             m_RootTransform.SetAnchorPos(m_OffPosition, Axis.X);
         }
+    
+        #endregion // BasePanel
     }
 }

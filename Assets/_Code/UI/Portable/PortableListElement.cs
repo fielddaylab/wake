@@ -48,6 +48,11 @@ namespace Aqua.Portable
             m_Callback?.Invoke(this, inbValue);
         }
 
+        public void SetState(bool inbActive)
+        {
+            m_Toggle.SetIsOnWithoutNotify(inbActive);
+        }
+
         void IPoolAllocHandler.OnAlloc()
         {
         }

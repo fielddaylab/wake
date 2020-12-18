@@ -170,6 +170,8 @@ namespace Aqua
         {
             using(PooledList<IService> newServices = PooledList<IService>.Create())
             {
+                // TODO: Register in priority order
+                
                 foreach(var service in inRoot.GetComponentsInChildren<IService>())
                 {
                     if (s_ServiceCache.Register(service))

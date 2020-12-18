@@ -14,5 +14,8 @@ namespace Aqua
         static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end";
 
         static public readonly StringHash32 BestiaryUpdated = "bestiary:updated";
+
+        static public readonly StringHash32 PortableOpened = "portable:opened";
+        static public readonly StringHash32 PortableClosed = "portable:closed";
     }
 }

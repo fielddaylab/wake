@@ -17,6 +17,31 @@ namespace Aqua.Portable
         [Serializable] private class EntryPool : SerializablePool<PortableListElement> { }
         [Serializable] private class FactPool : SerializablePool<BestiaryFactButton> { }
 
+        public class OpenToRequest : IPortableRequest
+        {
+            public BestiaryUpdateParams Target;
+
+            public OpenToRequest(BestiaryUpdateParams inTarget)
+            {
+                Target = inTarget;
+            }
+
+            public StringHash32 AppId()
+            {
+                return "bestiary";
+            }
+
+            public bool CanClose()
+            {
+                return true;
+            }
+
+            public bool CanNavigateApps()
+            {
+                return true;
+            }
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -62,7 +87,7 @@ namespace Aqua.Portable
                 return;
 
             if (inbOn)
-                LoadEntryGroup(BestiaryDescCategory.Critter, false);
+                LoadEntryGroup(BestiaryDescCategory.Critter, null, false);
         }
 
         private void OnEcosystemToggled(bool inbOn)
@@ -71,16 +96,48 @@ namespace Aqua.Portable
                 return;
                 
             if (inbOn)
-                LoadEntryGroup(BestiaryDescCategory.Ecosystem, false);
+                LoadEntryGroup(BestiaryDescCategory.Ecosystem, null, false);
         }
 
-        private void LoadEntryGroup(BestiaryDescCategory inType, bool inbForce)
+        private void LoadTarget(BestiaryUpdateParams inTarget)
+        {
+            BestiaryDesc targetEntry;
+            switch(inTarget.Type)
+            {
+                case BestiaryUpdateParams.UpdateType.Entity:
+                    {
+                        targetEntry = Services.Assets.Bestiary.Get(inTarget.Id);
+                        break;
+                    }
+
+                default:
+                    {
+                        targetEntry = Services.Assets.Bestiary.Fact(inTarget.Id).Parent();
+                        break;
+                    }
+            }
+
+            LoadEntryGroup(targetEntry.Category(), targetEntry, true);
+        }
+
+        private void LoadEntryGroup(BestiaryDescCategory inType, BestiaryDesc inTarget, bool inbForce)
         {
             if (!inbForce && m_CurrentEntryGroup == inType)
                 return;
 
             m_CurrentEntryGroup = inType;
             m_EntryPool.Reset();
+
+            switch(inType)
+            {
+                case BestiaryDescCategory.Critter:
+                    m_CritterGroupToggle.SetIsOnWithoutNotify(true);
+                    break;
+
+                case BestiaryDescCategory.Ecosystem:
+                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
+                    break;
+            }
 
             Color buttonColor = m_Tweaks.BestiaryListColor(inType);
             foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
@@ -91,7 +148,7 @@ namespace Aqua.Portable
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_EntryLayoutGroup.transform);
 
-            LoadEntry(null);
+            LoadEntry(inTarget);
         }
 
         private void OnEntryToggled(PortableListElement inElement, bool inbOn)
@@ -109,6 +166,11 @@ namespace Aqua.Portable
         private void LoadEntry(BestiaryDesc inEntry)
         {
             m_FactPool.Reset();
+
+            foreach(var button in m_EntryPool.ActiveObjects)
+            {
+                button.SetState((BestiaryDesc) button.Data == inEntry);
+            }
 
             if (inEntry == null)
             {
@@ -135,6 +197,19 @@ namespace Aqua.Portable
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_FactLayoutGroup.transform);
         }
 
+        public override bool TryHandle(IPortableRequest inRequest)
+        {
+            OpenToRequest openTo = inRequest as OpenToRequest;
+            if (openTo != null)
+            {
+                Show();
+                LoadTarget(openTo.Target);
+                return true;
+            }
+            
+            return false;
+        }
+
         protected override void OnShow(bool inbInstant)
         {
             base.OnShow(inbInstant);
@@ -143,7 +218,7 @@ namespace Aqua.Portable
 
             m_CritterGroupToggle.SetIsOnWithoutNotify(true);
             m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-            LoadEntryGroup(BestiaryDescCategory.Critter, true);
+            LoadEntryGroup(BestiaryDescCategory.Critter, null, true);
 
             LoadEntry(null);
         }
@@ -157,6 +232,8 @@ namespace Aqua.Portable
             m_FactPool.Reset();
             m_EntryPool.Reset();
             m_EntryToggleGroup.SetAllTogglesOff(false);
+            
+            m_ArgumentationMode = false;
 
             base.OnHide(inbInstant);
         }
