@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace ProtoAqua.Map {
+namespace ProtoAqua.Navigation {
     public class PlayerInput : MonoBehaviour {
 
         [SerializeField] CameraController cameraController = null;

@@ -11,6 +11,7 @@ namespace Aqua.Profile
         public InventoryData Inventory = new InventoryData();
         public ScriptingData Script = new ScriptingData();
         public BestiaryData Bestiary = new BestiaryData();
+        public MapData Map = new MapData();
 
         #region ISerializedData
 

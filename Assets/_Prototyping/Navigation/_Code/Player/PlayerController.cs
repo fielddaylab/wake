@@ -4,7 +4,7 @@ using UnityEngine;
 using BeauRoutine;
 
 
-namespace ProtoAqua.Map {
+namespace ProtoAqua.Navigation {
     
     public class PlayerController : MonoBehaviour {
 

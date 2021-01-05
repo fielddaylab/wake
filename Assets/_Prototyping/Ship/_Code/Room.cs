@@ -15,6 +15,7 @@ namespace ProtoAqua.Ship
         [SerializeField] Camera m_MainCamera = null;
         [SerializeField] Transform m_NewCameraTransform = null;
         [SerializeField] string m_SceneToLoad = null;
+        [SerializeField] bool updateSceneToLoad = false;
 
 
         private Routine fadeRoutine;
@@ -41,6 +42,9 @@ namespace ProtoAqua.Ship
         }
 
         private void ChangeScene() {
+            if(updateSceneToLoad) {
+                m_SceneToLoad = Services.Data.Profile.Map.getStationId();
+            }
             SceneManager.LoadScene(m_SceneToLoad);
         }
 
