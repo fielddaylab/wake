@@ -17,6 +17,9 @@ namespace Aqua.Profile
 
         #region Current Job
 
+        public PlayerJob CurrentJob { get { return m_CurrentJob; } }
+        public StringHash32 CurrentJobId { get { return m_CurrentJobId; } }
+
         public bool SetCurrentJob(StringHash32 inJobId)
         {
             if (m_CurrentJobId == inJobId)
