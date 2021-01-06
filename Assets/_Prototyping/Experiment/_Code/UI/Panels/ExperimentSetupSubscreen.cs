@@ -28,6 +28,11 @@ namespace ProtoAqua.Experiment
             }
         }
 
+        protected override void OnShowComplete(bool inbInstant)
+        {
+            Refresh();
+        }
+
         #endregion // BasePanel
     }
 }
