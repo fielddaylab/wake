@@ -32,6 +32,11 @@ namespace ProtoAqua.Experiment
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown);
         }
 
+        private void OnDestroy()
+        {
+            Services.Events?.DeregisterAll(this);
+        }
+
         private void OnExperimentBegin()
         {
             m_MoveRoutine.Replace(this, TransitionToTank());

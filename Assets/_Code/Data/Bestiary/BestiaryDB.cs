@@ -19,7 +19,7 @@ namespace Aqua
         {
             switch(inCategory)
             {
-                case BestiaryDescCategory.Ecosystem:
+                case BestiaryDescCategory.Environment:
                     return m_Ecosystems;
                 case BestiaryDescCategory.Critter:
                     return m_Critters;
@@ -80,7 +80,7 @@ namespace Aqua
                     m_Critters.Add(inItem);
                     break;
 
-                case BestiaryDescCategory.Ecosystem:
+                case BestiaryDescCategory.Environment:
                     m_Ecosystems.Add(inItem);
                     break;
             }

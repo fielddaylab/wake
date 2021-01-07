@@ -15,6 +15,8 @@ namespace Aqua
 
         public abstract FourCC ServiceId();
 
+        public virtual int Priority() { return 0; }
+
         #endregion // IService
 
         #region Events

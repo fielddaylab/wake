@@ -21,7 +21,7 @@ namespace Aqua.Profile
         {
             if (m_ObservedEntities.Add(inEntityId))
             {
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
 
@@ -53,7 +53,7 @@ namespace Aqua.Profile
             {
                 var fact = AddFact(inBehaviorId).Fact;
                 m_ObservedEntities.Add(fact.Parent().Id());
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inBehaviorId));
                 return true;
             }
 

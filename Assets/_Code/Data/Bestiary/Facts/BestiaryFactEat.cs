@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using BeauPools;
+using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
@@ -31,6 +33,22 @@ namespace Aqua
 
             yield return BestiaryFactFragment.CreateTargetVariant();
             yield return BestiaryFactFragment.CreateNoun(m_TargetEntry.CommonName());
+        }
+
+        public override string GenerateSentence(PlayerFactParams inParams = null)
+        {
+            // TODO: localization!!!
+
+            using(var psb = PooledStringBuilder.Create())
+            {
+                // TODO: Variants
+
+                psb.Builder.Append(Services.Loc.MaybeLocalize(m_SubjectEntry.CommonName()))
+                    .Append(" eats ")
+                    .Append(Services.Loc.MaybeLocalize(m_TargetEntry.CommonName()));
+
+                return psb.Builder.Flush();
+            }
         }
     }
 }

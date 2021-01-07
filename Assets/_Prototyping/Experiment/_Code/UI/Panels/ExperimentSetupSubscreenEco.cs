@@ -54,7 +54,7 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Ecosystem);
+            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
 
             int buttonIdx = 0;
             foreach(var waterType in allWaterTypes)

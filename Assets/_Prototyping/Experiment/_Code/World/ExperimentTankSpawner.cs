@@ -104,7 +104,7 @@ namespace ProtoAqua.Experiment
             var settings = Services.Tweaks.Get<ExperimentSettings>();
 
             Services.Data.SetVariable(ExperimentVars.TankType, inData.Tank.ToString());
-            Services.Data.SetVariable(ExperimentVars.TankTypeLabel, settings.GetTank(inData.Tank).ShortLabelId);
+            Services.Data.SetVariable(ExperimentVars.TankTypeLabel, settings.GetTank(inData.Tank).ShortLabelId.Hash());
             Services.Data.SetVariable(ExperimentVars.EcoType, inData.EcosystemId);
             Services.Data.SetVariable(ExperimentVars.EcoTypeLabel, Services.Assets.Bestiary.Get(inData.EcosystemId).CommonName());
         }
