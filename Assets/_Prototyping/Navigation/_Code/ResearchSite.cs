@@ -11,6 +11,10 @@ namespace ProtoAqua.Navigation
 
     public class ResearchSite : MonoBehaviour
     {
+
+        [SerializeField] UIController m_UIController = null;
+
+        [SerializeField] string m_siteId;
         private Routine fadeRoutine;
 
         // Start is called before the first frame update
@@ -25,9 +29,21 @@ namespace ProtoAqua.Navigation
 
         }
 
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            fadeRoutine.Replace(this, FadeRoutine());
+        // private void OnCollisionEnter2D(Collision2D other)
+        // {
+        //     fadeRoutine.Replace(this, FadeRoutine());
+        // }
+
+        private void OnTriggerEnter2D(Collider2D other) {
+            m_UIController.currentSiteId = m_siteId;
+            m_UIController.displayDiveUI();
+            Debug.Log("Show Button");
+        }
+
+        private void OnTriggerExit2D(Collider2D other) {
+            m_UIController.currentSiteId = null;
+            m_UIController.hideDiveUI();
+            Debug.Log("Hide Button");
         }
 
         private void ChangeScene()

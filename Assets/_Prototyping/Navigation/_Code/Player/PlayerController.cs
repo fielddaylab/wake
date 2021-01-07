@@ -19,18 +19,13 @@ namespace ProtoAqua.Navigation {
 
         // Start is called before the first frame update
         void Start() {
-            //@TODO Ensure this works not sure how to test it currently
-            if(Services.Data.Profile.Map.getPlayerTransform() != null) {
-                this.transform.position = Services.Data.Profile.Map.getPlayerTransform().position;
-            }
-           Services.Data.Profile.Map.setPlayerTransform(this.transform);
+            
         }
 
         // Update is called once per frame
         void FixedUpdate() {
             MovePlayer();
             RotatePlayer();
-            Debug.Log(Services.Data.Profile.Map.getPlayerTransform().position.x);
         }  
  
     
