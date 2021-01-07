@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
+using Aqua;
 
 
 namespace ProtoAqua.Navigation {
@@ -16,18 +17,20 @@ namespace ProtoAqua.Navigation {
         [SerializeField] float maxSpeed = 10;
 
 
-
-        
-
         // Start is called before the first frame update
         void Start() {
-
+            //@TODO Ensure this works not sure how to test it currently
+            if(Services.Data.Profile.Map.getPlayerTransform() != null) {
+                this.transform.position = Services.Data.Profile.Map.getPlayerTransform().position;
+            }
+           Services.Data.Profile.Map.setPlayerTransform(this.transform);
         }
 
         // Update is called once per frame
         void FixedUpdate() {
             MovePlayer();
             RotatePlayer();
+            Debug.Log(Services.Data.Profile.Map.getPlayerTransform().position.x);
         }  
  
     
