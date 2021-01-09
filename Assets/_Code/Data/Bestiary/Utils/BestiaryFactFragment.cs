@@ -6,7 +6,6 @@ namespace Aqua
     public struct BestiaryFactFragment
     {
         public BestiaryFactFragmentType Type;
-        public BestiaryFactFragmentWord Word;
         public StringSlice String;
 
         static public BestiaryFactFragment CreateWord(BestiaryFactFragmentType inType, StringSlice inWord)
@@ -14,7 +13,6 @@ namespace Aqua
             return new BestiaryFactFragment()
             {
                 Type = inType,
-                Word = BestiaryFactFragmentWord.String,
                 String = inWord
             };
         }
@@ -24,7 +22,6 @@ namespace Aqua
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Noun,
-                Word = BestiaryFactFragmentWord.String,
                 String = inWord
             };
         }
@@ -34,35 +31,34 @@ namespace Aqua
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Verb,
-                Word = BestiaryFactFragmentWord.String,
                 String = inWord
             };
         }
 
-        static public BestiaryFactFragment CreateSubjectVariant()
+        static public BestiaryFactFragment CreateAdjective(StringSlice inWord)
         {
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Adjective,
-                Word = BestiaryFactFragmentWord.SubjectVariant
+                String = inWord
             };
         }
 
-        static public BestiaryFactFragment CreateTargetVariant()
-        {
-            return new BestiaryFactFragment()
-            {
-                Type = BestiaryFactFragmentType.Adjective,
-                Word = BestiaryFactFragmentWord.TargetVariant
-            };
-        }
-
-        static public BestiaryFactFragment CreateAmount()
+        static public BestiaryFactFragment CreateAmount(float inAmount)
         {
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Amount,
-                Word = BestiaryFactFragmentWord.Amount
+                String = inAmount.ToString()
+            };
+        }
+
+        static public BestiaryFactFragment CreateAmount(StringSlice inWord)
+        {
+            return new BestiaryFactFragment()
+            {
+                Type = BestiaryFactFragmentType.Amount,
+                String = inWord
             };
         }
     }
@@ -75,16 +71,5 @@ namespace Aqua
         Amount,
         Conjunction,
         Condition,
-    }
-
-    public enum BestiaryFactFragmentWord : byte
-    {
-        String,
-        Amount,
-        SubjectVariant,
-        TargetVariant,
-        ConditionQuality,
-        ConditionOperator,
-        ConditionOperand
     }
 }

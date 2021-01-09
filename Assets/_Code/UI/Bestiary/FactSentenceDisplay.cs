@@ -34,7 +34,7 @@ namespace Aqua
             m_AllocatedFragments.Clear();
         }
 
-        public void Populate(BestiaryFactBase inFact, PlayerFactParams inFactParams)
+        public void Populate(BFBase inFact, PlayerFactParams inFactParams)
         {
             if (!m_Tweaks)
             {
@@ -55,45 +55,45 @@ namespace Aqua
         {
             StringSlice str = inFragment.String;
 
-            if (!m_DisplayOptionalFragments)
-            {
-                switch(inFragment.Word)
-                {
-                    case BestiaryFactFragmentWord.ConditionOperand:
-                    case BestiaryFactFragmentWord.ConditionOperator:
-                    case BestiaryFactFragmentWord.ConditionQuality:
-                        {
-                            if (inFactParams == null || inFactParams.ConditionData.Id.IsEmpty)
-                                return false;
+            // if (!m_DisplayOptionalFragments)
+            // {
+            //     switch(inFragment.Word)
+            //     {
+            //         case BestiaryFactFragmentWord.ConditionOperand:
+            //         case BestiaryFactFragmentWord.ConditionOperator:
+            //         case BestiaryFactFragmentWord.ConditionQuality:
+            //             {
+            //                 if (inFactParams == null || inFactParams.ConditionData.Id.IsEmpty)
+            //                     return false;
 
-                            break;
-                        }
+            //                 break;
+            //             }
 
-                    case BestiaryFactFragmentWord.Amount:
-                        {
-                            if (inFactParams == null ||inFactParams.Value.StrictEquals(Variant.Null))
-                                return false;
+            //         case BestiaryFactFragmentWord.Amount:
+            //             {
+            //                 if (inFactParams == null ||inFactParams.Value.StrictEquals(Variant.Null))
+            //                     return false;
 
-                            break;
-                        }
+            //                 break;
+            //             }
 
-                    case BestiaryFactFragmentWord.SubjectVariant:
-                        {
-                            if (inFactParams == null ||inFactParams.SubjectVariantId.IsEmpty)
-                                return false;
+            //         case BestiaryFactFragmentWord.SubjectVariant:
+            //             {
+            //                 if (inFactParams == null ||inFactParams.SubjectVariantId.IsEmpty)
+            //                     return false;
 
-                            break;
-                        }
+            //                 break;
+            //             }
 
-                    case BestiaryFactFragmentWord.TargetVariant:
-                        {
-                            if (inFactParams == null || inFactParams.TargetVariantId.IsEmpty)
-                                return false;
+            //         case BestiaryFactFragmentWord.TargetVariant:
+            //             {
+            //                 if (inFactParams == null || inFactParams.TargetVariantId.IsEmpty)
+            //                     return false;
 
-                            break;
-                        }
-                }
-            }
+            //                 break;
+            //             }
+            //     }
+            // }
 
             FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform, m_InteractiveFragments);
             fragment.Configure(inFragment.String);
