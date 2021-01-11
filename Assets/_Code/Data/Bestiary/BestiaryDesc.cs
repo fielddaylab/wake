@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BeauPools;
 using BeauUtil;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace Aqua
         [SerializeField] private VariantPair[] m_VariantIds = null;
         
         [Space]
-        [SerializeField] private BestiaryFactBase[] m_Facts = null;
+        [SerializeField] private BFBase[] m_Facts = null;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
@@ -41,7 +42,9 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [SerializeField] private Dictionary<StringHash32, BestiaryFactBase> m_FactMap;
+        [SerializeField] private Dictionary<StringHash32, BFBase> m_FactMap;
+        [NonSerialized] private BFBase[] m_InternalFacts;
+        [NonSerialized] private BFBase[] m_AssumedFacts;
 
         public BestiaryDescCategory Category() { return m_Type; }
         public BestiaryDescFlags Flags() { return m_Flags; }
@@ -60,16 +63,18 @@ namespace Aqua
             return value;
         }
 
-        public IReadOnlyList<BestiaryFactBase> Facts { get { return m_Facts; } }
+        public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
+        public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
+        public IReadOnlyList<BFBase> AssumedFacts { get { return m_AssumedFacts; } }
 
-        public BestiaryFactBase Fact(StringHash32 inFactId)
+        public BFBase Fact(StringHash32 inFactId)
         {
-            BestiaryFactBase fact;
+            BFBase fact;
             m_FactMap.TryGetValue(inFactId, out fact);
             return fact;
         }
 
-        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BestiaryFactBase
+        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
         {
             return (TFact) Fact(inFactId);
         }
@@ -81,11 +86,29 @@ namespace Aqua
 
         public void Initialize()
         {
-            m_FactMap = new Dictionary<StringHash32, BestiaryFactBase>();
-            foreach(var fact in m_Facts)
+            using(PooledList<BFBase> internalFacts = PooledList<BFBase>.Create())
+            using(PooledList<BFBase> assumedFacts = PooledList<BFBase>.Create())
             {
-                fact.Hook(this);
-                m_FactMap.Add(fact.Id(), fact);
+                m_FactMap = new Dictionary<StringHash32, BFBase>();
+                foreach(var fact in m_Facts)
+                {
+                    fact.Hook(this);
+                    m_FactMap.Add(fact.Id(), fact);
+
+                    switch(fact.Mode())
+                    {
+                        case BFMode.Internal:
+                            internalFacts.Add(fact);
+                            break;
+
+                        case BFMode.Always:
+                            assumedFacts.Add(fact);
+                            break;
+                    }
+                }
+
+                m_InternalFacts = internalFacts.ToArray();
+                m_AssumedFacts = assumedFacts.ToArray();
             }
         }
 
@@ -102,7 +125,7 @@ namespace Aqua
                         break;
                     }
 
-                case BestiaryDescCategory.Ecosystem:
+                case BestiaryDescCategory.Environment:
                     {
                         if (m_Size != BestiaryDescSize.Ecosystem)
                             m_Size = BestiaryDescSize.Ecosystem;
@@ -117,7 +140,7 @@ namespace Aqua
     public enum BestiaryDescCategory
     {
         Critter,
-        Ecosystem
+        Environment
     }
 
     [Flags]

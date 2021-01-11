@@ -12,10 +12,11 @@ namespace Aqua.Profile
         public ScriptingData Script = new ScriptingData();
         public BestiaryData Bestiary = new BestiaryData();
         public MapData Map = new MapData();
-
+        public JobsData Jobs = new JobsData();
+        
         #region ISerializedData
 
-        ushort ISerializedVersion.Version { get { return 3; } }
+        ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -32,6 +33,11 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 3)
             {
                 ioSerializer.Object("bestiary", ref Bestiary);
+            }
+
+            if (ioSerializer.ObjectVersion >= 4)
+            {
+                ioSerializer.Object("jobs", ref Jobs);
             }
         }
 

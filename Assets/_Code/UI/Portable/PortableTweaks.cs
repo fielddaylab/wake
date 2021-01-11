@@ -25,7 +25,7 @@ namespace Aqua.Portable
             {
                 case BestiaryDescCategory.Critter:
                     return m_CritterListColor;
-                case BestiaryDescCategory.Ecosystem:
+                case BestiaryDescCategory.Environment:
                     return m_EcosystemListColor;
 
                 default:

@@ -9,5 +9,6 @@ namespace Aqua
         void OnRegisterService();
         void AfterRegisterService();
         void OnDeregisterService();
+        int Priority();
     }
 }

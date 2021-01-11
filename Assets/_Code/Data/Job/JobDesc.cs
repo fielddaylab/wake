@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BeauUtil;
 using Leaf;
 using UnityEngine;
@@ -14,11 +15,11 @@ namespace Aqua
         [SerializeField, AutoEnum] private JobDescFlags m_Flags = 0;
 
         [Header("Text")]
-        [SerializeField] private SerializedHash32 m_NameId;
-        [SerializeField] private SerializedHash32 m_PosterId;
-        [SerializeField] private SerializedHash32 m_DescId;
-        [SerializeField] private SerializedHash32 m_DescInProgressId;
-        [SerializeField] private SerializedHash32 m_DescCompletedId;
+        [SerializeField] private SerializedHash32 m_NameId = null;
+        [SerializeField] private SerializedHash32 m_PosterId = null;
+        [SerializeField] private SerializedHash32 m_DescId = null;
+        [SerializeField] private SerializedHash32 m_DescInProgressId = null;
+        [SerializeField] private SerializedHash32 m_DescCompletedId = null;
 
         [Header("Info")]
         [SerializeField, Range(0, 4)] private int m_ExperimentDifficulty = 0;
@@ -36,9 +37,49 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private LeafAsset m_Scripts = null;
+        [SerializeField] private LeafAsset m_Script = null;
 
         #endregion // Inspector
+
+        public JobCategory Category() { return m_Category; }
+        public JobDescFlags Flags() { return m_Flags; }
+
+        public StringHash32 NameId() { return m_NameId; }
+        public StringHash32 PosterId() { return m_PosterId; }
+        public StringHash32 DescId() { return m_DescId; }
+        public StringHash32 DescInProgressId() { return m_DescInProgressId; }
+        public StringHash32 DescCompletedId() { return m_DescCompletedId; }
+
+        public int ExperimentDifficulty() { return m_ExperimentDifficulty; }
+        public int ModelingDifficulty() { return m_ModelingDifficulty; }
+        public int ArgumentationDifficulty() { return m_ArgumentationDifficulty; }
+
+        public bool ShouldBeAvailable()
+        {
+            var jobs = Services.Data.Profile.Jobs;
+
+            foreach(var job in m_PrerequisiteJobs)
+            {
+                if (!jobs.IsComplete(job.Id()))
+                    return false;
+            }
+
+            if (!string.IsNullOrEmpty(m_PrereqConditions))
+                return Services.Data.CheckConditions(m_PrereqConditions);
+
+            return true;
+        }
+
+        public int CashReward() { return m_CashReward; }
+        public int GearReward() { return m_GearReward; }
+        public IEnumerable<StringHash32> ExtraRewards()
+        {
+            foreach(var reward in m_AdditionalRewards)
+                yield return reward;
+        }
+
+        public Sprite Icon() { return m_Icon; }
+        public LeafAsset Script() { return m_Script; }
     }
 
     public enum JobCategory

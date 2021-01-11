@@ -18,7 +18,7 @@ namespace ProtoAqua.Foodweb
         [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
 
         #endregion // InspectorF
-        public void InitializeFW(BestiaryFactBase inFact, PlayerFactParams inParams, bool inbButtonMode)
+        public void InitializeFW(BFBase inFact, PlayerFactParams inParams, bool inbButtonMode)
         {
             m_Icon.sprite = inFact.Icon();
             m_Icon.gameObject.SetActive(inFact.Icon());

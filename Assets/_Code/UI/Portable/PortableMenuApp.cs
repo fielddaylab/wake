@@ -6,7 +6,7 @@ using BeauUtil;
 
 namespace Aqua.Portable
 {
-    public class PortableMenuApp : BasePanel
+    public abstract class PortableMenuApp : BasePanel
     {
         #region Inspector
 
@@ -16,5 +16,10 @@ namespace Aqua.Portable
         #endregion // Inspector
 
         public StringHash32 Id() { return m_Id; }
+
+        public virtual bool TryHandle(IPortableRequest inRequest)
+        {
+            return false;
+        }
     }
 }

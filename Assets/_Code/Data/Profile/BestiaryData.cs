@@ -21,7 +21,7 @@ namespace Aqua.Profile
         {
             if (m_ObservedEntities.Add(inEntityId))
             {
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
 
@@ -44,16 +44,16 @@ namespace Aqua.Profile
 
         public bool HasBaseFact(StringHash32 inBehaviorId)
         {
-            return m_ObservedFacts.Contains(inBehaviorId);
+            return m_ObservedFacts.Contains(inBehaviorId) || Services.Assets.Bestiary.IsAutoFact(inBehaviorId);
         }
 
         public bool RegisterBaseFact(StringHash32 inBehaviorId)
         {
-            if (m_ObservedFacts.Add(inBehaviorId))
+            if (!Services.Assets.Bestiary.IsAutoFact(inBehaviorId) && m_ObservedFacts.Add(inBehaviorId))
             {
                 var fact = AddFact(inBehaviorId).Fact;
                 m_ObservedEntities.Add(fact.Parent().Id());
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated);
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inBehaviorId));
                 return true;
             }
 
@@ -66,9 +66,16 @@ namespace Aqua.Profile
 
         public IEnumerable<PlayerFactParams> GetFactsForEntity(StringHash32 inEntityId)
         {
+            BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
+
+            foreach(var fact in entry.AssumedFacts)
+            {
+                yield return PlayerFactParams.Wrap(fact);
+            }
+
             foreach(var fact in m_Facts)
             {
-                if (fact.Fact.Parent().Id() == inEntityId)
+                if (fact.Fact.Parent() == entry)
                     yield return fact;
             }
         }

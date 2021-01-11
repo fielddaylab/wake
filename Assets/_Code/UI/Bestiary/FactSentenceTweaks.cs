@@ -66,16 +66,23 @@ namespace Aqua
             SetupPool(m_Default);
 
             SceneHelper.OnSceneUnload += UnloadFromScene;
+            Application.quitting += OnQuitting;
         }
 
         protected override void Remove()
         {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+            #endif // UNITY_EDITOR
+
             if (!m_Initialized)
                 return;
 
-            UnityHelper.SafeDestroyGO(ref m_PoolRoot);
             m_Default.Dispose();
+            UnityHelper.SafeDestroyGO(ref m_PoolRoot);
             SceneHelper.OnSceneUnload -= UnloadFromScene;
+            Application.quitting -= OnQuitting;
             
             m_Initialized = false;
         }
@@ -96,6 +103,11 @@ namespace Aqua
             {
                 Debug.LogWarningFormat("[FactSentenceTweaks] Cleaned up {0} fragments still present in unloading scene", recycleCount);
             }
+        }
+
+        private void OnQuitting()
+        {
+            Remove();
         }
 
         #endregion // Setup/Cleanup

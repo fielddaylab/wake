@@ -24,6 +24,7 @@ namespace Aqua.Portable
         [NonSerialized] private RectTransformState m_OriginalAnimState;
 
         [NonSerialized] private BaseInputLayer m_InputLayer;
+        [NonSerialized] private IPortableRequest m_Request;
 
         public Toggle Toggle { get { return m_Toggle; } }
 
@@ -41,9 +42,11 @@ namespace Aqua.Portable
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
             m_NewIcon.gameObject.SetActive(false);
 
-            Services.Events.Register(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
+            Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
+                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
+                .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
+                .Register(GameEvents.PortableClosed, OnPortableClosed, this);
         }
 
         private void OnDestroy()
@@ -91,7 +94,7 @@ namespace Aqua.Portable
             }
         }
 
-        private void OnBestiaryUpdated()
+        private void OnBestiaryUpdated(BestiaryUpdateParams inBestiaryUpdate)
         {
             m_HasNew = true;
             if (!m_NewAnim)
@@ -100,6 +103,7 @@ namespace Aqua.Portable
             }
 
             m_NewIcon.gameObject.SetActive(true);
+            m_Request = new BestiaryApp.OpenToRequest(inBestiaryUpdate);
         }
 
         private void OnCutsceneStart()
@@ -112,20 +116,36 @@ namespace Aqua.Portable
             Show();
         }
 
+        private void OnPortableOpened(IPortableRequest inRequest)
+        {
+            m_NewAnim.Stop();
+            m_HasNew = false;
+            m_Request = null;
+            m_OriginalAnimState.Apply(m_AnimationRoot);
+            m_NewIcon.gameObject.SetActive(false);
+
+            m_Toggle.SetIsOnWithoutNotify(true);
+            m_Toggle.interactable = inRequest == null || inRequest.CanClose();
+        }
+
+        private void OnPortableClosed()
+        {
+            m_Toggle.SetIsOnWithoutNotify(false);
+        }
+
         private void OnToggleValue(bool inbValue)
         {
             if (!m_Menu || !isActiveAndEnabled)
                 return;
-
-            m_NewAnim.Stop();
-            m_HasNew = false;
-            m_OriginalAnimState.Apply(m_AnimationRoot);
-            m_NewIcon.gameObject.SetActive(false);
             
             if (inbValue)
-                m_Menu.Show();
+            {
+                m_Menu.Open(m_Request);
+            }
             else
+            {
                 m_Menu.Hide();
+            }
         }
 
         #endregion // Handlers
@@ -136,7 +156,7 @@ namespace Aqua.Portable
         {
             while(true)
             {
-                yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 8, 0.3f, Axis.Y).Ease(Curve.CubeOut);
+                yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);
                 yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
                 yield return 2f;
             }
