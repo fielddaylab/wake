@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
 
-namespace ProtoAqua.Map {
+namespace ProtoAqua.Navigation {
 public class PlayerAnimator : MonoBehaviour {
 
         [SerializeField] Transform boatRenderer = null;
