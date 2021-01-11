@@ -71,6 +71,11 @@ namespace Aqua
 
         protected override void Remove()
         {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+            #endif // UNITY_EDITOR
+
             if (!m_Initialized)
                 return;
 
