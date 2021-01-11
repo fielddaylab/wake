@@ -33,7 +33,7 @@ namespace ProtoAqua.Experiment
                 ActorToggleButton button = m_CachedButtons[i];
                 button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
             }
-
+            Debug.Log("AWAKE FOR SUBSCREEN");
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
 
             UpdateButtons();
@@ -59,6 +59,7 @@ namespace ProtoAqua.Experiment
             int buttonIdx = 0;
             foreach(var actorType in allActorTypes)
             {
+
                 if (buttonIdx >= m_CachedButtons.Length)
                     break;
 
@@ -73,6 +74,7 @@ namespace ProtoAqua.Experiment
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
+
                 m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
             }
 

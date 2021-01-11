@@ -33,7 +33,7 @@ namespace ProtoAqua.Foodweb
             {
                 foreach (BestiaryFactBase facts in critter.Facts)
                 {
-                    Debug.Log(debug_str + facts.ToString());
+
                     m_Facts.Add(facts);
                 }
             }
@@ -43,9 +43,6 @@ namespace ProtoAqua.Foodweb
             catch (Exception e) {
                 throw new Exception("Unable to retrieve children", e);
             }
-
-            Debug.Log(debug_str + "TESTTTTTT");
-            Debug.Log(debug_str + m_Facts.Count);
 
             if (m_FactButtons.Length < m_Facts.Count)
             {
