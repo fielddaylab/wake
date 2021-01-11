@@ -45,8 +45,8 @@ namespace Aqua.Portable
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
-                .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened)
-                .Register(GameEvents.PortableClosed, OnPortableClosed);
+                .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
+                .Register(GameEvents.PortableClosed, OnPortableClosed, this);
         }
 
         private void OnDestroy()

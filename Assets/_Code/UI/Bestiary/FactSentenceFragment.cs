@@ -17,6 +17,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private IPool<FactSentenceFragment> m_Pool;
+        [NonSerialized] private bool m_Allocated;
 
         public void PreConfigure(Color inBackgroundColor, Color inTextColor, bool inbInteractive)
         {
@@ -32,13 +33,17 @@ namespace Aqua
         
         public void Recycle()
         {
-            m_Pool.Free(this);
+            if (m_Allocated)
+            {
+                m_Pool.Free(this);
+            }
         }
 
         #region IPooledObject
 
         void IPooledObject<FactSentenceFragment>.OnAlloc()
         {
+            m_Allocated = true;
         }
 
         void IPooledObject<FactSentenceFragment>.OnConstruct(IPool<FactSentenceFragment> inPool)
@@ -52,6 +57,7 @@ namespace Aqua
 
         void IPooledObject<FactSentenceFragment>.OnFree()
         {
+            m_Allocated = false;
         }
 
         #endregion // IPooledObject

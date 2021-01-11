@@ -1,28 +1,23 @@
 using System;
 using BeauData;
 using BeauUtil;
+using BeauUtil.Debugger;
 using BeauUtil.Variants;
 
 namespace Aqua
 {
     public class PlayerFactParams
     {
-        [NonSerialized] private BestiaryFactBase m_CachedFact;
+        [NonSerialized] private BFBase m_CachedFact;
+        [NonSerialized] private bool m_Locked;
         
         // base fact id
         private StringHash32 m_FactId;
-
-        // basic data
-        public Variant Value;
-        
-        // advanced data
-        public StringHash32 SubjectVariantId;
-        public StringHash32 TargetVariantId;
-        public Condition ConditionData;
+        private PlayerFactFlags m_Flags;
 
         public StringHash32 FactId { get { return m_FactId; } }
         
-        public BestiaryFactBase Fact
+        public BFBase Fact
         {
             get
             {
@@ -37,9 +32,56 @@ namespace Aqua
 
         public PlayerFactParams() { }
 
-        public PlayerFactParams(StringHash32 inFactId)
+        public PlayerFactParams(StringHash32 inFactId, PlayerFactFlags inFlags = 0)
         {
             m_FactId = inFactId;
+            m_Flags = inFlags;
+        }
+
+        internal PlayerFactParams(BFBase inFact)
+        {
+            m_FactId = inFact.Id();
+            m_CachedFact = inFact;
+            m_Flags = PlayerFactFlags.All;
+            m_Locked = true;
+        }
+
+        public PlayerFactFlags Flags
+        {
+            get { return m_Flags; }
+        }
+
+        public bool Has(PlayerFactFlags inFlags)
+        {
+            return (m_Flags & inFlags) != 0;
+        }
+
+        public bool HasAll(PlayerFactFlags inFlags)
+        {
+            return (m_Flags & inFlags) == inFlags;
+        }
+
+        public bool Add(PlayerFactFlags inFlags)
+        {
+            Assert.False(m_Locked, "PlayerFactParams is read-only");
+
+            PlayerFactFlags prev = m_Flags;
+            m_Flags |= inFlags;
+            return prev != m_Flags;
+        }
+
+        public bool Remove(PlayerFactFlags inFlags)
+        {
+            Assert.False(m_Locked, "PlayerFactParams is read-only");
+
+            PlayerFactFlags prev = m_Flags;
+            m_Flags &= ~inFlags;
+            return prev != m_Flags;
+        }
+
+        static public PlayerFactParams Wrap(BFBase inFact)
+        {
+            return inFact.GetWrapper();
         }
     }
 }

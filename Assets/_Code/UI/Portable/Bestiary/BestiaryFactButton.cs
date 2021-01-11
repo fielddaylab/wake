@@ -6,10 +6,11 @@ using TMPro;
 using Aqua;
 using System;
 using BeauUtil.Debugger;
+using BeauPools;
 
 namespace Aqua.Portable
 {
-    public class BestiaryFactButton : MonoBehaviour
+    public class BestiaryFactButton : MonoBehaviour, IPoolAllocHandler
     {
         #region Inspector
 
@@ -23,7 +24,7 @@ namespace Aqua.Portable
         private PlayerFactParams m_Params;
         private Action<PlayerFactParams> m_Callback;
 
-        public void Initialize(BestiaryFactBase inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
+        public void Initialize(BFBase inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
         {
             m_Icon.sprite = inFact.Icon();
             m_Icon.gameObject.SetActive(inFact.Icon());
@@ -50,8 +51,13 @@ namespace Aqua.Portable
             m_Button.onClick.AddListener(OnClick);
         }
 
-        private void OnDispose()
+        void IPoolAllocHandler.OnAlloc()
         {
+        }
+
+        void IPoolAllocHandler.OnFree()
+        {
+            m_Sentence.Clear();
             m_Params = null;
             m_Callback = null;
         }

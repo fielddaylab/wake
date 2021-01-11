@@ -8,10 +8,12 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Database", fileName = "BestiaryDB")]
     public class BestiaryDB : DBObjectCollection<BestiaryDesc>
     {
-        private Dictionary<StringHash32, BestiaryFactBase> m_FactMap;
+        [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
 
-        private List<BestiaryDesc> m_Critters;
-        private List<BestiaryDesc> m_Ecosystems;
+        [NonSerialized] private List<BestiaryDesc> m_Critters;
+        [NonSerialized] private List<BestiaryDesc> m_Ecosystems;
+
+        [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
 
         #region Lookup
 
@@ -29,18 +31,25 @@ namespace Aqua
             }
         }
 
-        public BestiaryFactBase Fact(StringHash32 inFactId)
+        public BFBase Fact(StringHash32 inFactId)
         {
             EnsureCreated();
 
-            BestiaryFactBase fact;
+            BFBase fact;
             m_FactMap.TryGetValue(inFactId, out fact);
             return fact;
         }
 
-        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BestiaryFactBase
+        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
         {
             return (TFact) Fact(inFactId);
+        }
+
+        public bool IsAutoFact(StringHash32 inFactId)
+        {
+            EnsureCreated();
+
+            return m_AutoFacts.Contains(inFactId);
         }
 
         #endregion // Facts
@@ -55,7 +64,8 @@ namespace Aqua
             m_Ecosystems = new List<BestiaryDesc>(listSize);
             m_Critters = new List<BestiaryDesc>(listSize);
 
-            m_FactMap = new Dictionary<StringHash32, BestiaryFactBase>(Count());
+            m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
+            m_AutoFacts = new HashSet<StringHash32>();
         }
 
         protected override void ConstructLookupForItem(BestiaryDesc inItem, int inIndex)
@@ -67,6 +77,10 @@ namespace Aqua
             foreach(var fact in inItem.Facts)
             {
                 m_FactMap.Add(fact.Id(), fact);
+                if (fact.Mode() != BFMode.Player)
+                {
+                    m_AutoFacts.Add(fact.Id());
+                }
             }
 
             switch(inItem.Category())

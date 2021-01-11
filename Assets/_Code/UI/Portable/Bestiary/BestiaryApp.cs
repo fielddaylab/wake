@@ -239,7 +239,6 @@ namespace Aqua.Portable
             m_NoSelectionGroup.gameObject.SetActive(true);
             m_HasSelectionGroup.gameObject.SetActive(false);
 
-            m_FactPool.Reset();
             m_EntryPool.Reset();
             m_EntryToggleGroup.SetAllTogglesOff(false);
             
