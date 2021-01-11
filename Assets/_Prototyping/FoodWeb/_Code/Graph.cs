@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using Aqua;
+using System.Collections.Generic;
 
 public class Graph<Position>
 {
@@ -15,7 +17,7 @@ public class Node<Position>
     public Position position {get; set;}
 }
 
-public class Edge
+public class Edge<Position>
 {
     public Node<Position> From {get; set; }
     public Node<Position> To {get; set; }

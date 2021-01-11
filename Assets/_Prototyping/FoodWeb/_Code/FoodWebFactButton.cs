@@ -16,7 +16,7 @@ namespace ProtoAqua.Foodweb
         [SerializeField] private FactSentenceDisplay m_Sentence = null;
 
         #endregion // InspectorF
-        public void InitializeFW(BestiaryFactBase inFact, PlayerFactParams inParams)
+        public void InitializeFW(BFBase inFact, PlayerFactParams inParams)
         {
             m_Sentence.Populate(inFact, inParams);
             m_Button.onClick.AddListener(() => TargetOnClick());

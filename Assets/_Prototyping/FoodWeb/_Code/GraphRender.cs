@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Foodweb{
     public class GraphRender : MonoBehaviour {
