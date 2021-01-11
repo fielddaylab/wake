@@ -184,19 +184,7 @@ namespace ProtoAqua.Argumentation
             {
                 Link link = kvp.Value;
                 link.InitializeLink();
-                if (link.factId == "claim")
-                {
-                    linkDictionary.Add(link.Id, link);
-                }
-                else if (dataService.Profile.Bestiary.HasBaseFact(link.factId)) //Check if factId is in bestiary? Also add factIds to links.txt
-                { 
-                    Debug.Log("test");
-                    linkDictionary.Add(link.Id, link);
-                }
-                else if (m_enableAllLinks)
-                {
-                    linkDictionary.Add(link.Id, link);
-                }
+                linkDictionary.Add(link.Id, link);
 
             }
 

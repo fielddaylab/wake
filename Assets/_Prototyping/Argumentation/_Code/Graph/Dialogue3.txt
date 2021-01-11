@@ -34,12 +34,12 @@ Hmmm
 
 :: node.OtterHelpKelpContinue
 @invalidNodeId node.invalid.Kelp
-@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
 Do you have any other evidence for how Otters help the kelp?
 
 :: node.OtterContinue
 @invalidNodeId node.invalid.Otter
-@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
 So what does that have to do with otters?
 
 :: node.intro
@@ -48,17 +48,17 @@ So what's going on?
 
 :: node.OtterHelpKelpInquery
 @invalidNodeId node.invalid.OtterKelp
-@responseIds link.OtterEatUrchin, link.UrchinEatKelp
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
 How so?
 
 :: node.OtterEatUrchinInquery
 @invalidNodeId node.invalid.Kelp
-@responseIds link.UrchinEatKelp
+@responseIds Urchin.Eats.Kelp
 So why does that help the kelp?
 
 :: node.UrchinEatKelpInquery
 @invalidNodeId node.invalid.Otter
-@responseIds link.OtterEatUrchin
+@responseIds SeaOtter.Eats.Urchin
 So what does that have to do with otters?
 
 :: node.FakePath

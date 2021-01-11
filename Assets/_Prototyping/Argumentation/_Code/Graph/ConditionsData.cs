@@ -18,20 +18,27 @@ namespace ProtoAqua.Argumentation
         // check if every specified node or link has been marked visited or used.
         public bool CheckConditions(Node node, Link link)
         {
-            foreach (string condition in link.RequiredVisited)
+            //return true; //@TODO fix this
+            if (link.RequiredVisited != null)
             {
-                if (!visitedNodes.Contains(condition))
+                foreach (string condition in link.RequiredVisited)
                 {
-                    Debug.Log("Visit requirements not met!");
-                    return false;
+                    if (!visitedNodes.Contains(condition))
+                    {
+                        Debug.Log("Visit requirements not met!");
+                        return false;
+                    }
                 }
             }
 
-            foreach (string condition in link.RequiredUsed)
+            if (link.RequiredVisited != null)
             {
-                if (!usedResponses.Contains(condition))
+                foreach (string condition in link.RequiredUsed)
                 {
-                    return false;
+                    if (!usedResponses.Contains(condition))
+                    {
+                        return false;
+                    }
                 }
             }
 

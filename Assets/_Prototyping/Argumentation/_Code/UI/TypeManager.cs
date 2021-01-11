@@ -64,21 +64,21 @@ namespace ProtoAqua.Argumentation
                 m_BehaviorButtons.SetActive(true);
                 m_EcosystemButtons.SetActive(false);
                 m_ModelButtons.SetActive(false);
-                InitializePoolButtons(m_BehaviorButtons, "behavior");
+                //InitializePoolButtons(m_BehaviorButtons, "behavior");
             }
             else if (tab == "ecosystem")
             {
                 m_BehaviorButtons.SetActive(false);
                 m_EcosystemButtons.SetActive(true);
                 m_ModelButtons.SetActive(false);
-                InitializePoolButtons(m_EcosystemButtons, "ecosystem");
+                //InitializePoolButtons(m_EcosystemButtons, "ecosystem");
             }
             else if (tab == "model")
             {
                 m_BehaviorButtons.SetActive(false);
                 m_EcosystemButtons.SetActive(false);
                 m_ModelButtons.SetActive(true);
-                InitializePoolButtons(m_ModelButtons, "model");
+                //InitializePoolButtons(m_ModelButtons, "model");
             }
         }
 

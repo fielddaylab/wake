@@ -55,6 +55,11 @@ namespace ProtoAqua.Argumentation
             typeTag = inType;
             displayText.SetText(inDisplayText);
         }
+         public void InitializeLinkData(string inDisplayText)
+        {
+            displayText.SetText(inDisplayText);
+        }
+        
 
         public void SetLongText()
         {

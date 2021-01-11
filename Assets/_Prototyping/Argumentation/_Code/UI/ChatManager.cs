@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Aqua;
+using Aqua.Portable;
 using BeauPools;
 using BeauRoutine;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace ProtoAqua.Argumentation
             m_NodePool.Initialize();
 
             Services.Events.Register<GameObject>("ArgumentationChatBubbleSelection", OnDrop, this);
+            Services.Events.Register<GameObject>("OpenBestiaryWithFacts", OpenBestiary, this);
 
 
             // Create the root node
@@ -75,13 +77,42 @@ namespace ProtoAqua.Argumentation
 
         }
 
+        private void OnSelect(GameObject selectedFact, string linkId) {
+            
+            selectedFact.transform.SetParent(m_ChatGrid);
+            selectedFact.GetComponent<ClickableObject>().enabled = false;
+            selectedFact.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
+                .childAlignment = TextAnchor.UpperRight;
+            selectedFact.SetActive(true);
+            Routine.Start(this, ScrollRoutine(linkId, selectedFact));
+        }
+
+        private void OpenBestiary(GameObject clicked) {
+            var request = new BestiaryApp.SelectFactRequest(BestiaryDescCategory.Critter);
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+            request.Return.OnComplete( (s) => {
+                Debug.Log("Selected: " + s.Fact.name);
+                GameObject newLink = m_LinkManager.ClickBestiaryLink(s);
+                OnSelect(newLink, s.Fact.name);
+                //m_FactText.SetText("Selected: " + s.Fact.GenerateSentence(s));
+            }).OnFail(() => {
+                //m_FactText.SetText("Selected: Nothing");
+            });
+        }
+
         // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
         private void RespondWithNextNode(string linkId, GameObject response)
         {
             Node nextNode = m_Graph.NextNode(linkId);
             Link currentLink = m_Graph.FindLink(linkId);
 
-            CheckConditionsMet(nextNode, currentLink);
+            Debug.Log("TEST!!!");
+            Debug.Log(linkId);
+            Debug.Log(currentLink);
+
+
+
+            //CheckConditionsMet(nextNode, currentLink);
 
             // Create the node bubble, and set its properties
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
@@ -101,7 +132,7 @@ namespace ProtoAqua.Argumentation
             {
                 newNode.ChangeColor(m_InvalidColor);
                 // Add response back into list for reuse
-                m_LinkManager.ResetLink(response, linkId, false);
+                // m_LinkManager.ResetLink(response, linkId, false); (Not needed for bestiary)
                 invalidResponseRoutine.Replace(this, InvalidResponseRoutine(response));
             }
             else
@@ -204,6 +235,11 @@ namespace ProtoAqua.Argumentation
         private void UpdateButtonList(string linkId)
         {
             Link currentLink = m_Graph.FindLink(linkId);
+
+            //@TODO FIX THIS
+            if(currentLink == null) {
+                return;
+            }
             if (currentLink.Tag == "claim")
             {
                 m_LinkManager.SelectClaim(linkId);

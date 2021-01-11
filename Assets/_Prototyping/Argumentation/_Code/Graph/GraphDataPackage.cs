@@ -95,7 +95,7 @@ namespace ProtoAqua.Argumentation
                     inPackage.m_Nodes.Add(id, (Node)outBlock);
                     return true;
                 } 
-                else if (id.StartsWith("link"))
+                else if (true) //@TODO FIX
                 {
                     outBlock = new Link(id);
                     inPackage.m_Data.Add(id, outBlock);
