@@ -18,11 +18,7 @@ namespace ProtoAqua.Foodweb
         [NonSerialized] private BestiaryFactBase m_Fact = null;
 
         #endregion // InspectorF
-<<<<<<< HEAD
-        public void InitializeFW(BestiaryFactBase inFact, PlayerFactParams inParams)
-=======
-        public void InitializeFW(BFBase inFact, PlayerFactParams inParams, bool inbButtonMode)
->>>>>>> 66100018027bce35bb281b09dd38caa8afa16af8
+        public void InitializeFW(BFBase inFact, PlayerFactParams inParams)
         {
             m_Sentence.Populate(inFact, inParams);
             m_Fact = inFact;
