@@ -48,10 +48,10 @@ namespace Aqua.Scripting
                     package.UnbindAsset();
                     Services.Script?.Unload(package);
                 }
-            }
 
-            m_LoadedPackages.Clear();
-            m_LoadedPackages = null;
+                m_LoadedPackages.Clear();
+                m_LoadedPackages = null;
+            }
         }
     }
 }

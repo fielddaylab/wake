@@ -26,6 +26,8 @@ namespace Aqua
 
         private VariantTable m_TempSceneTable;
 
+        private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
+
         #region Scene Loading
 
         /// <summary>
@@ -97,6 +99,39 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Loads to the previously loaded scene.
+        /// </summary>
+        public IEnumerator LoadPreviousScene(string inDefault = null, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            if (m_SceneLock)
+            {
+                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                return null;
+            }
+
+            if (m_SceneHistory.Count < 2)
+            {
+                if (!string.IsNullOrEmpty(inDefault))
+                {
+                    return LoadScene(inDefault, inContext, inFlags);
+                }
+
+                Debug.LogErrorFormat("[StateMgr] No previous scene in scene history");
+                return null;
+            }
+
+            // pop the current scene
+            m_SceneHistory.PopBack();
+
+            // get the previous one
+            SceneBinding prevScene = m_SceneHistory.PeekBack();
+
+            m_SceneLock = true;
+            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
+            return m_SceneLoadRoutine.Wait();
+        }
+
+        /// <summary>
         /// Returns if loading into another scene.
         /// </summary>
         public bool IsLoadingScene()
@@ -118,6 +153,7 @@ namespace Aqua
 
             SceneBinding active = SceneManager.GetActiveScene();
             BindScene(active);
+            m_SceneHistory.PushBack(active);
 
             yield return WaitForPreload(active, null);
 
@@ -166,6 +202,11 @@ namespace Aqua
 
                 yield return WaitForServiceLoading();
                 BindScene(inNextScene);
+
+                if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
+                {
+                    m_SceneHistory.PushBack(inNextScene);
+                }
 
                 yield return WaitForPreload(inNextScene, inContext);
 
@@ -299,6 +340,7 @@ namespace Aqua
         [Hidden]
         Default = 0,
 
-        NoLoadingScreen = 0x01
+        NoLoadingScreen = 0x01,
+        DoNotModifyHistory = 0x02
     }
 }
