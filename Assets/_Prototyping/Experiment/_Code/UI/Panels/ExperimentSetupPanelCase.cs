@@ -80,6 +80,7 @@ namespace ProtoAqua.Experiment
 
         protected override void OnShow(bool inbInstant)
         {
+  
             m_Hum = Services.Audio.PostEvent("tablet_hum").SetVolume(0).SetVolume(1, 0.5f);
             Services.Data.SetVariable(ExperimentVars.SetupPanelOn, true);
         }

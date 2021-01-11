@@ -17,6 +17,8 @@ namespace ProtoAqua.Experiment
         [Header("Spawning")]
         [SerializeField] private ActorSpawnType m_SpawnType = ActorSpawnType.Floor;
         [SerializeField] private float m_FloorOffset = 0.5f;
+
+        [SerializeField] private float m_submergeOffset = 0.5f;
         [SerializeField] private bool m_IsFixedToFloor = false;
 
         [Header("Traversal")]
@@ -47,11 +49,17 @@ namespace ProtoAqua.Experiment
             Vector2 spawnOffset, targetPos;
             switch(m_SpawnType)
             {
+                case ActorSpawnType.Water:
+                    targetPos = m_Helper.GetWaterSpawnTarget(Actor.Body.BodyRadius, m_submergeOffset, m_FloorOffset);
+                    spawnOffset = !m_IsFixedToFloor ? m_Helper.GetSpawnOffset() : default(Vector2);
+                    break;
                 case ActorSpawnType.Floor:
                 default:
                     targetPos = m_Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, m_FloorOffset);
                     spawnOffset = !m_IsFixedToFloor ? m_Helper.GetSpawnOffset() : default(Vector2);
                     break;
+                
+
             }
 
             m_MoveRoutine.Replace(this, SpawnRoutine(inDelay, targetPos, spawnOffset)).TryManuallyUpdate(0);

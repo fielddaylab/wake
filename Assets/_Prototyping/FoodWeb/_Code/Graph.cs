@@ -7,8 +7,6 @@ public class Graph<Position>
 {
     public List<Node<Position>> Nodes {get; private set; }
     public List<Edge<Position>> Edges {get; private set; }
-
-
 }
 
 public class Node<Position> 

@@ -15,13 +15,17 @@ namespace ProtoAqua.Foodweb
         [SerializeField] private Button m_Button = null;
         [SerializeField] private FactSentenceDisplay m_Sentence = null;
 
+        [NonSerialized] private BFBase m_Fact = null;
+
         #endregion // InspectorF
         public void InitializeFW(BFBase inFact, PlayerFactParams inParams)
         {
             m_Sentence.Populate(inFact, inParams);
+            m_Fact = inFact;
             m_Button.onClick.AddListener(() => TargetOnClick());
         }
-        public void TargetOnClick() {
+        public void TargetOnClick()
+        {
 
         }
 
