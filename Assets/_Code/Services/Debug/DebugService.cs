@@ -160,10 +160,6 @@ namespace Aqua.DebugConsole
                         Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
                 }
             }
-            foreach(var fact in Services.Assets.Bestiary.Facts())
-            {
-                Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
-            }
         }
 
         private IEnumerator RequestQuit()
