@@ -20,18 +20,18 @@ namespace ProtoAqua.Foodweb
         #endregion
 
         [NonSerialized] private FoodWebFactButton[] m_FactButtons;
-        [NonSerialized] private List<BestiaryFactBase> m_Facts;
+        [NonSerialized] private List<BFBase> m_Facts;
 
         String debug_str = "[PanelSetup Debug Log] ------ ";
 
         private void Awake()
         {
-            m_Facts = new List<BestiaryFactBase>();
+            m_Facts = new List<BFBase>();
 
 
             foreach (BestiaryDesc critter in Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Critter))
             {
-                foreach (BestiaryFactBase facts in critter.Facts)
+                foreach (BFBase facts in critter.Facts)
                 {
 
                     m_Facts.Add(facts);

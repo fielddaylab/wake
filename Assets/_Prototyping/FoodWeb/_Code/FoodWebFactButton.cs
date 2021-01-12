@@ -15,7 +15,7 @@ namespace ProtoAqua.Foodweb
         [SerializeField] private Button m_Button = null;
         [SerializeField] private FactSentenceDisplay m_Sentence = null;
 
-        [NonSerialized] private BestiaryFactBase m_Fact = null;
+        [NonSerialized] private BFBase m_Fact = null;
 
         #endregion // InspectorF
         public void InitializeFW(BFBase inFact, PlayerFactParams inParams)
