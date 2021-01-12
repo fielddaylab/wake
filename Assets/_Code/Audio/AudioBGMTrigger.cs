@@ -6,12 +6,13 @@ using UnityEngine;
 
 namespace AquaAudio
 {
-    public class AudioTrigger : MonoBehaviour
+    public class AudioBGMTrigger : MonoBehaviour
     {
         [SerializeField] private string m_EventId = null;
+        [SerializeField] private float m_Crossfade = 0;
 
         private Routine m_WaitRoutine;
-        private AudioHandle m_Playback;
+        private AudioHandle m_BGM;
 
         private void OnEnable()
         {
@@ -21,7 +22,7 @@ namespace AquaAudio
             }
             else
             {
-                m_Playback = Services.Audio.PostEvent(m_EventId);
+                m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
             }
         }
 
@@ -32,13 +33,17 @@ namespace AquaAudio
                 yield return null;
             }
 
-            m_Playback = Services.Audio.PostEvent(m_EventId);
+            m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
         }
 
         private void OnDisable()
         {
             m_WaitRoutine.Stop();
-            m_Playback.Stop(0.1f);
+            if (m_BGM.Exists())
+            {
+                m_BGM = default(AudioHandle);
+                Services.Audio.SetMusic(null, m_Crossfade);
+            }
         }
     }
 }

@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauRoutine;
 using Aqua;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Navigation
 {
-    public class UIController : MonoBehaviour
+    public class UIController : SharedPanel
     {
 
-        [SerializeField] GameObject m_DiveUI = null;
+        [SerializeField] private Button m_DiveButton = null;
+        [SerializeField] private LocText m_DiveLabel = null;
         
         public string currentSiteId {get; set;} 
         private Routine fadeRoutine;
@@ -18,44 +20,28 @@ namespace ProtoAqua.Navigation
         private string sceneToLoad = "";
 
         // Start is called before the first frame update
-        void Start()
+        protected override void Start()
         {
-            m_DiveUI.SetActive(false);
+            base.Start();
+
+            m_DiveButton.onClick.AddListener(beginDiveScene);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
-        public void returnToShip() {
-            sceneToLoad = "Ship";
+        private void beginDiveScene() {
             fadeRoutine.Replace(this, FadeRoutine());
         }
-        
-        public void displayDiveUI() {
-            m_DiveUI.SetActive(true);
-        }
 
-        public void hideDiveUI() {
-            m_DiveUI.SetActive(false);
-        }
-
-        public void beginDiveScene() {
-            sceneToLoad = "SeaSceneTest"; //CurrentSiteId
-            fadeRoutine.Replace(this, FadeRoutine());
-        }
-        private void ChangeScene()
+        public void Display(string inLabel, string inScene)
         {
-            SceneManager.LoadScene(sceneToLoad);
+            sceneToLoad = inScene;
+            m_DiveLabel.SetText(inLabel);
+            Show();
         }
 
         private IEnumerator FadeRoutine()
         {
-            yield return Services.UI.WorldFaders.FadeTransition(Color.white, 1, .2f, ChangeScene);
+            Services.Data.SetVariable(GameVars.DiveSite, sceneToLoad);
+            yield return StateUtil.LoadSceneWithFader(sceneToLoad);
         }
-
-        
     }
 }

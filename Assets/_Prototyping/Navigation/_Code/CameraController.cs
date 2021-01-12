@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BeauRoutine;
 using UnityEngine;
 namespace ProtoAqua.Navigation {
     public class CameraController : MonoBehaviour {
@@ -11,6 +12,8 @@ namespace ProtoAqua.Navigation {
         [SerializeField] float minX = 0;
         [SerializeField] float maxY = 0;
         [SerializeField] float minY = 0;
+        
+        [SerializeField] float lerpStrength = 4;
 
 
         // Start is called before the first frame update
@@ -21,11 +24,16 @@ namespace ProtoAqua.Navigation {
         
         // Update is called once per frame
         void Update() {
-            transform.position = new Vector3(
+            Vector2 targetPos = new Vector2(
                 Mathf.Clamp(target.position.x, minX, maxX),
-                Mathf.Clamp(target.position.y, minY, maxY),
-                transform.position.z
+                Mathf.Clamp(target.position.y, minY, maxY)
             );
+
+            Vector2 lerp = Vector2.Lerp(
+                transform.position, targetPos, TweenUtil.Lerp(lerpStrength)
+            );
+
+            transform.SetPosition(lerp, Axis.XY, Space.World);
         }
 
         public Vector3 ScreenToWorldOnPlane(Vector2 inScreenPos, Transform inWorldRef) {

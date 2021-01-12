@@ -41,6 +41,7 @@ namespace ProtoAqua.Experiment
         private IEnumerator BiteAnim()
         {
             yield return m_PivotTransform.RotateTo(m_PivotTransform.localEulerAngles.z + RNG.Instance.Choose(-5, 5), 0.5f, Axis.Z, Space.Self).Wave(Wave.Function.CosFade, 3).RevertOnCancel(false);
+            Actor.Recycle();
         }
 
         void ICreature.Bite(ActorCtrl inActor, float inBite)
@@ -53,17 +54,9 @@ namespace ProtoAqua.Experiment
         bool ICreature.TryGetEatLocation(ActorCtrl inActor, out Transform outTransform, out Vector3 outOffset)
         {
             outTransform = m_PivotTransform;
-            
-            float dist = RNG.Instance.NextFloat(0.25f, 1);
-            outOffset = m_PivotTransform.right;
-            outOffset.x *= m_PivotTransform.localScale.x;
-            outOffset.Normalize();
-            outOffset *= dist;
-
+            outOffset = Vector3.zero;
             return true;
         }
-
-
 
         private void OnCreate()
         {

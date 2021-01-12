@@ -17,7 +17,7 @@ namespace Aqua
 
         private void OnClick()
         {
-            Services.State.LoadPreviousScene("Ship");
+            Services.State.LoadPreviousScene("Ship", "back");
         }
     }
 }

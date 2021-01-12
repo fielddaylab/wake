@@ -59,6 +59,11 @@ namespace Aqua
             return m_RectPool.Alloc().FullTransition(inColor, inFadeDuration, inPause, inOnPause);
         }
 
+        public IEnumerator FadeTransition(Color inColor, float inFadeDuration, float inPause, Func<IEnumerator> inOnPause)
+        {
+            return m_RectPool.Alloc().FullTransition(inColor, inFadeDuration, inPause, inOnPause);
+        }
+
         public TempAlloc<FaderRect> AllocFader()
         {
             return m_RectPool.TempAlloc();
@@ -69,6 +74,11 @@ namespace Aqua
         #region Screen Wipe
 
         public IEnumerator WipeTransition(float inPause, Action inOnPause)
+        {
+            return m_WipePool.Alloc().FullTransition(inPause, inOnPause);
+        }
+
+        public IEnumerator WipeTransition(float inPause, Func<IEnumerator> inOnPause)
         {
             return m_WipePool.Alloc().FullTransition(inPause, inOnPause);
         }

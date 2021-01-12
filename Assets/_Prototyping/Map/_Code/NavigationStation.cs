@@ -15,29 +15,14 @@ namespace ProtoAqua.Map {
 
         private Routine fadeRoutine;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        }
-
         public void OnPointerClick(PointerEventData eventData)
         {
             Services.Data.Profile.Map.setStationId(stationId);
-             fadeRoutine.Replace(this, FadeRoutine());
-            
-        }
-         private void ChangeScene() 
-         {
-            SceneManager.LoadScene("Ship");
+            fadeRoutine.Replace(this, FadeRoutine());
         }
 
         private IEnumerator FadeRoutine() {
-            yield return Services.UI.WorldFaders.FadeTransition(Color.white, 1, .2f, ChangeScene);
+            yield return StateUtil.LoadSceneWithFader("Ship");
         }
 
     }

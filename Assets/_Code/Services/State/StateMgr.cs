@@ -22,11 +22,15 @@ namespace Aqua
         #endregion // Inspector
 
         private Routine m_SceneLoadRoutine;
-        private bool m_SceneLock;
+        [NonSerialized] private bool m_SceneLock;
+        [NonSerialized] private Camera m_MainCamera;
 
         private VariantTable m_TempSceneTable;
+        private VariantTable m_SessionTable;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
+
+        public Camera Camera { get { return m_MainCamera; } }
 
         #region Scene Loading
 
@@ -129,6 +133,14 @@ namespace Aqua
             m_SceneLock = true;
             m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
+        }
+
+        /// <summary>
+        /// Reloads the current scene.
+        /// </summary>
+        public IEnumerator ReloadCurrentScene(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            return LoadScene(SceneHelper.ActiveScene(), inContext, inFlags);
         }
 
         /// <summary>
@@ -294,6 +306,8 @@ namespace Aqua
 
         private void BindScene(SceneBinding inScene)
         {
+            // table bind
+
             if (m_TempSceneTable == null)
             {
                 m_TempSceneTable = new VariantTable("temp");
@@ -305,6 +319,10 @@ namespace Aqua
             {
                 m_TempSceneTable.Clear();
             }
+
+            // locate camera
+
+            m_MainCamera = Camera.main;
         }
 
         #endregion // Scripting
@@ -315,11 +333,20 @@ namespace Aqua
         {
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
+
+            m_SessionTable = new VariantTable("session");
         }
 
         protected override void OnDeregisterService()
         {
+            m_SessionTable.Clear();
+
             m_SceneLoadRoutine.Stop();
+        }
+
+        protected override void AfterRegisterService()
+        {
+            Services.Data.BindTable("session", m_SessionTable);
         }
 
         protected override bool IsLoading()
@@ -341,6 +368,6 @@ namespace Aqua
         Default = 0,
 
         NoLoadingScreen = 0x01,
-        DoNotModifyHistory = 0x02
+        DoNotModifyHistory = 0x02,
     }
 }
