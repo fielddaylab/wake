@@ -29,10 +29,11 @@ namespace ProtoAqua.Observation
 
         #region Inspector
 
-        [SerializeField] private KinematicObject2D m_Kinematic = null;
-        [SerializeField] private PlayerROVWorldUI m_WorldUI = null;
-        [SerializeField] private PlayerROVInput m_Input = null;
-        [SerializeField] private PlayerROVScanner m_Scanner = null;
+        [SerializeField, Required] private KinematicObject2D m_Kinematic = null;
+        [SerializeField, Required] private PlayerROVWorldUI m_WorldUI = null;
+        [SerializeField, Required] private PlayerROVInput m_Input = null;
+        [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
+        [SerializeField, Required] private SpriteRenderer m_Renderer = null;
 
         [Header("Movement Params")]
 
@@ -62,7 +63,6 @@ namespace ProtoAqua.Observation
         private void Start()
         {
             this.CacheComponent(ref m_Transform);
-            ObservationServices.Audio.PostEvent("underwater_loop");
 
             SetEngineState(false, true);
 
@@ -96,6 +96,9 @@ namespace ProtoAqua.Observation
             {
                 float amt = Mathf.Clamp01(m_LastInputData.Offset.magnitude / m_TargetVectorMaxDistance);
                 m_WorldUI.ShowMoveArrow(m_LastInputData.Offset, amt);
+
+                float scaleX = Math.Abs(m_Renderer.transform.localScale.x) * Math.Sign(m_LastInputData.Offset.x);
+                m_Renderer.transform.SetScale(scaleX, Axis.X);
             }
             else if (m_LastInputData.ToolMode)
             {

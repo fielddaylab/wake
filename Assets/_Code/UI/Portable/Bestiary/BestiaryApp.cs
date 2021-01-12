@@ -167,6 +167,7 @@ namespace Aqua.Portable
             m_EcosystemGroupToggle.onValueChanged.AddListener(OnEcosystemToggled);
 
             m_SelectEntryButton.onClick.AddListener(OnEntrySelectClicked);
+            m_SelectEntryButton.gameObject.SetActive(false);
 
             m_ParentMenu = GetComponentInParent<PortableMenu>();
         }

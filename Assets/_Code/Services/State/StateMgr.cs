@@ -22,9 +22,15 @@ namespace Aqua
         #endregion // Inspector
 
         private Routine m_SceneLoadRoutine;
-        private bool m_SceneLock;
+        [NonSerialized] private bool m_SceneLock;
+        [NonSerialized] private Camera m_MainCamera;
 
         private VariantTable m_TempSceneTable;
+        private VariantTable m_SessionTable;
+
+        private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
+
+        public Camera Camera { get { return m_MainCamera; } }
 
         #region Scene Loading
 
@@ -97,6 +103,47 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Loads to the previously loaded scene.
+        /// </summary>
+        public IEnumerator LoadPreviousScene(string inDefault = null, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            if (m_SceneLock)
+            {
+                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                return null;
+            }
+
+            if (m_SceneHistory.Count < 2)
+            {
+                if (!string.IsNullOrEmpty(inDefault))
+                {
+                    return LoadScene(inDefault, inContext, inFlags);
+                }
+
+                Debug.LogErrorFormat("[StateMgr] No previous scene in scene history");
+                return null;
+            }
+
+            // pop the current scene
+            m_SceneHistory.PopBack();
+
+            // get the previous one
+            SceneBinding prevScene = m_SceneHistory.PeekBack();
+
+            m_SceneLock = true;
+            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
+            return m_SceneLoadRoutine.Wait();
+        }
+
+        /// <summary>
+        /// Reloads the current scene.
+        /// </summary>
+        public IEnumerator ReloadCurrentScene(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            return LoadScene(SceneHelper.ActiveScene(), inContext, inFlags);
+        }
+
+        /// <summary>
         /// Returns if loading into another scene.
         /// </summary>
         public bool IsLoadingScene()
@@ -118,6 +165,7 @@ namespace Aqua
 
             SceneBinding active = SceneManager.GetActiveScene();
             BindScene(active);
+            m_SceneHistory.PushBack(active);
 
             yield return WaitForPreload(active, null);
 
@@ -166,6 +214,11 @@ namespace Aqua
 
                 yield return WaitForServiceLoading();
                 BindScene(inNextScene);
+
+                if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
+                {
+                    m_SceneHistory.PushBack(inNextScene);
+                }
 
                 yield return WaitForPreload(inNextScene, inContext);
 
@@ -253,6 +306,8 @@ namespace Aqua
 
         private void BindScene(SceneBinding inScene)
         {
+            // table bind
+
             if (m_TempSceneTable == null)
             {
                 m_TempSceneTable = new VariantTable("temp");
@@ -264,6 +319,10 @@ namespace Aqua
             {
                 m_TempSceneTable.Clear();
             }
+
+            // locate camera
+
+            m_MainCamera = Camera.main;
         }
 
         #endregion // Scripting
@@ -274,11 +333,20 @@ namespace Aqua
         {
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
+
+            m_SessionTable = new VariantTable("session");
         }
 
         protected override void OnDeregisterService()
         {
+            m_SessionTable.Clear();
+
             m_SceneLoadRoutine.Stop();
+        }
+
+        protected override void AfterRegisterService()
+        {
+            Services.Data.BindTable("session", m_SessionTable);
         }
 
         protected override bool IsLoading()
@@ -299,6 +367,7 @@ namespace Aqua
         [Hidden]
         Default = 0,
 
-        NoLoadingScreen = 0x01
+        NoLoadingScreen = 0x01,
+        DoNotModifyHistory = 0x02,
     }
 }

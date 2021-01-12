@@ -72,11 +72,6 @@ namespace ProtoAqua.Experiment
             return RNG.Instance.Next(GetProperty<int>("MinSwimsBeforeEat", 3), GetProperty<int>("MaxSwimsBeforeEat", 4) + 1);
         }
 
-        private int GetBiteCount()
-        {
-            return RNG.Instance.Next(GetProperty<int>("MinBites", 3), GetProperty<int>("MaxBites", 5) + 1);
-        }
-
         private ICreature GetNearestFoodSource()
         {
             Vector2 myPos = Actor.Body.WorldTransform.position;
@@ -110,34 +105,20 @@ namespace ProtoAqua.Experiment
             Vector3 targetOffset;
             inFoodSource.TryGetEatLocation(Actor, out targetTransform, out targetOffset);
 
-            StringHash32 id = inFoodSource.Id;
-            foreach (ActorCtrl target in m_Pools.Active("Urchin"))
-            {
-                if (target.Id == id)
-                {
-                    target.Recycle();
-                    break;
-                }
-            }
-
             yield return Actor.Nav.SwimTo(targetTransform.position + targetOffset);
             yield return 0.5f;
 
             using (ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, Behaviors.EatsUrchin))
             {
-                int biteCount = GetBiteCount();
-                while (biteCount-- > 0)
+                yield return Actor.Body.WorldTransform.ScaleTo(1.1f, 0.2f).Ease(Curve.CubeOut);
+                inFoodSource.Bite(Actor, GetProperty<float>("BiteSize", 5));
+                Services.Audio.PostEvent("seaotter_eat");
+                if (ExperimentServices.BehaviorCapture.WasObserved(Behaviors.EatsUrchin))
                 {
-                    yield return Actor.Body.WorldTransform.ScaleTo(1.1f, 0.2f).Ease(Curve.CubeOut);
-                    inFoodSource.Bite(Actor, GetProperty<float>("BiteSize", 5));
-                    Services.Audio.PostEvent("seaotter_eat");
-                    if (ExperimentServices.BehaviorCapture.WasObserved(Behaviors.EatsUrchin))
-                    {
-                         m_EatParticles.Emit(1);
-                    }
-                    yield return Actor.Body.WorldTransform.ScaleTo(1, 0.2f).Ease(Curve.CubeOut);
-                    yield return RNG.Instance.NextFloat(0.8f, 1.2f);
+                        m_EatParticles.Emit(1);
                 }
+                yield return Actor.Body.WorldTransform.ScaleTo(1, 0.2f).Ease(Curve.CubeOut);
+                yield return RNG.Instance.NextFloat(0.8f, 1.2f);
             }
         }
 

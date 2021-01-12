@@ -918,7 +918,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10.01
+      scalar: 4
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4885,9 +4885,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerRigidBody: {fileID: 2635531021390785892}
-  moveSpeed: 5
   playerInput: {fileID: 2635531021390785891}
   playerAnimator: {fileID: 1950210926}
+  minSpeed: 2
+  maxSpeed: 10
 --- !u!50 &2635531021390785892
 Rigidbody2D:
   serializedVersion: 4
@@ -4921,6 +4922,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9010dbc42b87346359665510ed5e03d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Priority: 0
+  m_Flags: 512
+  m_AutoPush: 0
+  m_Override: 0
+  m_OverrideState: 1
+  m_OnInputEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnInputDisabled:
+    m_PersistentCalls:
+      m_Calls: []
   cameraController: {fileID: 0}
   renderer: {fileID: 2635531021776982765}
 --- !u!114 &1950210926

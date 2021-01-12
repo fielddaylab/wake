@@ -6,6 +6,7 @@ using BeauUtil;
 using Aqua;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BeauRoutine;
 
 namespace AquaAudio
 {
@@ -34,6 +35,8 @@ namespace AquaAudio
         private uint m_Id;
 
         private AudioHandle m_BGM;
+        private float m_FadeMultiplier;
+        private Routine m_FadeMultiplierRoutine;
 
         #region IService
 
@@ -80,6 +83,9 @@ namespace AquaAudio
                 AudioPropertyBlock properties = m_MasterProperties;
                 AudioPropertyBlock.Combine(properties, m_MixerProperties, ref properties);
                 AudioPropertyBlock.Combine(properties, m_DebugProperties, ref properties);
+
+                // multiply loading volume
+                properties.Volume *= m_FadeMultiplier;
 
                 float deltaTime = Time.deltaTime;
                 AudioPlaybackTrack track;
@@ -195,6 +201,34 @@ namespace AquaAudio
         }
 
         #endregion // Background Music
+
+        #region Volume Fade
+
+        public void FadeOut(float inDuration)
+        {
+            if (inDuration <= 0)
+            {
+                m_FadeMultiplier = 0;
+                m_FadeMultiplierRoutine.Stop();
+                return;
+            }
+
+            m_FadeMultiplierRoutine.Replace(this, Tween.Float(m_FadeMultiplier, 0, (f) => m_FadeMultiplier = f, inDuration));
+        }
+
+        public void FadeIn(float inDuration)
+        {
+            if (inDuration <= 0)
+            {
+                m_FadeMultiplier = 1;
+                m_FadeMultiplierRoutine.Stop();
+                return;
+            }
+
+            m_FadeMultiplierRoutine.Replace(this, Tween.Float(m_FadeMultiplier, 1, (f) => m_FadeMultiplier = f, inDuration));
+        }
+
+        #endregion // Volume Fade
 
         #region Properties
 

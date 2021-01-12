@@ -32,6 +32,8 @@ namespace Aqua
 
             m_BackgroundGroup.alpha = 1;
             m_BackgroundGroup.gameObject.SetActive(true);
+
+            Services.Audio.FadeOut(0);
         }
 
         protected override void InstantTransitionToHide()
@@ -41,6 +43,8 @@ namespace Aqua
 
             m_BackgroundGroup.gameObject.SetActive(false);
             m_BackgroundGroup.alpha = 0;
+
+            Services.Audio?.FadeIn(0);
         }
 
         protected override void OnShow(bool inbInstant)
@@ -66,6 +70,8 @@ namespace Aqua
             m_SharedGroup.gameObject.SetActive(true);
             m_BackgroundGroup.gameObject.SetActive(true);
 
+            Services.Audio.FadeOut(m_TransitionSettings.Time);
+
             yield return Routine.Combine(
                 m_SharedGroup.FadeTo(1, m_TransitionSettings),
                 m_BackgroundGroup.FadeTo(1, m_TransitionSettings)
@@ -74,6 +80,8 @@ namespace Aqua
 
         protected override IEnumerator TransitionToHide()
         {
+            Services.Audio.FadeIn(m_TransitionSettings.Time);
+
             yield return Routine.Combine(
                 m_SharedGroup.FadeTo(0, m_TransitionSettings),
                 m_BackgroundGroup.FadeTo(0, m_TransitionSettings)
