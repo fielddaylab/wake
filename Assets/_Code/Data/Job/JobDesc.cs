@@ -30,6 +30,10 @@ namespace Aqua
         [SerializeField] private JobDesc[] m_PrerequisiteJobs = null;
         [SerializeField] private string m_PrereqConditions = null;
 
+        [Header("Locations")]
+        [SerializeField] private string m_StationId = null;
+        [SerializeField] private string[] m_DiveSiteIds = null;
+
         [Header("Rewards")]
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_GearReward = 0;
@@ -68,6 +72,24 @@ namespace Aqua
                 return Services.Data.CheckConditions(m_PrereqConditions);
 
             return true;
+        }
+
+        public bool IsAtStation()
+        {
+            var map = Services.Data.Profile.Map;
+
+            if (!string.IsNullOrEmpty(m_StationId))
+            {
+                if (map.getStationId() != m_StationId)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool UsesDiveSite(string inDiveSiteId)
+        {
+            return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
         }
 
         public int CashReward() { return m_CashReward; }
