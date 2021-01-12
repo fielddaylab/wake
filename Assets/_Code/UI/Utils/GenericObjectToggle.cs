@@ -11,9 +11,9 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private Toggle m_Toggle = null;
+        [SerializeField, Required] private Toggle m_Toggle = null;
         [Space]
-        [SerializeField] private GameObject m_OnObject = null;
+        [SerializeField, Required] private GameObject m_OnObject = null;
         [SerializeField] private bool m_Invert = false;
 
         #endregion // Inspector

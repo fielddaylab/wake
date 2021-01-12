@@ -13,7 +13,7 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class UrchinActor : ActorModule
+    public class UrchinActor : ActorModule, ICreature
     {
         static public class Behaviors
         {
@@ -21,13 +21,42 @@ namespace ProtoAqua.Experiment
         }
 
         #region Inspector
-
+        [SerializeField] private Transform m_PivotTransform = null;
+        [SerializeField] private Transform m_RenderTransform = null;
         [SerializeField, Required] private ActorSense m_FoodSense = null;
         [SerializeField, Required] private ParticleSystem m_EatParticles = null;
 
         #endregion // Inspector
 
         [NonSerialized] private Routine m_Anim;
+        [NonSerialized] private StringHash32 m_Id;
+
+        StringHash32 ICreature.Id { get { return m_Id; } }
+
+        bool ICreature.HasTag(StringHash32 inTag)
+        {
+            return inTag == "Urchin";
+        }
+
+        private IEnumerator BiteAnim()
+        {
+            yield return m_PivotTransform.RotateTo(m_PivotTransform.localEulerAngles.z + RNG.Instance.Choose(-5, 5), 0.5f, Axis.Z, Space.Self).Wave(Wave.Function.CosFade, 3).RevertOnCancel(false);
+            Actor.Recycle();
+        }
+
+        void ICreature.Bite(ActorCtrl inActor, float inBite)
+        {
+            m_Anim.Replace(this, BiteAnim());
+        }
+
+        Transform ICreature.Transform { get { return m_RenderTransform; } }
+        
+        bool ICreature.TryGetEatLocation(ActorCtrl inActor, out Transform outTransform, out Vector3 outOffset)
+        {
+            outTransform = m_PivotTransform;
+            outOffset = Vector3.zero;
+            return true;
+        }
 
         private void OnCreate()
         {

@@ -28,8 +28,8 @@ namespace ProtoAqua.Experiment
         {
             m_OriginalPosition = m_Position.localPosition;
 
-            Services.Events.Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin)
-                .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown);
+            Services.Events.Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this)
+                .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this);
         }
 
         private void OnDestroy()

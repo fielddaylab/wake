@@ -34,6 +34,14 @@ namespace ProtoAqua.Experiment
             return RNG.Instance.NextVector2(left, right);
         }
 
+        public Vector2 GetWaterSpawnTarget(float inSideOffset, float submergeOffset, float inFloorOffset)
+        {
+            Rect r = Rect();
+            Vector2 left = new Vector2(r.xMin + inSideOffset, r.yMax - submergeOffset);
+            Vector2 right = new Vector2(r.xMax - inSideOffset, r.yMin + inFloorOffset);
+            return RNG.Instance.NextVector2(left, right);
+        }
+
         public Vector2 GetRandomSwimTarget(float inSideOffset, float inFloorOffset, float inCeilingOffset)
         {
             Rect r = Rect();

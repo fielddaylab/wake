@@ -1,40 +1,49 @@
+using System;
 using UnityEngine;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine.UI;
 using TMPro;
 using Aqua;
-using Aqua.Portable;
 
 namespace ProtoAqua.Foodweb
 {
-    public class FoodWebFactButton : BestiaryFactButton
+    public class FoodWebFactButton : MonoBehaviour
     {
         #region Inspector
 
-        [SerializeField, Required] private Button m_Button = null;
-        [SerializeField, Required] private RectTransform m_ButtonTail = null;
-        [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
+        [SerializeField] private Button m_Button = null;
+        [SerializeField] private FactSentenceDisplay m_Sentence = null;
+
+        [NonSerialized] private BFBase m_Fact = null;
 
         #endregion // InspectorF
-        public void InitializeFW(BFBase inFact, PlayerFactParams inParams, bool inbButtonMode)
+        public void InitializeFW(BFBase inFact, PlayerFactParams inParams)
         {
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
             m_Sentence.Populate(inFact, inParams);
-
-            m_Button.targetGraphic.raycastTarget = inbButtonMode;
-            m_ButtonTail.gameObject.SetActive(inbButtonMode);
+            m_Fact = inFact;
             m_Button.onClick.AddListener(() => TargetOnClick());
         }
-        public void TargetOnClick() {
+        public void TargetOnClick()
+        {
 
         }
 
         public void OnFree()
         {
            m_Button.onClick.RemoveAllListeners();
+        }
+
+        public bool has_Sentence()
+        {
+            if (m_Sentence != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -66,11 +66,25 @@ namespace Aqua
             return m_SequenceRoutine.Replace(this, FullTransitionRoutine(inPause, inOnPause)).Wait();
         }
 
+        public IEnumerator FullTransition(float inPause, Func<IEnumerator> inOnPause)
+        {
+            return m_SequenceRoutine.Replace(this, FullTransitionRoutine(inPause, inOnPause)).Wait();
+        }
+
         private IEnumerator FullTransitionRoutine(float inPause, Action inOnPause)
         {
             yield return Show();
             if (inOnPause != null)
                 inOnPause();
+            yield return inPause;
+            yield return Hide();
+        }
+
+        private IEnumerator FullTransitionRoutine(float inPause, Func<IEnumerator> inOnPause)
+        {
+            yield return Show();
+            if (inOnPause != null)
+                yield return inOnPause();
             yield return inPause;
             yield return Hide();
         }

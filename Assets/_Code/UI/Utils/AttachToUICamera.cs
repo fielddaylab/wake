@@ -16,8 +16,7 @@ namespace Aqua
                 return;
             #endif // UNITY_EDITOR
 
-            Camera camera;
-            if (TransformHelper.TryGetCameraFromLayer(transform, out camera))
+            if (TransformHelper.TryGetCameraFromLayer(transform, out Camera camera))
                 GetComponent<Canvas>().worldCamera = camera;
         }
 

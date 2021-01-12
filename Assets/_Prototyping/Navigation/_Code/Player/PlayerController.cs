@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
+using Aqua;
 
 
-namespace ProtoAqua.Map {
+namespace ProtoAqua.Navigation {
     
     public class PlayerController : MonoBehaviour {
 
@@ -16,12 +17,9 @@ namespace ProtoAqua.Map {
         [SerializeField] float maxSpeed = 10;
 
 
-
-        
-
         // Start is called before the first frame update
         void Start() {
-
+            
         }
 
         // Update is called once per frame

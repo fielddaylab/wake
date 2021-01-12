@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5031810794983755182}
   - component: {fileID: 5031810794983755183}
-  - component: {fileID: 5031810794983755184}
   - component: {fileID: 5031810794983755181}
   - component: {fileID: 5031810794983755180}
   m_Layer: 0
@@ -28,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5031810794983755185}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -80}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -65,7 +64,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 3758100247
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -77,14 +76,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &5031810794983755184
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5031810794983755185}
-  m_Enabled: 1
 --- !u!114 &5031810794983755181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Target: {fileID: 0}
-  m_Height: 50.7
+  m_Height: 50
   m_Zoom: 2.7
 --- !u!114 &5031810794983755180
 MonoBehaviour:
@@ -114,3 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 5031810794983755183}
   target: {fileID: 0}
+  maxX: 0
+  minX: 0
+  maxY: 0
+  minY: 0
