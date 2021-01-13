@@ -41,7 +41,7 @@ namespace ProtoAqua.Navigation
         private IEnumerator FadeRoutine()
         {
             Services.Data.SetVariable(GameVars.DiveSite, sceneToLoad);
-            yield return StateUtil.LoadSceneWithFader(sceneToLoad);
+            yield return StateUtil.LoadSceneWithWipe(sceneToLoad);
         }
     }
 }

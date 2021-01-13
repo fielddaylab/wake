@@ -49,7 +49,7 @@ namespace ProtoAqua.Argumentation
             Services.Tweaks.Load(m_GraphDataManager);
 
             QueryParams queryParams = Services.Data.PeekQueryParams();
-            LoadGraph(queryParams.Get("script") ?? "Dialogue3");
+            LoadGraph(queryParams?.Get("script") ?? "Dialogue3");
         }
 
         // Given a link id, check if that link is a valid response for the current node.

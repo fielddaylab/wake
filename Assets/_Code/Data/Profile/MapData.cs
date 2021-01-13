@@ -5,17 +5,35 @@ using UnityEngine;
 
 namespace Aqua.Profile
 {
-    public class MapData
+    public class MapData : ISerializedObject, ISerializedVersion
     {
-        private string currentStationId = "Station1";
+        private string m_CurrentStationId = "Station1";
 
-        public void setStationId(string newStationId) {
-            currentStationId = newStationId;
+        public bool SetCurrentStationId(string inNewStationId)
+        {
+            if (m_CurrentStationId != inNewStationId)
+            {
+                m_CurrentStationId = inNewStationId;
+                return true;
+            }
+
+            return false;
         }
 
-        public string getStationId() {
-            return currentStationId;
+        public string CurrentStationId()
+        {
+            return m_CurrentStationId;
         }
-        
+
+        #region ISerializedObject
+
+        ushort ISerializedVersion.Version { get { return 1; } }
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("stationId", ref m_CurrentStationId);
+        }
+
+        #endregion // ISerializedObject
     }
 }

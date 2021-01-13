@@ -80,7 +80,7 @@ namespace Aqua
 
             if (!string.IsNullOrEmpty(m_StationId))
             {
-                if (map.getStationId() != m_StationId)
+                if (map.CurrentStationId() != m_StationId)
                     return false;
             }
 

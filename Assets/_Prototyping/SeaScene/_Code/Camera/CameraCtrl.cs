@@ -51,6 +51,13 @@ namespace ProtoAqua.Observation
             return pos;
         }
 
+        public Vector3 GameplayPlanePosition(Vector3 inWorldPos)
+        {
+            Vector3 pos;
+            m_Camera.TryCastPositionToTargetPlane(inWorldPos, m_CameraPlane.Target, out pos);
+            return pos;
+        }
+
         public Vector3 ScreenToWorldOnPlane(Vector2 inScreenPos, Transform inWorldRef)
         {
             Vector3 screenPos = inScreenPos;

@@ -44,6 +44,16 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Pops a variable with the given identifier.
+        /// </summary>
+        public Variant PopVariable(TableKeyPair inId, object inContext = null)
+        {
+            Variant result = GetVariable(inId, inContext);
+            SetVariable(inId, null, inContext);
+            return result;
+        }
+
+        /// <summary>
         /// Sets a variable with the given identifier and an optional context.
         /// </summary>
         public void SetVariable(StringSlice inId, Variant inValue, object inContext = null)

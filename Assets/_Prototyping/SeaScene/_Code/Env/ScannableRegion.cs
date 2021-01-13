@@ -16,20 +16,21 @@ namespace ProtoAqua.Observation
 
         [SerializeField] private string m_ScanId = null;
         [SerializeField] private Transform m_AttachedTo = null;
+        [SerializeField] private bool m_LockToCursor = false;
         
         [Header("Collisions")]
-        [SerializeField] private Collider2D m_Collider = null;
+        [SerializeField, Required] private Collider2D m_Collider = null;
 
         [Header("Transforms")]
-        [SerializeField] private Transform m_RootTransform = null;
-        [SerializeField] private Transform m_StateTransform = null;
-        [SerializeField] private ColorGroup m_StateGroup = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_RootTransform = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_StateTransform = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_StateGroup = null;
 
         [Header("Icon")]
-        [SerializeField] private Transform m_IconTransform = null;
-        [SerializeField] private ColorGroup m_IconGroup = null;
-        [SerializeField] private Transform m_Icon = null;
-        [SerializeField] private ColorGroup m_Progress = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_IconTransform = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_IconGroup = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_Icon = null;
+        [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_Progress = null;
 
         #endregion // Inspector
 
@@ -52,10 +53,17 @@ namespace ProtoAqua.Observation
             m_ScanRadiusListener.onTriggerEnter.AddListener(OnRadiusEnter);
             m_ScanRadiusListener.onTriggerExit.AddListener(OnRadiusExit);
 
-            m_RootTransform.gameObject.SetActive(false);
+            if (m_RootTransform)
+            {
+                m_RootTransform.gameObject.SetActive(false);
+            }
+
             m_Collider.gameObject.SetActive(false);
 
-            m_Progress.gameObject.SetActive(false);
+            if (m_Progress)
+            {
+                m_Progress.gameObject.SetActive(false);
+            }
         }
 
         private void OnEnable()
@@ -86,6 +94,8 @@ namespace ProtoAqua.Observation
         #region Scanning
 
         public string ScanId() { return m_ScanId; }
+
+        public bool LockToCursor() { return m_LockToCursor; }
 
         public bool ChangeScanId(string inScanId)
         {
@@ -131,24 +141,39 @@ namespace ProtoAqua.Observation
 
         public void StartScan()
         {
-            m_Progress.transform.SetScale(0);
-            m_Progress.gameObject.SetActive(true);
+            if (m_Progress)
+            {
+                m_Progress.transform.SetScale(0);
+                m_Progress.gameObject.SetActive(true);
+            }
 
-            m_StateTransform.SetScale(1.1f);
+            if (m_StateTransform)
+            {
+                m_StateTransform.SetScale(1.1f);
+            }
         }
 
         public void UpdateScan(float inProgress)
         {
-            m_Progress.SetAlpha(inProgress);
-            m_Progress.transform.SetScale(inProgress);
+            if (m_Progress)
+            {
+                m_Progress.SetAlpha(inProgress);
+                m_Progress.transform.SetScale(inProgress);
+            }
         }
 
         public void CancelScan()
         {
-            m_Progress.transform.SetScale(0);
-            m_Progress.gameObject.SetActive(false);
+            if (m_Progress)
+            {
+                m_Progress.transform.SetScale(0);
+                m_Progress.gameObject.SetActive(false);
+            }
 
-            m_StateTransform.SetScale(1f);
+            if (m_StateTransform)
+            {
+                m_StateTransform.SetScale(1f);
+            }
         }
 
         public ScanResult CompleteScan()
@@ -197,7 +222,10 @@ namespace ProtoAqua.Observation
                 return;
 
             m_Showing = true;
-            m_RootAnim.Replace(this, ShowAnim());
+            if (m_RootTransform)
+            {
+                m_RootAnim.Replace(this, ShowAnim());
+            }
         }
 
         private void Hide()
@@ -206,14 +234,20 @@ namespace ProtoAqua.Observation
                 return;
 
             m_Showing = false;
-            m_RootAnim.Replace(this, HideAnim());
+            if (m_RootTransform)
+            {
+                m_RootAnim.Replace(this, HideAnim());
+            }
         }
 
         private void UpdateColor(ScanData inData)
         {
-            var mgr = Services.Tweaks.Get<ScanDataMgr>();
-            var config = mgr.GetConfig(inData != null ? inData.Flags() : 0);
-            m_IconGroup.Color = m_ScanFinished ? config.Node.ScannedColor : config.Node.UnscannedColor;
+            if (m_IconGroup)
+            {
+                var mgr = Services.Tweaks.Get<ScanDataMgr>();
+                var config = mgr.GetConfig(inData != null ? inData.Flags() : 0);
+                m_IconGroup.Color = m_ScanFinished ? config.Node.ScannedColor : config.Node.UnscannedColor;
+            }
         }
 
         #endregion // State

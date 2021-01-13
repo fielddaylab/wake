@@ -17,12 +17,13 @@ namespace ProtoAqua.Map {
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Services.Data.Profile.Map.setStationId(stationId);
+            Services.Data.Profile.Map.SetCurrentStationId(stationId);
             fadeRoutine.Replace(this, FadeRoutine());
         }
 
-        private IEnumerator FadeRoutine() {
-            yield return StateUtil.LoadSceneWithFader("Ship");
+        private IEnumerator FadeRoutine()
+        {
+            yield return StateUtil.LoadPreviousSceneWithWipe();
         }
 
     }

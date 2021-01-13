@@ -5,46 +5,87 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine.EventSystems;
 using Aqua;
+using System;
 
 namespace ProtoAqua.Ship
 {
-    public class Room : MonoBehaviour, IPointerClickHandler
+    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>
     {
-        [SerializeField] Transform m_NewCameraTransform = null;
-        [SerializeField] string m_SceneToLoad = null;
-        [SerializeField] bool updateSceneToLoad = false;
+        #region Inspector
 
+        [SerializeField] private SerializedHash32 m_Id = null;
+        
+        [Header("Camera Settings")]
+        [SerializeField, Required(ComponentLookupDirection.Self)] private Transform m_CameraTarget = null;
+        [SerializeField] private float m_CameraHeight = 10;
 
-        private Routine fadeRoutine;
+        [Header("Objects")]
+        [SerializeField] private ColorGroup m_RootRenderingGroup = null;
+        [SerializeField] private GameObject m_ScriptingGroup = null;
 
-        public void OnPointerClick(PointerEventData eventData)
+        #endregion // Inspector
+
+        [NonSerialized] private RoomLink[] m_Links;
+
+        #region KeyValue
+
+        StringHash32 IKeyValuePair<StringHash32, Room>.Key { get { return Id(); } }
+
+        Room IKeyValuePair<StringHash32, Room>.Value { get { return this; } }
+
+        #endregion // KeyValue
+
+        public StringHash32 Id() { return m_Id; }
+
+        public void Initialize()
         {
-            fadeRoutine.Replace(this, FadeRoutine());
+            m_Links = GetComponentsInChildren<RoomLink>(true);
+
+            Hide();
         }
 
-
-        private void MoveCameraToRoom()
+        public void Enter(Camera inCamera)
         {
-            Services.State.Camera.transform.SetPosition(new Vector3(m_NewCameraTransform.position.x, m_NewCameraTransform.position.y), Axis.XY, Space.World);
+            inCamera.transform.SetPosition(m_CameraTarget.position, Axis.XY);
+            
+            var fovPlane = inCamera.GetComponent<CameraFOVPlane>();
+            if (fovPlane != null)
+            {
+                fovPlane.Target = m_CameraTarget;
+                fovPlane.Height = m_CameraHeight;
+            }
+
+            Show();
         }
 
-        private IEnumerator FadeRoutine()
+        public void Exit()
         {
-            if (m_NewCameraTransform != null)
+            Hide();
+        }
+
+        private void Show()
+        {
+            if (m_RootRenderingGroup)
             {
-                yield return Services.UI.WorldFaders.FadeTransition(Color.white, 0.5f, 0.25f, MoveCameraToRoom);
+                m_RootRenderingGroup.Visible = true;
             }
-            else if (m_SceneToLoad != null)
+
+            if (m_ScriptingGroup)
             {
-                if (updateSceneToLoad)
-                {
-                    m_SceneToLoad = Services.Data.Profile.Map.getStationId();
-                }
-                yield return StateUtil.LoadSceneWithFader(m_SceneToLoad);
+                m_ScriptingGroup.gameObject.SetActive(true);
             }
-            else
+        }
+
+        private void Hide()
+        {
+            if (m_RootRenderingGroup)
             {
-                Debug.Log("New Camera Transform or Scene not defined");
+                m_RootRenderingGroup.Visible = false;
+            }
+
+            if (m_ScriptingGroup)
+            {
+                m_ScriptingGroup.gameObject.SetActive(false);
             }
         }
     }

@@ -38,11 +38,14 @@ namespace AquaAudio
 
         private void OnDisable()
         {
-            m_WaitRoutine.Stop();
-            if (m_BGM.Exists())
+            if (Services.Audio)
             {
-                m_BGM = default(AudioHandle);
-                Services.Audio.SetMusic(null, m_Crossfade);
+                m_WaitRoutine.Stop();
+                if (m_BGM.Exists() && Services.Audio.CurrentMusic().EventId() == m_EventId)
+                {
+                    m_BGM = default(AudioHandle);
+                    Services.Audio.SetMusic(null, m_Crossfade);
+                }
             }
         }
     }

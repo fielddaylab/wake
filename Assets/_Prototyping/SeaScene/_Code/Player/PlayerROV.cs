@@ -128,7 +128,7 @@ namespace ProtoAqua.Observation
 
         private void CheckInput()
         {
-            Transform lockOn = GetLockOn();
+            Vector3? lockOn = GetLockOn();
 
             m_Input.GenerateInput(m_Transform, lockOn, out m_LastInputData);
 
@@ -142,11 +142,22 @@ namespace ProtoAqua.Observation
             }
         }
 
-        private Transform GetLockOn()
+        private Vector3? GetLockOn()
         {
             ScannableRegion currentScan = m_Scanner.CurrentTarget();
             if (currentScan && currentScan.isActiveAndEnabled)
-                return currentScan.transform;
+            {
+                if (currentScan.LockToCursor())
+                {
+                    Vector3 pos = m_Scanner.CurrentTargetStartCursorPos();
+                    pos.z = m_Transform.position.z;
+                    return pos;
+                }
+                else
+                {
+                    return currentScan.transform.position;
+                }
+            }
 
             return null;
         }

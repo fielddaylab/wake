@@ -17,8 +17,7 @@ namespace ProtoAqua.Navigation
             List<ResearchSite> allSites = new List<ResearchSite>(4);
             inScene.Scene.GetAllComponents(true, allSites);
 
-            StringHash32 diveSite = Services.Data.GetVariable(GameVars.DiveSite).AsStringHash();
-            Services.Data.SetVariable(GameVars.DiveSite, null);
+            StringHash32 diveSite = Services.Data.PopVariable(GameVars.DiveSite).AsStringHash();
 
             var job = Services.Data.Profile.Jobs.CurrentJob;
 
