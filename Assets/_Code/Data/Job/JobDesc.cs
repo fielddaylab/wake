@@ -92,6 +92,18 @@ namespace Aqua
             return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
         }
 
+        //temporary function
+        public string GetRewardsStr()
+        {
+            string Rewards = CashReward().ToString();
+            Rewards = Rewards + " " + GearReward().ToString();
+            foreach (StringHash32 reward in ExtraRewards())
+            {
+                Rewards = Rewards + " " + reward.ToDebugString();
+            }
+            return Rewards;
+        }
+
         public int CashReward() { return m_CashReward; }
         public int GearReward() { return m_GearReward; }
         public IEnumerable<StringHash32> ExtraRewards()
