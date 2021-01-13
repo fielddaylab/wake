@@ -21,35 +21,35 @@ namespace Aqua
 
         // TODO: Tie some of this into StateMgr itself??
 
-        static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null)
+        static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadSceneWithWipe(string inSceneName, object inContext = null)
+        static public IEnumerator LoadSceneWithWipe(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithFader(object inContext = null)
+        static public IEnumerator LoadPreviousSceneWithFader(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithWipe(object inContext = null)
+        static public IEnumerator LoadPreviousSceneWithWipe(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
         }
 

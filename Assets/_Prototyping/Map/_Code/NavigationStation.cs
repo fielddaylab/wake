@@ -6,25 +6,29 @@ using UnityEngine.SceneManagement;
 using BeauRoutine;
 using BeauUtil;
 using Aqua;
+using ProtoCP;
 
 namespace ProtoAqua.Map {
 
-    public class NavigationStation : MonoBehaviour, IPointerClickHandler
+    public class NavigationStation : MonoBehaviour
     {
-        [SerializeField] string stationId = null;
+        [SerializeField] private string stationId = null;
+        [SerializeField] private Transform m_ShipMount = null;
+        [SerializeField] private PointerListener m_ClickZone = null;
 
         private Routine fadeRoutine;
 
-        public void OnPointerClick(PointerEventData eventData)
+        private void Awake()
         {
-            Services.Data.Profile.Map.SetCurrentStationId(stationId);
-            fadeRoutine.Replace(this, FadeRoutine());
+            m_ClickZone.onClick.AddListener(OnClick);
         }
 
-        private IEnumerator FadeRoutine()
-        {
-            yield return StateUtil.LoadPreviousSceneWithWipe();
-        }
+        public string Id() { return stationId; }
+        public Transform Mount() { return m_ShipMount; }
 
+        private void OnClick(PointerEventData eventData)
+        {
+            Services.State.FindManager<StationManager>().SetStation(stationId, m_ShipMount);
+        }
     }
 }

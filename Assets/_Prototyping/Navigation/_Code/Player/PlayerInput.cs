@@ -19,7 +19,7 @@ namespace ProtoAqua.Navigation
         //Returns 0 if no input
         public Vector2 GetDirection()
         {
-            if (this.IsInputEnabled && Input.GetMouseButton(0))
+            if (this.IsInputEnabled && Input.GetMouseButton(0) && !Services.Input.IsPointerOverUI())
             {
                 mousePosition = cameraController.ScreenToWorldOnPlane(Input.mousePosition, transform);
 
@@ -52,7 +52,7 @@ namespace ProtoAqua.Navigation
         public float GetSpeed(float minSpeed, float maxSpeed)
         {
             float speed = 0;
-            if (this.IsInputEnabled && Input.GetMouseButton(0))
+            if (this.IsInputEnabled && Input.GetMouseButton(0) && !Services.Input.IsPointerOverUI())
             {
                 Vector2 rawDirection = (mousePosition - transform.position);
                 speed = Mathf.Clamp(rawDirection.magnitude, minSpeed, maxSpeed);
@@ -63,7 +63,7 @@ namespace ProtoAqua.Navigation
 
         public float GetRotateAngle()
         {
-            if (this.IsInputEnabled && Input.GetMouseButton(0))
+            if (this.IsInputEnabled && Input.GetMouseButton(0) && !Services.Input.IsPointerOverUI())
             {
                 return AngleBetweenTwoPoints(transform.position, mousePosition);
             }
@@ -75,7 +75,7 @@ namespace ProtoAqua.Navigation
 
         float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
         {
-            return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+            return Mathf.Atan2(b.y - a.y, b.x - a.x) * Mathf.Rad2Deg;
         }
     }
 }

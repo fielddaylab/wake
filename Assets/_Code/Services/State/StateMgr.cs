@@ -188,6 +188,12 @@ namespace Aqua
                 Services.Input.PauseAll();
 
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
+                bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
+                if (bShowCutscene)
+                {
+                    Services.UI.ShowLetterbox();
+                }
+
                 if (bShowLoading)
                 {
                     yield return Services.UI.ShowLoadingScreen();
@@ -229,6 +235,10 @@ namespace Aqua
                 if (bShowLoading)
                 {
                     Services.UI.HideLoadingScreen();
+                }
+                if (bShowCutscene)
+                {
+                    Services.UI.HideLetterbox();
                 }
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
@@ -431,5 +441,6 @@ namespace Aqua
 
         NoLoadingScreen = 0x01,
         DoNotModifyHistory = 0x02,
+        Cutscene = 0x04,
     }
 }

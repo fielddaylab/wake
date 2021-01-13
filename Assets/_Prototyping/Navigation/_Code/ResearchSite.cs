@@ -10,17 +10,23 @@ namespace ProtoAqua.Navigation
 {
     public class ResearchSite : MonoBehaviour
     {
+        #region Inspector
+
         [SerializeField, Required] private string m_siteId;
         [SerializeField, Required] private string m_siteLabel;
 
+        #endregion // Inspector
+
         public string SiteId { get { return m_siteId; } }
 
-        private void OnTriggerEnter2D(Collider2D other) {
+        private void OnTriggerEnter2D(Collider2D other)
+        {
             Services.UI.FindPanel<UIController>().Display(m_siteLabel, m_siteId);
             // Debug.Log("Show Button");
         }
 
-        private void OnTriggerExit2D(Collider2D other) {
+        private void OnTriggerExit2D(Collider2D other)
+        {
             Services.UI.FindPanel<UIController>().Hide();
             // Debug.Log("Hide Button");
         }

@@ -2,28 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
+using System;
+using BeauUtil;
+using Aqua;
 
 namespace ProtoAqua.Navigation {
 public class PlayerAnimator : MonoBehaviour {
 
         [SerializeField] Transform boatRenderer = null;
+        [SerializeField] private Color m_DiveColor = Color.black;
 
         private Routine bobbingRoutine;
         private Routine drivingRoutine;
-        private bool isBobbing = false;
-        private bool isDriving = false;
 
-        // Start is called before the first frame update
-        void Start() {
-            
+        [NonSerialized] private bool isBobbing = false;
+        [NonSerialized] private bool isDriving = false;
+
+        private Routine m_DiveRoutine;
+
+        private void OnEnable()
+        {
+            Services.Events.Register(UIController.Event_Dive, StartDiving, this);
         }
 
-        // Update is called once per frame
-        void Update() {
-            
+        private void OnDisable()
+        {
+            Services.Events?.DeregisterAll(this);
         }
 
         public void HandleBobbing(Vector2 direction) {
+            if (m_DiveRoutine)
+                return;
+
             if(direction == Vector2.zero) {
                 StartBobbing();
                 StopDriving();
@@ -62,8 +72,25 @@ public class PlayerAnimator : MonoBehaviour {
                 isDriving = false;
             }
         }
-                
-                
+
+        private void StartDiving()
+        {
+            m_DiveRoutine.Replace(this, DiveRoutine());
+        }
+
+        private IEnumerator DiveRoutine()
+        {
+            ColorGroup group = boatRenderer.GetComponent<ColorGroup>();
+            CameraFOVPlane fovPlane = Services.State.Camera.GetComponent<CameraFOVPlane>();
+
+            yield return Routine.Combine(
+                boatRenderer.MoveTo(5, 3, Axis.Z, Space.Self).Ease(Curve.QuadIn),
+                Tween.Color(group.Color, m_DiveColor, group.SetColor, 3).Ease(Curve.QuadIn),
+                Tween.Float(fovPlane.Zoom, 3, (f) => fovPlane.Zoom = f, 3).Ease(Curve.QuadIn).DelayBy(0.5f)
+            );
+
+            yield return Routine.WaitForever();
+        }
 
         private IEnumerator BobbingRoutine() {
             while(isBobbing) {
