@@ -34,11 +34,15 @@ namespace ProtoAqua.JobBoard
         {
             if (Status.Equals(PlayerJobStatus.InProgress))
             {
-                SetText("Active"); // TODO : clean this to a dict or enum
+                SetText("In Progress"); // TODO : clean this to a dict or enum
             }
             else if (Status.Equals(PlayerJobStatus.Completed))
             {
                 SetText("Completed");
+            }
+            else if (Status.Equals(PlayerJobStatus.Active))
+            {
+                SetText("Active");
             }
             else
             {

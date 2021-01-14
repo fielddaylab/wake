@@ -122,6 +122,13 @@ namespace Aqua
         SideStory
     }
 
+    public enum DifficultyType : byte
+        {
+            Experimentation,
+            Modeling,
+            Argumentation
+        }
+
     [Flags]
     public enum JobDescFlags : uint
     {

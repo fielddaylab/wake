@@ -24,31 +24,28 @@ namespace ProtoAqua.JobBoard
 
         public PlayerJobStatus Status { get; set; }
 
-        public void SetupJob(JobDesc job)
+        public void SetupJob(JobDesc job, PlayerJob player)
         {
             Job = job;
             JobId = job.Id();
-            if (job.DescInProgressId() == null && job.DescCompletedId() == null)
+            if (player == null)
             {
                 Status = PlayerJobStatus.NotStarted;
             }
-            else if (job.DescCompletedId() == null)
-            {
-                Status = PlayerJobStatus.InProgress;
-            }
             else
             {
-                Status = PlayerJobStatus.Completed;
+                Status = player.Status();
             }
+
             SetJobName(job.NameId());
             SetReward(job.CashReward());
             SetIcon(job.Icon());
             return;
         }
 
-        public void SetJobName(StringHash32 Job) {
-            if(!Job.IsEmpty) {
-                JobName.SetText(Job);
+        public void SetJobName(StringHash32 jobName) {
+            if(!jobName.IsEmpty) {
+                JobName.SetText(jobName);
             }
             else {
                 JobName.SetText(StringHash32.Null);

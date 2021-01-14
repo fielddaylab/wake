@@ -69,6 +69,7 @@ namespace Aqua
     public enum PlayerJobStatus : byte
     {
         NotStarted,
+        Active,
         InProgress,
         Completed
     }
