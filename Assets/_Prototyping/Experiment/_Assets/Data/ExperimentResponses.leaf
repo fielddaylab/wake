@@ -133,7 +133,7 @@ $set kevin:experiment.notedTabletDamage = true
 @once
 @cutscene
 $set player:experiment.seenFoundationalIntro = true
-{@kevin}    A foundational tank, huh?
+{@kevin}    A behavior observation tank, huh?
             Guess we can look at what's inside.
 
 // Behavior Already Observed
@@ -238,12 +238,12 @@ $set temp:newObservationTimer = 0
 
 // On Complete
 
-:: attemptExit
-@trigger    ExperimentFinished
-@who        Kevin
-$if observed.behavior:Urchin.Eats.Kelp
-    $goto demo.experimentationExit
-$else
-    {@kevin}    I don't know if we got anything out of that experiment.
-    {@player}   Well, maybe I can set it up differently...
-$endif
+// :: attemptExit
+// @trigger    ExperimentFinished
+// @who        Kevin
+// $if observed.behavior:Urchin.Eats.Kelp
+//     $goto demo.experimentationExit
+// $else
+//     {@kevin}    I don't know if we got anything out of that experiment.
+//     {@player}   Well, maybe I can set it up differently...
+// $endif

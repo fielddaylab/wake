@@ -5,6 +5,7 @@ using BeauRoutine;
 using UnityEngine.SceneManagement;
 using Aqua;
 using BeauUtil;
+using System;
 
 namespace ProtoAqua.Navigation
 {
@@ -21,6 +22,8 @@ namespace ProtoAqua.Navigation
 
         #endregion // Inspector
 
+        [NonSerialized] private bool m_Allowed;
+
         public string SiteId { get { return m_siteId; } }
 
         public void CheckAllowed()
@@ -28,26 +31,42 @@ namespace ProtoAqua.Navigation
             var currentJob = Services.Data.CurrentJob()?.Job;
             if (currentJob != null && currentJob.UsesDiveSite(m_siteId))
             {
-                m_Collider.enabled = true;
+                m_Allowed = true;
                 m_RenderGroup.SetAlpha(1);
             }
             else
             {
-                m_Collider.enabled = false;
+                m_Allowed = false;
                 m_RenderGroup.SetAlpha(0.25f);
             }
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!m_Allowed)
+            {
+                using(var tempTable = Services.Script.GetTempTable())
+                {
+                    tempTable.Set("siteId", m_siteId);
+                    Services.Script.TriggerResponse("ResearchSiteLocked", "kevin", null, tempTable);
+                    return;
+                }
+            }
+
             Services.UI.FindPanel<UIController>().Display(m_siteLabel, m_siteId);
-            // Debug.Log("Show Button");
+             using(var tempTable = Services.Script.GetTempTable())
+            {
+                tempTable.Set("siteId", m_siteId);
+                Services.Script.TriggerResponse("ResearchSiteFound", "kevin");
+            }
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
+            if (!m_Allowed)
+                return;
+            
             Services.UI.FindPanel<UIController>().Hide();
-            // Debug.Log("Hide Button");
         }
     }
 

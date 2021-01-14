@@ -26,6 +26,23 @@ namespace Aqua
             }
         }
 
+        public bool HasUnstartedJobs()
+        {
+            var unstarted = UnstartedJobs().GetEnumerator();;
+            return unstarted.MoveNext();
+        }
+        
+        public bool IsAvailableAndUnstarted(StringHash32 inId)
+        {
+            foreach(var unstarted in UnstartedJobs())
+            {
+                if (unstarted.Id() == inId)
+                    return true;
+            }
+
+            return false;
+        }
+
         public IEnumerable<JobDesc> VisibleJobs()
         {
             var jobsData = Services.Data.Profile.Jobs;

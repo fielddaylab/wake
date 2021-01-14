@@ -14,5 +14,13 @@ namespace Aqua
         // session
         static public readonly TableKeyPair DiveSite = TableKeyPair.Parse("session:nav.diveSite");
         static public readonly TableKeyPair ShipRoom = TableKeyPair.Parse("session:nav.shipRoom");
+
+        // jobs
+        static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
+
+        // global
+        static public readonly TableKeyPair Weekday = TableKeyPair.Parse("date:weekday");
+        static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
+        static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
     }
 }

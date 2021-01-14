@@ -142,9 +142,11 @@ namespace Aqua
         {
             m_VariableResolver = new CustomVariantResolver();
 
-            m_VariableResolver.SetVar(new TableKeyPair("date", "weekday"), GetDayOfWeek);
-            m_VariableResolver.SetVar(new TableKeyPair("player", "gender"), GetPlayerGender);
-            m_VariableResolver.SetVar(new TableKeyPair("scene", "name"), GetSceneName);
+            m_VariableResolver.SetVar(GameVars.Weekday, GetDayOfWeek);
+            m_VariableResolver.SetVar(GameVars.SceneName, GetSceneName);
+
+            m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerGender);
+            m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -158,6 +160,12 @@ namespace Aqua
             m_VariableResolver.SetTableVar("observed.entity", (s) => inData.Bestiary.HasEntity(s));
             m_VariableResolver.SetTableVar("observed.behavior", (s) => inData.Bestiary.HasBaseFact(s));
             m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
+            m_VariableResolver.SetTableVar("job.isStarted", (s) => inData.Jobs.IsStarted(s));
+            m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
+            m_VariableResolver.SetTableVar("job.isComplete", (s) => inData.Jobs.IsComplete(s));
+            m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));
+            m_VariableResolver.SetTableVar("job.anyAvailable", (s) => Services.Assets.Jobs.HasUnstartedJobs());
+            m_VariableResolver.SetTableVar("job.anyInProgress", (s) => inData.Jobs.InProgressJobs().Length > 0);
         }
 
         #region Callbacks
@@ -201,6 +209,11 @@ namespace Aqua
         private Variant GetSceneName()
         {
             return SceneHelper.ActiveScene().Name;
+        }
+
+        private Variant GetJobId()
+        {
+            return Profile.Jobs.CurrentJobId;
         }
 
         #endregion // Callbacks

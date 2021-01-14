@@ -9,5 +9,6 @@ namespace Aqua
     {
         static public readonly StringHash32 RequestPartnerHelp = "RequestPartnerHelp";
         static public readonly StringHash32 SceneStart = "SceneStart";
+        static public readonly StringHash32 JobStarted = "JobStarted";
     }
 }

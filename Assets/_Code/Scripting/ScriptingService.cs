@@ -351,19 +351,19 @@ namespace Aqua
 
         #region Contexts
 
-        public TempAlloc<VariantTable> GetTempTable()
+        public TempVarTable GetTempTable()
         {
             var table = m_TablePool.TempAlloc();
             table.Object.Name = "temp";
-            return table;
+            return new TempVarTable(table);
         }
 
-        public TempAlloc<VariantTable> GetTempTable(VariantTable inBase)
+        public TempVarTable GetTempTable(VariantTable inBase)
         {
             var table = m_TablePool.TempAlloc();
             table.Object.Name = "temp";
             table.Object.Base = inBase;
-            return table;
+            return new TempVarTable(table);
         }
 
         #endregion // Contexts
