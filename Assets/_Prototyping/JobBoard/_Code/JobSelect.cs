@@ -73,7 +73,7 @@ namespace ProtoAqua.JobBoard
                 StatusJobButton.gameObject.SetActive(false);
                 return;
             }
-            
+
             StatusJobButton.gameObject.SetActive(true);
 
             if (jobButton.Status.Equals(PlayerJobStatus.NotStarted))
@@ -101,7 +101,7 @@ namespace ProtoAqua.JobBoard
             int i = 0;
             foreach (DifficultyType dtype in (DifficultyType[])Enum.GetValues(typeof(DifficultyType)))
             {
-                DifficultyList[i].DifficultySetup(job, dtype);
+                DifficultyList[i++].DifficultySetup(job, dtype);
             }
         }
 

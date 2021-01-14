@@ -150,6 +150,11 @@ namespace ProtoAqua.JobBoard
                 }
             }
 
+            for(; i < jButtons.Length; ++i)
+            {
+                jButtons[i].gameObject.SetActive(false);
+            }
+
         }
 
         private void UpdateButtonByStatus(StringHash32 JobId)

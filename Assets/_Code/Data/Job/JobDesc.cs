@@ -22,7 +22,7 @@ namespace Aqua
         [SerializeField] private SerializedHash32 m_DescCompletedId = null;
 
         [Header("Info")]
-        [SerializeField, Range(0, 4)] private int m_ExperimentDifficulty = 0;
+        [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ArgumentationDifficulty = 0;
 
@@ -41,7 +41,7 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private LeafAsset m_Script = null; // TODO: Load this!!!
+        [SerializeField] private LeafAsset m_Scripting = null; // TODO: Load this!!!
         [SerializeField] private string m_ArgumentationScriptId = null;
 
         #endregion // Inspector
@@ -102,7 +102,7 @@ namespace Aqua
         }
 
         public Sprite Icon() { return m_Icon; }
-        public LeafAsset Script() { return m_Script; }
+        public LeafAsset Scripting() { return m_Scripting; }
 
         public string ArgumentationScriptId() { return m_ArgumentationScriptId; }
     }
@@ -114,11 +114,11 @@ namespace Aqua
     }
 
     public enum DifficultyType : byte
-        {
-            Experimentation,
-            Modeling,
-            Argumentation
-        }
+    {
+        Experimentation,
+        Modeling,
+        Argumentation
+    }
 
     [Flags]
     public enum JobDescFlags : uint

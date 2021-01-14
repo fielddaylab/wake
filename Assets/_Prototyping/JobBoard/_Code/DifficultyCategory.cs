@@ -38,7 +38,7 @@ namespace ProtoAqua.JobBoard
                 Value = job.ExperimentDifficulty();
             }
             else {
-                Value = job.ArgumentationDifficulty();
+                Value = job.ModelingDifficulty();
             }
 
             int i = 0;
