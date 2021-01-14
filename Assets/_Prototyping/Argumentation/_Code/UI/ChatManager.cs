@@ -188,9 +188,10 @@ namespace ProtoAqua.Argumentation
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());
 
             NamedOption[] options = { new NamedOption("Continue") };
-            Services.UI.Popup.Present("Congratulations!", "End of conversation", options)
+            Services.UI.Popup.Present("Congratulations!", "Job complete!", options)
                 .OnComplete((s) => {
                     Services.Script.TriggerResponse("ArgumentationComplete");
+                    StateUtil.LoadPreviousSceneWithWipe();
                 });
         }
 
