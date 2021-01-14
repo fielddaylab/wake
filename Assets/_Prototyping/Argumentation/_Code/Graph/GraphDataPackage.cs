@@ -83,8 +83,7 @@ namespace ProtoAqua.Argumentation
                 return new GraphDataPackage(inFileName);
             }
 
-            public override bool TryCreateBlock(IBlockParserUtil inUtil, 
-            GraphDataPackage inPackage, TagData inId, out GraphData outBlock)
+            public override bool TryCreateBlock(IBlockParserUtil inUtil, GraphDataPackage inPackage, TagData inId, out GraphData outBlock)
             {
                 string id = inId.Id.ToString();
 
@@ -95,17 +94,17 @@ namespace ProtoAqua.Argumentation
                     inPackage.m_Nodes.Add(id, (Node)outBlock);
                     return true;
                 } 
-                else if (id.StartsWith("link"))
+                else //@TODO FIX
                 {
                     outBlock = new Link(id);
                     inPackage.m_Data.Add(id, outBlock);
                     inPackage.m_Links.Add(id, (Link)outBlock);
                     return true;
                 } 
-                else
-                {
-                    throw new System.ArgumentException("Invalid id format");
-                }
+                // else
+                // {
+                //     throw new System.ArgumentException("Invalid id format");
+                // }
             }
         }
 

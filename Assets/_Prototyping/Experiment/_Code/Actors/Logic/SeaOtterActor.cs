@@ -80,6 +80,9 @@ namespace ProtoAqua.Experiment
             foreach(var obj in m_FoodSense.SensedObjects)
             {
                 ICreature source = obj.Collider.GetComponentInParent<ICreature>();
+                if (source == null)
+                    continue;
+                
                 // if (source.EnergyRemaining <= 0)
                 //     continue;
                 Debug.Log("FOOD SOURCE FOR SEA OTTER" + source.Id);

@@ -52,6 +52,7 @@ namespace Aqua
             return m_AutoFacts.Contains(inFactId);
         }
 
+
         #endregion // Facts
 
         #region Internal

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aqua;
 using BeauPools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +16,6 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Graph m_Graph = null;
         [SerializeField] private GameObject m_LinkContainer = null;
         [SerializeField] private LinkPool m_LinkPool = null;
-        [SerializeField] private TypeManager m_TypeManager = null;
 
         [Header("Button Dependencies")]
         [SerializeField] private GameObject m_TagButtons = null;
@@ -31,9 +31,9 @@ namespace ProtoAqua.Argumentation
         {
             m_LinkPool.Initialize();
 
-            m_BehaviorsButton.onClick.AddListener(() => ToggleTabs("behavior"));
-            m_EcosystemsButton.onClick.AddListener(() => ToggleTabs("ecosystem"));
-            m_ModelsButton.onClick.AddListener(() => ToggleTabs("model"));
+            // m_BehaviorsButton.onClick.AddListener(() => ToggleTabs("behavior"));
+            // m_EcosystemsButton.onClick.AddListener(() => ToggleTabs("ecosystem"));
+            // m_ModelsButton.onClick.AddListener(() => ToggleTabs("model"));
 
             m_Graph.OnGraphLoaded += Init;
         }
@@ -44,14 +44,24 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary)
             {
                 Link currLink = link.Value;
-                CreateLink(currLink);
+                if(currLink.Tag == "claim") {
+                    CreateLink(currLink);
+                }
+                
             }
 
             //Show claims and hide rest of the tabs
             ToggleTabs("claim");
             ToggleType("claim");
-            m_TypeManager.SetupTagButtons(responses);
             HideTabs();
+        }
+
+        public GameObject ClickBestiaryLink(PlayerFactParams s) {
+            ChatBubble newLink = m_LinkPool.Alloc();
+            newLink.gameObject.SetActive(false);
+            newLink.InitializeLinkData(s.Fact.GenerateSentence());
+            return newLink.gameObject;
+
         }
 
         // Reset a given response once used. If the response isn't placed in the chat,
@@ -59,6 +69,7 @@ namespace ProtoAqua.Argumentation
         // reallocated by CreateLink
         public void ResetLink(GameObject gameObject, string linkId, bool delete)
         {
+            return;
             RemoveResponse(gameObject);
 
             if (delete)
@@ -119,8 +130,6 @@ namespace ProtoAqua.Argumentation
         // Show responses with a given tag and hide all other responses
         private void ToggleTabs(string tagToShow)
         {
-            m_TypeManager.ToggleButtons(tagToShow);
-
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
         }
 
@@ -128,7 +137,7 @@ namespace ProtoAqua.Argumentation
         {
             currentClaim = linkId;
             ShowTabs();
-            ToggleTabs("behavior");
+            m_LinkContainer.SetActive(false);
         }
 
         private void HideTabs()
@@ -140,5 +149,6 @@ namespace ProtoAqua.Argumentation
         {
             m_TagButtons.SetActive(true);
         }
+
     }
 }

@@ -28,10 +28,17 @@ namespace ProtoAqua.Argumentation
 
         protected override void Apply()
         {
+            if (m_Packages.Count >= m_DefaultAssets.Length)
+                return;
+            
             foreach (var asset in m_DefaultAssets)
             {
                 m_Packages.Add(asset.name, BlockParser.Parse(asset.name, asset.text, BlockParsingRules.Default, m_Generator));
             }
+        }
+
+        protected override void Remove()
+        {
         }
 
         #endregion // TweakAsset

@@ -57,6 +57,7 @@ namespace ProtoAqua.Argumentation
                 else if (isButton)
                 {
                     colorRoutine.Replace(this, OnPointerUpColorRoutine());
+                    Services.Events.Dispatch("OpenBestiaryWithFacts", eventData.pointerPress.gameObject);
                 }
 
             }

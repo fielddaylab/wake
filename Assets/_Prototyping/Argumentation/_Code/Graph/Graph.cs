@@ -6,10 +6,15 @@ using UnityEngine;
 
 namespace ProtoAqua.Argumentation
 {
-    public class Graph : MonoBehaviour, ISceneLoadHandler
+    public class Graph : MonoBehaviour, ISceneLoadHandler, ISceneUnloadHandler
     {
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
+
+
+        [Header("Debug Booleans")]
+        [SerializeField] private bool m_enableAllLinks = false;
+
 
         private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
         private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
@@ -47,22 +52,15 @@ namespace ProtoAqua.Argumentation
 
         #endregion // Accessors
 
-        // Load graph data, create nodes and links
-        private void Awake()
+        void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)
         {
-            Services.Tweaks.Load(m_GraphDataManager);
-
-            QueryParams queryParams = Services.Data.PeekQueryParams();
-            LoadGraph(queryParams?.Get("script") ?? "Dialogue3");
-        }
-
-        private void OnDestroy()
-        {
-            Services.Tweaks.Unload(m_GraphDataManager);
+            Services.Tweaks?.Unload(m_GraphDataManager);
         }
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            Services.Tweaks.Load(m_GraphDataManager);
+
             JobDesc currentJob = Services.Data.CurrentJob()?.Job;
             string scriptId = currentJob?.ArgumentationScriptId();
             if (!string.IsNullOrEmpty(scriptId))
@@ -156,7 +154,7 @@ namespace ProtoAqua.Argumentation
         private void LoadGraph(string packageName)
         {
             ResetGraph();
-            
+
             GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
 
             foreach (KeyValuePair<string, Node> kvp in data.Nodes)
@@ -183,13 +181,7 @@ namespace ProtoAqua.Argumentation
             {
                 throw new System.ArgumentNullException("No end node specified");
             }
-            
-            foreach (KeyValuePair<string, Link> kvp in data.Links)
-            {
-                Link link = kvp.Value;
-                link.InitializeLink();
-                linkDictionary.Add(link.Id, link);
-            }
+
 
             defaultInvalidNodeId = data.DefaultInvalidNodeId;
 
@@ -198,8 +190,25 @@ namespace ProtoAqua.Argumentation
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
 
+            LoadLinks(packageName);
+
             if (OnGraphLoaded != null)
                 OnGraphLoaded();
+        }
+
+        private void LoadLinks(string packageName)
+        {
+            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
+            DataService dataService = Services.Data;
+
+            foreach (KeyValuePair<string, Link> kvp in data.Links)
+            {
+                Link link = kvp.Value;
+                link.InitializeLink();
+                linkDictionary.Add(link.Id, link);
+
+            }
+
         }
     }
 }
