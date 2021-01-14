@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Aqua;
 using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
 {
-    public class Graph : MonoBehaviour
+    public class Graph : MonoBehaviour, ISceneLoadHandler
     {
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
@@ -18,6 +19,9 @@ namespace ProtoAqua.Argumentation
         private Node currentNode;
         private string endNodeId;
         private string defaultInvalidNodeId;
+
+        public event Action OnGraphLoaded;
+        public event Action OnGraphNotAvailable;
 
         #region Accessors
 
@@ -50,6 +54,26 @@ namespace ProtoAqua.Argumentation
 
             QueryParams queryParams = Services.Data.PeekQueryParams();
             LoadGraph(queryParams?.Get("script") ?? "Dialogue3");
+        }
+
+        private void OnDestroy()
+        {
+            Services.Tweaks.Unload(m_GraphDataManager);
+        }
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
+        {
+            JobDesc currentJob = Services.Data.CurrentJob()?.Job;
+            string scriptId = currentJob?.ArgumentationScriptId();
+            if (!string.IsNullOrEmpty(scriptId))
+            {
+                LoadGraph(scriptId);
+            }
+            else
+            {
+                if (OnGraphNotAvailable != null)
+                    OnGraphNotAvailable();
+            }
         }
 
         // Given a link id, check if that link is a valid response for the current node.
@@ -173,6 +197,9 @@ namespace ProtoAqua.Argumentation
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
+
+            if (OnGraphLoaded != null)
+                OnGraphLoaded();
         }
     }
 }

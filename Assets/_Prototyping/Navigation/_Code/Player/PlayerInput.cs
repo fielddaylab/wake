@@ -9,7 +9,6 @@ namespace ProtoAqua.Navigation
     {
 
         [SerializeField] CameraController cameraController = null;
-        [SerializeField] new Renderer renderer;
 
 
         private Vector3 mousePosition;

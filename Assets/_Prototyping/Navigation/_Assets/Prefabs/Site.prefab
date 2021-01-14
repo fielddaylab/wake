@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_siteId: SeaSceneTest
   m_siteLabel: Dive Site A
+  m_RenderGroup: {fileID: 2061489168406542508}
+  m_Collider: {fileID: 1010058476}
 --- !u!58 &1010058476
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -74,6 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2002412076520116921}
   - component: {fileID: 2260897166385891339}
+  - component: {fileID: 2061489168406542508}
   m_Layer: 0
   m_Name: Site
   m_TagString: Untagged
@@ -136,7 +139,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_Sprite: {fileID: 6915337729473998805, guid: 34c4d696d4ab04049a2489c02d21ef10,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.2509804}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -146,6 +149,39 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2061489168406542508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8203761366304421662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Renderer: {fileID: 2260897166385891339}
+  m_Graphic: {fileID: 0}
+  m_Visible: 1
+  m_Colors:
+    Main: {r: 1, g: 1, b: 1, a: 1}
+    Emissive: {r: 1, g: 1, b: 1, a: 1}
+    CustomA: {r: 1, g: 1, b: 1, a: 1}
+    CustomB: {r: 1, g: 1, b: 1, a: 1}
+    CustomC: {r: 1, g: 1, b: 1, a: 1}
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+  m_UseMainAlphaForVisibility: 1
+  m_MaterialConfig:
+    MainProperty:
+      Name: _Color
+      Source: 0
+      Multiplier: {r: 1, g: 1, b: 1, a: 1}
+      Enabled: 0
+    AdditionalProperties: []
+  m_EnableRaycastLayer: 0
+  m_DisableRaycastLayer: 2
 --- !u!1 &9210133416134554373
 GameObject:
   m_ObjectHideFlags: 0

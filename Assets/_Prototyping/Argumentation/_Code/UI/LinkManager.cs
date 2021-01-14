@@ -35,6 +35,11 @@ namespace ProtoAqua.Argumentation
             m_EcosystemsButton.onClick.AddListener(() => ToggleTabs("ecosystem"));
             m_ModelsButton.onClick.AddListener(() => ToggleTabs("model"));
 
+            m_Graph.OnGraphLoaded += Init;
+        }
+
+        private void Init()
+        {
             // Create links for each Link in the dictionary of the graph
             foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary)
             {

@@ -21,6 +21,11 @@ namespace ProtoAqua.Navigation
 
             var job = Services.Data.Profile.Jobs.CurrentJob;
 
+            foreach(var site in allSites)
+            {
+                site.CheckAllowed();
+            }
+
             if (!diveSite.IsEmpty)
             {
                 foreach(var site in allSites)

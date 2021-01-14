@@ -27,7 +27,9 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Color m_InvalidColor = Color.red;
         [SerializeField] private Color m_EndColor = Color.green;
 
-
+        [Header("Layers")]
+        [SerializeField] private Transform m_Group = null;
+        [SerializeField] private Transform m_NotAvailableGroup = null;
 
         private Routine invalidResponseRoutine;
 
@@ -37,11 +39,22 @@ namespace ProtoAqua.Argumentation
 
             Services.Events.Register<GameObject>("ArgumentationChatBubbleSelection", OnDrop, this);
 
+            m_Graph.OnGraphLoaded += Init;
+            m_Graph.OnGraphNotAvailable += NotAvailable;
+        }
 
+        private void Init()
+        {
             // Create the root node
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
             newNode.InitializeNodeData(m_Graph.RootNode.Id, m_Graph.RootNode.DisplayText);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+        }
+
+        private void NotAvailable()
+        {
+            m_Group.gameObject.SetActive(false);
+            m_NotAvailableGroup.gameObject.SetActive(true);
         }
 
         private void OnDestroy()

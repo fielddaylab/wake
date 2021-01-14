@@ -78,6 +78,11 @@ namespace Aqua
             return profile != null ? profile.Pronouns : Pronouns.Neutral;
         }
 
+        public PlayerJob CurrentJob()
+        {
+            return m_CurrentSaveData?.Jobs?.CurrentJob;
+        }
+
         #endregion // Save Data
 
         #region IService
