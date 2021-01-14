@@ -13,5 +13,6 @@ namespace Aqua
 
         // session
         static public readonly TableKeyPair DiveSite = TableKeyPair.Parse("session:nav.diveSite");
+        static public readonly TableKeyPair ShipRoom = TableKeyPair.Parse("session:nav.shipRoom");
     }
 }

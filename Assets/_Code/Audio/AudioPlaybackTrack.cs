@@ -251,6 +251,13 @@ namespace AquaAudio
                 yield return null;
         }
 
+        internal StringHash32 EventId()
+        {
+            if (m_CurrentEvent != null)
+                return m_CurrentEvent.Id();
+            return StringHash32.Null;
+        }
+
         internal bool IsEvent(AudioEvent inEvent)
         {
             return m_CurrentEvent == inEvent;

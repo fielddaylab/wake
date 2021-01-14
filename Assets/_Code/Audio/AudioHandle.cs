@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BeauRoutine;
+using BeauUtil;
 
 namespace AquaAudio
 {
@@ -116,6 +117,14 @@ namespace AquaAudio
             }
 
             return m_Track;
+        }
+
+        public StringHash32 EventId()
+        {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null))
+                return track.EventId();
+            return StringHash32.Null;
         }
 
         #endregion // Checks

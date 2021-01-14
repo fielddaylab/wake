@@ -26,9 +26,9 @@ namespace Aqua
         [NonSerialized] private Camera m_MainCamera;
 
         private VariantTable m_TempSceneTable;
-        private VariantTable m_SessionTable;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
+        private Dictionary<StringHash32, SharedManager> m_SharedManagers;
 
         public Camera Camera { get { return m_MainCamera; } }
 
@@ -188,6 +188,12 @@ namespace Aqua
                 Services.Input.PauseAll();
 
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
+                bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
+                if (bShowCutscene)
+                {
+                    Services.UI.ShowLetterbox();
+                }
+
                 if (bShowLoading)
                 {
                     yield return Services.UI.ShowLoadingScreen();
@@ -229,6 +235,10 @@ namespace Aqua
                 if (bShowLoading)
                 {
                     Services.UI.HideLoadingScreen();
+                }
+                if (bShowCutscene)
+                {
+                    Services.UI.HideLetterbox();
                 }
 
                 Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
@@ -327,6 +337,75 @@ namespace Aqua
 
         #endregion // Scripting
 
+        #region Additional Managers
+
+        public void RegisterManager(SharedManager inManager)
+        {
+            Type t = inManager.GetType();
+            StringHash32 key = t.FullName;
+
+            SharedManager manager;
+            if (m_SharedManagers.TryGetValue(key, out manager))
+            {
+                if (manager != inManager)
+                    throw new ArgumentException(string.Format("Manager with type {0} already exists", t.FullName), "inManager");
+
+                return;
+            }
+
+            m_SharedManagers.Add(key, inManager);
+        }
+
+        public void DeregisterManager(SharedManager inManager)
+        {
+            Type t = inManager.GetType();
+            StringHash32 key = t.FullName;
+
+            SharedManager manager;
+            if (m_SharedManagers.TryGetValue(key, out manager) && manager == inManager)
+            {
+                m_SharedManagers.Remove(key);
+            }
+        }
+
+        public T FindManager<T>() where T : SharedManager
+        {
+            StringHash32 key = typeof(T).FullName;
+            SharedManager manager;
+            if (!m_SharedManagers.TryGetValue(key, out manager))
+            {
+                manager = FindObjectOfType<T>();
+                if (manager != null)
+                {
+                    RegisterManager(manager);
+                }
+            }
+            return (T) manager;
+        }
+
+        #endregion // Additional Managers
+
+        private void CleanupFromScene(SceneBinding inBinding, object inContext)
+        {
+            int removedManagerCount = 0;
+            using(PooledList<SharedManager> sharedManagers = PooledList<SharedManager>.Create(m_SharedManagers.Values))
+            {
+                foreach(var manager in sharedManagers)
+                {
+                    if (manager.gameObject.scene == inBinding.Scene)
+                    {
+                        DeregisterManager(manager);
+                        ++removedManagerCount;
+                    }
+                }
+            }
+
+            if (removedManagerCount > 0)
+            {
+                Debug.LogWarningFormat("[StateMgr] Unregistered {0} shared managers that were not deregistered at scene unload", removedManagerCount);
+            }
+        }
+
         #region IService
 
         protected override void OnRegisterService()
@@ -334,19 +413,12 @@ namespace Aqua
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
 
-            m_SessionTable = new VariantTable("session");
+            m_SharedManagers = new Dictionary<StringHash32, SharedManager>(8);
         }
 
         protected override void OnDeregisterService()
         {
-            m_SessionTable.Clear();
-
             m_SceneLoadRoutine.Stop();
-        }
-
-        protected override void AfterRegisterService()
-        {
-            Services.Data.BindTable("session", m_SessionTable);
         }
 
         protected override bool IsLoading()
@@ -369,5 +441,6 @@ namespace Aqua
 
         NoLoadingScreen = 0x01,
         DoNotModifyHistory = 0x02,
+        Cutscene = 0x04,
     }
 }

@@ -42,6 +42,7 @@ namespace Aqua
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private LeafAsset m_Script = null;
+        [SerializeField] private string m_ArgumentationScriptId = null;
 
         #endregion // Inspector
 
@@ -80,7 +81,7 @@ namespace Aqua
 
             if (!string.IsNullOrEmpty(m_StationId))
             {
-                if (map.getStationId() != m_StationId)
+                if (map.CurrentStationId() != m_StationId)
                     return false;
             }
 
@@ -114,6 +115,8 @@ namespace Aqua
 
         public Sprite Icon() { return m_Icon; }
         public LeafAsset Script() { return m_Script; }
+
+        public string ArgumentationScriptId() { return m_ArgumentationScriptId; }
     }
 
     public enum JobCategory

@@ -16,21 +16,53 @@ namespace Aqua
     static public class StateUtil
     {
         private const float FadeDuration = 0.25f;
+        private const float PauseDuration = 0.15f;
+        private const string DefaultBackScene = "Ship";
 
-        static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null)
+        // TODO: Tie some of this into StateMgr itself??
+
+        static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
-            Services.Audio.FadeOut(FadeDuration);
-            return Services.UI.WorldFaders.FadeTransition(Color.white, FadeDuration, 0,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen)).Then(() => Services.Audio.FadeIn(FadeDuration))
+            BeforeLoad();
+            return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithFader(object inContext = null)
+        static public IEnumerator LoadSceneWithWipe(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
-            Services.Audio.FadeOut(FadeDuration);
-            return Services.UI.WorldFaders.FadeTransition(Color.white, FadeDuration, 0,
-                () => Sequence.Create(Services.State.LoadPreviousScene(null, inContext, SceneLoadFlags.NoLoadingScreen)).Then(() => Services.Audio.FadeIn(FadeDuration))
+            BeforeLoad();
+            return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
             );
+        }
+
+        static public IEnumerator LoadPreviousSceneWithFader(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            BeforeLoad();
+            return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
+            );
+        }
+
+        static public IEnumerator LoadPreviousSceneWithWipe(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            BeforeLoad();
+            return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, SceneLoadFlags.NoLoadingScreen | inFlags)).Then(AfterLoad)
+            );
+        }
+
+        static private void BeforeLoad()
+        {
+            Services.Input.PauseAll();
+            Services.Audio.FadeOut(FadeDuration);
+        }
+
+        static private void AfterLoad()
+        {
+            Services.Audio.FadeIn(FadeDuration);
+            Services.Input.ResumeAll();
         }
     }
 }

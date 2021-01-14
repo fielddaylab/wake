@@ -16,12 +16,6 @@ namespace ProtoAqua.Navigation {
         [SerializeField] float minSpeed = 2;
         [SerializeField] float maxSpeed = 10;
 
-
-        // Start is called before the first frame update
-        void Start() {
-            
-        }
-
         // Update is called once per frame
         void FixedUpdate() {
             MovePlayer();

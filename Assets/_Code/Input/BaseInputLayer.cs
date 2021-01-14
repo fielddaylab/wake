@@ -165,7 +165,7 @@ namespace Aqua
             if (!inbForce && !bChanged)
                 return;
 
-            Debug.LogFormat("[BaseInputLayer] Set Input Enabled state on '{0}' to {1}", gameObject.FullPath(true), bDesiredState);
+            // Debug.LogFormat("[BaseInputLayer] Set Input Enabled state on '{0}' to {1}", gameObject.FullPath(true), bDesiredState);
 
             m_LastKnownState = bDesiredState;
             SyncEnabled(m_LastKnownState);

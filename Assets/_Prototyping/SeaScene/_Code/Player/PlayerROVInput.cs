@@ -35,7 +35,7 @@ namespace ProtoAqua.Observation
 
         #region Input Generation
 
-        public void GenerateInput(Transform inPlayerTransform, Transform inLockOn, out PlayerROV.InputData outInputData)
+        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, out PlayerROV.InputData outInputData)
         {
             if (!IsInputEnabled)
             {
@@ -45,9 +45,9 @@ namespace ProtoAqua.Observation
 
             bool bAllowLeftClick = !Services.Input.IsPointerOverUI();
 
-            if (inLockOn)
+            if (inLockOn.HasValue)
             {
-                outInputData.Target = ObservationServices.Camera.GameplayPlanePosition(inLockOn);
+                outInputData.Target = ObservationServices.Camera.GameplayPlanePosition(inLockOn.Value);
             }
             else
             {

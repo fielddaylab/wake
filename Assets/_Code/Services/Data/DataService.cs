@@ -27,6 +27,7 @@ namespace Aqua
 
         [NonSerialized] private SaveData m_CurrentSaveData = new SaveData();
         [NonSerialized] private QueryParams m_QueryParams;
+        [NonSerialized] private VariantTable m_SessionTable;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
 
@@ -77,6 +78,11 @@ namespace Aqua
             return profile != null ? profile.Pronouns : Pronouns.Neutral;
         }
 
+        public PlayerJob CurrentJob()
+        {
+            return m_CurrentSaveData?.Jobs?.CurrentJob;
+        }
+
         #endregion // Save Data
 
         #region IService
@@ -93,6 +99,9 @@ namespace Aqua
             RetrieveQueryParams();
 
             HookSaveDataToVariableResolver(m_CurrentSaveData);
+
+            m_SessionTable = new VariantTable("session");
+            BindTable("session", m_SessionTable);
         }
 
         protected override void OnDeregisterService()
