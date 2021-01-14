@@ -4,6 +4,9 @@ using BeauPools;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using BeauUtil;
+using BeauRoutine;
+using System.Collections;
 
 namespace ProtoAqua.Experiment
 {
@@ -36,6 +39,17 @@ namespace ProtoAqua.Experiment
                 var behavior = Services.Assets.Bestiary.Fact(behaviorId);
                 m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
             }
+
+            // HACKS
+            Routine.Start(this, ForceLayoutCorrectHACK());
+        }
+
+        private IEnumerator ForceLayoutCorrectHACK()
+        {
+            var layout = m_BehaviorDisplayPool.DefaultSpawnTransform.GetComponent<LayoutGroup>();
+            layout.enabled = false;
+            yield return null;
+            layout.enabled = true;
         }
     }
 }
