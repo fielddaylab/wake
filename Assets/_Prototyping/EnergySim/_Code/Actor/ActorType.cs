@@ -1,4 +1,5 @@
 using System;
+using Aqua;
 using BeauData;
 using BeauPools;
 using BeauUtil;
@@ -7,7 +8,7 @@ using UnityEngine;
 namespace ProtoAqua.Energy
 {
     [CreateAssetMenu(menuName = "Aqualab/Energy/Actor Type")]
-    public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>, ICopyCloneable<ActorType>
+    public class ActorType : ScriptableObject, ISimType<ActorType>, IKeyValuePair<FourCC, ActorType>, ICopyCloneable<ActorType>, IFactVisitor
     {
         #region Types
 
@@ -599,86 +600,54 @@ namespace ProtoAqua.Energy
 
         #endregion // Unity Events
     
-        #region Access by Name
+        #region IFactVisitor
 
-        public bool TryGetProperty(StringSlice inPath, out float outValue)
+        void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
         {
-            if (inPath == "lifecycle/growthInterval")
-            {
-                outValue = m_GrowthSettings.Interval;
-                return true;
-            }
-
-            if (inPath == "lifecycle/reproInterval")
-            {
-                outValue = m_ReproductionSettings.Interval;
-                return true;
-            }
-
-            if (inPath == "lifecycle/deathAge")
-            {
-                outValue = m_DeathSettings.Age;
-                return true;
-            }
-
-            if (inPath.StartsWith("eating"))
-            {
-                StringSlice idSlice = inPath.Substring(7);
-                FourCC id = new FourCC(idSlice.ToString());
-                for(int i = 0; i < m_EatingSettings.EdibleActors.Length; ++i)
-                {
-                    if (m_EatingSettings.EdibleActors[i].ActorType == id)
-                    {
-                        outValue = m_EatingSettings.EdibleActors[i].Rate;
-                        return true;
-                    }
-                }
-            }
-
-            outValue = 0;
-            return false;
+            throw new NotImplementedException();
         }
 
-        public bool TrySetProperty(StringSlice inPath, float inValue)
+        void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
         {
-            if (inPath == "lifecycle/growthInterval")
-            {
-                m_GrowthSettings.Interval = (ushort) inValue;
-                return true;
-            }
-
-            if (inPath == "lifecycle/reproInterval")
-            {
-                m_ReproductionSettings.Interval = (ushort) inValue;
-                return true;
-            }
-
-            if (inPath == "lifecycle/deathAge")
-            {
-                m_DeathSettings.Age = (ushort) inValue;
-                return true;
-            }
-
-            if (inPath.StartsWith("eating"))
-            {
-                StringSlice idSlice = inPath.Substring(7);
-                FourCC id = new FourCC(idSlice.ToString());
-                for(int i = 0; i < m_EatingSettings.EdibleActors.Length; ++i)
-                {
-                    if (m_EatingSettings.EdibleActors[i].ActorType == id)
-                    {
-                        m_EatingSettings.EdibleActors[i].Rate = inValue;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            throw new NotImplementedException();
         }
 
-        static private readonly char[] PathSplitChars = new char[] { '/' };
+        void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
 
-        #endregion // Access by Name
+        void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion // IFactVisitor
     }
 
     [LabeledEnum, Flags]

@@ -13,7 +13,6 @@ namespace ProtoAqua.Energy
 
         [Header("Tabs")]
         [SerializeField] private EditPanelTab[] m_Tabs = null;
-        [SerializeField] private EditPanelTabRules m_RulesTab = null;
 
         [Header("Buttons")]
         [SerializeField] private Button m_ResumeButton = null;
@@ -86,10 +85,6 @@ namespace ProtoAqua.Energy
 
         private void HandleRuleRegen()
         {
-            if (!m_RulesTab.gameObject.activeSelf)
-            {
-                m_RulesTab.Initialize(m_Scenario, m_Database, HandleRuleRegen, HandleScenarioChanged);
-            }
             HandleScenarioChanged();
         }
 
@@ -103,8 +98,6 @@ namespace ProtoAqua.Energy
         {
             if (!m_RegenScenarioRulesRequested)
                 return;
-
-            m_Scenario.CalculateRuleDeltas(m_Database);
 
             m_RegenScenarioRulesRequested = false;
         }

@@ -154,6 +154,8 @@ namespace ProtoAqua.Argumentation
         // Display a popup indicating that the end of the conversation has been reached
         private void EndConversationPopup()
         {
+            Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());
+
             NamedOption[] options = { new NamedOption("Continue") };
             Services.UI.Popup.Present("Congratulations!", "End of conversation", options)
                 .OnComplete((s) => {

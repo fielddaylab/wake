@@ -17,7 +17,18 @@ namespace Aqua
             m_JobId = inJobId;
         }
 
-        public StringHash32 JobId { get { return m_JobId; } }
+        public StringHash32 JobId
+        {
+            get { return m_JobId; }
+            private set
+            {
+                if (m_JobId != null)
+                {
+                    m_JobId = value;
+                    m_CachedJob = null;
+                }
+            }
+        }
         public JobDesc Job
         {
             get
@@ -33,19 +44,56 @@ namespace Aqua
 
         public PlayerJobStatus Status() { return m_Status; }
 
-        public bool IsInProgress()
+        public bool IsStarted()
         {
-            return m_Status == PlayerJobStatus.InProgress;
+            return m_Status != PlayerJobStatus.NotStarted;
         }
 
-        public void Reset()
+        public bool IsInProgress()
+        {
+            return m_Status == PlayerJobStatus.InProgress || m_Status == PlayerJobStatus.Active;
+        }
+
+        public bool IsActive()
+        {
+            return m_Status == PlayerJobStatus.Active;
+        }
+
+        public bool IsComplete()
+        {
+            return m_Status == PlayerJobStatus.Completed;
+        }
+
+        internal void Reset()
         {
             m_Status = PlayerJobStatus.InProgress;
         }
 
-        public bool Begin()
+        internal bool Begin()
         {
             if (m_Status == PlayerJobStatus.NotStarted)
+            {
+                m_Status = PlayerJobStatus.Active;
+                return true;
+            }
+
+            return false;
+        }
+
+        internal bool SetAsActive()
+        {
+            if (m_Status == PlayerJobStatus.InProgress)
+            {
+                m_Status = PlayerJobStatus.Active;
+                return true;
+            }
+
+            return false;
+        }
+
+        internal bool SetAsNotActive()
+        {
+            if (m_Status == PlayerJobStatus.Active)
             {
                 m_Status = PlayerJobStatus.InProgress;
                 return true;
@@ -54,9 +102,9 @@ namespace Aqua
             return false;
         }
 
-        public bool Complete()
+        internal bool Complete()
         {
-            if (m_Status == PlayerJobStatus.InProgress)
+            if (m_Status == PlayerJobStatus.InProgress || m_Status == PlayerJobStatus.Active)
             {
                 m_Status = PlayerJobStatus.Completed;
                 return true;
@@ -64,13 +112,20 @@ namespace Aqua
 
             return false;
         }
+
+        internal void SetAsTemp(StringHash32 inHash32, PlayerJobStatus inStatus)
+        {
+            m_Status = inStatus;
+            m_JobId = inHash32;
+            m_CachedJob = null;
+        }
     }
 
     public enum PlayerJobStatus : byte
     {
         NotStarted,
-        Active,
         InProgress,
+        Active,
         Completed
     }
 }

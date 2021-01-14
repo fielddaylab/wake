@@ -41,7 +41,7 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private LeafAsset m_Script = null;
+        [SerializeField] private LeafAsset m_Script = null; // TODO: Load this!!!
         [SerializeField] private string m_ArgumentationScriptId = null;
 
         #endregion // Inspector
@@ -91,18 +91,6 @@ namespace Aqua
         public bool UsesDiveSite(string inDiveSiteId)
         {
             return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
-        }
-
-        //temporary function
-        public string GetRewardsStr()
-        {
-            string Rewards = CashReward().ToString();
-            Rewards = Rewards + " " + GearReward().ToString();
-            foreach (StringHash32 reward in ExtraRewards())
-            {
-                Rewards = Rewards + " " + reward.ToDebugString();
-            }
-            return Rewards;
         }
 
         public int CashReward() { return m_CashReward; }

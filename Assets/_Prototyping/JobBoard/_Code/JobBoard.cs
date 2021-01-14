@@ -139,24 +139,23 @@ namespace ProtoAqua.JobBoard
             }
 
             int i = 0;
-            foreach (JobDesc job in Services.Assets.Jobs.Objects)
+            foreach (JobDesc job in Services.Assets.Jobs.VisibleJobs())
             {
                 Jobs.Add(job);
 
                 if (job.ShouldBeAvailable())
                 {
-                    
                     jButtons[i].SetupJob(job, Services.Data.Profile.Jobs.GetProgress(job.Id()));
-                    // jButtons[i].GetTransform().gameObject.SetActive(false);
+                    i++;
                 }
-                i++;
             }
 
         }
 
         private void UpdateButtonByStatus(StringHash32 JobId)
         {
-            PlayerJobStatus currStatus = CurrentJob.GetJobButton().Status;
+            PlayerJobStatus currStatus = Services.Data.Profile.Jobs.GetProgress(JobId).Status();
+            StringHash32 currentJobId = Services.Data.CurrentJob()?.JobId ?? StringHash32.Null;
             foreach (JobButton jobButton in JobButtons)
             {
                 if (jobButton.JobId.Equals(JobId))
@@ -164,40 +163,15 @@ namespace ProtoAqua.JobBoard
                     if (currStatus.Equals(PlayerJobStatus.NotStarted))
                     {
                         jobButton.Status = PlayerJobStatus.Active;
+                        Services.Data.Profile.Jobs.SetCurrentJob(JobId);
                     }
-                    else if (currStatus.Equals(PlayerJobStatus.Active))
+                    else if (currStatus.Equals(PlayerJobStatus.InProgress))
                     {
-                        jobButton.Status = PlayerJobStatus.InProgress;
+                        jobButton.Status = PlayerJobStatus.Active;
+                        Services.Data.Profile.Jobs.SetCurrentJob(JobId);
                     }
-                    
                 }
-                else if (jobButton.JobId.Equals(JobId) && currStatus.Equals(PlayerJobStatus.NotStarted))
-                {
-                    jobButton.Status = PlayerJobStatus.Active;
-                }
-            }
-
-            UpdateJobOrders();
-        }
-
-        private void AcceptAvailableJob(StringHash32 JobId)
-        {
-            foreach (JobButton jobButton in JobButtons)
-            {
-                if (jobButton.JobId.Equals(JobId) && jobButton.Status.Equals(PlayerJobStatus.NotStarted))
-                {
-                    jobButton.Status = PlayerJobStatus.InProgress;
-                }
-            }
-
-            UpdateJobOrders();
-        }
-
-        private void ActivateActiveJob(StringHash32 JobId)
-        {
-            foreach (JobButton jobButton in JobButtons)
-            {
-                if (jobButton.JobId.Equals(JobId) && jobButton.Status.Equals(PlayerJobStatus.Active))
+                else if (jobButton.JobId == currentJobId)
                 {
                     jobButton.Status = PlayerJobStatus.InProgress;
                 }
@@ -386,36 +360,21 @@ namespace ProtoAqua.JobBoard
         private void UpdateJobOrders() { // TODO : change to PlayerJobList
 
             int siblingIdx = 0;
-
-            //1. Reorder active jobs
-            PlayerJobStatus status = PlayerJobStatus.InProgress;
-            List<JobButton> inProgressJobs = GetJobButtonsByStatus(status);
-            // activeJobs.Sort(SortByJobOrder);
-            siblingIdx = UpdateHeaderText(status, siblingIdx);
-            siblingIdx = UpdateJobList(inProgressJobs, siblingIdx);
-
-            status = PlayerJobStatus.Active;
-            List<JobButton> activeJobs = GetJobButtonsByStatus(status);
-            // activeJobs.Sort(SortByJobOrder);
-            siblingIdx = UpdateHeaderText(status, siblingIdx);
-            siblingIdx = UpdateJobList(activeJobs, siblingIdx);
-
-            //2. Reorder Available jobs
-            status = PlayerJobStatus.NotStarted;
-            List<JobButton> availableJobs = GetJobButtonsByStatus(status);
-            // availableJobs.Sort(SortByJobOrder);
-            siblingIdx = UpdateHeaderText(status, siblingIdx);
-            siblingIdx = UpdateJobList(availableJobs, siblingIdx);
-
-            //3. Reorder Completed Jobs
-            status = PlayerJobStatus.Completed;
-            List<JobButton> completedJobs = GetJobButtonsByStatus(status);
-            // completedJobs.Sort(SortByJobOrder);
-            siblingIdx = UpdateHeaderText(status, siblingIdx);
-            siblingIdx = UpdateJobList(completedJobs, siblingIdx);
+            
+            ReorderJobs(PlayerJobStatus.Active, ref siblingIdx);
+            ReorderJobs(PlayerJobStatus.InProgress, ref siblingIdx);
+            ReorderJobs(PlayerJobStatus.NotStarted, ref siblingIdx);
+            ReorderJobs(PlayerJobStatus.Completed, ref siblingIdx);
 
             CurrentJob.SetupStatusButton();
 
+        }
+
+        private void ReorderJobs(PlayerJobStatus status, ref int siblingIdx)
+        {
+            List<JobButton> jobs = GetJobButtonsByStatus(status);
+            siblingIdx = UpdateHeaderText(status, siblingIdx);
+            siblingIdx = UpdateJobList(jobs, siblingIdx);
         }
 
         //Sorts job order
@@ -538,6 +497,7 @@ namespace ProtoAqua.JobBoard
         {
             SetupButtons(JobButtons);
             SetupHeaders(Headers);
+            UpdateJobOrders();
         }
         //old
 

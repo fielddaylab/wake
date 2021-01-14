@@ -68,13 +68,19 @@ namespace ProtoAqua.JobBoard
 
         public void SetupStatusButton()
         {
+            if (jobButton == null)
+            {
+                StatusJobButton.gameObject.SetActive(false);
+                return;
+            }
+            
             StatusJobButton.gameObject.SetActive(true);
 
             if (jobButton.Status.Equals(PlayerJobStatus.NotStarted))
             {
                 StatusJobButtonText.SetText("Accept");
             }
-            else if (jobButton.Status.Equals(PlayerJobStatus.Active))
+            else if (jobButton.Status.Equals(PlayerJobStatus.InProgress))
             {
                 StatusJobButtonText.SetText("Set As Active");
             }

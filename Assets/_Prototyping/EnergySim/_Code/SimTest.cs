@@ -62,8 +62,6 @@ namespace ProtoAqua.Energy
 
             m_DatabaseOverride = new SimDatabaseOverride(m_BaseDatabase);
 
-            m_ScenarioPackage.ApplyRules(m_DatabaseOverride);
-
             display.Menus.Initialize(m_ScenarioPackage, m_DatabaseOverride);
             display.Rules.Populate(m_ScenarioPackage, m_DatabaseOverride);
 
@@ -111,7 +109,6 @@ namespace ProtoAqua.Energy
             m_QueuedReset = false;
             m_QueuedRuleRegen = false;
 
-            m_ScenarioPackage.ApplyRules(m_DatabaseOverride);
             display.Rules.Populate(m_ScenarioPackage, m_DatabaseOverride);
 
             sim.Setup(ref simContext);
