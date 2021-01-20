@@ -83,7 +83,8 @@ namespace ProtoAqua.Argumentation
 
             if (currentNode.CheckResponse(id))
             {
-                string nextNodeId = response.GetNextNodeId(currentNode.Id);
+                //string nextNodeId = response.GetNextNodeId(currentNode.Id);
+                string nextNodeId = currentNode.GetNextNodeId(id);
                 Node nextNode = FindNode(nextNodeId);
 
                 if (nextNode != null)

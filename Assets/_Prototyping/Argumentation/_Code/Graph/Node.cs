@@ -1,19 +1,29 @@
 ﻿using System.Collections.Generic;
 using BeauUtil.Blocks;
+using UnityEngine.Scripting;
+
 
 namespace ProtoAqua.Argumentation
 {
     public class Node : GraphData
     {
         private List<string> responses = new List<string>();
+        private Dictionary<string, string> linkToNodeIds = new Dictionary<string, string>();
 
         #region Serialized
+
+        private List<string> m_InLinkToNodeIds = new List<string>();
 
         // Ids
         [BlockMeta("defaultNodeId")] private string m_DefaultNodeId = "node.default";
         [BlockMeta("responseIds")] private string m_ResponseIds = null;
         [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
         [BlockMeta("nextNodeId")] private string m_NextNodeId = null;
+        [BlockMeta("linkToNode"), Preserve]
+        private void AddNextNodeIds(string line)
+        {
+            m_InLinkToNodeIds.Add(line);
+        }
 
         // Text
         [BlockContent] private string m_DisplayText = null;
@@ -52,10 +62,20 @@ namespace ProtoAqua.Argumentation
 
         public void InitializeNode()
         {
+            ParseLinkToNodeIds(m_InLinkToNodeIds);
             if (m_ResponseIds != null)
             {
                 ParseResponses(m_ResponseIds);
             }
+        }
+
+        public string GetNextNodeId(string id) {
+            if (linkToNodeIds.TryGetValue(id, out string nextNodeId))
+            {
+                return nextNodeId;
+            }
+
+            return null;
         }
 
         // Checks if a given link id is a valid response to this node
@@ -80,6 +100,17 @@ namespace ProtoAqua.Argumentation
             {
                 responses.Add(response.Trim());
             }
+        }
+
+        private void ParseLinkToNodeIds(List<string> inLinkToNodeIds) {
+            linkToNodeIds = new Dictionary<string, string>();
+            foreach (string ids in inLinkToNodeIds)
+            {
+                string[] parsedIds = ids.Split(',');
+                linkToNodeIds.Add(parsedIds[0], parsedIds[1].Trim());
+            }
+            
+
         }
     }
 }

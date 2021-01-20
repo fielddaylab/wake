@@ -119,12 +119,6 @@ namespace ProtoAqua.Argumentation
             Node nextNode = m_Graph.NextNode(linkId);
             Link currentLink = m_Graph.FindLink(linkId);
 
-            Debug.Log("TEST!!!");
-            Debug.Log(linkId);
-            Debug.Log(currentLink);
-
-
-
             //CheckConditionsMet(nextNode, currentLink);
 
             // Create the node bubble, and set its properties

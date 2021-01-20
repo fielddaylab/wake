@@ -44,21 +44,28 @@ So what does that have to do with otters?
 
 :: node.intro
 @responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
+@linkToNode link.OtterHelpKelp, node.OtterHelpKelpInquery
+@linkToNode link.UrchinsCantSurvive, node.UrchinsCantSurviveInquery
 So what's going on?
 
 :: node.OtterHelpKelpInquery
 @invalidNodeId node.invalid.OtterKelp
 @responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
+@linkToNode SeaOtter.Eats.Urchin, node.OtterEatUrchinInquery
+@linkToNode Urchin.Eats.Kelp, node.UrchinEatKelpInquery
+@linkToNode link.OttersDontEatKelp, node.FakePath
 How so?
 
 :: node.OtterEatUrchinInquery
 @invalidNodeId node.invalid.Kelp
 @responseIds Urchin.Eats.Kelp
+@linkToNode Urchin.Eats.Kelp, node.end
 So why does that help the kelp?
 
 :: node.UrchinEatKelpInquery
 @invalidNodeId node.invalid.Otter
 @responseIds SeaOtter.Eats.Urchin
+@linkToNode SeaOtter.Eats.Urchin, node.end
 So what does that have to do with otters?
 
 :: node.FakePath

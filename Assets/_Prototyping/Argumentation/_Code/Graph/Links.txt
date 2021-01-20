@@ -3,7 +3,6 @@
 @factId claim
 @tag claim
 @type claim
-@nextNodeId node.intro, node.OtterHelpKelpInquery
 It seems like the otters somehow help the kelp.
 
 
@@ -11,16 +10,12 @@ It seems like the otters somehow help the kelp.
 @factId SeaOtter.Eats.Urchin
 @tag behavior
 @type otter
-@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
-@nextNodeId node.UrchinEatKelpInquery, node.end
 Otters eat urchins
 
 :: Urchin.Eats.Kelp
 @factId Urchin.Eats.Kelp
 @tag behavior
 @type urchin
-@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
-@nextNodeId node.OtterEatUrchinInquery, node.end
 Urchins eat kelp
 
 
@@ -35,7 +30,6 @@ Otters don't eat kelp.
 @factId claim
 @tag claim
 @type claim
-@nextNodeId node.intro, node.UrchinsCantSurviveInquery
 Urchins can't survive in this water.
 
 :: link.WaterTooCold
