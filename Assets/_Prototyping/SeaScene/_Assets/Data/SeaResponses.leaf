@@ -152,16 +152,16 @@ $set temp:kevin.testScene.loreProbing + 1
 
 // boat
 
-:: boat.check
-@trigger    RequestPartnerHelp
-@when       temp:camera.region == "BoatUnderside"
-@cutscene
-@boostScore 100
-$if scanned:testScene.species.urchin, scanned:testScene.species.kelp, scanned:testScene.species.otter
-    $goto demo.observationExit
-$else
-    $goto .undersideNotReady
-$endif
+// :: boat.check
+// @trigger    RequestPartnerHelp
+// @when       temp:camera.region == "BoatUnderside"
+// @cutscene
+// @boostScore 100
+// $if scanned:testScene.species.urchin, scanned:testScene.species.kelp, scanned:testScene.species.otter
+//     $goto demo.observationExit
+// $else
+//     $goto .undersideNotReady
+// $endif
 
 :: undersideNotReady
 @cutscene
@@ -187,5 +187,4 @@ $endif
 @repeat     2
 @boostScore 5
 {@kevin}    Kelp, urchins, otters...
-            If you think we're done, why not swim us up back to the boat?
-            Talk to me there.
+            If you think we're done, why not get us back to the surface?
