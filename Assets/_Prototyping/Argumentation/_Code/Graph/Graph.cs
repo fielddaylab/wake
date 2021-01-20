@@ -83,7 +83,6 @@ namespace ProtoAqua.Argumentation
 
             if (currentNode.CheckResponse(id))
             {
-                //string nextNodeId = response.GetNextNodeId(currentNode.Id);
                 string nextNodeId = currentNode.GetNextNodeId(id);
                 Node nextNode = FindNode(nextNodeId);
 
@@ -189,6 +188,11 @@ namespace ProtoAqua.Argumentation
             if (defaultInvalidNodeId == null)
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
+            }
+
+            if (data.LinksFile != null)
+            {
+                LoadLinks(data.LinksFile);
             }
 
             LoadLinks(packageName);
