@@ -12,6 +12,7 @@ namespace Aqua.Scripting
 {
     public class ScriptNodePackage : LeafNodePackage<ScriptNode>
     {
+        private LeafAsset m_Source;
         private IHotReloadable m_HotReload;
 
         public ScriptNodePackage(string inName)
@@ -73,6 +74,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void BindAsset(LeafAsset inAsset)
         {
+            m_Source = inAsset;
+
             if (m_HotReload != null)
             {
                 ReloadableAssetCache.Remove(m_HotReload);
@@ -156,6 +159,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void UnbindAsset()
         {
+            m_Source = null;
+
             if (m_HotReload != null)
             {
                 ReloadableAssetCache.Remove(m_HotReload);

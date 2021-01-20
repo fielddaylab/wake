@@ -127,7 +127,6 @@ namespace Aqua.Portable
         #region Inspector
 
         [Header("Types")]
-        [SerializeField, Required] private ToggleGroup m_EntryTypeToggleGroup = null;
         [SerializeField, Required] private Toggle m_CritterGroupToggle = null;
         [SerializeField, Required] private Toggle m_EcosystemGroupToggle = null;
 

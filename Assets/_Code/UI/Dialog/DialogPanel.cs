@@ -68,19 +68,16 @@ namespace Aqua
         
         [SerializeField] private RectTransform m_SpeakerContainer = null;
         [SerializeField] private TMP_Text m_SpeakerLabel = null;
-        [SerializeField] private Graphic m_SpeakerLabelBG = null;
 
         [Header("Text")]
 
         [SerializeField] private LayoutGroup m_TextLayout = null;
-        [SerializeField] private CanvasGroup m_TextContainer = null;
         [SerializeField] private TMP_Text m_TextDisplay = null;
 
         [Header("Button")]
 
         [SerializeField] private RectTransform m_ButtonContainer = null;
         [SerializeField] private Button m_Button = null;
-        [SerializeField] private CanvasGroup m_ButtonGroup = null;
 
         [Header("Options")]
 

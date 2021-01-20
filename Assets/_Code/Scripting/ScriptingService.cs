@@ -36,8 +36,12 @@ namespace Aqua
         private Dictionary<StringHash32, TriggerResponseSet> m_LoadedResponses;
         private HashSet<LeafAsset> m_LoadedPackageSourcesAssets;
 
+        // loading queue
+        [NonSerialized] private RingBuffer<LeafAsset> m_ScriptLoadQueue = new RingBuffer<LeafAsset>(8, RingBufferMode.Expand);
+
         // objects
         [NonSerialized] private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
+        [NonSerialized] private bool m_ScriptObjectListDirty = false;
 
         // pool
         private IPool<VariantTable> m_TablePool;
@@ -60,6 +64,32 @@ namespace Aqua
         }
 
         #endregion // Refs
+
+        #region Checks
+
+        /// <summary>
+        /// Returns if a thread is executing on the given target.
+        /// </summary>
+        public bool IsTargetExecuting(StringHash32 inTarget)
+        {
+            return m_ThreadTargetMap.ContainsKey(inTarget);
+        }
+
+        /// <summary>
+        /// Returns the thread executing for the given target.
+        /// </summary>
+        public ScriptThreadHandle GetTargetThread(StringHash32 inTarget)
+        {
+            ScriptThread thread;
+            if (m_ThreadTargetMap.TryGetValue(inTarget, out thread))
+            {
+                return thread.GetHandle();
+            }
+
+            return default(ScriptThreadHandle);
+        }
+
+        #endregion // Checks
 
         #region Operations
 
@@ -227,7 +257,7 @@ namespace Aqua
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
                         Debug.LogFormat("[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId.ToDebugString(), node.Id().ToDebugString());
-                        handle = StartNode(inThreadId, inContext, node);
+                        handle = StartThreadInternalNode(inThreadId, inContext, node, inContextTable);
                     }
                 }
             }
@@ -241,7 +271,7 @@ namespace Aqua
 
         private IVariantResolver GetResolver(VariantTable inContext)
         {
-            if (inContext == null || inContext.Count == 0)
+            if (inContext == null || (inContext.Count == 0 && inContext.Base == null))
                 return Services.Data.VariableResolver;
             
             if (m_CustomResolver == null)
@@ -323,14 +353,6 @@ namespace Aqua
         }
 
         /// <summary>
-        /// Kills a currently running scripting thread.
-        /// </summary>
-        public void KillThread(ScriptThreadHandle inThreadHandle)
-        {
-            inThreadHandle.Kill();
-        }
-
-        /// <summary>
         /// Kills all currently running threads.
         /// </summary>
         public void KillAllThreads()
@@ -343,6 +365,34 @@ namespace Aqua
             m_ThreadList.Clear();
             m_ThreadMap.Clear();
             m_ThreadTargetMap.Clear();
+        }
+
+        /// <summary>
+        /// Kills all threads with a priority less than the given priority
+        /// </summary>
+        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene)
+        {
+            for(int i = m_ThreadList.Count - 1; i >= 0; --i)
+            {
+                var thread = m_ThreadList[i];
+                if (thread.Priority() < inThreshold)
+                    thread.Kill();
+            }
+        }
+
+        /// <summary>
+        /// Kills all threads for the given target.
+        /// </summary>
+        public bool KillTargetThread(StringHash32 inTargetId)
+        {
+            ScriptThread thread;
+            if (m_ThreadTargetMap.TryGetValue(inTargetId, out thread))
+            {
+                thread.Kill();
+                return true;
+            }
+
+            return false;
         }
 
         #endregion // Killing Threads
@@ -396,7 +446,7 @@ namespace Aqua
 
         internal void UntrackThread(ScriptThread inThread)
         {
-            m_ThreadList.Remove(inThread);
+            m_ThreadList.FastRemove(inThread);
 
             string name = inThread.Name;
             if (!string.IsNullOrEmpty(name))
@@ -434,7 +484,10 @@ namespace Aqua
 
             TempAlloc<VariantTable> tempVars = m_TablePool.TempAlloc();
             if (inVars != null && inVars.Count > 0)
+            {
                 inVars.CopyTo(tempVars.Object);
+                tempVars.Object.Base = inVars.Base;
+            }
 
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, tempVars);

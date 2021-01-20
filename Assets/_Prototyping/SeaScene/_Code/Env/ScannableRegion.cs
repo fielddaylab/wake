@@ -24,12 +24,9 @@ namespace ProtoAqua.Observation
         [Header("Transforms")]
         [SerializeField, HideIfField("m_LockToCursor")] private Transform m_RootTransform = null;
         [SerializeField, HideIfField("m_LockToCursor")] private Transform m_StateTransform = null;
-        [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_StateGroup = null;
 
         [Header("Icon")]
-        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_IconTransform = null;
         [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_IconGroup = null;
-        [SerializeField, HideIfField("m_LockToCursor")] private Transform m_Icon = null;
         [SerializeField, HideIfField("m_LockToCursor")] private ColorGroup m_Progress = null;
 
         #endregion // Inspector

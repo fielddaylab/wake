@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -168,7 +169,7 @@ namespace Aqua
             m_SceneHistory.PushBack(active);
 
             yield return WaitForPreload(active, null);
-
+            yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
             m_SceneLock = false;
@@ -186,6 +187,7 @@ namespace Aqua
             try
             {
                 Services.Input.PauseAll();
+                Services.Script.KillLowPriorityThreads();
 
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
                 bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
@@ -227,7 +229,7 @@ namespace Aqua
                 }
 
                 yield return WaitForPreload(inNextScene, inContext);
-
+                yield return WaitForServiceLoading();
                 yield return WaitForCleanup();
 
                 m_SceneLock = false;

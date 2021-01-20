@@ -7,7 +7,7 @@ namespace PolyPerfect
   public class Common_WanderManager : MonoBehaviour
   {
     [SerializeField]
-    private bool peaceTime;
+    private bool peaceTime = false;
     public bool PeaceTime
     {
       get

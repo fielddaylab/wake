@@ -77,6 +77,11 @@ namespace Aqua.Scripting
             m_Name = inName;
             m_Id = (m_Id == uint.MaxValue ? 1 : m_Id + 1);
 
+            return GetHandle();
+        }
+
+        public ScriptThreadHandle GetHandle()
+        {
             return new ScriptThreadHandle(this, m_Id);
         }
 

@@ -13,7 +13,6 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private Camera m_UICamera = null;
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private LoadingDisplay m_Loading = null;

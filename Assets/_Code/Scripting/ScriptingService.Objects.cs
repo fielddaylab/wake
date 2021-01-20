@@ -41,10 +41,7 @@ namespace Aqua
 
         #region Loading
 
-        /// <summary>
-        /// Loads a script package.
-        /// </summary>
-        public void Load(ScriptNodePackage inPackage)
+        internal void Load(ScriptNodePackage inPackage)
         {
             if (!m_LoadedPackages.Add(inPackage))
                 return;
@@ -82,10 +79,7 @@ namespace Aqua
             Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' entrypoints and '{2}' responses", inPackage.Name(), entrypointCount, responseCount);
         }
 
-        /// <summary>
-        /// Unloads a script package.
-        /// </summary>
-        public void Unload(ScriptNodePackage inPackage)
+        internal void Unload(ScriptNodePackage inPackage)
         {
             if (!m_LoadedPackages.Remove(inPackage))
                 return;
@@ -117,18 +111,41 @@ namespace Aqua
     
         #region Objects
 
-        // private class ScriptObjectList
-        // {
-        //     private readonly List<ScriptObject> m_Objects = new List<ScriptObject>(16);
-        // }
+        public bool TryRegister(ScriptObject inObject)
+        {
+            if (m_ScriptObjects.Contains(inObject))
+                return false;
 
-        // public bool TryRegister(ScriptObject inObject)
-        // {
-        //     if (!m_ScriptObjects.Contains(inObject))
-        //         return false;
+            m_ScriptObjects.Add(inObject);
+            m_ScriptObjectListDirty = true;
+            return true;
+        }
 
-        //     m_ScriptObjects.Add()
-        // }
+        public bool TryDeregister(ScriptObject inObject)
+        {
+            if (m_ScriptObjects.FastRemove(inObject))
+            {
+                m_ScriptObjectListDirty = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryGetScriptObject(StringHash32 inId, out ScriptObject outObject)
+        {
+            UndirtyScriptObjectList();
+            return m_ScriptObjects.TryBinarySearch(inId, out outObject);
+        }
+
+        private void UndirtyScriptObjectList()
+        {
+            if (m_ScriptObjectListDirty)
+            {
+                m_ScriptObjects.SortByKey<StringHash32, ScriptObject, ScriptObject>();
+                m_ScriptObjectListDirty = false;
+            }
+        }
 
         #endregion // Objects
     }

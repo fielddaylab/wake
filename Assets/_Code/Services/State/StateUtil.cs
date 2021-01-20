@@ -1,15 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
 using BeauRoutine;
-using BeauUtil;
-using BeauUtil.Tags;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using BeauUtil.Debugger;
-using BeauUtil.Variants;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -57,6 +49,7 @@ namespace Aqua
         {
             Services.Input.PauseAll();
             Services.Audio.FadeOut(FadeDuration);
+            Services.Script.KillLowPriorityThreads();
         }
 
         static private void AfterLoad()

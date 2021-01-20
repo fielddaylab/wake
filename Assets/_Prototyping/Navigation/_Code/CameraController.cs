@@ -6,7 +6,7 @@ namespace ProtoAqua.Navigation {
     public class CameraController : MonoBehaviour {
 
         [SerializeField] Camera mainCamera = null;
-        [SerializeField] Transform target;
+        [SerializeField] Transform target = null;
 
         [SerializeField] float maxX = 0;
         [SerializeField] float minX = 0;
