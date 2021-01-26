@@ -21,5 +21,6 @@ namespace Aqua
         static public readonly StringHash32 JobStarted = "job:started";
         static public readonly StringHash32 JobCompleted = "job:completed";
         static public readonly StringHash32 JobSwitched = "job:switched";
+        
     }
 }

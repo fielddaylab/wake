@@ -15,14 +15,13 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using TMPro;
 using BeauPools;
 using System;
-using Aqua;
-using BeauUtil.Debugger;
 
 namespace Aqua.Portable
 {
@@ -32,13 +31,33 @@ namespace Aqua.Portable
         #region Inspector
 
         [Header("Types")]
+
+        [SerializeField, Required] private ToggleGroup m_Group = null;
         [SerializeField, Required] private Toggle m_JobToggle = null;
 
         [SerializeField, Required] private Toggle m_ResourceToggle = null;
 
+        [Header("Default")]
+
+        [SerializeField, Required] private TextMeshProUGUI Title = null;
+
+        [SerializeField, Required] private TextMeshProUGUI Background = null;
+
+        [SerializeField, Required] private TextMeshProUGUI Type = null;
+
+
+        [SerializeField, Required] private Transform Default = null;
+
         [Header("Job")]
+
+        [SerializeField, Required] private Transform JobView = null;
         [SerializeField, Required] private Transform JobSelect = null;
-        [SerializeField, Required] private Transform DefaultJob = null;
+
+        [Header("Resource")]
+
+        [SerializeField, Required] private Transform InventoryView = null;
+
+        [SerializeField, Required] private Transform m_ResourceGroup = null;
 
         #endregion
 
@@ -48,11 +67,14 @@ namespace Aqua.Portable
 
         [NonSerialized] private PlayerJob currentJob = null;
 
+        [NonSerialized] private List<Transform> itemDisplays = new List<Transform>();
+
         protected override void Awake()
         {
             base.Awake();
 
             LoadCurrentJob();
+
             m_JobToggle.onValueChanged.AddListener(OnJobToggled);
             m_ResourceToggle.onValueChanged.AddListener(OnResourceToggled);
 
@@ -101,6 +123,9 @@ namespace Aqua.Portable
 
         private void LoadCurrentJob()
         {
+            InventoryView.gameObject.SetActive(false);
+
+
             PlayerJob job = null;
             if (currentJob == null || !currentJob.IsInProgress())
             {
@@ -109,34 +134,89 @@ namespace Aqua.Portable
                 if (job == null)
                 {
                     Debug.Log("No current jobs found.");
-                    JobSelect.gameObject.SetActive(false);
-                    DefaultJob.gameObject.SetActive(true);
+
+                    JobView.gameObject.SetActive(false);
+                    SetupDefault("job", true);
 
                 }
                 else
                 {
                     SetupJobStatus(job);
-                    JobSelect.gameObject.SetActive(true);
-                    DefaultJob.gameObject.SetActive(false);
+                    JobView.gameObject.SetActive(true);
+                    SetupDefault("job", false);
                 }
 
             }
+        }
+
+        private void SetupDefault(string toggleType, bool Value)
+        {
+            if (toggleType.Equals("job"))
+            {
+                Title.SetText("Current Job");
+                Background.SetText("Job Portal");
+                Type.SetText("jobs");
+            }
+            else
+            {
+                Title.SetText("Inventory");
+                Background.SetText("Inventory");
+                Type.SetText("inventory items");
+            }
+            Default.gameObject.SetActive(Value);
+
+            // foreach (var toggle in m_Group.ActiveToggles())
+            // {
+            //     if (toggle.Equals(m_JobToggle))
+            //     {
+
+            //     }
+            // }
+
         }
 
         private void SetupJobStatus(PlayerJob job)
         {
             JobSelect JobDisplay = JobSelect.GetComponent<JobSelect>();
             JobDisplay.SetupJobSelect(job);
-
         }
 
         private void LoadResource()
         {
-            return;
+            JobView.gameObject.SetActive(false);
+
+            int itemCount = Services.Assets.Inventory.Objects.Count;
+
+            if (itemCount == 0)
+            {
+                SetupDefault("inventory", true);
+            }
+            else
+            {
+                InventoryView.gameObject.SetActive(true);
+
+                m_ResourceGroup.gameObject.GetImmediateComponentsInChildren<Transform>(false, true, itemDisplays);
+
+                if (itemDisplays.Count < itemCount)
+                {
+                    throw new IndexOutOfRangeException("number of InvItemDisplays is less than items in DB.");
+                }
+
+                int i = 0;
+                foreach (InvItem item in Services.Assets.Inventory.Objects)
+                {
+                    itemDisplays[i].GetComponent<InvItemDisplay>().SetupItem(item);
+                    itemDisplays[i++].gameObject.SetActive(true);
+
+                }
+
+                SetupDefault("", false);
+            }
+
+
         }
 
-
-
     }
+
     #endregion
 }

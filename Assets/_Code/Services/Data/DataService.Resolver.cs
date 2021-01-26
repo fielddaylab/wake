@@ -157,6 +157,7 @@ namespace Aqua
             m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
 
             m_VariableResolver.SetTableVar("scanned", (s) => inData.Inventory.WasScanned(s));
+            m_VariableResolver.SetTableVar("inventory.itemUpdate", (s) => inData.Inventory.HasItem(s));
             m_VariableResolver.SetTableVar("observed.entity", (s) => inData.Bestiary.HasEntity(s));
             m_VariableResolver.SetTableVar("observed.behavior", (s) => inData.Bestiary.HasBaseFact(s));
             m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
