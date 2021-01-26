@@ -25,12 +25,23 @@ namespace ProtoAqua.Observation
         {
             base.Awake();
             OnInputDisabled.AddListener(HandleInputDisabled);
+            Services.Events.Register<bool>(ObservationEvents.ScannerSetState, ScannerSetState, this);
+        }
+
+        private void OnDestroy() 
+        {
+            Services.Events?.DeregisterAll(this);
         }
 
         private void HandleInputDisabled()
         {
             m_ToolModeToggle = false;
             m_LastToolModeDown = -1;
+        }
+
+        private void ScannerSetState(bool inState)
+        {
+            m_ToolModeToggle = inState;
         }
 
         #region Input Generation
@@ -59,9 +70,9 @@ namespace ProtoAqua.Observation
             outInputData.UseHold = bAllowLeftClick && Input.GetMouseButton(0);
             outInputData.UsePress = bAllowLeftClick && Input.GetMouseButtonDown(0);
 
-            bool bRightMouseDown = Input.GetMouseButton(1);
+            bool bToolButtonDown = Input.GetKey(KeyCode.Space);
 
-            if (bRightMouseDown)
+            if (bToolButtonDown)
             {
                 if (m_LastToolModeDown == -1)
                 {
@@ -82,7 +93,7 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            outInputData.ToolMode = m_ToolModeToggle || bRightMouseDown;
+            outInputData.ToolMode = m_ToolModeToggle || bToolButtonDown;
         }
 
         private Vector2 GetMousePositionInWorld(Transform inTransform)
