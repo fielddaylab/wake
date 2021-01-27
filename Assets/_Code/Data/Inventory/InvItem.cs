@@ -13,11 +13,11 @@ namespace Aqua
         #region Inspector
 
         [Header("Text")]
-        [SerializeField] private SerializedHash32 m_ItemId = null;
+        [SerializeField] private string m_NameTextId = null;
 
         [Header("Value")]
 
-        [SerializeField, Range(0, 2000)] private int m_Default = 0;
+        [SerializeField, Range(0, 2000)] private int m_Value = 0;
 
         [Header("Assets")]
 
@@ -25,27 +25,18 @@ namespace Aqua
 
         #endregion
 
-        [NonSerialized] private int m_CurrentValue = 0;
-
-        public StringHash32 ItemId() { return m_ItemId; }
-
+        public string NameTextId() { return m_NameTextId; }
         public Sprite Icon() { return m_Icon; }
 
-        public int Value()
+        public int Value
         {
-            if (m_CurrentValue == 0)
-            {
-                m_CurrentValue = m_Default;
-            }
-
-            return m_CurrentValue;
+            get;
+            set;
         }
 
-        public void UpdateValue(int value)
+        public void SetDefault()
         {
-            m_CurrentValue += value;
-
-            return;
+            Value = m_Value;
         }
     }
 }

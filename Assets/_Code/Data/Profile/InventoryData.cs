@@ -6,36 +6,55 @@ namespace Aqua.Profile
 {
     public class InventoryData : ISerializedObject, ISerializedVersion
     {
-        private List<InvItem> m_Items = new List<InvItem>();
+        private List<PlayerInv> m_Items = new List<PlayerInv>();
 
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
 
-        public bool CheckUpdateResource(StringHash32 itemId, int value)
+
+        public IEnumerable<PlayerInv> Items()
         {
             foreach (var item in m_Items)
             {
-                if (item.ItemId().Equals(itemId))
+                yield return item;
+            }
+        }
+        public void InitializeDefault(bool defaultValue = true)
+        {
+            if (m_Items.Count == 0)
+            {
+                foreach (var item in Services.Assets.Inventory.Objects)
                 {
-                    if ((item.Value() + value) < 0)
+                    var inItem = item;
+
+                    if (defaultValue)
                     {
-                        return false;
+                        inItem.SetDefault();
                     }
                     else
                     {
-                        item.UpdateValue(value);
-                        return true;
+                        inItem.Value = 0;
                     }
-
+                    PlayerInv pItem = new PlayerInv(inItem);
+                    m_Items.Add(pItem);
                 }
             }
-            throw new KeyNotFoundException("item " + itemId + "doesn't exist.");
         }
 
-        public bool HasItem(StringHash32 ItemId)
+        public bool ListIsEmpty()
+        {
+            if (m_Items.Count == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        public bool HasItem(StringHash32 Id)
         {
             foreach (var item in m_Items)
             {
-                if (item.ItemId().Equals(ItemId))
+                if (item.Item.Id() == Id)
                 {
                     return true;
                 }
@@ -43,23 +62,29 @@ namespace Aqua.Profile
             return false;
         }
 
-        public InvItem GetItem(StringHash32 ItemId)
+        public PlayerInv GetItemByName(string NameId)
         {
-            if (m_Items.Count == 0)
+            foreach (var playerItem in m_Items)
             {
-                foreach (var item in Services.Assets.Inventory.Objects)
+                var nameid = playerItem.Item.NameTextId();
+                if (nameid == NameId)
                 {
-                    m_Items.Add(item);
+                    return playerItem;
                 }
             }
-            foreach (var item in m_Items)
+            return null;
+        }
+
+        public PlayerInv GetItemById(StringHash32 Id)
+        {
+            foreach (var playerItem in m_Items)
             {
-                if (item.ItemId().Equals(m_Items))
+                if (playerItem.Item.Id() == Id)
                 {
-                    return item;
+                    return playerItem;
                 }
             }
-            throw new KeyNotFoundException("Item " + ItemId + " couldn't be found");
+            return null;
         }
 
 

@@ -93,6 +93,10 @@ namespace Aqua.DebugConsole
                 {
                     UnlockAllBestiaryEntries(true);
                 }
+                else if (m_Input.KeyPressed(KeyCode.J))
+                {
+                    CompleteCurrentJob();
+                }
             }
         }
 
@@ -160,6 +164,16 @@ namespace Aqua.DebugConsole
                         Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
                 }
             }
+        }
+
+        private void CompleteCurrentJob()
+        {
+            var currJob = Services.Data.CurrentJob();
+            if (currJob != null)
+            {
+                Services.Data.Profile.Jobs.MarkComplete(currJob);
+            }
+            
         }
 
         private IEnumerator RequestQuit()

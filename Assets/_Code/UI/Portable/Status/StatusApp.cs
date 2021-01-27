@@ -202,10 +202,15 @@ namespace Aqua.Portable
                     throw new IndexOutOfRangeException("number of InvItemDisplays is less than items in DB.");
                 }
 
-                int i = 0;
-                foreach (InvItem item in Services.Assets.Inventory.Objects)
+                if (Services.Data.Profile.Inventory.ListIsEmpty())
                 {
-                    itemDisplays[i].GetComponent<InvItemDisplay>().SetupItem(item);
+                    Services.Data.Profile.Inventory.InitializeDefault();
+                }
+
+                int i = 0;
+                foreach (PlayerInv playItem in Services.Data.Profile.Inventory.Items())
+                {
+                    itemDisplays[i].GetComponent<InvItemDisplay>().SetupItem(playItem);
                     itemDisplays[i++].gameObject.SetActive(true);
 
                 }

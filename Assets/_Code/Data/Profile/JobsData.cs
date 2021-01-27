@@ -121,6 +121,19 @@ namespace Aqua.Profile
                 m_CurrentJob = null;
                 Services.Events.Dispatch(GameEvents.JobCompleted, inJob.JobId);
 
+                if (Services.Data.Profile.Inventory.ListIsEmpty())
+                {
+                    Services.Data.Profile.Inventory.InitializeDefault();
+                }
+                else
+                {
+                    PlayerInv cash = Services.Data.Profile.Inventory.GetItemByName("cash");
+                    cash.UpdateItem(inJob.Job.CashReward());
+                    PlayerInv gear = Services.Data.Profile.Inventory.GetItemByName("gear");
+                    gear.UpdateItem(inJob.Job.GearReward());
+                }
+
+
                 if (bIsCurrent)
                 {
                     if (m_JobStatuses.Count > 0)

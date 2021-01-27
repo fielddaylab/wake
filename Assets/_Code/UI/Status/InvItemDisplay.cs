@@ -19,32 +19,20 @@ namespace Aqua
 
         [NonSerialized] private int m_Value = 0;
 
-        [NonSerialized] private SerializedHash32 m_ItemId = null;
+        [NonSerialized] private string m_NameTextId = null;
 
-        [NonSerialized] private InvItem m_CurrentItem = null;
+        [NonSerialized] private PlayerInv m_CurrentItem = null;
 
-        public void SetupItem(InvItem item)
+        public void SetupItem(PlayerInv playerItem)
         {
-            m_CurrentItem = item;
-            Icon.sprite = item.Icon();
-            m_Value = item.Value();
-            m_ItemId = item.ItemId();
+            m_CurrentItem = playerItem;
+            Icon.sprite = playerItem.Item.Icon();
+            m_Value = playerItem.Value();
+            m_NameTextId = playerItem.Item.NameTextId();
 
             m_Text.SetText(m_Value.ToString());
 
             return;
-        }
-
-        public void UpdateItem()
-        {
-            int value = Services.Data.Profile.Inventory.GetItem(m_ItemId).Value();
-            if (m_Value != value)
-            {
-                m_Value = value;
-            }
-            m_Text.SetText(m_Value.ToString());
-            return;
-
         }
 
     }
