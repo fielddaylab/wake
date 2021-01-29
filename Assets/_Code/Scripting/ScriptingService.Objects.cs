@@ -53,6 +53,7 @@ namespace Aqua
             ScriptNodePackage package = BlockParser.Parse(inAsset.name, inAsset.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance);
             package.BindAsset(inAsset);
             AddPackage(package);
+            m_LoadedPackageSourcesAssets.Add(inAsset, package);
         }
 
         public void UnloadScript(LeafAsset inAsset)
