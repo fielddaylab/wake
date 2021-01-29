@@ -1,6 +1,10 @@
 using BeauUtil;
 using UnityEngine;
 using Aqua.Scripting;
+using System.Collections.Generic;
+using BeauPools;
+using Leaf;
+using BeauUtil.Blocks;
 
 namespace Aqua
 {
@@ -11,7 +15,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to get a script node, starting from the scope of the given node.
         /// </summary>
-        public bool TryGetScriptNode(ScriptNode inScope, StringHash32 inId, out ScriptNode outNode)
+        internal bool TryGetScriptNode(ScriptNode inScope, StringHash32 inId, out ScriptNode outNode)
         {
             if (inScope.Package().TryGetNode(inId, out outNode))
             {
@@ -24,7 +28,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to get a publically-exposed script node.
         /// </summary>
-        public bool TryGetEntrypoint(StringHash32 inId, out ScriptNode outNode)
+        internal bool TryGetEntrypoint(StringHash32 inId, out ScriptNode outNode)
         {
             return m_LoadedEntrypoints.TryGetValue(inId, out outNode);
         }
@@ -39,9 +43,30 @@ namespace Aqua
 
         #endregion // Access
 
-        #region Loading
+        #region Packages
 
-        internal void Load(ScriptNodePackage inPackage)
+        public void LoadScript(LeafAsset inAsset)
+        {
+            if (m_LoadedPackageSourcesAssets.ContainsKey(inAsset))
+                return;
+
+            ScriptNodePackage package = BlockParser.Parse(inAsset.name, inAsset.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance);
+            package.BindAsset(inAsset);
+            AddPackage(package);
+        }
+
+        public void UnloadScript(LeafAsset inAsset)
+        {
+            ScriptNodePackage package;
+            if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package))
+            {
+                package.UnbindAsset();
+                RemovePackage(package);
+                m_LoadedPackageSourcesAssets.Remove(inAsset);
+            }
+        }
+
+        internal void AddPackage(ScriptNodePackage inPackage)
         {
             if (!m_LoadedPackages.Add(inPackage))
                 return;
@@ -76,10 +101,10 @@ namespace Aqua
                 ++responseCount;
             }
 
-            Debug.LogFormat("[ScriptingService] Loaded package '{0}' with '{1}' entrypoints and '{2}' responses", inPackage.Name(), entrypointCount, responseCount);
+            Debug.LogFormat("[ScriptingService] Added package '{0}' with {1} entrypoints and {2} responses", inPackage.Name(), entrypointCount, responseCount);
         }
 
-        internal void Unload(ScriptNodePackage inPackage)
+        internal void RemovePackage(ScriptNodePackage inPackage)
         {
             if (!m_LoadedPackages.Remove(inPackage))
                 return;
@@ -104,10 +129,10 @@ namespace Aqua
                 }
             }
 
-            Debug.LogFormat("[ScriptingService] Unloaded package '{0}'", inPackage.Name());
+            Debug.LogFormat("[ScriptingService] Removed package '{0}'", inPackage.Name());
         }
 
-        #endregion // Loading
+        #endregion // Packages
     
         #region Objects
 
@@ -132,10 +157,69 @@ namespace Aqua
             return false;
         }
 
-        public bool TryGetScriptObject(StringHash32 inId, out ScriptObject outObject)
+        public bool TryGetScriptObjectById(StringHash32 inId, out ScriptObject outObject)
         {
             UndirtyScriptObjectList();
             return m_ScriptObjects.TryBinarySearch(inId, out outObject);
+        }
+
+        public bool TryGetScriptObjectByClass(StringHash32 inClass, out ScriptObject outObject)
+        {
+            UndirtyScriptObjectList();
+            
+            for(int i = 0; i < m_ScriptObjects.Count; ++i)
+            {
+                var obj = m_ScriptObjects[i];
+                if (obj.ClassName() == inClass)
+                {
+                    outObject = obj;
+                    return true;
+                }
+            }
+
+            outObject = null;
+            return false;
+        }
+
+        public int GetScriptObjectsByClass(StringHash32 inClass, IList<ScriptObject> outObjects)
+        {
+            UndirtyScriptObjectList();
+
+            int count = 0;
+            for(int i = 0; i < m_ScriptObjects.Count; ++i)
+            {
+                var obj = m_ScriptObjects[i];
+                if (obj.ClassName() == inClass)
+                {
+                    outObjects.Add(obj);
+                    ++count;
+                }
+            }
+
+            return count;
+        }
+
+        public IEnumerable<ScriptObject> GetScriptObjects(StringSlice inIdentifier)
+        {
+            if (inIdentifier.StartsWith('@'))
+            {
+                ScriptObject scObj;
+                if (TryGetScriptObjectById(inIdentifier, out scObj))
+                {
+                    yield return scObj;
+                }
+            }
+            else
+            {
+                using(PooledList<ScriptObject> scObjs = PooledList<ScriptObject>.Create())
+                {
+                    GetScriptObjectsByClass(inIdentifier.Substring(1), scObjs);
+                    foreach(var scObj in scObjs)
+                    {
+                        yield return scObj;
+                    }
+                }
+            }
         }
 
         private void UndirtyScriptObjectList()

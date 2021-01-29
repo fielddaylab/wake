@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 
 namespace Aqua.Scripting
 {
-    public class TriggerResponseSet : IReadOnlyCollection<ScriptNode>
+    internal class TriggerResponseSet : IReadOnlyCollection<ScriptNode>
     {
         private readonly List<ScriptNode> m_TriggerNodes = new List<ScriptNode>(16);
         private bool m_Sorted = true;
@@ -59,7 +59,7 @@ namespace Aqua.Scripting
         /// <summary>
         /// Returns the highest-scoring nodes for this response set.
         /// </summary>
-        public int GetHighestScoringNodes(IVariantResolver inResolver, object inContext, ScriptingData inScriptData, StringHash32 inTarget, ICollection<ScriptNode> outNodes, ref int ioMinScore)
+        public int GetHighestScoringNodes(IVariantResolver inResolver, object inContext, ScriptingData inScriptData, StringHash32 inTarget, Dictionary<StringHash32, ScriptThread> inTargetStates, ICollection<ScriptNode> outNodes, ref int ioMinScore)
         {
             Optimize();
 
@@ -71,18 +71,35 @@ namespace Aqua.Scripting
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
 
+                // score cutoff
                 if (triggerData.Score < ioMinScore)
                     break;
 
-                if (!inTarget.IsEmpty && inTarget != triggerData.TargetId)
+                // not the right target
+                if (!inTarget.IsEmpty && inTarget != node.TargetId())
                     continue;
 
+                // cannot play during cutscene
+                if ((node.Flags() & ScriptNodeFlags.SuppressDuringCutscene) != 0 && Services.UI.IsLetterboxed())
+                    continue;
+
+                // cannot play due to once
                 if (triggerData.OnceLevel != PersistenceLevel.Untracked && inScriptData.HasSeen(node.Id(), triggerData.OnceLevel))
                     continue;
 
+                // cannot play due to repetition
                 if (triggerData.RepeatDuration > 0 && inScriptData.HasRecentlySeen(node.Id(), triggerData.RepeatDuration))
                     continue;
 
+                // cannot play due to priority
+                if (node.TargetId() != StringHash32.Null)
+                {
+                    ScriptThread currentThread;
+                    if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
+                        continue;
+                }
+
+                // cannot play due to conditions
                 if (triggerData.Conditions != null)
                 {
                     bool bFailed = false;

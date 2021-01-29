@@ -11,9 +11,11 @@ using Aqua.Scripting;
 using BeauUtil.Variants;
 using Leaf.Runtime;
 using Leaf;
+using BeauUtil.Services;
 
 namespace Aqua
 {
+    [ServiceDependency(typeof(DataService), typeof(UIMgr), typeof(LocService), typeof(AssetsService), typeof(TweakMgr))]
     public partial class ScriptingService : ServiceBehaviour
     {
         // thread management
@@ -32,18 +34,17 @@ namespace Aqua
 
         // script nodes
         private HashSet<ScriptNodePackage> m_LoadedPackages;
+        private Dictionary<LeafAsset, ScriptNodePackage> m_LoadedPackageSourcesAssets;
+
         private Dictionary<StringHash32, ScriptNode> m_LoadedEntrypoints;
         private Dictionary<StringHash32, TriggerResponseSet> m_LoadedResponses;
-        private HashSet<LeafAsset> m_LoadedPackageSourcesAssets;
-
-        // loading queue
-        [NonSerialized] private RingBuffer<LeafAsset> m_ScriptLoadQueue = new RingBuffer<LeafAsset>(8, RingBufferMode.Expand);
+        private Dictionary<StringHash32, FunctionSet> m_LoadedFunctions;
 
         // objects
         [NonSerialized] private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
         [NonSerialized] private bool m_ScriptObjectListDirty = false;
 
-        // pool
+        // pools
         private IPool<VariantTable> m_TablePool;
         private IPool<ScriptThread> m_ThreadPool;
         private IPool<TagStringParser> m_ParserPool;
@@ -128,42 +129,6 @@ namespace Aqua
         }
 
         #endregion // Starting Threads with IEnumerator
-
-        #region Starting Threads with ScriptNode
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode.
-        /// </summary>
-        public ScriptThreadHandle StartNode(ScriptNode inNode)
-        {
-            return StartThreadInternalNode(null, null, inNode, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread with the given id running the given ScriptNode.
-        /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, ScriptNode inNode)
-        {
-            return StartThreadInternalNode(inThreadId, null, inNode, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartNode(IScriptContext inContext, ScriptNode inNode)
-        {
-            return StartThreadInternalNode(null, inContext, inNode, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, ScriptNode inNode)
-        {
-            return StartThreadInternalNode(inThreadId, inContext, inNode, null);
-        }
-
-        #endregion // Starting Threads with ScriptNode
 
         #region Starting Threads with Entrypoint
 
@@ -252,7 +217,7 @@ namespace Aqua
                 using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
                 {
                     int minScore = int.MinValue;
-                    int responseCount = responseSet.GetHighestScoringNodes(resolver, inContext, Services.Data.Profile?.Script, inTarget, nodes, ref minScore);
+                    int responseCount = responseSet.GetHighestScoringNodes(resolver, inContext, Services.Data.Profile?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
@@ -535,7 +500,7 @@ namespace Aqua
             ScriptThread thread;
             if (m_ThreadTargetMap.TryGetValue(target, out thread))
             {
-                if (thread.Priority() > inNode.Priority())
+                if (thread.Priority() >= inNode.Priority())
                 {
                     Debug.LogFormat("[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
                         inNode.Id().ToDebugString(), target.ToDebugString());
@@ -556,12 +521,7 @@ namespace Aqua
 
         #region IService
 
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Scripting;
-        }
-
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             InitParsers();
             InitHandlers();
@@ -579,6 +539,7 @@ namespace Aqua
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
             m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
             m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();
+            m_LoadedPackageSourcesAssets = new Dictionary<LeafAsset, ScriptNodePackage>();
 
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
             m_TablePool.Config.RegisterOnFree((p, obj) => { obj.Reset(); });
@@ -587,7 +548,7 @@ namespace Aqua
             m_ThreadPool.Config.RegisterOnConstruct((p, obj) => { obj.Initialize(this, Services.Data.VariableResolver); });
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_TagEventParser = null;
             m_TagEventHandler = null;

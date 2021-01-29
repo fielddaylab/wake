@@ -184,54 +184,15 @@ namespace Aqua
         private struct Handler
         {
             private UnityEngine.Object m_Binding;
-            private Action m_Action;
-            private Action<object> m_ActionWithContext;
-
-            private MulticastDelegate m_ActionWithCastedContext;
-            private Action<MulticastDelegate, object> m_ActionWithCastedContextCaller;
+            private CastableAction<object> m_Action;
 
             public string Name;
             public bool Delete;
 
-            public Handler(Action inAction, UnityEngine.Object inBinding)
+            public Handler(CastableAction<object> inAction, UnityEngine.Object inBinding)
             {
                 m_Binding = inBinding;
                 m_Action = inAction;
-                m_ActionWithContext = null;
-                m_ActionWithCastedContext = null;
-                m_ActionWithCastedContextCaller = null;
-                Delete = false;
-
-                #if UNITY_EDITOR
-                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
-                #else
-                Name = null;
-                #endif // UNITY_EDITOR
-            }
-
-            public Handler(Action<object> inActionWithContext, UnityEngine.Object inBinding)
-            {
-                m_Binding = inBinding;
-                m_Action = null;
-                m_ActionWithContext = inActionWithContext;
-                m_ActionWithCastedContext = null;
-                m_ActionWithCastedContextCaller = null;
-                Delete = false;
-
-                #if UNITY_EDITOR
-                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
-                #else
-                Name = null;
-                #endif // UNITY_EDITOR
-            }
-
-            private Handler(MulticastDelegate inActionWithCastedContext, Action<MulticastDelegate, object> inActionCaller, UnityEngine.Object inBinding)
-            {
-                m_Binding = inBinding;
-                m_Action = null;
-                m_ActionWithContext = null;
-                m_ActionWithCastedContext = inActionWithCastedContext;
-                m_ActionWithCastedContextCaller = inActionCaller;
                 Delete = false;
 
                 #if UNITY_EDITOR
@@ -248,17 +209,17 @@ namespace Aqua
 
             public bool Match(Action inAction)
             {
-                return m_Action == inAction;
+                return m_Action.Equals(inAction);
             }
 
             public bool Match(Action<object> inActionWithContext)
             {
-                return m_ActionWithContext == inActionWithContext;
+                return m_Action.Equals(inActionWithContext);
             }
 
             public bool Match(MulticastDelegate inActionWithCastedContext)
             {
-                return EqualityComparer<MulticastDelegate>.Default.Equals(m_ActionWithCastedContext, inActionWithCastedContext);
+                return m_Action.Equals(inActionWithCastedContext);
             }
 
             public bool Invoke(object inContext)
@@ -266,14 +227,8 @@ namespace Aqua
                 bool discard;
                 if (ShouldDelete(out discard))
                     return false;
-                
-                if (m_ActionWithCastedContext != null)
-                    m_ActionWithCastedContextCaller(m_ActionWithCastedContext, inContext);
-                else if (m_ActionWithContext != null)
-                    m_ActionWithContext(inContext);
-                else if (m_Action != null)
-                    m_Action();
 
+                m_Action.Invoke(inContext);
                 return !Delete;
             }
 
@@ -281,11 +236,6 @@ namespace Aqua
             {
                 outReferenceDestroyed = m_Binding.IsReferenceDestroyed();
                 return Delete || outReferenceDestroyed;
-            }
-
-            static public Handler FromArgumentAction<T>(Action<T> inAction, UnityEngine.Object inBinding)
-            {
-                return new Handler(inAction, CastedInvoke<T>, inBinding);
             }
         }
 
@@ -313,7 +263,7 @@ namespace Aqua
                 block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(new Handler(inAction, inBinding));
+            block.Add(new Handler(CastableAction<object>.Create(inAction), inBinding));
 
             return this;
         }
@@ -329,7 +279,7 @@ namespace Aqua
                 block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(new Handler(inActionWithContext, inBinding));
+            block.Add(new Handler(CastableAction<object>.Create(inActionWithContext), inBinding));
 
             return this;
         }
@@ -345,7 +295,7 @@ namespace Aqua
                 block = new HandlerBlock(inEventId);
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(Handler.FromArgumentAction(inActionWithCastedContext, inBinding));
+            block.Add(new Handler(CastableAction<object>.Create(inActionWithCastedContext), inBinding));
 
             return this;
         }
@@ -478,18 +428,14 @@ namespace Aqua
 
         #region IService
 
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Events;
-        }
-
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_CleanupRoutine.Replace(this, MaintenanceRoutine());
+
             SceneHelper.OnSceneLoaded += OnSceneLoad;
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_Handlers.Clear();
             m_CleanupRoutine.Stop();
@@ -498,10 +444,5 @@ namespace Aqua
         }
 
         #endregion // IService
-
-        static private void CastedInvoke<T>(MulticastDelegate inDelegate, object inContext)
-        {
-            ((Action<T>) inDelegate).Invoke((T) inContext);
-        }
     }
 }

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class LocService : ServiceBehaviour
+    public partial class LocService : ServiceBehaviour, ILoadable
     {
         #region Inspector
 
@@ -176,22 +176,17 @@ namespace Aqua
 
         #region IService
 
-        protected override bool IsLoading()
+        bool ILoadable.IsLoading()
         {
             return m_LoadRoutine;
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_LoadRoutine.Replace(this, InitialLoad());
 
             m_TagStringPool = new DynamicPool<TagString>(4, Pool.DefaultConstructor<TagString>());
             m_TagStringPool.Prewarm();
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Localization;
         }
 
         #endregion // IService

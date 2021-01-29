@@ -147,6 +147,7 @@ namespace Aqua
 
             m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerGender);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
+            m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -214,6 +215,11 @@ namespace Aqua
         private Variant GetJobId()
         {
             return Profile.Jobs.CurrentJobId;
+        }
+
+        private Variant GetActNumber()
+        {
+            return Profile.Script.ActIndex;
         }
 
         #endregion // Callbacks

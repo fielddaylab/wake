@@ -24,7 +24,7 @@ namespace Aqua.Scripting
             m_Id = inId;
         }
 
-        private ScriptThread GetThread()
+        internal ScriptThread GetThread()
         {
             if (m_Thread != null && !m_Thread.HasId(m_Id))
             {

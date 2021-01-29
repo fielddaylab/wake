@@ -7,10 +7,9 @@ using BeauUtil.Variants;
 
 namespace Aqua.Scripting
 {
-    public class TriggerNodeData
+    internal class TriggerNodeData
     {
         public StringHash32 TriggerId;
-        public StringHash32 TargetId;
         public TriggerPriority TriggerPriority;
 
         public VariantComparison[] Conditions;

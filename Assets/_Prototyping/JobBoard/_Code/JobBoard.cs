@@ -160,7 +160,7 @@ namespace ProtoAqua.JobBoard
         private void UpdateButtonByStatus(StringHash32 JobId)
         {
             PlayerJobStatus currStatus = Services.Data.Profile.Jobs.GetProgress(JobId).Status();
-            StringHash32 currentJobId = Services.Data.CurrentJob()?.JobId ?? StringHash32.Null;
+            StringHash32 currentJobId = Services.Data.CurrentJobId();
             foreach (JobButton jobButton in JobButtons)
             {
                 if (jobButton.JobId.Equals(JobId))

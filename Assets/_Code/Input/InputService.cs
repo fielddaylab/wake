@@ -238,14 +238,5 @@ namespace Aqua
         }
 
         #endregion // Unity Events
-
-        #region IService
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Input;
-        }
-
-        #endregion // IService
     }
 }

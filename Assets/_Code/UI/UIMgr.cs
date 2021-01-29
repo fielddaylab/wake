@@ -85,7 +85,7 @@ namespace Aqua
 
         public void ShowLetterbox()
         {
-            if (++m_LetterboxCounter > 0)
+            if (++m_LetterboxCounter == 1)
                 m_Letterbox.Show();
         }
 
@@ -185,12 +185,12 @@ namespace Aqua
 
         #region IService
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             SceneHelper.OnSceneUnload -= CleanupFromScene;
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_Loading.InstantShow();
 
@@ -203,11 +203,6 @@ namespace Aqua
             m_SharedPanels = new Dictionary<StringHash32, SharedPanel>(16);
 
             SceneHelper.OnSceneUnload += CleanupFromScene;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.CommonUI;
         }
 
         #endregion // IService

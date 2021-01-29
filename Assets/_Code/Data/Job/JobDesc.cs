@@ -58,6 +58,20 @@ namespace Aqua
         public int ExperimentDifficulty() { return m_ExperimentDifficulty; }
         public int ModelingDifficulty() { return m_ModelingDifficulty; }
         public int ArgumentationDifficulty() { return m_ArgumentationDifficulty; }
+        public int Difficulty(DifficultyType inType)
+        {
+            switch(inType)
+            {
+                case DifficultyType.Argumentation:
+                    return m_ArgumentationDifficulty;
+                case DifficultyType.Experimentation:
+                    return m_ExperimentDifficulty;
+                case DifficultyType.Modeling:
+                    return m_ModelingDifficulty;
+                default:
+                    throw new ArgumentOutOfRangeException("inType");
+            }
+        }
 
         public bool ShouldBeAvailable()
         {

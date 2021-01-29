@@ -87,7 +87,7 @@ namespace ProtoAqua.Experiment
 
         protected override void OnHide(bool inbInstant)
         {
-            if (WasShowing() && Services.Valid)
+            if (WasShowing() && Services.Events)
             {
                 m_Hum.Stop(0.5f);
                 Services.Events.Dispatch(ExperimentEvents.SetupPanelOff);

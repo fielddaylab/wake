@@ -16,6 +16,8 @@ namespace Aqua
 
         void ILeafPlugin<ScriptNode>.OnNodeEnter(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
+            inNode.Package().IncrementUseCount();
+
             Services.Data.Profile.Script.RecordNodeVisit(inNode.Id(), inNode.TrackingLevel());
             if ((inNode.Flags() & ScriptNodeFlags.Cutscene) != 0)
             {
@@ -31,6 +33,8 @@ namespace Aqua
 
         void ILeafPlugin<ScriptNode>.OnNodeExit(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
+            inNode.Package().DecrementUseCount();
+
             if ((inNode.Flags() & ScriptNodeFlags.Cutscene) != 0)
             {
                 ScriptThread thread = ((ScriptThread) inThreadState);

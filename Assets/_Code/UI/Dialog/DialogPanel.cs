@@ -375,7 +375,7 @@ namespace Aqua
 
         #region Options
 
-        public IEnumerator ShowOptions(ScriptNode inNode, LeafChoice inChoice, ILeafContentResolver inResolver, object inContext)
+        internal IEnumerator ShowOptions(ScriptNode inNode, LeafChoice inChoice, ILeafContentResolver inResolver, object inContext)
         {
             if (!m_OptionContainer)
                 yield break;
