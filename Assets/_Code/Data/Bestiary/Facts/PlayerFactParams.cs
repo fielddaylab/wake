@@ -6,7 +6,7 @@ using BeauUtil.Variants;
 
 namespace Aqua
 {
-    public class PlayerFactParams
+    public class PlayerFactParams : IKeyValuePair<StringHash32, PlayerFactParams>
     {
         [NonSerialized] private BFBase m_CachedFact;
         [NonSerialized] private bool m_Locked;
@@ -14,6 +14,14 @@ namespace Aqua
         // base fact id
         private StringHash32 m_FactId;
         private PlayerFactFlags m_Flags;
+
+        #region KeyValue
+
+        StringHash32 IKeyValuePair<StringHash32, PlayerFactParams>.Key { get { return m_FactId; } }
+
+        PlayerFactParams IKeyValuePair<StringHash32, PlayerFactParams>.Value { get { return this; } }
+
+        #endregion // KeyValue
 
         public StringHash32 FactId { get { return m_FactId; } }
         

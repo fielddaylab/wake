@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
+using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace Aqua.Profile
 {
@@ -9,6 +12,8 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
         private List<PlayerFactParams> m_Facts = new List<PlayerFactParams>();
+
+        [NonSerialized] private bool m_FactListDirty = true;
 
         #region Observed Entities
 
@@ -40,29 +45,59 @@ namespace Aqua.Profile
 
         #endregion // Observed Entities
 
-        #region Observed Behaviors
+        #region Facts
 
-        public bool HasBaseFact(StringHash32 inBehaviorId)
+        public bool HasFact(StringHash32 inFactId)
         {
-            return m_ObservedFacts.Contains(inBehaviorId) || Services.Assets.Bestiary.IsAutoFact(inBehaviorId);
+            return m_ObservedFacts.Contains(inFactId) || Services.Assets.Bestiary.IsAutoFact(inFactId);
         }
 
-        public bool RegisterBaseFact(StringHash32 inBehaviorId)
+        public bool RegisterFact(StringHash32 inFactId)
         {
-            if (!Services.Assets.Bestiary.IsAutoFact(inBehaviorId) && m_ObservedFacts.Add(inBehaviorId))
+            return RegisterFact(inFactId, out PlayerFactParams temp);
+        }
+
+        public bool RegisterFact(StringHash32 inFactId, out PlayerFactParams outParams)
+        {
+            if (Services.Assets.Bestiary.IsAutoFact(inFactId))
             {
-                var fact = AddFact(inBehaviorId).Fact;
+                outParams = PlayerFactParams.Wrap(Services.Assets.Bestiary.Fact(inFactId));
+                return false;
+            }
+
+            if (m_ObservedFacts.Add(inFactId))
+            {
+                var factParams = AddFact(inFactId);
+                var fact = factParams.Fact; 
                 m_ObservedEntities.Add(fact.Parent().Id());
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inBehaviorId));
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                outParams = factParams;
                 return true;
             }
 
+            SortFacts();
+            m_Facts.TryBinarySearch(inFactId, out outParams);
+            Assert.NotNull(outParams);
             return false;
         }
 
-        #endregion // Observed Behaviors
+        public PlayerFactParams GetFact(StringHash32 inFactId)
+        {
+            if (Services.Assets.Bestiary.IsAutoFact(inFactId))
+            {
+                return PlayerFactParams.Wrap(Services.Assets.Bestiary.Fact(inFactId));
+            }
 
-        #region Facts
+            SortFacts();
+            
+            PlayerFactParams p;
+            if (!m_Facts.TryBinarySearch(inFactId, out p))
+            {
+                Debug.LogErrorFormat("[BestiaryData] No fact with id '{0}' has been registered", inFactId.ToDebugString());
+            }
+
+            return p;
+        }
 
         public IEnumerable<PlayerFactParams> GetFactsForEntity(StringHash32 inEntityId)
         {
@@ -80,20 +115,21 @@ namespace Aqua.Profile
             }
         }
 
-        public IEnumerable<PlayerFactParams> GetFactsForBaseFact(StringHash32 inFactId)
-        {
-            foreach(var fact in m_Facts)
-            {
-                if (fact.FactId == inFactId)
-                    yield return fact;
-            }
-        }
-
-        public PlayerFactParams AddFact(StringHash32 inBaseFact)
+        private PlayerFactParams AddFact(StringHash32 inBaseFact)
         {
             PlayerFactParams fact = new PlayerFactParams(inBaseFact);
             m_Facts.Add(fact);
+            m_FactListDirty = true;
             return fact;
+        }
+
+        private void SortFacts()
+        {
+            if (!m_FactListDirty)
+                return;
+
+            m_Facts.SortByKey<StringHash32, PlayerFactParams, PlayerFactParams>();
+            m_FactListDirty = false;
         }
 
         #endregion // Facts

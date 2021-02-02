@@ -8,7 +8,7 @@ namespace ProtoAqua.Argumentation
     [CreateAssetMenu(menuName = "Aqualab/Argumentation/Graph Data Manager")]
     public class GraphDataManager : TweakAsset
     {
-        [SerializeField] private TextAsset[] m_DefaultAssets = null;
+        [SerializeField] private GraphDataPackage[] m_DefaultAssets = null;
 
         private Dictionary<string, GraphDataPackage> m_Packages = new Dictionary<string, GraphDataPackage>();
 
@@ -33,7 +33,8 @@ namespace ProtoAqua.Argumentation
             
             foreach (var asset in m_DefaultAssets)
             {
-                m_Packages.Add(asset.name, BlockParser.Parse(asset.name, asset.text, BlockParsingRules.Default, m_Generator));
+                asset.Parse(BlockParsingRules.Default, m_Generator);
+                m_Packages.Add(asset.name, asset);
             }
         }
 

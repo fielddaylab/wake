@@ -160,7 +160,7 @@ namespace Aqua.DebugConsole
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
-                        Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
+                        Services.Data.Profile.Bestiary.RegisterFact(fact.Id());
                 }
             }
         }

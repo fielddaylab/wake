@@ -51,7 +51,7 @@ namespace ProtoAqua.Experiment
             Services.UI.WorldFaders.Flash(Color.white.WithAlpha(0.5f), 0.25f);
             Services.Audio.PostEvent("capture_flash");
 
-            if (Services.Data.Profile.Bestiary.RegisterBaseFact(inBehaviorId))
+            if (Services.Data.Profile.Bestiary.RegisterFact(inBehaviorId))
             {
                 var factDef = Services.Assets.Bestiary.Fact(inBehaviorId);
 
@@ -81,7 +81,7 @@ namespace ProtoAqua.Experiment
 
         public bool WasObserved(StringHash32 inBehaviorId)
         {
-            return Services.Data.Profile.Bestiary.HasBaseFact(inBehaviorId);
+            return Services.Data.Profile.Bestiary.HasFact(inBehaviorId);
         }
 
         #region IService

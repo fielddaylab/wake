@@ -58,6 +58,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
             m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringData();
+            m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
             m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
             m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
 
@@ -261,6 +262,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
                 .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
                 .Register(ScriptEvents.Global.GiveFact, EventGiveFact)
+                .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
                 .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
                 .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob);
         }
@@ -529,7 +531,17 @@ namespace Aqua
 
         private void EventGiveFact(TagEventData inEvent, object inContext)
         {
+            var args = ExtractArgs(inEvent.StringArgument);
 
+            PlayerFactParams p;
+            Services.Data.Profile.Bestiary.RegisterFact(args[0].Hash32(), out p);
+
+            // TODO: Implement adding flags
+        }
+
+        private void EventGiveEntity(TagEventData inEvent, object inContext)
+        {
+            Services.Data.Profile.Bestiary.RegisterEntity(inEvent.Argument0.AsStringHash());
         }
 
         private void EventSwitchJob(TagEventData inEvent, object inContext)

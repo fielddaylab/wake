@@ -62,10 +62,10 @@ namespace ProtoAqua.Argumentation
             Services.Tweaks.Load(m_GraphDataManager);
 
             JobDesc currentJob = Services.Data.CurrentJob()?.Job;
-            string scriptId = currentJob?.ArgumentationScriptId();
-            if (!string.IsNullOrEmpty(scriptId))
+            GraphDataPackage script = currentJob?.FindAsset<GraphDataPackage>();
+            if (script != null)
             {
-                LoadGraph(scriptId);
+                LoadGraph(script);
             }
             else
             {
@@ -151,20 +151,18 @@ namespace ProtoAqua.Argumentation
             conditions = null;
         }
 
-        private void LoadGraph(string packageName)
+        private void LoadGraph(GraphDataPackage inPackage)
         {
             ResetGraph();
 
-            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
-
-            foreach (KeyValuePair<string, Node> kvp in data.Nodes)
+            foreach (KeyValuePair<string, Node> kvp in inPackage.Nodes)
             {
                 Node node = kvp.Value;
                 node.InitializeNode();
                 nodeDictionary.Add(node.Id, node);
             }
 
-            rootNode = FindNode(data.RootNodeId);
+            rootNode = FindNode(inPackage.RootNodeId);
 
             // Checks if no root node was specified
             if (rootNode == null)
@@ -175,7 +173,7 @@ namespace ProtoAqua.Argumentation
             currentNode = rootNode;
             conditions = new ConditionsData(currentNode.Id);
 
-            endNodeId = data.EndNodeId;
+            endNodeId = inPackage.EndNodeId;
 
             if (endNodeId == null)
             {
@@ -183,25 +181,24 @@ namespace ProtoAqua.Argumentation
             }
 
 
-            defaultInvalidNodeId = data.DefaultInvalidNodeId;
+            defaultInvalidNodeId = inPackage.DefaultInvalidNodeId;
 
             if (defaultInvalidNodeId == null)
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
 
-            LoadLinks(packageName);
+            LoadLinks(inPackage);
 
             if (OnGraphLoaded != null)
                 OnGraphLoaded();
         }
 
-        private void LoadLinks(string packageName)
+        private void LoadLinks(GraphDataPackage inPackage)
         {
-            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
             DataService dataService = Services.Data;
 
-            foreach (KeyValuePair<string, Link> kvp in data.Links)
+            foreach (KeyValuePair<string, Link> kvp in inPackage.Links)
             {
                 Link link = kvp.Value;
                 link.InitializeLink();

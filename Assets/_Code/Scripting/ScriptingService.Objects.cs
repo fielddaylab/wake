@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using BeauPools;
 using Leaf;
 using BeauUtil.Blocks;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -50,10 +51,13 @@ namespace Aqua
             if (m_LoadedPackageSourcesAssets.ContainsKey(inAsset))
                 return;
 
-            ScriptNodePackage package = BlockParser.Parse(inAsset.name, inAsset.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance);
-            package.BindAsset(inAsset);
-            AddPackage(package);
-            m_LoadedPackageSourcesAssets.Add(inAsset, package);
+            using(Profiling.Time(string.Format("Loading script {0}", inAsset.name)))
+            {
+                ScriptNodePackage package = BlockParser.Parse(inAsset.name, inAsset.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance);
+                package.BindAsset(inAsset);
+                AddPackage(package);
+                m_LoadedPackageSourcesAssets.Add(inAsset, package);
+            }
         }
 
         public void UnloadScript(LeafAsset inAsset)

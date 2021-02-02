@@ -6,18 +6,11 @@ using BeauUtil.Tags;
 
 namespace ProtoAqua.Argumentation
 {
-    public class GraphDataPackage : IDataBlockPackage<GraphData>
+    public class GraphDataPackage : ScriptableDataBlockPackage<GraphData>
     {
-        private readonly Dictionary<string, GraphData> m_Data = new Dictionary<string, GraphData>(32, StringComparer.Ordinal);
-        private readonly Dictionary<string, Node> m_Nodes = new Dictionary<string, Node>(32, StringComparer.Ordinal);
-        private readonly Dictionary<string, Link> m_Links = new Dictionary<string, Link>(32, StringComparer.Ordinal);
-
-        private string m_Name;
-
-        public GraphDataPackage(string inName)
-        {
-            m_Name = inName;
-        }
+        [NonSerialized] private readonly Dictionary<string, GraphData> m_Data = new Dictionary<string, GraphData>(32, StringComparer.Ordinal);
+        [NonSerialized] private readonly Dictionary<string, Node> m_Nodes = new Dictionary<string, Node>(32, StringComparer.Ordinal);
+        [NonSerialized] private readonly Dictionary<string, Link> m_Links = new Dictionary<string, Link>(32, StringComparer.Ordinal);
 
         // Package Ids
         [BlockMeta("rootNodeId")] private string m_RootNodeId = null;
@@ -25,11 +18,6 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("defaultInvalidNodeId")] private string m_DefaultInvalidNodeId = null;
 
         #region Accessors
-
-        public string Name
-        {
-            get { return m_Name; }
-        }
 
         public Dictionary<string, Node> Nodes
         {
@@ -60,29 +48,39 @@ namespace ProtoAqua.Argumentation
 
         #region ICollection
 
-        public int Count { get { return m_Data.Count; } }
+        public override int Count { get { return m_Data.Count; } }
 
-        public IEnumerator<GraphData> GetEnumerator()
+        public override IEnumerator<GraphData> GetEnumerator()
         {
             return m_Data.Values.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override void Clear()
         {
-            return GetEnumerator();
+            m_Data.Clear();
+            m_Links.Clear();
+            m_Nodes.Clear();
         }
 
         #endregion // ICollection
 
+        #region Importer
+
+        #if UNITY_EDITOR
+
+        [ScriptedExtension(1, "argue")]
+        private class Importer : ImporterBase<GraphDataPackage>
+        {
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Importer
+
         #region Generator
 
-        public class Generator : AbstractBlockGenerator<GraphData, GraphDataPackage>
+        public class Generator : GeneratorBase<GraphDataPackage>
         {
-            public override GraphDataPackage CreatePackage(string inFileName)
-            {
-                return new GraphDataPackage(inFileName);
-            }
-
             public override bool TryCreateBlock(IBlockParserUtil inUtil, GraphDataPackage inPackage, TagData inId, out GraphData outBlock)
             {
                 string id = inId.Id.ToString();

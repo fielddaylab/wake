@@ -55,11 +55,11 @@ $set temp:defaultResponseCount = 0
 
 :: telepathy.first
 @trigger    RequestPartnerHelp
-@when       kevin:help.requests == 1
+@when       kevin:help.requests >= 10
 @boostScore 1000
 @once       profile
 @cutscene
-{@player}   This is so weird. We're talking, but not speaking.
+{@player}   This is just... so weird. We're talking, but not speaking.
 {@kevin}    What did I tell you?
             It's a jellyblob thing. We're connected now.
 {@player}   How does that work exactly?
@@ -68,7 +68,7 @@ $set temp:defaultResponseCount = 0
 
 :: telepathy.discomfort
 @trigger    RequestPartnerHelp
-@when       kevin:help.requests >= 15, kevin:help.comfortTalks == 0
+@when       kevin:help.requests >= 30, kevin:help.comfortTalks == 0
 @once       profile
 @cutscene
 $set kevin:help.comfortTalks + 1
@@ -84,7 +84,7 @@ $set kevin:help.comfortTalks + 1
 
 :: telepathy.trust
 @trigger    RequestPartnerHelp
-@when       kevin:help.requests >= 30, kevin:help.comfortTalks == 1
+@when       kevin:help.requests >= 45, kevin:help.comfortTalks == 1
 @once       profile
 @boostScore 3
 @cutscene

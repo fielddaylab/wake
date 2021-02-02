@@ -1,0 +1,11 @@
+#basePath   job.1-6
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@kelpResearcher}   
+
+:: end
+@trigger    JobCompleted
+@cutscene
+{@player}   We did it!!
