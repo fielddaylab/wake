@@ -17,11 +17,11 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private readonly HashSet<TweakAsset> m_LoadedTweaks = new HashSet<TweakAsset>();
-        [NonSerialized] private readonly Dictionary<long, TweakAsset> m_TweakMap = new Dictionary<long, TweakAsset>();
+        [NonSerialized] private readonly Dictionary<Type, TweakAsset> m_TweakMap = new Dictionary<Type, TweakAsset>();
 
         #region IService
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             foreach(var tweak in m_LoadedTweaks)
             {
@@ -32,17 +32,12 @@ namespace Aqua
             m_TweakMap.Clear();
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             foreach(var tweak in m_Assets)
             {
                 Load(tweak);
             }
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Tweaks;
         }
 
         #endregion // IService
@@ -52,7 +47,7 @@ namespace Aqua
             if (!m_LoadedTweaks.Add(inTweaks))
                 return;
 
-            m_TweakMap.Add(GetKey(inTweaks), inTweaks);
+            m_TweakMap.Add(inTweaks.GetType(), inTweaks);
             inTweaks.OnAdded();
 
             Debug.LogFormat("[TweakMgr] Loaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
@@ -68,7 +63,7 @@ namespace Aqua
             if (inbRemove && !m_LoadedTweaks.Remove(inTweaks))
                 return;
 
-            m_TweakMap.Remove(GetKey(inTweaks));
+            m_TweakMap.Remove(inTweaks.GetType());
             inTweaks.OnRemoved();
 
             Debug.LogFormat("[TweakMgr] Unloaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
@@ -76,9 +71,8 @@ namespace Aqua
 
         public T Get<T>() where T : TweakAsset
         {
-            long key = GetKey(typeof(T));
             TweakAsset asset;
-            m_TweakMap.TryGetValue(key, out asset);
+            m_TweakMap.TryGetValue(typeof(T), out asset);
             return asset as T;
         }
 
@@ -100,15 +94,5 @@ namespace Aqua
         }
 
         #endif // UNITY_EDITOR
-
-        static private long GetKey(TweakAsset inAsset)
-        {
-            return inAsset.GetType().TypeHandle.Value.ToInt64();
-        }
-
-        static private long GetKey(Type inType)
-        {
-            return inType.TypeHandle.Value.ToInt64();
-        }
     }
 }

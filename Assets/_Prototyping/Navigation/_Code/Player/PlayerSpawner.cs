@@ -10,7 +10,7 @@ namespace ProtoAqua.Navigation
 {
     public class PlayerSpawner : MonoBehaviour, ISceneLoadHandler
     {
-        [SerializeField] private PlayerController m_Player;
+        [SerializeField] private PlayerController m_Player = null;
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {

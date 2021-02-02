@@ -41,8 +41,8 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private LeafAsset m_Scripting = null; // TODO: Load this!!!
-        [SerializeField] private string m_ArgumentationScriptId = null;
+        [SerializeField] private LeafAsset m_Scripting = null;
+        [SerializeField] private ScriptableObject[] m_ExtraAssets = null;
 
         #endregion // Inspector
 
@@ -55,9 +55,20 @@ namespace Aqua
         public StringHash32 DescInProgressId() { return m_DescInProgressId; }
         public StringHash32 DescCompletedId() { return m_DescCompletedId; }
 
-        public int ExperimentDifficulty() { return m_ExperimentDifficulty; }
-        public int ModelingDifficulty() { return m_ModelingDifficulty; }
-        public int ArgumentationDifficulty() { return m_ArgumentationDifficulty; }
+        public int Difficulty(DifficultyType inType)
+        {
+            switch(inType)
+            {
+                case DifficultyType.Argumentation:
+                    return m_ArgumentationDifficulty;
+                case DifficultyType.Experimentation:
+                    return m_ExperimentDifficulty;
+                case DifficultyType.Modeling:
+                    return m_ModelingDifficulty;
+                default:
+                    throw new ArgumentOutOfRangeException("inType");
+            }
+        }
 
         public bool ShouldBeAvailable()
         {
@@ -104,7 +115,27 @@ namespace Aqua
         public Sprite Icon() { return m_Icon; }
         public LeafAsset Scripting() { return m_Scripting; }
 
-        public string ArgumentationScriptId() { return m_ArgumentationScriptId; }
+        public IEnumerable<T> FindAssets<T>() where T : ScriptableObject
+        {
+            T casted;
+            foreach(var asset in m_ExtraAssets)
+            {
+                if ((casted = asset as T) != null)
+                    yield return casted;
+            }
+        }
+
+        public T FindAsset<T>() where T : ScriptableObject
+        {
+            T casted;
+            foreach(var asset in m_ExtraAssets)
+            {
+                if ((casted = asset as T) != null)
+                    return casted;
+            }
+
+            return null;
+        }
     }
 
     public enum JobCategory

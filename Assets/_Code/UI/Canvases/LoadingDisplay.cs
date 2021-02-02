@@ -16,8 +16,6 @@ namespace Aqua
 
         [Header("Shared Elements")]
         [SerializeField] private CanvasGroup m_SharedGroup = null;
-        [SerializeField] private SpriteAnimator m_SharedAnimator = null;
-        [SerializeField] private TMP_Text m_SharedText = null;
         [SerializeField] private TweenSettings m_TransitionSettings = new TweenSettings(0.2f);
         
         [Header("Backgrounds")]

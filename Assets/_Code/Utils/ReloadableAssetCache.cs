@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using BeauUtil;
@@ -13,6 +14,8 @@ namespace Aqua
     #endif // UNITY_EDITOR
     {
         static private readonly HotReloadBatcher s_AssetCache = new HotReloadBatcher();
+
+        static public event Action OnReload;
 
         static public bool Add(IHotReloadable inReloadable)
         {
@@ -41,6 +44,8 @@ namespace Aqua
             HashSet<HotReloadResult> results = new HashSet<HotReloadResult>();
             s_AssetCache.TryReloadAll(results, inbForce);
             LogResults(results);
+            if (results.Count > 0)
+                OnReload?.Invoke();
         }
 
         static public void TryReloadTag(StringHash32 inTag, bool inbForce = false)
@@ -48,6 +53,8 @@ namespace Aqua
             HashSet<HotReloadResult> results = new HashSet<HotReloadResult>();
             s_AssetCache.TryReloadTag(inTag, results, inbForce);
             LogResults(results);
+            if (results.Count > 0)
+                OnReload?.Invoke();
         }
 
         static private void LogResults(HashSet<HotReloadResult> inResults)

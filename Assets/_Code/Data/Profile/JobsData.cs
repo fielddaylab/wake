@@ -35,9 +35,20 @@ namespace Aqua.Profile
             }
 
             m_CurrentJobId = inJobId;
-            m_CurrentJob = GetProgress(inJobId, true);
 
+            if (inJobId == StringHash32.Null)
+            {
+                m_CurrentJob = null;
+                Services.Events.Dispatch(GameEvents.JobSwitched, StringHash32.Null);
+                return true;
+            }
+
+            bool bCreated;
+            m_CurrentJob = InternalGetOrCreateProgress(inJobId, out bCreated);
             m_CurrentJob.SetAsActive();
+
+            if (bCreated)
+                Services.Events.Dispatch(GameEvents.JobStarted, inJobId);
             Services.Events.Dispatch(GameEvents.JobSwitched, inJobId);
             return true;
         }
@@ -48,10 +59,10 @@ namespace Aqua.Profile
 
         public PlayerJob GetProgress(StringHash32 inJobId)
         {
-            return GetProgress(inJobId, false);
+            return InternalGetProgress(inJobId);
         }
 
-        private PlayerJob GetProgress(StringHash32 inJobId, bool inbCreate)
+        private PlayerJob InternalGetProgress(StringHash32 inJobId)
         {
             if (inJobId == StringHash32.Null)
                 return null;
@@ -68,17 +79,34 @@ namespace Aqua.Profile
                     return m_JobStatuses[i];
             }
 
-            if (inbCreate)
-            {
-                PlayerJob job = new PlayerJob(inJobId);
-                job.Begin();
-                m_JobStatuses.Add(job);
-                Services.Events.Dispatch(GameEvents.JobStarted, inJobId);
-                return job;
-            }
-
             m_TempJob.SetAsTemp(inJobId, PlayerJobStatus.NotStarted);
             return m_TempJob;
+        }
+
+        private PlayerJob InternalGetOrCreateProgress(StringHash32 inJobId, out bool outbCreated)
+        {
+            outbCreated = false;
+
+            if (inJobId == StringHash32.Null)
+                return null;
+
+            if (m_CompletedJobs.Contains(inJobId))
+            {
+                m_TempJob.SetAsTemp(inJobId, PlayerJobStatus.Completed);
+                return m_TempJob;
+            }
+
+            for(int i = 0; i < m_JobStatuses.Count; ++i)
+            {
+                if (m_JobStatuses[i].JobId == inJobId)
+                    return m_JobStatuses[i];
+            }
+
+            PlayerJob job = new PlayerJob(inJobId);
+            job.Begin();
+            m_JobStatuses.Add(job);
+            outbCreated = true;
+            return job;
         }
 
         public bool IsInProgress(StringHash32 inJobId)
@@ -161,7 +189,7 @@ namespace Aqua.Profile
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
-            m_CurrentJob = GetProgress(m_CurrentJobId, true);
+            m_CurrentJob = InternalGetProgress(m_CurrentJobId);
         }
 
         #endregion // ISerializedData

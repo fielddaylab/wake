@@ -7,6 +7,9 @@ using System.Globalization;
 using BeauUtil;
 using Aqua.DebugConsole;
 using UnityEngine;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 
 namespace Aqua
 {
@@ -17,25 +20,30 @@ namespace Aqua
 
         private void Awake()
         {
-            #if !DEVELOPMENT
-            Debug.Log("[Bootstrap] Debug mode disabled");
-            DestroyImmediate(m_Debug.gameObject);
-            #else
-            Debug.Log("[Bootstrap] Debug mode enabled");
-            m_Debug.gameObject.SetActive(true);
-            m_Debug = null;
-            #endif // !DEVELOPMENT
-
             BuildInfo.Load();
             Input.multiTouchEnabled = false;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
-            Services.AutoSetup(gameObject);
 
             foreach(var sceneName in m_IgnoredSceneNames)
             {
                 SceneHelper.IgnoreSceneByName(sceneName);
             }
+
+            #if !DEVELOPMENT
+            Debug.Log("[Bootstrap] Debug mode disabled");
+            DestroyImmediate(m_Debug.gameObject);
+            #else
+            Debug.Log("[Bootstrap] Debug mode enabled");
+            #endif // !DEVELOPMENT
+
+            Services.AutoSetup(gameObject);
+            Services.Data.LoadProfile();
+        }
+
+        private void OnDestroy()
+        {
+            Services.Shutdown();
         }
     }
 }

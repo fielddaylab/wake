@@ -126,7 +126,7 @@ namespace ProtoAqua.Experiment
 
         #region Service
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_VariantTablePool = new DynamicPool<VariantTable>(16, (p) => new VariantTable());
             m_VariantTablePool.Prewarm();
@@ -135,17 +135,12 @@ namespace ProtoAqua.Experiment
             m_VariantTablePool.Config.RegisterOnFree((p, o) => o.Reset());
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_VariantTablePool.Dispose();
             m_VariantTablePool = null;
 
             m_AllActors.Clear();
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.AI;
         }
 
         #endregion // Service

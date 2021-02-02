@@ -16,7 +16,7 @@ namespace Aqua.DebugConsole
         #region Inspector
 
         [SerializeField] private TMP_Text m_TimeScaleLabel = null;
-        [SerializeField] private TMP_Text m_StateLabel = null;
+        // [SerializeField] private TMP_Text m_StateLabel = null;
 
         #endregion // Inspector
         

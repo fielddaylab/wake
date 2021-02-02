@@ -114,13 +114,13 @@ namespace Aqua
 
         #region Alloc
 
-        public FactSentenceFragment Alloc(in BestiaryFactFragment inFragment, Transform inTarget, bool inbInteractive)
+        public FactSentenceFragment Alloc(in BestiaryFactFragment inFragment, Transform inTarget)
         {
             // TODO: Differentiate between different fragment types?
 
             FactSentenceFragment fragment = m_Default.Alloc(inTarget);
             TextBackgroundColorPair colors = FragmentColors(inFragment);
-            fragment.PreConfigure(colors.Background, colors.Text, inbInteractive);
+            fragment.PreConfigure(colors.Background, colors.Text);
 
             return fragment;
         }

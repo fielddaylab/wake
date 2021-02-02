@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
@@ -79,6 +80,7 @@ namespace ProtoAqua.Ship
         private IEnumerator RoomTransition(Room inNextRoom)
         {
             Services.Input.PauseAll();
+            Services.Script.KillLowPriorityThreads();
 
             using(var fader = Services.UI.WorldFaders.AllocWipe())
             {

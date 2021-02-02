@@ -284,14 +284,5 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Constraints
-
-        #region IService
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Camera;
-        }
-
-        #endregion // IService
     }
 }

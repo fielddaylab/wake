@@ -1,17 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AquaAudio;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.IO;
+using BeauUtil.Services;
 using BeauUtil.Tags;
 using BeauUtil.Variants;
 using UnityEngine;
 
 namespace Aqua.DebugConsole
 {
+    [ServiceDependency(typeof(ScriptingService), typeof(AudioMgr), typeof(DataService), typeof(UIMgr), typeof(StateMgr))]
     public partial class DebugService : ServiceBehaviour
     {
         #region Inspector
@@ -157,7 +160,7 @@ namespace Aqua.DebugConsole
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
-                        Services.Data.Profile.Bestiary.RegisterBaseFact(fact.Id());
+                        Services.Data.Profile.Bestiary.RegisterFact(fact.Id());
                 }
             }
         }
@@ -209,7 +212,7 @@ namespace Aqua.DebugConsole
 
         #region IService
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             #if PREVIEW
             SetMinimalLayer(false);
@@ -219,17 +222,13 @@ namespace Aqua.DebugConsole
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
 
-            m_Input = BaseInputLayer.Find(this).Device;
+            m_Canvas.gameObject.SetActive(true);
+            m_Input = BaseInputLayer.Find(m_Canvas).Device;
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Debug;
         }
 
         #endregion // IService

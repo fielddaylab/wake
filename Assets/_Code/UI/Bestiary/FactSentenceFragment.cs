@@ -12,16 +12,14 @@ namespace Aqua
 
         [SerializeField, Required] private LocText m_Text = null;
         [SerializeField, Required] private ColorGroup m_Background = null;
-        [SerializeField, Required] private CanvasGroup m_InputGroup = null;
 
         #endregion // Inspector
 
         [NonSerialized] private IPool<FactSentenceFragment> m_Pool;
         [NonSerialized] private bool m_Allocated;
 
-        public void PreConfigure(Color inBackgroundColor, Color inTextColor, bool inbInteractive)
+        public void PreConfigure(Color inBackgroundColor, Color inTextColor)
         {
-            m_InputGroup.blocksRaycasts = inbInteractive;
             m_Background.Color = inBackgroundColor;
             m_Text.Graphic.color = inTextColor;
         }

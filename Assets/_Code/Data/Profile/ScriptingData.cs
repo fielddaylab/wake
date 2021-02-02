@@ -22,6 +22,13 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_TrackedVisitedNodesForSession = new HashSet<StringHash32>();
         private RingBuffer<StringHash32> m_RecentNodeHistory = new RingBuffer<StringHash32>(32, RingBufferMode.Overwrite);
 
+        private uint m_ActIndex = 0;
+
+        public uint ActIndex
+        {
+            get { return m_ActIndex; }
+        }
+
         public IReadOnlyCollection<StringHash32> RecentNodeHistory { get { return m_RecentNodeHistory; } }
         public IReadOnlyCollection<StringHash32> ProfileNodeHistory { get { return m_TrackedVisitedNodes; } }
         public IReadOnlyCollection<StringHash32> SessionNodeHistory { get { return m_TrackedVisitedNodesForSession; } }

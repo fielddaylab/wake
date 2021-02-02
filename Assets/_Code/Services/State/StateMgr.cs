@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -168,7 +169,7 @@ namespace Aqua
             m_SceneHistory.PushBack(active);
 
             yield return WaitForPreload(active, null);
-
+            yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
             m_SceneLock = false;
@@ -186,6 +187,7 @@ namespace Aqua
             try
             {
                 Services.Input.PauseAll();
+                Services.Script.KillLowPriorityThreads();
 
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
                 bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
@@ -205,6 +207,8 @@ namespace Aqua
                 Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
                 active.BroadcastUnload(inContext);
                 
+                Services.Deregister(active);
+
                 AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
                 loadOp.allowSceneActivation = false;
 
@@ -227,7 +231,7 @@ namespace Aqua
                 }
 
                 yield return WaitForPreload(inNextScene, inContext);
-
+                yield return WaitForServiceLoading();
                 yield return WaitForCleanup();
 
                 m_SceneLock = false;
@@ -258,7 +262,7 @@ namespace Aqua
             while(BuildInfo.IsLoading())
                 yield return null;
 
-            foreach(var service in Services.All())
+            foreach(var service in Services.AllLoadable())
             {
                 if (ReferenceEquals(this, service))
                     continue;
@@ -331,8 +335,10 @@ namespace Aqua
             }
 
             // locate camera
-
             m_MainCamera = Camera.main;
+
+            // find services
+            Services.AutoSetup(inScene);
         }
 
         #endregion // Scripting
@@ -408,7 +414,7 @@ namespace Aqua
 
         #region IService
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
@@ -416,19 +422,9 @@ namespace Aqua
             m_SharedManagers = new Dictionary<StringHash32, SharedManager>(8);
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_SceneLoadRoutine.Stop();
-        }
-
-        protected override bool IsLoading()
-        {
-            return m_SceneLoadRoutine && m_SceneLock;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.State;
         }
 
         #endregion // IService

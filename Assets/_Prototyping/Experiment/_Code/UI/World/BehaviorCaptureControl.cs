@@ -12,8 +12,6 @@ namespace ProtoAqua.Experiment
 {
     public class BehaviorCaptureControl : ServiceBehaviour, ISceneUnloadHandler
     {
-        static public readonly FourCC GlobalServiceId = FourCC.Parse("BEHV");
-
         #region Types
 
         [Serializable] private class CaptureLocationPool : SerializablePool<BehaviorCaptureLocation> { }
@@ -53,7 +51,7 @@ namespace ProtoAqua.Experiment
             Services.UI.WorldFaders.Flash(Color.white.WithAlpha(0.5f), 0.25f);
             Services.Audio.PostEvent("capture_flash");
 
-            if (Services.Data.Profile.Bestiary.RegisterBaseFact(inBehaviorId))
+            if (Services.Data.Profile.Bestiary.RegisterFact(inBehaviorId))
             {
                 var factDef = Services.Assets.Bestiary.Fact(inBehaviorId);
 
@@ -83,29 +81,24 @@ namespace ProtoAqua.Experiment
 
         public bool WasObserved(StringHash32 inBehaviorId)
         {
-            return Services.Data.Profile.Bestiary.HasBaseFact(inBehaviorId);
+            return Services.Data.Profile.Bestiary.HasFact(inBehaviorId);
         }
 
         #region IService
 
-        public override FourCC ServiceId()
+        protected override void Initialize()
         {
-            return GlobalServiceId;
-        }
-
-        protected override void OnRegisterService()
-        {
-            base.OnRegisterService();
+            base.Initialize();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.AttemptObserveBehavior, OnAttemptObserve, this)
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this);
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
 
-            base.OnDeregisterService();
+            base.Shutdown();
         }
 
         #endregion // IService

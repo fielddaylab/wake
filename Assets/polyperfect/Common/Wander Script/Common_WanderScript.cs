@@ -15,13 +15,13 @@ namespace PolyPerfect
         private const float contingencyDistance = 1f;
 
         [SerializeField]
-        public IdleState[] idleStates;
+        public IdleState[] idleStates = null;
         [SerializeField]
-        private MovementState[] movementStates;
+        private MovementState[] movementStates = null;
         [SerializeField]
-        private AIState[] attackingStates;
+        private AIState[] attackingStates = null;
         [SerializeField]
-        private AIState[] deathStates;
+        private AIState[] deathStates = null;
 
         [SerializeField]
         public string species = "NA";
@@ -83,7 +83,7 @@ namespace PolyPerfect
         private bool constainedToWanderZone = false;
 
         [SerializeField, Tooltip("This animal will be peaceful towards species in this list.")]
-        private string[] nonAgressiveTowards;
+        private string[] nonAgressiveTowards = null;
 
         private static List<Common_WanderScript> allAnimals = new List<Common_WanderScript>();
         public static List<Common_WanderScript> AllAnimals { get { return allAnimals; } }

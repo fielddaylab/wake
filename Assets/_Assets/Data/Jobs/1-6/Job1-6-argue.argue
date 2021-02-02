@@ -1,0 +1,149 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid.default
+
+:: node.invalid.default
+Hmmm I'm not so sure that's right.
+
+:: node.invalid.1
+I don't think that makes sense here.
+
+:: node.invalid.OtterKelp
+@nextNodeId node.OtterHelpKelpContinue
+I don't think that explains why Otters help the kelp.
+
+:: node.invalid.Kelp
+@nextNodeId node.OtterHelpKelpContinue
+That is not why the otters help the kelp.
+
+:: node.invalid.Otter
+@nextNodeId node.OtterContinue
+That is not the right answer.
+
+:: node.invalid.DeadUrchin
+@nextNodeId node.DeadUrchinContinue
+I don't think this explains why urchins can't survive in this water.
+
+:: node.DeadUrchinContinue
+Why can urchins not survive in this water?
+
+
+
+:: node.default
+Hmmm
+
+:: node.OtterHelpKelpContinue
+@invalidNodeId node.invalid.Kelp
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
+Do you have any other evidence for how Otters help the kelp?
+
+:: node.OtterContinue
+@invalidNodeId node.invalid.Otter
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
+So what does that have to do with otters?
+
+:: node.intro
+@responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
+So what's going on?
+
+:: node.OtterHelpKelpInquery
+@invalidNodeId node.invalid.OtterKelp
+@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
+How so?
+
+:: node.OtterEatUrchinInquery
+@invalidNodeId node.invalid.Kelp
+@responseIds Urchin.Eats.Kelp
+So why does that help the kelp?
+
+:: node.UrchinEatKelpInquery
+@invalidNodeId node.invalid.Otter
+@responseIds SeaOtter.Eats.Urchin
+So what does that have to do with otters?
+
+:: node.FakePath
+Okay, that makes sense, not quite what I am looking for.
+
+
+:: node.end
+Got it! So more otters means less urchins and more kelp!
+
+
+:: node.UrchinsCantSurviveInquery
+@invalidNodeId node.invalid.DeadUrchin
+@responseIds link.NoUrchins, link.DeadUrchin
+Why not?
+
+:: node.PredatorNode
+@responseIds link.DeadUrchin
+But it could have been a predator or other variable
+
+:: node.BadFinish
+@responseIds link.DeadUrchin
+Ok then. Maybe try a new claim?
+
+
+
+
+
+:: link.OtterHelpKelp
+@factId claim
+@tag claim
+@type claim
+@nextNodeId node.intro, node.OtterHelpKelpInquery
+It seems like the otters somehow help the kelp.
+
+
+:: SeaOtter.Eats.Urchin
+@factId SeaOtter.Eats.Urchin
+@tag behavior
+@type otter
+@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
+@nextNodeId node.UrchinEatKelpInquery, node.end
+Otters eat urchins
+
+:: Urchin.Eats.Kelp
+@factId Urchin.Eats.Kelp
+@tag behavior
+@type urchin
+@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
+@nextNodeId node.OtterEatUrchinInquery, node.end
+Urchins eat kelp
+
+
+:: link.OttersDontEatKelp
+@factId
+@tag behavior
+@type otter
+@nextNodeId node.OtterHelpKelpInquery, node.FakePath
+Otters don't eat kelp.
+
+:: link.UrchinsCantSurvive
+@factId claim
+@tag claim
+@type claim
+@nextNodeId node.intro, node.UrchinsCantSurviveInquery
+Urchins can't survive in this water.
+
+:: link.WaterTooCold
+@factId
+@tag ecosystem
+@type water
+@shortenedText Water < 50
+The water was less than 50 degrees, so the urchins died.
+
+:: link.NoUrchins
+@factId
+@tag ecosystem
+@type water
+@nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
+There were no urchins in the wild env
+
+:: link.DeadUrchin
+@factId
+@tag model
+@type dead
+@nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
+@nextNodeId node.PredatorNode, node.BadFinish
+I dropped an urchin into a tank and it died.
+

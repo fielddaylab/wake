@@ -57,6 +57,10 @@ namespace Aqua
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithAliases("trigger").WithStringData();
             m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
+            m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringData();
+            m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
+            m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
+            m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -247,7 +251,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.Wait, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
-                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
+                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
                 .Register(ScriptEvents.Global.LoadScene, EventLoadScene)
@@ -256,7 +260,11 @@ namespace Aqua
                 .Register(ScriptEvents.Global.ScreenWipeIn, EventScreenWipeIn)
                 .Register(ScriptEvents.Global.ScreenFlash, EventScreenFlash)
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
-                .Register(ScriptEvents.Global.FadeIn, EventFadeIn);
+                .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
+                .Register(ScriptEvents.Global.GiveFact, EventGiveFact)
+                .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
+                .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
+                .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob);
         }
 
         #endregion // Event Setup
@@ -511,7 +519,49 @@ namespace Aqua
 
         private void EventEnableDisableObjectImpl(TagEventData inEvent, object inContext, bool inbActive)
         {
+            var ids = ExtractArgs(inEvent.StringArgument);
+            foreach(var id in ids)
+            {
+                foreach(var scriptObject in GetScriptObjects(id))
+                {
+                    scriptObject.gameObject.SetActive(inbActive);
+                }
+            }
+        }
 
+        private void EventGiveFact(TagEventData inEvent, object inContext)
+        {
+            var args = ExtractArgs(inEvent.StringArgument);
+
+            PlayerFactParams p;
+            Services.Data.Profile.Bestiary.RegisterFact(args[0].Hash32(), out p);
+
+            // TODO: Implement adding flags
+        }
+
+        private void EventGiveEntity(TagEventData inEvent, object inContext)
+        {
+            Services.Data.Profile.Bestiary.RegisterEntity(inEvent.Argument0.AsStringHash());
+        }
+
+        private void EventSwitchJob(TagEventData inEvent, object inContext)
+        {
+            Services.Data.Profile.Jobs.SetCurrentJob(inEvent.Argument0.AsStringHash());
+        }
+
+        private void EventCompleteJob(TagEventData inEvent, object inContext)
+        {
+            StringHash32 jobId = inEvent.Argument0.AsStringHash();
+            if (jobId.IsEmpty)
+                jobId = Services.Data.CurrentJobId();
+
+            if (jobId.IsEmpty)
+            {
+                Debug.LogErrorFormat("[ScriptingService] Attempting to complete job, but no job specified and no job active");
+                return;
+            }
+
+            Services.Data.Profile.Jobs.MarkComplete(Services.Data.Profile.Jobs.GetProgress(jobId));
         }
 
         #endregion // Event Callbacks

@@ -31,15 +31,7 @@ namespace ProtoAqua.JobBoard
                 throw new Exception("not enough or too many stars :" + Stars.Count + DType);
             }
 
-            if (dtype.Equals(DifficultyType.Argumentation)) {
-                Value = job.ArgumentationDifficulty();
-            }
-            else if (dtype.Equals(DifficultyType.Experimentation)) {
-                Value = job.ExperimentDifficulty();
-            }
-            else {
-                Value = job.ModelingDifficulty();
-            }
+            Value = job.Difficulty(dtype);
 
             int i = 0;
             foreach (Transform star in Stars)

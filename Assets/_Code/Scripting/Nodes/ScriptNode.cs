@@ -10,7 +10,7 @@ using Leaf;
 
 namespace Aqua.Scripting
 {
-    public class ScriptNode : LeafNode
+    internal class ScriptNode : LeafNode
     {
         #region Serialized
 
@@ -18,6 +18,8 @@ namespace Aqua.Scripting
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
         private TriggerNodeData m_TriggerData = null;
+        private StringHash32 m_FunctionId = null;
+        private StringHash32 m_Target = null;
         private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
 
         #endregion // Serialized
@@ -31,8 +33,12 @@ namespace Aqua.Scripting
         public ScriptNodeFlags Flags() { return m_Flags; }
         public ScriptNodePackage Package() { return m_Package; }
 
+        public bool IsTrigger() { return (m_Flags & ScriptNodeFlags.TriggerResponse) != 0; }
+        public bool IsFunction() { return (m_Flags & ScriptNodeFlags.Function) != 0; }
+
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
+        public StringHash32 FunctionId() { return m_FunctionId; }
 
         public override ILeafModule Module()
         {
@@ -54,7 +60,7 @@ namespace Aqua.Scripting
 
         public StringHash32 TargetId()
         {
-            return m_TriggerData != null ? m_TriggerData.TargetId : StringHash32.Null;
+            return m_Target;
         }
 
         public TriggerPriority Priority()
@@ -73,12 +79,15 @@ namespace Aqua.Scripting
         #region Parser
 
         [BlockMeta("cutscene"), Preserve]
-        private void SetCutscene(bool inbCutscene = true)
+        private void SetCutscene()
         {
-            if (inbCutscene)
-                m_Flags |= ScriptNodeFlags.Cutscene;
-            else
-                m_Flags &= ~ScriptNodeFlags.Cutscene;
+            m_Flags |= ScriptNodeFlags.Cutscene;
+        }
+
+        [BlockMeta("ignoreDuringCutscene"), Preserve]
+        private void IgnoreDuringCutscene()
+        {
+            m_Flags |= ScriptNodeFlags.SuppressDuringCutscene;
         }
 
         [BlockMeta("important"), Preserve]
@@ -90,7 +99,7 @@ namespace Aqua.Scripting
         [BlockMeta("chatter"), Preserve]
         private void SetChatter()
         {
-            m_Flags |= ScriptNodeFlags.CornerChatter;
+            m_Flags |= ScriptNodeFlags.CornerChatter | ScriptNodeFlags.SuppressDuringCutscene;
         }
 
         [BlockMeta("entrypoint"), Preserve]
@@ -109,19 +118,24 @@ namespace Aqua.Scripting
             }
             m_TriggerData.TriggerId = inTriggerId;
 
+            // Mapping Shortcut - Partner requests are always towards kevin
             if (inTriggerId == GameTriggers.RequestPartnerHelp)
             {
-                m_TriggerData.TargetId = "kevin";
+                m_Target = "kevin";
             }
+        }
+
+        [BlockMeta("function"), Preserve]
+        private void SetFunction(StringHash32 inFunctionId)
+        {
+            m_FunctionId = inFunctionId;
+            m_Flags |= ScriptNodeFlags.Function;
         }
 
         [BlockMeta("who"), Preserve]
         private void SetTriggerTarget(StringHash32 inTargetId)
         {
-            if (m_TriggerData != null)
-            {
-                m_TriggerData.TargetId = inTargetId;
-            }
+            m_Target = inTargetId;
         }
 
         [BlockMeta("triggerPriority"), Preserve]
@@ -198,12 +212,14 @@ namespace Aqua.Scripting
     }
     
     [Flags]
-    public enum ScriptNodeFlags
+    internal enum ScriptNodeFlags
     {
         Cutscene = 0x01,
         Entrypoint = 0x02,
         TriggerResponse = 0x04,
         Important = 0x08,
         CornerChatter = 0x10,
+        SuppressDuringCutscene = 0x20,
+        Function = 0x40
     }
 }

@@ -26,6 +26,14 @@ namespace ProtoAqua.Navigation
 
         public string SiteId { get { return m_siteId; } }
 
+        private void Awake()
+        {
+            var listener = m_Collider.EnsureComponent<TriggerListener2D>();
+            listener.FilterByComponentInParent<PlayerController>();
+            listener.onTriggerEnter.AddListener(OnPlayerEnter);
+            listener.onTriggerEnter.AddListener(OnPlayerExit);
+        }
+
         public void CheckAllowed()
         {
             var currentJob = Services.Data.CurrentJob()?.Job;
@@ -41,7 +49,7 @@ namespace ProtoAqua.Navigation
             }
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnPlayerEnter(Collider2D other)
         {
             if (!m_Allowed)
             {
@@ -61,7 +69,7 @@ namespace ProtoAqua.Navigation
             }
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private void OnPlayerExit(Collider2D other)
         {
             if (!m_Allowed)
                 return;

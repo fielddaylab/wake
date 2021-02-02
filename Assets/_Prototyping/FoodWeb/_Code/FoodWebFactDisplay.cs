@@ -11,9 +11,6 @@ namespace ProtoAqua.Foodweb
 {
     public class FoodWebFactDisplay : FactSentenceDisplay
     {
-        [Serializable]
-        public class Pool : SerializablePool<FactSentenceDisplay> { }
-
         #region Inspector
 
         [SerializeField] private bool m_DisplayOptionalFragments = false;
@@ -24,33 +21,6 @@ namespace ProtoAqua.Foodweb
 
         [NonSerialized] private List<FactSentenceFragment> m_AllocatedFragments = new List<FactSentenceFragment>();
         [NonSerialized] private FactSentenceTweaks m_Tweaks = null;
-
-        public void Clear()
-        {
-            foreach(var frag in m_AllocatedFragments)
-            {
-                frag.Recycle();
-            }
-
-            m_AllocatedFragments.Clear();
-        }
-
-        public void Populate(BFBase inFact, PlayerFactParams inFactParams)
-        {
-            if (!m_Tweaks)
-            {
-                m_Tweaks = Services.Tweaks.Get<FactSentenceTweaks>();
-            }
-
-            Clear();
-
-            foreach(var fragment in inFact.GenerateFragments(inFactParams))
-            {
-                TryAllocFragment(fragment, inFactParams);
-            }
-
-            m_Layout.ForceRebuild();
-        }
 
         private bool TryAllocFragment(in BestiaryFactFragment inFragment, PlayerFactParams inFactParams)
         {
@@ -96,7 +66,7 @@ namespace ProtoAqua.Foodweb
             //     }
             // }
 
-            FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform, m_InteractiveFragments);
+            FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform);
             fragment.Configure(inFragment.String);
             m_AllocatedFragments.Add(fragment);
 
