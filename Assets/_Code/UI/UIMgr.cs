@@ -24,9 +24,9 @@ namespace Aqua
 
         #endregion // Inspector
 
-        private int m_LetterboxCounter = 0;
+        [NonSerialized] private int m_LetterboxCounter = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
-        private Dictionary<StringHash32, SharedPanel> m_SharedPanels;
+        private Dictionary<Type, SharedPanel> m_SharedPanels;
 
         #region Loading Screen
 
@@ -119,10 +119,9 @@ namespace Aqua
         public void RegisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-            StringHash32 key = t.FullName;
 
             SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(key, out panel))
+            if (m_SharedPanels.TryGetValue(t, out panel))
             {
                 if (panel != inPanel)
                     throw new ArgumentException(string.Format("Panel with type {0} already exists", t.FullName), "inPanel");
@@ -130,26 +129,25 @@ namespace Aqua
                 return;
             }
 
-            m_SharedPanels.Add(key, inPanel);
+            m_SharedPanels.Add(t, inPanel);
         }
 
         public void DeregisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-            StringHash32 key = t.FullName;
 
             SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(key, out panel) && panel == inPanel)
+            if (m_SharedPanels.TryGetValue(t, out panel) && panel == inPanel)
             {
-                m_SharedPanels.Remove(key);
+                m_SharedPanels.Remove(t);
             }
         }
 
         public T FindPanel<T>() where T : SharedPanel
         {
-            StringHash32 key = typeof(T).FullName;
+            Type t = typeof(T);
             SharedPanel panel;
-            if (!m_SharedPanels.TryGetValue(key, out panel))
+            if (!m_SharedPanels.TryGetValue(t, out panel))
             {
                 panel = FindObjectOfType<T>();
                 if (panel != null)
@@ -200,7 +198,7 @@ namespace Aqua
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
-            m_SharedPanels = new Dictionary<StringHash32, SharedPanel>(16);
+            m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
 
             SceneHelper.OnSceneUnload += CleanupFromScene;
         }

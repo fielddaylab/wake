@@ -208,6 +208,21 @@ namespace Aqua.Scripting
         }
 
         #endregion // Cutscene
+        
+        #region Skipping
+
+        public void Skip()
+        {
+            m_Flags |= ScriptFlags.Skip;
+            m_RunningRoutine.SetTimeScale(100000);
+        }
+
+        public bool IsSkipping()
+        {
+            return (m_Flags & ScriptFlags.Skip) != 0;
+        }
+
+        #endregion // Skipping
 
         #region IPooledObject
 
@@ -271,7 +286,7 @@ namespace Aqua.Scripting
         #endregion // IPooledObject
     }
 
-    public enum ScriptFlags : UInt32
+    internal enum ScriptFlags : UInt32
     {
         None = 0x00,
 

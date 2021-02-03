@@ -185,7 +185,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.exitHint
 @trigger    TryEndExperiment
-@when       experiment:tankType == "Foundational", experiment:setup.urchin, experiment:setup.kelp, !observed.behavior:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
 @who        Kevin
 @cutscene
 {@kevin}    Hold on, I think we missed something.
@@ -195,7 +195,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.hint.1
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !observed.behavior:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
 @who        Kevin
 @repeat     1
 @chatter
@@ -203,7 +203,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.hint.2
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !observed.behavior:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
 @who        Kevin
 @repeat     1
 @chatter
@@ -211,7 +211,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.found
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, observed.behavior:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, has.fact:Urchin.Eats.Kelp
 @who        Kevin
 @repeat     1
 @chatter
@@ -241,7 +241,7 @@ $set temp:newObservationTimer = 0
 // :: attemptExit
 // @trigger    ExperimentFinished
 // @who        Kevin
-// $if observed.behavior:Urchin.Eats.Kelp
+// $if has.fact:Urchin.Eats.Kelp
 //     $goto demo.experimentationExit
 // $else
 //     {@kevin}    I don't know if we got anything out of that experiment.

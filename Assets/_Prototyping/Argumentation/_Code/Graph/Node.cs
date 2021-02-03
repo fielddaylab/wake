@@ -1,19 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BeauUtil;
 using BeauUtil.Blocks;
+using UnityEngine.Scripting;
+
 
 namespace ProtoAqua.Argumentation
 {
     public class Node : GraphData
     {
         private List<string> responses = new List<string>();
+        private Dictionary<StringHash32, StringHash32> linkToNodeIds = new Dictionary<StringHash32, StringHash32>();
+        private NodeFlags m_Flags;
 
         #region Serialized
 
+        private List<string> m_InLinkToNodeIds = new List<string>();
+
         // Ids
-        [BlockMeta("defaultNodeId")] private string m_DefaultNodeId = "node.default";
-        [BlockMeta("responseIds")] private string m_ResponseIds = null;
-        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
-        [BlockMeta("nextNodeId")] private string m_NextNodeId = null;
+        [BlockMeta("defaultNodeId")] private StringHash32 m_DefaultNodeId = "node.default";
+        [BlockMeta("invalidNodeId")] private StringHash32 m_InvalidNodeId = null;
+        [BlockMeta("nextNodeId")] private StringHash32 m_NextNodeId = null;
+        [BlockMeta("linkToNode"), Preserve]
+        private void AddNextNodeIds(string line)
+        {
+            m_InLinkToNodeIds.Add(line);
+        }
+
+        [BlockMeta("showClaims"), Preserve]
+        private void SetClaimsActive()
+        {
+            m_Flags |= NodeFlags.ShowClaims;
+        }
 
         // Text
         [BlockContent] private string m_DisplayText = null;
@@ -27,41 +45,59 @@ namespace ProtoAqua.Argumentation
             get { return m_DisplayText; }
         }
 
-        public string DefaultNodeId
+        public StringHash32 DefaultNodeId
         {
             get { return m_DefaultNodeId; }
         }
 
-        public List<string> Responses
-        {
-            get { return responses; }
-        }
-
-        public string InvalidNodeId
+        public StringHash32 InvalidNodeId
         {
             get { return m_InvalidNodeId; }
         }
-        public string NextNodeId
+
+        public StringHash32 NextNodeId
         {
             get { return m_NextNodeId; }
         }
 
+        public bool IsInvalid
+        {
+            get { return (m_Flags & NodeFlags.IsInvalid) != 0; }
+        }
+
+        public bool ShowClaims
+        {
+            get { return (m_Flags & NodeFlags.ShowClaims) != 0; }
+        }
+
         #endregion // Accessors
 
-        public Node(string inId) : base(inId) { }
-
-        public void InitializeNode()
+        public Node(string inId) : base(inId)
         {
-            if (m_ResponseIds != null)
+            if (inId.Contains("invalid"))
             {
-                ParseResponses(m_ResponseIds);
+                m_Flags |= NodeFlags.IsInvalid;
             }
         }
 
-        // Checks if a given link id is a valid response to this node
-        public bool CheckResponse(string id)
+        public void InitializeNode()
         {
-            foreach (string response in responses)
+            ParseLinkToNodeIds(m_InLinkToNodeIds);
+        }
+
+        public StringHash32 GetNextNodeId(StringHash32 id) {
+            if (linkToNodeIds.TryGetValue(id, out StringHash32 nextNodeId))
+            {
+                return nextNodeId;
+            }
+
+            return null;
+        }
+
+        // Checks if a given link id is a valid response to this node
+        public bool CheckResponse(StringHash32 id)
+        {
+            foreach (StringHash32 response in responses)
             {
                 if (response.Equals(id))
                 {
@@ -81,5 +117,24 @@ namespace ProtoAqua.Argumentation
                 responses.Add(response.Trim());
             }
         }
+
+        private void ParseLinkToNodeIds(List<string> inLinkToNodeIds) {
+            linkToNodeIds = new Dictionary<StringHash32, StringHash32>();
+            foreach (string ids in inLinkToNodeIds)
+            {
+                StringSlice[] parsedIds = StringSlice.Split(ids, CommaSplit, StringSplitOptions.None);
+                linkToNodeIds.Add(parsedIds[0], parsedIds[1].Trim());
+            }
+            
+        }
+
+        static private readonly char[] CommaSplit = new char[] { ',' };
+    }
+
+    [Flags]
+    public enum NodeFlags : byte
+    {
+        IsInvalid = 0x01,
+        ShowClaims = 0x02
     }
 }

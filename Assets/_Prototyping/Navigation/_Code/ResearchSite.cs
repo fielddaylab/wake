@@ -31,7 +31,7 @@ namespace ProtoAqua.Navigation
             var listener = m_Collider.EnsureComponent<TriggerListener2D>();
             listener.FilterByComponentInParent<PlayerController>();
             listener.onTriggerEnter.AddListener(OnPlayerEnter);
-            listener.onTriggerEnter.AddListener(OnPlayerExit);
+            listener.onTriggerExit.AddListener(OnPlayerExit);
         }
 
         public void CheckAllowed()
@@ -74,7 +74,7 @@ namespace ProtoAqua.Navigation
             if (!m_Allowed)
                 return;
             
-            Services.UI.FindPanel<UIController>().Hide();
+            Services.UI.FindPanel<UIController>()?.Hide();
         }
     }
 

@@ -10,11 +10,13 @@ namespace Aqua
         [SerializeField] private ActDB m_Acts = null;
         [SerializeField] private JobDB m_Jobs = null;
         [SerializeField] private BestiaryDB m_Bestiary = null;
+        [SerializeField] private MapDB m_Map = null;
 
         #endregion // Inspector
 
         public ActDB Acts { get { return m_Acts; } }
         public JobDB Jobs { get { return m_Jobs; } }
         public BestiaryDB Bestiary { get { return m_Bestiary; } }
+        public MapDB Map { get { return m_Map; } }
     }
 }

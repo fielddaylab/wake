@@ -61,7 +61,11 @@ namespace Aqua.Profile
         {
             if (Services.Assets.Bestiary.IsAutoFact(inFactId))
             {
-                outParams = PlayerFactParams.Wrap(Services.Assets.Bestiary.Fact(inFactId));
+                var fact = Services.Assets.Bestiary.Fact(inFactId);
+                if (fact.Mode() == BFMode.Always)
+                    outParams = PlayerFactParams.Wrap(fact);
+                else
+                    outParams = null;
                 return false;
             }
 

@@ -1,62 +1,11 @@
-
-:: link.OtterHelpKelp
-@factId claim
-@tag claim
-@type claim
-@nextNodeId node.intro, node.OtterHelpKelpInquery
-It seems like the otters somehow help the kelp.
-
-
 :: SeaOtter.Eats.Urchin
 @factId SeaOtter.Eats.Urchin
 @tag behavior
 @type otter
-@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
-@nextNodeId node.UrchinEatKelpInquery, node.end
 Otters eat urchins
 
 :: Urchin.Eats.Kelp
 @factId Urchin.Eats.Kelp
 @tag behavior
 @type urchin
-@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
-@nextNodeId node.OtterEatUrchinInquery, node.end
 Urchins eat kelp
-
-
-:: link.OttersDontEatKelp
-@factId
-@tag behavior
-@type otter
-@nextNodeId node.OtterHelpKelpInquery, node.FakePath
-Otters don't eat kelp.
-
-:: link.UrchinsCantSurvive
-@factId claim
-@tag claim
-@type claim
-@nextNodeId node.intro, node.UrchinsCantSurviveInquery
-Urchins can't survive in this water.
-
-:: link.WaterTooCold
-@factId
-@tag ecosystem
-@type water
-@shortenedText Water < 50
-The water was less than 50 degrees, so the urchins died.
-
-:: link.NoUrchins
-@factId
-@tag ecosystem
-@type water
-@nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
-There were no urchins in the wild env
-
-:: link.DeadUrchin
-@factId
-@tag model
-@type dead
-@nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
-@nextNodeId node.PredatorNode, node.BadFinish
-I dropped an urchin into a tank and it died.
-

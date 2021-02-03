@@ -38,7 +38,6 @@ namespace Aqua
             #endif // !DEVELOPMENT
 
             Services.AutoSetup(gameObject);
-            Services.Data.LoadProfile();
         }
 
         private void OnDestroy()

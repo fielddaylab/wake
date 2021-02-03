@@ -51,7 +51,8 @@ namespace ProtoAqua.Ship
 
         public void LoadNavRoom()
         {
-            StateUtil.LoadSceneWithWipe(Services.Data.Profile.Map.CurrentStationId());
+            string scene = MapDB.LookupScene(Services.Data.Profile.Map.CurrentStationId());
+            StateUtil.LoadSceneWithWipe(scene);
         }
 
         public void LoadScene(string inScene)

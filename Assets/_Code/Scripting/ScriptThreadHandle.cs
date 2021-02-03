@@ -87,6 +87,17 @@ namespace Aqua.Scripting
             return GetThread()?.Wait();
         }
 
+        public IEnumerator Skip()
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                thread.Skip();
+                return thread.Wait();
+            }
+            return null;
+        }
+
         /// <summary>
         /// Kills the thread.
         /// </summary>

@@ -7,9 +7,9 @@ namespace Aqua.Profile
 {
     public class MapData : ISerializedObject, ISerializedVersion
     {
-        private string m_CurrentStationId = "Station1";
+        private StringHash32 m_CurrentStationId = "Station1";
 
-        public bool SetCurrentStationId(string inNewStationId)
+        public bool SetCurrentStationId(StringHash32 inNewStationId)
         {
             if (m_CurrentStationId != inNewStationId)
             {
@@ -20,7 +20,7 @@ namespace Aqua.Profile
             return false;
         }
 
-        public string CurrentStationId()
+        public StringHash32 CurrentStationId()
         {
             return m_CurrentStationId;
         }
@@ -31,7 +31,7 @@ namespace Aqua.Profile
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Serialize("stationId", ref m_CurrentStationId);
+            // ioSerializer.Serialize("stationId", ref m_CurrentStationId);
         }
 
         #endregion // ISerializedObject

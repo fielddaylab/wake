@@ -16,8 +16,8 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private bool m_enableAllLinks = false;
 
 
-        private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
-        private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
+        private Dictionary<StringHash32, Node> nodeDictionary = new Dictionary<StringHash32, Node>();
+        private Dictionary<StringHash32, Link> linkDictionary = new Dictionary<StringHash32, Link>();
 
         private ConditionsData conditions;
         private Node rootNode;
@@ -30,7 +30,7 @@ namespace ProtoAqua.Argumentation
 
         #region Accessors
 
-        public Dictionary<string, Link> LinkDictionary
+        public Dictionary<StringHash32, Link> LinkDictionary
         {
             get { return linkDictionary; }
         }
@@ -77,13 +77,13 @@ namespace ProtoAqua.Argumentation
         // Given a link id, check if that link is a valid response for the current node.
         // If valid, find that link and the id of the next node based on the current node.
         // Then check if conditions for traversing to that next node are met.
-        public Node NextNode(string id)
+        public Node NextNode(StringHash32 id)
         {
             Link response = FindLink(id);
 
             if (currentNode.CheckResponse(id))
             {
-                string nextNodeId = response.GetNextNodeId(currentNode.Id);
+                StringHash32 nextNodeId = currentNode.GetNextNodeId(id);
                 Node nextNode = FindNode(nextNodeId);
 
                 if (nextNode != null)
@@ -120,7 +120,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Helper method for finding a node given its id
-        public Node FindNode(string id)
+        public Node FindNode(StringHash32 id)
         {
             if (nodeDictionary.TryGetValue(id, out Node node))
             {
@@ -131,7 +131,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Helper method for finding a link given its id
-        public Link FindLink(string id)
+        public Link FindLink(StringHash32 id)
         {
             if (linkDictionary.TryGetValue(id, out Link link))
             {
@@ -143,8 +143,8 @@ namespace ProtoAqua.Argumentation
 
         private void ResetGraph()
         {
-            nodeDictionary = new Dictionary<string, Node>();
-            linkDictionary = new Dictionary<string, Link>();
+            nodeDictionary = new Dictionary<StringHash32, Node>();
+            linkDictionary = new Dictionary<StringHash32, Link>();
             rootNode = null;
             currentNode = null;
             endNodeId = null;
@@ -154,6 +154,8 @@ namespace ProtoAqua.Argumentation
         private void LoadGraph(GraphDataPackage inPackage)
         {
             ResetGraph();
+
+            inPackage.Parse(Parsing.Block, new GraphDataPackage.Generator());
 
             foreach (KeyValuePair<string, Node> kvp in inPackage.Nodes)
             {
@@ -186,6 +188,11 @@ namespace ProtoAqua.Argumentation
             if (defaultInvalidNodeId == null)
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
+            }
+
+            if (!string.IsNullOrEmpty(inPackage.LinksFile))
+            {
+                LoadLinks(m_GraphDataManager.GetPackage(inPackage.LinksFile));
             }
 
             LoadLinks(inPackage);

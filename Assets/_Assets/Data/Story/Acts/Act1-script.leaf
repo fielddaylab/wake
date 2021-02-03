@@ -1,0 +1,30 @@
+#basePath   act1
+
+:: atStation1
+@trigger    SceneStart
+@when       scene:name == "Ship", player:currentStation == "Station1"
+@once
+@boostScore 100
+@cutscene
+$set    player:seen.jules = true
+{@kelpResearcher}   Hi there folks, looks like you're...
+                    {player-name}?!{wait 1} I haven't seen you in {slow}ages{/slow}!
+{@player}   Oh! Hey there Jules! Yeah it's been forever.
+{@kelpResearcher}   Well I'm the head researcher at the Kelp Station now!
+{@player}   Very impressive! Well I'm here for work - got anything I can help with?
+{@kelpResearcher}   Possibly! I'd check your job board, it should automatically sync up with the station.
+                    But we should catch up sometime!
+
+:: partner.jules.1
+@trigger    RequestPartnerHelp
+@when       player:currentStation == "Station1", player:seen.jules, !kevin:jules.intro
+@cutscene
+@once
+$set    kevin:jules.intro = true
+$if job.isStarted:Job1-6
+{@kevin}    Who is this "Jules" we keep talking to?
+$else
+{@kevin}    Who's "Jules"?
+$endif
+{@player}   They're a good friend.
+            Just been out of touch for a while.

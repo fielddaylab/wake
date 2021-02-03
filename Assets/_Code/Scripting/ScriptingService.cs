@@ -107,7 +107,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given IEnumerator.
         /// </summary>
-        public ScriptThreadHandle StartThread(string inThreadId, IEnumerator inEnumerator)
+        public ScriptThreadHandle StartThread(IEnumerator inEnumerator, string inThreadId)
         {
             return StartThreadInternal(inThreadId, null, inEnumerator);
         }
@@ -123,7 +123,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartThread(string inThreadId, IScriptContext inContext, IEnumerator inEnumerator)
+        public ScriptThreadHandle StartThread(IScriptContext inContext, IEnumerator inEnumerator, string inThreadId)
         {
             return StartThreadInternal(inThreadId, inContext, inEnumerator);
         }
@@ -150,7 +150,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread with the given id running the given ScriptNode entrypoint.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, StringHash32 inEntrypointId)
+        public ScriptThreadHandle StartNode(StringHash32 inEntrypointId, string inThreadId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -180,7 +180,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(string inThreadId, IScriptContext inContext, StringHash32 inEntrypointId)
+        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash32 inEntrypointId, string inThreadId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -199,15 +199,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
-        {
-            return TriggerResponse(null, inTriggerId, inTarget, inContext, inContextTable);
-        }
-
-        /// <summary>
-        /// Attempts to trigger a response.
-        /// </summary>
-        public ScriptThreadHandle TriggerResponse(string inThreadId, StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null, string inThreadId = null)
         {
             ScriptThreadHandle handle = default(ScriptThreadHandle);
             IVariantResolver resolver = GetResolver(inContextTable);

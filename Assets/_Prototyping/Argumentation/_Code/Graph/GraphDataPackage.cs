@@ -16,6 +16,7 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("rootNodeId")] private string m_RootNodeId = null;
         [BlockMeta("endNodeId")] private string m_EndNodeId = null;
         [BlockMeta("defaultInvalidNodeId")] private string m_DefaultInvalidNodeId = null;
+        [BlockMeta("linksFile")] private string m_LinksFile = null;
 
         #region Accessors
 
@@ -42,6 +43,11 @@ namespace ProtoAqua.Argumentation
         public string DefaultInvalidNodeId
         {
             get { return m_DefaultInvalidNodeId; }
+        }
+        
+        public string LinksFile
+        {
+            get { return m_LinksFile; }
         }
 
         #endregion // Accessors

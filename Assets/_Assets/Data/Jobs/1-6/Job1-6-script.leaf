@@ -1,11 +1,29 @@
-#basePath   job.1-6
+#basePath   job.1_6
 
 :: start
 @trigger    JobStarted
 @cutscene
-{@kelpResearcher}   
+{@kelpResearcher}   Hey, it's Jules again!
+                    Looks like you accepted our standard onboarding job.
+                    Really, we're just looking to get you introduced to the elements.
+                    Most folks don't know what we do here.
+                    So head over to Site B when you're ready.
 
 :: end
 @trigger    JobCompleted
 @cutscene
-{@player}   We did it!!
+{@kelpResearcher}   Nice work, {player-name}! And...
+                    Um, who's your friend there?
+{@player}       Oh, this is Kevin! They're a jellyblob.
+$if kevin:jules.intro
+    {@kevin}    {fast}Hi Jules nice to meet you okay bye{/fast}
+$else
+    $set    kevin:jules.intro = true
+    {@kevin}    Hi, uh, Jules?
+                Nice to meet you...
+                Bye
+$endif
+{hide-dialog} {wait 0.5}
+{kelpResearcher}    {slow}Okay...{/slow}
+                    Well anyways, we might have some more tasks for you.
+                    So go check that job board when you have a moment.

@@ -77,6 +77,11 @@ namespace Aqua
             s_ServiceCache.ClearAll();
         }
 
+        static public void Inject(object inObject)
+        {
+            s_ServiceCache.InjectReferences(inObject);
+        }
+
         #endregion // Setup
 
         #region All

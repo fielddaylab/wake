@@ -35,6 +35,7 @@ namespace Aqua
 
             m_TagEventParser.AddReplace("slow", "{wait 0.05}{speed 0.5}").CloseWith("{/speed}{wait 0.05}");
             m_TagEventParser.AddReplace("reallySlow", "{wait 0.05}{speed 0.25}").CloseWith("{/speed}{wait 0.05}");
+            m_TagEventParser.AddReplace("fast", "{wait 0.05}{speed 1.25}").CloseWith("{/speed}{wait 0.05}");
 
             // Global Events
             m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();

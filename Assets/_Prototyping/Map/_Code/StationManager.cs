@@ -45,7 +45,7 @@ namespace ProtoAqua.Map {
             inScene.Scene.GetAllComponents(true, allStations);
             m_Stations = allStations.ToArray();
 
-            string currentStation = Services.Data.Profile.Map.CurrentStationId();
+            StringHash32 currentStation = Services.Data.Profile.Map.CurrentStationId();
             foreach(var station in m_Stations)
             {
                 if (station.Id() == currentStation)

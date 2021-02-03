@@ -23,7 +23,7 @@ namespace ProtoAqua.Map {
             m_ClickZone.onClick.AddListener(OnClick);
         }
 
-        public string Id() { return stationId; }
+        public StringHash32 Id() { return stationId; }
         public Transform Mount() { return m_ShipMount; }
 
         private void OnClick(PointerEventData eventData)

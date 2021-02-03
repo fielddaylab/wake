@@ -16,7 +16,7 @@ namespace Aqua
     [ServiceDependency(typeof(AssetsService), typeof(EventService))]
     public partial class DataService : ServiceBehaviour
     {
-        static private readonly string DebugUserDataPrefsKey = "_debugUserProfile";
+        // static private readonly string DebugUserDataPrefsKey = "_debugUserProfile";
 
         #region Inspector
 
