@@ -9,7 +9,6 @@ namespace ProtoAqua.Argumentation
 {
     public class Node : GraphData
     {
-        private List<string> responses = new List<string>();
         private Dictionary<StringHash32, StringHash32> linkToNodeIds = new Dictionary<StringHash32, StringHash32>();
         private NodeFlags m_Flags;
 
@@ -97,25 +96,7 @@ namespace ProtoAqua.Argumentation
         // Checks if a given link id is a valid response to this node
         public bool CheckResponse(StringHash32 id)
         {
-            foreach (StringHash32 response in responses)
-            {
-                if (response.Equals(id))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private void ParseResponses(string inResponses)
-        {
-            string[] splitResponses = inResponses.Split(',');
-
-            foreach (string response in splitResponses)
-            {
-                responses.Add(response.Trim());
-            }
+            return linkToNodeIds.ContainsKey(id);
         }
 
         private void ParseLinkToNodeIds(List<string> inLinkToNodeIds) {

@@ -187,14 +187,28 @@ namespace ProtoAqua.Argumentation
         // Display a popup indicating that the end of the conversation has been reached
         private void EndConversationPopup()
         {
+            Routine.Start(this, CompleteConversation());
+        }
+
+        private IEnumerator CompleteConversation()
+        {
+            m_InputRaycasterLayer.Override = false;
+
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("jobId", Services.Data.CurrentJobId());
+                yield return Services.Script.TriggerResponse("ArgumentationComplete");
+            }
+
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());
 
-            NamedOption[] options = { new NamedOption("Continue") };
-            Services.UI.Popup.Present("Congratulations!", "Job complete!", options)
-                .OnComplete((s) => {
-                    Services.Script.TriggerResponse("ArgumentationComplete");
-                    StateUtil.LoadPreviousSceneWithWipe();
-                });
+            if (!Services.Script.IsCutscene())
+            {
+                Services.UI.Popup.Display("Congratulations!", "Job complete!")
+                    .OnComplete((s) => {
+                        StateUtil.LoadPreviousSceneWithWipe();
+                    });
+            }
         }
 
         // Shake response back and forth in the chat, indicating that the response is invalid

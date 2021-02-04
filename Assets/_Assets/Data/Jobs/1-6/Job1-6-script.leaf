@@ -24,6 +24,35 @@ $else
                 Bye
 $endif
 {hide-dialog} {wait 0.5}
-{kelpResearcher}    {slow}Okay...{/slow}
+{@kelpResearcher}   {slow}Okay...{/slow}
                     Well anyways, we might have some more tasks for you.
                     So go check that job board when you have a moment.
+
+// some guidance
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station1"
+@once
+@cutscene
+$set    player:seen.jules = true
+{@kelpResearcher}   You're gonna want to take your sub over to Dive Site B.
+                    That's the one I've marked on your map for you.
+                    Once you're there, you should dive.
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-1B"
+@once
+@cutscene
+{@kelpResearcher}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
+                    You'll see what I mean once you get there.
+
+:: atFloor
+@trigger    PlayerEnterRegion
+@when       scene:name == "RS-1B", regionId = "oceanBottom"
+@once
+@cutscene
+{@player}   Okay, we're here. Jules?
+{@kelpResearcher}   Great! Now look around, see if there's anything you can scan.
+                    Don't forget to scan the water too, you'll need that later.

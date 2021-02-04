@@ -1,12 +1,3 @@
-// comment
-// # packageMeta data
-// :: blockId
-// @ blockMeta data
-// --- block header end (optional)
-// block content
-// \ also block content
-// === block data end (optional)
-
 #basePath   testScene
 
 :: lore.jellyblob.1
@@ -44,6 +35,23 @@ The spines help ward off predators.
 Leafy plant-like creature.
 Essential to many ocean ecosystems.
 
+:: species.giantKelp
+@scanDuration 2
+@important
+@header Giant Kelp
+@bestiary GiantKelp
+Leafy plant-like creature.
+Essential to many ocean ecosystems.
+
+:: species.giantKelp.dead
+@scanDuration 2
+@important
+@header Giant Kelp
+@bestiary GiantKelp
+Leafy plant-like creature.
+Appears to be severely depleted.
+Bite marks are visible on the edges where it has snapped off.
+
 :: species.otter
 @scanDuration 2
 @important
@@ -59,3 +67,11 @@ Fur density exceeds that of any other animal.
 @bestiary   KelpForest
 Heavily-oxygenated ecosystem.
 Sustained by kelp species.
+
+:: ecosystem.urchinBarren
+@scanDuration 2
+@important
+@header Urchin Barren
+@bestiary   UrchinBarren
+Depleted ecosystem.
+Oxygen levels unsustainable.

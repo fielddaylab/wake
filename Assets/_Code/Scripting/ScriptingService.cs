@@ -22,12 +22,14 @@ namespace Aqua
         private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
         private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
         private List<ScriptThread> m_ThreadList = new List<ScriptThread>(64);
+        private ScriptThread m_CutsceneThread = null;
         
         // event parsing
         private TagStringEventHandler m_TagEventHandler;
         private CustomTagParserConfig m_TagEventParser;
         private StringUtils.ArgsList.Splitter m_ArgListSplitter;
         private LeafRuntime<ScriptNode> m_ThreadRuntime;
+        private HashSet<StringHash32> m_SkippedEvents;
 
         // trigger eval
         private CustomVariantResolver m_CustomResolver;
@@ -88,6 +90,22 @@ namespace Aqua
             }
 
             return default(ScriptThreadHandle);
+        }
+
+        /// <summary>
+        /// Returns if a cutscene thread is executing.
+        /// </summary>
+        public bool IsCutscene()
+        {
+            return m_CutsceneThread != null;
+        }
+
+        /// <summary>
+        /// Returns the current cutscene thread.
+        /// </summary>
+        public ScriptThreadHandle GetCutscene()
+        {
+            return m_CutsceneThread?.GetHandle() ?? default(ScriptThreadHandle);
         }
 
         #endregion // Checks
@@ -322,6 +340,7 @@ namespace Aqua
             m_ThreadList.Clear();
             m_ThreadMap.Clear();
             m_ThreadTargetMap.Clear();
+            m_CutsceneThread = null;
         }
 
         /// <summary>
@@ -412,6 +431,9 @@ namespace Aqua
             StringHash32 who = inThread.Target();
             if (!who.IsEmpty)
                 m_ThreadTargetMap.Remove(who);
+
+            if (m_CutsceneThread == inThread)
+                m_CutsceneThread = null;
         }
 
         // Starts a scripting thread
@@ -439,6 +461,11 @@ namespace Aqua
                 return default(ScriptThreadHandle);
             }
 
+            if (inNode.IsCutscene())
+            {
+                m_CutsceneThread?.Kill();
+            }
+
             TempAlloc<VariantTable> tempVars = m_TablePool.TempAlloc();
             if (inVars != null && inVars.Count > 0)
             {
@@ -458,6 +485,11 @@ namespace Aqua
             StringHash32 who = thread.Target();
             if (!who.IsEmpty)
                 m_ThreadTargetMap.Add(who, thread);
+
+            if (inNode.IsCutscene())
+            {
+                m_CutsceneThread = thread;
+            }
             
             return handle;
         }

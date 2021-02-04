@@ -27,6 +27,8 @@ namespace Aqua
         [NonSerialized] private int m_LetterboxCounter = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
         private Dictionary<Type, SharedPanel> m_SharedPanels;
+        [NonSerialized] private bool m_SkippingCutscene;
+        [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
 
         #region Loading Screen
 
@@ -98,6 +100,33 @@ namespace Aqua
         public bool IsLetterboxed()
         {
             return m_LetterboxCounter > 0;
+        }
+
+        public bool IsLetterboxVisible()
+        {
+            return m_LetterboxCounter > 0 || m_Letterbox.IsTransitioning();
+        }
+
+        public IEnumerator StartSkipCutscene()
+        {
+            if (!m_SkippingCutscene)
+            {
+                m_SkippingCutscene = true;
+                m_SkipFader = m_ScreenFaders.AllocFader();
+                return m_SkipFader.Object.Show(Color.black, 0.2f);
+            }
+
+            return null;
+        }
+
+        public void StopSkipCutscene()
+        {
+            if (m_SkippingCutscene)
+            {
+                m_SkipFader.Object?.Hide(0.2f);
+                m_SkipFader = null;
+                m_SkippingCutscene = false;
+            }
         }
 
         #endregion // Letterbox

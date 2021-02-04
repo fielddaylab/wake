@@ -17,7 +17,7 @@ namespace ProtoAqua.Experiment
     {
         static public class Behaviors
         {
-            static public readonly StringHash32 EatsKelp = "Urchin.Eats.Kelp";
+            static public readonly StringHash32 EatsGiantKelp = "Urchin.Eats.GiantKelp";
         }
 
         #region Inspector
@@ -137,7 +137,7 @@ namespace ProtoAqua.Experiment
             yield return Actor.Nav.SwimTo(targetTransform.position + targetOffset);
             yield return 0.5f;
             
-            using(ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, Behaviors.EatsKelp))
+            using(ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, Behaviors.EatsGiantKelp))
             {
                 int biteCount = GetBiteCount();
                 while(biteCount-- > 0)
@@ -145,7 +145,7 @@ namespace ProtoAqua.Experiment
                     yield return Actor.Body.WorldTransform.ScaleTo(1.1f, 0.2f).Ease(Curve.CubeOut);
                     inFoodSource.Bite(Actor, GetProperty<float>("BiteSize", 5));
                     Services.Audio.PostEvent("urchin_eat");
-                    if (ExperimentServices.BehaviorCapture.WasObserved(Behaviors.EatsKelp))
+                    if (ExperimentServices.BehaviorCapture.WasObserved(Behaviors.EatsGiantKelp))
                     {
                         m_EatParticles.Emit(1);
                     }

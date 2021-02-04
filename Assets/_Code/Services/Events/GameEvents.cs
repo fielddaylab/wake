@@ -11,6 +11,7 @@ namespace Aqua
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start";
         static public readonly StringHash32 CutsceneEnd = "cutscene:end";
+        static public readonly StringHash32 CutsceneSkip = "cutscene:skip";
 
         static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start";
         static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end";

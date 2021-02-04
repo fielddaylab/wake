@@ -13,17 +13,13 @@ namespace ProtoAqua.Observation
     {
         #region Inspector
 
-        [SerializeField] private string m_ScriptEntrypointId = null;
-        [SerializeField] private string m_TriggerId = null;
+        [SerializeField] private string m_RegionId = null;
         [Space]
         [SerializeField] private Collider2D m_Collider = null;
-        [SerializeField] private bool m_OnlyOnce = false;
-        [SerializeField] private float m_Delay = 0;
 
         #endregion // Inspector
 
         [NonSerialized] private TriggerListener2D m_Listener;
-        [NonSerialized] private Routine m_WaitToTriggerRoutine;
 
         private void Awake()
         {
@@ -35,38 +31,20 @@ namespace ProtoAqua.Observation
 
         private void OnEnter(Collider2D inCollider)
         {
-            m_WaitToTriggerRoutine = Routine.Start(this, WaitToTrigger());
-            m_WaitToTriggerRoutine.TryManuallyUpdate();
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("regionId", m_RegionId);
+                Services.Script.TriggerResponse(ObservationTriggers.PlayerEnterRegion, null, null, table);
+            }
         }
 
         private void OnExit(Collider2D inCollider)
         {
-            m_WaitToTriggerRoutine.Stop();
-        }
-
-        private IEnumerator WaitToTrigger()
-        {
-            if (Services.UI.IsLetterboxed())
+            using(var table = Services.Script.GetTempTable())
             {
-                while(true)
-                {
-                    yield return null;
-                    if (!Services.UI.IsLetterboxed())
-                        break;
-                }
-
-                yield return Services.Tweaks.Get<ScriptingTweaks>().CutsceneEndNextTriggerDelay();
+                table.Set("regionId", m_RegionId);
+                Services.Script.TriggerResponse(ObservationTriggers.PlayerExitRegion, null, null, table);
             }
-            
-            if (m_Delay > 0)
-                yield return m_Delay;
-            
-            if (!string.IsNullOrEmpty(m_ScriptEntrypointId))
-                Services.Script.StartNode(m_ScriptEntrypointId);
-            else if (!string.IsNullOrEmpty(m_TriggerId))
-                Services.Script.TriggerResponse(m_TriggerId);
-            if (m_OnlyOnce)
-                gameObject.SetActive(false);
         }
     }
 }

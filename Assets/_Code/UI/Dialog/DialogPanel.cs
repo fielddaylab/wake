@@ -33,12 +33,15 @@ namespace Aqua
             public float SkipHoldTimer;
             public bool SkipHeld;
 
+            public bool IsCutsceneSkip;
+
             public void ResetFull()
             {
                 SpeakerName = string.Empty;
                 Speed = 1;
                 VisibleText = null;
                 TypeSFX = null;
+                IsCutsceneSkip = false;
 
                 ResetTemp();
             }
@@ -48,6 +51,7 @@ namespace Aqua
                 SkipHoldTimer = 0;
                 SkipHeld = false;
                 AutoContinue = false;
+                IsCutsceneSkip = false;
             }
         }
 
@@ -277,6 +281,14 @@ namespace Aqua
             }
         }
 
+        /// <summary>
+        /// Skips all typing.
+        /// </summary>
+        public void Skip()
+        {
+            m_CurrentState.IsCutsceneSkip = true;
+        }
+
         #endregion // Scripting
 
         #region Typing
@@ -286,6 +298,9 @@ namespace Aqua
         /// </summary>
         public IEnumerator TypeLine(TagTextData inText)
         {
+            if (m_CurrentState.IsCutsceneSkip)
+                yield break;
+
             if (m_TextDisplay.maxVisibleCharacters == 0)
             {
                 if (IsShowing())
@@ -315,9 +330,15 @@ namespace Aqua
                     timeThisFrame = Routine.DeltaTime;
                     delay -= timeThisFrame;
                     UpdateInput();
+
+                    if (m_CurrentState.IsCutsceneSkip)
+                        yield break;
                 }
 
                 m_TextDisplay.maxVisibleCharacters++;
+
+                if (m_CurrentState.IsCutsceneSkip)
+                    yield break;
 
                 char shownChar = m_CurrentState.VisibleText[m_TextDisplay.maxVisibleCharacters - 1];
                 switch(shownChar)
@@ -476,7 +497,7 @@ namespace Aqua
             m_ButtonContainer.gameObject.SetActive(true);
             yield return Routine.Race(
                 m_Button == null ? null : m_Button.onClick.WaitForInvoke(),
-                Routine.WaitCondition(() => m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
+                Routine.WaitCondition(() => m_CurrentState.IsCutsceneSkip || m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
             );
             m_ButtonContainer.gameObject.SetActive(false);
         }

@@ -8,6 +8,7 @@ using UnityEngine;
 using Aqua.Scripting;
 using System.Collections;
 using AquaAudio;
+using System.Collections.Generic;
 
 namespace Aqua
 {
@@ -266,6 +267,29 @@ namespace Aqua
                 .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
                 .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
                 .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob);
+
+            m_SkippedEvents = new HashSet<StringHash32>();
+            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
+            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOff);
+            m_SkippedEvents.Add(ScriptEvents.Global.PitchBGM);
+            m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
+            m_SkippedEvents.Add(ScriptEvents.Global.Wait);
+            m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
+            m_SkippedEvents.Add(ScriptEvents.Global.BoxStyle);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenFlash);
+            m_SkippedEvents.Add(ScriptEvents.Global.FadeOut);
+            m_SkippedEvents.Add(ScriptEvents.Global.FadeIn);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeOut);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeIn);
+            m_SkippedEvents.Add(ScriptEvents.Global.HideDialog);
+            m_SkippedEvents.Add(ScriptEvents.Global.ShowDialog);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Auto);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Clear);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.InputContinue);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Speaker);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
         }
 
         #endregion // Event Setup

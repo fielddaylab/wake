@@ -96,6 +96,10 @@ namespace Aqua.DebugConsole
                 {
                     UnlockAllBestiaryEntries(true);
                 }
+                else if (m_Input.KeyPressed(KeyCode.Space))
+                {
+                    SkipCutscene();
+                }
             }
         }
 
@@ -106,6 +110,15 @@ namespace Aqua.DebugConsole
             Services.Audio.DebugMix.Volume = Mathf.Clamp01(1 / inTimeScale);
 
             m_TimeDisplay.UpdateTimescale(inTimeScale);
+        }
+
+        private void SkipCutscene()
+        {
+            var cutscene = Services.Script.GetCutscene();
+            if (cutscene.IsRunning())
+            {
+                cutscene.Skip();
+            }
         }
 
         private void DumpScriptingState()

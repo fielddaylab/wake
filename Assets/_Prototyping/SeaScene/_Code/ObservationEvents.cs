@@ -15,4 +15,10 @@ namespace ProtoAqua.Observation
         /// </summary>
         static public readonly StringHash32 ScannableComplete = "scannable:complete";
     }
+
+    static public class ObservationTriggers
+    {
+        static public readonly StringHash32 PlayerEnterRegion = "PlayerEnterRegion";
+        static public readonly StringHash32 PlayerExitRegion = "PlayerExitRegion";
+    }
 }
