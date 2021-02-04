@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace Aqua
 {
+    [DefaultExecutionOrder(int.MinValue)]
     public class Bootstrap : MonoBehaviour
     {
         [SerializeField, Required] private DebugService m_Debug = null;
