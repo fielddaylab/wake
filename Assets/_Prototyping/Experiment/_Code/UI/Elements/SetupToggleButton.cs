@@ -22,7 +22,6 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ColorGroup m_ColorGroup = null;
 
         #endregion // Inspector
-
         [NonSerialized] private Variant m_Id;
 
         public Toggle Toggle { get { return m_Toggle; } }

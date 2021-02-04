@@ -7,28 +7,26 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class ExperimentSetupSubscreenTank : ExperimentSetupSubscreen
+    public class ExperimentSetupSubscreenWaterProp : ExperimentSetupSubscreen
     {
         #region Inspector
 
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private Button m_NextButton = null;
+        [SerializeField] private Button m_BackButton = null;
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Sprite m_EmptyIcon = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private ExperimentSettings m_CachedSettings;
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
-
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
-        [NonSerialized] private TankType m_CurrentTank;
-
-        [NonSerialized] public Action OnSelectContinue;
+        public Action OnSelectContinue;
+        public Action OnSelectBack;
 
         protected override void Awake()
         {
-            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -36,14 +34,10 @@ namespace ProtoAqua.Experiment
                 m_CachedButtons[i].Toggle.onValueChanged.AddListener((b) => UpdateFromSelection());
             }
 
-            m_NextButton.onClick.AddListener(() => GetToggledExperiment());
+            m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
+            m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
 
             UpdateButtons();
-        }
-
-        private void GetToggledExperiment()
-        {
-            OnSelectContinue?.Invoke();
         }
 
         public override void SetData(ExperimentSetupData inData)
@@ -58,51 +52,43 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
-        public TankType SelectedTank()
-        {
-            return m_CurrentTank;
-        }
-
-
-
         private void UpdateButtons()
         {
-            var allTankTypes = m_CachedSettings.AllNonEmptyTanks();
-            var noneTankType = m_CachedSettings.GetTank(TankType.None);
+            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
 
             int buttonIdx = 0;
-            foreach(var tankType in allTankTypes)
+            foreach(var waterType in allWaterTypes)
             {
                 if (buttonIdx >= m_CachedButtons.Length)
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                
-                if (Services.Data.CheckConditions(tankType.Condition))
-                {
-                    button.Load((int) tankType.Tank, tankType.Icon, true);
-                }
-                else
-                {
-                    button.Load((int) noneTankType.Tank, noneTankType.Icon, false);
-                }
+                button.Load(waterType.Id(), waterType.Icon(), true);
 
                 ++buttonIdx;
             }
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load((int) noneTankType.Tank, noneTankType.Icon, false);
+                m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
             }
         }
 
-        private void UpdateDisplay(TankType inTankType)
+        private void UpdateDisplay(StringHash32 inWaterId)
         {
-            var def = m_CachedSettings.GetTank(inTankType);
-            m_Label.SetText(def.LabelId);
-            m_NextButton.interactable = inTankType != TankType.None;
+            if (inWaterId.IsEmpty)
+            {
+                m_NextButton.interactable = false;
+                m_Label.SetText(StringHash32.Null);
+            }
+            else
+            {
+                var def = Services.Assets.Bestiary.Get(inWaterId);
+                m_Label.SetText(def.CommonName());
+                m_NextButton.interactable = true;
+            }
 
-            Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());
+            Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
         }
     
         private void UpdateFromSelection()
@@ -110,24 +96,20 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CurrentTank = (TankType)active.GetComponent<SetupToggleButton>().Id.AsInt();
-                m_CachedData.Tank = m_CurrentTank; 
-                
+                m_CachedData.EcosystemId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
             }
             else
             {
-                m_CurrentTank = TankType.None;
-                m_CachedData.Tank = m_CurrentTank;
-
+                m_CachedData.EcosystemId = StringHash32.Null;
             }
 
-            UpdateDisplay(m_CachedData.Tank);
+            UpdateDisplay(m_CachedData.EcosystemId);
         }
 
         protected override void OnShowComplete(bool inbInstant)
         {
             base.OnShowComplete(inbInstant);
-            UpdateDisplay(m_CachedData.Tank);
+            UpdateDisplay(m_CachedData.EcosystemId);
         }
     }
 }

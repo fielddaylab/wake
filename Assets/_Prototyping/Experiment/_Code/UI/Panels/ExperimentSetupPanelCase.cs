@@ -52,18 +52,20 @@ namespace ProtoAqua.Experiment
                 .Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this);
 
             m_BootScreen.OnSelectContinue = () => SetSubscreen(m_TankScreen);
-            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_EcoScreen);
-            m_EcoScreen.OnSelectBack = () => SetSubscreen(m_TankScreen, true);
-            m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
-            m_HypothesisScreen.OnSelectBack = () => SetSubscreen(m_EcoScreen, true);
+
             m_HypothesisScreen.OnSelectContinue = () => OnHypothesisSubmit();
-            m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_BeginExperimentScreen);
+
             m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_ActorsScreen, true);
+            
+            m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_BeginExperimentScreen);
+
             m_BeginExperimentScreen.OnSelectStart = () => StartExperiment();
+            
             m_InProgressScreen.OnSelectEnd = () => TryEndExperiment();
 
             m_SelectionData = new ExperimentSetupData();
             m_TankScreen.SetData(m_SelectionData);
+
             m_EcoScreen.SetData(m_SelectionData);
             m_ActorsScreen.SetData(m_SelectionData);
             m_BeginExperimentScreen.SetData(m_SelectionData);
@@ -71,16 +73,45 @@ namespace ProtoAqua.Experiment
             m_SummaryScreen.SetData(m_SelectionData);
         }
 
+        private void Update()
+        {
+            if (m_TankScreen.SelectedTank().Equals(TankType.Stressor))
+            {
+                StressorFlow();
+            }
+            if (m_TankScreen.SelectedTank().Equals(TankType.Foundational))
+            {
+                FoundationalFlow();
+            }
+        }
+
+        private void StressorFlow()
+        {
+            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
+
+        }
+
+        private void FoundationalFlow()
+        {
+            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_EcoScreen);
+
+            m_EcoScreen.OnSelectBack = () => SetSubscreen(m_TankScreen, true);
+            m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
+
+            m_HypothesisScreen.OnSelectBack = () => SetSubscreen(m_EcoScreen, true);
+
+            
+            
+        }
+
         private void OnDestroy()
         {
             Services.Events?.DeregisterAll(this);
         }
-
         #region BasePanel
 
         protected override void OnShow(bool inbInstant)
         {
-  
             m_Hum = Services.Audio.PostEvent("tablet_hum").SetVolume(0).SetVolume(1, 0.5f);
             Services.Data.SetVariable(ExperimentVars.SetupPanelOn, true);
         }

@@ -10,6 +10,8 @@ namespace ProtoAqua.Experiment
     {
         static public readonly StringHash32 SetupPanelOn = "experiment:setup-panel-on";
         static public readonly StringHash32 SetupPanelOff = "experiment:setup-panel-off";
+
+        static public readonly StringHash32 StressorExperiment = "experiment:stressor-tank-on";
         static public readonly StringHash32 SetupInitialSubmit = "experiment:setup-initialSubmit";
         
         static public readonly StringHash32 SetupAddActor = "experiment:setup-addActor";
