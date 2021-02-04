@@ -101,6 +101,8 @@ namespace Aqua
 
         public void LoadProfile()
         {
+            m_CurrentSaveData.Inventory.SetDefaults();
+
             // SaveData fromPrefs = null;
             // if (Serializer.ReadPrefs(ref fromPrefs, DebugUserDataPrefsKey))
             // {

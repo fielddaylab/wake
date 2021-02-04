@@ -1,6 +1,5 @@
 using UnityEngine;
 using Aqua;
-using ProtoAqua;
 using BeauUtil;
 using BeauData;
 using System;
@@ -8,7 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 
-namespace ProtoAqua.JobBoard
+namespace Aqua.Portable
 {
     public class JobSelect : MonoBehaviour
     {
@@ -20,15 +19,9 @@ namespace ProtoAqua.JobBoard
         [SerializeField] TextMeshProUGUI CashReward = null;
         [SerializeField] TextMeshProUGUI GearReward = null;
 
-        [SerializeField] Transform StatusJobButton = null;
-
-        [SerializeField] TextMeshProUGUI StatusJobButtonText = null;
-
         [SerializeField] Transform DiffContainer = null;
 
         private JobDesc job = null;
-
-        private JobButton jobButton = null;
         private DifficultyCategory[] DifficultyList = null;
 
         public PlayerJobStatus status { get; set; }
@@ -38,23 +31,12 @@ namespace ProtoAqua.JobBoard
             return JobSelectTransform;
         }
 
-        public Transform GetStatusButton()
+        public void SetupJobSelect(PlayerJob pJob)
         {
-            return StatusJobButton;
-        }
-
-        public JobButton GetJobButton()
-        {
-            return jobButton;
-        }
-
-        public void SetupJobSelect(JobButton button)
-        {
-            if (button != null)
+            if (pJob != null)
             {
-                job = button.Job;
-                jobButton = button;
-                status = button.Status;
+                job = pJob.Job;
+                status = pJob.Status();
             }
             else
             {
@@ -70,37 +52,6 @@ namespace ProtoAqua.JobBoard
 
             SetupDifficulties();
 
-            SetupStatusButton();
-        }
-
-
-        public void SetupStatusButton()
-        {
-            if (jobButton == null)
-            {
-                StatusJobButton.gameObject.SetActive(false);
-                return;
-            }
-
-            StatusJobButton.gameObject.SetActive(true);
-
-            if (jobButton.Status.Equals(PlayerJobStatus.NotStarted))
-            {
-                StatusJobButtonText.SetText("Accept");
-            }
-            else if (jobButton.Status.Equals(PlayerJobStatus.InProgress))
-            {
-                StatusJobButtonText.SetText("Set As Active");
-
-            }
-            else
-            {
-                if (jobButton.Status.Equals(PlayerJobStatus.Active))
-                {
-                    Services.Data.Profile.Jobs.SetCurrentJob(job.Id());
-                }
-                StatusJobButton.gameObject.SetActive(false);
-            }
         }
 
         public void SetupDifficulties()

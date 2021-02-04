@@ -66,6 +66,12 @@ namespace Aqua
 
         private void OnJobCompleted(StringHash32 inJobId)
         {
+            var job = Services.Assets.Jobs.Get(inJobId);
+
+            // inventory adjustment
+            Services.Data.Profile.Inventory.AdjustItem("Cash", job.CashReward());
+            Services.Data.Profile.Inventory.AdjustItem("Gear", job.GearReward());
+
             using(var table = Services.Script.GetTempTable())
             {
                 table.Set("jobId", inJobId);
