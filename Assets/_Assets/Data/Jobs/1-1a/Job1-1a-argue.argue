@@ -1,155 +1,41 @@
 # rootNodeId node.intro
 # endNodeId node.end
 # defaultInvalidNodeId node.invalid.default
-
-:: node.invalid.default
-Hmmm I'm not so sure that's right.
-
-:: node.invalid.1
-I don't think that makes sense here.
-
-:: node.invalid.OtterKelp
-@nextNodeId node.OtterHelpKelpContinue
-I don't think that explains why Otters help the kelp.
-
-:: node.invalid.Kelp
-@nextNodeId node.OtterHelpKelpContinue
-That is not why the otters help the kelp.
-
-:: node.invalid.Otter
-@nextNodeId node.OtterContinue
-That is not the right answer.
-
-:: node.invalid.DeadUrchin
-@nextNodeId node.DeadUrchinContinue
-I don't think this explains why urchins can't survive in this water.
-
-:: node.DeadUrchinContinue
-Why can urchins not survive in this water?
-
-
-
-:: node.default
-Hmmm
-
-:: node.OtterHelpKelpContinue
-@invalidNodeId node.invalid.Kelp
-@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
-Do you have any other evidence for how Otters help the kelp?
-
-:: node.OtterContinue
-@invalidNodeId node.invalid.Otter
-@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
-So what does that have to do with otters?
+# linksFile Links
 
 :: node.intro
-@responseIds link.OtterHelpKelp, link.UrchinsCantSurvive
-@linkToNode link.OtterHelpKelp, node.OtterHelpKelpInquery
-@linkToNode link.UrchinsCantSurvive, node.UrchinsCantSurviveInquery
-So what's going on?
+@showClaims
+@linkToNode link.NotEnoughUrchins, node.NotEnoughUrchins
+So, what did you find out?
 
-:: node.OtterHelpKelpInquery
-@invalidNodeId node.invalid.OtterKelp
-@responseIds SeaOtter.Eats.Urchin, Urchin.Eats.Kelp
-@linkToNode SeaOtter.Eats.Urchin, node.OtterEatUrchinInquery
-@linkToNode Urchin.Eats.Kelp, node.UrchinEatKelpInquery
-How so?
+// not enough urchins
 
-:: node.OtterEatUrchinInquery
-@invalidNodeId node.invalid.Kelp
-@responseIds Urchin.Eats.Kelp
-@linkToNode Urchin.Eats.Kelp, node.end
-So why does that help the kelp?
+:: node.NotEnoughUrchins
+@invalidNodeId  node.invalid.NotEnoughUrchins
+@linkToNode     Urchin.Eats.BullKelp, node.end
+Really? Why is that?
 
-:: node.UrchinEatKelpInquery
-@invalidNodeId node.invalid.Otter
-@responseIds SeaOtter.Eats.Urchin
-@linkToNode SeaOtter.Eats.Urchin, node.end
-So what does that have to do with otters?
-
-:: node.FakePath
-Okay, that makes sense, not quite what I am looking for.
-
+:: node.NotEnoughUrchins.Continue
+@invalidNodeId  node.invalid.NotEnoughUrchins
+@linkToNode     Urchin.Eats.BullKelp, node.end
+Why aren't there enough urchins?
 
 :: node.end
-Got it! So more otters means less urchins and more kelp!
+Aha! Brilliant!
 
+// Invalid
 
-:: node.UrchinsCantSurviveInquery
-@invalidNodeId node.invalid.DeadUrchin
-@responseIds link.NoUrchins, link.DeadUrchin
-Why not?
+:: node.invalid.default
+Hmmm, I'm not so sure that's right.
 
-:: node.PredatorNode
-@responseIds link.DeadUrchin
-But it could have been a predator or other variable
+:: node.invalid.NotEnoughUrchins
+@nextNodeId node.NotEnoughUrchins.Continue
+That... doesn't explain it.
 
-:: node.BadFinish
-@responseIds link.DeadUrchin
-Ok then. Maybe try a new claim?
+// Claims
 
-
-
-
-
-:: link.OtterHelpKelp
+:: link.NotEnoughUrchins
 @factId claim
 @tag claim
 @type claim
-@nextNodeId node.intro, node.OtterHelpKelpInquery
-It seems like the otters somehow help the kelp.
-
-
-:: SeaOtter.Eats.Urchin
-@factId SeaOtter.Eats.Urchin
-@tag behavior
-@type otter
-@nextNodeId node.OtterHelpKelpInquery, node.OtterEatUrchinInquery
-@nextNodeId node.UrchinEatKelpInquery, node.end
-Otters eat urchins
-
-:: Urchin.Eats.Kelp
-@factId Urchin.Eats.Kelp
-@tag behavior
-@type urchin
-@nextNodeId node.OtterHelpKelpInquery, node.UrchinEatKelpInquery
-@nextNodeId node.OtterEatUrchinInquery, node.end
-Urchins eat kelp
-
-
-:: link.OttersDontEatKelp
-@factId
-@tag behavior
-@type otter
-@nextNodeId node.OtterHelpKelpInquery, node.FakePath
-Otters don't eat kelp.
-
-:: link.UrchinsCantSurvive
-@factId claim
-@tag claim
-@type claim
-@nextNodeId node.intro, node.UrchinsCantSurviveInquery
-Urchins can't survive in this water.
-
-:: link.WaterTooCold
-@factId
-@tag ecosystem
-@type water
-@shortenedText Water < 50
-The water was less than 50 degrees, so the urchins died.
-
-:: link.NoUrchins
-@factId
-@tag ecosystem
-@type water
-@nextNodeId node.UrchinsCantSurviveInquery, node.PredatorNode
-There were no urchins in the wild env
-
-:: link.DeadUrchin
-@factId
-@tag model
-@type dead
-@nextNodeId node.UrchinsCantSurviveInquery, node.BadFinish
-@nextNodeId node.PredatorNode, node.BadFinish
-I dropped an urchin into a tank and it died.
-
+There aren't enough urchins.

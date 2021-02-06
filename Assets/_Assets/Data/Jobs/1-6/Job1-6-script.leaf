@@ -1,4 +1,4 @@
-#basePath   job.1_6
+#basePath   job.j1_6
 
 :: start
 @trigger    JobStarted
@@ -53,6 +53,71 @@ $set    player:seen.jules = true
 @when       scene:name == "RS-1B", regionId = "oceanBottom"
 @once
 @cutscene
+$set    jobs:j1-6.seen.bottom = true
 {@player}   Okay, we're here. Jules?
 {@kelpResearcher}   Great! Now look around, see if there's anything you can scan.
                     Don't forget to scan the water too, you'll need that later.
+                    When you think you have everything, head back to the surface.
+
+:: navigation.return
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:j1-6.seen.bottom
+@once
+@cutscene
+{@player}   Alright, I think we got everything?
+{@kelpResearcher}   Let me check...
+
+$if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
+    $set    jobs:j1-6.got.scans = true
+    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+                        Head back to your ship when you're ready.
+$else
+    {@kelpResearcher}   No, looks like you missed something.
+    $if !has.entity:UrchinBarren
+        {@kelpResearcher}   You should make sure to scan the water too.
+    $else
+        {@kelpResearcher}   Are you sure you didn't miss any creatures down there?
+    $endif
+$endif
+
+:: navigation.return.again
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:j1-6.seen.bottom, seen:job.j1_6.navigation.return, !jobs:j1-6.got.scans
+@cutscene
+{@player}   How about now?
+{@kelpResearcher}   Ummmm...
+
+$if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
+    $set    jobs:j1-6.got.scans = true
+    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+                        Head back to your ship when you're ready.
+$else
+    {@kelpResearcher}   No, looks like you're still missing something.
+    $if !has.entity:UrchinBarren
+        {@kelpResearcher}   You should make sure to scan the water too.
+    $else
+        {@kelpResearcher}   Are you sure you didn't miss any creatures down there?
+    $endif
+$endif
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Ship", jobs:j1-6.got.scans
+@once
+@cutscene
+{@player}   We're back, Jules. Now what?
+{@kelpResearcher}   Now I need to know you can not only {h}observe{/h} your environment...
+                    But also {h}experiment{/h} with your observations.
+                    You have a tank onboard, right?
+{@player}   Uh, yeah.
+{@kelpResearcher}   Great! Just head in there when you're ready.
+
+// Kevin Responses
+
+:: kevin.atBottom
+@trigger    RequestPartnerHelp
+@when       scene:name == "RS-1B", jobs:j1-6.seen.bottom
+@once
+@boostScore 5
+@chatter
+{@kevin}    Kinda spooky down here...

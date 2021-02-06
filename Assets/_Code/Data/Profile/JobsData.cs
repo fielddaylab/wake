@@ -151,19 +151,20 @@ namespace Aqua.Profile
 
                 if (bIsCurrent)
                 {
-                    if (m_JobStatuses.Count > 0)
-                    {
-                        m_CurrentJob = RNG.Instance.Choose(m_JobStatuses);
-                        m_CurrentJobId = m_CurrentJob.JobId;
-                        m_CurrentJob.SetAsActive();
-                        Services.Events.Dispatch(GameEvents.JobSwitched, m_CurrentJobId);
-                    }
-                    else
-                    {
+                    // if we want to auto-select the next job
+                    // if (m_JobStatuses.Count > 0)
+                    // {
+                    //     m_CurrentJob = RNG.Instance.Choose(m_JobStatuses);
+                    //     m_CurrentJobId = m_CurrentJob.JobId;
+                    //     m_CurrentJob.SetAsActive();
+                    //     Services.Events.Dispatch(GameEvents.JobSwitched, m_CurrentJobId);
+                    // }
+                    // else
+                    // {
                         m_CurrentJob = null;
                         m_CurrentJobId = StringHash32.Null;
                         Services.Events.Dispatch(GameEvents.JobSwitched, StringHash32.Null);
-                    }
+                    // }
                 }
                 return true;
             }

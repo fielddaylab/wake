@@ -3,9 +3,50 @@
 :: start
 @trigger    JobStarted
 @cutscene
+$set    player:seen.urchinBaron = true
 {@player}   The... Urchin Baron?
+{@kevin}    Oh... oh no...
+{@urchinBaron}  Hey hey! Thanks for taking on my job!
+                Wait a second, is that-
+{@kevin}    ...Hi, Urban.
+{@urchinBaron}  Whoa!! Holy-
+                I haven't seen you since-
+{@kevin}    {speed 2}Yeah good to see you too{/speed}
+            We're here to do a job.
+{@urchinBaron}  ...Ah. Right.
+                The job.
+{hide-dialog}{wait 1}
+{@player}       Is... is that it?
+{@urchinBaron}  Is what it?
+{@player}       The{wait 0.2} job? That we accepted?
+{@urchinBaron}  Oh yes. Sorry, I was caught reminiscing about-
+{@kevin}    Get to the point, Urban.
+{@urchinBaron}  Oh fine. I need you to figure out why there's kelp in Site A.
+                Some urchins are there and I expected the results to turn out differently.
 
 :: end
 @trigger    JobCompleted
 @cutscene
-{@player}   We did it!!
+{@urchinBaron}  How marvelous! So the urchins are eating the kelp, but just not fast enough.
+{@player}   Yep, that's it.
+{@urchinBaron}  Sounds like I'll need more data then...
+                By the way, how would you feel about catching-
+{@kevin}    Not interested Urban.
+{@urchinBaron}  ...I see. You've changed.
+{@kevin}    You haven't.
+{@player}   Uh, anyways!
+            Nice working with you, please pay us, etc. Hanging up now!
+{hide-dialog}{wait 1}
+{@player}   What was {slow}that{/slow}?
+{@kevin}    {fast}Nothing, I'm fine.{/fast}
+
+// Kevin Responses
+
+:: kevin.atBottom
+@trigger    RequestPartnerHelp
+@when       scene:name == "RS-1A"
+@once
+@boostScore 5
+@cutscene
+{@kevin}    So, we're looking for why the urchins haven't wiped out the kelp?
+{@player}   I believe so.

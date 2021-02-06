@@ -126,9 +126,9 @@ namespace Aqua.Scripting
             {
                 m_Target = "kevin";
             }
-            else if (inTriggerId == GameTriggers.SceneStart)
+            else if (inTriggerId == GameTriggers.SceneStart) // scene start needs a short delay
             {
-                m_InitialDelay = 0.2f;
+                m_InitialDelay = 0.25f;
             }
         }
 
