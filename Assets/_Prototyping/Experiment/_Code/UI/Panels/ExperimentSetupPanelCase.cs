@@ -32,6 +32,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ExperimentSetupSubscreenInProgress m_InProgressScreen = null;
         [SerializeField] private ExperimentSetupSubscreenSummary m_SummaryScreen = null;
 
+        [SerializeField] private ExperimentSetupSubscreenWaterProp m_PropertyScreen = null;
+
         #endregion // Inspector
 
         [NonSerialized] private AudioHandle m_Hum;
@@ -52,18 +54,18 @@ namespace ProtoAqua.Experiment
                 .Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this);
 
             m_BootScreen.OnSelectContinue = () => SetSubscreen(m_TankScreen);
-            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_EcoScreen);
-            m_EcoScreen.OnSelectBack = () => SetSubscreen(m_TankScreen, true);
-            m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
-            m_HypothesisScreen.OnSelectBack = () => SetSubscreen(m_EcoScreen, true);
+
+            
+
             m_HypothesisScreen.OnSelectContinue = () => OnHypothesisSubmit();
-            m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_BeginExperimentScreen);
-            m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_ActorsScreen, true);
+
             m_BeginExperimentScreen.OnSelectStart = () => StartExperiment();
+            
             m_InProgressScreen.OnSelectEnd = () => TryEndExperiment();
 
             m_SelectionData = new ExperimentSetupData();
             m_TankScreen.SetData(m_SelectionData);
+            m_PropertyScreen.SetData(m_SelectionData);
             m_EcoScreen.SetData(m_SelectionData);
             m_ActorsScreen.SetData(m_SelectionData);
             m_BeginExperimentScreen.SetData(m_SelectionData);
@@ -71,16 +73,60 @@ namespace ProtoAqua.Experiment
             m_SummaryScreen.SetData(m_SelectionData);
         }
 
+        private void Update()
+        {
+            if (m_TankScreen.SelectedTank().Equals(TankType.Stressor))
+            {
+                StressorFlow();
+            }
+            if (m_TankScreen.SelectedTank().Equals(TankType.Foundational))
+            {
+                FoundationalFlow();
+            }
+        }
+
+        private void StressorFlow()
+        {
+            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
+            foreach(var waterType in allWaterTypes) {
+                m_SelectionData.EcosystemId = waterType.Id();
+                break;
+            }
+            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
+            m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_ActorsScreen, true);
+
+            m_PropertyScreen.OnSelectContinue = () => SetSubscreen(m_BeginExperimentScreen);
+            m_PropertyScreen.OnSelectBack = () => SetSubscreen(m_ActorsScreen, true);
+
+            m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_PropertyScreen);
+
+        }
+
+        private void FoundationalFlow()
+        {
+            
+            m_TankScreen.OnSelectContinue = () => SetSubscreen(m_EcoScreen);
+            m_EcoScreen.OnSelectBack = () => SetSubscreen(m_TankScreen, true);
+            m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_HypothesisScreen);
+
+            m_HypothesisScreen.OnSelectBack = () => SetSubscreen(m_EcoScreen, true);
+
+            m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_ActorsScreen, true);
+            
+            m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_BeginExperimentScreen);
+
+            
+            
+        }
+
         private void OnDestroy()
         {
             Services.Events?.DeregisterAll(this);
         }
-
         #region BasePanel
 
         protected override void OnShow(bool inbInstant)
         {
-  
             m_Hum = Services.Audio.PostEvent("tablet_hum").SetVolume(0).SetVolume(1, 0.5f);
             Services.Data.SetVariable(ExperimentVars.SetupPanelOn, true);
         }
@@ -207,7 +253,11 @@ namespace ProtoAqua.Experiment
         private void TryEndExperiment()
         {
             var kevinResponse = Services.Script.TriggerResponse(ExperimentTriggers.TryEndExperiment);
-            if (!kevinResponse.IsRunning())
+            if(m_TankScreen.SelectedTank().Equals(TankType.Stressor)) {
+                OnExperimentBegin();
+                Routine.Start(this, ExitExperimentRoutine());
+            }
+            else if (!kevinResponse.IsRunning())
             {
                 Services.UI.Popup.AskYesNo("End Experiment?", "Do you want to end the experiment?")
                     .OnComplete((a) => {
@@ -218,6 +268,7 @@ namespace ProtoAqua.Experiment
                         }
                     });
             }
+
         }
 
         private IEnumerator ExitExperimentRoutine()
@@ -258,6 +309,17 @@ namespace ProtoAqua.Experiment
                 SetInputState(false);
                 Routine.Start(this, StartExperimentRoutine());
             }
+
+            // if(m_TankScreen.SelectedTank().Equals(TankType.Stressor)) {
+            //     OnExperimentBegin();
+            //     Routine.Start(this, StressorTankWait());
+            //     TryEndExperiment();
+
+            // }
+        }
+
+        private IEnumerator StressorTankWait() {
+            yield return 4.5f;
         }
 
         private IEnumerator StartExperimentRoutine()
@@ -290,10 +352,13 @@ namespace ProtoAqua.Experiment
             m_ActorsScreen.Refresh();
             m_BootScreen.Refresh();
             m_TankScreen.Refresh();
-            m_EcoScreen.Refresh();
             m_HypothesisScreen.Refresh();
             m_BeginExperimentScreen.Refresh();
             m_InProgressScreen.Refresh();
+
+            if(!m_TankScreen.SelectedTank().Equals(TankType.Stressor)) {
+                m_EcoScreen.Refresh();
+            }
         }
 
         #endregion // Callbacks
