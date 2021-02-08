@@ -25,7 +25,8 @@ namespace Aqua.Editor
             
             if (branch != null)
             {
-                if (branch.Contains("dev") || branch.Contains("proto"))
+                if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/")
+                    || branch.Contains("dev") || branch.Contains("proto"))
                 {
                     bDesiredDevBuild = true;
                 }

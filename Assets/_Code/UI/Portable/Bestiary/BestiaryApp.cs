@@ -11,12 +11,13 @@ using BeauUtil.Debugger;
 
 namespace Aqua.Portable
 {
-    public class BestiaryApp : PortableMenuApp
+    public class BestiaryApp : PortableMenuApp, IFactVisitor
     {
         #region Types
 
         [Serializable] private class EntryPool : SerializablePool<PortableListElement> { }
         [Serializable] private class FactPool : SerializablePool<BestiaryFactButton> { }
+        [Serializable] private class RangeFactPool : SerializablePool<BestiaryRangeFactButton> { }
 
         public class OpenToRequest : IPortableRequest
         {
@@ -127,7 +128,6 @@ namespace Aqua.Portable
         #region Inspector
 
         [Header("Types")]
-        [SerializeField, Required] private ToggleGroup m_EntryTypeToggleGroup = null;
         [SerializeField, Required] private Toggle m_CritterGroupToggle = null;
         [SerializeField, Required] private Toggle m_EcosystemGroupToggle = null;
 
@@ -148,6 +148,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private VerticalLayoutGroup m_FactLayoutGroup = null;
         [SerializeField, Required] private Button m_SelectEntryButton = null;
         [SerializeField] private FactPool m_FactPool = null;
+        [SerializeField] private RangeFactPool m_RangeFactPool = null;
 
         #endregion // Inspector
 
@@ -237,6 +238,7 @@ namespace Aqua.Portable
         protected override void OnHide(bool inbInstant)
         {
             m_FactPool.Reset();
+            m_RangeFactPool.Reset();
             m_NoSelectionGroup.gameObject.SetActive(true);
             m_HasSelectionGroup.gameObject.SetActive(false);
 
@@ -349,6 +351,7 @@ namespace Aqua.Portable
         private void LoadEntry(BestiaryDesc inEntry)
         {
             m_FactPool.Reset();
+            m_RangeFactPool.Reset();
 
             foreach(var button in m_EntryPool.ActiveObjects)
             {
@@ -380,15 +383,7 @@ namespace Aqua.Portable
 
             foreach(var fact in Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id()))
             {
-                BestiaryFactButton factButton = m_FactPool.Alloc();
-                if (m_SelectFactRequest != null)
-                {
-                    factButton.Initialize(fact.Fact, fact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(fact), OnFactClicked);
-                }
-                else
-                {
-                    factButton.Initialize(fact.Fact, fact, false, true, null);
-                }
+                fact.Fact.Accept(this, fact);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_FactLayoutGroup.transform);
@@ -423,6 +418,78 @@ namespace Aqua.Portable
             }
             
             return false;
+        }
+
+
+        private void InstantiateFactButton(BFBase inFact, PlayerFactParams inParams) 
+        {
+            BestiaryFactButton factButton = m_FactPool.Alloc();
+            if (m_SelectFactRequest != null)
+            {
+                factButton.Initialize(inFact, inParams, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inParams), OnFactClicked);
+            }
+            else
+            {
+                factButton.Initialize(inFact, inParams, false, true, null);
+            }
+        }
+
+        private void InstantiateRangeFactButton(BFStateRange inFact, PlayerFactParams inParams) 
+        {
+            BestiaryRangeFactButton factButton = m_RangeFactPool.Alloc();
+            if (m_SelectFactRequest != null)
+            {
+                factButton.Initialize(inFact, inParams, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inParams), OnFactClicked);
+            }
+            else
+            {
+                factButton.Initialize(inFact, inParams, false, true, null);
+            }
+        }
+
+        void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
+        {
+            InstantiateRangeFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
         }
     }
 }

@@ -1,0 +1,41 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+:: node.intro
+@showClaims
+@linkToNode link.NotEnoughUrchins, node.NotEnoughUrchins
+So, what did you find out?
+
+// not enough urchins
+
+:: node.NotEnoughUrchins
+@invalidNodeId  node.invalid.NotEnoughUrchins
+@linkToNode     Urchin.Eats.BullKelp, node.end
+Really? Why is that?
+
+:: node.NotEnoughUrchins.Continue
+@invalidNodeId  node.invalid.NotEnoughUrchins
+@linkToNode     Urchin.Eats.BullKelp, node.end
+Why aren't there enough urchins?
+
+:: node.end
+Aha! Brilliant!
+
+// Invalid
+
+:: node.invalid.default
+Hmmm, I'm not so sure that's right.
+
+:: node.invalid.NotEnoughUrchins
+@nextNodeId node.NotEnoughUrchins.Continue
+That... doesn't explain it.
+
+// Claims
+
+:: link.NotEnoughUrchins
+@factId claim
+@tag claim
+@type claim
+There aren't enough urchins.

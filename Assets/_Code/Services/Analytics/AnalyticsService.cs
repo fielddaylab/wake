@@ -24,20 +24,15 @@ namespace Aqua
 
         #region IService
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_Logger = new SimpleLog(m_AppId, m_AppVersion);
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_Logger?.Flush();
             m_Logger = null;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Analytics;
         }
 
         #endregion // IService

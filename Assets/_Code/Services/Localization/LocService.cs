@@ -11,12 +11,12 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class LocService : ServiceBehaviour
+    public partial class LocService : ServiceBehaviour, ILoadable
     {
         #region Inspector
 
-        [SerializeField, Required] private TextAsset[] m_GlobalStrings = null;
-        [SerializeField, Required] private TextAsset[] m_EnglishStrings = null;
+        [SerializeField, Required] private LocPackage[] m_GlobalStrings = null;
+        [SerializeField, Required] private LocPackage[] m_EnglishStrings = null;
 
         #endregion // Inspector
 
@@ -43,10 +43,11 @@ namespace Aqua
             if (!inbForce && m_GlobalPackage != null)
                 yield break;
 
-            m_GlobalPackage = new LocPackage("GlobalStrings");
+            m_GlobalPackage = ScriptableObject.CreateInstance<LocPackage>();
+            m_GlobalPackage.name = "GlobalStrings";
             foreach(var file in m_GlobalStrings)
             {
-                var parser = BlockParser.ParseAsync(ref m_GlobalPackage, file.name, file.text, Parsing.Block, LocPackage.Generator.Instance);
+                var parser = BlockParser.ParseAsync(ref m_GlobalPackage, file.name, file.Source(), Parsing.Block, LocPackage.Generator.Instance);
                 yield return Async.Schedule(parser);
             }
 
@@ -58,10 +59,11 @@ namespace Aqua
             if (m_LanguagePackage != null)
                 yield break;
 
-            m_LanguagePackage = new LocPackage("LocaleStrings");
+            m_LanguagePackage = ScriptableObject.CreateInstance<LocPackage>();
+            m_LanguagePackage.name = "LanguageStrings";
             foreach(var file in m_EnglishStrings)
             {
-                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file.name, file.text, Parsing.Block, LocPackage.Generator.Instance);
+                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file.name, file.Source(), Parsing.Block, LocPackage.Generator.Instance);
                 yield return Async.Schedule(parser);
             }
 
@@ -100,11 +102,6 @@ namespace Aqua
         /// <summary>
         /// Localize the given key.
         /// </summary>
-        /// <param name="inKey"></param>
-        /// <param name="inDefault"></param>
-        /// <param name="inContext"></param>
-        /// <param name="inbIgnoreEvents"></param>
-        /// <returns></returns>
         public string Localize(StringHash32 inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
             if (m_LoadRoutine)
@@ -176,12 +173,12 @@ namespace Aqua
 
         #region IService
 
-        protected override bool IsLoading()
+        bool ILoadable.IsLoading()
         {
             return m_LoadRoutine;
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_LoadRoutine.Replace(this, InitialLoad());
 
@@ -189,9 +186,12 @@ namespace Aqua
             m_TagStringPool.Prewarm();
         }
 
-        public override FourCC ServiceId()
+        protected override void Shutdown()
         {
-            return ServiceIds.Localization;
+            UnityHelper.SafeDestroy(ref m_GlobalPackage);
+            UnityHelper.SafeDestroy(ref m_LanguagePackage);
+
+            base.Shutdown();
         }
 
         #endregion // IService

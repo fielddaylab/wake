@@ -1,5 +1,6 @@
 using BeauData;
 using UnityEngine;
+using BeauUtil.Services;
 
 namespace Aqua
 {
@@ -7,57 +8,31 @@ namespace Aqua
     {
         #region IService
 
-        protected virtual void OnDeregisterService() { }
+        protected virtual void Shutdown() { }
 
-        protected virtual void AfterRegisterService() { }
-
-        protected virtual void OnRegisterService() { }
-
-        public abstract FourCC ServiceId();
-
-        public virtual int Priority() { return 0; }
+        protected virtual void Initialize() { }
 
         #endregion // IService
 
         #region Events
 
-        protected virtual void OnEnable()
+        protected virtual void OnDestroy()
         {
-            Services.AttemptRegister(this);
+            Services.Deregister(this);
         }
 
-        protected virtual void OnDisable()
+        void IService.InitializeService()
         {
-            Services.AttemptDeregister(this);
+            Debug.LogFormat("[{0}] Initializing service...", GetType().Name);
+            Initialize();
+            Debug.LogFormat("[{0}] Finished initializing service.", GetType().Name);
         }
 
-        protected virtual bool IsLoading()
+        void IService.ShutdownService()
         {
-            return false;
-        }
-
-        void IService.OnRegisterService()
-        {
-            Debug.LogFormat("[{0}] Registering service...", GetType().Name);
-            OnRegisterService();
-            Debug.LogFormat("[{0}] Finished registering service.", GetType().Name);
-        }
-
-        void IService.AfterRegisterService()
-        {
-            AfterRegisterService();
-        }
-
-        void IService.OnDeregisterService()
-        {
-            Debug.LogFormat("[{0}] Deregistering service...", GetType().Name);
-            OnDeregisterService();
+            Debug.LogFormat("[{0}] Shutting down service...", GetType().Name);
+            Shutdown();
             Debug.LogFormat("[{0}] Finished deregistering service.", GetType().Name);
-        }
-
-        bool IService.IsLoading()
-        {
-            return IsLoading();
         }
 
         #endregion // Events

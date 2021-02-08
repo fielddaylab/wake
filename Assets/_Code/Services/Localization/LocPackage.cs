@@ -8,17 +8,11 @@ using System.IO;
 
 namespace Aqua
 {
-    public class LocPackage : IDataBlockPackage<LocNode>
+    public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
         private readonly Dictionary<StringHash32, LocNode> m_Nodes = new Dictionary<StringHash32, LocNode>(512);
 
-        private string m_Name;
         [BlockMeta("basePath")] private string m_RootPath = string.Empty;
-
-        public LocPackage(string inName)
-        {
-            m_Name = inName;
-        }
 
         #region Retrieve
 
@@ -59,30 +53,20 @@ namespace Aqua
 
         #region IDataBlockPackage
 
-        public int Count { get { return m_Nodes.Count; } }
+        public override int Count { get { return m_Nodes.Count; } }
 
-        public IEnumerator<LocNode> GetEnumerator()
+        public override IEnumerator<LocNode> GetEnumerator()
         {
             return m_Nodes.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         #endregion // IDataBlockPackage
 
         #region Generator
 
-        public class Generator : AbstractBlockGenerator<LocNode, LocPackage>
+        public class Generator : GeneratorBase<LocPackage>
         {
             static public readonly Generator Instance = new Generator();
-
-            public override LocPackage CreatePackage(string inFileName)
-            {
-                return new LocPackage(inFileName);
-            }
 
             public override bool TryCreateBlock(IBlockParserUtil inUtil, LocPackage inPackage, TagData inId, out LocNode outBlock)
             {
@@ -102,16 +86,8 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        [UnityEditor.Experimental.AssetImporters.ScriptedImporter(1, "aqloc")]
-        private class Importer : UnityEditor.Experimental.AssetImporters.ScriptedImporter
-        {
-            public override void OnImportAsset(UnityEditor.Experimental.AssetImporters.AssetImportContext ctx)
-            {
-                TextAsset txtAsset = new TextAsset(File.ReadAllText(ctx.assetPath));
-                ctx.AddObjectToAsset("Main Object", txtAsset);
-                ctx.SetMainObject(txtAsset);
-            }
-        }
+        [ScriptedExtension(1, "aqloc")]
+        private class Importer : ImporterBase<LocPackage> { }
 
         #endif // UNITY_EDITOR
     }

@@ -17,6 +17,12 @@ namespace Aqua
             public StringHash32 Key { get { return Id; } }
 
             public string Value { get { return Name; } }
+
+            public VariantPair(StringHash32 inId, string inName)
+            {
+                Id = inId;
+                Name = inName;
+            }
         }
 
         #region Inspector

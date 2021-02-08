@@ -1,4 +1,5 @@
 ﻿using BeauRoutine;
+using BeauUtil;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +23,7 @@ namespace ProtoAqua.Argumentation
 
 
 
-        public string id { get; set; }
+        public StringHash32 id { get; set; }
         public string linkTag { get; set; }
         public string typeTag { get; set; } //Organizes each bubble within the center tab
 
@@ -48,7 +49,7 @@ namespace ProtoAqua.Argumentation
             graph = inGraph;
         }
 
-        public void InitializeLinkData(string inId, string inTag, string inType, string inDisplayText)
+        public void InitializeLinkData(StringHash32 inId, string inTag, string inType, string inDisplayText)
         {
             id = inId;
             linkTag = inTag;
@@ -67,7 +68,7 @@ namespace ProtoAqua.Argumentation
             displayText.SetText(currLink.DisplayText);
         }
 
-        public void InitializeNodeData(string inId, string inDisplayText)
+        public void InitializeNodeData(StringHash32 inId, string inDisplayText)
         {
             id = inId;
             displayText.SetText(inDisplayText);

@@ -1,0 +1,21 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+:: node.intro
+@linkToNode Urchin.Eats.GiantKelp, node.end
+@linkToNode Urchin.Eats.BullKelp, node.end
+So, did you figure out the culprit that destroyed the kelp?
+
+:: node.invalid.default
+@nextNodeId node.prompt2
+No, that doesn't sound right.
+
+:: node.prompt2
+@linkToNode Urchin.Eats.GiantKelp, node.end
+@linkToNode Urchin.Eats.BullKelp, node.end
+Did you observe any interactions between the kelp and another creature?
+
+:: node.end
+Right! Urchins are eating all the kelp.

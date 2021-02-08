@@ -8,6 +8,7 @@ using UnityEngine;
 using Aqua.Scripting;
 using System.Collections;
 using AquaAudio;
+using System.Collections.Generic;
 
 namespace Aqua
 {
@@ -35,6 +36,7 @@ namespace Aqua
 
             m_TagEventParser.AddReplace("slow", "{wait 0.05}{speed 0.5}").CloseWith("{/speed}{wait 0.05}");
             m_TagEventParser.AddReplace("reallySlow", "{wait 0.05}{speed 0.25}").CloseWith("{/speed}{wait 0.05}");
+            m_TagEventParser.AddReplace("fast", "{wait 0.05}{speed 1.25}").CloseWith("{/speed}{wait 0.05}");
 
             // Global Events
             m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();
@@ -57,6 +59,10 @@ namespace Aqua
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithAliases("trigger").WithStringData();
             m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
+            m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringData();
+            m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
+            m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
+            m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -247,7 +253,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.Wait, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
-                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
+                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
                 .Register(ScriptEvents.Global.LoadScene, EventLoadScene)
@@ -256,7 +262,34 @@ namespace Aqua
                 .Register(ScriptEvents.Global.ScreenWipeIn, EventScreenWipeIn)
                 .Register(ScriptEvents.Global.ScreenFlash, EventScreenFlash)
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
-                .Register(ScriptEvents.Global.FadeIn, EventFadeIn);
+                .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
+                .Register(ScriptEvents.Global.GiveFact, EventGiveFact)
+                .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
+                .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
+                .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob);
+
+            m_SkippedEvents = new HashSet<StringHash32>();
+            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
+            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOff);
+            m_SkippedEvents.Add(ScriptEvents.Global.PitchBGM);
+            m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
+            m_SkippedEvents.Add(ScriptEvents.Global.Wait);
+            m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
+            m_SkippedEvents.Add(ScriptEvents.Global.BoxStyle);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenFlash);
+            m_SkippedEvents.Add(ScriptEvents.Global.FadeOut);
+            m_SkippedEvents.Add(ScriptEvents.Global.FadeIn);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeOut);
+            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeIn);
+            m_SkippedEvents.Add(ScriptEvents.Global.HideDialog);
+            m_SkippedEvents.Add(ScriptEvents.Global.ShowDialog);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Auto);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Clear);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.InputContinue);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Speaker);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
         }
 
         #endregion // Event Setup
@@ -511,7 +544,49 @@ namespace Aqua
 
         private void EventEnableDisableObjectImpl(TagEventData inEvent, object inContext, bool inbActive)
         {
+            var ids = ExtractArgs(inEvent.StringArgument);
+            foreach(var id in ids)
+            {
+                foreach(var scriptObject in GetScriptObjects(id))
+                {
+                    scriptObject.gameObject.SetActive(inbActive);
+                }
+            }
+        }
 
+        private void EventGiveFact(TagEventData inEvent, object inContext)
+        {
+            var args = ExtractArgs(inEvent.StringArgument);
+
+            PlayerFactParams p;
+            Services.Data.Profile.Bestiary.RegisterFact(args[0].Hash32(), out p);
+
+            // TODO: Implement adding flags
+        }
+
+        private void EventGiveEntity(TagEventData inEvent, object inContext)
+        {
+            Services.Data.Profile.Bestiary.RegisterEntity(inEvent.Argument0.AsStringHash());
+        }
+
+        private void EventSwitchJob(TagEventData inEvent, object inContext)
+        {
+            Services.Data.Profile.Jobs.SetCurrentJob(inEvent.Argument0.AsStringHash());
+        }
+
+        private void EventCompleteJob(TagEventData inEvent, object inContext)
+        {
+            StringHash32 jobId = inEvent.Argument0.AsStringHash();
+            if (jobId.IsEmpty)
+                jobId = Services.Data.CurrentJobId();
+
+            if (jobId.IsEmpty)
+            {
+                Debug.LogErrorFormat("[ScriptingService] Attempting to complete job, but no job specified and no job active");
+                return;
+            }
+
+            Services.Data.Profile.Jobs.MarkComplete(Services.Data.Profile.Jobs.GetProgress(jobId));
         }
 
         #endregion // Event Callbacks

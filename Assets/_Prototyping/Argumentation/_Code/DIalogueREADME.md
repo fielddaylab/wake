@@ -35,6 +35,7 @@ There are different options you have when creating a node and these are definded
 
 3.  @responseIds - a list of linksIds seperated by commas that are 'correct' responses to this node and will continue the conversation. If one of these links is not chosen it will go to the default invalid node id, unless a invalid nodeid is listed.
     Note: This is not required because invalid nodes and end nodes do not need it, but it is required of your nodes that you want to have a conversation with.
+4.  @linkToNode - Can have multiple of these and they will corersponde with each response id. They connect a responseId (link) to a node id
 
 4.  @invalidNodeId - an optional reference to an invalid node. If an invalid link is displayed it will display that invalid node rather than choosing the default invalid node.
 5.  @nextNodeId - used for invalid nodes only, this will continue the conversation from an invalid node into another node. This allows the conversation to continue smoother and allows for better conversation.
@@ -45,7 +46,9 @@ There are different options you have when creating a node and these are definded
 
 ```
 :: node.nodeId
-@responseIds node.firstResponse, node.secondResponse
+@responseIds link.firstResponse, link.secondResponse
+@linkToNode link.firstResponse, node.firstAnswer
+@linkToNode link.secondResponse, node.secondAnswer
 Hello, this is the root of the conversation
 ```
 
@@ -68,7 +71,8 @@ Uh oh, that is not the right choice. Try again!
 ```
 :: node.normalNode
 @invalidNodeId node.invalid.invalidWithContinue
-@responseId node.correctResponse1
+@responseId link.correctResponse1
+@linkToNode link.correctResponse1, node.nextResponseFromNPC
 Please answer correctResponse1 and the conversation will continue
 ```
 
@@ -99,14 +103,12 @@ Defining a link is in the early stages, and we are still uncertaion about the de
 
 1. :: Id - for each link and is the id of the link. Our naming convention has been link.linkId for link; however, the id can be anything that you decide
 2. Text - This is the text that the link will display
-3. @nextNodeId - Multiple of these can be described and it details the two nodes. The first node is the node that if it is chosen on it will be correct, and the second node is the node that it will continue to. (Technically not required if you want a link that will never continue the conversation)
-   For example: If I am at node1 and I want link1 to take me from node1 to node2. I would describe **@nextNodeId node1, node2**
-4. @tag - The tag that describes what section it is placed under. For now there are only four options and they are: **claim, behavior, model, ecosystem.**
-5. @type - the type describes which center row divider it will belong to. These must be defined in the unity scene pool within the TypeManager script attached to the TypeButtons. You describe the type name and the DIsplay Label and attach a sprite that will be displayed.
+3. @tag - The tag that describes what section it is placed under. For now there are only four options and they are: **claim, behavior, model, ecosystem.**
+4. @type - the type describes which center row divider it will belong to. These must be defined in the unity scene pool within the TypeManager script attached to the TypeButtons. You describe the type name and the DIsplay Label and attach a sprite that will be displayed.
 
 **Optional Optons**:
 
-6. @shortenedText - This is used to display a shortened version of the text when allowing the player to select the links. This will automatically switch to the text definded above when this link is selected.
+5. @shortenedText - This is used to display a shortened version of the text when allowing the player to select the links. This will automatically switch to the text definded above when this link is selected.
 
 ### Link Examples
 
@@ -116,7 +118,6 @@ Defining a link is in the early stages, and we are still uncertaion about the de
 :: link.claimLinkId
 @tag claim
 @type claim
-@nextNodeId node.rootNode, node.firstNode
 This is example claim link.
 ```
 
@@ -126,8 +127,6 @@ This is example claim link.
 :: link.normalLink
 @tag behavior
 @type otter
-@nextNodeId node.firstNode, node.secondNode
-@nextNodeId node.randomNode, node.nodeAfterRandomNode
 Otters are cute, and behave this way.
 ```
 
@@ -137,7 +136,6 @@ Otters are cute, and behave this way.
 :: link.shortenedLink
 @tag ecosystem
 @type water
-@nextNodeId node.thisNode, node.thatNode
 @shortenedText: Water < 10* C
 The water in this lake is less than 10 degrees celcius.
 ```

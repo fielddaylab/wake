@@ -40,7 +40,7 @@ namespace AquaAudio
 
         #region IService
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             DestroyPool();
 
@@ -50,9 +50,9 @@ namespace AquaAudio
             SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
-            m_Random = new System.Random(Environment.TickCount ^ ServiceIds.Audio.GetHashCode());
+            m_Random = new System.Random(Environment.TickCount ^ name.GetHashCode());
             m_MasterProperties = AudioPropertyBlock.Default;
             m_MixerProperties = AudioPropertyBlock.Default;
             m_DebugProperties = AudioPropertyBlock.Default;
@@ -62,11 +62,6 @@ namespace AquaAudio
                 Load(m_DefaultPackage);
 
             SceneHelper.OnSceneLoaded += OnGlobalSceneLoaded;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.Audio;
         }
 
         #endregion // IService

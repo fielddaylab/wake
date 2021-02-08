@@ -1,0 +1,66 @@
+#basePath   act1
+
+:: atStation1
+@trigger    SceneStart
+@when       scene:name == "Ship", player:currentStation == "Station1"
+@once
+@boostScore 100
+@cutscene
+$set    player:seen.jules = true
+{@kelpResearcher}   Hi there folks, looks like you're...
+                    {player-name}?!{wait 1} I haven't seen you in {slow}ages{/slow}!
+{@player}   Oh! Hey there Jules! Yeah it's been forever.
+{@kelpResearcher}   Well I'm the head researcher at the Kelp Station now!
+{@player}   Very impressive! Well I'm here for work - got anything I can help with?
+{@kelpResearcher}   Possibly! I'd check your job board, it should automatically sync up with the station.
+                    But we should catch up sometime!
+
+:: partner.jules.1
+@trigger    RequestPartnerHelp
+@when       player:currentStation == "Station1", player:seen.jules, !kevin:jules.intro
+@cutscene
+@once
+$set    kevin:jules.intro = true
+$if job.isStarted:Job1-6
+{@kevin}    Who is this "Jules" we keep talking to?
+$else
+{@kevin}    Who's "Jules"?
+$endif
+{@player}   They're a good friend.
+            Just been out of touch for a while.
+
+:: partner.urchinBaron.1
+@trigger    RequestPartnerHelp
+@when       player:seen.urchinBaron, !kevin:urchinBaron.player.talk
+@cutscene
+@once
+$set    kevin:urchinBaron.player.talk + 1
+
+$if job.isComplete:Job1-1a
+    $set    kevin:urchinBaron.player.talk.startedAfterJob = true
+    {@player}   So... Urban...
+    {@kevin}    ...I don't want to talk about him right now.
+    {@player}   Okay, okay.
+$else
+    {@player}   About Urban...
+    {@kevin}    What about him?
+    {@player}   You seemed... kinda tense when we were talking.
+    {@kevin}    Yeah. What of it?
+$endif
+
+:: partner.urchinBaron.2
+@trigger    RequestPartnerHelp
+@when       player:seen.urchinBaron, kevin:urchinBaron.player.talk == 1, job.isComplete:Job1-1a
+@cutscene
+@once
+$set    kevin:urchinBaron.player.talk + 1
+$if kevin:urchinBaron.player.talk.startedAfterJob
+    {@player}   Really though, are you doing okay?
+                Urban seemed to tick you off.
+$else
+    {@player}   Really, are you okay? Urban seemed to irritate you.
+                Like, a lot.
+$endif
+
+{@kevin}    Oh,{wait 0.3} what gave you {slow}that{/slow} impression?
+            He's not a good guy, let's just leave it at that.

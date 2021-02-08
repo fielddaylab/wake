@@ -11,97 +11,67 @@ namespace ProtoAqua.Foodweb
 {
     public class FoodWebFactDisplay : FactSentenceDisplay
     {
-        [Serializable]
-        public class Pool : SerializablePool<FactSentenceDisplay> { }
+        // #region Inspector
 
-        #region Inspector
+        // [SerializeField] private bool m_DisplayOptionalFragments = false;
+        // [SerializeField] private bool m_InteractiveFragments = false;
+        // [SerializeField] private LayoutGroup m_Layout = null;
 
-        [SerializeField] private bool m_DisplayOptionalFragments = false;
-        [SerializeField] private bool m_InteractiveFragments = false;
-        [SerializeField] private LayoutGroup m_Layout = null;
+        // #endregion // Inspector
 
-        #endregion // Inspector
+        // [NonSerialized] private List<FactSentenceFragment> m_AllocatedFragments = new List<FactSentenceFragment>();
+        // [NonSerialized] private FactSentenceTweaks m_Tweaks = null;
 
-        [NonSerialized] private List<FactSentenceFragment> m_AllocatedFragments = new List<FactSentenceFragment>();
-        [NonSerialized] private FactSentenceTweaks m_Tweaks = null;
+        // private bool TryAllocFragment(in BestiaryFactFragment inFragment, PlayerFactParams inFactParams)
+        // {
+        //     StringSlice str = inFragment.String;
 
-        public void Clear()
-        {
-            foreach(var frag in m_AllocatedFragments)
-            {
-                frag.Recycle();
-            }
+        //     // if (!m_DisplayOptionalFragments)
+        //     // {
+        //     //     switch(inFragment.Word)
+        //     //     {
+        //     //         case BestiaryFactFragmentWord.ConditionOperand:
+        //     //         case BestiaryFactFragmentWord.ConditionOperator:
+        //     //         case BestiaryFactFragmentWord.ConditionQuality:
+        //     //             {
+        //     //                 if (inFactParams == null || inFactParams.ConditionData.Id.IsEmpty)
+        //     //                     return false;
 
-            m_AllocatedFragments.Clear();
-        }
+        //     //                 break;
+        //     //             }
 
-        public void Populate(BFBase inFact, PlayerFactParams inFactParams)
-        {
-            if (!m_Tweaks)
-            {
-                m_Tweaks = Services.Tweaks.Get<FactSentenceTweaks>();
-            }
+        //     //         case BestiaryFactFragmentWord.Amount:
+        //     //             {
+        //     //                 if (inFactParams == null ||inFactParams.Value.StrictEquals(Variant.Null))
+        //     //                     return false;
 
-            Clear();
+        //     //                 break;
+        //     //             }
 
-            foreach(var fragment in inFact.GenerateFragments(inFactParams))
-            {
-                TryAllocFragment(fragment, inFactParams);
-            }
+        //     //         case BestiaryFactFragmentWord.SubjectVariant:
+        //     //             {
+        //     //                 if (inFactParams == null ||inFactParams.SubjectVariantId.IsEmpty)
+        //     //                     return false;
 
-            m_Layout.ForceRebuild();
-        }
+        //     //                 break;
+        //     //             }
 
-        private bool TryAllocFragment(in BestiaryFactFragment inFragment, PlayerFactParams inFactParams)
-        {
-            StringSlice str = inFragment.String;
+        //     //         case BestiaryFactFragmentWord.TargetVariant:
+        //     //             {
+        //     //                 if (inFactParams == null || inFactParams.TargetVariantId.IsEmpty)
+        //     //                     return false;
 
-            // if (!m_DisplayOptionalFragments)
-            // {
-            //     switch(inFragment.Word)
-            //     {
-            //         case BestiaryFactFragmentWord.ConditionOperand:
-            //         case BestiaryFactFragmentWord.ConditionOperator:
-            //         case BestiaryFactFragmentWord.ConditionQuality:
-            //             {
-            //                 if (inFactParams == null || inFactParams.ConditionData.Id.IsEmpty)
-            //                     return false;
+        //     //                 break;
+        //     //             }
+        //     //     }
+        //     // }
 
-            //                 break;
-            //             }
+        //     FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform);
+        //     fragment.Configure(inFragment.String);
+        //     m_AllocatedFragments.Add(fragment);
 
-            //         case BestiaryFactFragmentWord.Amount:
-            //             {
-            //                 if (inFactParams == null ||inFactParams.Value.StrictEquals(Variant.Null))
-            //                     return false;
-
-            //                 break;
-            //             }
-
-            //         case BestiaryFactFragmentWord.SubjectVariant:
-            //             {
-            //                 if (inFactParams == null ||inFactParams.SubjectVariantId.IsEmpty)
-            //                     return false;
-
-            //                 break;
-            //             }
-
-            //         case BestiaryFactFragmentWord.TargetVariant:
-            //             {
-            //                 if (inFactParams == null || inFactParams.TargetVariantId.IsEmpty)
-            //                     return false;
-
-            //                 break;
-            //             }
-            //     }
-            // }
-
-            FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform, m_InteractiveFragments);
-            fragment.Configure(inFragment.String);
-            m_AllocatedFragments.Add(fragment);
-
-            // TODO: Any other logic for setting up interactive parts
-            return true;
-        }
+        //     // TODO: Any other logic for setting up interactive parts
+        //     return true;
+        // }
     }
 }

@@ -5,19 +5,19 @@ namespace PolyPerfect
   public class Common_PlaySound : MonoBehaviour
   {
     [SerializeField]
-    private AudioClip animalSound;
+    private AudioClip animalSound = null;
     [SerializeField]
-    private AudioClip walking;
+    private AudioClip walking = null;
     [SerializeField]
-    private AudioClip eating;
+    private AudioClip eating = null;
     [SerializeField]
-    private AudioClip running;
+    private AudioClip running = null;
     [SerializeField]
-    private AudioClip attacking;
+    private AudioClip attacking = null;
     [SerializeField]
-    private AudioClip death;
+    private AudioClip death = null;
     [SerializeField]
-    private AudioClip sleeping;
+    private AudioClip sleeping = null;
 
     void AnimalSound()
     {

@@ -8,10 +8,10 @@ namespace PolyPerfect
     [ExecuteInEditMode]
     public class RandomCharacterPlacer : MonoBehaviour
     {
-        [SerializeField] float spawnSize;
-        [SerializeField] int spawnAmmount;
+        [SerializeField] float spawnSize = 0;
+        [SerializeField] int spawnAmmount = 0;
 
-        [SerializeField] GameObject[] characters;
+        [SerializeField] GameObject[] characters = null;
 
         [ContextMenu("Spawn Characters")]
         void SpawnAnimals()

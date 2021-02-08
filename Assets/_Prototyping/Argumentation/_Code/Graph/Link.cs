@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine.Scripting;
 
@@ -7,16 +8,15 @@ namespace ProtoAqua.Argumentation
 {
     public class Link : GraphData
     {
-        public static int count = 0;
-        public int Index { get; set; }
+        private static uint count = 0;
+        
+        public uint Index { get; set; }
 
-        private Dictionary<string, string> nextNodeIds = new Dictionary<string, string>();
-        private List<string> requiredVisited = new List<string>();
-        private List<string> requiredUsed = new List<string>();
+        private Dictionary<StringHash32, StringHash32> nextNodeIds = new Dictionary<StringHash32, StringHash32>();
+        private List<StringHash32> requiredVisited = new List<StringHash32>();
+        private List<StringHash32> requiredUsed = new List<StringHash32>();
 
         #region Serialized
-
-        private List<string> m_InNextNodeIds = new List<string>();
 
         // Properties
         [BlockMeta("tag")] private string m_Tag = null;
@@ -25,14 +25,9 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Ids
-        [BlockMeta("factId")] private string m_factId = null;
-        [BlockMeta("invalidNodeId")] private string m_InvalidNodeId = null;
-        [BlockMeta("conditionsNotMetId")] private string m_ConditionsNotMetId = null;
-        [BlockMeta("nextNodeId"), Preserve]
-        private void AddNextNodeIds(string line)
-        {
-            m_InNextNodeIds.Add(line);
-        }
+        [BlockMeta("factId")] private StringHash32 m_factId = null;
+        [BlockMeta("invalidNodeId")] private StringHash32 m_InvalidNodeId = null;
+        [BlockMeta("conditionsNotMetId")] private StringHash32 m_ConditionsNotMetId = null;
 
         // Text
         [BlockContent] private string m_DisplayText = null;
@@ -40,7 +35,7 @@ namespace ProtoAqua.Argumentation
         #endregion // Serialized
 
         #region Accessors
-         public string factId
+         public StringHash32 factId
         {
             get { return m_factId; }
         }
@@ -65,27 +60,22 @@ namespace ProtoAqua.Argumentation
         }
 
 
-        public string InvalidNodeId
+        public StringHash32 InvalidNodeId
         {
             get { return m_InvalidNodeId; }
         }
 
-        public string ConditionsNotMetId
+        public StringHash32 ConditionsNotMetId
         {
             get { return m_ConditionsNotMetId; }
         }
 
-        public Dictionary<string, string> NextNodeIds
-        {
-            get { return nextNodeIds; }
-        }
-
-        public List<string> RequiredVisited
+        public List<StringHash32> RequiredVisited
         {
             get { return requiredVisited; }
         }
 
-        public List<string> RequiredUsed
+        public List<StringHash32> RequiredUsed
         {
             get { return requiredUsed; }
         }
@@ -97,9 +87,6 @@ namespace ProtoAqua.Argumentation
 
         public void InitializeLink()
         {
-            
-            ParseNextNodeIds(m_InNextNodeIds);
-
             if (m_Conditions != null)
             {
                 ParseConditions(m_Conditions);
@@ -110,24 +97,14 @@ namespace ProtoAqua.Argumentation
         }
 
         // Given a node id, return the respsective node id that this link connects it to
-        public string GetNextNodeId(string id)
+        public StringHash32 GetNextNodeId(StringHash32 id)
         {
-            if (nextNodeIds.TryGetValue(id, out string nextNodeId))
+            if (nextNodeIds.TryGetValue(id, out StringHash32 nextNodeId))
             {
                 return nextNodeId;
             }
 
             return null;
-        }
-
-        private void ParseNextNodeIds(List<string> inNextNodeIds)
-        {
-            nextNodeIds = new Dictionary<string, string>();
-            foreach (string ids in inNextNodeIds)
-            {
-                string[] parsedIds = ids.Split(',');
-                nextNodeIds.Add(parsedIds[0], parsedIds[1].Trim());
-            }
         }
 
         private void ParseConditions(string inConditions)
@@ -141,7 +118,7 @@ namespace ProtoAqua.Argumentation
                 {
                     requiredVisited.Add(condition);
                 }
-                else if (condition.StartsWith("link"))
+                else
                 {
                     requiredUsed.Add(condition);
                 }

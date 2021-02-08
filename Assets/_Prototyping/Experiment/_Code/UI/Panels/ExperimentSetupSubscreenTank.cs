@@ -22,6 +22,8 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
+        [NonSerialized] private TankType m_CurrentTank;
+
         [NonSerialized] public Action OnSelectContinue;
 
         protected override void Awake()
@@ -34,9 +36,14 @@ namespace ProtoAqua.Experiment
                 m_CachedButtons[i].Toggle.onValueChanged.AddListener((b) => UpdateFromSelection());
             }
 
-            m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
+            m_NextButton.onClick.AddListener(() => GetToggledExperiment());
 
             UpdateButtons();
+        }
+
+        private void GetToggledExperiment()
+        {
+            OnSelectContinue?.Invoke();
         }
 
         public override void SetData(ExperimentSetupData inData)
@@ -50,6 +57,13 @@ namespace ProtoAqua.Experiment
             base.Refresh();
             UpdateButtons();
         }
+
+        public TankType SelectedTank()
+        {
+            return m_CurrentTank;
+        }
+
+
 
         private void UpdateButtons()
         {
@@ -96,11 +110,15 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.Tank = (TankType) active.GetComponent<SetupToggleButton>().Id.AsInt();
+                m_CurrentTank = (TankType)active.GetComponent<SetupToggleButton>().Id.AsInt();
+                m_CachedData.Tank = m_CurrentTank; 
+                
             }
             else
             {
-                m_CachedData.Tank = TankType.None;
+                m_CurrentTank = TankType.None;
+                m_CachedData.Tank = m_CurrentTank;
+
             }
 
             UpdateDisplay(m_CachedData.Tank);

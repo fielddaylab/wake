@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
 {
     public class ConditionsData
     {
-        private HashSet<string> visitedNodes = new HashSet<string>();
-        private HashSet<string> usedResponses = new HashSet<string>();
+        private HashSet<StringHash32> visitedNodes = new HashSet<StringHash32>();
+        private HashSet<StringHash32> usedResponses = new HashSet<StringHash32>();
 
         // Constructor for marking root node as visited
-        public ConditionsData(string id)
+        public ConditionsData(StringHash32 id)
         {
             visitedNodes.Add(id);
         }
@@ -21,7 +22,7 @@ namespace ProtoAqua.Argumentation
             //return true; //@TODO fix this
             if (link.RequiredVisited != null)
             {
-                foreach (string condition in link.RequiredVisited)
+                foreach (StringHash32 condition in link.RequiredVisited)
                 {
                     if (!visitedNodes.Contains(condition))
                     {
@@ -33,7 +34,7 @@ namespace ProtoAqua.Argumentation
 
             if (link.RequiredVisited != null)
             {
-                foreach (string condition in link.RequiredUsed)
+                foreach (StringHash32 condition in link.RequiredUsed)
                 {
                     if (!usedResponses.Contains(condition))
                     {

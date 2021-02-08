@@ -34,6 +34,7 @@ namespace Aqua.Scripting
         private FaderRect m_CurrentFader;
         private ScreenWipe m_CurrentWipe;
         private DialogPanel m_CurrentDialog;
+        private Routine m_SkipRoutine;
 
         // trigger state
         private StringHash32 m_TriggerWho;
@@ -77,6 +78,11 @@ namespace Aqua.Scripting
             m_Name = inName;
             m_Id = (m_Id == uint.MaxValue ? 1 : m_Id + 1);
 
+            return GetHandle();
+        }
+
+        public ScriptThreadHandle GetHandle()
+        {
             return new ScriptThreadHandle(this, m_Id);
         }
 
@@ -90,6 +96,11 @@ namespace Aqua.Scripting
         {
             m_TriggerWho = inNode.TargetId();
             m_TriggerPriority = inNode.Priority();
+        }
+
+        public void Delay(float inDelay)
+        {
+            m_RunningRoutine.DelayBy(inDelay);
         }
 
         public bool HasId(uint inId)
@@ -183,6 +194,7 @@ namespace Aqua.Scripting
         public bool IsPaused() { return m_RunningRoutine.GetPaused(); }
         public IEnumerator Wait() { return m_RunningRoutine.Wait(); }
 
+        public bool IsCutscene() { return (m_Flags & ScriptFlags.Cutscene) != 0 || m_CutsceneCount > 0; }
         public StringHash32 Target() { return m_TriggerWho; }
         public TriggerPriority Priority() { return m_TriggerPriority; }
 
@@ -203,6 +215,55 @@ namespace Aqua.Scripting
         }
 
         #endregion // Cutscene
+        
+        #region Skipping
+
+        public void Skip()
+        {
+            if ((m_Flags & ScriptFlags.Skip) == 0)
+            {
+                if (IsCutscene())
+                {
+                    m_Flags |= ScriptFlags.Cutscene;
+                    m_SkipRoutine = Routine.Start(m_Mgr, SkipCutsceneRoutine());
+                }
+                else
+                {
+                    InternalSkip();
+                }
+            }
+        }
+
+        public bool IsSkipping()
+        {
+            return (m_Flags & ScriptFlags.Skip) != 0;
+        }
+
+        private IEnumerator SkipCutsceneRoutine()
+        {
+            m_RunningRoutine.Pause();
+            Services.Input.PauseAll();
+            yield return Services.UI.StartSkipCutscene();
+            InternalSkip();
+            yield return 0.1f;
+            m_RunningRoutine.Resume();
+        }
+
+        private void InternalSkip()
+        {
+            m_Flags |= ScriptFlags.Skip;
+            m_RunningRoutine.SetTimeScale(100000);
+            if (IsCutscene())
+            {
+                Services.Events.Dispatch(GameEvents.CutsceneSkip);
+            }
+            if (Dialog != null)
+            {
+                Dialog.Skip();
+            }
+        }
+
+        #endregion // Skipping
 
         #region IPooledObject
 
@@ -242,6 +303,12 @@ namespace Aqua.Scripting
                 m_CurrentDialog = null;
             }
 
+            if (IsCutscene() && (m_Flags & ScriptFlags.Skip) != 0)
+            {
+                Services.Input.ResumeAll();
+                Services.UI.StopSkipCutscene();
+            }
+
             while(m_CutsceneCount > 0)
             {
                 Services.UI.HideLetterbox();
@@ -251,6 +318,7 @@ namespace Aqua.Scripting
             Reset(m_Mgr);
 
             m_RunningRoutine.Stop();
+            m_SkipRoutine.Stop();
 
             m_Mgr.UntrackThread(this);
 
@@ -258,6 +326,7 @@ namespace Aqua.Scripting
             Ref.Dispose(ref m_TempTable);
             m_Context = null;
             m_Name = null;
+            m_Flags = 0;
 
             m_TriggerWho = StringHash32.Null;
             m_TriggerPriority = TriggerPriority.Low;
@@ -266,10 +335,11 @@ namespace Aqua.Scripting
         #endregion // IPooledObject
     }
 
-    public enum ScriptFlags : UInt32
+    internal enum ScriptFlags : UInt32
     {
         None = 0x00,
 
-        Skip = 0x10
+        Skip = 0x10,
+        Cutscene = 0x20
     }
 }

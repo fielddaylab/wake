@@ -17,10 +17,12 @@ namespace Aqua
 
         // jobs
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
+        static public readonly TableKeyPair CurrentStation = TableKeyPair.Parse("player:currentStation");
 
         // global
         static public readonly TableKeyPair Weekday = TableKeyPair.Parse("date:weekday");
         static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
+        static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
     }
 }

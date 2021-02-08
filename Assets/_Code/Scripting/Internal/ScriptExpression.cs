@@ -4,7 +4,7 @@ using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
-    public class ScriptExpression : ILeafExpression<ScriptNode>
+    internal class ScriptExpression : ILeafExpression<ScriptNode>
     {
         private readonly string m_ExpressionString;
 

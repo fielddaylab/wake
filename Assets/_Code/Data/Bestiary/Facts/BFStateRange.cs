@@ -38,12 +38,17 @@ namespace Aqua
 
         public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
         {
-            throw new System.NotImplementedException();
+            yield return BestiaryFactFragment.CreateAmount(10f);
+            //throw new System.NotImplementedException();
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
-            throw new System.NotImplementedException();
+            var result = "is least " + TargetState().ToString() + " at " + MinSafe().ToString() + " and most " + TargetState().ToString() + " at " + MaxSafe().ToString();
+
+            return result;
+
+            // throw new System.NotImplementedException();
         }
 
         protected override void GenerateQualitative()

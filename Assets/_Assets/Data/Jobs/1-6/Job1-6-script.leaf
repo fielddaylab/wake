@@ -1,0 +1,123 @@
+#basePath   job.j1_6
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@kelpResearcher}   Hey, it's Jules again!
+                    Looks like you accepted our standard onboarding job.
+                    Really, we're just looking to get you introduced to the elements.
+                    Most folks don't know what we do here.
+                    So head over to Site B when you're ready.
+
+:: end
+@trigger    JobCompleted
+@cutscene
+{@kelpResearcher}   Nice work, {player-name}! And...
+                    Um, who's your friend there?
+{@player}       Oh, this is Kevin! They're a jellyblob.
+$if kevin:jules.intro
+    {@kevin}    {fast}Hi Jules nice to meet you okay bye{/fast}
+$else
+    $set    kevin:jules.intro = true
+    {@kevin}    Hi, uh, Jules?
+                Nice to meet you...
+                Bye
+$endif
+{hide-dialog} {wait 0.5}
+{@kelpResearcher}   {slow}Okay...{/slow}
+                    Well anyways, we might have some more tasks for you.
+                    So go check that job board when you have a moment.
+
+// some guidance
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station1"
+@once
+@cutscene
+$set    player:seen.jules = true
+{@kelpResearcher}   You're gonna want to take your sub over to Dive Site B.
+                    That's the one I've marked on your map for you.
+                    Once you're there, you should dive.
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-1B"
+@once
+@cutscene
+{@kelpResearcher}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
+                    You'll see what I mean once you get there.
+
+:: atFloor
+@trigger    PlayerEnterRegion
+@when       scene:name == "RS-1B", regionId = "oceanBottom"
+@once
+@cutscene
+$set    jobs:j1-6.seen.bottom = true
+{@player}   Okay, we're here. Jules?
+{@kelpResearcher}   Great! Now look around, see if there's anything you can scan.
+                    Don't forget to scan the water too, you'll need that later.
+                    When you think you have everything, head back to the surface.
+
+:: navigation.return
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:j1-6.seen.bottom
+@once
+@cutscene
+{@player}   Alright, I think we got everything?
+{@kelpResearcher}   Let me check...
+
+$if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
+    $set    jobs:j1-6.got.scans = true
+    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+                        Head back to your ship when you're ready.
+$else
+    {@kelpResearcher}   No, looks like you missed something.
+    $if !has.entity:UrchinBarren
+        {@kelpResearcher}   You should make sure to scan the water too.
+    $else
+        {@kelpResearcher}   Are you sure you didn't miss any creatures down there?
+    $endif
+$endif
+
+:: navigation.return.again
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:j1-6.seen.bottom, seen:job.j1_6.navigation.return, !jobs:j1-6.got.scans
+@cutscene
+{@player}   How about now?
+{@kelpResearcher}   Ummmm...
+
+$if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
+    $set    jobs:j1-6.got.scans = true
+    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+                        Head back to your ship when you're ready.
+$else
+    {@kelpResearcher}   No, looks like you're still missing something.
+    $if !has.entity:UrchinBarren
+        {@kelpResearcher}   You should make sure to scan the water too.
+    $else
+        {@kelpResearcher}   Are you sure you didn't miss any creatures down there?
+    $endif
+$endif
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Ship", jobs:j1-6.got.scans
+@once
+@cutscene
+{@player}   We're back, Jules. Now what?
+{@kelpResearcher}   Now I need to know you can not only {h}observe{/h} your environment...
+                    But also {h}experiment{/h} with your observations.
+                    You have a tank onboard, right?
+{@player}   Uh, yeah.
+{@kelpResearcher}   Great! Just head in there when you're ready.
+
+// Kevin Responses
+
+:: kevin.atBottom
+@trigger    RequestPartnerHelp
+@when       scene:name == "RS-1B", jobs:j1-6.seen.bottom
+@once
+@boostScore 5
+@chatter
+{@kevin}    Kinda spooky down here...

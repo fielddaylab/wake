@@ -19,16 +19,5 @@ namespace ProtoAqua.Observation
         #endregion // Inspector
 
         public ScannerDisplay Scanner() { return m_ScannerDisplay; }
-
-        #region Service
-
-        static public readonly FourCC Id = ServiceIds.Register("OBUI", "Observation UI");
-
-        public override FourCC ServiceId()
-        {
-            return Id;
-        }
-
-        #endregion // Service
     }
 }

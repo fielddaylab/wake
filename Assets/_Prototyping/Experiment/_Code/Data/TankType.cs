@@ -4,7 +4,7 @@ namespace ProtoAqua.Experiment
     {
         None,
         Foundational,
-        Conditional,
+        Stressor,
         Choice,
         Speed,
     }

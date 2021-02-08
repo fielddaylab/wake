@@ -15,8 +15,6 @@ namespace Aqua
 
         #region Inspector
 
-        [SerializeField] private bool m_DisplayOptionalFragments = false;
-        [SerializeField] private bool m_InteractiveFragments = false;
         [SerializeField] private LayoutGroup m_Layout = null;
 
         #endregion // Inspector
@@ -95,7 +93,7 @@ namespace Aqua
             //     }
             // }
 
-            FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform, m_InteractiveFragments);
+            FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform);
             fragment.Configure(inFragment.String);
             m_AllocatedFragments.Add(fragment);
 

@@ -167,6 +167,8 @@ namespace ProtoAqua.Observation
             float duration = mgr.GetScanDuration(data);
             float increment = 1f / duration;
 
+            scanUI.AdjustForScannableVisibility(m_TargetScannableStartPosition, gameObject.transform.parent.position);
+
             while(progress < 1)
             {
                 progress += increment * Routine.DeltaTime;

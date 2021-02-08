@@ -50,9 +50,16 @@ namespace ProtoAqua.JobBoard
 
         public void SetupJobSelect(JobButton button)
         {
-            job = button.Job;
-            jobButton = button;
-            status = button.Status;
+            if (button != null)
+            {
+                job = button.Job;
+                jobButton = button;
+                status = button.Status;
+            }
+            else
+            {
+                throw new ArgumentNullException("both JobButton and PlayerJob parameters are null in JobSelect");
+            }
             JobName.SetText(job.NameId());
             Postee.SetText(job.PosterId());
             CashReward.SetText(job.CashReward().ToString());
@@ -65,6 +72,7 @@ namespace ProtoAqua.JobBoard
 
             SetupStatusButton();
         }
+
 
         public void SetupStatusButton()
         {
@@ -83,9 +91,14 @@ namespace ProtoAqua.JobBoard
             else if (jobButton.Status.Equals(PlayerJobStatus.InProgress))
             {
                 StatusJobButtonText.SetText("Set As Active");
+
             }
             else
             {
+                if (jobButton.Status.Equals(PlayerJobStatus.Active))
+                {
+                    Services.Data.Profile.Jobs.SetCurrentJob(job.Id());
+                }
                 StatusJobButton.gameObject.SetActive(false);
             }
         }

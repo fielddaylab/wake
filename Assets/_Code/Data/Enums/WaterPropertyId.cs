@@ -1,12 +1,17 @@
+using UnityEngine;
+using System;
+using BeauUtil;
 namespace Aqua
 {
+
     public enum WaterPropertyId : byte
     {
+        None,
         Oxygen,
-        CarbonDioxide,
+        Temperature,
         Light,
         PH,
-        Temperature,
+        CarbonDioxide,
         
         Food = 16
     }

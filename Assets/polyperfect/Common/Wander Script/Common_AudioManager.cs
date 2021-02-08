@@ -8,7 +8,7 @@ namespace PolyPerfect
   {
     private static Common_AudioManager instance;
     [SerializeField]
-    private bool muteSound;
+    private bool muteSound = false;
 
     [SerializeField]
     private int objectPoolLength = 20;

@@ -48,6 +48,9 @@ namespace Aqua
         {
             EnsureCreated();
 
+            if (inScriptName.IsEmpty)
+                return null;
+
             StringHash32 id;
             m_ScriptNameMap.TryGetValue(inScriptName, out id);
             return id;
@@ -60,6 +63,9 @@ namespace Aqua
         public T Get(StringHash32 inId)
         {
             EnsureCreated();
+
+            if (inId.IsEmpty)
+                return null;
 
             T obj;
             m_IdMap.TryGetValue(inId, out obj);

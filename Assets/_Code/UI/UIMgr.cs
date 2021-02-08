@@ -13,7 +13,6 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private Camera m_UICamera = null;
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private LoadingDisplay m_Loading = null;
@@ -25,9 +24,11 @@ namespace Aqua
 
         #endregion // Inspector
 
-        private int m_LetterboxCounter = 0;
+        [NonSerialized] private int m_LetterboxCounter = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
-        private Dictionary<StringHash32, SharedPanel> m_SharedPanels;
+        private Dictionary<Type, SharedPanel> m_SharedPanels;
+        [NonSerialized] private bool m_SkippingCutscene;
+        [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
 
         #region Loading Screen
 
@@ -86,7 +87,7 @@ namespace Aqua
 
         public void ShowLetterbox()
         {
-            if (++m_LetterboxCounter > 0)
+            if (++m_LetterboxCounter == 1)
                 m_Letterbox.Show();
         }
 
@@ -99,6 +100,33 @@ namespace Aqua
         public bool IsLetterboxed()
         {
             return m_LetterboxCounter > 0;
+        }
+
+        public bool IsLetterboxVisible()
+        {
+            return m_LetterboxCounter > 0 || m_Letterbox.IsTransitioning();
+        }
+
+        public IEnumerator StartSkipCutscene()
+        {
+            if (!m_SkippingCutscene)
+            {
+                m_SkippingCutscene = true;
+                m_SkipFader = m_ScreenFaders.AllocFader();
+                return m_SkipFader.Object.Show(Color.black, 0.2f);
+            }
+
+            return null;
+        }
+
+        public void StopSkipCutscene()
+        {
+            if (m_SkippingCutscene)
+            {
+                m_SkipFader.Object?.Hide(0.2f);
+                m_SkipFader = null;
+                m_SkippingCutscene = false;
+            }
         }
 
         #endregion // Letterbox
@@ -120,10 +148,9 @@ namespace Aqua
         public void RegisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-            StringHash32 key = t.FullName;
 
             SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(key, out panel))
+            if (m_SharedPanels.TryGetValue(t, out panel))
             {
                 if (panel != inPanel)
                     throw new ArgumentException(string.Format("Panel with type {0} already exists", t.FullName), "inPanel");
@@ -131,26 +158,25 @@ namespace Aqua
                 return;
             }
 
-            m_SharedPanels.Add(key, inPanel);
+            m_SharedPanels.Add(t, inPanel);
         }
 
         public void DeregisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-            StringHash32 key = t.FullName;
 
             SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(key, out panel) && panel == inPanel)
+            if (m_SharedPanels.TryGetValue(t, out panel) && panel == inPanel)
             {
-                m_SharedPanels.Remove(key);
+                m_SharedPanels.Remove(t);
             }
         }
 
         public T FindPanel<T>() where T : SharedPanel
         {
-            StringHash32 key = typeof(T).FullName;
+            Type t = typeof(T);
             SharedPanel panel;
-            if (!m_SharedPanels.TryGetValue(key, out panel))
+            if (!m_SharedPanels.TryGetValue(t, out panel))
             {
                 panel = FindObjectOfType<T>();
                 if (panel != null)
@@ -186,12 +212,12 @@ namespace Aqua
 
         #region IService
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             SceneHelper.OnSceneUnload -= CleanupFromScene;
         }
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_Loading.InstantShow();
 
@@ -201,14 +227,9 @@ namespace Aqua
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
-            m_SharedPanels = new Dictionary<StringHash32, SharedPanel>(16);
+            m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
 
             SceneHelper.OnSceneUnload += CleanupFromScene;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.CommonUI;
         }
 
         #endregion // IService

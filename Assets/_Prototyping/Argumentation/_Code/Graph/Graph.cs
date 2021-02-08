@@ -16,8 +16,8 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private bool m_enableAllLinks = false;
 
 
-        private Dictionary<string, Node> nodeDictionary = new Dictionary<string, Node>();
-        private Dictionary<string, Link> linkDictionary = new Dictionary<string, Link>();
+        private Dictionary<StringHash32, Node> nodeDictionary = new Dictionary<StringHash32, Node>();
+        private Dictionary<StringHash32, Link> linkDictionary = new Dictionary<StringHash32, Link>();
 
         private ConditionsData conditions;
         private Node rootNode;
@@ -30,7 +30,7 @@ namespace ProtoAqua.Argumentation
 
         #region Accessors
 
-        public Dictionary<string, Link> LinkDictionary
+        public Dictionary<StringHash32, Link> LinkDictionary
         {
             get { return linkDictionary; }
         }
@@ -62,10 +62,10 @@ namespace ProtoAqua.Argumentation
             Services.Tweaks.Load(m_GraphDataManager);
 
             JobDesc currentJob = Services.Data.CurrentJob()?.Job;
-            string scriptId = currentJob?.ArgumentationScriptId();
-            if (!string.IsNullOrEmpty(scriptId))
+            GraphDataPackage script = currentJob?.FindAsset<GraphDataPackage>();
+            if (script != null)
             {
-                LoadGraph(scriptId);
+                LoadGraph(script);
             }
             else
             {
@@ -77,13 +77,13 @@ namespace ProtoAqua.Argumentation
         // Given a link id, check if that link is a valid response for the current node.
         // If valid, find that link and the id of the next node based on the current node.
         // Then check if conditions for traversing to that next node are met.
-        public Node NextNode(string id)
+        public Node NextNode(StringHash32 id)
         {
             Link response = FindLink(id);
 
             if (currentNode.CheckResponse(id))
             {
-                string nextNodeId = response.GetNextNodeId(currentNode.Id);
+                StringHash32 nextNodeId = currentNode.GetNextNodeId(id);
                 Node nextNode = FindNode(nextNodeId);
 
                 if (nextNode != null)
@@ -120,7 +120,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Helper method for finding a node given its id
-        public Node FindNode(string id)
+        public Node FindNode(StringHash32 id)
         {
             if (nodeDictionary.TryGetValue(id, out Node node))
             {
@@ -131,7 +131,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Helper method for finding a link given its id
-        public Link FindLink(string id)
+        public Link FindLink(StringHash32 id)
         {
             if (linkDictionary.TryGetValue(id, out Link link))
             {
@@ -143,28 +143,28 @@ namespace ProtoAqua.Argumentation
 
         private void ResetGraph()
         {
-            nodeDictionary = new Dictionary<string, Node>();
-            linkDictionary = new Dictionary<string, Link>();
+            nodeDictionary = new Dictionary<StringHash32, Node>();
+            linkDictionary = new Dictionary<StringHash32, Link>();
             rootNode = null;
             currentNode = null;
             endNodeId = null;
             conditions = null;
         }
 
-        private void LoadGraph(string packageName)
+        private void LoadGraph(GraphDataPackage inPackage)
         {
             ResetGraph();
 
-            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
+            inPackage.Parse(Parsing.Block, new GraphDataPackage.Generator());
 
-            foreach (KeyValuePair<string, Node> kvp in data.Nodes)
+            foreach (KeyValuePair<string, Node> kvp in inPackage.Nodes)
             {
                 Node node = kvp.Value;
                 node.InitializeNode();
                 nodeDictionary.Add(node.Id, node);
             }
 
-            rootNode = FindNode(data.RootNodeId);
+            rootNode = FindNode(inPackage.RootNodeId);
 
             // Checks if no root node was specified
             if (rootNode == null)
@@ -175,7 +175,7 @@ namespace ProtoAqua.Argumentation
             currentNode = rootNode;
             conditions = new ConditionsData(currentNode.Id);
 
-            endNodeId = data.EndNodeId;
+            endNodeId = inPackage.EndNodeId;
 
             if (endNodeId == null)
             {
@@ -183,25 +183,29 @@ namespace ProtoAqua.Argumentation
             }
 
 
-            defaultInvalidNodeId = data.DefaultInvalidNodeId;
+            defaultInvalidNodeId = inPackage.DefaultInvalidNodeId;
 
             if (defaultInvalidNodeId == null)
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
 
-            LoadLinks(packageName);
+            if (!string.IsNullOrEmpty(inPackage.LinksFile))
+            {
+                LoadLinks(m_GraphDataManager.GetPackage(inPackage.LinksFile));
+            }
+
+            LoadLinks(inPackage);
 
             if (OnGraphLoaded != null)
                 OnGraphLoaded();
         }
 
-        private void LoadLinks(string packageName)
+        private void LoadLinks(GraphDataPackage inPackage)
         {
-            GraphDataPackage data = m_GraphDataManager.GetPackage(packageName);
             DataService dataService = Services.Data;
 
-            foreach (KeyValuePair<string, Link> kvp in data.Links)
+            foreach (KeyValuePair<string, Link> kvp in inPackage.Links)
             {
                 Link link = kvp.Value;
                 link.InitializeLink();

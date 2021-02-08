@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -28,7 +29,7 @@ namespace Aqua
         private VariantTable m_TempSceneTable;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
-        private Dictionary<StringHash32, SharedManager> m_SharedManagers;
+        private Dictionary<Type, SharedManager> m_SharedManagers;
 
         public Camera Camera { get { return m_MainCamera; } }
 
@@ -167,8 +168,10 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
-            yield return WaitForPreload(active, null);
+            Services.Data.LoadProfile();
 
+            yield return WaitForPreload(active, null);
+            yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
             m_SceneLock = false;
@@ -186,6 +189,7 @@ namespace Aqua
             try
             {
                 Services.Input.PauseAll();
+                Services.Script.KillLowPriorityThreads();
 
                 bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
                 bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
@@ -205,6 +209,8 @@ namespace Aqua
                 Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
                 active.BroadcastUnload(inContext);
                 
+                Services.Deregister(active);
+
                 AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
                 loadOp.allowSceneActivation = false;
 
@@ -218,8 +224,8 @@ namespace Aqua
                 while(!loadOp.isDone)
                     yield return null;
 
-                yield return WaitForServiceLoading();
                 BindScene(inNextScene);
+                yield return WaitForServiceLoading();
 
                 if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
                 {
@@ -227,7 +233,7 @@ namespace Aqua
                 }
 
                 yield return WaitForPreload(inNextScene, inContext);
-
+                yield return WaitForServiceLoading();
                 yield return WaitForCleanup();
 
                 m_SceneLock = false;
@@ -258,7 +264,7 @@ namespace Aqua
             while(BuildInfo.IsLoading())
                 yield return null;
 
-            foreach(var service in Services.All())
+            foreach(var service in Services.AllLoadable())
             {
                 if (ReferenceEquals(this, service))
                     continue;
@@ -331,7 +337,6 @@ namespace Aqua
             }
 
             // locate camera
-
             m_MainCamera = Camera.main;
         }
 
@@ -342,10 +347,8 @@ namespace Aqua
         public void RegisterManager(SharedManager inManager)
         {
             Type t = inManager.GetType();
-            StringHash32 key = t.FullName;
-
             SharedManager manager;
-            if (m_SharedManagers.TryGetValue(key, out manager))
+            if (m_SharedManagers.TryGetValue(t, out manager))
             {
                 if (manager != inManager)
                     throw new ArgumentException(string.Format("Manager with type {0} already exists", t.FullName), "inManager");
@@ -353,26 +356,24 @@ namespace Aqua
                 return;
             }
 
-            m_SharedManagers.Add(key, inManager);
+            m_SharedManagers.Add(t, inManager);
         }
 
         public void DeregisterManager(SharedManager inManager)
         {
             Type t = inManager.GetType();
-            StringHash32 key = t.FullName;
-
             SharedManager manager;
-            if (m_SharedManagers.TryGetValue(key, out manager) && manager == inManager)
+            if (m_SharedManagers.TryGetValue(t, out manager) && manager == inManager)
             {
-                m_SharedManagers.Remove(key);
+                m_SharedManagers.Remove(t);
             }
         }
 
         public T FindManager<T>() where T : SharedManager
         {
-            StringHash32 key = typeof(T).FullName;
+            Type t = typeof(T);
             SharedManager manager;
-            if (!m_SharedManagers.TryGetValue(key, out manager))
+            if (!m_SharedManagers.TryGetValue(t, out manager))
             {
                 manager = FindObjectOfType<T>();
                 if (manager != null)
@@ -408,27 +409,17 @@ namespace Aqua
 
         #region IService
 
-        protected override void OnRegisterService()
+        protected override void Initialize()
         {
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
 
-            m_SharedManagers = new Dictionary<StringHash32, SharedManager>(8);
+            m_SharedManagers = new Dictionary<Type, SharedManager>(8);
         }
 
-        protected override void OnDeregisterService()
+        protected override void Shutdown()
         {
             m_SceneLoadRoutine.Stop();
-        }
-
-        protected override bool IsLoading()
-        {
-            return m_SceneLoadRoutine && m_SceneLock;
-        }
-
-        public override FourCC ServiceId()
-        {
-            return ServiceIds.State;
         }
 
         #endregion // IService

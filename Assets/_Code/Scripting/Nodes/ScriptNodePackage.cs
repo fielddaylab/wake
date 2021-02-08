@@ -7,12 +7,15 @@ using System.IO;
 using Leaf;
 using Leaf.Compiler;
 using Leaf.Runtime;
+using BeauUtil.Debugger;
 
 namespace Aqua.Scripting
 {
-    public class ScriptNodePackage : LeafNodePackage<ScriptNode>
+    internal class ScriptNodePackage : LeafNodePackage<ScriptNode>
     {
+        private LeafAsset m_Source;
         private IHotReloadable m_HotReload;
+        private int m_UseCount;
 
         public ScriptNodePackage(string inName)
             : base(inName)
@@ -66,6 +69,26 @@ namespace Aqua.Scripting
             }
         }
 
+        #region Use Count
+
+        public void IncrementUseCount()
+        {
+            ++m_UseCount;
+        }
+
+        public void DecrementUseCount()
+        {
+            Assert.True(m_UseCount > 0, "Unbalanced Increment/Decrement");
+            --m_UseCount;
+        }
+
+        public bool IsInUse()
+        {
+            return m_UseCount > 0;
+        }
+
+        #endregion // Use Count
+
         #region Reload
 
         /// <summary>
@@ -73,6 +96,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void BindAsset(LeafAsset inAsset)
         {
+            m_Source = inAsset;
+
             if (m_HotReload != null)
             {
                 ReloadableAssetCache.Remove(m_HotReload);
@@ -91,6 +116,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void BindAsset(string inFilePath)
         {
+            m_Source = null;
+
             if (m_HotReload != null)
             {
                 ReloadableAssetCache.Remove(m_HotReload);
@@ -109,7 +136,7 @@ namespace Aqua.Scripting
             var mgr = Services.Script;
             if (mgr != null)
             {
-                mgr.Unload(this);
+                mgr.RemovePackage(this);
             }
 
             m_Nodes.Clear();
@@ -122,7 +149,7 @@ namespace Aqua.Scripting
 
                 if (mgr != null)
                 {
-                    mgr.Load(this);
+                    mgr.AddPackage(this);
                 }
             }
         }
@@ -132,7 +159,7 @@ namespace Aqua.Scripting
             var mgr = Services.Script;
             if (mgr != null)
             {
-                mgr.Unload(this);
+                mgr.RemovePackage(this);
             }
 
             Clear();
@@ -146,7 +173,7 @@ namespace Aqua.Scripting
 
                 if (mgr != null)
                 {
-                    mgr.Load(this);
+                    mgr.AddPackage(this);
                 }
             }
         }
@@ -156,6 +183,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void UnbindAsset()
         {
+            m_Source = null;
+
             if (m_HotReload != null)
             {
                 ReloadableAssetCache.Remove(m_HotReload);

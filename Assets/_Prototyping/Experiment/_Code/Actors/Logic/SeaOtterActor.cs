@@ -26,13 +26,15 @@ namespace ProtoAqua.Experiment
 
         [SerializeField, Required] private ActorPools m_Pools = null;
 
+        [SerializeField, Required] private Transform Front = null;
+
         #endregion // Inspector
 
         [NonSerialized] private Routine m_Anim;
 
         private void OnCreate()
         {
-            Actor.Body.WorldTransform.SetRotation(RNG.Instance.NextFloat(360f), Axis.Z, Space.Self);
+            Actor.Body.WorldTransform.SetRotation(RNG.Instance.NextFloat(30f), Axis.Z, Space.Self);
         }
 
         private void OnThink()
@@ -50,7 +52,11 @@ namespace ProtoAqua.Experiment
             {
                 while(swims-- > 0)
                 {
-                    yield return Actor.Nav.SwimTo(Actor.Nav.Helper.GetRandomSwimTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius));
+
+                    Vector3 NextPosition = Actor.Nav.Helper.GetRandomSwimTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius);
+                    RotateActor(NextPosition);
+
+                    yield return Actor.Nav.SwimTo(NextPosition);
                     yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
                 }
 
@@ -65,6 +71,29 @@ namespace ProtoAqua.Experiment
                     swims = GetIdleSwimCount();
                 }
             }
+        }
+
+        private void RotateActor(Vector3 nextPosition)
+        {
+            Vector3 CurrPosition = Actor.Body.RenderGroup.transform.position;
+            Vector3 TargetDirection = nextPosition - CurrPosition;
+            Vector3 CurrDirection = GetCurrDirection();
+            float y = 0;
+            float angle = Vector3.Angle(GetCurrDirection(), TargetDirection);
+            if (angle > 90f)
+            {
+                angle = 180f - angle;
+                y = 180f;
+            }
+            Actor.Body.WorldTransform.Rotate(0f, y, angle);
+
+            return;
+
+        }
+
+        private Vector3 GetCurrDirection()
+        {
+            return Front.position - Actor.Body.WorldTransform.position;
         }
 
         private int GetIdleSwimCount()
@@ -82,20 +111,13 @@ namespace ProtoAqua.Experiment
                 ICreature source = obj.Collider.GetComponentInParent<ICreature>();
                 if (source == null)
                     continue;
-                
-                // if (source.EnergyRemaining <= 0)
-                //     continue;
-                Debug.Log("FOOD SOURCE FOR SEA OTTER" + source.Id);
 
                 if (!source.HasTag("Urchin"))
                     continue;
 
                 float dist = Vector2.Distance(source.Transform.position, myPos);
-                // float weight = (source.EnergyRemaining / 100f) * (100f - dist);
                 float weight = (100f - dist);
                 food.Add(source, weight);
-                Debug.Log("The food is below");
-                Debug.Log(food);
             }
 
             // food.FilterHigh(food.TotalWeight * GetProperty<float>("FoodFilterThreshold", 0.5f));
@@ -107,8 +129,9 @@ namespace ProtoAqua.Experiment
             Transform targetTransform;
             Vector3 targetOffset;
             inFoodSource.TryGetEatLocation(Actor, out targetTransform, out targetOffset);
-
-            yield return Actor.Nav.SwimTo(targetTransform.position + targetOffset);
+            Vector3 NextPosition = targetTransform.position + targetOffset;
+            RotateActor(NextPosition);
+            yield return Actor.Nav.SwimTo(NextPosition);
             yield return 0.5f;
 
             using (ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, Behaviors.EatsUrchin))

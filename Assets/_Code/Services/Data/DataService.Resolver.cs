@@ -147,6 +147,8 @@ namespace Aqua
 
             m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerGender);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
+            m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
+            m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -157,8 +159,10 @@ namespace Aqua
             m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
 
             m_VariableResolver.SetTableVar("scanned", (s) => inData.Inventory.WasScanned(s));
-            m_VariableResolver.SetTableVar("observed.entity", (s) => inData.Bestiary.HasEntity(s));
-            m_VariableResolver.SetTableVar("observed.behavior", (s) => inData.Bestiary.HasBaseFact(s));
+            m_VariableResolver.SetTableVar("has.entity", (s) => inData.Bestiary.HasEntity(s));
+            m_VariableResolver.SetTableVar("has.fact", (s) => inData.Bestiary.HasFact(s));
+            m_VariableResolver.SetTableVar("inventory.hasItem", (s) => inData.Inventory.HasItem(s));
+            m_VariableResolver.SetTableVar("inventory.count", (s) => inData.Inventory.ItemCount(s));
             m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
             m_VariableResolver.SetTableVar("job.isStarted", (s) => inData.Jobs.IsStarted(s));
             m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
@@ -214,6 +218,16 @@ namespace Aqua
         private Variant GetJobId()
         {
             return Profile.Jobs.CurrentJobId;
+        }
+
+        private Variant GetStationId()
+        {
+            return Profile.Map.CurrentStationId();
+        }
+
+        private Variant GetActNumber()
+        {
+            return Profile.Script.ActIndex;
         }
 
         #endregion // Callbacks

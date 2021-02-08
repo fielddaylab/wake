@@ -4,6 +4,7 @@ using Aqua;
 using Aqua.Portable;
 using BeauPools;
 using BeauRoutine;
+using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,10 +48,7 @@ namespace ProtoAqua.Argumentation
 
         private void Init()
         {
-            // Create the root node
-            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
-            newNode.InitializeNodeData(m_Graph.RootNode.Id, m_Graph.RootNode.DisplayText);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+            Routine.StartCall(this, OnStartChat);
         }
 
         private void NotAvailable()
@@ -64,6 +62,14 @@ namespace ProtoAqua.Argumentation
             Services.Events?.DeregisterAll(this);
         }
 
+        private void OnStartChat()
+        {
+            // Create the root node
+            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
+            newNode.InitializeNodeData(m_Graph.RootNode.Id, m_Graph.RootNode.DisplayText);
+            m_LinkManager.HandleNode(m_Graph.RootNode);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+        }
 
         // Activates when an item is dropped (called from DropSlot.cs)
         private void OnDrop(GameObject response)
@@ -81,7 +87,7 @@ namespace ProtoAqua.Argumentation
             response.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
                 .childAlignment = TextAnchor.UpperRight;
 
-            string linkId = response.GetComponent<ChatBubble>().id;
+            StringHash32 linkId = response.GetComponent<ChatBubble>().id;
             string linkTag = response.GetComponent<ChatBubble>().linkTag;
 
 
@@ -90,7 +96,7 @@ namespace ProtoAqua.Argumentation
 
         }
 
-        private void OnSelect(GameObject selectedFact, string linkId) {
+        private void OnSelect(GameObject selectedFact, StringHash32 linkId) {
             
             selectedFact.transform.SetParent(m_ChatGrid);
             selectedFact.GetComponent<ClickableObject>().enabled = false;
@@ -114,22 +120,17 @@ namespace ProtoAqua.Argumentation
         }
 
         // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        private void RespondWithNextNode(string linkId, GameObject response)
+        private void RespondWithNextNode(StringHash32 linkId, GameObject response)
         {
             Node nextNode = m_Graph.NextNode(linkId);
             Link currentLink = m_Graph.FindLink(linkId);
-
-            Debug.Log("TEST!!!");
-            Debug.Log(linkId);
-            Debug.Log(currentLink);
-
-
 
             //CheckConditionsMet(nextNode, currentLink);
 
             // Create the node bubble, and set its properties
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
             newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
+            m_LinkManager.HandleNode(nextNode);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
 
@@ -141,7 +142,7 @@ namespace ProtoAqua.Argumentation
             }
 
             // If the response is invalid, respond with an invalid node
-            if (newNode.id.Contains("invalid"))
+            if (nextNode.IsInvalid)
             {
                 newNode.ChangeColor(m_InvalidColor);
                 // Add response back into list for reuse
@@ -160,12 +161,13 @@ namespace ProtoAqua.Argumentation
             }
         }
 
-        private void RespondWithAnotherNode(string nextNodeId)
+        private void RespondWithAnotherNode(StringHash32 nextNodeId)
         {
             Node nextNode = m_Graph.FindNode(nextNodeId);
             // Create the node bubble, and set its properties
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
             newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
+            m_LinkManager.HandleNode(nextNode);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
@@ -185,14 +187,28 @@ namespace ProtoAqua.Argumentation
         // Display a popup indicating that the end of the conversation has been reached
         private void EndConversationPopup()
         {
+            Routine.Start(this, CompleteConversation());
+        }
+
+        private IEnumerator CompleteConversation()
+        {
+            m_InputRaycasterLayer.Override = false;
+
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("jobId", Services.Data.CurrentJobId());
+                yield return Services.Script.TriggerResponse("ArgumentationComplete");
+            }
+
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());
 
-            NamedOption[] options = { new NamedOption("Continue") };
-            Services.UI.Popup.Present("Congratulations!", "Job complete!", options)
-                .OnComplete((s) => {
-                    Services.Script.TriggerResponse("ArgumentationComplete");
-                    StateUtil.LoadPreviousSceneWithWipe();
-                });
+            if (!Services.Script.IsCutscene())
+            {
+                Services.UI.Popup.Display("Congratulations!", "Job complete!")
+                    .OnComplete((s) => {
+                        StateUtil.LoadPreviousSceneWithWipe();
+                    });
+            }
         }
 
         // Shake response back and forth in the chat, indicating that the response is invalid
@@ -209,7 +225,7 @@ namespace ProtoAqua.Argumentation
         // Handles scrolling when the response is placed in the chat, and once again when the
         // NPC responds with the next node. Raycasting is disabled during the routine so that
         // the player can't drag in additional responses.
-        private IEnumerator ScrollRoutine(string linkId, GameObject response)
+        private IEnumerator ScrollRoutine(StringHash32 linkId, GameObject response)
         {
             m_InputRaycasterLayer.Override = false;
 
@@ -230,7 +246,7 @@ namespace ProtoAqua.Argumentation
 
         //Handles scrolling when another node follows an NPC node
         //This does not update the button list and simply creates anothern ode to coninue the conversation
-        private IEnumerator ScrollAnotherNode(string nextNodeId)
+        private IEnumerator ScrollAnotherNode(StringHash32 nextNodeId)
         {
             m_InputRaycasterLayer.Override = false;
 
@@ -248,7 +264,7 @@ namespace ProtoAqua.Argumentation
         }
 
 
-        private void UpdateButtonList(string linkId)
+        private void UpdateButtonList(StringHash32 linkId)
         {
             Link currentLink = m_Graph.FindLink(linkId);
 

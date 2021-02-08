@@ -104,8 +104,8 @@ MonoBehaviour:
   m_text: "[`]\tToggle debug overlay\n[\\]\tToggle shortcut reference\n[ESC]\tReturn
     to title\n\n[Ctrl +]\n[D]\tDump scripting state\n[F]\tClear scripting state\n[Enter]\tReload
     changed assets\n[G]\tUnlock all bestiary entries\n[H]\tUnlock all bestiary entries
-    & facts\n\n[Shift +]\n[+]\tIncrease speed x2\n[-]\tDecrease speed x2\n[0]\tReset
-    speed"
+    & facts\n[Space]\tSkip current cutscene\n\n[Shift +]\n[+]\tIncrease speed x2\n[-]\tDecrease
+    speed x2\n[0]\tReset speed"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4d7666ee207a5ae4fa390331a56dc126, type: 2}
   m_sharedMaterial: {fileID: 2884982905993258549, guid: 4d7666ee207a5ae4fa390331a56dc126,
@@ -384,6 +384,31 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &4666824972165590860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3213361667639693507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091fef52bc7859c4d84d6de8d73b46e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Priority: 33767
+  m_Flags: 1048576
+  m_AutoPush: 0
+  m_Override: 1
+  m_OverrideState: 1
+  m_OnInputEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnInputDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Raycasters:
+  - {fileID: 1834284194587972899}
 --- !u!1 &3489196612341573306
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,7 +901,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TimeScaleLabel: {fileID: 937313959154299129}
-  m_StateLabel: {fileID: 3033501502186198909}
 --- !u!1 &6055636232209345887
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,48 +1652,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &873813589213704092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3213361667639693507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d190988990b67784fb9c1bbbce15f6c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Canvas: {fileID: 4255712713599071447}
-  m_ToggleMinimalKey: 96
-  m_MinimalLayer: {fileID: 7908555856594455395}
-  m_KeyboardReference: {fileID: 6880577313545408666}
-  m_TimeDisplay: {fileID: 6430951075759942110}
---- !u!114 &4666824972165590860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3213361667639693507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091fef52bc7859c4d84d6de8d73b46e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Priority: 33767
-  m_Flags: 1048576
-  m_AutoPush: 0
-  m_Override: 1
-  m_OverrideState: 1
-  m_OnInputEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnInputDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Raycasters:
-  - {fileID: 1834284194587972899}
 --- !u!1 &7615498157621277521
 GameObject:
   m_ObjectHideFlags: 0
@@ -2451,6 +2433,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9170561421860713221, guid: 7980326f9b25cdd4ea19b25fdceed3cf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7980326f9b25cdd4ea19b25fdceed3cf, type: 3}
 --- !u!224 &3184138858882718454 stripped
@@ -2462,12 +2449,6 @@ RectTransform:
 --- !u!1 &3213361667639693507 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5379806690338830053, guid: 7980326f9b25cdd4ea19b25fdceed3cf,
-    type: 3}
-  m_PrefabInstance: {fileID: 7363612745640388134}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &7908555856594455395 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 860217633760013637, guid: 7980326f9b25cdd4ea19b25fdceed3cf,
     type: 3}
   m_PrefabInstance: {fileID: 7363612745640388134}
   m_PrefabAsset: {fileID: 0}
@@ -2484,14 +2465,8 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 7363612745640388134}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3213361667639693507}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!223 &4255712713599071447 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 6719259513892934385, guid: 7980326f9b25cdd4ea19b25fdceed3cf,
-    type: 3}
-  m_PrefabInstance: {fileID: 7363612745640388134}
-  m_PrefabAsset: {fileID: 0}

@@ -24,7 +24,7 @@ namespace Aqua.Scripting
             m_Id = inId;
         }
 
-        private ScriptThread GetThread()
+        internal ScriptThread GetThread()
         {
             if (m_Thread != null && !m_Thread.HasId(m_Id))
             {
@@ -85,6 +85,17 @@ namespace Aqua.Scripting
         public IEnumerator Wait()
         {
             return GetThread()?.Wait();
+        }
+
+        public IEnumerator Skip()
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                thread.Skip();
+                return thread.Wait();
+            }
+            return null;
         }
 
         /// <summary>

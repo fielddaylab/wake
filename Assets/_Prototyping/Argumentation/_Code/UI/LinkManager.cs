@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Aqua;
 using BeauPools;
+using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +25,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Button m_ModelsButton = null;
 
         [NonSerialized] private List<GameObject> responses = new List<GameObject>();
-        private string currentClaim = "";
+        private StringHash32 currentClaim = "";
         private bool claimSelected = false;
 
         private void Start()
@@ -41,7 +42,7 @@ namespace ProtoAqua.Argumentation
         private void Init()
         {
             // Create links for each Link in the dictionary of the graph
-            foreach (KeyValuePair<string, Link> link in m_Graph.LinkDictionary)
+            foreach (KeyValuePair<StringHash32, Link> link in m_Graph.LinkDictionary)
             {
                 Link currLink = link.Value;
                 if(currLink.Tag == "claim") {
@@ -49,11 +50,6 @@ namespace ProtoAqua.Argumentation
                 }
                 
             }
-
-            //Show claims and hide rest of the tabs
-            ToggleTabs("claim");
-            ToggleType("claim");
-            HideTabs();
         }
 
         public GameObject ClickBestiaryLink(PlayerFactParams s) {
@@ -67,18 +63,18 @@ namespace ProtoAqua.Argumentation
         // Reset a given response once used. If the response isn't placed in the chat,
         // delete will be true and the object can be freed from the pool before being
         // reallocated by CreateLink
-        public void ResetLink(GameObject gameObject, string linkId, bool delete)
+        public void ResetLink(GameObject gameObject, StringHash32 linkId, bool delete)
         {
             return;
-            RemoveResponse(gameObject);
+            // RemoveResponse(gameObject);
 
-            if (delete)
-            {
-                m_LinkPool.Free(gameObject.GetComponent<ChatBubble>());
-            }
+            // if (delete)
+            // {
+            //     m_LinkPool.Free(gameObject.GetComponent<ChatBubble>());
+            // }
 
-            CreateLink(m_Graph.FindLink(linkId));
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+            // CreateLink(m_Graph.FindLink(linkId));
+            // LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
         }
 
         // Helper function for removing a response from the responses list
@@ -122,7 +118,7 @@ namespace ProtoAqua.Argumentation
                 newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
             }
 
-            newLink.transform.SetSiblingIndex(link.Index);
+            newLink.transform.SetSiblingIndex((int) link.Index);
 
             responses.Add(newLink.gameObject);
         }
@@ -133,9 +129,34 @@ namespace ProtoAqua.Argumentation
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
         }
 
-        public void SelectClaim(string linkId)
+        public void SelectClaim(StringHash32 linkId)
         {
             currentClaim = linkId;
+            HideClaims();
+        }
+
+        public void HandleNode(Node inNode)
+        {
+            if (inNode.ShowClaims)
+            {
+                ShowClaims();
+            }
+            else
+            {
+                HideClaims();
+            }
+        }
+
+        private void ShowClaims()
+        {
+            m_LinkContainer.SetActive(true);
+            ToggleTabs("claim");
+            ToggleType("claim");
+            HideTabs();
+        }
+
+        private void HideClaims()
+        {
             ShowTabs();
             m_LinkContainer.SetActive(false);
         }

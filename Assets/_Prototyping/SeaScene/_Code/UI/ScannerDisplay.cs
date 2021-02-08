@@ -40,6 +40,9 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Color m_DefaultTextColor;
         [NonSerialized] private Vector4 m_DefaultTextMargins;
 
+        [NonSerialized] private RectTransform m_RectTransform;
+        [NonSerialized] private float m_AnchorOffsetX;
+
         protected override void Awake()
         {
             base.Awake();
@@ -48,6 +51,8 @@ namespace ProtoAqua.Observation
             m_DefaultHeaderColor = m_HeaderText.color;
             m_DefaultTextColor = m_DescriptionText.color;
             m_DefaultTextMargins = m_DescriptionText.margin;
+            m_RectTransform = (RectTransform)transform;
+            m_AnchorOffsetX = m_RectTransform.anchoredPosition.x;
         }
 
         #region Scanning
@@ -142,6 +147,21 @@ namespace ProtoAqua.Observation
             Services.Audio.PostEvent(config.OpenSound);
         }
 
+
+        public void AdjustForScannableVisibility(Vector2 inScannableObjectPosition, Vector2 inPlayerROVPosition)
+        {
+            if (inScannableObjectPosition.x < inPlayerROVPosition.x)
+            {
+                m_RectTransform.SetAnchorPos(-m_AnchorOffsetX, Axis.X);
+                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(1f, .5f);
+            }
+            else
+            {
+                m_RectTransform.SetAnchorPos(m_AnchorOffsetX, Axis.X);
+                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(0f, .5f);
+            }
+        }
+
         public void CancelIfProgress()
         {
             if (m_CurrentScanData == null)
@@ -153,7 +173,7 @@ namespace ProtoAqua.Observation
         #endregion // Scanning
 
         #region Animations
-        
+
         protected override void InstantTransitionToShow()
         {
             m_RootTransform.gameObject.SetActive(true);
