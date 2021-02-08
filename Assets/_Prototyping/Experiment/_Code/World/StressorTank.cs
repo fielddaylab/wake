@@ -10,7 +10,9 @@ using BeauUtil.Variants;
 using BeauRoutine.Extensions;
 using ProtoCP;
 using Aqua;
-
+using TMPro;
+using UnityEngine.UI;
+using System.Collections.Generic;
 namespace ProtoAqua.Experiment
 {
     public class StressorTank : ExperimentTank
@@ -18,6 +20,8 @@ namespace ProtoAqua.Experiment
         #region Inspector
 
         [SerializeField] private float m_SpawnDelay = 0.05f;
+
+        [SerializeField] private LocText m_Text = null;
 
         #endregion // Inspector
 
@@ -44,7 +48,8 @@ namespace ProtoAqua.Experiment
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
+                .Register<WaterPropertyId>(ExperimentEvents.StressorText, ChangeText, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
@@ -61,7 +66,7 @@ namespace ProtoAqua.Experiment
         public override void OnExperimentStart()
         {
             base.OnExperimentStart();
-
+            
             ResetIdle();
             m_IdleRoutine.Replace(this, IdleTimer());
         }
@@ -108,6 +113,15 @@ namespace ProtoAqua.Experiment
                 actor.Nav.Helper = m_ActorNavHelper;
                 actor.Nav.Spawn(spawnCount * RNG.Instance.NextFloat(0.8f, 1.2f) * m_SpawnDelay);
             }
+        }
+
+        public void ChangeText(WaterPropertyId Id) {
+            
+            var m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
+
+
+
+            m_Text.SetText(m_CachedSettings.GetProperty(Id).LabelId);
         }
 
         private void SetupRemoveActor(StringHash32 inActorId)

@@ -44,7 +44,11 @@ namespace Aqua
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
-            throw new System.NotImplementedException();
+            var result = "is least " + TargetState().ToString() + " at " + MinSafe().ToString() + " and most " + TargetState().ToString() + " at " + MaxSafe().ToString();
+
+            return result;
+
+            // throw new System.NotImplementedException();
         }
 
         protected override void GenerateQualitative()

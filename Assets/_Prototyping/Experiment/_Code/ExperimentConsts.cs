@@ -16,7 +16,9 @@ namespace ProtoAqua.Experiment
         
         static public readonly StringHash32 SetupAddActor = "experiment:setup-addActor";
         static public readonly StringHash32 SetupRemoveActor = "experiment:setup-removeActor";
-        
+
+        static public readonly StringHash32 StressorText = "experiment:stressor-text";
+
         static public readonly StringHash32 ExperimentBegin = "experiment:begin";
         static public readonly StringHash32 ExperimentRequestSummary = "experiment:request-summary";
         static public readonly StringHash32 ExperimentTeardown = "experiment:teardown";

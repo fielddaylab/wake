@@ -80,6 +80,10 @@ Sea Otter Eats Urchin
 {loc experiment.summary.tankType}
 {loc experiment.summary.ecoType}
 
+:: summary.tankStressorSummary
+{loc experiment.summary.tankType}
+{loc experiment.waterproperty.temperature}
+
 :: summary.tankType
 {var-s experiment:tankTypeLabel}
 
@@ -95,3 +99,11 @@ Duration: {var-i experiment:experimentDuration} s.
 
 :: summary.observedBehaviors
 Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)
+
+// WATER PROPERTY
+
+:: waterproperty.temperature
+Temperature
+
+:: waterproperty.oxygen
+Oxygen

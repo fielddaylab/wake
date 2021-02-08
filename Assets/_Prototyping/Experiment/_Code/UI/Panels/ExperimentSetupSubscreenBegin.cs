@@ -33,7 +33,14 @@ namespace ProtoAqua.Experiment
         {
             var experimentSettings = Services.Tweaks.Get<ExperimentSettings>();
 
-            m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
+            if(m_CachedData.Tank.Equals(TankType.Stressor)) {
+                m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
+            }
+            else {
+                m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
+            }
+
+
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create())
             {

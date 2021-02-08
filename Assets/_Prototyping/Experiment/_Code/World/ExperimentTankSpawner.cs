@@ -23,10 +23,17 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private ExperimentTank m_CurrentTank = null;
+
+        [NonSerialized] private ExperimentSettings m_CachedSettings;
+
+        [NonSerialized] private ExperimentSetupData m_CurrentData = null;
         [NonSerialized] private HashSet<StringHash32> m_ObservedBehaviors = new HashSet<StringHash32>();
 
         private void Awake()
         {
+
+            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
+
             Services.Events.Register(ExperimentEvents.SetupInitialSubmit, OnInitialSubmit, this)
                 .Register(ExperimentEvents.ExperimentTeardown, OnTeardown, this)
                 .Register(ExperimentEvents.ExperimentBegin, OnBegin, this)
@@ -51,6 +58,9 @@ namespace ProtoAqua.Experiment
             ExperimentServices.Actors.BeginTicking();
             Services.Data.SetVariable(ExperimentVars.ExperimentRunning, true);
             m_CurrentTank.OnExperimentStart();
+            if(m_CurrentTank is StressorTank) {
+                Services.Events.Dispatch(ExperimentEvents.StressorText, m_CurrentData.PropertyId);
+            }
             m_ObservedBehaviors.Clear();
         }
 
@@ -87,6 +97,8 @@ namespace ProtoAqua.Experiment
         {
             m_ObservedBehaviors.Clear();
 
+            m_CurrentData = inData;
+
             for(int i = 0; i < m_Tanks.Length; ++i)
             {
                 if (m_Tanks[i].TryHandle(inData))
@@ -102,6 +114,8 @@ namespace ProtoAqua.Experiment
         private void SetVars(ExperimentSetupData inData)
         {
             var settings = Services.Tweaks.Get<ExperimentSettings>();
+
+            m_CurrentData = inData;
 
             Services.Data.SetVariable(ExperimentVars.TankType, inData.Tank.ToString());
             Services.Data.SetVariable(ExperimentVars.TankTypeLabel, settings.GetTank(inData.Tank).ShortLabelId.Hash());

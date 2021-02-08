@@ -19,6 +19,7 @@ namespace ProtoAqua.Experiment
             public SerializedHash32 LabelId;
             public SerializedHash32 ShortLabelId;
             public Sprite Icon;
+
             public string Condition;
             public BestiaryDescSize MaxSize;
 
@@ -27,11 +28,29 @@ namespace ProtoAqua.Experiment
             TankDefinition IKeyValuePair<TankType, TankDefinition>.Value { get { return this; } }
         }
 
+        [Serializable]
+
+        public class PropDefinition : IKeyValuePair<WaterPropertyId, PropDefinition>
+        {
+            public WaterPropertyId Id;
+
+            public SerializedHash32 LabelId;
+
+            public Sprite Icon;
+
+            WaterPropertyId IKeyValuePair<WaterPropertyId, PropDefinition>.Key {get { return Id; } }
+            PropDefinition IKeyValuePair<WaterPropertyId, PropDefinition>.Value {get { return this; } }
+        }
+
         #endregion // Types
 
         #region Inspector
 
         [SerializeField] private TankDefinition[] m_TankDefs = null;
+
+        [Header("Stressor Settings")]
+
+        [SerializeField] private PropDefinition[] m_Props = null;
 
         [Header("Icon Colors")]
         [SerializeField] private Color m_EnabledButtonColor = Color.white;
@@ -55,6 +74,21 @@ namespace ProtoAqua.Experiment
         {
             TankDefinition def;
             m_TankDefs.TryGetValue(inType, out def);
+            return def;
+        }
+
+        public IEnumerable<PropDefinition> AllNonEmptyProperties()
+        {
+            for(int i = 0; i < m_Props.Length; ++i)
+            {
+                if (m_Props[i].Id != WaterPropertyId.None)
+                    yield return m_Props[i];
+            }
+        }
+
+        public PropDefinition GetProperty(WaterPropertyId id) {
+            PropDefinition def;
+            m_Props.TryGetValue(id, out def);
             return def;
         }
 

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using TMPro;
 using Aqua;
 
@@ -21,12 +22,15 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
         [NonSerialized] private ExperimentSetupData m_CachedData;
+        [NonSerialized] private ExperimentSettings m_CachedSettings;
+
 
         public Action OnSelectContinue;
         public Action OnSelectBack;
 
         protected override void Awake()
         {
+            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -54,41 +58,46 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
+            var allEnvs = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
+
+            List<BFWaterProperty> EnvPropIds = new List<BFWaterProperty>();
+
+            foreach(BestiaryDesc env in allEnvs) {
+                foreach(BFBase waterFact in env.Facts) {
+                    if(waterFact is BFWaterProperty) {
+                        EnvPropIds.Add((BFWaterProperty)waterFact);
+                    }
+                }
+            }
+
+            var properties = m_CachedSettings.AllNonEmptyProperties();
 
             int buttonIdx = 0;
-            foreach(var waterType in allWaterTypes)
+
+            var noneProperty = WaterPropertyId.None;
+
+            foreach(var waterType in properties)
             {
                 if (buttonIdx >= m_CachedButtons.Length)
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.Load(waterType.Id(), waterType.Icon(), true);
+                button.Load((int) waterType.Id, waterType.Icon, true);
 
                 ++buttonIdx;
             }
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
+                m_CachedButtons[buttonIdx].Load((int) noneProperty, m_CachedSettings.GetProperty(noneProperty).Icon, false);
             }
         }
 
-        private void UpdateDisplay(StringHash32 inWaterId)
+        private void UpdateDisplay(WaterPropertyId inWaterId)
         {
-            if (inWaterId.IsEmpty)
-            {
-                m_NextButton.interactable = false;
-                m_Label.SetText(StringHash32.Null);
-            }
-            else
-            {
-                var def = Services.Assets.Bestiary.Get(inWaterId);
-                m_Label.SetText(def.CommonName());
-                m_NextButton.interactable = true;
-            }
-
-            Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
+            var def = m_CachedSettings.GetProperty(inWaterId);
+            m_Label.SetText(def.LabelId);
+            m_NextButton.interactable = inWaterId != WaterPropertyId.None;
         }
     
         private void UpdateFromSelection()
@@ -96,20 +105,21 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.EcosystemId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
+                m_CachedData.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
+                Services.Events.Dispatch(ExperimentEvents.StressorText, m_CachedData.PropertyId);
             }
             else
             {
-                m_CachedData.EcosystemId = StringHash32.Null;
+                m_CachedData.PropertyId = WaterPropertyId.None;
             }
 
-            UpdateDisplay(m_CachedData.EcosystemId);
+            UpdateDisplay(m_CachedData.PropertyId);
         }
 
         protected override void OnShowComplete(bool inbInstant)
         {
             base.OnShowComplete(inbInstant);
-            UpdateDisplay(m_CachedData.EcosystemId);
+            UpdateDisplay(m_CachedData.PropertyId);
         }
     }
 }
