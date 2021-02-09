@@ -18,6 +18,8 @@ namespace Aqua.Portable
         [Serializable] private class EntryPool : SerializablePool<PortableListElement> { }
         [Serializable] private class FactPool : SerializablePool<BestiaryFactButton> { }
         [Serializable] private class RangeFactPool : SerializablePool<BestiaryRangeFactButton> { }
+        [Serializable] private class WaterPropertyPool : SerializablePool<BestiaryWaterPropertyButton> { }
+
 
         public class OpenToRequest : IPortableRequest
         {
@@ -150,6 +152,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_SelectEntryButton = null;
         [SerializeField] private FactPool m_FactPool = null;
         [SerializeField] private RangeFactPool m_RangeFactPool = null;
+        [SerializeField] private WaterPropertyPool m_WaterPropertyPool = null;
 
         #endregion // Inspector
 
@@ -240,6 +243,7 @@ namespace Aqua.Portable
         {
             m_FactPool.Reset();
             m_RangeFactPool.Reset();
+            m_WaterPropertyPool.Reset();
             m_NoSelectionGroup.gameObject.SetActive(true);
             m_HasSelectionGroup.gameObject.SetActive(false);
 
@@ -353,6 +357,7 @@ namespace Aqua.Portable
         {
             m_FactPool.Reset();
             m_RangeFactPool.Reset();
+            m_WaterPropertyPool.Reset();
 
             foreach(var button in m_EntryPool.ActiveObjects)
             {
@@ -460,7 +465,15 @@ namespace Aqua.Portable
 
         void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
         {
-            InstantiateFactButton(inFact, inParams);
+            BestiaryWaterPropertyButton factButton = m_WaterPropertyPool.Alloc();
+            if (m_SelectFactRequest != null)
+            {
+                factButton.Initialize(inFact, inParams, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inParams), OnFactClicked);
+            }
+            else
+            {
+                factButton.Initialize(inFact, inParams, false, true, null);
+            }
         }
 
         void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
