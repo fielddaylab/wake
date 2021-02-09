@@ -6,6 +6,7 @@ using BeauPools;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
@@ -13,6 +14,7 @@ namespace Aqua
     {
         #region Inspector
 
+        [SerializeField, Required] private Camera m_UICamera = null;
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private LoadingDisplay m_Loading = null;
@@ -189,6 +191,21 @@ namespace Aqua
 
         #endregion // Additional Panels
 
+        public void BindCamera(Camera inCamera)
+        {
+            var uiCameraData = m_UICamera.GetUniversalAdditionalCameraData();
+
+            if (inCamera == null || inCamera == m_UICamera)
+            {
+                uiCameraData.renderType = CameraRenderType.Base;
+                return;
+            }
+
+            uiCameraData.renderType = CameraRenderType.Overlay;
+            var mainCameraData = inCamera.GetUniversalAdditionalCameraData();
+            mainCameraData.cameraStack.Add(m_UICamera);
+        }
+
         private void CleanupFromScene(SceneBinding inBinding, object inContext)
         {
             int removedPanelCount = 0;
@@ -230,6 +247,8 @@ namespace Aqua
             m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
 
             SceneHelper.OnSceneUnload += CleanupFromScene;
+
+            BindCamera(Camera.main);
         }
 
         #endregion // IService

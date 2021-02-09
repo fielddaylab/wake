@@ -338,6 +338,8 @@ namespace Aqua
 
             // locate camera
             m_MainCamera = Camera.main;
+
+            Services.UI.BindCamera(m_MainCamera);
         }
 
         #endregion // Scripting
