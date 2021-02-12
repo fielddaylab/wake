@@ -38,6 +38,10 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
+        public Action GetAction() {
+            return OnSelectContinue;
+        }
+
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);

@@ -44,6 +44,14 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
+        public List<Action> GetAction() {
+            var res = new List<Action>();
+            res.Add(OnSelectBack);
+            res.Add(OnSelectContinue);
+
+            return res;
+        }
+
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);
@@ -70,27 +78,31 @@ namespace ProtoAqua.Experiment
                 }
             }
 
-            var properties = m_CachedSettings.AllNonEmptyProperties();
+            if(m_CachedSettings != null) {
 
-            int buttonIdx = 0;
+                var properties = m_CachedSettings.AllNonEmptyProperties();
+                int buttonIdx = 0;
+                var noneProperty = WaterPropertyId.None;
 
-            var noneProperty = WaterPropertyId.None;
+                foreach(var waterType in properties)
+                {
+                    if (buttonIdx >= m_CachedButtons.Length)
+                        break;
 
-            foreach(var waterType in properties)
-            {
-                if (buttonIdx >= m_CachedButtons.Length)
-                    break;
+                    var button = m_CachedButtons[buttonIdx];
+                    button.Load((int) waterType.Id, waterType.Icon, true);
 
-                var button = m_CachedButtons[buttonIdx];
-                button.Load((int) waterType.Id, waterType.Icon, true);
+                    ++buttonIdx;
+                }
 
-                ++buttonIdx;
+                for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
+                {
+                    m_CachedButtons[buttonIdx].Load((int) noneProperty, m_CachedSettings.GetProperty(noneProperty).Icon, false);
+                }
+
             }
 
-            for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
-            {
-                m_CachedButtons[buttonIdx].Load((int) noneProperty, m_CachedSettings.GetProperty(noneProperty).Icon, false);
-            }
+            
         }
 
         private void UpdateDisplay(WaterPropertyId inWaterId)

@@ -36,10 +36,6 @@ namespace ProtoAqua.Experiment
 
         public void Populate(ExperimentResultData inResultData)
         {
-            
-
-            
-
             if(inResultData.Setup.Tank.Equals(TankType.Stressor)) {
                 
                 BFStateRange state = null;
@@ -64,12 +60,15 @@ namespace ProtoAqua.Experiment
 
                 var form_text = "Sea otter " + state.GenerateSentence(null);
 
+                
+
                 m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
                 m_SummaryText.SetText(form_text);
             }
             else {
                 m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
                 m_SummaryText.SetText(Services.Loc.Localize("experiment.summary.countableSummary"));
+                m_RangeFactButton.gameObject.SetActive(false);
             }
 
             m_BehaviorDisplayPool.Reset();
