@@ -74,6 +74,7 @@ namespace ProtoAqua.Experiment
 
         public override void OnExperimentEnd()
         {
+            m_Text.SetText("");
             m_IdleRoutine.Stop();
 
             base.OnExperimentEnd();

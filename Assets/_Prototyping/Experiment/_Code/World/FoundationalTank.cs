@@ -128,8 +128,5 @@ namespace ProtoAqua.Experiment
 
         #endregion // Actors
 
-        #region Routine
-
-        #endregion // Routine
     }
 }
