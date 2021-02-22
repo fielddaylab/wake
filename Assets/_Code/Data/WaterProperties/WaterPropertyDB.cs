@@ -34,7 +34,7 @@ namespace Aqua
         public WaterPropertyDesc Property(WaterPropertyId inId)
         {
             EnsureCreated();
-            
+
             if (inId < 0 || inId >= WaterPropertyId.MAX)
                 return null;
 

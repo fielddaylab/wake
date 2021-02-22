@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -850,6 +850,31 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -29.299988
       objectReference: {fileID: 0}
+    - target: {fileID: 554522758066973361, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554522758066973361, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554522758066973361, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554522758066973361, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554522758066973361, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1014372787612839069, guid: b67673eafaa2bbe4db571202a3dfab0b,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -993,6 +1018,31 @@ PrefabInstance:
     - target: {fileID: 1634156615150985271, guid: b67673eafaa2bbe4db571202a3dfab0b,
         type: 3}
       propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848020905838766166, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848020905838766166, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848020905838766166, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848020905838766166, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848020905838766166, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4657713290958200716, guid: b67673eafaa2bbe4db571202a3dfab0b,
@@ -1922,6 +1972,7 @@ GameObject:
   - component: {fileID: 740843277}
   - component: {fileID: 740843280}
   - component: {fileID: 740843281}
+  - component: {fileID: 740843282}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2042,6 +2093,37 @@ MonoBehaviour:
   m_Target: {fileID: 1916403497}
   m_Height: 10
   m_Zoom: 1
+--- !u!114 &740843282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740843276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &855071882
 GameObject:
   m_ObjectHideFlags: 0
@@ -2523,7 +2605,7 @@ PrefabInstance:
     - target: {fileID: 6833289159175257556, guid: 51a645c508f5fdb43b22e9f722bc1ccb,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6833289159547145730, guid: 51a645c508f5fdb43b22e9f722bc1ccb,
         type: 3}
@@ -2543,7 +2625,7 @@ PrefabInstance:
     - target: {fileID: 6833289159547145730, guid: 51a645c508f5fdb43b22e9f722bc1ccb,
         type: 3}
       propertyPath: m_Scene
-      value: SimScene
+      value: ModelingPrototype
       objectReference: {fileID: 0}
     - target: {fileID: 6833289159547145732, guid: 51a645c508f5fdb43b22e9f722bc1ccb,
         type: 3}
