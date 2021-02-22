@@ -8,7 +8,7 @@
          [HideInInspector] _RendererColor ("RendererColor", Color) = (1,1,1,1)
          [HideInInspector] _Flip ("Flip", Vector) = (1,1,1,1)
          [PerRendererData] _AlphaTex ("External Alpha", 2D) = "white" {}
-         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
+        //  [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
      }
  
      SubShader
