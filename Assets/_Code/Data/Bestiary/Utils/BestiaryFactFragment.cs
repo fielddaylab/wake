@@ -22,7 +22,16 @@ namespace Aqua
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Noun,
-                String = inWord
+                String = Services.Loc.MaybeLocalize(inWord, null, true)
+            };
+        }
+
+        static public BestiaryFactFragment CreateNoun(StringHash32 inWord)
+        {
+            return new BestiaryFactFragment()
+            {
+                Type = BestiaryFactFragmentType.Noun,
+                String = Services.Loc.Localize(inWord, true)
             };
         }
 

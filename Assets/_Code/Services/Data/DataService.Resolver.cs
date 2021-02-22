@@ -149,6 +149,8 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
+
+            m_VariableResolver.SetTableVar("random", GetRandomByRarity);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -229,6 +231,23 @@ namespace Aqua
         {
             return Profile.Script.ActIndex;
         }
+
+        private Variant GetRandomByRarity(StringHash32 inId)
+        {
+            if (inId == RandomRare)
+                return RNG.Instance.Chance(m_RareChance);
+            if (inId == RandomUncommon)
+                return RNG.Instance.Chance(m_UncommonChance);
+            if (inId == RandomCommon)
+                return RNG.Instance.Chance(m_CommonChance);
+            
+            UnityEngine.Debug.LogErrorFormat("[DataService] Unknown rarity '{0}'", inId.ToDebugString());
+            return false;
+        }
+
+        static private readonly StringHash32 RandomRare = "rare";
+        static private readonly StringHash32 RandomUncommon = "uncommon";
+        static private readonly StringHash32 RandomCommon = "common";
 
         #endregion // Callbacks
     }

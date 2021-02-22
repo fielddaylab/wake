@@ -1,0 +1,34 @@
+#basePath   partner.help.bestiary
+
+:: urchins.start
+@trigger    RequestPartnerHelp
+@when       has.entity:Urchin
+@once
+@cutscene
+{@player}   Kevin, what do you know about these urchins?
+{@kevin}    Urchins, huh? Spiny little suckers.
+            Adorable, in a sort of blobby way.
+            Other than that, uh, not a big fan.
+
+:: urchins.eat.giantKelp
+@trigger    RequestPartnerHelp
+@when       seen:partner.help.bestiary.urchins.start, has.fact:Urchins.Eat.GiantKelp
+@once
+@cutscene
+$if seen:urchins.eat.bullKelp
+    {@player}   Urchins eat giant kelp too?
+    {@kevin}    They eat all sorts of kelp.
+$else
+    {@player}   So... these urchins just eat kelp?
+    {@kevin}    Yep! Urchins are big kelp eaters.
+                Ravenous, even.
+$endif
+
+:: urchins.eat.bullKelp
+@trigger    RequestPartnerHelp
+@when       seen:partner.help.bestiary.urchins.start, has.fact:Urchins.Eat.BullKelp
+@once
+@cutscene
+{@player}   So... these urchins just eat kelp?
+{@kevin}    Yep! Urchins are big kelp eaters.
+            Leave all their bite marks

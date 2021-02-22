@@ -26,14 +26,25 @@ namespace Aqua
 
         public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
         {
-            yield return BestiaryFactFragment.CreateNoun(m_PropertyId.ToString());
+            yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(m_PropertyId).LabelId());
             yield return BestiaryFactFragment.CreateVerb("Is");
             yield return BestiaryFactFragment.CreateAmount(m_Value.ToString());
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
-            throw new System.NotImplementedException();
+            var prop = Services.Assets.WaterProp.Property(m_PropertyId);
+
+            using(var psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append(Services.Loc.Localize(prop.LabelId()))
+                    .Append(" in ")
+                    .Append(Services.Loc.MaybeLocalize(Parent().CommonName()))
+                    .Append(" is ")
+                    .Append(m_Value.ToString());
+
+                return psb.ToString();
+            }
         }
     }
 }

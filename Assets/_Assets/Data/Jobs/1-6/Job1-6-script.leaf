@@ -8,6 +8,7 @@
                     Really, we're just looking to get you introduced to the elements.
                     Most folks don't know what we do here.
                     So head over to Site B when you're ready.
+$call   JobBoardBackground->Deactivate
 
 :: end
 @trigger    JobCompleted
@@ -15,6 +16,7 @@
 {@kelpResearcher}   Nice work, {player-name}! And...
                     Um, who's your friend there?
 {@player}       Oh, this is Kevin! They're a jellyblob.
+
 $if kevin:jules.intro
     {@kevin}    {fast}Hi Jules nice to meet you okay bye{/fast}
 $else

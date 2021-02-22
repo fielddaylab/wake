@@ -70,11 +70,8 @@ namespace ProtoAqua.Experiment
                 }
             }
 
-            var properties = m_CachedSettings.AllNonEmptyProperties();
-
+            var properties = Services.Assets.WaterProp.Objects;
             int buttonIdx = 0;
-
-            var noneProperty = WaterPropertyId.None;
 
             foreach(var waterType in properties)
             {
@@ -82,22 +79,22 @@ namespace ProtoAqua.Experiment
                     break;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.Load((int) waterType.Id, waterType.Icon, true);
+                button.Load((int) waterType.Index(), waterType.Icon(), true);
 
                 ++buttonIdx;
             }
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load((int) noneProperty, m_CachedSettings.GetProperty(noneProperty).Icon, false);
+                m_CachedButtons[buttonIdx].Load(null, m_EmptyIcon, false);
             }
         }
 
         private void UpdateDisplay(WaterPropertyId inWaterId)
         {
-            var def = m_CachedSettings.GetProperty(inWaterId);
-            m_Label.SetText(def.LabelId);
-            m_NextButton.interactable = inWaterId != WaterPropertyId.None;
+            var def = Services.Assets.WaterProp.Property(inWaterId);
+            m_Label.SetText(def?.LabelId() ?? null);
+            m_NextButton.interactable = inWaterId != WaterPropertyId.MAX;
         }
     
         private void UpdateFromSelection()
@@ -110,7 +107,7 @@ namespace ProtoAqua.Experiment
             }
             else
             {
-                m_CachedData.PropertyId = WaterPropertyId.None;
+                m_CachedData.PropertyId = WaterPropertyId.MAX;
             }
 
             UpdateDisplay(m_CachedData.PropertyId);

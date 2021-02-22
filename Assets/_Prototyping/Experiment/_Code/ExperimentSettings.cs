@@ -48,10 +48,6 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private TankDefinition[] m_TankDefs = null;
 
-        [Header("Stressor Settings")]
-
-        [SerializeField] private PropDefinition[] m_Props = null;
-
         [Header("Icon Colors")]
         [SerializeField] private Color m_EnabledButtonColor = Color.white;
         [SerializeField] private Color m_DisabledButtonColor = Color.white;
@@ -74,21 +70,6 @@ namespace ProtoAqua.Experiment
         {
             TankDefinition def;
             m_TankDefs.TryGetValue(inType, out def);
-            return def;
-        }
-
-        public IEnumerable<PropDefinition> AllNonEmptyProperties()
-        {
-            for(int i = 0; i < m_Props.Length; ++i)
-            {
-                if (m_Props[i].Id != WaterPropertyId.None)
-                    yield return m_Props[i];
-            }
-        }
-
-        public PropDefinition GetProperty(WaterPropertyId id) {
-            PropDefinition def;
-            m_Props.TryGetValue(id, out def);
             return def;
         }
 

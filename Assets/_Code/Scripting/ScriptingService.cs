@@ -30,6 +30,7 @@ namespace Aqua
         private StringUtils.ArgsList.Splitter m_ArgListSplitter;
         private LeafRuntime<ScriptNode> m_ThreadRuntime;
         private HashSet<StringHash32> m_SkippedEvents;
+        private MethodCache<LeafMember> m_LeafCache;
 
         // trigger eval
         private CustomVariantResolver m_CustomResolver;
@@ -373,6 +374,50 @@ namespace Aqua
 
         #endregion // Killing Threads
 
+        #region Calling Methods
+
+        /// <summary>
+        /// Executes a script command.
+        /// Format should be "method arg0, arg1, arg2, ..." or "targetId->method arg0, arg1, arg2, ..."
+        /// </summary>
+        public object Execute(StringSlice inCommand)
+        {
+            StringSlice target = StringSlice.Empty, method, args;
+            var methodArgs = TagData.Parse(inCommand, Parsing.InlineEvent);
+            method = methodArgs.Id;
+            args = methodArgs.Data;
+
+            int indirectIndex = method.IndexOf("->");
+            if (indirectIndex >= 0)
+            {
+                target = method.Substring(0, indirectIndex);
+                method = method.Substring(indirectIndex + 2);
+            }
+
+            object result;
+            if (target.IsEmpty)
+            {
+                m_LeafCache.TryStaticInvoke(method, args, out result);
+            }
+            else
+            {
+                ScriptObject targetObj;
+                if (!TryGetScriptObjectById(target, out targetObj))
+                {
+                    Debug.LogWarningFormat("[ScriptingService] No ScriptObject with id '{0}' exists");
+                    result = null;
+                }
+                else
+                {
+                    m_LeafCache.TryInvoke(targetObj, method, args, out result);
+                }
+            }
+
+            return result;
+        }
+
+        #endregion // Calling Methods
+
         #endregion // Operations
 
         #region Contexts
@@ -549,6 +594,9 @@ namespace Aqua
         {
             InitParsers();
             InitHandlers();
+
+            m_LeafCache = new MethodCache<LeafMember>();
+            m_LeafCache.LoadStatic();
 
             m_ParserPool = new DynamicPool<TagStringParser>(4, (p) => {
                 var parser = new TagStringParser();

@@ -33,12 +33,18 @@ namespace Aqua.Profile
             return false;
         }
 
+        public IEnumerable<BestiaryDesc> GetEntities()
+        {
+            foreach(var entity in m_ObservedEntities)
+                yield return Services.Assets.Bestiary.Get(entity);
+        }
+
         public IEnumerable<BestiaryDesc> GetEntities(BestiaryDescCategory inCategory)
         {
             foreach(var entity in m_ObservedEntities)
             {
                 BestiaryDesc desc = Services.Assets.Bestiary.Get(entity);
-                if (desc.Category() == inCategory)
+                if (desc.HasCategory(inCategory))
                     yield return desc;
             }
         }

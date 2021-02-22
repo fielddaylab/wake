@@ -20,6 +20,12 @@ namespace Aqua
 
         [NonSerialized] private QualitativeValue m_QualAmount = QualitativeValue.None;
 
+        public BestiaryDesc Target() { return m_TargetEntry; }
+        public uint Amount() { return m_Amount; }
+
+        public QualitativeMapping QualMap() { return m_QualMap; }
+        public QualitativeValue QualAmount() { return m_QualAmount; }
+
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
             inVisitor.Visit(this, inParams);
@@ -27,30 +33,39 @@ namespace Aqua
 
         public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
         {
+            // TODO: localization!!
+
+            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
+
             yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
             yield return BestiaryFactFragment.CreateVerb("Eats");
+            if (bHasValue)
+                yield return BestiaryFactFragment.CreateAmount(FormatValue(WaterPropertyId.Food, m_Amount));
             yield return BestiaryFactFragment.CreateNoun(m_TargetEntry.CommonName());
+            if (bHasValue)
+                yield return BestiaryFactFragment.CreateAdjective("Per Tick");
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
             // TODO: localization!!!
 
+            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
+
             using(var psb = PooledStringBuilder.Create())
             {
                 // TODO: Variants
 
                 psb.Builder.Append(Services.Loc.MaybeLocalize(Parent().CommonName()))
-                    .Append(" eats ")
-                    .Append(Services.Loc.MaybeLocalize(m_TargetEntry.CommonName()));
+                    .Append(" eats ");
+                if (bHasValue)
+                    psb.Builder.Append(FormatValue(WaterPropertyId.Food, m_Amount)).Append(' ');
+                psb.Builder.Append(Services.Loc.MaybeLocalize(m_TargetEntry.CommonName()));
+                if (bHasValue)
+                    psb.Builder.Append(" per tick");
 
                 return psb.Builder.Flush();
             }
-        }
-
-        public override bool IsIdentitical(PlayerFactParams inParams1, PlayerFactParams inParams2)
-        {
-            throw new System.NotImplementedException();
         }
 
         public override bool HasSameSlot(BFBehavior inBehavior)

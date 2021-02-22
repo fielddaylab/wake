@@ -207,7 +207,7 @@ namespace Aqua.Scripting
 
             public override bool IsVerbose
             {
-                get { return false; }
+                get { return true; }
             }
 
             public override ScriptNodePackage CreatePackage(string inFileName)

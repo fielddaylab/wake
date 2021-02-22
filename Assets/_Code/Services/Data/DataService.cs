@@ -22,6 +22,12 @@ namespace Aqua
 
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
 
+        [Header("Random Chances")]
+
+        [SerializeField, Range(0, 1)] private float m_CommonChance = 0.5f;
+        [SerializeField, Range(0, 1)] private float m_UncommonChance = 0.3f;
+        [SerializeField, Range(0, 1)] private float m_RareChance = 0.1f;
+
         [Header("-- DEBUG --")]
         [SerializeField] private string m_DebugUrl = string.Empty;
 

@@ -21,5 +21,22 @@ namespace Aqua.Portable
         {
             return false;
         }
+
+        protected override void OnShow(bool inbInstant)
+        {
+            base.OnShow(inbInstant);
+
+            Services.Data.SetVariable("portable:app", m_Id.Hash());
+        }
+
+        protected override void OnHide(bool inbInstant)
+        {
+            if (Services.Data && Services.Data.GetVariable("portable:app") == m_Id.Hash())
+            {
+                Services.Data.SetVariable("portable:app", null);
+            }
+
+            base.OnHide(inbInstant);
+        }
     }
 }

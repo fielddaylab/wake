@@ -43,11 +43,6 @@ namespace Aqua
             throw new NotImplementedException();
         }
 
-        public override bool IsIdentitical(PlayerFactParams inParams1, PlayerFactParams inParams2)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override bool HasSameSlot(BFBehavior inBehavior)
         {
             BFGrow grow = inBehavior as BFGrow;

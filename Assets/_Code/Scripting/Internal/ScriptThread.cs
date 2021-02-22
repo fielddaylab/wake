@@ -6,6 +6,7 @@ using BeauUtil.Variants;
 using BeauUtil.Tags;
 using System.Collections;
 using Leaf.Runtime;
+using UnityEngine;
 
 namespace Aqua.Scripting
 {
@@ -252,7 +253,8 @@ namespace Aqua.Scripting
         private void InternalSkip()
         {
             m_Flags |= ScriptFlags.Skip;
-            m_RunningRoutine.SetTimeScale(100000);
+            Time.timeScale = 100;
+            m_RunningRoutine.SetTimeScale(1000);
             if (IsCutscene())
             {
                 Services.Events.Dispatch(GameEvents.CutsceneSkip);
@@ -305,6 +307,7 @@ namespace Aqua.Scripting
 
             if (IsCutscene() && (m_Flags & ScriptFlags.Skip) != 0)
             {
+                Time.timeScale = 1;
                 Services.Input.ResumeAll();
                 Services.UI.StopSkipCutscene();
             }

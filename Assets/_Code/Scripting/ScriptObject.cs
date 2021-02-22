@@ -1,5 +1,6 @@
 using BeauPools;
 using BeauUtil;
+using Leaf.Runtime;
 using UnityEngine;
 
 namespace Aqua
@@ -23,6 +24,30 @@ namespace Aqua
         public StringHash32 Id() { return m_Id; }
         public StringHash32 ClassName() { return m_ClassName; }
 
+        #region Leaf
+
+        [LeafMember("Activate")]
+        private void Activate()
+        {
+            gameObject.SetActive(true);
+        }
+
+        [LeafMember("Deactivate")]
+        private void Deactivate()
+        {
+            gameObject.SetActive(false);
+        }
+
+        [LeafMember("ToggleActive")]
+        private void ToggleActive()
+        {
+            gameObject.SetActive(!gameObject.activeSelf);
+        }
+
+        #endregion // Leaf
+
+        #region Events
+
         protected virtual void Awake()
         {
             RegisterScriptObject();
@@ -43,6 +68,10 @@ namespace Aqua
             DeregisterScriptObject();
         }
 
+        #endregion // Events
+
+        #region Register/Deregister
+
         protected void RegisterScriptObject()
         {
             Services.Script.TryRegister(this);
@@ -53,6 +82,10 @@ namespace Aqua
             Services.Script?.TryDeregister(this);
         }
 
+        #endregion // Register/Deregister
+
+        #region IPoolAllocHandler
+
         void IPoolAllocHandler.OnAlloc()
         {
             OnAlloc();
@@ -62,5 +95,7 @@ namespace Aqua
         {
             OnFree();
         }
+
+        #endregion // IPoolAllocHandler
     }
 }

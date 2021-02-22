@@ -14,6 +14,8 @@ namespace Aqua
     {
         #region ILeafPlugin
 
+        IMethodCache ILeafPlugin<ScriptNode>.MethodCache { get { return m_LeafCache; } }
+
         void ILeafPlugin<ScriptNode>.OnNodeEnter(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
             var thread = ScriptThread(inThreadState);
@@ -54,6 +56,7 @@ namespace Aqua
                     thread.Dialog = null;
                 }
             }
+            thread.Kill();
         }
 
         bool ILeafPlugin<ScriptNode>.TryLookupLine(StringHash32 inLineCode, ScriptNode inLocalNode, out string outLine)
@@ -84,6 +87,34 @@ namespace Aqua
             return PerformEventChoice(thread, inChoice, inContentResolver);
         }
 
+        bool ILeafPlugin<ScriptNode>.TryLookupObject(StringHash32 inObjectId, LeafThreadState<ScriptNode> inThreadState, out object outObject)
+        {
+            var thread = ScriptThread(inThreadState);
+            if (inObjectId == "this")
+            {
+                outObject = thread.Context.Object;
+                return outObject != null;
+            }
+
+            ScriptObject obj;
+            bool bFound = TryGetScriptObjectById(inObjectId, out obj);
+            outObject = obj;
+            return bFound;
+        }
+
+        LeafThreadState<ScriptNode> ILeafPlugin<ScriptNode>.Fork(LeafThreadState<ScriptNode> inThreadState, ScriptNode inForkNode)
+        {
+            var thread = ScriptThread(inThreadState);
+            var handle = StartThreadInternalNode(null, thread.Context, inForkNode, thread.Locals);
+            return handle.GetThread();
+        }
+
+        void ILeafPlugin<ScriptNode>.Kill(LeafThreadState<ScriptNode> inThreadState)
+        {
+            var thread = ScriptThread(inThreadState);
+            thread.Kill();
+        }
+
         #endregion // ILeafPlugin
 
         static private ScriptThread ScriptThread(LeafThreadState<ScriptNode> inThreadState)
@@ -94,8 +125,7 @@ namespace Aqua
         // Performs a node
         private IEnumerator ProcessNodeInstructions(ScriptThread inThread, ScriptNode inStartingNode)
         {
-            yield return m_ThreadRuntime.Execute(inThread, inStartingNode);
-            inThread.Kill();
+            return m_ThreadRuntime.Execute(inThread, inStartingNode);
         }
 
         // Reads a line of scripting

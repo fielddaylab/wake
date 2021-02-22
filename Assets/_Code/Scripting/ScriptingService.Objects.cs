@@ -209,7 +209,7 @@ namespace Aqua
             if (inIdentifier.StartsWith('@'))
             {
                 ScriptObject scObj;
-                if (TryGetScriptObjectById(inIdentifier, out scObj))
+                if (TryGetScriptObjectById(inIdentifier.Substring(1), out scObj))
                 {
                     yield return scObj;
                 }

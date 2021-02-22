@@ -107,9 +107,8 @@ namespace ProtoAqua.Argumentation
         }
 
         private void OpenBestiary(GameObject clicked) {
-            var request = new BestiaryApp.SelectFactRequest(BestiaryDescCategory.Critter);
-            Services.UI.FindPanel<PortableMenu>().Open(request);
-            request.Return.OnComplete( (s) => {
+            var future = BestiaryApp.RequestFact(BestiaryDescCategory.BOTH);
+            future.OnComplete( (s) => {
                 Debug.Log("Selected: " + s.Fact.name);
                 GameObject newLink = m_LinkManager.ClickBestiaryLink(s);
                 OnSelect(newLink, s.Fact.name);

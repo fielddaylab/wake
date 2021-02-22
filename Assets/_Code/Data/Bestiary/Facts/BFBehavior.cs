@@ -32,5 +32,10 @@ namespace Aqua
         {
             return GetType() == inBehavior.GetType();
         }
+
+        protected string FormatValue(WaterPropertyId inId, float inValue)
+        {
+            return Services.Assets.WaterProp.Property(inId)?.FormatValue(inValue);
+        }
     }
 }

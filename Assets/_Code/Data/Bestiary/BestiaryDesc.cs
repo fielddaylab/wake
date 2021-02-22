@@ -9,22 +9,6 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
     public class BestiaryDesc : DBObject
     {
-        private struct VariantPair : IKeyValuePair<StringHash32, string>
-        {
-            public SerializedHash32 Id;
-            public string Name;
-
-            public StringHash32 Key { get { return Id; } }
-
-            public string Value { get { return Name; } }
-
-            public VariantPair(StringHash32 inId, string inName)
-            {
-                Id = inId;
-                Name = inName;
-            }
-        }
-
         #region Inspector
 
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Type = BestiaryDescCategory.Critter;
@@ -34,9 +18,6 @@ namespace Aqua
         [Header("Info")]
         [SerializeField] private string m_ScientificNameId = null;
         [SerializeField] private string m_CommonNameId = null;
-
-        [Space]
-        [SerializeField] private VariantPair[] m_VariantIds = null;
         
         [Space]
         [SerializeField] private BFBase[] m_Facts = null;
@@ -51,6 +32,7 @@ namespace Aqua
         [SerializeField] private Dictionary<StringHash32, BFBase> m_FactMap;
         [NonSerialized] private BFBase[] m_InternalFacts;
         [NonSerialized] private BFBase[] m_AssumedFacts;
+        [NonSerialized] private BFState[] m_StateChangeFacts;
 
         public BestiaryDescCategory Category() { return m_Type; }
         public BestiaryDescFlags Flags() { return m_Flags; }
@@ -59,31 +41,17 @@ namespace Aqua
         public string ScientificName() { return m_ScientificNameId; }
         public string CommonName() { return m_CommonNameId; }
 
-        public string VariantName(StringHash32 inVariantId)
-        {
-            string value;
-            if (!m_VariantIds.TryGetValue(inVariantId, out value))
-            {
-                Debug.LogErrorFormat("[BestiaryDesc] No variant name for id '{0}' found on bestiary entry '{1}'", inVariantId.ToDebugString(), Id().ToDebugString());
-            }
-            return value;
-        }
-
         public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
         public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
         public IReadOnlyList<BFBase> AssumedFacts { get { return m_AssumedFacts; } }
 
-        public BFBase Fact(StringHash32 inFactId)
+        public bool HasCategory(BestiaryDescCategory inCategory)
         {
-            BFBase fact;
-            m_FactMap.TryGetValue(inFactId, out fact);
-            return fact;
+            return inCategory == BestiaryDescCategory.BOTH || m_Type == inCategory;
         }
 
-        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
-        {
-            return (TFact) Fact(inFactId);
-        }
+        public bool HasFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) != 0; }
+        public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
         public Sprite Sketch() { return m_Sketch; }
@@ -94,6 +62,7 @@ namespace Aqua
         {
             using(PooledList<BFBase> internalFacts = PooledList<BFBase>.Create())
             using(PooledList<BFBase> assumedFacts = PooledList<BFBase>.Create())
+            using(PooledList<BFState> stateFacts = PooledList<BFState>.Create())
             {
                 m_FactMap = new Dictionary<StringHash32, BFBase>();
                 foreach(var fact in m_Facts)
@@ -111,12 +80,93 @@ namespace Aqua
                             assumedFacts.Add(fact);
                             break;
                     }
+
+                    BFState state;
+                    if ((state = fact as BFState) != null)
+                    {
+                        stateFacts.Add(state);
+                    }
                 }
 
                 m_InternalFacts = internalFacts.ToArray();
                 m_AssumedFacts = assumedFacts.ToArray();
+                m_StateChangeFacts = stateFacts.ToArray();
             }
         }
+
+        #region Facts
+
+        public BFBase Fact(StringHash32 inFactId)
+        {
+            BFBase fact;
+            m_FactMap.TryGetValue(inFactId, out fact);
+            return fact;
+        }
+
+        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
+        {
+            return (TFact) Fact(inFactId);
+        }
+
+        public TFact FactOfType<TFact>() where TFact : BFBase
+        {
+            TFact result;
+            foreach(var fact in m_Facts)
+            {
+                if ((result = fact as TFact) != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<TFact> FactsOfType<TFact>() where TFact : BFBase
+        {
+            TFact result;
+            foreach(var fact in m_Facts)
+            {
+                if ((result = fact as TFact) != null)
+                    yield return result;
+            }
+        }
+
+        #endregion // Facts
+
+        #region Checks
+
+        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF inEnvironment, in WaterPropertyBlock8 inStarvation)
+        {
+            ActorStateId actorState = ActorStateId.Alive;
+
+            for(int i = m_StateChangeFacts.Length - 1; i >= 0 && actorState < ActorStateId.Dead; --i)
+            {
+                BFState state = m_StateChangeFacts[i];
+                
+                BFStateStarvation starve = state as BFStateStarvation;
+                if (!starve.IsReferenceNull())
+                {
+                    if (inStarvation[starve.PropertyId()] >= starve.Ticks())
+                    {
+                        actorState = starve.TargetState();
+                    }
+                    continue;
+                }
+
+                BFStateRange range = state as BFStateRange;
+                if (!range.IsReferenceNull())
+                {
+                    float currentVal = inEnvironment[range.PropertyId()];
+                    if (currentVal < range.MinSafe() || currentVal > range.MaxSafe())
+                    {
+                        actorState = range.TargetState();
+                    }
+                }
+            }
+
+            return actorState;
+        }
+
+        #endregion // Checks
 
         #if UNITY_EDITOR
 
@@ -143,10 +193,14 @@ namespace Aqua
         #endif // UNITY_EDITOR
     }
 
+    [LabeledEnum]
     public enum BestiaryDescCategory
     {
         Critter,
-        Environment
+        Environment,
+
+        [Hidden]
+        BOTH
     }
 
     [Flags]
@@ -155,7 +209,7 @@ namespace Aqua
         Rare = 0x01,
         LargeCreature = 0x02,
         DoNotUseInExperimentation = 0x04,
-        IsVariant = 0x08,
+        TreatAsHerd = 0x08
     }
 
     public enum BestiaryDescSize

@@ -12,11 +12,9 @@ namespace Aqua
 
         [Header("Body")]
         [SerializeField] private uint m_StartingMass = 0;
-        [SerializeField] private uint m_MaximumMass = 0;
 
         #endregion // Inspector
 
         public uint StartingMass() { return m_StartingMass; }
-        public uint MaximumMass() { return m_MaximumMass; }
     }
 }

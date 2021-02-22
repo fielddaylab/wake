@@ -12,6 +12,7 @@ namespace Aqua
         [SerializeField] private BestiaryDB m_Bestiary = null;
         [SerializeField] private MapDB m_Map = null;
         [SerializeField] private InventoryDB m_Inventory = null;
+        [SerializeField] private WaterPropertyDB m_WaterProperties = null;
 
         #endregion // Inspector
 
@@ -20,5 +21,6 @@ namespace Aqua
         public BestiaryDB Bestiary { get { return m_Bestiary; } }
         public MapDB Map { get { return m_Map; } }
         public InventoryDB Inventory { get { return m_Inventory; } }
+        public WaterPropertyDB WaterProp { get { return m_WaterProperties; } }
     }
 }

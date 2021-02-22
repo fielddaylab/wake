@@ -237,6 +237,8 @@ namespace Aqua.Portable
 
         protected override void OnHide(bool inbInstant)
         {
+            Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
+
             m_FactPool.Reset();
             m_RangeFactPool.Reset();
             m_NoSelectionGroup.gameObject.SetActive(true);
@@ -285,36 +287,79 @@ namespace Aqua.Portable
         {
             m_SelectBestiaryRequest = inSelect;
 
-            m_CritterGroupToggle.interactable = inSelect.Category == BestiaryDescCategory.Critter;
-            m_EcosystemGroupToggle.interactable = inSelect.Category == BestiaryDescCategory.Environment;
-
             m_PromptText.gameObject.SetActive(true);
             m_SelectEntryButton.gameObject.SetActive(true);
 
-            // TODO: Replace with real text
-            if (inSelect.Category == BestiaryDescCategory.Critter)
-                m_PromptText.SetText("Select Critter");
-            else
-                m_PromptText.SetText("Select Environment");
+            BestiaryDescCategory category = inSelect.Category;
+            switch(inSelect.Category)
+            {
+                case BestiaryDescCategory.Critter:
+                    {
+                        m_CritterGroupToggle.interactable = true;
+                        m_EcosystemGroupToggle.interactable = false;
+                        m_PromptText.SetText("Select Critter");
+                        break;
+                    }
 
-            LoadEntryGroup(inSelect.Category, null, true);
+                case BestiaryDescCategory.Environment:
+                    {
+                        m_CritterGroupToggle.interactable = false;
+                        m_EcosystemGroupToggle.interactable = true;
+                        m_PromptText.SetText("Select Environment");
+                        break;
+                    }
+
+                case BestiaryDescCategory.BOTH:
+                    {
+                        m_CritterGroupToggle.interactable = true;
+                        m_EcosystemGroupToggle.interactable = true;
+                        m_PromptText.SetText("Select Entry");
+
+                        category = BestiaryDescCategory.Critter;
+                        break;
+                    }
+            }
+
+            LoadEntryGroup(category, null, true);
         }
 
         private void LoadFactSelection(SelectFactRequest inSelect)
         {
             m_SelectFactRequest = inSelect;
 
-            m_CritterGroupToggle.interactable = inSelect.Category == BestiaryDescCategory.Critter;
-            m_EcosystemGroupToggle.interactable = inSelect.Category == BestiaryDescCategory.Environment;
-
             m_PromptText.gameObject.SetActive(true);
 
-            if (inSelect.Category == BestiaryDescCategory.Critter)
-                m_PromptText.SetText("Select Critter Behavior");
-            else
-                m_PromptText.SetText("Select Environment Fact");
+            BestiaryDescCategory category = inSelect.Category;
+            switch(inSelect.Category)
+            {
+                case BestiaryDescCategory.Critter:
+                    {
+                        m_CritterGroupToggle.interactable = true;
+                        m_EcosystemGroupToggle.interactable = false;
+                        m_PromptText.SetText("Select Critter Fact");
+                        break;
+                    }
 
-            LoadEntryGroup(inSelect.Category, null, true);
+                case BestiaryDescCategory.Environment:
+                    {
+                        m_CritterGroupToggle.interactable = false;
+                        m_EcosystemGroupToggle.interactable = true;
+                        m_PromptText.SetText("Select Environment Variable");
+                        break;
+                    }
+
+                case BestiaryDescCategory.BOTH:
+                    {
+                        m_CritterGroupToggle.interactable = true;
+                        m_EcosystemGroupToggle.interactable = true;
+                        m_PromptText.SetText("Select Fact");
+
+                        category = BestiaryDescCategory.Critter;
+                        break;
+                    }
+            }
+
+            LoadEntryGroup(category, null, true);
         }
 
         private void LoadEntryGroup(BestiaryDescCategory inType, BestiaryDesc inTarget, bool inbForce)
@@ -362,10 +407,13 @@ namespace Aqua.Portable
 
             if (inEntry == null)
             {
+                Services.Data.SetVariable("portable:bestiary.currentEntry", null);
                 m_NoSelectionGroup.gameObject.SetActive(true);
                 m_HasSelectionGroup.gameObject.SetActive(false);
                 return;
             }
+
+            Services.Data?.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
 
             m_NoSelectionGroup.gameObject.SetActive(false);
             m_HasSelectionGroup.gameObject.SetActive(true);
@@ -420,7 +468,6 @@ namespace Aqua.Portable
             return false;
         }
 
-
         private void InstantiateFactButton(BFBase inFact, PlayerFactParams inParams) 
         {
             BestiaryFactButton factButton = m_FactPool.Alloc();
@@ -446,6 +493,8 @@ namespace Aqua.Portable
                 factButton.Initialize(inFact, inParams, false, true, null);
             }
         }
+
+        #region IFactVisitor
 
         void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
         {
@@ -491,5 +540,37 @@ namespace Aqua.Portable
         {
             InstantiateFactButton(inFact, inParams);
         }
+    
+        #endregion // IFactVisitor
+    
+        #region Static
+
+        static public void OpenToEntry(StringHash32 inId)
+        {
+            var request = new OpenToRequest(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inId));
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+        }
+
+        static public void OpenToFact(StringHash32 inId)
+        {
+            var request = new OpenToRequest(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inId));
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+        }
+
+        static public Future<StringHash32> RequestEntity(BestiaryDescCategory inCategory, Func<BestiaryDesc, bool> inValidator = null)
+        {
+            var request = new SelectBestiaryEntryRequest(inCategory, inValidator);
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+            return request.Return;
+        }
+
+        static public Future<PlayerFactParams> RequestFact(BestiaryDescCategory inCategory, Func<PlayerFactParams, bool> inValidator = null)
+        {
+            var request = new SelectFactRequest(inCategory, inValidator);
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+            return request.Return;
+        }
+
+        #endregion // Static
     }
 }

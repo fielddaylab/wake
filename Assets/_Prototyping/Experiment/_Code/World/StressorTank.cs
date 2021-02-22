@@ -13,13 +13,12 @@ using Aqua;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+
 namespace ProtoAqua.Experiment
 {
     public class StressorTank : ExperimentTank
     {
         #region Inspector
-
-        [SerializeField] private float m_SpawnDelay = 0.05f;
 
         [SerializeField] private LocText m_Text = null;
 
@@ -106,22 +105,14 @@ namespace ProtoAqua.Experiment
 
         private void SetupAddActor(StringHash32 inActorId)
         {
-            int spawnCount = GetSpawnCount(inActorId);
-            while(spawnCount-- > 0)
-            {
-                ActorCtrl actor = ExperimentServices.Actors.Pools.Alloc(inActorId, m_ActorRoot);
-                actor.Nav.Helper = m_ActorNavHelper;
-                actor.Nav.Spawn(spawnCount * RNG.Instance.NextFloat(0.8f, 1.2f) * m_SpawnDelay);
-            }
+            ActorCtrl actor = ExperimentServices.Actors.Pools.Alloc(inActorId, m_ActorRoot);
+            actor.Nav.Helper = m_ActorNavHelper;
+            actor.Nav.Spawn(0);
         }
 
         public void ChangeText(WaterPropertyId Id) {
             
-            var m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
-
-
-
-            m_Text.SetText(m_CachedSettings.GetProperty(Id).LabelId);
+            m_Text.SetText(Services.Assets.WaterProp.Property(Id)?.LabelId() ?? null);
         }
 
         private void SetupRemoveActor(StringHash32 inActorId)
@@ -133,6 +124,11 @@ namespace ProtoAqua.Experiment
         private void ResetIdle()
         {
             m_IdleDuration = 0;
+        }
+
+        public override int GetSpawnCount(StringHash32 inActorId)
+        {
+            return 1;
         }
     }
     

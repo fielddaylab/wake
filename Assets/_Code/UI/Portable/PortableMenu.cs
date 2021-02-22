@@ -6,6 +6,7 @@ using BeauUtil;
 using Aqua;
 using System.Collections;
 using System;
+using BeauUtil.Variants;
 
 namespace Aqua.Portable
 {
@@ -32,6 +33,7 @@ namespace Aqua.Portable
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private IPortableRequest m_Request;
+        [NonSerialized] private VariantTable m_Table;
 
         #region Unity Events
 
@@ -40,6 +42,9 @@ namespace Aqua.Portable
             base.Awake();
             m_Input = BaseInputLayer.Find(this);
             m_CloseButton.onClick.AddListener(() => Hide());
+
+            m_Table = new VariantTable("portable");
+            Services.Data.BindTable("portable", m_Table);
         }
 
         protected override void OnEnable()
@@ -50,6 +55,12 @@ namespace Aqua.Portable
         protected override void OnDisable()
         {
             base.OnDisable();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Services.Data?.UnbindTable("portable");
         }
 
         #endregion // Unity Events
@@ -100,12 +111,16 @@ namespace Aqua.Portable
 
         protected override void OnShow(bool inbInstant)
         {
+            Services.Data.SetVariable("portable:open", true);
+
             m_Canvas.enabled = true;
             m_Input.PushPriority();
         }
 
         protected override void OnHide(bool inbInstant)
         {
+            Services.Data?.SetVariable("portable:open", false);
+
             m_Input.PopPriority();
 
             m_Request = null;

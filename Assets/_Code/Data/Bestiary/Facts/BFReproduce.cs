@@ -16,7 +16,7 @@ namespace Aqua
         [SerializeField] private QualitativeMapping m_QualMap = null;
 
         [Space]
-        [SerializeField] private uint m_Amount = 0;
+        [SerializeField] private float m_Amount = 0;
         [SerializeField] private uint m_MinAge = 0;
 
         #endregion // Inspector
@@ -25,7 +25,7 @@ namespace Aqua
 
         public uint Interval() { return m_Interval; }
         
-        public uint Amount() { return m_Amount; }
+        public float Amount() { return m_Amount; }
         public uint MinAge() { return m_MinAge; }
 
         public QualitativeMapping QualMap() { return m_QualMap; }
@@ -44,11 +44,6 @@ namespace Aqua
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
             throw new NotImplementedException();
-        }
-
-        public override bool IsIdentitical(PlayerFactParams inParams1, PlayerFactParams inParams2)
-        {
-            throw new System.NotImplementedException();
         }
 
         public override bool HasSameSlot(BFBehavior inBehavior)

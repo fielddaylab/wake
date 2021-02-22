@@ -27,7 +27,7 @@ namespace ProtoAqua.Experiment
         {
             Tank = TankType.None;
             EcosystemId = StringHash32.Null;
-            PropertyId = WaterPropertyId.None;
+            PropertyId = WaterPropertyId.MAX;
             ActorIds.Clear();
         }
     }

@@ -35,21 +35,6 @@ namespace Aqua
         public abstract IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null);
         public abstract string GenerateSentence(PlayerFactParams inParams = null);
 
-        public virtual bool IsIdentitical(PlayerFactParams inParams1, PlayerFactParams inParams2)
-        {
-            if (inParams1 == inParams2)
-                return true;
-
-            Assert.NotNull(inParams1?.Fact);
-            Assert.NotNull(inParams2?.Fact);
-
-            if (inParams1.Fact.GetType() != inParams2.Fact.GetType())
-                return false;
-
-            // TODO: Any other basic checks we can do
-            return true;
-        }
-
         public virtual void Hook(BestiaryDesc inParent)
         {
             m_Parent = inParent;
