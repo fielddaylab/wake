@@ -77,23 +77,13 @@ namespace ProtoAqua.Experiment
             SetData(m_SelectionData);
         }
 
-        private void Update()
-        {
-            SetSubScreenChain(m_TankScreen.SelectedTank());
-        }
-
-
-
         private void SetData(ExperimentSetupData selectData)
         {
             foreach (var screen in m_SubDirectory.AllSubscreens())
             {
                 if (screen != null)
                 {
-                    if (ExperimentHelper.HasMethod(screen, "SetData"))
-                    {
-                        screen.SetData(selectData);
-                    }
+                    screen.SetData(selectData);
                 }
             }
         }
@@ -298,12 +288,12 @@ namespace ProtoAqua.Experiment
             if (!kevinResponse.IsRunning())
             {
                 SetInputState(false);
-                if (m_TankScreen.SelectedTank().Equals(TankType.Foundational))
+                if (m_SelectionData.Tank == TankType.Foundational)
                 {
                     Routine.Start(this, StartFoundationalTankExperimentRoutine());
                 }
 
-                if (m_TankScreen.SelectedTank().Equals(TankType.Stressor))
+                if (m_SelectionData.Tank == TankType.Stressor)
                 {
                     Routine.Start(this, RunStressorTankExperimentRoutine());
                 }
@@ -329,7 +319,7 @@ namespace ProtoAqua.Experiment
 
             m_BootScreen.Refresh();
 
-            var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_TankScreen.SelectedTank()).Sequence;
+            var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_SelectionData.Tank).Sequence;
 
             foreach (var sEnum in sequence)
             {
@@ -378,16 +368,19 @@ namespace ProtoAqua.Experiment
             m_BeginExperimentScreen.OnSelectStart = () => StartExperiment();
             m_TankScreen.OnSelectConstruct = () => OnExperimentSubmit();
             m_EcoScreen.OnSelectConstruct = () => OnExperimentSubmit();
-            m_TankScreen.OnChange = () => SetSubSequence(m_TankScreen.SelectedTank());
+            m_TankScreen.OnChange = () => SetSubSequence(m_SelectionData.Tank);
             m_InProgressScreen.OnSelectEnd = () => TryEndExperiment();
         }
 
         private void SetSubScreenChain(TankType tank)
         {
 
+            if (m_CurrentExp == tank)
+                return;
+            
             m_CurrentExp = tank;
 
-            if (!tank.Equals(TankType.None))
+            if (tank != TankType.None)
             {
                 var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(tank).Sequence;
                 SetActions(sequence);

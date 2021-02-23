@@ -29,8 +29,6 @@ namespace ProtoAqua.Experiment
         {
             m_BehaviorDisplayPool.Reset();
 
-
-
             base.OnDisable();
         }
 
@@ -58,9 +56,7 @@ namespace ProtoAqua.Experiment
                     }
                 }
 
-                var form_text = "Sea otter " + state.GenerateSentence(null);
-
-                
+                var form_text = "Sea otter " + state.GenerateSentence(null);                
 
                 m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
                 m_SummaryText.SetText(form_text);

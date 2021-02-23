@@ -21,10 +21,12 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
         
         [NonSerialized] private Transform m_Transform;
+        [NonSerialized] private Collider2D m_Collider;
         [NonSerialized] private TriggerListener2D m_WaterListener;
 
         public Transform WorldTransform { get { return m_Transform; } }
         public Rigidbody2D Rigidbody { get { return m_Body; } }
+        public Collider2D Collider { get { return m_Collider; } }
         public float BodyRadius { get { return m_BodyRadius; } }
         public ColorGroup RenderGroup { get { return m_ColorGroup; } }
 
@@ -68,6 +70,7 @@ namespace ProtoAqua.Experiment
         {
             base.OnConstruct();
             m_Transform = transform;
+            m_Collider = m_Body.GetComponentInChildren<Collider2D>();
 
             m_WaterListener = m_Body.gameObject.AddComponent<TriggerListener2D>();
             m_WaterListener.LayerFilter = GameLayers.Water_Mask;

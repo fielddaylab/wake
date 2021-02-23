@@ -14,6 +14,8 @@ namespace ProtoAqua.Experiment
     {
         StringHash32 Id { get; }
         Transform Transform { get; }
+        Collider2D Collider { get; }
+        ActorCtrl Parent { get; }
 
         bool HasTag(StringHash32 inTag);
         float EnergyRemaining { get; }

@@ -13,14 +13,10 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class UrchinActor : ActorModule, ICreature
+    public class UrchinActor : ActorModule, IFoodSource
     {
-        static public class Behaviors
-        {
-            static public readonly StringHash32 EatsGiantKelp = "Urchin.Eats.GiantKelp";
-        }
-
         #region Inspector
+
         [SerializeField] private Transform m_PivotTransform = null;
         [SerializeField] private Transform m_RenderTransform = null;
         [SerializeField, Required] private ActorSense m_FoodSense = null;
@@ -29,33 +25,54 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private Routine m_Anim;
-        [NonSerialized] private StringHash32 m_Id;
 
-        StringHash32 ICreature.Id { get { return m_Id; } }
+        #region IFoodSource
 
-        bool ICreature.HasTag(StringHash32 inTag)
+        StringHash32 IFoodSource.Id { get { return Actor.Id; } }
+
+        bool IFoodSource.HasTag(StringHash32 inTag)
         {
             return inTag == "Urchin";
         }
 
-        private IEnumerator BiteAnim()
-        {
-            yield return m_PivotTransform.RotateTo(m_PivotTransform.localEulerAngles.z + RNG.Instance.Choose(-5, 5), 0.5f, Axis.Z, Space.Self).Wave(Wave.Function.CosFade, 3).RevertOnCancel(false);
-            Actor.Recycle();
-        }
+        Transform IFoodSource.Transform { get { return m_RenderTransform; } }
 
-        void ICreature.Bite(ActorCtrl inActor, float inBite)
-        {
-            m_Anim.Replace(this, BiteAnim());
-        }
+        Collider2D IFoodSource.Collider { get { return Actor.Body.Collider; } }
 
-        Transform ICreature.Transform { get { return m_RenderTransform; } }
+        ActorCtrl IFoodSource.Parent { get { return Actor; } }
+
+        float IFoodSource.EnergyRemaining { get { return 5; } }
+
+        void IFoodSource.Bite(ActorCtrl inActor, float inBite)
+        {
+            m_Anim.Replace(this, BittenAnim());
+        }
         
-        bool ICreature.TryGetEatLocation(ActorCtrl inActor, out Transform outTransform, out Vector3 outOffset)
+        bool IFoodSource.TryGetEatLocation(ActorCtrl inActor, out Transform outTransform, out Vector3 outOffset)
         {
             outTransform = m_PivotTransform;
             outOffset = Vector3.zero;
             return true;
+        }
+
+        private IEnumerator BittenAnim()
+        {
+            Actor.Recycle();
+            yield break;
+        }
+
+        #endregion // IFoodSource
+
+        #region Events
+
+        public override void OnConstruct()
+        {
+            base.OnConstruct();
+
+            Actor.Callbacks.OnCreate = OnCreate;
+            Actor.Callbacks.OnThink = OnThink;
+
+            m_FoodSense.Listener.FilterByComponentInParent<IFoodSource>();
         }
 
         private void OnCreate()
@@ -70,6 +87,22 @@ namespace ProtoAqua.Experiment
                 m_Anim.Replace(this, Animation());
             }
         }
+
+        #endregion // Events
+
+        #region Properties
+
+        private int GetIdleSwimCount()
+        {
+            return RNG.Instance.Next(GetProperty<int>("MinSwimsBeforeEat", 3), GetProperty<int>("MaxSwimsBeforeEat", 4) + 1);
+        }
+
+        private int GetBiteCount()
+        {
+            return RNG.Instance.Next(GetProperty<int>("MinBites", 3), GetProperty<int>("MaxBites", 5) + 1);
+        }
+
+        #endregion // Properties
 
         private IEnumerator Animation()
         {
@@ -93,16 +126,6 @@ namespace ProtoAqua.Experiment
                     swims = GetIdleSwimCount();
                 }
             }
-        }
-
-        private int GetIdleSwimCount()
-        {
-            return RNG.Instance.Next(GetProperty<int>("MinSwimsBeforeEat", 3), GetProperty<int>("MaxSwimsBeforeEat", 4) + 1);
-        }
-
-        private int GetBiteCount()
-        {
-            return RNG.Instance.Next(GetProperty<int>("MinBites", 3), GetProperty<int>("MaxBites", 5) + 1);
         }
 
         private IFoodSource GetNearestFoodSource()
@@ -136,8 +159,9 @@ namespace ProtoAqua.Experiment
 
             yield return Actor.Nav.SwimTo(targetTransform.position + targetOffset);
             yield return 0.5f;
-            
-            using(ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, Behaviors.EatsGiantKelp))
+
+            BFEat eatingBehavior = BestiaryUtils.FindEatingRule(Actor.Besitary, inFoodSource.Parent.Besitary.Id());
+            using(ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, eatingBehavior.Id()))
             {
                 int biteCount = GetBiteCount();
                 while(biteCount-- > 0)
@@ -145,7 +169,7 @@ namespace ProtoAqua.Experiment
                     yield return Actor.Body.WorldTransform.ScaleTo(1.1f, 0.2f).Ease(Curve.CubeOut);
                     inFoodSource.Bite(Actor, GetProperty<float>("BiteSize", 5));
                     Services.Audio.PostEvent("urchin_eat");
-                    if (ExperimentServices.BehaviorCapture.WasObserved(Behaviors.EatsGiantKelp))
+                    if (ExperimentServices.BehaviorCapture.WasObserved(eatingBehavior.Id()))
                     {
                         m_EatParticles.Emit(1);
                     }
@@ -153,16 +177,6 @@ namespace ProtoAqua.Experiment
                     yield return RNG.Instance.NextFloat(0.8f, 1.2f);
                 }
             }
-        }
-
-        public override void OnConstruct()
-        {
-            base.OnConstruct();
-
-            Actor.Callbacks.OnCreate = OnCreate;
-            Actor.Callbacks.OnThink = OnThink;
-
-            m_FoodSense.Listener.FilterByComponentInParent<IFoodSource>();
         }
     }
 }

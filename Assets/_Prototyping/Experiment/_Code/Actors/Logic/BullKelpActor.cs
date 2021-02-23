@@ -11,7 +11,7 @@ using BeauRoutine.Extensions;
 
 namespace ProtoAqua.Experiment
 {
-    public class KelpActor : ActorModule
+    public class BullKelpActor : ActorModule
     {
         #region Inspector
 
@@ -24,6 +24,17 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private KelpLeaf[] m_AllLeaves = null;
+
+        #region Events
+
+        public override void OnConstruct()
+        {
+            base.OnConstruct();
+
+            Actor.Callbacks.OnCreate = OnCreate;
+
+            m_AllLeaves = GetComponentsInChildren<KelpLeaf>(true);
+        }
 
         private void OnCreate()
         {
@@ -41,21 +52,13 @@ namespace ProtoAqua.Experiment
             float facing = RNG.Instance.Choose(-1, 1);
             for(int i = 0, leafCount = m_AllLeaves.Length; i < leafCount; ++i)
             {
-                float lerp = (i + 0.5f + RNG.Instance.NextFloat(-0.1f, 0.1f)) / leafCount;
+                float lerp = 1 + RNG.Instance.NextFloat(-0.2f, 0f);
                 float leafHeight = height * lerp;
 
-                m_AllLeaves[i].Initialize(leafHeight, facing, Actor.Config);
-                facing = -facing;
+                m_AllLeaves[i].Initialize(leafHeight, facing, Actor);
             }
         }
 
-        public override void OnConstruct()
-        {
-            base.OnConstruct();
-
-            Actor.Callbacks.OnCreate = OnCreate;
-
-            m_AllLeaves = GetComponentsInChildren<KelpLeaf>(true);
-        }
+        #endregion // Events
     }
 }

@@ -44,14 +44,6 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
-        public List<Action> GetAction() {
-            var res = new List<Action>();
-            res.Add(OnSelectBack);
-            res.Add(OnSelectContinue);
-
-            return res;
-        }
-
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);
@@ -66,28 +58,19 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allEnvs = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
-
-            List<BFWaterProperty> EnvPropIds = new List<BFWaterProperty>();
-
-            foreach(BestiaryDesc env in allEnvs) {
-                foreach(BFBase waterFact in env.Facts) {
-                    if(waterFact is BFWaterProperty) {
-                        EnvPropIds.Add((BFWaterProperty)waterFact);
-                    }
-                }
-            }
-
-            var properties = Services.Assets.WaterProp.Objects;
+            var properties = Services.Assets.WaterProp.Sorted();
             int buttonIdx = 0;
 
-            foreach(var waterType in properties)
+            foreach(var prop in properties)
             {
                 if (buttonIdx >= m_CachedButtons.Length)
                     break;
+                
+                if (!prop.HasFlags(WaterPropertyFlags.IsMeasureable))
+                    continue;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.Load((int) waterType.Index(), waterType.Icon(), true);
+                button.Load((int) prop.Index(), prop.Icon(), true);
 
                 ++buttonIdx;
             }

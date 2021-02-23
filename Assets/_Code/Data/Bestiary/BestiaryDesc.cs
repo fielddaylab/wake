@@ -44,6 +44,7 @@ namespace Aqua
         public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
         public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
         public IReadOnlyList<BFBase> AssumedFacts { get { return m_AssumedFacts; } }
+        public IReadOnlyList<BFState> StateFacts { get { return m_StateChangeFacts; } }
 
         public bool HasCategory(BestiaryDescCategory inCategory)
         {

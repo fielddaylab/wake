@@ -17,6 +17,7 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private Transform m_PivotTransform = null;
         [SerializeField] private Transform m_RenderTransform = null;
+        [SerializeField] private Collider2D m_Collider = null;
         [SerializeField] private SpriteAnimator m_Animator = null;
 
         #endregion // Inspector
@@ -24,44 +25,46 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] private float m_EnergyRemaining;
         [NonSerialized] private Routine m_BiteAnim;
+        [NonSerialized] private ActorCtrl m_Parent;
         [NonSerialized] private ActorConfig m_Config;
 
-        public void Initialize(float inHeight, float inPivotSide, ActorConfig inConfig)
+        public void Initialize(float inHeight, float inPivotSide, ActorCtrl inParent)
         {
             m_Id = ExperimentServices.Actors.NextId("KelpLeaf");
             m_PivotTransform.SetPosition(inHeight, Axis.Y, Space.Self);
             m_PivotTransform.SetScale(inPivotSide, Axis.X);
             m_PivotTransform.SetRotation(RNG.Instance.NextFloat(-40) * inPivotSide, Axis.Z, Space.Self);
             m_EnergyRemaining = 100f;
-            m_Config = inConfig;
+            m_Parent = inParent;
+            m_Config = inParent.Config;
 
-            m_Animator.Play(inConfig.GetProperty<SpriteAnimation>("LeafHealthyAnimation"));
+            m_Animator.Play(m_Config.GetProperty<SpriteAnimation>("LeafHealthyAnimation"));
         }
 
         private void OnDisable()
         {
             m_BiteAnim.Stop();
             m_Animator.Stop();
-        }
-
-        private IEnumerator BiteAnim()
-        {
-            yield return m_PivotTransform.RotateTo(m_PivotTransform.localEulerAngles.z + RNG.Instance.Choose(-5, 5), 0.5f, Axis.Z, Space.Self).Wave(Wave.Function.CosFade, 3).RevertOnCancel(false);
+            m_Id = StringHash32.Null;
         }
 
         #region IFoodSource
 
         Transform IFoodSource.Transform { get { return m_RenderTransform; } }
 
+        Collider2D IFoodSource.Collider { get { return m_Collider; } }
+
         float IFoodSource.EnergyRemaining { get { return m_EnergyRemaining; } }
 
         StringHash32 IFoodSource.Id { get { return m_Id; } }
+
+        ActorCtrl IFoodSource.Parent { get { return m_Parent; } }
 
         void IFoodSource.Bite(ActorCtrl inActor, float inBite)
         {
             float prevRemaining = m_EnergyRemaining;
             m_EnergyRemaining = Mathf.Max(m_EnergyRemaining - inBite, 15f);
-            m_BiteAnim.Replace(this, BiteAnim());
+            m_BiteAnim.Replace(this, BittenAnim());
 
             if (prevRemaining >= 50 && m_EnergyRemaining < 50)
             {
@@ -85,6 +88,11 @@ namespace ProtoAqua.Experiment
             outOffset *= dist;
 
             return true;
+        }
+
+        private IEnumerator BittenAnim()
+        {
+            yield return m_PivotTransform.RotateTo(m_PivotTransform.localEulerAngles.z + RNG.Instance.Choose(-5, 5), 0.5f, Axis.Z, Space.Self).Wave(Wave.Function.CosFade, 3).RevertOnCancel(false);
         }
 
         #endregion // IFoodSource

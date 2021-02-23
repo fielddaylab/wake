@@ -21,12 +21,12 @@ namespace ProtoAqua.Experiment
             public SerializedHash32 LabelId;
             public SerializedHash32 ShortLabelId;
             public Sprite Icon;
+            public bool SingleCritter;
 
             public string Condition;
             public BestiaryDescSize MaxSize;
 
             TankType IKeyValuePair<TankType, TankDefinition>.Key { get { return Tank; } }
-
             TankDefinition IKeyValuePair<TankType, TankDefinition>.Value { get { return this; } }
 
         }

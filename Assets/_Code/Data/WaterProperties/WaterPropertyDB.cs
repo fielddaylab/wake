@@ -9,11 +9,13 @@ namespace Aqua
     public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>
     {
         [NonSerialized] private WaterPropertyDesc[] m_PropertyIdMap;
+        [NonSerialized] private WaterPropertyDesc[] m_SortedMap;
 
         protected override void PreLookupConstruct()
         {
             base.PreLookupConstruct();
             m_PropertyIdMap = new WaterPropertyDesc[(int) WaterPropertyId.MAX];
+            m_SortedMap = new WaterPropertyDesc[SortOrder.Length];
         }
 
         protected override void ConstructLookupForItem(WaterPropertyDesc inItem, int inIndex)
@@ -29,6 +31,10 @@ namespace Aqua
             {
                 m_PropertyIdMap[(int) propIndex] = inItem;
             }
+
+            int sortIndex = Array.IndexOf(SortOrder, propIndex);
+            if (sortIndex >= 0)
+                m_SortedMap[sortIndex] = inItem;
         }
 
         public WaterPropertyDesc Property(WaterPropertyId inId)
@@ -40,6 +46,21 @@ namespace Aqua
 
             return m_PropertyIdMap[(int) inId];
         }
+
+        public IReadOnlyList<WaterPropertyDesc> Sorted()
+        {
+            return m_SortedMap;
+        }
+
+        static private readonly WaterPropertyId[] SortOrder = new WaterPropertyId[]
+        {
+            WaterPropertyId.Temperature,
+            WaterPropertyId.Light,
+            WaterPropertyId.Oxygen,
+            WaterPropertyId.Salinity,
+            WaterPropertyId.CarbonDioxide,
+            WaterPropertyId.PH
+        };
 
         #if UNITY_EDITOR
 

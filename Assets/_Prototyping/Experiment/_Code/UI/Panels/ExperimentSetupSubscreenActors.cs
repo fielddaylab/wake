@@ -16,11 +16,11 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private Sprite m_EmptyIcon = null;
+        [SerializeField] private ToggleGroup m_ToggleGroup = null;
 
         #endregion // Inspector
 
         [NonSerialized] private ActorToggleButton[] m_CachedButtons;
-
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
         public Action OnSelectContinue;
@@ -32,14 +32,11 @@ namespace ProtoAqua.Experiment
             {
                 ActorToggleButton button = m_CachedButtons[i];
                 button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
+                button.Toggle.group = m_ToggleGroup;
             }
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
 
             UpdateButtons();
-        }
-
-        public Action GetAction() {
-            return OnSelectContinue;
         }
 
         public override void SetData(ExperimentSetupData inData)
@@ -58,6 +55,8 @@ namespace ProtoAqua.Experiment
         {
             var tankType = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_CachedData.Tank);
             var allActorTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Critter);
+
+            m_ToggleGroup.enabled = tankType.SingleCritter;
 
             int buttonIdx = 0;
             foreach(var actorType in allActorTypes)

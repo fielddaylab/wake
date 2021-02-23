@@ -43,6 +43,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private uint m_NextThinkTick;
 
         public StringHash32 Id { get { return m_Id; } }
+        public BestiaryDesc Besitary { get { return m_Config.BestiaryEntry(); } }
         public ActorConfig Config { get { return m_Config; } }
         public ActorBody Body { get { return m_Body; } }
         public ActorStats Stats { get { return m_Stats; } }

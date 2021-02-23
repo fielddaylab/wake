@@ -93,6 +93,8 @@ namespace ProtoAqua.Experiment
             if (inWaterId.IsEmpty)
             {
                 m_NextButton.interactable = false;
+                m_ConstructButton.interactable = false;
+                m_ConstructButton.gameObject.SetActive(false);
                 m_Label.SetText(StringHash32.Null);
             }
             else
@@ -101,17 +103,15 @@ namespace ProtoAqua.Experiment
                 m_Label.SetText(def.CommonName());
                 
 
-                if(m_CachedData.Tank.Equals(TankType.Foundational)) {
-                    // SetTransforms();
+                if (m_CachedData.Tank == TankType.Foundational) {
                     m_NextButton.gameObject.SetActive(false);
                     m_ConstructButton.gameObject.SetActive(true);
-
+                    m_ConstructButton.interactable = true;
                 }
                 else {
                     m_NextButton.gameObject.SetActive(true);
                     m_ConstructButton.gameObject.SetActive(false);
                     m_NextButton.interactable = true;
-
                 }
             }
 

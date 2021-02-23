@@ -26,6 +26,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private readonly List<ActorCtrl> m_AllActors = new List<ActorCtrl>();
         [NonSerialized] private DynamicPool<VariantTable> m_VariantTablePool;
         [NonSerialized] private bool m_Ticking;
+        [NonSerialized] private Dictionary<StringHash32, object> m_NamedObjects = new Dictionary<StringHash32, object>();
 
         [NonSerialized] private uint m_NextId;
 
@@ -117,10 +118,31 @@ namespace ProtoAqua.Experiment
 
         #endregion // Variant Tables
 
+        #region Naming
+
         public StringHash32 NextId(string inType)
         {
             return string.Format("{0}:{1}", inType, m_NextId++);
         }
+
+        public void RegisterName(StringHash32 inId, object inObject)
+        {
+            m_NamedObjects.Add(inId, inObject);
+        }
+
+        public void DeregisterName(StringHash32 inId)
+        {
+            m_NamedObjects.Remove(inId);
+        }
+
+        public T GetNamedObject<T>(StringHash32 inId)
+        {
+            object obj;
+            m_NamedObjects.TryGetValue(inId, out obj);
+            return (T) obj;
+        }
+
+        #endregion // Naming
 
         public ActorPools Pools { get { return m_Pools; } }
 

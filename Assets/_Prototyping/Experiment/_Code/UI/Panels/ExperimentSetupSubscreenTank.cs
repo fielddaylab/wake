@@ -43,7 +43,6 @@ namespace ProtoAqua.Experiment
             }
 
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
-
             m_ConstructButton.onClick.AddListener(() => OnSelectConstruct?.Invoke());
 
             UpdateButtons();
@@ -59,13 +58,6 @@ namespace ProtoAqua.Experiment
             base.Refresh();
             UpdateButtons();
         }
-
-        public TankType SelectedTank()
-        {
-            return m_CurrentTank;
-        }
-
-
 
         private void UpdateButtons()
         {
@@ -105,16 +97,16 @@ namespace ProtoAqua.Experiment
             m_Label.SetText(def.LabelId);
             m_NextButton.interactable = inTankType != TankType.None;
 
-
-            if(m_CurrentTank.Equals(TankType.Stressor)) {
+            if(m_CurrentTank == TankType.Stressor) 
+            {
                 // SetTransforms();
                 m_NextButton.gameObject.SetActive(false);
                 m_ConstructButton.gameObject.SetActive(true);
             }
-            else {
+            else
+            {
                 m_NextButton.gameObject.SetActive(true);
                 m_ConstructButton.gameObject.SetActive(false);
-
             }
 
             Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());

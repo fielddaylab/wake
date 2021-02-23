@@ -8,6 +8,7 @@ using System.Collections;
 using BeauPools;
 using System.Collections.Generic;
 using BeauUtil.Variants;
+using Aqua;
 
 namespace ProtoAqua.Experiment
 {
@@ -16,11 +17,14 @@ namespace ProtoAqua.Experiment
     {
         #region Inspector
 
+        [SerializeField] private BestiaryDesc m_BestiaryEntry = null;
         [SerializeField] private PropertyBlock m_CustomProperties = null;
 
         #endregion // Inspector
 
         [NonSerialized] private VariantTable m_SharedBlackboard = null;
+
+        public BestiaryDesc BestiaryEntry() { return m_BestiaryEntry; }
 
         #region IReadOnlyPropertyBlock
 
@@ -48,9 +52,9 @@ namespace ProtoAqua.Experiment
             m_SharedBlackboard?.Clear();
         }
 
-        public VariantTable SharedBlackboard
+        public VariantTable SharedBlackboard()
         {
-            get { return m_SharedBlackboard ?? (m_SharedBlackboard = new VariantTable(name)); }
+            return m_SharedBlackboard ?? (m_SharedBlackboard = new VariantTable(name));
         }
 
         #endregion // Blackboard

@@ -60,12 +60,20 @@ namespace ProtoAqua.Experiment
 
                 Services.UI.Popup.Display(factDef.Title(), factDef.Description())
                     .OnComplete((r) => {
-                        Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
+                        using(var table = Services.Script.GetTempTable())
+                        {
+                            table.Set("factId", inBehaviorId);
+                            Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
+                        }
                     });
             }
             else
             {
-                Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved);
+                using(var table = Services.Script.GetTempTable())
+                {
+                    table.Set("factId", inBehaviorId);
+                    Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved);
+                }
             }
         }
 

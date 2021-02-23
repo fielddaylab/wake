@@ -64,6 +64,7 @@ namespace Aqua
     {
         HideAlways = 0x001,
         HideIfZero = 0x002,
-        TransferThroughEating = 0x004
+        TransferThroughEating = 0x004,
+        IsMeasureable = 0x008
     }
 }
