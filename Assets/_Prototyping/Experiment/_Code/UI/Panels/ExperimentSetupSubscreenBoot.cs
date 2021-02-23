@@ -18,5 +18,9 @@ namespace ProtoAqua.Experiment
         {
             m_ContinueButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
         }
+
+        public Action GetAction() {
+            return OnSelectContinue;
+        }
     }
 }

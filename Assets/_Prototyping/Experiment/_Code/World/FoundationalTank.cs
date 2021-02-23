@@ -26,6 +26,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
 
+        #region Basic Functions
         protected override void Awake()
         {
             base.Awake();
@@ -100,6 +101,14 @@ namespace ProtoAqua.Experiment
             return false;
         }
 
+        private void ResetIdle()
+        {
+            m_IdleDuration = 0;
+        }
+
+        #endregion // Basic Functions
+
+        #region Actors
         private void SetupAddActor(StringHash32 inActorId)
         {
             int spawnCount = GetSpawnCount(inActorId);
@@ -117,9 +126,7 @@ namespace ProtoAqua.Experiment
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
         }
 
-        private void ResetIdle()
-        {
-            m_IdleDuration = 0;
-        }
+        #endregion // Actors
+
     }
 }

@@ -23,6 +23,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] protected ActorNavHelper m_ActorNavHelper = null;
         [SerializeField] private SpawnCount[] m_ActorSpawns = null;
 
+        [SerializeField] private ExpSubscreen[] m_Sequence = null;
+
         #endregion // Inspector
 
         [NonSerialized] protected BaseInputLayer m_BaseInput;
@@ -50,6 +52,10 @@ namespace ProtoAqua.Experiment
             int val;
             m_ActorSpawns.TryGetValue(inActorId, out val);
             return val;
+        }
+
+        public virtual ExpSubscreen[] GetSequence() {
+            return m_Sequence;
         }
     }
 }

@@ -1,3 +1,5 @@
+using BeauUtil;
+using System;
 using UnityEngine;
 using BeauRoutine.Extensions;
 using Aqua;
@@ -17,6 +19,7 @@ namespace ProtoAqua.Experiment
         public virtual void Refresh() { }
 
         public virtual bool? ShouldCancelOnExit() { return null; }
+
 
         #region BasePanel
 

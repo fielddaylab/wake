@@ -4,6 +4,7 @@ using BeauUtil;
 using UnityEngine.UI;
 using TMPro;
 using Aqua;
+using System.Collections.Generic;
 
 namespace ProtoAqua.Experiment
 {
@@ -17,6 +18,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private Sprite m_EmptyIcon = null;
 
+        [SerializeField] private Button m_ConstructButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
@@ -24,6 +27,8 @@ namespace ProtoAqua.Experiment
 
         public Action OnSelectContinue;
         public Action OnSelectBack;
+
+        public Action OnSelectConstruct;
 
         protected override void Awake()
         {
@@ -36,6 +41,7 @@ namespace ProtoAqua.Experiment
 
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
+            m_ConstructButton.onClick.AddListener(() => OnSelectConstruct?.Invoke());
 
             UpdateButtons();
         }
@@ -50,6 +56,14 @@ namespace ProtoAqua.Experiment
         {
             base.Refresh();
             UpdateButtons();
+        }
+
+        public List<Action> GetAction() {
+            var res = new List<Action>();
+            res.Add(OnSelectBack);
+            res.Add(OnSelectContinue);
+
+            return res;
         }
 
         private void UpdateButtons()
@@ -85,11 +99,32 @@ namespace ProtoAqua.Experiment
             {
                 var def = Services.Assets.Bestiary.Get(inWaterId);
                 m_Label.SetText(def.CommonName());
-                m_NextButton.interactable = true;
+                
+
+                if(m_CachedData.Tank.Equals(TankType.Foundational)) {
+                    // SetTransforms();
+                    m_NextButton.gameObject.SetActive(false);
+                    m_ConstructButton.gameObject.SetActive(true);
+
+                }
+                else {
+                    m_NextButton.gameObject.SetActive(true);
+                    m_ConstructButton.gameObject.SetActive(false);
+                    m_NextButton.interactable = true;
+
+                }
             }
 
             Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
         }
+
+        // private void SetTransforms() {
+        //     Transform toggleGroup = m_ToggleGroup.transform;
+        //     Transform text = m_Label.transform;
+
+        //     toggleGroup.position = new Vector3(toggleGroup.position.x, 93f, toggleGroup.position.z);
+        //     text.position = new Vector3(text.position.x, 45f, text.position.z);
+        // }
     
         private void UpdateFromSelection()
         {

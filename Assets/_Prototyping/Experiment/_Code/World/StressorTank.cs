@@ -42,6 +42,7 @@ namespace ProtoAqua.Experiment
             });
         }
 
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -72,6 +73,7 @@ namespace ProtoAqua.Experiment
 
         public override void OnExperimentEnd()
         {
+            m_Text.SetText("");
             m_IdleRoutine.Stop();
 
             base.OnExperimentEnd();

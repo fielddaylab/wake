@@ -16,6 +16,8 @@ namespace ProtoAqua.Experiment
         public class TankDefinition : IKeyValuePair<TankType, TankDefinition>
         {
             public TankType Tank;
+
+            public ExpSubscreen[] Sequence;
             public SerializedHash32 LabelId;
             public SerializedHash32 ShortLabelId;
             public Sprite Icon;
@@ -26,20 +28,7 @@ namespace ProtoAqua.Experiment
             TankType IKeyValuePair<TankType, TankDefinition>.Key { get { return Tank; } }
 
             TankDefinition IKeyValuePair<TankType, TankDefinition>.Value { get { return this; } }
-        }
 
-        [Serializable]
-
-        public class PropDefinition : IKeyValuePair<WaterPropertyId, PropDefinition>
-        {
-            public WaterPropertyId Id;
-
-            public SerializedHash32 LabelId;
-
-            public Sprite Icon;
-
-            WaterPropertyId IKeyValuePair<WaterPropertyId, PropDefinition>.Key {get { return Id; } }
-            PropDefinition IKeyValuePair<WaterPropertyId, PropDefinition>.Value {get { return this; } }
         }
 
         #endregion // Types

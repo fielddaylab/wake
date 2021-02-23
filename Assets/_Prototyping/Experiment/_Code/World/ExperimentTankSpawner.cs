@@ -24,6 +24,8 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private ExperimentTank m_CurrentTank = null;
 
+        [NonSerialized] private TankType m_CurrentTankType = TankType.None;
+
         [NonSerialized] private ExperimentSettings m_CachedSettings;
 
         [NonSerialized] private ExperimentSetupData m_CurrentData = null;
@@ -38,7 +40,8 @@ namespace ProtoAqua.Experiment
                 .Register(ExperimentEvents.ExperimentTeardown, OnTeardown, this)
                 .Register(ExperimentEvents.ExperimentBegin, OnBegin, this)
                 .Register<StringHash32>(ExperimentEvents.BehaviorAddedToLog, OnBehaviorRecorded, this)
-                .Register<ExperimentResultData>(ExperimentEvents.ExperimentRequestSummary, GenerateResult, this);
+                .Register<ExperimentResultData>(ExperimentEvents.ExperimentRequestSummary, GenerateResult, this)
+                .Register<TankType>(ExperimentEvents.SetupTank, SetTank, this);
         }
 
         private void OnDestroy()
@@ -53,12 +56,16 @@ namespace ProtoAqua.Experiment
             SetVars(selectionData);
         }
 
+        private void SetTank(TankType tank) {
+            m_CurrentTankType = tank;
+        }
+
         private void OnBegin()
         {
             ExperimentServices.Actors.BeginTicking();
             Services.Data.SetVariable(ExperimentVars.ExperimentRunning, true);
             m_CurrentTank.OnExperimentStart();
-            if(m_CurrentTank is StressorTank) {
+            if(m_CurrentTankType.Equals(TankType.Stressor)) {
                 Services.Events.Dispatch(ExperimentEvents.StressorText, m_CurrentData.PropertyId);
             }
             m_ObservedBehaviors.Clear();

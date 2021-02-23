@@ -15,6 +15,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private LocText m_Label = null;
 
+        [SerializeField] private Button m_ConstructButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private ExperimentSettings m_CachedSettings;
@@ -24,7 +26,11 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private TankType m_CurrentTank;
 
+        [NonSerialized] public Action OnChange;
+
         [NonSerialized] public Action OnSelectContinue;
+
+        [NonSerialized] public Action OnSelectConstruct;
 
         protected override void Awake()
         {
@@ -36,16 +42,12 @@ namespace ProtoAqua.Experiment
                 m_CachedButtons[i].Toggle.onValueChanged.AddListener((b) => UpdateFromSelection());
             }
 
-            m_NextButton.onClick.AddListener(() => GetToggledExperiment());
+            m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
+
+            m_ConstructButton.onClick.AddListener(() => OnSelectConstruct?.Invoke());
 
             UpdateButtons();
         }
-
-        private void GetToggledExperiment()
-        {
-            OnSelectContinue?.Invoke();
-        }
-
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);
@@ -98,12 +100,33 @@ namespace ProtoAqua.Experiment
 
         private void UpdateDisplay(TankType inTankType)
         {
+            OnChange?.Invoke();
             var def = m_CachedSettings.GetTank(inTankType);
             m_Label.SetText(def.LabelId);
             m_NextButton.interactable = inTankType != TankType.None;
 
+
+            if(m_CurrentTank.Equals(TankType.Stressor)) {
+                // SetTransforms();
+                m_NextButton.gameObject.SetActive(false);
+                m_ConstructButton.gameObject.SetActive(true);
+            }
+            else {
+                m_NextButton.gameObject.SetActive(true);
+                m_ConstructButton.gameObject.SetActive(false);
+
+            }
+
             Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());
         }
+
+        // private void SetTransforms() {
+        //     Transform toggleGroup = m_ToggleGroup.transform;
+        //     Transform text = m_Label.transform;
+
+        //     m_ToggleGroup.position = new Vector3(0f, 93f, toggleGroup.position.z);
+        //     text.position = new Vector3(text.position.x, 45f, text.position.z);
+        // }
     
         private void UpdateFromSelection()
         {
@@ -112,6 +135,7 @@ namespace ProtoAqua.Experiment
             {
                 m_CurrentTank = (TankType)active.GetComponent<SetupToggleButton>().Id.AsInt();
                 m_CachedData.Tank = m_CurrentTank; 
+                
                 
             }
             else

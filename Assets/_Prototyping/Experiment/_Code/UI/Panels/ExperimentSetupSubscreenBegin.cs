@@ -4,6 +4,7 @@ using BeauPools;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace ProtoAqua.Experiment
 {
@@ -27,6 +28,10 @@ namespace ProtoAqua.Experiment
         {
             m_StartButton.onClick.AddListener(() => OnSelectStart?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
+        }
+
+        public Action GetAction() {
+            return OnSelectBack;
         }
 
         private void UpdateDisplay()
