@@ -17,8 +17,8 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_Button = null;
         [SerializeField, Required] private RectTransform m_ButtonTail = null;
         [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private TextMeshProUGUI m_Label = null;
-        [SerializeField, Required] private TextMeshProUGUI m_Value = null;
+        [SerializeField, Required] private LocText m_Label = null;
+        [SerializeField, Required] private LocText m_Value = null;
         [SerializeField, Required] private RectTransform m_SafeRangeTransform = null;
 
         #endregion // Inspector
@@ -28,17 +28,15 @@ namespace Aqua.Portable
 
         public void Initialize(BFWaterProperty inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
         {
+            var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
+
             m_Icon.sprite = inFact.Icon();
             m_Icon.gameObject.SetActive(inFact.Icon());
 
-            m_Label.text = inFact.PropertyId().ToString();
-            m_Value.text = inFact.Value().ToString();
+            m_Label.SetText(propData.LabelId());
+            m_Value.SetText(propData.FormatValue(inFact.Value()));
 
-            //Set Anchors of Safe Range (Assuming 0-100 degree range)
-            
-            //m_SafeRangeTransform.anchorMin = new Vector2((), 0f);
-            m_SafeRangeTransform.anchorMax = new Vector2((inFact.Value() / inFact.MaxValue()), 1f);
-
+            m_SafeRangeTransform.anchorMax = new Vector2(propData.RemapValue(inFact.Value()), 1f);
 
             m_Button.targetGraphic.raycastTarget = inbButtonMode;
             m_Button.interactable = inbInteractable;

@@ -13,23 +13,17 @@ namespace Aqua
 
         [Header("Reproduction")]
         [SerializeField] private uint m_Interval = 0;
-        [SerializeField] private QualitativeMapping m_QualMap = null;
 
         [Space]
         [SerializeField] private float m_Amount = 0;
         [SerializeField] private uint m_MinAge = 0;
 
         #endregion // Inspector
-        
-        [NonSerialized] private QualitativeValue m_QualInterval = QualitativeValue.None;
 
         public uint Interval() { return m_Interval; }
         
         public float Amount() { return m_Amount; }
         public uint MinAge() { return m_MinAge; }
-
-        public QualitativeMapping QualMap() { return m_QualMap; }
-        public QualitativeValue QualInterval() { return m_QualInterval; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
@@ -52,11 +46,9 @@ namespace Aqua
             return grow != null;
         }
 
-        protected override void GenerateQualitative()
+        public override BFMode Mode()
         {
-            base.GenerateQualitative();
-
-            m_QualInterval = m_QualMap.Closest(m_Interval);
+            return BFMode.Internal;
         }
     }
 }

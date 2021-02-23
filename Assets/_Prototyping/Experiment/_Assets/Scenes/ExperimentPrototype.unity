@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -4622,7 +4622,6 @@ MonoBehaviour:
     ActorCount: 6
   - ActorId: SeaOtter
     ActorCount: 2
-  m_SpawnDelay: 0.05
   m_Text: {fileID: 2076216696}
 --- !u!1 &988021654
 GameObject:
@@ -4831,7 +4830,7 @@ MonoBehaviour:
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
     MainProperty:
-      Name: _Color
+      Name: _BaseColor
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
       Enabled: 1
@@ -4856,7 +4855,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7c4b9837f33a3b54f91df5fe5b355afb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6249,6 +6248,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 29682253}
     m_Modifications:
+    - target: {fileID: 3772213009741999389, guid: 86593a88918bfa640ba206450ca7871f,
+        type: 3}
+      propertyPath: m_Colors.Main.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772213009741999389, guid: 86593a88918bfa640ba206450ca7871f,
+        type: 3}
+      propertyPath: m_Colors.Main.g
+      value: 0.07853117
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772213009741999389, guid: 86593a88918bfa640ba206450ca7871f,
+        type: 3}
+      propertyPath: m_Colors.Main.b
+      value: 0.6226415
+      objectReference: {fileID: 0}
     - target: {fileID: 3772213010191374612, guid: 86593a88918bfa640ba206450ca7871f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6312,7 +6326,7 @@ PrefabInstance:
     - target: {fileID: 3772213010191374615, guid: 86593a88918bfa640ba206450ca7871f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8078433970805356524, guid: 86593a88918bfa640ba206450ca7871f,
         type: 3}

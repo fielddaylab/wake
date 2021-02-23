@@ -13,20 +13,12 @@ namespace Aqua
 
         [Header("Growth")]
         [SerializeField] private uint m_Amount = 0;
-        [SerializeField] private QualitativeMapping m_QualMap = null;
-
-        [Space]
         [SerializeField] private uint m_Interval = 0;
 
         #endregion // Inspector
-        
-        [NonSerialized] private QualitativeValue m_QualAmount = QualitativeValue.None;
 
         public uint Amount() { return m_Amount; }
         public uint Interval() { return m_Interval; }
-
-        public QualitativeMapping QualMap() { return m_QualMap; }
-        public QualitativeValue QualAmount() { return m_QualAmount; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
@@ -49,11 +41,9 @@ namespace Aqua
             return grow != null;
         }
 
-        protected override void GenerateQualitative()
+        public override BFMode Mode()
         {
-            base.GenerateQualitative();
-
-            m_QualAmount = m_QualMap.Closest(m_Amount);
+            return BFMode.Internal;
         }
     }
 }

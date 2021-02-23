@@ -13,19 +13,21 @@ namespace Aqua
         [Header("Property")]
         [SerializeField] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
         [SerializeField] private float m_Value = 0;
-        [SerializeField] private float m_MaxValue = 0;
 
         #endregion // Inspector
 
         public WaterPropertyId PropertyId() { return m_PropertyId; }
         public float Value() { return m_Value; }
-        public float MaxValue() { return m_MaxValue;}
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
             inVisitor.Visit(this, inParams);
         }
 
+        protected override int GetSortingOrder()
+        {
+            return (int) m_PropertyId;
+        }
 
         public override BFMode Mode()
         {

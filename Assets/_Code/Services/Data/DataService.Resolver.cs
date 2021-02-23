@@ -166,7 +166,7 @@ namespace Aqua
             m_VariableResolver.SetTableVar("inventory.hasItem", (s) => inData.Inventory.HasItem(s));
             m_VariableResolver.SetTableVar("inventory.count", (s) => inData.Inventory.ItemCount(s));
             m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
-            m_VariableResolver.SetTableVar("job.isStarted", (s) => inData.Jobs.IsStarted(s));
+            m_VariableResolver.SetTableVar("job.isStartedOrComplete", (s) => inData.Jobs.IsStartedOrComplete(s));
             m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
             m_VariableResolver.SetTableVar("job.isComplete", (s) => inData.Jobs.IsComplete(s));
             m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));

@@ -10,6 +10,7 @@ namespace Aqua.Profile
         // Serialized
         private List<PlayerJob> m_JobStatuses = new List<PlayerJob>();
         private HashSet<StringHash32> m_CompletedJobs = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UnlockedJobs = new HashSet<StringHash32>();
         private StringHash32 m_CurrentJobId;
 
         // Non-Serialized
@@ -54,6 +55,23 @@ namespace Aqua.Profile
         }
 
         #endregion // Current Job
+
+        #region Unlocking
+
+        public bool UnlockHiddenJob(StringHash32 inJobId)
+        {
+            if (!Services.Assets.Jobs.IsHiddenJob(inJobId))
+                return false;
+
+            return m_UnlockedJobs.Add(inJobId);
+        }
+
+        public bool IsHiddenUnlocked(StringHash32 inId)
+        {
+            return m_UnlockedJobs.Contains(inId);
+        }
+
+        #endregion // Unlocking
 
         #region Progress
 
@@ -115,7 +133,7 @@ namespace Aqua.Profile
             return job.IsInProgress();
         }
 
-        public bool IsStarted(StringHash32 inJobId)
+        public bool IsStartedOrComplete(StringHash32 inJobId)
         {
             return IsComplete(inJobId) || IsInProgress(inJobId);
         }

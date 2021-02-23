@@ -49,6 +49,9 @@ namespace Aqua
         public JobCategory Category() { return m_Category; }
         public JobDescFlags Flags() { return m_Flags; }
 
+        public bool HasFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) != 0; }
+        public bool HasAllFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
+
         public StringHash32 NameId() { return m_NameId; }
         public StringHash32 PosterId() { return m_PosterId; }
         public StringHash32 DescId() { return m_DescId; }
@@ -73,6 +76,9 @@ namespace Aqua
         public bool ShouldBeAvailable()
         {
             var jobs = Services.Data.Profile.Jobs;
+
+            if (HasFlags(JobDescFlags.Hidden) && !jobs.IsHiddenUnlocked(Id()))
+                return false;
 
             foreach(var job in m_PrerequisiteJobs)
             {

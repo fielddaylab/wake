@@ -6,7 +6,7 @@ using BeauUtil.Variants;
 
 namespace Aqua
 {
-    public class PlayerFactParams : IKeyValuePair<StringHash32, PlayerFactParams>
+    public class PlayerFactParams : IKeyValuePair<StringHash32, PlayerFactParams>, IComparable<PlayerFactParams>
     {
         [NonSerialized] private BFBase m_CachedFact;
         [NonSerialized] private bool m_Locked;
@@ -91,5 +91,14 @@ namespace Aqua
         {
             return inFact.GetWrapper();
         }
+
+        #region IComparable
+
+        int IComparable<PlayerFactParams>.CompareTo(PlayerFactParams other)
+        {
+            return Fact.CompareTo(other.Fact);
+        }
+
+        #endregion // IComparable
     }
 }

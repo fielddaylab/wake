@@ -125,6 +125,29 @@ namespace Aqua.Profile
             }
         }
 
+        public int GetFactsForEntity(StringHash32 inEntityId, ICollection<PlayerFactParams> outFacts)
+        {
+            BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
+            int count = 0;
+
+            foreach(var fact in entry.AssumedFacts)
+            {
+                outFacts.Add(PlayerFactParams.Wrap(fact));
+                count++;
+            }
+
+            foreach(var fact in m_Facts)
+            {
+                if (fact.Fact.Parent() == entry)
+                {
+                    outFacts.Add(fact);
+                    ++count;
+                }
+            }
+
+            return count;
+        }
+
         private PlayerFactParams AddFact(StringHash32 inBaseFact)
         {
             PlayerFactParams fact = new PlayerFactParams(inBaseFact);

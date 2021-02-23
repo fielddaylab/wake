@@ -26,14 +26,15 @@ namespace Aqua.Portable
 
         public void Initialize(BFStateRange inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
         {
+            var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
+
             m_Icon.sprite = inFact.Icon();
             m_Icon.gameObject.SetActive(inFact.Icon());
 
             //Set Anchors of Safe Range (Assuming 0-100 degree range)
             
-            m_SafeRangeTransform.anchorMin = new Vector2((inFact.MinSafe() / 100f), 0f);
-            m_SafeRangeTransform.anchorMax = new Vector2((inFact.MaxSafe() / 100f), 1f);
-
+            m_SafeRangeTransform.anchorMin = new Vector2(propData.RemapValue(inFact.MinSafe()), 0f);
+            m_SafeRangeTransform.anchorMax = new Vector2(propData.RemapValue(inFact.MaxSafe()), 1f);
 
             m_Button.targetGraphic.raycastTarget = inbButtonMode;
             m_Button.interactable = inbInteractable;

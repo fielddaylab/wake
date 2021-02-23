@@ -22,5 +22,17 @@ namespace Aqua
         public MapDB Map { get { return m_Map; } }
         public InventoryDB Inventory { get { return m_Inventory; } }
         public WaterPropertyDB WaterProp { get { return m_WaterProperties; } }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            m_Acts.Initialize();
+            m_Jobs.Initialize();
+            m_Bestiary.Initialize();
+            m_Map.Initialize();
+            m_Inventory.Initialize();
+            m_WaterProperties.Initialize();
+        }
     }
 }

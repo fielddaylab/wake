@@ -49,6 +49,14 @@ namespace Aqua
 
         public float MinValue() { return m_MinValue; }
         public float MaxValue() { return m_MaxValue; }
+
+        /// <summary>
+        /// Remaps the given value to a 0-1 range from the minimum property value to the maximum.
+        /// </summary>
+        public float RemapValue(float inValue)
+        {
+            return (inValue - m_MinValue) / (m_MaxValue - m_MinValue);
+        }
     }
 
     [Flags]

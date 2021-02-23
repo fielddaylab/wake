@@ -94,6 +94,11 @@ namespace Aqua
 
         #region Internal
 
+        public void Initialize()
+        {
+            EnsureCreated();
+        }
+
         protected void EnsureCreated()
         {
             if (!m_Constructed)

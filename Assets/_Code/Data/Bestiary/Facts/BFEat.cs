@@ -14,17 +14,11 @@ namespace Aqua
         [Header("Eating")]
         [SerializeField] private BestiaryDesc m_TargetEntry = null;
         [SerializeField] private uint m_Amount = 0;
-        [SerializeField] private QualitativeMapping m_QualMap = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private QualitativeValue m_QualAmount = QualitativeValue.None;
-
         public BestiaryDesc Target() { return m_TargetEntry; }
         public uint Amount() { return m_Amount; }
-
-        public QualitativeMapping QualMap() { return m_QualMap; }
-        public QualitativeValue QualAmount() { return m_QualAmount; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
@@ -77,23 +71,9 @@ namespace Aqua
             return false;
         }
 
-        protected override void GenerateQualitative()
+        protected override int GetSortingOrder()
         {
-            base.GenerateQualitative();
-
-            m_QualAmount = m_QualMap.Closest(m_Amount);
+            return 10;
         }
-
-        #if UNITY_EDITOR
-
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            if (!m_QualMap)
-                m_QualMap = UnityEditor.AssetDatabase.LoadAssetAtPath<QualitativeMapping>("Assets/_Assets/Data/QualitativeMappings/_Default.asset");
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

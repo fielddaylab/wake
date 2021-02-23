@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public abstract class BFBase : DBObject
+    public abstract class BFBase : DBObject, IComparable<BFBase>
     {
         #region Inspector
 
@@ -38,16 +38,23 @@ namespace Aqua
         public virtual void Hook(BestiaryDesc inParent)
         {
             m_Parent = inParent;
-            GenerateQualitative();
         }
-
-        protected virtual void GenerateQualitative() { }
 
         internal PlayerFactParams GetWrapper()
         {
             Assert.True(Mode() == BFMode.Always, "PlayerFactParams wrapper is not available for facts of type '{0}'", GetType().FullName);
             return m_SelfParams ?? (m_SelfParams = new PlayerFactParams(this));
         }
+
+        public virtual int CompareTo(BFBase other)
+        {
+            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
+            if (sort == 0)
+                sort = Id().CompareTo(other.Id());
+            return sort;
+        }
+
+        protected virtual int GetSortingOrder() { return GetType().GetHashCode(); }
 
         #if UNITY_EDITOR
 

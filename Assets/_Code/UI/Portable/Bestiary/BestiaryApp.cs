@@ -20,7 +20,6 @@ namespace Aqua.Portable
         [Serializable] private class RangeFactPool : SerializablePool<BestiaryRangeFactButton> { }
         [Serializable] private class WaterPropertyPool : SerializablePool<BestiaryWaterPropertyButton> { }
 
-
         public class OpenToRequest : IPortableRequest
         {
             public BestiaryUpdateParams Target;
@@ -149,6 +148,8 @@ namespace Aqua.Portable
         [SerializeField, Required] private Image m_SketchImage = null;
         [SerializeField, Required] private VerticalLayoutGroup m_FactLayoutGroup = null;
         [SerializeField, Required] private Button m_SelectEntryButton = null;
+
+        [Header("Facts")]
         [SerializeField] private FactPool m_FactPool = null;
         [SerializeField] private RangeFactPool m_RangeFactPool = null;
         [SerializeField] private WaterPropertyPool m_WaterPropertyPool = null;
@@ -434,9 +435,14 @@ namespace Aqua.Portable
                 m_SelectEntryButton.interactable = m_SelectBestiaryRequest.CustomValidator == null || m_SelectBestiaryRequest.CustomValidator(inEntry);
             }
 
-            foreach(var fact in Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id()))
+            using(PooledList<PlayerFactParams> facts = PooledList<PlayerFactParams>.Create())
             {
-                fact.Fact.Accept(this, fact);
+                Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
+                facts.Sort();
+                foreach(var fact in facts)
+                {
+                    fact.Fact.Accept(this, fact);
+                }
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_FactLayoutGroup.transform);

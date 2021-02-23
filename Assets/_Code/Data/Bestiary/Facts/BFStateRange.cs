@@ -15,21 +15,13 @@ namespace Aqua
         [SerializeField] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
         [SerializeField] private float m_MinSafe = 0;
         [SerializeField] private float m_MaxSafe = 0;
-        [SerializeField] private QualitativeMapping m_QualMap = null;
 
         #endregion // Inspector
-
-        [NonSerialized] private QualitativeValue m_QualMinSafe = QualitativeValue.None;
-        [NonSerialized] private QualitativeValue m_QualMaxSafe = QualitativeValue.None;
 
         public WaterPropertyId PropertyId() { return m_PropertyId; }
 
         public float MinSafe() { return m_MinSafe; }
         public float MaxSafe() { return m_MaxSafe; }
-
-        public QualitativeMapping QualMap() { return m_QualMap; }
-        public QualitativeValue QualMinSafe() { return m_QualMinSafe; }
-        public QualitativeValue QualMaxSafe() { return m_QualMaxSafe; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
@@ -49,14 +41,6 @@ namespace Aqua
             return result;
 
             // throw new System.NotImplementedException();
-        }
-
-        protected override void GenerateQualitative()
-        {
-            base.GenerateQualitative();
-
-            m_QualMinSafe = m_QualMap.Closest(m_MinSafe);
-            m_QualMaxSafe = m_QualMap.Closest(m_MaxSafe);
         }
     }
 }
