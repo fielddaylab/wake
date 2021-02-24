@@ -32,7 +32,6 @@ namespace ProtoAqua.Experiment
             {
                 ActorToggleButton button = m_CachedButtons[i];
                 button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
-                button.Toggle.group = m_ToggleGroup;
             }
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
 
@@ -70,6 +69,8 @@ namespace ProtoAqua.Experiment
                     continue;
                 
                 button.Load(actorType.Id(), actorType.Icon(), true);
+                button.Toggle.group = tankType.SingleCritter ? m_ToggleGroup : null;
+
                 ++buttonIdx;
             }
 
