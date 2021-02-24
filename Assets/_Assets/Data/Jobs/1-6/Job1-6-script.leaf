@@ -8,7 +8,8 @@
                     Really, we're just looking to get you introduced to the elements.
                     Most folks don't know what we do here.
                     So head over to Site B when you're ready.
-$call   JobBoardBackground->Deactivate
+{@kevin}    Site B?
+{@kelpResearcher}   Yep! Just exit your helm, hop in your sub, and head east.
 
 :: end
 @trigger    JobCompleted
@@ -39,7 +40,7 @@ $endif
 @cutscene
 $set    player:seen.jules = true
 {@kelpResearcher}   You're gonna want to take your sub over to Dive Site B.
-                    That's the one I've marked on your map for you.
+                    That's the one I've marked for you to the east.
                     Once you're there, you should dive.
 
 :: diveSite
