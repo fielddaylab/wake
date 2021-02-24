@@ -58,15 +58,15 @@ namespace Aqua
         public StringHash32 DescInProgressId() { return m_DescInProgressId; }
         public StringHash32 DescCompletedId() { return m_DescCompletedId; }
 
-        public int Difficulty(DifficultyType inType)
+        public int Difficulty(ScienceActivityType inType)
         {
             switch(inType)
             {
-                case DifficultyType.Argumentation:
+                case ScienceActivityType.Argumentation:
                     return m_ArgumentationDifficulty;
-                case DifficultyType.Experimentation:
+                case ScienceActivityType.Experimentation:
                     return m_ExperimentDifficulty;
-                case DifficultyType.Modeling:
+                case ScienceActivityType.Modeling:
                     return m_ModelingDifficulty;
                 default:
                     throw new ArgumentOutOfRangeException("inType");
@@ -150,11 +150,15 @@ namespace Aqua
         SideStory
     }
 
-    public enum DifficultyType : byte
+    [LabeledEnum]
+    public enum ScienceActivityType : byte
     {
         Experimentation,
         Modeling,
-        Argumentation
+        Argumentation,
+
+        [Hidden]
+        MAX
     }
 
     [Flags]

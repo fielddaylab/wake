@@ -69,8 +69,8 @@ namespace Aqua
             var job = Services.Assets.Jobs.Get(inJobId);
 
             // inventory adjustment
-            Services.Data.Profile.Inventory.AdjustItem("Cash", job.CashReward());
-            Services.Data.Profile.Inventory.AdjustItem("Gear", job.GearReward());
+            Services.Data.Profile.Inventory.AdjustItem(GameConsts.CashId, job.CashReward());
+            Services.Data.Profile.Inventory.AdjustItem(GameConsts.GearsId, job.GearReward());
 
             using(var table = Services.Script.GetTempTable())
             {

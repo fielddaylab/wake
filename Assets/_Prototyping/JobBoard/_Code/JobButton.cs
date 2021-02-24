@@ -6,65 +6,88 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using BeauPools;
 
 namespace ProtoAqua.JobBoard
 {
-    public class JobButton : MonoBehaviour
+    public class JobButton : MonoBehaviour, IPoolAllocHandler
     {
-        [SerializeField] private LocText JobName = null;
-        [SerializeField] private TextMeshProUGUI JobReward = null;
+        #region Inspector
 
-        [SerializeField] public Image Icon = null;
+        [SerializeField, Required] private Toggle m_Toggle = null;
+        [SerializeField, Required] private Image m_Icon = null;
+        [SerializeField, Required] private LocText m_NameLabel = null;
+        [SerializeField] private LocText m_PosterLabel = null;
 
-        [SerializeField] public Transform ButtonTransform = null;
+        #endregion // Inspector
 
-        public JobDesc Job { get; set; }
+        [NonSerialized] private Transform m_Transform;
+        [NonSerialized] private Action<JobButton> m_OnSelected;
+        [NonSerialized] private JobDesc m_Job;
+        [NonSerialized] private PlayerJobStatus m_Status;
 
-        public StringHash32 JobId { get; set; }
+        public JobDesc Job { get { return m_Job; } }
+        public PlayerJobStatus Status { get { return m_Status; } }
+        public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
-        public PlayerJobStatus Status { get; set; }
-
-        public void SetupJob(JobDesc job, PlayerJob player)
+        private void Awake()
         {
-            Job = job;
-            JobId = job.Id();
-            if (player == null)
+            m_Toggle.onValueChanged.AddListener(OnToggle);
+        }
+
+        public void Initialize(ToggleGroup inGroup, Action<JobButton> inSelectedCallback)
+        {
+            m_Toggle.group = inGroup;
+            m_OnSelected = inSelectedCallback;
+        }
+
+        public void Populate(JobDesc inJob, PlayerJobStatus inStatus)
+        {
+            m_Job = inJob;
+            m_Status = inStatus;
+
+            m_NameLabel.SetText(inJob.NameId());
+            
+            if (m_PosterLabel)
+                m_PosterLabel.SetText(inJob.PosterId());
+
+            var jobIcon = inJob.Icon();
+            if (jobIcon != null)
             {
-                Status = PlayerJobStatus.NotStarted;
+                m_Icon.sprite = jobIcon;
+                m_Icon.gameObject.SetActive(true);
             }
             else
             {
-                Status = player.Status();
-            }
-
-            SetJobName(job.NameId());
-            SetReward(job.CashReward());
-            SetIcon(job.Icon());
-            return;
-        }
-
-        public void SetJobName(StringHash32 jobName) {
-            if(!jobName.IsEmpty) {
-                JobName.SetText(jobName);
-            }
-            else {
-                JobName.SetText(StringHash32.Null);
+                m_Icon.gameObject.SetActive(false);
+                m_Icon.sprite = null;
             }
         }
 
-        public void SetReward(int reward) {
-            JobReward.SetText(reward.ToString());
-        }
-
-        public void SetIcon(Sprite sprite) {
-            if(sprite != null) {
-                Icon.sprite = sprite;
-            }
-        }
-
-        public Transform GetTransform()
+        public bool UpdateStatus(PlayerJobStatus inStatus)
         {
-            return ButtonTransform;
+            if (m_Status != inStatus)
+            {
+                m_Status = inStatus;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void OnToggle(bool inbValue)
+        {
+            if (inbValue)
+                m_OnSelected(this);
+        }
+
+        void IPoolAllocHandler.OnAlloc()
+        {
+        }
+
+        void IPoolAllocHandler.OnFree()
+        {
+            m_Job = null;
         }
     }
 }

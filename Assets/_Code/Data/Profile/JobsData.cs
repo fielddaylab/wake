@@ -80,6 +80,12 @@ namespace Aqua.Profile
             return InternalGetProgress(inJobId);
         }
 
+        public PlayerJobStatus GetStatus(StringHash32 inJobId)
+        {
+            var progress = InternalGetProgress(inJobId);
+            return progress == null ? PlayerJobStatus.NotStarted : progress.Status();
+        }
+
         private PlayerJob InternalGetProgress(StringHash32 inJobId)
         {
             if (inJobId == StringHash32.Null)

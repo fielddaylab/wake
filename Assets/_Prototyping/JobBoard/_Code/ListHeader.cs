@@ -11,15 +11,15 @@ namespace ProtoAqua.JobBoard
 {
     public class ListHeader : MonoBehaviour
     {
-        [SerializeField] public Transform HeaderTransform = null;
-        [SerializeField] public LocText m_Label = null;
+        #region Inspector
 
-        public PlayerJobStatus Status { get; set; }
+        [SerializeField] private LocText m_Label = null;
 
-        public Transform GetTransform()
-        {
-            return HeaderTransform;
-        }
+        #endregion // Inspector
+
+        [NonSerialized] private Transform m_Transform;
+
+        public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
         public void SetText(string text)
         {
@@ -27,32 +27,6 @@ namespace ProtoAqua.JobBoard
             {
                 m_Label.SetText(text);
             }
-
         }
-
-        public void Update()
-        {
-            if (Status.Equals(PlayerJobStatus.InProgress))
-            {
-                SetText("In Progress"); // TODO : clean this to a dict or enum
-            }
-            else if (Status.Equals(PlayerJobStatus.Completed))
-            {
-                SetText("Completed");
-            }
-            else if (Status.Equals(PlayerJobStatus.Active))
-            {
-                SetText("Active");
-            }
-            else
-            {
-                SetText("Available");
-            }
-        }
-
-        
     }
-
-
-
 }

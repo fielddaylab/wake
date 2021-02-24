@@ -1,38 +1,36 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using BeauUtil;
 using TMPro;
-using BeauUtil.Variants;
-using BeauData;
-
 
 namespace Aqua
 {
-
     public class InvItemDisplay : MonoBehaviour
     {
         [SerializeField, Required] private Image Icon = null;
+        [SerializeField, Required] private TMP_Text m_Text = null;
 
-        [SerializeField, Required] private TextMeshProUGUI m_Text = null;
-
+        [NonSerialized] private InvItem m_Item = null;
         [NonSerialized] private int m_Value = 0;
-
-        [NonSerialized] private string m_NameTextId = null;
-
-        [NonSerialized] private PlayerInv m_CurrentItem = null;
 
         public void SetupItem(PlayerInv playerItem)
         {
-            m_CurrentItem = playerItem;
-            Icon.sprite = playerItem.Item.Icon();
-            m_Value = playerItem.Value();
-            m_NameTextId = playerItem.Item.NameTextId();
+            SetupItem(playerItem.Item, playerItem.Value());
+        }
 
-            m_Text.SetText(m_Value.ToString());
+        public void SetupItem(StringHash32 inItemId, int inValue)
+        {
+            SetupItem(Services.Assets.Inventory.Get(inItemId), inValue);
+        }
 
-            return;
+        public void SetupItem(InvItem inItem, int inValue)
+        {
+            m_Item = inItem;
+            m_Value = inValue;
+
+            Icon.sprite = inItem.Icon();
+            m_Text.SetText(m_Value.ToStringLookup());
         }
 
     }

@@ -34,24 +34,19 @@ namespace Aqua.Portable
 
         [SerializeField, Required] private ToggleGroup m_Group = null;
         [SerializeField, Required] private Toggle m_JobToggle = null;
-
         [SerializeField, Required] private Toggle m_ResourceToggle = null;
 
         [Header("Default")]
 
         [SerializeField, Required] private TextMeshProUGUI Title = null;
-
         [SerializeField, Required] private TextMeshProUGUI Background = null;
-
         [SerializeField, Required] private TextMeshProUGUI Type = null;
-
-
         [SerializeField, Required] private Transform Default = null;
 
         [Header("Job")]
 
         [SerializeField, Required] private Transform JobView = null;
-        [SerializeField, Required] private Transform JobSelect = null;
+        [SerializeField, Required] private JobInfoDisplay m_JobDisplay = null;
 
         [Header("Resource")]
 
@@ -125,7 +120,6 @@ namespace Aqua.Portable
         {
             InventoryView.gameObject.SetActive(false);
 
-
             PlayerJob job = null;
             if (currentJob == null || !currentJob.IsInProgress())
             {
@@ -163,6 +157,7 @@ namespace Aqua.Portable
                 Background.SetText("Inventory");
                 Type.SetText("inventory items");
             }
+            
             Default.gameObject.SetActive(Value);
 
             // foreach (var toggle in m_Group.ActiveToggles())
@@ -177,8 +172,7 @@ namespace Aqua.Portable
 
         private void SetupJobStatus(PlayerJob job)
         {
-            JobSelect JobDisplay = JobSelect.GetComponent<JobSelect>();
-            JobDisplay.SetupJobSelect(job);
+            m_JobDisplay.Populate(job.Job);
         }
 
         private void LoadResource()

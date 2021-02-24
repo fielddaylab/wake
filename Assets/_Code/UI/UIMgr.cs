@@ -204,6 +204,7 @@ namespace Aqua
             uiCameraData.renderType = CameraRenderType.Overlay;
             var mainCameraData = inCamera.GetUniversalAdditionalCameraData();
             mainCameraData.cameraStack.Add(m_UICamera);
+            inCamera.cullingMask &= ~GameLayers.UI_Mask;
         }
 
         private void CleanupFromScene(SceneBinding inBinding, object inContext)

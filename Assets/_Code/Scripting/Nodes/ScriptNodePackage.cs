@@ -207,7 +207,14 @@ namespace Aqua.Scripting
 
             public override bool IsVerbose
             {
-                get { return true; }
+                get
+                {
+                    #if UNITY_EDITOR
+                    return true;
+                    #else
+                    return false;
+                    #endif // UNITY_EDITOR
+                }
             }
 
             public override ScriptNodePackage CreatePackage(string inFileName)

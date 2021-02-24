@@ -1,0 +1,13 @@
+#basePath   jobBoard
+
+:: partner.tutorial
+@trigger    SceneStart
+@when       scene:name == "JobBoard"
+@once
+@cutscene
+{@kevin}    Alright, looks like this is the job board.
+            Seems to have gotten some updates since I last saw one of these.
+{@player}   You've seen one of these before?
+{@kevin}    An older version of them, yeah.
+            You should just be able to select a job on the left...
+            Then accept it from the panel on the right.

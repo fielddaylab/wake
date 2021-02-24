@@ -25,4 +25,10 @@ namespace Aqua
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
     }
+
+    static public class GameConsts
+    {
+        static public readonly StringHash32 CashId = "Cash";
+        static public readonly StringHash32 GearsId = "Gear";
+    }
 }

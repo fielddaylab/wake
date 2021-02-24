@@ -7,322 +7,224 @@ using BeauUtil;
 using UnityEngine.UI;
 using TMPro;
 using BeauData;
+using BeauPools;
 
 namespace ProtoAqua.JobBoard
 {
     public class JobBoard : MonoBehaviour, ISceneLoadHandler
     {
+        [Serializable] private class HeaderPool : SerializablePool<ListHeader> { }
+        [Serializable] private class ButtonPool : SerializablePool<JobButton> { }
 
-        #region Serialized Fields
-        [Header("Prefabs")]
-        [SerializeField] private GameObject listHeaderPrefab = null;
+        #region Inspector
 
-
-
-        [Header("Player")]
-        [SerializeField] private GameObject playerObject = null;
-        [SerializeField] private Transform JobPanel = null;
-
-        [SerializeField] private Transform JobSelected = null;
-
-        [Header("Sources")]
-        // [SerializeField] private TextAsset jobListJSON = null;
-        [SerializeField] private Sprite[] spriteRefs = null;
+        [SerializeField] private HeaderPool m_HeaderPool = null;
+        [SerializeField] private ButtonPool m_ButtonPool = null;
+        [SerializeField] private ToggleGroup m_JobToggle = null;
+        [SerializeField] private JobInfo m_Info = null;
 
         #endregion
 
-        #region PrivateVariables
+        [NonSerialized] private JobButton m_SelectedJobButton = null;
+        [NonSerialized] private ListHeader[] m_StatusHeaderMap = new ListHeader[4];
+        [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
 
-        // private Player player;
-        private StringHash32 currentJobId;
-
-        //Transforms used in Awake to create Buttons and adjust selectedJob
-        private Transform panel;
-        private Transform grid;
-        private Transform jobButtonTemplate;
-
-
-        //Used to change color of selectedButton and adjust button when new one is pressed
-        private Transform selectedButton = null;
-        private Image selectedButtonImage = null;
-
-        //Transforms used for the acccept/complete button
-        private Transform acceptJobButton = null;
-        // private Transform completeJobButton = null;
-
-        //Dictionary to match IDs used when updating the lists
-        // private Dictionary<string, Transform> jobIdToButton = new Dictionary<string, Transform>(); //Used to translate JobId to button transform
-        // private Dictionary<string, Transform> listHeaderToButton = new Dictionary<string, Transform>(); //Used to translate the listHeaders to buttons
-
-        private JobButton[] JobButtons = null;
-
-        private List<JobDesc> Jobs = new List<JobDesc>();
-
-        private ListHeader[] Headers = null;
-
-        private JobSelect CurrentJob = null;
-
-        #endregion //Private Variables
+        #region Unity Events
 
         private void Awake()
         {
+            Services.Events.Register(GameEvents.JobSwitched, RefreshButtons, this)
+                .Register(GameEvents.JobCompleted, RefreshButtons, this);
 
-            CurrentJob = JobSelected.GetComponent<JobSelect>();
-            JobSelected.gameObject.SetActive(false);
-            JobButtons = JobPanel.GetComponentsInChildren<JobButton>(true);
-            Headers = JobPanel.GetComponentsInChildren<ListHeader>(true);
-            CurrentJob.GetStatusButton().GetComponent<Button>().onClick.AddListener(
-                () => UpdateButtonByStatus(currentJobId));
-
+            m_Info.OnActionClicked.AddListener(OnJobAction);
         }
 
-        private void Start()
+        private void OnDestroy()
         {
-            //TODO adjust headers if no active jobs/ completed jobs?
-            foreach (PlayerJobStatus status in (PlayerJobStatus[])Enum.GetValues(typeof(PlayerJobStatus)))
+            Services.Events?.DeregisterAll(this);
+        }
+
+        #endregion // Unity Events
+
+        #region ISceneLoadHandler
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
+        {
+            AllocateButtons();
+            UpdateButtonStatuses();
+            OrderButtons();
+
+            m_Info.Clear();
+        }
+
+        #endregion // ISceneLoadHandler
+
+        #region Handlers
+
+        private void OnButtonSelected(JobButton inJobButton)
+        {
+            m_SelectedJobButton = inJobButton;
+            m_Info.Populate(inJobButton.Job, inJobButton.Status);
+        }
+
+        private void OnJobAction()
+        {
+            var profileJobData = Services.Data.Profile.Jobs;
+            switch(m_SelectedJobButton.Status)
             {
-                SetJobListActiveStatus(status);
+                case PlayerJobStatus.NotStarted:
+                case PlayerJobStatus.InProgress:
+                    {
+                        profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
+                        break;
+                    }
             }
         }
 
-        private void SetupHeaders(ListHeader[] Heads)
-        {
-            if (Heads.Length < 3)
-            {
-                Debug.Log("Needs more listHeaders object"); // TODO : make this dynamic
-            }
+        #endregion // Handlers
 
-            int i = 0;
-            foreach (PlayerJobStatus status in (PlayerJobStatus[])Enum.GetValues(typeof(PlayerJobStatus)))
+        #region Job Buttons
+
+        private void AllocateButtons()
+        {
+            StringHash32 id;
+            JobButton button;
+            foreach(var job in Services.Assets.Jobs.VisibleJobs())
             {
-                Heads[i].Status = status;
-                Heads[i].Update();
-                // Heads[i].GetTransform().gameObject.SetActive(false);
-                i++;
-            }
-            {
+                id = job.Id();
+                if (!m_JobButtonMap.TryGetValue(id, out button))
+                {
+                    button = m_ButtonPool.Alloc();
+                    button.Initialize(m_JobToggle, OnButtonSelected);
+                    button.Populate(job, PlayerJobStatus.NotStarted);
+                    m_JobButtonMap[id] = button;
+                }
             }
         }
-        private void SetupButtons(JobButton[] jButtons)
-        {
-            int buttonCount = jButtons.Length;
-            int dbCount = Services.Assets.Jobs.Objects.Count;
 
-            if (buttonCount < dbCount)
+        private void RefreshButtons()
+        {
+            if (UpdateButtonStatuses())
             {
-                Debug.Log("Needs more JobButtons Please"); // TODO : make this dynamic
+                OrderButtons();
+                if (m_SelectedJobButton != null)
+                    m_Info.UpdateStatus(m_SelectedJobButton.Status);
+            }
+        }
+
+        private bool UpdateButtonStatuses()
+        {
+            bool bUpdated = false;
+
+            var profileJobData = Services.Data.Profile.Jobs;
+            foreach(var button in m_ButtonPool.ActiveObjects)
+            {
+                bUpdated |= button.UpdateStatus(profileJobData.GetStatus(button.Job.Id()));
+            }
+
+            return bUpdated;
+        }
+
+        private void OrderButtons()
+        {
+            JobButton active = null;
+
+            using(PooledList<JobButton> progress = PooledList<JobButton>.Create())
+            using(PooledList<JobButton> completed = PooledList<JobButton>.Create())
+            using(PooledList<JobButton> available = PooledList<JobButton>.Create())
+            {
+                foreach(var button in m_ButtonPool.ActiveObjects)
+                {
+                    switch(button.Status)
+                    {
+                        case PlayerJobStatus.Active:
+                            active = button;
+                            break;
+
+                        case PlayerJobStatus.Completed:
+                            completed.Add(button);
+                            break;
+
+                        case PlayerJobStatus.InProgress:
+                            progress.Add(button);
+                            break;
+
+                        case PlayerJobStatus.NotStarted:
+                            available.Add(button);
+                            break;
+                    }
+                }
+
+                int siblingIndex = 0;
+                OrderList(PlayerJobStatus.Active, active, ref siblingIndex);
+                OrderList(PlayerJobStatus.InProgress, progress, ref siblingIndex);
+                OrderList(PlayerJobStatus.NotStarted, available, ref siblingIndex);
+                OrderList(PlayerJobStatus.Completed, completed, ref siblingIndex);
+            }
+        }
+
+        private void OrderList(PlayerJobStatus inStatus, JobButton inButton, ref int ioSiblingIndex)
+        {
+            if (inButton == null)
+            {
+                FindHeader(inStatus, false)?.gameObject.SetActive(false);
                 return;
             }
 
-            int i = 0;
-            foreach (JobDesc job in Services.Assets.Jobs.VisibleJobs())
-            {
-                Jobs.Add(job);
+            ListHeader header = FindHeader(inStatus, true);
+            header.gameObject.SetActive(true);
+            header.Transform.SetSiblingIndex(ioSiblingIndex++);
 
-                if (job.ShouldBeAvailable())
+            inButton.Transform.SetSiblingIndex(ioSiblingIndex++);
+        }
+
+        private void OrderList(PlayerJobStatus inStatus, List<JobButton> inButtons, ref int ioSiblingIndex)
+        {
+            if (inButtons.Count <= 0)
+            {
+                FindHeader(inStatus, false)?.gameObject.SetActive(false);
+                return;
+            }
+
+            ListHeader header = FindHeader(inStatus, true);
+            header.gameObject.SetActive(true);
+            header.Transform.SetSiblingIndex(ioSiblingIndex++);
+
+            foreach(var button in inButtons)
+            {
+                button.Transform.SetSiblingIndex(ioSiblingIndex++);
+            }
+        }
+
+        private ListHeader FindHeader(PlayerJobStatus inStatus, bool inbCreate)
+        {
+            ref ListHeader header = ref m_StatusHeaderMap[(int) inStatus];
+            if (header == null && inbCreate)
+            {
+                header = m_HeaderPool.Alloc();
+                switch(inStatus)
                 {
-                    jButtons[i].SetupJob(job, Services.Data.Profile.Jobs.GetProgress(job.Id()));
-                    i++;
+                    case PlayerJobStatus.Active:
+                        header.SetText("Active");
+                        break;
+
+                    case PlayerJobStatus.Completed:
+                        header.SetText("Completed");
+                        break;
+
+                    case PlayerJobStatus.InProgress:
+                        header.SetText("In Progress");
+                        break;
+
+                    case PlayerJobStatus.NotStarted:
+                        header.SetText("Available");
+                        break;
                 }
             }
 
-            for (; i < jButtons.Length; ++i)
-            {
-                jButtons[i].gameObject.SetActive(false);
-            }
-
+            return header;
         }
 
-        private void UpdateButtonByStatus(StringHash32 JobId)
-        {
-            PlayerJobStatus currStatus = Services.Data.Profile.Jobs.GetProgress(JobId).Status();
-            StringHash32 currentJobId = Services.Data.CurrentJobId();
-            foreach (JobButton jobButton in JobButtons)
-            {
-                if (jobButton.JobId.Equals(JobId))
-                {
-                    if (currStatus.Equals(PlayerJobStatus.NotStarted))
-                    {
-                        jobButton.Status = PlayerJobStatus.Active;
-                        Services.Data.Profile.Jobs.SetCurrentJob(JobId);
-                    }
-                    else if (currStatus.Equals(PlayerJobStatus.InProgress))
-                    {
-                        jobButton.Status = PlayerJobStatus.Active;
-                        Services.Data.Profile.Jobs.SetCurrentJob(JobId);
-                    }
-                }
-                else if (jobButton.JobId == currentJobId)
-                {
-                    jobButton.Status = PlayerJobStatus.InProgress;
-                }
-            }
-
-            UpdateJobOrders();
-        }
-
-        #region SelectJob
-        private void SelectJob(JobButton currentButton)
-        {
-            JobSelected.gameObject.SetActive(true); //Set right side to be active
-
-            JobDesc currentJob = currentButton.Job;
-
-            //Assign Global Variables
-            selectedButton = currentButton.GetTransform();
-            currentJobId = currentJob.Id();
-
-            //Used to select and deselect buttons. Set the "last selected button" to white if it exists then set the new button to gray
-            if (selectedButtonImage)
-            {
-                selectedButtonImage.color = Color.white;
-            }
-            selectedButtonImage = selectedButton.GetComponent<Image>();
-            selectedButtonImage.color = Color.gray;
-
-            //TODO change the description based on if the job is accepted or not?
-            CurrentJob.SetupJobSelect(currentButton);
-            CurrentJob.SetupStatusButton();
-
-        }
-
-        #endregion //Select Job
-
-        #region AcceptOrCompleteJob
-
-        private JobButton FindButton(StringHash32 JobId)
-        {
-            foreach (JobButton job in JobButtons)
-            {
-                if (job.JobId.Equals(JobId))
-                {
-                    return job;
-                }
-            }
-
-            Debug.Log("NO BUTTONS FOUND!!!!~~~~"); // TODO : how to throw error
-            return null;
-        }
-
-        private ListHeader FindHeader(PlayerJobStatus status)
-        {
-            foreach (ListHeader header in Headers)
-            {
-                if (header.Status.Equals(status))
-                {
-                    return header;
-                }
-            }
-
-            Debug.Log("NO HEADER FOUND!!!!~~~~");
-            return null;
-        }
-
-        private List<JobButton> GetJobButtonsByStatus(PlayerJobStatus status)
-        {
-            List<JobButton> result = new List<JobButton>();
-            foreach (JobButton jobBtn in JobButtons)
-            {
-                if (jobBtn.Status.Equals(status))
-                {
-                    result.Add(jobBtn);
-                }
-            }
-            return result;
-        }
-
-        #endregion //Aceept Complete
-
-        #region UpdateJobList
-
-        //This function called anytime the lists are updated and will reorder the jobs of each category
-        //Will sort the jobs of the lists to ensure that order is maintained
-        private void UpdateJobOrders()
-        { // TODO : change to PlayerJobList
-
-            int siblingIdx = 0;
-
-            ReorderJobs(PlayerJobStatus.Active, ref siblingIdx);
-            ReorderJobs(PlayerJobStatus.InProgress, ref siblingIdx);
-            ReorderJobs(PlayerJobStatus.NotStarted, ref siblingIdx);
-            ReorderJobs(PlayerJobStatus.Completed, ref siblingIdx);
-
-            CurrentJob.SetupStatusButton();
-
-        }
-
-        private void ReorderJobs(PlayerJobStatus status, ref int siblingIdx)
-        {
-            List<JobButton> jobs = GetJobButtonsByStatus(status);
-            siblingIdx = UpdateHeaderText(status, siblingIdx);
-            siblingIdx = UpdateJobList(jobs, siblingIdx);
-        }
-
-        //Helper function to update the index of the header text
-        private int UpdateHeaderText(PlayerJobStatus status, int siblingIdx)
-        {
-            Transform headerText = FindHeader(status).GetTransform();
-            // listHeaderToButton.TryGetValue(header, out headerText);
-            headerText.SetSiblingIndex(siblingIdx++);
-
-            return siblingIdx;
-        }
-
-        //Helper function to update the sibling indexes for each button in a specficic category
-        private int UpdateJobList(List<JobButton> jobList, int siblingIdx)
-        {
-            foreach (JobButton job in jobList)
-            {
-                Transform jobButtonTransform = job.GetTransform();
-                jobButtonTransform.SetSiblingIndex(siblingIdx++);
-            }
-
-            return siblingIdx;
-
-        }
-        #endregion //UpdateJobList
-
-        #region ListCreation
-
-        //Creates each seperate Job list, depending on what is passed in. Will get the list of jobs of that type and create all the buttons for them
-
-        private void SetJobListActiveStatus(PlayerJobStatus status)
-        {
-            //create list header
-            ActivateListHeader(status);
-            foreach (JobButton jBtn in JobButtons)
-            {
-                PlayerJobStatus BtnStatus = jBtn.Status;
-                if (status == BtnStatus)
-                {
-                    ActivateJobButton(jBtn);
-                }
-            }
-        }
-        private void ActivateListHeader(PlayerJobStatus Status)
-        {
-            foreach (ListHeader header in Headers)
-            {
-                if (header.Status.Equals(Status))
-                {
-                    header.GetTransform().gameObject.SetActive(true);
-                }
-            }
-        }
-        private void ActivateJobButton(JobButton jobBtn)
-        {
-            JobDesc currJob = jobBtn.Job;
-            jobBtn.GetTransform().GetComponent<Button>().onClick.AddListener(() => SelectJob(jobBtn));
-            jobBtn.GetTransform().gameObject.SetActive(true);
-        }
-
-        public void OnSceneLoad(SceneBinding inScene, object inContext)
-        {
-            SetupButtons(JobButtons);
-            SetupHeaders(Headers);
-            UpdateJobOrders();
-        }
+        #endregion // Job Buttons
     }
-
-    #endregion
 }
