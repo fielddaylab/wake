@@ -15,4 +15,14 @@ namespace Aqua
         
         Food = 16
     }
+
+    public enum PropertyColor {
+        None,
+        green,
+        red,
+        yellow,
+        purple,
+        cyan,
+        brown
+    }
 }

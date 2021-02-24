@@ -13,6 +13,8 @@ namespace ProtoAqua.Experiment
 
         static public readonly StringHash32 StressorExperiment = "experiment:stressor-tank-on";
 
+        static public readonly StringHash32 MeasurementCritX = "experiment:critterx-fill";
+
         static public readonly StringHash32 SetupTank = "experiment:setup-tank";
         static public readonly StringHash32 SetupInitialSubmit = "experiment:setup-initialSubmit";
         
@@ -24,6 +26,8 @@ namespace ProtoAqua.Experiment
         static public readonly StringHash32 ExperimentBegin = "experiment:begin";
         static public readonly StringHash32 ExperimentRequestSummary = "experiment:request-summary";
         static public readonly StringHash32 ExperimentTeardown = "experiment:teardown";
+
+        static public readonly StringHash32 SubscreenBack = "experiment:subscreen-back";
 
         static public readonly StringHash32 AttemptObserveBehavior = "experiment:attempt-observe-behavior";
         static public readonly StringHash32 BehaviorAddedToLog = "experiment:behavior-added-to-log";

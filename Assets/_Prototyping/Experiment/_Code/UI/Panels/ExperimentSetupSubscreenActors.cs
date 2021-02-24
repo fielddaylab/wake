@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using BeauUtil.Variants;
 using Aqua;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProtoAqua.Experiment
 {
@@ -17,9 +19,13 @@ namespace ProtoAqua.Experiment
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private Sprite m_EmptyIcon = null;
 
+        [SerializeField] private ToggleGroup m_ToggleGroup = null;
+
         #endregion // Inspector
 
         [NonSerialized] private ActorToggleButton[] m_CachedButtons;
+
+        [NonSerialized] private bool m_Visited = false;
 
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
@@ -27,21 +33,49 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
+            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this)
+            .Register<TankType>(ExperimentEvents.SetupTank, ConfigureMeasurement, this)
+            .Register(ExperimentEvents.MeasurementCritX, SetupMeasurementY, this);
+
+
             m_CachedButtons = m_ButtonRoot.GetComponentsInChildren<ActorToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 ActorToggleButton button = m_CachedButtons[i];
                 button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
             }
+
+
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
 
             UpdateButtons();
+
         }
 
-        public Action GetAction() {
-            return OnSelectContinue;
+        public void SetupMeasurementY() {
+            
+
+
         }
 
+        public void ConfigureMeasurement(TankType tank) {
+            if(tank == TankType.Measurement) {
+                for (int i = 0; i < m_CachedButtons.Length; ++i) {
+                ActorToggleButton button = m_CachedButtons[i];
+                    button.Toggle.onValueChanged.RemoveAllListeners();
+                    button.Toggle.onValueChanged.AddListener((b) => UpdateFromSelection());
+                }
+            }
+            else {
+                for(int i = 0; i < m_CachedButtons.Length; ++i)
+            {
+                ActorToggleButton button = m_CachedButtons[i];
+                button.Toggle.onValueChanged.RemoveAllListeners();
+                button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
+            }
+            }
+            
+        }
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);
@@ -51,13 +85,42 @@ namespace ProtoAqua.Experiment
         public override void Refresh()
         {
             base.Refresh();
+            m_Visited = false;
             UpdateButtons();
+        }
+        private void PresetButtons(ExpSubscreen sc) {
+
+            if(!sc.Equals(ExpSubscreen.Actor)) return;
+            if(m_CachedData == null) {
+                throw new NullReferenceException("No cached data in actor.");
+            }
+            var hasOn = false;
+            if(m_CachedData.ActorIds.Count > 0) {
+                foreach(var actor in m_CachedData.ActorIds) {
+                    foreach(var button in m_CachedButtons) {
+                        if(button.Id.AsStringHash().Equals(actor)) {
+                            button.Toggle.SetIsOnWithoutNotify(true);
+                            hasOn = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+
+            m_NextButton.interactable = hasOn;
+
         }
 
         private void UpdateButtons()
         {
             var tankType = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_CachedData.Tank);
             var allActorTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Critter);
+            if(tankType.Tank.Equals(TankType.Measurement)) {
+                if(!m_CachedData.CritterX.Equals(StringHash32.Null)) {
+                    allActorTypes = MeasurementFilterY(allActorTypes);
+                }
+            }
 
             int buttonIdx = 0;
             foreach(var actorType in allActorTypes)
@@ -82,12 +145,35 @@ namespace ProtoAqua.Experiment
             m_NextButton.interactable = false;
         }
 
+        private List<BestiaryDesc> MeasurementFilterY(IEnumerable<BestiaryDesc> All_Actors) {
+            List<BestiaryDesc> allActors = All_Actors.ToList();
+            List<BestiaryDesc> targets = new List<BestiaryDesc>();
+            foreach(var fact in m_CachedData.GetEat()) {
+                BFEat efact = (BFEat)fact.Fact;
+                targets.Add(efact.GetTarget());
+            }
+            allActors.RemoveAll(b => allActors.Except(targets).Contains(b));
+            return allActors;
+
+        }
+
         private void UpdateFromButton(StringHash32 inActorId, bool inbActive)
         {
             var actorData = Services.Assets.Bestiary.Get(inActorId);
+            Toggle active = m_ToggleGroup.ActiveToggle();
+
+            if(m_CachedData.Tank == TankType.Measurement) {
+                if(m_CachedData.CritterY.Equals(StringHash32.Null)) {
+                    if(active != null) {
+
+                    }
+                }
+            }
+
 
             if (inbActive)
             {
+
                 m_CachedData.ActorIds.Add(inActorId);
                 Services.Events.Dispatch(ExperimentEvents.SetupAddActor, inActorId);
             }
@@ -98,7 +184,6 @@ namespace ProtoAqua.Experiment
             }
 
             m_NextButton.interactable = m_CachedData.ActorIds.Count > 0;
-
             UpdateDisplay(inActorId);
             Services.Data.SetVariable("experiment:setup." + actorData.name, inbActive);
         }

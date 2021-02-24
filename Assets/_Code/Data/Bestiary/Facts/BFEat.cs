@@ -48,6 +48,10 @@ namespace Aqua
             }
         }
 
+        public BestiaryDesc GetTarget() {
+            return m_TargetEntry;
+        }
+
         public override bool IsIdentitical(PlayerFactParams inParams1, PlayerFactParams inParams2)
         {
             throw new System.NotImplementedException();

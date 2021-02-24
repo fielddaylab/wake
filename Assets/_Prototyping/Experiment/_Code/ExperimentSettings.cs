@@ -37,6 +37,8 @@ namespace ProtoAqua.Experiment
         {
             public WaterPropertyId Id;
 
+            public Color Color;
+
             public SerializedHash32 LabelId;
 
             public Sprite Icon;

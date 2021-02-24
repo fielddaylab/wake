@@ -351,9 +351,12 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator SwitchSubscreenRoutine(ExperimentSetupSubscreen inSubscreen, bool inbBack)
         {
+
             if (m_CurrentSubscreen != inSubscreen)
             {
                 ExperimentSetupSubscreen oldSub = m_CurrentSubscreen;
+                var oldsEnum = m_SubDirectory.GetEnum(oldSub);
+                if(m_SubDirectory.InSequence(oldsEnum)) m_SubDirectory.SetVisited(m_SubDirectory.GetEnum(oldSub));
                 m_CurrentSubscreen = inSubscreen;
                 if (oldSub)
                 {
@@ -366,8 +369,14 @@ namespace ProtoAqua.Experiment
 
                 if (m_CurrentSubscreen)
                 {
+                    var currEnum = m_SubDirectory.GetEnum(m_CurrentSubscreen);
+                    var isVisited = m_SubDirectory.InSequence(currEnum) ? m_SubDirectory.IsVisited(currEnum) : false;
                     m_CurrentSubscreen.Show();
                     Services.Audio.PostEvent(inbBack ? "tablet_ui_back" : "tablet_ui_advance");
+
+                    if(inbBack || isVisited) {
+                        Services.Events.Dispatch(ExperimentEvents.SubscreenBack, currEnum);
+                    }
                 }
             }
         }
@@ -384,50 +393,35 @@ namespace ProtoAqua.Experiment
 
         private void SetSubScreenChain(TankType tank)
         {
-
-            m_CurrentExp = tank;
-
-            if (!tank.Equals(TankType.None))
-            {
-                var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(tank).Sequence;
-                SetActions(sequence);
-
+            if(!tank.Equals(TankType.None)) {
+                if (m_CurrentExp.Equals(TankType.None) || !m_CurrentExp.Equals(tank))
+                {
+                    m_CurrentExp = tank;
+                    var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(tank).Sequence;
+                    SetActions(sequence);
+                }
             }
-
         }
 
 
         private void SetActions(ExpSubscreen[] sequence)
         {
             List<ExpSubscreen> bases = new List<ExpSubscreen>() { ExpSubscreen.None, ExpSubscreen.Boot };
-            if (sequence != m_SubDirectory.GetSequence())
-            {
-                m_SubDirectory.SetSequence(sequence);
-            }
+            if (!m_SubDirectory.SeqEquals(sequence)) m_SubDirectory.SetSequence(sequence);
             foreach (var sub in sequence)
             {
                 if (bases.Contains(sub)) continue;
-
                 if (sub.Equals(ExpSubscreen.Tank))
                 {
-                    if (m_SubDirectory.HasNext(sub))
-                    {
-                        m_TankScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                    }
+                    if (m_SubDirectory.HasNext(sub)) m_TankScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
                 }
                 if (sub.Equals(ExpSubscreen.Actor))
                 {
-                    if (m_SubDirectory.HasNext(sub))
-                    {
-                        m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                    }
+                    if (m_SubDirectory.HasNext(sub)) m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
                 }
                 if (sub.Equals(ExpSubscreen.Begin))
                 {
-                    if (m_SubDirectory.HasPrev(sub))
-                    {
-                        m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
-                    }
+                    if (m_SubDirectory.HasPrev(sub)) m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
                 }
                 if (sub.Equals(ExpSubscreen.Ecosystem))
                 {
@@ -454,12 +448,10 @@ namespace ProtoAqua.Experiment
             Services.Events.Dispatch(ExperimentEvents.SetupTank, Tank);
 
             var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(Tank).Sequence;
-            if (m_SubDirectory.GetSequence() == null || m_SubDirectory.GetSequence() != sequence)
+            if (m_SubDirectory.GetSequence() == null || !m_SubDirectory.SeqEquals(sequence))
             {
                 m_SubDirectory.SetSequence(sequence);
             }
-
-
             SetActions(sequence);
         }
 

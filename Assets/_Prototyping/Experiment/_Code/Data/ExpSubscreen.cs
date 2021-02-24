@@ -8,6 +8,8 @@ namespace ProtoAqua.Experiment {
         InProgress,
         Summary,
         Property,
+        Category,
+        Slider,
         Tank,
         Boot,
 

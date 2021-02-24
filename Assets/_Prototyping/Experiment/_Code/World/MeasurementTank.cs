@@ -15,7 +15,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 namespace ProtoAqua.Experiment
 {
-    public class StressorTank : ExperimentTank
+    public class MeasurementTank : ExperimentTank
     {
         #region Inspector
 
@@ -51,8 +51,7 @@ namespace ProtoAqua.Experiment
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
-                .Register<WaterPropertyId>(ExperimentEvents.StressorText, ChangeText, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
@@ -76,7 +75,6 @@ namespace ProtoAqua.Experiment
 
         public override void OnExperimentEnd()
         {
-            m_Text.SetText("");
             m_IdleRoutine.Stop();
 
             base.OnExperimentEnd();
@@ -99,7 +97,7 @@ namespace ProtoAqua.Experiment
 
         public override bool TryHandle(ExperimentSetupData inSelection)
         {
-            if (inSelection.Tank == TankType.Stressor)
+            if (inSelection.Tank == TankType.Measurement)
             {
                 gameObject.SetActive(true);
                 return true;
@@ -117,13 +115,6 @@ namespace ProtoAqua.Experiment
                 actor.Nav.Helper = m_ActorNavHelper;
                 actor.Nav.Spawn(spawnCount * RNG.Instance.NextFloat(0.8f, 1.2f) * m_SpawnDelay);
             }
-        }
-
-        public void ChangeText(WaterPropertyId Id) {
-            
-            var m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
-            m_Text.SetText(m_CachedSettings.GetProperty(Id).LabelId);
-            m_WaterColor.SetColor(m_CachedSettings.GetProperty(Id).Color);
         }
 
         private void SetupRemoveActor(StringHash32 inActorId)

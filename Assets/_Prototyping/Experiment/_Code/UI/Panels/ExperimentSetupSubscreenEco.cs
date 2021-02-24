@@ -32,6 +32,7 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
+            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -58,14 +59,6 @@ namespace ProtoAqua.Experiment
             UpdateButtons();
         }
 
-        public List<Action> GetAction() {
-            var res = new List<Action>();
-            res.Add(OnSelectBack);
-            res.Add(OnSelectContinue);
-
-            return res;
-        }
-
         private void UpdateButtons()
         {
             var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
@@ -86,6 +79,23 @@ namespace ProtoAqua.Experiment
             {
                 m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
             }
+
+            m_BackButton.interactable = true;
+        }
+
+        private void PresetButtons(ExpSubscreen sc) {
+            if(!sc.Equals(ExpSubscreen.Ecosystem)) return;
+            if(m_CachedData == null) {
+                throw new NullReferenceException("No cached data in actor.");
+            }
+            if(m_CachedData.EcosystemId.Equals(StringHash32.Null)) return;
+            
+            foreach(var button in m_CachedButtons) {
+                if(button.Id.AsStringHash().Equals(m_CachedData.EcosystemId)) {
+                    button.Toggle.SetIsOnWithoutNotify(true);
+                    break;
+                }
+            }
         }
 
         private void UpdateDisplay(StringHash32 inWaterId)
@@ -99,18 +109,21 @@ namespace ProtoAqua.Experiment
             {
                 var def = Services.Assets.Bestiary.Get(inWaterId);
                 m_Label.SetText(def.CommonName());
-                
 
-                if(m_CachedData.Tank.Equals(TankType.Foundational)) {
-                    // SetTransforms();
+
+                if (m_CachedData.Tank.Equals(TankType.Foundational))
+                {
                     m_NextButton.gameObject.SetActive(false);
                     m_ConstructButton.gameObject.SetActive(true);
+                    m_BackButton.interactable = true;
 
                 }
-                else {
+                else
+                {
                     m_NextButton.gameObject.SetActive(true);
                     m_ConstructButton.gameObject.SetActive(false);
                     m_NextButton.interactable = true;
+                    m_BackButton.interactable = true;
 
                 }
             }
@@ -118,14 +131,6 @@ namespace ProtoAqua.Experiment
             Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
         }
 
-        // private void SetTransforms() {
-        //     Transform toggleGroup = m_ToggleGroup.transform;
-        //     Transform text = m_Label.transform;
-
-        //     toggleGroup.position = new Vector3(toggleGroup.position.x, 93f, toggleGroup.position.z);
-        //     text.position = new Vector3(text.position.x, 45f, text.position.z);
-        // }
-    
         private void UpdateFromSelection()
         {
             Toggle active = m_ToggleGroup.ActiveToggle();
