@@ -74,7 +74,7 @@ namespace ProtoAqua.Navigation
             if (!m_Allowed)
                 return;
             
-            Services.UI.FindPanel<UIController>()?.Hide();
+            Services.UI?.FindPanel<UIController>()?.Hide();
         }
     }
 

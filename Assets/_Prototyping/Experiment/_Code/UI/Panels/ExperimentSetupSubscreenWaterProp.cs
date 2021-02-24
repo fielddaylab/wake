@@ -30,6 +30,7 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
+            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
@@ -78,6 +79,21 @@ namespace ProtoAqua.Experiment
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
                 m_CachedButtons[buttonIdx].Load(null, m_EmptyIcon, false);
+            }    
+        }
+
+        private void PresetButtons(ExpSubscreen sc) {
+            if(!sc.Equals(ExpSubscreen.Property)) return;
+            if(m_CachedData == null) {
+                throw new NullReferenceException("No cached data in actor.");
+            }
+
+            // if(m_CachedData.PropertyId.Equals(WaterPropertyId.None)) return;
+            foreach(var button in m_CachedButtons) {
+                if(button.Id.Equals((int)m_CachedData.PropertyId)) {
+                    button.Toggle.SetIsOnWithoutNotify(true);
+                    break;
+                }
             }
         }
 

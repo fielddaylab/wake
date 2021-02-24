@@ -5,7 +5,7 @@ namespace ProtoAqua.Experiment
         None,
         Foundational,
         Stressor,
-        Choice,
+        Measurement,
         Speed,
     }
 }

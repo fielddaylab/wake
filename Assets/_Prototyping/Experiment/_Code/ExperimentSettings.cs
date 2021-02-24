@@ -46,13 +46,9 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
-        public IEnumerable<TankDefinition> AllNonEmptyTanks()
+        public IEnumerable<TankDefinition> TankTypes()
         {
-            for(int i = 0; i < m_TankDefs.Length; ++i)
-            {
-                if (m_TankDefs[i].Tank != TankType.None)
-                    yield return m_TankDefs[i];
-            }
+            return m_TankDefs;
         }
 
         public TankDefinition GetTank(TankType inType)

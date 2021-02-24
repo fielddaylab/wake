@@ -1,6 +1,8 @@
 
 namespace ProtoAqua.Experiment {
-    public enum ExpSubscreen {
+    
+    public enum ExpSubscreen
+    {
         None,
         Actor,
         Ecosystem,
@@ -8,9 +10,9 @@ namespace ProtoAqua.Experiment {
         InProgress,
         Summary,
         Property,
+        // Category,
+        // Slider,
         Tank,
         Boot,
-
-
     }
 }

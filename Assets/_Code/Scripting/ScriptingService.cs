@@ -269,6 +269,43 @@ namespace Aqua
         }
 
         #endregion // Triggering Responses
+        
+        #region Functions
+
+        /// <summary>
+        /// Attempts to trigger a response.
+        /// </summary>
+        public void TryCallFunctions(StringHash32 inFunctionId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
+        {
+            IVariantResolver resolver = GetResolver(inContextTable);
+            FunctionSet functionSet;
+            if (m_LoadedFunctions.TryGetValue(inFunctionId, out functionSet))
+            {
+                using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
+                {
+                    int responseCount = functionSet.GetNodes(inTarget, nodes);
+                    if (responseCount > 0)
+                    {
+                        for(int i = responseCount - 1; i >= 0; --i)
+                        {
+                            Debug.LogFormat("[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
+                            StartThreadInternalNode(null, inContext, nodes[i], inContextTable).GetThread().Tick();
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogFormat("[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogFormat("[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
+            }
+            ResetCustomResolver();
+        }
+
+        #endregion // Functions
 
         #region Killing Threads
 

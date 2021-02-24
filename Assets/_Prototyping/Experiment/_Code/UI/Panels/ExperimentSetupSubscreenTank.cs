@@ -14,6 +14,7 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Sprite m_EmptyIcon = null;
 
         [SerializeField] private Button m_ConstructButton = null;
 
@@ -34,6 +35,7 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
+            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
@@ -61,8 +63,10 @@ namespace ProtoAqua.Experiment
 
         private void UpdateButtons()
         {
-            var allTankTypes = m_CachedSettings.AllNonEmptyTanks();
-            var noneTankType = m_CachedSettings.GetTank(TankType.None);
+            if (!m_CachedSettings)
+                m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
+                
+            var allTankTypes = m_CachedSettings.TankTypes();
 
             int buttonIdx = 0;
             foreach(var tankType in allTankTypes)
@@ -78,7 +82,7 @@ namespace ProtoAqua.Experiment
                 }
                 else
                 {
-                    button.Load((int) noneTankType.Tank, noneTankType.Icon, false);
+                    button.Load(-1, m_EmptyIcon, false);
                 }
 
                 ++buttonIdx;
@@ -86,7 +90,21 @@ namespace ProtoAqua.Experiment
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load((int) noneTankType.Tank, noneTankType.Icon, false);
+                m_CachedButtons[buttonIdx].Load(-1, m_EmptyIcon, false);
+            }
+        }
+
+        private void PresetButtons(ExpSubscreen sc) {
+            if(!sc.Equals(ExpSubscreen.Tank)) return;
+            if(m_CachedData == null) {
+                throw new NullReferenceException("No cached data in actor.");
+            }
+            if(m_CachedData.Tank.Equals(TankType.None)) return;
+            foreach(var button in m_CachedButtons) {
+                if(button.Id.Equals((int)m_CachedData.Tank)) {
+                    button.Toggle.SetIsOnWithoutNotify(true);
+                    break;
+                }
             }
         }
 
@@ -94,7 +112,8 @@ namespace ProtoAqua.Experiment
         {
             OnChange?.Invoke();
             var def = m_CachedSettings.GetTank(inTankType);
-            m_Label.SetText(def.LabelId);
+
+            m_Label.SetText(def?.LabelId ?? StringHash32.Null);
             m_NextButton.interactable = inTankType != TankType.None;
 
             if(m_CurrentTank == TankType.Stressor) 

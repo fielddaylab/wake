@@ -219,6 +219,11 @@ namespace Aqua.Scripting
         
         #region Skipping
 
+        public void Tick()
+        {
+            m_RunningRoutine.TryManuallyUpdate(0);
+        }
+
         public void Skip()
         {
             if ((m_Flags & ScriptFlags.Skip) == 0)
