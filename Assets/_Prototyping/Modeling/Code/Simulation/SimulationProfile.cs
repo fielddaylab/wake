@@ -37,6 +37,17 @@ namespace ProtoAqua.Modeling
             m_DiscoveredFacts.Clear();
         }
 
+        public void Construct(BestiaryDesc inEnvironment)
+        {
+            LimitedClear();
+
+            foreach(var fact in inEnvironment.Facts)
+                DiscoverFact(fact, null);
+
+            for(int i = 0; i < m_Profiles.Count; i++)
+                m_Profiles[i].PostProcess(this);
+        }
+
         public void Construct(BestiaryDesc inEnvironment, IEnumerable<PlayerFactParams> inFacts)
         {
             LimitedClear();

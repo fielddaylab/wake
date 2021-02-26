@@ -37,6 +37,12 @@ namespace Aqua
             }
         }
 
+        public override string ToString()
+        {
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
+        }
+
         static public WaterPropertyBlockF32 operator *(WaterPropertyBlockF32 inA, float inB)
         {
             WaterPropertyBlockF32 result = inA;
@@ -127,6 +133,12 @@ namespace Aqua
                     *((byte*) (start + (int) inId)) = value;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
         }
 
         static public unsafe WaterPropertyBlockU8 operator &(WaterPropertyBlockU8 inA, WaterPropertyMask inB)
@@ -248,6 +260,12 @@ namespace Aqua
                         throw new ArgumentOutOfRangeException("inId");
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
         }
     }
 }

@@ -13,9 +13,15 @@ namespace ProtoAqua.Modeling
 
         [SerializeField] private BestiaryDesc m_Environment = null;
         [SerializeField] private BFBase[] m_Facts = null;
+        
+        [Header("Historical Data")]
         [SerializeField] private ActorCount[] m_InitialActors = null;
         [SerializeField] private int m_TickCount = 1000;
-        [SerializeField] private int m_TickIncrement = 10;
+        [SerializeField] private int m_TickScale = 10;
+
+        [Header("Prediction")]
+        [SerializeField] private int m_PredictionTicks = 0;
+        // TODO: prediction targets?
 
         #endregion // Inspector
 
@@ -24,6 +30,8 @@ namespace ProtoAqua.Modeling
         public IReadOnlyList<ActorCount> Actors() { return m_InitialActors; }
 
         public int TickCount() { return m_TickCount; }
-        public int TickIncrement() { return m_TickIncrement; }
+        public int TickScale() { return m_TickScale; }
+
+        public int PredictionTicks() { return m_PredictionTicks; }
     }
 }
