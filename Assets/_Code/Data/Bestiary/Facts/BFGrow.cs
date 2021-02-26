@@ -13,12 +13,10 @@ namespace Aqua
 
         [Header("Growth")]
         [SerializeField] private uint m_Amount = 0;
-        [SerializeField] private uint m_Interval = 0;
 
         #endregion // Inspector
 
         public uint Amount() { return m_Amount; }
-        public uint Interval() { return m_Interval; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {

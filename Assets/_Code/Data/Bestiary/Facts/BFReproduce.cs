@@ -12,18 +12,11 @@ namespace Aqua
         #region Inspector
 
         [Header("Reproduction")]
-        [SerializeField] private uint m_Interval = 0;
-
-        [Space]
         [SerializeField] private float m_Amount = 0;
-        [SerializeField] private uint m_MinAge = 0;
 
         #endregion // Inspector
-
-        public uint Interval() { return m_Interval; }
         
         public float Amount() { return m_Amount; }
-        public uint MinAge() { return m_MinAge; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {

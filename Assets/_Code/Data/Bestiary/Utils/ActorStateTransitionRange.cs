@@ -40,5 +40,15 @@ namespace Aqua
                 return ActorStateId.Stressed;
             return ActorStateId.Alive;
         }
+
+        static ActorStateTransitionRange()
+        {
+            s_DefaultRange = new ActorStateTransitionRange();
+            s_DefaultRange.Reset();
+        }
+
+        static private readonly ActorStateTransitionRange s_DefaultRange;
+
+        static public ActorStateTransitionRange Default { get { return s_DefaultRange; } }
     }
 }

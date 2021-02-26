@@ -16,5 +16,10 @@ namespace Aqua
         #endregion // Inspector
 
         public uint StartingMass() { return m_StartingMass; }
+
+        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        {
+            inVisitor.Visit(this, inParams);
+        }
     }
 }

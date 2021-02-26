@@ -135,7 +135,7 @@ namespace Aqua
 
         #region Checks
 
-        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF inEnvironment, in WaterPropertyBlock8 inStarvation)
+        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF32 inEnvironment, in WaterPropertyBlockU8 inStarvation)
         {
             ActorStateId actorState = ActorStateId.Alive;
 
