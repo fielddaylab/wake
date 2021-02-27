@@ -25,6 +25,7 @@ namespace Aqua
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private Sprite m_Sketch = null;
+        [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
         #endregion // Inspector
@@ -56,6 +57,7 @@ namespace Aqua
 
         public Sprite Icon() { return m_Icon; }
         public Sprite Sketch() { return m_Sketch; }
+        public Color Color() { return m_Color; }
 
         public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
 

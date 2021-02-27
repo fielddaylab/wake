@@ -56,7 +56,7 @@ namespace Aqua
             double step = goodNormalizedStep / stepPower;
 
             double rangeMin = Math.Floor(min / step) * step;
-            double rangeMax = Math.Floor(max / step) * step;
+            double rangeMax = Math.Ceiling(max / step) * step;
             uint tickCount = 1 + (uint) ((rangeMax - rangeMin) / step);
 
             info.Min = (float) rangeMin;

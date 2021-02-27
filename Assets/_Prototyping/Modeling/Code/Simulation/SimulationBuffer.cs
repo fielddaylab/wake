@@ -70,10 +70,10 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Refreshes historical data.
         /// </summary>
-        public void RefreshHistorical()
+        public bool RefreshHistorical()
         {
             if (!m_HistoricalSimDirty)
-                return;
+                return false;
 
             m_HistoricalProfile.Clear();
             m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Facts());
@@ -82,18 +82,20 @@ namespace ProtoAqua.Modeling
 
             Simulator.GenerateToBuffer(m_HistoricalProfile, m_HistoricalResultBuffer, m_Scenario.TickScale(), Flags);
             m_HistoricalSimDirty = false;
+            return true;
         }
     
         /// <summary>
         /// Refreshes player data.
         /// </summary>
-        public void RefreshModel()
+        public bool RefreshModel()
         {
             if (!m_PlayerSimDirty)
-                return;
+                return false;
 
             Simulator.GenerateToBuffer(m_PlayerProfile, m_PlayerResultBuffer, m_Scenario.TickScale(), Flags);
             m_PlayerSimDirty = false;
+            return true;
         }
     }
 }

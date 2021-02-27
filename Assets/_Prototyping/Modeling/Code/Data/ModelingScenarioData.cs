@@ -25,13 +25,24 @@ namespace ProtoAqua.Modeling
 
         #endregion // Inspector
 
+        [NonSerialized] private bool m_Optimized;
+
         public BestiaryDesc Environment() { return m_Environment; }
-        public IReadOnlyList<BFBase> Facts() { return m_Facts; }
-        public IReadOnlyList<ActorCount> Actors() { return m_InitialActors; }
+        public IReadOnlyList<BFBase> Facts() { Optimize(); return m_Facts; }
+        public IReadOnlyList<ActorCount> Actors() { Optimize(); return m_InitialActors; }
 
         public int TickCount() { return m_TickCount; }
         public int TickScale() { return m_TickScale; }
 
         public int PredictionTicks() { return m_PredictionTicks; }
+
+        private void Optimize()
+        {
+            if (m_Optimized)
+                return;
+
+            KeyValueUtils.SortByKey<StringHash32, uint, ActorCount>(m_InitialActors);
+            m_Optimized = true;
+        }
     }
 }

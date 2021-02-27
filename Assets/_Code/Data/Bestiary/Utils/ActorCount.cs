@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Aqua
 {
     [Serializable]
-    public struct ActorCount
+    public struct ActorCount : IKeyValuePair<StringHash32, uint>
     {
         public SerializedHash32 Id;
         public uint Population;
@@ -16,5 +16,8 @@ namespace Aqua
             Id = inId;
             Population = inPopulation;
         }
+
+        public StringHash32 Key { get { return Id; } }
+        public uint Value { get { return Population; } }
     }
 }
