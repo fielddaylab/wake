@@ -12,9 +12,16 @@ namespace Aqua
 
         [Header("Body")]
         [SerializeField] private uint m_StartingMass = 0;
+        [SerializeField] private float m_MassDisplayScale = 1;
 
         #endregion // Inspector
 
         public uint StartingMass() { return m_StartingMass; }
+        public float MassDisplayScale() { return m_MassDisplayScale; }
+
+        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        {
+            inVisitor.Visit(this, inParams);
+        }
     }
 }

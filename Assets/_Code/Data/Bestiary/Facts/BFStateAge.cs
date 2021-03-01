@@ -12,11 +12,11 @@ namespace Aqua
         #region Inspector
 
         [Header("Age")]
-        [SerializeField] private uint m_Ticks = 0;
+        [SerializeField, Range(0, 1)] private float m_Proportion = 0;
 
         #endregion // Inspector
 
-        public uint Ticks() { return m_Ticks; }
+        public float Proportion() { return m_Proportion; }
 
         public override BFMode Mode()
         {
