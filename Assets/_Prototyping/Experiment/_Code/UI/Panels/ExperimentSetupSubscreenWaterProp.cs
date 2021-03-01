@@ -87,8 +87,7 @@ namespace ProtoAqua.Experiment
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
-
-            // if(m_CachedData.PropertyId.Equals(WaterPropertyId.None)) return;
+            
             foreach(var button in m_CachedButtons) {
                 if(button.Id.Equals((int)m_CachedData.PropertyId)) {
                     button.Toggle.SetIsOnWithoutNotify(true);

@@ -34,19 +34,59 @@ namespace ProtoAqua.Experiment
 
         public void Populate(ExperimentResultData inResultData)
         {
-            if(inResultData.Setup.Tank.Equals(TankType.Stressor)) {
-                
-                BFStateRange state = null;
-                var allEnvs = Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Environment);
-                List<BFStateRange> rangefacts = new List<BFStateRange>();
-                foreach(var env in allEnvs) {
-                    foreach(BFBase fact in env.Facts) {
-                        if(fact is BFStateRange) {
-                            rangefacts.Add((BFStateRange)fact);
-                            state = (BFStateRange) fact;
-                        }
+            if(inResultData.Setup.Tank == TankType.Stressor) {
+                PopulateStressor();
+
+            }
+            if(inResultData.Setup.Tank == TankType.Foundational) {
+                PopulateFoundational();
+            }
+            if(inResultData.Setup.Tank == TankType.Measurement) {
+                PopulateMeasurement(inResultData);
+            }
+
+            m_BehaviorDisplayPool.Reset();
+
+            foreach(var behaviorId in inResultData.ObservedBehaviorIds)
+            {
+                var behavior = Services.Assets.Bestiary.Fact(behaviorId);
+                m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
+            }
+
+            // HACKS
+            Routine.Start(this, ForceLayoutCorrectHACK());
+        }
+
+        private void PopulateMeasurement(ExperimentResultData resData) {
+            m_RangeFactButton.gameObject.SetActive(false);
+            var form_text = "";
+            if(resData.Setup.CritterY != StringHash32.Null) {
+                var result = resData.Setup.GetResult();
+                result.Add(PlayerFactFlags.KnowValue);
+                form_text = result.Fact.GenerateSentence(result);
+                Debug.Log(form_text);
+            }
+            m_SummaryText.SetText(form_text);
+        }
+
+        private void PopulateFoundational() {
+            m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
+            m_SummaryText.SetText(Services.Loc.Localize("experiment.summary.countableSummary"));
+            m_RangeFactButton.gameObject.SetActive(false);
+        }
+
+        private void PopulateStressor() {
+            BFStateRange state = null;
+            var allEnvs = Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Environment);
+            List<BFStateRange> rangefacts = new List<BFStateRange>();
+            foreach(var env in allEnvs) {
+                foreach(BFBase fact in env.Facts) {
+                    if(fact is BFStateRange) {
+                        rangefacts.Add((BFStateRange)fact);
+                        state = (BFStateRange) fact;
                     }
                 }
+            }
 
                 if(rangefacts.Count > 0) {
                     foreach(var fact in rangefacts) {
@@ -60,23 +100,6 @@ namespace ProtoAqua.Experiment
 
                 m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
                 m_SummaryText.SetText(form_text);
-            }
-            else {
-                m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
-                m_SummaryText.SetText(Services.Loc.Localize("experiment.summary.countableSummary"));
-                m_RangeFactButton.gameObject.SetActive(false);
-            }
-
-            m_BehaviorDisplayPool.Reset();
-
-            foreach(var behaviorId in inResultData.ObservedBehaviorIds)
-            {
-                var behavior = Services.Assets.Bestiary.Fact(behaviorId);
-                m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
-            }
-
-            // HACKS
-            Routine.Start(this, ForceLayoutCorrectHACK());
         }
 
         private IEnumerator ForceLayoutCorrectHACK()

@@ -6,7 +6,6 @@ using TMPro;
 using BeauUtil.Variants;
 using Aqua;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ProtoAqua.Experiment
 {
@@ -27,13 +26,14 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
+        private bool OnMeasurementCritterY;
+
         public Action OnSelectContinue;
+
 
         protected override void Awake()
         {
-            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this)
-            .Register<TankType>(ExperimentEvents.SetupTank, ConfigureMeasurement, this)
-            .Register(ExperimentEvents.MeasurementCritX, SetupMeasurementY, this);
+            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
 
 
             m_CachedButtons = m_ButtonRoot.GetComponentsInChildren<ActorToggleButton>();
@@ -50,30 +50,6 @@ namespace ProtoAqua.Experiment
 
         }
 
-        public void SetupMeasurementY() {
-            
-
-
-        }
-
-        public void ConfigureMeasurement(TankType tank) {
-            if(tank == TankType.Measurement) {
-                for (int i = 0; i < m_CachedButtons.Length; ++i) {
-                ActorToggleButton button = m_CachedButtons[i];
-                    button.Toggle.onValueChanged.RemoveAllListeners();
-                    // button.Toggle.onValueChanged.AddListener((b) => UpdateFromSelection());
-                }
-            }
-            else {
-                for(int i = 0; i < m_CachedButtons.Length; ++i)
-            {
-                ActorToggleButton button = m_CachedButtons[i];
-                button.Toggle.onValueChanged.RemoveAllListeners();
-                button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
-            }
-            }
-            
-        }
         public override void SetData(ExperimentSetupData inData)
         {
             base.SetData(inData);
@@ -83,12 +59,22 @@ namespace ProtoAqua.Experiment
         public override void Refresh()
         {
             base.Refresh();
+            OnMeasurementCritterY = OnMeasurementY();
             m_Visited = false;
             UpdateButtons();
         }
+
+        public bool OnMeasurementY() {
+            if(m_CachedData.Tank == TankType.Measurement) {
+                if(m_CachedData.CritterX != StringHash32.Null && m_CachedData.CritterY == StringHash32.Null) {
+                    return true;
+                }
+            }
+            return false;
+        }
         private void PresetButtons(ExpSubscreen sc) {
 
-            if(!sc.Equals(ExpSubscreen.Actor)) return;
+            if(!(sc == ExpSubscreen.Actor)) return;
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
@@ -117,12 +103,9 @@ namespace ProtoAqua.Experiment
                 return;
             
             var allActorTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Critter);
-            
-            // if(tankType.Tank.Equals(TankType.Measurement)) {
-            //     if(!m_CachedData.CritterX.Equals(StringHash32.Null)) {
-            //         allActorTypes = MeasurementFilterY(allActorTypes);
-            //     }
-            // }
+            if(tankType.Tank == TankType.Measurement && OnMeasurementCritterY) {
+                allActorTypes = MeasurementFilterY(allActorTypes);
+            } 
 
             m_ToggleGroup.enabled = tankType.SingleCritter;
 
@@ -152,31 +135,48 @@ namespace ProtoAqua.Experiment
         }
 
         private List<BestiaryDesc> MeasurementFilterY(IEnumerable<BestiaryDesc> All_Actors) {
-            List<BestiaryDesc> allActors = All_Actors.ToList();
-            List<BestiaryDesc> targets = new List<BestiaryDesc>();
-            foreach(var fact in m_CachedData.GetEat()) {
-                BFEat efact = (BFEat)fact.Fact;
-                // targets.Add(efact.GetTarget());
+            List<BestiaryDesc> Result = new List<BestiaryDesc>(All_Actors);
+            var targets = m_CachedData.GetTargets();
+            foreach(var actor in All_Actors) {
+                if(!targets.Contains(actor.Id())) Result.Remove(actor);
             }
-            allActors.RemoveAll(b => allActors.Except(targets).Contains(b));
-            return allActors;
-
+            return Result;
         }
 
         private void UpdateFromButton(StringHash32 inActorId, bool inbActive)
         {
             var actorData = Services.Assets.Bestiary.Get(inActorId);
-            Toggle active = m_ToggleGroup.ActiveToggle();
-
             if(m_CachedData.Tank == TankType.Measurement) {
-                if(m_CachedData.CritterY.Equals(StringHash32.Null)) {
-                    if(active != null) {
-
-                    }
-                }
+                MeasurementUpdate(inActorId, inbActive);
             }
+            else { GeneralUpdate(inActorId, inbActive); }
 
+            m_NextButton.interactable = m_CachedData.ActorIds.Count > 0 || m_CachedData.CritterX != StringHash32.Null;
+            UpdateDisplay(inActorId);
+            Services.Data.SetVariable("experiment:setup." + actorData.name, inbActive);
+        }
 
+        private void MeasurementUpdate(StringHash32 inActorId, bool inbActive) {
+            if(inbActive) {
+                if(OnMeasurementCritterY) {
+                    m_CachedData.CritterY = inActorId;
+                }
+                else { 
+                    m_CachedData.CritterX = inActorId;
+                    m_CachedData.Process(inActorId);
+                }
+                Services.Events.Dispatch(ExperimentEvents.SetupAddActor, inActorId);
+            }
+            else {
+                if(OnMeasurementCritterY) {
+                    m_CachedData.CritterY = StringHash32.Null;
+                }
+                else { m_CachedData.CritterX = StringHash32.Null; }
+                Services.Events.Dispatch(ExperimentEvents.SetupRemoveActor, inActorId);
+            }
+        }
+
+        private void GeneralUpdate(StringHash32 inActorId, bool inbActive) {
             if (inbActive)
             {
 
@@ -188,10 +188,6 @@ namespace ProtoAqua.Experiment
                 m_CachedData.ActorIds.Remove(inActorId);
                 Services.Events.Dispatch(ExperimentEvents.SetupRemoveActor, inActorId);
             }
-
-            m_NextButton.interactable = m_CachedData.ActorIds.Count > 0;
-            UpdateDisplay(inActorId);
-            Services.Data.SetVariable("experiment:setup." + actorData.name, inbActive);
         }
 
         private void UpdateDisplay(StringHash32 inActorId)

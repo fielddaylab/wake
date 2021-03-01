@@ -34,6 +34,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ExperimentSetupSubscreenInProgress m_InProgressScreen = null;
         [SerializeField] private ExperimentSetupSubscreenSummary m_SummaryScreen = null;
         [SerializeField] private ExperimentSetupSubscreenWaterProp m_PropertyScreen = null;
+        [SerializeField] private ExperimentSetupSubscreenCategory m_CategoryScreen = null;
+        [SerializeField] private ExperimentSetupSubscreenSlider m_SliderScreen = null;
 
         #endregion // Inspector
 
@@ -49,7 +51,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private bool m_ExperimentSetup = false;
         [NonSerialized] private bool m_ExperimentRunning = false;
 
-        [NonSerialized] private TankType m_CurrentExp = TankType.None;
+        [NonSerialized] private TankType m_CurrentExp;
 
         [NonSerialized] private bool m_ExperimentFinished = false;
 
@@ -58,17 +60,17 @@ namespace ProtoAqua.Experiment
         #region Core
         protected override void Awake()
         {
+            m_CurrentExp = TankType.None;
             m_SubDirectory = new SubscreenDirectory(
                 null, m_ActorsScreen, m_EcoScreen, m_BeginExperimentScreen, m_InProgressScreen,
-                m_SummaryScreen, m_PropertyScreen, m_TankScreen, m_BootScreen);
+                m_SummaryScreen, m_PropertyScreen, m_TankScreen, m_BootScreen, m_CategoryScreen, m_SliderScreen);
 
             m_CloseButton.onClick.AddListener(() => CancelExperiment());
 
             Services.Events.Register(ExperimentEvents.SetupPanelOn, () => Show(), this)
                 .Register(ExperimentEvents.SetupInitialSubmit, OnExperimentSubmitInitial, this)
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this)
-                .Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this)
-                .Register(ExperimentEvents.StressorExperiment, OnStressorTeardown, this);
+                .Register(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this);
 
             SetBaseSubscreenChain();
 
@@ -166,9 +168,9 @@ namespace ProtoAqua.Experiment
             if (m_ExperimentRunning) {
                 return m_InProgressScreen;
             }
-            else if(m_CurrentExp.Equals(TankType.Stressor) && !m_ExperimentFinished) {
-                return m_SummaryScreen;
-            }    
+            if(!m_ExperimentFinished) {
+                if(m_CurrentExp == TankType.Measurement) return m_SummaryScreen;
+            }
             return m_BootScreen;
         }
 
@@ -201,11 +203,6 @@ namespace ProtoAqua.Experiment
                 SetInputState(true);
             }
         }
-        
-        private void OnStressorTeardown() {
-            SetInputState(false);
-            Routine.Start(this, ExitExperimentRoutine());
-        }
 
         private void CancelExperiment()
         {
@@ -217,6 +214,7 @@ namespace ProtoAqua.Experiment
 
             if (bExit)
             {
+                m_CurrentExp = TankType.None;
                 SetInputState(false);
                 Routine.Start(this, ExitExperimentRoutine());
             }
@@ -292,9 +290,13 @@ namespace ProtoAqua.Experiment
                     Routine.Start(this, StartFoundationalTankExperimentRoutine());
                 }
 
-                if (m_SelectionData.Tank == TankType.Stressor)
+                if (m_SelectionData.Tank == TankType.Stressor || m_SelectionData.Tank == TankType.Measurement)
                 {
-                    Routine.Start(this, RunStressorTankExperimentRoutine());
+                    Routine.Start(this, StartQuickExperimentRoutine());
+                    TryEndExperiment();
+                    // Services.Script.TriggerResponse(ExperimentTriggers.TryEndExperiment);
+                    // SetInputState(false);
+                    // Routine.Start(this, ExitExperimentRoutine());
                 }
             }
         }
@@ -325,6 +327,8 @@ namespace ProtoAqua.Experiment
                     m_SubDirectory.GetSubscreen(sEnum).Refresh();
                 }
             }
+
+            m_SubDirectory.Refresh();
         }
 
         #endregion // Callbacks
@@ -378,58 +382,45 @@ namespace ProtoAqua.Experiment
             m_InProgressScreen.OnSelectEnd = () => TryEndExperiment();
         }
 
-        private void SetSubScreenChain(TankType tank)
-        {
-
-            if (m_CurrentExp == tank)
-                return;
-            
-            m_CurrentExp = tank;
-
-            if (tank != TankType.None)
-            {
-                var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(tank).Sequence;
-                SetActions(sequence);
-
-            }
-        }
-
-        static private List<ExpSubscreen> bases = new List<ExpSubscreen>() { ExpSubscreen.None, ExpSubscreen.Boot };
-
         private void SetActions(ExpSubscreen[] sequence)
         {
-            List<ExpSubscreen> bases = new List<ExpSubscreen>() { ExpSubscreen.None, ExpSubscreen.Boot };
             if (!m_SubDirectory.SeqEquals(sequence)) m_SubDirectory.SetSequence(sequence);
             foreach (var sub in sequence)
             {
-                if (bases.Contains(sub)) continue;
-                if (sub.Equals(ExpSubscreen.Tank))
+                switch (sub)
                 {
-                    if (m_SubDirectory.HasNext(sub)) m_TankScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                }
-                if (sub.Equals(ExpSubscreen.Actor))
-                {
-                    if (m_SubDirectory.HasNext(sub)) m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                }
-                if (sub.Equals(ExpSubscreen.Begin))
-                {
-                    if (m_SubDirectory.HasPrev(sub)) m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
-                }
-                if (sub.Equals(ExpSubscreen.Ecosystem))
-                {
-                    if (m_SubDirectory.HasPrevNext(sub))
-                    {
-                        m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                        m_EcoScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
-                    }
-                }
-                if (sub.Equals(ExpSubscreen.Property))
-                {
-                    if (m_SubDirectory.HasPrevNext(sub))
-                    {
-                        m_PropertyScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
-                        m_PropertyScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
-                    }
+                    case ExpSubscreen.Tank:
+                        if (m_SubDirectory.HasNext(sub)) m_TankScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
+                        break;
+                    case ExpSubscreen.Actor:
+                        if (m_SubDirectory.HasNext(sub)) m_ActorsScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
+                        break;
+                    case ExpSubscreen.Begin:
+                        if (m_SubDirectory.HasPrev(sub)) m_BeginExperimentScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
+                        break;
+                    case ExpSubscreen.Ecosystem:
+                        if (m_SubDirectory.HasPrevNext(sub))
+                        {
+                            m_EcoScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
+                            m_EcoScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
+                        }
+                        break;
+                    case ExpSubscreen.Property:
+                        if (m_SubDirectory.HasPrevNext(sub))
+                        {
+                            m_PropertyScreen.OnSelectContinue = () => SetSubscreen(m_SubDirectory.GetNext(sub));
+                            m_PropertyScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
+                        }
+                        break;
+                    case ExpSubscreen.Category:
+                        if(m_SubDirectory.HasPrev(sub)) m_CategoryScreen.OnSelectBack = () => SetSubscreen(m_SubDirectory.GetPrevious(sub), true);
+                        m_CategoryScreen.OnSelectCritter = () => SetSubscreen(m_SubDirectory.GetNext(sub));
+                        break;
+                    case ExpSubscreen.Slider:
+                        if(m_SubDirectory.HasNext(sub)) m_SliderScreen.OnSelectEnd = () => StartExperiment();
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -440,6 +431,7 @@ namespace ProtoAqua.Experiment
 
             if (Tank != TankType.None)
             {
+                m_CurrentExp = Tank;
                 var sequence = Services.Tweaks.Get<ExperimentSettings>().GetTank(Tank).Sequence;
                 if (m_SubDirectory.GetSequence() == null || !m_SubDirectory.SeqEquals(sequence))
                 {
@@ -450,7 +442,6 @@ namespace ProtoAqua.Experiment
         }
 
         #endregion // Subscreens
-
 
         #region Routines
 
@@ -464,15 +455,11 @@ namespace ProtoAqua.Experiment
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
         }
 
-        private IEnumerator RunStressorTankExperimentRoutine()
-        {
-            SetInputState(false);
+        private IEnumerator StartQuickExperimentRoutine() {
             Hide();
             yield return 0.25f;
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
             yield return 3f;
-            Services.Events.Dispatch(ExperimentEvents.StressorExperiment);
-
         }
 
         #endregion // Routines

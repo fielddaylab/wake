@@ -6,6 +6,8 @@ using System.Linq;
 namespace ProtoAqua.Experiment {
     
     public class SubscreenDirectory {
+
+        // TODO : Convert into hashmaps
         private List<ExpSubscreen> SubEnum = new List<ExpSubscreen>((ExpSubscreen[])Enum.GetValues(typeof(ExpSubscreen)));
 
         private List<ExperimentSetupSubscreen> SubScreens = new List<ExperimentSetupSubscreen>();
@@ -53,6 +55,16 @@ namespace ProtoAqua.Experiment {
                 Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
         }
 
+        public bool HasReuse(ExpSubscreen sEnum) {
+            int i = 0;
+            foreach(var seq in Sequence) {
+                if(seq == sEnum) ++i;
+            }
+
+            return i != 1;
+
+        }
+
         public bool SeqEquals(ExpSubscreen[] Seq) {
             return Sequence.SequenceEqual(Seq);
         }
@@ -71,22 +83,35 @@ namespace ProtoAqua.Experiment {
             return Visited[Sequence.IndexOf(sEnum)];
         }
 
+        public bool IsVisited(int idx) {
+            return Visited[idx];
+        }
+
 
         public ExpSubscreen[] GetSequence() {
             return Sequence.ToArray();
         }
-
+        // TODO: Consider Reuses
         public ExperimentSetupSubscreen GetNext(ExpSubscreen curr) {
-            if((Sequence.IndexOf(curr) < Sequence.Count -1) && (Sequence.IndexOf(curr) >= 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[Sequence.IndexOf(curr) + 1])];
+            int currIdx = Sequence.IndexOf(curr);
+            if(HasReuse(curr) && IsVisited(currIdx)) {
+                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+            } 
+
+            if((currIdx < Sequence.Count -1) && (currIdx >= 0))
+                return SubScreens[SubEnum.IndexOf(Sequence[currIdx + 1])];
             else {
                 return null;
             }
         }
 
         public ExperimentSetupSubscreen GetPrevious(ExpSubscreen curr) {
-            if((Sequence.IndexOf(curr) <= Sequence.Count -1) && (Sequence.IndexOf(curr) > 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[Sequence.IndexOf(curr) - 1])];
+            int currIdx = Sequence.IndexOf(curr);
+            if(HasReuse(curr) && IsVisited(currIdx)) {
+                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+            }
+            if((currIdx <= Sequence.Count -1) && (currIdx > 0))
+                return SubScreens[SubEnum.IndexOf(Sequence[currIdx - 1])];
             else {
                 return null;
             }
