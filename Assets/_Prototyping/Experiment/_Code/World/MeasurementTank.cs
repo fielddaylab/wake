@@ -34,6 +34,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private float min_Alpha = 0;
         [NonSerialized] private float max_Alpha = 0;
         [NonSerialized] private Color m_CurrentColor;
+        [NonSerialized] private float defaultAlpha;
 
 
         protected override void Awake()
@@ -51,6 +52,7 @@ namespace ProtoAqua.Experiment
             min_Alpha = m_WaterColor.GetAlpha();
             max_Alpha = min_Alpha + 0.25f;
             m_CurrentColor = m_WaterColor.GetColor();
+            defaultAlpha = m_WaterColor.GetAlpha();
         }
 
 
@@ -140,6 +142,7 @@ namespace ProtoAqua.Experiment
         private void ChangeColor(Color color) {
 
             var alpha = min_Alpha + (color.a - min_Alpha) * (max_Alpha - min_Alpha);
+            color.a = defaultAlpha;
 
             m_CurrentColor = Color.Lerp(m_CurrentColor, color, alpha);
 

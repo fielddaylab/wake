@@ -16,6 +16,8 @@ namespace ProtoAqua.Experiment
 
         public List<float> SliderValues = new List<float>();
 
+        public WaterPropertyBlockF32 Values;
+
         public StringHash32 CritterY;
 
         public WaterPropertyId PropertyId;
@@ -28,6 +30,7 @@ namespace ProtoAqua.Experiment
             clone.CritterX = CritterX;
             clone.CritterY = CritterY;
             clone.PropertyId = PropertyId;
+            clone.Values = Values;
             foreach(var id in ActorIds)
                 clone.ActorIds.Add(id);
             foreach(var id in FactIds) {
@@ -46,6 +49,7 @@ namespace ProtoAqua.Experiment
             PropertyId = WaterPropertyId.MAX;
             CritterX = StringHash32.Null;
             CritterY = StringHash32.Null;
+            Values = new WaterPropertyBlockF32();
             FactIds.Clear();
             ActorIds.Clear();
             SliderValues.Clear();
@@ -78,7 +82,7 @@ namespace ProtoAqua.Experiment
                 var fact = Services.Data.Profile.Bestiary.GetFact(id);
                 if(IsBFEat(fact.Fact)) {
                     var res = (BFEat)fact.Fact;
-                    if(res.Target().Id().Equals(CritterY)) return fact;
+                    if (res.Target().Id().Equals(CritterY)) return fact;
                 }
             }
             return null;

@@ -23,12 +23,15 @@ namespace ProtoAqua.Experiment
 
         private ExperimentSetupData m_CachedData;
 
+        private WaterPropertyBlockF32 m_Block;
+
         private PropertySlider[] m_CachedSliders;
 
         public Action OnSelectEnd;
 
         protected override void Awake()
         {
+            m_Block = new WaterPropertyBlockF32();
             m_EndButton.onClick.AddListener(() => OnSelectEnd?.Invoke());
             m_CachedSliders = m_SliderGroup.GetComponentsInChildren<PropertySlider>();
             for(int i = 0; i < m_CachedSliders.Length; ++i)
@@ -45,7 +48,9 @@ namespace ProtoAqua.Experiment
         public override void Refresh()
         {
             base.Refresh();
+            m_Block = new WaterPropertyBlockF32();
             UpdateSliders();
+            ResetSliders();
         }
 
         private void UpdateSliders() {
@@ -67,12 +72,18 @@ namespace ProtoAqua.Experiment
                 slider.Load(prop, prop.Icon(), true);
 
                 ++sliderIdx;
-
             }
 
             for(; sliderIdx < m_CachedSliders.Length; ++sliderIdx)
             {
                 m_CachedSliders[sliderIdx].Load(null, m_EmptyIcon, false);
+            }
+        }
+
+        private void ResetSliders() {
+            if(m_CachedSliders == null || m_CachedSliders.Length < 1) return;
+            foreach(var slider in m_CachedSliders) {
+                slider.Slider.SetValueWithoutNotify(0f);
             }
         }
 
@@ -86,6 +97,11 @@ namespace ProtoAqua.Experiment
             m_Value.SetText(def == null ? "" : def.FormatValue(displayValue));
             var color = def.Color();
             color.a = value;
+            if (def != null)
+            {
+                var scaledValue = Rescale(value, 0, 1, def.MinValue(), def.MaxValue());
+                UpdateBlock(m_Id, scaledValue);
+            }
 
             Services.Events.Dispatch(ExperimentEvents.OnMeasurementChange, color);
         }
@@ -97,6 +113,41 @@ namespace ProtoAqua.Experiment
             m_Label.SetText(def?.LabelId() ?? StringHash32.Null);
             m_Value.SetText(value < 0 ? " " : def.FormatValue(displayValue));
             m_EndButton.interactable = true;
+        }
+
+        private float Rescale(float value, float min, float max, float minScale, float maxScale) {
+            return minScale + (float)(value - min)/(max-min) * (maxScale - minScale);
+        }
+
+        private void UpdateBlock(WaterPropertyId m_Id, float value) {
+            switch(m_Id) {
+                case WaterPropertyId.CarbonDioxide:
+                    m_Block.CarbonDioxide = value;
+                    m_CachedData.Values.CarbonDioxide = value;
+                    break;
+                case WaterPropertyId.Light:
+                    m_Block.Light = value;
+                    m_CachedData.Values.Light = value;
+                    break;
+                case WaterPropertyId.Oxygen:
+                    m_Block.Oxygen = value;
+                    m_CachedData.Values.Oxygen = value;
+                    break;
+                case WaterPropertyId.PH:
+                    m_Block.PH = value;
+                    m_CachedData.Values.PH = value;
+                    break;
+                case WaterPropertyId.Salinity:
+                    m_Block.Salinity = value;
+                    m_CachedData.Values.Salinity = value;
+                    break;
+                case WaterPropertyId.Temperature:
+                    m_Block.Temperature = value;
+                    m_CachedData.Values.Temperature = value;
+                    break;
+                default:
+                    break;
+            }
         }
 
         public override void SetData(ExperimentSetupData inData)

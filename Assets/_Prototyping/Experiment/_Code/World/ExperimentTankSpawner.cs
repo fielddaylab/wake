@@ -66,7 +66,7 @@ namespace ProtoAqua.Experiment
             Services.Data.SetVariable(ExperimentVars.ExperimentRunning, true);
             m_CurrentTank.OnExperimentStart();
             if(m_CurrentTankType.Equals(TankType.Stressor)) {
-                Services.Events.Dispatch(ExperimentEvents.StressorText, m_CurrentData.PropertyId);
+                Services.Events.Dispatch(ExperimentEvents.StressorColor, m_CurrentData.PropertyId);
             }
             m_ObservedBehaviors.Clear();
         }

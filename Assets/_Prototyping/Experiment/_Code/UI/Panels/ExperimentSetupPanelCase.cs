@@ -249,6 +249,7 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator ExitExperimentRoutine()
         {
+            if(m_SelectionData.Tank == TankType.Stressor || m_SelectionData.Tank == TankType.Measurement) yield return 0.26f;
             using (var tempFader = Services.UI.ScreenFaders.AllocFader())
             {
                 bool bWasRunning = m_ExperimentRunning;
@@ -293,8 +294,8 @@ namespace ProtoAqua.Experiment
                 if (m_SelectionData.Tank == TankType.Stressor || m_SelectionData.Tank == TankType.Measurement)
                 {
                     Routine.Start(this, StartQuickExperimentRoutine());
-                    TryEndExperiment();
-                    // Services.Script.TriggerResponse(ExperimentTriggers.TryEndExperiment);
+                    // Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
+                    // OnExperimentBegin();
                     // SetInputState(false);
                     // Routine.Start(this, ExitExperimentRoutine());
                 }
@@ -460,6 +461,7 @@ namespace ProtoAqua.Experiment
             yield return 0.25f;
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
             yield return 3f;
+            Routine.Start(this, ExitExperimentRoutine());
         }
 
         #endregion // Routines

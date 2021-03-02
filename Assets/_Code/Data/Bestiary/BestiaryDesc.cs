@@ -41,6 +41,7 @@ namespace Aqua
 
         public string ScientificName() { return m_ScientificNameId; }
         public string CommonName() { return m_CommonNameId; }
+        public string PluralName() { return m_CommonNameId + "s"; }
 
         public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
         public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
@@ -137,23 +138,24 @@ namespace Aqua
 
         #region Checks
 
-        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF32 inEnvironment, in WaterPropertyBlockU8 inStarvation)
+        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF32 inEnvironment)
         {
+            // param: in WaterPropertyBlockU8 inStarvation)
             ActorStateId actorState = ActorStateId.Alive;
 
             for(int i = m_StateChangeFacts.Length - 1; i >= 0 && actorState < ActorStateId.Dead; --i)
             {
                 BFState state = m_StateChangeFacts[i];
                 
-                BFStateStarvation starve = state as BFStateStarvation;
-                if (!starve.IsReferenceNull())
-                {
-                    if (inStarvation[starve.PropertyId()] >= starve.Ticks())
-                    {
-                        actorState = starve.TargetState();
-                    }
-                    continue;
-                }
+                // BFStateStarvation starve = state as BFStateStarvation;
+                // if (!starve.IsReferenceNull())
+                // {
+                //     if (inStarvation[starve.PropertyId()] >= starve.Ticks())
+                //     {
+                //         actorState = starve.TargetState();
+                //     }
+                //     continue;
+                // }
 
                 BFStateRange range = state as BFStateRange;
                 if (!range.IsReferenceNull())

@@ -109,7 +109,7 @@ namespace ProtoAqua.Experiment
             if (active != null)
             {
                 m_CachedData.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
-                Services.Events.Dispatch(ExperimentEvents.StressorText, m_CachedData.PropertyId);
+                Services.Events.Dispatch(ExperimentEvents.StressorColor, m_CachedData.PropertyId);
             }
             else
             {
