@@ -20,12 +20,15 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         private Dictionary<StringHash32, GraphLine> m_LineMap = new Dictionary<StringHash32, GraphLine>();
+        private Rect m_LastRect;
 
         public void Clear()
         {
             m_LineMap.Clear();
             m_LinePool.Reset();
         }
+
+        public Rect Range { get { return m_LastRect; } }
 
         public Rect InitializeCritters(SimulationResult[] inResults)
         {
@@ -78,7 +81,7 @@ namespace ProtoAqua.Modeling
                 }
             }
 
-            return varRange;
+            return (m_LastRect = varRange);
         }
 
         public void RenderLines(Rect inRange)

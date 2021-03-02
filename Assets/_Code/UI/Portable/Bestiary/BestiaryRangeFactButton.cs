@@ -17,7 +17,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_Button = null;
         [SerializeField, Required] private RectTransform m_ButtonTail = null;
         [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private RectTransform m_SafeRangeTransform = null;
+        [SerializeField, Required] private RangeDisplay m_Range = null;
 
         #endregion // Inspector
 
@@ -28,13 +28,14 @@ namespace Aqua.Portable
         {
             var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
 
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
+            Sprite spr = inFact.Icon();
+            if (!spr)
+                spr = propData.Icon();
 
-            //Set Anchors of Safe Range (Assuming 0-100 degree range)
-            
-            m_SafeRangeTransform.anchorMin = new Vector2(propData.RemapValue(inFact.MinSafe()), 0f);
-            m_SafeRangeTransform.anchorMax = new Vector2(propData.RemapValue(inFact.MaxSafe()), 1f);
+            m_Icon.sprite = spr;
+            m_Icon.gameObject.SetActive(spr);
+
+            m_Range.Display(inFact.MinSafe(), inFact.MaxSafe(), propData.MinValue(), propData.MaxValue());
 
             m_Button.targetGraphic.raycastTarget = inbButtonMode;
             m_Button.interactable = inbInteractable;

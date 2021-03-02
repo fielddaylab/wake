@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 6730459072964100358}
   - component: {fileID: 1876585018272128034}
   - component: {fileID: 5353052580785829899}
+  - component: {fileID: 1296537466823715921}
   m_Layer: 5
   m_Name: SafeRange
   m_TagString: Untagged
@@ -203,6 +204,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1296537466823715921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3924015688099630583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b264ad23842574fba5f6a9b5a7bc02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4193740160415788072
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,7 +502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -845,7 +858,7 @@ MonoBehaviour:
   m_Button: {fileID: 7224831448112909527}
   m_ButtonTail: {fileID: 4575822806505846379}
   m_Icon: {fileID: 632203655763470832}
-  m_SafeRangeTransform: {fileID: 6730459072964100358}
+  m_Range: {fileID: 1296537466823715921}
 --- !u!114 &7224831448112909527
 MonoBehaviour:
   m_ObjectHideFlags: 0

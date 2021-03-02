@@ -16,7 +16,7 @@ namespace ProtoAqua.Modeling
         
         [Header("Historical Data")]
         [SerializeField] private ActorCount[] m_InitialActors = null;
-        [SerializeField] private int m_TickCount = 1000;
+        [SerializeField] private uint m_TickCount = 1000;
         [SerializeField] private int m_TickScale = 10;
 
         [Header("Prediction")]
@@ -26,12 +26,14 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         [NonSerialized] private bool m_Optimized;
+        [NonSerialized] private List<BestiaryDesc> m_Critters;
 
         public BestiaryDesc Environment() { return m_Environment; }
+        public IReadOnlyList<BestiaryDesc> Critters() { Optimize(); return m_Critters; }
         public IReadOnlyList<BFBase> Facts() { Optimize(); return m_Facts; }
         public IReadOnlyList<ActorCount> Actors() { Optimize(); return m_InitialActors; }
 
-        public int TickCount() { return m_TickCount; }
+        public uint TickCount() { return m_TickCount; }
         public int TickScale() { return m_TickScale; }
 
         public int PredictionTicks() { return m_PredictionTicks; }
@@ -40,6 +42,10 @@ namespace ProtoAqua.Modeling
         {
             if (m_Optimized)
                 return;
+
+            m_Critters = new List<BestiaryDesc>(m_InitialActors.Length);
+            for(int i = 0; i < m_Critters.Count; ++i)
+                m_Critters.Add(Services.Assets.Bestiary.Get(m_InitialActors[i].Id));
 
             KeyValueUtils.SortByKey<StringHash32, uint, ActorCount>(m_InitialActors);
             m_Optimized = true;

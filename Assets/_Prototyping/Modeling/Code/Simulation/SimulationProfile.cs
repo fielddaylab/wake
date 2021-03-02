@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Aqua;
-using BeauPools;
 using BeauUtil;
 using UnityEngine;
 
@@ -30,16 +28,19 @@ namespace ProtoAqua.Modeling
 
         private void LimitedClear()
         {
-            m_InitialState.Environment = default(WaterPropertyBlockF32);
+            m_InitialState.Environment = Services.Assets.WaterProp.DefaultValues();
             for(int i = 0; i < m_Profiles.Count; ++i)
                 m_Profiles[i].Clear();
             m_DiscoveredCritters.Clear();
             m_DiscoveredFacts.Clear();
         }
 
-        public void Construct(BestiaryDesc inEnvironment)
+        public void Construct(BestiaryDesc inEnvironment, IEnumerable<BestiaryDesc> inCritters)
         {
             LimitedClear();
+
+            foreach(var critter in inCritters)
+                DiscoverCritter(critter);
 
             foreach(var fact in inEnvironment.Facts)
                 DiscoverFact(fact, null);
@@ -48,28 +49,34 @@ namespace ProtoAqua.Modeling
                 m_Profiles[i].PostProcess(this);
         }
 
-        public void Construct(BestiaryDesc inEnvironment, IEnumerable<PlayerFactParams> inFacts)
+        public void Construct(BestiaryDesc inEnvironment, IEnumerable<BestiaryDesc> inCritters, IEnumerable<PlayerFactParams> inFacts)
         {
             LimitedClear();
 
-            foreach(var fact in inEnvironment.Facts)
-                DiscoverFact(fact, null);
+            foreach(var critter in inCritters)
+                DiscoverCritter(critter);
 
             foreach(var factParams in inFacts)
                 DiscoverFact(factParams.Fact, factParams);
 
+            foreach(var fact in inEnvironment.Facts)
+                DiscoverFact(fact, null);
+
             for(int i = 0; i < m_Profiles.Count; i++)
                 m_Profiles[i].PostProcess(this);
         }
 
-        public void Construct(BestiaryDesc inEnvironment, IEnumerable<BFBase> inFacts)
+        public void Construct(BestiaryDesc inEnvironment, IEnumerable<BestiaryDesc> inCritters, IEnumerable<BFBase> inFacts)
         {
             LimitedClear();
 
-            foreach(var fact in inEnvironment.Facts)
-                DiscoverFact(fact, null);
+            foreach(var critter in inCritters)
+                DiscoverCritter(critter);
 
             foreach(var fact in inFacts)
+                DiscoverFact(fact, null);
+
+            foreach(var fact in inEnvironment.Facts)
                 DiscoverFact(fact, null);
 
             for(int i = 0; i < m_Profiles.Count; i++)

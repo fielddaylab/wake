@@ -24,9 +24,6 @@ namespace ProtoAqua.Modeling
 
         #region Inspector
 
-        [Header("Facts")]
-        [SerializeField] private Button m_AddFactButton = null;
-
         [Header("Visualization")]
         [SerializeField] private RectTransform m_MapTransform = null;
         [SerializeField] private NodePool m_NodePool = null;
@@ -39,27 +36,6 @@ namespace ProtoAqua.Modeling
         private Dictionary<StringHash32, ConceptMapNode> m_AllocatedNodes = new Dictionary<StringHash32, ConceptMapNode>();
         private Dictionary<StringHash32, ConceptMapLink> m_AllocatedLinks = new Dictionary<StringHash32, ConceptMapLink>();
         private Routine m_QueuedRebuild;
-
-        #region Events
-
-        private void Awake()
-        {
-            m_AddFactButton.onClick.AddListener(OnAddFactClick);
-        }
-
-        #endregion // Events
-
-        #region Handlers
-
-        private void OnAddFactClick()
-        {
-            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (f) => !m_AddedFacts.Contains(f))
-                .OnComplete((f) => {
-                    AddFact(f);
-                });
-        }
-
-        #endregion // Handlers
 
         #region Add/Remove
 
@@ -79,6 +55,19 @@ namespace ProtoAqua.Modeling
         {
             if (m_AddedFacts.Remove(inParams))
             {
+                if (!m_QueuedRebuild)
+                    m_QueuedRebuild = Routine.StartCall(RebuildGraph);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool ClearFacts()
+        {
+            if (m_AddedFacts.Count > 0)
+            {
+                m_AddedFacts.Clear();
                 if (!m_QueuedRebuild)
                     m_QueuedRebuild = Routine.StartCall(RebuildGraph);
                 return true;

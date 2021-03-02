@@ -98,5 +98,22 @@ namespace Aqua
 
             return transitionRange;
         }
+    
+        /// <summary>
+        /// Generates the initial water chemistry properties for the given environment.
+        /// </summary>
+        static public WaterPropertyBlockF32 GenerateInitialState(BestiaryDesc inParent)
+        {
+            WaterPropertyBlockF32 properties = Services.Assets.WaterProp.DefaultValues();
+            foreach(var fact in inParent.Facts)
+            {
+                BFWaterProperty bfWater = fact as BFWaterProperty;
+                if (bfWater != null)
+                {
+                    properties[bfWater.PropertyId()] = bfWater.Value();
+                }
+            }
+            return properties;
+        }
     }
 }

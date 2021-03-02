@@ -22,8 +22,10 @@ namespace ProtoAqua.Modeling
             IReadOnlyList<CritterProfile> profiles = inProfile.Critters();
             int critterCount = profiles.Count;
 
+            // no static cached arrays here - since CritterData is just a data struct we can allocate it all on the stack!
             CritterData* dataBlock = stackalloc CritterData[critterCount];
 
+            // setup
             for(int i = 0; i < critterCount; ++i)
             {
                 profiles[i].CopyFrom(ref dataBlock[i], inInitial);
@@ -31,7 +33,6 @@ namespace ProtoAqua.Modeling
             }
 
             // produce stuff
-
             for(int i = 0; i < critterCount; ++i)
             {
                 if (dataBlock[i].Population > 0)

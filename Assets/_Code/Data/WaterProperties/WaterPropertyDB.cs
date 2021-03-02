@@ -10,6 +10,7 @@ namespace Aqua
     {
         [NonSerialized] private WaterPropertyDesc[] m_PropertyIdMap;
         [NonSerialized] private WaterPropertyDesc[] m_SortedMap;
+        [NonSerialized] private WaterPropertyBlockF32 m_DefaultValues;
 
         protected override void PreLookupConstruct()
         {
@@ -32,6 +33,11 @@ namespace Aqua
                 m_PropertyIdMap[(int) propIndex] = inItem;
             }
 
+            if (propIndex <= WaterPropertyId.TRACKED_MAX)
+            {
+                m_DefaultValues[propIndex] = inItem.DefaultValue();
+            }
+
             int sortIndex = Array.IndexOf(SortOrder, propIndex);
             if (sortIndex >= 0)
                 m_SortedMap[sortIndex] = inItem;
@@ -46,6 +52,8 @@ namespace Aqua
 
             return m_PropertyIdMap[(int) inId];
         }
+
+        public WaterPropertyBlockF32 DefaultValues() { return m_DefaultValues; }
 
         public IReadOnlyList<WaterPropertyDesc> Sorted()
         {

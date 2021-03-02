@@ -24,6 +24,7 @@ namespace Aqua
         [Header("Ranges")]
         [SerializeField] private float m_MinValue = 0;
         [SerializeField] private float m_MaxValue = 0;
+        [SerializeField] private float m_DefaultValue = 0;
 
         #endregion
 
@@ -49,6 +50,7 @@ namespace Aqua
 
         public float MinValue() { return m_MinValue; }
         public float MaxValue() { return m_MaxValue; }
+        public float DefaultValue() { return m_DefaultValue; }
 
         /// <summary>
         /// Remaps the given value to a 0-1 range from the minimum property value to the maximum.

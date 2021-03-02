@@ -11,8 +11,9 @@ namespace ProtoAqua.Modeling
     public class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
     {
         private readonly BestiaryDesc m_Desc;
-        private BFBody m_Body;
-        private bool m_IsHerd;
+        private readonly StringHash32 m_Id;
+        private readonly bool m_IsHerd;
+        private uint m_MassPerPopulation;
 
         private WaterPropertyBlockF32 m_ToProducePerPopulation;
         private WaterPropertyBlockF32 m_ToProducePerPopulationStressed;
@@ -38,6 +39,7 @@ namespace ProtoAqua.Modeling
                 throw new ArgumentNullException();
             
             m_Desc = inDesc;
+            m_Id = inDesc.Id();
             m_IsHerd = inDesc.HasFlags(BestiaryDescFlags.TreatAsHerd);
 
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
@@ -46,17 +48,17 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        public StringHash32 Id() { return m_Desc.Id(); }
+        public StringHash32 Id() { return m_Id; }
         public BestiaryDesc Desc() { return m_Desc; }
         public bool IsHerd() { return m_IsHerd; }
-        public uint MassPerPopulation() { return m_Body.StartingMass(); }
+        public uint MassPerPopulation() { return m_MassPerPopulation; }
 
         public ListSlice<StringHash32> EatTargets() { return new ListSlice<StringHash32>(m_EatTypes, 0, m_EatTypeCount); }
         public ListSlice<int> EatTargetIndices() { return new ListSlice<int>(m_EatTypeIndices, 0, m_EatTypeCount); }
 
         public void Clear()
         {
-            m_Body = null;
+            m_MassPerPopulation = 0;
 
             m_ToProducePerPopulation = default(WaterPropertyBlockF32);
             m_ToProducePerPopulationStressed = default(WaterPropertyBlockF32);
@@ -297,7 +299,7 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
         {
-            m_Body = inFact;
+            m_MassPerPopulation = inFact.StartingMass();
         }
 
         void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
