@@ -68,8 +68,6 @@ namespace Aqua.Portable
         {
             base.Awake();
 
-            LoadCurrentJob();
-
             m_JobToggle.onValueChanged.AddListener(OnJobToggled);
             m_ResourceToggle.onValueChanged.AddListener(OnResourceToggled);
 
