@@ -3,6 +3,9 @@ using BeauUtil;
 
 namespace Aqua
 {
+    /// <summary>
+    /// Mapping of property to 32-bit float.
+    /// </summary>
     public struct WaterPropertyBlockF32
     {
         public float Oxygen;
@@ -11,7 +14,6 @@ namespace Aqua
         public float PH;
         public float CarbonDioxide;
         public float Salinity;
-        public float Food;
 
         public unsafe float this[WaterPropertyId inId]
         {
@@ -39,8 +41,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
         }
 
         static public WaterPropertyBlockF32 operator *(WaterPropertyBlockF32 inA, float inB)
@@ -52,7 +54,6 @@ namespace Aqua
             result.PH *= inB;
             result.CarbonDioxide *= inB;
             result.Salinity *= inB;
-            result.Food *= inB;
             return result;
         }
 
@@ -65,7 +66,6 @@ namespace Aqua
             result.PH += inB.Light;
             result.CarbonDioxide += inB.CarbonDioxide;
             result.Salinity += inB.Salinity;
-            result.Food += inB.Food;
             return result;
         }
 
@@ -78,7 +78,6 @@ namespace Aqua
             result.PH -= inB.Light;
             result.CarbonDioxide -= inB.CarbonDioxide;
             result.Salinity -= inB.Salinity;
-            result.Food -= inB.Food;
             return result;
         }
 
@@ -101,6 +100,106 @@ namespace Aqua
         }
     }
 
+    /// <summary>
+    /// Mapping of property to unsigned 16-bit int.
+    /// </summary>
+    public struct WaterPropertyBlockU16
+    {
+        public ushort Oxygen;
+        public ushort Temperature;
+        public ushort Light;
+        public ushort PH;
+        public ushort CarbonDioxide;
+        public ushort Salinity;
+
+        public unsafe ushort this[WaterPropertyId inId]
+        {
+            get
+            {
+                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                    throw new ArgumentOutOfRangeException("inId");
+
+                fixed(ushort* start = &this.Oxygen)
+                {
+                    return *((ushort*) (start + (int) inId));
+                }
+            }
+            set
+            {
+                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                    throw new ArgumentOutOfRangeException("inId");
+
+                fixed(ushort* start = &this.Oxygen)
+                {
+                    *((ushort*) (start + (int) inId)) = value;
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+        }
+
+        static public WaterPropertyBlockU16 operator *(WaterPropertyBlockU16 inA, float inB)
+        {
+            WaterPropertyBlockU16 result = inA;
+            result.Oxygen = (ushort) (result.Oxygen * inB);
+            result.Temperature = (ushort) (result.Temperature * inB);
+            result.Light = (ushort) (result.Light * inB);
+            result.PH = (ushort) (result.PH * inB);
+            result.CarbonDioxide = (ushort) (result.CarbonDioxide * inB);
+            result.Salinity = (ushort) (result.Salinity * inB);
+            return result;
+        }
+
+        static public WaterPropertyBlockU16 operator +(WaterPropertyBlockU16 inA, WaterPropertyBlockU16 inB)
+        {
+            WaterPropertyBlockU16 result = inA;
+            result.Oxygen += inB.Oxygen;
+            result.Temperature += inB.Oxygen;
+            result.Light += inB.Light;
+            result.PH += inB.Light;
+            result.CarbonDioxide += inB.CarbonDioxide;
+            result.Salinity += inB.Salinity;
+            return result;
+        }
+
+        static public WaterPropertyBlockU16 operator -(WaterPropertyBlockU16 inA, WaterPropertyBlockU16 inB)
+        {
+            WaterPropertyBlockU16 result = inA;
+            result.Oxygen -= inB.Oxygen;
+            result.Temperature -= inB.Oxygen;
+            result.Light -= inB.Light;
+            result.PH -= inB.Light;
+            result.CarbonDioxide -= inB.CarbonDioxide;
+            result.Salinity -= inB.Salinity;
+            return result;
+        }
+
+        static public unsafe WaterPropertyBlockU16 operator &(WaterPropertyBlockU16 inA, WaterPropertyMask inB)
+        {
+            WaterPropertyBlockU16 result = inA;
+            
+            ushort* ptr = &result.Oxygen;
+            int idx = 0;
+            int mask = 1;
+            while(idx < (int) WaterPropertyId.TRACKED_MAX)
+            {
+                if ((inB & mask) == 0)
+                    *ptr = 0;
+                idx++;
+                mask <<= 1;
+            }
+
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Mapping of property to unsigned 8-bit integer.
+    /// </summary>
     public struct WaterPropertyBlockU8
     {
         public byte Oxygen;
@@ -109,7 +208,6 @@ namespace Aqua
         public byte PH;
         public byte CarbonDioxide;
         public byte Salinity;
-        public byte Food;
 
         public unsafe byte this[WaterPropertyId inId]
         {
@@ -137,8 +235,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
         }
 
         static public unsafe WaterPropertyBlockU8 operator &(WaterPropertyBlockU8 inA, WaterPropertyMask inB)
@@ -160,6 +258,9 @@ namespace Aqua
         }
     }
 
+    /// <summary>
+    /// Bit mask for property ids.
+    /// </summary>
     public struct WaterPropertyMask
     {
         public byte Mask;
@@ -195,6 +296,9 @@ namespace Aqua
         }
     }
 
+    /// <summary>
+    /// Block mapping property to arbitrary data.
+    /// </summary>
     public struct WaterPropertyBlock<T>
     {
         public T Oxygen;
@@ -203,7 +307,6 @@ namespace Aqua
         public T PH;
         public T CarbonDioxide;
         public T Salinity;
-        public T Food;
 
         public T this[WaterPropertyId inId]
         {
@@ -223,8 +326,6 @@ namespace Aqua
                         return CarbonDioxide;
                     case WaterPropertyId.Salinity:
                         return Salinity;
-                    case WaterPropertyId.Food:
-                        return Food;
 
                     default:
                         throw new ArgumentOutOfRangeException("inId");
@@ -252,9 +353,6 @@ namespace Aqua
                     case WaterPropertyId.Salinity:
                         Salinity = value;
                         break;
-                    case WaterPropertyId.Food:
-                        Food = value;
-                        break;
 
                     default:
                         throw new ArgumentOutOfRangeException("inId");
@@ -264,8 +362,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}, Food={6}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity, Food);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
         }
     }
 }

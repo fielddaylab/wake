@@ -10,6 +10,5 @@ namespace ProtoAqua.Modeling
     {
         public StringHash32 Id;
         public uint Population;
-        public ActorStateId State;
     }
 }

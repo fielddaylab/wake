@@ -9,7 +9,7 @@ namespace ProtoAqua.Modeling
     {
         public uint Population;
         public WaterPropertyBlockF32 ToConsume;
+        public uint Hunger;
         public ActorStateId State;
-        public bool AttemptedEat;
     }
 }

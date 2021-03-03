@@ -19,6 +19,6 @@ namespace Aqua
         MAX,
 
         [Hidden]
-        TRACKED_MAX = Food
+        TRACKED_MAX = Salinity
     }
 }

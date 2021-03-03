@@ -27,6 +27,8 @@ namespace ProtoAqua.Modeling
 
             LogThing<WaterPropertyBlockF32>();
             LogThing<CritterData>();
+            LogThing<CritterResult>();
+            LogThing<SimulationResult>();
 
             #endif // UNITY_EDITOR
 

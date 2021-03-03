@@ -75,7 +75,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
-                uint remainingFood = (uint) data.ToConsume[WaterPropertyId.Food];
+                uint remainingFood = (uint) data.Hunger;
                 if (remainingFood > 0)
                 {
                     ListSlice<int> foodTypes = profiles[i].EatTargetIndices();
@@ -94,13 +94,12 @@ namespace ProtoAqua.Modeling
                         }
                     }
 
-                    data.ToConsume[WaterPropertyId.Food] = remainingFood;
+                    data.Hunger = remainingFood;
                 }
-                data.AttemptedEat = true;
             }
 
             SimulationResult result = default(SimulationResult);
-            result.Timestamp = inInitial.Timestamp + 1;
+            result.Timestamp = (ushort) (inInitial.Timestamp + 1);
             result.Environment = environment;
 
             for(int i = 0; i < critterCount; ++i)
@@ -157,8 +156,7 @@ namespace ProtoAqua.Modeling
                 {
                     var actorStats = inResult.Actors[i];
                     psb.Builder.Append("\n ").Append(actorStats.Id.ToDebugString())
-                        .Append(" Population = ").Append(actorStats.Population)
-                        .Append(" State = ").Append(actorStats.State);
+                        .Append(" Population = ").Append(actorStats.Population);
                 }
                 return psb.ToString();
             }

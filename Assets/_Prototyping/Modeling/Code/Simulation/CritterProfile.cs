@@ -23,6 +23,9 @@ namespace ProtoAqua.Modeling
         private WaterPropertyBlockF32 m_ToConsumePerPopulationStressed;
         private WaterPropertyMask m_AssignedConsumeStressedMask;
 
+        private float m_FoodPerPopulation;
+        private float m_FoodPerPopulationStressed;
+
         private int m_EatTypeCount;
         private StringHash32[] m_EatTypes = new StringHash32[Simulator.MaxTrackedCritters];
         private int[] m_EatTypeIndices = new int[Simulator.MaxTrackedCritters];
@@ -67,6 +70,9 @@ namespace ProtoAqua.Modeling
             m_ToConsumePerPopulation = default(WaterPropertyBlockF32);
             m_ToConsumePerPopulationStressed = default(WaterPropertyBlockF32);
             m_AssignedConsumeStressedMask = default(WaterPropertyMask);
+
+            m_FoodPerPopulation = 0;
+            m_FoodPerPopulationStressed = 0;
 
             Array.Clear(m_EatTypes, 0, m_EatTypeCount);
             Array.Clear(m_EatTypeIndices, 0, m_EatTypeCount);
@@ -126,18 +132,21 @@ namespace ProtoAqua.Modeling
                 case ActorStateId.Alive:
                     {
                         ioData.ToConsume = m_ToConsumePerPopulation * ioData.Population;
+                        ioData.Hunger = (uint) (m_FoodPerPopulation * ioData.Population);
                         break;
                     }
 
                 case ActorStateId.Stressed:
                     {
                         ioData.ToConsume = m_ToConsumePerPopulationStressed * ioData.Population;
+                        ioData.Hunger = (uint) (m_FoodPerPopulationStressed * ioData.Population);
                         break;
                     }
 
                 case ActorStateId.Dead:
                     {
                         ioData.ToConsume = default(WaterPropertyBlockF32);
+                        ioData.Hunger = 0;
                         ioData.Population = 0;
                         break;
                     }
@@ -147,12 +156,16 @@ namespace ProtoAqua.Modeling
         public void EndTick(ref CritterData ioData, SimulatorFlags inFlags)
         {
             float toKillProportion = 0;
+            if (ioData.Hunger > 0)
+            {
+                toKillProportion = ioData.Hunger / (m_FoodPerPopulation * ioData.Population);
+            }
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
             {
                 float remainder = ioData.ToConsume[i];
                 if (remainder > 0)
                 {
-                    float proportion = remainder / m_ToConsumePerPopulation[i];
+                    float proportion = remainder / (m_ToConsumePerPopulation[i] * ioData.Population);
                     toKillProportion = Math.Max(toKillProportion, proportion);
                 }
             }
@@ -208,7 +221,7 @@ namespace ProtoAqua.Modeling
         {
             var result = inResult.GetCritters(Id());
             ioData.Population = result.Population;
-            ioData.State = result.State;
+            ioData.State = ActorStateId.Alive;
         }
 
         public void CopyTo(in CritterData inData, ref SimulationResult ioResult)
@@ -247,10 +260,10 @@ namespace ProtoAqua.Modeling
             consumedMass = consumedPopulation * MassPerPopulation();
             ioData.Population -= consumedPopulation;
 
-            if (!ioData.AttemptedEat && consumedPopulation > 0)
+            if (ioData.Hunger > 0 && consumedPopulation > 0)
             {
-                float perPopulation = (ioData.State == ActorStateId.Alive ? m_ToConsumePerPopulation : m_ToProducePerPopulation)[WaterPropertyId.Food];
-                ioData.ToConsume[WaterPropertyId.Food] -= consumedPopulation * perPopulation;
+                float perPopulation = (ioData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
+                ioData.Hunger -= (uint) (consumedPopulation * perPopulation);
             }
 
             return consumedMass;
@@ -321,7 +334,7 @@ namespace ProtoAqua.Modeling
         void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
         {
             // TODO: Account for stress?
-            m_ToConsumePerPopulation.Food += inFact.Amount();
+            m_FoodPerPopulation += inFact.Amount();
             m_EatTypes[m_EatTypeCount++] = inFact.Target().Id();
         }
 

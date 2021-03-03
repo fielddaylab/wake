@@ -8,7 +8,7 @@ namespace ProtoAqua.Modeling
     /// </summary>
     public struct SimulationResult
     {
-        public uint Timestamp;
+        public ushort Timestamp;
         public WaterPropertyBlockF32 Environment;
         public TempList8<CritterResult> Actors;
 
@@ -26,7 +26,6 @@ namespace ProtoAqua.Modeling
                 if (crit.Id == inActorId)
                 {
                     crit.Population = inPopulation;
-                    crit.State = inStateId;
                     Actors[i] = crit;
                     return;
                 }
@@ -35,7 +34,6 @@ namespace ProtoAqua.Modeling
             {
                 Id = inActorId,
                 Population = inPopulation,
-                State = inStateId
             });
         }
 
@@ -77,8 +75,7 @@ namespace ProtoAqua.Modeling
             errorAccum += GraphingUtils.RPD(inA.Environment.PH, inB.Environment.PH);
             errorAccum += GraphingUtils.RPD(inA.Environment.CarbonDioxide, inB.Environment.CarbonDioxide);
             errorAccum += GraphingUtils.RPD(inA.Environment.Salinity, inB.Environment.Salinity);
-            errorAccum += GraphingUtils.RPD(inA.Environment.Food, inB.Environment.Food);
-            errorCount += 7;
+            errorCount += 6;
 
             int critterCount = inA.Actors.Count;
             CritterResult critA, critB;
@@ -87,9 +84,8 @@ namespace ProtoAqua.Modeling
                 critA = inA.Actors[i];
                 critB = inB.GetCritters(critA.Id);
                 errorAccum += GraphingUtils.RPD(critA.Population, critB.Population);
-                errorAccum += GraphingUtils.RPD((float) critA.State, (float) critB.State);
             }
-            errorCount += critterCount * 2;
+            errorCount += critterCount;
 
             return errorAccum / errorCount;
         }
