@@ -48,9 +48,10 @@ namespace ProtoAqua.Modeling
                 for(int critterIdx = 0; critterIdx < critterCount; ++critterIdx)
                 {
                     StringHash32 id = inResults[0].Actors[critterIdx].Id;
+                    int resultIdx = inResults[0].IndexOf(id);
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
                     BFBody body = critterEntry.FactOfType<BFBody>();
-                    float populationScale = body.StartingMass() * body.MassDisplayScale();
+                    float populationScale = body.StartingMass();
 
                     unusedLines.Remove(id);
                     if (!m_LineMap.TryGetValue(id, out line))
@@ -67,7 +68,7 @@ namespace ProtoAqua.Modeling
                     float mass;
                     for(int tickIdx = 0; tickIdx < tickCount; ++tickIdx)
                     {
-                        result = inResults[tickIdx].GetCritters(id);
+                        result = inResults[tickIdx].Actors[resultIdx];
                         mass = result.Population * populationScale;
                         line.AddPoint(inResults[tickIdx].Timestamp, mass);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aqua;
 using BeauUtil;
 using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace ProtoAqua.Modeling
 {
@@ -11,6 +12,8 @@ namespace ProtoAqua.Modeling
     /// </summary>
     public class SimulationBuffer
     {
+        public const float ErrorScale = 1.3f;
+
         private enum DirtyFlags : byte
         {
             Facts = 0x01,
@@ -51,7 +54,7 @@ namespace ProtoAqua.Modeling
 
             m_Scenario = inScenarioData;
             Array.Resize(ref m_HistoricalResultBuffer, (int) m_Scenario.TickCount() + 1);
-            Array.Resize(ref m_PlayerResultBuffer, 1 + (int) m_Scenario.TickCount() + m_Scenario.PredictionTicks());
+            Array.Resize(ref m_PlayerResultBuffer, 1 + (int) m_Scenario.TotalTicks());
 
             m_HistoricalProfile.Clear();
             m_PlayerProfile.Clear();
@@ -227,6 +230,23 @@ namespace ProtoAqua.Modeling
             }
             m_PlayerSimDirty = 0;
             return true;
+        }
+
+        /// <summary>
+        /// Calculates the amount of error between the player model and the historical model.
+        /// </summary>
+        public float CalculateModelError()
+        {
+            RefreshHistorical();
+            RefreshModel();
+
+            float error = 0;
+            int ticksToCalc = m_HistoricalResultBuffer.Length;
+            for(int i = 0; i < ticksToCalc; ++i)
+            {
+                error += SimulationResult.CalculateError(m_HistoricalResultBuffer[i], m_PlayerResultBuffer[i]);
+            }
+            return Mathf.Clamp01((error / ticksToCalc) * ErrorScale);
         }
     
         #endregion // Results

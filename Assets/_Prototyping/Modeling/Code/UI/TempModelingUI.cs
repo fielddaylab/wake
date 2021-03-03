@@ -3,6 +3,7 @@ using Aqua;
 using Aqua.Portable;
 using BeauPools;
 using BeauUtil;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private Button m_AddButton = null;
         [SerializeField] private Button m_RemoveButton = null;
         [SerializeField] private CritterSliderPool m_SliderPool = null;
+        [SerializeField] private TMP_Text m_SyncLabel = null;
 
         #endregion // Inspector
 
@@ -35,6 +37,11 @@ namespace ProtoAqua.Modeling
                 slider.Load(critterType, inBuffer.GetPlayerCritters(critterType.Id()));
                 slider.OnPopulationChanged.AddListener(OnCritterPopulationChanged);
             }
+        }
+
+        public void DisplaySync(float inPercent)
+        {
+            m_SyncLabel.SetText(string.Format("{0}%", (int) Math.Floor(inPercent)));
         }
 
         #region Handlers

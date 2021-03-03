@@ -72,7 +72,7 @@ namespace ProtoAqua.Modeling
         private void OnTextValueChanged(string inValue)
         {
             uint val = StringParser.ParseUInt(inValue);
-            val = Math.Min(val, (uint) m_Slider.maxValue);
+            val = Math.Min(val, (uint) (m_Slider.maxValue * m_SliderScale));
             TryUpdateValue(val, false, true);
         }
 

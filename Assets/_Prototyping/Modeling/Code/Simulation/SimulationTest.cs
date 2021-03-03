@@ -12,6 +12,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private ConceptMap m_ConceptMap = null;
         [SerializeField] private GraphDisplay m_HistoricalDisplay = null;
         [SerializeField] private GraphDisplay m_PlayerDisplay = null;
+        [SerializeField] private GraphAxis m_AxisDisplay = null;
 
         [NonSerialized] private SimulationBuffer m_Buffer;
 
@@ -61,18 +62,26 @@ namespace ProtoAqua.Modeling
 
             if (bRectsChanged)
             {
-                Rect realRect = CalculateGraphRect(m_HistoricalDisplay.Range, m_PlayerDisplay.Range, m_Buffer.Scenario().TickCount(), 10);
-                m_HistoricalDisplay.RenderLines(realRect);
-                m_PlayerDisplay.RenderLines(realRect);
+                var axisPair = CalculateGraphRect(m_HistoricalDisplay.Range, m_PlayerDisplay.Range, m_Buffer.Scenario().TotalTicks(), 10);
+                axisPair.X.SetMinAtOrigin();
+                axisPair.Y.SetMinAtOrigin();
+                Rect fullRect = axisPair.ToRect();
+                m_HistoricalDisplay.RenderLines(fullRect);
+                m_PlayerDisplay.RenderLines(fullRect);
+                m_AxisDisplay.Load(axisPair);
+
+                float error = m_Buffer.CalculateModelError();
+                float sync = 100 - error * 100;
+                m_UI.DisplaySync(sync);
             }
         }
 
-        static private Rect CalculateGraphRect(Rect inA, Rect inB, uint inTickCountX, uint inTickCountY)
+        static private GraphingUtils.AxisRangePair CalculateGraphRect(Rect inA, Rect inB, uint inTickCountX, uint inTickCountY)
         {
             float xMin = Math.Min(inA.xMin, inB.xMin), xMax = Math.Max(inA.xMax, inB.xMax),
                 yMin = Math.Min(inA.yMin, inB.yMin), yMax = Math.Max(inA.yMax, inB.yMax);
 
-            return GraphingUtils.CalculateAxisPair(Rect.MinMaxRect(xMin, yMin, xMax, yMax), inTickCountX, inTickCountY).ToRect();
+            return GraphingUtils.CalculateAxisPair(Rect.MinMaxRect(xMin, yMin, xMax, yMax), inTickCountX, inTickCountY);
         }
     }
 }

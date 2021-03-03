@@ -31,6 +31,12 @@ namespace Aqua
             public float Max;
             public uint TickCount;
             public float TickInterval;
+
+            public void SetMinAtOrigin()
+            {
+                Max -= Min;
+                Min = 0;
+            }
         }
 
         static private readonly double[] GoodNormalizedTicks = new double[] { 1, 1.5, 2, 2.5, 5, 7.5, 10 };

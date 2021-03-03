@@ -50,6 +50,18 @@ namespace ProtoAqua.Modeling
             }
             return default(CritterResult);
         }
+
+        public int IndexOf(StringHash32 inActorId)
+        {
+            CritterResult crit;
+            for(int i = Actors.Count - 1; i >= 0; i--)
+            {
+                crit = Actors[i];
+                if (crit.Id == inActorId)
+                    return i;
+            }
+            return -1;
+        }
     
         /// <summary>
         /// Calculates the error between two simulations.
@@ -73,7 +85,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critterCount; ++i)
             {
                 critA = inA.Actors[i];
-                critB = inA.GetCritters(critA.Id);
+                critB = inB.GetCritters(critA.Id);
                 errorAccum += GraphingUtils.RPD(critA.Population, critB.Population);
                 errorAccum += GraphingUtils.RPD((float) critA.State, (float) critB.State);
             }

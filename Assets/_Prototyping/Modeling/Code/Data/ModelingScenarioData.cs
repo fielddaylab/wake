@@ -20,8 +20,11 @@ namespace ProtoAqua.Modeling
         [SerializeField] private int m_TickScale = 10;
 
         [Header("Prediction")]
-        [SerializeField] private int m_PredictionTicks = 0;
+        [SerializeField] private uint m_PredictionTicks = 0;
         // TODO: prediction targets?
+
+        [Header("Labels")]
+        [SerializeField] private StringHash32 m_TickLabelId = null;
 
         #endregion // Inspector
 
@@ -36,7 +39,8 @@ namespace ProtoAqua.Modeling
         public uint TickCount() { return m_TickCount; }
         public int TickScale() { return m_TickScale; }
 
-        public int PredictionTicks() { return m_PredictionTicks; }
+        public uint PredictionTicks() { return m_PredictionTicks; }
+        public uint TotalTicks() { return m_TickCount + m_PredictionTicks; }
 
         private void Optimize()
         {
