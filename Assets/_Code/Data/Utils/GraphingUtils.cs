@@ -1,11 +1,26 @@
 using System;
 using BeauUtil;
+using UnityEngine;
 
 namespace Aqua
 {
     static public class GraphingUtils
     {
         #region Axis
+
+        /// <summary>
+        /// Two-axis range.
+        /// </summary>
+        public struct AxisRangePair
+        {
+            public AxisRangeInfo X;
+            public AxisRangeInfo Y;
+
+            public Rect ToRect()
+            {
+                return new Rect(X.Min, Y.Min, X.Max - X.Min, Y.Max - Y.Min);
+            }
+        }
 
         /// <summary>
         /// Range information for a given axis.
@@ -65,6 +80,21 @@ namespace Aqua
             info.TickInterval = (float) step;
 
             return info;
+        }
+
+        /// <summary>
+        /// Calculates the axis information for the given rectangle.
+        /// </summary>
+        static public AxisRangePair CalculateAxisPair(Rect inRange, uint inTargetTickCountX, uint inTargetTickCountY)
+        {
+            var rangeX = GraphingUtils.CalculateAxis(inRange.xMin, inRange.xMax, inTargetTickCountX);
+            var rangeY = GraphingUtils.CalculateAxis(inRange.yMin, inRange.yMax, inTargetTickCountY);
+
+            return new AxisRangePair()
+            {
+                X = rangeX,
+                Y = rangeY
+            };
         }
 
         #endregion // Axis

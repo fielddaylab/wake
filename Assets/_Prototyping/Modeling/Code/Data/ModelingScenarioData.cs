@@ -44,7 +44,7 @@ namespace ProtoAqua.Modeling
                 return;
 
             m_Critters = new List<BestiaryDesc>(m_InitialActors.Length);
-            for(int i = 0; i < m_Critters.Count; ++i)
+            for(int i = 0; i < m_InitialActors.Length; ++i)
                 m_Critters.Add(Services.Assets.Bestiary.Get(m_InitialActors[i].Id));
 
             KeyValueUtils.SortByKey<StringHash32, uint, ActorCount>(m_InitialActors);

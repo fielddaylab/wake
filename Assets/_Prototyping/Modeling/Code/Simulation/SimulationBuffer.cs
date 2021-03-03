@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Aqua;
 using BeauUtil;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Modeling
 {
@@ -10,6 +11,14 @@ namespace ProtoAqua.Modeling
     /// </summary>
     public class SimulationBuffer
     {
+        private enum DirtyFlags : byte
+        {
+            Facts = 0x01,
+            Populations = 0x02,
+
+            ALL = Facts | Populations
+        }
+
         private readonly SimulationProfile m_HistoricalProfile = new SimulationProfile();
         private readonly SimulationProfile m_PlayerProfile = new SimulationProfile();
 
@@ -17,8 +26,8 @@ namespace ProtoAqua.Modeling
         private SimulationResult[] m_HistoricalResultBuffer;
         private SimulationResult[] m_PlayerResultBuffer;
 
-        private bool m_HistoricalSimDirty;
-        private bool m_PlayerSimDirty;
+        private DirtyFlags m_HistoricalSimDirty;
+        private DirtyFlags m_PlayerSimDirty;
 
         private readonly HashSet<PlayerFactParams> m_PlayerFacts = new HashSet<PlayerFactParams>();
         private readonly RingBuffer<ActorCount> m_PlayerActors = new RingBuffer<ActorCount>(Simulator.MaxTrackedCritters);
@@ -52,13 +61,13 @@ namespace ProtoAqua.Modeling
 
             foreach(var actor in inScenarioData.Actors())
             {
-                m_PlayerActors.PushBack(new ActorCount(actor.Id, actor.Population));
+                m_PlayerActors.PushBack(new ActorCount(actor.Id, 0));
             }
 
             m_PlayerActors.SortByKey<StringHash32, uint, ActorCount>();
 
-            m_PlayerSimDirty = true;
-            m_HistoricalSimDirty = true;
+            m_PlayerSimDirty = DirtyFlags.ALL;
+            m_HistoricalSimDirty = DirtyFlags.ALL;
             return true;
         }
 
@@ -86,7 +95,7 @@ namespace ProtoAqua.Modeling
             {
                 m_PlayerActors.PushBack(new ActorCount(inId, inPopulation));
                 m_PlayerActors.SortByKey<StringHash32, uint, ActorCount>();
-                m_PlayerSimDirty = true;
+                m_PlayerSimDirty |= DirtyFlags.Populations;
                 return true;
             }
 
@@ -94,7 +103,7 @@ namespace ProtoAqua.Modeling
             if (existing.Population != inPopulation)
             {
                 existing.Population = inPopulation;
-                m_PlayerSimDirty = true;
+                m_PlayerSimDirty |= DirtyFlags.Populations;
                 return true;
             }
             
@@ -108,7 +117,7 @@ namespace ProtoAqua.Modeling
         {
             if (m_PlayerFacts.Add(inFact))
             {
-                m_PlayerSimDirty = true;
+                m_PlayerSimDirty |= DirtyFlags.Facts;
                 return true;
             }
 
@@ -122,7 +131,7 @@ namespace ProtoAqua.Modeling
         {
             if (m_PlayerFacts.Remove(inFact))
             {
-                m_PlayerSimDirty = true;
+                m_PlayerSimDirty |= DirtyFlags.Facts;
                 return true;
             }
 
@@ -175,16 +184,23 @@ namespace ProtoAqua.Modeling
         /// </summary>
         public bool RefreshHistorical()
         {
-            if (!m_HistoricalSimDirty)
+            if (m_HistoricalSimDirty == 0)
                 return false;
 
-            m_HistoricalProfile.Clear();
-            m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_Scenario.Facts());
-            foreach(var critter in m_Scenario.Actors())
-                m_HistoricalProfile.InitialState.SetCritters(critter.Id, critter.Population);
+            if ((m_HistoricalSimDirty & DirtyFlags.Facts) != 0)
+                m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_Scenario.Facts());
 
-            Simulator.GenerateToBuffer(m_HistoricalProfile, m_HistoricalResultBuffer, m_Scenario.TickScale(), Flags);
-            m_HistoricalSimDirty = false;
+            if ((m_HistoricalSimDirty & DirtyFlags.Populations) != 0)
+            {
+                foreach(var critter in m_Scenario.Actors())
+                    m_HistoricalProfile.InitialState.SetCritters(critter.Id, critter.Population);
+            }
+
+            using(Profiling.Time("Generating historical model"))
+            {
+                Simulator.GenerateToBuffer(m_HistoricalProfile, m_HistoricalResultBuffer, m_Scenario.TickScale(), Flags);
+            }
+            m_HistoricalSimDirty = 0;
             return true;
         }
     
@@ -193,15 +209,23 @@ namespace ProtoAqua.Modeling
         /// </summary>
         public bool RefreshModel()
         {
-            if (!m_PlayerSimDirty)
+            if (m_PlayerSimDirty == 0)
                 return false;
 
-            m_PlayerProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_PlayerFacts);
-            foreach(var critter in m_PlayerActors)
-                m_PlayerProfile.InitialState.SetCritters(critter.Id, critter.Population);
+            if ((m_PlayerSimDirty & DirtyFlags.Facts) != 0)
+                m_PlayerProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_PlayerFacts);
 
-            Simulator.GenerateToBuffer(m_PlayerProfile, m_PlayerResultBuffer, m_Scenario.TickScale(), Flags);
-            m_PlayerSimDirty = false;
+            if ((m_PlayerSimDirty & DirtyFlags.Populations) != 0)
+            {
+                foreach(var critter in m_PlayerActors)
+                    m_PlayerProfile.InitialState.SetCritters(critter.Id, critter.Population);
+            }
+
+            using(Profiling.Time("Generating player model"))
+            {
+                Simulator.GenerateToBuffer(m_PlayerProfile, m_PlayerResultBuffer, m_Scenario.TickScale(), Flags);
+            }
+            m_PlayerSimDirty = 0;
             return true;
         }
     

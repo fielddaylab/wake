@@ -8,7 +8,6 @@ namespace ProtoAqua.Modeling
     public struct CritterData
     {
         public uint Population;
-        public WaterPropertyBlockF32 ToProduce;
         public WaterPropertyBlockF32 ToConsume;
         public ActorStateId State;
         public bool AttemptedEat;

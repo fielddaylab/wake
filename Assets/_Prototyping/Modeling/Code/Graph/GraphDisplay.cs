@@ -14,6 +14,8 @@ namespace ProtoAqua.Modeling
 
         #region Inspector
 
+        [SerializeField] private float m_LineThickness = 1;
+
         [Header("Pools")]
         [SerializeField] private LinePool m_LinePool = null;
 
@@ -30,7 +32,7 @@ namespace ProtoAqua.Modeling
 
         public Rect Range { get { return m_LastRect; } }
 
-        public Rect InitializeCritters(SimulationResult[] inResults)
+        public Rect LoadCritters(SimulationResult[] inResults)
         {
             Rect varRange = new Rect(0, 0, inResults[inResults.Length - 1].Timestamp, 0);
 
@@ -56,6 +58,7 @@ namespace ProtoAqua.Modeling
                         line = m_LinePool.Alloc();
                         m_LineMap[id] = line;
                         line.Renderer.color = critterEntry.Color();
+                        line.Renderer.LineThickness = m_LineThickness;
                     }
 
                     line.ClearPoints();

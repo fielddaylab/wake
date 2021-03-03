@@ -14,7 +14,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Generates a single result from the given profile and initial data.
         /// </summary>
-        static public unsafe SimulationResult Simulate(SimulationProfile inProfile, in SimulationResult inInitial, SimulatorFlags inFlags = 0)
+        static public unsafe SimulationResult Simulate(SimulationProfile inProfile, in SimulationResult inInitial, SimulatorFlags inFlags)
         {
             bool bLogging = (inFlags & SimulatorFlags.Debug) != 0;
 
@@ -37,13 +37,14 @@ namespace ProtoAqua.Modeling
             {
                 if (dataBlock[i].Population > 0)
                 {
+                    WaterPropertyBlockF32 produce = profiles[i].CalculateProduction(dataBlock[i]);
+
                     if (bLogging)
                     {
-                        Debug.LogFormat("[Simulator] Critter '{0}' produced {1}", profiles[i].Id().ToDebugString(), dataBlock[i].ToProduce);
+                        Debug.LogFormat("[Simulator] Critter '{0}' produced {1}", profiles[i].Id().ToDebugString(), produce);
                     }
 
-                    environment += dataBlock[i].ToProduce;
-                    dataBlock[i].ToProduce = default(WaterPropertyBlockF32);
+                    environment += produce;
                 }
             }
 

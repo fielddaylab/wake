@@ -1,6 +1,7 @@
 using System;
 using Aqua;
 using Aqua.Portable;
+using BeauPools;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,10 +10,13 @@ namespace ProtoAqua.Modeling
 {
     public class TempModelingUI : MonoBehaviour
     {
+        [Serializable] private class CritterSliderPool : SerializablePool<CritterPopulationSlider> { }
+
         #region Inspector
 
         [SerializeField] private Button m_AddButton = null;
         [SerializeField] private Button m_RemoveButton = null;
+        [SerializeField] private CritterSliderPool m_SliderPool = null;
 
         #endregion // Inspector
 
@@ -23,6 +27,14 @@ namespace ProtoAqua.Modeling
         {
             m_Buffer = inBuffer;
             m_OnUpdate = inOnUpdate;
+
+            m_SliderPool.Reset();
+            foreach(var critterType in inBuffer.Scenario().Critters())
+            {
+                var slider = m_SliderPool.Alloc();
+                slider.Load(critterType, inBuffer.GetPlayerCritters(critterType.Id()));
+                slider.OnPopulationChanged.AddListener(OnCritterPopulationChanged);
+            }
         }
 
         #region Handlers
@@ -53,6 +65,12 @@ namespace ProtoAqua.Modeling
                         m_OnUpdate?.Invoke();
                     }
                 });
+        }
+
+        private void OnCritterPopulationChanged(ActorCount inActorCount)
+        {
+            m_Buffer.SetPlayerCritters(inActorCount.Id, inActorCount.Population);
+            m_OnUpdate?.Invoke();
         }
 
         #endregion // Handlers

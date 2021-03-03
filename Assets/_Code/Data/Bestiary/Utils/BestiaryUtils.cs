@@ -81,8 +81,7 @@ namespace Aqua
         /// </summary>
         static public ActorStateTransitionRange FindStateTransitions(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
-            ActorStateTransitionRange transitionRange = new ActorStateTransitionRange();
-            transitionRange.Reset();
+            ActorStateTransitionRange transitionRange = ActorStateTransitionRange.Default;
 
             foreach(var fact in inParent.StateFacts)
             {

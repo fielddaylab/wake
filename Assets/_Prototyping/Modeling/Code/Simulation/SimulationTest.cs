@@ -17,6 +17,18 @@ namespace ProtoAqua.Modeling
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            #if UNITY_EDITOR
+
+            void LogThing<T>()
+            {
+                Debug.LogFormat("sizeof({0})={1}", typeof(T).Name, System.Runtime.InteropServices.Marshal.SizeOf<T>());
+            }
+
+            LogThing<WaterPropertyBlockF32>();
+            LogThing<CritterData>();
+
+            #endif // UNITY_EDITOR
+
             m_Buffer = new SimulationBuffer();
             m_Buffer.SetScenario(m_TestScenario);
             m_UI.SetBuffer(m_Buffer, Refresh);
@@ -30,7 +42,7 @@ namespace ProtoAqua.Modeling
 
             if (m_Buffer.RefreshHistorical())
             {
-                m_HistoricalDisplay.InitializeCritters(m_Buffer.HistoricalData());
+                m_HistoricalDisplay.LoadCritters(m_Buffer.HistoricalData());
                 bRectsChanged = true;
             }
 
@@ -43,7 +55,7 @@ namespace ProtoAqua.Modeling
                     m_ConceptMap.AddFact(fact);
                 }
 
-                m_PlayerDisplay.InitializeCritters(m_Buffer.PlayerData());
+                m_PlayerDisplay.LoadCritters(m_Buffer.PlayerData());
                 bRectsChanged = true;
             }
 
@@ -59,10 +71,8 @@ namespace ProtoAqua.Modeling
         {
             float xMin = Math.Min(inA.xMin, inB.xMin), xMax = Math.Max(inA.xMax, inB.xMax),
                 yMin = Math.Min(inA.yMin, inB.yMin), yMax = Math.Max(inA.yMax, inB.yMax);
-            
-            var rangeX = GraphingUtils.CalculateAxis(xMin, xMax, inTickCountX);
-            var rangeY = GraphingUtils.CalculateAxis(yMin, yMax, inTickCountY);
-            return new Rect(rangeX.Min, rangeY.Min, rangeX.Max - rangeX.Min, rangeY.Max - rangeY.Min);
+
+            return GraphingUtils.CalculateAxisPair(Rect.MinMaxRect(xMin, yMin, xMax, yMax), inTickCountX, inTickCountY).ToRect();
         }
     }
 }

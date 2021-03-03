@@ -125,21 +125,18 @@ namespace ProtoAqua.Modeling
             {
                 case ActorStateId.Alive:
                     {
-                        ioData.ToProduce = m_ToProducePerPopulation * ioData.Population;
                         ioData.ToConsume = m_ToConsumePerPopulation * ioData.Population;
                         break;
                     }
 
                 case ActorStateId.Stressed:
                     {
-                        ioData.ToProduce = m_ToProducePerPopulationStressed * ioData.Population;
                         ioData.ToConsume = m_ToConsumePerPopulationStressed * ioData.Population;
                         break;
                     }
 
                 case ActorStateId.Dead:
                     {
-                        ioData.ToProduce = default(WaterPropertyBlockF32);
                         ioData.ToConsume = default(WaterPropertyBlockF32);
                         ioData.Population = 0;
                         break;
@@ -217,6 +214,20 @@ namespace ProtoAqua.Modeling
         public void CopyTo(in CritterData inData, ref SimulationResult ioResult)
         {
             ioResult.SetCritters(Id(), inData.Population, inData.State);
+        }
+
+        public WaterPropertyBlockF32 CalculateProduction(in CritterData inCritterData)
+        {
+            switch(inCritterData.State)
+            {
+                case ActorStateId.Dead:
+                default:
+                    return default(WaterPropertyBlockF32);
+                case ActorStateId.Alive:
+                    return m_ToProducePerPopulation * inCritterData.Population;
+                case ActorStateId.Stressed:
+                    return m_ToProducePerPopulationStressed * inCritterData.Population;
+            }
         }
 
         public uint TryEat(ref CritterData ioData, uint inMass)
