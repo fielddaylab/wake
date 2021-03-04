@@ -169,7 +169,7 @@ namespace ProtoAqua.Experiment
                 return m_InProgressScreen;
             }
             if(!m_ExperimentFinished) {
-                if(m_CurrentExp == TankType.Measurement) return m_SummaryScreen;
+                if(m_CurrentExp == TankType.Measurement || m_CurrentExp == TankType.Stressor) return m_SummaryScreen;
             }
             return m_BootScreen;
         }
@@ -249,7 +249,6 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator ExitExperimentRoutine()
         {
-            if(m_SelectionData.Tank == TankType.Stressor || m_SelectionData.Tank == TankType.Measurement) yield return 0.26f;
             using (var tempFader = Services.UI.ScreenFaders.AllocFader())
             {
                 bool bWasRunning = m_ExperimentRunning;
@@ -277,6 +276,8 @@ namespace ProtoAqua.Experiment
                 }
                 yield return tempFader.Object.Hide(0.5f, false);
             }
+
+            Debug.Log("end experiment routine done");
         }
 
         private void StartExperiment()
@@ -293,11 +294,7 @@ namespace ProtoAqua.Experiment
 
                 if (m_SelectionData.Tank == TankType.Stressor || m_SelectionData.Tank == TankType.Measurement)
                 {
-                    Routine.Start(this, StartQuickExperimentRoutine());
-                    // Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
-                    // OnExperimentBegin();
-                    // SetInputState(false);
-                    // Routine.Start(this, ExitExperimentRoutine());
+                    Routine.Start(this, RunQuickExperimentRoutine());
                 }
             }
         }
@@ -456,15 +453,23 @@ namespace ProtoAqua.Experiment
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
         }
 
-        private IEnumerator StartQuickExperimentRoutine() {
+        private IEnumerator RunQuickExperimentRoutine() 
+        {
+            yield return StartQuickExperimentRoutine();
+            yield return ExitExperimentRoutine();
+        }
+
+        private IEnumerator StartQuickExperimentRoutine()
+        {
             Hide();
             yield return 0.25f;
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
             yield return 3f;
-            Routine.Start(this, ExitExperimentRoutine());
+            Debug.Log("Start quick experiment routine done.");
         }
 
-        #endregion // Routines
+        #endregion //Routines
     }
 
+        
 }

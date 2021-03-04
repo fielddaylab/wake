@@ -48,11 +48,12 @@ namespace ProtoAqua.Experiment {
         }
 
         public void SetSequence(ExpSubscreen[] Seq) {
-            if(Sequence.Count < 0 || !SeqEquals(Seq))
+            if(Sequence.Count == 0 || !SeqEquals(Seq))
                 Sequence.Clear();
                 Visited.Clear();
                 Sequence = new List<ExpSubscreen>(Seq);
-                Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
+                if(Sequence[0] != ExpSubscreen.Tank) Sequence.Add(ExpSubscreen.Tank);
+            Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
         }
 
         public bool HasReuse(ExpSubscreen sEnum) {

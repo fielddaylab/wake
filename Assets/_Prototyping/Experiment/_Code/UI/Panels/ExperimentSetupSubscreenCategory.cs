@@ -29,6 +29,8 @@ namespace ProtoAqua.Experiment
             m_CritterButton.onClick.AddListener(() => SetupMeasurementCritterY());
             m_PropertyButton.onClick.AddListener(() => OnSelectProperty?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
+
+            m_PropertyButton.enabled = false;
         }
 
         public override void SetData(ExperimentSetupData inData)

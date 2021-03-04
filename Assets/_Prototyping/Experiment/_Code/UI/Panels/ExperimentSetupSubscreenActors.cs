@@ -30,11 +30,22 @@ namespace ProtoAqua.Experiment
 
         public Action OnSelectContinue;
 
+        private class ActorButton : IKeyValuePair<StringHash32, ActorButton>
+        {
+            public StringHash32 ActorId;
+            public ActorToggleButton Button;
+
+            StringHash32 IKeyValuePair<StringHash32, ActorButton>.Key { get { return ActorId; } }
+
+            ActorButton IKeyValuePair<StringHash32, ActorButton>.Value { get { return this; } }
+        }
+
+        private Dictionary<StringHash32, ActorButton> buttonDict;
 
         protected override void Awake()
         {
             Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
-
+            buttonDict = new Dictionary<StringHash32, ActorButton>();
 
             m_CachedButtons = m_ButtonRoot.GetComponentsInChildren<ActorToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
@@ -60,6 +71,7 @@ namespace ProtoAqua.Experiment
         {
             base.Refresh();
             OnMeasurementCritterY = OnMeasurementY();
+            buttonDict.Clear();
             m_Visited = false;
             UpdateButtons();
         }
@@ -73,21 +85,20 @@ namespace ProtoAqua.Experiment
             return false;
         }
         private void PresetButtons(ExpSubscreen sc) {
-
             if(!(sc == ExpSubscreen.Actor)) return;
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
+            if(m_CachedData.ActorIds.Count == 0) return;
+            bool singleCritter = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_CachedData.Tank).SingleCritter;
             var hasOn = false;
-            if(m_CachedData.ActorIds.Count > 0) {
-                foreach(var actor in m_CachedData.ActorIds) {
-                    foreach(var button in m_CachedButtons) {
-                        if(button.Id.AsStringHash().Equals(actor)) {
-                            button.Toggle.SetIsOnWithoutNotify(true);
-                            hasOn = true;
-                            break;
-                        }
-                    }
+
+            foreach(var actor in m_CachedData.ActorIds) {
+                buttonDict.TryGetValue(actor, out ActorButton result);
+                if(result != null) {
+                    result.Button.Toggle.SetIsOnWithoutNotify(true);
+                    hasOn = true;
+                    if(singleCritter) break;
                 }
             }
             
@@ -121,10 +132,17 @@ namespace ProtoAqua.Experiment
                     continue;
                 
                 button.Load(actorType.Id(), actorType.Icon(), true);
+                ActorButton acb = new ActorButton();
+                acb.ActorId = actorType.Id();
+                acb.Button = m_CachedButtons[buttonIdx];
+                if(!buttonDict.ContainsKey(acb.ActorId)) buttonDict.Add(acb.ActorId, acb);
+
                 button.Toggle.group = tankType.SingleCritter ? m_ToggleGroup : null;
+
 
                 ++buttonIdx;
             }
+            
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {

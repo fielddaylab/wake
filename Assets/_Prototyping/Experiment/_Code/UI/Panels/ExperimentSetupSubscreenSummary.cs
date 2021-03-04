@@ -107,9 +107,12 @@ namespace ProtoAqua.Experiment
             foreach(var fact in actor.Facts) {
                 if(fact.GetType().Equals(typeof(BFStateRange))) {
                     state = (BFStateRange)fact;
-                    m_Button = m_RangeFactButton.GetComponent<BestiaryRangeFactButton>();
-                    m_Button.Initialize(state, null, false, false, null);
-                    m_Button.gameObject.SetActive(true);
+                    if(state.PropertyId() == resData.Setup.PropertyId){
+                        m_Button = m_RangeFactButton.GetComponent<BestiaryRangeFactButton>();
+                        m_Button.Initialize(state, null, false, false, null);
+                        m_Button.gameObject.SetActive(true);
+                    }
+                    else { state = null; }
                 }
             }
 
@@ -117,7 +120,11 @@ namespace ProtoAqua.Experiment
 
             if (state == null)
             {
-                form_text = actor.CommonName() + "Has No Fact for " + Services.Assets.WaterProp.Objects[(int)resData.Setup.PropertyId].name;
+                var selectProp = "";
+                foreach(var prop in Services.Assets.WaterProp.Objects) {
+                    if(resData.Setup.PropertyId == prop.Index())  selectProp = prop.name;
+                }
+                form_text = actor.CommonName() + " Has No Fact for " + selectProp;
             }
             else
             {
