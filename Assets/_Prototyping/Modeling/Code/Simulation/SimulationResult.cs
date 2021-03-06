@@ -37,6 +37,33 @@ namespace ProtoAqua.Modeling
             });
         }
 
+        public void AdjustCritters(StringHash32 inActorId, int inAdjust)
+        {
+            CritterResult crit;
+            for(int i = Actors.Count - 1; i >= 0; i--)
+            {
+                crit = Actors[i];
+                if (crit.Id == inActorId)
+                {
+                    long newPop = crit.Population + inAdjust;
+                    if (newPop < 0)
+                        newPop = 0;
+                    crit.Population = (uint) newPop;
+                    Actors[i] = crit;
+                    return;
+                }
+            }
+            
+            if (inAdjust < 0)
+                inAdjust = 0;
+            
+            Actors.Add(new CritterResult()
+            {
+                Id = inActorId,
+                Population = (uint) inAdjust,
+            });
+        }
+
         public CritterResult GetCritters(StringHash32 inActorId)
         {
             CritterResult crit;

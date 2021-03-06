@@ -5,6 +5,7 @@ using BeauUtil;
 using BeauPools;
 using System;
 using System.Collections.Generic;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Modeling
 {
@@ -48,7 +49,7 @@ namespace ProtoAqua.Modeling
                 for(int critterIdx = 0; critterIdx < critterCount; ++critterIdx)
                 {
                     StringHash32 id = inResults[0].Actors[critterIdx].Id;
-                    int resultIdx = inResults[0].IndexOf(id);
+                    int resultIdx = inResults[0].IndexOf(id); // this only works if this appears in the same place every time!
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
                     BFBody body = critterEntry.FactOfType<BFBody>();
                     float populationScale = body.StartingMass();
@@ -69,6 +70,8 @@ namespace ProtoAqua.Modeling
                     for(int tickIdx = 0; tickIdx < tickCount; ++tickIdx)
                     {
                         result = inResults[tickIdx].Actors[resultIdx];
+                        Assert.True(result.Id == id, "Result index desync - expected {0}, got {1}", id.ToDebugString(), result.Id.ToDebugString());
+
                         mass = result.Population * populationScale;
                         line.AddPoint(inResults[tickIdx].Timestamp, mass);
 

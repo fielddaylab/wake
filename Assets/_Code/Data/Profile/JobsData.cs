@@ -91,6 +91,8 @@ namespace Aqua.Profile
             if (inJobId == StringHash32.Null)
                 return null;
 
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
+
             if (m_CompletedJobs.Contains(inJobId))
             {
                 m_TempJob.SetAsTemp(inJobId, PlayerJobStatus.Completed);
@@ -113,6 +115,8 @@ namespace Aqua.Profile
 
             if (inJobId == StringHash32.Null)
                 return null;
+
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
 
             if (m_CompletedJobs.Contains(inJobId))
             {
@@ -198,6 +202,7 @@ namespace Aqua.Profile
 
         public bool IsComplete(StringHash32 inJobId)
         {
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
             return m_CompletedJobs.Contains(inJobId);
         }
 

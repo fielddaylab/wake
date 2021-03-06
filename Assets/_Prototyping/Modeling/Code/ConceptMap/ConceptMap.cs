@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using Aqua;
-using Aqua.Portable;
 using BeauPools;
 using BeauRoutine;
+using BeauRoutine.Extensions;
 using BeauUtil;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace ProtoAqua.Modeling
 {
-    public class ConceptMap : MonoBehaviour, IFactVisitor
+    public class ConceptMap : MonoBehaviour, IFactVisitor, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         #region Types
 
@@ -24,10 +24,19 @@ namespace ProtoAqua.Modeling
 
         #region Inspector
 
-        [Header("Visualization")]
+        [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private RectTransform m_MapTransform = null;
+        [SerializeField] private RectTransform m_ContentTransform = null;
+        [SerializeField] private RectTransform m_EmptyTransform = null;
+
+        [Header("Visualization")]
         [SerializeField] private NodePool m_NodePool = null;
         [SerializeField] private LinkPool m_LinkPool = null;
+        [SerializeField] private float m_NodeSpacingRatio = 2.5f;
+
+        [Header("Input")]
+        [SerializeField] private Vector2 m_ContentSizeBuffer = new Vector2(64, 64);
+        [SerializeField] private float m_LerpFactor = 10;
 
         #endregion // Inspector
 
@@ -36,6 +45,68 @@ namespace ProtoAqua.Modeling
         private Dictionary<StringHash32, ConceptMapNode> m_AllocatedNodes = new Dictionary<StringHash32, ConceptMapNode>();
         private Dictionary<StringHash32, ConceptMapLink> m_AllocatedLinks = new Dictionary<StringHash32, ConceptMapLink>();
         private Routine m_QueuedRebuild;
+
+        private Action<object> m_CachedLinkClicked;
+        private Action<object> m_CachedNodeClicked;
+
+        [NonSerialized] private Rect m_ContentBounds;
+        [NonSerialized] private Vector2 m_DragPointerStart;
+        [NonSerialized] private Vector2 m_DragContentStart;
+        [NonSerialized] private bool m_Dragging;
+
+        public Action<PlayerFactParams> OnLinkRequestRemove;
+
+        #region Handlers
+
+        private void Awake()
+        {
+            RebuildGraph();
+        }
+
+        private void OnDisable()
+        {
+            m_Dragging = false;
+        }
+
+        private void OnLinkClicked(object inTag)
+        {
+            PlayerFactParams playerFact = inTag as PlayerFactParams;
+            if (playerFact == null)
+            {
+                BFBase fact = inTag as BFBase;
+                if (fact != null)
+                {
+                    playerFact = Services.Data.Profile.Bestiary.GetFact(fact.Id());
+                }
+            }
+
+            if (playerFact != null)
+            {
+                OnLinkRequestRemove?.Invoke(playerFact);
+            }
+        }
+
+        private void OnNodeClicked(object inTag)
+        {
+            // TODO: Something?
+        }
+
+        private void LateUpdate()
+        {
+            // TODO: Implement... better
+            if (m_Dragging)
+                return;
+            
+            Vector2 contentOffset = m_ContentTransform.anchoredPosition + m_ContentBounds.center;
+            Rect fullRect = m_MapTransform.rect;
+            Vector2 targetOffset = Geom.Constrain(contentOffset, m_ContentSizeBuffer, fullRect);
+            
+            float lerpFactor = TweenUtil.Lerp(m_LerpFactor);
+            Vector2 newOffset = Vector2.LerpUnclamped(contentOffset, targetOffset, lerpFactor);
+            m_ContentTransform.anchoredPosition = newOffset - m_ContentBounds.center;
+        }
+
+        #endregion // Handlers
 
         #region Add/Remove
 
@@ -83,6 +154,7 @@ namespace ProtoAqua.Modeling
         private void RebuildGraph()
         {
             ProcessGraphData();
+            ProcessGraphToggles();
             ProcessGraphVisuals();
         }
 
@@ -95,10 +167,26 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        private void ProcessGraphToggles()
+        {
+            if (m_MapData.NodeCount() > 0)
+            {
+                m_MapTransform.gameObject.SetActive(true);
+                m_EmptyTransform.gameObject.SetActive(false);
+            }
+            else
+            {
+                m_MapTransform.gameObject.SetActive(false);
+                m_EmptyTransform.gameObject.SetActive(true);
+            }
+        }
+
         private void ProcessGraphVisuals()
         {
             // TODO: Arrange these in some nice pattern?
             // will probably require some math and heuristics...
+
+            m_ContentBounds = default(Rect);
 
             using(PooledSet<StringHash32> unusedNames = PooledSet<StringHash32>.Create(m_AllocatedNodes.Keys))
             {
@@ -115,12 +203,18 @@ namespace ProtoAqua.Modeling
                         m_AllocatedNodes.Add(nodeData.Name, visualNode);
                     }
 
-                    float radius = visualNode.Radius() * 3f;
+                    float radius = visualNode.Radius() * m_NodeSpacingRatio;
                     float rad = Mathf.PI * 2 * (float) i / nodeCount;
                     Vector2 pos = nodeCount == 1 ? Vector2.zero : new Vector2(radius * Mathf.Cos(rad), radius * Mathf.Sin(rad));
 
+                    visualNode.OnClick = m_CachedNodeClicked ?? (m_CachedNodeClicked = OnNodeClicked);
                     visualNode.Load(pos, nodeData);
+
+                    Geom.Encapsulate(ref m_ContentBounds, new Rect(pos.x - radius, pos.y - radius, radius * 2, radius * 2));
+                    Debug.LogFormat("[ConceptMap] New Content Bounds are {0}", m_ContentBounds);
                 }
+
+                Debug.LogFormat("[ConceptMap] Finalized {0}", m_ContentBounds);
 
                 foreach(var name in unusedNames)
                 {
@@ -150,6 +244,7 @@ namespace ProtoAqua.Modeling
                     ConceptMapNode start = m_AllocatedNodes[m_MapData.Node(linkData.Start).Name];
                     ConceptMapNode end = m_AllocatedNodes[m_MapData.Node(linkData.End).Name];
 
+                    visualLink.OnClick = m_CachedLinkClicked ?? (m_CachedLinkClicked = OnLinkClicked);
                     visualLink.Load(start, end, linkData);
                 }
 
@@ -206,7 +301,10 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
         {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            var propertyDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
+            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
+            m_MapData.CreateLink(inFact.Id(), self, target, "range", inFact);
         }
 
         void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
@@ -215,5 +313,44 @@ namespace ProtoAqua.Modeling
         }
 
         #endregion // IFactVisitor
+
+        #region IDragHandler
+
+        void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
+        {
+            if (m_MapData.NodeCount() == 0 || !isActiveAndEnabled || eventData.button != 0)
+                return;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(m_MapTransform, eventData.position, eventData.pressEventCamera, out m_DragPointerStart);
+            m_DragContentStart = m_ContentTransform.anchoredPosition;
+            m_Dragging = true;
+        }
+
+        void IDragHandler.OnDrag(PointerEventData eventData)
+        {
+            if (!m_Dragging || eventData.button != 0)
+                return;
+
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(m_MapTransform, eventData.position, eventData.pressEventCamera, out localPoint);
+            Vector2 delta = localPoint - m_DragPointerStart;
+            Vector2 newPos = m_DragContentStart + delta;
+            m_ContentTransform.anchoredPosition = newPos;
+        }
+
+        void IEndDragHandler.OnEndDrag(PointerEventData eventData)
+        {
+            if (!m_Dragging || eventData.button != 0)
+                return;
+
+            m_Dragging = false;
+        }
+
+        void IInitializePotentialDragHandler.OnInitializePotentialDrag(PointerEventData eventData)
+        {
+            // TODO: What?
+        }
+
+        #endregion // IDragHandler
     }
 }

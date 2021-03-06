@@ -13,6 +13,13 @@ namespace Aqua
 {
     public class ExposedPointerInputModule : StandaloneInputModule
     {
+        public PointerEventData GetPointerEventData()
+        {
+            PointerEventData eventData;
+            GetPointerData(kMouseLeftId, out eventData, true);
+            return eventData;
+        }
+
         public bool IsPointerOverCanvas()
         {
             PointerEventData eventData;

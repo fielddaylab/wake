@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -37,6 +38,7 @@ namespace Aqua
 
             BFBase fact;
             m_FactMap.TryGetValue(inFactId, out fact);
+            Assert.NotNull(fact, "Could not find BFBase with id '{1}'", inFactId.ToDebugString());
             return fact;
         }
 
@@ -52,6 +54,10 @@ namespace Aqua
             return m_AutoFacts.Contains(inFactId);
         }
 
+        public bool HasFactWithId(StringHash32 inFactId)
+        {
+            return m_FactMap.ContainsKey(inFactId);
+        }
 
         #endregion // Facts
 

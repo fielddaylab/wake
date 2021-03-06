@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
+using BeauUtil.Debugger;
 
 namespace Aqua.Profile
 {
@@ -61,22 +62,11 @@ namespace Aqua.Profile
             item?.Set(inAmount);
         }
 
-        public PlayerInv GetItemByName(string NameId)
-        {
-            foreach (var playerItem in m_Items)
-            {
-                var nameid = playerItem.Item.NameTextId();
-                if (nameid == NameId)
-                {
-                    return playerItem;
-                }
-            }
-            return null;
-        }
-
         private PlayerInv GetInv(StringHash32 inId, bool inbCreate)
         {
             CleanItemList();
+
+            Assert.True(Services.Assets.Inventory.HasId(inId), "Could not find ItemDesc with id '{1}'", inId.ToDebugString());
 
             PlayerInv item;
             if (!m_Items.TryBinarySearch(inId, out item) && inbCreate)

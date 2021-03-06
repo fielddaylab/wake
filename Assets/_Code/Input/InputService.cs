@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Aqua
 {
@@ -45,7 +47,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private readonly List<IInputLayer> m_AllInputLayers = new List<IInputLayer>(32);
+        [NonSerialized] private readonly BufferedCollection<IInputLayer> m_AllInputLayers = new BufferedCollection<IInputLayer>(32);
         [NonSerialized] private int m_CurrentPriority = DefaultPriority;
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
         [NonSerialized] private int m_PauseAllCounter = 0;
@@ -70,7 +72,7 @@ namespace Aqua
 
         public bool DeregisterInput(IInputLayer inInputLayer)
         {
-            return m_AllInputLayers.FastRemove(inInputLayer);
+            return m_AllInputLayers.Remove(inInputLayer);
         }
 
         #endregion // Input Layers
@@ -125,9 +127,9 @@ namespace Aqua
 
         private void BroadcastPriorityUpdate()
         {
-            for(int i = m_AllInputLayers.Count - 1; i >= 0; --i)
+            foreach(var layer in m_AllInputLayers)
             {
-                m_AllInputLayers[i].UpdateSystemPriority(m_CurrentPriority);
+                layer.UpdateSystemPriority(m_CurrentPriority);
             }
         }
 
@@ -184,9 +186,9 @@ namespace Aqua
         {
             InputLayerFlags flags = m_PauseAllCounter > 0 ? 0 : m_CurrentFlags;
 
-            for(int i = m_AllInputLayers.Count - 1; i >= 0; --i)
+            foreach(var layer in m_AllInputLayers)
             {
-                m_AllInputLayers[i].UpdateSystemFlags(flags);
+                layer.UpdateSystemFlags(flags);
             }
         }
 
@@ -197,6 +199,20 @@ namespace Aqua
         public bool IsPointerOverUI()
         {
             return m_InputModule.IsPointerOverCanvas();
+        }
+
+        public bool ExecuteClick(GameObject inRoot)
+        {
+            RectTransform rectTransform = inRoot.transform as RectTransform;
+            if (rectTransform && !rectTransform.IsPointerInteractable())
+                return false;
+            
+            IPointerClickHandler clickHandler = inRoot.GetComponent<IPointerClickHandler>();
+            if (clickHandler == null)
+                return false;
+            
+            clickHandler.OnPointerClick(m_InputModule.GetPointerEventData());
+            return true;
         }
 
         #endregion // Pointer
@@ -231,10 +247,12 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            for(int i = m_AllInputLayers.Count - 1; i >= 0; --i)
-            {
-                m_AllInputLayers[i].Device.Update();
-            }
+            m_AllInputLayers.ForEach(UpdateDevice);
+        }
+
+        static private void UpdateDevice(IInputLayer inLayer)
+        {
+            inLayer.Device.Update();
         }
 
         #endregion // Unity Events

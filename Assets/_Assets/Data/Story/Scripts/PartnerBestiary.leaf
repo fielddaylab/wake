@@ -2,7 +2,7 @@
 
 :: urchins.start
 @trigger    RequestPartnerHelp
-@when       has.entity:Urchin
+@when       random:common, has.entity:Urchin
 @once
 @cutscene
 {@player}   Kevin, what do you know about these urchins?
@@ -12,23 +12,70 @@
 
 :: urchins.eat.giantKelp
 @trigger    RequestPartnerHelp
-@when       seen:partner.help.bestiary.urchins.start, has.fact:Urchins.Eat.GiantKelp
+@when       random:common, seen:partner.help.bestiary.urchins.start, has.fact:Urchin.Eats.GiantKelp
 @once
 @cutscene
-$if seen:urchins.eat.bullKelp
+$if seen:partner.help.bestiary.urchins.eat.bullKelp
     {@player}   Urchins eat giant kelp too?
     {@kevin}    They eat all sorts of kelp.
 $else
-    {@player}   So... these urchins just eat kelp?
+    {@player}   So... these urchins eat giant kelp?
     {@kevin}    Yep! Urchins are big kelp eaters.
                 Ravenous, even.
 $endif
 
 :: urchins.eat.bullKelp
 @trigger    RequestPartnerHelp
-@when       seen:partner.help.bestiary.urchins.start, has.fact:Urchins.Eat.BullKelp
+@when       random:common, seen:partner.help.bestiary.urchins.start, has.fact:Urchin.Eats.BullKelp
 @once
 @cutscene
-{@player}   So... these urchins just eat kelp?
-{@kevin}    Yep! Urchins are big kelp eaters.
-            Leave all their bite marks
+$if seen:partner.help.bestiary.urchins.eat.giantKelp
+    {@player}   Urchins eat bull kelp too?
+    {@kevin}    Yup. The hungry little blobs...
+$else
+    {@player}   So... these urchins eat bull kelp?
+    {@kevin}    Yep! Urchins are big kelp eaters.
+                Leave all their bite marks everywhere.
+$endif
+
+:: urchins.randomFact.1
+@trigger    RequestPartnerHelp
+@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts == 0
+@once
+@cutscene
+$set    kevin:urchinFacts + 1
+{@player}   Got any good urchin facts?
+{@kevin}    An urchin fact...
+            Uh, I once worked on an urchin farm.
+{@player}   Ooh, an urchin farm...
+$if kevin:urchinBaron.player.talk > 0
+$set    kevin:urchinBaron.player.knowsFarm = true
+                So that was... oh...
+    {@kevin}    Yeah. With Urban.
+                I don't like talking about it.
+$else
+    {@player}   What's an urchin farm like?
+    {@kevin}    Stressful. Dangerous.
+                Exploitive.
+$endif
+
+:: urchins.randomFact.2
+@trigger    RequestPartnerHelp
+@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts > 1
+@once
+@cutscene
+$set    kevin:urchinFacts + 1
+{@player}   Tell me another urchin fact.
+{@kevin}    Another urchin fact? Well...
+            Urchins can see with their whole bodies.
+            They don't strictly have eyes... but their bodies are sort of one big light-sensitive organ.
+
+:: urchins.randomFact.3
+@trigger    RequestPartnerHelp
+@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts > 1
+@once
+@cutscene
+$set    kevin:urchinFacts + 1
+{@player}   Tell me another urchin fact.
+{@kevin}    Another urchin fact? Well...
+            Some urchins are {wait 0.2}quite{wait 0.2} poisonous.

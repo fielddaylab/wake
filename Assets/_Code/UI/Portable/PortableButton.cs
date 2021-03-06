@@ -23,7 +23,6 @@ namespace Aqua.Portable
         [NonSerialized] private bool m_HasNew;
         [NonSerialized] private RectTransformState m_OriginalAnimState;
 
-        [NonSerialized] private BaseInputLayer m_InputLayer;
         [NonSerialized] private IPortableRequest m_Request;
 
         public Toggle Toggle { get { return m_Toggle; } }
@@ -31,9 +30,6 @@ namespace Aqua.Portable
         protected override void Awake()
         {
             base.Awake();
-
-            m_InputLayer = BaseInputLayer.Find(this);
-            m_InputLayer.Device.OnUpdate += CheckInput;
 
             m_Menu = Services.UI.FindPanel<PortableMenu>();
 
@@ -43,16 +39,12 @@ namespace Aqua.Portable
             m_NewIcon.gameObject.SetActive(false);
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
-                .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
                 .Register(GameEvents.PortableClosed, OnPortableClosed, this);
         }
 
         private void OnDestroy()
         {
-            m_InputLayer.Device.OnUpdate -= CheckInput;
-
             m_Menu.OnHideEvent.RemoveListener(OnMenuClose);
 
             Services.Events?.DeregisterAll(this);
@@ -86,14 +78,6 @@ namespace Aqua.Portable
             m_Toggle.SetIsOnWithoutNotify(false);
         }
 
-        private void CheckInput(DeviceInput inDevice)
-        {
-            if (inDevice.KeyPressed(KeyCode.Tab))
-            {
-                m_Toggle.isOn = !m_Toggle.isOn;
-            }
-        }
-
         private void OnBestiaryUpdated(BestiaryUpdateParams inBestiaryUpdate)
         {
             m_HasNew = true;
@@ -104,16 +88,6 @@ namespace Aqua.Portable
 
             m_NewIcon.gameObject.SetActive(true);
             m_Request = new BestiaryApp.OpenToRequest(inBestiaryUpdate);
-        }
-
-        private void OnCutsceneStart()
-        {
-            Hide();
-        }
-
-        private void OnCutsceneEnd()
-        {
-            Show();
         }
 
         private void OnPortableOpened(IPortableRequest inRequest)
@@ -137,6 +111,8 @@ namespace Aqua.Portable
         {
             if (!m_Menu || !isActiveAndEnabled)
                 return;
+
+            Debug.LogFormat("[PortableActionButton] Detected on {0}", Time.frameCount);
             
             if (inbValue)
             {

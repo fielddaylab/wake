@@ -55,6 +55,7 @@ namespace Aqua.Profile
 
         public bool HasFact(StringHash32 inFactId)
         {
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
             return m_ObservedFacts.Contains(inFactId) || Services.Assets.Bestiary.IsAutoFact(inFactId);
         }
 
@@ -65,6 +66,8 @@ namespace Aqua.Profile
 
         public bool RegisterFact(StringHash32 inFactId, out PlayerFactParams outParams)
         {
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
+
             if (Services.Assets.Bestiary.IsAutoFact(inFactId))
             {
                 var fact = Services.Assets.Bestiary.Fact(inFactId);
@@ -93,6 +96,8 @@ namespace Aqua.Profile
 
         public PlayerFactParams GetFact(StringHash32 inFactId)
         {
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
+
             if (Services.Assets.Bestiary.IsAutoFact(inFactId))
             {
                 return PlayerFactParams.Wrap(Services.Assets.Bestiary.Fact(inFactId));
@@ -148,9 +153,11 @@ namespace Aqua.Profile
             return count;
         }
 
-        private PlayerFactParams AddFact(StringHash32 inBaseFact)
+        private PlayerFactParams AddFact(StringHash32 inFactId)
         {
-            PlayerFactParams fact = new PlayerFactParams(inBaseFact);
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
+
+            PlayerFactParams fact = new PlayerFactParams(inFactId);
             m_Facts.Add(fact);
             m_FactListDirty = true;
             return fact;

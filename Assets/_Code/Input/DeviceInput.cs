@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -9,6 +12,7 @@ namespace Aqua
         public bool Enabled { get; set; }
 
         public event Action<DeviceInput> OnUpdate;
+        private BufferedCollection<IInputHandler> m_UpdateHandlers;
 
         public DeviceInput()
         {
@@ -27,10 +31,36 @@ namespace Aqua
             return Enabled && (Layer == null || Layer.IsInputEnabled);
         }
 
+        public void RegisterHandler(IInputHandler inHandler)
+        {
+            if (m_UpdateHandlers == null)
+                m_UpdateHandlers = new BufferedCollection<IInputHandler>();
+            Assert.False(m_UpdateHandlers.Contains(inHandler), "Cannot register same handler '{0}' twice!", inHandler);
+            m_UpdateHandlers.Add(inHandler);
+        }
+
+        public void DeregisterHandler(IInputHandler inHandler)
+        {
+            if (m_UpdateHandlers != null)
+                m_UpdateHandlers.Remove(inHandler);
+        }
+
         public void Update()
         {
-            if (IsActive() && OnUpdate != null)
-                OnUpdate(this);
+            if (IsActive())
+            {
+                if (m_UpdateHandlers != null)
+                {
+                    m_UpdateHandlers.ForEach(HandleInputPtr ?? (HandleInputPtr = HandleInput), this);
+                }
+                OnUpdate?.Invoke(this);
+            }
+        }
+
+        static private Action<IInputHandler, DeviceInput> HandleInputPtr;
+        static private void HandleInput(IInputHandler inHandler, DeviceInput inInput)
+        {
+            inHandler.HandleInput(inInput);
         }
 
         public bool KeyDown(KeyCode inKeyCode)

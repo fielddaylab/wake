@@ -18,6 +18,11 @@ namespace ProtoAqua.Modeling
         {
             bool bLogging = (inFlags & SimulatorFlags.Debug) != 0;
 
+            if (bLogging && inInitial.Timestamp == 0)
+            {
+                Debug.LogFormat(Dump(inInitial));
+            }
+
             WaterPropertyBlockF32 environment = inInitial.Environment;
             IReadOnlyList<CritterProfile> profiles = inProfile.Critters();
             int critterCount = profiles.Count;
@@ -82,14 +87,17 @@ namespace ProtoAqua.Modeling
                     for(int j = 0; j < foodTypes.Length && remainingFood > 0; j++)
                     {
                         int targetIdx = foodTypes[j];
-                        if (dataBlock[targetIdx].Population > 0)
+                        if (targetIdx >= 0)
                         {
-                            uint actualEat = profiles[targetIdx].TryEat(ref dataBlock[targetIdx], remainingFood);
-                            remainingFood -= actualEat;
-
-                            if (bLogging)
+                            if (dataBlock[targetIdx].Population > 0)
                             {
-                                Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id().ToDebugString(), actualEat, profiles[targetIdx].Id().ToDebugString());
+                                uint actualEat = profiles[targetIdx].TryEat(ref dataBlock[targetIdx], remainingFood);
+                                remainingFood -= actualEat;
+
+                                if (bLogging)
+                                {
+                                    Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id().ToDebugString(), actualEat, profiles[targetIdx].Id().ToDebugString());
+                                }
                             }
                         }
                     }
@@ -124,6 +132,15 @@ namespace ProtoAqua.Modeling
             SimulationResult initial = inProfile.InitialState;
             ioResults[0] = initial;
             GenerateToBuffer(inProfile, initial, ioResults, 1, ioResults.Length - 1, inTickScale, inFlags);
+        }
+
+        /// <summary>
+        /// Fills the given buffer with simulation results.
+        /// </summary>
+        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, int inTickScale = 1, SimulatorFlags inFlags = 0)
+        {
+            ioResults[0] = inInitial;
+            GenerateToBuffer(inProfile, inInitial, ioResults, 1, ioResults.Length - 1, inTickScale, inFlags);
         }
 
         /// <summary>

@@ -22,7 +22,6 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private Routine m_ResponseRoutine;
-        [NonSerialized] private BaseInputLayer m_InputLayer;
 
         protected override void Awake()
         {
@@ -31,9 +30,6 @@ namespace Aqua
             
             m_Button.onClick.AddListener(OnButtonClicked);
 
-            m_InputLayer = BaseInputLayer.Find(this);
-            m_InputLayer.Device.OnUpdate += CheckInput;
-
             if (Services.UI.IsLetterboxed())
                 Hide();
         }
@@ -41,7 +37,6 @@ namespace Aqua
         private void OnDestroy()
         {
             Services.Events?.DeregisterAll(this);
-            m_InputLayer.Device.OnUpdate -= CheckInput;
         }
 
         #region Handlers
@@ -59,12 +54,6 @@ namespace Aqua
         private void OnCutsceneEnd()
         {
             Show();
-        }
-
-        private void CheckInput(DeviceInput inDevice)
-        {
-            if (inDevice.KeyPressed(KeyCode.Q) && m_RootGroup.blocksRaycasts)
-                OnButtonClicked();
         }
 
         #endregion // Handlers

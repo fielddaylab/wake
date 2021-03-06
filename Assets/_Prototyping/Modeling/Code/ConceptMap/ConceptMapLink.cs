@@ -4,6 +4,10 @@ using UnityEngine.UI;
 using TMPro;
 using BeauRoutine;
 using Aqua;
+using ProtoCP;
+using BeauUtil;
+using System;
+using UnityEngine.EventSystems;
 
 namespace ProtoAqua.Modeling
 {
@@ -13,12 +17,29 @@ namespace ProtoAqua.Modeling
 
         [SerializeField] private RectTransform m_LineTransform = null;
         [SerializeField] private Image m_Icon = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private LocText m_Label = null;
 
         #endregion // Inspector
 
+        private object m_Tag;
+
+        public Action<object> OnClick;
+        
+        private void Awake()
+        {
+            PointerListener listener = m_Icon.EnsureComponent<PointerListener>();
+            listener.onClick.AddListener(OnIconClick);
+        }
+
+        private void OnIconClick(PointerEventData ignored)
+        {
+            OnClick?.Invoke(m_Tag);
+        }
+
         public void Load(ConceptMapNode inStart, ConceptMapNode inEnd, in ConceptMapLinkData inData)
         {
+            m_Tag = inData.Tag;
+
             Vector2 startPos = ((RectTransform) inStart.transform).anchoredPosition;
             Vector2 endPos = ((RectTransform) inEnd.transform).anchoredPosition;
             Vector2 vector = endPos - startPos;
@@ -33,6 +54,22 @@ namespace ProtoAqua.Modeling
 
             BFBase fact = inData.Tag as BFBase;
             m_Icon.sprite = fact?.Icon();
+
+            BFBehavior behavior = fact as BFBehavior;
+            if (behavior != null)
+            {
+                if (m_Label)
+                {
+                    m_Label.SetText(behavior.Verb());
+                }
+            }
+            else
+            {
+                if (m_Label)
+                {
+                    m_Label.SetText(null);
+                }
+            }
         }
 
         #region IPooledObject
@@ -51,6 +88,7 @@ namespace ProtoAqua.Modeling
 
         void IPooledObject<ConceptMapLink>.OnFree()
         {
+            m_Tag = null;
         }
 
         #endregion // IPooledObject

@@ -21,6 +21,7 @@ namespace Aqua
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
+        [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
 
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
 
@@ -190,6 +191,8 @@ namespace Aqua
         }
 
         #endregion // Additional Panels
+
+        public KeycodeDisplayMap KeycodeMap { get { return m_KeyboardMap; } }
 
         public void BindCamera(Camera inCamera)
         {

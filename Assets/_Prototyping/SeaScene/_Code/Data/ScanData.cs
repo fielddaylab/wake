@@ -7,10 +7,11 @@ using UnityEngine.Scripting;
 using BeauUtil.Variants;
 using BeauPools;
 using Aqua;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
-    public class ScanData : IDataBlock
+    public class ScanData : IDataBlock, IValidatable
     {
         #region Serialized
 
@@ -29,10 +30,8 @@ namespace ProtoAqua.Observation
         // Links
         [BlockMeta("spriteId")] private string m_SpriteId = null;
 
-        [BlockMeta("logbook")] private string m_LogbookId = null;
-        [BlockMeta("bestiary")] private string m_BestiaryId = null;
-
-        [BlockMeta("eventEntrypoint")] private string m_EventEntrypoint = null;
+        [BlockMeta("logbook")] private StringHash32 m_LogbookId = null;
+        [BlockMeta("bestiary")] private StringHash32 m_BestiaryId = null;
 
         #endregion // Serialized
 
@@ -53,8 +52,6 @@ namespace ProtoAqua.Observation
         public string SpriteId() { return m_SpriteId; }
         public StringHash32 LogbookId() { return m_LogbookId; }
         public StringHash32 BestiaryId() { return m_BestiaryId; }
-
-        public string EventEntrypoint() { return m_EventEntrypoint; }
 
         #region Scan
 
@@ -80,6 +77,12 @@ namespace ProtoAqua.Observation
                 }
                 return modification;
             });
+        }
+
+        void IValidatable.Validate()
+        {
+            Assert.True(m_BestiaryId.IsEmpty || Services.Assets.Bestiary.HasId(m_BestiaryId),
+                "Scan '{0}' was linked to invalid bestiary entry '{1}'", m_Id.ToDebugString(), m_BestiaryId.ToDebugString());
         }
 
         #endregion // Scan

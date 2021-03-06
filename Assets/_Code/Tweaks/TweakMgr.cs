@@ -5,9 +5,11 @@ using BeauPools;
 using BeauUtil;
 using Aqua;
 using UnityEngine;
+using BeauUtil.Services;
 
 namespace Aqua
 {
+    [ServiceDependency(typeof(AssetsService))]
     public class TweakMgr : ServiceBehaviour
     {
         #region Inspector

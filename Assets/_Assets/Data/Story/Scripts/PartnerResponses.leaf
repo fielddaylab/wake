@@ -32,7 +32,7 @@ $set temp:defaultResponseCount + 1
 @chatter
 @boostScore -5
 $set temp:defaultResponseCount = 0
-{@kevin}    I didn't grant you this connection just so you could bother me all the time, you know.
+{@kevin}    Back off for a minute, okay?
 
 :: default.irritated.2
 @trigger    RequestPartnerHelp
@@ -92,12 +92,37 @@ $set kevin:help.comfortTalks + 1
             ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
 {@kevin}    ...Sure. When I trust you the same way, maybe we can try that.
 
-// gender conversations
+// name conversations
 
-// :: gender.first
-// @trigger    RequestPartnerHelp
-// @when       kevin:help.requests >= 15
-// @once       profile
-// @cutscene
-// $set kevin:help.genderTalks + 1
-// {@player}   
+:: name.intro
+@trigger    RequestPartnerHelp
+@when       random:rare, kevin:help.requests >= 15, kevin:help.nameTalks == 0
+@once
+@cutscene
+$set kevin:help.nameTalks + 1
+{@player}   So, where'd you get the name "Kevin" from?
+{@kevin}    From{wait 0.5} one of my old friends.
+            I thought it was a nice name.
+{@player}   Oh, cool.
+
+:: name.introFollowup
+@trigger    RequestPartnerHelp
+@when       kevin:help.nameTalks == 1
+@once
+@cutscene
+$set kevin:help.nameTalks + 1
+{@player}   So was Kevin your friend's name?
+            Or did they just suggest "Kevin" to you?
+{@kevin}    Uh... a bit of both I guess?
+            I don't know, can we not talk about them right now?
+
+:: name.sideComment
+@trigger    RequestPartnerHelp
+@when       random:rare, kevin:help.requests >= 30, kevin:help.nameTalks >= 2
+@once
+@cutscene
+{@player}   You know, I like the name Kevin.
+{@kevin}    Really?
+{@player}   Yeah, it has good "science familiar" energy.
+{@kevin}	Why thank you.
+{@}	Kevin does a little bow.

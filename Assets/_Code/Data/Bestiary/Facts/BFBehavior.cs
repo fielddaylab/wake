@@ -10,10 +10,12 @@ namespace Aqua
         #region Inspector
 
         [Header("Behavior")]
+        [SerializeField] private string m_Verb = null;
         [SerializeField] private bool m_Stressed = false;
 
         #endregion // Inspector
 
+        public string Verb() { return m_Verb; }
         public bool OnlyWhenStressed() { return m_Stressed; }
         
         public bool CheckOverride(BFBehavior inBehavior, out BFBehavior outOverridden)
