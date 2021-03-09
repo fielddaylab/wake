@@ -27,6 +27,7 @@ namespace ProtoAqua.Modeling
         [Header("Labels")]
         [SerializeField] private SerializedHash32 m_TitleId = null;
         [SerializeField] private SerializedHash32 m_DescId = null;
+        [SerializeField] private SerializedHash32 m_CompleteId = null;
         [SerializeField] private SerializedHash32 m_TickLabelId = null;
 
         [Header("Results")]
@@ -52,6 +53,7 @@ namespace ProtoAqua.Modeling
 
         public StringHash32 TitleId() { return m_TitleId; }
         public StringHash32 DescId() { return m_DescId; }
+        public StringHash32 CompleteId() { return m_CompleteId; }
         public StringHash32 TickLabelId() { return m_TickLabelId; }
 
         public StringHash32 CompletedItem() { return m_CompletedItem; }

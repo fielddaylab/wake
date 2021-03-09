@@ -16,6 +16,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private ModelingIntroUI m_Intro = null;
         [SerializeField] private ConceptMapUI m_ConceptMap = null;
         [SerializeField] private ChartUI m_Chart = null;
+        [SerializeField] private ModelingCompleteUI m_Complete = null;
         
         [Header("Critter Lists")]
         [SerializeField] private InitialCritterUI m_InitialCritters = null;
@@ -91,7 +92,7 @@ namespace ProtoAqua.Modeling
         public void Complete()
         {
             m_ConceptMap.Lock();
-            m_InputLayer.Override = false;
+            m_Complete.Load(m_Buffer.Scenario());
         }
 
         private IEnumerator SwitchToPredictAnimation()

@@ -5,12 +5,13 @@ using UnityEngine;
 
 namespace ProtoAqua.Modeling
 {
-    public class SimulationCtrl : MonoBehaviour, ISceneLoadHandler
+    public class SimulationCtrl : MonoBehaviour, ISceneLoadHandler, IInputHandler
     {
         #region Inspector
 
         [SerializeField] private ModelingScenarioData m_TestScenario = null;
-        [SerializeField] private ModelingUI m_UI = null;
+        [SerializeField, Required] private ModelingUI m_UI = null;
+        [SerializeField, Required] private BaseInputLayer m_Input = null;
         
         #endregion // Inspector
 
@@ -31,6 +32,8 @@ namespace ProtoAqua.Modeling
             OnBufferUpdated();
 
             m_UI.ShowIntro();
+
+            m_Input.Device.RegisterHandler(this);
         }
 
         private void OnBufferUpdated()
@@ -119,11 +122,14 @@ namespace ProtoAqua.Modeling
             SyncPhaseScriptVar();
 
             StringHash32 item = m_Buffer.Scenario().CompletedItem();
-            Services.Data.Profile.Inventory.GiveItem(item);
+            if (!item.IsEmpty)
+                Services.Data.Profile.Inventory.GiveItem(item);
             m_UI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_Completed);
+
+            m_Input.Device.DeregisterHandler(this);
         }
 
         private void SyncPhaseScriptVar()
@@ -142,6 +148,16 @@ namespace ProtoAqua.Modeling
                     Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Completed);
                     break;
             }
+        }
+
+        void IInputHandler.HandleInput(DeviceInput inInput)
+        {
+            #if UNITY_EDITOR
+            if (inInput.KeyPressed(KeyCode.F8))
+            {
+                m_Buffer.ReloadScenario();
+            }
+            #endif // UNITY_EDITOR
         }
     }
 }

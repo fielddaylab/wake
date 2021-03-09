@@ -111,8 +111,6 @@ namespace Aqua.Portable
         {
             if (!m_Menu || !isActiveAndEnabled)
                 return;
-
-            Debug.LogFormat("[PortableActionButton] Detected on {0}", Time.frameCount);
             
             if (inbValue)
             {

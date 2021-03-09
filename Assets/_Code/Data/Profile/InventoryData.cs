@@ -71,7 +71,7 @@ namespace Aqua.Profile
         {
             CleanItemList();
 
-            Assert.True(Services.Assets.Inventory.HasId(inId), "Could not find ItemDesc with id '{1}'", inId.ToDebugString());
+            Assert.True(Services.Assets.Inventory.HasId(inId), "Could not find ItemDesc with id '{0}'", inId.ToDebugString());
 
             PlayerInv item;
             if (!m_Items.TryBinarySearch(inId, out item) && inbCreate)

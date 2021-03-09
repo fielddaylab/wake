@@ -35,7 +35,8 @@ namespace ProtoAqua.Modeling
             float xMin = inBounds.xMin, xMax = inBounds.xMax, yMin = inBounds.yMin, yMax = inBounds.yMax;
             float x = MathUtil.Remap(m_RawPoint.x, xMin, xMax, 0, 1);
             float y = MathUtil.Remap(m_RawPoint.y, yMin, yMax, 0, 1);
-            m_Renderer.rectTransform.anchorMin = m_Renderer.rectTransform.anchorMax = new Vector2(x, y);
+            RectTransform r = m_Renderer.rectTransform;
+            r.anchorMin = r.anchorMax = new Vector2(x, y);
         }
     }
 }

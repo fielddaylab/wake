@@ -86,7 +86,7 @@ namespace Aqua
 
         public void PushPriority(int inPriority, object inContext = null)
         {
-            Debug.LogFormat("[InputService] Pushed priority {0} with context '{1}'", inPriority, inContext);
+            // Debug.LogFormat("[InputService] Pushed priority {0} with context '{1}'", inPriority, inContext);
 
             m_PriorityStack.Add(new PriorityRecord(inPriority, inContext));
             m_CurrentPriority = inPriority;
@@ -106,11 +106,11 @@ namespace Aqua
                         if (i == m_PriorityStack.Count)
                         {
                             m_CurrentPriority = i > 0 ? m_PriorityStack[i - 1].Priority : DefaultPriority;
-                            Debug.LogFormat("[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, i == 0 ? "null" : m_PriorityStack[i - 1].Context);
+                            // Debug.LogFormat("[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, i == 0 ? "null" : m_PriorityStack[i - 1].Context);
                         }
                         else
                         {
-                            Debug.LogFormat("[InputService] Popped priority with context '{0}'", inContext);
+                            // Debug.LogFormat("[InputService] Popped priority with context '{0}'", inContext);
                         }
 
                         BroadcastPriorityUpdate();
@@ -144,7 +144,7 @@ namespace Aqua
 
         public void PushFlags(InputLayerFlags inFlags, object inContext = null)
         {
-            Debug.LogFormat("[InputService] Pushed flags {0} with context '{1}'", inFlags, inContext);
+            // Debug.LogFormat("[InputService] Pushed flags {0} with context '{1}'", inFlags, inContext);
 
             m_FlagsStack.Add(new FlagsRecord(inFlags, inContext));
             m_CurrentFlags = inFlags;
@@ -164,11 +164,11 @@ namespace Aqua
                         if (i == m_FlagsStack.Count)
                         {
                             m_CurrentFlags = i > 0 ? m_FlagsStack[i - 1].Flags : InputLayerFlags.Default;
-                            Debug.LogFormat("[InputService] Popped flags with context '{0}', new flags are {1} with context '{2}'", inContext, m_CurrentFlags, i == 0 ? "null" : m_FlagsStack[i - 1].Context);
+                            // Debug.LogFormat("[InputService] Popped flags with context '{0}', new flags are {1} with context '{2}'", inContext, m_CurrentFlags, i == 0 ? "null" : m_FlagsStack[i - 1].Context);
                         }
                         else
                         {
-                            Debug.LogFormat("[InputService] Popped flags with context '{0}'", inContext);
+                            // Debug.LogFormat("[InputService] Popped flags with context '{0}'", inContext);
                         }
                         BroadcastFlagsUpdate();
                         return;
