@@ -23,6 +23,15 @@ namespace ProtoAqua.Modeling
             ALL = Facts | Populations | Prediction
         }
 
+        /// <summary>
+        /// Flags indicating which things were updated.
+        /// </summary>
+        public enum UpdateFlags : byte
+        {
+            Historical = 0x01,
+            Model = 0x02
+        }
+
         private readonly SimulationProfile m_HistoricalProfile = new SimulationProfile();
         private readonly SimulationProfile m_PlayerProfile = new SimulationProfile();
 
@@ -239,6 +248,21 @@ namespace ProtoAqua.Modeling
         }
 
         /// <summary>
+        /// Refreshes historical and player.
+        /// </summary>
+        public UpdateFlags Refresh()
+        {
+            UpdateFlags flags = 0;
+
+            if (RefreshHistorical())
+                flags |= UpdateFlags.Historical;
+            if (RefreshModel())
+                flags |= UpdateFlags.Model;
+
+            return flags;
+        }
+
+        /// <summary>
         /// Refreshes historical data.
         /// </summary>
         public bool RefreshHistorical()
@@ -334,7 +358,7 @@ namespace ProtoAqua.Modeling
             {
                 error += SimulationResult.CalculateError(m_HistoricalResultBuffer[i], m_PlayerResultBuffer[i]);
             }
-            return Mathf.Clamp01((error / ticksToCalc) * ErrorScale);
+            return ticksToCalc == 0 ? 0 : Mathf.Clamp01((error / ticksToCalc) * ErrorScale);
         }
 
         /// <summary>
@@ -355,7 +379,7 @@ namespace ProtoAqua.Modeling
                 error += GraphingUtils.RPD(predicted.GetCritters(target.Id).Population, target.Population);
             }
 
-            return Mathf.Clamp01((error / targets.Length) * ErrorScale);
+            return targets.Length == 0 ? 0 : Mathf.Clamp01((error / targets.Length) * ErrorScale);
         }
     
         #endregion // Results

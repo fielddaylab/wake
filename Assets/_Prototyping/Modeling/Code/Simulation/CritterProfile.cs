@@ -8,7 +8,7 @@ namespace ProtoAqua.Modeling
     /// <summary>
     /// Critter information and operations.
     /// </summary>
-    public class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
+    public sealed class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
     {
         private readonly BestiaryDesc m_Desc;
         private readonly StringHash32 m_Id;

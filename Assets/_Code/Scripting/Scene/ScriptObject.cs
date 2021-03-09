@@ -1,3 +1,5 @@
+using System;
+using Aqua.Scripting;
 using BeauPools;
 using BeauUtil;
 using Leaf.Runtime;
@@ -13,6 +15,8 @@ namespace Aqua
         [SerializeField] private SerializedHash32 m_Id = "";
 
         #endregion // Inspector
+
+        [NonSerialized] private IScriptComponent[] m_ScriptComponents;
 
         #region KeyValue
 
@@ -74,12 +78,23 @@ namespace Aqua
 
         protected void RegisterScriptObject()
         {
-            Services.Script.TryRegister(this);
+            if (Services.Script.TryRegister(this))
+            {
+                if (m_ScriptComponents == null)
+                    m_ScriptComponents = GetComponents<IScriptComponent>();
+
+                for(int i = m_ScriptComponents.Length - 1; i >= 0; i--)
+                    m_ScriptComponents[i].OnRegister(this);
+            }
         }
 
         protected void DeregisterScriptObject()
         {
-            Services.Script?.TryDeregister(this);
+            if (Services.Script && Services.Script.TryDeregister(this))
+            {
+                for(int i = m_ScriptComponents.Length - 1; i >= 0; i--)
+                    m_ScriptComponents[i].OnDeregister(this);
+            }
         }
 
         #endregion // Register/Deregister

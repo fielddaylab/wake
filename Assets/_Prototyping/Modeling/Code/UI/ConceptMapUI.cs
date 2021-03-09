@@ -22,6 +22,12 @@ namespace ProtoAqua.Modeling
             m_Buffer = inBuffer;
         }
 
+        public void Lock()
+        {
+            m_Map.Lock();
+            m_AddButton.interactable = false;
+        }
+
         #region Handlers
 
         private void Awake()

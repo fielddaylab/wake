@@ -1,3 +1,4 @@
+using System;
 using Aqua;
 using Aqua.Portable;
 using BeauRoutine.Extensions;
@@ -18,41 +19,43 @@ namespace ProtoAqua.Modeling
         
         #endregion // Inspector
 
-        public GraphAxis Axis { get { return m_Axis; } }
-        public GraphDisplay Historical { get { return m_Historical; } }
-        public GraphDisplay Player { get { return m_Player; } }
-        public GraphDisplay Predict { get { return m_Predict; } }
+        [NonSerialized] private bool m_PredictMode;
 
-        public bool Refresh(SimulationBuffer inBuffer)
+        private void Awake()
         {
-            bool bRectsChanged = false;
+            m_Predict.gameObject.SetActive(false);
+        }
 
-            if (inBuffer.RefreshHistorical())
+        public void ShowPrediction()
+        {
+            m_Predict.gameObject.SetActive(true);
+            m_PredictMode = true;
+        }
+
+        public void Refresh(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inUpdate)
+        {
+            if (inUpdate == 0)
+                return;
+
+            if ((inUpdate & SimulationBuffer.UpdateFlags.Historical) != 0)
             {
-                m_Historical.LoadCritters(inBuffer.HistoricalData());
-                bRectsChanged = true;
+                m_Historical.LoadCritters(inBuffer.HistoricalData(), inBuffer.Scenario());
             }
 
-            if (inBuffer.RefreshModel())
+            if ((inUpdate & SimulationBuffer.UpdateFlags.Model) != 0)
             {
-                m_Player.LoadCritters(inBuffer.PlayerData());
-                m_Predict.LoadCritters(inBuffer.PredictData());
-                bRectsChanged = true;
+                m_Player.LoadCritters(inBuffer.PlayerData(), inBuffer.Scenario());
+                m_Predict.LoadCritters(inBuffer.PredictData(), inBuffer.Scenario());
             }
 
-            if (bRectsChanged)
-            {
-                var axisPair = CalculateGraphRect(m_Historical.Range, m_Player.Range, m_Predict.Range, inBuffer.Scenario().TotalTicks(), 10);
-                axisPair.X.SetMinAtOrigin();
-                axisPair.Y.SetMinAtOrigin();
-                Rect fullRect = axisPair.ToRect();
-                m_Historical.RenderLines(fullRect);
-                m_Player.RenderLines(fullRect);
-                m_Predict.RenderLines(fullRect);
-                m_Axis.Load(axisPair);
-            }
+            uint totalTicks = inBuffer.Scenario().TotalTicks();
 
-            return bRectsChanged;
+            var axisPair = CalculateGraphRect(m_Historical.Range, m_Player.Range, m_PredictMode ? m_Predict.Range : default(Rect), totalTicks, 8);
+            Rect fullRect = axisPair.ToRect();
+            m_Historical.RenderLines(fullRect);
+            m_Player.RenderLines(fullRect);
+            m_Predict.RenderLines(fullRect);
+            m_Axis.Load(axisPair);
         }
 
         static private GraphingUtils.AxisRangePair CalculateGraphRect(Rect inA, Rect inB, Rect inC, uint inTickCountX, uint inTickCountY)
@@ -60,7 +63,12 @@ namespace ProtoAqua.Modeling
             Rect rect = inA;
             Geom.Encapsulate(ref rect, inB);
             Geom.Encapsulate(ref rect, inC);
-            return GraphingUtils.CalculateAxisPair(rect, inTickCountX, inTickCountY);
+
+            GraphingUtils.AxisRangePair pair;
+            pair.X = new GraphingUtils.AxisRangeInfo() { Min = 0, Max = inTickCountX, TickCount = inTickCountX + 1, TickInterval = 1 };
+            pair.Y = GraphingUtils.CalculateAxis(rect.yMin, rect.yMax, inTickCountY);
+            pair.Y.SetMinAtOrigin();
+            return pair;
         }
     }
 }

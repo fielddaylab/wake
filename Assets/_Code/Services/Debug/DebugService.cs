@@ -22,7 +22,7 @@ namespace Aqua.DebugConsole
         [SerializeField, Required] private Canvas m_Canvas = null;
         [SerializeField] private KeyCode m_ToggleMinimalKey = KeyCode.BackQuote;
         [SerializeField, Required] private CanvasGroup m_MinimalLayer = null;
-        [SerializeField, Required] private CanvasGroup m_KeyboardReference = null;
+        [SerializeField, Required] private GameObject m_KeyboardReference = null;
         [SerializeField, Required] private ConsoleTimeDisplay m_TimeDisplay = null;
 
         #endregion // Inspector
@@ -42,7 +42,7 @@ namespace Aqua.DebugConsole
 
             if (m_Input.KeyPressed(KeyCode.Backslash))
             {
-                m_KeyboardReference.alpha = 1 - m_KeyboardReference.alpha;
+                m_KeyboardReference.SetActive(!m_KeyboardReference.activeSelf);
             }
 
             if (!Services.State.IsLoadingScene() && !Services.UI.IsLoadingScreenVisible() && !Services.UI.Popup.IsShowing())

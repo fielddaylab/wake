@@ -107,7 +107,7 @@ $set kevin:help.nameTalks + 1
 
 :: name.introFollowup
 @trigger    RequestPartnerHelp
-@when       kevin:help.nameTalks == 1
+@when       random:common, kevin:help.nameTalks == 1
 @once
 @cutscene
 $set kevin:help.nameTalks + 1
@@ -121,8 +121,10 @@ $set kevin:help.nameTalks + 1
 @when       random:rare, kevin:help.requests >= 30, kevin:help.nameTalks >= 2
 @once
 @cutscene
+$set kevin:help.nameTalks + 1
 {@player}   You know, I like the name Kevin.
 {@kevin}    Really?
 {@player}   Yeah, it has good "science familiar" energy.
 {@kevin}	Why thank you.
-{@}	Kevin does a little bow.
+{@}	They do a little bow.
+{@kevin}	I picked it out myself.

@@ -56,6 +56,11 @@ namespace Aqua.Profile
             return item != null && item.TryAdjust(inAmount);
         }
 
+        public bool GiveItem(StringHash32 inId)
+        {
+            return AdjustItem(inId, 1);
+        }
+
         public void SetItem(StringHash32 inId, int inAmount)
         {
             var item = GetInv(inId, inAmount > 0);

@@ -1,7 +1,11 @@
 using System;
+using System.Collections;
 using Aqua;
+using BeauRoutine;
 using BeauRoutine.Extensions;
+using BeauUtil;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Modeling
 {
@@ -9,14 +13,39 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
+        [SerializeField] private ModelingIntroUI m_Intro = null;
         [SerializeField] private ConceptMapUI m_ConceptMap = null;
         [SerializeField] private ChartUI m_Chart = null;
+        
+        [Header("Critter Lists")]
         [SerializeField] private InitialCritterUI m_InitialCritters = null;
         [SerializeField] private CritterAdjustUI m_CritterAdjust = null;
+        
+        [Header("Sync")]
+        [SerializeField] private SyncDisplay m_ModelSync = null;
+        [SerializeField] private SyncDisplay m_PredictSync = null;
+
+        [Header("Buttons")]
+        [SerializeField] private Button m_ModelSyncButton = null;
+        [SerializeField] private Button m_PredictSyncButton = null;
 
         #endregion // Inspector
 
-        private SimulationBuffer m_Buffer;
+        [NonSerialized] private SimulationBuffer m_Buffer;
+        [NonSerialized] private BaseInputLayer m_InputLayer;
+
+        [NonSerialized] private RectTransform m_ChartTransform;
+
+        public Action OnAdvanceClicked;
+
+        private void Awake()
+        {
+            m_InputLayer = BaseInputLayer.Find(this);
+            m_Chart.CacheComponent(ref m_ChartTransform);
+
+            m_ModelSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
+            m_PredictSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
+        }
         
         public void SetBuffer(SimulationBuffer inBuffer)
         {
@@ -27,16 +56,57 @@ namespace ProtoAqua.Modeling
             m_CritterAdjust.SetBuffer(inBuffer);
         }
 
-        public void Refresh()
+        public void Refresh(in ModelingState inState, SimulationBuffer.UpdateFlags inFlags)
         {
-            bool bUpdated = m_Chart.Refresh(m_Buffer);
-
-            if (bUpdated)
+            m_Chart.Refresh(m_Buffer, inFlags);
+            if (inFlags != 0)
             {
-                float error = m_Buffer.CalculateModelError();
-                float sync = 100 - error * 100;
-                // m_UI.DisplaySync(sync);
+                m_ModelSync.Display(inState.ModelSync);
+                m_PredictSync.Display(inState.PredictSync);
             }
+        }
+
+        public void ShowIntro()
+        {
+            m_PredictSync.gameObject.SetActive(false);
+            m_ModelSync.gameObject.SetActive(true);
+            m_CritterAdjust.gameObject.SetActive(false);
+            m_InitialCritters.gameObject.SetActive(true);
+
+            m_Intro.Load(m_Buffer.Scenario());
+        }
+
+        public void SwitchToPredict()
+        {
+            m_PredictSync.gameObject.SetActive(true);
+            m_ModelSync.gameObject.SetActive(false);
+            m_CritterAdjust.gameObject.SetActive(true);
+            m_Chart.ShowPrediction();
+            m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.Model);
+            m_ConceptMap.Lock();
+
+            Routine.Start(this, SwitchToPredictAnimation()).TryManuallyUpdate(0);
+        }
+
+        public void Complete()
+        {
+            m_ConceptMap.Lock();
+            m_InputLayer.Override = false;
+        }
+
+        private IEnumerator SwitchToPredictAnimation()
+        {
+            Services.Input.PauseAll();
+            yield return Routine.Combine(
+                m_ChartTransform.AnchorPosTo(-m_ChartTransform.anchoredPosition.x, 0.5f, Axis.X).Ease(Curve.CubeInOut)
+            );
+            m_InitialCritters.gameObject.SetActive(false);
+            Services.Input.ResumeAll();
+        }
+
+        private void OnAdvanceButtonClicked()
+        {
+            OnAdvanceClicked?.Invoke();
         }
     }
 }

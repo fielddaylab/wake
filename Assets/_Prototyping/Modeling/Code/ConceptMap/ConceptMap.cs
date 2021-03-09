@@ -24,7 +24,6 @@ namespace ProtoAqua.Modeling
 
         #region Inspector
 
-        [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private RectTransform m_MapTransform = null;
         [SerializeField] private RectTransform m_ContentTransform = null;
         [SerializeField] private RectTransform m_EmptyTransform = null;
@@ -53,6 +52,7 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private Vector2 m_DragPointerStart;
         [NonSerialized] private Vector2 m_DragContentStart;
         [NonSerialized] private bool m_Dragging;
+        [NonSerialized] private bool m_Locked;
 
         public Action<PlayerFactParams> OnLinkRequestRemove;
 
@@ -70,6 +70,9 @@ namespace ProtoAqua.Modeling
 
         private void OnLinkClicked(object inTag)
         {
+            if (m_Locked)
+                return;
+            
             PlayerFactParams playerFact = inTag as PlayerFactParams;
             if (playerFact == null)
             {
@@ -107,6 +110,11 @@ namespace ProtoAqua.Modeling
         }
 
         #endregion // Handlers
+
+        public void Lock()
+        {
+            m_Locked = true;
+        }
 
         #region Add/Remove
 

@@ -8,7 +8,7 @@ namespace ProtoAqua.Modeling
     /// <summary>
     /// Initial state and critter profiles.
     /// </summary>
-    public class SimulationProfile : IFactVisitor
+    public sealed class SimulationProfile : IFactVisitor
     {
         private RingBuffer<CritterProfile> m_Profiles = new RingBuffer<CritterProfile>(Simulator.MaxTrackedCritters, RingBufferMode.Fixed);
         private SimulationResult m_InitialState;

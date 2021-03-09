@@ -22,7 +22,7 @@ namespace Aqua
             inNode.Package().IncrementUseCount();
 
             Services.Data.Profile.Script.RecordNodeVisit(inNode.Id(), inNode.TrackingLevel());
-            if ((inNode.Flags() & ScriptNodeFlags.Cutscene) != 0)
+            if (inNode.IsCutscene())
             {
                 thread.PushCutscene();
             }
@@ -38,7 +38,7 @@ namespace Aqua
         {
             inNode.Package().DecrementUseCount();
 
-            if ((inNode.Flags() & ScriptNodeFlags.Cutscene) != 0)
+            if (inNode.IsCutscene())
             {
                 ScriptThread thread = ((ScriptThread) inThreadState);
                 thread.PopCutscene();
