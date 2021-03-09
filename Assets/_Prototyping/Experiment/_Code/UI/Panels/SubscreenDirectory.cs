@@ -6,6 +6,8 @@ using System.Linq;
 namespace ProtoAqua.Experiment {
     
     public class SubscreenDirectory {
+
+        // TODO : Convert into hashmaps
         private List<ExpSubscreen> SubEnum = new List<ExpSubscreen>((ExpSubscreen[])Enum.GetValues(typeof(ExpSubscreen)));
 
         private List<ExperimentSetupSubscreen> SubScreens = new List<ExperimentSetupSubscreen>();
@@ -46,11 +48,22 @@ namespace ProtoAqua.Experiment {
         }
 
         public void SetSequence(ExpSubscreen[] Seq) {
-            if(Sequence.Count < 0 || !SeqEquals(Seq))
+            if(Sequence.Count == 0 || !SeqEquals(Seq))
                 Sequence.Clear();
                 Visited.Clear();
                 Sequence = new List<ExpSubscreen>(Seq);
-                Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
+                if(Sequence[0] != ExpSubscreen.Tank) Sequence.Add(ExpSubscreen.Tank);
+            Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
+        }
+
+        public bool HasReuse(ExpSubscreen sEnum) {
+            int i = 0;
+            foreach(var seq in Sequence) {
+                if(seq == sEnum) ++i;
+            }
+
+            return i != 1;
+
         }
 
         public bool SeqEquals(ExpSubscreen[] Seq) {
@@ -71,22 +84,35 @@ namespace ProtoAqua.Experiment {
             return Visited[Sequence.IndexOf(sEnum)];
         }
 
+        public bool IsVisited(int idx) {
+            return Visited[idx];
+        }
+
 
         public ExpSubscreen[] GetSequence() {
             return Sequence.ToArray();
         }
-
+        // TODO: Consider Reuses
         public ExperimentSetupSubscreen GetNext(ExpSubscreen curr) {
-            if((Sequence.IndexOf(curr) < Sequence.Count -1) && (Sequence.IndexOf(curr) >= 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[Sequence.IndexOf(curr) + 1])];
+            int currIdx = Sequence.IndexOf(curr);
+            if(HasReuse(curr) && IsVisited(currIdx)) {
+                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+            } 
+
+            if((currIdx < Sequence.Count -1) && (currIdx >= 0))
+                return SubScreens[SubEnum.IndexOf(Sequence[currIdx + 1])];
             else {
                 return null;
             }
         }
 
         public ExperimentSetupSubscreen GetPrevious(ExpSubscreen curr) {
-            if((Sequence.IndexOf(curr) <= Sequence.Count -1) && (Sequence.IndexOf(curr) > 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[Sequence.IndexOf(curr) - 1])];
+            int currIdx = Sequence.IndexOf(curr);
+            if(HasReuse(curr) && IsVisited(currIdx)) {
+                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+            }
+            if((currIdx <= Sequence.Count -1) && (currIdx > 0))
+                return SubScreens[SubEnum.IndexOf(Sequence[currIdx - 1])];
             else {
                 return null;
             }

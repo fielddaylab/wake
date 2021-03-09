@@ -31,6 +31,11 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
+        [NonSerialized] private float min_Alpha = 0;
+        [NonSerialized] private float max_Alpha = 0;
+        [NonSerialized] private Color m_CurrentColor;
+        [NonSerialized] private float defaultAlpha;
+
 
         protected override void Awake()
         {
@@ -43,6 +48,11 @@ namespace ProtoAqua.Experiment
                 m_IdleRoutine.Resume();
                 m_IdleDuration /= 2;
             });
+
+            min_Alpha = m_WaterColor.GetAlpha();
+            max_Alpha = min_Alpha + 0.25f;
+            m_CurrentColor = m_WaterColor.GetColor();
+            defaultAlpha = m_WaterColor.GetAlpha();
         }
 
 
@@ -51,7 +61,8 @@ namespace ProtoAqua.Experiment
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
+                .Register<Color>(ExperimentEvents.OnMeasurementChange, ChangeColor, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
@@ -127,6 +138,17 @@ namespace ProtoAqua.Experiment
         {
             m_IdleDuration = 0;
         }
+
+        private void ChangeColor(Color color) {
+
+            var alpha = min_Alpha + (color.a - min_Alpha) * (max_Alpha - min_Alpha);
+            color.a = defaultAlpha;
+
+            m_CurrentColor = Color.Lerp(m_CurrentColor, color, alpha);
+
+            m_WaterColor.SetColor(m_CurrentColor);
+        }
+
     }
     
 }
