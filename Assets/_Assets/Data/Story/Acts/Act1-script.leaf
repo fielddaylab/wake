@@ -30,6 +30,25 @@ $endif
 {@player}   They're a good friend.
             Just been out of touch for a while.
 
+:: Experimentation.intro.1
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype", player:seen.jules
+@once
+@cutscene
+$set    kevin:jules.player.talk + 1
+
+{@kevin}    Welcome to the Experimentation Room!
+{@player}   Thanks! It looks... {wait 1} nice?
+{@kevin}    I know, right? Nothing like wood makes it feel like home.
+{@player}   Yeah, right.
+$if jobs:job1-6.got.scans
+{@kevin}    Anyways, try to press on the panel to start!
+$else
+{@kevin}    Looks like you haven't started a job yet. 
+            Let's come back here once we get some things going.
+$endif
+
+
 :: partner.urchinBaron.1
 @trigger    RequestPartnerHelp
 @when       player:seen.urchinBaron, !kevin:urchinBaron.player.talk

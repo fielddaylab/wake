@@ -60,6 +60,14 @@ namespace ProtoAqua.Experiment
         private void PopulateMeasurement(ExperimentResultData resData) {
             m_RangeFactButton.gameObject.SetActive(false);
             var form_text = "";
+
+
+            if(resData.Setup.CritterX != StringHash32.Null) {
+                var actor = Services.Assets.Bestiary.Get(resData.Setup.CritterX);
+                var actorState = GetActorState(actor, resData.Setup.Values);
+                form_text = form_text + actor.PluralName() + GetState(actorState) + "\n";
+            }
+
             if(resData.Setup.CritterY != StringHash32.Null) {
                 var target = ((BFEat)resData.Setup.GetResult().Fact).Target();
                 var state = target.GetStateForEnvironment(in resData.Setup.Values);
@@ -67,10 +75,10 @@ namespace ProtoAqua.Experiment
                 if(eatFact != null)  {
                     Services.Data.Profile.Bestiary.RegisterFact(eatFact?.Id() ?? StringHash32.Null, out PlayerFactParams factParams);
                     factParams.Add(PlayerFactFlags.KnowValue);
-                    form_text = target.PluralName() + GetState(state) + "\n" + factParams.Fact.GenerateSentence(factParams);
+                    form_text = form_text + target.PluralName() + GetState(state) + "\n" + factParams.Fact.GenerateSentence(factParams);
                 }
                 else {
-                    form_text = target.PluralName() + GetState(state);
+                    form_text = form_text + target.PluralName() + GetState(state);
                 }
                 
                 Debug.Log(form_text);
@@ -78,6 +86,19 @@ namespace ProtoAqua.Experiment
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankMeasureSummary"));
             m_SummaryText.SetText(form_text);
 
+        }
+
+
+        private ActorStateId GetActorState(BestiaryDesc critter, WaterPropertyBlockF32 waterBlock) {
+            var allProperties = Services.Assets.WaterProp.Sorted();
+            var state = ActorStateId.Alive;
+            foreach(var prop in allProperties) {
+                if(!prop.HasFlags(WaterPropertyFlags.IsMeasureable)) continue;
+                var propState = BestiaryUtils.FindStateTransitions(
+                    critter, prop.Index()).Evaluate(waterBlock[prop.Index()]);
+                if(propState != ActorStateId.Alive) return propState;
+            }
+            return state;
         }
 
         private string GetState(ActorStateId id) {

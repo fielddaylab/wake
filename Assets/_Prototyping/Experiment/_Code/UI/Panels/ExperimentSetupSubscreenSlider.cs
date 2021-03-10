@@ -27,6 +27,20 @@ namespace ProtoAqua.Experiment
 
         private PropertySlider[] m_CachedSliders;
 
+        private class PropButton : IKeyValuePair<WaterPropertyId, PropButton>
+        {
+            public WaterPropertyId PropId;
+            public PropertySlider Slider;
+            public BFWaterProperty EnvProperty;
+            public WaterPropertyDesc PropSettings;
+
+            WaterPropertyId IKeyValuePair<WaterPropertyId, PropButton>.Key { get { return PropId; } }
+
+            PropButton IKeyValuePair<WaterPropertyId, PropButton>.Value { get { return this; } }
+        }
+
+        private Dictionary<WaterPropertyId, PropButton> buttonDict;
+
         public Action OnSelectEnd;
 
         protected override void Awake()
@@ -34,6 +48,9 @@ namespace ProtoAqua.Experiment
             m_Block = new WaterPropertyBlockF32();
             m_EndButton.onClick.AddListener(() => OnSelectEnd?.Invoke());
             m_CachedSliders = m_SliderGroup.GetComponentsInChildren<PropertySlider>();
+
+            buttonDict = new Dictionary<WaterPropertyId, PropButton>();
+
             for(int i = 0; i < m_CachedSliders.Length; ++i)
             {
                 PropertySlider slider = m_CachedSliders[i];
@@ -51,13 +68,14 @@ namespace ProtoAqua.Experiment
             m_Block = new WaterPropertyBlockF32();
             UpdateSliders();
             ResetSliders();
+            buttonDict?.Clear();
         }
 
         private void UpdateSliders() {
             var tankType = Services.Tweaks.Get<ExperimentSettings>().GetTank(m_CachedData.Tank);
             if(tankType == null) return;
 
-            var allProperties = Services.Assets.WaterProp.Objects;
+            var allProperties = Services.Assets.WaterProp.Sorted();
 
             int sliderIdx = 0;
             foreach(var prop in allProperties) {
@@ -71,6 +89,13 @@ namespace ProtoAqua.Experiment
 
                 slider.Load(prop, prop.Icon(), true);
 
+                PropButton acb = new PropButton();
+                acb.PropId = prop.Index();
+                acb.Slider = m_CachedSliders[sliderIdx];
+                acb.EnvProperty = null;
+                acb.PropSettings = prop;
+                if(!buttonDict.ContainsKey(acb.PropId)) buttonDict.Add(acb.PropId, acb);
+
                 ++sliderIdx;
             }
 
@@ -82,9 +107,33 @@ namespace ProtoAqua.Experiment
 
         private void ResetSliders() {
             if(m_CachedSliders == null || m_CachedSliders.Length < 1) return;
-            foreach(var slider in m_CachedSliders) {
-                slider.Slider.SetValueWithoutNotify(0f);
+            var facts = m_CachedData.EcosystemId == StringHash32.Null? null : Services.Assets.Bestiary.Get(m_CachedData.EcosystemId).Facts;
+            if(facts != null) {
+                foreach(var fact in facts) {
+                    if(fact.GetType().Equals(typeof(BFWaterProperty))) {
+                        BFWaterProperty envProp = (BFWaterProperty)fact;
+                        buttonDict.TryGetValue(envProp.PropertyId(), out PropButton slider);
+                        slider.EnvProperty = envProp;
+                    }
+                }
             }
+            
+            foreach(var slider in m_CachedSliders) {
+                buttonDict.TryGetValue(slider.Id, out PropButton propSlider);
+                if(buttonDict == null || propSlider?.EnvProperty == null) {
+                    slider.Slider.SetValueWithoutNotify(0f);
+                }
+                else {
+                    var propDesc = propSlider.PropSettings;
+                    slider.Slider.SetValueWithoutNotify(
+                        Rescale(propSlider.EnvProperty.Value(), 0f, 1f, propDesc.MinValue(), propDesc.MaxValue()));
+                }
+                
+            }
+        }
+
+        private float Rescale(float value, float min, float max, WaterPropertyDesc prop) {
+            return min + (max - min) / (prop.MaxValue() - prop.MinValue()) * (value - prop.MinValue());
         }
 
         private void UpdateFromSlider(WaterPropertyId m_Id, float value) {
