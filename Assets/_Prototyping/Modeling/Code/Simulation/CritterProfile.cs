@@ -252,9 +252,9 @@ namespace ProtoAqua.Modeling
                 consumedPopulation = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
             }
 
-            if (consumedPopulation > ioData.Population)
+            if (consumedPopulation > (uint)(ioData.Population * 0.7f)) //Magic number to correct for populations hiding from predators and not reaching 0
             {
-                consumedPopulation = ioData.Population;
+                consumedPopulation = (uint)(ioData.Population * 0.7f);
             }
 
             consumedMass = consumedPopulation * MassPerPopulation();
@@ -295,9 +295,9 @@ namespace ProtoAqua.Modeling
             {
                 populationDecrease = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
             }
-            if (populationDecrease > ioData.Population)
+            if (populationDecrease > ioData.Population) //Magic Nubmer to keep a species from completely dying out
             {
-                populationDecrease = ioData.Population;
+                populationDecrease = (uint)(ioData.Population * 0.5f);
             }
 
             ioData.Population -= populationDecrease;
