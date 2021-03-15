@@ -31,7 +31,7 @@ namespace Aqua.Scripting
 
         void IScriptComponent.OnRegister(ScriptObject inObject)
         {
-            Services.Data.BindTable(m_BlackboardName, m_Table ?? new VariantTable(m_BlackboardName));
+            Services.Data.BindTable(m_BlackboardName, m_Table ?? (m_Table = new VariantTable(m_BlackboardName)));
         }
 
         #endregion // IScriptComponent

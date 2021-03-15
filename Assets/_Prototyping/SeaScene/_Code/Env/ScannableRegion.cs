@@ -40,6 +40,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private bool m_ScannerOn;
         [NonSerialized] private bool m_Showing;
         [NonSerialized] private bool m_ScanFinished;
+        [NonSerialized] private float m_ProgressScale;
 
         #region Unity Events
 
@@ -49,6 +50,8 @@ namespace ProtoAqua.Observation
             m_ScanRadiusListener.TagFilter.Add("ScanRadius");
             m_ScanRadiusListener.onTriggerEnter.AddListener(OnRadiusEnter);
             m_ScanRadiusListener.onTriggerExit.AddListener(OnRadiusExit);
+
+            m_ProgressScale = m_Progress.transform.localScale.x;
 
             if (m_RootTransform)
             {
@@ -69,11 +72,13 @@ namespace ProtoAqua.Observation
 
             Services.Events.Register(ObservationEvents.ScannerOn, OnScannerOn, this)
                 .Register(ObservationEvents.ScannerOff, OnScannerOff, this)
-                .Register(ObservationEvents.ScannableComplete, OnScanComplete, this);
+                .Register(ObservationEvents.ScannableComplete, OnScanComplete, this)
+                .Register(GameEvents.SceneLoaded, OnSceneLoad, this);
 
             // TODO: Fix this so we can detect whether or not the scanner is on when we are enabled
 
-            UpdateData();
+            if (!Services.State.IsLoadingScene())
+                UpdateData();
         }
 
         private void OnDisable()
@@ -81,7 +86,7 @@ namespace ProtoAqua.Observation
             m_TickRoutine.Stop();
             m_ScannerOn = false;
 
-            Services.Events?.Deregister(ObservationEvents.ScannerOn, OnScannerOn)
+            Services.Events?.DeregisterAll(this)
                 .Deregister(ObservationEvents.ScannerOff, OnScannerOff)
                 .Deregister(ObservationEvents.ScannableComplete, OnScanComplete);
         }
@@ -127,6 +132,11 @@ namespace ProtoAqua.Observation
             return data;
         }
 
+        private void OnSceneLoad()
+        {
+            UpdateData();
+        }
+
         private ScanData UpdateData()
         {
             var mgr = Services.Tweaks.Get<ScanDataMgr>();
@@ -155,7 +165,7 @@ namespace ProtoAqua.Observation
             if (m_Progress)
             {
                 m_Progress.SetAlpha(inProgress);
-                m_Progress.transform.SetScale(inProgress);
+                m_Progress.transform.SetScale(inProgress * m_ProgressScale);
             }
         }
 

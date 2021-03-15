@@ -26,8 +26,8 @@ namespace ProtoAqua.Observation
 
         [Header("Data")]
         [SerializeField] private CanvasGroup m_DataGroup = null;
-        [SerializeField] private TMP_Text m_HeaderText = null;
-        [SerializeField] private TMP_Text m_DescriptionText = null;
+        [SerializeField] private LocText m_HeaderText = null;
+        [SerializeField] private LocText m_DescriptionText = null;
 
         #endregion // Inspector
 
@@ -48,9 +48,9 @@ namespace ProtoAqua.Observation
             base.Awake();
 
             m_DefaultBackgroundColor = m_Background.color;
-            m_DefaultHeaderColor = m_HeaderText.color;
-            m_DefaultTextColor = m_DescriptionText.color;
-            m_DefaultTextMargins = m_DescriptionText.margin;
+            m_DefaultHeaderColor = m_HeaderText.Graphic.color;
+            m_DefaultTextColor = m_DescriptionText.Graphic.color;
+            m_DefaultTextMargins = m_DescriptionText.Graphic.margin;
             m_RectTransform = (RectTransform)transform;
             m_AnchorOffsetX = m_RectTransform.anchoredPosition.x;
         }
@@ -73,8 +73,8 @@ namespace ProtoAqua.Observation
             if (!m_ScanningGroup.gameObject.activeSelf)
             {
                 m_Background.SetColor(m_DefaultBackgroundColor);
-                m_HeaderText.SetColor(m_DefaultHeaderColor);
-                m_DescriptionText.SetColor(m_DefaultBackgroundColor);
+                m_HeaderText.Graphic.SetColor(m_DefaultHeaderColor);
+                m_DescriptionText.Graphic.SetColor(m_DefaultBackgroundColor);
 
                 m_ScanningGroup.gameObject.SetActive(true);
 
@@ -111,14 +111,14 @@ namespace ProtoAqua.Observation
                     m_HeaderText.SetText(string.Empty);
                     m_HeaderText.gameObject.SetActive(false);
 
-                    m_DescriptionText.margin = Vector4.zero;
+                    m_DescriptionText.Graphic.margin = Vector4.zero;
                 }
                 else
                 {
                     m_HeaderText.SetText(header);
                     m_HeaderText.gameObject.SetActive(true);
 
-                    m_DescriptionText.margin = m_DefaultTextMargins;
+                    m_DescriptionText.Graphic.margin = m_DefaultTextMargins;
                 }
 
                 string text = inData.Text();
@@ -132,15 +132,15 @@ namespace ProtoAqua.Observation
                     m_DescriptionText.SetText(text);
                     m_DescriptionText.gameObject.SetActive(true);
 
-                    m_DescriptionText.maxVisibleCharacters = 0;
+                    m_DescriptionText.Graphic.maxVisibleCharacters = 0;
 
                     m_TypeRoutine.Replace(this, TypeOut());
                 }
             }
 
             m_Background.SetColor(config.BackgroundColor);
-            m_HeaderText.SetColor(config.HeaderColor);
-            m_DescriptionText.SetColor(config.TextColor);
+            m_HeaderText.Graphic.SetColor(config.HeaderColor);
+            m_DescriptionText.Graphic.SetColor(config.TextColor);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_RootTransform);
 
@@ -153,12 +153,12 @@ namespace ProtoAqua.Observation
             if (inScannableObjectPosition.x < inPlayerROVPosition.x)
             {
                 m_RectTransform.SetAnchorPos(-m_AnchorOffsetX, Axis.X);
-                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(1f, .5f);
+                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(1f, 0.5f);
             }
             else
             {
                 m_RectTransform.SetAnchorPos(m_AnchorOffsetX, Axis.X);
-                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(0f, .5f);
+                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(0f, 0.5f);
             }
         }
 
@@ -218,12 +218,12 @@ namespace ProtoAqua.Observation
 
         private IEnumerator BounceAnim()
         {
-            yield return m_RootTransform.AnchorPosTo(-15, 0.1f, Axis.Y).Ease(Curve.BackOut).From().ForceOnCancel();
+            return m_RootTransform.AnchorPosTo(-15, 0.1f, Axis.Y).Ease(Curve.BackOut).From().ForceOnCancel();
         }
 
         private IEnumerator TypeOut()
         {
-            yield return Tween.Int(0, m_DescriptionText.textInfo.characterCount, (c) => m_DescriptionText.maxVisibleCharacters = c, 0.8f);
+            return Tween.Int(0, m_DescriptionText.CurrentText.VisibleText.Length, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
         }
 
         #endregion // Animations

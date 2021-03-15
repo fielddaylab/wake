@@ -1,4 +1,5 @@
 using BeauUtil;
+using BeauUtil.Tags;
 using TMPro;
 using UnityEngine;
 
@@ -16,10 +17,12 @@ namespace Aqua
 
         private StringHash32 m_LastId;
         private string m_CurrentText;
+        private TagString m_TagString;
 
         #region Text
 
         public TMP_Text Graphic { get { return m_Text; } }
+        public TagString CurrentText { get { return m_TagString ?? (m_TagString = new TagString()); } }
 
         public void SetText(StringHash32 inId, object inContext = null)
         {
@@ -27,18 +30,20 @@ namespace Aqua
 
             if (inId.IsEmpty)
             {
+                m_TagString?.Clear();
                 InternalSetText(string.Empty);
                 return;
             }
 
-            string localized = Services.Loc.Localize(inId, "Text Not Found", inContext, false);
-            InternalSetText(localized);
+            Services.Loc.LocalizeTagged(ref m_TagString, inId, inContext);
+            InternalSetText(m_TagString.RichText);
         }
 
         public void SetText(StringSlice inString, object inContext = null)
         {
             if (inString.IsEmpty)
             {
+                m_TagString?.Clear();
                 m_LastId = StringHash32.Null;
                 InternalSetText(string.Empty);
                 return;
@@ -48,14 +53,15 @@ namespace Aqua
             {
                 m_LastId = inString.Substring(1).Hash32();
 
-                string localized = Services.Loc.Localize(m_LastId, inString.ToString(), inContext);
-                InternalSetText(localized);
+                Services.Loc.LocalizeTagged(ref m_TagString, m_LastId, inContext);
+                InternalSetText(m_TagString.RichText);
                 return;
             }
             else
             {
                 m_LastId = StringHash32.Null;
-                InternalSetText(inString.ToString());
+                Services.Script.ParseToTag(ref m_TagString, inString, inContext);
+                InternalSetText(m_TagString.RichText);
             }
         }
 
