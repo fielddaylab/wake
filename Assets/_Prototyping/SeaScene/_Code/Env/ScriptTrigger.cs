@@ -40,6 +40,9 @@ namespace ProtoAqua.Observation
 
         private void OnExit(Collider2D inCollider)
         {
+            if (!Services.Script)
+                return;
+            
             using(var table = Services.Script.GetTempTable())
             {
                 table.Set("regionId", m_RegionId);

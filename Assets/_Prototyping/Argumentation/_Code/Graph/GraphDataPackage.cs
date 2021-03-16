@@ -75,9 +75,7 @@ namespace ProtoAqua.Argumentation
         #if UNITY_EDITOR
 
         [ScriptedExtension(1, "argue")]
-        private class Importer : ImporterBase<GraphDataPackage>
-        {
-        }
+        private class Importer : ImporterBase<GraphDataPackage> { }
 
         #endif // UNITY_EDITOR
 

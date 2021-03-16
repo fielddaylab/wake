@@ -1,14 +1,10 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using AquaAudio;
-using BeauData;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
-using BeauUtil.IO;
 using BeauUtil.Services;
-using BeauUtil.Tags;
 using BeauUtil.Variants;
 using UnityEngine;
 
@@ -128,7 +124,7 @@ namespace Aqua.DebugConsole
         private void DumpScriptingState()
         {
             var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
-            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            using (PooledStringBuilder psb = PooledStringBuilder.Create())
             {
                 psb.Builder.Append("[DebugService] Dumping Script State");
                 foreach(var table in resolver.AllTables())
@@ -250,7 +246,7 @@ namespace Aqua.DebugConsole
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
 
             m_Canvas.gameObject.SetActive(true);
-            m_Input = BaseInputLayer.Find(m_Canvas).Device;
+            m_Input = DeviceInput.Find(m_Canvas);
         }
 
         protected override void Shutdown()

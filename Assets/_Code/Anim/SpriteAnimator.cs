@@ -1,6 +1,7 @@
 using System;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Services;
 using BeauUtil.Tags;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ namespace Aqua
     /// </summary>
     public class SpriteAnimator : MonoBehaviour
     {
+        [ServiceReference] static private SpriteAnimatorService Manager { get; set; }
+
         #region Types
 
         public delegate void AnimationChangeDelegate(SpriteAnimation inAnimation);
@@ -33,7 +36,6 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private Routine m_Playback;
         [NonSerialized] private int m_CurrentFrame = -1;
         [NonSerialized] private float m_CurrentFrameDelay = 0;
 
@@ -57,12 +59,12 @@ namespace Aqua
 
         private void OnEnable()
         {
-            m_Playback = Routine.StartLoop(this, Animate);
+            Manager.RegisterAnimator(this);
         }
 
         private void OnDisable()
         {
-            m_Playback.Stop();
+            Manager?.DeregisterAnimator(this);
         }
 
         #endregion // Unity Events
@@ -122,12 +124,12 @@ namespace Aqua
 
         #region Animation
 
-        private void Animate()
+        public void AdvanceAnimation(float inDeltaTime)
         {
             if (m_TimeScale <= 0 || !IsAnimated(m_Animation) || !m_Playing)
                 return;
             
-            float dt = Routine.DeltaTime * m_TimeScale;
+            float dt = inDeltaTime * m_TimeScale;
             float frameDelay = m_Animation.FrameDuration();
             m_CurrentFrameDelay -= dt;
             while(m_CurrentFrameDelay < 0 && m_Playing)

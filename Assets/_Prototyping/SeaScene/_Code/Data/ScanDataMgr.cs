@@ -35,7 +35,7 @@ namespace ProtoAqua.Observation
 
         #region Inspector
 
-        [SerializeField] private TextAsset[] m_DefaultAssets = null;
+        [SerializeField] private ScanDataPackage[] m_DefaultAssets = null;
         [SerializeField] private ScanTypeConfig m_DefaultScanConfig = null;
         [SerializeField] private ScanTypeConfig m_ImportantScanConfig = null;
         [SerializeField] private float m_BaseScanDuration = 0.75f;
@@ -43,8 +43,8 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-        private HashSet<ScanDataPackage> m_Packages = new HashSet<ScanDataPackage>();
-        private Dictionary<StringHash32, ScanData> m_MasterMap = new Dictionary<StringHash32, ScanData>();
+        private readonly HashSet<ScanDataPackage> m_Packages = new HashSet<ScanDataPackage>();
+        private readonly Dictionary<StringHash32, ScanData> m_MasterMap = new Dictionary<StringHash32, ScanData>();
 
         public bool TryGetScanData(StringHash32 inId, out ScanData outData)
         {
@@ -109,12 +109,8 @@ namespace ProtoAqua.Observation
             if (m_Packages.Add(inPackage))
             {
                 inPackage.BindManager(this);
-                foreach(var node in inPackage)
-                {
-                    m_MasterMap.Add(node.Id(), node);
-                }
-
-                Debug.LogFormat("[ScanDataMgr] Loaded scan data package '{0}' with {1} nodes", inPackage.Name, inPackage.Count);
+                inPackage.Parse(Parsing.Block, ScanDataPackage.Generator.Instance);
+                AddPackage(inPackage);
             }
         }
 
@@ -122,13 +118,28 @@ namespace ProtoAqua.Observation
         {
             if (m_Packages.Remove(inPackage))
             {
+                RemovePackage(inPackage);
                 inPackage.BindManager(null);
-                foreach(var node in inPackage)
-                {
-                    m_MasterMap.Remove(node.Id());
-                }
-                Debug.LogFormat("[ScanDataMgr] Unloaded scan data package '{0}'", inPackage.Name);
+                inPackage.Clear();
             }
+        }
+
+        internal void AddPackage(ScanDataPackage inPackage)
+        {
+            foreach(var node in inPackage)
+            {
+                m_MasterMap.Add(node.Id(), node);
+            }
+            Debug.LogFormat("[ScanDataMgr] Loaded scan data package '{0}' with {1} nodes", inPackage.name, inPackage.Count);
+        }
+
+        internal void RemovePackage(ScanDataPackage inPackage)
+        {
+            foreach(var node in inPackage)
+            {
+                m_MasterMap.Remove(node.Id());
+            }
+            Debug.LogFormat("[ScanDataMgr] Unloaded scan data package '{0}'", inPackage.name);
         }
 
         #endregion // Register/Unregister
@@ -139,9 +150,7 @@ namespace ProtoAqua.Observation
         {
             foreach(var asset in m_DefaultAssets)
             {
-                ScanDataPackage package = BlockParser.Parse(asset.name, asset.text, Parsing.Block, ScanDataPackage.Generator.Instance);
-                package.BindAsset(asset);
-                Load(package);
+                Load(asset);
             }
         }
 
@@ -149,8 +158,8 @@ namespace ProtoAqua.Observation
         {
             foreach(var package in m_Packages)
             {
-                package.UnbindAsset();
                 package.BindManager(null);
+                package.Clear();
             }
             m_Packages.Clear();
             m_MasterMap.Clear();

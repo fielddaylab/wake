@@ -8,6 +8,7 @@ namespace Aqua
     static public class GameEvents
     {
         static public readonly StringHash32 ProfileLoaded = "profile:loaded";
+        static public readonly StringHash32 SceneLoaded = "scene:loaded";
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start";
         static public readonly StringHash32 CutsceneEnd = "cutscene:end";

@@ -25,18 +25,7 @@ namespace Aqua
 
         protected override void Awake()
         {
-            Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
-            
             m_Button.onClick.AddListener(OnButtonClicked);
-
-            if (Services.UI.IsLetterboxed())
-                Hide();
-        }
-
-        private void OnDestroy()
-        {
-            Services.Events?.DeregisterAll(this);
         }
 
         #region Handlers
@@ -44,16 +33,6 @@ namespace Aqua
         private void OnButtonClicked()
         {
             m_ResponseRoutine.Replace(this, ExecuteSequence()).TryManuallyUpdate(0);
-        }
-
-        private void OnCutsceneStart()
-        {
-            Hide();
-        }
-
-        private void OnCutsceneEnd()
-        {
-            Show();
         }
 
         #endregion // Handlers
