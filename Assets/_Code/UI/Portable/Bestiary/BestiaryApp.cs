@@ -131,6 +131,7 @@ namespace Aqua.Portable
         [Header("Types")]
         [SerializeField, Required] private Toggle m_CritterGroupToggle = null;
         [SerializeField, Required] private Toggle m_EcosystemGroupToggle = null;
+        [SerializeField, Required] private Toggle m_ModelGroupToggle = null;
 
         [Header("Entries")]
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
@@ -170,6 +171,7 @@ namespace Aqua.Portable
 
             m_CritterGroupToggle.onValueChanged.AddListener(OnCritterToggled);
             m_EcosystemGroupToggle.onValueChanged.AddListener(OnEcosystemToggled);
+            m_ModelGroupToggle.onValueChanged.AddListener(OnModelToggled);
 
             m_SelectEntryButton.onClick.AddListener(OnEntrySelectClicked);
             m_SelectEntryButton.gameObject.SetActive(false);
@@ -186,6 +188,15 @@ namespace Aqua.Portable
 
             if (inbOn)
                 LoadEntryGroup(BestiaryDescCategory.Critter, null, false);
+        }
+
+        private void OnModelToggled(bool inbOn)
+        {
+            if (!IsShowing())
+                return;
+
+            if (inbOn)
+                LoadEntryGroup(BestiaryDescCategory.Model, null, false);
         }
 
         private void OnEcosystemToggled(bool inbOn)
@@ -207,6 +218,18 @@ namespace Aqua.Portable
             }
 
             LoadEntry((BestiaryDesc) inElement.Data);
+        }
+
+        private void OnModelEntryToggled(PortableListElement inElement, bool inbOn)
+        {
+            if (!inbOn)
+            {
+                if (!m_EntryToggleGroup.AnyTogglesOn())
+                    LoadModelEntry(null);
+                return;
+            }
+
+            LoadModelEntry((Artifact) inElement.Data);
         }
 
         private void OnEntrySelectClicked()
@@ -231,10 +254,12 @@ namespace Aqua.Portable
 
             m_CritterGroupToggle.SetIsOnWithoutNotify(true);
             m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
+            m_ModelGroupToggle.SetIsOnWithoutNotify(false);
             LoadEntryGroup(BestiaryDescCategory.Critter, null, true);
 
             m_CritterGroupToggle.interactable = true;
             m_EcosystemGroupToggle.interactable = true;
+            m_ModelGroupToggle.interactable = true;
 
             LoadEntry(null);
         }
@@ -302,6 +327,7 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = false;
+                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText("Select Critter");
                         break;
                     }
@@ -310,7 +336,17 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = true;
+                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText("Select Environment");
+                        break;
+                    }
+                
+                case BestiaryDescCategory.Model:
+                    {
+                        m_CritterGroupToggle.interactable = false;
+                        m_EcosystemGroupToggle.interactable = false;
+                        m_ModelGroupToggle.interactable = true;
+                        m_PromptText.SetText("Select Model");
                         break;
                     }
 
@@ -318,6 +354,7 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
+                        m_ModelGroupToggle.interactable = true;
                         m_PromptText.SetText("Select Entry");
 
                         category = BestiaryDescCategory.Critter;
@@ -367,7 +404,7 @@ namespace Aqua.Portable
             LoadEntryGroup(category, null, true);
         }
 
-        private void LoadEntryGroup(BestiaryDescCategory inType, BestiaryDesc inTarget, bool inbForce)
+        private void LoadEntryGroup(BestiaryDescCategory inType, BestiaryDesc inTarget, bool inbForce, Artifact inArt=null)
         {
             if (!inbForce && m_CurrentEntryGroup == inType)
                 return;
@@ -384,18 +421,64 @@ namespace Aqua.Portable
                 case BestiaryDescCategory.Environment:
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
                     break;
+
+                case BestiaryDescCategory.Model:
+                    m_ModelGroupToggle.SetIsOnWithoutNotify(true);
+                    break;
             }
 
             Color buttonColor = m_Tweaks.BestiaryListColor(inType);
-            foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
-            {
-                PortableListElement button = m_EntryPool.Alloc();
-                button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
-            }
 
+
+            if(inType == BestiaryDescCategory.Model && Services.Assets.Inventory.TryGetArtifact(out InvItemArtifact itemArtifact)) {
+                foreach(var artifact in itemArtifact.Models()) {
+                    PortableListElement button = m_EntryPool.Alloc();
+                    button.Initialize(artifact.Icon(), buttonColor, m_EntryToggleGroup, artifact.NameTextId(), artifact, OnModelEntryToggled);
+                }
+            }
+            else {
+                foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
+                {
+                    PortableListElement button = m_EntryPool.Alloc();
+                    button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                }
+            }
+            
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_EntryLayoutGroup.transform);
 
-            LoadEntry(inTarget);
+            if(inType == BestiaryDescCategory.Model) {
+                LoadModelEntry(null);
+            }
+            else {
+                LoadEntry(inTarget);
+            }
+
+            
+        }
+
+        private void LoadModelEntry(Artifact inEntry) {
+            foreach(var button in m_EntryPool.ActiveObjects)
+            {
+                button.SetState((Artifact) button.Data == inEntry);
+            }
+            if (inEntry == null)
+            {
+                Services.Data.SetVariable("portable:bestiary.currentEntry", null);
+                m_NoSelectionGroup.gameObject.SetActive(true);
+                m_HasSelectionGroup.gameObject.SetActive(false);
+                return;
+            }
+            Services.Data?.SetVariable("portable:bestiary.currentEntry", inEntry.Id());
+
+            m_NoSelectionGroup.gameObject.SetActive(false);
+            m_HasSelectionGroup.gameObject.SetActive(true);
+
+            m_ScientificNameLabel.SetText("Modelorama");
+            m_CommonNameLabel.SetText(inEntry.NameTextId());
+
+            m_SketchImage.sprite = inEntry.Icon();
+            m_SketchImage.gameObject.SetActive(true);
+            m_SelectEntryButton.interactable = true;
         }
 
         private void LoadEntry(BestiaryDesc inEntry)
@@ -405,7 +488,7 @@ namespace Aqua.Portable
             m_WaterPropertyPool.Reset();
 
             foreach(var button in m_EntryPool.ActiveObjects)
-            {
+            {   
                 button.SetState((BestiaryDesc) button.Data == inEntry);
             }
 

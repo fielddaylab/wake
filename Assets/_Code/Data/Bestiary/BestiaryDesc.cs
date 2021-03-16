@@ -201,6 +201,7 @@ namespace Aqua
     {
         Critter,
         Environment,
+        Model,
 
         [Hidden]
         BOTH
