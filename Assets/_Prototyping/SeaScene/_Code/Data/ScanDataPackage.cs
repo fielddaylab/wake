@@ -10,74 +10,13 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class ScanDataPackage : IDataBlockPackage<ScanData>
+    public class ScanDataPackage : ScriptableDataBlockPackage<ScanData>
     {
         private readonly Dictionary<StringHash32, ScanData> m_Data = new Dictionary<StringHash32, ScanData>(32);
 
-        private string m_Name;
         [BlockMeta("basePath")] private string m_RootPath = string.Empty;
 
-        private IHotReloadable m_HotReload;
         private ScanDataMgr m_Mgr;
-
-        public ScanDataPackage(string inName)
-        {
-            m_Name = inName;
-            m_RootPath = inName;
-        }
-
-        public string Name { get { return m_Name; } }
-
-        #region Reload
-
-        public void BindAsset(TextAsset inAsset)
-        {
-            if (m_HotReload != null)
-            {
-                ReloadableAssetCache.Remove(m_HotReload);
-                Ref.TryDispose(ref m_HotReload);
-            }
-
-            if (inAsset != null)
-            {
-                m_HotReload = new HotReloadableAssetProxy<TextAsset>(inAsset, "ScanDataPackage", Reload);
-                ReloadableAssetCache.Add(m_HotReload);
-            }
-        }
-
-        public void UnbindAsset()
-        {
-            if (m_HotReload != null)
-            {
-                ReloadableAssetCache.Remove(m_HotReload);
-                Ref.TryDispose(ref m_HotReload);
-            }
-        }
-
-        private void Reload(TextAsset inAsset, HotReloadOperation inOperation)
-        {
-            var mgr = m_Mgr;
-            if (mgr != null)
-            {
-                mgr.Unload(this);
-            }
-
-            m_Data.Clear();
-            m_RootPath = string.Empty;
-
-            if (inOperation == HotReloadOperation.Modified)
-            {
-                ScanDataPackage self = this;
-                BlockParser.Parse(ref self, null, inAsset.text, Parsing.Block, Generator.Instance);
-
-                if (mgr != null)
-                {
-                    mgr.Load(this);
-                }
-            }
-        }
-
-        #endregion // Reload
 
         #region Manager
 
@@ -90,30 +29,27 @@ namespace ProtoAqua.Observation
 
         #region ICollection
 
-        public int Count { get { return m_Data.Count; } }
+        public override int Count { get { return m_Data.Count; } }
 
-        public IEnumerator<ScanData> GetEnumerator()
+        public override IEnumerator<ScanData> GetEnumerator()
         {
             return m_Data.Values.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override void Clear()
         {
-            return GetEnumerator();
+            base.Clear();
+
+            m_Data.Clear();
         }
 
         #endregion // ICollection
 
         #region Generator
 
-        public class Generator : AbstractBlockGenerator<ScanData, ScanDataPackage>
+        public class Generator : GeneratorBase<ScanDataPackage>
         {
             static public readonly Generator Instance = new Generator();
-
-            public override ScanDataPackage CreatePackage(string inFileName)
-            {
-                return new ScanDataPackage(inFileName);
-            }
 
             public override bool TryCreateBlock(IBlockParserUtil inUtil, ScanDataPackage inPackage, TagData inId, out ScanData outBlock)
             {
@@ -133,16 +69,8 @@ namespace ProtoAqua.Observation
 
         #if UNITY_EDITOR
 
-        [UnityEditor.Experimental.AssetImporters.ScriptedImporter(1, "scan")]
-        private class Importer : UnityEditor.Experimental.AssetImporters.ScriptedImporter
-        {
-            public override void OnImportAsset(UnityEditor.Experimental.AssetImporters.AssetImportContext ctx)
-            {
-                TextAsset txtAsset = new TextAsset(File.ReadAllText(ctx.assetPath));
-                ctx.AddObjectToAsset("Main Object", txtAsset);
-                ctx.SetMainObject(txtAsset);
-            }
-        }
+        [ScriptedExtension(1, "scan")]
+        private class Importer : ImporterBase<ScanDataPackage> { }
 
         #endif // UNITY_EDITOR
     }

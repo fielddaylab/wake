@@ -30,10 +30,24 @@ namespace ProtoAqua.Experiment
 
         public Action OnSelectConstruct;
 
+        private Dictionary<StringHash32, EcoButton> buttonDict;
+
+        private class EcoButton : IKeyValuePair<StringHash32, EcoButton>
+        {
+            public StringHash32 EcoId;
+            public SetupToggleButton Button;
+
+            StringHash32 IKeyValuePair<StringHash32, EcoButton>.Key { get { return EcoId; } }
+
+            EcoButton IKeyValuePair<StringHash32, EcoButton>.Value { get { return this; } }
+        }
+
         protected override void Awake()
         {
             Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
+            buttonDict = new Dictionary<StringHash32, EcoButton>();
+            
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 m_CachedButtons[i].Toggle.group = m_ToggleGroup;
@@ -56,6 +70,7 @@ namespace ProtoAqua.Experiment
         public override void Refresh()
         {
             base.Refresh();
+            buttonDict.Clear();
             UpdateButtons();
         }
 
@@ -71,6 +86,11 @@ namespace ProtoAqua.Experiment
 
                 var button = m_CachedButtons[buttonIdx];
                 button.Load(waterType.Id(), waterType.Icon(), true);
+
+                EcoButton acb = new EcoButton();
+                acb.EcoId = waterType.Id();
+                acb.Button = m_CachedButtons[buttonIdx];
+                if(!buttonDict.ContainsKey(acb.EcoId)) buttonDict.Add(acb.EcoId, acb);
 
                 ++buttonIdx;
             }
@@ -88,14 +108,12 @@ namespace ProtoAqua.Experiment
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
-            if(m_CachedData.EcosystemId.Equals(StringHash32.Null)) return;
-            
-            foreach(var button in m_CachedButtons) {
-                if(button.Id.AsStringHash().Equals(m_CachedData.EcosystemId)) {
-                    button.Toggle.SetIsOnWithoutNotify(true);
-                    break;
-                }
-            }
+
+            var key = m_CachedData.EcosystemId;
+            if(key == StringHash32.Null) return;
+
+            buttonDict.TryGetValue(key, out EcoButton result);
+            if(result != null) result.Button.Toggle.SetIsOnWithoutNotify(true);
         }
 
         private void UpdateDisplay(StringHash32 inWaterId)

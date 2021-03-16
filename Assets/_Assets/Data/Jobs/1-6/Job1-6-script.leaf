@@ -4,9 +4,7 @@
 @trigger    JobStarted
 @cutscene
 {@kelpResearcher}   Hey, it's Jules again!
-                    Looks like you accepted our standard onboarding job.
-                    Really, we're just looking to get you introduced to the elements.
-                    Most folks don't know what we do here.
+                    Good choice! Let's get you up to speed with what we do here at the Kelp Forest Station.
                     So head over to Site B when you're ready.
 {@kevin}    Site B?
 {@kelpResearcher}   Yep! Just exit your helm, hop in your sub, and head east.
@@ -111,9 +109,22 @@ $endif
 {@player}   We're back, Jules. Now what?
 {@kelpResearcher}   Now I need to know you can not only {h}observe{/h} your environment...
                     But also {h}experiment{/h} with your observations.
-                    You have a tank onboard, right?
+                    You have an experiment room onboard, right?
 {@player}   Uh, yeah.
 {@kelpResearcher}   Great! Just head in there when you're ready.
+
+:: firstExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype", jobs:j1-6.got.scans
+@once
+@cutscene
+{@player}   Alright, We're in the experimentation room, What's next?
+{@kelpResearcher}  Great, so, we need to figure out what's going on with the urchin barren.
+                    Now that we have both the organisms and the water sample from that envirinment... 
+                    We can build a tank to see what's going on down there.
+                    Construct a behavior tank and drop those critters inside!
+{@player}   Then what?
+{@kelpResearcher}   Then you can capture what kind of behaviors they exhibit!
 
 // Kevin Responses
 

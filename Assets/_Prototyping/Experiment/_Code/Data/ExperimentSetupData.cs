@@ -12,7 +12,11 @@ namespace ProtoAqua.Experiment
 
         public StringHash32 CritterX;
 
-        public List<PlayerFactParams> FactParams = new List<PlayerFactParams>();
+        public List<StringHash32> FactIds = new List<StringHash32>();
+
+        public List<float> SliderValues = new List<float>();
+
+        public WaterPropertyBlockF32 Values;
 
         public StringHash32 CritterY;
 
@@ -26,35 +30,16 @@ namespace ProtoAqua.Experiment
             clone.CritterX = CritterX;
             clone.CritterY = CritterY;
             clone.PropertyId = PropertyId;
+            clone.Values = Values;
             foreach(var id in ActorIds)
                 clone.ActorIds.Add(id);
-            foreach(var fact in FactParams) {
-                clone.FactParams.Add(fact);
+            foreach(var id in FactIds) {
+                clone.FactIds.Add(id);
+            }
+            foreach(var value in SliderValues) {
+                clone.SliderValues.Add(value);
             }
             return clone;
-        }
-
-        public void Process(StringHash32 Critter)
-        {
-            CritterX = Critter;
-            foreach (var fact in Services.Data.Profile.Bestiary.GetFactsForEntity(Critter)){
-                FactParams.Add(fact);
-            }
-        }
-
-        public IEnumerable<PlayerFactParams> GetEat() {
-            foreach(var fact in FactParams) {
-                if(fact.GetType().Equals(typeof(BFEat))) {
-                    yield return fact;
-                }
-            }
-        }
-        public IEnumerable<PlayerFactParams> GetProp() {
-            foreach(var fact in FactParams) {
-                if(fact.GetType().Equals(typeof(BFWaterProperty))) {
-                    yield return fact;
-                }
-            }
         }
 
         public void Reset()
@@ -64,7 +49,62 @@ namespace ProtoAqua.Experiment
             PropertyId = WaterPropertyId.MAX;
             CritterX = StringHash32.Null;
             CritterY = StringHash32.Null;
+            Values = new WaterPropertyBlockF32();
+            FactIds.Clear();
             ActorIds.Clear();
+            SliderValues.Clear();
         }
+
+        #region Helpers
+
+        public void Process(StringHash32 Critter)
+        {
+            CritterX = Critter;
+            foreach (var fact in Services.Data.Profile.Bestiary.GetFactsForEntity(Critter)){
+                FactIds.Add(fact.FactId);
+            }
+        }
+
+        public List<StringHash32> GetTargets() {
+            List<StringHash32> result = new List<StringHash32>();
+            foreach(var id in FactIds) {
+                var fact = Services.Data.Profile.Bestiary.GetFact(id);
+                if(IsBFEat(fact.Fact)) {
+                    var res = (BFEat)fact.Fact;
+                    result.Add(res.Target().Id());
+                }
+            }
+            return result;
+        }
+
+        public PlayerFactParams GetResult() {
+            foreach(var id in FactIds) {
+                var fact = Services.Data.Profile.Bestiary.GetFact(id);
+                if(IsBFEat(fact.Fact)) {
+                    var res = (BFEat)fact.Fact;
+                    if (res.Target().Id().Equals(CritterY)) return fact;
+                }
+            }
+            return null;
+        }
+
+        public void SetTargets(string cType) {
+            var filteredIds = FactIds;
+            foreach(var id in FactIds) {
+                var fact = Services.Data.Profile.Bestiary.GetFact(id);
+                if(cType == "critter") {
+                    if(!IsBFEat(fact.Fact)) {
+                        filteredIds.Remove(id);
+                    }
+                }
+            }
+            FactIds = filteredIds;
+        }
+
+        public bool IsBFEat(DBObject x) {
+            return x.GetType().Equals(typeof(BFEat));
+        }
+
+        #endregion //Helpers
     }
 }

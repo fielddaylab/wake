@@ -1,16 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using BeauData;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
-using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -170,6 +167,7 @@ namespace Aqua
 
             Services.Data.LoadProfile();
 
+            yield return WaitForFlatten(active);
             yield return WaitForPreload(active, null);
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
@@ -181,82 +179,79 @@ namespace Aqua
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
 
+            Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
         private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, SceneLoadFlags inFlags)
         {
-            try
+            Services.Input.PauseAll();
+            Services.Script.KillLowPriorityThreads();
+
+            bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
+            bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
+            if (bShowCutscene)
             {
-                Services.Input.PauseAll();
-                Services.Script.KillLowPriorityThreads();
-
-                bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
-                bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
-                if (bShowCutscene)
-                {
-                    Services.UI.ShowLetterbox();
-                }
-
-                if (bShowLoading)
-                {
-                    yield return Services.UI.ShowLoadingScreen();
-                }
-
-                SceneBinding active = SceneHelper.ActiveScene();
-
-                // unloading instant
-                Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
-                active.BroadcastUnload(inContext);
-                
-                Services.Deregister(active);
-
-                AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
-                loadOp.allowSceneActivation = false;
-
-                Debug.LogFormat("[StateMgr] Loading scene '{0}'", inNextScene.Path);
-
-                while(loadOp.progress < 0.9f)
-                    yield return null;
-
-                loadOp.allowSceneActivation = true;
-
-                while(!loadOp.isDone)
-                    yield return null;
-
-                BindScene(inNextScene);
-                yield return WaitForServiceLoading();
-
-                if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
-                {
-                    m_SceneHistory.PushBack(inNextScene);
-                }
-
-                yield return WaitForPreload(inNextScene, inContext);
-                yield return WaitForServiceLoading();
-                yield return WaitForCleanup();
-
-                m_SceneLock = false;
-
-                if (bShowLoading)
-                {
-                    Services.UI.HideLoadingScreen();
-                }
-                if (bShowCutscene)
-                {
-                    Services.UI.HideLetterbox();
-                }
-
-                Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
-                inNextScene.BroadcastLoaded(inContext);
-
-                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                Services.UI.ShowLetterbox();
             }
-            finally
+
+            if (bShowLoading)
             {
-                Services.Input.ResumeAll();
-                m_SceneLock = false;
+                yield return Services.UI.ShowLoadingScreen();
             }
+
+            SceneBinding active = SceneHelper.ActiveScene();
+
+            // unloading instant
+            Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
+            active.BroadcastUnload(inContext);
+            
+            Services.Deregister(active);
+
+            AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
+            loadOp.allowSceneActivation = false;
+
+            Debug.LogFormat("[StateMgr] Loading scene '{0}'", inNextScene.Path);
+
+            while(loadOp.progress < 0.9f)
+                yield return null;
+
+            loadOp.allowSceneActivation = true;
+
+            while(!loadOp.isDone)
+                yield return null;
+
+            BindScene(inNextScene);
+            yield return WaitForServiceLoading();
+
+            if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
+            {
+                m_SceneHistory.PushBack(inNextScene);
+            }
+
+            yield return WaitForFlatten(inNextScene);
+            yield return WaitForPreload(inNextScene, inContext);
+            yield return WaitForServiceLoading();
+            yield return WaitForCleanup();
+
+            m_SceneLock = false;
+
+            if (bShowLoading)
+            {
+                Services.UI.HideLoadingScreen();
+            }
+            if (bShowCutscene)
+            {
+                Services.UI.HideLetterbox();
+            }
+
+            Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+            inNextScene.BroadcastLoaded(inContext);
+            Services.Input.ResumeAll();
+            m_SceneLock = false;
+
+            Services.Events.Dispatch(GameEvents.SceneLoaded);
+            Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
         private IEnumerator WaitForServiceLoading()
@@ -287,6 +282,22 @@ namespace Aqua
             }
 
             return null;
+        }
+
+        private IEnumerator WaitForFlatten(SceneBinding inBinding)
+        {
+            using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
+            {
+                inBinding.Scene.GetAllComponents<FlattenHierarchy>(false, allFlatten);
+                if (allFlatten.Count > 0)
+                {
+                    Debug.LogFormat("[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
+                    using(Profiling.Time("flatten scene hierarchy"))
+                    {
+                        yield return Routine.Inline(Routine.ForEachAmortize(allFlatten.ToArray(), (f) => f.Flatten(), 5));
+                    }
+                }
+            }
         }
 
         private IEnumerator WaitForPreload(GameObject inRoot, object inContext)

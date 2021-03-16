@@ -116,9 +116,8 @@ namespace ProtoAqua.Experiment
             m_Label.SetText(def?.LabelId ?? StringHash32.Null);
             m_NextButton.interactable = inTankType != TankType.None;
 
-            if(m_CurrentTank == TankType.Stressor) 
+            if(m_CurrentTank == TankType.Stressor || m_CurrentTank == TankType.Measurement) 
             {
-                // SetTransforms();
                 m_NextButton.gameObject.SetActive(false);
                 m_ConstructButton.gameObject.SetActive(true);
             }
@@ -131,14 +130,6 @@ namespace ProtoAqua.Experiment
             Services.Data.SetVariable(ExperimentVars.SetupPanelTankType, inTankType.ToString());
         }
 
-        // private void SetTransforms() {
-        //     Transform toggleGroup = m_ToggleGroup.transform;
-        //     Transform text = m_Label.transform;
-
-        //     m_ToggleGroup.position = new Vector3(0f, 93f, toggleGroup.position.z);
-        //     text.position = new Vector3(text.position.x, 45f, text.position.z);
-        // }
-    
         private void UpdateFromSelection()
         {
             Toggle active = m_ToggleGroup.ActiveToggle();
@@ -146,7 +137,11 @@ namespace ProtoAqua.Experiment
             {
                 m_CurrentTank = (TankType)active.GetComponent<SetupToggleButton>().Id.AsInt();
                 m_CachedData.Tank = m_CurrentTank; 
-                
+                if(m_CurrentTank == TankType.Measurement) {
+                    foreach(var sc in Services.Assets.WaterProp.Objects) {
+                        m_CachedData.SliderValues.Add(0);
+                    }
+                }
                 
             }
             else

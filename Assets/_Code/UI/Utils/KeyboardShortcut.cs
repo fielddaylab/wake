@@ -17,24 +17,30 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private DeviceInput m_DeviceInput;
+        [NonSerialized] private bool m_Registered;
 
         private void Awake()
         {
-            m_DeviceInput = BaseInputLayer.Find(this).Device;
             m_ButtonDisplay.Assign(m_KeyCode);
         }
 
         private void OnEnable()
         {
-            m_DeviceInput = m_DeviceInput ?? BaseInputLayer.Find(this).Device;
-            m_DeviceInput.RegisterHandler(this);
+            m_DeviceInput = m_DeviceInput ?? DeviceInput.Find(this);
+            
+            if (m_DeviceInput != null && !m_Registered)
+            {
+                m_DeviceInput.RegisterHandler(this);
+                m_Registered = true;
+            }
         }
 
         private void OnDisable()
         {
-            if (m_DeviceInput != null)
+            if (m_DeviceInput != null && m_Registered)
             {
                 m_DeviceInput.DeregisterHandler(this);
+                m_Registered = false;
             }
         }
 
@@ -59,7 +65,11 @@ namespace Aqua
         {
             if (m_DeviceInput != null)
             {
-                m_DeviceInput.DeregisterHandler(this);
+                if (m_Registered)
+                {
+                    m_DeviceInput.DeregisterHandler(this);
+                    m_Registered = false;
+                }
                 m_DeviceInput = null;
             }
         }

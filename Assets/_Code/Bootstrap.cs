@@ -16,8 +16,12 @@ namespace Aqua
     [DefaultExecutionOrder(int.MinValue)]
     public class Bootstrap : MonoBehaviour
     {
+        #pragma warning disable CS0414
+
         [SerializeField, Required] private DebugService m_Debug = null;
         [SerializeField, Required] private string[] m_IgnoredSceneNames = null;
+
+        #pragma warning restore CS0414
 
         private void Awake()
         {

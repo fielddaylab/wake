@@ -42,7 +42,10 @@ namespace Aqua
         public void DeregisterHandler(IInputHandler inHandler)
         {
             if (m_UpdateHandlers != null)
+            {
+                Assert.True(m_UpdateHandlers.Contains(inHandler), "Cannot deregister handler '{0}' more than once!", inHandler);
                 m_UpdateHandlers.Remove(inHandler);
+            }
         }
 
         public void Update()
@@ -51,13 +54,13 @@ namespace Aqua
             {
                 if (m_UpdateHandlers != null)
                 {
-                    m_UpdateHandlers.ForEach(HandleInputPtr ?? (HandleInputPtr = HandleInput), this);
+                    m_UpdateHandlers.ForEach(HandleInputPtr, this);
                 }
                 OnUpdate?.Invoke(this);
             }
         }
 
-        static private Action<IInputHandler, DeviceInput> HandleInputPtr;
+        static private readonly Action<IInputHandler, DeviceInput> HandleInputPtr = HandleInput;
         static private void HandleInput(IInputHandler inHandler, DeviceInput inInput)
         {
             inHandler.HandleInput(inInput);
@@ -91,6 +94,11 @@ namespace Aqua
         public bool MouseReleased(int inMouseButton)
         {
             return IsActive() && Input.GetMouseButtonUp(inMouseButton);
+        }
+
+        static public DeviceInput Find(Component inComponent)
+        {
+            return BaseInputLayer.Find(inComponent)?.Device;
         }
     }
 }

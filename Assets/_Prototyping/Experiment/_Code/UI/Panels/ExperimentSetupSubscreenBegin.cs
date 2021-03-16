@@ -30,10 +30,6 @@ namespace ProtoAqua.Experiment
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
         }
 
-        public Action GetAction() {
-            return OnSelectBack;
-        }
-
         private void UpdateDisplay()
         {
             var experimentSettings = Services.Tweaks.Get<ExperimentSettings>();

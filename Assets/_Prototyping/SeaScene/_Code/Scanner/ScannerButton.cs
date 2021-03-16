@@ -17,23 +17,18 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-
-
         protected override void Awake()
         {
-            Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
+            Services.Events
                 .Register(ObservationEvents.ScannerOn, OnScannerOn, this)
                 .Register(ObservationEvents.ScannerOff, OnScannerOff, this);
-            
-            
             
             m_Toggle.onValueChanged.AddListener(OnToggle);
         }
 
         private void OnDestroy()
         {
-            Services.Events?.DeregisterAll(this);  
+            Services.Events?.DeregisterAll(this);
         }
 
         private void OnToggle(bool inState)
@@ -48,20 +43,5 @@ namespace ProtoAqua.Observation
         private void OnScannerOff() {
             m_Toggle.SetIsOnWithoutNotify(false);
         }
-
-        private void OnCutsceneStart()
-        {
-            Hide();
-        }
-
-        private void OnCutsceneEnd()
-        {
-            Show();
-        }
-
-
-
-
-
     }
 }

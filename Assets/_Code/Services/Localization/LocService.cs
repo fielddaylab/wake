@@ -85,10 +85,24 @@ namespace Aqua
 
             if (inString.StartsWith('\''))
             {
-                return Localize(inString.Substring(1), inString, inContext, inbIgnoreEvents);
+                return Localize(inString.Substring(1).Hash32(), inString, inContext, inbIgnoreEvents);
             }
 
-            return inString.ToString();
+            StringSlice content = inString;
+            if (!inbIgnoreEvents && inString.IndexOf('{') >= 0)
+            {
+                using(var tagAlloc = m_TagStringPool.TempAlloc())
+                {
+                    TagString tagStr = tagAlloc.Object;
+                    Services.Script.ParseToTag(ref tagStr, content, inContext);
+                    content = tagStr.RichText;
+                    if (tagStr.EventCount > 0)
+                    {
+                        Debug.LogWarningFormat("[LocService] String '{0}' contains {1} embedded events, which are discarded when translating directly to string", inString, tagStr.EventCount);
+                    }
+                }
+            }
+            return content.ToString();
         }
 
         /// <summary>
@@ -145,7 +159,10 @@ namespace Aqua
 
         public bool LocalizeTagged(ref TagString ioTagString, StringHash32 inKey, object inContext = null)
         {
-            ioTagString.Clear();
+            if (ioTagString == null)
+                ioTagString = new TagString();
+            else
+                ioTagString.Clear();
 
             if (m_LoadRoutine)
             {

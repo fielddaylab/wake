@@ -28,11 +28,26 @@ namespace ProtoAqua.Experiment
         public Action OnSelectContinue;
         public Action OnSelectBack;
 
+        private class PropButton : IKeyValuePair<WaterPropertyId, PropButton>
+        {
+            public WaterPropertyId PropId;
+            public SetupToggleButton Button;
+
+            WaterPropertyId IKeyValuePair<WaterPropertyId, PropButton>.Key { get { return PropId; } }
+
+            PropButton IKeyValuePair<WaterPropertyId, PropButton>.Value { get { return this; } }
+        }
+
+        private Dictionary<WaterPropertyId, PropButton> buttonDict;
+
         protected override void Awake()
         {
             Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
+
+            buttonDict = new Dictionary<WaterPropertyId, PropButton>();
+
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 m_CachedButtons[i].Toggle.group = m_ToggleGroup;
@@ -55,12 +70,15 @@ namespace ProtoAqua.Experiment
         {
             base.Refresh();
             UpdateButtons();
+            buttonDict.Clear();
         }
 
         private void UpdateButtons()
         {
             var properties = Services.Assets.WaterProp.Sorted();
             int buttonIdx = 0;
+
+            if(m_CachedButtons == null) return;
 
             foreach(var prop in properties)
             {
@@ -72,6 +90,11 @@ namespace ProtoAqua.Experiment
 
                 var button = m_CachedButtons[buttonIdx];
                 button.Load((int) prop.Index(), prop.Icon(), true);
+
+                PropButton acb = new PropButton();
+                acb.PropId = prop.Index();
+                acb.Button = m_CachedButtons[buttonIdx];
+                if(!buttonDict.ContainsKey(acb.PropId)) buttonDict.Add(acb.PropId, acb);
 
                 ++buttonIdx;
             }
@@ -87,14 +110,12 @@ namespace ProtoAqua.Experiment
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
+            
+            var key = m_CachedData.PropertyId;
+            if(key == WaterPropertyId.MAX) return;
 
-            // if(m_CachedData.PropertyId.Equals(WaterPropertyId.None)) return;
-            foreach(var button in m_CachedButtons) {
-                if(button.Id.Equals((int)m_CachedData.PropertyId)) {
-                    button.Toggle.SetIsOnWithoutNotify(true);
-                    break;
-                }
-            }
+            buttonDict.TryGetValue(key, out PropButton result);
+            if(result != null) result.Button.Toggle.SetIsOnWithoutNotify(true);
         }
 
         private void UpdateDisplay(WaterPropertyId inWaterId)
@@ -110,7 +131,7 @@ namespace ProtoAqua.Experiment
             if (active != null)
             {
                 m_CachedData.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
-                Services.Events.Dispatch(ExperimentEvents.StressorText, m_CachedData.PropertyId);
+                Services.Events.Dispatch(ExperimentEvents.StressorColor, m_CachedData.PropertyId);
             }
             else
             {

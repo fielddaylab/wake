@@ -247,8 +247,10 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            m_AllInputLayers.ForEach(UpdateDevice);
+            m_AllInputLayers.ForEach(UpdateDevicePtr);
         }
+
+        static private readonly Action<IInputLayer> UpdateDevicePtr = UpdateDevice;
 
         static private void UpdateDevice(IInputLayer inLayer)
         {

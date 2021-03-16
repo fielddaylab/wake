@@ -63,7 +63,7 @@ namespace Aqua
                     break;
 
                 case KeyCode.Space:
-                    mapping.Image = m_WideKey;
+                    mapping.Image = m_MediumKey;
                     break;
 
                 default:
