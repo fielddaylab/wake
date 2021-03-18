@@ -14,9 +14,14 @@ namespace Aqua
         [Header("Reproduction")]
         [SerializeField] private float m_Amount = 0;
 
+        [Header("Scarcity")]
+        [SerializeField] private uint m_ScarcityLevel = 0;
+
         #endregion // Inspector
-        
+
         public float Amount() { return m_Amount; }
+
+        public uint ScarcityLevel() { return m_ScarcityLevel; }
 
         public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
         {
