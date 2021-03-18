@@ -32,6 +32,7 @@ namespace ProtoAqua.Modeling
 
         private WaterPropertyBlock<ActorStateTransitionRange> m_Transitions;
 
+        private uint m_ScarcityLevel;
         private uint m_GrowthPerTick;
         private float m_ReproducePerTick;
         private float m_DeathPerTick;
@@ -83,6 +84,7 @@ namespace ProtoAqua.Modeling
                 m_Transitions[i] = ActorStateTransitionRange.Default;
             }
 
+            m_ScarcityLevel = 0;
             m_GrowthPerTick = 0;
             m_ReproducePerTick = 0;
             m_DeathPerTick = 0;
@@ -243,7 +245,7 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        public uint TryEat(ref CritterData ioData, uint inMass)
+        public uint TryEat(ref CritterData predatorData, ref CritterData preyData, uint inMass)
         {
             uint consumedMass = inMass;
             uint consumedPopulation = consumedMass;
@@ -252,18 +254,28 @@ namespace ProtoAqua.Modeling
                 consumedPopulation = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
             }
 
-            if (consumedPopulation > (uint)(ioData.Population * 0.7f)) //Magic number to correct for populations hiding from predators and not reaching 0
+            if (m_ScarcityLevel > 0)
             {
-                consumedPopulation = (uint)(ioData.Population * 0.7f);
+                float magicNumber = (float)preyData.Population / m_ScarcityLevel;
+                if (magicNumber < 1) //Magic number to correct for populations hiding from predators and not reaching 0
+                {
+                    consumedPopulation = (uint)(consumedPopulation * magicNumber);
+                }
+            }
+
+            uint maxPopulationLoss = (uint)(.75 * preyData.Population);
+            if (consumedPopulation > maxPopulationLoss)
+            {
+                consumedPopulation = maxPopulationLoss;
             }
 
             consumedMass = consumedPopulation * MassPerPopulation();
-            ioData.Population -= consumedPopulation;
+            preyData.Population -= consumedPopulation;
 
-            if (ioData.Hunger > 0 && consumedPopulation > 0)
+            if (preyData.Hunger > 0 && consumedPopulation > 0)
             {
-                float perPopulation = (ioData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
-                ioData.Hunger -= (uint) (consumedPopulation * perPopulation);
+                float perPopulation = (preyData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
+                preyData.Hunger -= (uint) (consumedPopulation * perPopulation);
             }
 
             return consumedMass;
@@ -342,12 +354,14 @@ namespace ProtoAqua.Modeling
         {
             // TODO: Account for stress?
             m_GrowthPerTick = inFact.Amount();
+            m_ScarcityLevel = inFact.ScarcityLevel();
         }
 
         void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
         {
             // TODO: Account for stress?
             m_ReproducePerTick = inFact.Amount();
+            m_ScarcityLevel = inFact.ScarcityLevel();
         }
 
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
