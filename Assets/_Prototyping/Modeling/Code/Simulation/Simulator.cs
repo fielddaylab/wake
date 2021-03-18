@@ -10,6 +10,7 @@ namespace ProtoAqua.Modeling
     static public class Simulator
     {
         public const int MaxTrackedCritters = 8;
+        public const float MaxEatProportion = 0.75f;
 
         /// <summary>
         /// Generates a single result from the given profile and initial data.
@@ -91,7 +92,7 @@ namespace ProtoAqua.Modeling
                         {
                             if (dataBlock[targetIdx].Population > 0)
                             {
-                                uint actualEat = profiles[targetIdx].TryEat(ref dataBlock[i], ref dataBlock[targetIdx], remainingFood);
+                                uint actualEat = profiles[targetIdx].TryBeEaten(ref dataBlock[targetIdx], remainingFood);
                                 remainingFood -= actualEat;
 
                                 if (bLogging)

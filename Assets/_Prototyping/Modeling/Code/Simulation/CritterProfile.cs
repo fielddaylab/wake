@@ -246,7 +246,7 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        public uint TryEat(ref CritterData predatorData, ref CritterData preyData, uint inMass)
+        public uint TryBeEaten(ref CritterData ioData, uint inMass)
         {
             uint consumedMass = inMass;
             uint consumedPopulation = consumedMass;
@@ -257,26 +257,26 @@ namespace ProtoAqua.Modeling
 
             if (m_ScarcityLevel > 0)
             {
-                float magicNumber = (float)preyData.Population / m_ScarcityLevel;
+                float magicNumber = (float) ioData.Population / m_ScarcityLevel;
                 if (magicNumber < 1) //Magic number to correct for populations hiding from predators and not reaching 0
                 {
-                    consumedPopulation = (uint)(consumedPopulation * magicNumber);
+                    consumedPopulation = (uint) (consumedPopulation * magicNumber);
                 }
             }
 
-            uint maxPopulationLoss = (uint)(.75 * preyData.Population);
+            uint maxPopulationLoss = (uint) (Simulator.MaxEatProportion * ioData.Population);
             if (consumedPopulation > maxPopulationLoss)
             {
                 consumedPopulation = maxPopulationLoss;
             }
 
             consumedMass = consumedPopulation * MassPerPopulation();
-            preyData.Population -= consumedPopulation;
+            ioData.Population -= consumedPopulation;
 
-            if (preyData.Hunger > 0 && consumedPopulation > 0)
+            if (ioData.Hunger > 0 && consumedPopulation > 0)
             {
-                float perPopulation = (preyData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
-                preyData.Hunger -= (uint) (consumedPopulation * perPopulation);
+                float perPopulation = (ioData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
+                ioData.Hunger -= (uint) (consumedPopulation * perPopulation);
             }
 
             return consumedMass;
