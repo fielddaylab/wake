@@ -131,7 +131,7 @@ namespace Aqua.Scripting
             }
         }
 
-        private void ReloadFromAsset(LeafAsset inAsset, HotReloadOperation inOperation)
+        private void ReloadFromAsset(LeafAsset inAsset, HotReloadAssetRemapArgs<LeafAsset> inRemap, HotReloadOperation inOperation)
         {
             var mgr = Services.Script;
             if (mgr != null)
@@ -209,11 +209,12 @@ namespace Aqua.Scripting
             {
                 get
                 {
-                    #if UNITY_EDITOR
-                    return true;
-                    #else
+                    // #if UNITY_EDITOR
+                    // return true;
+                    // #else
+                    // return false;
+                    // #endif // UNITY_EDITOR
                     return false;
-                    #endif // UNITY_EDITOR
                 }
             }
 

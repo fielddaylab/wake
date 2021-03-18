@@ -18,13 +18,13 @@ namespace Aqua
 
         public void RegisterAnimator(SpriteAnimator inAnimator)
         {
-            Assert.False(m_Animators.Contains(inAnimator), "SpriteAnimator '{0}' has already been registered", inAnimator.name);
+            Assert.False(m_Animators.Contains(inAnimator), "SpriteAnimator '{0}' has already been registered", inAnimator);
             m_Animators.Add(inAnimator);
         }
 
         public void DeregisterAnimator(SpriteAnimator inAnimator)
         {
-            Assert.True(m_Animators.Contains(inAnimator), "SpriteAnimator '{0}' has already been deregistered", inAnimator.name);
+            Assert.True(m_Animators.Contains(inAnimator), "SpriteAnimator '{0}' has already been deregistered", inAnimator);
             m_Animators.Remove(inAnimator);
         }
 

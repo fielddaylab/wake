@@ -11,7 +11,7 @@ namespace Aqua
 
         public void Flatten()
         {
-            transform.FlattenChildren(Recursive);
+            transform.FlattenHierarchy(Recursive);
 
             if (DestroyGameObject)
                 Destroy(gameObject);

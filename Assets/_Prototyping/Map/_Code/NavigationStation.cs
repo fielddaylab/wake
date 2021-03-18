@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using BeauRoutine;
 using BeauUtil;
 using Aqua;
-using ProtoCP;
+using BeauUtil.UI;
 
 namespace ProtoAqua.Map {
 

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -376,6 +376,7 @@ GameObject:
   - component: {fileID: 49481873}
   - component: {fileID: 49481872}
   - component: {fileID: 49481875}
+  - component: {fileID: 49481876}
   m_Layer: 0
   m_Name: LevelAssets
   m_TagString: Untagged
@@ -439,6 +440,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ScanData:
   - {fileID: -4270002856181823206, guid: f5aab99224f736a4fbd6c1135a97b29a, type: 3}
+--- !u!114 &49481876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49481871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: underwater_loop
 --- !u!4 &107765065 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5470274428244772038, guid: 5166ee7b0b786f4489d6e252f16c3f38,
@@ -4178,6 +4192,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6588013227186991927, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7155375523728817391, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7155375523728817391, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7155375523728817391, guid: b67673eafaa2bbe4db571202a3dfab0b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7155375523728817391, guid: b67673eafaa2bbe4db571202a3dfab0b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0

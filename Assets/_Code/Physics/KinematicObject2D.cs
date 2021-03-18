@@ -7,56 +7,47 @@ namespace Aqua
 {
     public class KinematicObject2D : MonoBehaviour
     {
-        public delegate bool MoveDelegate(Vector2 inOffset, ref KinematicPropertyBlock2D ioProperties, float inDeltaTime);
-
         #region Inspector
 
         [Inline(InlineAttribute.DisplayType.HeaderLabel)]
-        public KinematicPropertyBlock2D Properties;
+        public KinematicState2D State;
+
+        [Inline]
+        public KinematicConfig2D Config;
+
+        [Header("Components")]
+
+        [Required(ComponentLookupDirection.Self)] public Rigidbody2D Body;
+        [Required(ComponentLookupDirection.Children)] public Collider2D Collider;
+        
+        [Header("Solid")]
+
+        public LayerMask SolidMask;
+
+        [NonSerialized] public Transform Transform;
 
         #endregion // Inspector
 
-        [NonSerialized] private MoveDelegate m_MoveCallback;
-        [NonSerialized] private Transform m_Transform;
-        [NonSerialized] private Routine m_TickRoutine;
-
-        public MoveDelegate MoveCallback
-        {
-            get { return m_MoveCallback; }
-            set { m_MoveCallback = value; }
-        }
-
         private void OnEnable()
         {
-            this.CacheComponent(ref m_Transform);
-            m_TickRoutine = Routine.StartLoop(this, Tick).SetPhase(RoutinePhase.FixedUpdate).SetPriority(1000);
+            this.CacheComponent(ref Transform);
+            Services.Physics.Register(this);
         }
 
         private void OnDisable()
         {
-            m_TickRoutine.Stop();
+            Services.Physics?.Deregister(this);
         }
 
-        private void Tick()
+        public bool CheckSolid(Vector2 inOffset)
         {
-            float deltaTime = Routine.DeltaTime;
-            if (deltaTime <= 0)
-                return;
+            Vector2 ignored;
+            return PhysicsService.CheckSolid(this, inOffset, out ignored);
+        }
 
-            Vector2 offset = KinematicMath2D.Integrate(ref Properties, deltaTime);
-            bool bMoveDirect = m_MoveCallback == null;
-            if (!bMoveDirect)
-            {
-                bMoveDirect = m_MoveCallback(offset, ref Properties, deltaTime);
-            }
-            
-            if (!bMoveDirect)
-            {
-                Vector3 pos = m_Transform.localPosition;
-                pos.x += offset.x;
-                pos.y += offset.y;
-                m_Transform.localPosition = pos;
-            }
+        public bool CheckSolid(Vector2 inOffset, out Vector2 outNormal)
+        {
+            return PhysicsService.CheckSolid(this, inOffset, out outNormal);
         }
     }
 }

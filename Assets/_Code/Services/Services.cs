@@ -39,6 +39,7 @@ namespace Aqua
         [ServiceReference] static public EventService Events { get; private set; }
         [ServiceReference] static public InputService Input { get; private set; }
         [ServiceReference] static public LocService Loc { get; private set; }
+        [ServiceReference] static public PhysicsService Physics { get; private set; }
         [ServiceReference] static public ScriptingService Script { get; private set; }
         [ServiceReference] static public StateMgr State { get; private set; }
         [ServiceReference] static public TweakMgr Tweaks { get; private set; }

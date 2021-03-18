@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BeauRoutine;
+using BeauUtil;
 using UnityEngine;
 namespace ProtoAqua.Navigation {
     public class CameraController : MonoBehaviour {
@@ -48,5 +49,19 @@ namespace ProtoAqua.Navigation {
 
                 return r.GetPoint(dist);
             }
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            if (!Application.isPlaying)
+            {
+                var comp = GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+                if (comp)
+                    comp.hideFlags = HideFlags.DontSave;
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

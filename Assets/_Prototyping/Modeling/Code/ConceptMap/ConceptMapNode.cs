@@ -6,6 +6,7 @@ using Aqua;
 using System;
 using ProtoCP;
 using BeauUtil;
+using BeauUtil.UI;
 using UnityEngine.EventSystems;
 
 namespace ProtoAqua.Modeling

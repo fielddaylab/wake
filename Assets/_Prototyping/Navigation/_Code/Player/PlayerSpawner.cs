@@ -32,7 +32,7 @@ namespace ProtoAqua.Navigation
                 {
                     if (site.SiteId == diveSite)
                     {
-                        m_Player.transform.SetPosition(site.transform.position, Axis.XY);
+                        m_Player.Teleport(site.transform.position);
                         break;
                     }
                 }

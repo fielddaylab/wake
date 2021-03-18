@@ -155,6 +155,7 @@ namespace ProtoAqua.Modeling
             #if UNITY_EDITOR
             if (inInput.KeyPressed(KeyCode.F8))
             {
+                m_Buffer.Flags |= SimulatorFlags.Debug;
                 m_Buffer.ReloadScenario();
             }
             #endif // UNITY_EDITOR

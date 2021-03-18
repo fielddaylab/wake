@@ -17,13 +17,6 @@ namespace ProtoAqua.Navigation
         protected override void Awake()
         {
             base.Awake();
-
-            OnInputDisabled.AddListener(StopMovement);
-        }
-
-        private void StopMovement()
-        {
-            direction *= 0.8f;
         }
 
         //Returns the direction the player will move
@@ -46,18 +39,7 @@ namespace ProtoAqua.Navigation
             }
             else
             {
-                //Gradually slow down
-                if (direction.magnitude > .01f)
-                {
-                    if (IsInputEnabled)
-                        direction = direction * 0.985f;
-                    else
-                        direction = direction * 0.4f;
-                }
-                else
-                {
-                    direction = Vector2.zero;
-                }
+                direction = Vector2.zero;
             }
             return direction;
         }

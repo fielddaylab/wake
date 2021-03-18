@@ -4,8 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 using BeauRoutine;
 using Aqua;
-using ProtoCP;
 using BeauUtil;
+using BeauUtil.UI;
 using System;
 using UnityEngine.EventSystems;
 

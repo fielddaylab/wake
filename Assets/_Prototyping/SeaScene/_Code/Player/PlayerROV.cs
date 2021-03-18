@@ -33,7 +33,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVWorldUI m_WorldUI = null;
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
-        [SerializeField, Required] private SpriteRenderer m_Renderer = null;
+        [SerializeField, Required] private Transform m_Renderer = null;
 
         [Header("Movement Params")]
 
@@ -82,14 +82,14 @@ namespace ProtoAqua.Observation
 
         private void LateUpdate()
         {
-            m_Kinematic.Properties.ApplyLimits();
+            KinematicMath2D.ApplyLimits(ref m_Kinematic.State, ref m_Kinematic.Config);
 
             if (m_EngineSound.Exists())
             {
-                m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematic.Properties.Velocity.magnitude / m_Kinematic.Properties.MaxSpeed));
+                m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematic.State.Velocity.magnitude / m_Kinematic.Config.MaxSpeed));
             }
 
-            m_VelocityHint.PositionAt(m_Transform, m_Kinematic.Properties.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove));
+            m_VelocityHint.PositionAt(m_Transform, m_Kinematic.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove));
             m_VelocityHint.SetWeight(m_CameraForwardLookWeight);
 
             if (m_Moving)
@@ -140,6 +140,8 @@ namespace ProtoAqua.Observation
             {
                 UpdateMove();
             }
+
+            // Debug.LogFormat("[PlayerROV] Contact Below = {0}", PhysicsService.CheckSolid(m_Kinematic, Vector2.down * 0.05f, out Vector2 ignore));
         }
 
         private Vector3? GetLockOn()
@@ -183,12 +185,20 @@ namespace ProtoAqua.Observation
                 if (dist > m_TargetVectorMinDistance)
                 {
                     SetEngineState(true);
-                    float desiredSpeed = m_Kinematic.Properties.MaxSpeed * Mathf.Clamp01(dist / m_TargetVectorMaxDistance);
-                    float speedChange = desiredSpeed - m_Kinematic.Properties.Velocity.magnitude;
+                    float desiredSpeed = m_Kinematic.Config.MaxSpeed * Mathf.Clamp01(dist / m_TargetVectorMaxDistance);
+                    float speedChange = desiredSpeed - m_Kinematic.State.Velocity.magnitude;
                     if (speedChange > 0)
                     {
                         vector *= speedChange * Routine.DeltaTime * m_TargetVectorSpeed;
-                        m_Kinematic.Properties.Velocity += vector;
+                        vector = PhysicsService.SmoothVelocity(vector);
+                        
+                        Vector2 collideNormal;
+                        if (m_Kinematic.CheckSolid(vector, out collideNormal))
+                        {
+                            vector = PhysicsService.SmoothDeflect(vector, collideNormal);
+                        }
+                        
+                        m_Kinematic.State.Velocity += vector;
                     }
                 }
                 else
@@ -213,13 +223,13 @@ namespace ProtoAqua.Observation
                 m_EngineSound = ObservationServices.Audio.PostEvent("rov_engine_loop");
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
 
-                m_Kinematic.Properties.Drag = m_DragEngineOn;
+                m_Kinematic.Config.Drag = m_DragEngineOn;
             }
             else
             {
                 m_EngineSound.Stop(0.25f);
 
-                m_Kinematic.Properties.Drag = m_DragEngineOff;
+                m_Kinematic.Config.Drag = m_DragEngineOff;
             }
         }
     }

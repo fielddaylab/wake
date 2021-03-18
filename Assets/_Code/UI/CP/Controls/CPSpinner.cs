@@ -5,6 +5,7 @@ using BeauData;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;

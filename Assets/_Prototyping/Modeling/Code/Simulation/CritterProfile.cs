@@ -160,6 +160,7 @@ namespace ProtoAqua.Modeling
             {
                 toKillProportion = ioData.Hunger / (m_FoodPerPopulation * ioData.Population);
             }
+            
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
             {
                 float remainder = ioData.ToConsume[i];
