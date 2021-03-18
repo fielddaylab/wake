@@ -104,7 +104,7 @@ namespace ProtoAqua.Experiment
         }
 
         private void PresetButtons(ExpSubscreen sc) {
-            if(!sc.Equals(ExpSubscreen.Ecosystem)) return;
+            if(!(sc == ExpSubscreen.Ecosystem)) return;
             if(m_CachedData == null) {
                 throw new NullReferenceException("No cached data in actor.");
             }
