@@ -91,7 +91,7 @@ namespace ProtoAqua.Modeling
                         {
                             if (dataBlock[targetIdx].Population > 0)
                             {
-                                uint actualEat = profiles[targetIdx].TryEat(ref dataBlock[targetIdx], remainingFood);
+                                uint actualEat = profiles[targetIdx].TryEat(ref dataBlock[i], ref dataBlock[targetIdx], remainingFood);
                                 remainingFood -= actualEat;
 
                                 if (bLogging)
