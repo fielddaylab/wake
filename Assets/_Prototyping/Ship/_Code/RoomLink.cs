@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Aqua;
+using BeauUtil;
 
 namespace ProtoAqua.Ship
 {
+    [RequireComponent(typeof(CursorInteractionHint))]
     public class RoomLink : MonoBehaviour, IPointerClickHandler
     {
         private enum LinkType
@@ -16,6 +18,11 @@ namespace ProtoAqua.Ship
         [SerializeField] private LinkType m_LinkType = LinkType.Room;
         [SerializeField] private Room m_Room = null;
         [SerializeField] private string m_Scene = null;
+
+        private void Awake()
+        {
+            this.EnsureComponent<CursorInteractionHint>();
+        }
         
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {

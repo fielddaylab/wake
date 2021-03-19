@@ -21,6 +21,7 @@ namespace Aqua
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
+        [SerializeField, Required] private InputCursor m_Cursor = null;
         [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
 
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
@@ -32,6 +33,7 @@ namespace Aqua
         private Dictionary<Type, SharedPanel> m_SharedPanels;
         [NonSerialized] private bool m_SkippingCutscene;
         [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
+        [NonSerialized] private CursorHintMgr m_CursorHintMgr;
 
         #region Loading Screen
 
@@ -192,7 +194,14 @@ namespace Aqua
 
         #endregion // Additional Panels
 
+        public InputCursor Cursor { get { return m_Cursor; } }
+        public CursorHintMgr CursorHintMgr { get { return m_CursorHintMgr; } }
         public KeycodeDisplayMap KeycodeMap { get { return m_KeyboardMap; } }
+
+        private void LateUpdate()
+        {
+            m_Cursor.DoUpdate();
+        }
 
         public void BindCamera(Camera inCamera)
         {
@@ -249,7 +258,7 @@ namespace Aqua
             }
 
             m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
-
+            m_CursorHintMgr = new CursorHintMgr(m_Cursor);
             SceneHelper.OnSceneUnload += CleanupFromScene;
 
             BindCamera(Camera.main);

@@ -47,6 +47,7 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private PointerInputMode m_PointerMode = PointerInputMode.Mouse;
         [NonSerialized] private readonly BufferedCollection<IInputLayer> m_AllInputLayers = new BufferedCollection<IInputLayer>(32);
         [NonSerialized] private int m_CurrentPriority = DefaultPriority;
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
@@ -63,7 +64,7 @@ namespace Aqua
             {
                 m_AllInputLayers.Add(inInputLayer);
                 inInputLayer.UpdateSystemPriority(m_CurrentPriority);
-                inInputLayer.UpdateSystemFlags(m_CurrentFlags);
+                inInputLayer.UpdateSystemFlags(WorkingFlags());
                 return true;
             }
 
@@ -184,7 +185,7 @@ namespace Aqua
 
         private void BroadcastFlagsUpdate()
         {
-            InputLayerFlags flags = m_PauseAllCounter > 0 ? 0 : m_CurrentFlags;
+            InputLayerFlags flags = WorkingFlags();
 
             foreach(var layer in m_AllInputLayers)
             {
@@ -192,9 +193,16 @@ namespace Aqua
             }
         }
 
+        private InputLayerFlags WorkingFlags()
+        {
+            return m_PauseAllCounter > 0 ? 0 : m_CurrentFlags;
+        }
+
         #endregion // Flags
 
         #region Pointer
+
+        public PointerInputMode PointerMode() { return m_PointerMode; }
 
         public bool IsPointerOverUI()
         {
@@ -213,6 +221,12 @@ namespace Aqua
             
             clickHandler.OnPointerClick(m_InputModule.GetPointerEventData());
             return true;
+        }
+
+        private void OnInputModeChanged(PointerInputMode inMode)
+        {
+            m_PointerMode = inMode;
+            Debug.LogFormat("[InputService] Pointer mode switched to {0}", inMode);
         }
 
         #endregion // Pointer
@@ -247,16 +261,30 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            m_AllInputLayers.ForEach(UpdateDevicePtr);
+            m_AllInputLayers.ForEach(UpdateDevice);
         }
 
-        static private readonly Action<IInputLayer> UpdateDevicePtr = UpdateDevice;
-
-        static private void UpdateDevice(IInputLayer inLayer)
-        {
-            inLayer.Device.Update();
-        }
+        static private readonly Action<IInputLayer> UpdateDevice = (l) => l.Device.Update();
 
         #endregion // Unity Events
+
+        #region Service
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            Input.multiTouchEnabled = false;
+            m_InputModule.OnModeChanged += OnInputModeChanged;
+        }
+
+        protected override void OnDestroy()
+        {
+            m_InputModule.OnModeChanged -= OnInputModeChanged;
+
+            base.OnDestroy();
+        }
+
+        #endregion // Service
     }
 }

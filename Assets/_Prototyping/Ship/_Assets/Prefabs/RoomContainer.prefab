@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 6833289159547145735}
   - component: {fileID: 6833289159547145732}
   - component: {fileID: 6833289159547145730}
+  - component: {fileID: 64318525292091783}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -101,7 +102,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42620c8a34fe7d94793a5cf6b2ce0d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MainCamera: {fileID: 0}
-  m_NewCameraTransform: {fileID: 0}
-  m_SceneToLoad: 
-  updateSceneToLoad: 0
+  m_LinkType: 0
+  m_Room: {fileID: 0}
+  m_Scene: 
+--- !u!114 &64318525292091783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6833289159547145734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

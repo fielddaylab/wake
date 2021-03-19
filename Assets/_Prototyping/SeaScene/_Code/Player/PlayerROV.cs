@@ -48,6 +48,7 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_CameraForwardLook = 1;
         [SerializeField] private float m_CameraForwardLookWeight = 0.5f;
         [SerializeField] private float m_CameraForwardLookNoMove = 1;
+        [SerializeField] private float m_CameraZoomTool = 1.1f;
         
         #endregion // Inspector
 
@@ -119,6 +120,7 @@ namespace ProtoAqua.Observation
                 }
                 m_MouseHint.PositionAt(m_Transform, offset);
                 m_MouseHint.SetWeight(m_CameraForwardLookWeight);
+                m_MouseHint.Zoom = m_LastInputData.ToolMode ? m_CameraZoomTool : 1f;
             }
             else
             {

@@ -13,7 +13,12 @@ namespace ProtoAqua.Observation
     {
         #region Inspector
         
-        [SerializeField] private Toggle m_Toggle = null;
+        [SerializeField, Required] private Toggle m_Toggle = null;
+        [SerializeField, Required] private Image m_Icon = null;
+
+        [Header("Assets")]
+        [SerializeField] private Sprite m_ScanIcon = null;
+        [SerializeField] private Sprite m_MoveIcon = null;
 
         #endregion // Inspector
 
@@ -38,10 +43,12 @@ namespace ProtoAqua.Observation
 
         private void OnScannerOn() {
             m_Toggle.SetIsOnWithoutNotify(true);
+            m_Icon.sprite = m_MoveIcon;
         }
 
         private void OnScannerOff() {
             m_Toggle.SetIsOnWithoutNotify(false);
+            m_Icon.sprite = m_ScanIcon;
         }
     }
 }
