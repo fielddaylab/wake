@@ -36,7 +36,7 @@ namespace Aqua
             }
 
             if (m_MousePointerData == null)
-                GetPointerData(0, out m_MousePointerData, true);
+                GetPointerData(kMouseLeftId, out m_MousePointerData, true);
             return m_MousePointerData;
         }
 

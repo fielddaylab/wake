@@ -7,9 +7,30 @@ using UnityEngine.UI;
 
 namespace Aqua
 {
+    [DisallowMultipleComponent]
     public class CursorInteractionHint : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        /// <summary>
+        /// Tooltip string id.
+        /// </summary>
+        public SerializedHash32 TooltipId;
+
+        [NonSerialized] private Selectable m_Selectable = null;
         [NonSerialized] private int m_EnterMask = 0;
+        [NonSerialized] private bool m_Initialized = false;
+
+        public bool IsInteractable()
+        {
+            if (!m_Initialized)
+            {
+                this.CacheComponent(ref m_Selectable);
+                m_Initialized = true;
+            }
+            
+            return m_Selectable.IsReferenceNull() || m_Selectable.IsInteractable();
+        }
+
+        #region Handlers
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
@@ -17,6 +38,11 @@ namespace Aqua
             if ((m_EnterMask & mask) != 0)
                 return;
 
+            if (!m_Initialized)
+            {
+                this.CacheComponent(ref m_Selectable);
+                m_Initialized = true;
+            }
             m_EnterMask |= mask;
             Services.UI.CursorHintMgr.SetHint(this);
         }
@@ -33,5 +59,7 @@ namespace Aqua
                 Services.UI.CursorHintMgr.ClearHint(this);
             }
         }
+
+        #endregion // Handlers
     }
 }

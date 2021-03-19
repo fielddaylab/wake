@@ -15,16 +15,23 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private Camera m_UICamera = null;
+
+        [Header("Panels")]
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
+        [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+
+        [Header("Overlays")]
         [SerializeField, Required] private LoadingDisplay m_Loading = null;
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
-        [SerializeField, Required] private InputCursor m_Cursor = null;
-        [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
 
-        [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+        [Header("Input")]
+        [SerializeField, Required] private InputCursor m_Cursor = null;
+        [SerializeField, Required] private CursorTooltip m_Tooltip = null;
+        [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
+        [SerializeField] private float m_TooltipHoverTime = 0.6f;
 
         #endregion // Inspector
 
@@ -200,7 +207,9 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            m_Cursor.DoUpdate();
+            m_CursorHintMgr.Process(m_TooltipHoverTime);
+            Vector2 cursorPos = m_Cursor.Process();
+            m_Tooltip.Process(cursorPos);
         }
 
         public void BindCamera(Camera inCamera)
@@ -258,7 +267,7 @@ namespace Aqua
             }
 
             m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
-            m_CursorHintMgr = new CursorHintMgr(m_Cursor);
+            m_CursorHintMgr = new CursorHintMgr(m_Cursor, m_Tooltip);
             SceneHelper.OnSceneUnload += CleanupFromScene;
 
             BindCamera(Camera.main);
