@@ -17,6 +17,7 @@ namespace Aqua
         [NonSerialized] private StringHash32 m_PosLock;
         [NonSerialized] private StringHash32 m_SpriteLock;
         [NonSerialized] private bool m_HasInteraction;
+        [NonSerialized] private Sprite m_SpriteLockSprite;
 
         static private readonly Vector3 MouseDownScale = new Vector3(0.75f, 0.75f, 1);
         static private readonly Vector3 MouseUpScale = new Vector3(1, 1, 1);
@@ -40,26 +41,47 @@ namespace Aqua
             Cursor.visible = true;
         }
 
-        public void DoUpdate()
+        public Vector2 Process()
         {
+            #if UNITY_EDITOR
             Cursor.visible = false;
+            #endif // UNITY_EDITOR
+
+            Vector2 position;
+            
             if (m_PosLock.IsEmpty)
             {
-                m_Transform.position = Input.mousePosition;
+                position = Input.mousePosition;
+                m_Transform.position = position;
+            }
+            else
+            {
+                position = m_Transform.position;
             }
 
-            if (m_SpriteLock.IsEmpty)
+            if (m_HasInteraction)
             {
-                m_Image.sprite = m_HasInteraction ? m_InteractSprite : m_OriginalSprite;
-                if (Input.GetMouseButton(0))
-                {
-                    m_Transform.localScale = MouseDownScale;
-                }
-                else
-                {
-                    m_Transform.localScale = MouseUpScale;
-                }
+                m_Image.sprite = m_InteractSprite;
             }
+            else if (!m_SpriteLockSprite.IsReferenceNull())
+            {
+                m_Image.sprite = m_SpriteLockSprite;
+            }
+            else
+            {
+                m_Image.sprite = m_OriginalSprite;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                m_Transform.localScale = MouseDownScale;
+            }
+            else
+            {
+                m_Transform.localScale = MouseUpScale;
+            }
+
+            return position;
         }
 
         #endregion // Events
@@ -70,6 +92,8 @@ namespace Aqua
         {
             Assert.True(m_PosLock.IsEmpty || m_PosLock == inHash, "Current position lock is {0}, attempting to lock with mismatched key {1}", m_PosLock.ToDebugString(), inHash.ToDebugString());
             m_PosLock = inHash;
+            inScreenPosition.x = (float) Math.Round(inScreenPosition.x);
+            inScreenPosition.y = (float) Math.Round(inScreenPosition.y);
             m_Transform.position = inScreenPosition;
         }
 

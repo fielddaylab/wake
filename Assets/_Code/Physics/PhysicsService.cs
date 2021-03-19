@@ -237,12 +237,12 @@ namespace Aqua
 
                                     AdjustVelocity(ref states[objIdx].Velocity, contact.normal, 0);
                                 }
+                            }
 
-                                if (separationAccum.sqrMagnitude > 0)
-                                {
-                                    positions[objIdx] += separationAccum;
-                                    frameOffset[objIdx] += separationAccum;
-                                }
+                            if (separationAccum.sqrMagnitude > 0)
+                            {
+                                positions[objIdx] += separationAccum;
+                                frameOffset[objIdx] += separationAccum;
                             }
 
                             Array.Clear(contactBuffer, 0, contactCount);

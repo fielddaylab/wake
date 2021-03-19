@@ -13,13 +13,13 @@ namespace Aqua
         [SerializeField, HideInInspector] private Selectable m_Selectable = null;
         
         [Header("Hover State")]
-        [SerializeField] private string m_EnterEvent = null;
+        [SerializeField] private string m_EnterEvent = "ui_hover";
         [SerializeField] private string m_ExitEvent = null;
         
         [Header("Click State")]
         [SerializeField] private string m_DownEvent = null;
         [SerializeField] private string m_UpEvent = null;
-        [SerializeField] private string m_ClickEvent = null;
+        [SerializeField] private string m_ClickEvent = "ui_click";
 
         #endregion // Inspector
 
