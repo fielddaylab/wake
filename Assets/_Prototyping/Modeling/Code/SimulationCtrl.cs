@@ -44,7 +44,7 @@ namespace ProtoAqua.Modeling
                 return;
 
             float error = m_Buffer.CalculateModelError();
-            int sync = 100 - (int) (error * 100);
+            int sync = 100 - Mathf.CeilToInt(error * 100);
             
             if (m_State.Phase == ModelingPhase.Model && m_State.ModelSync != 100 && sync == 100)
             {
@@ -54,7 +54,7 @@ namespace ProtoAqua.Modeling
             m_State.ModelSync = sync;
             
             error = m_Buffer.CalculatePredictionError();
-            sync = 100 - (int) (error * 100);
+            sync = 100 - Mathf.CeilToInt(error * 100);
             
             if (m_State.Phase == ModelingPhase.Predict && m_State.PredictSync != 100 && sync == 100)
             {

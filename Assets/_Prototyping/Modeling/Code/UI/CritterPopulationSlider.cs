@@ -25,6 +25,7 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private ActorCountI32 m_Data;
         [NonSerialized] private float m_SliderScale;
+        [NonSerialized] private float m_PopulationScale;
         
         public readonly ActorCountEvent OnPopulationChanged = new ActorCountEvent();
 
@@ -54,6 +55,7 @@ namespace ProtoAqua.Modeling
             m_Data.Population = inPopulation;
 
             m_SliderScale = body.PopulationSoftIncrement();
+            m_PopulationScale = body.MassDisplayScale();
 
             if (inRange <= 0)
                 inRange = (int) body.PopulationSoftCap();
@@ -63,8 +65,20 @@ namespace ProtoAqua.Modeling
             m_Slider.maxValue = inRange / m_SliderScale;
             m_Slider.wholeNumbers = true;
 
-            m_Slider.SetValueWithoutNotify(inPopulation / m_SliderScale);
-            m_Text.SetTextWithoutNotify(inPopulation.ToString());
+            int displayPop = ToDisplayPopulation(inPopulation);
+
+            m_Slider.SetValueWithoutNotify(displayPop / m_SliderScale);
+            m_Text.SetTextWithoutNotify(displayPop.ToString());
+        }
+
+        private int ToDisplayPopulation(int inPopulation)
+        {
+            return (int) Math.Round(inPopulation * m_PopulationScale); 
+        }
+
+        private int ToRealPopulation(int inPopulation)
+        {
+            return (int) Math.Round(inPopulation / m_PopulationScale);
         }
 
         #region Handlers
@@ -78,7 +92,8 @@ namespace ProtoAqua.Modeling
         private void OnTextValueChanged(string inValue)
         {
             int val = StringParser.ParseInt(inValue);
-            val = Math.Min(val, (int) (m_Slider.maxValue * m_SliderScale));
+            val = ToRealPopulation(val);
+            val = Mathf.Clamp(val, (int) (m_Slider.minValue * m_SliderScale), (int) (m_Slider.maxValue * m_SliderScale));
             TryUpdateValue(val, false, true);
         }
 
@@ -88,10 +103,12 @@ namespace ProtoAqua.Modeling
                 return;
 
             m_Data.Population = inPopulation;
+
+            int displayPop = ToDisplayPopulation(inPopulation);
             if (inbUpdateText)
-                m_Text.SetTextWithoutNotify(inPopulation.ToString());
+                m_Text.SetTextWithoutNotify(displayPop.ToString());
             if (inbUpdateSlider)
-                m_Slider.SetValueWithoutNotify(inPopulation / m_SliderScale);
+                m_Slider.SetValueWithoutNotify(displayPop * m_SliderScale);
 
             OnPopulationChanged.Invoke(m_Data);
         }

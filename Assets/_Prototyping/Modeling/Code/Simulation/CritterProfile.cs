@@ -14,6 +14,7 @@ namespace ProtoAqua.Modeling
         private readonly StringHash32 m_Id;
         private readonly bool m_IsHerd;
         private uint m_MassPerPopulation;
+        private uint m_PopulationCap;
 
         private WaterPropertyBlockF32 m_ToProducePerPopulation;
         private WaterPropertyBlockF32 m_ToProducePerPopulationStressed;
@@ -63,6 +64,7 @@ namespace ProtoAqua.Modeling
         public void Clear()
         {
             m_MassPerPopulation = 0;
+            m_PopulationCap = 0;
 
             m_ToProducePerPopulation = default(WaterPropertyBlockF32);
             m_ToProducePerPopulationStressed = default(WaterPropertyBlockF32);
@@ -157,58 +159,60 @@ namespace ProtoAqua.Modeling
 
         public void EndTick(ref CritterData ioData, SimulatorFlags inFlags)
         {
-            float toKillProportion = 0;
-            if (ioData.Hunger > 0)
+            if (ioData.Population > 0)
             {
-                toKillProportion = ioData.Hunger / (m_FoodPerPopulation * ioData.Population);
-            }
-            
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
-            {
-                float remainder = ioData.ToConsume[i];
-                if (remainder > 0)
+                uint toKillAbsolute = 0;
+                if (ioData.Hunger > 0)
                 {
-                    float proportion = remainder / (m_ToConsumePerPopulation[i] * ioData.Population);
-                    toKillProportion = Math.Max(toKillProportion, proportion);
+                    toKillAbsolute = (uint) (ioData.Hunger / m_FoodPerPopulation);
                 }
-            }
-
-            uint toKill = (uint) (CalculateMass(ioData) * (m_DeathPerTick + toKillProportion));
-
-            if (toKill > 0)
-            {
-                uint popDecrease = Die(ref ioData, toKill);
-                if ((inFlags & SimulatorFlags.Debug) != 0)
+                
+                for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
                 {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id().ToDebugString());
+                    float remainder = ioData.ToConsume[i];
+                    if (remainder > 0)
+                    {
+                        toKillAbsolute = Math.Max(toKillAbsolute, (uint) (remainder / m_ToConsumePerPopulation[i]));
+                    }
                 }
-            }
 
-            if (m_GrowthPerTick > 0 && ioData.Population > 0)
-            {
-                uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
-                if ((inFlags & SimulatorFlags.Debug) != 0)
-                {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
-                }
-            }
+                uint toKill = CalculateMass((uint) (ioData.Population * m_DeathPerTick) + toKillAbsolute);
 
-            if (m_ReproducePerTick > 0 && ioData.Population > 0)
-            {
-                uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
-                if ((inFlags & SimulatorFlags.Debug) != 0)
+                if (toKill > 0)
                 {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
+                    uint popDecrease = Die(ref ioData, toKill);
+                    if ((inFlags & SimulatorFlags.Debug) != 0)
+                    {
+                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id().ToDebugString());
+                    }
                 }
-            }
 
-            if (ioData.Population == 0)
-            {
-                if ((inFlags & SimulatorFlags.Debug) != 0)
+                if (m_GrowthPerTick > 0 && ioData.Population > 0)
                 {
-                    Debug.LogFormat("[CritterProfile] Critter '{0}' population hit 0", Id().ToDebugString());
+                    uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
+                    if ((inFlags & SimulatorFlags.Debug) != 0)
+                    {
+                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
+                    }
                 }
-                ioData.State = ActorStateId.Dead;
+
+                if (m_ReproducePerTick > 0 && ioData.Population > 0)
+                {
+                    uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
+                    if ((inFlags & SimulatorFlags.Debug) != 0)
+                    {
+                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
+                    }
+                }
+
+                if (ioData.Population == 0)
+                {
+                    if ((inFlags & SimulatorFlags.Debug) != 0)
+                    {
+                        Debug.LogFormat("[CritterProfile] Critter '{0}' population hit 0", Id().ToDebugString());
+                    }
+                    ioData.State = ActorStateId.Dead;
+                }
             }
         }
 
@@ -290,6 +294,12 @@ namespace ProtoAqua.Modeling
                 populationIncrease = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
             }
 
+            uint maxIncrease = (uint) (Simulator.MaxReproduceProportion * (m_PopulationCap - ioData.Population));
+            if (populationIncrease > maxIncrease)
+            {
+                populationIncrease = maxIncrease;
+            }
+
             ioData.Population += populationIncrease;
             return populationIncrease;
         }
@@ -297,6 +307,13 @@ namespace ProtoAqua.Modeling
         private uint Reproduce(ref CritterData ioData, float inProportion)
         {
             uint populationIncrease = (uint) Mathf.RoundToInt(inProportion * ioData.Population);
+
+            uint maxIncrease = (uint) (Simulator.MaxReproduceProportion * (m_PopulationCap - ioData.Population));
+            if (populationIncrease > maxIncrease)
+            {
+                populationIncrease = maxIncrease;
+            }
+
             ioData.Population += populationIncrease;
             return populationIncrease;
         }
@@ -336,7 +353,8 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
         {
-            m_MassPerPopulation = inFact.StartingMass();
+            m_MassPerPopulation = inFact.MassPerPopulation();
+            m_PopulationCap = inFact.PopulationHardCap();
         }
 
         void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
