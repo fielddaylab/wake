@@ -12,6 +12,7 @@ using BeauUtil.Variants;
 using Leaf.Runtime;
 using Leaf;
 using BeauUtil.Services;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -227,19 +228,21 @@ namespace Aqua
             {
                 using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
                 {
+                    DebugService.Log(LogMask.Scripting, "[ScriptingService] Evaluating trigger {0}...", inTriggerId.ToDebugString());
+                    
                     int minScore = int.MinValue;
                     int responseCount = responseSet.GetHighestScoringNodes(resolver, inContext, Services.Data.Profile?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
-                        Debug.LogFormat("[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId.ToDebugString(), node.Id().ToDebugString());
+                        DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId.ToDebugString(), node.Id().ToDebugString());
                         handle = StartThreadInternalNode(inThreadId, inContext, node, inContextTable);
                     }
                 }
             }
             if (!handle.IsRunning())
             {
-                Debug.LogFormat("[ScriptingService] Trigger '{0}' had no valid responses", inTriggerId.ToDebugString());
+                DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' had no valid responses", inTriggerId.ToDebugString());
             }
             ResetCustomResolver();
             return handle;
@@ -288,19 +291,19 @@ namespace Aqua
                     {
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
-                            Debug.LogFormat("[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
+                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
                             StartThreadInternalNode(null, inContext, nodes[i], inContextTable).GetThread().Tick();
                         }
                     }
                     else
                     {
-                        Debug.LogFormat("[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
+                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId.ToDebugString());
                     }
                 }
             }
             else
             {
-                Debug.LogFormat("[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
             }
             ResetCustomResolver();
         }
@@ -370,6 +373,8 @@ namespace Aqua
         /// </summary>
         public void KillAllThreads()
         {
+            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all threads");
+
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 m_ThreadList[i].Kill();
@@ -386,6 +391,8 @@ namespace Aqua
         /// </summary>
         public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene)
         {
+            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
+
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 var thread = m_ThreadList[i];
@@ -608,12 +615,12 @@ namespace Aqua
             {
                 if (thread.Priority() >= inNode.Priority())
                 {
-                    Debug.LogFormat("[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
+                    DebugService.Log(LogMask.Scripting,  "[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
                         inNode.Id().ToDebugString(), target.ToDebugString());
                     return false;
                 }
 
-                Debug.LogFormat("[ScriptingService] Killed thread with priority '{0}' running on target '{1}' - higher priority node '{2}' was requested",
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killed thread with priority '{0}' running on target '{1}' - higher priority node '{2}' was requested",
                     thread.Priority(), target.ToDebugString(), inNode.Id().ToDebugString());
 
                 thread.Kill();

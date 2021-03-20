@@ -10,6 +10,7 @@ using Aqua;
 using Aqua.Profile;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Aqua.Debugging;
 
 namespace Aqua.Scripting
 {
@@ -71,32 +72,52 @@ namespace Aqua.Scripting
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
 
+                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id().ToDebugString());
+
                 // score cutoff
                 if (triggerData.Score < ioMinScore)
+                {
+                    DebugService.Log(LogMask.Scripting, "...higher-scoring node has already been found");
                     break;
+                }
 
                 // not the right target
                 if (!inTarget.IsEmpty && inTarget != node.TargetId())
+                {
+                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget.ToDebugString(), node.TargetId().ToDebugString());
                     continue;
+                }
 
                 // cannot play during cutscene
                 if ((node.Flags() & ScriptNodeFlags.SuppressDuringCutscene) != 0 && Services.UI.IsLetterboxed())
+                {
+                    DebugService.Log(LogMask.Scripting, "...cutscene is playing");
                     continue;
+                }
 
                 // cannot play due to once
                 if (triggerData.OnceLevel != PersistenceLevel.Untracked && inScriptData.HasSeen(node.Id(), triggerData.OnceLevel))
+                {
+                    DebugService.Log(LogMask.Scripting, "...node has already been seen");
                     continue;
+                }
 
                 // cannot play due to repetition
                 if (triggerData.RepeatDuration > 0 && inScriptData.HasRecentlySeen(node.Id(), triggerData.RepeatDuration))
+                {
+                    DebugService.Log(LogMask.Scripting, "...node was seen too recently");
                     continue;
+                }
 
                 // cannot play due to priority
                 if (node.TargetId() != StringHash32.Null)
                 {
                     ScriptThread currentThread;
                     if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
+                    {
+                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeId().ToDebugString(), node.TargetId().ToDebugString());
                         continue;
+                    }
                 }
 
                 // cannot play due to conditions
@@ -105,8 +126,13 @@ namespace Aqua.Scripting
                     bool bFailed = false;
                     for(int condIdx = 0, condCount = triggerData.Conditions.Length; condIdx < condCount; ++condIdx)
                     {
-                        if (!triggerData.Conditions[condIdx].Evaluate(inResolver, inContext))
+                        ref var comp = ref triggerData.Conditions[condIdx];
+                        if (!comp.Evaluate(inResolver, inContext))
                         {
+                            if (DebugService.IsLogging(LogMask.Scripting))
+                            {
+                                DebugService.Log(LogMask.Scripting, "...node condition '{0}' failed", Stringify(comp));
+                            }
                             bFailed = true;
                             break;
                         }
@@ -116,12 +142,72 @@ namespace Aqua.Scripting
                         continue;
                 }
 
+                DebugService.Log(LogMask.Scripting, "...node passed!");
                 outNodes.Add(node);
                 ioMinScore = triggerData.Score;
                 ++count;
             }
 
             return count;
+        }
+
+        static private string Stringify(in VariantComparison inComparison)
+        {
+            switch(inComparison.Operator)
+            {
+                case VariantCompareOperator.True:
+                    {
+                        return string.Format("{0} == true", inComparison.VariableKey.ToDebugString());
+                    }
+
+                case VariantCompareOperator.False:
+                    {
+                        return string.Format("{0} == true", inComparison.VariableKey.ToDebugString());
+                    }
+
+                case VariantCompareOperator.DoesNotExist:
+                    {
+                        return string.Format("{0} does not exist", inComparison.VariableKey.ToDebugString());
+                    }
+
+                case VariantCompareOperator.EqualTo:
+                    {
+                        return string.Format("{0} == {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                case VariantCompareOperator.Exists:
+                    {
+                        return string.Format("{0} exists", inComparison.VariableKey.ToDebugString());
+                    }
+
+                case VariantCompareOperator.GreaterThan:
+                    {
+                        return string.Format("{0} > {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                case VariantCompareOperator.GreaterThanOrEqualTo:
+                    {
+                        return string.Format("{0} >= {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                case VariantCompareOperator.LessThan:
+                    {
+                        return string.Format("{0} < {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                case VariantCompareOperator.LessThanOrEqualTo:
+                    {
+                        return string.Format("{0} <= {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                case VariantCompareOperator.NotEqualTo:
+                    {
+                        return string.Format("{0} != {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                    }
+
+                default:
+                    throw new ArgumentException("inComparison");
+            }
         }
 
         #endregion // Locating

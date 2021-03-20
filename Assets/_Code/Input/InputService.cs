@@ -1,3 +1,4 @@
+using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using System;
@@ -87,7 +88,7 @@ namespace Aqua
 
         public void PushPriority(int inPriority, object inContext = null)
         {
-            // Debug.LogFormat("[InputService] Pushed priority {0} with context '{1}'", inPriority, inContext);
+            DebugService.Log(LogMask.Input, "[InputService] Pushed priority {0} with context '{1}'", inPriority, inContext);
 
             m_PriorityStack.Add(new PriorityRecord(inPriority, inContext));
             m_CurrentPriority = inPriority;
@@ -107,11 +108,11 @@ namespace Aqua
                         if (i == m_PriorityStack.Count)
                         {
                             m_CurrentPriority = i > 0 ? m_PriorityStack[i - 1].Priority : DefaultPriority;
-                            // Debug.LogFormat("[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, i == 0 ? "null" : m_PriorityStack[i - 1].Context);
+                            DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, i == 0 ? "null" : m_PriorityStack[i - 1].Context);
                         }
                         else
                         {
-                            // Debug.LogFormat("[InputService] Popped priority with context '{0}'", inContext);
+                            DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}'", inContext);
                         }
 
                         BroadcastPriorityUpdate();
@@ -145,7 +146,7 @@ namespace Aqua
 
         public void PushFlags(InputLayerFlags inFlags, object inContext = null)
         {
-            // Debug.LogFormat("[InputService] Pushed flags {0} with context '{1}'", inFlags, inContext);
+            DebugService.Log(LogMask.Input, "[InputService] Pushed flags {0} with context '{1}'", inFlags, inContext);
 
             m_FlagsStack.Add(new FlagsRecord(inFlags, inContext));
             m_CurrentFlags = inFlags;
@@ -165,11 +166,11 @@ namespace Aqua
                         if (i == m_FlagsStack.Count)
                         {
                             m_CurrentFlags = i > 0 ? m_FlagsStack[i - 1].Flags : InputLayerFlags.Default;
-                            // Debug.LogFormat("[InputService] Popped flags with context '{0}', new flags are {1} with context '{2}'", inContext, m_CurrentFlags, i == 0 ? "null" : m_FlagsStack[i - 1].Context);
+                            DebugService.Log(LogMask.Input, "[InputService] Popped flags with context '{0}', new flags are {1} with context '{2}'", inContext, m_CurrentFlags, i == 0 ? "null" : m_FlagsStack[i - 1].Context);
                         }
                         else
                         {
-                            // Debug.LogFormat("[InputService] Popped flags with context '{0}'", inContext);
+                            DebugService.Log(LogMask.Input, "[InputService] Popped flags with context '{0}'", inContext);
                         }
                         BroadcastFlagsUpdate();
                         return;
@@ -226,7 +227,7 @@ namespace Aqua
         private void OnInputModeChanged(PointerInputMode inMode)
         {
             m_PointerMode = inMode;
-            Debug.LogFormat("[InputService] Pointer mode switched to {0}", inMode);
+            DebugService.Log(LogMask.Input, "[InputService] Pointer mode switched to {0}", inMode);
         }
 
         #endregion // Pointer
@@ -235,6 +236,8 @@ namespace Aqua
 
         public void PauseAll()
         {
+            DebugService.Log(LogMask.Input, "[InputService] Pausing all input (depth {0})", m_PauseAllCounter);
+
             if (++m_PauseAllCounter == 1)
             {
                 BroadcastFlagsUpdate();
@@ -248,6 +251,8 @@ namespace Aqua
                 Debug.LogErrorFormat("[InputService] Pause/Resume calls are mismatched");
                 return;
             }
+
+            DebugService.Log(LogMask.Input, "[InputService] Resuming all input (depth {0})", m_PauseAllCounter - 1);
 
             if (--m_PauseAllCounter == 0)
             {

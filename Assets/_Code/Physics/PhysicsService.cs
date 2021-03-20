@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Debugging;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
@@ -79,7 +80,7 @@ namespace Aqua
 
             if (contactCount > 0)
             {
-                Debug.LogFormat("[PhysicsService] Generated {0} contacts on tick {1}", contactCount, m_TickCount);
+                DebugService.Log(LogMask.Physics, "[PhysicsService] Generated {0} contacts on tick {1}", contactCount, m_TickCount);
             }
 
             // clear contacts
@@ -208,7 +209,7 @@ namespace Aqua
                                     separateVector.x *= -separation;
                                     separateVector.y *= -separation;
                                     
-                                    // Debug.LogFormat("[PhysicsService] Resolving contact on {0} by {1} {2} (tick {3}, tickIter {4})", body, contact.normal, separation, inTickIdx, iterationIdx);
+                                    DebugService.Log(LogMask.Physics, "[PhysicsService] Resolving contact on {0} by {1} {2} (tick {3}, tickIter {4})", objCollider, contact.normal, separation, inTickIdx, iterationIdx);
 
                                     if (!ReferenceEquals(lastCollider, contact.collider))
                                     {

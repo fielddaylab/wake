@@ -6,6 +6,7 @@ using BeauPools;
 using Leaf;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -106,7 +107,7 @@ namespace Aqua
                 ++responseCount;
             }
 
-            Debug.LogFormat("[ScriptingService] Added package '{0}' with {1} entrypoints and {2} responses", inPackage.Name(), entrypointCount, responseCount);
+            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Added package '{0}' with {1} entrypoints and {2} responses", inPackage.Name(), entrypointCount, responseCount);
         }
 
         internal void RemovePackage(ScriptNodePackage inPackage)
@@ -134,7 +135,7 @@ namespace Aqua
                 }
             }
 
-            Debug.LogFormat("[ScriptingService] Removed package '{0}'", inPackage.Name());
+            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Removed package '{0}'", inPackage.Name());
         }
 
         #endregion // Packages

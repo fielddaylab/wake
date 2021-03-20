@@ -51,7 +51,7 @@ namespace Aqua
         protected override void OnValidate()
         {
             CacheRaycasters();
-            if (Application.isPlaying)
+            if (Application.isPlaying && Time.frameCount > 2)
                 UpdateEnabled(true);
         }
 

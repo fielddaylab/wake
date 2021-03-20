@@ -32,6 +32,15 @@ namespace Aqua
 
         #region Handlers
 
+        private void OnDisable()
+        {
+            if (m_EnterMask != 0)
+            {
+                m_EnterMask = 0;
+                Services.UI?.CursorHintMgr.ClearHint(this);
+            }
+        }
+
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
             int mask = 1 << ((eventData.pointerId + 32) % 32);

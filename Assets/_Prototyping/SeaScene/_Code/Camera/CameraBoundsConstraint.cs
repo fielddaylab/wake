@@ -2,6 +2,7 @@ using System;
 using BeauUtil;
 using UnityEngine;
 using BeauRoutine;
+using Aqua.Debugging;
 
 namespace ProtoAqua.Observation
 {
@@ -71,7 +72,7 @@ namespace ProtoAqua.Observation
             
             ObservationServices.Camera.RemoveBounds(m_BoundsConstraint);
             m_BoundsConstraint = null;
-            Debug.LogFormat("[CameraBoundsConstraint] Removed bounding region '{0}'", name);
+            DebugService.Log(LogMask.Camera, "[CameraBoundsConstraint] Removed bounding region '{0}'", name);
         }
 
         #endregion // Events

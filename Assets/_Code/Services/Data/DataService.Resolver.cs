@@ -10,6 +10,7 @@ using BeauUtil.Variants;
 using Aqua.Profile;
 using Aqua.Scripting;
 using UnityEngine;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -111,7 +112,7 @@ namespace Aqua
         public void BindTable(StringHash32 inId, VariantTable inTable)
         {
             m_VariableResolver.SetTable(inId, inTable);
-            Debug.LogFormat("[DataService] Bound table '{0}'", inId.ToDebugString());
+            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Bound table '{0}'", inId.ToDebugString());
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace Aqua
         public void UnbindTable(StringHash32 inId)
         {
             m_VariableResolver.ClearTable(inId);
-            Debug.LogFormat("[DataService] Unbound table '{0}'", inId.ToDebugString());
+            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Unbound table '{0}'", inId.ToDebugString());
         }
 
         #endregion // Tables

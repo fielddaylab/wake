@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Debugging;
 using BeauUtil;
 using UnityEngine;
 
@@ -99,7 +100,7 @@ namespace ProtoAqua.Modeling
             CritterProfile profile;
             if (!m_Profiles.TryBinarySearch(inCritter.Id(), out profile))
             {
-                // Debug.LogFormat("[SimulationProfile] Creating new profile for '{0}'", inCritter.Id().ToDebugString());
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Creating new profile for '{0}'", inCritter.Id().ToDebugString());
                 profile = new CritterProfile(inCritter);
                 m_Profiles.PushBack(profile);
                 m_Profiles.SortByKey<StringHash32, CritterProfile>();
@@ -135,7 +136,7 @@ namespace ProtoAqua.Modeling
         {
             if (m_DiscoveredCritters.Add(inCritter))
             {
-                // Debug.LogFormat("[SimulationProfile] Importing critter '{0}'", inCritter.Id().ToDebugString());
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing critter '{0}'", inCritter.Id().ToDebugString());
                 foreach(var internalFact in inCritter.InternalFacts)
                     DiscoverFact(internalFact, null);
             }
@@ -146,7 +147,7 @@ namespace ProtoAqua.Modeling
             DiscoverCritter(inFact.Parent());
             if (m_DiscoveredFacts.Add(inFact))
             {
-                // Debug.LogFormat("[SimulationProfile] Importing fact '{0}'", inFact.Id().ToDebugString());
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing fact '{0}'", inFact.Id().ToDebugString());
                 inFact.Accept(this, inParams);
             }
         }

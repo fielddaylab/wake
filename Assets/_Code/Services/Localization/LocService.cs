@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Debugging;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -51,7 +52,7 @@ namespace Aqua
                 yield return Async.Schedule(parser);
             }
 
-            Debug.LogFormat("[LocService] Loaded {0} keys (global)", m_GlobalPackage.Count);
+            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (global)", m_GlobalPackage.Count);
         }
 
         private IEnumerator LoadLanguage(bool inbForce)
@@ -67,7 +68,7 @@ namespace Aqua
                 yield return Async.Schedule(parser);
             }
 
-            Debug.LogFormat("[LocService] Loaded {0} keys (english)", m_LanguagePackage.Count);
+            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (english)", m_LanguagePackage.Count);
         }
 
         #endregion // Loading

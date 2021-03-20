@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Debugging;
 using BeauData;
 using BeauRoutine;
 using BeauUtil;
@@ -214,7 +215,7 @@ namespace ProtoAqua.Observation
             bounds.Name = inName;
             m_BoundsConstraints.Add(bounds);
 
-            Debug.LogFormat("[CameraCtrl] Added bounding region '{0}'", inName);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Added bounding region '{0}'", inName);
             
             return bounds;
         }
@@ -222,7 +223,7 @@ namespace ProtoAqua.Observation
         public void RemoveBounds(CameraConstraints.Bounds inBounds)
         {
             m_BoundsConstraints.FastRemove(inBounds);
-            Debug.LogFormat("[CameraCtrl] Removed bounding region '{0}'", inBounds.Name);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Removed bounding region '{0}'", inBounds.Name);
         }
 
         public CameraConstraints.Hint AddHint(string inName)
@@ -231,14 +232,14 @@ namespace ProtoAqua.Observation
             hint.Name = inName;
             m_HintConstraints.Add(hint);
 
-            Debug.LogFormat("[CameraCtrl] Added camera hint '{0}'", inName);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Added camera hint '{0}'", inName);
             return hint;
         }
 
         public void RemoveHint(CameraConstraints.Hint inHint)
         {
             m_HintConstraints.FastRemove(inHint);
-            Debug.LogFormat("[CameraCtrl] Removed camera hint '{0}'", inHint.Name);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Removed camera hint '{0}'", inHint.Name);
         }
 
         public CameraConstraints.Drift AddDrift(string inName)
@@ -247,14 +248,14 @@ namespace ProtoAqua.Observation
             drift.Name = inName;
             m_DriftConstraints.Add(drift);
 
-            Debug.LogFormat("[CameraCtrl] Added camera drift '{0}'", inName);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Added camera drift '{0}'", inName);
             return drift;
         }
 
         public void RemoveDrift(CameraConstraints.Drift inDrift)
         {
             m_DriftConstraints.FastRemove(inDrift);
-            Debug.LogFormat("[CameraCtrl] Removed camera drift '{0}'", inDrift.Name);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Removed camera drift '{0}'", inDrift.Name);
         }
 
         public void SetTarget(Transform inTransform)
@@ -271,14 +272,14 @@ namespace ProtoAqua.Observation
             m_TargetConstraint.Zoom = 1;
             m_TargetConstraint.LerpFactor = m_DefaultLerp;
 
-            Debug.LogFormat("[CameraCtrl] Started tracking target '{0}'", m_TargetConstraint.Name);
+            DebugService.Log(LogMask.Camera, "[CameraCtrl] Started tracking target '{0}'", m_TargetConstraint.Name);
         }
 
         public void ClearTarget()
         {
             if (m_TargetConstraint != null)
             {
-                Debug.LogFormat("[CameraCtrl] Stopped tracking target '{0}'", m_TargetConstraint.Name);
+                DebugService.Log(LogMask.Camera, "[CameraCtrl] Stopped tracking target '{0}'", m_TargetConstraint.Name);
                 m_TargetConstraint = null;
             }
         }

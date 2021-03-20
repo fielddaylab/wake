@@ -1,5 +1,10 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System;
 using System.Collections;
+using System.Diagnostics;
 using AquaAudio;
 using BeauPools;
 using BeauRoutine;
@@ -7,8 +12,9 @@ using BeauUtil;
 using BeauUtil.Services;
 using BeauUtil.Variants;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
-namespace Aqua.DebugConsole
+namespace Aqua.Debugging
 {
     [ServiceDependency(typeof(ScriptingService), typeof(AudioMgr), typeof(DataService), typeof(UIMgr), typeof(StateMgr))]
     public partial class DebugService : ServiceBehaviour
@@ -255,5 +261,47 @@ namespace Aqua.DebugConsole
         }
 
         #endregion // IService
+    
+        #region Logging Stuff
+
+        #if DEVELOPMENT
+
+        static private uint s_LoggingMask = (uint) (LogMask.DEFAULT);
+
+        static private readonly object[] NullArgs = Array.Empty<object>();
+
+        static internal void AllowLogs(LogMask inMask)
+        {
+            s_LoggingMask |= (uint) inMask;
+        }
+
+        static internal void DisallowLogs(LogMask inMask)
+        {
+            s_LoggingMask &= ~(uint) inMask;
+        }
+
+        static public bool IsLogging(LogMask inMask) { return (s_LoggingMask & (uint) inMask) != 0; }
+
+        static public void Log(LogMask inMask, string inMessage) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(inMessage, NullArgs); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0), NullArgs); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0, inArg1), NullArgs); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0, inArg1, inArg2), NullArgs); }
+        static public void Log(LogMask inMask, string inMessage, params object[] inParams) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inParams), NullArgs); }
+
+        #else
+
+        static internal void AllowLogs(LogMask inMask) { }
+        static internal void DisallowLogs(LogMask inMask) { }
+        static public bool IsLogging(LogMask inMask) { return false; }
+
+        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage) { }
+        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0) { }
+        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { }
+        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { }
+        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, params object[] inParams) { }
+
+        #endif // DEVELOPMENT
+
+        #endregion // Logging Stuff
     }
 }

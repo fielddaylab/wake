@@ -6,6 +6,7 @@ using BeauUtil;
 using Aqua;
 using UnityEngine;
 using BeauUtil.Services;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -52,7 +53,7 @@ namespace Aqua
             m_TweakMap.Add(inTweaks.GetType(), inTweaks);
             inTweaks.OnAdded();
 
-            Debug.LogFormat("[TweakMgr] Loaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
+            DebugService.Log(LogMask.Loading, "[TweakMgr] Loaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
         }
 
         public void Unload(TweakAsset inTweaks)
@@ -68,7 +69,7 @@ namespace Aqua
             m_TweakMap.Remove(inTweaks.GetType());
             inTweaks.OnRemoved();
 
-            Debug.LogFormat("[TweakMgr] Unloaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
+            DebugService.Log(LogMask.Loading, "[TweakMgr] Unloaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
         }
 
         public T Get<T>() where T : TweakAsset

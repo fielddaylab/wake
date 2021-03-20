@@ -219,10 +219,7 @@ namespace ProtoAqua.Modeling
                     visualNode.Load(pos, nodeData);
 
                     Geom.Encapsulate(ref m_ContentBounds, new Rect(pos.x - radius, pos.y - radius, radius * 2, radius * 2));
-                    Debug.LogFormat("[ConceptMap] New Content Bounds are {0}", m_ContentBounds);
                 }
-
-                Debug.LogFormat("[ConceptMap] Finalized {0}", m_ContentBounds);
 
                 foreach(var name in unusedNames)
                 {

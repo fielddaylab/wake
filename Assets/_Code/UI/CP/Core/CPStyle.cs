@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Aqua.Debugging;
 
 namespace ProtoCP
 {
@@ -244,7 +245,7 @@ namespace ProtoCP
             if (m_Initialized)
                 return;
 
-            Debug.LogFormat("[CPStyle] Loading style '{0}'...", name);
+            DebugService.Log(LogMask.UI | LogMask.Loading, "[CPStyle] Loading style '{0}'...", name);
 
             GameObject poolRootGO = new GameObject(string.Format("CPStyle Storage ({0})", name));
             poolRootGO.hideFlags = HideFlags.DontSave;
@@ -272,7 +273,7 @@ namespace ProtoCP
             Application.quitting += m_ShutdownDelegate;
             m_Initialized = true;
 
-            Debug.LogFormat("[CPStyle] ...finished loading style '{0}'", name);
+            DebugService.Log(LogMask.UI | LogMask.Loading, "[CPStyle] ...finished loading style '{0}'", name);
         }
 
         private void Shutdown()
@@ -288,7 +289,7 @@ namespace ProtoCP
             Application.quitting -= m_ShutdownDelegate;
             SceneHelper.OnSceneUnload -= m_UnloadDelegate;
 
-            Debug.LogFormat("[CPStyle] Unloading style '{0}'...", name);
+            DebugService.Log(LogMask.UI | LogMask.Loading, "[CPStyle] Unloading style '{0}'...", name);
 
             foreach(var poolCollection in m_PoolSets.Values)
             {
@@ -300,7 +301,7 @@ namespace ProtoCP
 
             m_Initialized = false;
 
-            Debug.LogFormat("[CPStyle] ...finished unloading style '{0}'...", name);
+            DebugService.Log(LogMask.UI | LogMask.Loading, "[CPStyle] ...finished unloading style '{0}'...", name);
         }
     
         #if UNITY_EDITOR

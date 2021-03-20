@@ -8,25 +8,7 @@ namespace Aqua
     {
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            var queryParams = Services.Data.PeekQueryParams();
             string targetScene = null;
-
-            if (queryParams != null)
-            {
-                string activity = queryParams.Get("activity");
-                if (activity == "sim")
-                {
-                    targetScene = "SimScene";
-                }
-                else if (activity == "observation")
-                {
-                    targetScene = "SeaSceneTest";
-                }
-                else if (queryParams.Contains("scenarioData") || queryParams.Contains("scenarioId"))
-                {
-                    targetScene = "SimScene";
-                }
-            }
 
             if (!string.IsNullOrEmpty(targetScene))
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aqua.Debugging;
 using BeauUtil;
 using BeauUtil.IO;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Aqua
         {
             if (s_AssetCache.Add(inReloadable))
             {
-                Debug.LogFormat("[ReloadableAssetCache] Added asset '{0}'", inReloadable.Id.ToDebugString());
+                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Added asset '{0}'", inReloadable.Id.ToDebugString());
                 return true;
             }
 
@@ -32,7 +33,8 @@ namespace Aqua
         {
             if (s_AssetCache.Remove(inReloadable))
             {
-                Debug.LogFormat("[ReloadableAssetCache] Removed asset '{0}'", inReloadable.Id.ToDebugString());
+                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Removed asset '{0}'", inReloadable.Id.ToDebugString());
+                
                 return true;
             }
 

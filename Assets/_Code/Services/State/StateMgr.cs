@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -159,7 +160,7 @@ namespace Aqua
             foreach(var obj in m_InitialPreloadRoot.GetComponentsInChildren<ISceneLoadHandler>(true))
                 obj.OnSceneLoad(m_InitialPreloadRoot.scene, null);
 
-            Debug.LogFormat("[StateMgr] Initial load of preload scene '{0}' finished", m_InitialPreloadRoot.scene.path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of preload scene '{0}' finished", m_InitialPreloadRoot.scene.path);
 
             SceneBinding active = SceneManager.GetActiveScene();
             BindScene(active);
@@ -175,7 +176,8 @@ namespace Aqua
             m_SceneLock = false;
             Services.UI.HideLoadingScreen();
 
-            Debug.LogFormat("[StateMgr] Initial load of '{0}' finished", active.Path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
+
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
 
@@ -203,7 +205,8 @@ namespace Aqua
             SceneBinding active = SceneHelper.ActiveScene();
 
             // unloading instant
-            Debug.LogFormat("[StateMgr] Unloading scene '{0}'", active.Path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Unloading scene '{0}'", active.Path);
+
             active.BroadcastUnload(inContext);
             
             Services.Deregister(active);
@@ -211,7 +214,7 @@ namespace Aqua
             AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
             loadOp.allowSceneActivation = false;
 
-            Debug.LogFormat("[StateMgr] Loading scene '{0}'", inNextScene.Path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Loading scene '{0}'", inNextScene.Path);
 
             while(loadOp.progress < 0.9f)
                 yield return null;
@@ -245,7 +248,7 @@ namespace Aqua
                 Services.UI.HideLetterbox();
             }
 
-            Debug.LogFormat("[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
             inNextScene.BroadcastLoaded(inContext);
             Services.Input.ResumeAll();
             m_SceneLock = false;
@@ -276,7 +279,7 @@ namespace Aqua
                 inScene.Scene.GetAllComponents<IScenePreloader>(true, allPreloaders);
                 if (allPreloaders.Count > 0)
                 {
-                    Debug.LogFormat("[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
                     return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
                 }
             }
@@ -291,7 +294,7 @@ namespace Aqua
                 inBinding.Scene.GetAllComponents<FlattenHierarchy>(false, allFlatten);
                 if (allFlatten.Count > 0)
                 {
-                    Debug.LogFormat("[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
                     using(Profiling.Time("flatten scene hierarchy"))
                     {
                         yield return Routine.Inline(Routine.ForEachAmortize(allFlatten.ToArray(), (f) => f.Flatten(), 5));
@@ -307,7 +310,7 @@ namespace Aqua
                 inRoot.GetComponentsInChildren<IScenePreloader>(true, allPreloaders);
                 if (allPreloaders.Count > 0)
                 {
-                    Debug.LogFormat("[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
                     return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
                 }
             }

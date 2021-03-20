@@ -9,7 +9,7 @@ using BeauUtil.Tags;
 using TMPro;
 using UnityEngine;
 
-namespace Aqua.DebugConsole
+namespace Aqua.Debugging
 {
     public class ConsoleTimeDisplay : MonoBehaviour
     {

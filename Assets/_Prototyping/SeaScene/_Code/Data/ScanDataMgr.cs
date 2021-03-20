@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Debugging;
 using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine;
@@ -130,7 +131,8 @@ namespace ProtoAqua.Observation
             {
                 m_MasterMap.Add(node.Id(), node);
             }
-            Debug.LogFormat("[ScanDataMgr] Loaded scan data package '{0}' with {1} nodes", inPackage.name, inPackage.Count);
+
+            DebugService.Log(LogMask.Observation | LogMask.Loading, "[ScanDataMgr] Loaded scan data package '{0}' with {1} nodes", inPackage.name, inPackage.Count);
         }
 
         internal void RemovePackage(ScanDataPackage inPackage)
@@ -139,7 +141,8 @@ namespace ProtoAqua.Observation
             {
                 m_MasterMap.Remove(node.Id());
             }
-            Debug.LogFormat("[ScanDataMgr] Unloaded scan data package '{0}'", inPackage.name);
+            
+            DebugService.Log(LogMask.Observation | LogMask.Loading, "[ScanDataMgr] Unloaded scan data package '{0}'", inPackage.name);
         }
 
         #endregion // Register/Unregister

@@ -7,6 +7,7 @@ using Aqua;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauRoutine;
+using Aqua.Debugging;
 
 namespace AquaAudio
 {
@@ -248,7 +249,7 @@ namespace AquaAudio
             if (!m_LoadedPackages.Add(inPackage))
                 return;
 
-            Debug.LogFormat("[AudioMgr] Loaded package '{0}'", inPackage.name);
+            DebugService.Log(LogMask.Audio | LogMask.Loading, "[AudioMgr] Loaded package '{0}'", inPackage.name);
 
             foreach(var evt in inPackage.Events())
             {
@@ -294,7 +295,7 @@ namespace AquaAudio
         {
             m_LoadedPackages.Remove(inPackage);
 
-            Debug.LogFormat("[AudioMgr] Unloaded package '{0}'", inPackage.name);
+            DebugService.Log(LogMask.Audio | LogMask.Loading, "[AudioMgr] Unloaded package '{0}'", inPackage.name);
             
             foreach(var evt in inPackage.Events())
             {

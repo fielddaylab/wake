@@ -28,45 +28,12 @@ namespace Aqua
         [SerializeField, Range(0, 1)] private float m_UncommonChance = 0.3f;
         [SerializeField, Range(0, 1)] private float m_RareChance = 0.1f;
 
-        [Header("-- DEBUG --")]
-        [SerializeField] private string m_DebugUrl = string.Empty;
-
         #endregion // Inspector
 
         [NonSerialized] private SaveData m_CurrentSaveData = new SaveData();
-        [NonSerialized] private QueryParams m_QueryParams;
         [NonSerialized] private VariantTable m_SessionTable;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
-
-        #region Query Params
-
-        public QueryParams PeekQueryParams()
-        {
-            return m_QueryParams;
-        }
-
-        public QueryParams PopQueryParams()
-        {
-            QueryParams stored = m_QueryParams;
-            m_QueryParams = null;
-            return stored;
-        }
-
-        private void RetrieveQueryParams()
-        {
-            string url;
-            #if UNITY_EDITOR
-            url = m_DebugUrl;
-            #else
-            url = Application.absoluteURL;
-            #endif // UNITY_EDITOR
-
-            m_QueryParams = new QueryParams();
-            m_QueryParams.TryParse(url);
-        }
-
-        #endregion // Query Params
 
         #region Save Data
 
@@ -134,7 +101,6 @@ namespace Aqua
         protected override void Initialize()
         {
             InitVariableResolver();
-            RetrieveQueryParams();
 
             m_SessionTable = new VariantTable("session");
             BindTable("session", m_SessionTable);
@@ -143,7 +109,6 @@ namespace Aqua
         protected override void Shutdown()
         {
             SaveProfile();
-            m_QueryParams = null;
         }
 
         #endregion // IService
