@@ -55,7 +55,7 @@ namespace ProtoAqua.Modeling
 
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
                     BFBody body = critterEntry.FactOfType<BFBody>();
-                    float populationScale = body.StartingMass();
+                    float populationScale = body.MassPerPopulation() * body.MassDisplayScale();
 
                     unusedPoints.Remove(id);
                     if (!m_PointMap.TryGetValue(id, out point))
