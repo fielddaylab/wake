@@ -20,8 +20,7 @@ namespace Aqua
         bool IsInputEnabled { get; }
         DeviceInput Device { get; }
 
-        void UpdateSystemPriority(int inSystemPriority);
-        void UpdateSystemFlags(InputLayerFlags inFlags);
+        void UpdateSystem(int inSystemPriority, InputLayerFlags inFlags, bool inbForceUpdate);
 
         UnityEvent OnInputEnabled { get; }
         UnityEvent OnInputDisabled { get; }

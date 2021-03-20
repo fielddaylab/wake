@@ -64,8 +64,7 @@ namespace Aqua
             if (!m_AllInputLayers.Contains(inInputLayer))
             {
                 m_AllInputLayers.Add(inInputLayer);
-                inInputLayer.UpdateSystemPriority(m_CurrentPriority);
-                inInputLayer.UpdateSystemFlags(WorkingFlags());
+                inInputLayer.UpdateSystem(m_CurrentPriority, WorkingFlags(), true);
                 return true;
             }
 
@@ -75,6 +74,14 @@ namespace Aqua
         public bool DeregisterInput(IInputLayer inInputLayer)
         {
             return m_AllInputLayers.Remove(inInputLayer);
+        }
+
+        private void BroadcastSystemUpdate()
+        {
+            foreach(var layer in m_AllInputLayers)
+            {
+                layer.UpdateSystem(m_CurrentPriority, WorkingFlags(), false);
+            }
         }
 
         #endregion // Input Layers
@@ -93,7 +100,7 @@ namespace Aqua
             m_PriorityStack.Add(new PriorityRecord(inPriority, inContext));
             m_CurrentPriority = inPriority;
 
-            BroadcastPriorityUpdate();
+            BroadcastSystemUpdate();
         }
 
         public void PopPriority(object inContext = null)
@@ -115,7 +122,7 @@ namespace Aqua
                             DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}'", inContext);
                         }
 
-                        BroadcastPriorityUpdate();
+                        BroadcastSystemUpdate();
                         return;
                     }
                 }
@@ -124,14 +131,6 @@ namespace Aqua
             {
                 Debug.LogErrorFormat("[InputService] Attempting to pop priority with nothing on stack.");
                 m_CurrentPriority = 0;
-            }
-        }
-
-        private void BroadcastPriorityUpdate()
-        {
-            foreach(var layer in m_AllInputLayers)
-            {
-                layer.UpdateSystemPriority(m_CurrentPriority);
             }
         }
 
@@ -151,7 +150,7 @@ namespace Aqua
             m_FlagsStack.Add(new FlagsRecord(inFlags, inContext));
             m_CurrentFlags = inFlags;
 
-            BroadcastFlagsUpdate();
+            BroadcastSystemUpdate();
         }
 
         public void PopFlags(object inContext = null)
@@ -172,7 +171,7 @@ namespace Aqua
                         {
                             DebugService.Log(LogMask.Input, "[InputService] Popped flags with context '{0}'", inContext);
                         }
-                        BroadcastFlagsUpdate();
+                        BroadcastSystemUpdate();
                         return;
                     }
                 }
@@ -181,16 +180,6 @@ namespace Aqua
             {
                 Debug.LogErrorFormat("[InputService] Attempting to pop flags with nothing on stack.");
                 m_CurrentFlags = InputLayerFlags.Default;
-            }
-        }
-
-        private void BroadcastFlagsUpdate()
-        {
-            InputLayerFlags flags = WorkingFlags();
-
-            foreach(var layer in m_AllInputLayers)
-            {
-                layer.UpdateSystemFlags(flags);
             }
         }
 
@@ -240,7 +229,7 @@ namespace Aqua
 
             if (++m_PauseAllCounter == 1)
             {
-                BroadcastFlagsUpdate();
+                BroadcastSystemUpdate();
             }
         }
 
@@ -256,7 +245,7 @@ namespace Aqua
 
             if (--m_PauseAllCounter == 0)
             {
-                BroadcastFlagsUpdate();
+                BroadcastSystemUpdate();
             }
         }
 

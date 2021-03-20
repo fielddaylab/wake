@@ -31,7 +31,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private int m_LastKnownSystemPriority = 0;
+        [NonSerialized] private int m_LastKnownSystemPriority = InputService.DefaultPriority;
         [NonSerialized] private InputLayerFlags m_LastKnownSystemFlags = InputLayerFlags.Default;
         [NonSerialized] private bool m_LastKnownState;
         [NonSerialized] private DeviceInput m_DeviceInput;
@@ -109,21 +109,13 @@ namespace Aqua
             get { return m_DeviceInput ?? (m_DeviceInput = new DeviceInput(this)); }
         }
 
-        public void UpdateSystemPriority(int inSystemPriority)
+        public void UpdateSystem(int inSystemPriority, InputLayerFlags inFlags, bool inbForceUpdate)
         {
-            if (m_LastKnownSystemPriority != inSystemPriority)
+            if (inbForceUpdate || m_LastKnownSystemPriority != inSystemPriority || m_LastKnownSystemFlags != inFlags)
             {
                 m_LastKnownSystemPriority = inSystemPriority;
-                UpdateEnabled(false);
-            }
-        }
-
-        public void UpdateSystemFlags(InputLayerFlags inFlags)
-        {
-            if (m_LastKnownSystemFlags != inFlags)
-            {
                 m_LastKnownSystemFlags = inFlags;
-                UpdateEnabled(false);
+                UpdateEnabled(inbForceUpdate);
             }
         }
 

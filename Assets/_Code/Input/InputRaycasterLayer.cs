@@ -51,8 +51,8 @@ namespace Aqua
         protected override void OnValidate()
         {
             CacheRaycasters();
-            if (Application.isPlaying && Time.frameCount > 2)
-                UpdateEnabled(true);
+            // if (Application.isPlaying && Time.frameCount > 2)
+            //     UpdateEnabled(true);
         }
 
         #endif // UNITY_EDITOR
