@@ -1,52 +1,73 @@
-#basePath   job.1_1a
+#basePath   job.1_2b
 
 :: start
 @trigger    JobStarted
 @cutscene
-$set    player:seen.urchinBaron = true
-{@player}   The... Urchin Baron?
-{@kevin}    Oh... oh no...
-{@urchinBaron}  Hey hey! Thanks for taking on my job!
-                Wait a second, is that-
-{@kevin}    ...Hi, Urban.
-{@urchinBaron}  Whoa!! Holy-
-                I haven't seen you since-
-{@kevin}    {speed 2}Yeah good to see you too{/speed}
-            We're here to do a job.
-{@urchinBaron}  ...Ah. Right.
-                The job.
+$set    player:seen.MargoLargo = true
+{@kelpResearcher} 	Care to help settle a bet? You've seen the urchin barren, right? Well, a few of us here think it's hopeless to keep...
+			trying to fix it.
+{@player}   Oh... But, isn't that why we're here?
+{@kevin}    Here we go again...
+{{@kelpResearcher}  Well, yes, and no. We are here to study the site, but we don't really know if it can be "fixed". 
+	We know there's a perfectly good Giant Kelp forest just west of the barren, but there are a few differences between them.
+	We were hoping a set of fresh eyes would help, and maybe you could tell us whether there's a chance.
+
 {hide-dialog}{wait 1}
-{@player}       Is... is that it?
-{@urchinBaron}  Is what it?
-{@player}       The{wait 0.2} job? That we accepted?
-{@urchinBaron}  Oh yes. Sorry, I was caught reminiscing about-
-{@kevin}    Get to the point, Urban.
-{@urchinBaron}  Oh fine. I need you to figure out why there's kelp in Site A.
-                Some urchins are there and I expected the results to turn out differently.
+{@player}       OK, so just to recap. You want us, the newbies, the go spot the difference between the two forests? 
+		And we need to report back whether we can fix it? What counts as evidence for that?
+{@Kevin}  We should probably bring them a model of the future of the barren.
+{{@kelpResearcher} What they said. A model would be lovely.
+{@player} Alrighty then. Here goes nothing!
+{@Kevin} Let's start by observing the sites again...
 
 :: end
 @trigger    JobCompleted
 @cutscene
-{@urchinBaron}  How marvelous! So the urchins are eating the kelp, but just not fast enough.
-{@player}   Yep, that's it.
-{@urchinBaron}  Sounds like I'll need more data then...
-                By the way, how would you feel about catching-
-{@kevin}    Not interested Urban.
-{@urchinBaron}  ...I see. You've changed.
-{@kevin}    You haven't.
-{@player}   Uh, anyways!
-            Nice working with you, please pay us, etc. Hanging up now!
-{hide-dialog}{wait 1}
-{@player}   What was {slow}that{/slow}?
-{@kevin}    {fast}Nothing, I'm fine.{/fast}
+{{@kelpResearcher}  How marvelous! We just need some otters.
+{@player}   100%
+{{@kelpResearcher}   This is so exciting! We had all been getting pretty bummed out thinking it was hopeless.
+		Can't wait to work with you again!
+ 
+// some guidance
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station1", seen.MargoLargo == True
+@once
+@cutscene
+{@kevin}   We've already been to depressing barren Site B, how about we look for Site C to the west?
+
+:: 1-2BExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype", jobs:j1-2b.got.scans
+@once
+@cutscene
+{@player}   Here we are, on our own, Kevin, What's next?
+$if has.entity:Otter// all scans?
+    $set    jobs:j1-2b.got.scans = true
+    {@kevin}   Not sure what we can find out here. I think you missed something in the ocean.
+$else
+    {@kevin}   We should probably find the behaviors of otters.
+    $endif
+$endif
+
 
 // Kevin Responses
 
 :: kevin.atBottom
 @trigger    RequestPartnerHelp
-@when       scene:name == "RS-1A"
+@when       scene:name == "RS-1B"
 @once
 @boostScore 5
 @cutscene
-{@kevin}    So, we're looking for why the urchins haven't wiped out the kelp?
-{@player}   I believe so.
+{@kevin}    Well, this IS rather depressing... Makes me kinda mad at these urchin...
+{@player}   No kidding
+
+:: kevin.atBottom
+@trigger    RequestPartnerHelp
+@when       scene:name == "RS-1C"
+@once
+@boostScore 5
+@cutscene
+{@player}   Kevin, this is gorgeous!
+{@kevin}	Focus. What could be the difference?
