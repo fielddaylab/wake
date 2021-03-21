@@ -71,7 +71,7 @@ namespace Aqua
             EnsureCreated();
 
             if (inId.IsEmpty)
-                return null;
+                return NullValue();
 
             T obj;
             m_IdMap.TryGetValue(inId, out obj);
@@ -96,6 +96,8 @@ namespace Aqua
                     yield return obj;
             }
         }
+
+        protected virtual T NullValue() { return null; }
 
         #endregion // Lookup
 

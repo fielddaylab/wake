@@ -1,4 +1,5 @@
 using BeauData;
+using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
@@ -7,12 +8,13 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private ActDB m_Acts = null;
-        [SerializeField] private JobDB m_Jobs = null;
-        [SerializeField] private BestiaryDB m_Bestiary = null;
-        [SerializeField] private MapDB m_Map = null;
-        [SerializeField] private InventoryDB m_Inventory = null;
-        [SerializeField] private WaterPropertyDB m_WaterProperties = null;
+        [SerializeField, Required] private ActDB m_Acts = null;
+        [SerializeField, Required] private JobDB m_Jobs = null;
+        [SerializeField, Required] private BestiaryDB m_Bestiary = null;
+        [SerializeField, Required] private MapDB m_Map = null;
+        [SerializeField, Required] private InventoryDB m_Inventory = null;
+        [SerializeField, Required] private WaterPropertyDB m_WaterProperties = null;
+        [SerializeField, Required] private ScriptCharacterDB m_ScriptCharacters = null; 
 
         #endregion // Inspector
 
@@ -22,6 +24,7 @@ namespace Aqua
         public MapDB Map { get { return m_Map; } }
         public InventoryDB Inventory { get { return m_Inventory; } }
         public WaterPropertyDB WaterProp { get { return m_WaterProperties; } }
+        public ScriptCharacterDB Characters { get { return m_ScriptCharacters; } }
 
         protected override void Initialize()
         {
@@ -33,6 +36,7 @@ namespace Aqua
             m_Map.Initialize();
             m_Inventory.Initialize();
             m_WaterProperties.Initialize();
+            m_ScriptCharacters.Initialize();
         }
     }
 }

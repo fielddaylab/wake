@@ -29,6 +29,10 @@ namespace Aqua
             public string VisibleText;
             public StringHash32 TypeSFX;
 
+            public StringHash32 TargetId;
+            public ScriptActorDefinition TargetDef;
+            public StringHash32 PortraitId;
+
             public bool AutoContinue;
             public float SkipHoldTimer;
             public bool SkipHeld;
@@ -42,6 +46,9 @@ namespace Aqua
                 VisibleText = null;
                 TypeSFX = null;
                 IsCutsceneSkip = false;
+                TargetId = StringHash32.Null;
+                PortraitId = StringHash32.Null;
+                TargetDef = null;
 
                 ResetTemp();
             }
@@ -72,11 +79,14 @@ namespace Aqua
         
         [SerializeField] private RectTransform m_SpeakerContainer = null;
         [SerializeField] private TMP_Text m_SpeakerLabel = null;
+        [SerializeField] private Graphic m_SpeakerLabelBackground = null;
+        [SerializeField] private Image m_SpeakerPortrait = null;
 
         [Header("Text")]
 
-        [SerializeField] private LayoutGroup m_TextLayout = null;
-        [SerializeField] private TMP_Text m_TextDisplay = null;
+        [SerializeField, Required] private LayoutGroup m_TextLayout = null;
+        [SerializeField, Required] private TMP_Text m_TextDisplay = null;
+        [SerializeField] private Graphic m_TextBackground = null;
 
         [Header("Button")]
 
@@ -93,6 +103,9 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private ColorPalette4 m_DefaultNamePalette;
+        [NonSerialized] private ColorPalette4 m_DefaultTextPalette;
+
         [NonSerialized] private TypingState m_CurrentState;
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
@@ -107,23 +120,38 @@ namespace Aqua
 
         #region BasePanel
 
+        protected override void Awake()
+        {
+            base.Awake();
+            
+            if (m_SpeakerLabel)
+                m_DefaultNamePalette.Content = m_SpeakerLabel.color;
+
+            if (m_SpeakerLabelBackground)
+                m_DefaultNamePalette.Background = m_SpeakerLabelBackground.color;
+
+            m_DefaultTextPalette.Content = m_TextDisplay.color;
+
+            if (m_TextBackground)
+                m_DefaultTextPalette.Background = m_TextBackground.color;
+        }
+
         protected override void Start()
         {
             base.Start();
 
             m_Input = BaseInputLayer.Find(this);
+            m_CurrentState.ResetFull();
+            ResetSpeaker();
         }
 
         protected override void OnHideComplete(bool inbInstant)
         {
             m_CurrentState.ResetFull();
 
-            if (m_SpeakerLabel)
-                m_SpeakerLabel.SetText(string.Empty);
-            
+            ResetSpeaker();
+
             m_TextDisplay.SetText(string.Empty);
-            if (m_SpeakerContainer)
-                m_SpeakerContainer.gameObject.SetActive(false);
             
             if (m_ButtonContainer)
                 m_ButtonContainer.gameObject.SetActive(false);
@@ -146,42 +174,29 @@ namespace Aqua
                 m_EventHandler.Register(ScriptEvents.Dialog.Clear, () => m_TextDisplay.SetText(string.Empty));
                 m_EventHandler.Register(ScriptEvents.Dialog.InputContinue, () => WaitForInput());
                 m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.Argument0.AsStringHash());
-                m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeaker(e.StringArgument));
+                m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeakerName(e.StringArgument));
                 m_EventHandler.Register(ScriptEvents.Dialog.Speed, (e, o) => {
                     m_CurrentState.Speed = e.IsClosing ? 1 : e.Argument0.AsFloat();
                     return Routine.WaitSeconds(0.15f);
                 });
-                m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.Argument0.AsStringHash()));
+                m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.Argument0.AsStringHash(), e.Argument1.AsStringHash(), false));
+                m_EventHandler.Register(ScriptEvents.Dialog.Portrait, (e, o) => SetPortrait(e.Argument0.AsStringHash(), false));
                 m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Routine.WaitSeconds(e.Argument0.AsFloat() * GetSkipMultiplier()));
             }
 
             return m_EventHandler;
         }
 
-        
-        private void SetTarget(StringHash32 inTarget)
+        #endregion // Event Handlers
+
+        #region Speaker
+
+        private void ResetSpeaker()
         {
-            if (inTarget.IsEmpty)
-            {
-                m_CurrentState.TypeSFX = null;
-                SetSpeaker(null);
-                return;
-            }
-
-            ScriptActorDefinition actorDef = Services.Script.Tweaks.ActorDef(inTarget);
-
-            m_CurrentState.TypeSFX = actorDef.DefaultTypeSfx();
-            if (actorDef.HasFlags(ScriptActorTypeFlags.IsPlayer))
-            {
-                SetSpeaker(Services.Data.CurrentCharacterName());
-            }
-            else
-            {
-                SetSpeaker(Services.Loc.Localize(actorDef.NameId()));
-            }
+            SetTarget(StringHash32.Null, StringHash32.Null, true);
         }
 
-        private bool SetSpeaker(StringSlice inSpeaker)
+        private bool SetSpeakerName(StringSlice inSpeaker)
         {
             if (m_CurrentState.SpeakerName == inSpeaker)
                 return false;
@@ -205,7 +220,81 @@ namespace Aqua
             return true;
         }
 
-        #endregion // Event Handlers
+        private bool SetTarget(StringHash32 inTargetId, StringHash32 inPortraitId, bool inbForce)
+        {
+            if (!inbForce && m_CurrentState.TargetId == inTargetId)
+                return SetPortrait(inPortraitId, false);
+
+            m_CurrentState.TargetId = inTargetId;
+            ScriptActorDefinition actorDef = m_CurrentState.TargetDef = Services.Assets.Characters.Get(inTargetId);
+
+            m_CurrentState.TypeSFX = actorDef.DefaultTypeSfx();
+
+            if (actorDef.HasFlags(ScriptActorTypeFlags.IsPlayer))
+            {
+                SetSpeakerName(Services.Data.CurrentCharacterName());
+            }
+            else
+            {
+                if (actorDef.NameId().IsEmpty)
+                    SetSpeakerName(StringSlice.Empty);
+                else
+                    SetSpeakerName(Services.Loc.Localize(actorDef.NameId()));
+            }
+
+            ColorPalette4? nameOverride = actorDef.NamePaletteOverride();
+            ColorPalette4? textOverride = actorDef.TextPaletteOverride();
+
+            AssignNamePalette(nameOverride ?? m_DefaultNamePalette);
+            AssignTextPalette(textOverride ?? m_DefaultTextPalette);
+
+            SetPortrait(inPortraitId, true);
+            return true;
+        }
+
+        private bool SetPortrait(StringHash32 inPortraitId, bool inbForce)
+        {
+            if (!inbForce && m_CurrentState.PortraitId == inPortraitId)
+                return false;
+            
+            Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
+            m_CurrentState.PortraitId = inPortraitId;
+            if (portraitSprite)
+            {
+                if (m_SpeakerPortrait)
+                {
+                    m_SpeakerPortrait.sprite = portraitSprite;
+                    m_SpeakerPortrait.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (m_SpeakerPortrait)
+                {
+                    m_SpeakerPortrait.gameObject.SetActive(false);
+                    m_SpeakerPortrait.sprite = null;
+                }
+            }
+
+            return true;
+        }
+
+        private void AssignNamePalette(in ColorPalette4 inPalette)
+        {
+            if (m_SpeakerLabel)
+                m_SpeakerLabel.color = inPalette.Content;
+            if (m_SpeakerLabelBackground)
+                m_SpeakerLabelBackground.color = inPalette.Background;
+        }
+
+        private void AssignTextPalette(in ColorPalette4 inPalette)
+        {
+            m_TextDisplay.color = inPalette.Content;
+            if (m_TextBackground)
+                m_TextBackground.color = inPalette.Background;
+        }
+
+        #endregion // Speaker
 
         #region Scripting
 

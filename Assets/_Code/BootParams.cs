@@ -47,6 +47,7 @@ namespace Aqua
             Debug.Log("[Bootstrap] Debug mode disabled");
             DestroyImmediate(m_Debug.gameObject);
             #else
+            Assert.NotNull(m_Debug); // should initialize assert error catching
             Debug.Log("[Bootstrap] Debug mode enabled");
             #endif // !DEVELOPMENT
 
@@ -79,6 +80,18 @@ namespace Aqua
             if (p.Contains("mute"))
             {
                 AudioListener.volume = 0;
+                Debug.LogFormat("[BootParams] Muting volume");
+            }
+
+            // antialiasing
+            if (p.Contains("forceAA"))
+            {
+                Variant aa = p.GetVariant("forceAA");
+                int aaVal = 2;
+                if (aa.Type != VariantType.Null)
+                    aaVal = aa.AsInt();
+                QualitySettings.antiAliasing = aaVal;
+                Debug.LogFormat("[BootParams] Antialiasing set to {0}", aaVal);
             }
 
             // debug
@@ -95,7 +108,7 @@ namespace Aqua
 
                 if (extraCategories != 0)
                 {
-                    Debug.LogFormat("Activating debug categories '{0}'", extraCategories.ToString());
+                    Debug.LogFormat("[BootParams] Activating debug categories '{0}'", extraCategories.ToString());
                     DebugService.AllowLogs(extraCategories);
                 }
             }

@@ -48,6 +48,7 @@ namespace Aqua.Scripting
             static public readonly StringHash32 Auto = "auto-continue";
             static public readonly StringHash32 Clear = "clear";
             static public readonly StringHash32 InputContinue = "input-continue";
+            static public readonly StringHash32 Portrait = "set-portrait";
             static public readonly StringHash32 SetTypeSFX = "set-type-sfx";
             static public readonly StringHash32 Speaker = "set-speaker";
             static public readonly StringHash32 Speed = "set-speed";

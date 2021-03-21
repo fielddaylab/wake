@@ -68,13 +68,21 @@ namespace Aqua
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
             m_TagEventParser.AddEvent("input-continue", ScriptEvents.Dialog.InputContinue).WithAliases("continue");
+            m_TagEventParser.AddEvent("#*", ScriptEvents.Dialog.Portrait).ProcessWith(ParsePortraitArgs);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
-            m_TagEventParser.AddEvent("@*", ScriptEvents.Dialog.Target).ProcessWith(ParseTargetEventData);
+            m_TagEventParser.AddEvent("@*", ScriptEvents.Dialog.Target).ProcessWith(ParseTargetArgs);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
         }
 
-        static private void ParseTargetEventData(TagData inTag, object inContext, ref TagEventData ioEvent)
+        static private void ParseTargetArgs(TagData inTag, object inContext, ref TagEventData ioEvent)
+        {
+            ioEvent.Argument0 = inTag.Id.Substring(1).Hash32();
+            if (inTag.Data.StartsWith('#'))
+                ioEvent.Argument1 = inTag.Data.Substring(1).Hash32();
+        }
+
+        static private void ParsePortraitArgs(TagData inTag, object inContext, ref TagEventData ioEvent)
         {
             ioEvent.Argument0 = inTag.Id.Substring(1).Hash32();
         }
@@ -271,7 +279,6 @@ namespace Aqua
             m_SkippedEvents = new HashSet<StringHash32>();
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOff);
-            m_SkippedEvents.Add(ScriptEvents.Global.PitchBGM);
             m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
             m_SkippedEvents.Add(ScriptEvents.Global.Wait);
             m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
@@ -290,6 +297,7 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speaker);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.Portrait);
         }
 
         #endregion // Event Setup

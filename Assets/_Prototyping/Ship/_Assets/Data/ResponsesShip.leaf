@@ -10,7 +10,7 @@
 @cutscene
 {@kevin}    So, this is the helm?
 {@player}   Yup!
-{@kevin}    Looks like there's a map...{wait 0.2} and a "Progress"? What is that?
+{@kevin}    Looks like there's a map...{wait 0.2}{#confused} and a "Progress"? What is that?
 {@player}   Kinda a tablet for looking at all the jobs I could take.
 {@kevin}    But if we wanted to look at the ocean we could just step outside.
 {@player}   Yup!
@@ -39,7 +39,7 @@ $set    kevin:seenShipHelm = true
 @boostScore -5
 @repeat     1
 @chatter
-{@kevin}    Hello from the ceiling!
+{@kevin #happy}    Hello from the ceiling!
 
 :: inside.helm.hello2
 @trigger    RequestPartnerHelp
@@ -48,7 +48,7 @@ $set    kevin:seenShipHelm = true
 @boostScore -5
 @repeat     1
 @chatter
-{@kevin}    This bulb is a little cramped...
+{@kevin #confused}    This bulb is a little cramped...
 
 // SHIP
 
@@ -59,7 +59,7 @@ $set    kevin:seenShipHelm = true
 @once
 @cutscene
 {@kevin}    Ah, the open ocean...
-            So relaxing!
+            {#happy} So relaxing!
 $set    kevin:seenShipExterior = true
 
 // OFFICE
@@ -72,9 +72,9 @@ $set    kevin:seenShipExterior = true
 @cutscene
 {@player}   Welcome to the office!
 {@kevin}    Neat! This is rather... uh...
-            ...underwhelming?
+            {#confused}...underwhelming?
 {@player}   {wait 0.2}Thanks, Kevin.
-{@kevin}    So you've got another tablet and... is that {slow}also{/slow} the job board?
+{@kevin}    So you've got another tablet here.
 {@player}   Yep! That tablet is for communicating with my clients.
 $set    kevin:seenShipOffice = true
 

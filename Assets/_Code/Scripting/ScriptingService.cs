@@ -53,23 +53,6 @@ namespace Aqua
         private IPool<ScriptThread> m_ThreadPool;
         private IPool<TagStringParser> m_ParserPool;
 
-        // cached refs
-        [NonSerialized] private ScriptingTweaks m_CachedTweaks;
-
-        #region Refs
-
-        public ScriptingTweaks Tweaks
-        {
-            get
-            {
-                if (m_CachedTweaks.IsReferenceNull())
-                    m_CachedTweaks = Services.Tweaks.Get<ScriptingTweaks>();
-                return m_CachedTweaks;
-            }
-        }
-
-        #endregion // Refs
-
         #region Checks
 
         /// <summary>

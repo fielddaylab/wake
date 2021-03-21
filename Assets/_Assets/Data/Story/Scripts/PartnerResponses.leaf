@@ -114,7 +114,7 @@ $set kevin:help.nameTalks + 1
 {@player}   So was Kevin your friend's name?
             Or did they just suggest "Kevin" to you?
 {@kevin}    Uh... a bit of both I guess?
-            I don't know, can we not talk about them right now?
+            {#tired} I don't know, can we not talk about them right now?
 
 :: name.sideComment
 @trigger    RequestPartnerHelp
@@ -123,8 +123,8 @@ $set kevin:help.nameTalks + 1
 @cutscene
 $set kevin:help.nameTalks + 1
 {@player}   You know, I like the name Kevin.
-{@kevin}    Really?
+{@kevin #confused}    Really?
 {@player}   Yeah, it has good "science familiar" energy.
-{@kevin}	Why thank you.
+{@kevin #happy} Why thank you.
 {@}	They do a little bow.
-{@kevin}	I picked it out myself.
+{@kevin #happy}	I picked it out myself.

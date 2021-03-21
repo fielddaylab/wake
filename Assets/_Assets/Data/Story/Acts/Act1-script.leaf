@@ -14,7 +14,6 @@ $set    player:seen.jules = true
 {@player}   Cool! Well I'm here for work - got anything I can help with?
 {@kelpResearcher}   Yeah! Check the job board in your captain's office.
                     And we should catch up sometime!
-{hide-dialog}{wait 1}
 
 :: partner.jules.1
 @trigger    RequestPartnerHelp
@@ -22,32 +21,31 @@ $set    player:seen.jules = true
 @cutscene
 @once
 $set    kevin:jules.intro = true
-$if job.isStarted:Job1-6
-{@kevin}    Who is this "Jules" we keep talking to?
+$if job.isStartedOrComplete:Job1-6
+{@kevin #confused}    Who is this "Jules" we keep talking to?
 $else
-{@kevin}    Who's "Jules"?
+{@kevin #confused}    Who's "Jules"?
 $endif
 {@player}   They're a good friend.
             Just been out of touch for a while.
 
-:: Experimentation.intro.1
-@trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", player:seen.jules
-@once
-@cutscene
-$set    kevin:jules.player.talk + 1
-
-{@kevin}    Welcome to the Experimentation Room!
-{@player}   Thanks! It looks... {wait 1} nice?
-{@kevin}    I know, right? Nothing like wood makes it feel like home.
-{@player}   Yeah, right.
-$if jobs:job1-6.got.scans
-{@kevin}    Anyways, try to press on the panel to start!
-$else
-{@kevin}    Looks like you haven't started a job yet. 
-            Let's come back here once we get some things going.
-$endif
-
+// :: Experimentation.intro.1
+// @trigger    SceneStart
+// @when       scene:name == "ExperimentPrototype", player:seen.jules
+// @once
+// @cutscene
+// $set    kevin:jules.player.talk + 1
+// 
+// {@kevin}    Welcome to the Experimentation Room!
+// {@player}   Thanks! It looks... {wait 1} nice?
+// {@kevin}    I know, right? Nothing like wood makes it feel like home.
+// {@player}   Yeah, right.
+// $if jobs:job1-6.got.scans
+// {@kevin}    Anyways, try to press on the panel to start!
+// $else
+// {@kevin}    Looks like you haven't started a job yet. 
+//             Let's come back here once we get some things going.
+// $endif
 
 :: partner.urchinBaron.1
 @trigger    RequestPartnerHelp
@@ -59,13 +57,13 @@ $set    kevin:urchinBaron.player.talk + 1
 $if job.isComplete:Job1-1a
     $set    kevin:urchinBaron.player.talk.startedAfterJob = true
     {@player}   So... Urban...
-    {@kevin}    ...I don't want to talk about him right now.
+    {@kevin #tired}    ...I don't want to talk about him right now.
     {@player}   Okay, okay.
 $else
     {@player}   About Urban...
     {@kevin}    What about him?
     {@player}   You seemed... kinda tense when we were talking.
-    {@kevin}    Yeah. What of it?
+    {@kevin #narrow}    Yeah. What of it?
 $endif
 
 :: partner.urchinBaron.2
@@ -82,5 +80,5 @@ $else
                 Like, a lot.
 $endif
 
-{@kevin}    Oh,{wait 0.3} what gave you {slow}that{/slow} impression?
-            He's not a good guy, let's just leave it at that.
+{@kevin #narrow}    Oh,{wait 0.3} what gave you {slow}that{/slow} impression?
+                    {#tired} He's not a good guy, let's just leave it at that.

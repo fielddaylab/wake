@@ -7,8 +7,8 @@
 @cutscene
 {@player}   Kevin, what do you know about these urchins?
 {@kevin}    Urchins, huh? Spiny little suckers.
-            Adorable, in a sort of blobby way.
-            Other than that, uh, not a big fan.
+            {#narrow} Adorable, in a sort of blobby way.
+            {#confused} Other than that, uh, not a big fan.
 
 :: urchins.eat.giantKelp
 @trigger    RequestPartnerHelp
@@ -21,7 +21,7 @@ $if seen:partner.help.bestiary.urchins.eat.bullKelp
 $else
     {@player}   So... these urchins eat giant kelp?
     {@kevin}    Yep! Urchins are big kelp eaters.
-                Ravenous, even.
+                {#narrow} Ravenous, even.
 $endif
 
 :: urchins.eat.bullKelp
@@ -35,7 +35,7 @@ $if seen:partner.help.bestiary.urchins.eat.giantKelp
 $else
     {@player}   So... these urchins eat bull kelp?
     {@kevin}    Yep! Urchins are big kelp eaters.
-                Leave all their bite marks everywhere.
+                {#narrow} Leave all their bite marks everywhere...
 $endif
 
 :: urchins.randomFact.1
@@ -45,17 +45,17 @@ $endif
 @cutscene
 $set    kevin:urchinFacts + 1
 {@player}   Got any good urchin facts?
-{@kevin}    An urchin fact...
+{@kevin #confused}  An urchin fact...
             Uh, I once worked on an urchin farm.
 {@player}   Ooh, an urchin farm...
 $if kevin:urchinBaron.player.talk > 0
 	$set	kevin:urchinBaron.player.knowsFarm = true
                 So that was... oh...
-    {@kevin}    Yeah. With Urban.
+    {@kevin #tired}    Yeah. With Urban.
                 I don't like talking about it.
 $else
     {@player}   What's an urchin farm like?
-    {@kevin}    Stressful. Dangerous.
+    {@kevin #tired}    Stressful. Dangerous.
                 Exploitive.
 $endif
 
@@ -66,9 +66,9 @@ $endif
 @cutscene
 $set    kevin:urchinFacts + 1
 {@player}   Tell me another urchin fact.
-{@kevin}    Another urchin fact? Well...
-            Urchins can see with their whole bodies.
-            They don't strictly have eyes... but their bodies are sort of one big light-sensitive organ.
+{@kevin #narrow}    Another urchin fact? Well...
+            {#} Urchins can see with their whole bodies.
+            {#confused} They don't strictly have eyes... {#} but their bodies are sort of one big light-sensitive organ.
 
 :: urchins.randomFact.3
 @trigger    RequestPartnerHelp
