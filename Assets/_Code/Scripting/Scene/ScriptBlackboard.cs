@@ -9,7 +9,7 @@ using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
-    public class ScriptBlackboard : MonoBehaviour, IScriptComponent
+    public class ScriptBlackboard : ScriptComponent
     {
         [SerializeField] private SerializedHash32 m_BlackboardName = null;
 
@@ -24,13 +24,15 @@ namespace Aqua.Scripting
 
         #region IScriptComponent
 
-        void IScriptComponent.OnDeregister(ScriptObject inObject)
+        public override void OnDeregister(ScriptObject inObject)
         {
             Services.Data.UnbindTable(m_BlackboardName);
+            base.OnDeregister(inObject);
         }
 
-        void IScriptComponent.OnRegister(ScriptObject inObject)
+        public override void OnRegister(ScriptObject inObject)
         {
+            base.OnRegister(inObject);
             Services.Data.BindTable(m_BlackboardName, m_Table ?? (m_Table = new VariantTable(m_BlackboardName)));
         }
 

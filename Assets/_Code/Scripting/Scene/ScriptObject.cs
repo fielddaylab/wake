@@ -2,6 +2,7 @@ using System;
 using Aqua.Scripting;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
 
@@ -112,5 +113,15 @@ namespace Aqua
         }
 
         #endregion // IPoolAllocHandler
+
+        static public ScriptThreadHandle Inspect(ScriptObject inObject)
+        {
+            Assert.NotNull(inObject);
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("objectId", inObject.m_Id.Hash());
+                return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, null, table);
+            }
+        }
     }
 }

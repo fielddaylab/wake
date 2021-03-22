@@ -8,6 +8,7 @@ namespace Aqua
     static public class GameTriggers
     {
         static public readonly StringHash32 RequestPartnerHelp = "RequestPartnerHelp";
+        static public readonly StringHash32 InspectObject = "InspectObject";
         static public readonly StringHash32 SceneStart = "SceneStart";
         static public readonly StringHash32 JobStarted = "JobStarted";
         static public readonly StringHash32 JobSwitched = "JobSwitched";
