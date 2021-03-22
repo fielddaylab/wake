@@ -124,6 +124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3443955731409594637}
+  - component: {fileID: 7648859449579466671}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -147,6 +148,20 @@ Transform:
   m_Father: {fileID: 304587901264811379}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7648859449579466671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4914712155190279058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b2f9d7f696c49fa8e204574c2ad4f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Body: {fileID: 7734384579477539394}
+  m_Collider: {fileID: 0}
 --- !u!1 &6706664874992643076
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,6 +254,7 @@ GameObject:
   - component: {fileID: 7538707801214224185}
   - component: {fileID: 7538707801214224182}
   - component: {fileID: 896447165356133450}
+  - component: {fileID: 4056820312589538862}
   m_Layer: 0
   m_Name: Renderer
   m_TagString: Untagged
@@ -361,6 +377,32 @@ MonoBehaviour:
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
   m_DisableRaycastLayer: 2
+--- !u!61 &4056820312589538862
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7538707801214224180}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.046788752, y: -1.0939355}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2, y: 2}
+    newSize: {x: 2, y: 2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 2
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.6711924, y: 4.187871}
+  m_EdgeRadius: 0
 --- !u!1 &7538707802506055077
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,6 +531,7 @@ MonoBehaviour:
   m_HeightOffset: {fileID: 3443955731409594637}
   m_SpineRenderer: {fileID: 7538707801214224185}
   m_HeightCapOffset: {fileID: 8725417940063683821}
+  m_Stem: {fileID: 7648859449579466671}
 --- !u!1 &8916035631611386611
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,6 +928,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Leaf
       objectReference: {fileID: 0}
+    - target: {fileID: 5930525994405477619, guid: 4e5c1d5cbb3629449a3bb41bde7968f9,
+        type: 3}
+      propertyPath: m_Collider
+      value: 
+      objectReference: {fileID: 487102682764908471}
     - target: {fileID: 8394848267685485486, guid: 4e5c1d5cbb3629449a3bb41bde7968f9,
         type: 3}
       propertyPath: m_WasSpriteAssigned
@@ -895,6 +943,12 @@ PrefabInstance:
 --- !u!4 &4995707967487159621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3931296018538311390, guid: 4e5c1d5cbb3629449a3bb41bde7968f9,
+    type: 3}
+  m_PrefabInstance: {fileID: 8348148737793262491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &487102682764908471 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 8437524983870952492, guid: 4e5c1d5cbb3629449a3bb41bde7968f9,
     type: 3}
   m_PrefabInstance: {fileID: 8348148737793262491}
   m_PrefabAsset: {fileID: 0}

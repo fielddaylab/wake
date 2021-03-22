@@ -76,7 +76,7 @@ namespace ProtoAqua.Experiment
 
                 var button = m_CachedButtons[buttonIdx];
                 
-                if (Services.Data.CheckConditions(tankType.Condition))
+                if (Services.Data.CheckConditions(tankType.Condition) && tankType.TankOn)
                 {
                     button.Load((int) tankType.Tank, tankType.Icon, true);
                 }

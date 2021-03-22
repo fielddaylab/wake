@@ -50,6 +50,20 @@ namespace ProtoAqua.Experiment
             return RNG.Instance.NextVector2(left, right);
         }
 
+        public Vector2 GetClimb(float root, float inSideOffset, float heightOffset, float currHeight, bool descend=false) {
+            float climbOffset = heightOffset;
+            if (descend) climbOffset *= -1;
+            Vector2 left = new Vector2(root + inSideOffset, currHeight + climbOffset);
+            Vector2 right = new Vector2(root - inSideOffset, currHeight + climbOffset);
+            return RNG.Instance.NextVector2(left, right);
+
+        }
+
+        public bool ReachedTheFloor(Vector2 position, float inFloorOffset) {
+            Rect r = Rect();
+            return position.y <= r.yMin - inFloorOffset;
+        }
+
         private Rect Rect()
         {
             Rect rect = new Rect();

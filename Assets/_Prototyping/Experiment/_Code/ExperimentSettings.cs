@@ -22,6 +22,7 @@ namespace ProtoAqua.Experiment
             public SerializedHash32 ShortLabelId;
             public Sprite Icon;
             public bool SingleCritter;
+            public bool TankOn;
 
             public string Condition;
             public BestiaryDescSize MaxSize;

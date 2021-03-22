@@ -20,6 +20,7 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Transform m_HeightOffset = null;
         [SerializeField] private SpriteRenderer m_SpineRenderer = null;
         [SerializeField] private Transform m_HeightCapOffset = null;
+        [SerializeField] private KelpStem m_Stem = null;
         
         #endregion // Inspector
 
@@ -58,6 +59,12 @@ namespace ProtoAqua.Experiment
                 m_AllLeaves[i].Initialize(leafHeight, facing, Actor);
                 facing = -facing;
             }
+
+            m_Stem.Initialize(Actor);
+        }
+
+        public SpriteRenderer GetSpine() {
+            return m_SpineRenderer;
         }
 
         #endregion // Events
