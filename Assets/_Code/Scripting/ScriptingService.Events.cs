@@ -29,7 +29,6 @@ namespace Aqua
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("loc", ReplaceLoc);
             m_TagEventParser.AddReplace("var", ReplaceVariable).WithAliases("var-i", "var-f", "var-b", "var-s");
-            m_TagEventParser.AddReplace("switch-var", SwitchOnVariable);
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
 
             // Extra Replace Tags (with embedded events)
@@ -43,20 +42,20 @@ namespace Aqua
             m_TagEventParser.AddEvent("bgm-stop", ScriptEvents.Global.StopBGM).WithFloatData(0.5f);
             m_TagEventParser.AddEvent("bgm", ScriptEvents.Global.PlayBGM).WithStringData();
             m_TagEventParser.AddEvent("hide-dialog", ScriptEvents.Global.HideDialog);
-            m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithAliases("sound").WithStringData();
+            m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
             m_TagEventParser.AddEvent("wait", ScriptEvents.Global.Wait).WithFloatData(0.25f);
             m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
             m_TagEventParser.AddEvent("letterbox", ScriptEvents.Global.LetterboxOn).CloseWith(ScriptEvents.Global.LetterboxOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
-            m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithAliases("broadcast").WithStringData();
+            m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithStringData();
             m_TagEventParser.AddEvent("fade-out", ScriptEvents.Global.FadeOut).WithStringData();
             m_TagEventParser.AddEvent("fade-in", ScriptEvents.Global.FadeIn).WithStringData();
             m_TagEventParser.AddEvent("wipe-out", ScriptEvents.Global.ScreenWipeOut).WithStringData();
             m_TagEventParser.AddEvent("wipe-in", ScriptEvents.Global.ScreenWipeIn).WithStringData();
             m_TagEventParser.AddEvent("screen-flash", ScriptEvents.Global.ScreenFlash).WithStringData();
-            m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithAliases("trigger").WithStringData();
+            m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
             m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
             m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringData();
@@ -67,7 +66,7 @@ namespace Aqua
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
-            m_TagEventParser.AddEvent("input-continue", ScriptEvents.Dialog.InputContinue).WithAliases("continue");
+            m_TagEventParser.AddEvent("continue", ScriptEvents.Dialog.InputContinue);
             m_TagEventParser.AddEvent("#*", ScriptEvents.Dialog.Portrait).ProcessWith(ParsePortraitArgs);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
@@ -188,58 +187,6 @@ namespace Aqua
             return string.Format("<sprite name=\"{0}\">", inTag.Data.ToString());
         }
 
-        static private string SwitchOnVariable(TagData inTag, object inContext)
-        {
-            int commaIdx = inTag.Data.IndexOf(',');
-            if (commaIdx > 0)
-            {
-                StringSlice varId = inTag.Data.Substring(0, commaIdx).TrimEnd();
-                StringSlice args = inTag.Data.Substring(commaIdx + 1).TrimStart();
-
-                TempList16<StringSlice> slices = new TempList16<StringSlice>();
-                int sliceCount = args.Split(ChoiceSplitChars, StringSplitOptions.None, ref slices);
-
-                if (slices.Count <= 0)
-                {
-                    Debug.LogWarningFormat("[ScriptingService] Fewer than expected arguments provided to '{0}' tag", inTag.Id);
-                    return varId.ToString();
-                }
-                
-                Variant variable = Services.Data.GetVariable(varId, inContext);
-                int idx = 0;
-                switch(variable.Type)
-                {
-                    case VariantType.Null:
-                        idx = 0;
-                        break;
-                    case VariantType.Bool:
-                        idx = variable.AsBool() ? 0 : 1;
-                        break;
-                    case VariantType.Int:
-                    case VariantType.Float:
-                    case VariantType.UInt:
-                        idx = variable.AsInt();
-                        break;
-                    default:
-                        Debug.LogWarningFormat("[ScriptingService] Unsupported variable type {0} provided to '{0}' tag", variable.Type, inTag.Id);
-                        return varId.ToString();
-                }
-
-                if (idx > slices.Count)
-                {
-                    Debug.LogWarningFormat("[ScriptingService] Switched on {0}, but result {1} out of range of provided args (count {2})", varId, idx, slices.Count);
-                    idx = 0;
-                }
-
-                return slices[idx].ToString();
-            }
-            else
-            {
-                Debug.LogWarningFormat("[ScriptingService] Fewer than expected arguments provided to '{0}' tag", inTag.Id);
-                return string.Empty;
-            }
-        }
-
         static private readonly char[] ChoiceSplitChars = new char[] { '|' };
 
         #endregion // Replace Callbacks
@@ -274,7 +221,9 @@ namespace Aqua
                 .Register(ScriptEvents.Global.GiveFact, EventGiveFact)
                 .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
                 .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
-                .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob);
+                .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob)
+                .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
+                .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
 
             m_SkippedEvents = new HashSet<StringHash32>();
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);

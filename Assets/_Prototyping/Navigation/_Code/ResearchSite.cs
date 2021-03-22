@@ -79,7 +79,7 @@ namespace ProtoAqua.Navigation
             {
                 tempTable.Set("siteId", m_siteId);
                 tempTable.Set("siteHighlighted", m_Highlighted);
-                Services.Script.TriggerResponse("ResearchSiteFound", "kevin");
+                Services.Script.TriggerResponse("ResearchSiteFound", null, null, tempTable);
             }
         }
 
