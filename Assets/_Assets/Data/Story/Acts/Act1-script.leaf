@@ -34,7 +34,7 @@ $set    player:seen.jules = true
 
 ::Modeling.intro.1
 @trigger    SceneStart
-@when       scene:name == "ModelingPrototype", job: 1-6.JobCompleted
+@when       scene:name == "ModelingPrototype", job.isComplete: Job1-6
 @once
 @cutscene
 $set    kevin:jules.player.talk + 1
