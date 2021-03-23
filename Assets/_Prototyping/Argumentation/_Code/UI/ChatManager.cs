@@ -167,6 +167,7 @@ namespace ProtoAqua.Argumentation
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
             newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
             m_LinkManager.HandleNode(nextNode);
+            m_Graph.SetCurrentNode(nextNode);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
         }
