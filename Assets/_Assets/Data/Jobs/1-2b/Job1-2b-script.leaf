@@ -8,31 +8,31 @@ $set    player:seen.MargoLargo = true
 			trying to fix it.
 {@player}   Oh... But, isn't that why we're here?
 {@kevin}    Here we go again...
-{{@kelpResearcher}  Well, yes, and no. We are here to study the site, but we don't really know if it can be "fixed". 
+{@kelpResearcher}  Well, yes, and no. We are here to study the site, but we don't really know if it can be "fixed". 
 	We know there's a perfectly good Giant Kelp forest just west of the barren, but there are a few differences between them.
 	We were hoping a set of fresh eyes would help, and maybe you could tell us whether there's a chance.
 
 {hide-dialog}{wait 1}
 {@player}       OK, so just to recap. You want us, the newbies, the go spot the difference between the two forests? 
 		And we need to report back whether we can fix it? What counts as evidence for that?
-{@Kevin}  We should probably bring them a model of the future of the barren.
-{{@kelpResearcher} What they said. A model would be lovely.
+{@kevin}  We should probably bring them a model of the future of the barren.
+{@kelpResearcher} What they said. A model would be lovely.
 {@player} Alrighty then. Here goes nothing!
-{@Kevin} Let's start by observing the sites again...
+{@kevin} Let's start by observing the sites again...
 
 :: end
 @trigger    JobCompleted
 @cutscene
-{{@kelpResearcher}  How marvelous! We just need some otters.
+{@kelpResearcher}  How marvelous! We just need some otters.
 {@player}   100%.
-{{@kelpResearcher}   This is so exciting! We had all been getting pretty bummed out thinking it was hopeless.
+{@kelpResearcher}   This is so exciting! We had all been getting pretty bummed out thinking it was hopeless.
 		Can't wait to work with you again!
  
 // some guidance
 
 :: navigation
 @trigger    SceneStart
-@when       scene:name == "Station1", seen.MargoLargo == True
+@when       scene:name == "Station1", player:seen.MargoLargo == True
 @once
 @cutscene
 {@kevin}   We've already been to depressing barren Site B, how about we look for Site C to the west?
