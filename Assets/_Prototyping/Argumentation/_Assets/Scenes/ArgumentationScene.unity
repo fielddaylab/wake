@@ -583,6 +583,7 @@ GameObject:
   - component: {fileID: 341003587}
   - component: {fileID: 341003586}
   - component: {fileID: 341003588}
+  - component: {fileID: 341003589}
   m_Layer: 5
   m_Name: Model
   m_TagString: Untagged
@@ -603,7 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -676,6 +677,21 @@ MonoBehaviour:
   m_FactCategory: 2
   m_DefaultColor: {r: 1, g: 1, b: 1, a: 1}
   m_ClickColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+--- !u!114 &341003589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341003585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: ui.argue.model.tooltip
+    m_Hash: 2169532905
 --- !u!1 &396172660
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +991,7 @@ GameObject:
   - component: {fileID: 429400122}
   - component: {fileID: 429400121}
   - component: {fileID: 429400123}
+  - component: {fileID: 429400124}
   m_Layer: 5
   m_Name: Ecosystem
   m_TagString: Untagged
@@ -995,7 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1068,6 +1085,21 @@ MonoBehaviour:
   m_FactCategory: 1
   m_DefaultColor: {r: 1, g: 1, b: 1, a: 1}
   m_ClickColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+--- !u!114 &429400124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429400120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: ui.argue.ecosystem.tooltip
+    m_Hash: 2109628028
 --- !u!1 &812704474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,6 +2213,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5335650598845173639, guid: 5a86c0ff3c825a14897345586040d890,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -12
+      objectReference: {fileID: 0}
     - target: {fileID: 5471364861693874655, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -2943,6 +2980,7 @@ GameObject:
   - component: {fileID: 1340056470}
   - component: {fileID: 1340056469}
   - component: {fileID: 1340056471}
+  - component: {fileID: 1340056472}
   m_Layer: 5
   m_Name: Behavior
   m_TagString: Untagged
@@ -2963,7 +3001,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -3036,6 +3074,21 @@ MonoBehaviour:
   m_FactCategory: 0
   m_DefaultColor: {r: 1, g: 1, b: 1, a: 1}
   m_ClickColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+--- !u!114 &1340056472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340056468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: ui.argue.behavior.tooltip
+    m_Hash: 1568963652
 --- !u!1 &1352141651
 GameObject:
   m_ObjectHideFlags: 0
