@@ -31,6 +31,7 @@ namespace ProtoAqua.Argumentation
         {
             m_Flags |= NodeFlags.ShowClaims;
         }
+        
 
         // Text
         [BlockContent] private string m_DisplayText = null;
