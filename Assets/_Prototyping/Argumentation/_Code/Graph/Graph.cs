@@ -103,7 +103,7 @@ namespace ProtoAqua.Argumentation
                     }
                     else
                     {
-                        return FindNode(currentNode.InvalidNodeId);
+                        return currentNode = FindNode(currentNode.InvalidNodeId);
                     }
                 }
                 else
@@ -123,6 +123,10 @@ namespace ProtoAqua.Argumentation
 
                 return FindNode(defaultInvalidNodeId);
             }
+        }
+
+        public void SetCurrentNode(Node node) {
+            currentNode = node;
         }
 
         // Helper method for finding a node given its id

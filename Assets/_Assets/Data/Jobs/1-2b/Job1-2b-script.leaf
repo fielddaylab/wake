@@ -24,7 +24,7 @@ $set    player:seen.MargoLargo = true
 @trigger    JobCompleted
 @cutscene
 {{@kelpResearcher}  How marvelous! We just need some otters.
-{@player}   100%
+{@player}   100%.
 {{@kelpResearcher}   This is so exciting! We had all been getting pretty bummed out thinking it was hopeless.
 		Can't wait to work with you again!
  
@@ -43,18 +43,18 @@ $set    player:seen.MargoLargo = true
 @once
 @cutscene
 {@player}   Here we are, on our own, Kevin, What's next?
-$if has.entity:Otter// all scans?
+// all scans?
+$if has.entity:Otter
     $set    jobs:j1-2b.got.scans = true
     {@kevin}   Not sure what we can find out here. I think you missed something in the ocean.
 $else
     {@kevin}   We should probably find the behaviors of otters.
-    $endif
 $endif
 
 
 // Kevin Responses
 
-:: kevin.atBottom
+:: kevin.atBottom.1B
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1B"
 @once
@@ -63,7 +63,7 @@ $endif
 {@kevin}    Well, this IS rather depressing... Makes me kinda mad at these urchin...
 {@player}   No kidding
 
-:: kevin.atBottom
+:: kevin.atBottom.1C
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C"
 @once
