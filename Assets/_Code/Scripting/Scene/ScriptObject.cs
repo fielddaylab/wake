@@ -123,5 +123,25 @@ namespace Aqua
                 return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, null, table);
             }
         }
+
+        static public StringHash32 FindId(GameObject inObject, StringHash32 inDefault = default(StringHash32))
+        {
+            Assert.NotNull(inObject);
+            ScriptObject obj = inObject.GetComponent<ScriptObject>();
+            if (!obj.IsReferenceNull())
+                return obj.m_Id;
+
+            return inDefault;
+        }
+
+        static public StringHash32 FindId(Component inObject, StringHash32 inDefault = default(StringHash32))
+        {
+            Assert.NotNull(inObject);
+            ScriptObject obj = inObject.GetComponent<ScriptObject>();
+            if (!obj.IsReferenceNull())
+                return obj.m_Id;
+
+            return inDefault;
+        }
     }
 }

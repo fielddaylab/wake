@@ -12,65 +12,16 @@ public class PlayerAnimator : MonoBehaviour {
         [SerializeField] Transform boatRenderer = null;
         [SerializeField] private Color m_DiveColor = Color.black;
 
-        private Routine bobbingRoutine;
-        private Routine drivingRoutine;
-
-        [NonSerialized] private bool isBobbing = false;
-        [NonSerialized] private bool isDriving = false;
-
         private Routine m_DiveRoutine;
 
         private void OnEnable()
         {
-            Services.Events.Register(UIController.Event_Dive, StartDiving, this);
+            Services.Events.Register(NavigationUI.Event_Dive, StartDiving, this);
         }
 
         private void OnDisable()
         {
             Services.Events?.DeregisterAll(this);
-        }
-
-        public void HandleBobbing(Vector2 direction) {
-            if (m_DiveRoutine)
-                return;
-
-            if(direction == Vector2.zero) {
-                StartBobbing();
-                StopDriving();
-            } else {
-                StopBobbing();
-                StartDriving();
-            }
-        }
-
-        private void StartBobbing() {
-            if(!isBobbing){
-                    bobbingRoutine = Routine.Start(this, BobbingRoutine());
-                    isBobbing = true;
-            }
-                    
-        }
-
-        private void StopBobbing() {
-             if(isBobbing) {
-                 bobbingRoutine.Stop();
-                 isBobbing = false; 
-             }
-        }
-
-
-        private void StartDriving() {
-            if(!isDriving) {
-                drivingRoutine = Routine.Start(this, DrivingRoutine());
-                isDriving = true;
-            }
-        }
-        
-        private void StopDriving() {
-            if(isDriving) {
-                drivingRoutine.Stop();
-                isDriving = false;
-            }
         }
 
         private void StartDiving()
@@ -90,19 +41,6 @@ public class PlayerAnimator : MonoBehaviour {
             );
 
             yield return Routine.WaitForever();
-        }
-
-        private IEnumerator BobbingRoutine() {
-            while(isBobbing) {
-                //TODO change order of this, based on Z position?
-                yield return boatRenderer.MoveTo(0f,2f, Axis.Z).Ease(Curve.Smooth);
-                yield return boatRenderer.MoveTo(-.5f,2f, Axis.Z).Ease(Curve.Smooth);
-            }
-        }
-
-        
-        private IEnumerator DrivingRoutine() {
-            yield return boatRenderer.MoveTo(-.5f,2f, Axis.Z).Ease(Curve.Smooth);
         }
     }
 }

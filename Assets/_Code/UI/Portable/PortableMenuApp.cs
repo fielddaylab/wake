@@ -31,9 +31,9 @@ namespace Aqua.Portable
 
         protected override void OnHide(bool inbInstant)
         {
-            if (Services.Data && Services.Data.GetVariable("portable:app") == m_Id.Hash())
+            if (Services.Data)
             {
-                Services.Data.SetVariable("portable:app", null);
+                Services.Data.CompareExchange("portable:app", m_Id.Hash(), null);
             }
 
             base.OnHide(inbInstant);

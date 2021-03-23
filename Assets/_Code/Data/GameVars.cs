@@ -10,6 +10,7 @@ namespace Aqua
     {
         // temporary
         static public readonly TableKeyPair CameraRegion = TableKeyPair.Parse("temp:camera.region");
+        static public readonly TableKeyPair InteractObject = TableKeyPair.Parse("temp:interact.object");
 
         // session
         static public readonly TableKeyPair DiveSite = TableKeyPair.Parse("session:nav.diveSite");

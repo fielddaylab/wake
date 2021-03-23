@@ -82,8 +82,8 @@ namespace ProtoAqua.Observation
             if (Services.Data)
             {
                 StringHash32 regionName = RegionName();
-                if (!regionName.IsEmpty && Services.Data.GetVariable(GameVars.CameraRegion) == regionName)
-                    Services.Data.SetVariable(GameVars.CameraRegion, Variant.Null);
+                if (!regionName.IsEmpty)
+                    Services.Data.CompareExchange(GameVars.CameraRegion, regionName, Variant.Null);
             }
         }
 

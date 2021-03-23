@@ -180,6 +180,7 @@ namespace Aqua
 
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
+            Services.Physics.AllowTicking = true;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
@@ -189,6 +190,7 @@ namespace Aqua
         {
             Services.Input.PauseAll();
             Services.Script.KillLowPriorityThreads();
+            Services.Physics.AllowTicking = false;
 
             bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
@@ -251,6 +253,7 @@ namespace Aqua
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
             inNextScene.BroadcastLoaded(inContext);
             Services.Input.ResumeAll();
+            Services.Physics.AllowTicking = true;
             m_SceneLock = false;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);

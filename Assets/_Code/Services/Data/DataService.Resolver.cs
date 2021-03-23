@@ -102,6 +102,46 @@ namespace Aqua
             }
         }
 
+        /// <summary>
+        /// Retrieves a variable with the given id.
+        /// If the value equals the old value, the variable is set to the new value.
+        /// </summary>
+        public bool CompareExchange(StringSlice inId, Variant inOldValue, Variant inNewValue, object inContext = null)
+        {
+            TableKeyPair keyPair;
+            if (!TableKeyPair.TryParse(inId, out keyPair))
+            {
+                return false;
+            }
+
+            Variant result = default(Variant);
+            VariableResolver.TryResolve(inContext, keyPair, out result);
+            if (result == inOldValue)
+            {
+                SetVariable(keyPair, inNewValue, inContext);
+                return true;
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves a variable with the given id.
+        /// If the value equals the old value, the variable is set to the new value.
+        /// </summary>
+        public bool CompareExchange(TableKeyPair inId, Variant inOldValue, Variant inNewValue, object inContext = null)
+        {
+            Variant result = default(Variant);
+            VariableResolver.TryResolve(inContext, inId, out result);
+            if (result == inOldValue)
+            {
+                SetVariable(inId, inNewValue, inContext);
+                return true;
+            }
+            
+            return false;
+        }
+
         #endregion // Variables
 
         #region Tables

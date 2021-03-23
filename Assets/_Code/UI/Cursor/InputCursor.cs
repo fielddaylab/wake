@@ -16,8 +16,10 @@ namespace Aqua
 
         [NonSerialized] private StringHash32 m_PosLock;
         [NonSerialized] private StringHash32 m_SpriteLock;
-        [NonSerialized] private bool m_HasInteraction;
+        [NonSerialized] private StringHash32 m_RotationLock;
         [NonSerialized] private Sprite m_SpriteLockSprite;
+
+        [NonSerialized] private bool m_HasInteraction;
 
         static private readonly Vector3 MouseDownScale = new Vector3(0.75f, 0.75f, 1);
         static private readonly Vector3 MouseUpScale = new Vector3(1, 1, 1);
@@ -104,6 +106,42 @@ namespace Aqua
         }
     
         #endregion // Position Lock
+
+        #region Sprite Lock
+
+        public void LockSprite(StringHash32 inHash, Sprite inSprite)
+        {
+            Assert.True(m_SpriteLock.IsEmpty || m_SpriteLock == inHash, "Current sprite lock is {0}, attempting to lock with mismatched key {1}", m_SpriteLock.ToDebugString(), inHash.ToDebugString());
+            m_SpriteLock = inHash;
+            m_SpriteLockSprite = inSprite;
+        }
+
+        public void ReleaseSprite(StringHash32 inHash)
+        {
+            Assert.True(inHash == m_SpriteLock, "Current sprite lock is {0}, attempting to unlock with mismatched key {1}", m_SpriteLock.ToDebugString(), inHash.ToDebugString());
+            m_SpriteLock = StringHash32.Null;
+            m_SpriteLockSprite = null;
+        }
+
+        #endregion // Sprite Lock
+
+        #region Rotation Lock
+
+        public void LockRotation(StringHash32 inHash, float inRotation)
+        {
+            Assert.True(m_RotationLock.IsEmpty || m_RotationLock == inHash, "Current rotation lock is {0}, attempting to lock with mismatched key {1}", m_RotationLock.ToDebugString(), inHash.ToDebugString());
+            m_RotationLock = inHash;
+            m_Transform.localEulerAngles = new Vector3(0, 0, inRotation);
+        }
+
+        public void ReleaseRotation(StringHash32 inHash)
+        {
+            Assert.True(inHash == m_RotationLock, "Current rotation lock is {0}, attempting to unlock with mismatched key {1}", m_RotationLock.ToDebugString(), inHash.ToDebugString());
+            m_RotationLock = StringHash32.Null;
+            m_Transform.localEulerAngles = default(Vector3);
+        }
+
+        #endregion // Rotation Lock
 
         #region Interaction
 

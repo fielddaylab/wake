@@ -15,6 +15,7 @@ namespace ProtoAqua.Navigation
 
         [SerializeField, Required] private string m_siteId = null;
         [SerializeField, Required] private string m_siteLabel = null;
+        [SerializeField, Required] private Transform m_PlayerSpawnLocation = null;
 
         [Header("Components")]
         [SerializeField, Required] private ColorGroup m_RenderGroup = null;
@@ -37,6 +38,7 @@ namespace ProtoAqua.Navigation
         [NonSerialized] private float m_OriginalFoamScale;
 
         public string SiteId { get { return m_siteId; } }
+        public Transform PlayerSpawnLocation { get { return m_PlayerSpawnLocation; } }
 
         private void Awake()
         {
@@ -74,18 +76,25 @@ namespace ProtoAqua.Navigation
 
         private void OnPlayerEnter(Collider2D other)
         {
-            Services.UI.FindPanel<UIController>().Display(m_siteLabel, m_siteId);
-            using(var tempTable = Services.Script.GetTempTable())
+            if (Services.Data.CompareExchange(GameVars.InteractObject, null, m_siteId))
             {
-                tempTable.Set("siteId", m_siteId);
-                tempTable.Set("siteHighlighted", m_Highlighted);
-                Services.Script.TriggerResponse("ResearchSiteFound", null, null, tempTable);
+                Services.UI.FindPanel<NavigationUI>().DisplayDive(m_siteLabel, m_siteId);
+                
+                using(var tempTable = Services.Script.GetTempTable())
+                {
+                    tempTable.Set("siteId", m_siteId);
+                    tempTable.Set("siteHighlighted", m_Highlighted);
+                    Services.Script.TriggerResponse("ResearchSiteFound", null, null, tempTable);
+                }
             }
         }
 
         private void OnPlayerExit(Collider2D other)
         {
-            Services.UI?.FindPanel<UIController>()?.Hide();
+            if (Services.Data && Services.Data.CompareExchange(GameVars.InteractObject, m_siteId, null))
+            {
+                Services.UI?.FindPanel<NavigationUI>()?.Hide();
+            }
         }
 
         private IEnumerator BobAnimation()

@@ -42,8 +42,6 @@ namespace ProtoAqua.Navigation
             
             if (newVelocity.sqrMagnitude > currentVelocity.sqrMagnitude)
                 playerRigidBody.State.Velocity += (newVelocity - currentVelocity) * Time.fixedDeltaTime * 5;
-
-            playerAnimator.HandleBobbing(direction);    
         }
 
         private void RotatePlayer()

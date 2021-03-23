@@ -59,10 +59,15 @@ namespace Aqua
             return kinematic;
         }
 
+        [NonSerialized] public bool AllowTicking = false;
+
         #region Handlers
 
         private void FixedUpdate()
         {
+            if (!AllowTicking)
+                return;
+            
             float deltaTime = Time.fixedDeltaTime;
             if (deltaTime <= 0)
                 return;

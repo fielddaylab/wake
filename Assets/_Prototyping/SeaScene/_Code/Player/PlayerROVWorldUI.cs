@@ -11,56 +11,58 @@ namespace ProtoAqua.Observation
 {
     public class PlayerROVWorldUI : MonoBehaviour
     {
+        static private readonly StringHash32 CursorLockKey = "PlayerROVWorldUI";
+
         #region Inspector
 
-        [Header("Cursor")]
-
-        [SerializeField] private ColorGroup m_CursorGroup = null;
-        [SerializeField] private SpriteAnimator m_CursorSprite = null;
-        [SerializeField] private TweenSettings m_CursorFadeTween = default(TweenSettings);
-        [SerializeField] private TweenSettings m_CursorBounceTween = default(TweenSettings);
-        [SerializeField] private float m_CursorBounceTweenScale = 0.8f;
-
         [Header("Animations")]
-        [SerializeField] private SpriteAnimation m_MoveAnimation = null;
-        [SerializeField] private SpriteAnimation m_ScanAnimation = null;
-
-        [Header("Cursor Types")]
+        [SerializeField] private Sprite m_MoveSlow = null;
+        [SerializeField] private Sprite m_MoveFast = null;
+        [SerializeField] private Sprite m_ScanOff = null;
+        [SerializeField] private Sprite m_ScanOn = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private Routine m_CursorEnableAnim;
-        [NonSerialized] private Routine m_CursorSwitchAnim;
+        [NonSerialized] private Transform m_Transform;
+        [NonSerialized] private bool m_PositionLocked;
+        [NonSerialized] private bool m_RotationLocked;
         [NonSerialized] private bool m_CursorOn;
-        [NonSerialized] private PlayerROVCursor m_CursorMode;
+
+        private void OnDisable()
+        {
+            HideCursor();
+        }
 
         public void ShowMoveArrow(Vector2 inOffset, float inPower)
         {
-            SetCursorMode(PlayerROVCursor.Move);
             SetCursorOn(true);
-
-            m_CursorGroup.transform.SetPosition(inOffset, Axis.XY, Space.Self);
-            m_CursorGroup.transform.SetRotation(Mathf.Atan2(inOffset.y, inOffset.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
-
-            m_CursorSprite.Animation = m_MoveAnimation;
-            m_CursorSprite.FrameIndex = Mathf.RoundToInt(Mathf.Clamp01(inPower) * (m_CursorSprite.Animation.FrameCount() - 1));
+            ReleasePositionLock();
+            
+            Services.UI.Cursor.LockSprite(CursorLockKey, inPower > 0.5f ? m_MoveFast : m_MoveSlow);
+            
+            m_RotationLocked = true;
+            Services.UI.Cursor.LockRotation(CursorLockKey, Mathf.Atan2(inOffset.y, inOffset.x) * Mathf.Rad2Deg);
         }
 
         public void ShowScan(Vector2 inOffset, bool inbScanning)
         {
-            SetCursorMode(PlayerROVCursor.Scan);
             SetCursorOn(true);
+            ReleaseRotationLock();
 
-            m_CursorGroup.transform.SetPosition(inOffset, Axis.XY, Space.Self);
-            m_CursorGroup.transform.SetRotation(0, Axis.Z, Space.Self);
-
-            m_CursorSprite.Animation = m_ScanAnimation;
-            m_CursorSprite.FrameIndex = inbScanning ? 1 : 0;
+            if (inbScanning)
+            {
+                Services.UI.Cursor.LockSprite(CursorLockKey, m_ScanOn);
+                LockPosition(inOffset);
+            }
+            else
+            {
+                Services.UI.Cursor.LockSprite(CursorLockKey, m_ScanOff);
+                ReleasePositionLock();
+            }
         }
 
         public void HideCursor()
         {
-            SetCursorMode(PlayerROVCursor.None);
             SetCursorOn(false);
         }
 
@@ -69,63 +71,39 @@ namespace ProtoAqua.Observation
             if (m_CursorOn == inbOn)
                 return;
 
+            if (!inbOn)
+            {
+                ReleasePositionLock();
+                ReleaseRotationLock();
+                Services.UI.Cursor.ReleaseSprite(CursorLockKey);
+            }
+            
             m_CursorOn = inbOn;
-            if (m_CursorOn)
-            {
-                m_CursorEnableAnim.Replace(this, ShowCursorAnim());
-            }
-            else
-            {
-                m_CursorEnableAnim.Replace(this, HideCursorAnim());
-                m_CursorSwitchAnim.Stop();
-            }
-
-            Cursor.visible = !inbOn;
         }
 
-        private void SetCursorMode(PlayerROVCursor inMode)
+        private void LockPosition(Vector2 inOffset)
         {
-            if (m_CursorMode != inMode)
-            {
-                m_CursorMode = inMode;
-                if (m_CursorOn && inMode != PlayerROVCursor.None)
-                    m_CursorSwitchAnim.Replace(this, CursorBounceAnim());
-            }
+            Vector2 screenPos = Services.State.Camera.WorldToScreenPoint(this.CacheComponent(ref m_Transform).position + (Vector3) inOffset);
+            Services.UI.Cursor.LockPosition(CursorLockKey, screenPos);
+            m_PositionLocked = true;
         }
 
-        private IEnumerator ShowCursorAnim()
+        private void ReleasePositionLock()
         {
-            if (!m_CursorGroup.gameObject.activeSelf)
+            if (m_PositionLocked)
             {
-                m_CursorGroup.SetAlpha(0);
-                m_CursorGroup.gameObject.SetActive(true);
-            }
-
-            if (m_CursorGroup.GetAlpha() < 1)
-            {
-                yield return Tween.Float(m_CursorGroup.GetAlpha(), 1, m_CursorGroup.SetAlpha, m_CursorFadeTween);
+                Services.UI.Cursor.ReleasePosition(CursorLockKey);
+                m_PositionLocked = false;
             }
         }
 
-        private IEnumerator CursorBounceAnim()
+        private void ReleaseRotationLock()
         {
-            yield return m_CursorGroup.transform.ScaleTo(m_CursorBounceTweenScale, m_CursorBounceTween, Axis.XY).From().ForceOnCancel();
-        }
-
-        private IEnumerator HideCursorAnim()
-        {
-            if (m_CursorGroup.gameObject.activeSelf)
+            if (m_RotationLocked)
             {
-                yield return Tween.Float(m_CursorGroup.GetAlpha(), 0, m_CursorGroup.SetAlpha, m_CursorFadeTween);
-                m_CursorGroup.gameObject.SetActive(false);
+                Services.UI.Cursor.ReleaseRotation(CursorLockKey);
+                m_RotationLocked = false;
             }
         }
-    }
-
-    public enum PlayerROVCursor
-    {
-        None,
-        Move,
-        Scan
     }
 }
