@@ -25,6 +25,9 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private Routine m_Anim;
+        [NonSerialized] private KelpStem m_CurrStem = null;
+        [NonSerialized] private bool descend = false;
+
 
         #region IFoodSource
 
@@ -111,8 +114,21 @@ namespace ProtoAqua.Experiment
             {
                 while(swims-- > 0)
                 {
-                    yield return Actor.Nav.SwimTo(Actor.Nav.Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius));
+                    if (m_CurrStem != null)
+                    {
+                        yield return ClimbAnimation(m_CurrStem, descend);
+                    }
+                    else {
+                        yield return Actor.Nav.SwimTo(Actor.Nav.Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius));
+                    }
+                    
                     yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
+                }
+
+                bool StemSearch = RNG.Instance.NextBool();
+
+                if(StemSearch) {
+                    if(m_CurrStem == null) m_CurrStem = GetNearestStem();
                 }
 
                 IFoodSource nearestFood = GetNearestFoodSource();
@@ -128,6 +144,32 @@ namespace ProtoAqua.Experiment
             }
         }
 
+        private KelpStem GetNearestStem() {
+            Vector2 myPos = Actor.Body.WorldTransform.position;
+            foreach(var obj in m_FoodSense.SensedObjects) {
+                KelpStem stem = obj.Collider.GetComponentInParent<KelpStem>();
+                if(stem == null) continue;
+                if(!stem.hasSpine()) return null;
+                stem.ResetPosition(obj.Collider.transform.position);
+                return stem;
+            }
+            
+            return null;
+        }
+
+        private IEnumerator ClimbAnimation(KelpStem stem, bool descend=false) {
+            Vector2 myPos = Actor.Body.WorldTransform.position;
+            yield return Actor.Nav.SwimTo(
+                Actor.Nav.Helper.GetClimb(stem.root, Actor.Body.BodyRadius, GetProperty<float>("ClimbSpeed", 0.3f), myPos.y, descend));
+            yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
+            if (Actor.Nav.Helper.ReachedTheFloor(myPos, Actor.Body.BodyRadius))
+            {
+                descend = false;
+                m_CurrStem = null;
+            }
+
+        }
+
         private IFoodSource GetNearestFoodSource()
         {
             Vector2 myPos = Actor.Body.WorldTransform.position;
@@ -136,6 +178,7 @@ namespace ProtoAqua.Experiment
             foreach(var obj in m_FoodSense.SensedObjects)
             {
                 IFoodSource source = obj.Collider.GetComponentInParent<IFoodSource>();
+
                 if (source.EnergyRemaining <= 0)
                     continue;
 
@@ -145,6 +188,7 @@ namespace ProtoAqua.Experiment
                 float dist = Vector2.Distance(source.Transform.position, myPos);
                 float weight = (source.EnergyRemaining / 100f) * (100f - dist);
                 food.Add(source, weight);
+
             }
 
             food.FilterHigh(food.TotalWeight * GetProperty<float>("FoodFilterThreshold", 0.5f));
@@ -160,7 +204,7 @@ namespace ProtoAqua.Experiment
             yield return Actor.Nav.SwimTo(targetTransform.position + targetOffset);
             yield return 0.5f;
 
-            BFEat eatingBehavior = BestiaryUtils.FindEatingRule(Actor.Besitary, inFoodSource.Parent.Besitary.Id());
+            BFEat eatingBehavior = BestiaryUtils.FindEatingRule(Actor.Bestiary, inFoodSource.Parent.Bestiary.Id());
             using(ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, eatingBehavior.Id()))
             {
                 int biteCount = GetBiteCount();
@@ -176,6 +220,10 @@ namespace ProtoAqua.Experiment
                     yield return Actor.Body.WorldTransform.ScaleTo(1, 0.2f).Ease(Curve.CubeOut);
                     yield return RNG.Instance.NextFloat(0.8f, 1.2f);
                 }
+            }
+            float height = (targetTransform.position + targetOffset).y;
+            if(m_CurrStem != null) {
+                descend = true;
             }
         }
     }

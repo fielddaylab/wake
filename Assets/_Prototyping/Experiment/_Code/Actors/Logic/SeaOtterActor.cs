@@ -156,7 +156,7 @@ namespace ProtoAqua.Experiment
                     yield break;
             }
 
-            BFEat eatingBehavior = BestiaryUtils.FindEatingRule(Actor.Besitary, inFoodSource.Parent.Besitary.Id());
+            BFEat eatingBehavior = BestiaryUtils.FindEatingRule(Actor.Bestiary, inFoodSource.Parent.Bestiary.Id());
             
             using (ExperimentServices.BehaviorCapture.GetCaptureInstance(Actor, eatingBehavior.Id()))
             {
