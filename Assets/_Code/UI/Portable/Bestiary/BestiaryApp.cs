@@ -428,14 +428,20 @@ namespace Aqua.Portable
             {
                 case BestiaryDescCategory.Critter:
                     m_CritterGroupToggle.SetIsOnWithoutNotify(true);
+                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
+                    m_ModelGroupToggle.SetIsOnWithoutNotify(false);
                     break;
 
                 case BestiaryDescCategory.Environment:
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
+                    m_CritterGroupToggle.SetIsOnWithoutNotify(false);
+                    m_ModelGroupToggle.SetIsOnWithoutNotify(false);
                     break;
 
                 case BestiaryDescCategory.Model:
                     m_ModelGroupToggle.SetIsOnWithoutNotify(true);
+                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
+                    m_CritterGroupToggle.SetIsOnWithoutNotify(false);
                     break;
             }
 
@@ -447,7 +453,7 @@ namespace Aqua.Portable
                 button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
             }
             
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_EntryLayoutGroup.transform);
+            LayoutRebuilder.MarkLayoutForRebuild((RectTransform) m_EntryLayoutGroup.transform);
             LoadEntry(inTarget);
         }
 
