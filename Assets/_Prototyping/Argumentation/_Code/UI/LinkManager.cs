@@ -103,8 +103,13 @@ namespace ProtoAqua.Argumentation
             }
         }
 
+        public GameObject CopyLink(Link link)
+        {
+            return CreateLink(link);
+        }
+
         // Allocate a new link from the pool and initialize its fields based on data from the graph
-        private void CreateLink(Link link)
+        private GameObject CreateLink(Link link)
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
             newLink.InitializeLinkDependencies(this, m_Graph);
@@ -124,6 +129,7 @@ namespace ProtoAqua.Argumentation
             newLink.transform.SetSiblingIndex((int) link.Index);
 
             responses.Add(newLink.gameObject);
+            return newLink.gameObject;
         }
 
         // Show responses with a given tag and hide all other responses

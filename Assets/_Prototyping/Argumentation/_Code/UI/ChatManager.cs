@@ -83,15 +83,20 @@ namespace ProtoAqua.Argumentation
                 return;
             }
 
+            StringHash32 linkId = response.GetComponent<ChatBubble>().id;
+            string linkTag = response.GetComponent<ChatBubble>().linkTag;
+
+            if (linkTag == "claim")
+            {
+                response = m_LinkManager.CopyLink(m_Graph.FindLink(linkId));
+            }
+
             // Place response in the chat grid and align it to the right
             response.transform.SetParent(m_ChatGrid);
             response.GetComponent<ClickableObject>().enabled = false;
             response.GetComponent<ChatBubble>().SetLongText();
             response.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
                 .childAlignment = TextAnchor.UpperRight;
-
-            StringHash32 linkId = response.GetComponent<ChatBubble>().id;
-            string linkTag = response.GetComponent<ChatBubble>().linkTag;
 
 
             Routine.Start(this, ScrollRoutine(linkId, response));
