@@ -95,6 +95,12 @@ namespace ProtoAqua.Modeling
             m_Complete.Load(m_Buffer.Scenario());
         }
 
+        public void ShowAlreadyCompleted()
+        {
+            m_ConceptMap.Lock();
+            m_Complete.LoadAlreadyComplete("modeling.alreadyCompleted.title", "modeling.alreadyCompleted.desc");
+        }
+
         private IEnumerator SwitchToPredictAnimation()
         {
             Services.Input.PauseAll();

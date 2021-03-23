@@ -9,9 +9,17 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
-        [SerializeField] private ModelingScenarioData m_TestScenario = null;
         [SerializeField, Required] private ModelingUI m_UI = null;
         [SerializeField, Required] private BaseInputLayer m_Input = null;
+        [SerializeField, Required] private GameObject m_ScenarioGroup = null;
+        [SerializeField, Required] private GameObject m_EmptyGroup = null;
+
+        #pragma warning disable CS0414
+
+        [Header("-- DEBUG -- ")]
+        [SerializeField] private ModelingScenarioData m_TestScenario = null;
+
+        #pragma warning restore CS0414
         
         #endregion // Inspector
 
@@ -20,8 +28,25 @@ namespace ProtoAqua.Modeling
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            ModelingScenarioData scenario = Services.Data.CurrentJob()?.Job.FindAsset<ModelingScenarioData>();
+            
+            #if UNITY_EDITOR
+            if (!scenario)
+                scenario = m_TestScenario;
+            #endif // UNITY_DEITOR
+
+            if (!scenario || !Services.Data.Profile.Bestiary.HasEntity(scenario.Environment().Id()))
+            {
+                m_ScenarioGroup.SetActive(false);
+                m_EmptyGroup.SetActive(true);
+                return;
+            }
+
+            m_EmptyGroup.SetActive(false);
+            m_ScenarioGroup.SetActive(true);
+
             m_Buffer = new SimulationBuffer();
-            m_Buffer.SetScenario(m_TestScenario);
+            m_Buffer.SetScenario(scenario);
             m_UI.SetBuffer(m_Buffer);
             m_UI.OnAdvanceClicked = OnAdvanceClicked;
 
@@ -31,7 +56,15 @@ namespace ProtoAqua.Modeling
             m_Buffer.OnUpdate = OnBufferUpdated;
             OnBufferUpdated();
 
-            m_UI.ShowIntro();
+            StringHash32 modelId = scenario.BestiaryModelId();
+            if (!modelId.IsEmpty && Services.Data.Profile.Bestiary.HasFact(modelId))
+            {
+                m_UI.ShowAlreadyCompleted();
+            }
+            else
+            {
+                m_UI.ShowIntro();
+            }
 
             m_Input.Device.RegisterHandler(this);
         }

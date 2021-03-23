@@ -34,6 +34,7 @@ namespace Aqua
 
         private IEnumerator ShowRoutine()
         {
+            // Services.Audio.PostEvent("ui.screenWipe.toOn");
             yield return Tween.Float(-1, 0, SetPosition, 0.25f);
         }
 
@@ -52,6 +53,7 @@ namespace Aqua
 
         private IEnumerator HideRoutine(bool inbAutoFree)
         {
+            // Services.Audio.PostEvent("ui.screenWipe.toOff");
             yield return Routine.Inline(Tween.Float(0, 1, SetPosition, 0.25f));
             if (inbAutoFree)
                 m_Pool.Free(this);
