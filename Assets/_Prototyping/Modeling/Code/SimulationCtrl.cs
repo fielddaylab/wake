@@ -31,11 +31,15 @@ namespace ProtoAqua.Modeling
             ModelingScenarioData scenario = Services.Data.CurrentJob()?.Job.FindAsset<ModelingScenarioData>();
             
             #if UNITY_EDITOR
-            if (!scenario)
+            if (!scenario && BootParams.BootedFromCurrentScene)
                 scenario = m_TestScenario;
             #endif // UNITY_DEITOR
 
-            if (!scenario || !Services.Data.Profile.Bestiary.HasEntity(scenario.Environment().Id()))
+            bool bBoot = scenario;
+            if (bBoot && !BootParams.BootedFromCurrentScene)
+                bBoot = Services.Data.Profile.Bestiary.HasEntity(scenario.Environment().Id());
+
+            if (!bBoot)
             {
                 m_ScenarioGroup.SetActive(false);
                 m_EmptyGroup.SetActive(true);

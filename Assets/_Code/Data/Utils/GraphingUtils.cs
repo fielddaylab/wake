@@ -114,7 +114,7 @@ namespace Aqua
         {
             float delta = Math.Abs(inA - inB);
             float avg = (Math.Abs(inA) + Math.Abs(inB)) / 2;
-            return avg == 0 ? 0 : delta / avg;
+            return avg == 0 ? 0 : (delta / avg);
         }
 
         #endregion // Error

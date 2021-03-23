@@ -67,7 +67,7 @@ namespace ProtoAqua.Argumentation
             GraphDataPackage script = currentJob?.FindAsset<GraphDataPackage>();
             
             #if UNITY_EDITOR
-            if (!script)
+            if (!script && BootParams.BootedFromCurrentScene)
                 script = m_DebugPackage;
             #else
             m_DebugPackage = null;

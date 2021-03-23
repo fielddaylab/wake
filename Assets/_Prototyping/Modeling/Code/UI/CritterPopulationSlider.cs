@@ -6,6 +6,7 @@ using System;
 using BeauUtil;
 using UnityEngine.Events;
 using BeauPools;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Modeling
 {
@@ -20,12 +21,14 @@ namespace ProtoAqua.Modeling
         [SerializeField] private Slider m_Slider = null;
         [SerializeField] private Graphic m_Color = null;
         [SerializeField] private TMP_InputField m_Text = null;
+        [SerializeField] private RectTransform m_DesiredValue = null;
 
         #endregion // Inspector
 
         [NonSerialized] private ActorCountI32 m_Data;
         [NonSerialized] private float m_SliderScale;
         [NonSerialized] private float m_PopulationScale;
+        [NonSerialized] private float m_MaxDisplayPopulation;
         
         public readonly ActorCountEvent OnPopulationChanged = new ActorCountEvent();
 
@@ -39,12 +42,12 @@ namespace ProtoAqua.Modeling
 
         #endregion // Unity Events
 
-        public void Load(StringHash32 inActorId, int inPopulation, int inRange = -1)
+        public void Load(StringHash32 inActorId, int inPopulation, int inRange = -1, int inDesired = -1)
         {
-            Load(Services.Assets.Bestiary[inActorId], inPopulation, inRange);
+            Load(Services.Assets.Bestiary[inActorId], inPopulation, inRange, inDesired);
         }
 
-        public void Load(BestiaryDesc inDesc, int inPopulation, int inRange = -1)
+        public void Load(BestiaryDesc inDesc, int inPopulation, int inRange = -1, int inDesired = -1)
         {
             var body = inDesc.FactOfType<BFBody>();
 
@@ -65,6 +68,19 @@ namespace ProtoAqua.Modeling
             m_Slider.maxValue = inRange / m_SliderScale;
             m_Slider.wholeNumbers = true;
 
+            if (inDesired > 0)
+            {
+                Assert.True(inDesired <= inRange);
+                float fraction = (float) inDesired / inRange;
+                m_DesiredValue.anchorMin = m_DesiredValue.anchorMax = new Vector2(fraction, 0.5f);
+                m_DesiredValue.gameObject.SetActive(true);
+            }
+            else
+            {
+                m_DesiredValue.gameObject.SetActive(false);
+            }
+
+            m_MaxDisplayPopulation = ToDisplayPopulation(inRange);
             int displayPop = ToDisplayPopulation(inPopulation);
 
             m_Slider.SetValueWithoutNotify(displayPop / m_SliderScale);
@@ -85,15 +101,15 @@ namespace ProtoAqua.Modeling
 
         private void OnSliderValueChanged(float inValue)
         {
-            int val = (int) (inValue * m_SliderScale);
+            int val = ToRealPopulation((int) (inValue * m_SliderScale));
             TryUpdateValue(val, true, false);
         }
 
         private void OnTextValueChanged(string inValue)
         {
             int val = StringParser.ParseInt(inValue);
+            val = Mathf.Clamp(val, 0, (int) m_MaxDisplayPopulation);
             val = ToRealPopulation(val);
-            val = Mathf.Clamp(val, (int) (m_Slider.minValue * m_SliderScale), (int) (m_Slider.maxValue * m_SliderScale));
             TryUpdateValue(val, false, true);
         }
 
@@ -108,7 +124,7 @@ namespace ProtoAqua.Modeling
             if (inbUpdateText)
                 m_Text.SetTextWithoutNotify(displayPop.ToString());
             if (inbUpdateSlider)
-                m_Slider.SetValueWithoutNotify(displayPop * m_SliderScale);
+                m_Slider.SetValueWithoutNotify(displayPop / m_SliderScale);
 
             OnPopulationChanged.Invoke(m_Data);
         }

@@ -70,12 +70,25 @@ namespace ProtoAqua.Modeling
             if (m_Optimized)
                 return;
 
+            BestiaryDesc critter;
+
             m_AllowedLines = new HashSet<StringHash32>();
             m_Critters = new List<BestiaryDesc>(m_InitialActors.Length);
             for(int i = 0; i < m_InitialActors.Length; ++i)
             {
+                critter = Services.Assets.Bestiary.Get(m_InitialActors[i].Id);
+
                 m_AllowedLines.Add(m_InitialActors[i].Id);
-                m_Critters.Add(Services.Assets.Bestiary.Get(m_InitialActors[i].Id));
+                m_Critters.Add(critter);
+            }
+
+            for(int i = 0; i < m_AdjustableActors.Length; ++i)
+            {
+                critter = Services.Assets.Bestiary.Get(m_AdjustableActors[i].Id);
+
+                m_AllowedLines.Add(m_AdjustableActors[i].Id);
+                if (!m_Critters.Contains(critter))
+                    m_Critters.Add(critter);
             }
 
             KeyValueUtils.SortByKey<StringHash32, uint, ActorCountU32>(m_InitialActors);

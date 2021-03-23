@@ -106,6 +106,14 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        /// <summary>
+        /// Returns the amount of critters at the start of the model data.
+        /// </summary>
+        public uint GetModelCritters(StringHash32 inId)
+        {
+            return m_HistoricalProfile.InitialState.GetCritters(inId).Population;
+        }
+
         #endregion // Scenario
 
         #region Player

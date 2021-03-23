@@ -191,6 +191,7 @@ namespace Aqua
             Services.Input.PauseAll();
             Services.Script.KillLowPriorityThreads();
             Services.Physics.AllowTicking = false;
+            BootParams.ClearStartFlag();
 
             bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;

@@ -29,6 +29,10 @@ namespace Aqua
 
         #pragma warning restore CS0414
 
+        #if UNITY_EDITOR
+        static private bool s_StartFlag = true;
+        #endif // UNITY_EDITOR
+        
         static private QueryParams s_Args;
 
         private void Awake()
@@ -114,7 +118,23 @@ namespace Aqua
             }
         }
 
+        static internal void ClearStartFlag()
+        {
+            #if UNITY_EDITOR
+            s_StartFlag = false;
+            #endif // UNITY_EDITOR
+        }
+
         static public QueryParams Args { get { return s_Args; } }
+
+        #if UNITY_EDITOR
+        static public bool BootedFromCurrentScene
+        {
+            get { return s_StartFlag; }
+        }
+        #else
+        public const bool BootedFromCurrentScene = false;
+        #endif // UNITY_EDITOR
 
         #endregion // Boot Parameters
     }

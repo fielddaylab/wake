@@ -60,6 +60,10 @@ namespace ProtoAqua.Modeling
                     BFBody body = critterEntry.FactOfType<BFBody>();
                     float populationScale = body.MassPerPopulation() * body.MassDisplayScale();
 
+                    // if population starts at 0, don't graph
+                    if (inResults[0].Actors[resultIdx].Population == 0)
+                        continue;
+
                     unusedLines.Remove(id);
                     if (!m_LineMap.TryGetValue(id, out line))
                     {

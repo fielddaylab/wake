@@ -20,10 +20,10 @@ namespace ProtoAqua.Modeling
             m_Buffer = inBuffer;
             
             m_SliderPool.Reset();
-            foreach(var critterType in inBuffer.Scenario().Critters())
+            foreach(var critterPair in inBuffer.Scenario().Actors())
             {
                 var slider = m_SliderPool.Alloc();
-                slider.Load(critterType, (int) inBuffer.GetPlayerCritters(critterType.Id()));
+                slider.Load(critterPair.Id, (int) inBuffer.GetPlayerCritters(critterPair.Id), -1, (int) inBuffer.GetModelCritters(critterPair.Id));
                 slider.OnPopulationChanged.AddListener(OnCritterPopulationChanged);
             }
         }
