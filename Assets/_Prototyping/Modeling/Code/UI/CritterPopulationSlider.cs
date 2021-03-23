@@ -26,9 +26,10 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         [NonSerialized] private ActorCountI32 m_Data;
-        [NonSerialized] private float m_SliderScale;
-        [NonSerialized] private float m_PopulationScale;
         [NonSerialized] private float m_MaxDisplayPopulation;
+
+        [NonSerialized] private float m_SliderScale;
+        [NonSerialized] private float m_DisplayScale;
         
         public readonly ActorCountEvent OnPopulationChanged = new ActorCountEvent();
 
@@ -58,7 +59,7 @@ namespace ProtoAqua.Modeling
             m_Data.Population = inPopulation;
 
             m_SliderScale = body.PopulationSoftIncrement();
-            m_PopulationScale = body.MassDisplayScale();
+            m_DisplayScale = body.MassDisplayScale();
 
             if (inRange <= 0)
                 inRange = (int) body.PopulationSoftCap();
@@ -89,19 +90,19 @@ namespace ProtoAqua.Modeling
 
         private int ToDisplayPopulation(int inPopulation)
         {
-            return (int) Math.Round(inPopulation * m_PopulationScale); 
+            return (int) Math.Round(inPopulation * m_DisplayScale); 
         }
 
         private int ToRealPopulation(int inPopulation)
         {
-            return (int) Math.Round(inPopulation / m_PopulationScale);
+            return (int) Math.Round(inPopulation / m_DisplayScale);
         }
 
         #region Handlers
 
         private void OnSliderValueChanged(float inValue)
         {
-            int val = ToRealPopulation((int) (inValue * m_SliderScale));
+            int val = (int) (inValue * m_SliderScale);
             TryUpdateValue(val, true, false);
         }
 

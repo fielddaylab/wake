@@ -111,7 +111,13 @@ namespace ProtoAqua.Modeling
         /// </summary>
         public uint GetModelCritters(StringHash32 inId)
         {
-            return m_HistoricalProfile.InitialState.GetCritters(inId).Population;
+            foreach(var critter in m_Scenario.Actors())
+            {
+                if (critter.Id == inId)
+                    return critter.Population;
+            }
+
+            return 0;
         }
 
         #endregion // Scenario

@@ -15,15 +15,15 @@ MonoBehaviour:
   m_Environment: {fileID: 11400000, guid: b5149999ba7b2cd4cb10c2759f9b41a5, type: 2}
   m_Facts:
   - {fileID: 11400000, guid: d89c7af8c17e6904086a3cea978c4487, type: 2}
-  - {fileID: 11400000, guid: ff0b32bad14f5c748a91f95b41fa133f, type: 2}
+  - {fileID: 11400000, guid: 4038e47901814474cb918d28931f7bb8, type: 2}
   m_InitialActors:
   - Id:
       m_Source: Urchin
       m_Hash: 1973276590
     Population: 500
   - Id:
-      m_Source: GiantKelp
-      m_Hash: 3510470690
+      m_Source: BullKelp
+      m_Hash: 3363669640
     Population: 40000
   - Id:
       m_Source: SeaOtter
@@ -34,10 +34,22 @@ MonoBehaviour:
   m_PredictionTicks: 20
   m_TargetActors:
   - Id:
-      m_Source: GiantKelp
-      m_Hash: 3510470690
+      m_Source: BullKelp
+      m_Hash: 3363669640
     Population: 15368
-  m_AdjustableActors: []
+  m_AdjustableActors:
+  - Id:
+      m_Source: Urchin
+      m_Hash: 1973276590
+    Population: 500
+  - Id:
+      m_Source: BullKelp
+      m_Hash: 3363669640
+    Population: 40000
+  - Id:
+      m_Source: SeaOtter
+      m_Hash: 3836809010
+    Population: 25
   m_TitleId:
     m_Source: modeling.coolKelpForest.title
     m_Hash: 1278307012
