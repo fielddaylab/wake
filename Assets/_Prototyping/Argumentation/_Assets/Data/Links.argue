@@ -1,17 +1,53 @@
+// CRITTERS
+
 :: SeaOtter.Eats.Urchin
 @factId SeaOtter.Eats.Urchin
 @tag behavior
-@type otter
-Otters eat urchins
+@type SeaOtter
+I observed that Sea Otters eat Urchins
 
 :: Urchin.Eats.GiantKelp
 @factId Urchin.Eats.GiantKelp
 @tag behavior
-@type urchin
-Urchins eat giant kelp
+@type Urchin
+I observed that Urchins eat Giant Kelp
 
 :: Urchin.Eats.BullKelp
 @factId Urchin.Eats.BullKelp
 @tag behavior
-@type urchin
-Urchins eat bull kelp
+@type Urchin
+I observed that Urchins eat Bull Kelp
+
+// ECOSYSTEMS
+
+:: UrchinBarren.Temperature
+@factId UrchinBarren.Temperature
+@tag environment
+@type UrchinBarren
+I observed that the the Urchin Barren has a temperature of 50°F
+
+:: UrchinBarren.Oxygen
+@factId UrchinBarren.Oxygen
+@tag environment
+@type UrchinBarren
+I observed that the Urchin Barren has an oxygen concentration of 50mg/L
+
+:: KelpForest.Temperature
+@factId KelpForest.Temperature
+@tag environment
+@type KelpForest
+I observed that the the Cool Kelp Forest has a temperature of 70°F
+
+:: KelpForest.Oxygen
+@factId KelpForest.Oxygen
+@tag environment
+@type KelpForest
+I observed that the Cool Kelp Forest has an oxygen concentration of 80mg/L
+
+// MODELS
+
+:: Model.UrchinBarren
+@factId Model.UrchinBarren
+@tag model
+@type UrchinBarren
+I observed that the Urchin Barren is predicted to grow more Giant Kelp if we add Sea Otters.

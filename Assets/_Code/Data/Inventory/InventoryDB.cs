@@ -16,19 +16,5 @@ namespace Aqua
         {}
 
         #endif // UNITY_EDITOR
-
-        public bool TryGetArtifact(out InvItemArtifact artifact) {
-            foreach(var obj in this.Objects) {
-                if(obj.GetType().Equals(typeof(InvItemArtifact))) {
-                    artifact = (InvItemArtifact)obj;
-                    return true;
-                }
-            }
-            artifact = null;
-            return false;
-        }
-        
     }
-    
-
 }

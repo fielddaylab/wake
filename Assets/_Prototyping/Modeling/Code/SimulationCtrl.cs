@@ -121,9 +121,9 @@ namespace ProtoAqua.Modeling
             m_State.Phase = ModelingPhase.Completed;
             SyncPhaseScriptVar();
 
-            StringHash32 item = m_Buffer.Scenario().CompletedItem();
-            if (!item.IsEmpty)
-                Services.Data.Profile.Inventory.GiveItem(item);
+            StringHash32 fact = m_Buffer.Scenario().BestiaryModelId();
+            if (!fact.IsEmpty)
+                Services.Data.Profile.Bestiary.RegisterFact(fact);
             m_UI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");

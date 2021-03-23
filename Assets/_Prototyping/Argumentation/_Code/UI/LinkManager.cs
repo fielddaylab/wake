@@ -55,9 +55,12 @@ namespace ProtoAqua.Argumentation
         public GameObject ClickBestiaryLink(PlayerFactParams s) {
             ChatBubble newLink = m_LinkPool.Alloc();
             newLink.gameObject.SetActive(false);
-            newLink.InitializeLinkData(s.Fact.GenerateSentence());
+            Link link = m_Graph.FindLink(s.FactId);
+            if (link != null)
+                newLink.InitializeLinkData(link.DisplayText);
+            else
+                newLink.InitializeLinkData(s.Fact.GenerateSentence());
             return newLink.gameObject;
-
         }
 
         // Reset a given response once used. If the response isn't placed in the chat,

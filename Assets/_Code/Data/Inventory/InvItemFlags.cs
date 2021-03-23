@@ -1,19 +1,14 @@
 using System;
-using BeauData;
 using BeauUtil;
-using BeauUtil.Variants;
 
 namespace Aqua
 {
     [Flags]
     public enum InvItemFlags : byte
     {
-        Artifact,
+        [Hidden]
+        None = 0x00,
 
-        Cash,
-
-        Gear,
-
-        None
+        Currency = 0x01,
     }
 }

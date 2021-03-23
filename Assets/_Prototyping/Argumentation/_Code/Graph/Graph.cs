@@ -11,10 +11,12 @@ namespace ProtoAqua.Argumentation
         [Header("Graph Dependencies")]
         [SerializeField] private GraphDataManager m_GraphDataManager = null;
 
+        #pragma warning disable CS0414
 
-        [Header("Debug Booleans")]
-        [SerializeField] private bool m_enableAllLinks = false;
+        [Header("-- DEBUG --")]
+        [SerializeField] private GraphDataPackage m_DebugPackage = null;
 
+        #pragma warning restore CS0414
 
         private Dictionary<StringHash32, Node> nodeDictionary = new Dictionary<StringHash32, Node>();
         private Dictionary<StringHash32, Link> linkDictionary = new Dictionary<StringHash32, Link>();
@@ -63,6 +65,14 @@ namespace ProtoAqua.Argumentation
 
             JobDesc currentJob = Services.Data.CurrentJob()?.Job;
             GraphDataPackage script = currentJob?.FindAsset<GraphDataPackage>();
+            
+            #if UNITY_EDITOR
+            if (!script)
+                script = m_DebugPackage;
+            #else
+            m_DebugPackage = null;
+            #endif // UNITY_EDITOR
+
             if (script != null)
             {
                 LoadGraph(script);
@@ -79,8 +89,6 @@ namespace ProtoAqua.Argumentation
         // Then check if conditions for traversing to that next node are met.
         public Node NextNode(StringHash32 id)
         {
-            Link response = FindLink(id);
-
             if (currentNode.CheckResponse(id))
             {
                 StringHash32 nextNodeId = currentNode.GetNextNodeId(id);
@@ -88,16 +96,14 @@ namespace ProtoAqua.Argumentation
 
                 if (nextNode != null)
                 {
-                    if (conditions.CheckConditions(nextNode, response))
+                    if (conditions.CheckConditions(nextNode, id))
                     {
                         currentNode = nextNode;
                         return currentNode;
                     }
                     else
                     {
-                        // If CheckConditions returns false, cycle back to conditions not met node
-                        currentNode = FindNode(response.ConditionsNotMetId);
-                        return currentNode;
+                        return FindNode(currentNode.InvalidNodeId);
                     }
                 }
                 else

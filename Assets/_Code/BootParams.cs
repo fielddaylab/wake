@@ -19,9 +19,9 @@ namespace Aqua
     [DefaultExecutionOrder(int.MinValue)]
     public class BootParams : MonoBehaviour
     {
-        #pragma warning disable CS0414
-
         [SerializeField, Required] private string[] m_IgnoredSceneNames = null;
+
+        #pragma warning disable CS0414
 
         [Header("-- DEBUG --")]
         [SerializeField, Required] private DebugService m_Debug = null;

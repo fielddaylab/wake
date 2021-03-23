@@ -18,9 +18,11 @@ namespace ProtoAqua.Argumentation
         [Header("Clickable Object Settings")]
         [SerializeField] private bool chatBubble = false;
         [SerializeField] private bool isButton = false;
+        [SerializeField, ShowIfField("isButton")] private BestiaryDescCategory m_FactCategory = BestiaryDescCategory.ALL;
+
+        [Header("Colors")]
         [SerializeField] private Color m_DefaultColor = Color.cyan;
         [SerializeField] private Color m_ClickColor = Color.blue;
-
 
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
@@ -52,12 +54,12 @@ namespace ProtoAqua.Argumentation
                 if (chatBubble)
                 {
                     colorRoutine.Replace(this, OnPointerUpColorRoutine());
-                    Services.Events.Dispatch("ArgumentationChatBubbleSelection", eventData.pointerPress.gameObject);
+                    Services.Events.Dispatch(ChatManager.Event_ArgumentBubbleSelection, eventData.pointerPress.gameObject);
                 }
                 else if (isButton)
                 {
                     colorRoutine.Replace(this, OnPointerUpColorRoutine());
-                    Services.Events.Dispatch("OpenBestiaryWithFacts", eventData.pointerPress.gameObject);
+                    Services.Events.Dispatch(ChatManager.Event_OpenBestiaryRequest, m_FactCategory);
                 }
 
             }

@@ -10,14 +10,7 @@ namespace Aqua
 
         public InvItem Item
         {
-            get
-            {
-                if (m_CachedItem == null)
-                {
-                    m_CachedItem = Services.Assets.Inventory.Get(m_ItemId);
-                }
-                return m_CachedItem;
-            }
+            get { return m_CachedItem ?? (m_CachedItem = Services.Assets.Inventory.Get(m_ItemId)); }
         }
 
         [NonSerialized] private InvItem m_CachedItem;

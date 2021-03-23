@@ -50,7 +50,7 @@ namespace Aqua
 
         public bool HasCategory(BestiaryDescCategory inCategory)
         {
-            return inCategory == BestiaryDescCategory.BOTH || m_Type == inCategory;
+            return inCategory == BestiaryDescCategory.ALL || m_Type == inCategory;
         }
 
         public bool HasFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) != 0; }
@@ -206,7 +206,7 @@ namespace Aqua
         Model,
 
         [Hidden]
-        BOTH
+        ALL
     }
 
     [Flags]

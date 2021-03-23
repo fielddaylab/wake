@@ -31,7 +31,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private SerializedHash32 m_TickLabelId = null;
 
         [Header("Results")]
-        [SerializeField] private SerializedHash32 m_CompletedItem = null;
+        [SerializeField] private SerializedHash32 m_BestiaryModelId = null;
 
         #endregion // Inspector
 
@@ -56,7 +56,7 @@ namespace ProtoAqua.Modeling
         public StringHash32 CompleteId() { return m_CompleteId; }
         public StringHash32 TickLabelId() { return m_TickLabelId; }
 
-        public StringHash32 CompletedItem() { return m_CompletedItem; }
+        public StringHash32 BestiaryModelId() { return m_BestiaryModelId; }
         
         public uint TotalTicks() { return m_TickCount + m_PredictionTicks; }
 

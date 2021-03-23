@@ -13,6 +13,9 @@ namespace ProtoAqua.Argumentation
 
     public class ChatManager : MonoBehaviour
     {
+        static public readonly StringHash32 Event_ArgumentBubbleSelection = "ArgumentationChatBubbleSelection";
+        static public readonly StringHash32 Event_OpenBestiaryRequest = "OpenBestiaryWithFacts";
+
         [Serializable]
         public class NodePool : SerializablePool<ChatBubble> { }
 
@@ -39,8 +42,8 @@ namespace ProtoAqua.Argumentation
         {
             m_NodePool.Initialize();
 
-            Services.Events.Register<GameObject>("ArgumentationChatBubbleSelection", OnDrop, this);
-            Services.Events.Register<GameObject>("OpenBestiaryWithFacts", OpenBestiary, this);
+            Services.Events.Register<GameObject>(Event_ArgumentBubbleSelection, OnDrop, this);
+            Services.Events.Register<BestiaryDescCategory>(Event_OpenBestiaryRequest, OpenBestiary, this);
 
             m_Graph.OnGraphLoaded += Init;
             m_Graph.OnGraphNotAvailable += NotAvailable;
@@ -106,12 +109,12 @@ namespace ProtoAqua.Argumentation
             Routine.Start(this, ScrollRoutine(linkId, selectedFact));
         }
 
-        private void OpenBestiary(GameObject clicked) {
-            var future = BestiaryApp.RequestFact(BestiaryDescCategory.BOTH);
+        private void OpenBestiary(BestiaryDescCategory inCategory) {
+            var future = BestiaryApp.RequestFact(inCategory);
             future.OnComplete( (s) => {
                 Debug.Log("Selected: " + s.Fact.name);
                 GameObject newLink = m_LinkManager.ClickBestiaryLink(s);
-                OnSelect(newLink, s.Fact.name);
+                OnSelect(newLink, s.Fact.Id());
                 //m_FactText.SetText("Selected: " + s.Fact.GenerateSentence(s));
             }).OnFail(() => {
                 //m_FactText.SetText("Selected: Nothing");
@@ -122,9 +125,6 @@ namespace ProtoAqua.Argumentation
         private void RespondWithNextNode(StringHash32 linkId, GameObject response)
         {
             Node nextNode = m_Graph.NextNode(linkId);
-            Link currentLink = m_Graph.FindLink(linkId);
-
-            //CheckConditionsMet(nextNode, currentLink);
 
             // Create the node bubble, and set its properties
             ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
@@ -169,18 +169,6 @@ namespace ProtoAqua.Argumentation
             m_LinkManager.HandleNode(nextNode);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-        }
-
-        // Checks if conditions for the next node are met. If not, create and respond with
-        // a node indicate that conditions haven't been met
-        private void CheckConditionsMet(Node nextNode, Link currentLink)
-        {
-            if (!m_Graph.Conditions.CheckConditions(nextNode, currentLink))
-            {
-                ChatBubble conditionsNotMetNode = m_NodePool.Alloc(m_ChatGrid);
-                conditionsNotMetNode.InitializeNodeData("conditionsNotMet", "Conditions not met!");
-                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-            }
         }
 
         // Display a popup indicating that the end of the conversation has been reached

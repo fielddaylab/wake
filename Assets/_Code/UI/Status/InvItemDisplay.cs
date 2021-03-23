@@ -10,6 +10,7 @@ namespace Aqua
     {
         [SerializeField, Required] private Image Icon = null;
         [SerializeField, Required] private TMP_Text m_Text = null;
+        [SerializeField] private LocText m_NameText = null;
 
         [NonSerialized] private InvItem m_Item = null;
         [NonSerialized] private int m_Value = 0;
@@ -31,6 +32,9 @@ namespace Aqua
 
             Icon.sprite = inItem.Icon();
             m_Text.SetText(m_Value.ToStringLookup());
+
+            if (m_NameText)
+                m_NameText.SetText(inItem.NameTextId());
         }
 
     }
