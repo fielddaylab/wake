@@ -50,7 +50,7 @@ namespace ProtoAqua.Experiment
                     if (psb.Builder.Length > 0)
                         psb.Builder.Append('\n');
                     
-                    string label = Services.Loc.MaybeLocalize(Services.Assets.Bestiary.Get(actor).CommonName());
+                    string label = Services.Loc.Localize(Services.Assets.Bestiary.Get(actor).CommonName());
                     psb.Builder.Append(label);
                 }
 

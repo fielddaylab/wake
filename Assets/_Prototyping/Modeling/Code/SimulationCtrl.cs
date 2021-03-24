@@ -50,6 +50,11 @@ namespace ProtoAqua.Modeling
             m_ScenarioGroup.SetActive(true);
 
             m_Buffer = new SimulationBuffer();
+
+            #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            m_Buffer.Flags = SimulatorFlags.Debug;
+            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
             m_Buffer.SetScenario(scenario);
             m_UI.SetBuffer(m_Buffer);
             m_UI.OnAdvanceClicked = OnAdvanceClicked;
@@ -189,13 +194,13 @@ namespace ProtoAqua.Modeling
 
         void IInputHandler.HandleInput(DeviceInput inInput)
         {
-            #if UNITY_EDITOR
-            if (inInput.KeyPressed(KeyCode.F8))
+            #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (inInput.KeyPressed(KeyCode.F8) || inInput.KeyPressed(KeyCode.R))
             {
                 m_Buffer.Flags |= SimulatorFlags.Debug;
                 m_Buffer.ReloadScenario();
             }
-            #endif // UNITY_EDITOR
+            #endif //  || DEVELOPMENT_BUILD
         }
     }
 }

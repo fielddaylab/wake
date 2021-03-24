@@ -450,7 +450,7 @@ namespace Aqua.Portable
             foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
             {
                 PortableListElement button = m_EntryPool.Alloc();
-                button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, Services.Loc.Localize(entry.CommonName()), entry, OnEntryToggled);
             }
             
             LayoutRebuilder.MarkLayoutForRebuild((RectTransform) m_EntryLayoutGroup.transform);
