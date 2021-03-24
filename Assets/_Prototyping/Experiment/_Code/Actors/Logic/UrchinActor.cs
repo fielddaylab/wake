@@ -27,6 +27,7 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private Routine m_Anim;
         [NonSerialized] private KelpStem m_CurrStem = null;
         [NonSerialized] private bool descend = false;
+        [NonSerialized] private float minKelpHeight = float.PositiveInfinity;
 
 
         #region IFoodSource
@@ -151,6 +152,8 @@ namespace ProtoAqua.Experiment
                 if(stem == null) continue;
                 if(!stem.hasSpine()) return null;
                 stem.ResetPosition(obj.Collider.transform.position);
+
+                if(stem.height < minKelpHeight) minKelpHeight = stem.height;
                 return stem;
             }
             
@@ -166,6 +169,9 @@ namespace ProtoAqua.Experiment
             {
                 descend = false;
                 m_CurrStem = null;
+            }
+            else if(myPos.y >= stem.height) {
+                descend = true;
             }
 
         }

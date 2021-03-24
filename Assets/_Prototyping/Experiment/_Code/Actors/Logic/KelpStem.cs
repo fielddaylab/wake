@@ -34,7 +34,7 @@ namespace ProtoAqua.Experiment
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
             m_Spine = bull == null ? giant.GetSpine() : bull.GetSpine();
-            height = m_Spine.size.y;
+            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
             root = inParent.Body.WorldTransform.position.x;
             position = m_Spine.transform.position;
             m_Parent = inParent;

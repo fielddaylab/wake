@@ -61,7 +61,7 @@ namespace ProtoAqua.Experiment
 
         public bool ReachedTheFloor(Vector2 position, float inFloorOffset) {
             Rect r = Rect();
-            return position.y <= r.yMin - inFloorOffset;
+            return position.y <= (r.yMin + inFloorOffset);
         }
 
         private Rect Rect()
