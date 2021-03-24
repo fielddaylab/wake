@@ -200,6 +200,9 @@ namespace Aqua
                 Services.UI.ShowLetterbox();
             }
 
+            if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
+                Services.Events.Dispatch(GameEvents.SceneWillUnload);
+
             if (bShowLoading)
             {
                 yield return Services.UI.ShowLoadingScreen();
@@ -453,5 +456,6 @@ namespace Aqua
         NoLoadingScreen = 0x01,
         DoNotModifyHistory = 0x02,
         Cutscene = 0x04,
+        DoNotDispatchPreUnload = 0x08
     }
 }

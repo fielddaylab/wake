@@ -106,6 +106,10 @@ namespace Aqua.Debugging
                 {
                     CompleteCurrentJob();
                 }
+                else if (m_Input.KeyPressed(KeyCode.C))
+                {
+                    DumpConversationLog();
+                }
             }
         }
 
@@ -154,6 +158,21 @@ namespace Aqua.Debugging
                 foreach(var node in Services.Data.Profile.Script.RecentNodeHistory)
                 {
                     psb.Builder.Append("\n  ").Append(node.ToDebugString());
+                }
+
+                Debug.Log(psb.Builder.Flush());
+            }
+        }
+
+        private void DumpConversationLog()
+        {
+            using (PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append("[DebugService] Dumping conversation history");
+
+                foreach(var record in Services.Data.DialogHistory)
+                {
+                    psb.Builder.Append('\n').Append(record.ToDebugString());
                 }
 
                 Debug.Log(psb.Builder.Flush());

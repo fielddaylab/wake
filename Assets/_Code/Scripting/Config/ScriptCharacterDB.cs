@@ -7,21 +7,21 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Script Character Database")]
-    public class ScriptCharacterDB : DBObjectCollection<ScriptActorDefinition>
+    public class ScriptCharacterDB : DBObjectCollection<ScriptActorDef>
     {
         #region Inspector
 
-        [SerializeField, Required] private ScriptActorDefinition m_NullActorDefinition = null;
+        [SerializeField, Required] private ScriptActorDef m_NullActorDefinition = null;
         [SerializeField, Required] private Sprite m_ErrorPortrait = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private Dictionary<StringHash32, ScriptActorDefinition> m_ActorDefinitionMap;
+        [NonSerialized] private Dictionary<StringHash32, ScriptActorDef> m_ActorDefinitionMap;
 
-        public ScriptActorDefinition Default() { return m_NullActorDefinition; }
+        public ScriptActorDef Default() { return m_NullActorDefinition; }
         public Sprite ErrorPortrait() { return m_ErrorPortrait; }
 
-        protected override ScriptActorDefinition NullValue()
+        protected override ScriptActorDef NullValue()
         {
             return m_NullActorDefinition;
         }

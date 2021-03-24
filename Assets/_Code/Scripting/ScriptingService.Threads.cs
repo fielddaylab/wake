@@ -141,6 +141,8 @@ namespace Aqua
             ParseToTag(ref lineEvents, inLine, inThread);
             eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler);
 
+            inThread.RecordDialog(lineEvents);
+
             for (int i = 0; i < lineEvents.Nodes.Length; ++i)
             {
                 TagNodeData node = lineEvents.Nodes[i];
@@ -192,6 +194,8 @@ namespace Aqua
             TagString lineEvents = inThread.TagString;
             TagStringEventHandler eventHandler = m_TagEventHandler;
             ParseToTag(ref lineEvents, inLine, inThread);
+
+            inThread.RecordDialog(lineEvents);
 
             for (int i = 0; i < lineEvents.Nodes.Length; ++i)
             {

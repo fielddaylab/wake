@@ -37,6 +37,11 @@ namespace Aqua.Scripting
         private DialogPanel m_CurrentDialog;
         private Routine m_SkipRoutine;
 
+        // record state
+        private bool m_RecordedDialog;
+        private StringHash32 m_LastKnownCharacter;
+        private string m_LastKnownName;
+
         // trigger state
         private StringHash32 m_TriggerNodeId;
         private StringHash32 m_TriggerWho;
@@ -204,6 +209,26 @@ namespace Aqua.Scripting
 
         #endregion // Temp State
 
+        #region Records
+
+        /// <summary>
+        /// Records an instance of dialog text.
+        /// </summary>
+        public void RecordDialog(TagString inString)
+        {
+            if (inString.RichText.Length <= 0)
+                return;
+            
+            DialogRecord record = DialogRecord.FromTag(inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog);
+            m_LastKnownCharacter = record.CharacterId;
+            m_LastKnownName = record.Name;
+            m_RecordedDialog = true;
+
+            Services.Data.AddToDialogHistory(record);
+        }
+
+        #endregion // Records
+
         #region Cutscene
 
         public void PushCutscene()
@@ -341,6 +366,10 @@ namespace Aqua.Scripting
 
             m_TriggerWho = StringHash32.Null;
             m_TriggerPriority = TriggerPriority.Low;
+
+            m_LastKnownCharacter = StringHash32.Null;
+            m_LastKnownName = null;
+            m_RecordedDialog = false;
         }
 
         #endregion // IPooledObject

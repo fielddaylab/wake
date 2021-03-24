@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Script Actor Definition")]
-    public class ScriptActorDefinition : DBObject
+    public class ScriptActorDef : DBObject
     {
         [Serializable]
         private struct PortraitDef : IKeyValuePair<StringHash32, Sprite>
@@ -29,6 +29,8 @@ namespace Aqua
         [SerializeField, ShowIfField("m_OverrideNamePalette")] private ColorPalette4 m_NameColor = new ColorPalette4(Color.white, Color.grey);
         [SerializeField] private bool m_OverrideTextPalette = false;
         [SerializeField, ShowIfField("m_OverrideTextPalette")] private ColorPalette4 m_TextColor = new ColorPalette4(Color.white, Color.grey);
+        [SerializeField] private bool m_OverrideHistoryColor = false;
+        [SerializeField, ShowIfField("m_OverrideHistoryColor")] private Color32 m_HistoryColor;
 
         [Header("Portraits")]
         [SerializeField] private Sprite m_DefaultPortrait = null;
@@ -44,6 +46,7 @@ namespace Aqua
         
         public ColorPalette4? NamePaletteOverride() { return m_OverrideNamePalette ? m_NameColor : new ColorPalette4?(); }
         public ColorPalette4? TextPaletteOverride() { return m_OverrideTextPalette ? m_TextColor : new ColorPalette4?(); }
+        public Color32? HistoryColorOverride() { return m_OverrideHistoryColor ? m_HistoryColor : new Color32?(); }
 
         public Sprite DefaultPortrait() { return m_DefaultPortrait; }
         public Sprite Portrait(StringHash32 inId)

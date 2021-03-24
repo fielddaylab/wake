@@ -20,6 +20,10 @@ namespace Aqua
 
         #region Inspector
 
+        [Header("Conversation History")]
+        [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
+
+        [Header("Defaults")]
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
 
         [Header("Random Chances")]
@@ -34,6 +38,7 @@ namespace Aqua
         [NonSerialized] private VariantTable m_SessionTable;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
+        [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
 
         #region Save Data
 
@@ -96,6 +101,20 @@ namespace Aqua
 
         #endregion // Load
 
+        #region Dialog History
+
+        public void AddToDialogHistory(in DialogRecord inRecord)
+        {
+            m_DialogHistory.PushBack(inRecord);
+        }
+
+        public RingBuffer<DialogRecord> DialogHistory
+        {
+            get { return m_DialogHistory; }
+        }
+
+        #endregion // Dialog History
+
         #region IService
 
         protected override void Initialize()
@@ -104,6 +123,8 @@ namespace Aqua
 
             m_SessionTable = new VariantTable("session");
             BindTable("session", m_SessionTable);
+
+            m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
         }
 
         protected override void Shutdown()

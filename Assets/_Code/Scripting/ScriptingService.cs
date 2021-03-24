@@ -536,6 +536,7 @@ namespace Aqua
             if (inNode.IsCutscene())
             {
                 m_CutsceneThread?.Kill();
+                KillLowPriorityThreads(TriggerPriority.High);
             }
 
             TempAlloc<VariantTable> tempVars = m_TablePool.TempAlloc();
@@ -659,5 +660,60 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region Text Utils
+
+        /// <summary>
+        /// Attempts to locate the character and name associtaed 
+        /// </summary>
+        static public bool TryFindCharacter(TagString inTagString, out StringHash32 outCharacterId, out string outName)
+        {
+            outName = null;
+
+            var nodes = inTagString.Nodes;
+            TagNodeData node;
+            for(int i = nodes.Length - 1; i >= 0; --i)
+            {
+                node = nodes[i];
+                if (node.Type == TagNodeType.Event)
+                {
+                    if (node.Event.Type == ScriptEvents.Dialog.Speaker)
+                    {
+                        outName = node.Event.StringArgument.ToString();
+                    }
+                    else if (node.Event.Type == ScriptEvents.Dialog.Target)
+                    {
+                        StringHash32 target = node.Event.Argument0.AsStringHash();
+                        outCharacterId = target;
+
+                        if (target.IsEmpty)
+                        {
+                            outName = null;
+                            return true;
+                        }
+
+                        if (outName == null)
+                        {
+                            var character = Services.Assets.Characters.Get(target);
+                            if (character.HasFlags(ScriptActorTypeFlags.IsPlayer))
+                            {
+                                outName = Services.Data.CurrentCharacterName();
+                            }
+                            else
+                            {
+                                outName = Services.Loc.Localize(character.NameId());
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            outCharacterId = StringHash32.Null;
+            return outName != null;
+        }
+
+        #endregion // Text Utils
     }
 }

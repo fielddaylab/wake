@@ -20,6 +20,7 @@ namespace Aqua
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+        [SerializeField, Required] private DialogHistoryPanel m_DialogHistory = null;
 
         [Header("Overlays")]
         [SerializeField, Required] private LoadingDisplay m_Loading = null;
@@ -64,11 +65,13 @@ namespace Aqua
         #region Dialog
 
         public DialogPanel Dialog { get { return m_DialogPanel; } }
+        public DialogHistoryPanel DialogHistory { get { return m_DialogHistory; } }
         public PopupPanel Popup { get { return m_PopupPanel; } }
 
         public void HideAll()
         {
             m_DialogPanel.InstantHide();
+            m_DialogHistory.InstantHide();
             m_PopupPanel.InstantHide();
             m_LetterboxCounter = 0;
             m_Letterbox.InstantHide();
