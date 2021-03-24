@@ -49,7 +49,7 @@ namespace Aqua
             {
                 psb.Builder.Append(Services.Loc.Localize(prop.LabelId()))
                     .Append(" in ")
-                    .Append(Services.Loc.MaybeLocalize(Parent().CommonName()))
+                    .Append(Services.Loc.Localize(Parent().CommonName()))
                     .Append(" is ")
                     .Append(m_Value.ToString());
 

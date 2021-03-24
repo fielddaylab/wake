@@ -145,11 +145,11 @@ namespace ProtoAqua.Experiment
                 foreach(var prop in Services.Assets.WaterProp.Objects) {
                     if(resData.Setup.PropertyId == prop.Index())  selectProp = prop.name;
                 }
-                form_text = actor.CommonName() + " Has No Fact for " + selectProp;
+                form_text = Services.Loc.Localize(actor.CommonName()) + " Has No Fact for " + selectProp;
             }
             else
             {
-                form_text = actor.CommonName() + state.GenerateSentence();
+                form_text = Services.Loc.Localize(actor.CommonName()) + state.GenerateSentence();
             }
             // BFStateRange state = null;
             // var allEnvs = Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Environment);

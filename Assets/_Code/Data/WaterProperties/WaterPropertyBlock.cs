@@ -1,11 +1,13 @@
 using System;
 using BeauUtil;
+using System.Runtime.InteropServices;
 
 namespace Aqua
 {
     /// <summary>
     /// Mapping of property to 32-bit float.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack=4)]
     public struct WaterPropertyBlockF32
     {
         public float Oxygen;
@@ -103,6 +105,7 @@ namespace Aqua
     /// <summary>
     /// Mapping of property to unsigned 16-bit int.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack=2)]
     public struct WaterPropertyBlockU16
     {
         public ushort Oxygen;
@@ -200,6 +203,7 @@ namespace Aqua
     /// <summary>
     /// Mapping of property to unsigned 8-bit integer.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
     public struct WaterPropertyBlockU8
     {
         public byte Oxygen;
@@ -265,7 +269,7 @@ namespace Aqua
     {
         public byte Mask;
 
-        public unsafe bool this[WaterPropertyId inId]
+        public bool this[WaterPropertyId inId]
         {
             get
             {

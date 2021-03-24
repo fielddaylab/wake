@@ -162,7 +162,7 @@ namespace ProtoAqua.Experiment
             {
                 yield return Actor.Body.WorldTransform.ScaleTo(1.1f, 0.2f).Ease(Curve.CubeOut);
                 inFoodSource.Bite(Actor, GetProperty<float>("BiteSize", 5));
-                Services.Audio.PostEvent("seaotter_eat");
+                // Services.Audio.PostEvent("seaotter_eat");
                 if (ExperimentServices.BehaviorCapture.WasObserved(eatingBehavior.Id()))
                 {
                     m_EatParticles.Emit(1);

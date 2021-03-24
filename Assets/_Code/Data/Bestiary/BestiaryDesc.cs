@@ -17,7 +17,7 @@ namespace Aqua
 
         [Header("Info")]
         [SerializeField] private string m_ScientificNameId = null;
-        [SerializeField] private string m_CommonNameId = null;
+        [SerializeField] private SerializedHash32 m_CommonNameId = null;
         
         [Space]
         [SerializeField] private BFBase[] m_Facts = null;
@@ -40,8 +40,9 @@ namespace Aqua
         public BestiaryDescSize Size() { return m_Size; }
 
         public string ScientificName() { return m_ScientificNameId; }
-        public string CommonName() { return m_CommonNameId; }
-        public string PluralName() { return m_CommonNameId + "s"; }
+        public StringHash32 CommonName() { return m_CommonNameId; }
+
+        public string PluralName() { return Services.Loc.Localize(m_CommonNameId, true) + "s"; }
 
         public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
         public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }

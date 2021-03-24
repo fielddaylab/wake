@@ -50,11 +50,11 @@ namespace Aqua
             {
                 // TODO: Variants
 
-                psb.Builder.Append(Services.Loc.MaybeLocalize(Parent().CommonName()))
+                psb.Builder.Append(Services.Loc.Localize(Parent().CommonName()))
                     .Append(" eats ");
                 if (bHasValue)
                     psb.Builder.Append(FormatValue(WaterPropertyId.Food, m_Amount)).Append(' ');
-                psb.Builder.Append(Services.Loc.MaybeLocalize(m_TargetEntry.CommonName()));
+                psb.Builder.Append(Services.Loc.Localize(m_TargetEntry.CommonName()));
                 if (bHasValue)
                     psb.Builder.Append(" per tick");
 
