@@ -106,6 +106,10 @@ namespace Aqua.Debugging
                 {
                     CompleteCurrentJob();
                 }
+                else if (m_Input.KeyPressed(KeyCode.A))
+                {
+                    OpenArgumentation();
+                }
             }
         }
 
@@ -192,6 +196,10 @@ namespace Aqua.Debugging
                 Services.Data.Profile.Jobs.MarkComplete(currJob);
             }
             
+        }
+
+        private void OpenArgumentation() {
+            StateUtil.LoadSceneWithWipe("ArgumentationScene");
         }
 
         private IEnumerator RequestQuit()

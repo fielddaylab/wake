@@ -24,7 +24,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Button m_EcosystemsButton = null;
         [SerializeField] private Button m_ModelsButton = null;
 
-        [NonSerialized] private List<GameObject> responses = new List<GameObject>();
+        [NonSerialized] private List<ChatBubble> responses = new List<ChatBubble>();
         private StringHash32 currentClaim = "";
         private bool claimSelected = false;
 
@@ -52,7 +52,7 @@ namespace ProtoAqua.Argumentation
             }
         }
 
-        public GameObject ClickBestiaryLink(PlayerFactParams s) {
+        public ChatBubble ClickBestiaryLink(PlayerFactParams s) {
             ChatBubble newLink = m_LinkPool.Alloc();
             newLink.gameObject.SetActive(false);
             Link link = m_Graph.FindLink(s.FactId);
@@ -60,58 +60,41 @@ namespace ProtoAqua.Argumentation
                 newLink.InitializeLinkData(link.DisplayText);
             else
                 newLink.InitializeLinkData(s.Fact.GenerateSentence());
-            return newLink.gameObject;
-        }
-
-        // Reset a given response once used. If the response isn't placed in the chat,
-        // delete will be true and the object can be freed from the pool before being
-        // reallocated by CreateLink
-        public void ResetLink(GameObject gameObject, StringHash32 linkId, bool delete)
-        {
-            return;
-            // RemoveResponse(gameObject);
-
-            // if (delete)
-            // {
-            //     m_LinkPool.Free(gameObject.GetComponent<ChatBubble>());
-            // }
-
-            // CreateLink(m_Graph.FindLink(linkId));
-            // LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+            return newLink;
         }
 
         // Helper function for removing a response from the responses list
-        public void RemoveResponse(GameObject gameObject)
+        public void RemoveResponse(ChatBubble response)
         {
-            responses.Remove(gameObject);
+            responses.Remove(response);
         }
 
         public void ToggleType(string type)
         {
-            foreach (GameObject gameObject in responses)
+            foreach (ChatBubble res in responses)
             {
-                ChatBubble chatBubble = gameObject.GetComponent<ChatBubble>();
-
-                if (chatBubble.typeTag.Equals(type))
+                if (res.typeTag.Equals(type))
                 {
-                    gameObject.SetActive(true);
+                    res.gameObject.SetActive(true);
                 }
                 else
                 {
-                    gameObject.SetActive(false);
+                    res.gameObject.SetActive(false);
                 }
             }
         }
 
-        public GameObject CopyLink(Link link)
+        public ChatBubble CopyLink(Link link)
         {
             return CreateLink(link);
         }
 
         // Allocate a new link from the pool and initialize its fields based on data from the graph
-        private GameObject CreateLink(Link link)
+        private ChatBubble CreateLink(Link link)
         {
             ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
+
+            newLink.SetChatBubble(true);
             newLink.InitializeLinkDependencies(this, m_Graph);
 
 
@@ -128,8 +111,8 @@ namespace ProtoAqua.Argumentation
 
             newLink.transform.SetSiblingIndex((int) link.Index);
 
-            responses.Add(newLink.gameObject);
-            return newLink.gameObject;
+            responses.Add(newLink);
+            return newLink;
         }
 
         // Show responses with a given tag and hide all other responses

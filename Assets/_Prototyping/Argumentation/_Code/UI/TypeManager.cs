@@ -45,12 +45,6 @@ namespace ProtoAqua.Argumentation
             m_TypePool.Initialize();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         public void ToggleType(string type)
         {
             m_LinkManager.ToggleType(type);
@@ -105,11 +99,8 @@ namespace ProtoAqua.Argumentation
                     }
                 }
             } else {
-                   ToggleType("otter");
+                ToggleType("otter");
             }
-
-
-
         }
 
 
