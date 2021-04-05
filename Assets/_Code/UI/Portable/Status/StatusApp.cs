@@ -58,8 +58,6 @@ namespace Aqua.Portable
 
         [NonSerialized] private PortableMenu m_ParentMenu = null;
 
-        [NonSerialized] private PortableTweaks m_Tweaks = null;
-
         [NonSerialized] private PlayerJob currentJob = null;
 
         [NonSerialized] private List<Transform> itemDisplays = new List<Transform>();

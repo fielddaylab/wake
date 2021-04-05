@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public class PhysicsService : ServiceBehaviour
+    public class PhysicsService : ServiceBehaviour, IPauseable
     {
         private const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
@@ -59,13 +59,15 @@ namespace Aqua
             return kinematic;
         }
 
-        [NonSerialized] public bool AllowTicking = false;
+        [NonSerialized] public bool Enabled = false;
+
+        private float m_FixedDeltaTime;
 
         #region Handlers
 
         private void FixedUpdate()
         {
-            if (!AllowTicking)
+            if (!Enabled)
                 return;
             
             float deltaTime = Time.fixedDeltaTime;
@@ -102,11 +104,30 @@ namespace Aqua
         {
             base.Initialize();
 
-            Time.fixedDeltaTime = 1f / 60f;
+            Time.fixedDeltaTime = Time.fixedDeltaTime = 1f / 60;
             Physics2D.autoSimulation = false;
         }
 
         #endregion // Service
+
+        #region IPauseable
+        
+        bool IPauseable.IsPaused()
+        {
+            return !Enabled;
+        }
+
+        void IPauseable.Pause()
+        {
+            Enabled = false;
+        }
+
+        void IPauseable.Resume()
+        {
+            Enabled = true;
+        }
+
+        #endregion // IPauseable
 
         #region Tick Logic
 

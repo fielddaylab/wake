@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Aqua
+namespace Aqua.Animation
 {
     [Serializable]
     public struct SpriteFrame

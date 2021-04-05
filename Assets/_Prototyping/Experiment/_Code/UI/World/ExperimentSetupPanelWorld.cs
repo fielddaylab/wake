@@ -4,6 +4,7 @@ using System;
 using BeauRoutine;
 using Aqua;
 using BeauUtil;
+using Aqua.Animation;
 
 namespace ProtoAqua.Experiment
 {

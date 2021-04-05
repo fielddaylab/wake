@@ -8,6 +8,7 @@ using System.Collections;
 using BeauPools;
 using BeauUtil.Variants;
 using Aqua;
+using Aqua.Animation;
 
 namespace ProtoAqua.Experiment
 {

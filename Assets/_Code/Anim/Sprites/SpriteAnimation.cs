@@ -2,7 +2,7 @@ using System;
 using BeauUtil;
 using UnityEngine;
 
-namespace Aqua
+namespace Aqua.Animation
 {
     /// <summary>
     /// Animated sequence of sprites.

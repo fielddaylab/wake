@@ -11,6 +11,7 @@ using AquaAudio;
 using UnityEngine;
 using BeauUtil.Services;
 using UnityEngine.SceneManagement;
+using Aqua.Animation;
 
 namespace Aqua
 {
@@ -39,11 +40,21 @@ namespace Aqua
         [ServiceReference] static public EventService Events { get; private set; }
         [ServiceReference] static public InputService Input { get; private set; }
         [ServiceReference] static public LocService Loc { get; private set; }
+        [ServiceReference] static public PauseService Pause { get; private set; }
         [ServiceReference] static public PhysicsService Physics { get; private set; }
         [ServiceReference] static public ScriptingService Script { get; private set; }
         [ServiceReference] static public StateMgr State { get; private set; }
         [ServiceReference] static public TweakMgr Tweaks { get; private set; }
         [ServiceReference] static public UIMgr UI { get; private set; }
+
+        /// <summary>
+        /// Animation services.
+        /// </summary>
+        static public class Animation
+        {
+            [ServiceReference] static public AmbientTransformService AmbientTransforms { get; private set; }
+            [ServiceReference] static public SpriteAnimatorService Sprites { get; private set; }
+        }
     
         #endregion // Accessors
 
@@ -95,6 +106,11 @@ namespace Aqua
         static public IEnumerable<ILoadable> AllLoadable()
         {
             return s_ServiceCache.All<ILoadable>();
+        }
+
+        static public IEnumerable<IPauseable> AllPauseable()
+        {
+            return s_ServiceCache.All<IPauseable>();
         }
 
         #endregion // All

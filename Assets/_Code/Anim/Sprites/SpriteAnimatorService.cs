@@ -7,7 +7,7 @@ using BeauUtil.Tags;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Aqua
+namespace Aqua.Animation
 {
     /// <summary>
     /// Animates a sequence of sprites.

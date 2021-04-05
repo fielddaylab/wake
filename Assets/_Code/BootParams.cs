@@ -12,6 +12,12 @@ using BeauUtil.Variants;
 using System;
 using BeauUtil.Debugger;
 
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor;
+#endif // UNITY_EDITOR
+
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 
 namespace Aqua
@@ -137,5 +143,35 @@ namespace Aqua
         #endif // UNITY_EDITOR
 
         #endregion // Boot Parameters
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            if (EditorApplication.isPlaying)
+                return;
+
+            PrefabStage stage = PrefabStageUtility.GetPrefabStage(gameObject);
+            if (stage != null)
+                return;
+            
+            int editorSceneBuildIndex = EditorSceneManager.GetActiveScene().buildIndex;
+            if (editorSceneBuildIndex > 0)
+            {
+                if (!gameObject.CompareTag("EditorOnly"))
+                {
+                    EditorApplication.delayCall += () => { if (this) gameObject.tag = "EditorOnly"; };
+                }
+            }
+            else
+            {
+                if (!gameObject.CompareTag("Untagged"))
+                {
+                    EditorApplication.delayCall += () => { if (this) gameObject.tag = "Untagged"; };
+                }
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

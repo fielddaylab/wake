@@ -18,7 +18,7 @@ namespace Aqua.Scripting
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
         private TriggerNodeData m_TriggerData = null;
-        private StringHash32 m_FunctionId = null;
+        private StringHash32 m_TriggerOrFunctionId = null;
         private StringHash32 m_Target = null;
         private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
         private float m_InitialDelay;
@@ -40,7 +40,7 @@ namespace Aqua.Scripting
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
-        public StringHash32 FunctionId() { return m_FunctionId; }
+        public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
         public float InitialDelay() { return m_InitialDelay; }
 
         public override ILeafModule Module()
@@ -119,7 +119,7 @@ namespace Aqua.Scripting
             {
                 m_TriggerData = new TriggerNodeData();
             }
-            m_TriggerData.TriggerId = inTriggerId;
+            m_TriggerOrFunctionId = inTriggerId;
 
             // Mapping Shortcut - Partner requests are always towards kevin
             if (inTriggerId == GameTriggers.RequestPartnerHelp)
@@ -135,7 +135,7 @@ namespace Aqua.Scripting
         [BlockMeta("function"), Preserve]
         private void SetFunction(StringHash32 inFunctionId)
         {
-            m_FunctionId = inFunctionId;
+            m_TriggerOrFunctionId = inFunctionId;
             m_Flags |= ScriptNodeFlags.Function;
         }
 

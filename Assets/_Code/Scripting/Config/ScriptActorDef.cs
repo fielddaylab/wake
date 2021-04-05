@@ -12,8 +12,12 @@ namespace Aqua
         [Serializable]
         private struct PortraitDef : IKeyValuePair<StringHash32, Sprite>
         {
+            #pragma warning disable CS0649
+
             public SerializedHash32 Id;
             public Sprite Sprite;
+
+            #pragma warning restore CS0649
 
             public StringHash32 Key { get { return Id; } }
             public Sprite Value { get { return Sprite; } }
@@ -30,7 +34,7 @@ namespace Aqua
         [SerializeField] private bool m_OverrideTextPalette = false;
         [SerializeField, ShowIfField("m_OverrideTextPalette")] private ColorPalette4 m_TextColor = new ColorPalette4(Color.white, Color.grey);
         [SerializeField] private bool m_OverrideHistoryColor = false;
-        [SerializeField, ShowIfField("m_OverrideHistoryColor")] private Color32 m_HistoryColor;
+        [SerializeField, ShowIfField("m_OverrideHistoryColor")] private Color32 m_HistoryColor = Color.white;
 
         [Header("Portraits")]
         [SerializeField] private Sprite m_DefaultPortrait = null;

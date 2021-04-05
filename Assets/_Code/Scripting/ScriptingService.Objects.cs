@@ -95,7 +95,7 @@ namespace Aqua
             int responseCount = 0;
             foreach(var response in inPackage.Responses())
             {
-                StringHash32 triggerId = response.TriggerData.TriggerId;
+                StringHash32 triggerId = response.TriggerOrFunctionId();
                 TriggerResponseSet responseSet;
                 if (!m_LoadedResponses.TryGetValue(triggerId, out responseSet))
                 {
@@ -107,7 +107,22 @@ namespace Aqua
                 ++responseCount;
             }
 
-            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Added package '{0}' with {1} entrypoints and {2} responses", inPackage.Name(), entrypointCount, responseCount);
+            int functionCount = 0;
+            foreach(var function in inPackage.Functions())
+            {
+                StringHash32 functionId = function.TriggerOrFunctionId();
+                FunctionSet funcSet;
+                if (!m_LoadedFunctions.TryGetValue(functionId, out funcSet))
+                {
+                    funcSet = new FunctionSet();
+                    m_LoadedFunctions.Add(functionId, funcSet);
+                }
+
+                funcSet.AddNode(function);
+                ++responseCount;
+            }
+
+            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Added package '{0}' with {1} entrypoints, {2} responses, {3} functions", inPackage.Name(), entrypointCount, responseCount, functionCount);
         }
 
         internal void RemovePackage(ScriptNodePackage inPackage)
@@ -127,11 +142,21 @@ namespace Aqua
 
             foreach(var response in inPackage.Responses())
             {
-                StringHash32 triggerId = response.TriggerData.TriggerId;
+                StringHash32 triggerId = response.TriggerOrFunctionId();
                 TriggerResponseSet responseSet;
                 if (m_LoadedResponses.TryGetValue(triggerId, out responseSet))
                 {
                     responseSet.RemoveNode(response);
+                }
+            }
+
+            foreach(var function in inPackage.Functions())
+            {
+                StringHash32 functionId = function.TriggerOrFunctionId();
+                FunctionSet funcSet;
+                if (m_LoadedFunctions.TryGetValue(functionId, out funcSet))
+                {
+                    funcSet.RemoveNode(function);
                 }
             }
 

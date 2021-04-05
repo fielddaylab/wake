@@ -1,14 +1,11 @@
 using UnityEngine;
-using BeauRoutine;
 using BeauUtil;
 using UnityEngine.UI;
 using System;
-using System.Collections;
-using BeauRoutine.Extensions;
 
 namespace Aqua
 {
-    public class DialogHistoryButton : BasePanel
+    public sealed class DialogHistoryButton : MonoBehaviour
     {
         #region Inspector
 
@@ -18,11 +15,9 @@ namespace Aqua
 
         [NonSerialized] private DialogHistoryPanel m_Menu;
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
-
-            m_Menu = Services.UI.DialogHistory;
+            m_Menu = Services.UI.FindPanel<DialogHistoryPanel>();
             m_Menu.OnHideEvent.AddListener(OnMenuClose);
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
         }
@@ -32,10 +27,9 @@ namespace Aqua
             m_Menu?.OnHideEvent.RemoveListener(OnMenuClose);
         }
 
-        protected override void OnDisable()
+        private void OnDisable()
         {
             m_Toggle.isOn = false;
-            base.OnDisable();
         }
 
         #region Handlers

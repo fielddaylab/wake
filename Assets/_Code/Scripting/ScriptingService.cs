@@ -13,11 +13,12 @@ using Leaf.Runtime;
 using Leaf;
 using BeauUtil.Services;
 using Aqua.Debugging;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(UIMgr), typeof(LocService), typeof(AssetsService), typeof(TweakMgr))]
-    public partial class ScriptingService : ServiceBehaviour
+    public partial class ScriptingService : ServiceBehaviour, IPauseable
     {
         // thread management
         private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
@@ -52,6 +53,9 @@ namespace Aqua
         private IPool<VariantTable> m_TablePool;
         private IPool<ScriptThread> m_ThreadPool;
         private IPool<TagStringParser> m_ParserPool;
+
+        // pausing
+        private int m_PauseCount = 0;
 
         #region Checks
 
@@ -518,7 +522,7 @@ namespace Aqua
 
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, null);
-            thread.AttachToRoutine(Routine.Start(this, inEnumerator));
+            thread.AttachToRoutine(Routine.Start(this, inEnumerator).SetPhase(RoutinePhase.Manual));
 
             m_ThreadList.Add(thread);
             if (!string.IsNullOrEmpty(inThreadName))
@@ -549,7 +553,7 @@ namespace Aqua
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, tempVars);
             thread.SyncPriority(inNode);
-            thread.AttachToRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)));
+            thread.AttachToRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual));
 
             m_ThreadList.Add(thread);
             if (!string.IsNullOrEmpty(inThreadName))
@@ -616,6 +620,45 @@ namespace Aqua
 
         #endregion // Internal
 
+        #region Pausing
+
+        /// <summary>
+        /// Pauses all script execution.
+        /// </summary>
+        public void Pause()
+        {
+            ++m_PauseCount;
+        }
+
+        /// <summary>
+        /// Resumes all script execution.
+        /// </summary>
+        public void Resume()
+        {
+            Assert.True(m_PauseCount > 0, "Unbalanced pause/resume calls");
+            --m_PauseCount;
+        }
+
+        /// <summary>
+        /// Returns if the ScriptingService is paused.
+        /// </summary>
+        public bool IsPaused()
+        {
+            return m_PauseCount > 0;
+        }
+
+        #endregion // Pausing
+
+        #region Unity Events
+
+        private void LateUpdate()
+        {
+            if (m_PauseCount == 0)
+                Routine.ManualUpdate(Time.deltaTime);
+        }
+
+        #endregion // Unity Events
+
         #region IService
 
         protected override void Initialize()
@@ -639,6 +682,7 @@ namespace Aqua
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
             m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
             m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();
+            m_LoadedFunctions = new Dictionary<StringHash32, FunctionSet>();
             m_LoadedPackageSourcesAssets = new Dictionary<LeafAsset, ScriptNodePackage>();
 
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());

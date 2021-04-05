@@ -29,11 +29,6 @@ namespace Aqua
         
         private StringHash32 m_LastId;
 
-        private void Start()
-        {
-            gameObject.SetActive(false);
-        }
-
         public void Process(Vector2 inCursorPosition)
         {
             if (m_LastId.IsEmpty)

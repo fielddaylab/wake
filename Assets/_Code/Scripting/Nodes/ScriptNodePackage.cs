@@ -69,6 +69,20 @@ namespace Aqua.Scripting
             }
         }
 
+        /// <summary>
+        /// Returns all functions.
+        /// </summary>
+        public IEnumerable<ScriptNode> Functions()
+        {
+            foreach(var node in m_Nodes.Values)
+            {
+                if ((node.Flags() & ScriptNodeFlags.Function) != 0)
+                {
+                    yield return node;
+                }
+            }
+        }
+
         #region Use Count
 
         public void IncrementUseCount()

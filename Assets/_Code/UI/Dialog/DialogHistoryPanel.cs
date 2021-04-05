@@ -10,7 +10,7 @@ using TMPro;
 
 namespace Aqua
 {
-    public class DialogHistoryPanel : BasePanel
+    public class DialogHistoryPanel : SharedPanel
     {
         [Serializable] private class NodePool : SerializablePool<DialogHistoryNode> { }
 
@@ -40,24 +40,30 @@ namespace Aqua
             m_Scroller.verticalScrollbar.gameObject.SetActive(false);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             Services.Events?.DeregisterAll(this);
+
+            base.OnDestroy();
         }
 
         protected override void OnShow(bool inbInstant)
         {
             base.OnShow(inbInstant);
 
-            m_InputLayer.Override = null;
-            m_InputLayer.PushPriority();
+            if (m_InputLayer.PushPriority())
+            {
+                Services.Pause.Pause();
+            }
             PopulateHistory();
         }
 
         protected override void OnHide(bool inbInstant)
         {
-            m_InputLayer.Override = false;
-            m_InputLayer.PopPriority();
+            if (m_InputLayer.PopPriority())
+            {
+                Services.Pause?.Resume();
+            }
             base.OnHide(inbInstant);
         }
 

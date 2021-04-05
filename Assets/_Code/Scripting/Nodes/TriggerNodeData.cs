@@ -9,7 +9,6 @@ namespace Aqua.Scripting
 {
     internal class TriggerNodeData
     {
-        public StringHash32 TriggerId;
         public TriggerPriority TriggerPriority;
 
         public VariantComparison[] Conditions;
