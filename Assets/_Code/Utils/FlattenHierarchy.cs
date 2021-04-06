@@ -13,6 +13,17 @@ namespace Aqua
         {
             transform.FlattenHierarchy(Recursive);
 
+            #if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                if (DestroyGameObject)
+                    DestroyImmediate(gameObject);
+                else
+                    DestroyImmediate(this);
+                return;
+            }
+            #endif // UNITY_EDITOR
+            
             if (DestroyGameObject)
                 Destroy(gameObject);
             else

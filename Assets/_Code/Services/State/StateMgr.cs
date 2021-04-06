@@ -168,7 +168,10 @@ namespace Aqua
 
             Services.Data.LoadProfile();
 
+            #if UNITY_EDITOR
             yield return WaitForFlatten(active);
+            #endif // UNITY_EDITOR
+
             yield return WaitForPreload(active, null);
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
@@ -238,7 +241,10 @@ namespace Aqua
                 m_SceneHistory.PushBack(inNextScene);
             }
 
+            #if UNITY_EDITOR
             yield return WaitForFlatten(inNextScene);
+            #endif // UNITY_EDITOR
+
             yield return WaitForPreload(inNextScene, inContext);
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
