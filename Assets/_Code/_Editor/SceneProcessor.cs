@@ -18,6 +18,9 @@ namespace Aqua.Editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            if (EditorApplication.isPlaying)
+                return;
+            
             RemoveBootstrap(scene);
             Flatten(scene);
         }

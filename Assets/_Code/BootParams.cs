@@ -33,10 +33,12 @@ namespace Aqua
         static private bool s_StartFlag = true;
         #endif // UNITY_EDITOR
         
+        private bool m_HasPersisted = false;
         static private QueryParams s_Args;
 
         private void Awake()
         {
+            m_HasPersisted = true;
             BuildInfo.Load();
             Input.multiTouchEnabled = false;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
@@ -71,7 +73,10 @@ namespace Aqua
 
         private void OnDestroy()
         {
-            Services.Shutdown();
+            if (m_HasPersisted)
+            {
+                Services.Shutdown();
+            }
         }
     
         #region Boot Parameters
