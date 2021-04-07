@@ -195,12 +195,14 @@ namespace ProtoAqua.Modeling
         void IInputHandler.HandleInput(DeviceInput inInput)
         {
             #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            
             if (inInput.KeyPressed(KeyCode.F8) || inInput.KeyPressed(KeyCode.R))
             {
                 m_Buffer.Flags |= SimulatorFlags.Debug;
                 m_Buffer.ReloadScenario();
             }
-            #endif //  || DEVELOPMENT_BUILD
+
+            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
         }
     }
 }

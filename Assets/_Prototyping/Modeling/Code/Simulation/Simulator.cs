@@ -12,6 +12,7 @@ namespace ProtoAqua.Modeling
         public const int MaxTrackedCritters = 8;
         public const float MaxEatProportion = 0.75f;
         public const float MaxReproduceProportion = 0.75f;
+        public const float MaxDeathProportion = 0.5f;
 
         /// <summary>
         /// Generates a single result from the given profile and initial data.

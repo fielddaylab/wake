@@ -90,7 +90,7 @@ namespace Aqua
             float* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx < (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;
@@ -188,7 +188,7 @@ namespace Aqua
             ushort* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx < (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;
@@ -250,7 +250,7 @@ namespace Aqua
             byte* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx < (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;

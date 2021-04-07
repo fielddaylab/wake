@@ -280,7 +280,8 @@ namespace ProtoAqua.Modeling
             if (ioData.Hunger > 0 && consumedPopulation > 0)
             {
                 float perPopulation = (ioData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
-                ioData.Hunger -= (uint) (consumedPopulation * perPopulation);
+                uint hungerDecrease = Math.Min(ioData.Hunger, (uint) (consumedPopulation * perPopulation));
+                ioData.Hunger -= hungerDecrease;
             }
 
             return consumedMass;
@@ -325,9 +326,10 @@ namespace ProtoAqua.Modeling
             {
                 populationDecrease = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
             }
-            if (populationDecrease > ioData.Population) //Magic Nubmer to keep a species from completely dying out
+
+            if (populationDecrease >= ioData.Population) //Magic Nubmer to keep a species from completely dying out
             {
-                populationDecrease = (uint)(ioData.Population * 0.5f);
+                populationDecrease = (uint) (ioData.Population * Simulator.MaxDeathProportion);
             }
 
             ioData.Population -= populationDecrease;
