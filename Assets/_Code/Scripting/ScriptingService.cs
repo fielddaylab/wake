@@ -18,7 +18,7 @@ using BeauUtil.Debugger;
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(UIMgr), typeof(LocService), typeof(AssetsService), typeof(TweakMgr))]
-    public partial class ScriptingService : ServiceBehaviour, IPauseable
+    public partial class ScriptingService : ServiceBehaviour, IPauseable, IDebuggable
     {
         // thread management
         private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
@@ -704,6 +704,94 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region IDebuggable
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        {
+            DMInfo scriptingMenu = DebugService.NewDebugMenu("Scripting");
+
+            DMInfo triggerMenu = DebugService.NewDebugMenu("Trigger Response");
+            RegisterTriggerResponse(triggerMenu, GameTriggers.SceneStart);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.RequestPartnerHelp);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.JobSwitched);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.JobStarted);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.JobCompleted);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.InspectObject);
+
+            scriptingMenu.AddSubmenu(triggerMenu);
+            scriptingMenu.AddDivider();
+
+            RegisterLogging(scriptingMenu);
+            scriptingMenu.AddDivider();
+            
+            scriptingMenu.AddButton("Dump Scripting State", DumpScriptingState);
+            scriptingMenu.AddButton("Clear Scripting State", ClearScriptingState);
+
+            yield return scriptingMenu;
+        }
+
+        static private void RegisterLogging(DMInfo inMenu)
+        {
+            inMenu.AddToggle("Enable Logging", () => DebugService.IsLogging(LogMask.Scripting),
+                (b) => {
+                    if (b)
+                        DebugService.AllowLogs(LogMask.Scripting);
+                    else
+                        DebugService.DisallowLogs(LogMask.Scripting);
+                });
+        }
+
+        static private void RegisterTriggerResponse(DMInfo inMenu, StringHash32 inResponse)
+        {
+            inMenu.AddButton(inResponse.ToDebugString(), () => Services.Script.TriggerResponse(inResponse));
+        }
+
+        static private void DumpScriptingState()
+        {
+            var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
+            using (PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append("[DebugService] Dumping Script State");
+                foreach(var table in resolver.AllTables())
+                {
+                    psb.Builder.Append('\n').Append(table.ToDebugString());
+                }
+
+                psb.Builder.Append("\nAll Visited Nodes");
+                foreach(var node in Services.Data.Profile.Script.ProfileNodeHistory)
+                {
+                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
+                }
+
+                psb.Builder.Append("\nAll Visited in Current Session");
+                foreach(var node in Services.Data.Profile.Script.SessionNodeHistory)
+                {
+                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
+                }
+
+                psb.Builder.Append("\nRecent Node History");
+                foreach(var node in Services.Data.Profile.Script.RecentNodeHistory)
+                {
+                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
+                }
+
+                Debug.Log(psb.Builder.Flush());
+            }
+        }
+
+        static private void ClearScriptingState()
+        {
+            var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
+            foreach(var table in resolver.AllTables())
+            {
+                table.Clear();
+            }
+            Services.Data.Profile.Script.Reset();
+            Debug.LogWarningFormat("[DebugService] Cleared all scripting state");
+        }
+
+        #endregion // IDebuggable
 
         #region Text Utils
 

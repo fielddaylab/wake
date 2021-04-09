@@ -104,15 +104,7 @@ namespace Aqua.Debugging
 
             if (m_Input.KeyDown(KeyCode.LeftControl))
             {
-                if (m_Input.KeyPressed(KeyCode.D))
-                {
-                    DumpScriptingState();
-                }
-                else if (m_Input.KeyPressed(KeyCode.F))
-                {
-                    ClearScriptingState();
-                }
-                else if (m_Input.KeyPressed(KeyCode.Return))
+                if (m_Input.KeyPressed(KeyCode.Return))
                 {
                     TryReloadAssets();
                 }
@@ -141,39 +133,6 @@ namespace Aqua.Debugging
             }
         }
 
-        private void DumpScriptingState()
-        {
-            var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
-            using (PooledStringBuilder psb = PooledStringBuilder.Create())
-            {
-                psb.Builder.Append("[DebugService] Dumping Script State");
-                foreach(var table in resolver.AllTables())
-                {
-                    psb.Builder.Append('\n').Append(table.ToDebugString());
-                }
-
-                psb.Builder.Append("\nAll Visited Nodes");
-                foreach(var node in Services.Data.Profile.Script.ProfileNodeHistory)
-                {
-                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
-                }
-
-                psb.Builder.Append("\nAll Visited in Current Session");
-                foreach(var node in Services.Data.Profile.Script.SessionNodeHistory)
-                {
-                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
-                }
-
-                psb.Builder.Append("\nRecent Node History");
-                foreach(var node in Services.Data.Profile.Script.RecentNodeHistory)
-                {
-                    psb.Builder.Append("\n  ").Append(node.ToDebugString());
-                }
-
-                Debug.Log(psb.Builder.Flush());
-            }
-        }
-
         private void DumpConversationLog()
         {
             using (PooledStringBuilder psb = PooledStringBuilder.Create())
@@ -187,17 +146,6 @@ namespace Aqua.Debugging
 
                 Debug.Log(psb.Builder.Flush());
             }
-        }
-
-        private void ClearScriptingState()
-        {
-            var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
-            foreach(var table in resolver.AllTables())
-            {
-                table.Clear();
-            }
-            Services.Data.Profile.Script.Reset();
-            Debug.LogWarningFormat("[DebugService] Cleared all scripting state");
         }
 
         private void SetMinimalLayer(bool inbOn)

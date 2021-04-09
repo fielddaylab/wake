@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using BeauUtil.Variants;
 using System;
 using BeauUtil.Debugger;
+using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 
@@ -50,11 +51,11 @@ namespace Aqua
             }
 
             #if !DEVELOPMENT
-            Debug.Log("[Bootstrap] Debug mode disabled");
+            Debug.Log("[BootParams] Debug mode disabled");
             DestroyImmediate(m_Debug.gameObject);
             #else
             Assert.NotNull(m_Debug); // should initialize assert error catching
-            Debug.Log("[Bootstrap] Debug mode enabled");
+            Debug.Log("[BootParams] Debug mode enabled");
             #endif // !DEVELOPMENT
 
             string url;
@@ -69,6 +70,26 @@ namespace Aqua
 
             LoadBootParamsFirstPass();
             Services.AutoSetup(gameObject);
+
+            #if DEVELOPMENT
+
+            List<DMInfo> debugMenus = new List<DMInfo>(8);
+            foreach(var debugService in Services.AllDebuggable())
+            {
+                debugMenus.AddRange(debugService.ConstructDebugMenus());
+            }
+            debugMenus.Sort((a, b) => a.Header.Label.CompareTo(b.Header.Label));
+
+            Debug.LogFormat("[BootParams] Found '{0}' debug menus", debugMenus.Count);
+            
+            DMInfo rootMenu = DebugService.RootDebugMenu();
+            foreach(var menu in debugMenus)
+            {
+                Debug.LogFormat("[BootParams] Adding debug menu '{0}'", menu.Header.Label);
+                rootMenu.AddSubmenu(menu);
+            }
+
+            #endif // DEVELOPMENT
         }
 
         private void OnDestroy()

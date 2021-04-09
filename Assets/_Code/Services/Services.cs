@@ -108,6 +108,11 @@ namespace Aqua
             return s_ServiceCache.All<T>();
         }
 
+        static public IEnumerable<IDebuggable> AllDebuggable()
+        {
+            return s_ServiceCache.All<IDebuggable>();
+        }
+
         static public IEnumerable<ILoadable> AllLoadable()
         {
             return s_ServiceCache.All<ILoadable>();
