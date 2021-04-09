@@ -49,6 +49,11 @@ namespace Aqua.Profile
             }
         }
 
+        public bool DeregisterEntity(StringHash32 inEntityId)
+        {
+            return m_ObservedEntities.Remove(inEntityId);
+        }
+
         #endregion // Observed Entities
 
         #region Facts
@@ -153,10 +158,24 @@ namespace Aqua.Profile
             return count;
         }
 
+        public bool DeregisterFact(StringHash32 inFactId)
+        {
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId.ToDebugString());
+
+            if (m_ObservedFacts.Remove(inFactId))
+            {
+                SortFacts();
+                int index = m_Facts.BinarySearch(inFactId);
+                m_Facts.FastRemoveAt(index);
+                m_FactListDirty = true;
+                return true;
+            }
+
+            return false;
+        }
+
         private PlayerFactParams AddFact(StringHash32 inFactId)
         {
-            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
-
             PlayerFactParams fact = new PlayerFactParams(inFactId);
             m_Facts.Add(fact);
             m_FactListDirty = true;

@@ -12,7 +12,7 @@ using Aqua.Debugging;
 
 namespace Aqua
 {
-    public partial class StateMgr : ServiceBehaviour
+    public partial class StateMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
 
@@ -452,6 +452,27 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region IDebuggable
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        {
+            var menu = DebugService.NewDebugMenu("Load Scene", 8);
+            
+            foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
+            {
+                RegisterLoadButton(menu, scene);
+            }
+
+            yield return menu;
+        }
+
+        static private void RegisterLoadButton(DMInfo inMenu, SceneBinding inBinding)
+        {
+            inMenu.AddButton(inBinding.Name, () => Services.State.LoadScene(inBinding));
+        }
+
+        #endregion // IDebuggable
     }
 
     public enum SceneLoadFlags

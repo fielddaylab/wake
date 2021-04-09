@@ -59,6 +59,11 @@ namespace Aqua
             return m_FactMap.ContainsKey(inFactId);
         }
 
+        public IEnumerable<BFBase> AllFacts()
+        {
+            return m_FactMap.Values;
+        }
+
         #endregion // Facts
 
         #region Internal

@@ -26,7 +26,7 @@ namespace Aqua
         [SerializeField] private Sprite m_Tap = null;
         [SerializeField] private Sprite m_SmallKey = null;
         [SerializeField] private Sprite m_MediumKey = null;
-        [SerializeField] private Sprite m_WideKey = null;
+        // [SerializeField] private Sprite m_WideKey = null;
 
         #endregion // Inspector
 

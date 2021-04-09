@@ -158,6 +158,27 @@ namespace Aqua.Profile
             return m_CompletedJobs;
         }
 
+        /// <summary>
+        /// Forgets that the given job was ever started.
+        /// </summary>
+        public void ForgetJob(StringHash32 inJobId)
+        {
+            m_CompletedJobs.Remove(inJobId);
+            if (inJobId == m_CurrentJobId)
+            {
+                SetCurrentJob(null);
+            }
+
+            for(int i = 0; i < m_JobStatuses.Count; ++i)
+            {
+                if (m_JobStatuses[i].JobId == inJobId)
+                {
+                    m_JobStatuses.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
         #endregion // Progress
 
         #region Completion
@@ -207,6 +228,18 @@ namespace Aqua.Profile
         }
 
         #endregion // Completion
+
+        #region Clearing
+
+        public void ClearAll()
+        {
+            SetCurrentJob(null);
+            m_JobStatuses.Clear();
+            m_CompletedJobs.Clear();
+            m_UnlockedJobs.Clear();
+        }
+
+        #endregion // Clearing
 
         #region ISerializedData
 
