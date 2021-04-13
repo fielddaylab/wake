@@ -31,8 +31,7 @@ namespace Aqua
 
             yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
             yield return BestiaryFactFragment.CreateVerb("Consumes");
-            yield return BestiaryFactFragment.CreateNoun(FormatValue(m_Property, m_Amount));
-            yield return BestiaryFactFragment.CreateAdjective("Per Tick");
+            yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(Target()).name);
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
