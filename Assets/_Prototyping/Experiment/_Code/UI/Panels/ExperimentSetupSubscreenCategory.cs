@@ -29,7 +29,7 @@ namespace ProtoAqua.Experiment
 
         protected override void Awake()
         {
-            m_CritterButton.onClick.AddListener(() => SetupMeasurementCritterY());
+            // m_CritterButton.onClick.AddListener(() => SetupMeasurementCritterY());
             m_PropertyButton.onClick.AddListener(() => OnSelectProperty?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
 
@@ -46,18 +46,18 @@ namespace ProtoAqua.Experiment
         }
 
         private void UpdateDisplay() {
-            if(m_CachedData.CritterX == StringHash32.Null) return;
+            // if(m_CachedData.CritterX == StringHash32.Null) return;
 
-            if(m_CachedData.GetTargets().Count == 0) {
-                m_NoInfo.gameObject.SetActive(true);
-                m_PropertyButton.gameObject.SetActive(false);
-                m_CritterButton.gameObject.SetActive(false);
-            }
-            else {
-                m_NoInfo.gameObject.SetActive(false);
-                m_PropertyButton.gameObject.SetActive(true);
-                m_CritterButton.gameObject.SetActive(true);
-            }
+            // if(m_CachedData.GetTargets().Count == 0) {
+            //     m_NoInfo.gameObject.SetActive(true);
+            //     m_PropertyButton.gameObject.SetActive(false);
+            //     m_CritterButton.gameObject.SetActive(false);
+            // }
+            // else {
+            //     m_NoInfo.gameObject.SetActive(false);
+            //     m_PropertyButton.gameObject.SetActive(true);
+            //     m_CritterButton.gameObject.SetActive(true);
+            // }
         }
 
         public override void SetData(ExperimentSetupData inData)
@@ -66,10 +66,10 @@ namespace ProtoAqua.Experiment
             m_CachedData = inData;
         }
 
-        private void SetupMeasurementCritterY() {
-            m_CachedData.SetTargets("critter");
+        // private void SetupMeasurementCritterY() {
+        //     m_CachedData.SetTargets("critter");
 
-            OnSelectCritter?.Invoke();
-        }
+        //     OnSelectCritter?.Invoke();
+        // }
     }
 }

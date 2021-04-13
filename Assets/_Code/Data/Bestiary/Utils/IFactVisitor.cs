@@ -10,6 +10,8 @@ namespace Aqua
         void Visit(BFEat inFact, PlayerFactParams inParams = null);
         void Visit(BFGrow inFact, PlayerFactParams inParams = null);
         void Visit(BFReproduce inFact, PlayerFactParams inParams = null);
+        void Visit(BFConsume inFact, PlayerFactParams inParams = null);
+        void Visit(BFProduce inFact, PlayerFactParams inParams = null);
 
         void Visit(BFStateStarvation inFact, PlayerFactParams inParams = null);
         void Visit(BFStateRange inFact, PlayerFactParams inParams = null);

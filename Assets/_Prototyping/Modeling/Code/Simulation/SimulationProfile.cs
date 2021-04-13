@@ -187,6 +187,16 @@ namespace ProtoAqua.Modeling
             inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
         }
 
+        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        {
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+        }
+
+        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        {
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+        }
+
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
         {
             inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);

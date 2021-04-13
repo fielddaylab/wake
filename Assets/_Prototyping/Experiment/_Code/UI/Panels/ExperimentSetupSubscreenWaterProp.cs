@@ -38,7 +38,7 @@ namespace ProtoAqua.Experiment
             PropButton IKeyValuePair<WaterPropertyId, PropButton>.Value { get { return this; } }
         }
 
-        private Dictionary<WaterPropertyId, PropButton> buttonDict;
+        private Dictionary<WaterPropertyId, PropButton> buttonDict = new Dictionary<WaterPropertyId, PropButton>();
 
         protected override void Awake()
         {
@@ -132,10 +132,12 @@ namespace ProtoAqua.Experiment
             {
                 m_CachedData.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
                 Services.Events.Dispatch(ExperimentEvents.StressorColor, m_CachedData.PropertyId);
+                Services.Events.Dispatch(ExperimentEvents.SetupAddWaterProperty, m_CachedData.PropertyId);
             }
             else
             {
                 m_CachedData.PropertyId = WaterPropertyId.MAX;
+                Services.Events.Dispatch(ExperimentEvents.SetupRemoveWaterProperty);
             }
 
             UpdateDisplay(m_CachedData.PropertyId);

@@ -299,6 +299,16 @@ namespace ProtoAqua.Modeling
             m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
+        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        {
+            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+        }
+
+        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        {
+            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+        }
+
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
         {
             // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());

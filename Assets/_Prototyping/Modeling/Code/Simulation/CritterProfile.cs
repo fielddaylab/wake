@@ -36,6 +36,8 @@ namespace ProtoAqua.Modeling
         private uint m_ScarcityLevel;
         private uint m_GrowthPerTick;
         private float m_ReproducePerTick;
+        private float m_ProducePerTick;
+        private float m_ConsumePerTick;
         private float m_DeathPerTick;
 
         public CritterProfile(BestiaryDesc inDesc)
@@ -381,6 +383,18 @@ namespace ProtoAqua.Modeling
             // TODO: Account for stress?
             m_ReproducePerTick = inFact.Amount();
             m_ScarcityLevel = inFact.ScarcityLevel();
+        }
+
+        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        {
+            // TODO: Account for stress?
+            m_ProducePerTick = inFact.Amount();
+        }
+
+        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        {
+            // TODO: Account for stress?
+            m_ConsumePerTick = inFact.Amount();
         }
 
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)

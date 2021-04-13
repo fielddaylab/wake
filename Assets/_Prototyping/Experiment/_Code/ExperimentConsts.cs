@@ -20,6 +20,9 @@ namespace ProtoAqua.Experiment
         static public readonly StringHash32 SetupAddActor = "experiment:setup-addActor";
         static public readonly StringHash32 SetupRemoveActor = "experiment:setup-removeActor";
 
+        static public readonly StringHash32 SetupAddWaterProperty = "experiment:setup-addProperty";
+        static public readonly StringHash32 SetupRemoveWaterProperty = "experiment:setup-removeProperty";
+
         static public readonly StringHash32 StressorColor = "experiment:stressor-color";
 
         static public readonly StringHash32 ExperimentBegin = "experiment:begin";
