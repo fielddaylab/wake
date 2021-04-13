@@ -1,5 +1,6 @@
 using System;
 using Aqua;
+using Aqua.Debugging;
 using BeauUtil;
 using UnityEngine;
 
@@ -52,7 +53,8 @@ namespace ProtoAqua.Modeling
             m_Buffer = new SimulationBuffer();
 
             #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            m_Buffer.Flags = SimulatorFlags.Debug;
+            if (DebugService.IsLogging(LogMask.Modeling))
+                m_Buffer.Flags = SimulatorFlags.Debug;
             #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
 
             m_Buffer.SetScenario(scenario);

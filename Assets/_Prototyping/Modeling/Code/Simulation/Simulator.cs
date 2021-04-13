@@ -9,10 +9,11 @@ namespace ProtoAqua.Modeling
 {
     static public class Simulator
     {
-        public const int MaxTrackedCritters = 8;
+        public const int MaxTrackedCritters = 16;
         public const float MaxEatProportion = 0.75f;
         public const float MaxReproduceProportion = 0.75f;
         public const float MaxDeathProportion = 0.5f;
+        public const uint HungerPerCritter = 32;
 
         /// <summary>
         /// Generates a single result from the given profile and initial data.
@@ -27,11 +28,13 @@ namespace ProtoAqua.Modeling
             }
 
             WaterPropertyBlockF32 environment = inInitial.Environment;
+            SimulationRandom random = inInitial.Random;
             IReadOnlyList<CritterProfile> profiles = inProfile.Critters();
             int critterCount = profiles.Count;
 
             // no static cached arrays here - since CritterData is just a data struct we can allocate it all on the stack!
             CritterData* dataBlock = stackalloc CritterData[critterCount];
+            double* massToConsume = stackalloc double[MaxTrackedCritters];
 
             // setup
             for(int i = 0; i < critterCount; ++i)
@@ -78,39 +81,83 @@ namespace ProtoAqua.Modeling
                 }
             }
 
-            // eat stuff
-
+            // initial food pass
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
-                uint remainingFood = (uint) data.Hunger;
-                if (remainingFood > 0)
-                {
-                    ListSlice<int> foodTypes = profiles[i].EatTargetIndices();
-                    for(int j = 0; j < foodTypes.Length && remainingFood > 0; j++)
-                    {
-                        int targetIdx = foodTypes[j];
-                        if (targetIdx >= 0)
-                        {
-                            if (dataBlock[targetIdx].Population > 0)
-                            {
-                                uint actualEat = profiles[targetIdx].TryBeEaten(ref dataBlock[targetIdx], remainingFood);
-                                remainingFood -= actualEat;
+                double remainingFood = data.Hunger;
+                if (remainingFood <= 0)
+                    continue;
 
-                                if (bLogging)
-                                {
-                                    Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id().ToDebugString(), actualEat, profiles[targetIdx].Id().ToDebugString());
-                                }
-                            }
+                ListSlice<CritterProfile.EatConfig> eatConfigs = profiles[i].EatTargets(data.State);
+                int eatCount = eatConfigs.Length;
+                CritterProfile.EatConfig eatTarget;
+
+                double foodToAllocate = remainingFood;
+
+                // initial pass, proportional allocation
+                for(int j = 0; j < eatCount; j++)
+                {
+                    eatTarget = eatConfigs[j];
+                    short targetIndex = eatTarget.Index;
+                    if (targetIndex >= 0 && dataBlock[targetIndex].Population > 0)
+                    {
+                        uint targetTotalMass = profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population;
+                        double targetMass = remainingFood * eatTarget.MassScale * eatTarget.Proportion; // convert to mass units
+                        if (targetMass > targetTotalMass)
+                            targetMass = targetTotalMass;
+
+                        massToConsume[j] = targetMass;
+                        foodToAllocate -= Math.Min(foodToAllocate, targetMass * eatTarget.MassScaleInv); // back to hunger units
+                    }
+                    else
+                    {
+                        massToConsume[j] = 0;
+                    }
+                }
+
+                // if remainder, allocate as much as possible
+                if (foodToAllocate > 0)
+                {
+                    for(int j = 0; j < eatCount && foodToAllocate > 0; j++)
+                    {
+                        eatTarget = eatConfigs[j];
+                        short targetIndex = eatTarget.Index;
+                        if (targetIndex >= 0 && dataBlock[targetIndex].Population > 0)
+                        {
+                            uint targetTotalMass = profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population;
+                            double targetMass = foodToAllocate * eatTarget.MassScale; // to mass units
+                            if (targetMass > targetTotalMass)
+                                targetMass = targetTotalMass;
+
+                            massToConsume[j] += targetMass;
+                            foodToAllocate -= Math.Min(foodToAllocate, targetMass * eatTarget.MassScaleInv); // to hunger units
                         }
                     }
-
-                    data.Hunger = remainingFood;
                 }
+
+                for(int j = 0; j < eatConfigs.Length && remainingFood > 0; j++)
+                {
+                    eatTarget = eatConfigs[j];
+                    short targetIndex = eatTarget.Index;
+                    if (eatTarget.Index >= 0 && massToConsume[j] > 0)
+                    {
+                        uint massToEat = (uint) Math.Round(massToConsume[j]); // this accounts for any tiny errors between full model and player model
+                        uint actualEat = profiles[targetIndex].TryBeEaten(ref dataBlock[targetIndex], massToEat);
+                        remainingFood -= actualEat * eatTarget.MassScaleInv; // convert back from mass to hunger
+                        if (bLogging)
+                        {
+                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id().ToDebugString(), actualEat, profiles[targetIndex].Id().ToDebugString());
+                        }
+                    }
+                }
+
+                data.Hunger = (uint) remainingFood;
             }
 
             SimulationResult result = default(SimulationResult);
             result.Timestamp = (ushort) (inInitial.Timestamp + 1);
+            result.Random = random;
             result.Environment = environment;
 
             for(int i = 0; i < critterCount; ++i)
@@ -125,6 +172,32 @@ namespace ProtoAqua.Modeling
             }
 
             return result;
+        }
+
+        // Shuffles a set of indices
+        static private unsafe void Shuffle(short* ioIndices, int inLength, ref SimulationRandom ioRandom)
+        {
+            uint i = (uint) inLength;
+            uint j;
+            while (--i > 0)
+            {
+                short old = ioIndices[i];
+                ioIndices[i] = ioIndices[j = ioRandom.Next(i + 1)];
+                ioIndices[j] = old;
+            }
+        }
+
+        // Shuffles a set of indices
+        static private unsafe void Shuffle(int* ioIndices, int inLength, ref SimulationRandom ioRandom)
+        {
+            uint i = (uint) inLength;
+            uint j;
+            while (--i > 0)
+            {
+                int old = ioIndices[i];
+                ioIndices[i] = ioIndices[j = ioRandom.Next(i + 1)];
+                ioIndices[j] = old;
+            }
         }
     
         /// <summary>

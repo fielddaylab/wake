@@ -42,6 +42,8 @@ namespace Aqua.Debugging
         [NonSerialized] private DeviceInput m_Input;
         [NonSerialized] private bool m_MinimalOn;
         [NonSerialized] private bool m_FirstMenuToggle;
+        [NonSerialized] private bool m_Paused;
+        [NonSerialized] private float m_TimeScale = 1;
 
         private void LateUpdate()
         {
@@ -61,12 +63,20 @@ namespace Aqua.Debugging
                 SetMinimalLayer(!m_MinimalOn);
             }
 
-            if (m_MinimalOn && m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
+            if (Services.State.IsLoadingScene())
             {
                 if (m_DebugMenu.isActiveAndEnabled)
                 {
-                    Services.Input.PopFlags(this);
                     m_DebugMenu.gameObject.SetActive(false);
+                    Resume();
+                }
+            }
+            else if (m_MinimalOn && m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
+            {
+                if (m_DebugMenu.isActiveAndEnabled)
+                {
+                    m_DebugMenu.gameObject.SetActive(false);
+                    Resume();
                 }
                 else
                 {
@@ -76,7 +86,7 @@ namespace Aqua.Debugging
                         m_FirstMenuToggle = true;
                     }
                     m_DebugMenu.gameObject.SetActive(true);
-                    Services.Input.PushFlags(InputLayerFlags.System, this);
+                    Pause();
                 }
             }
 
@@ -89,12 +99,12 @@ namespace Aqua.Debugging
             {
                 if (m_Input.KeyPressed(KeyCode.Minus))
                 {
-                    SetTimescale(Time.timeScale / 2);
+                    SetTimescale(m_TimeScale / 2);
                 }
                 else if (m_Input.KeyPressed(KeyCode.Equals))
                 {
-                    if (Time.timeScale * 2 < 100)
-                        SetTimescale(Time.timeScale * 2);
+                    if (m_TimeScale * 2 < 100)
+                        SetTimescale(m_TimeScale * 2);
                 }
                 else if (m_Input.KeyPressed(KeyCode.Alpha0))
                 {
@@ -117,11 +127,18 @@ namespace Aqua.Debugging
 
         private void SetTimescale(float inTimeScale)
         {
-            Time.timeScale = inTimeScale;
-            Services.Audio.DebugMix.Pitch = inTimeScale;
-            Services.Audio.DebugMix.Volume = Mathf.Clamp01(1 / inTimeScale);
+            m_TimeScale = inTimeScale;
+            if (!m_Paused)
+                SyncTimeScale();
 
             m_TimeDisplay.UpdateTimescale(inTimeScale);
+        }
+
+        private void SyncTimeScale()
+        {
+            Time.timeScale = m_TimeScale;
+            Services.Audio.DebugMix.Pitch = m_TimeScale;
+            Services.Audio.DebugMix.Volume = Mathf.Clamp01(1 / m_TimeScale);
         }
 
         private void SkipCutscene()
@@ -159,11 +176,43 @@ namespace Aqua.Debugging
             {
                 if (m_DebugMenu.isActiveAndEnabled)
                 {
-                    Services.Input.PopFlags(this);
                     m_DebugMenu.gameObject.SetActive(false);
+                    Resume();
                 }
             }
         }
+
+        #region Pausing
+
+        private void Pause()
+        {
+            if (m_Paused)
+                return;
+            
+            Time.timeScale = 0;
+            Routine.Settings.Paused = true;
+            Services.Audio.DebugMix.Pause = true;
+            Services.Pause.Pause();
+            Services.Input.PushFlags(InputLayerFlags.System, this);
+            m_Paused = true;
+            m_TimeDisplay.UpdateStateLabel("PAUSED");
+        }
+
+        private void Resume()
+        {
+            if (!m_Paused)
+                return;
+            
+            SyncTimeScale();
+            Routine.Settings.Paused = false;
+            Services.Audio.DebugMix.Pause = false;
+            Services.Pause.Resume();
+            Services.Input.PopFlags(this);
+            m_Paused = false;
+            m_TimeDisplay.UpdateStateLabel("PLAYING");
+        }
+
+        #endregion // Pausing
 
         #region Asset Reloading
 

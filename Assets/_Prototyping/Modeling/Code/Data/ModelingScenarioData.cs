@@ -12,7 +12,7 @@ namespace ProtoAqua.Modeling
         #region Inspector
 
         [SerializeField] private BestiaryDesc m_Environment = null;
-        [SerializeField] private BFBase[] m_Facts = null;
+        [SerializeField] private uint m_Seed = 54321;
         
         [Header("Historical Data")]
         [SerializeField] private ActorCountU32[] m_InitialActors = null;
@@ -39,9 +39,10 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private List<BestiaryDesc> m_Critters;
         [NonSerialized] private HashSet<StringHash32> m_AllowedLines;
 
+        public uint Seed() { return m_Seed; }
+
         public BestiaryDesc Environment() { return m_Environment; }
         public ListSlice<BestiaryDesc> Critters() { Optimize(); return m_Critters; }
-        public ListSlice<BFBase> Facts() { Optimize(); return m_Facts; }
         public ListSlice<ActorCountU32> Actors() { Optimize(); return m_InitialActors; }
 
         public uint TickCount() { return m_TickCount; }

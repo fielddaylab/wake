@@ -9,8 +9,9 @@ namespace ProtoAqua.Modeling
     public struct SimulationResult
     {
         public ushort Timestamp;
+        public SimulationRandom Random;
         public WaterPropertyBlockF32 Environment;
-        public TempList8<CritterResult> Actors;
+        public TempList16<CritterResult> Actors;
 
         public void ClearCritters()
         {

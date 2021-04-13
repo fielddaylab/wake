@@ -16,7 +16,7 @@ namespace Aqua.Debugging
         #region Inspector
 
         [SerializeField] private TMP_Text m_TimeScaleLabel = null;
-        // [SerializeField] private TMP_Text m_StateLabel = null;
+        [SerializeField] private TMP_Text m_StateLabel = null;
 
         #endregion // Inspector
         
@@ -34,6 +34,11 @@ namespace Aqua.Debugging
                 m_LastKnownTimescale = inTimeScale;
                 m_TimeScaleLabel.text = string.Format("{0:0.00}x", m_LastKnownTimescale);
             }
+        }
+
+        public void UpdateStateLabel(string inLabel)
+        {
+            m_StateLabel.SetText(inLabel);
         }
     }
 }

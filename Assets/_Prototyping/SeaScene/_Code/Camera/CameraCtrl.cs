@@ -145,7 +145,7 @@ namespace ProtoAqua.Observation
             RenderInlineDebug(targetPos);
             #endif // UNITY_EDITOR
 
-            lerp = TweenUtil.Lerp(lerp, 1, Routine.DeltaTime);
+            lerp = TweenUtil.Lerp(lerp, 1, Time.deltaTime);
             ioPos = Vector2.LerpUnclamped(ioPos, targetPos, lerp);
             ioZoom = Mathf.LerpUnclamped(ioZoom, targetZoom, lerp);
 

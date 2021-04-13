@@ -10,5 +10,10 @@ namespace ProtoAqua.Modeling
     {
         public StringHash32 Id;
         public uint Population;
+
+        public override string ToString()
+        {
+            return string.Format("{0}: {1}", Id.ToDebugString(), Population);
+        }
     }
 }

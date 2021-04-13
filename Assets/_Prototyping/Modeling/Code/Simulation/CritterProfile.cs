@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Aqua;
 using BeauUtil;
 using UnityEngine;
@@ -10,6 +12,26 @@ namespace ProtoAqua.Modeling
     /// </summary>
     public sealed class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
     {
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct EatConfig
+        {
+            public StringHash32 Type;
+            public short Index;
+            public Fraction16 Proportion;
+            public float MassScale;
+            public float MassScaleInv;
+
+            static public readonly IComparer<EatConfig> Comparer = new ComparerClass();
+
+            private class ComparerClass : IComparer<EatConfig>
+            {
+                public int Compare(EatConfig x, EatConfig y)
+                {
+                    return x.Type.CompareTo(y.Type);
+                }
+            }
+        }
+
         private readonly BestiaryDesc m_Desc;
         private readonly StringHash32 m_Id;
         private readonly bool m_IsHerd;
@@ -24,12 +46,13 @@ namespace ProtoAqua.Modeling
         private WaterPropertyBlockF32 m_ToConsumePerPopulationStressed;
         private WaterPropertyMask m_AssignedConsumeStressedMask;
 
-        private float m_FoodPerPopulation;
-        private float m_FoodPerPopulationStressed;
-
         private int m_EatTypeCount;
-        private StringHash32[] m_EatTypes = new StringHash32[Simulator.MaxTrackedCritters];
-        private int[] m_EatTypeIndices = new int[Simulator.MaxTrackedCritters];
+        private uint m_EatAmountTotal;
+        private EatConfig[] m_EatTypes = new EatConfig[Simulator.MaxTrackedCritters];
+
+        private int m_EatTypeStressedCount;
+        private uint m_EatAmountStressedTotal;
+        private EatConfig[] m_EatTypesStressed = new EatConfig[Simulator.MaxTrackedCritters];
 
         private WaterPropertyBlock<ActorStateTransitionRange> m_Transitions;
 
@@ -58,8 +81,18 @@ namespace ProtoAqua.Modeling
         public bool IsHerd() { return m_IsHerd; }
         public uint MassPerPopulation() { return m_MassPerPopulation; }
 
-        public ListSlice<StringHash32> EatTargets() { return new ListSlice<StringHash32>(m_EatTypes, 0, m_EatTypeCount); }
-        public ListSlice<int> EatTargetIndices() { return new ListSlice<int>(m_EatTypeIndices, 0, m_EatTypeCount); }
+        public ListSlice<EatConfig> EatTargets(ActorStateId inState)
+        {
+            switch(inState)
+            {
+                case ActorStateId.Alive:
+                    return new ListSlice<EatConfig>(m_EatTypes, 0, m_EatTypeCount);
+                case ActorStateId.Stressed:
+                    return new ListSlice<EatConfig>(m_EatTypesStressed, 0, m_EatTypeStressedCount);
+                default:
+                    return default(ListSlice<EatConfig>);
+            }
+        }
 
         public void Clear()
         {
@@ -74,12 +107,12 @@ namespace ProtoAqua.Modeling
             m_ToConsumePerPopulationStressed = default(WaterPropertyBlockF32);
             m_AssignedConsumeStressedMask = default(WaterPropertyMask);
 
-            m_FoodPerPopulation = 0;
-            m_FoodPerPopulationStressed = 0;
-
             Array.Clear(m_EatTypes, 0, m_EatTypeCount);
-            Array.Clear(m_EatTypeIndices, 0, m_EatTypeCount);
+            Array.Clear(m_EatTypesStressed, 0, m_EatTypeStressedCount);
             m_EatTypeCount = 0;
+            m_EatTypeStressedCount = 0;
+            m_EatAmountTotal = 0;
+            m_EatAmountStressedTotal = 0;
 
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
             {
@@ -94,9 +127,25 @@ namespace ProtoAqua.Modeling
 
         public void PostProcess(SimulationProfile inProfile)
         {
+            Array.Sort(m_EatTypes, 0, m_EatTypeCount, EatConfig.Comparer);
+            Array.Sort(m_EatTypesStressed, 0, m_EatTypeStressedCount, EatConfig.Comparer);
+
             for(int i = 0; i < m_EatTypeCount; ++i)
             {
-                m_EatTypeIndices[i] = inProfile.CritterIndex(m_EatTypes[i]);
+                ref EatConfig config = ref m_EatTypes[i];
+                config.Proportion = new Fraction16(config.MassScale / m_EatAmountTotal);
+                config.MassScale = config.MassScale / Simulator.HungerPerCritter;
+                config.MassScaleInv = 1 / config.MassScale;
+                config.Index = (short) inProfile.CritterIndex(config.Type);
+            }
+
+            for(int i = 0; i < m_EatTypeStressedCount; ++i)
+            {
+                ref EatConfig config = ref m_EatTypesStressed[i];
+                config.Proportion = new Fraction16(config.MassScale / m_EatAmountStressedTotal);
+                config.MassScale = config.MassScale / Simulator.HungerPerCritter;
+                config.MassScaleInv = 1 / config.MassScale;
+                config.Index = (short) inProfile.CritterIndex(config.Type);
             }
         }
 
@@ -130,20 +179,20 @@ namespace ProtoAqua.Modeling
                 Debug.LogFormat("[CritterProfile] Critter '{0}' is {1}", Id().ToDebugString(), state);
             }
 
+            ioData.Hunger = m_EatTypeCount > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
+
             ioData.State = state;
             switch(state)
             {
                 case ActorStateId.Alive:
                     {
                         ioData.ToConsume = m_ToConsumePerPopulation * ioData.Population;
-                        ioData.Hunger = (uint) (m_FoodPerPopulation * ioData.Population);
                         break;
                     }
 
                 case ActorStateId.Stressed:
                     {
                         ioData.ToConsume = m_ToConsumePerPopulationStressed * ioData.Population;
-                        ioData.Hunger = (uint) (m_FoodPerPopulationStressed * ioData.Population);
                         break;
                     }
 
@@ -164,7 +213,7 @@ namespace ProtoAqua.Modeling
                 uint toKillAbsolute = 0;
                 if (ioData.Hunger > 0)
                 {
-                    toKillAbsolute = (uint) (ioData.Hunger / m_FoodPerPopulation);
+                    toKillAbsolute = ioData.Hunger / Simulator.HungerPerCritter;
                 }
                 
                 for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
@@ -279,8 +328,7 @@ namespace ProtoAqua.Modeling
 
             if (ioData.Hunger > 0 && consumedPopulation > 0)
             {
-                float perPopulation = (ioData.State == ActorStateId.Alive ? m_FoodPerPopulation : m_FoodPerPopulationStressed);
-                uint hungerDecrease = Math.Min(ioData.Hunger, (uint) (consumedPopulation * perPopulation));
+                uint hungerDecrease = Math.Min(ioData.Hunger, consumedPopulation * Simulator.HungerPerCritter);
                 ioData.Hunger -= hungerDecrease;
             }
 
@@ -367,8 +415,12 @@ namespace ProtoAqua.Modeling
         void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
         {
             // TODO: Account for stress?
-            m_FoodPerPopulation += inFact.Amount();
-            m_EatTypes[m_EatTypeCount++] = inFact.Target().Id();
+            m_EatAmountTotal += inFact.Amount();
+            m_EatTypes[m_EatTypeCount++] = new EatConfig()
+            {
+                MassScale = inFact.Amount(),
+                Type = inFact.Target().Id(),
+            };
         }
 
         void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)

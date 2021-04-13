@@ -6,11 +6,11 @@ namespace Aqua
     public enum WaterPropertyId : byte
     {
         Oxygen,
-        Temperature,
-        Light,
+        Temperature, // environmental
+        Light, // calculated
         PH,
         CarbonDioxide,
-        Salinity,
+        Salinity, // environmental
 
         Food, // food (for eating)
         Mass, // mass (for growth)

@@ -41,7 +41,11 @@ namespace ProtoAqua.Modeling
             LimitedClear();
 
             foreach(var critter in inCritters)
+            {
                 DiscoverCritter(critter);
+                foreach(var fact in critter.Facts)
+                    DiscoverFact(fact, null);
+            }
 
             foreach(var fact in inEnvironment.Facts)
                 DiscoverFact(fact, null);
@@ -203,5 +207,18 @@ namespace ProtoAqua.Modeling
         }
 
         #endregion // IFactVisitor
+
+        #region Utils
+
+        static public IEnumerable<BFBase> GatherFacts(ListSlice<BestiaryDesc> inCritters)
+        {
+            foreach(var critter in inCritters)
+            {
+                foreach(var fact in critter.Facts)
+                    yield return fact;
+            }
+        }
+
+        #endregion // Utils
     }
 }

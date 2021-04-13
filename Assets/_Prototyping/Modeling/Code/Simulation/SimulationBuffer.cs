@@ -305,7 +305,8 @@ namespace ProtoAqua.Modeling
             {
                 using(Profiling.Time("Generating historical profile"))
                 {
-                    m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_Scenario.Facts());
+                    m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters());
+                    m_HistoricalProfile.InitialState.Random = new SimulationRandom(m_Scenario.Seed());
                 }
             }
 
@@ -346,6 +347,7 @@ namespace ProtoAqua.Modeling
                 using(Profiling.Time("Generating player profile"))
                 {
                     m_PlayerProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_PlayerFacts);
+                    m_PlayerProfile.InitialState.Random = m_HistoricalProfile.InitialState.Random;
                 }
                 bUpdateModel = true;
             }
