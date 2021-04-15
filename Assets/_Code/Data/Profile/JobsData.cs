@@ -153,7 +153,7 @@ namespace Aqua.Profile
             return m_JobStatuses;
         }
 
-        public IEnumerable<StringHash32> CompletedJobIds()
+        public IReadOnlyCollection<StringHash32> CompletedJobIds()
         {
             return m_CompletedJobs;
         }

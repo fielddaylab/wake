@@ -211,8 +211,9 @@ namespace Aqua
             m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
             m_VariableResolver.SetTableVar("job.isComplete", (s) => inData.Jobs.IsComplete(s));
             m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));
-            m_VariableResolver.SetTableVar("job.anyAvailable", (s) => Services.Assets.Jobs.HasUnstartedJobs());
-            m_VariableResolver.SetTableVar("job.anyInProgress", (s) => inData.Jobs.InProgressJobs().Length > 0);
+            m_VariableResolver.SetTableVar("jobs:anyAvailable", (s) => Services.Assets.Jobs.HasUnstartedJobs());
+            m_VariableResolver.SetTableVar("jobs:anyInProgress", (s) => inData.Jobs.InProgressJobs().Length > 0);
+            m_VariableResolver.SetTableVar("jobs:anyComplete", (s) => inData.Jobs.CompletedJobIds().Count > 0);
         }
 
         #region Callbacks

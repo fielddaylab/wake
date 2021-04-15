@@ -125,10 +125,10 @@ namespace ProtoAqua.Modeling
                         short targetIndex = eatTarget.Index;
                         if (targetIndex >= 0 && dataBlock[targetIndex].Population > 0)
                         {
-                            uint targetTotalMass = profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population;
+                            double remainingTotalMass = Math.Max(0, profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population - massToConsume[j]);
                             double targetMass = foodToAllocate * eatTarget.MassScale; // to mass units
-                            if (targetMass > targetTotalMass)
-                                targetMass = targetTotalMass;
+                            if (targetMass > remainingTotalMass)
+                                targetMass = remainingTotalMass;
 
                             massToConsume[j] += targetMass;
                             foodToAllocate -= Math.Min(foodToAllocate, targetMass * eatTarget.MassScaleInv); // to hunger units

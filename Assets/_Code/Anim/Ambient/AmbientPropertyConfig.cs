@@ -50,6 +50,22 @@ namespace Aqua.Animation
         public float DistanceZ;
     }
 
+    [Serializable]
+    public struct AmbientColorPropertyConfig
+    {
+        [HideInInspector] public Color Initial;
+
+        [Header("Full")]
+        public AmbientWaveConfig WaveColor;
+        public Color MinColor;
+        public Color MaxColor;
+
+        [Header("Alpha")]
+        public AmbientWaveConfig WaveAlpha;
+        public Fraction16 MinAlpha;
+        public Fraction16 MaxAlpha;
+    }
+
     [LabeledEnum(false)]
     public enum AmbientWaveMethod : byte
     {
@@ -60,6 +76,9 @@ namespace Aqua.Animation
         AbsSine,
 
         [Label("Yoyo")]
-        Triangle
+        Triangle,
+
+        [Label("Sawtooth")]
+        Sawtooth,
     }
 }

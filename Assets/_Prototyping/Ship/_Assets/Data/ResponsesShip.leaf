@@ -3,37 +3,23 @@
 // HELM
 
 :: inside.helm
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @who        kevin
 @when       session:nav.shipRoom == "helm"
 @once
 @cutscene
 {@kevin}    So, this is the helm?
 {@player}   Yup!
-{@kevin}    Looks like there's a map...{wait 0.2}{#confused} and a "Progress"? What is that?
-{@player}   Kinda a tablet for looking at all the jobs I could take.
-{@kevin}    But if we wanted to look at the ocean we could just step outside.
+{@kevin}    Looks like there's a map...{wait 0.2} and the job board.
+{@player}   Yeah! Any time we need to take on a job we can just take it from that board.
+            Or if we want to move to another station  we can look at the map.
+{@kevin}    And if we wanted to look at the ocean... we could just step outside?
 {@player}   Yup!
 $set    kevin:seenShipHelm = true
-
-:: inside.helm.checkJob1
-@trigger    RequestPartnerHelp
-@who        kevin
-@when       session:nav.shipRoom == "helm", kevin:seenShipHelm, !player:currentJob
-@chatter
-@repeat     3
-{@kevin}    Maybe we should check for available jobs...
-
-:: inside.helm.checkJob2
-@trigger    RequestPartnerHelp
-@who        kevin
-@when       session:nav.shipRoom == "helm", kevin:seenShipHelm, !player:currentJob
-@chatter
-@repeat     3
-{@kevin}    I feel like we should look at the job board.
+$set    kevin:knowsJobs = true
 
 :: inside.helm.hello1
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @who        kevin
 @when       session:nav.shipRoom == "helm", kevin:seenShipHelm
 @boostScore -5
@@ -42,7 +28,7 @@ $set    kevin:seenShipHelm = true
 {@kevin #happy}    Hello from the ceiling!
 
 :: inside.helm.hello2
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @who        kevin
 @when       session:nav.shipRoom == "helm", kevin:seenShipHelm
 @boostScore -5
@@ -53,7 +39,7 @@ $set    kevin:seenShipHelm = true
 // SHIP
 
 :: inside.ship
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @who        kevin
 @when       session:nav.shipRoom == "exterior"
 @once
@@ -65,7 +51,7 @@ $set    kevin:seenShipExterior = true
 // OFFICE
 
 :: inside.office
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @who        kevin
 @when       session:nav.shipRoom == "office"
 @once

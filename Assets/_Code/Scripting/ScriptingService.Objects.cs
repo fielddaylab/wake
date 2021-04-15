@@ -167,7 +167,7 @@ namespace Aqua
     
         #region Objects
 
-        public bool TryRegister(ScriptObject inObject)
+        public bool TryRegisterObject(ScriptObject inObject)
         {
             if (m_ScriptObjects.Contains(inObject))
                 return false;
@@ -177,7 +177,7 @@ namespace Aqua
             return true;
         }
 
-        public bool TryDeregister(ScriptObject inObject)
+        public bool TryDeregisterObject(ScriptObject inObject)
         {
             if (m_ScriptObjects.FastRemove(inObject))
             {
@@ -263,5 +263,9 @@ namespace Aqua
         }
 
         #endregion // Objects
+    
+        #region Actors
+
+        #endregion // Actors
     }
 }

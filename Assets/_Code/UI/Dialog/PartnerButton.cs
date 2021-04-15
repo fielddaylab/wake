@@ -8,6 +8,7 @@ using System;
 using BeauUtil.Tags;
 using BeauUtil;
 using BeauUtil.Variants;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -18,38 +19,62 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private Button m_Button = null;
+        [SerializeField] private bool m_IsHint = false;
 
         #endregion // Inspector
-
-        [NonSerialized] private Routine m_ResponseRoutine;
 
         protected override void Awake()
         {
             m_Button.onClick.AddListener(OnButtonClicked);
+
+            Services.Script.OnTargetedThreadStarted += OnTargetedThreadStart;
+            Services.Script.OnTargetedThreadKilled += OnTargetedThreadEnd;
+
+            OnTargetedThreadStart(Services.Script.GetTargetThread(GameConsts.Target_Kevin));
+        }
+
+        private void OnDestroy()
+        {
+            if (Services.Script)
+            {
+                Services.Script.OnTargetedThreadStarted -= OnTargetedThreadStart;
+                Services.Script.OnTargetedThreadKilled -= OnTargetedThreadEnd;
+            }
         }
 
         #region Handlers
 
+        private void OnTargetedThreadStart(ScriptThreadHandle inHandle)
+        {
+            if (inHandle.TargetId() != GameConsts.Target_Kevin)
+                return;
+
+            m_RootGroup.alpha = 0.5f;
+            SetInputState(false);
+        }
+
+        private void OnTargetedThreadEnd(StringHash32 inTarget)
+        {
+            if (inTarget != GameConsts.Target_Kevin)
+                return;
+
+            m_RootGroup.alpha = 1;
+            SetInputState(IsShowing());
+        }
+
         private void OnButtonClicked()
         {
-            m_ResponseRoutine.Replace(this, ExecuteSequence()).TryManuallyUpdate(0);
+            Services.Data.AddVariable(RequestCounter, 1);
+            if (m_IsHint)
+            {
+                Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
+            }
+            else
+            {
+                Services.Script.TriggerResponse(GameTriggers.PartnerTalk, GameConsts.Target_Kevin);
+            }
         }
 
         #endregion // Handlers
-
-        #region Sequences
-
-        private IEnumerator ExecuteSequence()
-        {
-            Services.Data.AddVariable(RequestCounter, 1);
-            var sequence = Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, "kevin");
-            SetInputState(false);
-            m_RootGroup.alpha = 0.75f;
-            yield return sequence.Wait();
-            SetInputState(IsShowing());
-            m_RootGroup.alpha = 1;
-        }
-
-        #endregion // Sequences
     }
 }

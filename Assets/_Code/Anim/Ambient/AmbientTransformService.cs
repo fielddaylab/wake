@@ -99,6 +99,7 @@ namespace Aqua.Animation
 
             AmbientVec3State* stateBuffer = stackalloc AmbientVec3State[objectCount];
             AmbientVec3PropertyConfig* configBuffer = stackalloc AmbientVec3PropertyConfig[objectCount];
+            float* animScaleBuffer = stackalloc float[objectCount];
             byte* changeBuffer = stackalloc byte[objectCount];
 
             for(int i = 0; i < objectCount; ++i)
@@ -108,22 +109,22 @@ namespace Aqua.Animation
             
             // process position
 
-            LoadPositions(positions, stateBuffer, configBuffer, inTransforms);
-            AmbientUtils.ProcessVec3Additive(positions, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Position);
+            LoadPositions(positions, animScaleBuffer, stateBuffer, configBuffer, inTransforms);
+            AmbientUtils.ProcessVec3Additive(positions, animScaleBuffer, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Position);
             AmbientUtils.ProcessVec3Waves(stateBuffer, configBuffer, objectCount, inTimestamp, inRandom);
             StorePositionState(stateBuffer, inTransforms);
 
             // process rotation
 
             LoadRotations(rotations, stateBuffer, configBuffer, inTransforms);
-            AmbientUtils.ProcessVec3Additive(rotations, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Rotation);
+            AmbientUtils.ProcessVec3Additive(rotations, animScaleBuffer, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Rotation);
             AmbientUtils.ProcessVec3Waves(stateBuffer, configBuffer, objectCount, inTimestamp, inRandom);
             StoreRotationState(stateBuffer, inTransforms);
 
             // process scale
 
             LoadScales(scales, stateBuffer, configBuffer, inTransforms);
-            AmbientUtils.ProcessVec3Additive(scales, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Scale);
+            AmbientUtils.ProcessVec3Additive(scales, animScaleBuffer, stateBuffer, configBuffer, changeBuffer, objectCount, inTimestamp, ChangeFlag_Scale);
             AmbientUtils.ProcessVec3Waves(stateBuffer, configBuffer, objectCount, inTimestamp, inRandom);
             StoreScaleState(stateBuffer, inTransforms);
 
@@ -180,7 +181,7 @@ namespace Aqua.Animation
 
         #region Load
 
-        static private unsafe void LoadPositions(Vector3* ioPositions, AmbientVec3State* ioStateBuffer, AmbientVec3PropertyConfig* ioPropertyBuffer, ListSlice<AmbientTransform> inTransforms)
+        static private unsafe void LoadPositions(Vector3* ioPositions, float* ioAnimScales, AmbientVec3State* ioStateBuffer, AmbientVec3PropertyConfig* ioPropertyBuffer, ListSlice<AmbientTransform> inTransforms)
         {
             int objectIndex = 0;
             foreach(var obj in inTransforms)
@@ -188,6 +189,7 @@ namespace Aqua.Animation
                 ioStateBuffer[objectIndex] = obj.TransformState.PositionState;
                 ioPropertyBuffer[objectIndex] = obj.PositionAnimation;
                 ioPositions[objectIndex] = obj.PositionAnimation.Initial;
+                ioAnimScales[objectIndex] = obj.AnimationScale;
                 ++objectIndex;
             }
         }

@@ -1,7 +1,7 @@
-#basePath   partner.help.bestiary
+#basePath   partner.talk.bestiary
 
 :: urchins.start
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       random:common, has.entity:Urchin
 @once
 @cutscene
@@ -11,11 +11,11 @@
             {#confused} Other than that, uh, not a big fan.
 
 :: urchins.eat.giantKelp
-@trigger    RequestPartnerHelp
-@when       random:common, seen:partner.help.bestiary.urchins.start, has.fact:Urchin.Eats.GiantKelp
+@trigger    PartnerTalk
+@when       random:common, seen:partner.talk.bestiary.urchins.start, has.fact:Urchin.Eats.GiantKelp
 @once
 @cutscene
-$if seen:partner.help.bestiary.urchins.eat.bullKelp
+$if seen:partner.talk.bestiary.urchins.eat.bullKelp
     {@player}   Urchins eat giant kelp too?
     {@kevin}    They eat all sorts of kelp.
 $else
@@ -25,11 +25,11 @@ $else
 $endif
 
 :: urchins.eat.bullKelp
-@trigger    RequestPartnerHelp
-@when       random:common, seen:partner.help.bestiary.urchins.start, has.fact:Urchin.Eats.BullKelp
+@trigger    PartnerTalk
+@when       random:common, seen:partner.talk.bestiary.urchins.start, has.fact:Urchin.Eats.BullKelp
 @once
 @cutscene
-$if seen:partner.help.bestiary.urchins.eat.giantKelp
+$if seen:partner.talk.bestiary.urchins.eat.giantKelp
     {@player}   Urchins eat bull kelp too?
     {@kevin}    Yup. The hungry little blobs...
 $else
@@ -39,8 +39,8 @@ $else
 $endif
 
 :: urchins.randomFact.1
-@trigger    RequestPartnerHelp
-@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts == 0
+@trigger    PartnerTalk
+@when       random:uncommon, seen:partner.talk.bestiary.urchins.start, kevin:urchinFacts == 0
 @once
 @cutscene
 $set    kevin:urchinFacts + 1
@@ -60,8 +60,8 @@ $else
 $endif
 
 :: urchins.randomFact.2
-@trigger    RequestPartnerHelp
-@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts > 1
+@trigger    PartnerTalk
+@when       random:uncommon, seen:partner.talk.bestiary.urchins.start, kevin:urchinFacts > 1
 @once
 @cutscene
 $set    kevin:urchinFacts + 1
@@ -71,8 +71,8 @@ $set    kevin:urchinFacts + 1
             {#confused} They don't strictly have eyes... {#} but their bodies are sort of one big light-sensitive organ.
 
 :: urchins.randomFact.3
-@trigger    RequestPartnerHelp
-@when       random:uncommon, seen:partner.help.bestiary.urchins.start, kevin:urchinFacts > 1
+@trigger    PartnerTalk
+@when       random:uncommon, seen:partner.talk.bestiary.urchins.start, kevin:urchinFacts > 1
 @once
 @cutscene
 $set    kevin:urchinFacts + 1

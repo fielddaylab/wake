@@ -1,4 +1,4 @@
-#basePath   partner.help.experiment
+#basePath   partner.talk.experiment
 
 // Room Stuff
 
@@ -60,7 +60,7 @@ $set kevin:experiment.notedTabletDamage = true
 
 :: screen.userId.hasNotedDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "boot", kevin:experiment.notedTabletDamage, !seen:partner.help.experiment.screen.userId.didNotNoteDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", kevin:experiment.notedTabletDamage, !seen:partner.talk.experiment.screen.userId.didNotNoteDamage
 @once
 @cutscene
 {@kevin}    Looks like there's already someone logged in.
@@ -86,7 +86,7 @@ $set kevin:experiment.notedTabletDamage = true
 
 :: screen.versionNumber.hasNotedDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos.experiment.tablet, kevin:experiment.notedTabletDamage, !seen:partner.help.experiment.screen.versionNumber.didNotNoteDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos.experiment.tablet, kevin:experiment.notedTabletDamage, !seen:partner.talk.experiment.screen.versionNumber.didNotNoteDamage
 @once
 @cutscene
 {@kevin}    Given that it's in some kind of "recovery"...
@@ -117,7 +117,7 @@ $set kevin:experiment.notedTabletDamage = true
 
 :: screen.hypothesis.2
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "hypothesis", player:seen.aqos.experiment.tablet, seen:partner.help.experiment.screen.hypothesis.1, seen:partner.help.experiment.screen.hypothesis.0
+@when       experiment:setup.on, experiment:setup.screen == "hypothesis", player:seen.aqos.experiment.tablet, seen:partner.talk.experiment.screen.hypothesis.1, seen:partner.talk.experiment.screen.hypothesis.0
 @once
 @cutscene
 {@kevin}    This "AQ-OS" must not have been finished.

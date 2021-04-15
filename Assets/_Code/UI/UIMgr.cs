@@ -59,6 +59,11 @@ namespace Aqua
             return m_Loading.IsShowing() || m_Loading.IsTransitioning();
         }
 
+        public void ForceLoadingScreen()
+        {
+            m_Loading.InstantShow();
+        }
+
         #endregion // Loading Screen
 
         #region Dialog
@@ -263,8 +268,6 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_Loading.InstantShow();
-
             m_DialogStyleMap = new Dictionary<StringHash32, DialogPanel>(m_DialogStyles.Length);
             foreach(var panel in m_DialogStyles)
             {

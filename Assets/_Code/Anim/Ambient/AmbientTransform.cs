@@ -28,6 +28,11 @@ namespace Aqua.Animation
         public Space TransformSpace = Space.Self;
 
         /// <summary>
+        /// Animation scale.
+        /// </summary>
+        public float AnimationScale = 1;
+
+        /// <summary>
         /// Position animation.
         /// </summary>
         public AmbientVec3PropertyConfig PositionAnimation;

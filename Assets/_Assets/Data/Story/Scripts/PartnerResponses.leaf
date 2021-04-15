@@ -3,7 +3,7 @@
 // some regular reponses
 
 :: default.1
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @repeat     2
 @boostScore -5
 @chatter
@@ -11,7 +11,7 @@ $set temp:defaultResponseCount + 1
 {@kevin}    Nope, sorry, got nothing right now.
 
 :: default.2
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @repeat     2
 @boostScore -5
 @chatter
@@ -19,7 +19,7 @@ $set temp:defaultResponseCount + 1
 {@kevin}    Huh? Sorry, thinking right now.
 
 :: default.3
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @repeat     2
 @boostScore -5
 @chatter
@@ -27,7 +27,7 @@ $set temp:defaultResponseCount + 1
 {@kevin}    Let's chat later, okay?
 
 :: default.irritated.1
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       temp:defaultResponseCount >= 4
 @chatter
 @boostScore -5
@@ -35,7 +35,7 @@ $set temp:defaultResponseCount = 0
 {@kevin}    Back off for a minute, okay?
 
 :: default.irritated.2
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       temp:defaultResponseCount >= 4
 @chatter
 @boostScore -5
@@ -45,7 +45,7 @@ $set temp:defaultResponseCount = 0
 // trust conversations
 
 :: telepathy.first
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       kevin:help.requests >= 10
 @boostScore 1000
 @once       profile
@@ -58,7 +58,7 @@ $set temp:defaultResponseCount = 0
             For now, let's just try getting used to it.
 
 :: telepathy.discomfort
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       kevin:help.requests >= 30, kevin:help.comfortTalks == 0
 @once       profile
 @cutscene
@@ -74,7 +74,7 @@ $set kevin:help.comfortTalks + 1
             So it should only get better from here on out.
 
 :: telepathy.trust
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       kevin:help.requests >= 45, kevin:help.comfortTalks == 1
 @once       profile
 @boostScore 3
@@ -95,7 +95,7 @@ $set kevin:help.comfortTalks + 1
 // name conversations
 
 :: name.intro
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       random:rare, kevin:help.requests >= 15, kevin:help.nameTalks == 0
 @once
 @cutscene
@@ -106,7 +106,7 @@ $set kevin:help.nameTalks + 1
 {@player}   Oh, cool.
 
 :: name.introFollowup
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       random:common, kevin:help.nameTalks == 1
 @once
 @cutscene
@@ -117,7 +117,7 @@ $set kevin:help.nameTalks + 1
             {#tired} I don't know, can we not talk about them right now?
 
 :: name.sideComment
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       random:rare, kevin:help.requests >= 30, kevin:help.nameTalks >= 2
 @once
 @cutscene

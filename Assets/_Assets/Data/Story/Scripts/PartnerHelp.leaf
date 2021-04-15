@@ -1,0 +1,61 @@
+#basePath   partner.talk.help
+
+// No job
+
+:: noJob.intro
+@trigger    RequestPartnerHelp
+@when       !player:currentJob, !kevin:knowsJobs, !jobs:anyComplete
+@boostScore 10000
+@once
+@cutscene
+{@player}   So, what should we be doing right now?
+{@kevin}    Well, I'd think we need to find some work!
+$if kevin:seenShipHelm
+            Maybe we should check out the job board?
+$else
+            Is there anywhere on this ship where we can see available jobs?
+    $if scene:name == "Ship", session:nav.shipRoom == "helm"
+            {@player}   Oh, yeah, right in front of us there's the job board.
+                        Should be synced up with the current station.
+    $else
+            {@player}   Oh yeah, we have a job board in the helm.
+                        Should be synced up with the current station.
+    $endif // scene:name == "Ship", session:nav.shipRoom == "helm"
+    {@kevin}   Great! Then we should check there.
+$endif // kevin:seenShipHelm
+$set    kevin:knowsJobs = true
+
+:: noJob.notAtHelm
+@trigger    RequestPartnerHelp
+@when       !player:currentJob, scene:name != "JobBoard", session:nav.shipRoom != "helm"
+@repeat     1
+@chatter
+{@kevin}    Maybe we should head back to the helm and take a job?
+
+:: noJob.atHelm
+@trigger    RequestPartnerHelp
+@when       !player:currentJob, scene:name == "Ship", session:nav.shipRoom == "helm"
+@repeat     1
+@chatter
+{@kevin}    Maybe we should check out the job board...
+
+:: noJob.atJobBoard
+@trigger    RequestPartnerHelp
+@when       !player:currentJob, scene:name == "JobBoard"
+@repeat     1
+@chatter
+{@kevin}    Are you seeing any available jobs on the left?
+
+:: noJob.default.1
+@trigger    RequestPartnerHelp
+@when       !player:currentJob
+@repeat     1
+@chatter
+{@kevin}    I'd recommend we see if there are any jobs available for us.
+
+:: noJob.default.2
+@trigger    RequestPartnerHelp
+@when       !player:currentJob
+@repeat     1
+@chatter
+{@kevin}    I wonder if there are any jobs available for us to take...

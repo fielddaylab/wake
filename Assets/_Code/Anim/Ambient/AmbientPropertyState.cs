@@ -19,7 +19,7 @@ namespace Aqua.Animation
                 return 0;
             float prog = (inTime - inState.Start) / inState.Length;
             if (!inbLoop)
-                prog = Math.Max(1, prog);
+                prog = Math.Min(1, prog);
             return prog;
         }
 
@@ -55,9 +55,9 @@ namespace Aqua.Animation
     }
 
     /// <summary>
-    /// Ambient renderer state.
+    /// Ambient color state.
     /// </summary>
-    public struct AmbientRendererState
+    public struct AmbientColorState
     {
         public AmbientWaveState ColorState;
         public AmbientWaveState AlphaState;

@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Scripts:
   - {fileID: -1942890987711236906, guid: ca9876139510fcd4c88a677585438226, type: 3}
   - {fileID: -1942890987711236906, guid: a410ec946b8949c4eb453dafaf5fc93c, type: 3}
+  - {fileID: -1942890987711236906, guid: 56ce207d67bc8bc409ad4941a8bad887, type: 3}
 --- !u!1 &637868027807838691
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,6 +225,7 @@ GameObject:
   - component: {fileID: 6015263453021641193}
   - component: {fileID: 4870450588388672993}
   - component: {fileID: 7316193542421585488}
+  - component: {fileID: 7690253913131561610}
   m_Layer: 0
   m_Name: GameplayServices
   m_TagString: Untagged
@@ -342,6 +344,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1aef307d808779b42a9049baa9dae0ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7690253913131561610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5442631026839326357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05133cc2c6bd3e14e9927e53da2b26cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6707031283120621058
@@ -526,7 +540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8400ae16527fd1d4aa301dd2c0752c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DialogHistorySize: 32
+  m_DialogHistorySize: 64
   m_DefaultPlayerDisplayName: October
   m_CommonChance: 0.4
   m_UncommonChance: 0.2

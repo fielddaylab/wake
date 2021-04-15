@@ -79,7 +79,7 @@ namespace Aqua
 
         protected void RegisterScriptObject()
         {
-            if (Services.Script.TryRegister(this))
+            if (Services.Script.TryRegisterObject(this))
             {
                 if (m_ScriptComponents == null)
                     m_ScriptComponents = GetComponents<IScriptComponent>();
@@ -91,7 +91,7 @@ namespace Aqua
 
         protected void DeregisterScriptObject()
         {
-            if (Services.Script && Services.Script.TryDeregister(this))
+            if (Services.Script && Services.Script.TryDeregisterObject(this))
             {
                 for(int i = m_ScriptComponents.Length - 1; i >= 0; i--)
                     m_ScriptComponents[i].OnDeregister(this);

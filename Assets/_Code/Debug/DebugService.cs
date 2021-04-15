@@ -36,6 +36,8 @@ namespace Aqua.Debugging
         [SerializeField, Required] private GameObject m_KeyboardReference = null;
         [SerializeField, Required] private ConsoleTimeDisplay m_TimeDisplay = null;
         [SerializeField, Required] private DMMenuUI m_DebugMenu = null;
+        [Space]
+        [SerializeField] private bool m_StartOn = true;
 
         #endregion // Inspector
 
@@ -235,7 +237,7 @@ namespace Aqua.Debugging
             #if PREVIEW
             SetMinimalLayer(false);
             #else
-            SetMinimalLayer(m_MinimalLayer.alpha > 0);
+            SetMinimalLayer(m_StartOn);
             #endif // PREVIEW
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;

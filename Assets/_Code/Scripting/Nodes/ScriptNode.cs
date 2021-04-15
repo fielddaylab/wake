@@ -93,12 +93,6 @@ namespace Aqua.Scripting
             m_Flags |= ScriptNodeFlags.SuppressDuringCutscene;
         }
 
-        [BlockMeta("important"), Preserve]
-        private void SetImportant()
-        {
-            m_Flags |= ScriptNodeFlags.Important;
-        }
-
         [BlockMeta("chatter"), Preserve]
         private void SetChatter()
         {
@@ -122,7 +116,7 @@ namespace Aqua.Scripting
             m_TriggerOrFunctionId = inTriggerId;
 
             // Mapping Shortcut - Partner requests are always towards kevin
-            if (inTriggerId == GameTriggers.RequestPartnerHelp)
+            if (inTriggerId == GameTriggers.RequestPartnerHelp || inTriggerId == GameTriggers.PartnerTalk)
             {
                 m_Target = "kevin";
             }
@@ -224,7 +218,6 @@ namespace Aqua.Scripting
         Cutscene = 0x01,
         Entrypoint = 0x02,
         TriggerResponse = 0x04,
-        Important = 0x08,
         CornerChatter = 0x10,
         SuppressDuringCutscene = 0x20,
         Function = 0x40

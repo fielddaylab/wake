@@ -9,9 +9,11 @@ using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
 using Aqua.Debugging;
+using BeauUtil.Services;
 
 namespace Aqua
 {
+    [ServiceDependency(typeof(UIMgr))]
     public partial class StateMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
@@ -148,6 +150,16 @@ namespace Aqua
         public bool IsLoadingScene()
         {
             return m_SceneLock;
+        }
+
+        /// <summary>
+        /// Returns the previous scene.
+        /// </summary>
+        public SceneBinding PreviousScene()
+        {
+            if (m_SceneHistory.Count > 1)
+                return m_SceneHistory[m_SceneHistory.Count - 2];
+            return default(SceneBinding);
         }
 
         private IEnumerator InitialSceneLoad()
@@ -443,6 +455,9 @@ namespace Aqua
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
 
+            if (SceneHelper.ActiveScene().BuildIndex != 0)
+                Services.UI.ForceLoadingScreen();
+
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
         }
 
@@ -469,7 +484,14 @@ namespace Aqua
 
         static private void RegisterLoadButton(DMInfo inMenu, SceneBinding inBinding)
         {
-            inMenu.AddButton(inBinding.Name, () => Services.State.LoadScene(inBinding));
+            inMenu.AddButton(inBinding.Name, () => DebugLoadScene(inBinding));
+        }
+
+        static private void DebugLoadScene(SceneBinding inBinding)
+        {
+            Services.UI.HideAll();
+            Services.Script.KillAllThreads();
+            Services.State.LoadScene(inBinding);
         }
 
         #endregion // IDebuggable

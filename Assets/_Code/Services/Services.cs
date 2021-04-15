@@ -53,6 +53,7 @@ namespace Aqua
         static public class Animation
         {
             [ServiceReference] static public AmbientTransformService AmbientTransforms { get; private set; }
+            [ServiceReference] static public AmbientRendererService AmbientRenderers { get; private set; }
             [ServiceReference] static public SpriteAnimatorService Sprites { get; private set; }
         }
     

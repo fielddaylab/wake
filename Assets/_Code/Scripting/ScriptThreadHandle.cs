@@ -45,6 +45,11 @@ namespace Aqua.Scripting
         public IScriptContext Context() { return GetThread()?.Context; }
 
         /// <summary>
+        /// Target of the script thread.
+        /// </summary>
+        public StringHash32 TargetId() { return GetThread()?.Target() ?? StringHash32.Null; }
+
+        /// <summary>
         /// Pauses the thread.
         /// </summary>
         public void Pause()

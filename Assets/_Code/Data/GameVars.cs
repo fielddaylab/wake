@@ -31,5 +31,8 @@ namespace Aqua
     {
         static public readonly StringHash32 CashId = "Cash";
         static public readonly StringHash32 GearsId = "Gear";
+
+        static public readonly StringHash32 Target_Kevin = "kevin";
+        static public readonly StringHash32 Target_Player = "player";
     }
 }

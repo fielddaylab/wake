@@ -11,11 +11,13 @@
 :: end
 @trigger    JobCompleted
 @cutscene
+$call JobCompletePopup->ShowMenu
 {@kelpResearcher}   Way to science, {player-name}! And...
                     Um, who's your friend there?
 {@player}       Oh, this is Kevin! They're a jellyblob.
 {@kelpResearcher}   Neat! Well anyways, we might have some more tasks for you, but you can also take jobs from others too.
                     Check that out on the job board when you have a moment.
+$call JobCompletePopup->HideMenu
 
 // some guidance
 
@@ -117,7 +119,7 @@ $endif
 // Kevin Responses
 
 :: kevin.atBottom
-@trigger    RequestPartnerHelp
+@trigger    PartnerTalk
 @when       scene:name == "RS-1B", jobs:j1-6.seen.bottom
 @once
 @boostScore 5

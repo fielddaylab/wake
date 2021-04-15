@@ -20,6 +20,9 @@ namespace Aqua
     [ServiceDependency(typeof(DataService), typeof(UIMgr), typeof(LocService), typeof(AssetsService), typeof(TweakMgr))]
     public partial class ScriptingService : ServiceBehaviour, IPauseable, IDebuggable
     {
+        public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
+        public delegate void ScriptTargetHandler(StringHash32 inTarget);
+
         // thread management
         private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
         private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
@@ -506,7 +509,10 @@ namespace Aqua
 
             StringHash32 who = inThread.Target();
             if (!who.IsEmpty)
+            {
                 m_ThreadTargetMap.Remove(who);
+                OnTargetedThreadKilled?.Invoke(who);
+            }
 
             if (m_CutsceneThread == inThread)
                 m_CutsceneThread = null;
@@ -559,13 +565,16 @@ namespace Aqua
             if (!string.IsNullOrEmpty(inThreadName))
                 m_ThreadMap.Add(inThreadName, thread);
 
-            StringHash32 who = thread.Target();
-            if (!who.IsEmpty)
-                m_ThreadTargetMap.Add(who, thread);
-
             if (inNode.IsCutscene())
             {
                 m_CutsceneThread = thread;
+            }
+
+            StringHash32 who = thread.Target();
+            if (!who.IsEmpty)
+            {
+                m_ThreadTargetMap.Add(who, thread);
+                OnTargetedThreadStarted?.Invoke(handle);
             }
             
             return handle;
@@ -659,6 +668,20 @@ namespace Aqua
 
         #endregion // Unity Events
 
+        #region Events
+
+        /// <summary>
+        /// Dispatched when a thread is started.
+        /// </summary>
+        public event ScriptThreadHandler OnTargetedThreadStarted;
+
+        /// <summary>
+        /// Dispatched when a thread is killed.
+        /// </summary>
+        public event ScriptTargetHandler OnTargetedThreadKilled;
+
+        #endregion // Events
+
         #region IService
 
         protected override void Initialize()
@@ -714,6 +737,7 @@ namespace Aqua
             DMInfo triggerMenu = DebugService.NewDebugMenu("Trigger Response");
             RegisterTriggerResponse(triggerMenu, GameTriggers.SceneStart);
             RegisterTriggerResponse(triggerMenu, GameTriggers.RequestPartnerHelp);
+            RegisterTriggerResponse(triggerMenu, GameTriggers.PartnerTalk);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobSwitched);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobStarted);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobCompleted);
