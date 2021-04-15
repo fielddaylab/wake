@@ -108,6 +108,15 @@ namespace Aqua
             return fact;
         }
 
+        public bool HasFactWithValue() {
+            foreach(var fact in Facts) {
+                if(fact.HasValue()) { 
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
         {
             return (TFact) Fact(inFactId);
