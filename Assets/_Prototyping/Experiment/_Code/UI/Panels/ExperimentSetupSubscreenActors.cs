@@ -26,7 +26,7 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private ExperimentSetupData m_CachedData;
 
-        private bool OnMeasurementCritterY;
+        // private bool OnMeasurementCritterY;
 
         public Action OnSelectContinue;
 
@@ -70,20 +70,20 @@ namespace ProtoAqua.Experiment
         public override void Refresh()
         {
             base.Refresh();
-            OnMeasurementCritterY = OnMeasurementY();
+            // OnMeasurementCritterY = OnMeasurementY();
             buttonDict.Clear();
             m_Visited = false;
             UpdateButtons();
         }
 
-        public bool OnMeasurementY() {
-            if(m_CachedData.Tank == TankType.Measurement) {
-                if(m_CachedData.CritterX != StringHash32.Null && m_CachedData.CritterY == StringHash32.Null) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        // public bool OnMeasurementY() {
+        //     if(m_CachedData.Tank == TankType.Measurement) {
+        //         if(m_CachedData.CritterX != StringHash32.Null && m_CachedData.CritterY == StringHash32.Null) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
         private void PresetButtons(ExpSubscreen sc) {
             if(!(sc == ExpSubscreen.Actor)) return;
             if(m_CachedData == null) {
@@ -114,9 +114,9 @@ namespace ProtoAqua.Experiment
                 return;
             
             var allActorTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Critter);
-            if(tankType.Tank == TankType.Measurement && OnMeasurementCritterY) {
-                allActorTypes = MeasurementFilterY(allActorTypes);
-            } 
+            // if(tankType.Tank == TankType.Measurement && OnMeasurementCritterY) {
+            //     allActorTypes = MeasurementFilterY(allActorTypes);
+            // } 
 
             m_ToggleGroup.enabled = tankType.SingleCritter;
 
@@ -152,52 +152,52 @@ namespace ProtoAqua.Experiment
             m_NextButton.interactable = false;
         }
 
-        private List<BestiaryDesc> MeasurementFilterY(IEnumerable<BestiaryDesc> All_Actors) {
-            List<BestiaryDesc> Result = new List<BestiaryDesc>(All_Actors);
-            var targets = m_CachedData.GetTargets();
-            foreach(var actor in All_Actors) {
-                if(!targets.Contains(actor.Id())) Result.Remove(actor);
-            }
-            return Result;
-        }
+        // private List<BestiaryDesc> MeasurementFilterY(IEnumerable<BestiaryDesc> All_Actors) {
+        //     List<BestiaryDesc> Result = new List<BestiaryDesc>(All_Actors);
+        //     var targets = m_CachedData.GetTargets();
+        //     foreach(var actor in All_Actors) {
+        //         if(!targets.Contains(actor.Id())) Result.Remove(actor);
+        //     }
+        //     return Result;
+        // }
 
         private void UpdateFromButton(StringHash32 inActorId, bool inbActive)
         {
             var actorData = Services.Assets.Bestiary.Get(inActorId);
-            if(m_CachedData.Tank == TankType.Measurement) {
-                MeasurementUpdate(inActorId, inbActive);
-            }
-            else { GeneralUpdate(inActorId, inbActive); }
+            // if(m_CachedData.Tank == TankType.Measurement) {
+            //     MeasurementUpdate(inActorId, inbActive);
+            // }
+            // else { GeneralUpdate(inActorId, inbActive); }
+            GeneralUpdate(inActorId, inbActive);
 
-            m_NextButton.interactable = m_CachedData.ActorIds.Count > 0 || m_CachedData.CritterX != StringHash32.Null;
+            m_NextButton.interactable = m_CachedData.ActorIds.Count > 0;
             UpdateDisplay(inActorId);
             Services.Data.SetVariable("experiment:setup." + actorData.name, inbActive);
         }
 
-        private void MeasurementUpdate(StringHash32 inActorId, bool inbActive) {
-            if(inbActive) {
-                if(OnMeasurementCritterY) {
-                    m_CachedData.CritterY = inActorId;
-                }
-                else { 
-                    m_CachedData.CritterX = inActorId;
-                    m_CachedData.Process(inActorId);
-                }
-                Services.Events.Dispatch(ExperimentEvents.SetupAddActor, inActorId);
-            }
-            else {
-                if(OnMeasurementCritterY) {
-                    m_CachedData.CritterY = StringHash32.Null;
-                }
-                else { m_CachedData.CritterX = StringHash32.Null; }
-                Services.Events.Dispatch(ExperimentEvents.SetupRemoveActor, inActorId);
-            }
-        }
+        // private void MeasurementUpdate(StringHash32 inActorId, bool inbActive) {
+        //     if(inbActive) {
+        //         if(OnMeasurementCritterY) {
+        //             m_CachedData.CritterY = inActorId;
+        //         }
+        //         else { 
+        //             m_CachedData.CritterX = inActorId;
+        //             m_CachedData.Process(inActorId);
+        //         }
+        //         Services.Events.Dispatch(ExperimentEvents.SetupAddActor, inActorId);
+        //     }
+        //     else {
+        //         if(OnMeasurementCritterY) {
+        //             m_CachedData.CritterY = StringHash32.Null;
+        //         }
+        //         else { m_CachedData.CritterX = StringHash32.Null; }
+        //         Services.Events.Dispatch(ExperimentEvents.SetupRemoveActor, inActorId);
+        //     }
+        // }
 
         private void GeneralUpdate(StringHash32 inActorId, bool inbActive) {
             if (inbActive)
             {
-
                 m_CachedData.ActorIds.Add(inActorId);
                 Services.Events.Dispatch(ExperimentEvents.SetupAddActor, inActorId);
             }
@@ -205,6 +205,12 @@ namespace ProtoAqua.Experiment
             {
                 m_CachedData.ActorIds.Remove(inActorId);
                 Services.Events.Dispatch(ExperimentEvents.SetupRemoveActor, inActorId);
+            }
+            if(m_CachedData.Tank == TankType.Measurement) {
+                if(inbActive)   m_CachedData.Critter = inActorId;
+                else {
+                    m_CachedData.Critter = StringHash32.Null;
+                }
             }
         }
 

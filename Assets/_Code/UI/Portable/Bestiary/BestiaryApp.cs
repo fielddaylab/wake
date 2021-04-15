@@ -604,6 +604,16 @@ namespace Aqua.Portable
             InstantiateFactButton(inFact, inParams);
         }
 
+        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
+        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        {
+            InstantiateFactButton(inFact, inParams);
+        }
+
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
         {
             InstantiateFactButton(inFact, inParams);

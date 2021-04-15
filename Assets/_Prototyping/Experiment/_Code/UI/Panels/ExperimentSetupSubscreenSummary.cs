@@ -34,23 +34,17 @@ namespace ProtoAqua.Experiment
 
         public void Populate(ExperimentResultData inResultData)
         {
+            m_BehaviorDisplayPool.Reset();
+
             if(inResultData.Setup.Tank == TankType.Stressor) {
                 PopulateStressor(inResultData);
 
             }
             if(inResultData.Setup.Tank == TankType.Foundational) {
-                PopulateFoundational();
+                PopulateFoundational(inResultData);
             }
             if(inResultData.Setup.Tank == TankType.Measurement) {
                 PopulateMeasurement(inResultData);
-            }
-
-            m_BehaviorDisplayPool.Reset();
-
-            foreach(var behaviorId in inResultData.ObservedBehaviorIds)
-            {
-                var behavior = Services.Assets.Bestiary.Fact(behaviorId);
-                m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
             }
 
             // HACKS
@@ -60,29 +54,44 @@ namespace ProtoAqua.Experiment
         private void PopulateMeasurement(ExperimentResultData resData) {
             m_RangeFactButton.gameObject.SetActive(false);
             var form_text = "";
-
-
-            if(resData.Setup.CritterX != StringHash32.Null) {
-                var actor = Services.Assets.Bestiary.Get(resData.Setup.CritterX);
-                var actorState = GetActorState(actor, resData.Setup.Values);
-                form_text = form_text + actor.PluralName() + GetState(actorState) + "\n";
+            var critter = Services.Assets.Bestiary.Get(resData.Setup.Critter);
+            var consume = BestiaryUtils.FindConsumeRule(critter, resData.Setup.PropertyId);
+            var produce = BestiaryUtils.FindProduceRule(critter, resData.Setup.PropertyId);
+            if(produce != null){
+                if(Services.Data.Profile.Bestiary.RegisterFact(produce.Id())) {
+                    m_BehaviorDisplayPool.Alloc().Populate(produce, null);
+                }
             }
+            else if(consume != null){
+                if(Services.Data.Profile.Bestiary.RegisterFact(consume.Id())) {
+                    m_BehaviorDisplayPool.Alloc().Populate(consume, null);
+                }
+            }
+            else {
+                form_text = "No facts found for " + critter.CommonName() + " with " 
+                    + Services.Assets.WaterProp.Property(resData.Setup.PropertyId).name;
+            }
+            // if(resData.Setup.CritterX != StringHash32.Null) {
+            //     var actor = Services.Assets.Bestiary.Get(resData.Setup.CritterX);
+            //     var actorState = GetActorState(actor, resData.Setup.Values);
+            //     form_text = form_text + actor.PluralName() + GetState(actorState) + "\n";
+            // }
 
-            if(resData.Setup.CritterY != StringHash32.Null) {
-                var target = ((BFEat)resData.Setup.GetResult().Fact).Target();
-                var state = target.GetStateForEnvironment(in resData.Setup.Values);
-                var eatFact = BestiaryUtils.FindEatingRule(resData.Setup.CritterX, target.Id(), state);
-                if(eatFact != null)  {
-                    Services.Data.Profile.Bestiary.RegisterFact(eatFact?.Id() ?? StringHash32.Null, out PlayerFactParams factParams);
-                    factParams.Add(PlayerFactFlags.KnowValue);
-                    form_text = form_text + target.PluralName() + GetState(state) + "\n" + factParams.Fact.GenerateSentence(factParams);
-                }
-                else {
-                    form_text = form_text + target.PluralName() + GetState(state);
-                }
+            // if(resData.Setup.CritterY != StringHash32.Null) {
+            //     var target = ((BFEat)resData.Setup.GetResult().Fact).Target();
+            //     var state = target.GetStateForEnvironment(in resData.Setup.Values);
+            //     var eatFact = BestiaryUtils.FindEatingRule(resData.Setup.CritterX, target.Id(), state);
+            //     if(eatFact != null)  {
+            //         Services.Data.Profile.Bestiary.RegisterFact(eatFact?.Id() ?? StringHash32.Null, out PlayerFactParams factParams);
+            //         factParams.Add(PlayerFactFlags.KnowValue);
+            //         form_text = form_text + target.PluralName() + GetState(state) + "\n" + factParams.Fact.GenerateSentence(factParams);
+            //     }
+            //     else {
+            //         form_text = form_text + target.PluralName() + GetState(state);
+            //     }
                 
-                Debug.Log(form_text);
-            }
+            //     Debug.Log(form_text);
+            // }
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankMeasureSummary"));
             m_SummaryText.SetText(form_text);
 
@@ -114,7 +123,12 @@ namespace ProtoAqua.Experiment
             }
         }
 
-        private void PopulateFoundational() {
+        private void PopulateFoundational(ExperimentResultData inResultData) {
+            foreach(var behaviorId in inResultData.ObservedBehaviorIds)
+            {
+                var behavior = Services.Assets.Bestiary.Fact(behaviorId);
+                m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
+            }
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
             m_SummaryText.SetText(Services.Loc.Localize("experiment.summary.countableSummary"));
             m_RangeFactButton.gameObject.SetActive(false);
@@ -150,28 +164,7 @@ namespace ProtoAqua.Experiment
             else
             {
                 form_text = Services.Loc.Localize(actor.CommonName()) + state.GenerateSentence();
-            }
-            // BFStateRange state = null;
-            // var allEnvs = Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Environment);
-            // List<BFStateRange> rangefacts = new List<BFStateRange>();
-            // foreach(var env in allEnvs) {
-            //     foreach(BFBase fact in env.Facts) {
-            //         if(fact is BFStateRange) {
-            //             rangefacts.Add((BFStateRange)fact);
-            //             state = (BFStateRange) fact;
-            //         }
-            //     }
-            // }
-
-            //     if(rangefacts.Count > 0) {
-            //         foreach(var fact in rangefacts) {
-            //             m_Button = m_RangeFactButton.GetComponent<BestiaryRangeFactButton>();
-            //             m_Button.Initialize(fact, null, false, false, null);
-            //             m_Button.gameObject.SetActive(true);
-            //         }
-            //     }
-
-            //     var form_text = "Sea otter " + state.GenerateSentence(null);                
+            }  
 
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
                 m_SummaryText.SetText(form_text);

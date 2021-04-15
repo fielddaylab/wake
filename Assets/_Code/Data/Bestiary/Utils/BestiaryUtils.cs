@@ -54,6 +54,49 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Locates produce/consume rule associated with the given creature and water property.
+        /// </summary>
+        static public BFProduce FindProduceRule(BestiaryDesc inParent, WaterPropertyId inPropertyId) {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            BFProduce defaultProduce = null;
+            foreach(var fact in inParent.Facts) {
+                BFProduce prod = fact as BFProduce;
+                if (prod == null)
+                    continue;
+                
+                if (prod.Target() != inPropertyId)
+                    continue;
+
+                defaultProduce = prod;
+
+            }
+
+            return defaultProduce;
+        }
+
+        static public BFConsume FindConsumeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId) {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            BFConsume defaultConsume = null;
+            foreach(var fact in inParent.Facts) {
+                BFConsume consume = fact as BFConsume;
+                if (consume == null)
+                    continue;
+                
+                if (consume.Target() != inPropertyId)
+                    continue;
+
+                defaultConsume = consume;
+
+            }
+
+            return defaultConsume;
+        }
+
+        /// <summary>
         /// Locates all range rules associated with the given creature and water property.
         /// </summary>
         static public int FindRangeRules(BestiaryDesc inParent, WaterPropertyId inPropertyId, ICollection<BFStateRange> outRanges)

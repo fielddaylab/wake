@@ -15,18 +15,6 @@ public class TypeButton : MonoBehaviour, IPoolAllocHandler {
 
 
     //private TypeManager typeManager = null;
-    
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
 
         public void InitalizeButton(string inId, string inDisplayText, Sprite inSprite, TypeManager inTypeManager) {
             Debug.Log("Making button");

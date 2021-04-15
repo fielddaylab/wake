@@ -42,7 +42,7 @@ namespace ProtoAqua.Argumentation
         {
             m_NodePool.Initialize();
 
-            Services.Events.Register<GameObject>(Event_ArgumentBubbleSelection, OnDrop, this);
+            Services.Events.Register<ChatBubble>(Event_ArgumentBubbleSelection, OnDrop, this);
             Services.Events.Register<BestiaryDescCategory>(Event_OpenBestiaryRequest, OpenBestiary, this);
 
             m_Graph.OnGraphLoaded += Init;
@@ -75,16 +75,12 @@ namespace ProtoAqua.Argumentation
         }
 
         // Activates when an item is dropped (called from DropSlot.cs)
-        private void OnDrop(GameObject response)
+        private void OnDrop(ChatBubble response)
         {
             // Make sure the object is draggable (This should never occur that its not)
-            if (response.GetComponent<ClickableObject>() == null)
-            {
-                return;
-            }
 
-            StringHash32 linkId = response.GetComponent<ChatBubble>().id;
-            string linkTag = response.GetComponent<ChatBubble>().linkTag;
+            StringHash32 linkId = response.id;
+            string linkTag = response.linkTag;
 
             if (linkTag == "claim")
             {
@@ -93,8 +89,7 @@ namespace ProtoAqua.Argumentation
 
             // Place response in the chat grid and align it to the right
             response.transform.SetParent(m_ChatGrid);
-            response.GetComponent<ClickableObject>().enabled = false;
-            response.GetComponent<ChatBubble>().SetLongText();
+            response.SetLongText();
             response.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
                 .childAlignment = TextAnchor.UpperRight;
 
@@ -104,13 +99,12 @@ namespace ProtoAqua.Argumentation
 
         }
 
-        private void OnSelect(GameObject selectedFact, StringHash32 linkId) {
+        private void OnSelect(ChatBubble selectedFact, StringHash32 linkId) {
             
             selectedFact.transform.SetParent(m_ChatGrid);
-            selectedFact.GetComponent<ClickableObject>().enabled = false;
             selectedFact.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
                 .childAlignment = TextAnchor.UpperRight;
-            selectedFact.SetActive(true);
+            selectedFact.gameObject.SetActive(true);
             Routine.Start(this, ScrollRoutine(linkId, selectedFact));
         }
 
@@ -118,7 +112,7 @@ namespace ProtoAqua.Argumentation
             var future = BestiaryApp.RequestFact(inCategory);
             future.OnComplete( (s) => {
                 Debug.Log("Selected: " + s.Fact.name);
-                GameObject newLink = m_LinkManager.ClickBestiaryLink(s);
+                ChatBubble newLink = m_LinkManager.ClickBestiaryLink(s);
                 OnSelect(newLink, s.Fact.Id());
                 //m_FactText.SetText("Selected: " + s.Fact.GenerateSentence(s));
             }).OnFail(() => {
@@ -127,7 +121,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        private void RespondWithNextNode(StringHash32 linkId, GameObject response)
+        private void RespondWithNextNode(StringHash32 linkId, ChatBubble response)
         {
             Node nextNode = m_Graph.NextNode(linkId);
 
@@ -205,7 +199,7 @@ namespace ProtoAqua.Argumentation
         }
 
         // Shake response back and forth in the chat, indicating that the response is invalid
-        private IEnumerator InvalidResponseRoutine(GameObject response)
+        private IEnumerator InvalidResponseRoutine(ChatBubble response)
         {
             yield return response.transform.MoveTo(transform.position +
                             new Vector3(0.1f, 0, 0), 0.05f, Axis.X).Ease(Curve.CubeOut);
@@ -218,7 +212,7 @@ namespace ProtoAqua.Argumentation
         // Handles scrolling when the response is placed in the chat, and once again when the
         // NPC responds with the next node. Raycasting is disabled during the routine so that
         // the player can't drag in additional responses.
-        private IEnumerator ScrollRoutine(StringHash32 linkId, GameObject response)
+        private IEnumerator ScrollRoutine(StringHash32 linkId, ChatBubble response)
         {
             m_InputRaycasterLayer.Override = false;
 
