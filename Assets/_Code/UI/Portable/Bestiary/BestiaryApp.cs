@@ -44,6 +44,11 @@ namespace Aqua.Portable
                 return true;
             }
 
+            public bool ForceInputEnabled()
+            {
+                return false;
+            }
+
             public void Dispose()
             {
                 Target = default(BestiaryUpdateParams);
@@ -76,6 +81,11 @@ namespace Aqua.Portable
             public bool CanNavigateApps()
             {
                 return false;
+            }
+
+            public bool ForceInputEnabled()
+            {
+                return true;
             }
 
             public void Dispose()
@@ -111,6 +121,11 @@ namespace Aqua.Portable
             }
 
             public bool CanNavigateApps()
+            {
+                return false;
+            }
+
+            public bool ForceInputEnabled()
             {
                 return false;
             }

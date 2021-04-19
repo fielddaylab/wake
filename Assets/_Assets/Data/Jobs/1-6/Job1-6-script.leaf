@@ -38,6 +38,20 @@ $set    player:seen.jules = true
 {@kelpResearcher}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
                     You'll see what I mean once you get there.
 
+:: diveSite
+@trigger    SceneStart
+@when    scene:name == "RS-1B", scanned:RS-1B.probe
+@cutscene
+{@Probe}    Beep, boop.. Thanks for scanning me! Select a critter to tag!
+$call Probe->AskForBestiaryEntry temp:critterImproveId
+$if !temp:critterImproveId
+    {@Probe}    Hmm.. you didn't select a critter yet.
+$else
+    {@Probe}    {temp:critterImproveId} can be improved!
+    $call Probe->ImproveRules
+$endif
+
+
 :: atFloor
 @trigger    PlayerEnterRegion
 @when       scene:name == "RS-1B", regionId = "oceanBottom"
