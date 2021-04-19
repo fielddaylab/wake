@@ -27,11 +27,11 @@ namespace Aqua.Scripting
         [LeafMember("AskForBestiaryEntry")]
         IEnumerator AskForBestiaryEntry(StringHash32 varId)
         {
-            selectedCritter = Services.Assets.Bestiary.Get(varId);
             Future<StringHash32> entity = BestiaryApp.RequestEntity(
-                BestiaryDescCategory.Critter, (selectedCritter) => EntryHasValues(selectedCritter));
+                BestiaryDescCategory.Critter, (critterId) => EntryHasValues(critterId));
             entity.OnComplete((critterId) => StoreId(critterId, out varId));
             entity.OnFail(() => varId = null);
+            
             yield return entity.Wait();
 
         }
@@ -56,6 +56,8 @@ namespace Aqua.Scripting
 
         public void StoreId(StringHash32 critterId, out StringHash32 varId) {
             probeCritterId = critterId;
+            selectedCritter = critterId != null ? Services.Assets.Bestiary.Get(critterId) : null;
+            Services.Data.SetVariable("probeScan:critter", selectedCritter.CommonName());
             varId = critterId;
 
         }
