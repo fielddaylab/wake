@@ -113,6 +113,10 @@ namespace Aqua.Portable
         {
             Services.Data.SetVariable("portable:open", true);
 
+            if(m_Request != null && Services.UI.IsLetterboxed() && m_Request.ForceInputEnabled()) {
+                m_Input.Override = true;
+            }
+
             m_Canvas.enabled = true;
             m_Input.PushPriority();
 
@@ -124,6 +128,7 @@ namespace Aqua.Portable
             Services.Data?.SetVariable("portable:open", false);
 
             m_Input.PopPriority();
+            m_Input.Override = null;
 
             m_Request = null;
             m_CloseButton.interactable = true;

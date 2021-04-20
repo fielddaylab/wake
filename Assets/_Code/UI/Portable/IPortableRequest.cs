@@ -8,5 +8,6 @@ namespace Aqua.Portable
         StringHash32 AppId();
         bool CanNavigateApps();
         bool CanClose();
+        bool ForceInputEnabled();
     }
 }

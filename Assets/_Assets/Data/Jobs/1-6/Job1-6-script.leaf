@@ -40,6 +40,19 @@ $set    player:seen.jules = true
 {@kelpResearcher}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
                     You'll see what I mean once you get there.
 
+:: diveSite.probe
+@trigger    PlayerEnterRegion
+@when    scene:name == "RS-1B", scanned:RS-1B.probe, regionId = "probeScan"
+{@probe}    Beep, boop.. Welcome to Dive Site B! Which critter do you want me to check?
+$call Probe->AskForBestiaryEntry temp:critterImproveId
+$if probeScan:critter == " "
+    {@probe}    Looks like it doesn't need any additional data yet.
+$else
+    {@probe}    Collecting data...{wait [3]}{var-s probeScan:critter}s' data is finished!
+    $call Probe->ImproveRules
+$endif
+
+
 :: atFloor
 @trigger    PlayerEnterRegion
 @when       scene:name == "RS-1B", regionId = "oceanBottom"
