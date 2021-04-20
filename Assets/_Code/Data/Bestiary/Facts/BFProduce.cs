@@ -31,7 +31,7 @@ namespace Aqua
 
             yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
             yield return BestiaryFactFragment.CreateVerb("Produces");
-            yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(Target()).name);
+            yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(Target()).LabelId());
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
@@ -44,7 +44,7 @@ namespace Aqua
 
                 psb.Builder.Append(Services.Loc.Localize(Parent().CommonName()))
                     .Append(" produces ");
-                psb.Builder.Append(FormatValue(WaterPropertyId.Food, m_Amount)).Append(' ');
+                psb.Builder.Append(FormatValue(Target(), m_Amount)).Append(' ');
                 psb.Builder.Append(" per tick");
 
                 return psb.Builder.Flush();

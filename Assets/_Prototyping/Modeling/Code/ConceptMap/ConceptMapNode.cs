@@ -16,6 +16,7 @@ namespace ProtoAqua.Modeling
         #region Inspector
 
         [SerializeField] private Image m_ClickZone = null;
+        [SerializeField] private Image m_Glow = null;
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private float m_Radius = 64;
@@ -71,6 +72,11 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        public void SetGlowing(bool inbGlowing)
+        {
+            m_Glow.gameObject.SetActive(inbGlowing);
+        }
+
         #region IPooledObject
 
         void IPooledObject<ConceptMapNode>.OnAlloc()
@@ -87,6 +93,7 @@ namespace ProtoAqua.Modeling
 
         void IPooledObject<ConceptMapNode>.OnFree()
         {
+            SetGlowing(false);
             m_Tag = null;
         }
 

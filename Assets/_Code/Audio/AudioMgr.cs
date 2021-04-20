@@ -8,11 +8,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauRoutine;
 using Aqua.Debugging;
+using BeauUtil.Debugger;
 
 namespace AquaAudio
 {
     public class AudioMgr : ServiceBehaviour
     {
+        public const int BusCount = (int) AudioBusId.LENGTH;
+
         #region Types
 
         [Serializable] private class AudioPool : SerializablePool<AudioPlaybackTrack> { }
@@ -23,17 +26,21 @@ namespace AquaAudio
 
         [SerializeField] private AudioPackage m_DefaultPackage = null;
         [SerializeField] private AudioPool m_Pool = null;
+        [SerializeField] private float m_DefaultMusicCrossfade = 0.5f;
 
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
         private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>();
+        private readonly RingBuffer<AudioPlaybackTrack> m_Playing = new RingBuffer<AudioPlaybackTrack>(32, RingBufferMode.Expand);
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
         private AudioPropertyBlock m_MixerProperties;
         private AudioPropertyBlock m_DebugProperties;
         private uint m_Id;
+
+        private AudioPropertyBlock[] m_BusMixes;
 
         private AudioHandle m_BGM;
         private float m_FadeMultiplier;
@@ -57,6 +64,10 @@ namespace AquaAudio
             m_MasterProperties = AudioPropertyBlock.Default;
             m_MixerProperties = AudioPropertyBlock.Default;
             m_DebugProperties = AudioPropertyBlock.Default;
+
+            m_BusMixes = new AudioPropertyBlock[BusCount - 1];
+            for(int i = 0; i < m_BusMixes.Length; ++i)
+                m_BusMixes[i] = AudioPropertyBlock.Default;
             
             InitPool();
             if (m_DefaultPackage != null)
@@ -71,28 +82,37 @@ namespace AquaAudio
 
         private void LateUpdate()
         {
-            using(PooledList<AudioPlaybackTrack> playingTracks = PooledList<AudioPlaybackTrack>.Create())
+            UnsafeUpdate();
+        }
+
+        private unsafe void UnsafeUpdate()
+        {
+            int count = m_Playing.Count;
+            
+            AudioPropertyBlock masterProperties = m_MasterProperties;
+            AudioPropertyBlock.Combine(masterProperties, m_MixerProperties, ref masterProperties);
+            AudioPropertyBlock.Combine(masterProperties, m_DebugProperties, ref masterProperties);
+
+            AudioPropertyBlock* properties = stackalloc AudioPropertyBlock[BusCount];
+            properties[0] = masterProperties;
+
+            for(int i = 0; i < m_BusMixes.Length; ++i)
+                AudioPropertyBlock.Combine(masterProperties, m_BusMixes[i], ref properties[1 + i]);
+
+            // multiply loading volume
+            properties[(int) AudioBusId.SFX].Volume *= m_FadeMultiplier;
+            properties[(int) AudioBusId.Voice].Volume *= m_FadeMultiplier;
+
+            float deltaTime = Time.deltaTime;
+            AudioPlaybackTrack track;
+
+            for(int i = count - 1; i >= 0; --i)
             {
-                playingTracks.AddRange(m_Pool.ActiveObjects);
-                int count = playingTracks.Count;
-                
-                AudioPropertyBlock properties = m_MasterProperties;
-                AudioPropertyBlock.Combine(properties, m_MixerProperties, ref properties);
-                AudioPropertyBlock.Combine(properties, m_DebugProperties, ref properties);
-
-                // multiply loading volume
-                properties.Volume *= m_FadeMultiplier;
-
-                float deltaTime = Time.deltaTime;
-                AudioPlaybackTrack track;
-
-                for(int i = count - 1; i >= 0; --i)
+                track = m_Playing[i];
+                if (!track.UpdatePlayback(ref properties[(int) track.BusId()], deltaTime))
                 {
-                    track = playingTracks[i];
-                    if (!track.UpdatePlayback(properties, deltaTime))
-                    {
-                        m_Pool.Free(track);
-                    }
+                    m_Pool.Free(track);
+                    m_Playing.FastRemoveAt(i);
                 }
             }
         }
@@ -128,6 +148,7 @@ namespace AquaAudio
             AudioHandle handle = track.TryLoad(evt, NextId(), m_Random);
             if (handle != AudioHandle.Null)
             {
+                m_Playing.PushBack(track);
                 track.Play();
             }
             else
@@ -150,6 +171,7 @@ namespace AquaAudio
             AudioHandle handle = track.TryLoad(inEvent, NextId(), m_Random);
             if (handle != AudioHandle.Null)
             {
+                m_Playing.PushBack(track);
                 track.Play();
             }
             else
@@ -182,8 +204,16 @@ namespace AquaAudio
 
         public AudioHandle CurrentMusic() { return m_BGM; }
 
-        public AudioHandle SetMusic(StringHash32 inId, float inCrossFade = 0)
+        public AudioHandle SetMusic(StringHash32 inId)
         {
+            return SetMusic(inId, m_DefaultMusicCrossfade);
+        }
+
+        public AudioHandle SetMusic(StringHash32 inId, float inCrossFade)
+        {
+            if (m_BGM.EventId() == inId)
+                return m_BGM;
+
             m_BGM.Stop(inCrossFade);
             m_BGM = PostEvent(inId);
             if (inCrossFade > 0)
@@ -191,7 +221,12 @@ namespace AquaAudio
             return m_BGM;
         }
 
-        public void StopMusic(float inFade = 0)
+        public void StopMusic()
+        {
+            m_BGM.Stop(m_DefaultMusicCrossfade);
+        }
+
+        public void StopMusic(float inFade)
         {
             m_BGM.Stop(inFade);
         }
@@ -236,6 +271,16 @@ namespace AquaAudio
         internal ref AudioPropertyBlock DebugMix
         {
             get { return ref m_DebugProperties; }
+        }
+
+        public ref AudioPropertyBlock BusMix(AudioBusId inBusId)
+        {
+            Assert.True(inBusId >= 0 && inBusId < AudioBusId.LENGTH, "Invalid bus id '{0}'", inBusId);
+
+            if (inBusId == AudioBusId.Master)
+                return ref m_MasterProperties;
+
+            return ref m_BusMixes[(int) inBusId - 1];
         }
 
         #endregion // Properties

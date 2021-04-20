@@ -37,6 +37,7 @@ namespace Aqua
         [NonSerialized] private DeviceInput m_DeviceInput;
 
         [NonSerialized] private bool m_PriorityPushed;
+        [NonSerialized] private int? m_PriorityOverride;
 
         #region Unity Events
 
@@ -80,7 +81,7 @@ namespace Aqua
 
         public int Priority
         {
-            get { return m_Priority; }
+            get { return m_PriorityOverride.HasValue ? m_PriorityOverride.Value : m_Priority; }
         }
 
         public InputLayerFlags Flags
@@ -95,6 +96,16 @@ namespace Aqua
             {
                 m_Override = value.HasValue;
                 m_OverrideState = value.GetValueOrDefault();
+                UpdateEnabled(false);
+            }
+        }
+
+        public int? PriorityOVerride
+        {
+            get { return m_PriorityOverride; }
+            set
+            {
+                m_PriorityOverride = value;
                 UpdateEnabled(false);
             }
         }
@@ -180,12 +191,35 @@ namespace Aqua
             if (m_Override)
                 return m_OverrideState;
             else
-                return m_Priority >= m_LastKnownSystemPriority && m_LastKnownSystemFlags != 0 && (m_Flags == 0 || (m_LastKnownSystemFlags & m_Flags) != 0);
+                return Priority >= m_LastKnownSystemPriority && m_LastKnownSystemFlags != 0 && (m_Flags == 0 || (m_LastKnownSystemFlags & m_Flags) != 0);
+        }
+
+        [ContextMenu("Reset Priority")]
+        protected virtual void ResetPriority()
+        {
+            Canvas c = GetComponentInParent<Canvas>();
+            if (c != null)
+                m_Priority = CalculateDefaultPriority(c);
         }
 
         static public BaseInputLayer Find(Component inComponent)
         {
             return inComponent.GetComponentInParent<BaseInputLayer>();
+        }
+
+        /// <summary>
+        /// Calculates the priority of a given canvas.
+        /// </summary>
+        static public int CalculateDefaultPriority(Canvas inCanvas)
+        {
+            int offset = CalculatePriorityOffset(inCanvas.sortingLayerID, (int) inCanvas.planeDistance, inCanvas.sortingOrder);
+            return 100000 * (2 - (int) inCanvas.renderMode) + offset;
+        }
+
+        static protected int CalculatePriorityOffset(int inSortingLayerId, int inDistanceToCamera, int inSortingOrder)
+        {
+            int layerIndex = GameSortingLayers.IndexOf(inSortingLayerId);
+            return 500 * layerIndex + 500 - inDistanceToCamera + inSortingOrder;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace AquaAudio
     {
         #region Inspector
 
+        [SerializeField] private AudioBusId m_Bus = AudioBusId.Master;
         [SerializeField, Required] private AudioClip[] m_Clips = null;
 
         [Header("Playback Settings")]
@@ -33,6 +34,7 @@ namespace AquaAudio
         #endregion // IKeyValuePair
 
         public StringHash32 Id() { return !m_Id.IsEmpty ? m_Id : (m_Id = name); }
+        public AudioBusId Bus() { return m_Bus; }
 
         public bool CanPlay()
         {

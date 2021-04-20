@@ -32,20 +32,7 @@ namespace Aqua
         protected override void Reset()
         {
             CacheRaycasters();
-            Canvas c = GetComponent<Canvas>();
-            if (c != null)
-            {
-                switch(c.renderMode)
-                {
-                    case RenderMode.ScreenSpaceCamera:
-                        m_Priority = 1000 - (int) c.planeDistance;
-                        break;
-
-                    case RenderMode.ScreenSpaceOverlay:
-                        m_Priority = 1000 + c.sortingOrder;
-                        break;
-                }
-            }
+            ResetPriority();
         }
 
         protected override void OnValidate()

@@ -85,6 +85,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4533985417951192861}
   - component: {fileID: 3594578799420362106}
+  - component: {fileID: 522291845261519553}
+  - component: {fileID: 7041510124479738068}
+  - component: {fileID: 7550264839170302309}
   m_Layer: 5
   m_Name: DialogHistoryButton
   m_TagString: Untagged
@@ -126,6 +129,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Toggle: {fileID: 6894258332810878212}
+--- !u!114 &522291845261519553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3204369106883285330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ClassName:
+    m_Source: 
+    m_Hash: 0
+  m_Id:
+    m_Source: hotbar.convoHistory
+    m_Hash: 1282054584
+--- !u!114 &7041510124479738068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3204369106883285330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca0f487b5f010b642a4dc51b3d877921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Group: {fileID: 7550264839170302309}
+  m_Canvas: {fileID: 0}
+--- !u!225 &7550264839170302309
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3204369106883285330}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6894258332810878214
 GameObject:
   m_ObjectHideFlags: 0

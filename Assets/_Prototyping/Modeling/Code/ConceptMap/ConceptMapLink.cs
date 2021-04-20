@@ -17,7 +17,10 @@ namespace ProtoAqua.Modeling
 
         [SerializeField] private RectTransform m_LineTransform = null;
         [SerializeField] private Image m_Icon = null;
+        [SerializeField] private RawImage m_Line = null;
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Texture2D m_SolidLineTexture = null;
+        [SerializeField] private Texture2D m_DottedLineTexture = null;
 
         #endregion // Inspector
 
@@ -58,6 +61,8 @@ namespace ProtoAqua.Modeling
             BFBehavior behavior = fact as BFBehavior;
             if (behavior != null)
             {
+                // TODO: dotted vs solid line
+
                 if (m_Label)
                 {
                     m_Label.SetText(behavior.Verb());
@@ -88,6 +93,7 @@ namespace ProtoAqua.Modeling
 
         void IPooledObject<ConceptMapLink>.OnFree()
         {
+            OnClick = null;
             m_Tag = null;
         }
 

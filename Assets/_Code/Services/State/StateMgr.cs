@@ -178,7 +178,9 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
-            Services.Data.LoadProfile();
+            // if we started from another scene than the boot or title scene
+            if (active.BuildIndex > 1)
+                Services.Data.LoadProfile();
 
             #if UNITY_EDITOR
             yield return WaitForFlatten(active);
@@ -222,6 +224,9 @@ namespace Aqua
             {
                 yield return Services.UI.ShowLoadingScreen();
             }
+
+            if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
+                Services.Data.LoadProfile();
 
             SceneBinding active = SceneHelper.ActiveScene();
 
@@ -455,7 +460,7 @@ namespace Aqua
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
 
-            if (SceneHelper.ActiveScene().BuildIndex != 0)
+            if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
                 Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
@@ -491,6 +496,7 @@ namespace Aqua
         {
             Services.UI.HideAll();
             Services.Script.KillAllThreads();
+            Services.Audio.StopAll();
             Services.State.LoadScene(inBinding);
         }
 

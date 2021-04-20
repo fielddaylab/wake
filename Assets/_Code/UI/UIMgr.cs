@@ -26,6 +26,7 @@ namespace Aqua
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
+        [SerializeField, Required] private FocusHighlight m_FocusHighlight = null;
 
         [Header("Input")]
         [SerializeField, Required] private InputCursor m_Cursor = null;
@@ -79,6 +80,7 @@ namespace Aqua
             m_Letterbox.InstantHide();
             m_ScreenFaders.StopAll();
             m_WorldFaders.StopAll();
+            m_FocusHighlight.Hide(true);
 
             foreach(var panel in m_DialogStyles)
             {
@@ -151,12 +153,18 @@ namespace Aqua
             }
         }
 
+        public bool IsSkippingCutscene()
+        {
+            return m_SkippingCutscene;
+        }
+
         #endregion // Letterbox
 
         #region Screen Effects
 
         public ScreenFaderDisplay ScreenFaders { get { return m_ScreenFaders; } }
         public ScreenFaderDisplay WorldFaders { get { return m_WorldFaders; } }
+        public FocusHighlight Focus { get { return m_FocusHighlight; } }
 
         public ScreenFaderDisplay Faders(ScreenFaderLayer inLayer)
         {

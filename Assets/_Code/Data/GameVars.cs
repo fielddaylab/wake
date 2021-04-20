@@ -34,5 +34,7 @@ namespace Aqua
 
         static public readonly StringHash32 Target_Kevin = "kevin";
         static public readonly StringHash32 Target_Player = "player";
+
+        public const int GameSceneIndexStart = 2;
     }
 }

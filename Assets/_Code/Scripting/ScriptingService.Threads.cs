@@ -139,11 +139,17 @@ namespace Aqua
             DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.Dialog);
 
             ParseToTag(ref lineEvents, inLine, inThread);
-            eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler);
+            bool bHasDialogEvents = false;
+            for(int i = 0; !bHasDialogEvents && i < lineEvents.Nodes.Length; i++)
+            {
+                bHasDialogEvents = lineEvents.Nodes[i].Type == TagNodeType.Event && m_DialogOnlyEvents.Contains(lineEvents.Nodes[i].Event.Type);
+            }
+
+            eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents);
 
             inThread.RecordDialog(lineEvents);
 
-            for (int i = 0; i < lineEvents.Nodes.Length; ++i)
+            for (int i = 0; i < lineEvents.Nodes.Length; i++)
             {
                 TagNodeData node = lineEvents.Nodes[i];
                 switch (node.Type)
@@ -162,7 +168,7 @@ namespace Aqua
                                 if (inThread.Dialog != dialogPanel)
                                 {
                                     dialogPanel = inThread.Dialog;
-                                    eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler);
+                                    eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents);
                                 }
 
                                 inThread.Dialog?.UpdateInput();
@@ -184,6 +190,8 @@ namespace Aqua
             {
                 yield return inThread.Dialog?.CompleteLine();
             }
+
+            yield return Routine.Command.BreakAndResume;
         }
 
         private void SkipEventLine(ScriptThread inThread, StringSlice inLine)
@@ -216,6 +224,8 @@ namespace Aqua
     
         private IEnumerator PerformEventChoice(ScriptThread inThread, LeafChoice inChoice, ILeafContentResolver inContentResolver)
         {
+            inThread.StopSkipping();
+            
             DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.GetDialog("center"));
             return dialogPanel.ShowOptions(inThread.PeekNode(), inChoice, inContentResolver, inThread);
         }

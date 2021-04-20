@@ -247,6 +247,16 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Portrait);
+
+            m_DialogOnlyEvents = new HashSet<StringHash32>();
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Auto);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Portrait);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speaker);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speed);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Target);
         }
 
         #endregion // Event Setup
@@ -331,15 +341,20 @@ namespace Aqua
             Services.Events.Dispatch(inEvent.StringArgument);
         }
 
-        private void EventTriggerResponse(TagEventData inEvent, object inContext)
+        private IEnumerator EventTriggerResponse(TagEventData inEvent, object inContext)
         {
             ScriptThread thread = Thread(inContext);
             var args = ExtractArgs(inEvent.StringArgument);
 
             StringHash32 trigger = args[0];
             StringHash32 who = args.Count > 1 ? args[1] : StringHash32.Null;
+            bool bWait = args.Count > 2 && args[2] == "wait";
 
-            Services.Script.TriggerResponse(trigger, who, thread?.Context, thread?.Locals);
+            var response = Services.Script.TriggerResponse(trigger, who, thread?.Context, thread?.Locals);
+            if (response.IsRunning() && bWait)
+                return response.Wait();
+            
+            return null;
         }
 
         private IEnumerator EventLoadScene(TagEventData inEvent, object inContext)

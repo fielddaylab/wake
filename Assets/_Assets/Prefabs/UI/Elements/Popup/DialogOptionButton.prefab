@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7743806561986191453}
   - component: {fileID: 8285771638237838604}
   - component: {fileID: 4147190905632409515}
+  - component: {fileID: 6995297675396985540}
   m_Layer: 5
   m_Name: DialogOptionButton
   m_TagString: Untagged
@@ -197,6 +198,24 @@ MonoBehaviour:
   TooltipId:
     m_Source: 
     m_Hash: 0
+--- !u!114 &6995297675396985540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800706802525946150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 6943464433970573473}
+  m_EnterEvent: ui_hover
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: ui_click
 --- !u!1 &4996439179647954526
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,7 +275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.40832, g: 0.41133714, b: 0.44, a: 1}
+  m_Color: {r: 0.32062745, g: 0.33545098, b: 0.4392157, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

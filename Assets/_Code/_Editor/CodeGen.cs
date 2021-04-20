@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
+using System;
 
 namespace Aqua.Editor
 {
@@ -74,6 +75,42 @@ namespace Aqua.Editor
             builder.Append("\n}");
 
             string outputPath = Path.Combine(TargetFolder, "GameScenes.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
+
+        [MenuItem("Aqualab/CodeGen/Regen Sorting Layers")]
+        static private void GenerateSortingLayerConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("using System;");
+            builder.Append("\n\nstatic public class GameSortingLayers")
+                .Append("\n{");
+
+            SortingLayer[] allLayers = SortingLayer.layers;
+            Array.Sort(allLayers, (a, b) => a.value.CompareTo(b.value));
+
+            foreach(var sortingLayer in allLayers)
+            {
+                string layerName = sortingLayer.name;
+                string safeName = ObjectNames.NicifyVariableName(layerName).Replace("-", "_").Replace(" ", "");
+
+                builder.Append("\n\tpublic const int ").Append(safeName).Append(" = ").Append(sortingLayer.id).Append(";");
+            }
+
+            builder.Append("\n\n\tstatic public readonly int[] Order = new int[]\n\t{");
+            foreach(var layer in allLayers)
+                builder.Append("\n\t\t").Append(layer.id).Append(",");
+            builder.Append("\n\t};");
+
+            builder.Append("\n\n\tstatic public int IndexOf(int inSortingLayerId)")
+                .Append("\n\t{")
+                .Append("\n\t\treturn Array.IndexOf(Order, inSortingLayerId);")
+                .Append("\n\t}");
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "GameSortingLayers.cs");
             File.WriteAllText(outputPath, builder.Flush());
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }

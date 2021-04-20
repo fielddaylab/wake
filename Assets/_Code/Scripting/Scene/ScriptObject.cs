@@ -12,7 +12,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_ClassName = "";
+        [SerializeField, HideInEditor] private SerializedHash32 m_ClassName = "";
         [SerializeField] private SerializedHash32 m_Id = "";
 
         #endregion // Inspector

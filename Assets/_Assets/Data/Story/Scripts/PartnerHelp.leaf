@@ -29,33 +29,58 @@ $set    kevin:knowsJobs = true
 @trigger    RequestPartnerHelp
 @when       !player:currentJob, scene:name != "JobBoard", session:nav.shipRoom != "helm"
 @repeat     1
-@chatter
+@cutscene
+{@player}   Any idea what we should be doing right now?
 {@kevin}    Maybe we should head back to the helm and take a job?
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp
 @when       !player:currentJob, scene:name == "Ship", session:nav.shipRoom == "helm"
 @repeat     1
-@chatter
+@cutscene
+{@player}   Any thoughts on what we should do next?
 {@kevin}    Maybe we should check out the job board...
 
-:: noJob.atJobBoard
+:: noJob.atJobBoard.someAvailable
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name == "JobBoard"
+@when       !player:currentJob, scene:name == "JobBoard", jobs:anyAvailable
 @repeat     1
-@chatter
+@cutscene
+{@player}   I'm stuck, anything I should look for?
 {@kevin}    Are you seeing any available jobs on the left?
+
+:: noJob.atJobBoard.someInProgress
+@trigger    RequestPartnerHelp
+@when       !player:currentJob, scene:name == "JobBoard", jobs:anyInProgress
+@repeat     1
+@cutscene
+{@player}   I'm stuck. Anything I'm missing?
+{@kevin}    It looks like there are some jobs you already started.
+            Why not pick those back up?
 
 :: noJob.default.1
 @trigger    RequestPartnerHelp
 @when       !player:currentJob
 @repeat     1
-@chatter
+@cutscene
+{@player}   Kevin, any help?
 {@kevin}    I'd recommend we see if there are any jobs available for us.
 
 :: noJob.default.2
 @trigger    RequestPartnerHelp
 @when       !player:currentJob
 @repeat     1
-@chatter
+@cutscene
+{@player}   Kevin, any words of wisdom? I'm a bit stuck.
 {@kevin}    I wonder if there are any jobs available for us to take...
+
+:: undefined.1
+@trigger        RequestPartnerHelp
+@cutscene
+@boostScore -500
+{@player}       Uh, Kevin? Any idea what I should be doing?
+{@kevin #confused}
+        Oh, well, uh... I don't have anything specific.
+        {#} But I'd look back at what the job-giver had to tell us.
+        And maybe check your bestiary too?
+{@}     (The help system is not yet finished.)

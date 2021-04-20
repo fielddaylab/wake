@@ -10,6 +10,7 @@ namespace AquaAudio
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_Crossfade = 0;
+        [SerializeField] private bool m_StopOnDisable = true;
 
         private Routine m_WaitRoutine;
         private AudioHandle m_BGM;
@@ -38,9 +39,13 @@ namespace AquaAudio
 
         private void OnDisable()
         {
+            m_WaitRoutine.Stop();
+
+            if (!m_StopOnDisable)
+                return;
+            
             if (Services.Audio)
             {
-                m_WaitRoutine.Stop();
                 if (m_BGM.Exists() && Services.Audio.CurrentMusic().EventId() == m_EventId)
                 {
                     m_BGM = default(AudioHandle);

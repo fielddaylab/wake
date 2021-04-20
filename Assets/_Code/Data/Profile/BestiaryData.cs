@@ -12,6 +12,7 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
         private List<PlayerFactParams> m_Facts = new List<PlayerFactParams>();
+        private List<StringHash32> m_GraphedFacts = new List<StringHash32>();
 
         [NonSerialized] private bool m_FactListDirty = true;
 
@@ -168,6 +169,7 @@ namespace Aqua.Profile
                 int index = m_Facts.BinarySearch(inFactId);
                 m_Facts.FastRemoveAt(index);
                 m_FactListDirty = true;
+                m_GraphedFacts.Remove(inFactId);
                 return true;
             }
 
@@ -192,6 +194,30 @@ namespace Aqua.Profile
         }
 
         #endregion // Facts
+
+        #region Graphed
+
+        public ListSlice<StringHash32> GraphedFacts()
+        {
+            return m_GraphedFacts;
+        }
+
+        public bool AddFactToGraph(StringHash32 inFactId)
+        {
+            RegisterFact(inFactId);
+            if (m_GraphedFacts.Contains(inFactId))
+                return false;
+            
+            m_GraphedFacts.Add(inFactId);
+            return true;
+        }
+
+        public bool IsFactGraphed(StringHash32 inFactId)
+        {
+            return m_ObservedFacts.Contains(inFactId) && m_GraphedFacts.Contains(inFactId);
+        }
+
+        #endregion // Graphed
 
         #region ISerializedData
 

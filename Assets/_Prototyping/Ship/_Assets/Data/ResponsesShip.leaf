@@ -27,14 +27,34 @@ $set    kevin:knowsJobs = true
 @chatter
 {@kevin #happy}    Hello from the ceiling!
 
-:: inside.helm.hello2
-@trigger    PartnerTalk
+:: inside.helm.inspect.kevin.1
+@trigger    InspectObject
 @who        kevin
-@when       session:nav.shipRoom == "helm", kevin:seenShipHelm
-@boostScore -5
-@repeat     1
-@chatter
-{@kevin #confused}    This bulb is a little cramped...
+@when       objectId == "helm.kevin"
+@once
+@boostScore 10
+@cutscene
+{@kevin #happy}    Thanks again for giving me space on your ship!
+{@player}   No problem!
+
+:: inside.helm.inspect.kevin.2
+@trigger    InspectObject
+@who        kevin
+@when       objectId == "helm.kevin"
+@once
+@cutscene
+@boostScore 9
+{@kevin #narrow}    It is a little cramped up here though...
+                    {#tired}Maybe we could {wait 0.5}consider{wait 0.25}{#happy} expanding this sometime?
+{@player}   Oh, of course, yeah we can do that sometime.
+
+:: inside.helm.inspect.kevin.3
+@trigger    InspectObject
+@who        kevin
+@when       objectId == "helm.kevin"
+@cutscene
+{@player}   That's Kevin, chilling up in their bulb.
+{@kevin}    Yep, that's me!
 
 // SHIP
 

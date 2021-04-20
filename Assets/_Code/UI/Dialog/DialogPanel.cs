@@ -198,7 +198,7 @@ namespace Aqua
 
         private bool SetSpeakerName(StringSlice inSpeaker)
         {
-            if (m_CurrentState.SpeakerName == inSpeaker)
+            if (IsShowing() && m_CurrentState.SpeakerName == inSpeaker)
                 return false;
 
             m_CurrentState.SpeakerName = inSpeaker;
@@ -301,19 +301,23 @@ namespace Aqua
         /// <summary>
         /// Preps for a line of dialog.
         /// </summary>
-        public TagStringEventHandler PrepLine(TagString inLine, TagStringEventHandler inParentHandler)
+        public TagStringEventHandler PrepLine(TagString inLine, TagStringEventHandler inParentHandler, bool inbForceHandle)
         {
             m_CurrentState.ResetTemp();
 
-            if (inLine.RichText.Length > 0)
+            bool bHasText = inLine.RichText.Length > 0;
+            if (inbForceHandle || bHasText)
             {
-                m_TextDisplay.SetText(inLine.RichText);
-                m_CurrentState.VisibleText = inLine.VisibleText;
-                m_TextDisplay.maxVisibleCharacters = 0;
+                if (bHasText)
+                {
+                    m_TextDisplay.SetText(inLine.RichText);
+                    m_CurrentState.VisibleText = inLine.VisibleText;
+                    m_TextDisplay.maxVisibleCharacters = 0;
 
-                UpdateSkipHeld();
+                    UpdateSkipHeld();
 
-                RebuildLayout();
+                    RebuildLayout();
+                }
 
                 TagStringEventHandler handler = GetHandler();
                 handler.Base = inParentHandler;

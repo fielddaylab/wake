@@ -51,6 +51,7 @@ namespace Aqua
 
         private void Awake()
         {
+            m_CameraFOV.Zoom = m_CloseZoom;
             m_NextButton.onClick.AddListener(OnNextButton);
         }
 
@@ -61,6 +62,8 @@ namespace Aqua
 
         private void OnNextButton()
         {
+            Services.Data.LoadProfile();
+            Services.Audio.StopMusic();
             StateUtil.LoadSceneWithWipe(m_LoadSceneName);
         }
 
@@ -129,7 +132,7 @@ namespace Aqua
         {
             while(true)
             {
-                yield return RNG.Instance.NextFloat(12, 20);
+                yield return RNG.Instance.NextFloat(12, 24);
                 Services.Audio.PostEvent("TitleWhale");
             }
         }
@@ -144,7 +147,7 @@ namespace Aqua
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
 
             // if returning from another scene
-            if (Services.State.PreviousScene().BuildIndex > 0)
+            if (Services.State.PreviousScene().BuildIndex >= GameConsts.GameSceneIndexStart)
             {
                 InitializeFromAnotherScene();
             }

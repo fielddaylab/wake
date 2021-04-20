@@ -217,7 +217,16 @@ namespace Aqua.Scripting
         public void RecordDialog(TagString inString)
         {
             if (inString.RichText.Length <= 0)
+            {
+                StringHash32 characterId;
+                string characterName;
+                if (ScriptingService.TryFindCharacter(inString, out characterId, out characterName))
+                {
+                    m_LastKnownCharacter = characterId;
+                    m_LastKnownName = characterName;
+                }
                 return;
+            }
             
             DialogRecord record = DialogRecord.FromTag(inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog);
             m_LastKnownCharacter = record.CharacterId;
@@ -266,6 +275,26 @@ namespace Aqua.Scripting
                     InternalSkip();
                 }
             }
+        }
+
+        public bool StopSkipping()
+        {
+            if ((m_Flags & ScriptFlags.Skip) != 0)
+            {
+                m_Flags &= ~ScriptFlags.Skip;
+                if (IsCutscene())
+                {
+                    m_SkipRoutine.Stop();
+                    Time.timeScale = 1;
+                    Services.Input.ResumeAll();
+                    Services.UI.StopSkipCutscene();
+                    m_RunningRoutine.SetTimeScale(1);
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public bool IsSkipping()

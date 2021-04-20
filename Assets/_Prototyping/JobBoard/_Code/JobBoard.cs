@@ -18,10 +18,17 @@ namespace ProtoAqua.JobBoard
 
         #region Inspector
 
+        [Header("Pools")]
         [SerializeField] private HeaderPool m_HeaderPool = null;
         [SerializeField] private ButtonPool m_ButtonPool = null;
+        
+        [Header("Groups")]
         [SerializeField] private ToggleGroup m_JobToggle = null;
         [SerializeField] private JobInfo m_Info = null;
+        
+        [Header("Station Label")]
+        [SerializeField] private Image m_StationIcon = null;
+        [SerializeField] private LocText m_StationName = null;
 
         #endregion
 
@@ -53,6 +60,10 @@ namespace ProtoAqua.JobBoard
             AllocateButtons();
             UpdateButtonStatuses();
             OrderButtons();
+
+            MapDesc currentStation = Services.Assets.Map[Services.Data.Profile.Map.CurrentStationId()];
+            m_StationIcon.sprite = currentStation.Icon();
+            m_StationName.SetText(currentStation.LabelId());
 
             m_Info.Clear();
         }

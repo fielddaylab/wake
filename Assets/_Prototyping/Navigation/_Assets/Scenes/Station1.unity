@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -723,6 +723,7 @@ GameObject:
   - component: {fileID: 575936042}
   - component: {fileID: 575936045}
   - component: {fileID: 575936046}
+  - component: {fileID: 575936047}
   m_Layer: 0
   m_Name: LevelAssets
   m_TagString: Untagged
@@ -798,6 +799,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventId: oceanWavesLoop
+--- !u!114 &575936047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575936041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ebe9a610c1ca0743a3a95f706918ea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: 
+  m_Crossfade: 0.5
+  m_StopOnDisable: 0
 --- !u!1 &627994180
 GameObject:
   m_ObjectHideFlags: 0
@@ -1817,7 +1833,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 5031810795656326111}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 5031810795656326112}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8063a91da80374b7788d094165780cb3, type: 3}
@@ -3386,3 +3402,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12dc5830a18c94aa89e47af7b0761be1, type: 3}
+--- !u!1 &5031810795656326112 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5031810794983755185, guid: 12dc5830a18c94aa89e47af7b0761be1,
+    type: 3}
+  m_PrefabInstance: {fileID: 5031810795656326111}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5031810795656326113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5031810795656326112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2

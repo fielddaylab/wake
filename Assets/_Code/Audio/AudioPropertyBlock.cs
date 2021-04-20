@@ -37,6 +37,11 @@ namespace AquaAudio
             this = s_Default;
         }
 
+        public override string ToString()
+        {
+            return string.Format("volume={0} pitch={1} mute={2} pause={3}", Volume, Pitch, Mute, Pause);
+        }
+
         #region Default
 
         static private readonly AudioPropertyBlock s_Default = new AudioPropertyBlock()

@@ -7,12 +7,17 @@
 @boostScore 100
 @cutscene
 $set    player:seen.jules = true
-{@kelpResearcher}   Hi there folks, Welcome to the Kelpdom! At least that's what I call the Great Channel Kelp Research Station.
+{@kelpResearcher}   Hi there folks! Welcome to the Kelpdom!
+                    At least that's what I call the Great Channel Kelp Research Station.
                     You're... {player-name}, right? I'm Jules.
-{@player}   Hi Jules! Where should we report for our first task? We're here to help with {slow} the Kelpdom? {/slow}
-{@kelpResearcher}   Super! We can always use new recruits! Check the job board on your dash.
+{@player}   Hi Jules! We're here to help with {slow}the Kelpdom?{/slow}
+            Where should we report for our first task? 
+{@kelpResearcher}   Oh, super! We can always use the help!
+                    Check the {h}Job Board{/h} on your dash.
                     You'll find everything you need to get started there.
 
+{hide-dialog}{wait 0.5}
+$goto .tutorial
 
 // :: Experimentation.intro.1
 // @trigger    SceneStart
@@ -42,3 +47,69 @@ $set    kevin:jules.player.talk + 1
 {@kevin} Modeling is pretty straightforward. You don't even need Calculus!
 	Just use your bestiary to add some rules, and they will influence the graph.
 	Play around until things start to look right.
+
+// tutorial
+
+:: tutorial
+@cutscene
+{fade-out black.60, 0.5, wait}
+{@kevin}    Hi there! Is this your first time here?
+$choice .tutorial.firstTime; Yeah!
+$choice .tutorial.skip; Nope!
+$choose branch
+
+{hide-dialog}{fade-in 0.5, wait}
+
+:: tutorial.firstTime
+@cutscene
+{@kevin #happy}
+    Great! Then let me give you the quick summary.
+
+// story background
+
+{@kevin}
+    {#}You're {player-name}, a...{#confused}{wait 0.2} scientist? I think?
+    {#narrow}(We haven't quite worked that out...)
+    {#}And I'm Kevin, your friend and science partner!
+    And together we're exploring the ocean!
+    {#narrow}(Or something like that...)
+    {#}So let's take on some jobs and see what's out there!
+{hide-dialog}{wait 0.5}
+
+// button help
+
+{@}
+{style center}
+    Don't be afraid to ask for help!
+
+$call hotbar.kevin->ForceOnTop
+$call FocusHighlight->Focus hotbar.kevin
+    You can talk to Kevin by clicking the {h}Talk Button{/h} up here.
+    They might have some interesting things to say!
+$call hotbar.kevin->ResetSorting
+
+$call hotbar.help->ForceOnTop
+$call FocusHighlight->Focus hotbar.help
+    You can also ask them for help by clicking the {h}Help Button{/h} down here.
+    (Though they might not have all the answers...)
+$call hotbar.help->ResetSorting
+
+$call hotbar.convoHistory->ForceOnTop
+$call FocusHighlight->Focus hotbar.convoHistory
+    And if you need to reread a conversation, you can always check your {h}Conversation Log{/h}.
+$call hotbar.convoHistory->ResetSorting
+
+$call hotbar.portable->ForceOnTop
+$call FocusHighlight->Focus hotbar.portable
+    Lastly, all your progress is stored over here in your {h}AQ-OS Portable Tablet{/h}.
+    Check in there to see everything you've collected so far!
+$call hotbar.portable->ResetSorting
+$call FocusHighlight->Clear
+
+Have fun!
+
+:: tutorial.skip
+@cutscene
+{@kevin #happy}
+    Oh, awesome! Then I'll let you get back to it!
+    {#}And if you need help, feel free to ask me.

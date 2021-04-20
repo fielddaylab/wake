@@ -33,7 +33,7 @@ namespace ProtoAqua.Modeling
         private void Awake()
         {
             m_AddButton.onClick.AddListener(OnAddClicked);
-            m_Map.OnLinkRequestRemove = Remove;
+            // m_Map.OnLinkRequestRemove = Remove;
         }
 
         private void OnAddClicked()

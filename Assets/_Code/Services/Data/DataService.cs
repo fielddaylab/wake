@@ -36,7 +36,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private SaveData m_CurrentSaveData = new SaveData();
+        [NonSerialized] private SaveData m_CurrentSaveData;
         [NonSerialized] private VariantTable m_SessionTable;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
@@ -79,9 +79,16 @@ namespace Aqua
 
         #region Load
 
+        public bool IsProfileLoaded()
+        {
+            return m_CurrentSaveData != null;
+        }
+
         public void LoadProfile()
         {
+            m_CurrentSaveData = new SaveData();
             m_CurrentSaveData.Inventory.SetDefaults();
+            m_DialogHistory.Clear();
 
             // SaveData fromPrefs = null;
             // if (Serializer.ReadPrefs(ref fromPrefs, DebugUserDataPrefsKey))

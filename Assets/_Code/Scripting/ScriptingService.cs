@@ -35,6 +35,7 @@ namespace Aqua
         private StringUtils.ArgsList.Splitter m_ArgListSplitter;
         private LeafRuntime<ScriptNode> m_ThreadRuntime;
         private HashSet<StringHash32> m_SkippedEvents;
+        private HashSet<StringHash32> m_DialogOnlyEvents;
         private MethodCache<LeafMember> m_LeafCache;
 
         // trigger eval

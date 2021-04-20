@@ -54,7 +54,7 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private bool m_Dragging;
         [NonSerialized] private bool m_Locked;
 
-        public Action<PlayerFactParams> OnLinkRequestRemove;
+        public Action<BestiaryDesc> OnNodeRequestToggle;
 
         #region Handlers
 
@@ -70,28 +70,20 @@ namespace ProtoAqua.Modeling
 
         private void OnLinkClicked(object inTag)
         {
-            if (m_Locked)
-                return;
-            
-            PlayerFactParams playerFact = inTag as PlayerFactParams;
-            if (playerFact == null)
-            {
-                BFBase fact = inTag as BFBase;
-                if (fact != null)
-                {
-                    playerFact = Services.Data.Profile.Bestiary.GetFact(fact.Id());
-                }
-            }
-
-            if (playerFact != null)
-            {
-                OnLinkRequestRemove?.Invoke(playerFact);
-            }
+            // if (m_Locked)
+            //     return;
         }
 
         private void OnNodeClicked(object inTag)
         {
-            // TODO: Something?
+            if (OnNodeRequestToggle == null)
+                return;
+
+            BestiaryDesc desc = inTag as BestiaryDesc;
+            if (desc != null)
+            {
+                OnNodeRequestToggle(desc);
+            }
         }
 
         private void LateUpdate()

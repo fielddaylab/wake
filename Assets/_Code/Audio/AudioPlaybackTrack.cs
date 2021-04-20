@@ -23,6 +23,7 @@ namespace AquaAudio
 
         [NonSerialized] private AudioEvent m_CurrentEvent;
         [NonSerialized] private uint m_CurrentId;
+        [NonSerialized] private AudioBusId m_CurrentBus;
 
         [NonSerialized] private State m_CurrentState;
         [NonSerialized] private float m_CurrentDelay;
@@ -52,6 +53,7 @@ namespace AquaAudio
 
             m_CurrentEvent = inEvent;
             m_CurrentId = inId;
+            m_CurrentBus = inEvent.Bus();
 
             #if UNITY_EDITOR
             gameObject.name = m_CurrentEvent.Id().ToDebugString();
@@ -154,7 +156,7 @@ namespace AquaAudio
 
         #region Updates
 
-        public bool UpdatePlayback(in AudioPropertyBlock inParentSettings, in float inDeltaTime)
+        public bool UpdatePlayback(ref AudioPropertyBlock inParentSettings, in float inDeltaTime)
         {
             m_LastKnownSettings = inParentSettings;
             AudioPropertyBlock.Combine(m_LastKnownSettings, m_EventSettings, ref m_LastKnownSettings);
@@ -258,6 +260,11 @@ namespace AquaAudio
             return StringHash32.Null;
         }
 
+        internal AudioBusId BusId()
+        {
+            return m_CurrentBus;
+        }
+
         internal bool IsEvent(AudioEvent inEvent)
         {
             return m_CurrentEvent == inEvent;
@@ -293,6 +300,7 @@ namespace AquaAudio
         {
             m_CurrentId = 0;
             m_CurrentEvent = null;
+            m_CurrentBus = AudioBusId.Master;
             m_Source.Stop();
             m_Source.clip = null;
             m_VolumeRoutine.Stop();

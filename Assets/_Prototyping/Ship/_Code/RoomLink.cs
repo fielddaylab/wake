@@ -16,8 +16,13 @@ namespace ProtoAqua.Ship
         }
 
         [SerializeField] private LinkType m_LinkType = LinkType.Room;
+        
+        [Header("Room Mode")]
         [SerializeField] private Room m_Room = null;
+        
+        [Header("Scene Mode")]
         [SerializeField] private string m_Scene = null;
+        [SerializeField] private bool m_StopMusic = true;
 
         private void Awake()
         {
@@ -32,6 +37,7 @@ namespace ProtoAqua.Ship
             {
                 case LinkType.Nav:
                     roomMgr.LoadNavRoom();
+                    Services.Audio.StopMusic();
                     break;
 
                 case LinkType.Room:
@@ -40,6 +46,8 @@ namespace ProtoAqua.Ship
 
                 case LinkType.Scene:
                     roomMgr.LoadScene(m_Scene);
+                    if (m_StopMusic)
+                        Services.Audio.StopMusic();
                     break;
             }
         }
