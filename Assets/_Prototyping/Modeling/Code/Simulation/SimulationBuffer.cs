@@ -242,7 +242,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Returns all facts added to the player sim.
         /// </summary>
-        public IEnumerable<PlayerFactParams> PlayerFacts()
+        public IReadOnlyCollection<PlayerFactParams> PlayerFacts()
         {
             return m_PlayerFacts;
         }

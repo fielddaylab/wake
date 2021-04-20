@@ -227,7 +227,15 @@ namespace Aqua
             inThread.StopSkipping();
             
             DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.GetDialog("center"));
-            return dialogPanel.ShowOptions(inThread.PeekNode(), inChoice, inContentResolver, inThread);
+            inThread.MarkChoice();
+            yield return dialogPanel.ShowOptions(inThread.PeekNode(), inChoice, inContentResolver, inThread);
+            inThread.EndChoice();
+
+            LeafChoice.Option chosenOption = inChoice[inChoice.ChosenIndex()];
+
+            string chosenLine;
+            inContentResolver.TryGetLine(chosenOption.LineCode, inThread.PeekNode(), out chosenLine);
+            inThread.RecordChoice(chosenLine);
         }
     }
 }

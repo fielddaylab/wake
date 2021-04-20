@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Aqua;
+using Aqua.Profile;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
@@ -13,107 +14,21 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
-        [SerializeField] private ModelingIntroUI m_Intro = null;
         [SerializeField] private ConceptMapUI m_ConceptMap = null;
-        [SerializeField] private ChartUI m_Chart = null;
-        [SerializeField] private ModelingCompleteUI m_Complete = null;
-        
-        [Header("Critter Lists")]
-        [SerializeField] private InitialCritterUI m_InitialCritters = null;
-        [SerializeField] private CritterAdjustUI m_CritterAdjust = null;
-        
-        [Header("Sync")]
-        [SerializeField] private SyncDisplay m_ModelSync = null;
-        [SerializeField] private SyncDisplay m_PredictSync = null;
-
-        [Header("Buttons")]
-        [SerializeField] private Button m_ModelSyncButton = null;
-        [SerializeField] private Button m_PredictSyncButton = null;
+        [SerializeField] private ScenarioPanelUI m_ScenarioPanel = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private SimulationBuffer m_Buffer;
-        [NonSerialized] private BaseInputLayer m_InputLayer;
-
-        [NonSerialized] private RectTransform m_ChartTransform;
-
-        public Action OnAdvanceClicked;
-
-        private void Awake()
-        {
-            m_InputLayer = BaseInputLayer.Find(this);
-            m_Chart.CacheComponent(ref m_ChartTransform);
-
-            m_ModelSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
-            m_PredictSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
-        }
+        public Action OnSimulateClick;
         
-        public void SetBuffer(SimulationBuffer inBuffer)
+        public void Populate(BestiaryData inPlayerData)
         {
-            m_Buffer = inBuffer;
-
-            m_ConceptMap.SetBuffer(inBuffer);
-            m_InitialCritters.SetBuffer(inBuffer);
-            m_CritterAdjust.SetBuffer(inBuffer);
+            m_ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts());
         }
 
-        public void Refresh(in ModelingState inState, SimulationBuffer.UpdateFlags inFlags)
+        public void SetScenario(ModelingScenarioData inScenario, bool inbOverride)
         {
-            m_Chart.Refresh(m_Buffer, inFlags);
-            if (inFlags != 0)
-            {
-                m_ModelSync.Display(inState.ModelSync);
-                m_PredictSync.Display(inState.PredictSync);
-            }
-        }
-
-        public void ShowIntro()
-        {
-            m_PredictSync.gameObject.SetActive(false);
-            m_ModelSync.gameObject.SetActive(true);
-            m_CritterAdjust.gameObject.SetActive(false);
-            m_InitialCritters.gameObject.SetActive(true);
-
-            m_Intro.Load(m_Buffer.Scenario());
-        }
-
-        public void SwitchToPredict()
-        {
-            m_PredictSync.gameObject.SetActive(true);
-            m_ModelSync.gameObject.SetActive(false);
-            m_CritterAdjust.gameObject.SetActive(true);
-            m_Chart.ShowPrediction();
-            m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.Model);
-            m_ConceptMap.Lock();
-
-            Routine.Start(this, SwitchToPredictAnimation()).TryManuallyUpdate(0);
-        }
-
-        public void Complete()
-        {
-            m_ConceptMap.Lock();
-            m_Complete.Load(m_Buffer.Scenario());
-        }
-
-        public void ShowAlreadyCompleted()
-        {
-            m_ConceptMap.Lock();
-            m_Complete.LoadAlreadyComplete("modeling.alreadyCompleted.title", "modeling.alreadyCompleted.desc");
-        }
-
-        private IEnumerator SwitchToPredictAnimation()
-        {
-            Services.Input.PauseAll();
-            yield return Routine.Combine(
-                m_ChartTransform.AnchorPosTo(-m_ChartTransform.anchoredPosition.x, 0.5f, Axis.X).Ease(Curve.CubeInOut)
-            );
-            m_InitialCritters.gameObject.SetActive(false);
-            Services.Input.ResumeAll();
-        }
-
-        private void OnAdvanceButtonClicked()
-        {
-            OnAdvanceClicked?.Invoke();
+            m_ScenarioPanel.SetScenario(inScenario, inbOverride);
         }
     }
 }

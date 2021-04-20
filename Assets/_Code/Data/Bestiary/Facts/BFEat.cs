@@ -75,5 +75,10 @@ namespace Aqua
         {
             return 10;
         }
+
+        public override bool HasValue()
+        {
+            return true;
+        }
     }
 }

@@ -293,12 +293,18 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
         {
-            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
+            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
+            m_MapData.CreateLink(inFact.Id(), self, target, "produce", inFact);
         }
 
         void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
         {
-            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+            var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
+            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
+            m_MapData.CreateLink(inFact.Id(), self, target, "consume", inFact);
         }
 
         void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)

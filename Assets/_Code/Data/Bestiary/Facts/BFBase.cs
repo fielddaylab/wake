@@ -13,7 +13,6 @@ namespace Aqua
         [SerializeField] private string m_Title = null;
         [SerializeField] private string m_Description = null;
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private bool m_IsValue = false;
 
         #endregion // Inspector
 
@@ -47,8 +46,9 @@ namespace Aqua
             return m_SelfParams ?? (m_SelfParams = new PlayerFactParams(this));
         }
 
-        public virtual bool HasValue() {
-            return m_IsValue;
+        public virtual bool HasValue()
+        {
+            return false;
         }
 
         public virtual int CompareTo(BFBase other)

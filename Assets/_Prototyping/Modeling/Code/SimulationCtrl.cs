@@ -10,10 +10,9 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
-        [SerializeField, Required] private ModelingUI m_UI = null;
+        [SerializeField, Required] private ModelingUI m_ModelingUI = null;
+        [SerializeField, Required] private SimulationUI m_SimulationUI = null;
         [SerializeField, Required] private BaseInputLayer m_Input = null;
-        [SerializeField, Required] private GameObject m_ScenarioGroup = null;
-        [SerializeField, Required] private GameObject m_EmptyGroup = null;
 
         #pragma warning disable CS0414
 
@@ -36,19 +35,7 @@ namespace ProtoAqua.Modeling
                 scenario = m_TestScenario;
             #endif // UNITY_DEITOR
 
-            bool bBoot = scenario;
-            if (bBoot && !BootParams.BootedFromCurrentScene)
-                bBoot = Services.Data.Profile.Bestiary.HasEntity(scenario.Environment().Id());
-
-            if (!bBoot)
-            {
-                m_ScenarioGroup.SetActive(false);
-                m_EmptyGroup.SetActive(true);
-                return;
-            }
-
-            m_EmptyGroup.SetActive(false);
-            m_ScenarioGroup.SetActive(true);
+            m_ModelingUI.SetScenario(scenario, scenario && BootParams.BootedFromCurrentScene);
 
             m_Buffer = new SimulationBuffer();
 
@@ -58,24 +45,14 @@ namespace ProtoAqua.Modeling
             #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
 
             m_Buffer.SetScenario(scenario);
-            m_UI.SetBuffer(m_Buffer);
-            m_UI.OnAdvanceClicked = OnAdvanceClicked;
+            m_ModelingUI.Populate(Services.Data.Profile.Bestiary);
+            // m_ModelingUI.OnSimulateClick = OnAdvanceClicked;
 
             Services.Data.SetVariable(SimulationConsts.Var_HasScenario, m_Buffer.Scenario() != null);
             SyncPhaseScriptVar();
 
             m_Buffer.OnUpdate = OnBufferUpdated;
             OnBufferUpdated();
-
-            StringHash32 modelId = scenario.BestiaryModelId();
-            if (!modelId.IsEmpty && Services.Data.Profile.Bestiary.HasFact(modelId))
-            {
-                m_UI.ShowAlreadyCompleted();
-            }
-            else
-            {
-                m_UI.ShowIntro();
-            }
 
             m_Input.Device.RegisterHandler(this);
         }
@@ -110,7 +87,7 @@ namespace ProtoAqua.Modeling
             Services.Data.SetVariable(SimulationConsts.Var_ModelSync, m_State.ModelSync);
             Services.Data.SetVariable(SimulationConsts.Var_PredictSync, m_State.PredictSync);
             
-            m_UI.Refresh(m_State, updateFlags);
+            // m_ModelingUI.Refresh(m_State, updateFlags);
         }
 
         private void OnAdvanceClicked()
@@ -154,7 +131,7 @@ namespace ProtoAqua.Modeling
 
             m_State.Phase = ModelingPhase.Predict;
             SyncPhaseScriptVar();
-            m_UI.SwitchToPredict();
+            // m_ModelingUI.SwitchToPredict();
 
             Services.Audio.PostEvent("modelSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_Synced);
@@ -168,7 +145,7 @@ namespace ProtoAqua.Modeling
             StringHash32 fact = m_Buffer.Scenario().BestiaryModelId();
             if (!fact.IsEmpty)
                 Services.Data.Profile.Bestiary.RegisterFact(fact);
-            m_UI.Complete();
+            // m_ModelingUI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_Completed);

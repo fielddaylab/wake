@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Portable;
 using BeauRoutine.Extensions;
+using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,17 +17,20 @@ namespace ProtoAqua.Modeling
         
         #endregion // Inspector
 
-        private SimulationBuffer m_Buffer;
+        private List<PlayerFactParams> m_FactIs = new List<PlayerFactParams>();
 
-        public void SetBuffer(SimulationBuffer inBuffer)
+        public void SetInitialFacts(ListSlice<StringHash32> inFacts)
         {
-            m_Buffer = inBuffer;
-        }
+            m_Map.ClearFacts();
 
-        public void Lock()
-        {
-            m_Map.Lock();
-            m_AddButton.interactable = false;
+            m_FactIs.Clear();
+            var bestiaryData = Services.Data.Profile.Bestiary;
+            foreach(var factId in inFacts)
+            {
+                PlayerFactParams playerFact = bestiaryData.GetFact(factId);
+                m_FactIs.Add(playerFact);
+                m_Map.AddFact(playerFact);
+            }
         }
 
         #region Handlers
@@ -38,20 +43,17 @@ namespace ProtoAqua.Modeling
 
         private void OnAddClicked()
         {
-            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !m_Buffer.ContainsFact(p))
+            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !m_FactIs.Contains(p))
                 .OnComplete(Add);
         }
 
         private void Add(PlayerFactParams inParams)
         {
-            m_Buffer.AddFact(inParams);
-            m_Map.AddFact(inParams);
-        }
-
-        private void Remove(PlayerFactParams inParams)
-        {
-            m_Buffer.RemoveFact(inParams);
-            m_Map.RemoveFact(inParams);
+            if (Services.Data.Profile.Bestiary.AddFactToGraph(inParams.FactId))
+            {
+                m_FactIs.Add(inParams);
+                m_Map.AddFact(inParams);
+            }
         }
 
         #endregion // Handlers

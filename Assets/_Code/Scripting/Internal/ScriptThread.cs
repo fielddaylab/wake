@@ -236,6 +236,26 @@ namespace Aqua.Scripting
             Services.Data.AddToDialogHistory(record);
         }
 
+        /// <summary>
+        /// Records a player choice.
+        /// </summary>
+        public void RecordChoice(string inChoice)
+        {
+            DialogRecord record = new DialogRecord()
+            {
+                CharacterId = "player",
+                Name = Services.Data.CurrentCharacterName(),
+                Text = inChoice,
+                IsBoundary = true
+            };
+
+            m_LastKnownCharacter = record.CharacterId;
+            m_LastKnownName = record.Name;
+            m_RecordedDialog = true;
+
+            Services.Data.AddToDialogHistory(record);
+        }
+
         #endregion // Records
 
         #region Cutscene
@@ -263,7 +283,7 @@ namespace Aqua.Scripting
 
         public void Skip()
         {
-            if ((m_Flags & ScriptFlags.Skip) == 0)
+            if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice())
             {
                 if (IsCutscene())
                 {
@@ -325,6 +345,21 @@ namespace Aqua.Scripting
             {
                 Dialog.Skip();
             }
+        }
+
+        public void MarkChoice()
+        {
+            m_Flags |= ScriptFlags.InChoice;
+        }
+
+        public void EndChoice()
+        {
+            m_Flags &= ~ScriptFlags.InChoice;
+        }
+
+        private bool InChoice()
+        {
+            return (m_Flags & ScriptFlags.InChoice) != 0;
         }
 
         #endregion // Skipping
@@ -409,6 +444,7 @@ namespace Aqua.Scripting
         None = 0x00,
 
         Skip = 0x10,
-        Cutscene = 0x20
+        Cutscene = 0x20,
+        InChoice = 0x40,
     }
 }
