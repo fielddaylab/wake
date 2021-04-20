@@ -63,9 +63,9 @@ namespace Aqua
         {
             WaterPropertyBlockF32 result = inA;
             result.Oxygen += inB.Oxygen;
-            result.Temperature += inB.Oxygen;
+            result.Temperature += inB.Temperature;
             result.Light += inB.Light;
-            result.PH += inB.Light;
+            result.PH += inB.PH;
             result.CarbonDioxide += inB.CarbonDioxide;
             result.Salinity += inB.Salinity;
             return result;
@@ -75,9 +75,9 @@ namespace Aqua
         {
             WaterPropertyBlockF32 result = inA;
             result.Oxygen -= inB.Oxygen;
-            result.Temperature -= inB.Oxygen;
+            result.Temperature -= inB.Temperature;
             result.Light -= inB.Light;
-            result.PH -= inB.Light;
+            result.PH -= inB.PH;
             result.CarbonDioxide -= inB.CarbonDioxide;
             result.Salinity -= inB.Salinity;
             return result;
@@ -161,9 +161,9 @@ namespace Aqua
         {
             WaterPropertyBlockU16 result = inA;
             result.Oxygen += inB.Oxygen;
-            result.Temperature += inB.Oxygen;
+            result.Temperature += inB.Temperature;
             result.Light += inB.Light;
-            result.PH += inB.Light;
+            result.PH += inB.PH;
             result.CarbonDioxide += inB.CarbonDioxide;
             result.Salinity += inB.Salinity;
             return result;
@@ -173,9 +173,9 @@ namespace Aqua
         {
             WaterPropertyBlockU16 result = inA;
             result.Oxygen -= inB.Oxygen;
-            result.Temperature -= inB.Oxygen;
+            result.Temperature -= inB.Temperature;
             result.Light -= inB.Light;
-            result.PH -= inB.Light;
+            result.PH -= inB.PH;
             result.CarbonDioxide -= inB.CarbonDioxide;
             result.Salinity -= inB.Salinity;
             return result;

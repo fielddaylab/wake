@@ -15,7 +15,8 @@ namespace ProtoAqua.Modeling
 
     public enum ModelingPhase
     {
-        Model,
+        Universal,
+        Sync,
         Predict,
         Completed
     }

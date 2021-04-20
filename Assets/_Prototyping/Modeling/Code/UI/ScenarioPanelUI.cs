@@ -50,6 +50,8 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private ModelingScenarioData m_Scenario = null;
         [NonSerialized] private bool m_OverrideScenarioAccess = false;
 
+        public Action OnSimulateSelect;
+
         protected override void Awake()
         {
             base.Awake();
@@ -57,6 +59,7 @@ namespace ProtoAqua.Modeling
             m_ConfigureButton.onClick.AddListener(OnConfigureClick);
             m_PrevButton.onClick.AddListener(OnPageToggle);
             m_NextButton.onClick.AddListener(OnPageToggle);
+            m_SimulateButton.onClick.AddListener(OnSimulateClick);
         }
 
         public void SetScenario(ModelingScenarioData inScenario, bool inbOverride)
@@ -70,6 +73,17 @@ namespace ProtoAqua.Modeling
         public void SetSimulationReady(bool inbReady)
         {
             m_SimulateButton.interactable = inbReady && m_SimulationAllowed;
+        }
+
+        public bool CanSimulate()
+        {
+            return m_SimulationAllowed;
+        }
+
+        public void ForceShow()
+        {
+            Populate(m_Scenario, m_OverrideScenarioAccess);
+            InstantShow();
         }
 
         #region Handlers
@@ -91,6 +105,11 @@ namespace ProtoAqua.Modeling
         {
             m_CurrentPage = (Page) (((int) m_CurrentPage + 1) % (int) Page.COUNT);
             DisplayPage(m_CurrentPage);
+        }
+
+        private void OnSimulateClick()
+        {
+            OnSimulateSelect?.Invoke();
         }
 
         #endregion // Handlers

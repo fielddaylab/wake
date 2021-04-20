@@ -27,23 +27,26 @@ namespace ProtoAqua.Modeling
         [Header("Buttons")]
         [SerializeField] private Button m_ModelSyncButton = null;
         [SerializeField] private Button m_PredictSyncButton = null;
+        [SerializeField] private Button m_BackButton = null;
 
         #endregion // Inspector
 
         [NonSerialized] private SimulationBuffer m_Buffer;
-        [NonSerialized] private BaseInputLayer m_InputLayer;
 
         [NonSerialized] private RectTransform m_ChartTransform;
+        [NonSerialized] private float m_OriginalChartX;
 
         public Action OnAdvanceClicked;
+        public Action OnBackClicked;
 
         private void Awake()
         {
-            m_InputLayer = BaseInputLayer.Find(this);
             m_Chart.CacheComponent(ref m_ChartTransform);
+            m_OriginalChartX = m_ChartTransform.anchoredPosition.x;
 
             m_ModelSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
             m_PredictSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
+            m_BackButton.onClick.AddListener(OnBackButtonClicked);
         }
         
         public void SetBuffer(SimulationBuffer inBuffer)
@@ -64,12 +67,16 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        public void ShowIntro()
+        public void DisplayInitial()
         {
             m_PredictSync.gameObject.SetActive(false);
             m_ModelSync.gameObject.SetActive(true);
+
             m_CritterAdjust.gameObject.SetActive(false);
             m_InitialCritters.gameObject.SetActive(true);
+            m_ChartTransform.SetAnchorPos(m_OriginalChartX, Axis.X);
+
+            m_Chart.HidePrediction();
         }
 
         public void SwitchToPredict()
@@ -79,28 +86,20 @@ namespace ProtoAqua.Modeling
             m_CritterAdjust.gameObject.SetActive(true);
             m_Chart.ShowPrediction();
             m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.Model);
-            // m_ConceptMap.Lock();
 
             Routine.Start(this, SwitchToPredictAnimation()).TryManuallyUpdate(0);
         }
 
         public void Complete()
         {
-            // m_ConceptMap.Lock();
             m_Complete.Load(m_Buffer.Scenario());
-        }
-
-        public void ShowAlreadyCompleted()
-        {
-            // m_ConceptMap.Lock();
-            m_Complete.LoadAlreadyComplete("modeling.alreadyCompleted.title", "modeling.alreadyCompleted.desc");
         }
 
         private IEnumerator SwitchToPredictAnimation()
         {
             Services.Input.PauseAll();
             yield return Routine.Combine(
-                m_ChartTransform.AnchorPosTo(-m_ChartTransform.anchoredPosition.x, 0.5f, Axis.X).Ease(Curve.CubeInOut)
+                m_ChartTransform.AnchorPosTo(-m_OriginalChartX, 0.5f, Axis.X).Ease(Curve.CubeInOut)
             );
             m_InitialCritters.gameObject.SetActive(false);
             Services.Input.ResumeAll();
@@ -109,6 +108,11 @@ namespace ProtoAqua.Modeling
         private void OnAdvanceButtonClicked()
         {
             OnAdvanceClicked?.Invoke();
+        }
+
+        private void OnBackButtonClicked()
+        {
+            OnBackClicked?.Invoke();
         }
     }
 }

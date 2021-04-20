@@ -73,8 +73,10 @@ namespace Aqua.Debugging
                     Resume();
                 }
             }
-            else if (m_MinimalOn && m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
+            else if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
             {
+                DeviceInput.BlockAll();
+                
                 if (m_DebugMenu.isActiveAndEnabled)
                 {
                     m_DebugMenu.gameObject.SetActive(false);
@@ -88,6 +90,7 @@ namespace Aqua.Debugging
                         m_FirstMenuToggle = true;
                     }
                     m_DebugMenu.gameObject.SetActive(true);
+                    SetMinimalLayer(true);
                     Pause();
                 }
             }

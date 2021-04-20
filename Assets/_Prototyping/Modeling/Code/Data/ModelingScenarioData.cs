@@ -63,7 +63,8 @@ namespace ProtoAqua.Modeling
 
         public bool ShouldGraph(StringHash32 inId)
         {
-            return m_AllowedLines.Contains(inId);
+            return true;
+            // return m_AllowedLines.Contains(inId);
         }
 
         private void Optimize()

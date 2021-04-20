@@ -56,6 +56,16 @@ namespace ProtoAqua.Modeling
 
         public Action<BestiaryDesc> OnNodeRequestToggle;
 
+        public IReadOnlyCollection<ConceptMapNode> Nodes()
+        {
+            return m_AllocatedNodes.Values;
+        }
+
+        public ConceptMapNode Node(StringHash32 inId)
+        {
+            return m_AllocatedNodes[inId];
+        }
+
         #region Handlers
 
         private void Awake()

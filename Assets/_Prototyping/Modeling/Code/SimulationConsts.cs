@@ -14,6 +14,7 @@ namespace ProtoAqua.Modeling
         static public readonly StringHash32 Trigger_Synced = "ModelingSynced";
         static public readonly StringHash32 Trigger_Completed = "ModelingCompleted";
 
+        static public readonly StringHash32 ModelPhase_Universal = "universal";
         static public readonly StringHash32 ModelPhase_Model = "model";
         static public readonly StringHash32 ModelPhase_Predict = "predict";
         static public readonly StringHash32 ModelPhase_Completed = "complete";

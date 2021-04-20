@@ -29,7 +29,9 @@ namespace ProtoAqua.Modeling
         public enum UpdateFlags : byte
         {
             Historical = 0x01,
-            Model = 0x02
+            Model = 0x02,
+
+            ALL = Historical | Model
         }
 
         private readonly SimulationProfile m_HistoricalProfile = new SimulationProfile();
@@ -44,6 +46,7 @@ namespace ProtoAqua.Modeling
         private DirtyFlags m_PlayerSimDirty;
 
         private readonly HashSet<PlayerFactParams> m_PlayerFacts = new HashSet<PlayerFactParams>();
+        private readonly HashSet<BestiaryDesc> m_PlayerCritters = new HashSet<BestiaryDesc>();
         private readonly RingBuffer<ActorCountU32> m_PlayerActors = new RingBuffer<ActorCountU32>(Simulator.MaxTrackedCritters);
         private readonly RingBuffer<ActorCountI32> m_PlayerActorPredictionAdjust = new RingBuffer<ActorCountI32>(Simulator.MaxTrackedCritters);
 
@@ -73,6 +76,7 @@ namespace ProtoAqua.Modeling
             m_HistoricalProfile.Clear();
             m_PlayerProfile.Clear();
 
+            m_PlayerCritters.Clear();
             m_PlayerFacts.Clear();
             m_PlayerActors.Clear();
 
@@ -240,11 +244,66 @@ namespace ProtoAqua.Modeling
         }
 
         /// <summary>
+        /// Clears all player facts.
+        /// </summary>
+        public bool ClearFacts()
+        {
+            if (m_PlayerFacts.Count > 0)
+            {
+                m_PlayerFacts.Clear();
+                m_PlayerSimDirty |= DirtyFlags.Facts;
+                InvokeOnUpdate();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Adds a critter to the player sim.
+        /// </summary>
+        public bool SelectCritter(BestiaryDesc inCritter)
+        {
+            if (m_PlayerCritters.Add(inCritter))
+            {
+                m_PlayerSimDirty |= DirtyFlags.Facts | DirtyFlags.Populations;
+                InvokeOnUpdate();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Clears all selected critters.
+        /// </summary>
+        public bool ClearSelectedCritters()
+        {
+            if (m_PlayerCritters.Count > 0)
+            {
+                m_PlayerCritters.Clear();
+                m_PlayerSimDirty |= DirtyFlags.Facts;
+                InvokeOnUpdate();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Returns all facts added to the player sim.
         /// </summary>
         public IReadOnlyCollection<PlayerFactParams> PlayerFacts()
         {
             return m_PlayerFacts;
+        }
+
+        /// <summary>
+        /// Returns all critters added to the player sim.
+        /// </summary>
+        public IReadOnlyCollection<BestiaryDesc> PlayerCritters()
+        {
+            return m_PlayerCritters;
         }
 
         #endregion // Player
@@ -346,7 +405,7 @@ namespace ProtoAqua.Modeling
             {
                 using(Profiling.Time("Generating player profile"))
                 {
-                    m_PlayerProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters(), m_PlayerFacts);
+                    m_PlayerProfile.Construct(m_Scenario.Environment(), m_PlayerCritters, m_PlayerFacts);
                     m_PlayerProfile.InitialState.Random = m_HistoricalProfile.InitialState.Random;
                 }
                 bUpdateModel = true;

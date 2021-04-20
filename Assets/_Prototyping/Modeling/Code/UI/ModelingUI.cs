@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Profile;
 using BeauRoutine;
@@ -14,21 +15,47 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
-        [SerializeField] private ConceptMapUI m_ConceptMap = null;
-        [SerializeField] private ScenarioPanelUI m_ScenarioPanel = null;
+        [SerializeField] public ConceptMapUI ConceptMap = null;
+        [SerializeField] public ScenarioPanelUI ScenarioPanel = null;
 
         #endregion // Inspector
 
-        public Action OnSimulateClick;
-        
-        public void Populate(BestiaryData inPlayerData)
+        private void Awake()
         {
-            m_ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts());
+            ScenarioPanel.OnShowEvent.AddListener(OnScenarioShow);
+            ScenarioPanel.OnHideEvent.AddListener(OnScenarioHide);
+        }
+        
+        public void PopulateMap(BestiaryData inPlayerData)
+        {
+            ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts());
         }
 
         public void SetScenario(ModelingScenarioData inScenario, bool inbOverride)
         {
-            m_ScenarioPanel.SetScenario(inScenario, inbOverride);
+            ScenarioPanel.SetScenario(inScenario, inbOverride);
         }
+
+        public void OnBufferUpdate(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inFlags)
+        {
+            if ((inFlags & SimulationBuffer.UpdateFlags.Model) == 0)
+                return;
+
+            ScenarioPanel.SetSimulationReady(inBuffer.PlayerCritters().Count > 0);
+        }
+
+        #region Handlers
+
+        private void OnScenarioShow(BasePanel.TransitionType inType)
+        {
+            ConceptMap.SetHighlightAllowed(ScenarioPanel.CanSimulate());
+        }
+
+        private void OnScenarioHide(BasePanel.TransitionType inType)
+        {
+            ConceptMap.SetHighlightAllowed(false);
+        }
+
+        #endregion // Handlers
     }
 }

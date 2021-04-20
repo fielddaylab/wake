@@ -97,13 +97,14 @@ namespace ProtoAqua.Modeling
             float errorAccum = 0;
             int errorCount = 0;
 
-            errorAccum += GraphingUtils.RPD(inA.Environment.Oxygen, inB.Environment.Oxygen);
-            errorAccum += GraphingUtils.RPD(inA.Environment.Temperature, inB.Environment.Temperature);
-            errorAccum += GraphingUtils.RPD(inA.Environment.Light, inB.Environment.Light);
-            errorAccum += GraphingUtils.RPD(inA.Environment.PH, inB.Environment.PH);
-            errorAccum += GraphingUtils.RPD(inA.Environment.CarbonDioxide, inB.Environment.CarbonDioxide);
-            errorAccum += GraphingUtils.RPD(inA.Environment.Salinity, inB.Environment.Salinity);
-            errorCount += 6;
+            // TODO: Enable when we work out how best to handle sync here
+            // errorAccum += GraphingUtils.RPD(inA.Environment.Oxygen, inB.Environment.Oxygen);
+            // errorAccum += GraphingUtils.RPD(inA.Environment.Temperature, inB.Environment.Temperature);
+            // errorAccum += GraphingUtils.RPD(inA.Environment.Light, inB.Environment.Light);
+            // errorAccum += GraphingUtils.RPD(inA.Environment.PH, inB.Environment.PH);
+            // errorAccum += GraphingUtils.RPD(inA.Environment.CarbonDioxide, inB.Environment.CarbonDioxide);
+            // errorAccum += GraphingUtils.RPD(inA.Environment.Salinity, inB.Environment.Salinity);
+            // errorCount += 6;
 
             int critterCount = inA.Actors.Count;
             CritterResult critA, critB;
@@ -115,7 +116,7 @@ namespace ProtoAqua.Modeling
             }
             errorCount += critterCount;
 
-            return errorAccum / errorCount;
+            return errorCount == 0 ? 0 : errorAccum / errorCount;
         }
     }
 }

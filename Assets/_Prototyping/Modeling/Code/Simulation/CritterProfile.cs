@@ -208,60 +208,60 @@ namespace ProtoAqua.Modeling
 
         public void EndTick(ref CritterData ioData, SimulatorFlags inFlags)
         {
-            if (ioData.Population > 0)
+            if (ioData.Population == 0)
+                return;
+
+            uint toKillAbsolute = 0;
+            if (ioData.Hunger > 0)
             {
-                uint toKillAbsolute = 0;
-                if (ioData.Hunger > 0)
+                toKillAbsolute = ioData.Hunger / Simulator.HungerPerCritter;
+            }
+            
+            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
+            {
+                float remainder = ioData.ToConsume[i];
+                if (remainder > 0)
                 {
-                    toKillAbsolute = ioData.Hunger / Simulator.HungerPerCritter;
+                    toKillAbsolute = Math.Max(toKillAbsolute, (uint) (remainder / m_ToConsumePerPopulation[i]));
                 }
-                
-                for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
-                {
-                    float remainder = ioData.ToConsume[i];
-                    if (remainder > 0)
-                    {
-                        toKillAbsolute = Math.Max(toKillAbsolute, (uint) (remainder / m_ToConsumePerPopulation[i]));
-                    }
-                }
+            }
 
-                uint toKill = CalculateMass((uint) (ioData.Population * m_DeathPerTick) + toKillAbsolute);
+            uint toKill = CalculateMass((uint) (ioData.Population * m_DeathPerTick) + toKillAbsolute);
 
-                if (toKill > 0)
+            if (toKill > 0)
+            {
+                uint popDecrease = Die(ref ioData, toKill);
+                if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    uint popDecrease = Die(ref ioData, toKill);
-                    if ((inFlags & SimulatorFlags.Debug) != 0)
-                    {
-                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id().ToDebugString());
-                    }
+                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id().ToDebugString());
                 }
+            }
 
-                if (m_GrowthPerTick > 0 && ioData.Population > 0)
+            if (m_GrowthPerTick > 0 && ioData.Population > 0)
+            {
+                uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
+                if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
-                    if ((inFlags & SimulatorFlags.Debug) != 0)
-                    {
-                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
-                    }
+                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
                 }
+            }
 
-                if (m_ReproducePerTick > 0 && ioData.Population > 0)
+            if (m_ReproducePerTick > 0 && ioData.Population > 0)
+            {
+                uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
+                if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
-                    if ((inFlags & SimulatorFlags.Debug) != 0)
-                    {
-                        Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
-                    }
+                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
                 }
+            }
 
-                if (ioData.Population == 0)
+            if (ioData.Population == 0)
+            {
+                if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    if ((inFlags & SimulatorFlags.Debug) != 0)
-                    {
-                        Debug.LogFormat("[CritterProfile] Critter '{0}' population hit 0", Id().ToDebugString());
-                    }
-                    ioData.State = ActorStateId.Dead;
+                    Debug.LogFormat("[CritterProfile] Critter '{0}' population hit 0", Id().ToDebugString());
                 }
+                ioData.State = ActorStateId.Dead;
             }
         }
 

@@ -35,6 +35,13 @@ namespace ProtoAqua.Modeling
             m_PredictMode = true;
         }
 
+        public void HidePrediction()
+        {
+            m_Predict.gameObject.SetActive(false);
+            m_Targets.gameObject.SetActive(false);
+            m_PredictMode = true;
+        }
+
         public void Refresh(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inUpdate)
         {
             if (inUpdate == 0)

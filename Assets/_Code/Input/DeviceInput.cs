@@ -8,6 +8,18 @@ namespace Aqua
 {
     public class DeviceInput
     {
+        static private bool s_Reset;
+
+        static public void BlockAll()
+        {
+            s_Reset = true;
+        }
+
+        static public void ClearBlock()
+        {
+            s_Reset = false;
+        }
+
         public IInputLayer Layer { get; private set; }
         public bool Enabled { get; set; }
 
@@ -28,7 +40,7 @@ namespace Aqua
 
         public bool IsActive()
         {
-            return Enabled && (Layer == null || Layer.IsInputEnabled);
+            return !s_Reset && Enabled && (Layer == null || Layer.IsInputEnabled);
         }
 
         public void RegisterHandler(IInputHandler inHandler)

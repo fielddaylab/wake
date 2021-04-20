@@ -9,6 +9,7 @@ namespace Aqua
     public class SceneBackButton : MonoBehaviour
     {
         [SerializeField, Required] private Button m_Button = null;
+        [SerializeField] private bool m_StopMusic = true;
 
         private void Awake()
         {
@@ -17,6 +18,8 @@ namespace Aqua
 
         private void OnClick()
         {
+            if (m_StopMusic)
+                Services.Audio.StopMusic();
             StateUtil.LoadPreviousSceneWithWipe();
         }
     }

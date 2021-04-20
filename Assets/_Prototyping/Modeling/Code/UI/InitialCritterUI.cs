@@ -1,6 +1,7 @@
 using System;
 using Aqua;
 using BeauRoutine.Extensions;
+using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua.Modeling
@@ -20,10 +21,11 @@ namespace ProtoAqua.Modeling
             m_Buffer = inBuffer;
             
             m_SliderPool.Reset();
-            foreach(var critterPair in inBuffer.Scenario().Actors())
+            foreach(var critter in inBuffer.PlayerCritters())
             {
+                StringHash32 id = critter.Id();
                 var slider = m_SliderPool.Alloc();
-                slider.Load(critterPair.Id, (int) inBuffer.GetPlayerCritters(critterPair.Id), -1, (int) inBuffer.GetModelCritters(critterPair.Id));
+                slider.Load(id, (int) inBuffer.GetPlayerCritters(id), -1, (int) inBuffer.GetModelCritters(id));
                 slider.OnPopulationChanged.AddListener(OnCritterPopulationChanged);
             }
         }
