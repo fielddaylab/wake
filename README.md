@@ -14,9 +14,9 @@ Player Actions
 * Begin_Argument (job_id)
 * Begin_Model (job_id)
 * Begin_Simulation (job_id)
-* Ask_For_Help (script_id)
-* Talk_With_Guide (script_id)
+* Ask_For_Help (node_id)
+* Talk_With_Guide (node_id)
 
 Game Feedback
 * Simulation_Sync_Achieved (job_id)
-* Guide_Script_Displayed (script_id)
+* Guide_Script_Triggered (node_id)
