@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
 using FieldDay;
 using UnityEngine;
 
@@ -15,7 +9,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private string m_AppId = "Aqualab";
+        [SerializeField, Required] private string m_AppId = "AQUALAB";
         [SerializeField] private int m_AppVersion = 1;
         
         #endregion // Inspector
@@ -26,7 +20,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_Logger = new SimpleLog(m_AppId, m_AppVersion);
+            m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
         }
 
         protected override void Shutdown()
