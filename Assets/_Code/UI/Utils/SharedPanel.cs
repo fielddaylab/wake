@@ -2,6 +2,8 @@ using UnityEngine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using System;
+using System.Collections;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -42,6 +44,27 @@ namespace Aqua
         {
             Services.UI?.DeregisterPanel(this);
         }
+
+        #region Default Animations
+
+        static protected IEnumerator DefaultFadeOn(RectTransform inTransform, CanvasGroup inGroup, float inDuration, Curve inCurve)
+        {
+            if (!inTransform.gameObject.activeSelf)
+            {
+                inTransform.gameObject.SetActive(true);
+                inGroup.alpha = 0;
+            }
+
+            yield return Routine.Inline(inGroup.FadeTo(1, inDuration).Ease(inCurve));
+        }
+
+        static protected IEnumerator DefaultFadeOff(RectTransform inTransform, CanvasGroup inGroup, float inDuration, Curve inCurve)
+        {
+            yield return Routine.Inline(inGroup.FadeTo(0, inDuration).Ease(inCurve));
+            inTransform.gameObject.SetActive(false);
+        }
+
+        #endregion // Default Animations
 
         #region Ordering
 

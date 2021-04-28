@@ -44,12 +44,13 @@ namespace Aqua
 
         public int Value() { return m_CurrentValue; }
 
-        public bool TryAdjust(int value)
+        public bool TryAdjust(int inValue)
         {
-            if ((m_CurrentValue + value) < 0)
+            if (inValue == 0 || (m_CurrentValue + inValue) < 0)
                 return false;
 
-            m_CurrentValue += value;
+            m_CurrentValue += inValue;
+            Services.Events.Dispatch(GameEvents.InventoryUpdated, m_ItemId);
             return true;
         }
 
@@ -57,7 +58,11 @@ namespace Aqua
         {
             if (inValue < 0)
                 inValue = 0;
-            m_CurrentValue = inValue;
+            if (m_CurrentValue != inValue)
+            {
+                m_CurrentValue = inValue;
+                Services.Events.Dispatch(GameEvents.InventoryUpdated, m_ItemId);
+            }
         }
     }
     

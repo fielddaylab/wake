@@ -106,7 +106,13 @@ namespace Aqua.Profile
 
         public bool RegisterScanned(StringHash32 inId)
         {
-            return m_ScannerIds.Add(inId);
+            if (m_ScannerIds.Add(inId))
+            {
+                Services.Events.Dispatch(GameEvents.ScanLogUpdated, inId);
+                return true;
+            }
+
+            return false;
         }
 
         #endregion // Scanner

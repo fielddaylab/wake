@@ -56,11 +56,15 @@ namespace Aqua
 
         public bool HasFactWithId(StringHash32 inFactId)
         {
+            EnsureCreated();
+
             return m_FactMap.ContainsKey(inFactId);
         }
 
         public IEnumerable<BFBase> AllFacts()
         {
+            EnsureCreated();
+            
             return m_FactMap.Values;
         }
 

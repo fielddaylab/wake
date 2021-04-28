@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BeauPools;
 using BeauUtil;
 using Leaf;
 using UnityEngine;
@@ -9,6 +10,18 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Jobs/Job Database", fileName = "JobDB")]
     public class JobDB : DBObjectCollection<JobDesc>
     {
+        #region Inspector
+
+        [Header("Colors")]
+
+        [SerializeField] private ColorPalette4 m_ActiveInlinePalette = new ColorPalette4(Color.white, ColorBank.Navy);
+        [SerializeField] private ColorPalette4 m_CompletedInlinePalette = new ColorPalette4(ColorBank.LightGray, ColorBank.SlateBlue);
+
+        #endregion // Inspector
+
+        public ColorPalette4 ActiveInlinePalette() { return m_ActiveInlinePalette; }
+        public ColorPalette4 CompletedInlinePalette() { return m_CompletedInlinePalette; }
+
         private HashSet<StringHash32> m_HiddenJobs;
 
         public IEnumerable<JobDesc> UnstartedJobs()
@@ -79,6 +92,10 @@ namespace Aqua
 
             if (inItem.HasFlags(JobDescFlags.Hidden))
                 m_HiddenJobs.Add(inItem.Id());
+
+            #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+            JobDesc.ValidateTaskIds(inItem);
+            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
         #if UNITY_EDITOR

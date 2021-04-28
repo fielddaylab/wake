@@ -129,7 +129,7 @@ namespace ProtoAqua.Experiment
             if (inData.Tank.Equals(TankType.Foundational))
             {
                 Services.Data.SetVariable(ExperimentVars.EcoType, inData.EcosystemId);
-                Services.Data.SetVariable(ExperimentVars.EcoTypeLabel, Services.Assets.Bestiary.Get(inData.EcosystemId).CommonName());
+                Services.Data.SetVariable(ExperimentVars.EcoTypeLabel, Services.Assets.Bestiary.Get(inData.EcosystemId).CommonName().Hash());
             }
 
         }

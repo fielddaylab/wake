@@ -75,7 +75,13 @@ namespace Aqua
 
             PlayerFactFlags prev = m_Flags;
             m_Flags |= inFlags;
-            return prev != m_Flags;
+            if (prev != m_Flags)
+            {
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, m_FactId));
+                return true;
+            }
+
+            return false;
         }
 
         public bool Remove(PlayerFactFlags inFlags)
@@ -84,7 +90,14 @@ namespace Aqua
 
             PlayerFactFlags prev = m_Flags;
             m_Flags &= ~inFlags;
-            return prev != m_Flags;
+            
+            if (prev != m_Flags)
+            {
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, m_FactId));
+                return true;
+            }
+
+            return false;
         }
 
         static public PlayerFactParams Wrap(BFBase inFact)

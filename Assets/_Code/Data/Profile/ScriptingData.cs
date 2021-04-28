@@ -91,6 +91,8 @@ namespace Aqua.Profile
                         break;
                     }
             }
+
+            Services.Events.Dispatch(GameEvents.ScriptNodeSeen, inId);
         }
 
         #endregion // Node Visits

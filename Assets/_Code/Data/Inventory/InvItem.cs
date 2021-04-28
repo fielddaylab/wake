@@ -14,8 +14,8 @@ namespace Aqua
         [SerializeField] private InvItemFlags m_Flags = InvItemFlags.None;
 
         [Header("Text")]
-        [SerializeField] private SerializedHash32 m_NameTextId = null;
-        [SerializeField] private SerializedHash32 m_DescriptionTextId = null;
+        [SerializeField] private TextId m_NameTextId = null;
+        [SerializeField] private TextId m_DescriptionTextId = null;
 
         [Header("Value")]
         [SerializeField, Range(0, 2000)] private int m_Default = 0;
@@ -27,8 +27,8 @@ namespace Aqua
 
         public InvItemFlags Flags() { return m_Flags; }
 
-        public StringHash32 NameTextId() { return m_NameTextId; }
-        public StringHash32 DescriptionTextId() { return m_DescriptionTextId; }
+        public TextId NameTextId() { return m_NameTextId; }
+        public TextId DescriptionTextId() { return m_DescriptionTextId; }
         
         public Sprite Icon() { return m_Icon; }
 

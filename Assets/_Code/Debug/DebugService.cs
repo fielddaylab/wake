@@ -335,11 +335,11 @@ namespace Aqua.Debugging
         static internal void DisallowLogs(LogMask inMask) { }
         static public bool IsLogging(LogMask inMask) { return false; }
 
-        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage) { }
-        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0) { }
-        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { }
-        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { }
-        [Conditional("DEVELOPMENT")] static public void Log(LogMask inMask, string inMessage, params object[] inParams) { }
+        [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage) { }
+        [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, object inArg0) { }
+        [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { }
+        [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { }
+        [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, params object[] inParams) { }
 
         #endif // DEVELOPMENT
 
