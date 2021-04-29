@@ -32,6 +32,7 @@ namespace Aqua
 
         [NonSerialized] private StringHash32 m_LoadedJobId;
         [NonSerialized] private TaskEventMask m_TaskMask;
+        [NonSerialized] private bool m_JobLoading;
         private readonly RingBuffer<TaskState> m_TaskGraph = new RingBuffer<TaskState>(16, RingBufferMode.Expand);
         private readonly RingBuffer<ushort> m_TaskUpdateQueue = new RingBuffer<ushort>(16, RingBufferMode.Expand);
 
@@ -84,9 +85,13 @@ namespace Aqua
 
             SaveData saveData = Services.Data.Profile;
             
+            m_JobLoading = true;
+
             ConstructTaskGraph(inJobId);
             SyncTaskStateFromProfile(saveData.Jobs);
             ProcessUpdates(0);
+
+            m_JobLoading = false;
         }
 
         private void OnJobUnload(StringHash32 inJobId)
@@ -199,6 +204,8 @@ namespace Aqua
         private void ProcessUpdateQueue(JobsData inData)
         {
             ushort taskIndex;
+            int count = m_TaskUpdateQueue.Count;
+
             while(m_TaskUpdateQueue.TryPopFront(out taskIndex))
             {
                 ref TaskState state = ref m_TaskGraph[taskIndex];
@@ -216,6 +223,11 @@ namespace Aqua
                         inData.SetTaskInactive(state.Task.Id);
                         break;
                 }
+            }
+
+            if (!m_JobLoading && count > 0)
+            {
+                Services.Events.Dispatch(GameEvents.JobTasksUpdated);
             }
         }
 

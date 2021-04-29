@@ -13,6 +13,7 @@ namespace Aqua
 
         [NonSerialized] private int m_LoadedActId = -1;
         [NonSerialized] private StringHash32 m_LoadedJobId;
+        [NonSerialized] private bool m_JobLoading;
 
         protected override void Initialize()
         {
@@ -23,6 +24,7 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobSwitched, OnJobSwitched, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, OnJobCompleted, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
+                .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this);
         }
@@ -109,6 +111,15 @@ namespace Aqua
                 table.Set("jobId", m_LoadedJobId);
                 table.Set("taskId", inTaskId);
                 Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, null, null, table);
+            }
+        }
+
+        private void OnJobTasksUpdated()
+        {
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("jobId", m_LoadedJobId);
+                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, null, null, table);
             }
         }
 

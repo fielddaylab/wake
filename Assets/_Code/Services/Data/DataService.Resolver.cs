@@ -229,12 +229,24 @@ namespace Aqua
             m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));
             m_VariableResolver.SetTableVar("job.taskActive", (s) => inData.Jobs.IsTaskActive(s));
             m_VariableResolver.SetTableVar("job.taskComplete", (s) => inData.Jobs.IsTaskComplete(s));
-            m_VariableResolver.SetTableVar("jobs:anyAvailable", (s) => Services.Assets.Jobs.HasUnstartedJobs());
-            m_VariableResolver.SetTableVar("jobs:anyInProgress", (s) => inData.Jobs.InProgressJobs().Length > 0);
-            m_VariableResolver.SetTableVar("jobs:anyComplete", (s) => inData.Jobs.CompletedJobIds().Count > 0);
+
+            m_VariableResolver.SetVar(GameVars.JobsAnyAvailable, CountUnstartedJobs);
+            m_VariableResolver.SetVar(GameVars.JobsAnyInProgress, () => inData.Jobs.InProgressJobs().Length);
+            m_VariableResolver.SetVar(GameVars.JobsAnyComplete, () => inData.Jobs.CompletedJobIds().Count);
         }
 
         #region Callbacks
+
+        static private Variant CountUnstartedJobs()
+        {
+            var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
+            int count = 0;
+            
+            while(unstarted.MoveNext())
+                ++count;
+
+            return count;
+        }
 
         static private Variant GetDayOfWeek()
         {

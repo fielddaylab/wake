@@ -42,6 +42,7 @@ namespace Aqua
         static public readonly StringHash32 JobTaskAdded = "job:task-added"; // StringHash32 taskId
         static public readonly StringHash32 JobTaskRemoved = "job:task-removed"; // StringHash32 taskId
         static public readonly StringHash32 JobTaskCompleted = "job:task-completed"; // StringHash32 taskId
+        static public readonly StringHash32 JobTasksUpdated = "job:tasks-updated"; // no args
 
         static public readonly StringHash32 ActChanged = "act:changed"; // uint actIndex
         static public readonly StringHash32 StationChanged = "station:changed"; // StringHash32 stationId
