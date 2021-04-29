@@ -109,7 +109,7 @@ namespace Aqua
         /// <summary>
         /// Localizes the given key.
         /// </summary>
-        public string Localize(StringHash32 inKey, bool inbIgnoreEvents = false)
+        public string Localize(TextId inKey, bool inbIgnoreEvents = false)
         {
             return Localize(inKey, string.Empty, null, inbIgnoreEvents);
         }
@@ -117,7 +117,7 @@ namespace Aqua
         /// <summary>
         /// Localize the given key.
         /// </summary>
-        public string Localize(StringHash32 inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
+        public string Localize(TextId inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
             if (m_LoadRoutine)
             {

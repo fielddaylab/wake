@@ -13,7 +13,7 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private string m_SceneName = null;
-        [SerializeField] private SerializedHash32 m_LabelId = null;
+        [SerializeField] private TextId m_LabelId = null;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private MapDesc m_Parent = null;
 
@@ -23,7 +23,7 @@ namespace Aqua
         #endregion // Inspector
 
         public string SceneName() { return m_SceneName; }
-        public StringHash32 LabelId() { return m_LabelId; }
+        public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
         public MapDesc Parent() { return m_Parent; }
 

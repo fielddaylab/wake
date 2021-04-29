@@ -304,6 +304,8 @@ namespace Aqua
 
         private IEnumerator WaitForPreload(SceneBinding inScene, object inContext)
         {
+            Services.Events.Dispatch(GameEvents.ScenePreloading);
+            
             using(PooledList<IScenePreloader> allPreloaders = PooledList<IScenePreloader>.Create())
             {
                 inScene.Scene.GetAllComponents<IScenePreloader>(true, allPreloaders);

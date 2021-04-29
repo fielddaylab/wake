@@ -26,9 +26,6 @@ MonoBehaviour:
   m_DescId:
     m_Source: jobs.1_6.desc
     m_Hash: 374135536
-  m_DescInProgressId:
-    m_Source: 
-    m_Hash: 0
   m_DescCompletedId:
     m_Source: 
     m_Hash: 0
@@ -40,6 +37,244 @@ MonoBehaviour:
   m_StationId: Station1
   m_DiveSiteIds:
   - RS-1B
+  m_Tasks:
+  - Id:
+      m_Source: step2
+      m_Hash: 3979693575
+    LabelId:
+      m_Source: Go to Dive Site B
+      m_Hash: 3678178671
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1B
+        m_Hash: 2195572834
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: step3.1
+      m_Hash: 770907469
+    LabelId:
+      m_Source: Scan Urchin
+      m_Hash: 1441805803
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Urchin
+        m_Hash: 1973276590
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: step2
+      m_Hash: 3979693575
+  - Id:
+      m_Source: step3.2
+      m_Hash: 720574612
+    LabelId:
+      m_Source: Scan Giant Kelp
+      m_Hash: 2952039527
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GiantKelp
+        m_Hash: 3510470690
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: step2
+      m_Hash: 3979693575
+  - Id:
+      m_Source: step3.3
+      m_Hash: 737352231
+    LabelId:
+      m_Source: Scan Probe
+      m_Hash: 3077967330
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: UrchinBarren
+        m_Hash: 1712208608
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: step2
+      m_Hash: 3979693575
+  - Id:
+      m_Source: step4
+      m_Hash: 3946138337
+    LabelId:
+      m_Source: Learn how Urchins affect Giant Kelp in the Experiment Room
+      m_Hash: 2289491791
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: ExperimentPrototype
+        m_Hash: 863707312
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.GiantKelp
+        m_Hash: 3556196180
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: step3.1
+      m_Hash: 770907469
+    - m_Source: step3.2
+      m_Hash: 720574612
+    - m_Source: step3.3
+      m_Hash: 737352231
+  - Id:
+      m_Source: step5
+      m_Hash: 3929360718
+    LabelId:
+      m_Source: Enter Argumentation
+      m_Hash: 1618760513
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: ArgumentationScene
+        m_Hash: 1900589957
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: step4
+      m_Hash: 3946138337
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: step2
+      m_Hash: 3979693575
+    Index: 0
+    LabelId:
+      m_Source: Go to Dive Site B
+      m_Hash: 3678178671
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1B
+        m_Hash: 2195572834
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: step3.1
+      m_Hash: 770907469
+    Index: 1
+    LabelId:
+      m_Source: Scan Urchin
+      m_Hash: 1441805803
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Urchin
+        m_Hash: 1973276590
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: step3.2
+      m_Hash: 720574612
+    Index: 2
+    LabelId:
+      m_Source: Scan Giant Kelp
+      m_Hash: 2952039527
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GiantKelp
+        m_Hash: 3510470690
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: step3.3
+      m_Hash: 737352231
+    Index: 3
+    LabelId:
+      m_Source: Scan Probe
+      m_Hash: 3077967330
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: UrchinBarren
+        m_Hash: 1712208608
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: step4
+      m_Hash: 3946138337
+    Index: 4
+    LabelId:
+      m_Source: Learn how Urchins affect Giant Kelp in the Experiment Room
+      m_Hash: 2289491791
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: ExperimentPrototype
+        m_Hash: 863707312
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.GiantKelp
+        m_Hash: 3556196180
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 010002000300
+  - Id:
+      m_Source: step5
+      m_Hash: 3929360718
+    Index: 5
+    LabelId:
+      m_Source: Enter Argumentation
+      m_Hash: 1618760513
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: ArgumentationScene
+        m_Hash: 1900589957
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0400
   m_CashReward: 0
   m_GearReward: 0
   m_AdditionalRewards: []

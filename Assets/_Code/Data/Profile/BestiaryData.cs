@@ -209,6 +209,7 @@ namespace Aqua.Profile
                 return false;
             
             m_GraphedFacts.Add(inFactId);
+            Services.Events.Dispatch(GameEvents.ModelUpdated, inFactId);
             return true;
         }
 

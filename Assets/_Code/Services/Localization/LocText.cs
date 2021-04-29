@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using BeauUtil;
 using BeauUtil.Tags;
 using TMPro;
@@ -35,8 +36,14 @@ namespace Aqua
                 return;
             }
 
-            Services.Loc.LocalizeTagged(ref m_TagString, inId, inContext);
-            InternalSetText(m_TagString.RichText);
+            if (Services.Loc.LocalizeTagged(ref m_TagString, inId, inContext))
+            {
+                InternalSetText(m_TagString.RichText);
+            }
+            else
+            {
+                InternalSetText(string.Format("'{0}'", inId.ToDebugString()));
+            }
         }
 
         public void SetText(StringSlice inString, object inContext = null)

@@ -130,7 +130,7 @@ namespace Aqua
             else
             {
                 Debug.LogErrorFormat("[InputService] Attempting to pop priority with nothing on stack.");
-                m_CurrentPriority = 0;
+                m_CurrentPriority = DefaultPriority;
             }
         }
 

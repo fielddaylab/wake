@@ -179,7 +179,7 @@ namespace Aqua
 
         static private string ReplaceLoc(TagData inTag, object inContext)
         {
-            return Services.Loc.Localize(inTag.Data, null, inContext);
+            return Services.Loc.Localize(inTag.Data.Hash32(), null, inContext);
         }
 
         static private string ReplaceIcon(TagData inTag, object inContext)
@@ -233,10 +233,6 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
             m_SkippedEvents.Add(ScriptEvents.Global.BoxStyle);
             m_SkippedEvents.Add(ScriptEvents.Global.ScreenFlash);
-            m_SkippedEvents.Add(ScriptEvents.Global.FadeOut);
-            m_SkippedEvents.Add(ScriptEvents.Global.FadeIn);
-            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeOut);
-            m_SkippedEvents.Add(ScriptEvents.Global.ScreenWipeIn);
             m_SkippedEvents.Add(ScriptEvents.Global.HideDialog);
             m_SkippedEvents.Add(ScriptEvents.Global.ShowDialog);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Auto);

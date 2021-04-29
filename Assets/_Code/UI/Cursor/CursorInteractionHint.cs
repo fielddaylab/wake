@@ -13,7 +13,7 @@ namespace Aqua
         /// <summary>
         /// Tooltip string id.
         /// </summary>
-        public SerializedHash32 TooltipId;
+        public TextId TooltipId;
 
         [NonSerialized] private Selectable m_Selectable = null;
         [NonSerialized] private int m_EnterMask = 0;

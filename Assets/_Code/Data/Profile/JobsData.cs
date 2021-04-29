@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -11,10 +12,13 @@ namespace Aqua.Profile
         private List<PlayerJob> m_JobStatuses = new List<PlayerJob>();
         private HashSet<StringHash32> m_CompletedJobs = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedJobs = new HashSet<StringHash32>();
+        private HashSet<JobTaskKey> m_CompletedTasks = new HashSet<JobTaskKey>();
         private StringHash32 m_CurrentJobId;
 
         // Non-Serialized
         private PlayerJob m_CurrentJob;
+        private HashSet<StringHash32> m_CurrentJobTaskIds = new HashSet<StringHash32>();
+        private bool m_JobLoadLock = false;
 
         private readonly PlayerJob m_TempJob = new PlayerJob();
 
@@ -30,12 +34,20 @@ namespace Aqua.Profile
 
             Assert.False(m_CompletedJobs.Contains(inJobId), "Cannot use completed job as active job");
 
+            if (!m_CurrentJobId.IsEmpty)
+                Services.Events.Dispatch(GameEvents.JobUnload, inJobId);
+
             if (m_CurrentJob != null)
             {
                 m_CurrentJob.SetAsNotActive();
             }
 
             m_CurrentJobId = inJobId;
+            m_CurrentJobTaskIds.Clear();
+
+            m_JobLoadLock = true;
+            Services.Events.Dispatch(GameEvents.JobPreload, inJobId);
+            m_JobLoadLock = false;
 
             if (inJobId == StringHash32.Null)
             {
@@ -194,26 +206,20 @@ namespace Aqua.Profile
                 m_CompletedJobs.Add(inJob.JobId);
                 m_JobStatuses.FastRemove(inJob);
 
-                m_CurrentJobId = StringHash32.Null;
-                m_CurrentJob = null;
                 Services.Events.Dispatch(GameEvents.JobCompleted, inJob.JobId);
 
                 if (bIsCurrent)
                 {
-                    // if we want to auto-select the next job
-                    // if (m_JobStatuses.Count > 0)
-                    // {
-                    //     m_CurrentJob = RNG.Instance.Choose(m_JobStatuses);
-                    //     m_CurrentJobId = m_CurrentJob.JobId;
-                    //     m_CurrentJob.SetAsActive();
-                    //     Services.Events.Dispatch(GameEvents.JobSwitched, m_CurrentJobId);
-                    // }
-                    // else
-                    // {
-                        m_CurrentJob = null;
-                        m_CurrentJobId = StringHash32.Null;
-                        Services.Events.Dispatch(GameEvents.JobSwitched, StringHash32.Null);
-                    // }
+                    Services.Events.Dispatch(GameEvents.JobUnload, m_CurrentJobId);
+
+                    m_CurrentJobId = StringHash32.Null;
+                    m_CurrentJob = null;
+                    m_CurrentJobTaskIds.Clear();
+
+                    m_JobLoadLock = true;
+                    Services.Events.Dispatch(GameEvents.JobPreload, StringHash32.Null);
+                    m_JobLoadLock = false;
+                    Services.Events.Dispatch(GameEvents.JobSwitched, StringHash32.Null);
                 }
                 return true;
             }
@@ -229,14 +235,114 @@ namespace Aqua.Profile
 
         #endregion // Completion
 
+        #region Tasks
+
+        /// <summary>
+        /// Returns if a given task is active for the current job.
+        /// If no job is selected, then this will just return false.
+        /// </summary>
+        public bool IsTaskActive(StringHash32 inTaskId)
+        {
+            if (m_CurrentJobId.IsEmpty)
+                return false;
+            
+            Assert.False(inTaskId.IsEmpty, "Cannot check null task");
+            return m_CurrentJobTaskIds.Contains(inTaskId);
+        }
+
+        /// <summary>
+        /// Returns if a given task is complete for the current job.
+        /// If no job is selected, then this will just return false.
+        /// </summary>
+        public bool IsTaskComplete(StringHash32 inTaskId)
+        {
+            if (m_CurrentJobId.IsEmpty)
+                return false;
+            
+            Assert.False(inTaskId.IsEmpty, "Cannot check null task");
+            return m_CompletedTasks.Contains(new JobTaskKey(m_CurrentJobId, inTaskId));
+        }
+
+        /// <summary>
+        /// Sets the given task as complete for the current job.
+        /// </summary>
+        public bool SetTaskComplete(StringHash32 inTaskId)
+        {
+            Assert.False(m_CurrentJobId.IsEmpty, "No current job to complete tasks for");
+            Assert.False(inTaskId.IsEmpty, "Cannot complete null task");
+
+            m_CurrentJobTaskIds.Remove(inTaskId);
+            if (m_CompletedTasks.Add(new JobTaskKey(m_CurrentJobId, inTaskId)))
+            {
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set completed", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                if (!m_JobLoadLock)
+                {
+                    Services.Events.Dispatch(GameEvents.JobTaskCompleted, inTaskId);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Sets a given task as active for the current job.
+        /// </summary>
+        public bool SetTaskActive(StringHash32 inTaskId)
+        {
+            Assert.False(m_CurrentJobId.IsEmpty, "No current job to modify tasks for");
+            Assert.False(inTaskId.IsEmpty, "Cannot modify null task");
+
+            m_CompletedTasks.Remove(new JobTaskKey(m_CurrentJobId, inTaskId));
+            if (m_CurrentJobTaskIds.Add(inTaskId))
+            {
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set active", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                if (!m_JobLoadLock)
+                {
+                    Services.Events.Dispatch(GameEvents.JobTaskAdded, inTaskId);
+                }
+                return true;
+            }
+
+            return false;
+        }
+        
+        /// <summary>
+        /// Sets a given task as inactive for the current job.
+        /// </summary>
+        public bool SetTaskInactive(StringHash32 inTaskId)
+        {
+            Assert.False(m_CurrentJobId.IsEmpty, "No current job to modify tasks for");
+            Assert.False(inTaskId.IsEmpty, "Cannot modify null task");
+
+            m_CompletedTasks.Remove(new JobTaskKey(m_CurrentJobId, inTaskId));
+            if (m_CurrentJobTaskIds.Remove(inTaskId))
+            {
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set inactive", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                if (!m_JobLoadLock)
+                {
+                    Services.Events.Dispatch(GameEvents.JobTaskRemoved, inTaskId);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Tasks
+
         #region Clearing
 
         public void ClearAll()
         {
             SetCurrentJob(null);
+            
             m_JobStatuses.Clear();
             m_CompletedJobs.Clear();
             m_UnlockedJobs.Clear();
+            m_CompletedTasks.Clear();
+
+            Services.Events.Dispatch(GameEvents.ProfileRefresh);
         }
 
         #endregion // Clearing

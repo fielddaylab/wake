@@ -46,6 +46,7 @@ namespace Aqua.Scripting
         private StringHash32 m_TriggerNodeId;
         private StringHash32 m_TriggerWho;
         private TriggerPriority m_TriggerPriority;
+        private StringHash32 m_TriggerId;
 
         // cached callbacks
         private readonly Action m_KillCallback;
@@ -102,6 +103,7 @@ namespace Aqua.Scripting
         public void SyncPriority(ScriptNode inNode)
         {
             m_TriggerNodeId = inNode.Id();
+            m_TriggerId = inNode.TriggerOrFunctionId();
             m_TriggerWho = inNode.TargetId();
             m_TriggerPriority = inNode.Priority();
         }
@@ -204,6 +206,7 @@ namespace Aqua.Scripting
 
         public bool IsCutscene() { return (m_Flags & ScriptFlags.Cutscene) != 0 || m_CutsceneCount > 0; }
         public StringHash32 InitialNodeId() { return m_TriggerNodeId; }
+        public StringHash32 TriggerId() { return m_TriggerId; }
         public StringHash32 Target() { return m_TriggerWho; }
         public TriggerPriority Priority() { return m_TriggerPriority; }
 

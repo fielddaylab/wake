@@ -14,6 +14,7 @@ namespace Aqua.Profile
             if (m_CurrentStationId != inNewStationId)
             {
                 m_CurrentStationId = inNewStationId;
+                Services.Events.Dispatch(GameEvents.StationChanged, inNewStationId);
                 return true;
             }
 

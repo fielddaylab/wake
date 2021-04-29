@@ -25,10 +25,10 @@ namespace ProtoAqua.Modeling
         [SerializeField] private ActorCountI32[] m_AdjustableActors = null;
 
         [Header("Labels")]
-        [SerializeField] private SerializedHash32 m_TitleId = null;
-        [SerializeField] private SerializedHash32 m_DescId = null;
-        [SerializeField] private SerializedHash32 m_CompleteId = null;
-        [SerializeField] private SerializedHash32 m_TickLabelId = null;
+        [SerializeField] private TextId m_TitleId = null;
+        [SerializeField] private TextId m_DescId = null;
+        [SerializeField] private TextId m_CompleteId = null;
+        [SerializeField] private TextId m_TickLabelId = null;
 
         [Header("Results")]
         [SerializeField] private SerializedHash32 m_BestiaryModelId = null;
@@ -52,10 +52,10 @@ namespace ProtoAqua.Modeling
         public ListSlice<ActorCountU32> PredictionTargets() { return m_TargetActors; }
         public ListSlice<ActorCountI32> AdjustableActors() { return m_AdjustableActors; }
 
-        public StringHash32 TitleId() { return m_TitleId; }
-        public StringHash32 DescId() { return m_DescId; }
-        public StringHash32 CompleteId() { return m_CompleteId; }
-        public StringHash32 TickLabelId() { return m_TickLabelId; }
+        public TextId TitleId() { return m_TitleId; }
+        public TextId DescId() { return m_DescId; }
+        public TextId CompleteId() { return m_CompleteId; }
+        public TextId TickLabelId() { return m_TickLabelId; }
 
         public StringHash32 BestiaryModelId() { return m_BestiaryModelId; }
         

@@ -65,6 +65,10 @@ namespace Aqua
             {
                 Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId, inValue.ToDebugString());
             }
+            else
+            {
+                Services.Events.Dispatch(GameEvents.VariableSet, keyPair);
+            }
         }
 
         /// <summary>
@@ -75,6 +79,10 @@ namespace Aqua
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Set, inValue))
             {
                 Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
+            }
+            else
+            {
+                Services.Events.Dispatch(GameEvents.VariableSet, inId);
             }
         }
 
@@ -89,6 +97,10 @@ namespace Aqua
             {
                 Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId, inValue.ToDebugString());
             }
+            else
+            {
+                Services.Events.Dispatch(GameEvents.VariableSet, keyPair);
+            }
         }
 
         /// <summary>
@@ -99,6 +111,10 @@ namespace Aqua
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Add, inValue))
             {
                 Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
+            }
+            else
+            {
+                Services.Events.Dispatch(GameEvents.VariableSet, inId);
             }
         }
 
@@ -211,6 +227,8 @@ namespace Aqua
             m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
             m_VariableResolver.SetTableVar("job.isComplete", (s) => inData.Jobs.IsComplete(s));
             m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));
+            m_VariableResolver.SetTableVar("job.taskActive", (s) => inData.Jobs.IsTaskActive(s));
+            m_VariableResolver.SetTableVar("job.taskComplete", (s) => inData.Jobs.IsTaskComplete(s));
             m_VariableResolver.SetTableVar("jobs:anyAvailable", (s) => Services.Assets.Jobs.HasUnstartedJobs());
             m_VariableResolver.SetTableVar("jobs:anyInProgress", (s) => inData.Jobs.InProgressJobs().Length > 0);
             m_VariableResolver.SetTableVar("jobs:anyComplete", (s) => inData.Jobs.CompletedJobIds().Count > 0);
