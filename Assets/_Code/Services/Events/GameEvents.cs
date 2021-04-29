@@ -28,5 +28,20 @@ namespace Aqua
         static public readonly StringHash32 JobSwitched = "job:switched";
 
         static public readonly StringHash32 ActChanged = "act:changed";
+
+        static public readonly StringHash32 ReceiveFact = "receive-fact";
+
+        static public readonly StringHash32 BeginExperiment = "experiment:begin";
+        static public readonly StringHash32 BeginDive = "dive:begin";
+        static public readonly StringHash32 BeginArgument = "argument:begin";
+        static public readonly StringHash32 BeginModel = "model:begin";
+        static public readonly StringHash32 BeginSimulation = "simulation:begin";
+
+        static public readonly StringHash32 AskForHelp = "ask-for-help";
+        static public readonly StringHash32 TalkWithGuide = "talk-with-guide";
+
+        static public readonly StringHash32 SimulationSyncAchieved = "simulation-sync-achieved";
+
+        static public readonly StringHash32 GuideScriptTriggered = "guide-script-triggered";
     }
 }

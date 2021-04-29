@@ -61,6 +61,8 @@ namespace ProtoAqua.Modeling
             OnBufferUpdated();
 
             m_Input.Device.RegisterHandler(this);
+
+            Services.Events.Dispatch(GameEvents.BeginModel);
         }
 
         private void LateUpdate()
@@ -134,6 +136,8 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.SetBuffer(m_Buffer);
             m_SimulationUI.Refresh(m_State, SimulationBuffer.UpdateFlags.ALL);
             m_SimulationUI.DisplayInitial();
+
+            Services.Events.Dispatch(GameEvents.BeginSimulation);
         }
 
         private void OnSimulationAdvanceClicked()
@@ -209,6 +213,7 @@ namespace ProtoAqua.Modeling
 
             Services.Audio.PostEvent("predictionSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_Completed);
+            Services.Events.Dispatch(GameEvents.SimulationSyncAchieved);
 
             m_Input.Device.DeregisterHandler(this);
         }

@@ -296,6 +296,9 @@ namespace ProtoAqua.Experiment
                 {
                     Routine.Start(this, RunQuickExperimentRoutine());
                 }
+
+                // TODO: use ExperimentEvents?
+                Services.Events.Dispatch(GameEvents.BeginExperiment);
             }
         }
 

@@ -68,10 +68,12 @@ namespace Aqua
             if (m_IsHint)
             {
                 Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
+                Services.Events.Dispatch(GameEvents.AskForHelp);
             }
             else
             {
                 Services.Script.TriggerResponse(GameTriggers.PartnerTalk, GameConsts.Target_Kevin);
+                Services.Events.Dispatch(GameEvents.TalkWithGuide);
             }
         }
 
