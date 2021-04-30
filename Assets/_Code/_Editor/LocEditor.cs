@@ -76,6 +76,8 @@ namespace Aqua.Editor
             public string Id;
             [BlockContent] public string Content;
 
+            [NonSerialized] public PackageRecord Parent;
+
             public TextRecord(string inId)
             {
                 Id = inId;
@@ -162,13 +164,6 @@ namespace Aqua.Editor
             }
         }
 
-        private void AddOpenPackageShortcut(PackageRecord inRecord)
-        {
-            m_OpenPackageFileMenu.AddItem(new GUIContent(inRecord.Name), false, () => {
-                AssetDatabase.OpenAsset(inRecord.Asset, (int) inRecord.LastLine);
-            });
-        }
-
         #endregion // Constructing Records
 
         #region Map
@@ -197,6 +192,7 @@ namespace Aqua.Editor
                     else
                     {
                         m_TextMap.Add(text.Id, text);
+                        text.Parent = package;
 
                         string listKey = text.Id.Replace(".", "/");
                         m_TextSelectableList.Add(listKey, text.Id);
@@ -207,6 +203,16 @@ namespace Aqua.Editor
             }
 
             m_FullyInitialized = true;
+        }
+
+        private void AddOpenPackageShortcut(PackageRecord inRecord)
+        {
+            m_OpenPackageFileMenu.AddItem(new GUIContent(inRecord.Name), false, () => OpenPackage(inRecord));
+        }
+
+        static private void OpenPackage(PackageRecord inRecord)
+        {
+            AssetDatabase.OpenAsset(inRecord.Asset, (int) inRecord.LastLine);
         }
 
         #endregion // Map
@@ -220,10 +226,7 @@ namespace Aqua.Editor
                 return;
             
             var instance = GetInstance();
-            if (instance.m_PackageRecords.Count == 0)
-            {
-                instance.ReloadPackages();
-            }
+            instance.ReloadPackages();
         }
 
         #endregion // Initialization
@@ -252,6 +255,16 @@ namespace Aqua.Editor
             var instance = GetInstance();
             GUIUtility.systemCopyBuffer = inKey;
             instance.m_OpenPackageFileMenu.ShowAsContext();
+        }
+
+        static public void OpenFile(string inKey)
+        {
+            var instance = GetInstance();
+            TextRecord text;
+            if (instance.m_TextMap.TryGetValue(inKey, out text))
+            {
+                OpenPackage(text.Parent);
+            }
         }
 
         #endregion // Statics

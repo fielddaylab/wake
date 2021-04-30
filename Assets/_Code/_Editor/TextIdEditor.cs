@@ -8,8 +8,6 @@ namespace Aqua.Editor
     [CustomPropertyDrawer(typeof(TextId))]
     public class TextIdEditor : PropertyDrawer
     {
-        [SerializeField] private string m_TempText;
-
         private const float TextIconDisplayWidth = 45;
 
         private GUIStyle m_NullIconStyle;
@@ -42,48 +40,61 @@ namespace Aqua.Editor
             label = EditorGUI.BeginProperty(position, label, property);
             Rect propRect = position;
             propRect.width -= TextIconDisplayWidth - 4;
-            Rect iconRect = new Rect(propRect.xMax + 4, propRect.y, TextIconDisplayWidth, propRect.height);
+
+            Rect statusRect = new Rect(propRect.xMax + 4, propRect.y, TextIconDisplayWidth, propRect.height);
             
             EditorGUI.BeginChangeCheck();
             var stringProp = property.FindPropertyRelative("m_Source");
             var hashProp = property.FindPropertyRelative("m_Hash");
             EditorGUI.PropertyField(propRect, stringProp, label);
-            if (UnityEditor.EditorGUI.EndChangeCheck()
-                || (!stringProp.hasMultipleDifferentValues && !string.IsNullOrEmpty(stringProp.stringValue) && hashProp.longValue == 0))
+            if (UnityEditor.EditorGUI.EndChangeCheck())
             {
                 hashProp.longValue = new StringHash32(stringProp.stringValue).HashValue;
             }
-            
-            string key = stringProp.stringValue;
-            if (string.IsNullOrEmpty(key))
+
+            using(GUIScopes.IndentLevelScope.SetIndent(0))
             {
-                using(GUIScopes.IndentLevelScope.SetIndent(0))
+                EditorGUIUtility.AddCursorRect(statusRect, MouseCursor.Link);
+
+                string key = null;
+                bool bFound = false;
+
+                if (stringProp.hasMultipleDifferentValues)
                 {
-                    EditorGUI.LabelField(iconRect, "Null", m_NullIconStyle);
-                }
-            }
-            else
-            {
-                string content;
-                if (LocEditor.TryLookup(key, out content))
-                {
-                    using(GUIScopes.IndentLevelScope.SetIndent(0))
-                    {
-                        var guiContent = m_ValidContent ?? (m_ValidContent = new GUIContent("Valid"));
-                        guiContent.tooltip = content;
-                        EditorGUI.LabelField(iconRect, guiContent, m_FoundIconStyle);
-                        m_TempText = content;
-                    }
+                    EditorGUI.LabelField(statusRect, "---", m_NullIconStyle);
                 }
                 else
                 {
-                    using(GUIScopes.IndentLevelScope.SetIndent(0))
+                    key = stringProp.stringValue;
+                    string content = null;
+                    bFound = !string.IsNullOrEmpty(key) && LocEditor.TryLookup(key, out content);
+
+                    if (string.IsNullOrEmpty(key))
                     {
-                        var guiContent = m_MissingContent ?? (m_MissingContent = new GUIContent("Unkn", "Right-click to open file for editing"));
-                        EditorGUI.LabelField(iconRect, guiContent, m_MissingIconStyle);
-                        
-                        if (Event.current.type == EventType.ContextClick && iconRect.Contains(Event.current.mousePosition))
-                            LocEditor.AttemptOpenFile(key);
+                        EditorGUI.LabelField(statusRect, "Null", m_NullIconStyle);
+                    }
+                    else if (bFound)
+                    {
+                        var guiContent = m_ValidContent ?? (m_ValidContent = new GUIContent("Good"));
+                        guiContent.tooltip = content;
+                        EditorGUI.LabelField(statusRect, guiContent, m_FoundIconStyle);
+                    }
+                    else
+                    {
+                        var guiContent = m_MissingContent ?? (m_MissingContent = new GUIContent("???"));
+                        EditorGUI.LabelField(statusRect, guiContent, m_MissingIconStyle);
+                    }
+                }
+
+                if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && statusRect.Contains(Event.current.mousePosition))
+                {
+                    if (bFound)
+                    {
+                        LocEditor.OpenFile(key);
+                    }
+                    else
+                    {
+                        LocEditor.AttemptOpenFile(key);
                     }
                 }
             }
