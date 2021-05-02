@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using BeauUtil.Debugger;
 using Leaf;
+using Unity.Collections;
 using UnityEngine;
 
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Jobs/Job Description", fileName = "NewJobDesc")]
-    public class JobDesc : DBObject
+    public partial class JobDesc : DBObject
     {
         #region Inspector
 
@@ -15,11 +17,10 @@ namespace Aqua
         [SerializeField, AutoEnum] private JobDescFlags m_Flags = 0;
 
         [Header("Text")]
-        [SerializeField] private SerializedHash32 m_NameId = null;
-        [SerializeField] private SerializedHash32 m_PosterId = null;
-        [SerializeField] private SerializedHash32 m_DescId = null;
-        [SerializeField] private SerializedHash32 m_DescInProgressId = null;
-        [SerializeField] private SerializedHash32 m_DescCompletedId = null;
+        [SerializeField] private TextId m_NameId = null;
+        [SerializeField] private TextId m_PosterId = null;
+        [SerializeField] private TextId m_DescId = null;
+        [SerializeField] private TextId m_DescCompletedId = null;
 
         [Header("Info")]
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
@@ -33,6 +34,10 @@ namespace Aqua
         [Header("Locations")]
         [SerializeField] private string m_StationId = null;
         [SerializeField] private string[] m_DiveSiteIds = null;
+
+        [Header("Steps")]
+        [SerializeField] private EditorJobTask[] m_Tasks = null;
+        [SerializeField] private JobTask[] m_OptimizedTaskList = null;
 
         [Header("Rewards")]
         [SerializeField] private int m_CashReward = 0;
@@ -52,11 +57,10 @@ namespace Aqua
         public bool HasFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) != 0; }
         public bool HasAllFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
-        public StringHash32 NameId() { return m_NameId; }
-        public StringHash32 PosterId() { return m_PosterId; }
-        public StringHash32 DescId() { return m_DescId; }
-        public StringHash32 DescInProgressId() { return m_DescInProgressId; }
-        public StringHash32 DescCompletedId() { return m_DescCompletedId; }
+        public TextId NameId() { return m_NameId; }
+        public TextId PosterId() { return m_PosterId; }
+        public TextId DescId() { return m_DescId; }
+        public TextId DescCompletedId() { return m_DescCompletedId; }
 
         public int Difficulty(ScienceActivityType inType)
         {
@@ -108,6 +112,20 @@ namespace Aqua
         public bool UsesDiveSite(string inDiveSiteId)
         {
             return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
+        }
+
+        public ListSlice<JobTask> Tasks() { return m_OptimizedTaskList; }
+        
+        public JobTask Task(StringHash32 inId)
+        {
+            for(int i = 0, length = m_OptimizedTaskList.Length; i < length; i++)
+            {
+                if (m_OptimizedTaskList[i].Id == inId)
+                    return m_OptimizedTaskList[i];
+            }
+
+            Assert.True(false, "[JobDesc] No task with id '{0}' on job '{1}'", inId.ToDebugString(), Id().ToDebugString());
+            return null;
         }
 
         public int CashReward() { return m_CashReward; }

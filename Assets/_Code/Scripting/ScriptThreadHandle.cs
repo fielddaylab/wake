@@ -1,12 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using Aqua;
-using UnityEngine;
 
 namespace Aqua.Scripting
 {
@@ -48,6 +41,16 @@ namespace Aqua.Scripting
         /// Target of the script thread.
         /// </summary>
         public StringHash32 TargetId() { return GetThread()?.Target() ?? StringHash32.Null; }
+
+        /// <summary>
+        /// Trigger of this thread.
+        /// </summary>
+        public StringHash32 TriggerId() { return GetThread()?.TriggerId() ?? StringHash32.Null; }
+
+        /// <summary>
+        /// Initialize node of this thread.
+        /// </summary>
+        public string RootNodeName() { return GetThread()?.InitialNodeName() ?? string.Empty; }
 
         /// <summary>
         /// Pauses the thread.

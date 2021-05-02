@@ -54,7 +54,7 @@ namespace ProtoAqua.Navigation
                 case Mode.Dive:
                     {
                         Hide();
-                        Services.Events.Dispatch(GameEvents.BeginDive);
+                        Services.Events.Dispatch(GameEvents.BeginDive, m_TargetScene);
                         Routine.Start(FadeRoutine());
                         break;
                     }

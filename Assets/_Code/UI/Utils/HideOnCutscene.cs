@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +16,8 @@ namespace Aqua
 
         #endregion // Inspector
 
+        private Routine m_Anim;
+
         private void OnEnable()
         {
             Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
@@ -21,30 +25,38 @@ namespace Aqua
 
             if (Services.UI.IsLetterboxed())
             {
-                OnCutsceneStart();
+                m_Group.alpha = 0;
+                m_Group.blocksRaycasts = false;
             }
             else
             {
-                OnCutsceneEnd();
+                m_Group.alpha = 1;
+                m_Group.blocksRaycasts = true;
             }
         }
 
         private void OnDisable()
         {
+            m_Anim.Stop();
+
             Services.Events?.Deregister(GameEvents.CutsceneStart, OnCutsceneStart)
                 .Deregister(GameEvents.CutsceneEnd, OnCutsceneEnd);
         }
 
         private void OnCutsceneStart()
         {
-            m_Group.alpha = 0;
-            m_Group.blocksRaycasts = false;
+            m_Anim.Replace(this, Fade(0, false));
         }
 
         private void OnCutsceneEnd()
         {
-            m_Group.alpha = 1;
-            m_Group.blocksRaycasts = true;
+            m_Anim.Replace(this, Fade(1, true));
+        }
+
+        private IEnumerator Fade(float inAlpha, bool inbRaycasts)
+        {
+            m_Group.blocksRaycasts = inbRaycasts;
+            return m_Group.FadeTo(inAlpha, 0.1f);
         }
 
         #if UNITY_EDITOR

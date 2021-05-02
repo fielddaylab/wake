@@ -15,7 +15,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private WaterPropertyFlags m_Flags = 0;
         
         [Header("Display")]
-        [SerializeField] private SerializedHash32 m_LabelId = null;
+        [SerializeField] private TextId m_LabelId = null;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private string m_Format = "{0}";
@@ -33,7 +33,7 @@ namespace Aqua
         public bool HasFlags(WaterPropertyFlags inFlags) { return (m_Flags & inFlags) != 0; }
         public bool HasAllFlags(WaterPropertyFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
-        public StringHash32 LabelId() { return m_LabelId; }
+        public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
         public Color Color() { return m_Color; }
         

@@ -1,6 +1,4 @@
 using BeauUtil;
-using BeauUtil.Debugger;
-using UnityEngine;
 
 namespace Aqua
 {
@@ -44,6 +42,8 @@ namespace Aqua
 
         public PlayerJobStatus Status() { return m_Status; }
 
+        #region Checks
+
         public bool IsStarted()
         {
             return m_Status != PlayerJobStatus.NotStarted;
@@ -63,6 +63,10 @@ namespace Aqua
         {
             return m_Status == PlayerJobStatus.Completed;
         }
+
+        #endregion // Checks
+
+        #region Internal
 
         internal void Reset()
         {
@@ -119,6 +123,8 @@ namespace Aqua
             m_JobId = inHash32;
             m_CachedJob = null;
         }
+
+        #endregion // Internal
     }
 
     public enum PlayerJobStatus : byte

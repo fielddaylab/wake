@@ -15,6 +15,7 @@ namespace Aqua.Scripting
         #region Serialized
 
         // Properties
+        private string m_FullName = null;
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_Package = null;
         private TriggerNodeData m_TriggerData = null;
@@ -25,11 +26,14 @@ namespace Aqua.Scripting
 
         #endregion // Serialized
 
-        public ScriptNode(ScriptNodePackage inPackage, StringHash32 inFullId)
+        public ScriptNode(ScriptNodePackage inPackage, string inFullId)
         {
             m_Package = inPackage;
             m_Id = inFullId;
+            m_FullName = inFullId;
         }
+
+        public string FullName() { return m_FullName; }
 
         public ScriptNodeFlags Flags() { return m_Flags; }
         public ScriptNodePackage Package() { return m_Package; }

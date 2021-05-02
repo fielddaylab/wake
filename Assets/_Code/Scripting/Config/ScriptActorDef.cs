@@ -25,7 +25,7 @@ namespace Aqua
 
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_NameId = null;
+        [SerializeField] private TextId m_NameId = null;
         [SerializeField, AutoEnum] private ScriptActorTypeFlags m_Flags = 0;
 
         [Header("Colors")]
@@ -45,7 +45,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public StringHash32 NameId() { return m_NameId; }
+        public TextId NameId() { return m_NameId; }
         public ScriptActorTypeFlags Flags() { return m_Flags; }
         
         public ColorPalette4? NamePaletteOverride() { return m_OverrideNamePalette ? m_NameColor : new ColorPalette4?(); }

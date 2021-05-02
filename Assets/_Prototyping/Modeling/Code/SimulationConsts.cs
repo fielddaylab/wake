@@ -18,5 +18,9 @@ namespace ProtoAqua.Modeling
         static public readonly StringHash32 ModelPhase_Model = "model";
         static public readonly StringHash32 ModelPhase_Predict = "predict";
         static public readonly StringHash32 ModelPhase_Completed = "complete";
+
+        static public readonly StringHash32 Event_Model_Begin = "modeling:model-begin";
+        static public readonly StringHash32 Event_Simulation_Begin = "simulation:simulation-begin";
+        static public readonly StringHash32 Event_Simulation_Complete = "simulation:simulation-complete";
     }
 }

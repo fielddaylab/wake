@@ -60,8 +60,6 @@ namespace ProtoAqua.Observation
             {
                 ScanResult result = ScanResult.NewScan;
 
-                Services.Events.Dispatch(ObservationEvents.ScannableComplete, inData.Id());
-
                 StringHash32 bestiaryId = inData.BestiaryId();
                 if (!bestiaryId.IsEmpty && Services.Data.Profile.Bestiary.RegisterEntity(bestiaryId))
                 {

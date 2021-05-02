@@ -54,10 +54,11 @@ namespace Aqua.Scripting
             return critter.HasFactWithValue(out ImproveFactIds);
         }
 
-        public void StoreId(StringHash32 critterId) {
+        public void StoreId(StringHash32 critterId)
+        {
             probeCritterId = critterId;
             selectedCritter = critterId != null ? Services.Assets.Bestiary.Get(critterId) : null;
-            Services.Data.SetVariable("probeScan:critter", selectedCritter.CommonName());
+            Services.Data.SetVariable("probeScan:critter", selectedCritter.CommonName().Hash());
         }
     }
 }

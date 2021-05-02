@@ -1,52 +1,78 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
-using BeauUtil.Variants;
-using Aqua.Profile;
-using UnityEngine;
 using BeauUtil.Services;
 using Leaf;
 
 namespace Aqua
 {
-    public partial class ProgressionWatcher : MonoBehaviour
+    [ServiceDependency(typeof(DataService), typeof(AssetsService), typeof(EventService))]
+    public partial class ProgressionWatcher : ServiceBehaviour
     {
         [NonSerialized] private LeafAsset m_JobScript;
         [NonSerialized] private LeafAsset m_ActScript;
 
-        private void Awake()
+        [NonSerialized] private int m_LoadedActId = -1;
+        [NonSerialized] private StringHash32 m_LoadedJobId;
+        [NonSerialized] private bool m_JobLoading;
+
+        protected override void Initialize()
         {
+            base.Initialize();
+
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, OnJobStarted, this)
+                .Register<StringHash32>(GameEvents.JobPreload, OnJobPreload, this)
                 .Register<StringHash32>(GameEvents.JobSwitched, OnJobSwitched, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, OnJobCompleted, this)
+                .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
+                .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this);
         }
 
-        private void OnDestroy()
+        protected override void Shutdown()
         {
+            ClearState();
             Services.Events?.DeregisterAll(this);
+
+            base.Shutdown();
         }
 
         private void InitScripts()
         {
-            SetActScript(Services.Data.CurrentAct());
-            SetJobScript(Services.Data.CurrentJobId());
+            ClearState();
+
+            LoadAct(Services.Data.CurrentAct());
+            LoadJob(Services.Data.CurrentJobId());
         }
+
+        private void ClearState()
+        {
+            if (m_JobScript)
+                Services.Script?.UnloadScript(m_JobScript);
+            m_JobScript = null;
+
+            if (m_ActScript)
+                Services.Script?.UnloadScript(m_ActScript);
+            m_ActScript = null;
+
+            m_LoadedJobId = StringHash32.Null;
+            m_LoadedActId = -1;
+        }
+
+        #region Handlers
 
         private void OnActChanged(uint inAct)
         {
-            SetActScript(inAct);
+            LoadAct(inAct);
+        }
+
+        private void OnJobPreload(StringHash32 inJobId)
+        {
+            LoadJob(inJobId);
         }
 
         private void OnJobStarted(StringHash32 inJobId)
         {
-            SetJobScript(inJobId);
             using(var table = Services.Script.GetTempTable())
             {
                 table.Set("jobId", inJobId);
@@ -56,7 +82,6 @@ namespace Aqua
 
         private void OnJobSwitched(StringHash32 inJobId)
         {
-            SetJobScript(inJobId);
             using(var table = Services.Script.GetTempTable())
             {
                 table.Set("jobId", inJobId);
@@ -79,34 +104,59 @@ namespace Aqua
             }
         }
 
-        private void SetActScript(uint inAct)
+        private void OnJobTaskCompleted(StringHash32 inTaskId)
         {
-            LeafAsset script = Services.Assets.Acts.Act(inAct)?.Scripting();
-            if (m_ActScript == script)
-                return;
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("jobId", m_LoadedJobId);
+                table.Set("taskId", inTaskId);
+                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, null, null, table);
+            }
+        }
 
+        private void OnJobTasksUpdated()
+        {
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("jobId", m_LoadedJobId);
+                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, null, null, table);
+            }
+        }
+
+        private void LoadAct(uint inAct)
+        {
+            if (m_LoadedActId == inAct)
+                return;
+            
+            m_LoadedActId = (int) inAct;
+            
             if (m_ActScript)
                 Services.Script.UnloadScript(m_ActScript);
             
-            m_ActScript = script;
+            m_ActScript = Services.Assets.Acts.Act(inAct)?.Scripting();
             
             if (m_ActScript)
                 Services.Script.LoadScript(m_ActScript);
         }
 
-        private void SetJobScript(StringHash32 inJob)
+        private void LoadJob(StringHash32 inJob)
         {
-            LeafAsset script = Services.Assets.Jobs.Get(inJob)?.Scripting();
-            if (m_JobScript == script)
+            if (m_LoadedJobId == inJob)
                 return;
+            
+            m_LoadedJobId = inJob;
 
             if (m_JobScript)
                 Services.Script.UnloadScript(m_JobScript);
 
-            m_JobScript = script;
+            JobDesc job = Services.Assets.Jobs.Get(inJob);
+
+            m_JobScript = job?.Scripting();
             
             if (m_JobScript)
                 Services.Script.LoadScript(m_JobScript);
         }
+
+        #endregion // Handlers
     }
 }

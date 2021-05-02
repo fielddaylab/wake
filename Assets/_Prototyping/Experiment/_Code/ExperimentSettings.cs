@@ -18,8 +18,8 @@ namespace ProtoAqua.Experiment
             public TankType Tank;
 
             public ExpSubscreen[] Sequence;
-            public SerializedHash32 LabelId;
-            public SerializedHash32 ShortLabelId;
+            public TextId LabelId;
+            public TextId ShortLabelId;
             public Sprite Icon;
             public bool SingleCritter;
             public bool TankOn;

@@ -72,7 +72,7 @@ namespace ProtoAqua.Observation
 
             Services.Events.Register(ObservationEvents.ScannerOn, OnScannerOn, this)
                 .Register(ObservationEvents.ScannerOff, OnScannerOff, this)
-                .Register(ObservationEvents.ScannableComplete, OnScanComplete, this)
+                .Register(GameEvents.ScanLogUpdated, OnScanComplete, this)
                 .Register(GameEvents.SceneLoaded, OnSceneLoad, this);
 
             // TODO: Fix this so we can detect whether or not the scanner is on when we are enabled
@@ -86,9 +86,7 @@ namespace ProtoAqua.Observation
             m_TickRoutine.Stop();
             m_ScannerOn = false;
 
-            Services.Events?.DeregisterAll(this)
-                .Deregister(ObservationEvents.ScannerOff, OnScannerOff)
-                .Deregister(ObservationEvents.ScannableComplete, OnScanComplete);
+            Services.Events?.DeregisterAll(this);
         }
 
         #endregion // Unity Events
