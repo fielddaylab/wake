@@ -18,14 +18,14 @@ MonoBehaviour:
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: jobs.kelp-welcome.name
-    m_Hash: 1037341677
+    m_Source: jobs.kelp-urchin-barren.name
+    m_Hash: 688585909
   m_PosterId:
-    m_Source: jobs.kelp-welcome.poster
-    m_Hash: 2113696151
+    m_Source: jobs.kelp-urchin-barren.poster
+    m_Hash: 1026242447
   m_DescId:
-    m_Source: jobs.kelp-welcome.desc
-    m_Hash: 2276908015
+    m_Source: jobs.kelp-urchin-barren.desc
+    m_Hash: 198913719
   m_DescCompletedId:
     m_Source: 
     m_Hash: 0
@@ -88,9 +88,7 @@ MonoBehaviour:
         m_Hash: 351135428
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: gotoSiteC
-      m_Hash: 1682475842
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
@@ -107,142 +105,80 @@ MonoBehaviour:
         m_Hash: 3202844602
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: gotoSiteC
-      m_Hash: 1682475842
+    PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
-      m_Source: gotoSiteC
-      m_Hash: 1682475842
+      m_Source: gotoSiteB
+      m_Hash: 1699253461
     Index: 0
     LabelId:
-      m_Source: Travel to the Giant Kelp Forest at Site C
-      m_Hash: 3292233296
+      m_Source: Travel to Site B
+      m_Hash: 4259247523
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 3
       Target:
-        m_Source: RS-1C
-        m_Hash: 2212350453
+        m_Source: RS-1B
+        m_Hash: 2195572834
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: scanGiantKelp
-      m_Hash: 1818207473
+      m_Source: getProbeData
+      m_Hash: 21751579
     Index: 1
     LabelId:
-      m_Source: Scan Giant Kelp
-      m_Hash: 2952039527
+      m_Source: Collect data from the Site B Research Probe
+      m_Hash: 194114706
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: GiantKelp
-        m_Hash: 3510470690
+        m_Source: UrchinBaren
+        m_Hash: 3353438248
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
   - Id:
-      m_Source: scanUrchin
-      m_Hash: 3702806939
+      m_Source: predictSiteB
+      m_Hash: 984087169
     Index: 2
     LabelId:
-      m_Source: Scan an Urchin
-      m_Hash: 1661933590
+      m_Source: Build a Model to Predict the future for Site B
+      m_Hash: 840833973
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: Urchin
-        m_Hash: 1973276590
+        m_Source: Model.UrchinBarrenPrediction
+        m_Hash: 351135428
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
-      m_Source: scanOtter
-      m_Hash: 2400623110
-    Index: 3
-    LabelId:
-      m_Source: Scan a Sea Otter
-      m_Hash: 3138696262
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: SeaOtter
-        m_Hash: 3836809010
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
-      m_Source: collectWarmKelpForrest
-      m_Hash: 347392237
-    Index: 4
-    LabelId:
-      m_Source: Collect Data from the Probe
-      m_Hash: 815679380
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: WarmKelpForest
-        m_Hash: 2991222945
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
-      m_Source: observeOttersUrchinsAndGianKelp
-      m_Hash: 2673732810
-    Index: 5
-    LabelId:
-      m_Source: Experiement with Otters, Urchins and Gian Kelp
-      m_Hash: 1823809906
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: SeaOtter.Eats.Urchin
-        m_Hash: 1212586560
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Urchin.Eats.GiantKelp
-        m_Hash: 3556196180
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0300020001000400
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
-    Index: 6
+    Index: 3
     LabelId:
-      m_Source: Report Back to Dr. Jules
-      m_Hash: 2814745952
+      m_Source: Report back with your prediction
+      m_Hash: 1346380998
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 5
+    - Type: 3
       Target:
-        m_Source: 
-        m_Hash: 0
+        m_Source: NeverGonnaHappen
+        m_Hash: 3202844602
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: 
   m_CashReward: 240
   m_GearReward: 350
   m_AdditionalRewards: []

@@ -132,25 +132,19 @@ MonoBehaviour:
     - m_Source: gotoSiteC
       m_Hash: 1682475842
   - Id:
-      m_Source: observeOttersUrchinsAndGianKelp
-      m_Hash: 2673732810
+      m_Source: returnToShip
+      m_Hash: 3093150432
     LabelId:
-      m_Source: Experiement with Otters, Urchins and Gian Kelp
-      m_Hash: 1823809906
+      m_Source: Go back up to the surface and return to your Ship
+      m_Hash: 4235091169
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 1
+    - Type: 3
       Target:
-        m_Source: SeaOtter.Eats.Urchin
-        m_Hash: 1212586560
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Urchin.Eats.GiantKelp
-        m_Hash: 3556196180
+        m_Source: Ship
+        m_Hash: 746798495
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -163,24 +157,50 @@ MonoBehaviour:
     - m_Source: collectWarmKelpForrest
       m_Hash: 347392237
   - Id:
+      m_Source: runExperiment
+      m_Hash: 30875405
+    LabelId:
+      m_Source: Use the experiementation room to observe the interactions between
+        urchins, otters and kelp
+      m_Hash: 1477971612
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.GiantKelp
+        m_Hash: 3556196180
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: SeaOtter.Eats.Urchin
+        m_Hash: 1212586560
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: returnToShip
+      m_Hash: 3093150432
+  - Id:
       m_Source: reportBack
       m_Hash: 2059105924
     LabelId:
-      m_Source: Report Back to Dr. Jules
-      m_Hash: 2814745952
+      m_Source: Report Back to Dr. Jules in the Office
+      m_Hash: 767461884
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 5
       Target:
-        m_Source: 
-        m_Hash: 0
+        m_Source: NeverGonnaHappen
+        m_Hash: 3202844602
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: observeOttersUrchinsAndGianKelp
-      m_Hash: 2673732810
+    - m_Source: runExperiment
+      m_Hash: 30875405
   m_OptimizedTaskList:
   - Id:
       m_Source: gotoSiteC
@@ -273,47 +293,66 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: observeOttersUrchinsAndGianKelp
-      m_Hash: 2673732810
+      m_Source: returnToShip
+      m_Hash: 3093150432
     Index: 5
     LabelId:
-      m_Source: Experiement with Otters, Urchins and Gian Kelp
-      m_Hash: 1823809906
+      m_Source: Go back up to the surface and return to your Ship
+      m_Hash: 4235091169
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 1
+    - Type: 3
       Target:
-        m_Source: SeaOtter.Eats.Urchin
-        m_Hash: 1212586560
+        m_Source: Ship
+        m_Hash: 746798495
       ConditionString: 
       Amount: 0
+    PrerequisiteTaskIndices: 0300020001000400
+  - Id:
+      m_Source: runExperiment
+      m_Hash: 30875405
+    Index: 6
+    LabelId:
+      m_Source: Use the experiementation room to observe the interactions between
+        urchins, otters and kelp
+      m_Hash: 1477971612
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
     - Type: 1
       Target:
         m_Source: Urchin.Eats.GiantKelp
         m_Hash: 3556196180
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300020001000400
+    - Type: 1
+      Target:
+        m_Source: SeaOtter.Eats.Urchin
+        m_Hash: 1212586560
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0500
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
-    Index: 6
+    Index: 7
     LabelId:
-      m_Source: Report Back to Dr. Jules
-      m_Hash: 2814745952
+      m_Source: Report Back to Dr. Jules in the Office
+      m_Hash: 767461884
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 5
       Target:
-        m_Source: 
-        m_Hash: 0
+        m_Source: NeverGonnaHappen
+        m_Hash: 3202844602
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: ffff
   m_CashReward: 240
   m_GearReward: 350
   m_AdditionalRewards: []
