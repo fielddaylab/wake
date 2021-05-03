@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: kelp-save-urchin-barren
+  m_EditorClassIdentifier: 
+  m_ScriptName:
+    m_Source: 
+    m_Hash: 0
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.kelp-welcome.name
+    m_Hash: 1037341677
+  m_PosterId:
+    m_Source: jobs.kelp-welcome.poster
+    m_Hash: 2113696151
+  m_DescId:
+    m_Source: jobs.kelp-welcome.desc
+    m_Hash: 2276908015
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 1
+  m_ModelingDifficulty: 1
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_StationId: Station1
+  m_DiveSiteIds:
+  - RS-1B
+  m_Tasks:
+  - Id:
+      m_Source: gotoSiteC
+      m_Hash: 1682475842
+    LabelId:
+      m_Source: Travel to the Giant Kelp Forest at Site C
+      m_Hash: 3292233296
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1C
+        m_Hash: 2212350453
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: scanGiantKelp
+      m_Hash: 1818207473
+    LabelId:
+      m_Source: Scan Giant Kelp
+      m_Hash: 2952039527
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GiantKelp
+        m_Hash: 3510470690
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: gotoSiteC
+      m_Hash: 1682475842
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: gotoSiteC
+      m_Hash: 1682475842
+    Index: 0
+    LabelId:
+      m_Source: Travel to the Giant Kelp Forest at Site C
+      m_Hash: 3292233296
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1C
+        m_Hash: 2212350453
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: scanGiantKelp
+      m_Hash: 1818207473
+    Index: 1
+    LabelId:
+      m_Source: Scan Giant Kelp
+      m_Hash: 2952039527
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GiantKelp
+        m_Hash: 3510470690
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  m_CashReward: 240
+  m_GearReward: 350
+  m_AdditionalRewards: []
+  m_Icon: {fileID: -2922770040550098064, guid: cc4f86ee3cca1e649bcb76a08e75c622, type: 3}
+  m_Scripting: {fileID: -1942890987711236906, guid: 26a7ede768d5f3c48b28344f4298fc0d,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: 0fb9b05b980d1684e8da199acb529fda, type: 3}
