@@ -4,32 +4,18 @@
 @trigger    JobStarted
 @cutscene
 $set    player:seen.drJules = true
-{@drJules} I'm glad to see you takiong on a Job here!
+{@drJules} I'm glad to see you taking on a Job here!
 {@drJules}  The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
 {@player} How do I do that?
 {@drJules} Just exit the helm, then use the submarine to travel out to research sites. 
-{@drJules}  When you are done, come back and tell me what you've learned.
+{@drJules}  When you are done, come back to the office and tell me what you've learned.
+{@player} Taking out a sub?!? I'm on it!
 :: end
 
 @trigger    JobCompleted
 @cutscene
-{@urchinBaron}  How marvelous! I can tell everyone to just cool it.
-		The urchins are indeed eating the kelp, but the otters are keeping them in check.
-		Rather unfortunate for some of my urchin friends, but such is the balance of nature, eh?
-{@player}   That about sums it up.
-{@urchinBaron}  Fab. Come back any time! Well, any time I have a job for you that is. 
-		I'm sure you'll find something on your job board. I'll be sure to recommend you to ...
-		my business associates.
-{@kevin}   Interesting... Later, Baron.
-
-
-// Kevin Responses
-
-:: kevin.atBottom
-@trigger    PartnerTalk
-@when       scene:name == "RS-1A"
-@once
-@boostScore 5
-@cutscene
-{@kevin}    So, we're trying to figure out if the kelp is safe from Baron's urchins?
-{@player}   I believe so.
+{@drJules}  Really nice work!
+{@player}   Thanks. My friend Kevin helped quite a bit.
+{@drJules}  Well you seem to make a great team. Want to do some more exploring?
+{@drJules}  I put some other Jobs on the Job board. Go to the Helm, pick something new and we will talk again. 
+{@player}   Ok. I'm on my way. 
