@@ -148,6 +148,9 @@ namespace Aqua.Debugging
 
         private void SkipCutscene()
         {
+            if (Services.Pause.IsPaused())
+                return;
+            
             var cutscene = Services.Script.GetCutscene();
             if (cutscene.IsRunning())
             {
@@ -247,6 +250,8 @@ namespace Aqua.Debugging
 
             m_Canvas.gameObject.SetActive(true);
             m_Input = DeviceInput.Find(m_Canvas);
+
+            transform.FlattenHierarchy();
 
             RootDebugMenu();
         }

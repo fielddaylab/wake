@@ -9,17 +9,23 @@ namespace Aqua
 {
     public class JobTaskDisplay : MonoBehaviour, IPoolAllocHandler
     {
+        [Serializable] public class Pool : SerializablePool<JobTaskDisplay> { }
+
+        #region Inspector
+
         [Required] public RectTransform Root;
-        [Required] public CanvasGroup Group;
+        public CanvasGroup Group;
 
         [Header("Display")]
         [Required] public LocText Label;
-        [Required] public Graphic Background;
+        public Graphic Background;
         public LocText Description;
         public Graphic Checkmark;
 
         [Header("Animation")]
         public Graphic Flash;
+
+        #endregion // Inspector
 
         [NonSerialized] public JobTask Task;
         [NonSerialized] public bool Completed;
@@ -34,8 +40,20 @@ namespace Aqua
         public void Populate(TextId inLabelId, TextId inDescId, bool inbCompleted)
         {
             Label.SetText(inLabelId);
+
             if (Description)
-                Description.SetText(inDescId);
+            {
+                if (inbCompleted)
+                {
+                    Description.SetText(null);
+                    Description.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Description.SetText(inDescId);
+                    Description.gameObject.SetActive(true);
+                }
+            }
             if (Checkmark)
                 Checkmark.enabled = inbCompleted;
 

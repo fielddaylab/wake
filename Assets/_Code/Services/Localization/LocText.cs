@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using BeauUtil;
 using BeauUtil.Tags;
@@ -12,13 +13,14 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, HideInEditor] private TMP_Text m_Text = null;
-        [SerializeField] private string m_DefaultText = null;
+        [SerializeField] private TextId m_DefaultText = default(TextId);
 
         #endregion // Inspector
 
-        private StringHash32 m_LastId;
-        private string m_CurrentText;
+        [NonSerialized] private StringHash32 m_LastId;
+        [NonSerialized] private string m_CurrentText;
         private TagString m_TagString;
+        [NonSerialized] private bool m_Initialized;
 
         #region Text
 
@@ -76,26 +78,34 @@ namespace Aqua
         {
             m_Text.SetText(inText);
             m_CurrentText = inText;
+            m_Initialized = true;
+        }
+
+        internal void OnLocalizationRefresh()
+        {
+            if (string.IsNullOrEmpty(m_CurrentText) && !m_DefaultText.IsEmpty)
+                SetText(m_DefaultText, null);
+            
+            m_Initialized = true;
         }
 
         #endregion // Text
 
         #region Unity Events
 
-        private void Start()
-        {
-            if (string.IsNullOrEmpty(m_CurrentText) && !string.IsNullOrEmpty(m_DefaultText))
-                SetText(m_DefaultText, null);
-        }
-
         private void OnEnable()
         {
-            // TODO: Hook into refresh?
+            Services.Loc.RegisterText(this);
+
+            if (!m_Initialized && !Services.Loc.IsLoading())
+            {
+                OnLocalizationRefresh();
+            }
         }
 
         private void OnDisable()
         {
-            // TODO: Unhook from refresh?
+            Services.Loc?.DeregisterText(this);
         }
 
         #if UNITY_EDITOR

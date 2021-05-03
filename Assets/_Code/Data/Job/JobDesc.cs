@@ -37,7 +37,7 @@ namespace Aqua
 
         [Header("Steps")]
         [SerializeField] private EditorJobTask[] m_Tasks = null;
-        [SerializeField] private JobTask[] m_OptimizedTaskList = null;
+        [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = null;
 
         [Header("Rewards")]
         [SerializeField] private int m_CashReward = 0;

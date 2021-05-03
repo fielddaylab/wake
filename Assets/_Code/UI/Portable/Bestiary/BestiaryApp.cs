@@ -13,6 +13,21 @@ namespace Aqua.Portable
 {
     public class BestiaryApp : PortableMenuApp, IFactVisitor
     {
+        #region Consts
+
+        static private readonly StringHash32 Critters_Label = "ui.portable.app.bestiary.critters.label";
+        static private readonly StringHash32 Ecosystems_Label = "ui.portable.app.bestiary.ecosystems.label";
+        static private readonly StringHash32 Models_Label = "ui.portable.app.bestiary.models.label";
+
+        static private readonly StringHash32 SelectCritter_Label = "ui.portable.app.bestiary.selectCritter.label";
+        static private readonly StringHash32 SelectEcosystem_Label = "ui.portable.app.bestiary.selectEcosystem.label";
+
+        static private readonly StringHash32 SelectCritterFact_Label = "ui.portable.app.bestiary.selectCritterFact.label";
+        static private readonly StringHash32 SelectEcosystemFact_Label = "ui.portable.app.bestiary.selectEcosystemFact.label";
+        static private readonly StringHash32 SelectModel_Label = "ui.portable.app.bestiary.selectModel.label";
+
+        #endregion // Consts
+
         #region Types
 
         [Serializable] private class EntryPool : SerializablePool<PortableListElement> { }
@@ -152,6 +167,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
         [SerializeField, Required] private ToggleGroup m_EntryToggleGroup = null;
         [SerializeField] private EntryPool m_EntryPool = null;
+        [SerializeField] private LocText m_CategoryLabel = null;
 
         [Header("Group")]
         [SerializeField, Required] private RectTransform m_NoSelectionGroup = null;
@@ -172,7 +188,6 @@ namespace Aqua.Portable
 
         #endregion // Inspector
 
-        [NonSerialized] private PortableMenu m_ParentMenu = null;
         [NonSerialized] private PortableTweaks m_Tweaks = null;
         [NonSerialized] private BestiaryDescCategory m_CurrentEntryGroup = BestiaryDescCategory.Critter;
         [NonSerialized] private BestiaryDesc m_CurrentEntry;
@@ -190,8 +205,6 @@ namespace Aqua.Portable
 
             m_SelectEntryButton.onClick.AddListener(OnEntrySelectClicked);
             m_SelectEntryButton.gameObject.SetActive(false);
-
-            m_ParentMenu = GetComponentInParent<PortableMenu>();
         }
 
         #region Callbacks
@@ -343,7 +356,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = false;
                         m_ModelGroupToggle.interactable = false;
-                        m_PromptText.SetText("Select Critter");
+                        m_PromptText.SetText(SelectCritter_Label);
                         break;
                     }
 
@@ -352,7 +365,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = true;
                         m_ModelGroupToggle.interactable = false;
-                        m_PromptText.SetText("Select Environment");
+                        m_PromptText.SetText(SelectEcosystem_Label);
                         break;
                     }
                 
@@ -361,7 +374,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = false;
                         m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("Select Model");
+                        m_PromptText.SetText("-- Unsupported Mode --");
                         break;
                     }
 
@@ -370,7 +383,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
                         m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("Select Entry");
+                        m_PromptText.SetText("-- Unsupported Mode --");
 
                         category = BestiaryDescCategory.Critter;
                         break;
@@ -394,7 +407,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = false;
                         m_ModelGroupToggle.interactable = false;
-                        m_PromptText.SetText("Select Critter Fact");
+                        m_PromptText.SetText(SelectCritterFact_Label);
                         break;
                     }
 
@@ -403,7 +416,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = true;
                         m_ModelGroupToggle.interactable = false;
-                        m_PromptText.SetText("Select Environment Variable");
+                        m_PromptText.SetText(SelectEcosystemFact_Label);
                         break;
                     }
 
@@ -412,7 +425,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = false;
                         m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("Select Model");
+                        m_PromptText.SetText(SelectModel_Label);
                         break;
                     }
 
@@ -421,7 +434,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
                         m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("Select Fact");
+                        m_PromptText.SetText("-- Unsupported Mode --");
 
                         category = BestiaryDescCategory.Critter;
                         break;
@@ -445,18 +458,24 @@ namespace Aqua.Portable
                     m_CritterGroupToggle.SetIsOnWithoutNotify(true);
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
                     m_ModelGroupToggle.SetIsOnWithoutNotify(false);
+
+                    m_CategoryLabel.SetText(Critters_Label);
                     break;
 
                 case BestiaryDescCategory.Environment:
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
                     m_CritterGroupToggle.SetIsOnWithoutNotify(false);
                     m_ModelGroupToggle.SetIsOnWithoutNotify(false);
+
+                    m_CategoryLabel.SetText(Ecosystems_Label);
                     break;
 
                 case BestiaryDescCategory.Model:
                     m_ModelGroupToggle.SetIsOnWithoutNotify(true);
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
                     m_CritterGroupToggle.SetIsOnWithoutNotify(false);
+
+                    m_CategoryLabel.SetText(Models_Label);
                     break;
             }
 
@@ -479,7 +498,7 @@ namespace Aqua.Portable
             m_WaterPropertyPool.Reset();
 
             foreach(var button in m_EntryPool.ActiveObjects)
-            {   
+            {
                 button.SetState((BestiaryDesc) button.Data == inEntry);
             }
 
@@ -487,13 +506,13 @@ namespace Aqua.Portable
 
             if (inEntry == null)
             {
-                Services.Data.SetVariable("portable:bestiary.currentEntry", null);
+                Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
                 m_NoSelectionGroup.gameObject.SetActive(true);
                 m_HasSelectionGroup.gameObject.SetActive(false);
                 return;
             }
 
-            Services.Data?.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
+            Services.Data.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
 
             m_NoSelectionGroup.gameObject.SetActive(false);
             m_HasSelectionGroup.gameObject.SetActive(true);

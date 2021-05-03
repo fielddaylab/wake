@@ -225,6 +225,9 @@ namespace Aqua
             if (!inbForce && m_CurrentState.TargetId == inTargetId)
                 return SetPortrait(inPortraitId, false);
 
+            if (!Services.Valid)
+                return false;
+
             m_CurrentState.TargetId = inTargetId;
             ScriptActorDef actorDef = m_CurrentState.TargetDef = Services.Assets.Characters.Get(inTargetId);
 

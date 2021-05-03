@@ -4932,6 +4932,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5774820918325110237}
   - component: {fileID: 2568443420038237299}
+  - component: {fileID: 4257229457167983756}
   m_Layer: 0
   m_Name: ScannableProbe
   m_TagString: Untagged
@@ -4971,6 +4972,147 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -10
+--- !u!114 &4257229457167983756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774820918325110238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 5774820918325110237}
+  TransformSpace: 0
+  AnimationScale: 1
+  PositionAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 4.5
+      DurationRandom:
+        m_Value: 23
+    DistanceY: 0.2
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  ScaleAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  RotationAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 2
+      Method: 0
+      Delay: 1
+      DelayRandom:
+        m_Value: 254
+      Duration: 14
+      DurationRandom:
+        m_Value: 38
+    DistanceZ: 2
 --- !u!1 &7810280647004677053
 GameObject:
   m_ObjectHideFlags: 0
@@ -9982,6 +10124,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ScriptTriggerProbe
+      objectReference: {fileID: 0}
+    - target: {fileID: 7362313560458652878, guid: 5e078c90f08654488bc55ead8373c477,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e078c90f08654488bc55ead8373c477, type: 3}

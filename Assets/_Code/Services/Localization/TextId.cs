@@ -47,6 +47,8 @@ namespace Aqua
             #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
             if (!string.IsNullOrEmpty(m_Source))
                 return m_Source;
+            if (m_Hash == 0)
+                return string.Empty;
             return new StringHash32(m_Hash).ToDebugString();
             #else
             return Hash().ToDebugString();

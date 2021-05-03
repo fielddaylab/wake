@@ -19,6 +19,9 @@ namespace Aqua
         // jobs
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
         static public readonly TableKeyPair CurrentStation = TableKeyPair.Parse("player:currentStation");
+        static public readonly TableKeyPair JobsAnyAvailable = TableKeyPair.Parse("jobs:anyAvailable");
+        static public readonly TableKeyPair JobsAnyInProgress = TableKeyPair.Parse("jobs:anyInProgress");
+        static public readonly TableKeyPair JobsAnyComplete = TableKeyPair.Parse("jobs:anyComplete");
 
         // global
         static public readonly TableKeyPair Weekday = TableKeyPair.Parse("date:weekday");

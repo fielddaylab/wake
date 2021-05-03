@@ -78,6 +78,9 @@
 | `global:actNumber` | Index of the current game act (starting from 0) | `global:actNumber == 0` |
 | `player:currentJob` | Id of the player's current job | | `player:currentJob == "Job1-6"` |
 | `player:currentStation` | Id of the player's current station | `player:currentStation == "Station1"` |
+| `jobs:anyAvailable` | Returns the number of jobs are available and unstarted | `jobs:anyAvailable > 1`, `jobs:anyAvailable` |
+| `jobs:anyInProgress` | Returns the number of jobs are in progress | `jobs:anyInProgress > 3` |
+| `jobs:anyComplete` | Returns the number of jobs have been completed | `jobs:anyComplete <= 2` |
 | **Random** |
 | `random:common` | Returns a random bool with a **40%** chance of being true | `random:common` |
 | `random:uncommon` | Returns a random bool with a **20%** chance of being true | `random:uncommon` |
@@ -95,6 +98,8 @@
 | `job.inProgress` | Job Id | Returns if the given job is in progress or active | `job.inProgress:Job1-1a` |
 | `job.isComplete` | Job Id | Returns if the given job has been completed | `job.isComplete:Job1-6` |
 | `job.isAvailable` | Job Id | Returns if the given job is unstarted and available at a job board. | `job.isAvailable:Job1-3a` |
+| `job.taskActive` | Task Id | Returns if the current job has an active task with the given id | `job.taskActive:task1` |
+| `job.taskComplete` | Task Id | Returns if the current job has a completed task with the given id | `job.taskComplete:task3.1` |
 | **Inventory** |
 | `has.item` | Item Id | Returns if the player has a specific item in their inventory | `has.item:SomeArtifact` |
 | `item.count` | Item Id | Returns the amount of a specific item in the player's inventory | `item.count:Cash > 50`, `item.count:RareArtifactThingy < 2` |
@@ -108,8 +113,10 @@
 | Name | Arguments | Description |
 | ---- | --------- | ----------- |
 | **Basic** |
+| `PartnerTalk` | N/a | Triggers when the player asks their partner to talk |
 | `RequestPartnerHelp` | N/a | Triggers when the player asks their partner for help |
 | `SceneStart` | N/a | Triggers when a scene starts |
+| `InspectObject` | `objectId` | Triggers when an object is inspected with a cursor click |
 | **Regions** |
 | `PlayerEnterRegion` | `regionId` | Triggers when the player enters a trigger region within a scene |
 | `PlayerExitRegion` | `regionId` | Triggers when the player exits a trigger region within a scene |
@@ -130,7 +137,9 @@
 | **Jobs** |
 | `JobStarted` | `jobId` | Triggered when a new job is started |
 | `JobSwitched` | `jobId` | Triggered when a job becomes the player's active job |
-| `JobCompleted` | `jobId` | Triggered when a job is completed
+| `JobCompleted` | `jobId` | Triggered when a job is completed |
+| `JobTaskCompleted` | `jobId`, `taskId` | Triggered when a job task is completed |
+| `JobTasksUpdated` | `jobId` | Triggered after job tasks are updated |
 
 ### Formatting Tags
 
@@ -198,5 +207,5 @@
 
 **Guide to Colors**  
 Colors are specified as `color` or `color.alpha`.  
-`color` can be either common values (i.e. `black`, `white`, `grey`)  
+`color` can be either common values (i.e. `black`, `white`, `grey`) or hex codes (i.e. `ffffff`, `0a2b3c`)
 `alpha` is specified as a value between 0 and 100 (i.e. `black.50`, `white.25`, `grey.90`). If no `alpha` is specified, a default value of 100 is assumed.

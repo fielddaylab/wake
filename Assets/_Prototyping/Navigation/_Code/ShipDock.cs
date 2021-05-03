@@ -36,7 +36,7 @@ namespace ProtoAqua.Navigation
         {
             if (Services.Data.CompareExchange(GameVars.InteractObject, null, m_Id))
             {
-                Services.UI.FindPanel<NavigationUI>().DisplayDock();
+                Services.UI.FindPanel<NavigationUI>().DisplayDock(m_Collider.transform);
             }
         }
 

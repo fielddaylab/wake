@@ -40,6 +40,7 @@ namespace Aqua
         private void Awake()
         {
             m_HasPersisted = true;
+            
             BuildInfo.Load();
             Input.multiTouchEnabled = false;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
@@ -70,6 +71,8 @@ namespace Aqua
 
             LoadBootParamsFirstPass();
             Services.AutoSetup(gameObject);
+
+            TransformHelper.FlattenHierarchy(transform);
 
             #if DEVELOPMENT
 

@@ -54,15 +54,7 @@ MonoBehaviour:
   m_siteLabel: Dive Site A
   m_PlayerSpawnLocation: {fileID: 3941570860446204741}
   m_RenderGroup: {fileID: 2061489168406542508}
-  m_BuoyGroup: {fileID: 6135260542846908289}
   m_Collider: {fileID: 1010058476}
-  m_FoamTransform: {fileID: 8051799911846875415}
-  m_BobRotatePeriod: {x: 7, y: 11, z: 13}
-  m_BobMovePeriod: 5.7
-  m_FoamScalePeriod: 8.3
-  m_BobRotateDistance: {x: 10, y: 7, z: 3}
-  m_BobMoveDistance: 0.1
-  m_FoamScaleDistance: 0.05
 --- !u!58 &1010058476
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -203,6 +195,7 @@ GameObject:
   - component: {fileID: 8051799911846875415}
   - component: {fileID: 8822801491993723796}
   - component: {fileID: 3803166016382967793}
+  - component: {fileID: 2737661838731774708}
   m_Layer: 0
   m_Name: Foam
   m_TagString: Untagged
@@ -292,6 +285,147 @@ MonoBehaviour:
   m_Animation: {fileID: 11400000, guid: 941d65816b33eb343b4a75cddbadbefb, type: 2}
   m_TimeScale: 1
   m_SyncPivot: 0
+--- !u!114 &2737661838731774708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717216007727557037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 8051799911846875415}
+  TransformSpace: 1
+  AnimationScale: 1
+  PositionAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  ScaleAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 1
+      Method: 0
+      Delay: 1
+      DelayRandom:
+        m_Value: 64
+      Duration: 8.7
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0.05, y: 0.05, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  RotationAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 17
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 6
 --- !u!1 &4744495195496904923
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +516,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6135260542846908289}
+  - component: {fileID: 1618575709809959008}
   m_Layer: 0
   m_Name: BuoyGroup
   m_TagString: Untagged
@@ -405,6 +540,147 @@ Transform:
   m_Father: {fileID: 1272653230675361850}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1618575709809959008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4818198240999045079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 6135260542846908289}
+  TransformSpace: 1
+  AnimationScale: 1
+  PositionAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 5.7
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0.1
+  ScaleAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  RotationAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 7
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 10
+    WaveY:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 11
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 7
+    WaveZ:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 13
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 7
 --- !u!1 &4966182735729243627
 GameObject:
   m_ObjectHideFlags: 0

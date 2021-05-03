@@ -110,7 +110,7 @@ namespace Aqua
         {
             InvItemDisplay item = m_Rewards[inIndex];
             item.gameObject.SetActive(true);
-            item.SetupItem(inId, inAmount);
+            item.Populate(inId, inAmount);
         }
     }
 }

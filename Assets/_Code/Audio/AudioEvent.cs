@@ -10,7 +10,7 @@ namespace AquaAudio
     {
         #region Inspector
 
-        [SerializeField] private AudioBusId m_Bus = AudioBusId.Master;
+        [SerializeField] private AudioBusId m_Bus = AudioBusId.SFX;
         [SerializeField, Required] private AudioClip[] m_Clips = null;
 
         [Header("Playback Settings")]

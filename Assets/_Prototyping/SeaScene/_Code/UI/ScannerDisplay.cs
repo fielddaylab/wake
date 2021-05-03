@@ -12,7 +12,7 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class ScannerDisplay : BasePanel
+    public class ScannerDisplay : SharedPanel
     {
         #region Inspector
 

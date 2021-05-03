@@ -1,18 +1,3 @@
-// Portable - [Bestiary, Journal, Status] 
-// Bestiary
-// Journal
-// Status - show current resources(coins, gears), current job
-
-// task - create status
-// Assets.Code.UI.Portable
-// Look at BestiaryApp
-// making a StatusApp
-// onShow, onHide - BestiaryApp
-// Services.Data.CurrentJob seperate state (no job selected)
-
-// InventoryData - coins, gears
-// Active - 1, InProgress - 3
-
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -22,89 +7,72 @@ using BeauUtil;
 using TMPro;
 using BeauPools;
 using System;
+using Aqua.Profile;
 
 namespace Aqua.Portable
 {
     public class StatusApp : PortableMenuApp
     {
+        #region Types
+
+        private enum PageId
+        {
+            Job,
+            Item,
+            Tech
+        }
+
+        #endregion // Types
 
         #region Inspector
 
-        [Header("Types")]
+        [Header("Tabs")]
 
-        [SerializeField, Required] private ToggleGroup m_Group = null;
         [SerializeField, Required] private Toggle m_JobToggle = null;
-        [SerializeField, Required] private Toggle m_ResourceToggle = null;
-
-        [Header("Default")]
-
-        [SerializeField, Required] private TextMeshProUGUI Title = null;
-        [SerializeField, Required] private TextMeshProUGUI Background = null;
-        [SerializeField, Required] private TextMeshProUGUI Type = null;
-        [SerializeField, Required] private Transform Default = null;
+        [SerializeField, Required] private Toggle m_ItemToggle = null;
+        [SerializeField, Required] private Toggle m_TechToggle = null;
 
         [Header("Job")]
 
-        [SerializeField, Required] private Transform JobView = null;
+        [SerializeField, Required] private Transform m_JobTab = null;
         [SerializeField, Required] private JobInfoDisplay m_JobDisplay = null;
+        [SerializeField, Required] private PortableJobTaskList m_JobTaskList = null;
+        [SerializeField, Required] private Transform m_NoJobDisplay = null;
 
-        [Header("Resource")]
+        [Header("Item")]
 
-        [SerializeField, Required] private Transform InventoryView = null;
+        [SerializeField, Required] private Transform m_ItemTab = null;
+        [SerializeField, Required] private InvItemDisplay m_CoinDisplay = null;
+        [SerializeField, Required] private InvItemDisplay m_GearDisplay = null;
 
-        [SerializeField, Required] private Transform m_ResourceGroup = null;
+        [Header("Tech")]
+
+        [SerializeField, Required] private Transform m_TechTab = null;
 
         #endregion
 
-        [NonSerialized] private PortableMenu m_ParentMenu = null;
-
-        [NonSerialized] private PlayerJob currentJob = null;
-
-        [NonSerialized] private List<Transform> itemDisplays = new List<Transform>();
+        [NonSerialized] private PageId m_CurrentPage;
 
         protected override void Awake()
         {
             base.Awake();
 
-            m_JobToggle.onValueChanged.AddListener(OnJobToggled);
-            m_ResourceToggle.onValueChanged.AddListener(OnResourceToggled);
-
-            m_ParentMenu = GetComponentInParent<PortableMenu>();
+            m_JobToggle.onValueChanged.AddListener(OnJobToggle);
+            m_ItemToggle.onValueChanged.AddListener(OnItemToggle);
+            m_TechToggle.onValueChanged.AddListener(OnTechToggle);
         }
 
-        #region Callbacks
-
-        private void OnJobToggled(bool inbOn)
-        {
-            if (!IsShowing()) return;
-
-            if (inbOn)
-            {
-                LoadCurrentJob();
-            }
-        }
-
-        private void OnResourceToggled(bool inbOn)
-        {
-            if (!IsShowing()) return;
-
-            if (inbOn)
-            {
-                LoadResource();
-            }
-        }
+        #region Panel
 
         protected override void OnShow(bool inbInstant)
         {
             base.OnShow(inbInstant);
 
-            m_JobToggle.SetIsOnWithoutNotify(true);
-            m_ResourceToggle.SetIsOnWithoutNotify(false);
-            LoadCurrentJob();
-
             m_JobToggle.interactable = true;
-            m_ResourceToggle.interactable = true;
+            m_ItemToggle.interactable = true;
+            m_TechToggle.interactable = true;
 
+            LoadPage(PageId.Job, true);
         }
 
         protected override void OnHide(bool inbInstant)
@@ -112,100 +80,113 @@ namespace Aqua.Portable
             base.OnHide(inbInstant);
         }
 
-        private void LoadCurrentJob()
+        #endregion // Panel
+
+        #region Callbacks
+
+        private void OnJobToggle(bool inbOn)
         {
-            InventoryView.gameObject.SetActive(false);
+            if (!inbOn || !IsShowing())
+                return;
 
-            PlayerJob job = null;
-            if (currentJob == null || !currentJob.IsInProgress())
-            {
-                job = Services.Data.Profile.Jobs.CurrentJob;
-
-                if (job == null)
-                {
-                    Debug.Log("No current jobs found.");
-
-                    JobView.gameObject.SetActive(false);
-                    SetupDefault("job", true);
-
-                }
-                else
-                {
-                    SetupJobStatus(job);
-                    JobView.gameObject.SetActive(true);
-                    SetupDefault("job", false);
-                }
-
-            }
+            LoadPage(PageId.Job, false);
         }
 
-        private void SetupDefault(string toggleType, bool Value)
+        private void OnItemToggle(bool inbOn)
         {
-            if (toggleType.Equals("job"))
-            {
-                Title.SetText("Current Job");
-                Background.SetText("Job Portal");
-                Type.SetText("jobs");
-            }
-            else
-            {
-                Title.SetText("Inventory");
-                Background.SetText("Inventory");
-                Type.SetText("inventory items");
-            }
+            if (!inbOn || !IsShowing())
+                return;
+
+            LoadPage(PageId.Item, false);
+        }
+
+        private void OnTechToggle(bool inbOn)
+        {
+            if (!inbOn || !IsShowing())
+                return;
+
+            LoadPage(PageId.Tech, false);
+        }
+
+        #endregion // Callbacks
+
+        #region Page Display
+
+        private void LoadPage(PageId inPage, bool inbForce)
+        {
+            if (!inbForce && m_CurrentPage == inPage)
+                return;
             
-            Default.gameObject.SetActive(Value);
+            m_CurrentPage = inPage;
 
-            // foreach (var toggle in m_Group.ActiveToggles())
-            // {
-            //     if (toggle.Equals(m_JobToggle))
-            //     {
+            m_JobToggle.SetIsOnWithoutNotify(inPage == PageId.Job);
+            m_ItemToggle.SetIsOnWithoutNotify(inPage == PageId.Item);
+            m_TechToggle.SetIsOnWithoutNotify(inPage == PageId.Tech);
 
-            //     }
-            // }
-
-        }
-
-        private void SetupJobStatus(PlayerJob job)
-        {
-            m_JobDisplay.Populate(job.Job);
-        }
-
-        private void LoadResource()
-        {
-            JobView.gameObject.SetActive(false);
-
-            int itemCount = Services.Assets.Inventory.Objects.Count;
-
-            if (itemCount == 0)
+            switch(inPage)
             {
-                SetupDefault("inventory", true);
+                case PageId.Job:
+                    {
+                        LoadJobPage();
+                        break;
+                    }
+
+                case PageId.Item:
+                    {
+                        LoadItemPage();
+                        break;
+                    }
+                
+                case PageId.Tech:
+                    {
+                        LoadTechPage();
+                        break;
+                    }
+            }
+        }
+
+        private void LoadJobPage()
+        {
+            m_JobTab.gameObject.SetActive(true);
+            m_ItemTab.gameObject.SetActive(false);
+            m_TechTab.gameObject.SetActive(false);
+
+            JobsData jobsData = Services.Data.Profile.Jobs;
+            PlayerJob currentJob = jobsData.CurrentJob;
+            if (currentJob == null)
+            {
+                m_JobDisplay.gameObject.SetActive(false);
+                m_NoJobDisplay.gameObject.SetActive(true);
             }
             else
             {
-                InventoryView.gameObject.SetActive(true);
-
-                m_ResourceGroup.gameObject.GetImmediateComponentsInChildren<Transform>(false, true, itemDisplays);
-
-                if (itemDisplays.Count < itemCount)
-                {
-                    throw new IndexOutOfRangeException("number of InvItemDisplays is less than items in DB.");
-                }
-
-                int i = 0;
-                foreach (PlayerInv playItem in Services.Data.Profile.Inventory.Items())
-                {
-                    itemDisplays[i].GetComponent<InvItemDisplay>().SetupItem(playItem);
-                    itemDisplays[i++].gameObject.SetActive(true);
-                }
-
-                SetupDefault("", false);
+                m_NoJobDisplay.gameObject.SetActive(false);
+                m_JobDisplay.gameObject.SetActive(true);
+                m_JobDisplay.Populate(currentJob.Job, currentJob.Status());
+                m_JobTaskList.LoadTasks(currentJob.Job, jobsData);
             }
-
-
         }
 
-    }
+        private void LoadItemPage()
+        {
+            m_JobTab.gameObject.SetActive(false);
+            m_ItemTab.gameObject.SetActive(true);
+            m_TechTab.gameObject.SetActive(false);
 
-    #endregion
+            InventoryData invData = Services.Data.Profile.Inventory;
+            m_CoinDisplay.Populate(invData.GetItem(GameConsts.CashId));
+            m_GearDisplay.Populate(invData.GetItem(GameConsts.GearsId));
+        }
+
+        private void LoadTechPage()
+        {
+            m_JobTab.gameObject.SetActive(false);
+            m_ItemTab.gameObject.SetActive(false);
+            m_TechTab.gameObject.SetActive(true);
+            
+            // TODO: Display player's tech upgrades
+        }
+
+        #endregion // Page Display
+    }
 }

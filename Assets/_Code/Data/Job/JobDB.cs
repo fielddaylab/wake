@@ -17,10 +17,16 @@ namespace Aqua
         [SerializeField] private ColorPalette4 m_ActiveInlinePalette = new ColorPalette4(Color.white, ColorBank.Navy);
         [SerializeField] private ColorPalette4 m_CompletedInlinePalette = new ColorPalette4(ColorBank.LightGray, ColorBank.SlateBlue);
 
+        [SerializeField] private ColorPalette4 m_ActivePortablePalette = new ColorPalette4(Color.white, ColorBank.Navy);
+        [SerializeField] private ColorPalette4 m_CompletedPortablePalette = new ColorPalette4(ColorBank.LightGray, ColorBank.SlateBlue);
+
         #endregion // Inspector
 
         public ColorPalette4 ActiveInlinePalette() { return m_ActiveInlinePalette; }
         public ColorPalette4 CompletedInlinePalette() { return m_CompletedInlinePalette; }
+
+        public ColorPalette4 ActivePortablePalette() { return m_ActivePortablePalette; }
+        public ColorPalette4 CompletedPortablePalette() { return m_CompletedPortablePalette; }
 
         private HashSet<StringHash32> m_HiddenJobs;
 
