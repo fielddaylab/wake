@@ -11,6 +11,8 @@ namespace Aqua
 
         private readonly HashSet<IPauseable> m_PausedServices = new HashSet<IPauseable>();
 
+        public bool IsPaused() { return m_PauseCount > 0; }
+
         public void Pause()
         {
             if (++m_PauseCount == 1)

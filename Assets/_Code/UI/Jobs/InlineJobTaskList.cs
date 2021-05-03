@@ -13,8 +13,6 @@ namespace Aqua
     public class InlineJobTaskList : SharedPanel
     {
         #region Types
-
-        [Serializable] private class TaskPool : SerializablePool<JobTaskDisplay> { }
         
         private struct TaskOperation
         {
@@ -42,7 +40,7 @@ namespace Aqua
 
         [Header("Task List")]
 
-        [SerializeField] private TaskPool m_TaskDisplays = null;
+        [SerializeField] private JobTaskDisplay.Pool m_TaskDisplays = null;
         [SerializeField] private float m_Spacing = 8;
         
         [Header("Animations")]
@@ -375,8 +373,6 @@ namespace Aqua
                     }
                 }
 
-                m_LastAnimatingJob = null;
-
                 float duration = m_LingerDuration;
                 while(duration > 0 && m_OperationQueue.Count == 0)
                 {
@@ -389,6 +385,7 @@ namespace Aqua
             }
 
             Hide();
+            m_LastAnimatingJob = null;
         }
 
         #endregion // Tasks

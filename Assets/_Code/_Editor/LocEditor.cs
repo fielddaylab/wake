@@ -47,10 +47,10 @@ namespace Aqua.Editor
             public string Name;
 
             public LocPackage Asset;
-            public uint LastLine;
+            [HideInInspector] public uint LastLine;
 
             public List<TextRecord> Records = new List<TextRecord>();
-            [BlockMeta("basePath")] public string BasePath = string.Empty;
+            [HideInInspector] [BlockMeta("basePath")] public string BasePath = string.Empty;
 
             public PackageRecord(string inName)
             {
@@ -74,7 +74,7 @@ namespace Aqua.Editor
         private class TextRecord : IDataBlock
         {
             public string Id;
-            [BlockContent] public string Content;
+            [Multiline] [BlockContent] public string Content = null;
 
             [NonSerialized] public PackageRecord Parent;
 
@@ -226,7 +226,8 @@ namespace Aqua.Editor
                 return;
             
             var instance = GetInstance();
-            instance.ReloadPackages();
+            if (instance.m_PackageRecords.Count == 0)
+                instance.ReloadPackages();
         }
 
         #endregion // Initialization
@@ -248,6 +249,24 @@ namespace Aqua.Editor
                 outText = null;
                 return false;
             }
+        }
+
+        static public int Search(string inSearch, ICollection<string> outResults)
+        {
+            var instance = GetInstance();
+            instance.EnsureFullInitialize();
+
+            int count = 0;
+            foreach(var record in instance.m_TextMap.Values)
+            {
+                if (record.Id.Contains(inSearch))
+                {
+                    outResults.Add(record.Id);
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         static public void AttemptOpenFile(string inKey)
@@ -291,6 +310,9 @@ namespace Aqua.Editor
                 
                 foreach(var filePath in assetNames)
                 {
+                    if (filePath.EndsWith("LocEditor.cs"))
+                        return true;
+                    
                     if (filePath.EndsWith(".aqloc"))
                     {
                         StringSlice truncated = filePath.Substring(0, filePath.Length - 6);

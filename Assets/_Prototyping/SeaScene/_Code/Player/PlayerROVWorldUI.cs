@@ -30,7 +30,8 @@ namespace ProtoAqua.Observation
 
         private void OnDisable()
         {
-            HideCursor();
+            if (Services.UI)
+                HideCursor();
         }
 
         public void ShowMoveArrow(Vector2 inOffset, float inPower)

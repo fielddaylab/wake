@@ -60,7 +60,7 @@ namespace ProtoAqua.Observation
                 return;
 
             CancelScan();
-            ObservationServices.SceneUI.Scanner().Hide();
+            Services.UI.FindPanel<ScannerDisplay>().Hide();
             m_ScannerOn = false;
             Services.Events.Dispatch(ObservationEvents.ScannerOff);
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
@@ -101,7 +101,7 @@ namespace ProtoAqua.Observation
                     }
                     if (!bFound)
                     {
-                        ObservationServices.SceneUI.Scanner().Hide();
+                        Services.UI.FindPanel<ScannerDisplay>().Hide();
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace ProtoAqua.Observation
                     m_TargetScannable.CancelScan();
                 }
 
-                ObservationServices.SceneUI.Scanner().CancelIfProgress();
+                Services.UI.FindPanel<ScannerDisplay>().CancelIfProgress();
 
                 m_TargetScannable = null;
                 m_TargetScanId = null;
@@ -158,7 +158,7 @@ namespace ProtoAqua.Observation
         private IEnumerator ScanRoutine()
         {
             var mgr = Services.Tweaks.Get<ScanDataMgr>();
-            var scanUI = ObservationServices.SceneUI.Scanner();
+            var scanUI = Services.UI.FindPanel<ScannerDisplay>();
 
             ScanData data;
             mgr.TryGetScanData(m_TargetScanId, out data);

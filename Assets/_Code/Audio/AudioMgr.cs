@@ -101,6 +101,7 @@ namespace AquaAudio
 
             // multiply loading volume
             properties[(int) AudioBusId.SFX].Volume *= m_FadeMultiplier;
+            properties[(int) AudioBusId.Ambient].Volume *= m_FadeMultiplier;
             properties[(int) AudioBusId.Voice].Volume *= m_FadeMultiplier;
 
             float deltaTime = Time.deltaTime;

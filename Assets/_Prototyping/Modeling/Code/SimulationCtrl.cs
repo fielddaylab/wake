@@ -134,6 +134,8 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.SetBuffer(m_Buffer);
             m_SimulationUI.Refresh(m_State, SimulationBuffer.UpdateFlags.ALL);
             m_SimulationUI.DisplayInitial();
+
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_Started);
         }
 
         private void OnSimulationAdvanceClicked()

@@ -288,6 +288,7 @@ namespace Aqua
             SceneHelper.OnSceneUnload += CleanupFromScene;
 
             BindCamera(Camera.main);
+            transform.FlattenHierarchy();
         }
 
         #endregion // IService

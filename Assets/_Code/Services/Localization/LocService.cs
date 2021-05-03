@@ -37,6 +37,8 @@ namespace Aqua
                 LoadIndependent(true),
                 LoadLanguage(true)
             );
+
+            DispatchTextRefresh();
         }
 
         private IEnumerator LoadIndependent(bool inbForce)
@@ -189,9 +191,29 @@ namespace Aqua
 
         #endregion // Localization
 
+        #region Texts
+
+        public void RegisterText(LocText inText)
+        {
+            m_ActiveTexts.Add(inText);
+        }
+
+        public void DeregisterText(LocText inText)
+        {
+            m_ActiveTexts.FastRemove(inText);
+        }
+
+        private void DispatchTextRefresh()
+        {
+            for(int i = 0, length = m_ActiveTexts.Count; i < length; i++)
+                m_ActiveTexts[i].OnLocalizationRefresh();
+        }
+
+        #endregion // Texts
+
         #region IService
 
-        bool ILoadable.IsLoading()
+        public bool IsLoading()
         {
             return m_LoadRoutine;
         }

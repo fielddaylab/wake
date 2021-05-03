@@ -1,10 +1,5 @@
 using BeauUtil;
 using UnityEngine;
-using System.Collections;
-using BeauUtil.Debugger;
-using Leaf;
-using System;
-using BeauUtil.Variants;
 using Leaf.Runtime;
 using UnityEngine.EventSystems;
 

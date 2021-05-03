@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
+using System;
 
 namespace Aqua.Portable
 {
@@ -15,11 +16,20 @@ namespace Aqua.Portable
 
         #endregion // Inspector
 
+        [NonSerialized] protected PortableMenu m_ParentMenu;
+
         public StringHash32 Id() { return m_Id; }
 
         public virtual bool TryHandle(IPortableRequest inRequest)
         {
             return false;
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            m_ParentMenu = GetComponentInParent<PortableMenu>();
         }
 
         protected override void OnShow(bool inbInstant)

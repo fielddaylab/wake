@@ -15,17 +15,17 @@ namespace Aqua
         [NonSerialized] private InvItem m_Item = null;
         [NonSerialized] private int m_Value = 0;
 
-        public void SetupItem(PlayerInv playerItem)
+        public void Populate(PlayerInv playerItem)
         {
-            SetupItem(playerItem.Item, playerItem.Value());
+            Populate(playerItem.Item, playerItem.Value());
         }
 
-        public void SetupItem(StringHash32 inItemId, int inValue)
+        public void Populate(StringHash32 inItemId, int inValue)
         {
-            SetupItem(Services.Assets.Inventory.Get(inItemId), inValue);
+            Populate(Services.Assets.Inventory.Get(inItemId), inValue);
         }
 
-        public void SetupItem(InvItem inItem, int inValue)
+        public void Populate(InvItem inItem, int inValue)
         {
             m_Item = inItem;
             m_Value = inValue;

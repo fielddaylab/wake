@@ -12,7 +12,6 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
 
         [NonSerialized] private bool m_ItemListDirty = true;
-        [NonSerialized] public bool HasFlags = false;
 
         #region Items
 
@@ -57,16 +56,15 @@ namespace Aqua.Profile
             return item != null && item.TryAdjust(inAmount);
         }
 
-        public bool GiveItem(StringHash32 inId, bool hasArtifact=false)
-        {
-            HasFlags = hasArtifact;
-            return AdjustItem(inId, 1);
-        }
-
         public void SetItem(StringHash32 inId, int inAmount)
         {
             var item = GetInv(inId, inAmount > 0);
             item?.Set(inAmount);
+        }
+
+        public PlayerInv GetItem(StringHash32 inId)
+        {
+            return GetInv(inId, true);
         }
 
         private PlayerInv GetInv(StringHash32 inId, bool inbCreate)
