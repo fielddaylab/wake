@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Portable;
 using BeauPools;
@@ -10,24 +11,30 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation
 {
-
     public class ChatManager : MonoBehaviour
     {
-        static public readonly StringHash32 Event_ArgumentBubbleSelection = "ArgumentationChatBubbleSelection";
-        static public readonly StringHash32 Event_OpenBestiaryRequest = "OpenBestiaryWithFacts";
+        static public readonly StringHash32 Event_SelectClaim = "argue:select-claim";
+        static public readonly StringHash32 Event_OpenFactSelect = "argue:open-fact-select";
 
         [Serializable]
-        public class NodePool : SerializablePool<ChatBubble> { }
+        public class ChatPool : SerializablePool<ArgueChatLine> { }
 
-        [Header("Chat Manager Dependencies")]
+        #region Inspector
+
+        [Header("Data")]
         [SerializeField] private Graph m_Graph = null;
-        [SerializeField] private LinkManager m_LinkManager = null;
-        [SerializeField] private Transform m_ChatGrid = null;
+        
+        [Header("Chat")]
+        [SerializeField] private LocText m_CharacterName = null;
         [SerializeField] private ScrollRect m_ScrollRect = null;
-        [SerializeField] private InputRaycasterLayer m_InputRaycasterLayer = null;
-        [SerializeField] private NodePool m_NodePool = null;
+        [SerializeField] private LayoutGroup m_ChatLayout = null;
+        [SerializeField] private ChatPool m_NodePool = null;
 
-        [Header("Chat Manager Settings")]
+        [Header("Input")]
+        [SerializeField] private LinkManager m_LinkManager = null;
+        [SerializeField] private InputRaycasterLayer m_InputRaycasterLayer = null;
+
+        [Header("Animation")]
         [SerializeField] private float m_ScrollTime = 0.25f;
         [SerializeField] private Color m_InvalidColor = Color.red;
         [SerializeField] private Color m_EndColor = Color.green;
@@ -36,21 +43,37 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private Transform m_Group = null;
         [SerializeField] private Transform m_NotAvailableGroup = null;
 
-        private Routine invalidResponseRoutine;
+        #endregion // Inspector
+
+        private Routine m_ChatRoutine;
+        [NonSerialized] private ScriptActorDef m_CharacterDef;
+        [NonSerialized] private ScriptActorDef m_PlayerDef;
+        [NonSerialized] private List<Link> m_Claims = new List<Link>();
 
         private void Start()
         {
             m_NodePool.Initialize();
 
-            Services.Events.Register<ChatBubble>(Event_ArgumentBubbleSelection, OnDrop, this);
-            Services.Events.Register<BestiaryDescCategory>(Event_OpenBestiaryRequest, OpenBestiary, this);
+            Services.Events.Register<StringHash32>(Event_SelectClaim, OnOptionSelected, this);
+            Services.Events.Register<BestiaryDescCategory>(Event_OpenFactSelect, OnOpenBestiary, this);
 
-            m_Graph.OnGraphLoaded += Init;
+            m_Graph.OnGraphLoaded += OnGraphLoaded;
             m_Graph.OnGraphNotAvailable += NotAvailable;
         }
 
-        private void Init()
+        private void OnGraphLoaded()
         {
+            foreach(var link in m_Graph.LinkDictionary.Values)
+            {
+                if (link.Tag == "claim")
+                    m_Claims.Add(link);
+            }
+
+            m_CharacterDef = Services.Assets.Characters.Get(m_Graph.CharacterId);
+            m_PlayerDef = Services.Assets.Characters.Get(GameConsts.Target_Player);
+
+            m_CharacterName.SetText(m_CharacterDef.NameId());
+
             Routine.StartCall(this, OnStartChat);
         }
 
@@ -65,116 +88,119 @@ namespace ProtoAqua.Argumentation
             Services.Events?.DeregisterAll(this);
         }
 
-        private void OnStartChat()
+        #region Callbacks
+
+        private void OnOptionSelected(StringHash32 inOptionId)
         {
-            // Create the root node
-            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
-            newNode.InitializeNodeData(m_Graph.RootNode.Id, m_Graph.RootNode.DisplayText);
-            m_LinkManager.HandleNode(m_Graph.RootNode);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+            Link link = m_Graph.FindLink(inOptionId);
+            m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
         }
 
-        // Activates when an item is dropped (called from DropSlot.cs)
-        private void OnDrop(ChatBubble response)
+        private void OnFactSelected(PlayerFactParams inFact)
         {
-            // Make sure the object is draggable (This should never occur that its not)
-
-            StringHash32 linkId = response.id;
-            string linkTag = response.linkTag;
-
-            if (linkTag == "claim")
+            Link link = m_Graph.FindLink(inFact.FactId);
+            if (link == null)
             {
-                response = m_LinkManager.CopyLink(m_Graph.FindLink(linkId));
+                link = new Link(inFact);
             }
 
-            // Place response in the chat grid and align it to the right
-            response.transform.SetParent(m_ChatGrid);
-            response.SetLongText();
-            response.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
-                .childAlignment = TextAnchor.UpperRight;
-
-
-            Routine.Start(this, ScrollRoutine(linkId, response));
-
-
+            m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
         }
 
-        private void OnSelect(ChatBubble selectedFact, StringHash32 linkId) {
-            
-            selectedFact.transform.SetParent(m_ChatGrid);
-            selectedFact.transform.GetChild(0).gameObject.GetComponent<VerticalLayoutGroup>()
-                .childAlignment = TextAnchor.UpperRight;
-            selectedFact.gameObject.SetActive(true);
-            Routine.Start(this, ScrollRoutine(linkId, selectedFact));
-        }
-
-        private void OpenBestiary(BestiaryDescCategory inCategory) {
+        private void OnOpenBestiary(BestiaryDescCategory inCategory)
+        {
             var future = BestiaryApp.RequestFact(inCategory);
-            future.OnComplete( (s) => {
-                Debug.Log("Selected: " + s.Fact.name);
-                ChatBubble newLink = m_LinkManager.ClickBestiaryLink(s);
-                OnSelect(newLink, s.Fact.Id());
-                //m_FactText.SetText("Selected: " + s.Fact.GenerateSentence(s));
-            }).OnFail(() => {
-                //m_FactText.SetText("Selected: Nothing");
-            });
+            future.OnComplete(OnFactSelected);
         }
 
-        // Add functionality to respond with more nodes, etc. This is where the NPC "talks back"
-        private void RespondWithNextNode(StringHash32 linkId, ChatBubble response)
+        #endregion // Callbacks
+
+        #region Display
+
+        private IEnumerator DisplayLink(Link inLink)
         {
-            Node nextNode = m_Graph.NextNode(linkId);
+            m_InputRaycasterLayer.Override = false;
+            m_LinkManager.Hide();
 
-            // Create the node bubble, and set its properties
-            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
-            newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
-            m_LinkManager.HandleNode(nextNode);
+            ArgueChatLine chat = m_NodePool.Alloc();
+            chat.Populate(inLink.DisplayText, m_PlayerDef);
+            m_ChatLayout.ForceRebuild();
+            yield return ScrollDown();
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+            Node node = m_Graph.NextNode(inLink.Id);
+            yield return DisplayNode(node);
+        }
 
-            // If the end node is reached, end the conversation
-            if (newNode.id.Equals(m_Graph.EndNodeId))
+        private IEnumerator DisplayNode(Node inNode)
+        {
+            m_InputRaycasterLayer.Override = false;
+
+            Node toDisplay = inNode;
+            Node currentNode = inNode;
+            while(toDisplay != null)
             {
-                newNode.ChangeColor(m_EndColor);
-                EndConversationPopup();
+                currentNode = toDisplay;
+                m_Graph.SetCurrentNode(currentNode);
+
+                ArgueChatLine chat = m_NodePool.Alloc();
+                chat.Populate(toDisplay.DisplayText, m_CharacterDef);
+                
+                if (toDisplay.IsInvalid)
+                {
+                    chat.OverrideColors(null, m_InvalidColor);
+                    Routine.Start(this, ShakeNode(chat));
+                }
+                else if (toDisplay.Id == m_Graph.EndNodeId)
+                {
+                    chat.OverrideColors(null, m_EndColor);
+                }
+                
+                m_ChatLayout.ForceRebuild();
+                yield return ScrollDown();
+
+                toDisplay = m_Graph.FindNode(toDisplay.NextNodeId);
+                if (toDisplay != null)
+                    yield return m_ScrollTime * 2;
             }
 
-            // If the response is invalid, respond with an invalid node
-            if (nextNode.IsInvalid)
+            if (currentNode.Id == m_Graph.EndNodeId)
             {
-                newNode.ChangeColor(m_InvalidColor);
-                // Add response back into list for reuse
-                // m_LinkManager.ResetLink(response, linkId, false); (Not needed for bestiary)
-                invalidResponseRoutine.Replace(this, InvalidResponseRoutine(response));
+                EndConversationPopup();
             }
             else
             {
-                // If the response is valid, remove it from the player's available responses
-                m_LinkManager.RemoveResponse(response);
-            }
-
-            if (nextNode.NextNodeId != null)
-            {
-                Routine.Start(this, ScrollAnotherNode(nextNode.NextNodeId));
+                m_InputRaycasterLayer.Override = null;
+                if (currentNode.ShowClaims)
+                {
+                    m_LinkManager.DisplayClaims(m_Claims);
+                }
+                else
+                {
+                    m_LinkManager.DisplayBestiary();
+                }
             }
         }
 
-        private void RespondWithAnotherNode(StringHash32 nextNodeId)
+        private IEnumerator ScrollDown()
         {
-            Node nextNode = m_Graph.FindNode(nextNodeId);
-            // Create the node bubble, and set its properties
-            ChatBubble newNode = m_NodePool.Alloc(m_ChatGrid);
-            newNode.InitializeNodeData(nextNode.Id, nextNode.DisplayText);
-            m_LinkManager.HandleNode(nextNode);
-            m_Graph.SetCurrentNode(nextNode);
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
+            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
         }
 
-        // Display a popup indicating that the end of the conversation has been reached
+        private IEnumerator ShakeNode(ArgueChatLine inLine)
+        {
+            yield return inLine.Shake();
+        }
+
+        #endregion // Display
+
+        private void OnStartChat()
+        {
+            m_ChatRoutine.Replace(this, DisplayNode(m_Graph.RootNode)).TryManuallyUpdate(0);
+        }
+
         private void EndConversationPopup()
         {
-            Routine.Start(this, CompleteConversation());
+            m_ChatRoutine.Replace(this, CompleteConversation()).TryManuallyUpdate(0);
         }
 
         private IEnumerator CompleteConversation()
@@ -197,74 +223,5 @@ namespace ProtoAqua.Argumentation
                     });
             }
         }
-
-        // Shake response back and forth in the chat, indicating that the response is invalid
-        private IEnumerator InvalidResponseRoutine(ChatBubble response)
-        {
-            yield return response.transform.MoveTo(transform.position +
-                            new Vector3(0.1f, 0, 0), 0.05f, Axis.X).Ease(Curve.CubeOut);
-            yield return response.transform.MoveTo(transform.position +
-                            new Vector3(-0.1f, 0, 0), 0.05f, Axis.X).Ease(Curve.CubeOut);
-            yield return response.transform.MoveTo(transform.position,
-                            0.05f, Axis.X).Ease(Curve.CubeOut);
-        }
-
-        // Handles scrolling when the response is placed in the chat, and once again when the
-        // NPC responds with the next node. Raycasting is disabled during the routine so that
-        // the player can't drag in additional responses.
-        private IEnumerator ScrollRoutine(StringHash32 linkId, ChatBubble response)
-        {
-            m_InputRaycasterLayer.Override = false;
-
-            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-
-            yield return m_ScrollTime;
-            RespondWithNextNode(linkId, response);
-            UpdateButtonList(linkId);
-
-
-
-            yield return m_ScrollRect.NormalizedPosTo(0, .5f, Axis.Y).Ease(Curve.CubeOut);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-
-            m_InputRaycasterLayer.Override = null;
-        }
-
-        //Handles scrolling when another node follows an NPC node
-        //This does not update the button list and simply creates anothern ode to coninue the conversation
-        private IEnumerator ScrollAnotherNode(StringHash32 nextNodeId)
-        {
-            m_InputRaycasterLayer.Override = false;
-
-            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-
-            yield return m_ScrollTime * 2;
-            RespondWithAnotherNode(nextNodeId);
-
-
-            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_ScrollRect.transform);
-
-            m_InputRaycasterLayer.Override = null;
-        }
-
-
-        private void UpdateButtonList(StringHash32 linkId)
-        {
-            Link currentLink = m_Graph.FindLink(linkId);
-
-            //@TODO FIX THIS
-            if(currentLink == null) {
-                return;
-            }
-            if (currentLink.Tag == "claim")
-            {
-                m_LinkManager.SelectClaim(linkId);
-            }
-        }
-
-
     }
 }

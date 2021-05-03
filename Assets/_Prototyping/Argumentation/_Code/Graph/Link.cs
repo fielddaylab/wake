@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Aqua;
 using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine.Scripting;
@@ -8,10 +9,6 @@ namespace ProtoAqua.Argumentation
 {
     public class Link : GraphData
     {
-        private static uint count = 0;
-        
-        public uint Index { get; set; }
-
         private Dictionary<StringHash32, StringHash32> nextNodeIds = new Dictionary<StringHash32, StringHash32>();
         private List<StringHash32> requiredVisited = new List<StringHash32>();
         private List<StringHash32> requiredUsed = new List<StringHash32>();
@@ -25,7 +22,6 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Ids
-        [BlockMeta("factId")] private StringHash32 m_factId = null;
         [BlockMeta("invalidNodeId")] private StringHash32 m_InvalidNodeId = null;
         [BlockMeta("conditionsNotMetId")] private StringHash32 m_ConditionsNotMetId = null;
 
@@ -35,10 +31,6 @@ namespace ProtoAqua.Argumentation
         #endregion // Serialized
 
         #region Accessors
-         public StringHash32 factId
-        {
-            get { return m_factId; }
-        }
 
         public string DisplayText
         {
@@ -58,7 +50,6 @@ namespace ProtoAqua.Argumentation
         {
             get { return m_Type; }
         }
-
 
         public StringHash32 InvalidNodeId
         {
@@ -80,10 +71,15 @@ namespace ProtoAqua.Argumentation
             get { return requiredUsed; }
         }
 
-
         #endregion // Accessors
 
         public Link(string inId) : base(inId) { }
+
+        public Link(PlayerFactParams inPlayerFact)
+            : base(inPlayerFact.Fact.name)
+        {
+            m_DisplayText = inPlayerFact.Fact.GenerateSentence(inPlayerFact);
+        }
 
         public void InitializeLink()
         {
@@ -91,9 +87,6 @@ namespace ProtoAqua.Argumentation
             {
                 ParseConditions(m_Conditions);
             }
-
-            Index = ++count;
-           
         }
 
         // Given a node id, return the respsective node id that this link connects it to

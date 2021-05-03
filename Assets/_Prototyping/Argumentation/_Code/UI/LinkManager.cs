@@ -11,157 +11,48 @@ namespace ProtoAqua.Argumentation
     public class LinkManager : MonoBehaviour
     {
         [Serializable]
-        public class LinkPool : SerializablePool<ChatBubble> { }
+        public class OptionPool : SerializablePool<ArgueOptionButton> { }
 
-        [Header("Link Manager Dependencies")]
-        [SerializeField] private Graph m_Graph = null;
-        [SerializeField] private GameObject m_LinkContainer = null;
-        [SerializeField] private LinkPool m_LinkPool = null;
-
-        [Header("Button Dependencies")]
-        [SerializeField] private GameObject m_TagButtons = null;
-        [SerializeField] private Button m_BehaviorsButton = null;
-        [SerializeField] private Button m_EcosystemsButton = null;
-        [SerializeField] private Button m_ModelsButton = null;
-
-        [NonSerialized] private List<ChatBubble> responses = new List<ChatBubble>();
-        private StringHash32 currentClaim = "";
-        private bool claimSelected = false;
+        [SerializeField] private OptionPool m_Pool = null;
+        [SerializeField] private CanvasGroup m_BestiaryGroup = null;
+        [SerializeField] private CanvasGroup m_ClaimGroup = null;
+        [SerializeField] private LayoutGroup m_ClaimLayout = null;
 
         private void Start()
         {
-            m_LinkPool.Initialize();
-
-            // m_BehaviorsButton.onClick.AddListener(() => ToggleTabs("behavior"));
-            // m_EcosystemsButton.onClick.AddListener(() => ToggleTabs("ecosystem"));
-            // m_ModelsButton.onClick.AddListener(() => ToggleTabs("model"));
-
-            m_Graph.OnGraphLoaded += Init;
+            m_Pool.Initialize();
+            
+            m_BestiaryGroup.gameObject.SetActive(false);
+            m_ClaimGroup.gameObject.SetActive(false);
         }
 
-        private void Init()
+        public void DisplayClaims(IEnumerable<Link> inLinks)
         {
-            // Create links for each Link in the dictionary of the graph
-            foreach (KeyValuePair<StringHash32, Link> link in m_Graph.LinkDictionary)
+            m_ClaimGroup.gameObject.SetActive(true);
+            m_BestiaryGroup.gameObject.SetActive(false);
+
+            m_Pool.Reset();
+
+            ArgueOptionButton button;
+            foreach(var link in inLinks)
             {
-                Link currLink = link.Value;
-                if(currLink.Tag == "claim") {
-                    CreateLink(currLink);
-                }
-                
-            }
-        }
-
-        public ChatBubble ClickBestiaryLink(PlayerFactParams s) {
-            ChatBubble newLink = m_LinkPool.Alloc();
-            newLink.gameObject.SetActive(false);
-            Link link = m_Graph.FindLink(s.FactId);
-            if (link != null)
-                newLink.InitializeLinkData(link.DisplayText);
-            else
-                newLink.InitializeLinkData(s.Fact.GenerateSentence());
-            return newLink;
-        }
-
-        // Helper function for removing a response from the responses list
-        public void RemoveResponse(ChatBubble response)
-        {
-            responses.Remove(response);
-        }
-
-        public void ToggleType(string type)
-        {
-            foreach (ChatBubble res in responses)
-            {
-                if (res.typeTag.Equals(type))
-                {
-                    res.gameObject.SetActive(true);
-                }
-                else
-                {
-                    res.gameObject.SetActive(false);
-                }
-            }
-        }
-
-        public ChatBubble CopyLink(Link link)
-        {
-            return CreateLink(link);
-        }
-
-        // Allocate a new link from the pool and initialize its fields based on data from the graph
-        private ChatBubble CreateLink(Link link)
-        {
-            ChatBubble newLink = m_LinkPool.Alloc(m_LinkContainer.transform);
-
-            newLink.SetChatBubble(true);
-            newLink.InitializeLinkDependencies(this, m_Graph);
-
-
-
-            //TODO remove this check, temporary
-            if (link.ShortenedText != null)
-            {
-                newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.ShortenedText);
-            }
-            else
-            {
-                newLink.InitializeLinkData(link.Id, link.Tag, link.Type, link.DisplayText);
+                button = m_Pool.Alloc();
+                button.Populate(link.ShortenedText ?? link.DisplayText, link.Id);
             }
 
-            newLink.transform.SetSiblingIndex((int) link.Index);
-
-            responses.Add(newLink);
-            return newLink;
+            m_ClaimLayout.ForceRebuild();
         }
 
-        // Show responses with a given tag and hide all other responses
-        private void ToggleTabs(string tagToShow)
+        public void DisplayBestiary()
         {
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_LinkContainer.transform);
+            m_ClaimGroup.gameObject.SetActive(false);
+            m_BestiaryGroup.gameObject.SetActive(true);
         }
 
-        public void SelectClaim(StringHash32 linkId)
+        public void Hide()
         {
-            currentClaim = linkId;
-            HideClaims();
+            m_BestiaryGroup.gameObject.SetActive(false);
+            m_ClaimGroup.gameObject.SetActive(false);
         }
-
-        public void HandleNode(Node inNode)
-        {
-            if (inNode.ShowClaims)
-            {
-                ShowClaims();
-            }
-            else
-            {
-                HideClaims();
-            }
-        }
-
-        private void ShowClaims()
-        {
-            m_LinkContainer.SetActive(true);
-            ToggleTabs("claim");
-            ToggleType("claim");
-            HideTabs();
-        }
-
-        private void HideClaims()
-        {
-            ShowTabs();
-            m_LinkContainer.SetActive(false);
-        }
-
-        private void HideTabs()
-        {
-            m_TagButtons.SetActive(false);
-        }
-
-        private void ShowTabs()
-        {
-            m_TagButtons.SetActive(true);
-        }
-
     }
 }

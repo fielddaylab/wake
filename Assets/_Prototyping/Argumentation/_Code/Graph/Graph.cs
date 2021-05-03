@@ -21,11 +21,12 @@ namespace ProtoAqua.Argumentation
         private Dictionary<StringHash32, Node> nodeDictionary = new Dictionary<StringHash32, Node>();
         private Dictionary<StringHash32, Link> linkDictionary = new Dictionary<StringHash32, Link>();
 
-        private ConditionsData conditions;
-        private Node rootNode;
-        private Node currentNode;
-        private string endNodeId;
-        private string defaultInvalidNodeId;
+        private ConditionsData m_Conditions;
+        private Node m_RootNode;
+        private Node m_CurrentNode;
+        [NonSerialized] private StringHash32 m_EndNodeId;
+        [NonSerialized] private StringHash32 m_DefaultInvalidNodeId;
+        [NonSerialized] private StringHash32 m_CharacterId;
 
         public event Action OnGraphLoaded;
         public event Action OnGraphNotAvailable;
@@ -39,18 +40,20 @@ namespace ProtoAqua.Argumentation
 
         public Node RootNode
         {
-            get { return rootNode; }
+            get { return m_RootNode; }
         }
 
-        public string EndNodeId
+        public StringHash32 EndNodeId
         {
-            get { return endNodeId; }
+            get { return m_EndNodeId; }
         }
 
         public ConditionsData Conditions
         {
-            get { return conditions; }
+            get { return m_Conditions; }
         }
+
+        public StringHash32 CharacterId { get { return m_CharacterId; } }
 
         #endregion // Accessors
 
@@ -89,44 +92,44 @@ namespace ProtoAqua.Argumentation
         // Then check if conditions for traversing to that next node are met.
         public Node NextNode(StringHash32 id)
         {
-            if (currentNode.CheckResponse(id))
+            if (m_CurrentNode.CheckResponse(id))
             {
-                StringHash32 nextNodeId = currentNode.GetNextNodeId(id);
+                StringHash32 nextNodeId = m_CurrentNode.GetNextNodeId(id);
                 Node nextNode = FindNode(nextNodeId);
 
                 if (nextNode != null)
                 {
-                    if (conditions.CheckConditions(nextNode, id))
+                    if (m_Conditions.CheckConditions(nextNode, id))
                     {
-                        currentNode = nextNode;
-                        return currentNode;
+                        m_CurrentNode = nextNode;
+                        return m_CurrentNode;
                     }
                     else
                     {
-                        return currentNode = FindNode(currentNode.InvalidNodeId);
+                        return m_CurrentNode = FindNode(m_CurrentNode.InvalidNodeId);
                     }
                 }
                 else
                 {
                     // If no nextNodeId, go to default node
                     // TODO: Find better implementation for default node
-                    return FindNode(currentNode.DefaultNodeId);
+                    return FindNode(m_CurrentNode.DefaultNodeId);
                 }
             }
             else
             {
                 // If id isn't valid, display invalid fact node
-                if (currentNode.InvalidNodeId != null)
+                if (m_CurrentNode.InvalidNodeId != null)
                 {
-                    return FindNode(currentNode.InvalidNodeId);
+                    return FindNode(m_CurrentNode.InvalidNodeId);
                 }
 
-                return FindNode(defaultInvalidNodeId);
+                return FindNode(m_DefaultInvalidNodeId);
             }
         }
 
         public void SetCurrentNode(Node node) {
-            currentNode = node;
+            m_CurrentNode = node;
         }
 
         // Helper method for finding a node given its id
@@ -155,10 +158,11 @@ namespace ProtoAqua.Argumentation
         {
             nodeDictionary = new Dictionary<StringHash32, Node>();
             linkDictionary = new Dictionary<StringHash32, Link>();
-            rootNode = null;
-            currentNode = null;
-            endNodeId = null;
-            conditions = null;
+            m_RootNode = null;
+            m_CurrentNode = null;
+            m_EndNodeId = null;
+            m_Conditions = null;
+            m_CharacterId = null;
         }
 
         private void LoadGraph(GraphDataPackage inPackage)
@@ -167,35 +171,36 @@ namespace ProtoAqua.Argumentation
 
             inPackage.Parse(Parsing.Block, new GraphDataPackage.Generator());
 
-            foreach (KeyValuePair<string, Node> kvp in inPackage.Nodes)
+            foreach (KeyValuePair<StringHash32, Node> kvp in inPackage.Nodes)
             {
                 Node node = kvp.Value;
                 node.InitializeNode();
                 nodeDictionary.Add(node.Id, node);
             }
 
-            rootNode = FindNode(inPackage.RootNodeId);
+            m_RootNode = FindNode(inPackage.RootNodeId);
+            m_CharacterId = inPackage.CharacterId;
 
             // Checks if no root node was specified
-            if (rootNode == null)
+            if (m_RootNode == null)
             {
                 throw new System.ArgumentNullException("No root node specified");
             }
 
-            currentNode = rootNode;
-            conditions = new ConditionsData(currentNode.Id);
+            m_CurrentNode = m_RootNode;
+            m_Conditions = new ConditionsData(m_CurrentNode.Id);
 
-            endNodeId = inPackage.EndNodeId;
+            m_EndNodeId = inPackage.EndNodeId;
 
-            if (endNodeId == null)
+            if (m_EndNodeId == null)
             {
                 throw new System.ArgumentNullException("No end node specified");
             }
 
 
-            defaultInvalidNodeId = inPackage.DefaultInvalidNodeId;
+            m_DefaultInvalidNodeId = inPackage.DefaultInvalidNodeId;
 
-            if (defaultInvalidNodeId == null)
+            if (m_DefaultInvalidNodeId == null)
             {
                 throw new System.ArgumentNullException("No default invalid node specified");
             }
@@ -215,7 +220,7 @@ namespace ProtoAqua.Argumentation
         {
             DataService dataService = Services.Data;
 
-            foreach (KeyValuePair<string, Link> kvp in inPackage.Links)
+            foreach (KeyValuePair<StringHash32, Link> kvp in inPackage.Links)
             {
                 Link link = kvp.Value;
                 link.InitializeLink();

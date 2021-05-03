@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using BeauUtil;
 using BeauUtil.Blocks;
 using BeauUtil.Tags;
 
@@ -8,42 +9,26 @@ namespace ProtoAqua.Argumentation
 {
     public class GraphDataPackage : ScriptableDataBlockPackage<GraphData>
     {
-        [NonSerialized] private readonly Dictionary<string, GraphData> m_Data = new Dictionary<string, GraphData>(32, StringComparer.Ordinal);
-        [NonSerialized] private readonly Dictionary<string, Node> m_Nodes = new Dictionary<string, Node>(32, StringComparer.Ordinal);
-        [NonSerialized] private readonly Dictionary<string, Link> m_Links = new Dictionary<string, Link>(32, StringComparer.Ordinal);
+        [NonSerialized] private readonly Dictionary<StringHash32, GraphData> m_Data = new Dictionary<StringHash32, GraphData>(32);
+        [NonSerialized] private readonly Dictionary<StringHash32, Node> m_Nodes = new Dictionary<StringHash32, Node>(32);
+        [NonSerialized] private readonly Dictionary<StringHash32, Link> m_Links = new Dictionary<StringHash32, Link>(32);
 
         // Package Ids
-        [BlockMeta("rootNodeId")] private string m_RootNodeId = null;
-        [BlockMeta("endNodeId")] private string m_EndNodeId = null;
-        [BlockMeta("defaultInvalidNodeId")] private string m_DefaultInvalidNodeId = null;
+        [BlockMeta("rootNodeId")] private StringHash32 m_RootNodeId = null;
+        [BlockMeta("endNodeId")] private StringHash32 m_EndNodeId = null;
+        [BlockMeta("defaultInvalidNodeId")] private StringHash32 m_DefaultInvalidNodeId = null;
         [BlockMeta("linksFile")] private string m_LinksFile = null;
+        [BlockMeta("characterId")] private StringHash32 m_CharacterId = null;
 
         #region Accessors
 
-        public Dictionary<string, Node> Nodes
-        {
-            get { return m_Nodes; }
-        }
+        public Dictionary<StringHash32, Node> Nodes { get { return m_Nodes; } }
+        public Dictionary<StringHash32, Link> Links { get { return m_Links; } }
 
-        public Dictionary<string, Link> Links
-        {
-            get { return m_Links; }
-        }
-
-        public string RootNodeId
-        { 
-            get { return m_RootNodeId; }
-        }
-
-        public string EndNodeId
-        { 
-            get { return m_EndNodeId; }
-        }
-
-        public string DefaultInvalidNodeId
-        {
-            get { return m_DefaultInvalidNodeId; }
-        }
+        public StringHash32 RootNodeId { get { return m_RootNodeId; } }
+        public StringHash32 EndNodeId {  get { return m_EndNodeId; } }
+        public StringHash32 DefaultInvalidNodeId { get { return m_DefaultInvalidNodeId; } }
+        public StringHash32 CharacterId { get { return m_CharacterId; } }
         
         public string LinksFile
         {
