@@ -19,3 +19,82 @@ $set    player:seen.drJules = true
 {@drJules}  Well you seem to make a great team. Want to do some more exploring?
 {@drJules}  I put some other Jobs on the Job board. Go to the Helm, pick something new and we will talk again. 
 {@player}   Ok. I'm on my way. 
+
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station1"
+@once
+@cutscene
+$set    player:seen.kevin = true
+{@kevin} You're gonna want to take your sub over to Dive Site C.
+                    It's marked for you to the east. When you're there, dive.
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-1C"
+@once
+@cutscene
+$set    jobs:kelp-welcome.seen.bottom = true
+{@kelpResearcher}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+
+:: navigation.return
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:kelp-welcome.seen.bottom
+@once
+@cutscene
+{@player}   Alright, I think we got everything?
+{@kevin}   Let me check...
+
+$if has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.entity:SeaOtter // all scans?
+    $set    jobs:kelp-welcome.got.scans = true
+    {@kevin}   Nice work down there. You found everything. Let's go back to the ship. 
+$else
+    {@kevin}   I think you missed something.
+    $if !has.entity:WarmKelpForest
+        {@kevin}   You should make sure to scan the probe for the water data too.
+    $else
+        {@kevin}   Are you sure you didn't miss any creatures down there?
+    $endif
+$endif
+
+:: navigation.return.again
+@trigger    SceneStart
+@when       scene:name == "Station1", jobs:kelp-welcome.seen.bottom, seen:job.kelp-welcome.navigation.return, !jobs:kelp-welcome.got.scans
+@cutscene
+{@player}   How about now?
+{@kevin}   Ummmm...
+
+$if has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.entity:SeaOtter // all scans?
+    $set    jobs:kelp-welcome.got.scans = true
+    {@kevin}   Yep, looks like you scanned everything I was expecting.
+                        Head back to your ship when you're ready.
+$else
+    {@kevin}   No, looks like you're still missing something.
+    $if !has.entity:WarmKelpForest
+        {@kevin}   The probe is the thing that looks like an archaeic, yet alien computer. Scan it just like a normal critter.
+    $else
+        {@kevin}   Are you sure you didn't miss any creatures down there? Plants, Animals, Other? 
+	Not sure what would even count as other, but it sounded right.
+    $endif
+$endif
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Ship", jobs:kelp-welcome.got.scans
+@once
+@cutscene
+{@player}   We're back. Now what?
+{@kevin}   Now that you know some of the most important species in the kelp forest, it's time to learn how they interact.
+{@player}   Ok, how?
+{@kevin}   Let's go into the experiement room.
+
+:: firstExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype", jobs:kelp-welcome.got.scans
+@once
+@cutscene
+{@player}   Alright, I'm in the experimentation room, What's next?
+{@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviours.
+{@player}   Then what?
+{@kevin}   Then we can know for sure how they relate!
