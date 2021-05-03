@@ -1,0 +1,16 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+:: node.intro
+@invalidNodeId  node.invalid.default
+@linkToNode Urchin.Eats.BullKelp, node.end
+It seems you are really getting the hang of this scientist thing! So how do bull kelp fit into the ecosystem?
+
+:: node.invalid.default
+@nextNodeId node.intro
+Hmmm. That doesn't answer my question. Let's try again.
+
+:: node.end
+Ahhh ha! So just like at Site C, Otters eat the Urchins and the Urchins eat the Kelp. The Bull Kelp power the whole forest! Job Well done!

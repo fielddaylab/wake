@@ -1,0 +1,16 @@
+#basePath   job.kelp-welcome
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@drJules} You are off to a great start. 
+{@drJules} Let's see if you can do it again.
+{@drJules} I need you to head out to Site A and see if there is anything different there.
+{@drJules}  When you are done, report back to me at the office.
+{@player} I'm on it!
+:: end
+
+@trigger    JobCompleted
+@cutscene
+{@drJules}  Great work! It seems the bull kelp fall right into the same place in the food web as the Giant Kelp.
+{@player}   That about sums it up.

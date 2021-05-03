@@ -1,0 +1,190 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: kelp-urchin-barren
+  m_EditorClassIdentifier: 
+  m_ScriptName:
+    m_Source: 
+    m_Hash: 0
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.kelp-urchin-barren.name
+    m_Hash: 688585909
+  m_PosterId:
+    m_Source: jobs.kelp-urchin-barren.poster
+    m_Hash: 1026242447
+  m_DescId:
+    m_Source: jobs.kelp-urchin-barren.desc
+    m_Hash: 198913719
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 1
+  m_ModelingDifficulty: 1
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_StationId: Station1
+  m_DiveSiteIds:
+  - RS-1B
+  m_Tasks:
+  - Id:
+      m_Source: gotoSiteB
+      m_Hash: 1699253461
+    LabelId:
+      m_Source: Travel to Site B
+      m_Hash: 4259247523
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1B
+        m_Hash: 2195572834
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: getProbeData
+      m_Hash: 21751579
+    LabelId:
+      m_Source: Collect data from the Site B Research Probe
+      m_Hash: 194114706
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: UrchinBarren
+        m_Hash: 1712208608
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: predictSiteB
+      m_Hash: 984087169
+    LabelId:
+      m_Source: Build a Model to Predict the future for Site B
+      m_Hash: 840833973
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Model.UrchinBarrenPrediction
+        m_Hash: 351135428
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: Report back with your prediction
+      m_Hash: 1346380998
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: NeverGonnaHappen
+        m_Hash: 3202844602
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: gotoSiteB
+      m_Hash: 1699253461
+    Index: 0
+    LabelId:
+      m_Source: Travel to Site B
+      m_Hash: 4259247523
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1B
+        m_Hash: 2195572834
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: getProbeData
+      m_Hash: 21751579
+    Index: 1
+    LabelId:
+      m_Source: Collect data from the Site B Research Probe
+      m_Hash: 194114706
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: UrchinBarren
+        m_Hash: 1712208608
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: predictSiteB
+      m_Hash: 984087169
+    Index: 2
+    LabelId:
+      m_Source: Build a Model to Predict the future for Site B
+      m_Hash: 840833973
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Model.UrchinBarrenPrediction
+        m_Hash: 351135428
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 3
+    LabelId:
+      m_Source: Report back with your prediction
+      m_Hash: 1346380998
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: NeverGonnaHappen
+        m_Hash: 3202844602
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 240
+  m_GearReward: 350
+  m_AdditionalRewards: []
+  m_Icon: {fileID: -2922770040550098064, guid: cc4f86ee3cca1e649bcb76a08e75c622, type: 3}
+  m_Scripting: {fileID: -1942890987711236906, guid: ff8a0f4af772bf24abe08b4331650368,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: 12fc9289eb46ef24bb7c48575ca7415a, type: 3}
+  - {fileID: 11400000, guid: c0bdbedc564cae04683260eb4df66a17, type: 2}

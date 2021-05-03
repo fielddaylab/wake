@@ -6,13 +6,13 @@
 @once
 @boostScore 100
 @cutscene
-$set    player:seen.jules = true
-{@kelpResearcher}   Hi there folks! Welcome to the Kelpdom!
+$set    player:seen.drJules = true
+{@drJules}  Hi there folks! Welcome to the Kelpdom!
                     At least that's what I call the Great Channel Kelp Research Station.
-                    You're... {player-name}, right? I'm Jules.
-{@player}   Hi Jules! We're here to help with {slow}the Kelpdom?{/slow}
+                    You're... {player-name}, right? I'm Dr. Jules.
+{@player}   Hi Jules! We're here to help.
             Where should we report for our first task? 
-{@kelpResearcher}   Oh, super! We can always use the help!
+{@drJules}  Oh, super! We can always use the help!
                     Check the {h}Job Board{/h} on your dash.
                     You'll find everything you need to get started there.
 
@@ -65,18 +65,13 @@ $choose branch
 {@kevin #happy}
     Great! Then let me give you the quick summary.
 
-// story background
-
 {@kevin}
-    {#}You're {player-name}, a...{#confused}{wait 0.2} scientist? I think?
-    {#narrow}(We haven't quite worked that out...)
+    {#}You're {player-name}, a...{#confused}{wait 0.2} scientist for hire. 
     {#}And I'm Kevin, your friend and science partner!
     And together we're exploring the ocean!
     {#narrow}(Or something like that...)
     {#}So let's take on some jobs and see what's out there!
 {hide-dialog}{wait 0.5}
-
-// button help
 
 {@}
 {style center}
@@ -101,15 +96,14 @@ $call hotbar.convoHistory->ResetSorting
 
 $call hotbar.portable->ForceOnTop
 $call FocusHighlight->Focus hotbar.portable
-    Lastly, all your progress is stored over here in your {h}AQ-OS Portable Tablet{/h}.
-    Check in there to see everything you've collected so far!
+    Lastly, everything you learn is stored in your {h}AQ-OS Portable Tablet{/h}.
 $call hotbar.portable->ResetSorting
 $call FocusHighlight->Clear
 
-Have fun!
+Have Fun!
 
 :: tutorial.skip
 @cutscene
 {@kevin #happy}
-    Oh, awesome! Then I'll let you get back to it!
-    {#}And if you need help, feel free to ask me.
+    Great! 
+    {#} if you need help, feel free to ask.

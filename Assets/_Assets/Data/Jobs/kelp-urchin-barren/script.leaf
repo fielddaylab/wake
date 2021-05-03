@@ -1,0 +1,46 @@
+#basePath   job.kelp-urchin-barren
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@drJules} This next Job is going to be a little different.
+{@player} How is that?
+{@drJules} First, you are going to help us study Site B, which is not doing very well.
+{@drJules} Second, with this job you are going to learn how to build a model and perform simulations of what is likely going to happen in the future.
+{@player} Predict the future?!? Sounds cool.
+{@drJules} Agreed. Models and simulations are very powerful tools!
+
+:: end
+@trigger    JobCompleted
+@cutscene
+{@drJules}  Well that's a bit depressing.
+{@player}   Yeah it is. Predicting the future is more fun when the future looks bright.
+{@drJules}  Don't loose hope yet. I have one last job for you.
+
+
+@trigger 	JobTaskCompleted
+@where		taskId = "getProbeData"
+@once
+@cutscene
+{@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
+
+:: ModelingSetup
+@trigger	ModelingStarted
+@once
+@cutscene
+{@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. It's what we call a model of the system.
+{@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
+{@kevin} On the next screen, you will set the populations so they match the past data we have from the urchin barren.
+{@kevin} If the model predicts how the populations changed in the past, it's likely it can help us figure out what's going to happen next!
+
+:: ModelingSynced
+@trigger	ModelingSynced
+@once
+@cutscene
+{@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. Now let's see what it predicts will happen next.
+
+:: ModelingComplete
+@trigger	ModelingComplete
+@once
+@cutscene
+{@kevin} Ok. We have our answer. It's not looking good. Let's go to the office and report back to Dr. Jules
