@@ -17,6 +17,12 @@ namespace ProtoAqua.Modeling
         [SerializeField, Required] private GraphDisplay m_Player = null;
         [SerializeField, Required] private GraphDisplay m_Predict = null;
         [SerializeField, Required] private GraphPlot m_Targets = null;
+
+        [Header("Chart Regions")]
+        [SerializeField, Required] private RectTransform m_SyncRegion = null;
+        [SerializeField, Required] private LocText m_SyncLabel = null;
+        [SerializeField, Required] private RectTransform m_PredictRegion = null;
+        [SerializeField, Required] private LocText m_PredictLabel = null;
         
         #endregion // Inspector
 
@@ -77,6 +83,40 @@ namespace ProtoAqua.Modeling
             m_Predict.RenderLines(fullRect);
             m_Targets.RenderPoints(fullRect);
             m_Axis.Load(axisPair);
+
+            RenderRegion(fullRect, inBuffer);
+        }
+
+        private void RenderRegion(Rect inRect, SimulationBuffer inBuffer)
+        {
+            ModelingScenarioData scenario = inBuffer.Scenario();
+            float divide = scenario.TickCount() * scenario.TickScale() / inRect.xMax;
+
+            if (scenario.TickCount() > 0)
+            {
+                m_SyncRegion.anchorMax = new Vector2(divide, 1);
+                m_SyncRegion.gameObject.SetActive(true);
+
+                // TODO: Replace
+                m_SyncLabel.SetText(string.Format("Last {0} years", scenario.TickCount()));
+            }
+            else
+            {
+                m_SyncRegion.gameObject.SetActive(false);
+            }
+
+            if (scenario.PredictionTicks() > 0)
+            {
+                m_PredictRegion.anchorMin = new Vector2(divide, 0);
+                m_PredictRegion.gameObject.SetActive(true);
+
+                // TODO: Replace
+                m_PredictLabel.SetText(string.Format("Next {0} years", scenario.PredictionTicks()));
+            }
+            else
+            {
+                m_PredictRegion.gameObject.SetActive(false);
+            }
         }
 
         static private GraphingUtils.AxisRangePair CalculateGraphRect(in Rect inA, in Rect inB, in Rect inC, in Rect inD, uint inTickCountX, uint inTickCountY)

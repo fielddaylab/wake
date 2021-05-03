@@ -20,8 +20,11 @@ namespace ProtoAqua.Modeling
 
         public void Load(GraphingUtils.AxisRangePair inPair)
         {
-            m_MaxY.SetText(inPair.Y.Max.ToString());
-            m_MaxX.SetText(inPair.X.Max.ToString());
+            if (m_MaxY)
+                m_MaxY.SetText(inPair.Y.Max.ToString());
+            
+            if (m_MaxX)
+                m_MaxX.SetText(inPair.X.Max.ToString());
         }
     }
 }
