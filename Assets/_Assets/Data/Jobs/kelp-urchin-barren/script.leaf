@@ -1,21 +1,18 @@
-#basePath   job.kelp-welcome
+#basePath   job.kelp-urchin-barren
 
 :: start
 @trigger    JobStarted
 @cutscene
-$set    player:seen.drJules = true
-{@drJules} I'm glad to see you taking on a Job here!
-{@drJules}  The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
-{@player} How do I do that?
-{@drJules} Just exit the helm, then use the submarine to travel out to research sites. 
-{@drJules}  When you are done, come back to the office and tell me what you've learned.
-{@player} Taking out a sub?!? I'm on it!
+{@drJules} This next Job is going to be a little different.
+{@player} How is that?
+{@drJules} First, you are going to help us study Site B, which is not doing very well.
+{@drJules} Second, with this job you are going to learn how to build a model and perform simulations of what is likely going to happen in the future.
+{@player} Predict the future?!? Sounds cool.
+{@drJules} Agreed. Models and simulations are very powerful tools!
 :: end
 
 @trigger    JobCompleted
 @cutscene
-{@drJules}  Really nice work!
-{@player}   Thanks. My friend Kevin helped quite a bit.
-{@drJules}  Well you seem to make a great team. Want to do some more exploring?
-{@drJules}  I put some other Jobs on the Job board. Go to the Helm, pick something new and we will talk again. 
-{@player}   Ok. I'm on my way. 
+{@drJules}  Well that's a bit depressing.
+{@player}   Yeah it is. Predicting the future is more fun when the future looks bright.
+{@drJules}  Don't loose hope yet. I have one last job for you.
