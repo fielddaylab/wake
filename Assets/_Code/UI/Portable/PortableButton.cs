@@ -40,6 +40,8 @@ namespace Aqua.Portable
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
+                .Register(GameEvents.JobTasksUpdated, OnJobUpdated, this)
+                .Register(GameEvents.JobStarted, OnJobUpdated, this)
                 .Register(GameEvents.PortableClosed, OnPortableClosed, this);
         }
 
@@ -90,6 +92,21 @@ namespace Aqua.Portable
             m_Request = new BestiaryApp.OpenToRequest(inBestiaryUpdate);
         }
 
+        private void OnJobUpdated()
+        {
+            if (m_Request != null)
+                return;
+            
+            m_HasNew = true;
+            if (!m_NewAnim)
+            {
+                m_NewAnim.Replace(this, NewAnim());
+            }
+
+            m_NewIcon.gameObject.SetActive(true);
+            m_Request = new StatusApp.OpenToPageRequest(StatusApp.PageId.Job);
+        }
+
         private void OnPortableOpened(IPortableRequest inRequest)
         {
             m_NewAnim.Stop();
@@ -128,6 +145,10 @@ namespace Aqua.Portable
 
         private IEnumerator NewAnim()
         {
+            while(Services.UI.IsLetterboxed())
+                yield return null;
+            
+            Services.Audio.PostEvent("portable.ping.new");
             while(true)
             {
                 yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);

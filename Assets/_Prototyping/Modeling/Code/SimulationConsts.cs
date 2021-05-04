@@ -10,9 +10,12 @@ namespace ProtoAqua.Modeling
         static public readonly TableKeyPair Var_PredictSync = TableKeyPair.Parse("modeling:predictSync");
         static public readonly TableKeyPair Var_ModelPhase = TableKeyPair.Parse("modeling:phase");
 
-        static public readonly StringHash32 Trigger_Started = "ModelingStarted";
-        static public readonly StringHash32 Trigger_Synced = "ModelingSynced";
-        static public readonly StringHash32 Trigger_Completed = "ModelingCompleted";
+        static public readonly StringHash32 Trigger_ConceptStarted = "UniversalModelStarted";
+        static public readonly StringHash32 Trigger_GraphStarted = "ModelGraphStarted";
+        static public readonly StringHash32 Trigger_SyncedImmediate = "ModelSyncedImmediate";
+        static public readonly StringHash32 Trigger_Synced = "ModelSynced";
+        static public readonly StringHash32 Trigger_PredictImmediate = "ModelPredictImmediate";
+        static public readonly StringHash32 Trigger_GraphCompleted = "ModelCompleted";
 
         static public readonly StringHash32 ModelPhase_Universal = "universal";
         static public readonly StringHash32 ModelPhase_Model = "model";

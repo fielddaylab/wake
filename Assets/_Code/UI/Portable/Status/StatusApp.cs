@@ -15,11 +15,45 @@ namespace Aqua.Portable
     {
         #region Types
 
-        private enum PageId
+        public enum PageId
         {
             Job,
             Item,
             Tech
+        }
+
+        public class OpenToPageRequest : IPortableRequest
+        {
+            public PageId Page;
+
+            public OpenToPageRequest(PageId inPage)
+            {
+                Page = inPage;
+            }
+
+            public StringHash32 AppId()
+            {
+                return "status";
+            }
+
+            public bool CanClose()
+            {
+                return true;
+            }
+
+            public bool CanNavigateApps()
+            {
+                return true;
+            }
+
+            public bool ForceInputEnabled()
+            {
+                return false;
+            }
+
+            public void Dispose()
+            {
+            }
         }
 
         #endregion // Types
@@ -60,6 +94,19 @@ namespace Aqua.Portable
             m_JobToggle.onValueChanged.AddListener(OnJobToggle);
             m_ItemToggle.onValueChanged.AddListener(OnItemToggle);
             m_TechToggle.onValueChanged.AddListener(OnTechToggle);
+        }
+
+        public override bool TryHandle(IPortableRequest inRequest)
+        {
+            OpenToPageRequest pageRequest = inRequest as OpenToPageRequest;
+            if (pageRequest != null)
+            {
+                Show();
+                LoadPage(pageRequest.Page, true);
+                return true;
+            }
+
+            return false;
         }
 
         #region Panel

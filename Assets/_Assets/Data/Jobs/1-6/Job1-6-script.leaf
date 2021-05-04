@@ -3,20 +3,20 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@kelpResearcher}   Great! You found it! Let's get you up to speed with what we do here at the Kelpdom.
+{@drJules}   Great! You found it! Let's get you up to speed with what we do here at the Kelpdom.
                     So head over to Site B when you're ready.
 {@kevin}    Site B?
-{@kelpResearcher}   Yep! Just exit your helm, hop in your sub, and head east.
+{@drJules}   Yep! Just exit your helm, hop in your sub, and head east.
 
 :: end
 @trigger    JobCompleted
 @cutscene
 $call JobCompletePopup->ShowMenu
-{@kelpResearcher}   Way to science, {player-name}! And...
+{@drJules}   Way to science, {player-name}! And...
                     Um, who's your friend there?
 {@player}       Oh, this is Kevin! They're a jellyblob.
 {@kevin}        ...Hi.
-{@kelpResearcher}   Wait, what? I didn't know they were real.
+{@drJules}   Wait, what? I didn't know they were real.
                     Anyways, we might have some more tasks for you, but you can also take jobs from others too.
                     Check that out on the job board when you have a moment.
 $call JobCompletePopup->HideMenu
@@ -29,7 +29,7 @@ $call JobCompletePopup->HideMenu
 @once
 @cutscene
 $set    player:seen.jules = true
-{@kelpResearcher}   You're gonna want to take your sub over to Dive Site B.
+{@drJules}   You're gonna want to take your sub over to Dive Site B.
                     It's marked for you to the east. When you're there, dive.
 
 :: diveSite
@@ -37,7 +37,7 @@ $set    player:seen.jules = true
 @when       scene:name == "RS-1B"
 @once
 @cutscene
-{@kelpResearcher}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
+{@drJules}   Now that you're down here, you're going to want to move {slow}way{/slow} towards the ocean floor.
                     You'll see what I mean once you get there.
 
 :: diveSite.probe
@@ -60,7 +60,7 @@ $endif
 @cutscene
 $set    jobs:j1-6.seen.bottom = true
 {@player}   Okay, here. Jules?
-{@kelpResearcher}   Great! Now look around, see if there's any life forms you can scan.
+{@drJules}   Great! Now look around, see if there's any life forms you can scan.
                     Our probe has been collecting water data, so scan that too. You'll know it when you see it.
                     When you think you have everything, head back to the surface.
 
@@ -70,18 +70,18 @@ $set    jobs:j1-6.seen.bottom = true
 @once
 @cutscene
 {@player}   Alright, I think we got everything?
-{@kelpResearcher}   Let me check...
+{@drJules}   Let me check...
 
 $if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
     $set    jobs:j1-6.got.scans = true
-    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+    {@drJules}   Yep, looks like you scanned everything I was expecting.
                         Head back to your ship when you're ready.
 $else
-    {@kelpResearcher}   No, looks like you missed something.
+    {@drJules}   No, looks like you missed something.
     $if !has.entity:UrchinBarren
-        {@kelpResearcher}   You should make sure to scan the probe for the water data too.
+        {@drJules}   You should make sure to scan the probe for the water data too.
     $else
-        {@kelpResearcher}   Are you sure you didn't miss any creatures down there?
+        {@drJules}   Are you sure you didn't miss any creatures down there?
     $endif
 $endif
 
@@ -90,18 +90,18 @@ $endif
 @when       scene:name == "Station1", jobs:j1-6.seen.bottom, seen:job.j1_6.navigation.return, !jobs:j1-6.got.scans
 @cutscene
 {@player}   How about now?
-{@kelpResearcher}   Ummmm...
+{@drJules}   Ummmm...
 
 $if has.entity:UrchinBarren, has.entity:Urchin, has.entity:GiantKelp // all scans?
     $set    jobs:j1-6.got.scans = true
-    {@kelpResearcher}   Yep, looks like you scanned everything I was expecting.
+    {@drJules}   Yep, looks like you scanned everything I was expecting.
                         Head back to your ship when you're ready.
 $else
-    {@kelpResearcher}   No, looks like you're still missing something.
+    {@drJules}   No, looks like you're still missing something.
     $if !has.entity:UrchinBarren
-        {@kelpResearcher}   The probe is the thing that looks like an archaeic, yet alien computer. Scan it just like a normal critter.
+        {@drJules}   The probe is the thing that looks like an archaeic, yet alien computer. Scan it just like a normal critter.
     $else
-        {@kelpResearcher}   Are you sure you didn't miss any creatures down there? Plants, Animals, Other? 
+        {@drJules}   Are you sure you didn't miss any creatures down there? Plants, Animals, Other? 
 	Not sure what would even count as other, but it sounded right.
     $endif
 $endif
@@ -112,11 +112,11 @@ $endif
 @once
 @cutscene
 {@player}   We're back, Jules. Now what?
-{@kelpResearcher}   Now I need to know you can not only {h}observe{/h} ocean environments...
+{@drJules}   Now I need to know you can not only {h}observe{/h} ocean environments...
                     But also run {h}experiments{/h} based on your observations.
                     You have an experiment room onboard, right?
 {@player}   Uh, yeah.
-{@kelpResearcher}   Great! Just head in there when you're ready.
+{@drJules}   Great! Just head in there when you're ready.
 
 :: firstExperiment
 @trigger    SceneStart
@@ -124,12 +124,12 @@ $endif
 @once
 @cutscene
 {@player}   Alright, We're in the experimentation room, What's next?
-{@kelpResearcher}  Great, so, remember you need to figure out what's going on with the urchin barren.
+{@drJules}  Great, so, remember you need to figure out what's going on with the urchin barren.
                    Now that we have both the organisms and the water sample from that environment... 
                    You can plan an experiment to see what's going on down there.
                    You can use a behavior tank - just drop those critters inside!
 {@player}   Then what?
-{@kelpResearcher}   Then you can capture what kind of behaviors they exhibit!
+{@drJules}   Then you can capture what kind of behaviors they exhibit!
 
 // Kevin Responses
 

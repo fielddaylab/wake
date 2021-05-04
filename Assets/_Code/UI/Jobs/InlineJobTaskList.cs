@@ -298,7 +298,7 @@ namespace Aqua
                     {
                         case TaskOperationType.SwitchedJob:
                             {
-                                yield return 1;
+                                yield return 2;
                                 break;
                             }
 
@@ -341,7 +341,7 @@ namespace Aqua
 
                                 yield return CompleteTaskAnimation(taskDisplay, 0);
 
-                                yield return 0.2f;
+                                yield return 0.5f;
 
                                 yield return GenerateOrderingInfo();
 

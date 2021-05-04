@@ -18,14 +18,14 @@
 {@drJules}  Don't loose hope yet. I have one last job for you.
 
 
-@trigger 	JobTaskCompleted
-@where		taskId = "getProbeData"
-@once
-@cutscene
-{@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
+// @trigger 	JobTaskCompleted
+// @where		taskId = "getProbeData"
+// @once
+// @cutscene
+// {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
 
 :: ModelingSetup
-@trigger	ModelingStarted
+@trigger	ModelGraphStarted
 @once
 @cutscene
 {@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. It's what we call a model of the system.
@@ -33,14 +33,14 @@
 {@kevin} On the next screen, you will set the populations so they match the past data we have from the urchin barren.
 {@kevin} If the model predicts how the populations changed in the past, it's likely it can help us figure out what's going to happen next!
 
-:: ModelingSynced
-@trigger	ModelingSynced
+:: ModelSynced
+@trigger	ModelSynced
 @once
 @cutscene
 {@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. Now let's see what it predicts will happen next.
 
-:: ModelingComplete
-@trigger	ModelingComplete
+:: ModelingGraphComplete
+@trigger	ModelCompleted
 @once
 @cutscene
 {@kevin} Ok. We have our answer. It's not looking good. Let's go to the office and report back to Dr. Jules

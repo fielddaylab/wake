@@ -25,6 +25,8 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobCompleted, OnJobCompleted, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
                 .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
+                .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
+                .Register<StringHash32>(GameEvents.ModelUpdated, OnModelUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this);
         }
@@ -123,6 +125,42 @@ namespace Aqua
             }
         }
 
+        private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
+        {
+            using(var table = Services.Script.GetTempTable())
+            {
+                switch(inUpdateParams.Type)
+                {
+                    case BestiaryUpdateParams.UpdateType.Entity:
+                        {
+                            table.Set("entryId", inUpdateParams.Id);
+                            Services.Script.TriggerResponse(GameTriggers.BestiaryEntryAdded, null, null, table);
+                            break;
+                        }
+
+                    case BestiaryUpdateParams.UpdateType.Fact:
+                        {
+                            table.Set("factId", inUpdateParams.Id);
+                            Services.Script.TriggerResponse(GameTriggers.BestiaryFactAdded, null, null, table);
+                            break;
+                        }
+                }
+            }
+        }
+
+        private void OnModelUpdated(StringHash32 inFactAdded)
+        {
+            using(var table = Services.Script.GetTempTable())
+            {
+                table.Set("factId", inFactAdded);
+                Services.Script.TriggerResponse(GameTriggers.BestiaryFactAddedToModel, null, null, table);
+            }
+        }
+
+        #endregion // Handlers
+
+        #region Loading
+
         private void LoadAct(uint inAct)
         {
             if (m_LoadedActId == inAct)
@@ -157,6 +195,6 @@ namespace Aqua
                 Services.Script.LoadScript(m_JobScript);
         }
 
-        #endregion // Handlers
+        #endregion // Loading
     }
 }

@@ -251,15 +251,15 @@ namespace Aqua
                     switch(state.Status)
                     {
                         case JobTaskStatus.Active:
-                            Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id);
+                            Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id.Hash());
                             break;
 
                         case JobTaskStatus.Complete:
-                            Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id);
+                            Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id.Hash());
                             break;
 
                         case JobTaskStatus.Inactive:
-                            Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id);
+                            Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id.Hash());
                             break;
                     }
                 }

@@ -283,7 +283,7 @@ namespace Aqua
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
                             DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
-                            StartThreadInternalNode(null, inContext, nodes[i], inContextTable).GetThread().Tick();
+                            StartThreadInternalNode(null, inContext, nodes[i], inContextTable);
                         }
                     }
                     else
@@ -577,6 +577,9 @@ namespace Aqua
                 m_ThreadTargetMap.Add(who, thread);
                 OnTargetedThreadStarted?.Invoke(handle);
             }
+
+            if (!IsPaused())
+                thread.Tick();
             
             return handle;
         }

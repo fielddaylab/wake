@@ -60,6 +60,8 @@ namespace ProtoAqua.Modeling
             m_Buffer.OnUpdate = () => m_BufferDirty = true;
             OnBufferUpdated();
 
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_ConceptStarted);
+
             m_Input.Device.RegisterHandler(this);
         }
 
@@ -105,6 +107,7 @@ namespace ProtoAqua.Modeling
             if (m_State.Phase == ModelingPhase.Sync && m_State.ModelSync != 100 && sync == 100)
             {
                 Services.Audio.PostEvent("modelSync");
+                Services.Script.TriggerResponse(SimulationConsts.Trigger_SyncedImmediate);
             }
 
             m_State.ModelSync = sync;
@@ -114,6 +117,7 @@ namespace ProtoAqua.Modeling
             
             if (m_State.Phase == ModelingPhase.Predict && m_State.PredictSync != 100 && sync == 100)
             {
+                Services.Script.TriggerResponse(SimulationConsts.Trigger_PredictImmediate);
                 Services.Audio.PostEvent("modelSync");
             }
 
@@ -135,7 +139,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.Refresh(m_State, SimulationBuffer.UpdateFlags.ALL);
             m_SimulationUI.DisplayInitial();
 
-            Services.Script.TriggerResponse(SimulationConsts.Trigger_Started);
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphStarted);
         }
 
         private void OnSimulationAdvanceClicked()
@@ -180,6 +184,8 @@ namespace ProtoAqua.Modeling
             m_Buffer.ClearSelectedCritters();
 
             m_ModelingUI.ScenarioPanel.ForceShow();
+            
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_ConceptStarted);
         }
 
         private void AdvanceToPredict()
@@ -210,7 +216,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");
-            Services.Script.TriggerResponse(SimulationConsts.Trigger_Completed);
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphCompleted);
 
             m_Input.Device.DeregisterHandler(this);
         }

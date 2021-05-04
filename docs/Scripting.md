@@ -117,6 +117,10 @@
 | `RequestPartnerHelp` | N/a | Triggers when the player asks their partner for help |
 | `SceneStart` | N/a | Triggers when a scene starts |
 | `InspectObject` | `objectId` | Triggers when an object is inspected with a cursor click |
+| **Bestiary** |
+| `BestiaryEntryAdded` | `entryId` | Triggers when a new entry is added to the bestiary |
+| `BestiaryFactAdded` | `factId` | Triggers when a new fact is added to the bestiary |
+| `BestiaryFactAddedToModel` | `factId` | Triggers when a fact is added to the universal model |
 | **Regions** |
 | `PlayerEnterRegion` | `regionId` | Triggers when the player enters a trigger region within a scene |
 | `PlayerExitRegion` | `regionId` | Triggers when the player exits a trigger region within a scene |
@@ -129,9 +133,12 @@
 | `BehaviorAlreadyObserved` | `factId` | Triggers when the player attempts to observe a fact that has already been added to the bestiary |
 | `ExperimentIdle` | N/a | Triggers during an experiment every 30-ish seconds when the player has not clicked on anything |
 | **Modeling** |
-| `ModelingStarted` | N/a | Triggers when the player clicks through the intro dialog in modeling |
-| `ModelingSynced` | N/a | Triggers when the player clicks the button to signal 100% sync between their model and historical data (only if moving on to prediction phase) |
-| `ModelingCompleted` | N/a | Triggers when the player completes the modeling activity |
+| `UniversalModelStarted` | N/a | Triggers when the player views the universal model in modeling |
+| `ModelGraphStarted` | N/a | Triggers when the player begins graphing |
+| `ModelSyncedImmediate` | N/a | Triggers when the player's sync reaches 100% between their model and historical data |
+| `ModelSynced` | N/a | Triggers when the player clicks the button to signal 100% sync between their model and historical data (only if moving on to prediction phase) |
+| `ModelPredictImmediate` | N/a | Triggers when the player hits all prediction targets |
+| `ModelCompleted` | N/a | Triggers when the player completes the modeling activity |
 | **Argumentation** |
 | `ArgumentationComplete` | `jobId` | Triggers when the player completes an argumentation activity |
 | **Jobs** |
