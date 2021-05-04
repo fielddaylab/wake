@@ -203,32 +203,71 @@ namespace Aqua
 
         private void ProcessUpdateQueue(JobsData inData)
         {
-            ushort taskIndex;
             int count = m_TaskUpdateQueue.Count;
+            if (count <= 0)
+                return;
 
-            while(m_TaskUpdateQueue.TryPopFront(out taskIndex))
+            Assert.True(count <= 64, "More than 64 tasks updated in one frame, how the...");
+            ulong updateMask = 0; // 64-bit mask indicating which tasks in the queue actually updated in the save data
+            
+            ushort taskIndex;
+            ulong taskMask;
+            for(int i = 0; i < count; i++)
             {
+                taskMask = (ulong) 1 << i;
+                taskIndex = m_TaskUpdateQueue[i];
+
                 ref TaskState state = ref m_TaskGraph[taskIndex];
                 switch(state.Status)
                 {
                     case JobTaskStatus.Active:
-                        inData.SetTaskActive(state.Task.Id);
+                        if (inData.SetTaskActive(state.Task.Id))
+                            updateMask |= taskMask;
                         break;
 
                     case JobTaskStatus.Complete:
-                        inData.SetTaskComplete(state.Task.Id);
+                        if (inData.SetTaskComplete(state.Task.Id))
+                            updateMask |= taskMask;
                         break;
 
                     case JobTaskStatus.Inactive:
-                        inData.SetTaskInactive(state.Task.Id);
+                        if (inData.SetTaskInactive(state.Task.Id))
+                            updateMask |= taskMask;
                         break;
                 }
             }
 
-            if (!m_JobLoading && count > 0)
+            if (!m_JobLoading && updateMask != 0)
             {
+                for(int i = 0; i < count; i++)
+                {
+                    taskMask = (ulong) 1 << i;
+                    if ((taskMask & updateMask) == 0)
+                        continue;
+                    
+                    taskIndex = m_TaskUpdateQueue[i];
+                    
+                    ref TaskState state = ref m_TaskGraph[taskIndex];
+                    switch(state.Status)
+                    {
+                        case JobTaskStatus.Active:
+                            Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id);
+                            break;
+
+                        case JobTaskStatus.Complete:
+                            Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id);
+                            break;
+
+                        case JobTaskStatus.Inactive:
+                            Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id);
+                            break;
+                    }
+                }
+
                 Services.Events.Dispatch(GameEvents.JobTasksUpdated);
             }
+
+            m_TaskUpdateQueue.Clear();
         }
 
         #endregion // Queue

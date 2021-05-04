@@ -27,7 +27,7 @@ namespace ProtoAqua.Argumentation
 
         private void OnClick()
         {
-            Services.Events.Dispatch(ChatManager.Event_OpenFactSelect, m_Category);
+            Services.Events.Dispatch(ArgueActivity.Event_OpenFactSelect, m_Category);
         }
     }
 }

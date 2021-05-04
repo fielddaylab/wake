@@ -214,7 +214,7 @@ namespace Aqua.Animation
 
             if (inbProcessEvents)
             {
-                Services.Audio.PostEvent(frame.AudioEvent);
+                Services.Audio?.PostEvent(frame.AudioEvent);
             }
             
             if (m_WorldRenderer != null)

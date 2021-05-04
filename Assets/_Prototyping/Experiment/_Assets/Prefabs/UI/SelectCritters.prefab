@@ -148,7 +148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Text: {fileID: 109212927486951366}
-  m_DefaultText: 
+  m_DefaultText:
+    m_Source: 
+    m_Hash: 0
 --- !u!1 &6244183881292171606
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,6 +298,7 @@ GameObject:
   - component: {fileID: 7844674043105528561}
   - component: {fileID: 56669188669282086}
   - component: {fileID: 1116860383877728683}
+  - component: {fileID: 180422182230519834}
   m_Layer: 5
   m_Name: Next
   m_TagString: Untagged
@@ -420,6 +423,21 @@ MonoBehaviour:
   m_DownEvent: 
   m_UpEvent: 
   m_ClickEvent: tablet_ui_click
+--- !u!114 &180422182230519834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6645609925581912731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: 
+    m_Hash: 0
 --- !u!1 &7252007575853416927
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,7 +578,6 @@ MonoBehaviour:
   m_ScreenId: actors
   m_ButtonRoot: {fileID: 7252007575853416926}
   m_NextButton: {fileID: 56669188669282086}
-  m_StartButton: {fileID: 0}
   m_Label: {fileID: 7741644386774376568}
   m_EmptyIcon: {fileID: 21300000, guid: 297741307d85e394da92dfaf7b713cc1, type: 3}
   m_ToggleGroup: {fileID: 4152123096728454443}

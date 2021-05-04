@@ -37,17 +37,6 @@ $goto .tutorial
 //             Let's come back here once we get some things going.
 // $endif
 
-::Modeling.intro.1
-@trigger    SceneStart
-@when       scene:name == "ModelingPrototype", job.isComplete: Job1-6
-@once
-@cutscene
-$set    kevin:jules.player.talk + 1
-
-{@kevin} Modeling is pretty straightforward. You don't even need Calculus!
-	Just use your bestiary to add some rules, and they will influence the graph.
-	Play around until things start to look right.
-
 // tutorial
 
 :: tutorial

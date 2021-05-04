@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Argumentation
 {
-    public class ChatManager : MonoBehaviour
+    public class ArgueActivity : MonoBehaviour
     {
         static public readonly StringHash32 Event_SelectClaim = "argue:select-claim";
         static public readonly StringHash32 Event_OpenFactSelect = "argue:open-fact-select";
@@ -63,6 +63,9 @@ namespace ProtoAqua.Argumentation
 
         private void OnGraphLoaded()
         {
+            m_Group.gameObject.SetActive(true);
+            m_NotAvailableGroup.gameObject.SetActive(false);
+
             foreach(var link in m_Graph.LinkDictionary.Values)
             {
                 if (link.Tag == "claim")
@@ -74,7 +77,7 @@ namespace ProtoAqua.Argumentation
 
             m_CharacterName.SetText(m_CharacterDef.NameId());
 
-            Routine.StartCall(this, OnStartChat);
+            m_ChatRoutine = Routine.Start(this. OnStartChat());
         }
 
         private void NotAvailable()
@@ -125,7 +128,10 @@ namespace ProtoAqua.Argumentation
             ArgueChatLine chat = m_NodePool.Alloc();
             chat.Populate(inLink.DisplayText, m_PlayerDef);
             m_ChatLayout.ForceRebuild();
+            Services.Audio.PostEvent("argue.chat.player");
+            
             yield return ScrollDown();
+            yield return 0.5f;
 
             Node node = m_Graph.NextNode(inLink.Id);
             yield return DisplayNode(node);
@@ -149,19 +155,26 @@ namespace ProtoAqua.Argumentation
                 {
                     chat.OverrideColors(null, m_InvalidColor);
                     Routine.Start(this, ShakeNode(chat));
+                    Services.Audio.PostEvent("argue.chat.incorrect");
                 }
                 else if (toDisplay.Id == m_Graph.EndNodeId)
                 {
                     chat.OverrideColors(null, m_EndColor);
+                    Services.Audio.PostEvent("argue.chat.end");
+                }
+                else
+                {
+                    Services.Audio.PostEvent("argue.chat.new");
                 }
                 
                 m_ChatLayout.ForceRebuild();
                 yield return ScrollDown();
+                yield return 0.5f;
 
                 toDisplay = m_Graph.FindNode(toDisplay.NextNodeId);
-                if (toDisplay != null)
-                    yield return m_ScrollTime * 2;
             }
+
+            yield return 0.5f;
 
             if (currentNode.Id == m_Graph.EndNodeId)
             {
@@ -193,9 +206,10 @@ namespace ProtoAqua.Argumentation
 
         #endregion // Display
 
-        private void OnStartChat()
+        private IEnumerator OnStartChat()
         {
-            m_ChatRoutine.Replace(this, DisplayNode(m_Graph.RootNode)).TryManuallyUpdate(0);
+            yield return 1;
+            yield return Routine.Inline(DisplayNode(m_Graph.RootNode));
         }
 
         private void EndConversationPopup()
@@ -205,7 +219,7 @@ namespace ProtoAqua.Argumentation
 
         private IEnumerator CompleteConversation()
         {
-            m_InputRaycasterLayer.Override = false;
+            m_InputRaycasterLayer.Override = null;
 
             using(var table = Services.Script.GetTempTable())
             {

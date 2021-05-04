@@ -121,6 +121,7 @@ namespace ProtoAqua.Experiment
             if (inWaterId.IsEmpty)
             {
                 m_NextButton.interactable = false;
+                m_ConstructButton.interactable = false;
                 m_Label.SetText(StringHash32.Null);
             }
             else
@@ -134,15 +135,15 @@ namespace ProtoAqua.Experiment
                     m_NextButton.gameObject.SetActive(false);
                     m_ConstructButton.gameObject.SetActive(true);
                     m_BackButton.interactable = true;
-
+                    m_ConstructButton.interactable = true;
                 }
                 else
                 {
                     m_NextButton.gameObject.SetActive(true);
                     m_ConstructButton.gameObject.SetActive(false);
+                    m_ConstructButton.interactable = false;
                     m_NextButton.interactable = true;
                     m_BackButton.interactable = true;
-
                 }
             }
 

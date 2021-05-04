@@ -7,6 +7,7 @@ using Aqua;
 using System.Collections;
 using System;
 using BeauUtil.Variants;
+using BeauUtil.UI;
 
 namespace Aqua.Portable
 {
@@ -41,7 +42,9 @@ namespace Aqua.Portable
         {
             base.Awake();
             m_Input = BaseInputLayer.Find(this);
+
             m_CloseButton.onClick.AddListener(() => Hide());
+            m_Fader.EnsureComponent<PointerListener>().onClick.AddListener((p) => Hide());
 
             m_Table = new VariantTable("portable");
             Services.Data.BindTable("portable", m_Table);
@@ -113,8 +116,14 @@ namespace Aqua.Portable
         {
             Services.Data.SetVariable("portable:open", true);
 
-            if(m_Request != null && Services.UI.IsLetterboxed() && m_Request.ForceInputEnabled()) {
+            if(m_Request != null && Services.UI.IsLetterboxed() && m_Request.ForceInputEnabled()) 
+            {
                 m_Input.Override = true;
+                BringToFront();
+            }
+            else
+            {
+                m_Input.Override = null;
             }
 
             m_Canvas.enabled = true;
@@ -142,6 +151,7 @@ namespace Aqua.Portable
         protected override void OnHideComplete(bool inbInstant)
         {
             m_Canvas.enabled = false;
+            m_Input.Override = false;
             base.OnHideComplete(inbInstant);
         }
 

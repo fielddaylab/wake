@@ -30,6 +30,9 @@ namespace Aqua.Animation
 
         private void LateUpdate()
         {
+            if (!Services.Valid)
+                return;
+            
             m_Animators.ForEach(UpdateSpriteAnimatorPtr, Time.deltaTime);
         }
 

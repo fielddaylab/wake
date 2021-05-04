@@ -18,7 +18,6 @@ namespace Aqua.Profile
         // Non-Serialized
         private PlayerJob m_CurrentJob;
         private HashSet<StringHash32> m_CurrentJobTaskIds = new HashSet<StringHash32>();
-        private bool m_JobLoadLock = false;
 
         private readonly PlayerJob m_TempJob = new PlayerJob();
 
@@ -45,9 +44,7 @@ namespace Aqua.Profile
             m_CurrentJobId = inJobId;
             m_CurrentJobTaskIds.Clear();
 
-            m_JobLoadLock = true;
             Services.Events.Dispatch(GameEvents.JobPreload, inJobId);
-            m_JobLoadLock = false;
 
             if (inJobId == StringHash32.Null)
             {
@@ -216,9 +213,7 @@ namespace Aqua.Profile
                     m_CurrentJob = null;
                     m_CurrentJobTaskIds.Clear();
 
-                    m_JobLoadLock = true;
                     Services.Events.Dispatch(GameEvents.JobPreload, StringHash32.Null);
-                    m_JobLoadLock = false;
                     Services.Events.Dispatch(GameEvents.JobSwitched, StringHash32.Null);
                 }
                 return true;
@@ -229,7 +224,7 @@ namespace Aqua.Profile
 
         public bool IsComplete(StringHash32 inJobId)
         {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
             return m_CompletedJobs.Contains(inJobId);
         }
 
@@ -275,10 +270,6 @@ namespace Aqua.Profile
             if (m_CompletedTasks.Add(new JobTaskKey(m_CurrentJobId, inTaskId)))
             {
                 DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set completed", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
-                if (!m_JobLoadLock)
-                {
-                    Services.Events.Dispatch(GameEvents.JobTaskCompleted, inTaskId);
-                }
                 return true;
             }
 
@@ -297,10 +288,6 @@ namespace Aqua.Profile
             if (m_CurrentJobTaskIds.Add(inTaskId))
             {
                 DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set active", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
-                if (!m_JobLoadLock)
-                {
-                    Services.Events.Dispatch(GameEvents.JobTaskAdded, inTaskId);
-                }
                 return true;
             }
 
@@ -319,10 +306,6 @@ namespace Aqua.Profile
             if (m_CurrentJobTaskIds.Remove(inTaskId))
             {
                 DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set inactive", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
-                if (!m_JobLoadLock)
-                {
-                    Services.Events.Dispatch(GameEvents.JobTaskRemoved, inTaskId);
-                }
                 return true;
             }
 

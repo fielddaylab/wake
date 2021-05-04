@@ -30,7 +30,7 @@ namespace ProtoAqua.Argumentation
 
         private void OnClick()
         {
-            Services.Events.Dispatch(ChatManager.Event_SelectClaim, m_Id);
+            Services.Events.Dispatch(ArgueActivity.Event_SelectClaim, m_Id);
         }
 
         #region Commands
