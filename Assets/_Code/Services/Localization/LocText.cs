@@ -44,7 +44,7 @@ namespace Aqua
             }
             else
             {
-                InternalSetText(string.Format("'{0}'", inId.ToDebugString()));
+                InternalSetText(string.Format("<color=red>ERROR:</color> {0}", inId.ToDebugString()));
             }
         }
 

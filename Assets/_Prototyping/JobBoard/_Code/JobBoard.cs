@@ -25,6 +25,9 @@ namespace ProtoAqua.JobBoard
         [Header("Groups")]
         [SerializeField] private ToggleGroup m_JobToggle = null;
         [SerializeField] private JobInfo m_Info = null;
+
+        [Inline(InlineAttribute.DisplayType.HeaderLabel)]
+        [SerializeField] private JobButton.ButtonAppearanceConfig m_ButtonAppearance = default;
         
         [Header("Station Label")]
         [SerializeField] private Image m_StationIcon = null;
@@ -119,7 +122,7 @@ namespace ProtoAqua.JobBoard
             {
                 OrderButtons();
                 if (m_SelectedJobButton != null)
-                    m_Info.UpdateStatus(m_SelectedJobButton.Status);
+                    m_Info.UpdateStatus(m_SelectedJobButton.Job, m_SelectedJobButton.Status);
             }
         }
 
@@ -130,7 +133,7 @@ namespace ProtoAqua.JobBoard
             var profileJobData = Services.Data.Profile.Jobs;
             foreach(var button in m_ButtonPool.ActiveObjects)
             {
-                bUpdated |= button.UpdateStatus(profileJobData.GetStatus(button.Job.Id()));
+                bUpdated |= button.UpdateStatus(profileJobData.GetStatus(button.Job.Id()), m_ButtonAppearance );
             }
 
             return bUpdated;

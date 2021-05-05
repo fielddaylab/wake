@@ -1,6 +1,7 @@
 using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
+using System;
 
 namespace Aqua
 {
@@ -53,9 +54,6 @@ namespace Aqua
             
             if (m_PosterLabel)
                 m_PosterLabel.SetText(inJob.PosterId());
-            
-            if (m_DescriptionLabel)
-                m_DescriptionLabel.SetText(inJob.DescId());
 
             if (m_Icon)
             {
@@ -102,8 +100,7 @@ namespace Aqua
                 }
             }
 
-            if (m_CompletedDisplay)
-                m_CompletedDisplay.gameObject.SetActive(inStatus == PlayerJobStatus.Completed);
+            UpdateStatus(inJob, inStatus);
         }
 
         private void PopulateReward(int inIndex, StringHash32 inId, int inAmount)
@@ -111,6 +108,20 @@ namespace Aqua
             InvItemDisplay item = m_Rewards[inIndex];
             item.gameObject.SetActive(true);
             item.Populate(inId, inAmount);
+        }
+
+        public void UpdateStatus(JobDesc inJob, PlayerJobStatus inStatus)
+        {
+            if (m_DescriptionLabel)
+            {
+                StringHash32 desc = inJob.DescCompletedId();
+                if (desc.IsEmpty || inStatus != PlayerJobStatus.Completed)
+                    desc = inJob.DescId();
+                m_DescriptionLabel.SetText(desc);
+            }
+
+            if (m_CompletedDisplay)
+                m_CompletedDisplay.gameObject.SetActive(inStatus == PlayerJobStatus.Completed);
         }
     }
 }

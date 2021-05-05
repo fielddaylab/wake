@@ -235,5 +235,15 @@ namespace Aqua.Portable
         }
 
         #endregion // Page Display
+
+        #region Statics
+
+        static public void OpenToPage(PageId inPage)
+        {
+            var request = new OpenToPageRequest(inPage);
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+        }
+
+        #endregion // Statics
     }
 }

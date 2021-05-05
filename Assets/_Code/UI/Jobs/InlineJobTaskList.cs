@@ -7,6 +7,7 @@ using System.Collections;
 using BeauRoutine;
 using System.Collections.Generic;
 using Aqua.Profile;
+using Aqua.Portable;
 
 namespace Aqua
 {
@@ -38,6 +39,10 @@ namespace Aqua
 
         #region Inspector
 
+        [Header("Title")]
+        [SerializeField] private LocText m_JobTitle = null;
+        [SerializeField] private Button m_OpenTaskButton = null;
+
         [Header("Task List")]
 
         [SerializeField] private JobTaskDisplay.Pool m_TaskDisplays = null;
@@ -63,13 +68,14 @@ namespace Aqua
         private RingBuffer<TaskOperation> m_OperationQueue = new RingBuffer<TaskOperation>(16, RingBufferMode.Expand);
 
         private Routine m_ProcessOperationsJob;
-        private Routine m_ReorderAnim;
 
         #region Events
 
         protected override void Awake()
         {
             base.Awake();
+
+            m_OpenTaskButton.onClick.AddListener(OnTaskButtonClicked);
 
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
                 .Register(GameEvents.JobSwitched, OnJobSwitched, this)
@@ -101,6 +107,17 @@ namespace Aqua
         private void OnJobSwitched()
         {
             ReloadTasks(true, true);
+        }
+        
+        private void OnTaskButtonClicked()
+        {
+            StatusApp.OpenToPage(StatusApp.PageId.Job);
+            
+            SyncActiveTasks();
+            m_ProcessOperationsJob.Stop();
+            m_OperationQueue.Clear();
+
+            Hide();
         }
 
         private void OnTaskCompleted(StringHash32 inTaskId)
@@ -185,7 +202,6 @@ namespace Aqua
 
         protected override void OnHideComplete(bool inbInstant)
         {
-            m_ReorderAnim.Stop();
             ClearDisplayTasks();
             m_ProcessOperationsJob.Stop();
         }
@@ -227,6 +243,24 @@ namespace Aqua
                 return;
             }
 
+            InstantHide();
+
+            m_JobTitle.SetText(currentJob.NameId());
+
+            SyncActiveTasks();
+
+            m_LastAnimatingJob = m_CurrentJob;
+            InstantDisplayTasks();
+
+            if (inbDisplay)
+                QueueOperation(null, TaskOperationType.SwitchedJob);
+        }
+
+        private void SyncActiveTasks()
+        {
+            if (m_CurrentJob == null)
+                return;
+            
             JobsData jobsData = Services.Data.Profile.Jobs;
             m_CurrentActiveTasks.Clear();
             foreach(var task in m_CurrentJob.Tasks())
@@ -234,12 +268,6 @@ namespace Aqua
                 if (jobsData.IsTaskActive(task.Id))
                     m_CurrentActiveTasks.PushBack(task.Id);
             }
-
-            m_LastAnimatingJob = m_CurrentJob;
-            InstantDisplayTasks();
-
-            if (inbDisplay)
-                QueueOperation(null, TaskOperationType.SwitchedJob);
         }
 
         private void InstantDisplayTasks()
@@ -255,7 +283,7 @@ namespace Aqua
                 AllocTaskDisplay(task, false);
             }
 
-            m_ReorderAnim.Replace(this, InstantOrderTaskList());
+            InstantOrderTaskList();
         }
 
         private void ClearDisplayTasks()
@@ -311,7 +339,7 @@ namespace Aqua
                                 if (taskDisplay == null)
                                 {
                                     taskDisplay = AllocTaskDisplay(task, true);
-                                    yield return GenerateOrderingInfo();
+                                    GenerateOrderingInfo();
 
                                     yield return Routine.Combine(
                                         ReorderTaskList(),
@@ -331,7 +359,7 @@ namespace Aqua
                                 if (taskDisplay == null)
                                 {
                                     taskDisplay = AllocTaskDisplay(task, true);
-                                    yield return GenerateOrderingInfo();
+                                    GenerateOrderingInfo();
 
                                     yield return Routine.Combine(
                                         ReorderTaskList(),
@@ -343,7 +371,7 @@ namespace Aqua
 
                                 yield return 0.5f;
 
-                                yield return GenerateOrderingInfo();
+                                GenerateOrderingInfo();
 
                                 yield return Routine.Combine(
                                     ReorderTaskList(),
@@ -361,7 +389,7 @@ namespace Aqua
                                 {
                                     m_AllocatedTasks.FastRemove(taskDisplay);
 
-                                    yield return GenerateOrderingInfo();
+                                    GenerateOrderingInfo();
 
                                     yield return Routine.Combine(
                                         HideTaskAnimation(taskDisplay, 0),
@@ -450,16 +478,20 @@ namespace Aqua
 
         #region Reordering
 
-        private IEnumerator GenerateOrderingInfo()
+        private void GenerateOrderingInfo()
         {
             m_AllocatedTasks.Sort(JobTaskSorter);
+
+            if (!Root.gameObject.activeSelf)
+            {
+                Root.gameObject.SetActive(true);
+                CanvasGroup.alpha = 0;
+            }
 
             foreach(var taskDisplay in m_AllocatedTasks)
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(taskDisplay.Root);
             }
-
-            yield return null;
 
             float yAccum = 0;
             foreach(var taskDisplay in m_AllocatedTasks)
@@ -493,9 +525,9 @@ namespace Aqua
                 yield return Routine.Combine(moveAnims);
         }
 
-        private IEnumerator InstantOrderTaskList()
+        private void InstantOrderTaskList()
         {
-            yield return GenerateOrderingInfo();
+            GenerateOrderingInfo();
 
             JobTaskDisplay taskDisplay;
             for(int i = 0; i < m_AllocatedTasks.Count; i++)

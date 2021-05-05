@@ -12,6 +12,13 @@ namespace ProtoAqua.JobBoard
 {
     public class JobButton : MonoBehaviour, IPoolAllocHandler
     {
+        [Serializable]
+        public struct ButtonAppearanceConfig
+        {
+            public Sprite ActiveIcon;
+            public Sprite CompletedIcon;
+        }
+
         #region Inspector
 
         [SerializeField, Required] private Toggle m_Toggle = null;
@@ -64,11 +71,33 @@ namespace ProtoAqua.JobBoard
             }
         }
 
-        public bool UpdateStatus(PlayerJobStatus inStatus)
+        public bool UpdateStatus(PlayerJobStatus inStatus, in ButtonAppearanceConfig inConfig)
         {
             if (m_Status != inStatus)
             {
                 m_Status = inStatus;
+                switch(inStatus)
+                {
+                    case PlayerJobStatus.Completed:
+                        {
+                            m_Icon.sprite = inConfig.CompletedIcon;
+                            break;
+                        }
+                    
+                    case PlayerJobStatus.Active:
+                        {
+                            m_Icon.sprite = inConfig.ActiveIcon;
+                            break;
+                        }
+
+                    default:
+                        {
+                            var icon = m_Job.Icon();
+                            m_Icon.sprite = icon;
+                            m_Icon.gameObject.SetActive(icon);
+                            break;
+                        }
+                }
                 return true;
             }
 
