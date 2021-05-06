@@ -21,7 +21,7 @@ namespace ProtoAqua.Modeling
 
         [Header("Prediction")]
         [SerializeField] private uint m_PredictionTicks = 0;
-        [SerializeField] private ActorCountU32[] m_TargetActors = null;
+        [SerializeField] private ActorCountRange[] m_TargetActors = null;
         [SerializeField] private ActorCountI32[] m_AdjustableActors = null;
 
         [Header("Labels")]
@@ -49,7 +49,7 @@ namespace ProtoAqua.Modeling
         public int TickScale() { return m_TickScale; }
 
         public uint PredictionTicks() { return m_PredictionTicks; }
-        public ListSlice<ActorCountU32> PredictionTargets() { return m_TargetActors; }
+        public ListSlice<ActorCountRange> PredictionTargets() { return m_TargetActors; }
         public ListSlice<ActorCountI32> AdjustableActors() { return m_AdjustableActors; }
 
         public TextId TitleId() { return m_TitleId; }
@@ -105,7 +105,7 @@ namespace ProtoAqua.Modeling
             }
 
             KeyValueUtils.SortByKey<StringHash32, uint, ActorCountU32>(m_InitialActors);
-            KeyValueUtils.SortByKey<StringHash32, uint, ActorCountU32>(m_TargetActors);
+            KeyValueUtils.SortByKey<StringHash32, ActorCountRange, ActorCountRange>(m_TargetActors);
             m_Optimized = true;
         }
     }

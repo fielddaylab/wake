@@ -113,6 +113,23 @@ namespace Aqua
         static public float RPD(float inA, float inB)
         {
             float delta = Math.Abs(inA - inB);
+            if (delta <= 0)
+                return 0;
+            
+            float avg = (Math.Abs(inA) + Math.Abs(inB)) / 2;
+            return avg == 0 ? 0 : (delta / avg);
+        }
+
+        /// <summary>
+        /// Calculates the relative percent deviation between two values.
+        /// </summary>
+        static public float RPD(float inA, float inB, float inDeltaThreshold)
+        {
+            float delta = Math.Abs(inA - inB);
+            delta -= inDeltaThreshold;
+            if (delta <= 0)
+                return 0;
+
             float avg = (Math.Abs(inA) + Math.Abs(inB)) / 2;
             return avg == 0 ? 0 : (delta / avg);
         }

@@ -529,11 +529,11 @@ namespace ProtoAqua.Modeling
             SimulationResult predicted = m_PredictionResultBuffer[m_PredictionResultBuffer.Length - 1];
             
             var targets = m_Scenario.PredictionTargets();
-            ActorCountU32 target;
+            ActorCountRange target;
             for(int i = 0; i < targets.Length; ++i)
             {
                 target = targets[i];
-                error += GraphingUtils.RPD(predicted.GetCritters(target.Id).Population, target.Population);
+                error += GraphingUtils.RPD(predicted.GetCritters(target.Id).Population, target.Population, target.Range);
             }
 
             return targets.Length == 0 ? 0 : Mathf.Clamp01((error / targets.Length) * ErrorScale);

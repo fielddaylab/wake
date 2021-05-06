@@ -22,6 +22,24 @@ namespace Aqua
     }
 
     [Serializable]
+    public struct ActorCountRange : IKeyValuePair<StringHash32, ActorCountRange>
+    {
+        public SerializedHash32 Id;
+        public uint Population;
+        public uint Range;
+
+        public ActorCountRange(StringHash32 inId, uint inPopulation, uint inRange)
+        {
+            Id = inId;
+            Population = inPopulation;
+            Range = inRange;
+        }
+
+        public StringHash32 Key { get { return Id; } }
+        public ActorCountRange Value { get { return this; } }
+    }
+
+    [Serializable]
     public struct ActorCountI32 : IKeyValuePair<StringHash32, int>
     {
         public SerializedHash32 Id;
