@@ -52,7 +52,13 @@ namespace Aqua.Profile
 
         public bool DeregisterEntity(StringHash32 inEntityId)
         {
-            return m_ObservedEntities.Remove(inEntityId);
+            if (m_ObservedEntities.Remove(inEntityId))
+            {
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
+                return true;
+            }
+
+            return false;
         }
 
         #endregion // Observed Entities
@@ -170,6 +176,7 @@ namespace Aqua.Profile
                 m_Facts.FastRemoveAt(index);
                 m_FactListDirty = true;
                 m_GraphedFacts.Remove(inFactId);
+                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
             }
 
@@ -205,6 +212,7 @@ namespace Aqua.Profile
         public bool AddFactToGraph(StringHash32 inFactId)
         {
             RegisterFact(inFactId);
+
             if (m_GraphedFacts.Contains(inFactId))
                 return false;
             
@@ -215,7 +223,51 @@ namespace Aqua.Profile
 
         public bool IsFactGraphed(StringHash32 inFactId)
         {
-            return m_ObservedFacts.Contains(inFactId) && m_GraphedFacts.Contains(inFactId);
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
+
+            return m_GraphedFacts.Contains(inFactId);
+        }
+
+        /// <summary>
+        /// Retrieves all observed/assumed but ungraphed facts
+        /// </summary>
+        public int GetUngraphedFacts(ICollection<StringHash32> outFacts)
+        {
+            BestiaryDB db = Services.Assets.Bestiary;
+            
+            BestiaryDesc desc;
+            int count = 0;
+            foreach(var entityId in m_ObservedEntities)
+            {
+                desc = db.Get(entityId);
+                if (!desc.HasCategory(BestiaryDescCategory.Critter))
+                    continue;
+
+                foreach(var assumed in desc.AssumedFacts)
+                {
+                    if (!m_GraphedFacts.Contains(assumed.Id()))
+                    {
+                        outFacts.Add(assumed.Id());
+                        count++;
+                    }
+                }
+            }
+
+            BFBase fact;
+            foreach(var factId in m_ObservedFacts)
+            {
+                fact = db.Fact(factId);
+                if (!fact.Parent().HasCategory(BestiaryDescCategory.Critter))
+                    continue;
+                
+                if (!m_GraphedFacts.Contains(factId))
+                {
+                    outFacts.Add(factId);
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         #endregion // Graphed

@@ -136,8 +136,10 @@
 | `UniversalModelStarted` | N/a | Triggers when the player views the universal model in modeling |
 | `ModelGraphStarted` | N/a | Triggers when the player begins graphing |
 | `ModelSyncedImmediate` | N/a | Triggers when the player's sync reaches 100% between their model and historical data |
+| `ModelSyncError` | N/a | Triggers when the player clicks the sync button and their sync is less than 100% |
 | `ModelSynced` | N/a | Triggers when the player clicks the button to signal 100% sync between their model and historical data (only if moving on to prediction phase) |
 | `ModelPredictImmediate` | N/a | Triggers when the player hits all prediction targets |
+| `ModelPredictError` | N/a | Triggers when the player clicks the Save Prediction button and they are not hitting all prediction targets |
 | `ModelCompleted` | N/a | Triggers when the player completes the modeling activity |
 | **Argumentation** |
 | `ArgumentationComplete` | `jobId` | Triggers when the player completes an argumentation activity |

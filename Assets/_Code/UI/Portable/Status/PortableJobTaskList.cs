@@ -15,7 +15,6 @@ namespace Aqua
         [Header("Task List")]
 
         [SerializeField] private JobTaskDisplay.Pool m_TaskDisplays = null;
-        [SerializeField] private LayoutGroup m_TaskLayout = null;
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private ScrollRect m_ScrollView = null;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aqua;
 using Aqua.Portable;
 using BeauUtil;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,29 +16,31 @@ namespace ProtoAqua.Modeling
         [SerializeField] private ConceptMap m_Map = null;
         [SerializeField] private CanvasGroup m_CritterSelectGroup = null;
         [SerializeField] private Button m_AddButton = null;
+
+        [Header("Unadded Notification")]
+        [SerializeField] private RectTransform m_UnaddedGroup = null;
+        [SerializeField] private TMP_Text m_UnaddedLabel = null;
         
         #endregion // Inspector
 
-        [NonSerialized] private HashSet<StringHash32> m_GraphedCritters = new HashSet<StringHash32>();
+        [NonSerialized] private UniversalModelState m_ModelState;
 
         public event Action<StringHash32> OnGraphUpdated;
 
-        public void SetInitialFacts(ListSlice<StringHash32> inFacts)
+        public void SetInitialFacts(ListSlice<StringHash32> inFacts, UniversalModelState inModelState)
         {
             m_Map.ClearFacts();
+
+            m_ModelState = inModelState;
 
             var bestiaryData = Services.Data.Profile.Bestiary;
             foreach(var factId in inFacts)
             {
                 PlayerFactParams playerFact = bestiaryData.GetFact(factId);
                 m_Map.AddFact(playerFact);
-                playerFact.Fact.CollectReferences(m_GraphedCritters);
             }
-        }
 
-        public bool IsGraphed(StringHash32 inCritterId)
-        {
-            return m_GraphedCritters.Contains(inCritterId);
+            UpdateUnadded();
         }
 
         #region Handlers
@@ -60,8 +63,23 @@ namespace ProtoAqua.Modeling
             if (Services.Data.Profile.Bestiary.AddFactToGraph(inParams.FactId))
             {
                 m_Map.AddFact(inParams);
-                inParams.Fact.CollectReferences(m_GraphedCritters);
+                m_ModelState.AddFact(inParams);
                 OnGraphUpdated?.Invoke(inParams.FactId);
+                UpdateUnadded();
+            }
+        }
+
+        private void UpdateUnadded()
+        {
+            int count = m_ModelState.UngraphedFactCount();
+            if (count > 0)
+            {
+                m_UnaddedGroup.gameObject.SetActive(true);
+                m_UnaddedLabel.SetText(count.ToStringLookup());
+            }
+            else
+            {
+                m_UnaddedGroup.gameObject.SetActive(false);
             }
         }
 

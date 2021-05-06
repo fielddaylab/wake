@@ -33,7 +33,6 @@ namespace Aqua
 
         #region Accessors
 
-        [ServiceReference] static public AnalyticsService Analytics { get; private set; }
         [ServiceReference] static public AssetsService Assets { get; private set; }
         [ServiceReference] static public AudioMgr Audio { get; private set; }
         [ServiceReference] static public DataService Data { get; private set; }

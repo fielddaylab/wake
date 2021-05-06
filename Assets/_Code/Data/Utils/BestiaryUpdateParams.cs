@@ -7,7 +7,10 @@ namespace Aqua
         public enum UpdateType : byte
         {
             Entity,
-            Fact
+            Fact,
+
+            RemovedEntity,
+            RemovedFact
         }
 
         public UpdateType Type;
