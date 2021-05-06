@@ -12,10 +12,45 @@ $set    player:seen.drJules = true
 {@player} Taking out a sub?!? I'm on it!
 :: end
 
-@trigger    JobCompleted
+:: InterventionModelingSetup
+@trigger	UniversalModelStarted
+@once
 @cutscene
-{@drJules}  Really nice work!
-{@player}   Thanks. My friend Kevin helped quite a bit.
-{@drJules}  Well you seem to make a great team. Want to do some more exploring?
-{@drJules}  I put some other Jobs on the Job board. Go to the Helm, pick something new and we will talk again. 
-{@player}   Ok. I'm on my way. 
+{@kevin} This time we will use the modeling tool to predict what would happen if we intervened with the ecosystem in some way.
+{@kevin} You should have all the rules from your bestiary added already, so hit that Simulate button.
+
+:: InterventionGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@kevin} Just like before, setup the historic populations to match the probe's recordings.
+{@kevin} If the model is correct, it will sync, and we can use it to predict.
+
+
+:: InterventionModelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} Nailed it!
+
+:: InterventionModelSynced
+@trigger	ModelSynced
+@once
+@cutscene
+{@kevin} Now what would happened if we added kelp, or removed Urchins, or even ...
+
+:: InterventionModelPredictImmediate
+@trigger	ModelPredictImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} That looks promising! Let's save the result.
+
+:: InterventionModelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+{@kevin} Ok. It looks like we have a plan! I have no idea what adding Otters really looks like, but let's report back to Dr. Jules at the office.
+
+
