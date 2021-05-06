@@ -25,19 +25,31 @@
 // {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
 
 :: ModelingSetup
-@trigger	ModelGraphStarted
+@trigger	UniversalModelStarted
 @once
 @cutscene
 {@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. It's what we call a model of the system.
 {@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
-{@kevin} On the next screen, you will set the populations so they match the past data we have from the urchin barren.
-{@kevin} If the model predicts how the populations changed in the past, it's likely it can help us figure out what's going to happen next!
+{@kevin} You can do this by using the "Import Rule" button and selcting behaviors from your bestiary.
+{@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
 
-:: ModelSynced
-@trigger	ModelSynced
+:: GetSync
+@trigger	ModelGraphStarted
 @once
 @cutscene
-{@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. Now let's see what it predicts will happen next.
+{@kevin} Now we are simulating how all those behavors will play out using the model of the ecosystem you just constructed.
+{@kevin} The faded lines show the historical population data we downloaded from the probe at Site B.
+{@kevin} The regular lines show what your model is predicting.
+{@kevin} Set the starting populations by dragging the sliders for each species to match the probe's recording from a few years back.
+{@kevin} If the model syncs with how the populations changed until now, it's likely it can help us figure out what's going to happen next! If you can't get it to sync, you must be missing some detail in the model.
+
+
+:: ModelSynced
+@trigger	ModelSyncedImmediate
+@once
+@cutscene
+{@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. 
+{@kevin} Now let's see what it predicts will happen next. Hit the Predict button.
 
 :: ModelingGraphComplete
 @trigger	ModelCompleted
