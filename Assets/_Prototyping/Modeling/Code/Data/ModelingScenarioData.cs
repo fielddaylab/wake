@@ -67,6 +67,17 @@ namespace ProtoAqua.Modeling
             // return m_AllowedLines.Contains(inId);
         }
 
+        public bool IsInHistorical(StringHash32 inId)
+        {
+            foreach(var actorCount in m_InitialActors)
+            {
+                if (actorCount.Id == inId)
+                    return true;
+            }
+
+            return false;
+        }
+
         private void Optimize()
         {
             if (m_Optimized)

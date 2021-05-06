@@ -21,8 +21,13 @@ namespace ProtoAqua.Modeling
             m_Buffer = inBuffer;
             
             m_SliderPool.Reset();
+            var playerCritters = inBuffer.PlayerCritters();
+            ModelingScenarioData scenario = inBuffer.Scenario();
             foreach(var critter in inBuffer.PlayerCritters())
             {
+                if (!scenario.IsInHistorical(critter.Id()))
+                    continue;
+                
                 StringHash32 id = critter.Id();
                 var slider = m_SliderPool.Alloc();
                 slider.Load(id, (int) inBuffer.GetPlayerCritters(id), -1, (int) inBuffer.GetModelCritters(id));

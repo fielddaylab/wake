@@ -485,6 +485,8 @@ namespace ProtoAqua.Modeling
                 
                 using(Profiling.Time("Generating player prediction populations"))
                 {
+                    foreach(var critter in m_Scenario.AdjustableActors())
+                        initialPredictResult.AdjustCritters(critter.Id, 0);
                     foreach(var critter in m_PlayerActorPredictionAdjust)
                         initialPredictResult.AdjustCritters(critter.Id, critter.Population);
                 }

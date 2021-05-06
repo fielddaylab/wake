@@ -150,13 +150,12 @@ namespace ProtoAqua.Modeling
         {
             // import critters and their graphed facts
             BestiaryData bestiaryData = Services.Data.Profile.Bestiary;
-            foreach(var critter in m_Buffer.Scenario().Actors())
+            foreach(var critter in m_Buffer.Scenario().Critters())
             {
-                if (m_UniversalState.IsCritterGraphed(critter.Id))
+                if (m_UniversalState.IsCritterGraphed(critter.Id()))
                 {
-                    BestiaryDesc critterDesc = Services.Assets.Bestiary.Get(critter.Id);
-                    m_Buffer.SelectCritter(critterDesc);
-                    foreach(var fact in critterDesc.Facts)
+                    m_Buffer.SelectCritter(critter);
+                    foreach(var fact in critter.Facts)
                     {
                         if (m_UniversalState.IsFactGraphed(fact.Id()))
                             m_Buffer.AddFact(bestiaryData.GetFact(fact.Id()));
