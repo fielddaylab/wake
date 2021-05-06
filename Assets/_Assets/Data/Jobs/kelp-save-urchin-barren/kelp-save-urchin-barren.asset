@@ -43,8 +43,8 @@ MonoBehaviour:
       m_Source: makeAPlan
       m_Hash: 1081959121
     LabelId:
-      m_Source: Make a plan for how to save the Urchin Barren
-      m_Hash: 925365920
+      m_Source: jobs.kelp-save-urchin-barren.task.makeAPlan
+      m_Hash: 642567
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -60,8 +60,8 @@ MonoBehaviour:
       m_Source: return
       m_Hash: 2246981567
     LabelId:
-      m_Source: Tell Dr. Jules about your plan in the office
-      m_Hash: 3544812506
+      m_Source: jobs.kelp-save-urchin-barren.task.return
+      m_Hash: 1731407629
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -79,8 +79,8 @@ MonoBehaviour:
       m_Hash: 1081959121
     Index: 0
     LabelId:
-      m_Source: Make a plan for how to save the Urchin Barren
-      m_Hash: 925365920
+      m_Source: jobs.kelp-save-urchin-barren.task.makeAPlan
+      m_Hash: 642567
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -97,12 +97,18 @@ MonoBehaviour:
       m_Hash: 2246981567
     Index: 1
     LabelId:
-      m_Source: Tell Dr. Jules about your plan in the office
-      m_Hash: 3544812506
+      m_Source: jobs.kelp-save-urchin-barren.task.return
+      m_Hash: 1731407629
     DescriptionId:
       m_Source: 
       m_Hash: 0
-    Steps: []
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: neverGonnaHappen
+        m_Hash: 2067570458
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 
   m_CashReward: 250
   m_GearReward: 7
