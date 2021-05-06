@@ -14,6 +14,8 @@ namespace Aqua
 {
     public class TitleController : MonoBehaviour, ISceneLoadHandler
     {
+        static public readonly StringHash32 Event_StartGame = "title:start-game"; // String userCode
+
         #region Inspector
 
         [Header("Camera")]
@@ -27,6 +29,7 @@ namespace Aqua
         [Header("UI")]
         [SerializeField] private CanvasGroup m_FieldDayCard = null;
         [SerializeField] private CanvasGroup m_TitleCard = null;
+        [SerializeField] private TMP_InputField m_UsercodeInput = null;
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private TMP_Text m_BuildIdText = null;
         
@@ -63,6 +66,7 @@ namespace Aqua
         private void OnNextButton()
         {
             Services.Data.LoadProfile();
+            Services.Events.Dispatch(Event_StartGame, m_UsercodeInput.text);
             Services.Audio.StopMusic();
             StateUtil.LoadSceneWithWipe(m_LoadSceneName);
         }

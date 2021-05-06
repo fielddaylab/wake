@@ -296,6 +296,9 @@ namespace ProtoAqua.Experiment
                 {
                     Routine.Start(this, RunQuickExperimentRoutine());
                 }
+
+                // TODO: use ExperimentEvents?
+                //Services.Events.Dispatch(GameEvents.BeginExperiment);
             }
         }
 
@@ -450,7 +453,7 @@ namespace ProtoAqua.Experiment
 
             Hide();
             yield return 0.25f;
-            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_CurrentExp);
         }
 
         private IEnumerator RunQuickExperimentRoutine() 
@@ -463,7 +466,7 @@ namespace ProtoAqua.Experiment
         {
             Hide();
             yield return 0.25f;
-            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_CurrentExp);
             yield return 3f;
             Debug.Log("Start quick experiment routine done.");
         }

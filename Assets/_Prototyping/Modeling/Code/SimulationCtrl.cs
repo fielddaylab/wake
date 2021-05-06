@@ -162,6 +162,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.Refresh(m_State, SimulationBuffer.UpdateFlags.ALL);
             m_SimulationUI.DisplayInitial();
 
+            Services.Events.Dispatch(SimulationConsts.Event_Simulation_Begin);
             Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphStarted);
         }
 
@@ -232,6 +233,7 @@ namespace ProtoAqua.Modeling
                         if (m_State.ModelSync < 100)
                         {
                             Services.Audio.PostEvent("syncDenied");
+                            Services.Script.TriggerResponse(SimulationConsts.Trigger_SyncError);
                             break;
                         }
 
@@ -244,6 +246,7 @@ namespace ProtoAqua.Modeling
                         if (m_State.PredictSync < 100)
                         {
                             Services.Audio.PostEvent("syncDenied");
+                            Services.Script.TriggerResponse(SimulationConsts.Trigger_PredictError);
                             break;
                         }
 

@@ -205,6 +205,7 @@ namespace Aqua.Profile
         public bool AddFactToGraph(StringHash32 inFactId)
         {
             RegisterFact(inFactId);
+
             if (m_GraphedFacts.Contains(inFactId))
                 return false;
             
@@ -215,7 +216,9 @@ namespace Aqua.Profile
 
         public bool IsFactGraphed(StringHash32 inFactId)
         {
-            return m_ObservedFacts.Contains(inFactId) && m_GraphedFacts.Contains(inFactId);
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
+
+            return m_GraphedFacts.Contains(inFactId);
         }
 
         #endregion // Graphed

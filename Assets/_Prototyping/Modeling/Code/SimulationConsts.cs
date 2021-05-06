@@ -13,13 +13,19 @@ namespace ProtoAqua.Modeling
         static public readonly StringHash32 Trigger_ConceptStarted = "UniversalModelStarted";
         static public readonly StringHash32 Trigger_GraphStarted = "ModelGraphStarted";
         static public readonly StringHash32 Trigger_SyncedImmediate = "ModelSyncedImmediate";
+        static public readonly StringHash32 Trigger_SyncError = "ModelSyncError";
         static public readonly StringHash32 Trigger_Synced = "ModelSynced";
         static public readonly StringHash32 Trigger_PredictImmediate = "ModelPredictImmediate";
+        static public readonly StringHash32 Trigger_PredictError = "ModelPredictError";
         static public readonly StringHash32 Trigger_GraphCompleted = "ModelCompleted";
 
         static public readonly StringHash32 ModelPhase_Universal = "universal";
         static public readonly StringHash32 ModelPhase_Model = "model";
         static public readonly StringHash32 ModelPhase_Predict = "predict";
         static public readonly StringHash32 ModelPhase_Completed = "complete";
+
+        static public readonly StringHash32 Event_Model_Begin = "modeling:model-begin";
+        static public readonly StringHash32 Event_Simulation_Begin = "simulation:simulation-begin";
+        static public readonly StringHash32 Event_Simulation_Complete = "simulation:simulation-complete";
     }
 }

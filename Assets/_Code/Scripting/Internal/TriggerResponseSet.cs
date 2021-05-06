@@ -115,7 +115,7 @@ namespace Aqua.Scripting
                     ScriptThread currentThread;
                     if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
                     {
-                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeId().ToDebugString(), node.TargetId().ToDebugString());
+                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId().ToDebugString());
                         continue;
                     }
                 }

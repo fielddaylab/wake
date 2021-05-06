@@ -78,6 +78,7 @@ namespace ProtoAqua.Argumentation
 
             if (script != null)
             {
+                Services.Events.Dispatch(GameEvents.BeginArgument);
                 LoadGraph(script);
             }
             else

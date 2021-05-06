@@ -48,6 +48,11 @@ namespace Aqua.Scripting
         public StringHash32 TriggerId() { return GetThread()?.TriggerId() ?? StringHash32.Null; }
 
         /// <summary>
+        /// Initialize node of this thread.
+        /// </summary>
+        public string RootNodeName() { return GetThread()?.InitialNodeName() ?? string.Empty; }
+
+        /// <summary>
         /// Pauses the thread.
         /// </summary>
         public void Pause()
