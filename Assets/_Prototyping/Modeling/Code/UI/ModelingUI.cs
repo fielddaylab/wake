@@ -1,13 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Aqua;
 using Aqua.Profile;
-using BeauRoutine;
-using BeauRoutine.Extensions;
-using BeauUtil;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ProtoAqua.Modeling
 {
@@ -21,32 +14,49 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         [NonSerialized] private ModelingScenarioData m_Scenario;
+        [NonSerialized] private UniversalModelState m_UniversalModel;
 
         public void Awake()
         {
-            ConceptMap.OnGraphUpdated += OnCritterGraphed;
+            ConceptMap.OnGraphUpdated += (s) => UpdateScenarioPanel();
         }
         
-        public void PopulateMap(BestiaryData inPlayerData)
+        public void PopulateMap(BestiaryData inPlayerData, UniversalModelState inModelState)
         {
-            ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts());
+            m_UniversalModel = inModelState;
+
+            ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts(), inModelState);
+            ScenarioPanel.SetUniversalModel(inModelState);
         }
 
         public void SetScenario(ModelingScenarioData inScenario, bool inbOverride)
         {
             m_Scenario = inScenario;
             ScenarioPanel.SetScenario(inScenario, inbOverride);
+            UpdateScenarioReady();
         }
 
-        public void OnCritterGraphed(StringHash32 inFactGraphed)
+        public void UpdateScenarioPanel()
         {
+            ScenarioPanel.UpdateCritterIcons();
+            UpdateScenarioReady();
+        }
+
+        private void UpdateScenarioReady()
+        {
+            if (!m_Scenario)
+                return;
+            
             bool bIsReady = false;
-            foreach(var critter in m_Scenario.Actors())
+            if (m_UniversalModel.UngraphedFactCount() == 0)
             {
-                if (ConceptMap.IsGraphed(critter.Id))
+                foreach(var critter in m_Scenario.Actors())
                 {
-                    bIsReady = true;
-                    break;
+                    if (m_UniversalModel.IsCritterGraphed(critter.Id))
+                    {
+                        bIsReady = true;
+                        break;
+                    }
                 }
             }
 

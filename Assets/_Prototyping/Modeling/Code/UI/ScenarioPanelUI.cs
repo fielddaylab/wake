@@ -14,7 +14,6 @@ namespace ProtoAqua.Modeling
         #region Inspector
 
         [Header("Panel")]
-        [SerializeField] private RectTransform m_Root = null;
         [SerializeField] private LocText m_ScenarioName = null;
         [SerializeField] private LocText m_DescriptionText = null;
 
@@ -24,6 +23,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private RectTransform m_AlreadyCompletePage = null;
         [SerializeField] private RectTransform m_CrittersPage = null;
         [SerializeField] private Image[] m_CritterIcons = null;
+        [SerializeField] private Sprite m_MissingCritterIcon = null;
         [SerializeField] private Button m_SimulateButton = null;
 
         #endregion // Inspector
@@ -32,6 +32,7 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private ModelingScenarioData m_Scenario = null;
         [NonSerialized] private bool m_OverrideScenarioAccess = false;
+        [NonSerialized] private UniversalModelState m_UniversalModel;
 
         public Action OnSimulateSelect;
 
@@ -44,16 +45,20 @@ namespace ProtoAqua.Modeling
         {
             m_Scenario = inScenario;
             m_OverrideScenarioAccess = inbOverride;
-
-            m_Root.gameObject.SetActive(inScenario != null);
+            
             m_SimulateButton.interactable = inScenario != null;
 
             Populate(m_Scenario, m_OverrideScenarioAccess);
         }
 
+        public void SetUniversalModel(UniversalModelState inModel)
+        {
+            m_UniversalModel = inModel;
+        }
+
         public void SetSimulationReady(bool inbReady)
         {
-            m_SimulateButton.interactable = inbReady && m_SimulationAllowed;
+            m_SimulateButton.interactable = inbReady && m_SimulationAllowed && m_UniversalModel.UngraphedFactCount() == 0;
         }
 
         public bool CanSimulate()
@@ -74,6 +79,18 @@ namespace ProtoAqua.Modeling
 
         private void Populate(ModelingScenarioData inScenario, bool inbOverride)
         {
+            if (inScenario == null)
+            {
+                // TODO: Replace
+                m_ScenarioName.SetText("No Scenario Loaded");
+                m_DescriptionText.SetText(null);
+
+                m_MissingEnvPage.gameObject.SetActive(false);
+                m_AlreadyCompletePage.gameObject.SetActive(false);
+                m_CrittersPage.gameObject.SetActive(false);
+                return;
+            }
+            
             m_ScenarioName.SetText(inScenario.TitleId());
             m_DescriptionText.SetText(inScenario.DescId());
             
@@ -92,7 +109,7 @@ namespace ProtoAqua.Modeling
             {
                 m_SimulationAllowed = true;
                 m_CrittersPage.gameObject.SetActive(true);
-                DisplayCritterIcons(inScenario);
+                UpdateCritterIcons();
                 return;
             }
             
@@ -116,15 +133,18 @@ namespace ProtoAqua.Modeling
 
             m_CrittersPage.gameObject.SetActive(true);
             m_SimulationAllowed = true;
-            DisplayCritterIcons(inScenario);
+            UpdateCritterIcons();
         }
 
-        private void DisplayCritterIcons(ModelingScenarioData inScenario)
+        public void UpdateCritterIcons()
         {
-            var critters = inScenario.Critters();
+            if (!m_Scenario)
+                return;
+            
+            var critters = m_Scenario.Critters();
             for(int i = 0; i < critters.Length; ++i)
             {
-                m_CritterIcons[i].sprite = critters[i].Icon();
+                m_CritterIcons[i].sprite = m_UniversalModel.IsCritterGraphed(critters[i].Id()) ? critters[i].Icon() : m_MissingCritterIcon;
                 m_CritterIcons[i].gameObject.SetActive(true);
             }
 
