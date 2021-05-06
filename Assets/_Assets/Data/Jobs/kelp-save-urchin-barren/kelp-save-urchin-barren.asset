@@ -38,43 +38,7 @@ MonoBehaviour:
   m_StationId: Station1
   m_DiveSiteIds:
   - RS-1B
-  m_Tasks:
-  - Id:
-      m_Source: gotoSiteC
-      m_Hash: 1682475842
-    LabelId:
-      m_Source: Travel to the Giant Kelp Forest at Site C
-      m_Hash: 3292233296
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 3
-      Target:
-        m_Source: RS-1C
-        m_Hash: 2212350453
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: scanGiantKelp
-      m_Hash: 1818207473
-    LabelId:
-      m_Source: Scan Giant Kelp
-      m_Hash: 2952039527
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: GiantKelp
-        m_Hash: 3510470690
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: gotoSiteC
-      m_Hash: 1682475842
+  m_Tasks: []
   m_OptimizedTaskList:
   - Id:
       m_Source: gotoSiteC
