@@ -36,7 +36,15 @@ $set    player:seen.kevin = true
 @once
 @cutscene
 $set    jobs:kelp-welcome.seen.bottom = true
-{@drJules}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+{@kevin}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+
+:: navigation.goBackUp
+@trigger    JobTaskUpdated
+@when       has.entity:SeaOtter, has.entity:Urchin, has.entity:GiantKelp, scanned:RS-1C.probe
+@once
+@cutscene
+{@kevin}    Looking good! If you are ready to return, drive your sub back up toward the surface of the water. 
+
 
 :: navigation.return
 @trigger    SceneStart
