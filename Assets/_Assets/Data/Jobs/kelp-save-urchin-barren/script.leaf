@@ -4,13 +4,16 @@
 @trigger    JobStarted
 @cutscene
 $set    player:seen.drJules = true
-{@drJules} I'm glad to see you taking on a Job here!
-{@drJules}  The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
-{@player} How do I do that?
-{@drJules} Just exit the helm, then use the submarine to travel out to research sites. 
-{@drJules}  When you are done, come back to the office and tell me what you've learned.
-{@player} Taking out a sub?!? I'm on it!
+{@drJules} Ok. Time to bring it all together. 
+{@drJules} See if you can come up with a way to repair Site B, the Urcin Barren.
+{@drJules} Use all the tools on your ship and meet me in the office when you have a plan. 
+
 :: end
+@trigger    JobCompleted
+@cutscene
+{@drJules}  Absolutely Fantastic Work!
+{@player}   Thanks. It was nice being able to use some science to help.
+{@drJules}  Well this is the end of the Aqualab prototype. A WINNER IS YOU.
 
 :: InterventionModelingSetup
 @trigger	UniversalModelStarted
@@ -51,6 +54,4 @@ $set    player:seen.drJules = true
 @trigger	ModelCompleted
 @once
 @cutscene
-{@kevin} Ok. It looks like we have a plan! I have no idea what adding Otters really looks like, but let's report back to Dr. Jules at the office.
-
-
+{@kevin} Ok. It looks like we have a plan! I have no idea what adding Otters practically means, but let's report back to Dr. Jules at the office.

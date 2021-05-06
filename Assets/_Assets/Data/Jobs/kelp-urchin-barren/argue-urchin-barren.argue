@@ -1,8 +1,22 @@
-# rootNodeId node.end
+# rootNodeId node.intro
 # endNodeId node.end
-# defaultInvalidNodeId node.invalid.default
+# defaultInvalidNodeId node.invalid.first
 # characterId drJules
 # linksFile Links
 
+:: node.intro
+@invalidNodeId  node.invalid.first
+@linkToNode Urchin.Eats.GiantKelp, node.uchinsEatKelp
+I see you explored Site B. Why are all the Kelp dying? 
+
+:: node.invalid.first
+@nextNodeId node.intro
+But where all all the Kelp going? Is something eating them?
+
+:: node.uchinsEatKelp
+@invalidNodeId  node.invalid.first
+@linkToNode Model.UrchinBarrenPrediction, node.end
+I see. So do you know if they will ever grow back? 
+
 :: node.end
-Wow. This is concerning. Your predictions are pretty grim.
+Ok then.

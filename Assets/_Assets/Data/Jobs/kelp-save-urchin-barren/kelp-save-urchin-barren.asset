@@ -40,78 +40,76 @@ MonoBehaviour:
   - RS-1B
   m_Tasks:
   - Id:
-      m_Source: gotoSiteC
-      m_Hash: 1682475842
+      m_Source: makeAPlan
+      m_Hash: 1081959121
     LabelId:
-      m_Source: Travel to the Giant Kelp Forest at Site C
-      m_Hash: 3292233296
+      m_Source: jobs.kelp-save-urchin-barren.task.makeAPlan
+      m_Hash: 642567
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 1
       Target:
-        m_Source: RS-1C
-        m_Hash: 2212350453
+        m_Source: Model.UrchinBarrenIntroduceOtters
+        m_Hash: 690303041
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: scanGiantKelp
-      m_Hash: 1818207473
+      m_Source: return
+      m_Hash: 2246981567
     LabelId:
-      m_Source: Scan Giant Kelp
-      m_Hash: 2952039527
+      m_Source: jobs.kelp-save-urchin-barren.task.return
+      m_Hash: 1731407629
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: GiantKelp
-        m_Hash: 3510470690
+        m_Source: neverGonnaHappen
+        m_Hash: 2067570458
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: gotoSiteC
-      m_Hash: 1682475842
+    PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
-      m_Source: gotoSiteC
-      m_Hash: 1682475842
+      m_Source: makeAPlan
+      m_Hash: 1081959121
     Index: 0
     LabelId:
-      m_Source: Travel to the Giant Kelp Forest at Site C
-      m_Hash: 3292233296
+      m_Source: jobs.kelp-save-urchin-barren.task.makeAPlan
+      m_Hash: 642567
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 1
       Target:
-        m_Source: RS-1C
-        m_Hash: 2212350453
+        m_Source: Model.UrchinBarrenIntroduceOtters
+        m_Hash: 690303041
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: scanGiantKelp
-      m_Hash: 1818207473
+      m_Source: return
+      m_Hash: 2246981567
     Index: 1
     LabelId:
-      m_Source: Scan Giant Kelp
-      m_Hash: 2952039527
+      m_Source: jobs.kelp-save-urchin-barren.task.return
+      m_Hash: 1731407629
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: GiantKelp
-        m_Hash: 3510470690
+        m_Source: neverGonnaHappen
+        m_Hash: 2067570458
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
   m_CashReward: 250
   m_GearReward: 7
   m_AdditionalRewards: []
