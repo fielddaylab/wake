@@ -160,7 +160,7 @@ $set temp:newObservationTimer + 1
 @repeat 1
 @chatter
 $set temp:newObservationTimer = 0
-{@kevin}    Nice one.
+{@kevin}    Nice one! Once you are done observing, use the control on the left of the observation tank to end the experiment. 
 
 :: behavior.alreadyObserved.exitHint
 @trigger    BehaviorAlreadyObserved
@@ -171,7 +171,7 @@ $set temp:newObservationTimer = 0
 @chatter
 $set temp:newObservationTimer = 0
 {@kevin}    We might be done here...
-            Just use the tablet on the left if you want to stop the experiment.
+            Use the control on the left of the tank if you want to stop the experiment.
 
 :: behavior.newObservation.2
 @trigger    NewBehaviorObserved

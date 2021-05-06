@@ -10,16 +10,6 @@ $set    player:seen.drJules = true
 {@drJules} Just exit the helm, then use the submarine to travel out to research sites. 
 {@drJules}  When you are done, come back to the office and tell me what you've learned.
 {@player} Taking out a sub?!? I'm on it!
-:: end
-
-@trigger    JobCompleted
-@cutscene
-{@drJules}  Really nice work! You just explained the basis of the kelp forest food web.
-{@player}   Thanks. My friend Kevin helped quite a bit.
-{@drJules}  Well you seem to make a great team. Want to do some more exploring?
-{@drJules}  I put some other Jobs on the Job board. Go to the Helm, pick something new and we will talk again. 
-{@player}   Ok. I'm on my way. 
-
 
 :: navigation
 @trigger    SceneStart
@@ -106,3 +96,10 @@ $endif
 {@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviours.
 {@player}   Then what?
 {@kevin}   Then we can know for sure how they relate!
+
+:: firstBehavior
+@trigger    NewBehaviorObserved
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    You just observed your first behavior! Once you are sure you are done observing, use the control on the left of the observation tank to end the experiment. 
