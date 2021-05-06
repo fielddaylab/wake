@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Aqua;
-using BeauUtil;
-using UnityEngine;
-
 namespace ProtoAqua.Modeling
 {
     public struct ModelingState

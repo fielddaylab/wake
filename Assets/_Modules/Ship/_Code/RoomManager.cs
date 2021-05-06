@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Aqua;
-using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 
-namespace ProtoAqua.Ship
+namespace Aqua.Ship
 {
     public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader
     {

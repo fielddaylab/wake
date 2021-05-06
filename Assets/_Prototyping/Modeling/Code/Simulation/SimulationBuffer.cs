@@ -166,6 +166,28 @@ namespace ProtoAqua.Modeling
         }
 
         /// <summary>
+        /// Clears all player critter counts.
+        /// </summary>
+        public bool ClearPlayerCritters()
+        {
+            bool bChanged = false;
+            for(int i = 0; i < m_PlayerActors.Count; i++)
+            {
+                bChanged |= m_PlayerActors[i].Population > 0;
+                m_PlayerActors[i].Population = 0;
+            }
+
+            if (bChanged)
+            {
+                m_PlayerSimDirty |= DirtyFlags.Populations;
+                InvokeOnUpdate();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Returns the player prediction critter adjust.
         /// </summary>
         public int GetPlayerPredictionCritterAdjust(StringHash32 inId)
@@ -199,6 +221,28 @@ namespace ProtoAqua.Modeling
                 return true;
             }
             
+            return false;
+        }
+
+        /// <summary>
+        /// Clears all player critter adjusts.
+        /// </summary>
+        public bool ClearPlayerPredictionCritterAdjusts()
+        {
+            bool bChanged = false;
+            for(int i = 0; i < m_PlayerActorPredictionAdjust.Count; i++)
+            {
+                bChanged |= m_PlayerActorPredictionAdjust[i].Population != 0;
+                m_PlayerActorPredictionAdjust[i].Population = 0;
+            }
+
+            if (bChanged)
+            {
+                m_PlayerSimDirty |= DirtyFlags.Prediction;
+                InvokeOnUpdate();
+                return true;
+            }
+
             return false;
         }
 

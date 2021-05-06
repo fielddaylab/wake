@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System;
 using BeauUtil;
 
-namespace ProtoAqua.JobBoard
+namespace Aqua.JobBoard
 {
     public class JobInfo : MonoBehaviour
     {

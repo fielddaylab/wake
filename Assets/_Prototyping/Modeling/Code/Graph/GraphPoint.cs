@@ -11,12 +11,14 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
+        [SerializeField] private Image m_Background = null;
         [SerializeField] private Image m_Renderer = null;
 
         #endregion // Inspector
 
         [NonSerialized] private Vector2 m_RawPoint;
 
+        public Image Background { get { return m_Background; } }
         public Image Renderer { get { return m_Renderer; } }
 
         public void SetPoint(Vector2 inPoint)

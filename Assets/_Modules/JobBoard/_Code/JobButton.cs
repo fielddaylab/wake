@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine.UI;
 using BeauPools;
 
-namespace ProtoAqua.JobBoard
+namespace Aqua.JobBoard
 {
     public class JobButton : MonoBehaviour, IPoolAllocHandler
     {

@@ -1,11 +1,10 @@
 using Aqua;
-using UnityEngine;
-using UnityEngine.UI;
-using BeauUtil;
 using BeauPools;
+using BeauUtil;
+using BeauUtil.Debugger;
 using System;
 using System.Collections.Generic;
-using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace ProtoAqua.Modeling
 {

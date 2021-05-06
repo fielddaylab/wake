@@ -1,6 +1,7 @@
 using System;
 using Aqua;
 using Aqua.Debugging;
+using Aqua.Profile;
 using BeauUtil;
 using UnityEngine;
 
@@ -27,6 +28,8 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private ModelingState m_State;
         [NonSerialized] private bool m_BufferDirty = false;
 
+        #region ISceneLoad
+
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
             ModelingScenarioData scenario = Services.Data.CurrentJob()?.Job.FindAsset<ModelingScenarioData>();
@@ -45,7 +48,6 @@ namespace ProtoAqua.Modeling
 
             m_ModelingUI.SetScenario(scenario, scenario && BootParams.BootedFromCurrentScene);
             m_ModelingUI.PopulateMap(Services.Data.Profile.Bestiary);
-            m_ModelingUI.ConceptMap.SetBuffer(m_Buffer);
 
             m_ModelingUI.ScenarioPanel.OnSimulateSelect = OnScenarioSimulateClick;
             m_SimulationUI.OnAdvanceClicked = OnSimulationAdvanceClicked;
@@ -65,6 +67,8 @@ namespace ProtoAqua.Modeling
             m_Input.Device.RegisterHandler(this);
         }
 
+        #endregion // ISceneLoad
+
         private void LateUpdate()
         {
             if (m_BufferDirty)
@@ -74,30 +78,7 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        private void OnBufferUpdated()
-        {
-            var updateFlags = m_Buffer.Refresh();
-
-            if (updateFlags == 0)
-                return;
-
-            switch(m_State.Phase)
-            {
-                case ModelingPhase.Universal:
-                    {
-                        m_ModelingUI.OnBufferUpdate(m_Buffer, updateFlags);
-                        break;
-                    }
-
-                case ModelingPhase.Sync:
-                case ModelingPhase.Predict:
-                    {
-                        UpdateSync();
-                        m_SimulationUI.Refresh(m_State, updateFlags);
-                        break;
-                    }
-            }
-        }
+        #region Sync
 
         private void UpdateSync()
         {
@@ -127,8 +108,50 @@ namespace ProtoAqua.Modeling
             Services.Data.SetVariable(SimulationConsts.Var_PredictSync, m_State.PredictSync);
         }
 
-        private void OnScenarioSimulateClick()
+        private void SyncPhaseScriptVar()
         {
+            switch(m_State.Phase)
+            {
+                case ModelingPhase.Universal:
+                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Universal);
+                    break;
+
+                case ModelingPhase.Sync:
+                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Model);
+                    break;
+
+                case ModelingPhase.Predict:
+                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Predict);
+                    break;
+
+                case ModelingPhase.Completed:
+                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Completed);
+                    break;
+            }
+        }
+
+        #endregion // Sync
+
+        #region Activity
+
+        private void StartActivity()
+        {
+            // import critters and their graphed facts
+            BestiaryData bestiaryData = Services.Data.Profile.Bestiary;
+            foreach(var critter in m_Buffer.Scenario().Actors())
+            {
+                if (m_ModelingUI.ConceptMap.IsGraphed(critter.Id))
+                {
+                    BestiaryDesc critterDesc = Services.Assets.Bestiary.Get(critter.Id);
+                    m_Buffer.SelectCritter(critterDesc);
+                    foreach(var fact in critterDesc.Facts)
+                    {
+                        if (bestiaryData.IsFactGraphed(fact.Id()))
+                            m_Buffer.AddFact(bestiaryData.GetFact(fact.Id()));
+                    }
+                }
+            }
+
             m_ModelingUI.gameObject.SetActive(false);
             m_SimulationUI.gameObject.SetActive(true);
 
@@ -140,52 +163,6 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.DisplayInitial();
 
             Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphStarted);
-        }
-
-        private void OnSimulationAdvanceClicked()
-        {
-            switch(m_State.Phase)
-            {
-                case ModelingPhase.Sync:
-                    {
-                        if (m_State.ModelSync < 100)
-                        {
-                            Services.Audio.PostEvent("syncDenied");
-                            break;
-                        }
-
-                        AdvanceToPredict();
-                        break;
-                    }
-
-                case ModelingPhase.Predict:
-                    {
-                        if (m_State.PredictSync < 100)
-                        {
-                            Services.Audio.PostEvent("syncDenied");
-                            break;
-                        }
-
-                        CompleteActivity();
-                        break;
-                    }
-            }
-        }
-
-        private void OnSimulationBackClicked()
-        {
-            m_ModelingUI.gameObject.SetActive(true);
-            m_SimulationUI.gameObject.SetActive(false);
-
-            m_State.Phase = ModelingPhase.Universal;
-            SyncPhaseScriptVar();
-
-            m_Buffer.ClearFacts();
-            m_Buffer.ClearSelectedCritters();
-
-            m_ModelingUI.ScenarioPanel.ForceShow();
-            
-            Services.Script.TriggerResponse(SimulationConsts.Trigger_ConceptStarted);
         }
 
         private void AdvanceToPredict()
@@ -221,25 +198,87 @@ namespace ProtoAqua.Modeling
             m_Input.Device.DeregisterHandler(this);
         }
 
-        private void SyncPhaseScriptVar()
+        private void CancelActivity()
+        {
+            m_ModelingUI.gameObject.SetActive(true);
+            m_SimulationUI.gameObject.SetActive(false);
+
+            m_State.Phase = ModelingPhase.Universal;
+            SyncPhaseScriptVar();
+
+            m_Buffer.ClearFacts();
+            m_Buffer.ClearSelectedCritters();
+            m_Buffer.ClearPlayerCritters();
+            m_Buffer.ClearPlayerPredictionCritterAdjusts();
+            
+            Services.Script.TriggerResponse(SimulationConsts.Trigger_ConceptStarted);
+        }
+
+        #endregion // Activity
+
+        #region Handlers
+
+        private void OnScenarioSimulateClick()
+        {
+            StartActivity();
+        }
+
+        private void OnSimulationAdvanceClicked()
         {
             switch(m_State.Phase)
             {
-                case ModelingPhase.Universal:
-                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Universal);
-                    break;
-
                 case ModelingPhase.Sync:
-                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Model);
-                    break;
+                    {
+                        if (m_State.ModelSync < 100)
+                        {
+                            Services.Audio.PostEvent("syncDenied");
+                            break;
+                        }
+
+                        AdvanceToPredict();
+                        break;
+                    }
 
                 case ModelingPhase.Predict:
-                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Predict);
-                    break;
+                    {
+                        if (m_State.PredictSync < 100)
+                        {
+                            Services.Audio.PostEvent("syncDenied");
+                            break;
+                        }
 
-                case ModelingPhase.Completed:
-                    Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Completed);
-                    break;
+                        CompleteActivity();
+                        break;
+                    }
+            }
+        }
+
+        private void OnSimulationBackClicked()
+        {
+            CancelActivity();
+        }
+
+        private void OnBufferUpdated()
+        {
+            var updateFlags = m_Buffer.Refresh();
+
+            if (updateFlags == 0)
+                return;
+
+            switch(m_State.Phase)
+            {
+                case ModelingPhase.Universal:
+                    {
+                        break;
+                    }
+
+                case ModelingPhase.Sync:
+                case ModelingPhase.Predict:
+                    {
+                        UpdateSync();
+                        m_SimulationUI.Refresh(m_State, updateFlags);
+                        break;
+                    }
             }
         }
 
@@ -255,5 +294,7 @@ namespace ProtoAqua.Modeling
 
             #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
         }
+    
+        #endregion // Handlers
     }
 }

@@ -9,32 +9,16 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.Modeling
 {
-    public class ScenarioPanelUI : BasePanel
+    public class ScenarioPanelUI : MonoBehaviour
     {
-        private enum Page
-        {
-            Info,
-            Simulator,
-
-            COUNT
-        }
-
         #region Inspector
 
         [Header("Panel")]
+        [SerializeField] private RectTransform m_Root = null;
         [SerializeField] private LocText m_ScenarioName = null;
-        
-        [Header("Controls")]
-        [SerializeField] private Button m_ConfigureButton = null;
-        [SerializeField] private Button m_PrevButton = null;
-        [SerializeField] private Button m_NextButton = null;
-
-        [Header("Info Page")]
-        [SerializeField] private RectTransform m_InfoPage = null;
         [SerializeField] private LocText m_DescriptionText = null;
 
         [Header("Simulator Page")]
-        [SerializeField] private RectTransform m_SimulatorPage = null;
         [SerializeField] private RectTransform m_MissingEnvPage = null;
         [SerializeField] private Image m_MissingEnvIcon = null;
         [SerializeField] private RectTransform m_AlreadyCompletePage = null;
@@ -44,7 +28,6 @@ namespace ProtoAqua.Modeling
 
         #endregion // Inspector
 
-        [NonSerialized] private Page m_CurrentPage;
         [NonSerialized] private bool m_SimulationAllowed;
 
         [NonSerialized] private ModelingScenarioData m_Scenario = null;
@@ -52,13 +35,8 @@ namespace ProtoAqua.Modeling
 
         public Action OnSimulateSelect;
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
-
-            m_ConfigureButton.onClick.AddListener(OnConfigureClick);
-            m_PrevButton.onClick.AddListener(OnPageToggle);
-            m_NextButton.onClick.AddListener(OnPageToggle);
             m_SimulateButton.onClick.AddListener(OnSimulateClick);
         }
 
@@ -67,7 +45,10 @@ namespace ProtoAqua.Modeling
             m_Scenario = inScenario;
             m_OverrideScenarioAccess = inbOverride;
 
-            m_ConfigureButton.interactable = inScenario != null;
+            m_Root.gameObject.SetActive(inScenario != null);
+            m_SimulateButton.interactable = inScenario != null;
+
+            Populate(m_Scenario, m_OverrideScenarioAccess);
         }
 
         public void SetSimulationReady(bool inbReady)
@@ -80,32 +61,7 @@ namespace ProtoAqua.Modeling
             return m_SimulationAllowed;
         }
 
-        public void ForceShow()
-        {
-            Populate(m_Scenario, m_OverrideScenarioAccess);
-            InstantShow();
-        }
-
         #region Handlers
-
-        private void OnConfigureClick()
-        {
-            if (IsShowing())
-            {
-                Hide();
-            }
-            else
-            {
-                Populate(m_Scenario, m_OverrideScenarioAccess);
-                Show();
-            }
-        }
-
-        private void OnPageToggle()
-        {
-            m_CurrentPage = (Page) (((int) m_CurrentPage + 1) % (int) Page.COUNT);
-            DisplayPage(m_CurrentPage);
-        }
 
         private void OnSimulateClick()
         {
@@ -118,12 +74,10 @@ namespace ProtoAqua.Modeling
 
         private void Populate(ModelingScenarioData inScenario, bool inbOverride)
         {
-            m_CurrentPage = Page.Info;
             m_ScenarioName.SetText(inScenario.TitleId());
             m_DescriptionText.SetText(inScenario.DescId());
             
             ConfigureSimulatorPage(inScenario, inbOverride);
-            DisplayPage(m_CurrentPage);
 
             m_SimulateButton.interactable = false;
         }
@@ -177,26 +131,6 @@ namespace ProtoAqua.Modeling
             for(int i = critters.Length; i < m_CritterIcons.Length; ++i)
             {
                 m_CritterIcons[i].gameObject.SetActive(false);
-            }
-        }
-
-        private void DisplayPage(Page inPage)
-        {
-            switch(inPage)
-            {
-                case Page.Info:
-                    {
-                        m_SimulatorPage.gameObject.SetActive(false);
-                        m_InfoPage.gameObject.SetActive(true);
-                        break;
-                    }
-
-                case Page.Simulator:
-                    {
-                        m_InfoPage.gameObject.SetActive(false);
-                        m_SimulatorPage.gameObject.SetActive(true);
-                        break;
-                    }
             }
         }
 

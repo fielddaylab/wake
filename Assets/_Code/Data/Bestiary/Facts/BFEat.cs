@@ -12,7 +12,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Eating")]
-        [SerializeField] private BestiaryDesc m_TargetEntry = null;
+        [SerializeField, Required] private BestiaryDesc m_TargetEntry = null;
         [SerializeField] private uint m_Amount = 0;
 
         #endregion // Inspector
@@ -60,6 +60,12 @@ namespace Aqua
 
                 return psb.Builder.Flush();
             }
+        }
+
+        public override void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
+        {
+            base.CollectReferences(outReferencedBestiary);
+            outReferencedBestiary.Add(m_TargetEntry.Id());
         }
 
         public override bool HasSameSlot(BFBehavior inBehavior)

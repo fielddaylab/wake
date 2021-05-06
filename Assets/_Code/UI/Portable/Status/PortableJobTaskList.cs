@@ -59,16 +59,16 @@ namespace Aqua
             }
 
             m_Group.alpha = 0;
-            Routine.Start(this, RebuildLayout());
+            Routine.Start(this, ScrollRebuildHack());
         }
 
-        private IEnumerator RebuildLayout()
+        private IEnumerator ScrollRebuildHack()
         {
             yield return null;
-            
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_TaskLayout.transform);
-            m_Group.alpha = 1;
+
+            m_ScrollView.ForceRebuild();
             m_ScrollView.verticalNormalizedPosition = 0;
+            m_Group.alpha = 1;
         }
 
         private JobTaskDisplay AllocTaskDisplay(JobTask inTask, bool inbComplete)

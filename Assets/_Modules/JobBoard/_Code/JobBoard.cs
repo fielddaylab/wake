@@ -9,7 +9,7 @@ using TMPro;
 using BeauData;
 using BeauPools;
 
-namespace ProtoAqua.JobBoard
+namespace Aqua.JobBoard
 {
     public class JobBoard : MonoBehaviour, ISceneLoadHandler
     {

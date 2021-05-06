@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 
-namespace ProtoAqua.JobBoard
+namespace Aqua.JobBoard
 {
     public class ListHeader : MonoBehaviour
     {

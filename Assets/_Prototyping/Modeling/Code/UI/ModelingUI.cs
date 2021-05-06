@@ -20,10 +20,11 @@ namespace ProtoAqua.Modeling
 
         #endregion // Inspector
 
-        private void Awake()
+        [NonSerialized] private ModelingScenarioData m_Scenario;
+
+        public void Awake()
         {
-            ScenarioPanel.OnShowEvent.AddListener(OnScenarioShow);
-            ScenarioPanel.OnHideEvent.AddListener(OnScenarioHide);
+            ConceptMap.OnGraphUpdated += OnCritterGraphed;
         }
         
         public void PopulateMap(BestiaryData inPlayerData)
@@ -33,29 +34,23 @@ namespace ProtoAqua.Modeling
 
         public void SetScenario(ModelingScenarioData inScenario, bool inbOverride)
         {
+            m_Scenario = inScenario;
             ScenarioPanel.SetScenario(inScenario, inbOverride);
         }
 
-        public void OnBufferUpdate(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inFlags)
+        public void OnCritterGraphed(StringHash32 inFactGraphed)
         {
-            if ((inFlags & SimulationBuffer.UpdateFlags.Model) == 0)
-                return;
+            bool bIsReady = false;
+            foreach(var critter in m_Scenario.Actors())
+            {
+                if (ConceptMap.IsGraphed(critter.Id))
+                {
+                    bIsReady = true;
+                    break;
+                }
+            }
 
-            ScenarioPanel.SetSimulationReady(inBuffer.PlayerCritters().Count > 0);
+            ScenarioPanel.SetSimulationReady(bIsReady);
         }
-
-        #region Handlers
-
-        private void OnScenarioShow(BasePanel.TransitionType inType)
-        {
-            ConceptMap.SetHighlightAllowed(ScenarioPanel.CanSimulate());
-        }
-
-        private void OnScenarioHide(BasePanel.TransitionType inType)
-        {
-            ConceptMap.SetHighlightAllowed(false);
-        }
-
-        #endregion // Handlers
     }
 }

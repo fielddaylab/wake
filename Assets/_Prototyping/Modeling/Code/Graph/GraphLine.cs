@@ -1,6 +1,4 @@
-using Aqua;
 using UnityEngine;
-using UnityEngine.UI;
 using BeauUtil;
 using UnityEngine.UI.Extensions;
 using System;
@@ -12,6 +10,7 @@ namespace ProtoAqua.Modeling
         #region Inspector
 
         [SerializeField] private UILineRenderer m_Renderer = null;
+        [SerializeField] private GraphPoint m_InitialPointRenderer = null;
 
         #endregion // Inspector
 
@@ -19,6 +18,7 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private Vector2[] m_RelativePoints;
 
         public UILineRenderer Renderer { get { return m_Renderer; } }
+        public GraphPoint PointRenderer { get { return m_InitialPointRenderer; } }
 
         public void ClearPoints()
         {
@@ -52,6 +52,20 @@ namespace ProtoAqua.Modeling
 
             m_Renderer.RelativeSize = true;
             m_Renderer.Points = m_RelativePoints;
+
+            if (m_InitialPointRenderer)
+            {
+                if (m_RawPoints.Count > 0)
+                {
+                    m_InitialPointRenderer.gameObject.SetActive(true);
+                    m_InitialPointRenderer.SetPoint(m_RawPoints[0]);
+                    m_InitialPointRenderer.Render(inBounds);
+                }
+                else
+                {
+                    m_InitialPointRenderer.gameObject.SetActive(false);
+                }
+            }
         }
     }
 }

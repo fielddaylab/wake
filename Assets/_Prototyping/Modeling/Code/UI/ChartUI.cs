@@ -45,7 +45,7 @@ namespace ProtoAqua.Modeling
         {
             m_Predict.gameObject.SetActive(false);
             m_Targets.gameObject.SetActive(false);
-            m_PredictMode = true;
+            m_PredictMode = false;
         }
 
         public void Refresh(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inUpdate)
@@ -74,7 +74,7 @@ namespace ProtoAqua.Modeling
             }
             else
             {
-                axisPair = CalculateGraphRect(m_Historical.Range, m_Player.Range, default(Rect), default(Rect), totalTicks, 8);
+                axisPair = CalculateGraphRect(m_Historical.Range, default(Rect), default(Rect), default(Rect), totalTicks, 8);
             }
 
             Rect fullRect = axisPair.ToRect();
@@ -82,6 +82,7 @@ namespace ProtoAqua.Modeling
             m_Player.RenderLines(fullRect);
             m_Predict.RenderLines(fullRect);
             m_Targets.RenderPoints(fullRect);
+
             m_Axis.Load(axisPair);
 
             RenderRegion(fullRect, inBuffer);

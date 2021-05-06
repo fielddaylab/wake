@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using BeauRoutine;
 using BeauUtil;
-using UnityEngine.EventSystems;
-using Aqua;
 using System;
 
-namespace ProtoAqua.Ship
+namespace Aqua.Ship
 {
     public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>
     {
@@ -30,7 +26,6 @@ namespace ProtoAqua.Ship
         #region KeyValue
 
         StringHash32 IKeyValuePair<StringHash32, Room>.Key { get { return Id(); } }
-
         Room IKeyValuePair<StringHash32, Room>.Value { get { return this; } }
 
         #endregion // KeyValue

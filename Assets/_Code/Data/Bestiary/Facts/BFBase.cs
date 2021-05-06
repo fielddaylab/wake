@@ -34,6 +34,11 @@ namespace Aqua
 
         public abstract IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null);
         public abstract string GenerateSentence(PlayerFactParams inParams = null);
+        
+        public virtual void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
+        {
+            outReferencedBestiary.Add(m_Parent.Id());
+        }
 
         public virtual void Hook(BestiaryDesc inParent)
         {

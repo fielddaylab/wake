@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using Aqua;
 using BeauUtil;
 
-namespace ProtoAqua.Ship
+namespace Aqua.Ship
 {
     [RequireComponent(typeof(CursorInteractionHint))]
     public class RoomLink : MonoBehaviour, IPointerClickHandler

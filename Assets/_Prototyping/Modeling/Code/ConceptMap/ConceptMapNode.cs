@@ -1,10 +1,8 @@
 using UnityEngine;
 using BeauPools;
 using UnityEngine.UI;
-using TMPro;
 using Aqua;
 using System;
-using ProtoCP;
 using BeauUtil;
 using BeauUtil.UI;
 using UnityEngine.EventSystems;
