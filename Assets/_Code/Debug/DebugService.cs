@@ -73,25 +73,32 @@ namespace Aqua.Debugging
                     Resume();
                 }
             }
-            else if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
+            else
             {
-                DeviceInput.BlockAll();
-                
-                if (m_DebugMenu.isActiveAndEnabled)
+                if (m_Input.MousePressed(1))
                 {
-                    m_DebugMenu.gameObject.SetActive(false);
-                    Resume();
+                    // TODO: Pop menu
                 }
-                else
+                if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
                 {
-                    if (!m_FirstMenuToggle)
+                    DeviceInput.BlockAll();
+                    
+                    if (m_DebugMenu.isActiveAndEnabled)
                     {
-                        m_DebugMenu.GotoMenu(s_RootMenu);
-                        m_FirstMenuToggle = true;
+                        m_DebugMenu.gameObject.SetActive(false);
+                        Resume();
                     }
-                    m_DebugMenu.gameObject.SetActive(true);
-                    SetMinimalLayer(true);
-                    Pause();
+                    else
+                    {
+                        if (!m_FirstMenuToggle)
+                        {
+                            m_DebugMenu.GotoMenu(s_RootMenu);
+                            m_FirstMenuToggle = true;
+                        }
+                        m_DebugMenu.gameObject.SetActive(true);
+                        SetMinimalLayer(true);
+                        Pause();
+                    }
                 }
             }
 
@@ -240,7 +247,7 @@ namespace Aqua.Debugging
 
         protected override void Initialize()
         {
-            #if PREVIEW
+            #if !UNITY_EDITOR
             SetMinimalLayer(false);
             #else
             SetMinimalLayer(m_StartOn);

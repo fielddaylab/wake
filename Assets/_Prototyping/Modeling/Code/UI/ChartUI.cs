@@ -16,7 +16,7 @@ namespace ProtoAqua.Modeling
         [SerializeField, Required] private GraphDisplay m_Historical = null;
         [SerializeField, Required] private GraphDisplay m_Player = null;
         [SerializeField, Required] private GraphDisplay m_Predict = null;
-        [SerializeField, Required] private GraphPlot m_Targets = null;
+        [SerializeField, Required] private GraphDisplay m_Targets = null;
 
         [Header("Chart Regions")]
         [SerializeField, Required] private RectTransform m_SyncRegion = null;
@@ -81,7 +81,7 @@ namespace ProtoAqua.Modeling
             m_Historical.RenderLines(fullRect);
             m_Player.RenderLines(fullRect);
             m_Predict.RenderLines(fullRect);
-            m_Targets.RenderPoints(fullRect);
+            m_Targets.RenderLines(fullRect);
 
             m_Axis.Load(axisPair);
 

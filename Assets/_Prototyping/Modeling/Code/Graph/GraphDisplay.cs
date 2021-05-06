@@ -33,6 +33,66 @@ namespace ProtoAqua.Modeling
 
         public Rect Range { get { return m_LastRect; } }
 
+        public Rect LoadTargets(ModelingScenarioData inScenario)
+        {
+            Assert.NotNull(inScenario);
+
+            float endX = inScenario.TotalTicks() * inScenario.TickScale();
+            Rect varRange = new Rect(0, 0, endX, 0);
+
+            using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys))
+            {
+                GraphLine line;
+
+                var critterTargets = inScenario.PredictionTargets();
+                int critterCount = critterTargets.Length;
+
+                // Iterate over critters first, points second
+                // this will reduce the number of lookups to the map considerably
+                for(int critterIdx = 0; critterIdx < critterCount; ++critterIdx)
+                {
+                    ActorCountRange critterRange = critterTargets[critterIdx];
+
+                    StringHash32 id = critterRange.Id;
+                    if (!inScenario.ShouldGraph(id))
+                        continue;
+
+                    BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
+                    BFBody body = critterEntry.FactOfType<BFBody>();
+                    float populationScale = body.MassPerPopulation() * body.MassDisplayScale();
+
+                    unusedLines.Remove(id);
+                    if (!m_LineMap.TryGetValue(id, out line))
+                    {
+                        line = m_LinePool.Alloc();
+                        m_LineMap[id] = line;
+                        line.Renderer.color = critterEntry.Color();
+                        line.Renderer.LineThickness = m_LineThickness;
+                    }
+
+                    line.ClearPoints();
+
+                    float minMass = ((float) critterRange.Population - critterRange.Range) * populationScale;
+                    float maxMass = ((float) critterRange.Population + critterRange.Range) * populationScale;
+
+                    line.AddPoint(endX, minMass);
+                    line.AddPoint(endX, maxMass);
+
+                    if (maxMass > varRange.height)
+                        varRange.height = maxMass;
+                }
+
+                foreach(var lineId in unusedLines)
+                {
+                    line = m_LineMap[lineId];
+                    m_LinePool.Free(line);
+                    m_LineMap.Remove(lineId);
+                }
+            }
+
+            return (m_LastRect = varRange);
+        }
+
         public Rect LoadCritters(SimulationResult[] inResults, ModelingScenarioData inScenario)
         {
             Assert.NotNull(inResults);
