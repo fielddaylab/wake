@@ -63,7 +63,7 @@ jobs:
     #    unityVersion: ${{ env.UNITY_VERSION }}
     
     - name: Build project
-      uses: webbertakken/unity-builder@v0.10
+      uses: game-ci/unity-builder@v2
       with:
         unityVersion: ${{ env.UNITY_VERSION }}
         targetPlatform: WebGL
