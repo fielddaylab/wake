@@ -52,7 +52,7 @@ jobs:
     # Unity Build Steps
 
     - name: Cache Library folder
-      uses: actions/cache@v1.1.0
+      uses: actions/cache@v2
       with:
         path: Library
         key: Library
@@ -73,7 +73,7 @@ jobs:
     # Deploy Steps
     
     - name: Upload build as artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: aqualab-webgl_${{ env.VERSION }}
         path: build/WebGL/WebGL
