@@ -1,0 +1,67 @@
+using UnityEngine;
+using BeauRoutine;
+using BeauUtil;
+using UnityEngine.UI;
+using System;
+using System.Collections;
+using BeauRoutine.Extensions;
+
+namespace Aqua.Option
+{
+    public class OptionsButton : BasePanel
+    {
+        #region Inspector
+
+        [SerializeField, Required] private Toggle m_Toggle = null;
+        [SerializeField, Required] private OptionsMenu m_Menu = null;
+
+        #endregion // Inspector
+
+        public Toggle Toggle { get { return m_Toggle; } }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            m_Toggle.onValueChanged.AddListener(OnToggleValue);
+
+            Services.Events.Register(GameEvents.OptionsClosed, OnOptionsClose);
+        }
+
+        private void OnDestroy()
+        {
+
+            Services.Events?.DeregisterAll(this);
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+
+        }
+
+        #region Handlers
+
+        private void OnOptionsClose()
+        {
+            m_Toggle.SetIsOnWithoutNotify(false);
+        }
+
+        private void OnToggleValue(bool inbValue)
+        {
+            if (!m_Menu || !isActiveAndEnabled)
+                return;
+
+            if (inbValue)
+            {
+                m_Menu.Show();
+            }
+            else
+            {
+                m_Menu.Hide();
+            }
+        }
+
+        #endregion // Handlers
+    }
+}

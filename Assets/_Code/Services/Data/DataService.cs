@@ -37,6 +37,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private SaveData m_CurrentSaveData;
+        // [NonSerialized] private Options m_CurrentOptions;
         [NonSerialized] private VariantTable m_SessionTable;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
@@ -48,6 +49,11 @@ namespace Aqua
         {
             get { return m_CurrentSaveData; }
         }
+
+        // public Options Settings
+        // {
+        //     get { return m_CurrentOptions; }
+        // }
 
         public string CurrentCharacterName()
         {

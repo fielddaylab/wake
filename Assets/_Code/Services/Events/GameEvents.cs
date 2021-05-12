@@ -35,6 +35,9 @@ namespace Aqua
         static public readonly StringHash32 PortableOpened = "portable:opened"; // IPortableRequest request
         static public readonly StringHash32 PortableClosed = "portable:closed"; // no args
 
+        static public readonly StringHash32 OptionsOpened = "options:opened";
+        static public readonly StringHash32 OptionsClosed = "options:closed";
+
         static public readonly StringHash32 JobUnload = "job:unload"; // StringHash32 jobId
         static public readonly StringHash32 JobPreload = "job:preload"; // StringHash32 jobId
 
