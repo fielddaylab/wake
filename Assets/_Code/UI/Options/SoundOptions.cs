@@ -20,21 +20,36 @@ namespace Aqua.Option
 
         [NonSerialized] private AudioBusId m_Id = AudioBusId.LENGTH;
 
-        public void Initialize(AudioBusId inId) 
+        private void Awake()
+        {
+            m_Slider.onValueChanged.AddListener(b => VolumeChange(b));
+
+            m_MuteButton.onClick.AddListener(Mute);
+        }
+
+        public void Initialize(AudioBusId inId, AudioPropertyBlock inBlock)
         {
             m_Id = inId;
-
-            m_Slider?.SetValueWithoutNotify(Services.Audio.BusMix(m_Id).Volume);
-            m_MuteButton.onClick.AddListener(Mute);
-            m_CheckBox.color = Color.white;
+            m_CheckBox.color = inBlock.Mute ? Color.gray : Color.white;
+            m_Slider.SetValueWithoutNotify(inBlock.Volume);
             m_Text.SetText(GetText());
         }
 
-        public void Mute() 
+        public void Reset() {
+            m_MuteButton.onClick.RemoveAllListeners();
+            m_Slider.onValueChanged.RemoveAllListeners();
+        }
+
+        private void Mute() 
         {
             m_CheckBox.color = m_CheckBox.color == Color.white ? Color.gray : Color.white;
             bool isMute = Services.Audio.BusMix(m_Id).Mute;
-            Services.Audio.BusMix(m_Id).Mute = !isMute;
+            Services.Data.Settings.UpdateAudioMute(m_Id, !isMute);
+        }
+
+        private void VolumeChange(float inVolume) 
+        {
+            Services.Data.Settings.UpdateAudioVolume(m_Id, inVolume);
         }
 
         private string GetText() 
@@ -45,8 +60,10 @@ namespace Aqua.Option
                     return "Master";
                 case AudioBusId.Music:
                     return "Music";
-                default:
+                case AudioBusId.SFX:
                     return "SFX";
+                default:
+                    throw new Exception("No BusMix found for " + m_Id.ToString());
             }
         }
 

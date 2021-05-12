@@ -210,6 +210,12 @@ namespace Aqua
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
+            if(!Services.Data.IsOptionsLoaded()) 
+            {
+                Services.Data.LoadOptionsSettings();
+            }
+            Services.Data.Settings.LoadOptions();
+
             bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
             if (bShowCutscene)

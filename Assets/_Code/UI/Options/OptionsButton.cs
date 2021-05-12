@@ -13,15 +13,18 @@ namespace Aqua.Option
         #region Inspector
 
         [SerializeField, Required] private Toggle m_Toggle = null;
-        [SerializeField, Required] private OptionsMenu m_Menu = null;
 
         #endregion // Inspector
+
+        [NonSerialized] private OptionsMenu m_Menu;
 
         public Toggle Toggle { get { return m_Toggle; } }
 
         protected override void Awake()
         {
             base.Awake();
+
+            m_Menu = Services.UI.FindPanel<OptionsMenu>();
 
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
 
