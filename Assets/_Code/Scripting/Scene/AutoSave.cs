@@ -54,7 +54,7 @@ namespace Aqua.Scripting
                 return;
             
             m_InstantAutosave.Stop();
-            m_DelayTimestamp = Time.timeSinceLevelLoad;
+            m_DelayTimestamp = Time.unscaledTime;
             if (!m_DelayedAutosave)
                 m_DelayedAutosave = Routine.Start(this, DelayedSave());
         }
@@ -71,7 +71,7 @@ namespace Aqua.Scripting
 
         private IEnumerator DelayedSave()
         {
-            while(Services.Script.IsCutscene() || Time.timeSinceLevelLoad < m_DelayTimestamp + AutosaveDelay)
+            while(Services.Script.IsCutscene() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
             {
                 if (Services.Data.IsSaving())
                     yield break;
@@ -83,5 +83,10 @@ namespace Aqua.Scripting
         }
 
         #endregion // Saving
+
+        static public void Hint()
+        {
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint);
+        }
     }
 }

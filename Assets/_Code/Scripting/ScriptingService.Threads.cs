@@ -46,7 +46,7 @@ namespace Aqua
 
             if ((inNode.Flags() & ScriptNodeFlags.Autosave) != 0)
             {
-                Services.Events.Dispatch(GameEvents.ProfileAutosaveHint);
+                AutoSave.Hint();
             }
         }
 

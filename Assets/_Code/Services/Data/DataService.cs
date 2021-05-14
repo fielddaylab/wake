@@ -10,14 +10,14 @@ using BeauUtil.Debugger;
 using BeauUtil.Services;
 using BeauUtil.Variants;
 using System;
+using BeauRoutine;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
-using BeauRoutine;
-using System.Collections;
 #endif // UNITY_EDITOR
 
 namespace Aqua
