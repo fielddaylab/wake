@@ -86,10 +86,10 @@ namespace Aqua.Option
                     optionAudio.Master = inBlock;
                     break;
                 case AudioBusId.Music:
-                    optionAudio.Master = inBlock;
+                    optionAudio.Music = inBlock;
                     break;
                 case AudioBusId.SFX:
-                    optionAudio.Master = inBlock;
+                    optionAudio.SFX = inBlock;
                     break;
                 default:
                     throw new Exception("Cannot find busMix");

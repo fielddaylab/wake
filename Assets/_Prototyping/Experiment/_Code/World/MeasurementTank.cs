@@ -21,7 +21,7 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private float m_SpawnDelay = 0.05f;
 
-        [SerializeField] private SpriteRenderer m_Sprite = null;
+        // [SerializeField] private SpriteRenderer m_Sprite = null;
 
         [SerializeField] private ColorGroup m_WaterColor = null;
 
@@ -61,9 +61,9 @@ namespace ProtoAqua.Experiment
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
-                .Register<WaterPropertyId>(ExperimentEvents.SetupAddWaterProperty, SetupWaterProperty, this)
-                .Register(ExperimentEvents.SetupRemoveWaterProperty, SetupRemoveWaterProperty, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
+            // .Register<WaterPropertyId>(ExperimentEvents.SetupAddWaterProperty, SetupWaterProperty, this)
+            // .Register(ExperimentEvents.SetupRemoveWaterProperty, SetupRemoveWaterProperty, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
@@ -135,15 +135,15 @@ namespace ProtoAqua.Experiment
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
         }
 
-        private void SetupWaterProperty(WaterPropertyId inPropId)
-        {
-            m_Sprite.sprite = Services.Assets.WaterProp.Property(inPropId).Icon();
-        }
+        // private void SetupWaterProperty(WaterPropertyId inPropId)
+        // {
+        //     m_Sprite.sprite = Services.Assets.WaterProp.Property(inPropId).Icon();
+        // }
 
-        private void SetupRemoveWaterProperty()
-        {
-            m_Sprite.sprite = null;
-        }
+        // private void SetupRemoveWaterProperty()
+        // {
+        //     m_Sprite.sprite = null;
+        // }
 
         private void ResetIdle()
         {

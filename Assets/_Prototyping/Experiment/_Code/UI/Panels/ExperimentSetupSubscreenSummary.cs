@@ -15,6 +15,9 @@ namespace ProtoAqua.Experiment
     {
         #region Inspector
 
+        [SerializeField] private Transform m_Group = null;
+
+        [Header("Text")]
         [SerializeField] private TMP_Text m_TankText = null;
         [SerializeField] private TMP_Text m_SummaryText = null;
 
@@ -54,7 +57,7 @@ namespace ProtoAqua.Experiment
         private void PopulateMeasurement(ExperimentResultData resData) {
             m_RangeFactButton.gameObject.SetActive(false);
             var form_text = "";
-            var critter = Services.Assets.Bestiary.Get(resData.Setup.Critter);
+            BestiaryDesc critter = Services.Assets.Bestiary.Get(resData.Setup.Critter);
             var consume = BestiaryUtils.FindConsumeRule(critter, resData.Setup.PropertyId);
             var produce = BestiaryUtils.FindProduceRule(critter, resData.Setup.PropertyId);
             if(produce != null){
@@ -68,7 +71,7 @@ namespace ProtoAqua.Experiment
                 }
             }
             else {
-                form_text = "No facts found for " + critter.CommonName() + " with " 
+                form_text = "No facts found for " + Services.Loc.Localize(critter.CommonName()) + " with " 
                     + Services.Assets.WaterProp.Property(resData.Setup.PropertyId).name;
             }
             // if(resData.Setup.CritterX != StringHash32.Null) {
@@ -94,6 +97,7 @@ namespace ProtoAqua.Experiment
             // }
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankMeasureSummary"));
             m_SummaryText.SetText(form_text);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_Group);
 
         }
 
@@ -160,14 +164,19 @@ namespace ProtoAqua.Experiment
                     if(resData.Setup.PropertyId == prop.Index())  selectProp = prop.name;
                 }
                 form_text = Services.Loc.Localize(actor.CommonName()) + " Has No Fact for " + selectProp;
+                m_SummaryText.SetText(form_text);
             }
             else
             {
-                form_text = Services.Loc.Localize(actor.CommonName()) + state.GenerateSentence();
-            }  
+                m_SummaryText.gameObject.SetActive(false);
+            }
+            // else
+            // {
+            //     form_text = Services.Loc.Localize(actor.CommonName()) + state.GenerateSentence();
+            // }  
 
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
-                m_SummaryText.SetText(form_text);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_Group);
         }
 
         private BestiaryDesc GetSingleCritter(ExperimentResultData resData) {
