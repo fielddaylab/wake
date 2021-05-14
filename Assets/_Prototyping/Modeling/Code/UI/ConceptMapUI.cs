@@ -27,7 +27,7 @@ namespace ProtoAqua.Modeling
 
         public event Action<StringHash32> OnGraphUpdated;
 
-        public void SetInitialFacts(ListSlice<StringHash32> inFacts, UniversalModelState inModelState)
+        public void SetInitialFacts(IEnumerable<StringHash32> inFacts, UniversalModelState inModelState)
         {
             m_Map.ClearFacts();
 

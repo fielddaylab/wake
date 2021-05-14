@@ -180,10 +180,10 @@ namespace Aqua
 
             // if we started from another scene than the boot or title scene
             if (active.BuildIndex > 1)
-                Services.Data.LoadProfile();
+                Services.Data.LoadProfile(null);
 
             #if UNITY_EDITOR
-            yield return WaitForFlatten(active);
+            yield return WaitForOptimize(active);
             #endif // UNITY_EDITOR
 
             yield return WaitForPreload(active, null);
@@ -226,7 +226,7 @@ namespace Aqua
             }
 
             if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
-                Services.Data.LoadProfile();
+                Services.Data.LoadProfile(null);
 
             SceneBinding active = SceneHelper.ActiveScene();
 
@@ -259,7 +259,7 @@ namespace Aqua
             }
 
             #if UNITY_EDITOR
-            yield return WaitForFlatten(inNextScene);
+            yield return WaitForOptimize(inNextScene);
             #endif // UNITY_EDITOR
 
             yield return WaitForPreload(inNextScene, inContext);
@@ -319,7 +319,9 @@ namespace Aqua
             return null;
         }
 
-        private IEnumerator WaitForFlatten(SceneBinding inBinding)
+        #if UNITY_EDITOR
+        
+        private IEnumerator WaitForOptimize(SceneBinding inBinding)
         {
             using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
             {
@@ -329,11 +331,26 @@ namespace Aqua
                     DebugService.Log(LogMask.Loading, "[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
                     using(Profiling.Time("flatten scene hierarchy"))
                     {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allFlatten.ToArray(), (f) => f.Flatten(), 5));
+                        yield return Routine.Inline(Routine.ForEachAmortize(allFlatten, (f) => f.Flatten(), 5));
+                    }
+                }
+            }
+
+            using(PooledList<ISceneOptimizable> allOptimizable = PooledList<ISceneOptimizable>.Create())
+            {
+                inBinding.Scene.GetAllComponents<ISceneOptimizable>(true, allOptimizable);
+                if (allOptimizable.Count > 0)
+                {
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Optimizing {0} objects...", allOptimizable.Count);
+                    using(Profiling.Time("optimize objects"))
+                    {
+                        yield return Routine.Inline(Routine.ForEachAmortize(allOptimizable, (f) => f.Optimize(), 5));
                     }
                 }
             }
         }
+
+        #endif // UNITY_EDITOR
 
         private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
         {

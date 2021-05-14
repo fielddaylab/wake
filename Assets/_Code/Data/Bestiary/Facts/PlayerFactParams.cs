@@ -6,7 +6,7 @@ using BeauUtil.Variants;
 
 namespace Aqua
 {
-    public class PlayerFactParams : IKeyValuePair<StringHash32, PlayerFactParams>, IComparable<PlayerFactParams>
+    public class PlayerFactParams : IKeyValuePair<StringHash32, PlayerFactParams>, IComparable<PlayerFactParams>, ISerializedObject
     {
         [NonSerialized] private BFBase m_CachedFact;
         [NonSerialized] private bool m_Locked;
@@ -113,5 +113,15 @@ namespace Aqua
         }
 
         #endregion // IComparable
+
+        #region ISerializedObject
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("id", ref m_FactId);
+            ioSerializer.Enum("flags", ref m_Flags);
+        }
+
+        #endregion // ISerializedObject
     }
 }

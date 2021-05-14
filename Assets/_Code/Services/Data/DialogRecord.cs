@@ -12,8 +12,9 @@ namespace Aqua
         public string Name;
         public string Text;
         public bool IsBoundary;
+        public bool IsChoice;
 
-        static public DialogRecord FromTag(TagString inTag, StringHash32 inDefaultCharacterId, string inDefaultName, bool inbBoundary)
+        static public DialogRecord FromTag(TagString inTag, StringHash32 inDefaultCharacterId, string inDefaultName, bool inbBoundary, bool inbChoice)
         {
             DialogRecord record;
             if (!ScriptingService.TryFindCharacter(inTag, out record.CharacterId, out record.Name))
@@ -23,6 +24,7 @@ namespace Aqua
             }
             record.Text = inTag.RichText;
             record.IsBoundary = inbBoundary;
+            record.IsChoice = inbChoice;
             return record;
         }
 

@@ -1,12 +1,13 @@
 using System;
 using System.Diagnostics;
+using BeauData;
 using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
 {
     [DebuggerDisplay("{ToDebugString()}")]
-    public struct JobTaskKey : IEquatable<JobTaskKey>
+    public struct JobTaskKey : IEquatable<JobTaskKey>, ISerializedObject
     {
         public StringHash32 JobId;
         public StringHash32 TaskId;
@@ -43,5 +44,15 @@ namespace Aqua
         {
             return (int) (JobId.HashValue << 4 ^ TaskId.HashValue);
         }
+
+        #region ISerializedObject
+
+        public void Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("jobId", ref JobId);
+            ioSerializer.Serialize("taskId", ref TaskId);
+        }
+
+        #endregion // ISerializedObject
     }
 }

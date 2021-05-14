@@ -1,8 +1,9 @@
+using BeauData;
 using BeauUtil;
 
 namespace Aqua
 {
-    public class PlayerJob
+    public class PlayerJob : ISerializedObject
     {
         private StringHash32 m_JobId;
         private PlayerJobStatus m_Status;
@@ -125,6 +126,16 @@ namespace Aqua
         }
 
         #endregion // Internal
+
+        #region ISerializedObject
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("id", ref m_JobId);
+            ioSerializer.Enum("status", ref m_Status);
+        }
+
+        #endregion // ISerializedObject
     }
 
     public enum PlayerJobStatus : byte

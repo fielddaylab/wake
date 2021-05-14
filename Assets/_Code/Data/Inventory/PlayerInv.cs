@@ -2,18 +2,14 @@ using UnityEngine;
 using BeauUtil;
 using System.Collections.Generic;
 using System;
+using BeauData;
 
 namespace Aqua
 {
-    public class PlayerInv : IKeyValuePair<StringHash32, PlayerInv>
+    public class PlayerInv : IKeyValuePair<StringHash32, PlayerInv>, ISerializedObject
     {
-
-        public InvItem Item
-        {
-            get { return m_CachedItem ?? (m_CachedItem = Services.Assets.Inventory.Get(m_ItemId)); }
-        }
-
         [NonSerialized] private InvItem m_CachedItem;
+
         private StringHash32 m_ItemId;
         private int m_CurrentValue = 0;
 
@@ -42,9 +38,14 @@ namespace Aqua
             m_CurrentValue = 0;
         }
 
+        public InvItem Item
+        {
+            get { return m_CachedItem ?? (m_CachedItem = Services.Assets.Inventory.Get(m_ItemId)); }
+        }
+
         public int Value() { return m_CurrentValue; }
 
-        public bool TryAdjust(int inValue)
+        internal bool TryAdjust(int inValue)
         {
             if (inValue == 0 || (m_CurrentValue + inValue) < 0)
                 return false;
@@ -54,15 +55,27 @@ namespace Aqua
             return true;
         }
 
-        public void Set(int inValue)
+        internal bool Set(int inValue)
         {
             if (inValue < 0)
+            {
                 inValue = 0;
+            }
+
             if (m_CurrentValue != inValue)
             {
                 m_CurrentValue = inValue;
                 Services.Events.Dispatch(GameEvents.InventoryUpdated, m_ItemId);
+                return true;
             }
+
+            return false;
+        }
+
+        void ISerializedObject.Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("id", ref m_ItemId);
+            ioSerializer.Serialize("value", ref m_CurrentValue, 1);
         }
     }
     

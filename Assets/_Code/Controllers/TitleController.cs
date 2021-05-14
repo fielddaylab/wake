@@ -65,7 +65,7 @@ namespace Aqua
 
         private void OnNextButton()
         {
-            Services.Data.LoadProfile();
+            Services.Data.LoadProfile(m_UsercodeInput.text);
             Services.Events.Dispatch(Event_StartGame, m_UsercodeInput.text);
             Services.Audio.StopMusic();
             StateUtil.LoadSceneWithWipe(m_LoadSceneName);

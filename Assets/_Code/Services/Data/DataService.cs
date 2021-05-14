@@ -1,25 +1,30 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
-using BeauUtil;
-using BeauUtil.Tags;
-using BeauUtil.Variants;
-using Aqua.Profile;
-using UnityEngine;
-using BeauUtil.Services;
-using BeauUtil.Debugger;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using Aqua.Debugging;
+using Aqua.Profile;
+using BeauData;
+using BeauUtil;
+using BeauUtil.Debugger;
+using BeauUtil.Services;
+using BeauUtil.Variants;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+using BeauRoutine;
+using System.Collections;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
     [ServiceDependency(typeof(AssetsService), typeof(EventService))]
-    public partial class DataService : ServiceBehaviour, IDebuggable
+    public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable
     {
-        // static private readonly string DebugUserDataPrefsKey = "_debugUserProfile";
-
         #region Inspector
 
         [Header("Conversation History")]
@@ -38,9 +43,17 @@ namespace Aqua
 
         [NonSerialized] private SaveData m_CurrentSaveData;
         [NonSerialized] private VariantTable m_SessionTable;
+        [NonSerialized] private string m_UserCode;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
         [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
+        [NonSerialized] private bool m_PostLoadQueued;
+
+        [NonSerialized] private Routine m_SaveRoutine;
+
+        #if UNITY_EDITOR
+        [NonSerialized] private DMInfo m_BookmarksMenu;
+        #endif // UNITY_EDITOR
 
         #region Save Data
 
@@ -77,38 +90,238 @@ namespace Aqua
 
         #endregion // Save Data
 
-        #region Load
+        #region Loading
 
         public bool IsProfileLoaded()
         {
             return m_CurrentSaveData != null;
         }
 
-        public void LoadProfile()
+        public void LoadProfile(string inUserCode)
         {
-            m_CurrentSaveData = new SaveData();
-            m_CurrentSaveData.Inventory.SetDefaults();
+            ClearOldProfile();
+
+            SaveData saveData;
+            if (inUserCode != null && TryLoadProfileFromPrefs(inUserCode, out saveData))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
+                m_UserCode = inUserCode;
+            }
+            else
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Created new profile with user id '{0}'", inUserCode);
+                m_UserCode = inUserCode;
+                saveData = CreateNewProfile();
+            }
+
+            DeclareProfile(saveData);
+        }
+
+        #if DEVELOPMENT
+
+        private void LoadBookmark(string inBookmarkName)
+        {
+            TextAsset bookmarkAsset = Resources.Load<TextAsset>("Bookmarks/" + inBookmarkName);
+            if (!bookmarkAsset)
+                return;
+
+            SaveData bookmark;
+            if (TryLoadProfileFromBytes(bookmarkAsset.bytes, out bookmark))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Loaded profile from bookmark '{0}'", inBookmarkName);
+                m_UserCode = null;
+
+                DeclareProfile(bookmark);
+
+                Services.UI.HideAll();
+                Services.Script.KillAllThreads();
+                Services.Audio.StopAll();
+                Services.State.LoadScene("Ship");
+            }
+        }
+
+        #endif // DEVELOPMENT
+
+        private void ClearOldProfile()
+        {
             m_DialogHistory.Clear();
-
-            // SaveData fromPrefs = null;
-            // if (Serializer.ReadPrefs(ref fromPrefs, DebugUserDataPrefsKey))
-            // {
-            //     m_CurrentSaveData = fromPrefs;
-            // }
-
-            HookSaveDataToVariableResolver(m_CurrentSaveData);
             m_SessionTable.Clear();
 
-            Services.Events.Dispatch(GameEvents.ProfileLoaded);
+            m_CurrentSaveData = null;
         }
 
-        public void SaveProfile()
+        private SaveData CreateNewProfile()
         {
-            // Serializer.WritePrefs(m_CurrentSaveData, DebugUserDataPrefsKey, OutputOptions.None, Serializer.Format.JSON);
-            // PlayerPrefs.Save();
+            SaveData data = new SaveData();
+            data.Id = Guid.NewGuid().ToString();
+            data.Map.SetDefaults();
+            data.Inventory.SetDefaults();
+            return data;
         }
 
-        #endregion // Load
+        private bool TryLoadProfileFromPrefs(string inUserCode, out SaveData outProfile)
+        {
+            outProfile = null;
+
+            string key = GetPrefsKeyForCode(inUserCode);
+            if (PlayerPrefs.HasKey(key))
+            {
+                return Serializer.ReadPrefs(ref outProfile, key);
+            }
+
+            return false;
+        }
+
+        private bool TryLoadProfileFromBytes(byte[] inBytes, out SaveData outProfile)
+        {
+            outProfile = null;
+            return Serializer.Read(ref outProfile, inBytes);
+        }
+
+        private void DeclareProfile(SaveData inProfile)
+        {
+            m_CurrentSaveData = inProfile;
+            HookSaveDataToVariableResolver(inProfile);
+            Services.Events.Dispatch(GameEvents.ProfileLoaded);
+            m_PostLoadQueued = true;
+        }
+
+        private void PerformPostLoad()
+        {
+            if (!m_PostLoadQueued)
+                return;
+
+            m_CurrentSaveData.Jobs.PostLoad();
+            m_PostLoadQueued = false;
+        }
+
+        #endregion // Loading
+
+        #region Saving
+
+        public bool IsSaving()
+        {
+            return m_SaveRoutine;
+        }
+
+        private void SyncProfile()
+        {
+            m_CurrentSaveData.LastUpdated = DateTime.UtcNow.ToFileTime();
+        }
+
+        public IEnumerator SaveProfile()
+        {
+            return SaveProfile(false);
+        }
+
+        public IEnumerator SaveProfile(bool inbForce)
+        {
+            if (m_CurrentSaveData == null)
+            {
+                Debug.LogErrorFormat("[DataService] No data to save!");
+                return null;
+            }
+
+            if (!m_CurrentSaveData.HasChanges())
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] No changes detected to save");
+                return null;
+            }
+
+            if (m_SaveRoutine)
+            {
+                if (inbForce)
+                {
+                    m_SaveRoutine.Stop();
+                    Debug.LogWarningFormat("[DataService] Interrupting in-progress save");
+                }
+                else
+                {
+                    Debug.LogErrorFormat("[DataService] Save is already in progress");
+                    return m_SaveRoutine.Wait();
+                }
+            }
+
+            m_SaveRoutine.Replace(this, SaveRoutine()).TryManuallyUpdate(0);
+            return m_SaveRoutine.Wait();
+        }
+
+        private IEnumerator SaveRoutine()
+        {
+            SyncProfile();
+            yield return null;
+
+            string key = GetPrefsKeyForCode(m_UserCode);
+            Services.Events.Dispatch(GameEvents.ProfileSaveBegin);
+
+            DebugService.Log(LogMask.DataService, "[DataService] Saving to '{0}'...", key);
+
+            Serializer.WritePrefs(m_CurrentSaveData, key, OutputOptions.None, Serializer.Format.Binary);
+            yield return null;
+            
+            PlayerPrefs.Save();
+            yield return null;
+            
+            DebugService.Log(LogMask.DataService, "[DataService] ...finished saving to '{0}'", key);
+            m_CurrentSaveData.MarkChangesPersisted();
+            Services.Events.Dispatch(GameEvents.ProfileSaveCompleted);
+        }
+
+        private void DebugSaveData()
+        {
+            SyncProfile();
+
+            #if UNITY_EDITOR
+
+            Directory.CreateDirectory("Saves");
+            string saveName = string.Format("Saves/save_{0}.json", m_CurrentSaveData.LastUpdated);
+            string binarySaveName = string.Format("Saves/save_{0}.bbin", m_CurrentSaveData.LastUpdated);
+            Serializer.WriteFile(m_CurrentSaveData, saveName, OutputOptions.PrettyPrint, Serializer.Format.JSON);
+            Serializer.WriteFile(m_CurrentSaveData, binarySaveName, OutputOptions.None, Serializer.Format.Binary);
+            Debug.LogFormat("[DataService] Saved Profile to {0} and {1}", saveName, binarySaveName);
+            EditorUtility.OpenWithDefaultApp(saveName);
+
+            #elif DEVELOPMENT_BUILD
+
+            string json = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.JSON);
+            Debug.LogFormat("[DataService] Current Profile: {0}", json);
+
+            #endif // UNITY_EDITOR
+        }
+
+        #if UNITY_EDITOR
+
+        private void BookmarkSaveData()
+        {
+            SyncProfile();
+
+            Cursor.visible = true;
+            
+            string path = UnityEditor.EditorUtility.SaveFilePanelInProject("Save Bookmark", string.Empty, "json", "Choose a location to save your bookmark", "Assets/Resources/Bookmarks/");
+            if (!string.IsNullOrEmpty(path))
+            {
+                Serializer.WriteFile(m_CurrentSaveData, path, OutputOptions.PrettyPrint, Serializer.Format.JSON);
+                Debug.LogFormat("[DataService] Saved bookmark at {0}", path);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                RegenerateBookmarks(m_BookmarksMenu);
+            }
+
+            Cursor.visible = false;
+        }
+
+        #endif // UNITY_EDITOR
+
+        static private string GetPrefsKeyForCode(string inUserCode)
+        {
+            if (string.IsNullOrEmpty(inUserCode))
+            {
+                return string.Format("aqualab/profiles/debug/profile");
+            }
+
+            return string.Format("aqualab/profiles/{0}", inUserCode.Replace("/", "_"));
+        }
+
+        #endregion // Saving
 
         #region Dialog History
 
@@ -133,12 +346,15 @@ namespace Aqua
             m_SessionTable = new VariantTable("session");
             BindTable("session", m_SessionTable);
 
+            Services.Events.Register(GameEvents.SceneLoaded, PerformPostLoad, this);
+
             m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
         }
 
         protected override void Shutdown()
         {
-            SaveProfile();
+            Services.Events?.DeregisterAll(this);
+            m_SaveRoutine.Stop();
         }
 
         #endregion // IService
@@ -147,6 +363,8 @@ namespace Aqua
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
+            // jobs menu
+
             DMInfo jobsMenu = DebugService.NewDebugMenu("Jobs");
 
             DMInfo startJobMenu = DebugService.NewDebugMenu("Start Job");
@@ -159,6 +377,8 @@ namespace Aqua
             jobsMenu.AddButton("Clear All Job Progress", () => Services.Data.Profile.Jobs.ClearAll());
 
             yield return jobsMenu;
+
+            // bestiary menu
 
             DMInfo bestiaryMenu = DebugService.NewDebugMenu("Bestiary");
 
@@ -200,6 +420,82 @@ namespace Aqua
             bestiaryMenu.AddButton("Clear Bestiary", () => ClearBestiary());
 
             yield return bestiaryMenu;
+
+            // save data menu
+
+            DMInfo saveMenu = DebugService.NewDebugMenu("Player Profile");
+
+            DMInfo bookmarkMenu = DebugService.NewDebugMenu("Bookmarks");
+            #if UNITY_EDITOR
+            m_BookmarksMenu = bookmarkMenu;
+            #endif // UNITY_EDITOR
+
+            RegenerateBookmarks(bookmarkMenu);
+            saveMenu.AddSubmenu(bookmarkMenu);
+            saveMenu.AddDivider();
+
+            saveMenu.AddButton("Save", () => SaveProfile(), () => m_CurrentSaveData != null);
+            saveMenu.AddButton("Save (Debug)", () => DebugSaveData(), () => m_CurrentSaveData != null);
+            #if UNITY_EDITOR
+            saveMenu.AddButton("Save as Bookmark", () => BookmarkSaveData(), () => m_CurrentSaveData != null);
+            #else 
+            saveMenu.AddButton("Save as Bookmark", null, () => false);
+            #endif // UNITY_EDITOR
+
+            saveMenu.AddDivider();
+
+            saveMenu.AddButton("Clear Local Saves", () => ClearLocalSaves());
+
+            yield return saveMenu;
+        }
+
+        static private void RegenerateBookmarks(DMInfo inMenu)
+        {
+            var allBookmarks = Resources.LoadAll<TextAsset>("Bookmarks");
+
+            inMenu.Clear();
+
+            if (allBookmarks.Length == 0)
+            {
+                inMenu.AddText("No bookmarks :(", () => string.Empty);
+            }
+            else if (allBookmarks.Length <= 10)
+            {
+                foreach(var bookmark in allBookmarks)
+                {
+                    RegisterBookmark(inMenu, bookmark);
+                }
+            }
+            else
+            {
+                int pageNumber = 0;
+                int bookmarkCounter = 0;
+                DMInfo page = new DMInfo("Page 1", 10);
+                inMenu.AddSubmenu(page);
+                foreach(var bookmark in allBookmarks)
+                {
+                    if (bookmarkCounter >= 10)
+                    {
+                        pageNumber++;
+                        page = new DMInfo("Page " + pageNumber.ToString(), 10);
+                        inMenu.AddSubmenu(page);
+                    }
+
+                    RegisterBookmark(page, bookmark);
+
+                    bookmarkCounter++;
+                }
+            }
+        }
+
+        static private void RegisterBookmark(DMInfo inMenu, TextAsset inAsset)
+        {
+            #if DEVELOPMENT
+            string name = inAsset.name;
+            inMenu.AddButton(name, () => Services.Data.LoadBookmark(name), () => !Services.Data.m_SaveRoutine);
+            #endif // DEVELOPMENT
+            
+            Resources.UnloadAsset(inAsset);
         }
 
         static private void RegisterJobStart(DMInfo inMenu, StringHash32 inJobId)
@@ -262,6 +558,22 @@ namespace Aqua
             }
         }
 
+        static private void ClearLocalSaves()
+        {
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Debug.LogWarningFormat("[DataService] All local save data has been cleared");
+        }
+
         #endregion // IDebuggable
+
+        #region ILoadable
+
+        bool ILoadable.IsLoading()
+        {
+            return m_SaveRoutine;
+        }
+
+        #endregion // ILoadable
     }
 }

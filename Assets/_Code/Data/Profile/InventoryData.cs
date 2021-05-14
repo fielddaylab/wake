@@ -6,12 +6,14 @@ using BeauUtil.Debugger;
 
 namespace Aqua.Profile
 {
-    public class InventoryData : ISerializedObject, ISerializedVersion
+    public class InventoryData : IProfileChunk, ISerializedVersion
     {
         private List<PlayerInv> m_Items = new List<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
 
         [NonSerialized] private bool m_ItemListDirty = true;
+        [NonSerialized] private bool m_HasChanges;
 
         #region Items
 
@@ -32,6 +34,7 @@ namespace Aqua.Profile
                     {
                         m_Items.Add(new PlayerInv(item));
                         m_ItemListDirty = true;
+                        m_HasChanges = true;
                     }
                 }
             }
@@ -53,13 +56,25 @@ namespace Aqua.Profile
                 return true;
 
             var item = GetInv(inId, inAmount > 0);
-            return item != null && item.TryAdjust(inAmount);
+            if (item != null && item.TryAdjust(inAmount))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
         }
 
-        public void SetItem(StringHash32 inId, int inAmount)
+        public bool SetItem(StringHash32 inId, int inAmount)
         {
             var item = GetInv(inId, inAmount > 0);
-            item?.Set(inAmount);
+            if (item != null && item.Set(inAmount))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
         }
 
         public PlayerInv GetItem(StringHash32 inId)
@@ -106,6 +121,7 @@ namespace Aqua.Profile
         {
             if (m_ScannerIds.Add(inId))
             {
+                m_HasChanges = true;
                 Services.Events.Dispatch(GameEvents.ScanLogUpdated, inId);
                 return true;
             }
@@ -115,15 +131,48 @@ namespace Aqua.Profile
 
         #endregion // Scanner
 
-        #region ISerializedData
+        #region Upgrades
+
+        public bool HasUpgrade(StringHash32 inUpgradeId)
+        {
+            return m_UpgradeIds.Contains(inUpgradeId);
+        }
+
+        public bool AddUpgrade(StringHash32 inUpgradeId)
+        {
+            if (m_UpgradeIds.Add(inUpgradeId))
+            {
+                m_HasChanges = true;
+                Services.Events.Dispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Upgrades
+
+        #region IProfileChunk
 
         ushort ISerializedVersion.Version { get { return 1; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            // TODO: Implement
+            ioSerializer.ObjectArray("items", ref m_Items);
+            ioSerializer.Set("scannerIds", ref m_ScannerIds);
+            ioSerializer.Set("upgradeIds", ref m_UpgradeIds);
         }
 
-        #endregion // ISerializedData
+        public bool HasChanges()
+        {
+            return m_HasChanges;
+        }
+
+        public void MarkChangesPersisted()
+        {
+            m_HasChanges = false;
+        }
+
+        #endregion // IProfileChunk
     }
 }

@@ -7,14 +7,15 @@ using UnityEngine;
 
 namespace Aqua.Profile
 {
-    public class BestiaryData : ISerializedObject, ISerializedVersion
+    public class BestiaryData : IProfileChunk, ISerializedVersion
     {
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
         private List<PlayerFactParams> m_Facts = new List<PlayerFactParams>();
-        private List<StringHash32> m_GraphedFacts = new List<StringHash32>();
+        private HashSet<StringHash32> m_GraphedFacts = new HashSet<StringHash32>();
 
         [NonSerialized] private bool m_FactListDirty = true;
+        [NonSerialized] private bool m_HasChanges = false;
 
         #region Observed Entities
 
@@ -27,6 +28,7 @@ namespace Aqua.Profile
         {
             if (m_ObservedEntities.Add(inEntityId))
             {
+                m_HasChanges = true;
                 Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
@@ -54,6 +56,7 @@ namespace Aqua.Profile
         {
             if (m_ObservedEntities.Remove(inEntityId))
             {
+                m_HasChanges = true;
                 Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
                 return true;
             }
@@ -92,6 +95,7 @@ namespace Aqua.Profile
 
             if (m_ObservedFacts.Add(inFactId))
             {
+                m_HasChanges = true;
                 var factParams = AddFact(inFactId);
                 var fact = factParams.Fact; 
                 m_ObservedEntities.Add(fact.Parent().Id());
@@ -171,6 +175,7 @@ namespace Aqua.Profile
 
             if (m_ObservedFacts.Remove(inFactId))
             {
+                m_HasChanges = true;
                 SortFacts();
                 int index = m_Facts.BinarySearch(inFactId);
                 m_Facts.FastRemoveAt(index);
@@ -204,7 +209,7 @@ namespace Aqua.Profile
 
         #region Graphed
 
-        public ListSlice<StringHash32> GraphedFacts()
+        public IEnumerable<StringHash32> GraphedFacts()
         {
             return m_GraphedFacts;
         }
@@ -216,6 +221,7 @@ namespace Aqua.Profile
             if (m_GraphedFacts.Contains(inFactId))
                 return false;
             
+            m_HasChanges = true;
             m_GraphedFacts.Add(inFactId);
             Services.Events.Dispatch(GameEvents.ModelUpdated, inFactId);
             return true;
@@ -272,15 +278,28 @@ namespace Aqua.Profile
 
         #endregion // Graphed
 
-        #region ISerializedData
+        #region IProfileChunk
 
         ushort ISerializedVersion.Version { get { return 1; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            // TODO: Implement
+            ioSerializer.Set("allEntities", ref m_ObservedEntities);
+            ioSerializer.Set("allFacts", ref m_ObservedFacts);
+            ioSerializer.ObjectArray("factStatus", ref m_Facts);
+            ioSerializer.Set("graphedFacts", ref m_GraphedFacts);
         }
 
-        #endregion // ISerializedData
+        public bool HasChanges()
+        {
+            return m_HasChanges;
+        }
+
+        public void MarkChangesPersisted()
+        {
+            m_HasChanges = false;
+        }
+
+        #endregion // IProfileChunk
     }
 }

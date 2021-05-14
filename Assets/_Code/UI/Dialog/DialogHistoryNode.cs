@@ -10,5 +10,6 @@ namespace Aqua
         public ContentSizeFitter Fitter = null;
         public TMP_Text Name = null;
         public TMP_Text Text = null;
+        public Graphic ChoiceBackground = null;
     }
 }

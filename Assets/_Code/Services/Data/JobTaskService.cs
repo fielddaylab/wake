@@ -43,7 +43,8 @@ namespace Aqua
             EventService events = Services.Events;
             events.Register<StringHash32>(GameEvents.JobPreload, OnJobPreload, this)
                 .Register<StringHash32>(GameEvents.JobUnload, OnJobUnload, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
+                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
+                .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this);
 
             RegisterTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
             RegisterTaskEvent(events, GameEvents.BestiaryUpdated, TaskEventMask.BestiaryUpdate);
@@ -68,6 +69,14 @@ namespace Aqua
         }
 
         #region Handlers
+
+        private void OnProfileLoaded()
+        {
+            m_LoadedJobId = null;
+            m_TaskGraph.Clear();
+            m_TaskMask = 0;
+            m_TaskUpdateQueue.Clear();
+        }
 
         private void OnJobPreload(StringHash32 inJobId)
         {

@@ -6,7 +6,7 @@ using Aqua.Scripting;
 
 namespace Aqua.Profile
 {
-    public class ScriptingData : ISerializedObject, ISerializedVersion
+    public class ScriptingData : IProfileChunk, ISerializedVersion
     {
         // Tables
 
@@ -24,20 +24,40 @@ namespace Aqua.Profile
 
         private uint m_ActIndex = 0;
 
+        private bool m_HasChanges;
+
         public uint ActIndex
         {
             get { return m_ActIndex; }
+            set
+            {
+                if (m_ActIndex != value)
+                {
+                    m_ActIndex = value;
+                    m_HasChanges = true;
+                    Services.Events.Dispatch(GameEvents.ActChanged, value);
+                }
+            }
         }
 
         public IReadOnlyCollection<StringHash32> RecentNodeHistory { get { return m_RecentNodeHistory; } }
         public IReadOnlyCollection<StringHash32> ProfileNodeHistory { get { return m_TrackedVisitedNodes; } }
         public IReadOnlyCollection<StringHash32> SessionNodeHistory { get { return m_TrackedVisitedNodesForSession; } }
 
+        public ScriptingData()
+        {
+            GlobalTable.OnUpdated += OnTableUpdated;
+            JobsTable.OnUpdated += OnTableUpdated;
+            PlayerTable.OnUpdated += OnTableUpdated;
+            PartnerTable.OnUpdated += OnTableUpdated;
+        }
+
         public void Reset()
         {
             GlobalTable.Clear();
             PlayerTable.Clear();
             PartnerTable.Clear();
+            JobsTable.Clear();
 
             m_TrackedVisitedNodes.Clear();
             m_TrackedVisitedNodesForSession.Clear();
@@ -82,6 +102,7 @@ namespace Aqua.Profile
                     {
                         m_TrackedVisitedNodes.Add(inId);
                         m_TrackedVisitedNodesForSession.Add(inId);
+                        m_HasChanges = true;
                         break;
                     }
 
@@ -97,15 +118,36 @@ namespace Aqua.Profile
 
         #endregion // Node Visits
 
-        #region ISerializedData
+        private void OnTableUpdated(NamedVariant inVariant)
+        {
+            m_HasChanges = true;
+        }
+
+        #region IProfileChunk
 
         ushort ISerializedVersion.Version { get { return 1; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            // TODO: Implement
+            ioSerializer.Serialize("actIndex", ref m_ActIndex);
+            ioSerializer.Set("visited", ref m_TrackedVisitedNodes);
+
+            ioSerializer.Table("globals", ref GlobalTable);
+            ioSerializer.Table("jobs", ref JobsTable);
+            ioSerializer.Table("player", ref PlayerTable);
+            ioSerializer.Table("partner", ref PartnerTable);
         }
 
-        #endregion // ISerializedData
+        public bool HasChanges()
+        {
+            return m_HasChanges;
+        }
+
+        public void MarkChangesPersisted()
+        {
+            m_HasChanges = false;
+        }
+
+        #endregion // IProfileChunk
     }
 }

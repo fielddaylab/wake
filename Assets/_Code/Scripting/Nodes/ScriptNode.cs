@@ -109,6 +109,12 @@ namespace Aqua.Scripting
             m_Flags |= ScriptNodeFlags.Entrypoint;
         }
 
+        [BlockMeta("autosave"), Preserve]
+        private void SetAutosave()
+        {
+            m_Flags |= ScriptNodeFlags.Autosave;
+        }
+
         [BlockMeta("trigger"), Preserve]
         private void SetTriggerResponse(StringHash32 inTriggerId)
         {
@@ -224,6 +230,7 @@ namespace Aqua.Scripting
         TriggerResponse = 0x04,
         CornerChatter = 0x10,
         SuppressDuringCutscene = 0x20,
-        Function = 0x40
+        Function = 0x40,
+        Autosave = 0x80
     }
 }

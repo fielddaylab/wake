@@ -43,6 +43,11 @@ namespace Aqua
                 ScriptThread thread = ((ScriptThread) inThreadState);
                 thread.PopCutscene();
             }
+
+            if ((inNode.Flags() & ScriptNodeFlags.Autosave) != 0)
+            {
+                Services.Events.Dispatch(GameEvents.ProfileAutosaveHint);
+            }
         }
 
         void ILeafPlugin<ScriptNode>.OnEnd(LeafThreadState<ScriptNode> inThreadState)

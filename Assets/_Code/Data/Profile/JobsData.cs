@@ -6,18 +6,19 @@ using BeauUtil.Debugger;
 
 namespace Aqua.Profile
 {
-    public class JobsData : ISerializedObject, ISerializedVersion, ISerializedCallbacks
+    public class JobsData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
         // Serialized
+        private StringHash32 m_CurrentJobId;
         private List<PlayerJob> m_JobStatuses = new List<PlayerJob>();
         private HashSet<StringHash32> m_CompletedJobs = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedJobs = new HashSet<StringHash32>();
         private HashSet<JobTaskKey> m_CompletedTasks = new HashSet<JobTaskKey>();
-        private StringHash32 m_CurrentJobId;
 
         // Non-Serialized
         private PlayerJob m_CurrentJob;
         private HashSet<StringHash32> m_CurrentJobTaskIds = new HashSet<StringHash32>();
+        private bool m_HasChanges;
 
         private readonly PlayerJob m_TempJob = new PlayerJob();
 
@@ -32,6 +33,8 @@ namespace Aqua.Profile
                 return false;
 
             Assert.False(m_CompletedJobs.Contains(inJobId), "Cannot use completed job as active job");
+
+            m_HasChanges = true;
 
             if (!m_CurrentJobId.IsEmpty)
                 Services.Events.Dispatch(GameEvents.JobUnload, inJobId);
@@ -72,7 +75,13 @@ namespace Aqua.Profile
             if (!Services.Assets.Jobs.IsHiddenJob(inJobId))
                 return false;
 
-            return m_UnlockedJobs.Add(inJobId);
+            if (m_UnlockedJobs.Add(inJobId))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
         }
 
         public bool IsHiddenUnlocked(StringHash32 inId)
@@ -200,6 +209,7 @@ namespace Aqua.Profile
             {
                 bool bIsCurrent = m_CurrentJob == inJob;
 
+                m_HasChanges = true;
                 m_CompletedJobs.Add(inJob.JobId);
                 m_JobStatuses.FastRemove(inJob);
 
@@ -269,6 +279,7 @@ namespace Aqua.Profile
             m_CurrentJobTaskIds.Remove(inTaskId);
             if (m_CompletedTasks.Add(new JobTaskKey(m_CurrentJobId, inTaskId)))
             {
+                m_HasChanges = true;
                 DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set completed", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
                 return true;
             }
@@ -302,7 +313,11 @@ namespace Aqua.Profile
             Assert.False(m_CurrentJobId.IsEmpty, "No current job to modify tasks for");
             Assert.False(inTaskId.IsEmpty, "Cannot modify null task");
 
-            m_CompletedTasks.Remove(new JobTaskKey(m_CurrentJobId, inTaskId));
+            if (m_CompletedTasks.Remove(new JobTaskKey(m_CurrentJobId, inTaskId)))
+            {
+                m_HasChanges = true;
+            }
+
             if (m_CurrentJobTaskIds.Remove(inTaskId))
             {
                 DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set inactive", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
@@ -330,20 +345,48 @@ namespace Aqua.Profile
 
         #endregion // Clearing
 
-        #region ISerializedData
+        #region IProfileChunk
 
         ushort ISerializedVersion.Version { get { return 1; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            // TODO: Implement
+            ioSerializer.Serialize("currentJobId", ref m_CurrentJobId);
+            ioSerializer.ObjectArray("jobStatuses", ref m_JobStatuses);
+            ioSerializer.Set("completedJobs", ref m_CompletedJobs);
+            ioSerializer.Set("unlockedJobs", ref m_UnlockedJobs);
+            ioSerializer.ObjectSet("completedTasks", ref m_CompletedTasks);
         }
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
-            m_CurrentJob = InternalGetProgress(m_CurrentJobId);
+            if (inMode == Serializer.Mode.Read)
+            {
+                m_CurrentJob = InternalGetProgress(m_CurrentJobId);
+                m_CurrentJobTaskIds.Clear();
+            }
         }
 
-        #endregion // ISerializedData
+        public bool HasChanges()
+        {
+            return m_HasChanges;
+        }
+
+        public void MarkChangesPersisted()
+        {
+            m_HasChanges = false;
+        }
+
+        #endregion // IProfileChunk
+    
+        public void PostLoad()
+        {
+            Services.Events.Dispatch(GameEvents.JobPreload, m_CurrentJobId);
+            
+            if (!m_CurrentJobId.IsEmpty)
+            {
+                Services.Events.Dispatch(GameEvents.JobSwitched, m_CurrentJobId);
+            }
+        }
     }
 }

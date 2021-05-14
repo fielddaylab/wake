@@ -3,14 +3,10 @@
 #endif
 
 using System;
-using System.Collections;
-using System.Diagnostics;
-using AquaAudio;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Services;
-using BeauUtil.Variants;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using BeauUtil.Debugger;
@@ -77,7 +73,10 @@ namespace Aqua.Debugging
             {
                 if (m_Input.MousePressed(1))
                 {
-                    // TODO: Pop menu
+                    if (m_DebugMenu.isActiveAndEnabled)
+                    {
+                        m_DebugMenu.TryPopMenu();
+                    }
                 }
                 if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
                 {

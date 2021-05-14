@@ -23,8 +23,10 @@ namespace Aqua
         [SerializeField] private ContentSizeFitter m_ListFitter = null;
         [SerializeField] private ScrollRect m_Scroller = null;
 
-        [Header("Default Colors")]
+        [Header("Default Settings")]
         [SerializeField] private Color m_DefaultTextColor = Color.white;
+        [SerializeField] private float m_DefaultTextIndent = 20;
+        [SerializeField] private float m_ChoiceTextIndent = 60;
 
         #endregion // Inspector
 
@@ -100,19 +102,44 @@ namespace Aqua
                     textColor = actorDef.HistoryColorOverride() ?? m_DefaultTextColor;
                 }
 
-                if (record.Name != currentName)
+                if (record.IsChoice)
                 {
-                    bShowName = true;
-                    currentName = record.Name;
+                    bShowName = false;
+                    currentName = null;
                 }
                 else
                 {
-                    bShowName = record.IsBoundary;
+                    if (record.Name != currentName)
+                    {
+                        bShowName = true;
+                        currentName = record.Name;
+                    }
+                    else
+                    {
+                        bShowName = record.IsBoundary;
+                    }
                 }
 
                 DialogHistoryNode node = m_NodePool.Alloc();
                 node.Text.color = textColor;
                 node.Text.SetText(record.Text);
+                node.ChoiceBackground.enabled = record.IsChoice;
+
+                Vector4 margins = node.Text.margin;
+                if (record.IsChoice)
+                {
+                    margins.x = 0;
+                    margins.z = m_ChoiceTextIndent;
+                    node.Text.horizontalAlignment = HorizontalAlignmentOptions.Right;
+                }
+                else
+                {
+                    margins.x = m_DefaultTextIndent;
+                    margins.z = 0;
+                    node.Text.horizontalAlignment = HorizontalAlignmentOptions.Left;
+                }
+
+                node.Text.margin = margins;
 
                 if (bShowName)
                 {

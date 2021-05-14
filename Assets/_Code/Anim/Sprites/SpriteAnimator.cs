@@ -99,6 +99,11 @@ namespace Aqua.Animation
             m_Playing = true;
         }
 
+        public bool IsPlaying()
+        {
+            return m_Animation != null && m_Playing;
+        }
+
         #endregion // Operations
 
         #region Accessors / Setters

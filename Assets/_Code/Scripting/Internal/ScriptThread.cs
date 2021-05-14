@@ -231,7 +231,7 @@ namespace Aqua.Scripting
                 return;
             }
             
-            DialogRecord record = DialogRecord.FromTag(inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog);
+            DialogRecord record = DialogRecord.FromTag(inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog, false);
             m_LastKnownCharacter = record.CharacterId;
             m_LastKnownName = record.Name;
             m_RecordedDialog = true;
@@ -247,14 +247,14 @@ namespace Aqua.Scripting
             DialogRecord record = new DialogRecord()
             {
                 CharacterId = "player",
-                Name = Services.Data.CurrentCharacterName(),
                 Text = inChoice,
-                IsBoundary = true
+                IsBoundary = true,
+                IsChoice = true
             };
 
             m_LastKnownCharacter = record.CharacterId;
             m_LastKnownName = record.Name;
-            m_RecordedDialog = true;
+            m_RecordedDialog = false;
 
             Services.Data.AddToDialogHistory(record);
         }

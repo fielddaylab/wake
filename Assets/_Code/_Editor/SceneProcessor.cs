@@ -23,6 +23,7 @@ namespace Aqua.Editor
             
             RemoveBootstrap(scene);
             Flatten(scene);
+            Optimize(scene);
         }
 
         static private void RemoveBootstrap(Scene scene)
@@ -49,6 +50,24 @@ namespace Aqua.Editor
                 {
                     foreach(var flatten in allFlatten)
                         flatten.Flatten();
+                }
+            }
+        }
+
+        static private void Optimize(Scene scene)
+        {
+            List<ISceneOptimizable> allOptimizable = new List<ISceneOptimizable>();
+            scene.GetAllComponents<ISceneOptimizable>(true, allOptimizable);
+            if (allOptimizable.Count > 0)
+            {
+                Debug.LogFormat("[SceneProcessor] Optimizing {0} objects scene '{1}'...", allOptimizable.Count, scene.name);
+                using(Profiling.Time("optimizing objects"))
+                {
+                    foreach(var optimizable in allOptimizable)
+                    {
+                        Debug.LogFormat("[SceneProcessor] ...optimizing {0}", optimizable.ToString());
+                        optimizable.Optimize();
+                    }
                 }
             }
         }
