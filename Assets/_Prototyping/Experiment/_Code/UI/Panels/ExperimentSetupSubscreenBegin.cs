@@ -15,6 +15,7 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Button m_StartButton = null;
         [SerializeField] private TMP_Text m_TankText = null;
         [SerializeField] private TMP_Text m_ActorText = null;
+        [SerializeField] private TMP_Text m_PropText = null;
         [SerializeField] private Button m_BackButton = null;
 
         #endregion // Inspector
@@ -40,6 +41,18 @@ namespace ProtoAqua.Experiment
             else {
                 m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
             }
+
+            if(m_CachedData.PropertyId != WaterPropertyId.MAX)
+            {
+                m_PropText.gameObject.SetActive(true);
+                m_PropText.SetText(
+                    Services.Loc.Localize(Services.Assets.WaterProp.Property(m_CachedData.PropertyId).LabelId()));
+            }
+            else
+            {
+                m_PropText.gameObject.SetActive(false);
+            }
+
 
 
 

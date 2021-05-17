@@ -29,14 +29,32 @@ namespace Aqua
         {
             // TODO: localization!!
 
+            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.Stressed);
+
+            bool kHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
+
             yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
             yield return BestiaryFactFragment.CreateVerb("Consumes");
+            if(kHasValue)
+            {
+                yield return BestiaryFactFragment.CreateAmount(Amount());
+            }
             yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(Target()).LabelId());
+            if(bHasValue)
+            {
+                yield return BestiaryFactFragment.CreateWord(BestiaryFactFragmentType.Conjunction, "When");
+                yield return BestiaryFactFragment.CreateNoun("Stressed");
+            }
+            
         }
 
         public override string GenerateSentence(PlayerFactParams inParams = null)
         {
             // TODO: localization!!!
+
+            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.Stressed);
+
+            bool kHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
 
             using(var psb = PooledStringBuilder.Create())
             {
@@ -44,9 +62,16 @@ namespace Aqua
 
                 psb.Builder.Append(Services.Loc.Localize(Parent().CommonName()))
                     .Append(" produces ");
+                if(kHasValue)
+                {
+                    psb.Builder.Append(" " + Amount() + " ");
+                }
                 psb.Builder.Append(FormatValue(Target(), m_Amount)).Append(' ');
                 psb.Builder.Append(" per tick");
-
+                if(bHasValue)
+                {
+                    psb.Builder.Append("when stressed");
+                }
                 return psb.Builder.Flush();
             }
         }

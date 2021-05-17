@@ -9,6 +9,7 @@ namespace Aqua
     public enum PlayerFactFlags : byte
     {
         KnowValue = 0x01,
+        Stressed = 0x02,
         
         [Hidden]
         All = KnowValue
