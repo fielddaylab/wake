@@ -11,7 +11,7 @@ namespace Aqua
         static public readonly StringHash32 ProfileRefresh = "profile:refresh"; // no args
         static public readonly StringHash32 ProfileSaveBegin = "profile:save-begin"; // no args
         static public readonly StringHash32 ProfileSaveCompleted = "profile:save-completed"; // no args
-        static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // no args
+        static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
 
         static public readonly StringHash32 SceneWillUnload = "scene:will-unload"; // no args
         static public readonly StringHash32 ScenePreloading = "scene:preloading"; // no args

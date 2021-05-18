@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -9,7 +10,7 @@ namespace Aqua.Profile
     public class MapData : IProfileChunk, ISerializedVersion
     {
         private StringHash32 m_CurrentStationId;
-        private StringHash32 m_CurrentSceneId;
+        private StringHash32 m_CurrentMapId;
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
 
         private bool m_HasChanges;
@@ -76,10 +77,21 @@ namespace Aqua.Profile
             m_UnlockedStationIds.Add(m_CurrentStationId);
         }
 
-        public void SyncSceneId()
+        public bool SyncMapId()
         {
-            m_CurrentSceneId = MapDB.LookupMap(SceneHelper.ActiveScene());
+            StringHash32 mapId = MapDB.LookupMap(SceneHelper.ActiveScene());
+            if (!mapId.IsEmpty && m_CurrentMapId != mapId)
+            {
+                m_CurrentMapId = mapId;
+                m_HasChanges = true;
+                DebugService.Log(LogMask.DataService, "[MapData] Current map id is '{0}'", m_CurrentMapId.ToDebugString());
+                return true;
+            }
+
+            return false;
         }
+
+        public StringHash32 SavedSceneId() { return m_CurrentMapId; }
 
         #region IProfileChunk
 
@@ -90,7 +102,7 @@ namespace Aqua.Profile
             ioSerializer.UInt32Proxy("stationId", ref m_CurrentStationId);
             ioSerializer.UInt32ProxySet("unlockedStations", ref m_UnlockedStationIds);
 
-            ioSerializer.UInt32Proxy("currentSceneId", ref m_CurrentSceneId);
+            ioSerializer.UInt32Proxy("currentMapId", ref m_CurrentMapId);
         }
 
         public bool HasChanges()

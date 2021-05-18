@@ -3,19 +3,26 @@ using UnityEngine;
 using BeauRoutine;
 using System.Collections;
 using Leaf.Runtime;
+using Aqua.Debugging;
 
 namespace Aqua.Scripting
 {
     [RequireComponent(typeof(ScriptObject))]
     public class AutoSave : ScriptComponent
     {
+        private enum Mode
+        {
+            Delayed,
+            Now
+        }
+
         private const float AutosaveDelay = 10f;
 
         private void Awake()
         {
-            Services.Events.Register(GameEvents.SceneLoaded, OnAutosaveEvent, this)
+            Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
                 .Register(GameEvents.SceneWillUnload, OnAutosaveEvent, this)
-                .Register(GameEvents.ProfileAutosaveHint, OnAutosaveEvent, this)
+                .Register<Mode>(GameEvents.ProfileAutosaveHint, OnHint, this)
                 .Register(GameEvents.BestiaryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.InventoryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.ModelUpdated, OnAutosaveDelayedEvent, this)
@@ -43,6 +50,23 @@ namespace Aqua.Scripting
             OnAutosaveEvent();
         }
 
+        private void OnSceneLoaded()
+        {
+            if (!Services.Valid || !Services.Data.IsProfileLoaded())
+                return;
+
+            Services.Data.Profile.Map.SyncMapId();
+            OnAutosaveEvent();
+        }
+
+        private void OnHint(Mode inMode)
+        {
+            if (inMode == Mode.Now)
+                OnAutosaveEvent();
+            else
+                OnAutosaveDelayedEvent();
+        }
+
         private void OnAutosaveEvent()
         {
             if (!CanSave())
@@ -50,7 +74,10 @@ namespace Aqua.Scripting
             
             m_DelayedAutosave.Stop();
             if (!m_InstantAutosave)
+            {
+                DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
                 m_InstantAutosave = Routine.Start(this, NearInstantSave());
+            }
         }
 
         private void OnAutosaveDelayedEvent()
@@ -61,7 +88,14 @@ namespace Aqua.Scripting
             m_InstantAutosave.Stop();
             m_DelayTimestamp = Time.unscaledTime;
             if (!m_DelayedAutosave)
+            {
+                DebugService.Log(LogMask.DataService, "[AutoSave] Queueing delayed save");
                 m_DelayedAutosave = Routine.Start(this, DelayedSave());
+            }
+            else
+            {
+                DebugService.Log(LogMask.DataService, "[AutoSave] Delayed save re-delayed due to more changes");
+            }
         }
 
         private bool CanSave()
@@ -94,9 +128,14 @@ namespace Aqua.Scripting
 
         #endregion // Saving
 
+        static public void Force()
+        {
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Now);
+        }
+
         static public void Hint()
         {
-            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint);
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Delayed);
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Aqua
 
         [Header("Defaults")]
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
+        [SerializeField] private SerializedHash32 m_DefaultMapId = "Ship";
 
         [Header("Random Chances")]
 
@@ -120,6 +121,26 @@ namespace Aqua
             DeclareProfile(saveData, true);
         }
 
+        public void StartPlaying()
+        {
+            StartPlaying(false);
+        }
+
+        private void StartPlaying(bool inbHardReset)
+        {
+            Services.Audio.StopMusic();
+            Services.Script.KillAllThreads();
+
+            if (inbHardReset)
+            {
+                Services.Audio.StopAll();
+                Services.UI.HideAll();
+            }
+
+            StringHash32 mapId = FindMapId(m_CurrentSaveData);
+            StateUtil.LoadMapWithWipe(mapId);
+        }
+
         #if DEVELOPMENT
 
         internal void CreateDebugProfile()
@@ -146,33 +167,21 @@ namespace Aqua
                 m_UserCode = null;
 
                 DeclareProfile(bookmark, false);
-
-                Services.UI.HideAll();
-                Services.Script.KillAllThreads();
-                Services.Audio.StopAll();
-                Services.State.LoadScene("Ship");
+                StartPlaying(true);
             }
         }
 
         private void ForceReloadSave()
         {
             LoadProfile(m_UserCode);
-
-            Services.UI.HideAll();
-            Services.Script.KillAllThreads();
-            Services.Audio.StopAll();
-            Services.State.LoadScene("Ship");
+            StartPlaying(true);
         }
 
         private void ForceRestart()
         {
             DeleteSave(m_UserCode);
             LoadProfile(m_UserCode);
-
-            Services.UI.HideAll();
-            Services.Script.KillAllThreads();
-            Services.Audio.StopAll();
-            Services.State.LoadScene("Ship");
+            StartPlaying(true);
         }
 
         #endif // DEVELOPMENT
@@ -220,6 +229,14 @@ namespace Aqua
             Services.Events.Dispatch(GameEvents.ProfileLoaded);
             SetAutosaveEnabled(inbAutoSave);
             m_PostLoadQueued = true;
+        }
+
+        private StringHash32 FindMapId(SaveData inSaveData)
+        {
+            StringHash32 mapId = inSaveData.Map.SavedSceneId();
+            if (mapId.IsEmpty)
+                return m_DefaultMapId;
+            return mapId;
         }
 
         private void PerformPostLoad()
@@ -343,7 +360,7 @@ namespace Aqua
             {
                 m_AutoSaveEnabled = inbEnabled;
                 if (inbEnabled)
-                    AutoSave.Hint();
+                    AutoSave.Force();
             }
         }
 

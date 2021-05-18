@@ -2,6 +2,7 @@ using System.Collections;
 using BeauRoutine;
 using UnityEngine;
 using Aqua.Scripting;
+using BeauUtil;
 
 namespace Aqua
 {
@@ -12,8 +13,6 @@ namespace Aqua
         private const float FadeDuration = 0.25f;
         private const float PauseDuration = 0.15f;
         private const string DefaultBackScene = "Ship";
-
-        // TODO: Tie some of this into StateMgr itself??
 
         static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
@@ -28,6 +27,14 @@ namespace Aqua
             BeforeLoad();
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
                 () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+            );
+        }
+
+        static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            BeforeLoad();
+            return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
+                () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 
