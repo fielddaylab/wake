@@ -284,10 +284,10 @@ namespace Aqua.Profile
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Set("allEntities", ref m_ObservedEntities);
-            ioSerializer.Set("allFacts", ref m_ObservedFacts);
+            ioSerializer.UInt32ProxySet("allEntities", ref m_ObservedEntities);
+            ioSerializer.UInt32ProxySet("allFacts", ref m_ObservedFacts);
             ioSerializer.ObjectArray("factStatus", ref m_Facts);
-            ioSerializer.Set("graphedFacts", ref m_GraphedFacts);
+            ioSerializer.UInt32ProxySet("graphedFacts", ref m_GraphedFacts);
         }
 
         public bool HasChanges()

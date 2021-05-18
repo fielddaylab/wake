@@ -11,6 +11,8 @@ namespace Aqua
     {
         #region Inspector
 
+        [SerializeField, AutoEnum] private MapFlags m_Flags = 0;
+
         [Header("Assets")]
         [SerializeField] private string m_SceneName = null;
         [SerializeField] private TextId m_LabelId = null;
@@ -22,6 +24,11 @@ namespace Aqua
 
         #endregion // Inspector
 
+        public MapFlags Flags() { return m_Flags; }
+
+        public bool HasFlags(MapFlags inFlags) { return (m_Flags & inFlags) != 0; }
+        public bool HasAllFlags(MapFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
+
         public string SceneName() { return m_SceneName; }
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
@@ -30,5 +37,11 @@ namespace Aqua
         public PropertyBlock AdditionalProperties() { return m_AdditionalProperties; }
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
+    }
+
+    [Flags]
+    public enum MapFlags
+    {
+        IsStation = 0x01
     }
 }

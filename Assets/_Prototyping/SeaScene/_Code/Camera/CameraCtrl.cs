@@ -21,9 +21,10 @@ namespace ProtoAqua.Observation
 
         [SerializeField] private float m_DefaultLerp = 5;
         [SerializeField] private float m_TargetWeight = 0.5f;
-        [SerializeField] private double m_Time = 0;
 
         #endregion // Inspector
+        
+        [NonSerialized] private double m_Time = 0;
 
         [NonSerialized] private List<CameraConstraints.Bounds> m_BoundsConstraints = new List<CameraConstraints.Bounds>(8);
         [NonSerialized] private List<CameraConstraints.Hint> m_HintConstraints = new List<CameraConstraints.Hint>(8);

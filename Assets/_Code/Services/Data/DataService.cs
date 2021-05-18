@@ -4,6 +4,7 @@
 
 using Aqua.Debugging;
 using Aqua.Profile;
+using Aqua.Scripting;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -55,6 +56,8 @@ namespace Aqua
         [NonSerialized] private DMInfo m_BookmarksMenu;
         #endif // UNITY_EDITOR
 
+        [NonSerialized] private bool m_AutoSaveEnabled;
+
         #region Save Data
 
         public SaveData Profile
@@ -102,7 +105,7 @@ namespace Aqua
             ClearOldProfile();
 
             SaveData saveData;
-            if (inUserCode != null && TryLoadProfileFromPrefs(inUserCode, out saveData))
+            if (TryLoadProfileFromPrefs(inUserCode, out saveData))
             {
                 DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
                 m_UserCode = inUserCode;
@@ -110,14 +113,23 @@ namespace Aqua
             else
             {
                 DebugService.Log(LogMask.DataService, "[DataService] Created new profile with user id '{0}'", inUserCode);
-                m_UserCode = inUserCode;
+                m_UserCode = inUserCode ?? string.Empty;
                 saveData = CreateNewProfile();
             }
 
-            DeclareProfile(saveData);
+            DeclareProfile(saveData, true);
         }
 
         #if DEVELOPMENT
+
+        internal void CreateDebugProfile()
+        {
+            ClearOldProfile();
+            m_UserCode = string.Empty;
+            SaveData saveData = CreateNewProfile();
+            DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
+            DeclareProfile(saveData, false);
+        }
 
         private void LoadBookmark(string inBookmarkName)
         {
@@ -128,16 +140,39 @@ namespace Aqua
             SaveData bookmark;
             if (TryLoadProfileFromBytes(bookmarkAsset.bytes, out bookmark))
             {
+                ClearOldProfile();
+
                 DebugService.Log(LogMask.DataService, "[DataService] Loaded profile from bookmark '{0}'", inBookmarkName);
                 m_UserCode = null;
 
-                DeclareProfile(bookmark);
+                DeclareProfile(bookmark, false);
 
                 Services.UI.HideAll();
                 Services.Script.KillAllThreads();
                 Services.Audio.StopAll();
                 Services.State.LoadScene("Ship");
             }
+        }
+
+        private void ForceReloadSave()
+        {
+            LoadProfile(m_UserCode);
+
+            Services.UI.HideAll();
+            Services.Script.KillAllThreads();
+            Services.Audio.StopAll();
+            Services.State.LoadScene("Ship");
+        }
+
+        private void ForceRestart()
+        {
+            DeleteSave(m_UserCode);
+            LoadProfile(m_UserCode);
+
+            Services.UI.HideAll();
+            Services.Script.KillAllThreads();
+            Services.Audio.StopAll();
+            Services.State.LoadScene("Ship");
         }
 
         #endif // DEVELOPMENT
@@ -178,11 +213,12 @@ namespace Aqua
             return Serializer.Read(ref outProfile, inBytes);
         }
 
-        private void DeclareProfile(SaveData inProfile)
+        private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
         {
             m_CurrentSaveData = inProfile;
             HookSaveDataToVariableResolver(inProfile);
             Services.Events.Dispatch(GameEvents.ProfileLoaded);
+            SetAutosaveEnabled(inbAutoSave);
             m_PostLoadQueued = true;
         }
 
@@ -287,6 +323,28 @@ namespace Aqua
             Debug.LogFormat("[DataService] Current Profile: {0}", json);
 
             #endif // UNITY_EDITOR
+        }
+
+        private void DeleteSave(string inUserCode)
+        {
+            PlayerPrefs.DeleteKey(GetPrefsKeyForCode(inUserCode));
+            PlayerPrefs.Save();
+            Debug.LogWarningFormat("[DataService] Local save data for user id '{0}' has been cleared", inUserCode);
+        }
+
+        public bool AutosaveEnabled()
+        {
+            return m_AutoSaveEnabled;
+        }
+
+        public void SetAutosaveEnabled(bool inbEnabled)
+        {
+            if (m_AutoSaveEnabled != inbEnabled)
+            {
+                m_AutoSaveEnabled = inbEnabled;
+                if (inbEnabled)
+                    AutoSave.Hint();
+            }
         }
 
         #if UNITY_EDITOR
@@ -421,6 +479,21 @@ namespace Aqua
 
             yield return bestiaryMenu;
 
+            // map menu
+
+            DMInfo mapMenu = DebugService.NewDebugMenu("World Map");
+
+            foreach(var map in Services.Assets.Map.Stations())
+            {
+                RegisterStationToggle(mapMenu, map.Id());
+            }
+
+            mapMenu.AddDivider();
+
+            mapMenu.AddButton("Unlock All Stations", () => UnlockAllStations());
+
+            yield return mapMenu;
+
             // save data menu
 
             DMInfo saveMenu = DebugService.NewDebugMenu("Player Profile");
@@ -434,13 +507,21 @@ namespace Aqua
             saveMenu.AddSubmenu(bookmarkMenu);
             saveMenu.AddDivider();
 
-            saveMenu.AddButton("Save", () => SaveProfile(), () => m_CurrentSaveData != null);
-            saveMenu.AddButton("Save (Debug)", () => DebugSaveData(), () => m_CurrentSaveData != null);
+            saveMenu.AddButton("Save", () => SaveProfile(), IsProfileLoaded);
+            saveMenu.AddButton("Save (Debug)", () => DebugSaveData(), IsProfileLoaded);
             #if UNITY_EDITOR
-            saveMenu.AddButton("Save as Bookmark", () => BookmarkSaveData(), () => m_CurrentSaveData != null);
+            saveMenu.AddButton("Save as Bookmark", () => BookmarkSaveData(), IsProfileLoaded);
             #else 
             saveMenu.AddButton("Save as Bookmark", null, () => false);
             #endif // UNITY_EDITOR
+            saveMenu.AddToggle("Autosave Enabled", AutosaveEnabled, SetAutosaveEnabled);
+
+            saveMenu.AddDivider();
+
+            #if DEVELOPMENT
+            saveMenu.AddButton("Reload Save", () => ForceReloadSave(), IsProfileLoaded);
+            saveMenu.AddButton("Restart from Beginning", () => ForceRestart());
+            #endif // DEVELOPMENT
 
             saveMenu.AddDivider();
 
@@ -535,6 +616,7 @@ namespace Aqua
             );
         }
 
+
         static private void UnlockAllBestiaryEntries(bool inbIncludeFacts)
         {
             foreach(var entry in Services.Assets.Bestiary.Objects)
@@ -555,6 +637,28 @@ namespace Aqua
                 Services.Data.Profile.Bestiary.DeregisterEntity(entry.Id());
                 foreach(var fact in entry.Facts)
                     Services.Data.Profile.Bestiary.DeregisterFact(fact.Id());
+            }
+        }
+
+        static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)
+        {
+            inMenu.AddToggle(inStationId.ToDebugString(),
+                () => { return Services.Data.Profile.Map.IsStationUnlocked(inStationId); },
+                (b) =>
+                {
+                    if (b)
+                        Services.Data.Profile.Map.UnlockStation(inStationId);
+                    else
+                        Services.Data.Profile.Map.LockStation(inStationId);
+                }
+            );
+        }
+
+        static private void UnlockAllStations()
+        {
+            foreach(var map in Services.Assets.Map.Stations())
+            {
+                Services.Data.Profile.Map.UnlockStation(map.Id());
             }
         }
 

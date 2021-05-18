@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -178,9 +182,11 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
+            #if DEVELOPMENT
             // if we started from another scene than the boot or title scene
-            if (active.BuildIndex > 1)
-                Services.Data.LoadProfile(null);
+            if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
+                Services.Data.CreateDebugProfile();
+            #endif // DEVELOPMENT
 
             #if UNITY_EDITOR
             yield return WaitForOptimize(active);
@@ -225,8 +231,10 @@ namespace Aqua
                 yield return Services.UI.ShowLoadingScreen();
             }
 
+            #if DEVELOPMENT
             if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
-                Services.Data.LoadProfile(null);
+                Services.Data.CreateDebugProfile();
+            #endif // DEVELOPMENT
 
             SceneBinding active = SceneHelper.ActiveScene();
 

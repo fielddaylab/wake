@@ -2,6 +2,7 @@ using BeauUtil;
 using UnityEngine;
 using BeauRoutine;
 using System.Collections;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -36,9 +37,15 @@ namespace Aqua.Scripting
 
         #region Handlers
 
+        [LeafMember("Hint")]
+        private void LeafHint()
+        {
+            OnAutosaveEvent();
+        }
+
         private void OnAutosaveEvent()
         {
-            if (!Services.Data.Profile.HasChanges())
+            if (!CanSave())
                 return;
             
             m_DelayedAutosave.Stop();
@@ -48,13 +55,18 @@ namespace Aqua.Scripting
 
         private void OnAutosaveDelayedEvent()
         {
-            if (!Services.Data.Profile.HasChanges())
+            if (!CanSave())
                 return;
             
             m_InstantAutosave.Stop();
             m_DelayTimestamp = Time.unscaledTime;
             if (!m_DelayedAutosave)
                 m_DelayedAutosave = Routine.Start(this, DelayedSave());
+        }
+
+        private bool CanSave()
+        {
+            return Services.Valid && Services.Data.AutosaveEnabled() && Services.Data.Profile.HasChanges();
         }
 
         #endregion // Handlers
