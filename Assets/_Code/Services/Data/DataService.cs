@@ -15,6 +15,7 @@ using BeauRoutine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Aqua.Option;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -44,6 +45,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private SaveData m_CurrentSaveData;
+        [NonSerialized] private OptionsData m_CurrentOptions;
         [NonSerialized] private VariantTable m_SessionTable;
         [NonSerialized] private string m_UserCode;
 
@@ -64,6 +66,11 @@ namespace Aqua
         public SaveData Profile
         {
             get { return m_CurrentSaveData; }
+        }
+
+        public OptionsData Options
+        {
+            get { return m_CurrentOptions; }
         }
 
         public string CurrentCharacterName()
@@ -138,14 +145,18 @@ namespace Aqua
             }
 
             StringHash32 mapId = FindMapId(m_CurrentSaveData);
+            Services.State.ClearSceneHistory();
             StateUtil.LoadMapWithWipe(mapId);
+            AutoSave.Suppress();
         }
 
         #if DEVELOPMENT
 
-        internal void CreateDebugProfile()
+        internal void UseDebugProfile()
         {
             ClearOldProfile();
+            m_CurrentOptions.SetDefaults();
+
             m_UserCode = string.Empty;
             SaveData saveData = CreateNewProfile();
             DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
@@ -225,8 +236,11 @@ namespace Aqua
         private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
         {
             m_CurrentSaveData = inProfile;
+            OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
+
             HookSaveDataToVariableResolver(inProfile);
             Services.Events.Dispatch(GameEvents.ProfileLoaded);
+            
             SetAutosaveEnabled(inbAutoSave);
             m_PostLoadQueued = true;
         }
@@ -260,6 +274,12 @@ namespace Aqua
         private void SyncProfile()
         {
             m_CurrentSaveData.LastUpdated = DateTime.UtcNow.ToFileTime();
+            OptionsData.SyncFrom(m_CurrentOptions, m_CurrentSaveData.Options, OptionsData.Authority.All);
+        }
+
+        public bool NeedsSave()
+        {
+            return m_CurrentSaveData != null && (m_CurrentSaveData.HasChanges() || m_CurrentOptions.HasChanges());
         }
 
         public IEnumerator SaveProfile()
@@ -275,7 +295,7 @@ namespace Aqua
                 return null;
             }
 
-            if (!m_CurrentSaveData.HasChanges())
+            if (!m_CurrentSaveData.HasChanges() && !m_CurrentOptions.HasChanges())
             {
                 DebugService.Log(LogMask.DataService, "[DataService] No changes detected to save");
                 return null;
@@ -412,6 +432,20 @@ namespace Aqua
 
         #endregion // Dialog History
 
+        #region Options
+
+        public bool IsOptionsLoaded()
+        {
+            return m_CurrentOptions != null;
+        }
+
+        public void LoadOptionsSettings() 
+        {
+            m_CurrentOptions = new OptionsData();
+        }
+
+        #endregion // Options
+
         #region IService
 
         protected override void Initialize()
@@ -422,6 +456,9 @@ namespace Aqua
             BindTable("session", m_SessionTable);
 
             Services.Events.Register(GameEvents.SceneLoaded, PerformPostLoad, this);
+
+            m_CurrentOptions = new OptionsData();
+            m_CurrentOptions.SetDefaults();
 
             m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
         }

@@ -4,6 +4,7 @@ using BeauRoutine;
 using System.Collections;
 using Leaf.Runtime;
 using Aqua.Debugging;
+using System;
 
 namespace Aqua.Scripting
 {
@@ -23,6 +24,7 @@ namespace Aqua.Scripting
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
                 .Register(GameEvents.SceneWillUnload, OnAutosaveEvent, this)
                 .Register<Mode>(GameEvents.ProfileAutosaveHint, OnHint, this)
+                .Register(GameEvents.ProfileAutosaveSuppress, OnSuppress, this)
                 .Register(GameEvents.BestiaryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.InventoryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.ModelUpdated, OnAutosaveDelayedEvent, this)
@@ -40,7 +42,8 @@ namespace Aqua.Scripting
 
         private Routine m_InstantAutosave;
         private Routine m_DelayedAutosave;
-        private float m_DelayTimestamp;
+        [NonSerialized] private float m_DelayTimestamp;
+        [NonSerialized] private bool m_Suppressed;
 
         #region Handlers
 
@@ -65,6 +68,18 @@ namespace Aqua.Scripting
                 OnAutosaveEvent();
             else
                 OnAutosaveDelayedEvent();
+        }
+
+        private void OnSuppress()
+        {
+            if (!m_Suppressed)
+            {
+                m_Suppressed = true;
+                DebugService.Log(LogMask.DataService, "[AutoSave] Suppressing autosave");
+            }
+
+            m_InstantAutosave.Stop();
+            m_DelayedAutosave.Stop();
         }
 
         private void OnAutosaveEvent()
@@ -100,7 +115,7 @@ namespace Aqua.Scripting
 
         private bool CanSave()
         {
-            return Services.Valid && Services.Data.AutosaveEnabled() && Services.Data.Profile.HasChanges();
+            return !m_Suppressed && Services.Valid && Services.Data.AutosaveEnabled() && Services.Data.NeedsSave();
         }
 
         #endregion // Handlers
@@ -136,6 +151,11 @@ namespace Aqua.Scripting
         static public void Hint()
         {
             Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Delayed);
+        }
+
+        static public void Suppress()
+        {
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveSuppress);
         }
     }
 }

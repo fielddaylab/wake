@@ -214,9 +214,8 @@ namespace Aqua
 
             #if DEVELOPMENT
             // if we started from another scene than the boot or title scene
-            yield return null;
             if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
-                Services.Data.CreateDebugProfile();
+                Services.Data.UseDebugProfile();
             #endif // DEVELOPMENT
 
             #if UNITY_EDITOR
@@ -263,9 +262,8 @@ namespace Aqua
             }
 
             #if DEVELOPMENT
-            yield return null;
             if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
-                Services.Data.CreateDebugProfile();
+                Services.Data.UseDebugProfile();
             #endif // DEVELOPMENT
 
             SceneBinding active = SceneHelper.ActiveScene();
@@ -420,6 +418,15 @@ namespace Aqua
         }
 
         #endregion // Scene Loading
+
+        #region Scene History
+
+        public void ClearSceneHistory()
+        {
+            m_SceneHistory.Clear();
+        }
+
+        #endregion // Scene History
 
         #region Scripting
 

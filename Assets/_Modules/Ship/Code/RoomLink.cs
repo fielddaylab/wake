@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using BeauUtil;
+using Aqua.Scripting;
 
 namespace Aqua.Ship
 {
@@ -18,6 +19,7 @@ namespace Aqua.Ship
         [SerializeField, ShowIfField("ShowRoom")] private Room m_Room = null;
         [SerializeField, ShowIfField("ShowScene")] private string m_Scene = null;
         [SerializeField, ShowIfField("ShowScene")] private bool m_StopMusic = true;
+        [SerializeField, ShowIfField("ShowScene")] private bool m_SuppressAutosave = false;
 
         private void Awake()
         {
@@ -43,6 +45,8 @@ namespace Aqua.Ship
                     roomMgr.LoadScene(m_Scene);
                     if (m_StopMusic)
                         Services.Audio.StopMusic();
+                    if (m_SuppressAutosave)
+                        AutoSave.Suppress();
                     break;
             }
         }
