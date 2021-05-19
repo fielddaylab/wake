@@ -1,0 +1,179 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: coral-clear-sarg
+  m_EditorClassIdentifier: 
+  m_ScriptName:
+    m_Source: 
+    m_Hash: 0
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.coral-clear-sarg.name
+    m_Hash: 1952771779
+  m_PosterId:
+    m_Source: jobs.coral-clear-sarg.poster
+    m_Hash: 485491357
+  m_DescId:
+    m_Source: jobs.coral-clear-sarg.desc
+    m_Hash: 3687848241
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: ffcb01ca3fde9498d999046d7660f28e, type: 2}
+  m_PrereqConditions: 
+  m_StationId: Station2
+  m_DiveSiteIds:
+  - RS-2R
+  m_Tasks:
+  - Id:
+      m_Source: relationship
+      m_Hash: 374391099
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.relationship
+      m_Hash: 2422490015
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_Hash: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_Hash: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_Hash: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: CoralGrouper
+        m_Hash: 1575786998
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: urchinSarg
+      m_Hash: 1406225829
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.urchinSarg
+      m_Hash: 1268927417
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.Sargassum
+        m_Hash: 430969211
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: relaionship
+      m_Hash: 1397682145
+  - Id:
+      m_Source: urchinSagArgue
+      m_Hash: 1556930087
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.urchinSargAgue
+      m_Hash: 4003386727
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: relationship
+      m_Hash: 374391099
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.relationship
+      m_Hash: 2422490015
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_Hash: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_Hash: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_Hash: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: CoralGrouper
+        m_Hash: 1575786998
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: urchinSarg
+      m_Hash: 1406225829
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.urchinSarg
+      m_Hash: 1268927417
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.Sargassum
+        m_Hash: 430969211
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: ffff
+  - Id:
+      m_Source: urchinSagArgue
+      m_Hash: 1556930087
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-clear-sarg.task.urchinSargAgue
+      m_Hash: 4003386727
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIndices: 
+  m_CashReward: 44
+  m_GearReward: 110
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: 0}
+  m_ExtraAssets: []

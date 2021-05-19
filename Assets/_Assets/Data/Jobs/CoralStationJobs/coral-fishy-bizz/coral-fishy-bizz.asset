@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: coral-fishy-bizz
+  m_EditorClassIdentifier: 
+  m_ScriptName:
+    m_Source: 
+    m_Hash: 0
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.coral-fishy-bizz.name
+    m_Hash: 2785212121
+  m_PosterId:
+    m_Source: jobs.coral-fishy-bizz.poster
+    m_Hash: 411411267
+  m_DescId:
+    m_Source: jobs.coral-fishy-bizz.desc
+    m_Hash: 3163738963
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_StationId: Station2
+  m_DiveSiteIds:
+  - RS-2V
+  m_Tasks:
+  - Id:
+      m_Source: grouperScan
+      m_Hash: 3631948938
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.grouperScan
+      m_Hash: 3134970016
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: CoralGrouper
+        m_Hash: 1575786998
+      ConditionString: 
+      Amount: 0
+    - Type: 7
+      Target:
+        m_Source: FishingBoat
+        m_Hash: 921976459
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: grouperModel
+      m_Hash: 2904668152
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.grouperModel
+      m_Hash: 2048412674
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.GrouperRepoduction
+        m_Hash: 2030457218
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Model.GrouperFishingRate
+        m_Hash: 2289506904
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: boatNumbers
+      m_Hash: 3019330219
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.boatNumbers
+      m_Hash: 3351430957
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: boatReport
+      m_Hash: 2200770821
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.boatReport
+      m_Hash: 2183305711
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: grouperScan
+      m_Hash: 3631948938
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.grouperScan
+      m_Hash: 3134970016
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: CoralGrouper
+        m_Hash: 1575786998
+      ConditionString: 
+      Amount: 0
+    - Type: 7
+      Target:
+        m_Source: FishingBoat
+        m_Hash: 921976459
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: grouperModel
+      m_Hash: 2904668152
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.grouperModel
+      m_Hash: 2048412674
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.GrouperRepoduction
+        m_Hash: 2030457218
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Model.GrouperFishingRate
+        m_Hash: 2289506904
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: boatNumbers
+      m_Hash: 3019330219
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.boatNumbers
+      m_Hash: 3351430957
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: boatReport
+      m_Hash: 2200770821
+    Index: 3
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.boatReport
+      m_Hash: 2183305711
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIndices: 
+  m_CashReward: 0
+  m_GearReward: 0
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: 0}
+  m_ExtraAssets: []

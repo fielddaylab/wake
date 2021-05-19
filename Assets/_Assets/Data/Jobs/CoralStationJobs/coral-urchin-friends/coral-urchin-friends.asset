@@ -1,0 +1,192 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: coral-urchin-friends
+  m_EditorClassIdentifier: 
+  m_ScriptName:
+    m_Source: 
+    m_Hash: 0
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.coral-urchin-friends.name
+    m_Hash: 209123215
+  m_PosterId:
+    m_Source: jobs.coral-urchin-friends.poster
+    m_Hash: 65636297
+  m_DescId:
+    m_Source: jobs.coral-urchin-friends.desc
+    m_Hash: 201461205
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: e9524ce99e0024d07a424d315aee33a1, type: 2}
+  m_PrereqConditions: 
+  m_StationId: Station2
+  m_DiveSiteIds:
+  - RS-2R
+  m_Tasks:
+  - Id:
+      m_Source: coralUrchinModel
+      m_Hash: 1696952758
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.coralUrchinModel
+      m_Hash: 4010859262
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.CoralUrchinPrediction
+        m_Hash: 623001303
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: urchinStressed
+      m_Hash: 3545460779
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.urchinStressed
+      m_Hash: 36328067
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Temperature.Stressed
+        m_Hash: 3711146441
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Urchin.Oxygen.Stressed
+        m_Hash: 1331213863
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: coralUrchinModel
+      m_Hash: 1696952758
+  - Id:
+      m_Source: SiteRModel
+      m_Hash: 3648834849
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.SiteRModel
+      m_Hash: 3850702276
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.SiteRPrediction
+        m_Hash: 4016923694
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: coralUrchinModel
+      m_Hash: 1696952758
+  - Id:
+      m_Source: present
+      m_Hash: 511712492
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.present
+      m_Hash: 2454781044
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: coralUrchinModel
+      m_Hash: 1696952758
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.coralUrchinModel
+      m_Hash: 4010859262
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.CoralUrchinPrediction
+        m_Hash: 623001303
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: urchinStressed
+      m_Hash: 3545460779
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.urchinStressed
+      m_Hash: 36328067
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Temperature.Stressed
+        m_Hash: 3711146441
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Urchin.Oxygen.Stressed
+        m_Hash: 1331213863
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: SiteRModel
+      m_Hash: 3648834849
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.SiteRModel
+      m_Hash: 3850702276
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.SiteRPrediction
+        m_Hash: 4016923694
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: present
+      m_Hash: 511712492
+    Index: 3
+    LabelId:
+      m_Source: jobs.coral-urchin-friends.task.present
+      m_Hash: 2454781044
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps: []
+    PrerequisiteTaskIndices: 
+  m_CashReward: 0
+  m_GearReward: 0
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: 0}
+  m_ExtraAssets: []
