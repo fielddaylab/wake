@@ -9,6 +9,8 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using System.Collections.Generic;
+
+// TODO : Need some major cleanup
 namespace ProtoAqua.Experiment
 {
     public class ExperimentSetupSubscreenSummary : ExperimentSetupSubscreen
@@ -21,6 +23,8 @@ namespace ProtoAqua.Experiment
         [SerializeField] private TMP_Text m_TankText = null;
         [SerializeField] private TMP_Text m_SummaryText = null;
 
+
+        [SerializeField] private VerticalLayoutGroup m_BehaviourGroup = null;
         [SerializeField] private Transform m_RangeFactButton = null;
         [SerializeField] private FactSentenceDisplay.Pool m_BehaviorDisplayPool = null;
 
@@ -33,6 +37,13 @@ namespace ProtoAqua.Experiment
             m_BehaviorDisplayPool.Reset();
 
             base.OnDisable();
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+
+            Routine.Start(this, PoolForceLayoutCorrectHACK());
         }
 
         public void Populate(ExperimentResultData inResultData)
@@ -60,20 +71,41 @@ namespace ProtoAqua.Experiment
             BestiaryDesc critter = Services.Assets.Bestiary.Get(resData.Setup.Critter);
             var consume = BestiaryUtils.FindConsumeRule(critter, resData.Setup.PropertyId);
             var produce = BestiaryUtils.FindProduceRule(critter, resData.Setup.PropertyId);
-            if(produce != null){
-                if(Services.Data.Profile.Bestiary.RegisterFact(produce.Id())) {
-                    m_BehaviorDisplayPool.Alloc().Populate(produce, null);
+            var state = critter.GetStateForEnvironment(resData.Setup.Values);
+            if(produce != null)
+            {
+                if(Services.Data.Profile.Bestiary.RegisterFact(produce.Id())) 
+                {
+                    var fact = Services.Data.Profile.Bestiary.GetFact(produce.Id());
+                    fact.Add(PlayerFactFlags.KnowValue);
+                    if(state == ActorStateId.Stressed)
+                    {
+                        
+                        fact.Add(PlayerFactFlags.Stressed);
+                    }
+                    m_BehaviorDisplayPool.Alloc().Populate(produce, fact);
                 }
             }
-            else if(consume != null){
-                if(Services.Data.Profile.Bestiary.RegisterFact(consume.Id())) {
-                    m_BehaviorDisplayPool.Alloc().Populate(consume, null);
+            if(consume != null){
+                if(Services.Data.Profile.Bestiary.RegisterFact(consume.Id())) 
+                {
+                    var fact = Services.Data.Profile.Bestiary.GetFact(consume.Id());
+                    fact.Add(PlayerFactFlags.KnowValue);
+                    if(state == ActorStateId.Stressed)
+                    {
+                        
+                        fact.Add(PlayerFactFlags.Stressed);
+                        
+                    }
+                    m_BehaviorDisplayPool.Alloc().Populate(consume, fact);
                 }
             }
-            else {
+
+            if(consume == null && produce == null) {
                 form_text = "No facts found for " + Services.Loc.Localize(critter.CommonName()) + " with " 
                     + Services.Assets.WaterProp.Property(resData.Setup.PropertyId).name;
             }
+
             // if(resData.Setup.CritterX != StringHash32.Null) {
             //     var actor = Services.Assets.Bestiary.Get(resData.Setup.CritterX);
             //     var actorState = GetActorState(actor, resData.Setup.Values);
@@ -186,6 +218,13 @@ namespace ProtoAqua.Experiment
                 return Services.Assets.Bestiary.Get(actor);
             }
             return null;
+        }
+
+        private IEnumerator PoolForceLayoutCorrectHACK()
+        {
+            m_BehaviourGroup.enabled = false;
+            yield return null;
+            m_BehaviourGroup.enabled = true;
         }
 
         private IEnumerator ForceLayoutCorrectHACK()
