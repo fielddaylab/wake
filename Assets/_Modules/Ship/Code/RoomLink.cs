@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using BeauUtil;
+using Aqua.Scripting;
 
 namespace Aqua.Ship
 {
@@ -15,13 +16,10 @@ namespace Aqua.Ship
         }
 
         [SerializeField] private LinkType m_LinkType = LinkType.Room;
-        
-        [Header("Room Mode")]
-        [SerializeField] private Room m_Room = null;
-        
-        [Header("Scene Mode")]
-        [SerializeField] private string m_Scene = null;
-        [SerializeField] private bool m_StopMusic = true;
+        [SerializeField, ShowIfField("ShowRoom")] private Room m_Room = null;
+        [SerializeField, ShowIfField("ShowScene")] private string m_Scene = null;
+        [SerializeField, ShowIfField("ShowScene")] private bool m_StopMusic = true;
+        [SerializeField, ShowIfField("ShowScene")] private bool m_SuppressAutosave = false;
 
         private void Awake()
         {
@@ -47,9 +45,25 @@ namespace Aqua.Ship
                     roomMgr.LoadScene(m_Scene);
                     if (m_StopMusic)
                         Services.Audio.StopMusic();
+                    if (m_SuppressAutosave)
+                        AutoSave.Suppress();
                     break;
             }
         }
+    
+        #if UNITY_EDITOR
+
+        private bool ShowRoom()
+        {
+            return m_LinkType == LinkType.Room;
+        }
+
+        private bool ShowScene()
+        {
+            return m_LinkType == LinkType.Scene;
+        }
+
+        #endif // UNITY_EDITOR
     }
 }
 

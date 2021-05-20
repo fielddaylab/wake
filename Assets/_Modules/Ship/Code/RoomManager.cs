@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
@@ -49,8 +50,7 @@ namespace Aqua.Ship
 
         public void LoadNavRoom()
         {
-            string scene = MapDB.LookupScene(Services.Data.Profile.Map.CurrentStationId());
-            StateUtil.LoadSceneWithWipe(scene);
+            StateUtil.LoadMapWithWipe(Services.Data.Profile.Map.CurrentStationId());
         }
 
         public void LoadScene(string inScene)
@@ -91,6 +91,7 @@ namespace Aqua.Ship
                 yield return fader.Object.Hide(false);
             }
 
+            AutoSave.Hint();
             Services.Input.ResumeAll();
         }
 

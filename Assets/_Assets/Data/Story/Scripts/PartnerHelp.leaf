@@ -14,20 +14,20 @@ $if kevin:seenShipHelm
             Maybe we should check out the job board?
 $else
             Is there anywhere on this ship where we can see available jobs?
-    $if scene:name == "Ship", session:nav.shipRoom == "helm"
+    $if scene:name == "Ship", global:nav.shipRoom == "helm"
             {@player}   Oh, yeah, right in front of us there's the job board.
                         Should be synced up with the current station.
     $else
             {@player}   Oh yeah, we have a job board in the helm.
                         Should be synced up with the current station.
-    $endif // scene:name == "Ship", session:nav.shipRoom == "helm"
+    $endif // scene:name == "Ship", global:nav.shipRoom == "helm"
     {@kevin}   Great! Then we should check there.
 $endif // kevin:seenShipHelm
 $set    kevin:knowsJobs = true
 
 :: noJob.notAtHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name != "JobBoard", session:nav.shipRoom != "helm"
+@when       !player:currentJob, scene:name != "JobBoard", global:nav.shipRoom != "helm"
 @repeat     1
 @cutscene
 {@player}   Any idea what we should be doing right now?
@@ -35,7 +35,7 @@ $set    kevin:knowsJobs = true
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name == "Ship", session:nav.shipRoom == "helm"
+@when       !player:currentJob, scene:name == "Ship", global:nav.shipRoom == "helm"
 @repeat     1
 @cutscene
 {@player}   Any thoughts on what we should do next?

@@ -59,6 +59,8 @@ namespace ProtoAqua.Experiment
 
             UpdateSliders();
 
+            ResetSliders();
+
 
         }
 
@@ -107,7 +109,7 @@ namespace ProtoAqua.Experiment
 
         private void ResetSliders() {
             if(m_CachedSliders == null || m_CachedSliders.Length < 1) return;
-            var facts = m_CachedData.EcosystemId == StringHash32.Null? null : Services.Assets.Bestiary.Get(m_CachedData.EcosystemId).Facts;
+            var facts = Services.Assets.Bestiary.Get(m_CachedData.EcosystemId)?.Facts ?? null;
             if(facts != null) {
                 foreach(var fact in facts) {
                     if(fact.GetType().Equals(typeof(BFWaterProperty))) {
@@ -125,15 +127,11 @@ namespace ProtoAqua.Experiment
                 }
                 else {
                     var propDesc = propSlider.PropSettings;
-                    slider.Slider.SetValueWithoutNotify(
-                        Rescale(propSlider.EnvProperty.Value(), 0f, 1f, propDesc.MinValue(), propDesc.MaxValue()));
+                    float initValue = Rescale(propSlider.EnvProperty.Value(), 0f, 1f, propDesc.MinValue(), propDesc.MaxValue());
+                    slider.Slider.SetValueWithoutNotify(initValue);
                 }
                 
             }
-        }
-
-        private float Rescale(float value, float min, float max, WaterPropertyDesc prop) {
-            return min + (max - min) / (prop.MaxValue() - prop.MinValue()) * (value - prop.MinValue());
         }
 
         private void UpdateFromSlider(WaterPropertyId m_Id, float value) {
@@ -165,7 +163,7 @@ namespace ProtoAqua.Experiment
         }
 
         private float Rescale(float value, float min, float max, float minScale, float maxScale) {
-            return minScale + (float)(value - min)/(max-min) * (maxScale - minScale);
+            return minScale + (float)((value - min)/((max-min) * (maxScale - minScale)));
         }
 
         private void UpdateBlock(WaterPropertyId m_Id, float value) {

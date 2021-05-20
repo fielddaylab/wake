@@ -5,7 +5,7 @@
 :: inside.helm
 @trigger    PartnerTalk
 @who        kevin
-@when       session:nav.shipRoom == "helm"
+@when       global:nav.shipRoom == "helm"
 @once
 @cutscene
 {@kevin}    So, this is the helm?
@@ -21,7 +21,7 @@ $set    kevin:knowsJobs = true
 :: inside.helm.hello1
 @trigger    PartnerTalk
 @who        kevin
-@when       session:nav.shipRoom == "helm", kevin:seenShipHelm
+@when       global:nav.shipRoom == "helm", kevin:seenShipHelm
 @boostScore -5
 @repeat     1
 @chatter
@@ -61,7 +61,7 @@ $set    kevin:knowsJobs = true
 :: inside.ship
 @trigger    PartnerTalk
 @who        kevin
-@when       session:nav.shipRoom == "exterior"
+@when       global:nav.shipRoom == "exterior"
 @once
 @cutscene
 {@kevin}    Ah, the open ocean...
@@ -73,7 +73,7 @@ $set    kevin:seenShipExterior = true
 :: inside.office
 @trigger    PartnerTalk
 @who        kevin
-@when       session:nav.shipRoom == "office"
+@when       global:nav.shipRoom == "office"
 @once
 @cutscene
 {@player}   Welcome to the office!
@@ -87,7 +87,121 @@ $set    kevin:seenShipOffice = true
 :: inside.office.argue
 @trigger    RequestPartnerHelp
 @who        kevin
-@when       session:nav.shipRoom == "office", kevin:seenShipOffice, player:currentJob
+@when       global:nav.shipRoom == "office", kevin:seenShipOffice, player:currentJob
 @chatter
 {@kevin}    Let's use the tablet when we're ready to talk to the client.
 $set    kevin:seenShipOffice = true
+
+// MODELING
+
+:: inside.modeling
+@trigger	PartnerTalk
+@who		kevin
+@when		global:nav.shipRoom == "modeling"
+@once
+@cutscene
+{@player}	Our modeling room!
+{@kevin}	But... it's just a big whiteboard.
+{@player}	A smart whiteboard!
+{@kevin}	Ah.
+			{#confused} I don't get it.
+
+// QUARTERS
+
+:: inside.quarters
+@trigger	PartnerTalk
+@who		kevin
+@when		global:nav.shipRoom == "quarters"
+@once
+@cutscene
+{@player}	Here's where I sleep and eat.
+			Not the most room, but... it's cozy.
+{@kevin #confused}	Cramped is more like it.
+			{#} But...
+			I do like the look of the bed.
+			{#happy} That shade of purple is beautiful.
+			
+:: inside.quarters.inspect.poster.1
+@trigger	InspectObject
+@when		objectId == "quarters.poster"
+@once
+@cutscene
+@boostScore 10
+{@kevin}	What's that?
+{@player}	Oh, just a poster.
+{@kevin}	Okay, I can see it's a poster.
+			{#narrow} What is is a poster of?
+{@player}	It's... a neat gadget? I think?
+			It's been a while since I thought about the specifics.
+			I just like the aesthetics of it. {wait 0.3}And the nostalgia.
+			
+:: inside.quarters.inspect.poster.2
+@trigger	InspectObject
+@when		objectId == "quarters.poster"
+@cutscene
+{@player}	Just a nice-looking poster I have.
+
+:: inside.quarters.inspect.chest.1
+@trigger	InspectObject
+@when		objectId == "quarters.chest"
+@once
+@cutscene
+@boostScore 10
+{@kevin}	What do you keep in there?
+{@player}	Supplies. Food. Some valuable items.
+{@kevin}	Okay, so nothing surprising.
+{@player}	How many boats have you been on, Kevin?
+{@kevin #narrow} Uh...
+			I remember... {#wideEyes}let's see, that one sorta counts...
+			{#} Well I can recall at least fifteen, but there's probably more.
+			So, a lot.
+{@player}	That's a lot of boats...
+$set kevin:estimatedBoatsToPlayer = true
+			
+:: inside.quarters.inspect.chest.2
+@trigger	InspectObject
+@when		objectId == "quarters.chest"
+@cutscene
+{@player}	A chest containing some supplies and valuables.
+
+:: inside.quarters.inspect.bed.1
+@trigger	InspectObject
+@when		objectId == "quarters.bed"
+@once
+@cutscene
+@boostScore 10
+{@kevin}	Nice bed.
+{@player}	Thanks. The mattress isn't the softest thing ever, but it beats laying on a hammock.
+			After a long day, it's exactly what I need.
+			Just thinking about it is making me tired...
+			
+{hide-dialog}{fade-out black.60, 0.5, wait}{style center}
+{@}			If you ever need a break, you can take a nap on your bed.
+			Who knows, you might even have some interesting dreams!
+{hide-dialog}{fade-in 0.5, wait}
+
+:: inside.quarters.inspect.bed.sleepy
+@trigger	InspectObject
+@when		objectId == "quarters.bed"
+@cutscene
+{@player}	{voice silent}(Should I take a nap?){/voice}
+
+$choice	.bed.sleep.yes; Take a nap
+$choice .bed.sleep.no; Stay awake
+
+:: bed.sleep.yes
+@cutscene
+$set player:naps + 1
+{@player}	I'm going to take a nap, Kevin.
+$if random:common
+	{@kevin}	Go for it. I'll be here when you wake up.
+$elseif random:common
+	{@kevin}	Alright, sounds good. I might take one too.
+$else
+	{@kevin}	Okay, have a good nap.
+$endif
+
+{trigger-response PlayerDream}
+
+:: bed.sleep.no
+{hide-dialog}

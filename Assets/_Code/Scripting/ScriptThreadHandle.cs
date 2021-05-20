@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using BeauUtil;
 
@@ -6,7 +7,7 @@ namespace Aqua.Scripting
     /// <summary>
     /// Handle for a scripting thread.
     /// </summary>
-    public struct ScriptThreadHandle
+    public struct ScriptThreadHandle : IEquatable<ScriptThreadHandle>
     {
         private ScriptThread m_Thread;
         private uint m_Id;
@@ -112,6 +113,11 @@ namespace Aqua.Scripting
         public void Kill()
         {
             GetThread()?.Kill();
+        }
+
+        public bool Equals(ScriptThreadHandle other)
+        {
+            return m_Id == other.m_Id && m_Thread == other.m_Thread;
         }
     }
 }

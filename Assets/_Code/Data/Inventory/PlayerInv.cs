@@ -74,7 +74,7 @@ namespace Aqua
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Serialize("id", ref m_ItemId);
+            ioSerializer.UInt32Proxy("id", ref m_ItemId);
             ioSerializer.Serialize("value", ref m_CurrentValue, 1);
         }
     }

@@ -117,8 +117,8 @@ namespace Aqua
 
         public void HideLetterbox()
         {
-            if (m_LetterboxCounter > 0 && --m_LetterboxCounter == 0)
-                m_Letterbox.Hide();
+            if (m_LetterboxCounter > 0)
+                --m_LetterboxCounter;
         }
 
         public bool IsLetterboxed()
@@ -225,6 +225,9 @@ namespace Aqua
 
         private void LateUpdate()
         {
+            if (m_LetterboxCounter == 0 && m_Letterbox.IsShowing())
+                m_Letterbox.Hide();
+
             m_CursorHintMgr.Process(m_TooltipHoverTime);
             Vector2 cursorPos = m_Cursor.Process();
             m_Tooltip.Process(cursorPos);

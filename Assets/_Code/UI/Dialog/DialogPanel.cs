@@ -33,6 +33,7 @@ namespace Aqua
             public ScriptActorDef TargetDef;
             public StringHash32 PortraitId;
 
+            public bool Silent;
             public bool AutoContinue;
             public float SkipHoldTimer;
             public bool SkipHeld;
@@ -49,6 +50,7 @@ namespace Aqua
                 TargetId = StringHash32.Null;
                 PortraitId = StringHash32.Null;
                 TargetDef = null;
+                Silent = false;
 
                 ResetTemp();
             }
@@ -174,6 +176,7 @@ namespace Aqua
                 m_EventHandler.Register(ScriptEvents.Dialog.Clear, () => m_TextDisplay.SetText(string.Empty));
                 m_EventHandler.Register(ScriptEvents.Dialog.InputContinue, () => WaitForInput());
                 m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.Argument0.AsStringHash());
+                m_EventHandler.Register(ScriptEvents.Dialog.SetVoiceType, SetVoiceType);
                 m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeakerName(e.StringArgument));
                 m_EventHandler.Register(ScriptEvents.Dialog.Speed, (e, o) => {
                     m_CurrentState.Speed = e.IsClosing ? 1 : e.Argument0.AsFloat();
@@ -185,6 +188,19 @@ namespace Aqua
             }
 
             return m_EventHandler;
+        }
+
+        private void SetVoiceType(TagEventData inEventData, object inContext)
+        {
+            StringHash32 voiceType = inEventData.Argument0.AsStringHash();
+            if (voiceType == "silent")
+            {
+                m_CurrentState.Silent = true;
+            }
+            else
+            {
+                m_CurrentState.Silent = false;
+            }
         }
 
         #endregion // Event Handlers
@@ -566,6 +582,9 @@ namespace Aqua
 
         private void PlayTypingSound()
         {
+            if (m_CurrentState.Silent)
+                return;
+            
             StringHash32 typeSfx = m_CurrentState.TypeSFX.IsEmpty ? m_DefaultTypeSFX.Hash() : m_CurrentState.TypeSFX;
             Services.Audio.PostEvent(typeSfx);
         }

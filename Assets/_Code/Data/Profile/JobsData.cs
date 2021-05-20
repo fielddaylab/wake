@@ -351,10 +351,10 @@ namespace Aqua.Profile
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Serialize("currentJobId", ref m_CurrentJobId);
+            ioSerializer.UInt32Proxy("currentJobId", ref m_CurrentJobId);
             ioSerializer.ObjectArray("jobStatuses", ref m_JobStatuses);
-            ioSerializer.Set("completedJobs", ref m_CompletedJobs);
-            ioSerializer.Set("unlockedJobs", ref m_UnlockedJobs);
+            ioSerializer.UInt32ProxySet("completedJobs", ref m_CompletedJobs);
+            ioSerializer.UInt32ProxySet("unlockedJobs", ref m_UnlockedJobs);
             ioSerializer.ObjectSet("completedTasks", ref m_CompletedTasks);
         }
 

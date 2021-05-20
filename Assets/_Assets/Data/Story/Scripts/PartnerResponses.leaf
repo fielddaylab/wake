@@ -50,6 +50,7 @@ $set temp:defaultResponseCount = 0
 @boostScore 1000
 @once       profile
 @cutscene
+$set        kevin:trust + 1
 {@player}   This is just... so weird. We're talking, but not speaking.
 {@kevin}    What did I tell you?
             It's a jellyblob thing. We're connected now.
@@ -62,6 +63,7 @@ $set temp:defaultResponseCount = 0
 @when       kevin:help.requests >= 30, kevin:help.comfortTalks == 0
 @once       profile
 @cutscene
+$set        kevin:trust + 1
 $set kevin:help.comfortTalks + 1
 {@player}   Is this supposed to be... uncomfortable?
 {@kevin}    What do you mean?
@@ -79,6 +81,7 @@ $set kevin:help.comfortTalks + 1
 @once       profile
 @boostScore 3
 @cutscene
+$set        kevin:trust + 1
 $set kevin:help.comfortTalks + 1
 {@player}   So... You haven't been, like, in my thoughts, right?
             Like my private thoughts?
@@ -96,7 +99,7 @@ $set kevin:help.comfortTalks + 1
 
 :: name.intro
 @trigger    PartnerTalk
-@when       random:rare, kevin:help.requests >= 15, kevin:help.nameTalks == 0
+@when       random:rare, kevin:trust >= 1, kevin:help.nameTalks == 0
 @once
 @cutscene
 $set kevin:help.nameTalks + 1
@@ -118,7 +121,7 @@ $set kevin:help.nameTalks + 1
 
 :: name.sideComment
 @trigger    PartnerTalk
-@when       random:rare, kevin:help.requests >= 30, kevin:help.nameTalks >= 2
+@when       random:rare, kevin:trust >= 2, kevin:help.nameTalks >= 2
 @once
 @cutscene
 $set kevin:help.nameTalks + 1

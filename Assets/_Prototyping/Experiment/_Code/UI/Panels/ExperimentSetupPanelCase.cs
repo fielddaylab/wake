@@ -458,8 +458,10 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator RunQuickExperimentRoutine() 
         {
+            Services.UI.ShowLetterbox();
             yield return StartQuickExperimentRoutine();
             yield return ExitExperimentRoutine();
+            Services.UI.HideLetterbox();
         }
 
         private IEnumerator StartQuickExperimentRoutine()
