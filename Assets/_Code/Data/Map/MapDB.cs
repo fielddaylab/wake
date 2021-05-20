@@ -16,14 +16,18 @@ namespace Aqua
         #endregion // Inspector
 
         private Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>();
+        private HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
 
         public StringHash32 DefaultStationId() { return m_DefaultStationId; }
+        public ICollection<MapDesc> Stations() { return m_Stations; }
 
         protected override void ConstructLookupForItem(MapDesc inItem, int inIndex)
         {
             base.ConstructLookupForItem(inItem, inIndex);
             
             m_SceneMapping.Add(inItem.SceneName(), inItem.Id());
+            if (inItem.HasFlags(MapFlags.IsStation))
+                m_Stations.Add(inItem);
         }
 
         #if UNITY_EDITOR

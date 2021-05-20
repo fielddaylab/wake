@@ -139,6 +139,7 @@ namespace Aqua
             if (inLine.IsEmpty || inLine.IsWhitespace)
                 yield break;
 
+            ScriptThreadHandle handle = inThread.GetHandle();
             TagString lineEvents = inThread.TagString;
             TagStringEventHandler eventHandler = m_TagEventHandler;
             DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.Dialog);
@@ -167,6 +168,9 @@ namespace Aqua
                             IEnumerator coroutine;
                             if (eventHandler.TryEvaluate(node.Event, inThread, out coroutine))
                             {
+                                if (!inThread.GetHandle().Equals(handle))
+                                    yield break;
+                                
                                 if (coroutine != null)
                                     yield return coroutine;
 

@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,6 +54,36 @@ namespace Aqua
             if (!scene.IsValid())
             {
                 Debug.LogErrorFormat("[StateMgr] No scene found with name matching '{0}'", inSceneName);
+                return null;
+            }
+
+            m_SceneLock = true;
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
+            return m_SceneLoadRoutine.Wait();
+        }
+
+        /// <summary>
+        /// Loads to another scene from a given map id.
+        /// </summary>
+        public IEnumerator LoadSceneFromMap(StringHash32 inMapId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        {
+            if (m_SceneLock)
+            {
+                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                return null;
+            }
+
+            MapDesc map = Services.Assets.Map.Get(inMapId);
+            if (!map)
+            {
+                Debug.LogErrorFormat("[StateMgr] No map found with id '{0}'", inMapId.ToDebugString());
+                return null;
+            }
+
+            SceneBinding scene = SceneHelper.FindSceneByName(map.SceneName(), SceneCategories.Build);
+            if (!scene.IsValid())
+            {
+                Debug.LogErrorFormat("[StateMgr] No scene found with name matching '{0}' on map '{1}'", map.SceneName(), inMapId.ToDebugString());
                 return null;
             }
 
@@ -178,9 +212,11 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
+            #if DEVELOPMENT
             // if we started from another scene than the boot or title scene
-            if (active.BuildIndex > 1)
-                Services.Data.LoadProfile(null);
+            if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
+                Services.Data.UseDebugProfile();
+            #endif // DEVELOPMENT
 
             #if UNITY_EDITOR
             yield return WaitForOptimize(active);
@@ -225,8 +261,10 @@ namespace Aqua
                 yield return Services.UI.ShowLoadingScreen();
             }
 
+            #if DEVELOPMENT
             if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
-                Services.Data.LoadProfile(null);
+                Services.Data.UseDebugProfile();
+            #endif // DEVELOPMENT
 
             SceneBinding active = SceneHelper.ActiveScene();
 
@@ -380,6 +418,15 @@ namespace Aqua
         }
 
         #endregion // Scene Loading
+
+        #region Scene History
+
+        public void ClearSceneHistory()
+        {
+            m_SceneHistory.Clear();
+        }
+
+        #endregion // Scene History
 
         #region Scripting
 

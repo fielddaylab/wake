@@ -34,7 +34,6 @@ namespace Aqua
         [SerializeField] private TMP_Text m_BuildIdText = null;
         
         [Header("Settings")]
-        [SerializeField] private string m_LoadSceneName = null;
         [SerializeField] private SerializedHash32 m_AmbienceEvent = null;
 
         [Header("Animation")]
@@ -65,10 +64,11 @@ namespace Aqua
 
         private void OnNextButton()
         {
-            Services.Data.LoadProfile(m_UsercodeInput.text);
-            Services.Events.Dispatch(Event_StartGame, m_UsercodeInput.text);
-            Services.Audio.StopMusic();
-            StateUtil.LoadSceneWithWipe(m_LoadSceneName);
+            string usercode = m_UsercodeInput.text;
+            
+            Services.Data.LoadProfile(usercode);
+            Services.Events.Dispatch(Event_StartGame, usercode);
+            Services.Data.StartPlaying();
         }
 
         private void InitializeFromAnotherScene()

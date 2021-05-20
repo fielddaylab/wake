@@ -130,12 +130,12 @@ namespace Aqua.Profile
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.Serialize("actIndex", ref m_ActIndex);
-            ioSerializer.Set("visited", ref m_TrackedVisitedNodes);
+            ioSerializer.UInt32ProxySet("visited", ref m_TrackedVisitedNodes);
 
-            ioSerializer.Table("globals", ref GlobalTable);
-            ioSerializer.Table("jobs", ref JobsTable);
-            ioSerializer.Table("player", ref PlayerTable);
-            ioSerializer.Table("partner", ref PartnerTable);
+            ioSerializer.Object("globals", ref GlobalTable);
+            ioSerializer.Object("jobs", ref JobsTable);
+            ioSerializer.Object("player", ref PlayerTable);
+            ioSerializer.Object("partner", ref PartnerTable);
         }
 
         public bool HasChanges()

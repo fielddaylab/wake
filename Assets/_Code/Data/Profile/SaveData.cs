@@ -1,3 +1,4 @@
+using Aqua.Option;
 using BeauData;
 
 namespace Aqua.Profile
@@ -13,10 +14,17 @@ namespace Aqua.Profile
         public BestiaryData Bestiary = new BestiaryData();
         public MapData Map = new MapData();
         public JobsData Jobs = new JobsData();
+        public OptionsData Options = new OptionsData();
+
+        public SaveData()
+        {
+            Options.SetDefaults();
+        }
         
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        // v2: added options
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -29,6 +37,9 @@ namespace Aqua.Profile
             ioSerializer.Object("bestiary", ref Bestiary);
             ioSerializer.Object("jobs", ref Jobs);
             ioSerializer.Object("map", ref Map);
+            
+            if (ioSerializer.ObjectVersion >= 2)
+                ioSerializer.Object("options", ref Options);
         }
 
         public void MarkChangesPersisted()
@@ -39,6 +50,7 @@ namespace Aqua.Profile
             Bestiary.MarkChangesPersisted();
             Map.MarkChangesPersisted();
             Jobs.MarkChangesPersisted();
+            Options.MarkChangesPersisted();
         }
 
         public bool HasChanges()

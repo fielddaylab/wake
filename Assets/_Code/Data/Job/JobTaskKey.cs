@@ -49,8 +49,8 @@ namespace Aqua
 
         public void Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Serialize("jobId", ref JobId);
-            ioSerializer.Serialize("taskId", ref TaskId);
+            ioSerializer.UInt32Proxy("jobId", ref JobId);
+            ioSerializer.UInt32Proxy("taskId", ref TaskId);
         }
 
         #endregion // ISerializedObject

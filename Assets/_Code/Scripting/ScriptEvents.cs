@@ -21,6 +21,7 @@ namespace Aqua.Scripting
             static public readonly StringHash32 LoadScene = "load-scene";
             static public readonly StringHash32 PitchBGM = "bgm-pitch";
             static public readonly StringHash32 PlayBGM = "bgm-play";
+            static public readonly StringHash32 VolumeBGM = "bgm-volume";
             static public readonly StringHash32 PlaySound = "sound-play";
             static public readonly StringHash32 ScreenFlash = "flash";
             static public readonly StringHash32 ScreenWipeIn = "wipe-in";
@@ -40,6 +41,7 @@ namespace Aqua.Scripting
             static public readonly StringHash32 InputContinue = "input-continue";
             static public readonly StringHash32 Portrait = "set-portrait";
             static public readonly StringHash32 SetTypeSFX = "set-type-sfx";
+            static public readonly StringHash32 SetVoiceType = "set-voice-type";
             static public readonly StringHash32 Speaker = "set-speaker";
             static public readonly StringHash32 Speed = "set-speed";
             static public readonly StringHash32 Target = "set-target";

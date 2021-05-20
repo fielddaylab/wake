@@ -118,7 +118,7 @@ namespace Aqua
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Serialize("id", ref m_FactId);
+            ioSerializer.UInt32Proxy("id", ref m_FactId);
             ioSerializer.Enum("flags", ref m_Flags);
         }
 

@@ -22,7 +22,7 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private LocText m_Text = null;
 
-        [SerializeField] private ColorGroup m_WaterColor = null;
+        // [SerializeField] private ColorGroup m_WaterColor = null;
 
         #endregion // Inspector
 
@@ -30,7 +30,7 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
-        [NonSerialized] private Color m_CurrentColor;
+        // [NonSerialized] private Color m_CurrentColor;
         [NonSerialized] private float m_defAlpha;
 
         protected override void Awake()
@@ -44,8 +44,8 @@ namespace ProtoAqua.Experiment
                 m_IdleRoutine.Resume();
                 m_IdleDuration /= 2;
             });
-            m_CurrentColor = m_WaterColor.GetColor();
-            m_defAlpha = m_WaterColor.GetAlpha();
+            // m_CurrentColor = m_WaterColor.GetColor();
+            // m_defAlpha = m_WaterColor.GetAlpha();
         }
 
 
@@ -54,8 +54,8 @@ namespace ProtoAqua.Experiment
             base.OnEnable();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
-                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
-                .Register<WaterPropertyId>(ExperimentEvents.StressorColor, ChangeColor, this);
+                .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this);
+                // .Register<WaterPropertyId>(ExperimentEvents.StressorColor, ChangeColor, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
         }
@@ -118,16 +118,16 @@ namespace ProtoAqua.Experiment
             actor.Nav.Spawn(0);
         }
 
-        public void ChangeColor(WaterPropertyId Id) {
-            foreach(var prop in Services.Assets.WaterProp.Objects) {
-                if(prop.Index() == Id){
-                    var pColor = prop.Color();
-                    pColor.a = m_defAlpha;
-                    m_WaterColor.SetColor(pColor);
-                    break;
-                }
-            }
-        }
+        // public void ChangeColor(WaterPropertyId Id) {
+        //     foreach(var prop in Services.Assets.WaterProp.Objects) {
+        //         if(prop.Index() == Id){
+        //             var pColor = prop.Color();
+        //             pColor.a = m_defAlpha;
+        //             m_WaterColor.SetColor(pColor);
+        //             break;
+        //         }
+        //     }
+        // }
 
         private void SetupRemoveActor(StringHash32 inActorId)
         {

@@ -159,8 +159,8 @@ namespace Aqua.Profile
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.ObjectArray("items", ref m_Items);
-            ioSerializer.Set("scannerIds", ref m_ScannerIds);
-            ioSerializer.Set("upgradeIds", ref m_UpgradeIds);
+            ioSerializer.UInt32ProxySet("scannerIds", ref m_ScannerIds);
+            ioSerializer.UInt32ProxySet("upgradeIds", ref m_UpgradeIds);
         }
 
         public bool HasChanges()

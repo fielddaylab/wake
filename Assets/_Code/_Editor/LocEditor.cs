@@ -130,6 +130,13 @@ namespace Aqua.Editor
 
         #region Constructing Records
 
+        [MenuItem("Aqualab/Force Rebuild Loc Database")]
+        static private void ForceRebuildFromMenu()
+        {
+            var instance = GetInstance();
+            instance.ReloadPackages();
+        }
+
         [ContextMenu("Force Reload")]
         private void ReloadPackages()
         {
@@ -162,6 +169,8 @@ namespace Aqua.Editor
                 EnsureFullInitialize();
                 EditorUtility.ClearProgressBar();
             }
+
+            EditorUtility.SetDirty(this);
         }
 
         #endregion // Constructing Records

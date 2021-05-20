@@ -38,7 +38,8 @@ namespace Aqua
             m_TagEventParser.AddReplace("fast", "{wait 0.05}{speed 1.25}").CloseWith("{/speed}{wait 0.05}");
 
             // Global Events
-            m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithFloatData();
+            m_TagEventParser.AddEvent("bgm-pitch", ScriptEvents.Global.PitchBGM).WithStringData();
+            m_TagEventParser.AddEvent("bgm-volume", ScriptEvents.Global.VolumeBGM).WithStringData();
             m_TagEventParser.AddEvent("bgm-stop", ScriptEvents.Global.StopBGM).WithFloatData(0.5f);
             m_TagEventParser.AddEvent("bgm", ScriptEvents.Global.PlayBGM).WithStringData();
             m_TagEventParser.AddEvent("hide-dialog", ScriptEvents.Global.HideDialog);
@@ -72,6 +73,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
             m_TagEventParser.AddEvent("@*", ScriptEvents.Dialog.Target).ProcessWith(ParseTargetArgs);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
+            m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
         }
 
         static private void ParseTargetArgs(TagData inTag, object inContext, ref TagEventData ioEvent)
@@ -204,6 +206,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.LetterboxOff, () => Services.UI.HideLetterbox() )
                 .Register(ScriptEvents.Global.LetterboxOn, () => Services.UI.ShowLetterbox() )
                 .Register(ScriptEvents.Global.PitchBGM, EventPitchBGM)
+                .Register(ScriptEvents.Global.VolumeBGM, EventVolumeBGM)
                 .Register(ScriptEvents.Global.PlayBGM, EventPlayBGM)
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
@@ -239,6 +242,7 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Dialog.Clear);
             m_SkippedEvents.Add(ScriptEvents.Dialog.InputContinue);
             m_SkippedEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_SkippedEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speaker);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
@@ -250,6 +254,7 @@ namespace Aqua
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Portrait);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speaker);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speed);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Target);
@@ -330,6 +335,22 @@ namespace Aqua
                 fadeTime = StringParser.ParseFloat(args[1], 0.5f);
             }
             Services.Audio.CurrentMusic().SetPitch(pitch, fadeTime);
+        }
+
+        private void EventVolumeBGM(TagEventData inEvent, object inContext)
+        {
+            var args = ExtractArgs(inEvent.StringArgument);
+            float volume = 1;
+            float fadeTime = 0.5f;
+            if (args.Count >= 1)
+            {
+                volume = StringParser.ParseFloat(args[0], 1);
+            }
+            if (args.Count >= 2)
+            {
+                fadeTime = StringParser.ParseFloat(args[1], 0.5f);
+            }
+            Services.Audio.CurrentMusic().SetVolume(volume, fadeTime);
         }
 
         private void EventBroadcastEvent(TagEventData inEvent, object inContext)

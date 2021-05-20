@@ -13,10 +13,16 @@ namespace Aqua
 
         [NonSerialized] private List<BestiaryDesc> m_Critters;
         [NonSerialized] private List<BestiaryDesc> m_Ecosystems;
+        [NonSerialized] private List<BestiaryDesc> m_HumanFactors;
 
         [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
 
         #region Lookup
+
+        public IReadOnlyList<BestiaryDesc> AllHumanFactors()
+        {
+            return m_HumanFactors;
+        }
 
         public IReadOnlyList<BestiaryDesc> AllEntriesForCategory(BestiaryDescCategory inCategory)
         {
@@ -76,9 +82,10 @@ namespace Aqua
         {
             base.PreLookupConstruct();
 
-            int listSize = Mathf.Max(4, Count() / 2 + 1);
+            int listSize = Mathf.Max(4, Count() / 3 + 1);
             m_Ecosystems = new List<BestiaryDesc>(listSize);
             m_Critters = new List<BestiaryDesc>(listSize);
+            m_HumanFactors = new List<BestiaryDesc>(listSize);
 
             m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
             m_AutoFacts = new HashSet<StringHash32>();
@@ -97,6 +104,12 @@ namespace Aqua
                 {
                     m_AutoFacts.Add(fact.Id());
                 }
+            }
+
+            if (inItem.HasFlags(BestiaryDescFlags.Human))
+            {
+                m_HumanFactors.Add(inItem);
+                return;
             }
 
             switch(inItem.Category())
