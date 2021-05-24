@@ -11,6 +11,7 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using UnityEngine;
 using Aqua.Debugging;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -63,7 +64,7 @@ namespace Aqua
             if (!TableKeyPair.TryParse(inId, out keyPair)
                 || !VariableResolver.TryModify(inContext, keyPair, VariantModifyOperator.Set, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId, inValue.ToDebugString());
+                Log.Error("[DataService] Unable to set variable '{0}' to {1}", inId, inValue.ToDebugString());
             }
             else
             {
@@ -78,7 +79,7 @@ namespace Aqua
         {
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Set, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to set variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
+                Log.Error("[DataService] Unable to set variable '{0}' to {1}", inId, inValue);
             }
             else
             {
@@ -95,7 +96,7 @@ namespace Aqua
             if (!TableKeyPair.TryParse(inId, out keyPair)
                 || !VariableResolver.TryModify(inContext, keyPair, VariantModifyOperator.Add, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId, inValue.ToDebugString());
+                Log.Error("[DataService] Unable to add variable '{0}' to {1}", inId, inValue);
             }
             else
             {
@@ -110,7 +111,7 @@ namespace Aqua
         {
             if (!VariableResolver.TryModify(inContext, inId, VariantModifyOperator.Add, inValue))
             {
-                Debug.LogErrorFormat("[DataService] Unable to add variable '{0}' to {1}", inId.ToDebugString(), inValue.ToDebugString());
+                Log.Error("[DataService] Unable to add variable '{0}' to {1}", inId, inValue);
             }
             else
             {
@@ -168,7 +169,7 @@ namespace Aqua
         public void BindTable(StringHash32 inId, VariantTable inTable)
         {
             m_VariableResolver.SetTable(inId, inTable);
-            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Bound table '{0}'", inId.ToDebugString());
+            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Bound table '{0}'", inId);
         }
 
         /// <summary>
@@ -177,7 +178,7 @@ namespace Aqua
         public void UnbindTable(StringHash32 inId)
         {
             m_VariableResolver.ClearTable(inId);
-            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Unbound table '{0}'", inId.ToDebugString());
+            DebugService.Log(LogMask.Loading | LogMask.DataService, "[DataService] Unbound table '{0}'", inId);
         }
 
         #endregion // Tables
@@ -313,7 +314,7 @@ namespace Aqua
             if (inId == RandomCommon)
                 return RNG.Instance.Chance(m_CommonChance);
             
-            UnityEngine.Debug.LogErrorFormat("[DataService] Unknown rarity '{0}'", inId.ToDebugString());
+            Log.Error("[DataService] Unknown rarity '{0}'", inId);
             return false;
         }
 

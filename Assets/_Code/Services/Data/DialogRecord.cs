@@ -6,7 +6,7 @@ namespace Aqua
     /// <summary>
     /// Record of displayed dialog.
     /// </summary>
-    public struct DialogRecord
+    public struct DialogRecord : IDebugString
     {
         public StringHash32 CharacterId;
         public string Name;

@@ -140,7 +140,7 @@ namespace ProtoAqua.Modeling
                     for(int tickIdx = 0; tickIdx < tickCount; ++tickIdx)
                     {
                         result = inResults[tickIdx].Actors[resultIdx];
-                        Assert.True(result.Id == id, "Result index desync - expected {0}, got {1}", id.ToDebugString(), result.Id.ToDebugString());
+                        Assert.True(result.Id == id, "Result index desync - expected {0}, got {1}", id, result.Id);
 
                         mass = result.Population * populationScale;
                         line.AddPoint(inResults[tickIdx].Timestamp, mass);

@@ -58,7 +58,7 @@ namespace ProtoAqua.Experiment
                 Services.Audio.PostEvent("capture_new");
                 Services.Events.Dispatch(ExperimentEvents.BehaviorAddedToLog, inBehaviorId);
 
-                Services.UI.Popup.Display(factDef.Title(), factDef.Description())
+                Services.UI.Popup.Display(factDef.name, factDef.GenerateSentence())
                     .OnComplete((r) => {
                         using(var table = Services.Script.GetTempTable())
                         {

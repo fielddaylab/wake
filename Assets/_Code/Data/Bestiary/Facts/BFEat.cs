@@ -9,6 +9,10 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Behavior/Eats")]
     public class BFEat : BFBehavior
     {
+        static private readonly TextId EatVerb = "words.eat";
+        static private readonly TextId EatSentence = "factFormat.eat";
+        static private readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
+
         #region Inspector
 
         [Header("Eating")]
@@ -20,46 +24,35 @@ namespace Aqua
         public BestiaryDesc Target() { return m_TargetEntry; }
         public uint Amount() { return m_Amount; }
 
-        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        protected override TextId DefaultVerb()
         {
-            inVisitor.Visit(this, inParams);
+            return EatVerb;
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
+        protected override TextId DefaultSentence()
+        {
+            return OnlyWhenStressed() ? EatSentenceStressed : EatSentence;
+        }
+
+        public override void Accept(IFactVisitor inVisitor)
+        {
+            inVisitor.Visit(this);
+        }
+
+        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
         {
             // TODO: localization!!
 
-            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
-
-            yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
-            yield return BestiaryFactFragment.CreateVerb("Eats");
-            if (bHasValue)
-                yield return BestiaryFactFragment.CreateAmount(FormatValue(WaterPropertyId.Food, m_Amount));
-            yield return BestiaryFactFragment.CreateNoun(m_TargetEntry.CommonName());
-            if (bHasValue)
-                yield return BestiaryFactFragment.CreateAdjective("Per Tick");
+            yield return BestiaryFactFragment.CreateLocNoun(Parent().CommonName());
+            yield return BestiaryFactFragment.CreateLocVerb(Verb());
+            yield return BestiaryFactFragment.CreateAmount(Property(WaterPropertyId.Food).FormatValue(m_Amount));
+            yield return BestiaryFactFragment.CreateLocNoun(m_TargetEntry.CommonName());
+            yield return BestiaryFactFragment.CreateLocAdjective("words.perTick");
         }
 
-        public override string GenerateSentence(PlayerFactParams inParams = null)
+        public override string GenerateSentence()
         {
-            // TODO: localization!!!
-
-            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
-
-            using(var psb = PooledStringBuilder.Create())
-            {
-                // TODO: Variants
-
-                psb.Builder.Append(Services.Loc.Localize(Parent().CommonName()))
-                    .Append(" eats ");
-                if (bHasValue)
-                    psb.Builder.Append(FormatValue(WaterPropertyId.Food, m_Amount)).Append(' ');
-                psb.Builder.Append(Services.Loc.Localize(m_TargetEntry.CommonName()));
-                if (bHasValue)
-                    psb.Builder.Append(" per tick");
-
-                return psb.Builder.Flush();
-            }
+            return Loc.Format(SentenceFormat(), Parent().CommonName(), Property(WaterPropertyId.Food).FormatValue(m_Amount), m_TargetEntry.CommonName());
         }
 
         public override void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
@@ -68,23 +61,9 @@ namespace Aqua
             outReferencedBestiary.Add(m_TargetEntry.Id());
         }
 
-        public override bool HasSameSlot(BFBehavior inBehavior)
-        {
-            BFEat eat = inBehavior as BFEat;
-            if (eat != null)
-                return eat.m_TargetEntry == m_TargetEntry;
-
-            return false;
-        }
-
-        protected override int GetSortingOrder()
+        internal override int GetSortingOrder()
         {
             return 10;
-        }
-
-        public override bool HasValue()
-        {
-            return true;
         }
     }
 }

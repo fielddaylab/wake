@@ -19,6 +19,7 @@ namespace Aqua
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private string m_Format = "{0}";
+        [SerializeField] private TextId m_EnvironmentFactFormat = null;
         [SerializeField] private float m_DisplayScale = 1;
 
         [Header("Ranges")]
@@ -36,6 +37,7 @@ namespace Aqua
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
         public Color Color() { return m_Color; }
+        public TextId EnvironmentFactFormat() { return m_EnvironmentFactFormat; }
         
         public string FormatValue(float inValue)
         {

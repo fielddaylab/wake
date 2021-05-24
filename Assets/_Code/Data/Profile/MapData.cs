@@ -41,13 +41,13 @@ namespace Aqua.Profile
 
         public bool IsStationUnlocked(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
             return m_UnlockedStationIds.Contains(inStationId);
         }
 
         public bool UnlockStation(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
             if (m_UnlockedStationIds.Add(inStationId))
             {
                 m_HasChanges = true;
@@ -59,7 +59,7 @@ namespace Aqua.Profile
 
         public bool LockStation(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
             if (m_UnlockedStationIds.Remove(inStationId))
             {
                 m_HasChanges = true;
@@ -84,7 +84,7 @@ namespace Aqua.Profile
             {
                 m_CurrentMapId = mapId;
                 m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[MapData] Current map id is '{0}'", m_CurrentMapId.ToDebugString());
+                DebugService.Log(LogMask.DataService, "[MapData] Current map id is '{0}'", m_CurrentMapId);
                 return true;
             }
 

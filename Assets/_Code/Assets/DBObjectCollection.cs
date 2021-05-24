@@ -75,7 +75,7 @@ namespace Aqua
 
             T obj;
             m_IdMap.TryGetValue(inId, out obj);
-            Assert.NotNull(obj, "Could not find {0} with id '{1}'", typeof(T).Name, inId.ToDebugString());
+            Assert.NotNull(obj, "Could not find {0} with id '{1}'", typeof(T).Name, inId);
             return obj;
         }
 

@@ -7,6 +7,7 @@ using BeauRoutine;
 using System.Collections;
 using BeauPools;
 using System.Collections.Generic;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Experiment
 {
@@ -48,7 +49,7 @@ namespace ProtoAqua.Experiment
             }
             else
             {
-                Debug.LogErrorFormat("[ActorPools] Unrecognized actor pool id '{0}'", inId.ToDebugString());
+                Log.Error("[ActorPools] Unrecognized actor pool id '{0}'", inId);
                 return null;
             }
         }
@@ -67,7 +68,7 @@ namespace ProtoAqua.Experiment
             }
             else
             {
-                Debug.LogErrorFormat("[ActorPools] Unrecognized actor pool id '{0}'", inId.ToDebugString());
+                Log.Error("[ActorPools] Unrecognized actor pool id '{0}'", inId);
                 return null;
             }
         }
@@ -87,7 +88,7 @@ namespace ProtoAqua.Experiment
                 }
                 else
                 {
-                    Debug.LogWarningFormat("[ActorPools] Unrecognized actor pool id '{0}'", inId.ToDebugString());
+                    Log.Warn("[ActorPools] Unrecognized actor pool id '{0}'", inId);
                 }
             }
         }

@@ -30,9 +30,9 @@ namespace Aqua
 
         public uint PopulationSoftIncrement() { return m_PopulationSoftIncrement; }
 
-        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        public override void Accept(IFactVisitor inVisitor)
         {
-            inVisitor.Visit(this, inParams);
+            inVisitor.Visit(this);
         }
     }
 }

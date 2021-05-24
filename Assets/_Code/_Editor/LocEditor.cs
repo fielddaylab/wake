@@ -10,6 +10,7 @@ using BeauUtil;
 using BeauUtil.Editor;
 using System.IO;
 using UnityEditorInternal;
+using BeauUtil.Debugger;
 
 namespace Aqua.Editor
 {
@@ -196,7 +197,7 @@ namespace Aqua.Editor
                 {
                     if (m_TextMap.ContainsKey(text.Id))
                     {
-                        Debug.LogErrorFormat("[LocEditor] Duplicate text id '{0}'", text.Id);
+                        Log.Error("[LocEditor] Duplicate text id '{0}'", text.Id);
                     }
                     else
                     {

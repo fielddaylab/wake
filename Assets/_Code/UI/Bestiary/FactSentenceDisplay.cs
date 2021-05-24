@@ -32,7 +32,7 @@ namespace Aqua
             m_AllocatedFragments.Clear();
         }
 
-        public void Populate(BFBase inFact, PlayerFactParams inFactParams)
+        public void Populate(BFBehavior inFact)
         {
             if (!m_Tweaks)
             {
@@ -41,63 +41,22 @@ namespace Aqua
 
             Clear();
 
-            foreach(var fragment in inFact.GenerateFragments(inFactParams))
+            foreach(var fragment in inFact.GenerateFragments())
             {
-                TryAllocFragment(fragment, inFactParams);
+                TryAllocFragment(fragment);
             }
 
             m_Layout.ForceRebuild();
         }
 
-        private bool TryAllocFragment(in BestiaryFactFragment inFragment, PlayerFactParams inFactParams)
+        private bool TryAllocFragment(in BestiaryFactFragment inFragment)
         {
             StringSlice str = inFragment.String;
-
-            // if (!m_DisplayOptionalFragments)
-            // {
-            //     switch(inFragment.Word)
-            //     {
-            //         case BestiaryFactFragmentWord.ConditionOperand:
-            //         case BestiaryFactFragmentWord.ConditionOperator:
-            //         case BestiaryFactFragmentWord.ConditionQuality:
-            //             {
-            //                 if (inFactParams == null || inFactParams.ConditionData.Id.IsEmpty)
-            //                     return false;
-
-            //                 break;
-            //             }
-
-            //         case BestiaryFactFragmentWord.Amount:
-            //             {
-            //                 if (inFactParams == null ||inFactParams.Value.StrictEquals(Variant.Null))
-            //                     return false;
-
-            //                 break;
-            //             }
-
-            //         case BestiaryFactFragmentWord.SubjectVariant:
-            //             {
-            //                 if (inFactParams == null ||inFactParams.SubjectVariantId.IsEmpty)
-            //                     return false;
-
-            //                 break;
-            //             }
-
-            //         case BestiaryFactFragmentWord.TargetVariant:
-            //             {
-            //                 if (inFactParams == null || inFactParams.TargetVariantId.IsEmpty)
-            //                     return false;
-
-            //                 break;
-            //             }
-            //     }
-            // }
 
             FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform);
             fragment.Configure(inFragment.String);
             m_AllocatedFragments.Add(fragment);
 
-            // TODO: Any other logic for setting up interactive parts
             return true;
         }
     }

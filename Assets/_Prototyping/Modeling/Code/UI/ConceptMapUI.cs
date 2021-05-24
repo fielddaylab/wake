@@ -36,8 +36,8 @@ namespace ProtoAqua.Modeling
             var bestiaryData = Services.Data.Profile.Bestiary;
             foreach(var factId in inFacts)
             {
-                PlayerFactParams playerFact = bestiaryData.GetFact(factId);
-                m_Map.AddFact(playerFact);
+                BFBase fact = Services.Assets.Bestiary.Fact(factId);
+                m_Map.AddFact(fact);
             }
 
             UpdateUnadded();
@@ -54,17 +54,18 @@ namespace ProtoAqua.Modeling
         private void OnAddClicked()
         {
             var bestiaryData = Services.Data.Profile.Bestiary;
-            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !bestiaryData.IsFactGraphed(p.FactId))
+            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !bestiaryData.IsFactGraphed(p.Id()))
                 .OnComplete(Add);
         }
 
-        private void Add(PlayerFactParams inParams)
+        private void Add(StringHash32 inFactId)
         {
-            if (Services.Data.Profile.Bestiary.AddFactToGraph(inParams.FactId))
+            if (Services.Data.Profile.Bestiary.AddFactToGraph(inFactId))
             {
-                m_Map.AddFact(inParams);
-                m_ModelState.AddFact(inParams);
-                OnGraphUpdated?.Invoke(inParams.FactId);
+                BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
+                m_Map.AddFact(fact);
+                m_ModelState.AddFact(fact);
+                OnGraphUpdated?.Invoke(fact.Id());
                 UpdateUnadded();
             }
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Blocks;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -61,7 +62,7 @@ namespace Aqua
             Sprite spr;
             if (!m_Portraits.TryGetValue(inId, out spr))
             {
-                Debug.LogErrorFormat("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId.ToString(), name);
+                Log.Error("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId.ToString(), name);
                 spr = Services.Assets.Characters.ErrorPortrait();
             }
             

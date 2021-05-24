@@ -11,6 +11,7 @@ using Aqua.Profile;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Aqua.Debugging;
+using BeauUtil.Debugger;
 
 namespace Aqua.Scripting
 {
@@ -28,7 +29,7 @@ namespace Aqua.Scripting
         {
             if (m_TriggerNodes.Contains(inNode))
             {
-                Debug.LogErrorFormat("[TriggerResponseSet] Cannot add node '{0} twice", inNode.Id().ToDebugString());
+                Log.Error("[TriggerResponseSet] Cannot add node '{0} twice", inNode.Id());
                 return false;
             }
 
@@ -72,7 +73,7 @@ namespace Aqua.Scripting
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
 
-                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id().ToDebugString());
+                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id());
 
                 // score cutoff
                 if (triggerData.Score < ioMinScore)
@@ -84,7 +85,7 @@ namespace Aqua.Scripting
                 // not the right target
                 if (!inTarget.IsEmpty && inTarget != node.TargetId())
                 {
-                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget.ToDebugString(), node.TargetId().ToDebugString());
+                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget, node.TargetId());
                     continue;
                 }
 
@@ -115,7 +116,7 @@ namespace Aqua.Scripting
                     ScriptThread currentThread;
                     if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
                     {
-                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId().ToDebugString());
+                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId());
                         continue;
                     }
                 }

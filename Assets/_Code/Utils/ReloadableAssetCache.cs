@@ -22,7 +22,7 @@ namespace Aqua
         {
             if (s_AssetCache.Add(inReloadable))
             {
-                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Added asset '{0}'", inReloadable.Id.ToDebugString());
+                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Added asset '{0}'", inReloadable.Id);
                 return true;
             }
 
@@ -33,7 +33,7 @@ namespace Aqua
         {
             if (s_AssetCache.Remove(inReloadable))
             {
-                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Removed asset '{0}'", inReloadable.Id.ToDebugString());
+                DebugService.Log(LogMask.Loading, "[ReloadableAssetCache] Removed asset '{0}'", inReloadable.Id);
                 
                 return true;
             }

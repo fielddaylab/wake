@@ -45,7 +45,7 @@ namespace ProtoAqua.Modeling
         private DirtyFlags m_HistoricalSimDirty;
         private DirtyFlags m_PlayerSimDirty;
 
-        private readonly HashSet<PlayerFactParams> m_PlayerFacts = new HashSet<PlayerFactParams>();
+        private readonly HashSet<BFBase> m_PlayerFacts = new HashSet<BFBase>();
         private readonly HashSet<BestiaryDesc> m_PlayerCritters = new HashSet<BestiaryDesc>();
         private readonly RingBuffer<ActorCountU32> m_PlayerActors = new RingBuffer<ActorCountU32>(Simulator.MaxTrackedCritters);
         private readonly RingBuffer<ActorCountI32> m_PlayerActorPredictionAdjust = new RingBuffer<ActorCountI32>(Simulator.MaxTrackedCritters);
@@ -249,7 +249,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Adds a fact to the player sim.
         /// </summary>
-        public bool AddFact(PlayerFactParams inFact)
+        public bool AddFact(BFBase inFact)
         {
             if (m_PlayerFacts.Add(inFact))
             {
@@ -264,7 +264,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Removes a fact from the player sim.
         /// </summary>
-        public bool RemoveFact(PlayerFactParams inFact)
+        public bool RemoveFact(BFBase inFact)
         {
             if (m_PlayerFacts.Remove(inFact))
             {
@@ -279,9 +279,9 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Returns if the player sim contains the given fact.
         /// </summary>
-        public bool ContainsFact(PlayerFactParams inFact)
+        public bool ContainsFact(BFBase inFact)
         {
-            if (Services.Assets.Bestiary.IsAutoFact(inFact.FactId))
+            if (Services.Assets.Bestiary.IsAutoFact(inFact.Id()))
                 return true;
 
             return m_PlayerFacts.Contains(inFact);
@@ -337,7 +337,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Returns all facts added to the player sim.
         /// </summary>
-        public IReadOnlyCollection<PlayerFactParams> PlayerFacts()
+        public IReadOnlyCollection<BFBase> PlayerFacts()
         {
             return m_PlayerFacts;
         }

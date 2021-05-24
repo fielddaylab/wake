@@ -1,3 +1,4 @@
+using BeauUtil.Debugger;
 using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
@@ -26,7 +27,7 @@ namespace Aqua.Scripting
             var resolver = thread.Resolver ?? Services.Data.VariableResolver;
             if (!resolver.TryModify(thread.Context, m_ExpressionString))
             {
-                UnityEngine.Debug.LogErrorFormat("[ScriptExpression] Failed to set variables from string '{0}'", m_ExpressionString);
+                Log.Error("[ScriptExpression] Failed to set variables from string '{0}'", m_ExpressionString);
             }
         }
     }

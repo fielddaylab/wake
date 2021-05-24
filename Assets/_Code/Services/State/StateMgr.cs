@@ -46,14 +46,14 @@ namespace Aqua
         {
             if (m_SceneLock)
             {
-                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                Log.Error("[StateMgr] Scene load already in progress");
                 return null;
             }
 
             SceneBinding scene = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build);
             if (!scene.IsValid())
             {
-                Debug.LogErrorFormat("[StateMgr] No scene found with name matching '{0}'", inSceneName);
+                Log.Error("[StateMgr] No scene found with name matching '{0}'", inSceneName);
                 return null;
             }
 
@@ -69,21 +69,21 @@ namespace Aqua
         {
             if (m_SceneLock)
             {
-                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                Log.Error("[StateMgr] Scene load already in progress");
                 return null;
             }
 
             MapDesc map = Services.Assets.Map.Get(inMapId);
             if (!map)
             {
-                Debug.LogErrorFormat("[StateMgr] No map found with id '{0}'", inMapId.ToDebugString());
+                Log.Error("[StateMgr] No map found with id '{0}'", inMapId);
                 return null;
             }
 
             SceneBinding scene = SceneHelper.FindSceneByName(map.SceneName(), SceneCategories.Build);
             if (!scene.IsValid())
             {
-                Debug.LogErrorFormat("[StateMgr] No scene found with name matching '{0}' on map '{1}'", map.SceneName(), inMapId.ToDebugString());
+                Log.Error("[StateMgr] No scene found with name matching '{0}' on map '{1}'", map.SceneName(), inMapId);
                 return null;
             }
 
@@ -99,13 +99,13 @@ namespace Aqua
         {
             if (m_SceneLock)
             {
-                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                Log.Error("[StateMgr] Scene load already in progress");
                 return null;
             }
 
             if (!inScene.IsValid())
             {
-                Debug.LogErrorFormat("[StateMgr] Provided scene '{0}' is not valid", inScene);
+                Log.Error("[StateMgr] Provided scene '{0}' is not valid", inScene);
                 return null;
             }
 
@@ -121,14 +121,14 @@ namespace Aqua
         {
             if (m_SceneLock)
             {
-                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                Log.Error("[StateMgr] Scene load already in progress");
                 return null;
             }
 
             SceneBinding scene = SceneHelper.FindSceneById(inSceneId, SceneCategories.Build);
             if (!scene.IsValid())
             {
-                Debug.LogErrorFormat("[StateMgr] No scene found with id '{0}'", inSceneId.ToString());
+                Log.Error("[StateMgr] No scene found with id '{0}'", inSceneId);
                 return null;
             }
 
@@ -144,7 +144,7 @@ namespace Aqua
         {
             if (m_SceneLock)
             {
-                Debug.LogErrorFormat("[StateMgr] Scene load already in progress");
+                Log.Error("[StateMgr] Scene load already in progress");
                 return null;
             }
 
@@ -155,7 +155,7 @@ namespace Aqua
                     return LoadScene(inDefault, inContext, inFlags);
                 }
 
-                Debug.LogErrorFormat("[StateMgr] No previous scene in scene history");
+                Log.Error("[StateMgr] No previous scene in scene history");
                 return null;
             }
 
@@ -515,7 +515,7 @@ namespace Aqua
 
             if (removedManagerCount > 0)
             {
-                Debug.LogWarningFormat("[StateMgr] Unregistered {0} shared managers that were not deregistered at scene unload", removedManagerCount);
+                Log.Warn("[StateMgr] Unregistered {0} shared managers that were not deregistered at scene unload", removedManagerCount);
             }
         }
 

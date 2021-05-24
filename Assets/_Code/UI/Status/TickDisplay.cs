@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -19,7 +20,7 @@ namespace Aqua
 
             if (inTickCount > m_Ticks.Length)
             {
-                Debug.LogErrorFormat("[TickDisplay] Too many ticks {0} to display with {1} objects", inTickCount, m_Ticks.Length);
+                Log.Error("[TickDisplay] Too many ticks {0} to display with {1} objects", inTickCount, m_Ticks.Length);
                 inTickCount = m_Ticks.Length;
             }
 

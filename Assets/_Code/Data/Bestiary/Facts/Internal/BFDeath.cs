@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/State/Age State Change")]
-    public class BFStateAge : BFState
+    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Death Rate")]
+    public class BFDeath : BFBehavior
     {
         #region Inspector
 
@@ -23,17 +23,17 @@ namespace Aqua
             return BFMode.Internal;
         }
 
-        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        public override void Accept(IFactVisitor inVisitor)
         {
-            inVisitor.Visit(this, inParams);
+            inVisitor.Visit(this);
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
+        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
         {
             throw new System.NotSupportedException();
         }
 
-        public override string GenerateSentence(PlayerFactParams inParams = null)
+        public override string GenerateSentence()
         {
             throw new System.NotSupportedException();
         }

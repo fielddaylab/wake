@@ -2,19 +2,18 @@ namespace Aqua
 {
     public interface IFactVisitor
     {
-        void Visit(BFBase inFact, PlayerFactParams inParams = null);
+        void Visit(BFBase inFact);
 
-        void Visit(BFBody inFact, PlayerFactParams inParams = null);
-        void Visit(BFWaterProperty inFact, PlayerFactParams inParams = null);
-        
-        void Visit(BFEat inFact, PlayerFactParams inParams = null);
-        void Visit(BFGrow inFact, PlayerFactParams inParams = null);
-        void Visit(BFReproduce inFact, PlayerFactParams inParams = null);
-        void Visit(BFConsume inFact, PlayerFactParams inParams = null);
-        void Visit(BFProduce inFact, PlayerFactParams inParams = null);
+        void Visit(BFBody inFact);
+        void Visit(BFWaterProperty inFact);
+        void Visit(BFModel inModel);
 
-        void Visit(BFStateStarvation inFact, PlayerFactParams inParams = null);
-        void Visit(BFStateRange inFact, PlayerFactParams inParams = null);
-        void Visit(BFStateAge inFact, PlayerFactParams inParams = null);
+        void Visit(BFEat inFact);
+        void Visit(BFGrow inFact);
+        void Visit(BFReproduce inFact);
+        void Visit(BFConsume inFact);
+        void Visit(BFProduce inFact);
+        void Visit(BFState inFact);
+        void Visit(BFDeath inFact);
     }
 }

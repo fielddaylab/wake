@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.Debugger;
 using Leaf;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace Aqua
 
             if (m_Tasks.Length > MaxTasks)
             {
-                Debug.LogErrorFormat("Job cannot have more than {0} tasks", MaxTasks);
+                Log.Error("Job cannot have more than {0} tasks", MaxTasks);
                 Array.Resize(ref m_Tasks, MaxTasks);
             }
 
@@ -162,14 +163,14 @@ namespace Aqua
                     
                     if (!taskIds.Add(task.Id))
                     {
-                        Debug.LogErrorFormat("[JobDB] Duplicate task id '{0}' on job '{1}'",
-                            task.Id.Hash().ToDebugString(), inItem.Id().ToDebugString());
+                        Log.Error("[JobDB] Duplicate task id '{0}' on job '{1}'",
+                            task.Id.Hash(), inItem.Id());
                     }
                 }
 
                 if (rootCount == 0)
                 {
-                    Debug.LogErrorFormat("[JobDB] No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id().ToDebugString());
+                    Log.Error("[JobDB] No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
                 }
 
                 foreach(var task in inItem.m_Tasks)
@@ -178,8 +179,8 @@ namespace Aqua
                     {
                         if (!taskIds.Contains(prereq))
                         {
-                            Debug.LogErrorFormat("[JobDB] Task '{0}' on job '{1}' contains reference to unknown task '{2}'",
-                                task.Id.Hash().ToDebugString(), inItem.Id().ToDebugString(), prereq.Hash().ToDebugString());
+                            Log.Error("[JobDB] Task '{0}' on job '{1}' contains reference to unknown task '{2}'",
+                                task.Id.Hash(), inItem.Id(), prereq.Hash());
                         }
                     }
                 }

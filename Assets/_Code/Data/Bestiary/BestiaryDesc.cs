@@ -106,19 +106,6 @@ namespace Aqua
             return fact;
         }
 
-        public bool HasFactWithValue(out HashSet<StringHash32> factIds) {
-            bool res = false;
-            factIds = null;
-            foreach(var fact in Facts) {
-                if(fact.HasValue()) {
-                    if(factIds == null) factIds = new HashSet<StringHash32>() { fact.Id() };
-                    factIds.Add(fact.Id());
-                    res = true;
-                }
-            }
-            return res;
-        }
-
         public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
         {
             return (TFact) Fact(inFactId);
@@ -157,26 +144,11 @@ namespace Aqua
 
             for(int i = m_StateChangeFacts.Length - 1; i >= 0 && actorState < ActorStateId.Dead; --i)
             {
-                BFState state = m_StateChangeFacts[i];
-                
-                // BFStateStarvation starve = state as BFStateStarvation;
-                // if (!starve.IsReferenceNull())
-                // {
-                //     if (inStarvation[starve.PropertyId()] >= starve.Ticks())
-                //     {
-                //         actorState = starve.TargetState();
-                //     }
-                //     continue;
-                // }
-
-                BFStateRange range = state as BFStateRange;
-                if (!range.IsReferenceNull())
+                BFState fact = m_StateChangeFacts[i];
+                ActorStateId desiredState = fact.Range().Evaluate(inEnvironment[fact.PropertyId()]);
+                if (desiredState > actorState)
                 {
-                    float currentVal = inEnvironment[range.PropertyId()];
-                    if (currentVal < range.MinSafe() || currentVal > range.MaxSafe())
-                    {
-                        actorState = range.TargetState();
-                    }
+                    actorState = desiredState;
                 }
             }
 

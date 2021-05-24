@@ -52,7 +52,7 @@ namespace ProtoAqua.Modeling
 
                     if (bLogging)
                     {
-                        Debug.LogFormat("[Simulator] Critter '{0}' produced {1}", profiles[i].Id().ToDebugString(), produce);
+                        Debug.LogFormat("[Simulator] Critter '{0}' produced {1}", profiles[i].Id(), produce);
                     }
 
                     environment += produce;
@@ -75,7 +75,7 @@ namespace ProtoAqua.Modeling
                         
                         if (bLogging && canConsume > 0)
                         {
-                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id().ToDebugString(), canConsume, j);
+                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, j);
                         }
                     }
                 }
@@ -147,7 +147,7 @@ namespace ProtoAqua.Modeling
                         remainingFood -= actualEat * eatTarget.MassScaleInv; // convert back from mass to hunger
                         if (bLogging)
                         {
-                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id().ToDebugString(), actualEat, profiles[targetIndex].Id().ToDebugString());
+                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id(), actualEat, profiles[targetIndex].Id());
                         }
                     }
                 }

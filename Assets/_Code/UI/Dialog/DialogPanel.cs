@@ -9,6 +9,7 @@ using BeauUtil.Tags;
 using Aqua.Scripting;
 using BeauUtil;
 using Leaf;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -258,7 +259,7 @@ namespace Aqua
                 if (actorDef.NameId().IsEmpty)
                     SetSpeakerName(StringSlice.Empty);
                 else
-                    SetSpeakerName(Services.Loc.Localize(actorDef.NameId()));
+                    SetSpeakerName(Loc.Find(actorDef.NameId()));
             }
 
             ColorPalette4? nameOverride = actorDef.NamePaletteOverride();
@@ -518,7 +519,7 @@ namespace Aqua
             if (optionsToShow > m_OptionButtons.Length)
             {
                 optionsToShow = m_OptionButtons.Length;
-                Debug.LogWarningFormat("[DialogPanel] Too many options - {0}, but only {1} buttons present", inChoice.AvailableCount, optionsToShow);
+                Log.Warn("[DialogPanel] Too many options - {0}, but only {1} buttons present", inChoice.AvailableCount, optionsToShow);
             }
 
             int buttonIdx = 0;

@@ -109,7 +109,7 @@ namespace Aqua.Profile
             if (inJobId == StringHash32.Null)
                 return null;
 
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId);
 
             if (m_CompletedJobs.Contains(inJobId))
             {
@@ -134,7 +134,7 @@ namespace Aqua.Profile
             if (inJobId == StringHash32.Null)
                 return null;
 
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId.ToDebugString());
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{1}'", inJobId);
 
             if (m_CompletedJobs.Contains(inJobId))
             {
@@ -234,7 +234,7 @@ namespace Aqua.Profile
 
         public bool IsComplete(StringHash32 inJobId)
         {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
             return m_CompletedJobs.Contains(inJobId);
         }
 
@@ -280,7 +280,7 @@ namespace Aqua.Profile
             if (m_CompletedTasks.Add(new JobTaskKey(m_CurrentJobId, inTaskId)))
             {
                 m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set completed", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set completed", inTaskId, m_CurrentJobId);
                 return true;
             }
 
@@ -298,7 +298,7 @@ namespace Aqua.Profile
             m_CompletedTasks.Remove(new JobTaskKey(m_CurrentJobId, inTaskId));
             if (m_CurrentJobTaskIds.Add(inTaskId))
             {
-                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set active", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set active", inTaskId, m_CurrentJobId);
                 return true;
             }
 
@@ -320,7 +320,7 @@ namespace Aqua.Profile
 
             if (m_CurrentJobTaskIds.Remove(inTaskId))
             {
-                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set inactive", inTaskId.ToDebugString(), m_CurrentJobId.ToDebugString());
+                DebugService.Log(LogMask.DataService, "[JobsData] Task '{0}' on job '{1}' has been set inactive", inTaskId, m_CurrentJobId);
                 return true;
             }
 

@@ -151,7 +151,7 @@ namespace Aqua
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
+                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
                 return default(ScriptThreadHandle);
             }
 
@@ -166,7 +166,7 @@ namespace Aqua
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
+                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
                 return default(ScriptThreadHandle);
             }
 
@@ -181,7 +181,7 @@ namespace Aqua
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
+                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
                 return default(ScriptThreadHandle);
             }
 
@@ -196,7 +196,7 @@ namespace Aqua
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
             {
-                Debug.LogWarningFormat("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId.ToDebugString());
+                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
                 return default(ScriptThreadHandle);
             }
 
@@ -226,14 +226,14 @@ namespace Aqua
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
-                        DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId.ToDebugString(), node.Id().ToDebugString());
+                        DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId, node.Id());
                         handle = StartThreadInternalNode(inThreadId, inContext, node, inContextTable);
                     }
                 }
             }
             if (!handle.IsRunning())
             {
-                DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' had no valid responses", inTriggerId.ToDebugString());
+                DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' had no valid responses", inTriggerId);
             }
             ResetCustomResolver();
             return handle;
@@ -282,19 +282,19 @@ namespace Aqua
                     {
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
-                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
+                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id(), inFunctionId);
                             StartThreadInternalNode(null, inContext, nodes[i], inContextTable);
                         }
                     }
                     else
                     {
-                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId.ToDebugString());
+                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId);
                     }
                 }
             }
             else
             {
-                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId);
             }
             ResetCustomResolver();
         }
@@ -439,7 +439,7 @@ namespace Aqua
                 ScriptObject targetObj;
                 if (!TryGetScriptObjectById(target, out targetObj))
                 {
-                    Debug.LogWarningFormat("[ScriptingService] No ScriptObject with id '{0}' exists");
+                    Log.Warn("[ScriptingService] No ScriptObject with id '{0}' exists");
                     result = null;
                 }
                 else
@@ -591,7 +591,7 @@ namespace Aqua
             {
                 if (inThreadName.IndexOf('*') >= 0)
                 {
-                    Debug.LogErrorFormat("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadName);
+                    Log.Error("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadName);
                     return false;
                 }
 
@@ -617,12 +617,12 @@ namespace Aqua
                 if (thread.Priority() >= inNode.Priority())
                 {
                     DebugService.Log(LogMask.Scripting,  "[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
-                        inNode.Id().ToDebugString(), target.ToDebugString());
+                        inNode.Id(), target);
                     return false;
                 }
 
                 DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killed thread with priority '{0}' running on target '{1}' - higher priority node '{2}' was requested",
-                    thread.Priority(), target.ToDebugString(), inNode.Id().ToDebugString());
+                    thread.Priority(), target, inNode.Id());
 
                 thread.Kill();
                 m_ThreadTargetMap.Remove(target);
@@ -816,7 +816,7 @@ namespace Aqua
                 table.Clear();
             }
             Services.Data.Profile.Script.Reset();
-            Debug.LogWarningFormat("[DebugService] Cleared all scripting state");
+            Log.Warn("[DebugService] Cleared all scripting state");
         }
 
         #endregion // IDebuggable
@@ -861,7 +861,7 @@ namespace Aqua
                             }
                             else
                             {
-                                outName = Services.Loc.Localize(character.NameId());
+                                outName = Loc.Find(character.NameId());
                             }
                         }
 

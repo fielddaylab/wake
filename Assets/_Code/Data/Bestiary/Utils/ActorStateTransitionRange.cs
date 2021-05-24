@@ -18,20 +18,6 @@ namespace Aqua
             AliveMax = StressedMax = float.PositiveInfinity;
         }
 
-        public void Encompass(BFStateRange inRange)
-        {
-            if (inRange.TargetState() == ActorStateId.Stressed)
-            {
-                AliveMin = Mathf.Max(AliveMin, inRange.MinSafe());
-                AliveMax = Mathf.Min(AliveMax, inRange.MaxSafe());
-            }
-            else
-            {
-                StressedMin = Mathf.Max(StressedMin, inRange.MinSafe());
-                StressedMax = Mathf.Min(StressedMax, inRange.MaxSafe());
-            }
-        }
-
         public ActorStateId Evaluate(float inValue)
         {
             if (inValue < StressedMin || inValue > StressedMax)

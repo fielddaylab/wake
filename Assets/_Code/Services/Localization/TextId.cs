@@ -1,11 +1,12 @@
 using System;
+using System.Text;
 using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
 {
     [Serializable]
-    public struct TextId
+    public struct TextId : IDebugString
     {
         #region Inspector
 
@@ -77,6 +78,27 @@ namespace Aqua
 #endif // EXPANDED_REFS
         {
             return inId.Hash();
+        }
+    }
+
+    static public class TextIdExtensions
+    {
+        static public StringBuilder AppendLoc(this StringBuilder inBuilder, TextId inTextId)
+        {
+            inBuilder.Append(Loc.Find(inTextId));
+            return inBuilder;
+        }
+
+        static public StringBuilder AppendLocLC(this StringBuilder inBuilder, TextId inTextId)
+        {
+            inBuilder.Append(Loc.Find(inTextId).ToLowerInvariant());
+            return inBuilder;
+        }
+
+        static public StringBuilder AppendLocUC(this StringBuilder inBuilder, TextId inTextId)
+        {
+            inBuilder.Append(Loc.Find(inTextId).ToUpperInvariant());
+            return inBuilder;
         }
     }
 }

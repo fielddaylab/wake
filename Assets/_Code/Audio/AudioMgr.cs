@@ -138,7 +138,7 @@ namespace AquaAudio
             AudioEvent evt = GetEvent(inId);
             if (evt == null)
             {
-                Debug.LogErrorFormat("[AudioMgr] No event with id '{0}' loaded", inId.ToDebugString());
+                Log.Error("[AudioMgr] No event with id '{0}' loaded", inId);
                 return AudioHandle.Null;
             }
 
@@ -396,7 +396,7 @@ namespace AquaAudio
 
             if (otherListeners.Count > 0)
             {
-                Debug.LogWarningFormat("[AudioMgr] Discovered {0} other AudioListeners in the scene. Please delete them as soon as possible.", otherListeners.Count);
+                Log.Warn("[AudioMgr] Discovered {0} other AudioListeners in the scene. Please delete them as soon as possible.", otherListeners.Count);
                 foreach(var listener in otherListeners)
                 {
                     GameObject.Destroy(listener);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Aqua;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace ProtoAqua.Modeling
@@ -157,7 +158,7 @@ namespace ProtoAqua.Modeling
             {
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    Debug.LogFormat("[CritterProfile] Critter '{0}' is dead due to 0 population", Id().ToDebugString());
+                    Log.Msg("[CritterProfile] Critter '{0}' is dead due to 0 population", Id());
                 }
                 ioData.State = ActorStateId.Dead;
                 return;
@@ -176,7 +177,7 @@ namespace ProtoAqua.Modeling
 
             if ((inFlags & SimulatorFlags.Debug) != 0)
             {
-                Debug.LogFormat("[CritterProfile] Critter '{0}' is {1}", Id().ToDebugString(), state);
+                Log.Msg("[CritterProfile] Critter '{0}' is {1}", Id(), state);
             }
 
             ioData.Hunger = m_EatTypeCount > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
@@ -233,7 +234,7 @@ namespace ProtoAqua.Modeling
                 uint popDecrease = Die(ref ioData, toKill);
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id().ToDebugString());
+                    Log.Msg("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id());
                 }
             }
 
@@ -242,7 +243,7 @@ namespace ProtoAqua.Modeling
                 uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
+                    Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
                 }
             }
 
@@ -251,7 +252,7 @@ namespace ProtoAqua.Modeling
                 uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    Debug.LogFormat("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id().ToDebugString());
+                    Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
                 }
             }
 
@@ -259,7 +260,7 @@ namespace ProtoAqua.Modeling
             {
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
-                    Debug.LogFormat("[CritterProfile] Critter '{0}' population hit 0", Id().ToDebugString());
+                    Log.Msg("[CritterProfile] Critter '{0}' population hit 0", Id());
                 }
                 ioData.State = ActorStateId.Dead;
             }
@@ -396,23 +397,23 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBase inFact)
         {
             // Default
         }
 
-        void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBody inFact)
         {
             m_MassPerPopulation = inFact.MassPerPopulation();
             m_PopulationCap = inFact.PopulationHardCap();
         }
 
-        void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFWaterProperty inFact)
         {
             // Does not affect a critter
         }
 
-        void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFEat inFact)
         {
             // TODO: Account for stress?
             m_EatAmountTotal += inFact.Amount();
@@ -423,48 +424,46 @@ namespace ProtoAqua.Modeling
             };
         }
 
-        void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFGrow inFact)
         {
             // TODO: Account for stress?
             m_GrowthPerTick = inFact.Amount();
             m_ScarcityLevel = inFact.ScarcityLevel();
         }
 
-        void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFReproduce inFact)
         {
             // TODO: Account for stress?
             m_ReproducePerTick = inFact.Amount();
             m_ScarcityLevel = inFact.ScarcityLevel();
         }
 
-        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFProduce inFact)
         {
             // TODO: Account for stress?
             m_ToProducePerPopulation[inFact.Target()] = inFact.Amount();
         }
 
-        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFConsume inFact)
         {
             // TODO: Account for stress?
             m_ToConsumePerPopulation[inFact.Target()] = inFact.Amount();
         }
 
-        void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFState inFact)
         {
-            // TODO: Eliminate starvation?
+            m_Transitions[inFact.PropertyId()] = inFact.Range();
         }
 
-        void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
-        {
-            var transition = m_Transitions[inFact.PropertyId()];
-            transition.Encompass(inFact);
-            m_Transitions[inFact.PropertyId()] = transition;
-        }
-
-        void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFDeath inFact)
         {
             // TODO: What if BFStateAge is for "Stressed"?
             m_DeathPerTick = inFact.Proportion();
+        }
+
+        void IFactVisitor.Visit(BFModel inModel)
+        {
+            // nothing
         }
 
         #endregion // IFactVisitor

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -26,7 +27,7 @@ namespace Aqua
             WaterPropertyId propIndex = inItem.Index();
             if (m_PropertyIdMap[(int) propIndex] != null)
             {
-                Debug.LogErrorFormat("[WaterPropertyDB] Multiple properties mapped to id '{0}'", propIndex);
+                Log.Error("[WaterPropertyDB] Multiple properties mapped to id '{0}'", propIndex);
             }
             else
             {

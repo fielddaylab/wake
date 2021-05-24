@@ -15,6 +15,8 @@ namespace Aqua.Scripting
             static public readonly StringHash32 FadeOut = "fade-out";
             static public readonly StringHash32 GiveFact = "give-fact";
             static public readonly StringHash32 GiveEntity = "give-entity";
+            static public readonly StringHash32 UnlockJob = "unlock-job";
+            static public readonly StringHash32 UnlockStation = "unlock-station";
             static public readonly StringHash32 HideDialog = "hide-dialog";
             static public readonly StringHash32 LetterboxOff = "letterbox-off";
             static public readonly StringHash32 LetterboxOn = "letterbox-on";

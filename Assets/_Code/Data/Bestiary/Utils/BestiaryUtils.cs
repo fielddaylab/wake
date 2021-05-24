@@ -27,12 +27,12 @@ namespace Aqua
                 return null;
 
             BFEat defaultEat = null;
-            foreach(var fact in inParent.Facts)
+            foreach (var fact in inParent.Facts)
             {
                 BFEat eat = fact as BFEat;
                 if (eat == null)
                     continue;
-                
+
                 if (eat.Target().Id() != inTargetId)
                     continue;
 
@@ -45,7 +45,7 @@ namespace Aqua
                 {
                     if (inState == ActorStateId.Alive)
                         return eat;
-                    
+
                     defaultEat = eat;
                 }
             }
@@ -54,69 +54,95 @@ namespace Aqua
         }
 
         /// <summary>
-        /// Locates produce/consume rule associated with the given creature and water property.
+        /// Locates produce rule associated with the given creature and water property.
         /// </summary>
-        static public BFProduce FindProduceRule(BestiaryDesc inParent, WaterPropertyId inPropertyId) {
+        static public BFProduce FindProduceRule(BestiaryDesc inParent, WaterPropertyId inPropertyId, ActorStateId inState = ActorStateId.Alive)
+        {
             if (inParent == null)
                 throw new ArgumentNullException("inParent");
 
+            if (inState == ActorStateId.Dead)
+                return null;
+
             BFProduce defaultProduce = null;
-            foreach(var fact in inParent.Facts) {
+            foreach (var fact in inParent.Facts)
+            {
                 BFProduce prod = fact as BFProduce;
                 if (prod == null)
                     continue;
-                
+
                 if (prod.Target() != inPropertyId)
                     continue;
 
-                defaultProduce = prod;
+                if (prod.OnlyWhenStressed())
+                {
+                    if (inState == ActorStateId.Stressed)
+                        return prod;
+                }
+                else
+                {
+                    if (inState == ActorStateId.Alive)
+                        return prod;
 
+                    defaultProduce = prod;
+                }
             }
 
             return defaultProduce;
         }
 
-        static public BFConsume FindConsumeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId) {
+        /// <summary>
+        /// Locates consume rule associated with the given creature and water property.
+        /// </summary>
+        static public BFConsume FindConsumeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId, ActorStateId inState = ActorStateId.Alive)
+        {
             if (inParent == null)
                 throw new ArgumentNullException("inParent");
 
+            if (inState == ActorStateId.Dead)
+                return null;
+
             BFConsume defaultConsume = null;
-            foreach(var fact in inParent.Facts) {
+            foreach (var fact in inParent.Facts)
+            {
                 BFConsume consume = fact as BFConsume;
                 if (consume == null)
                     continue;
-                
+
                 if (consume.Target() != inPropertyId)
                     continue;
 
-                defaultConsume = consume;
+                if (consume.OnlyWhenStressed())
+                {
+                    if (inState == ActorStateId.Stressed)
+                        return consume;
+                }
+                else
+                {
+                    if (inState == ActorStateId.Alive)
+                        return consume;
 
+                    defaultConsume = consume;
+                }
             }
 
             return defaultConsume;
         }
 
         /// <summary>
-        /// Locates all range rules associated with the given creature and water property.
+        /// Locates the range rule associated with the given creature and water property.
         /// </summary>
-        static public int FindRangeRules(BestiaryDesc inParent, WaterPropertyId inPropertyId, ICollection<BFStateRange> outRanges)
+        static public BFState FindRangeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
-            int count = 0;
-
-            foreach(var fact in inParent.StateFacts)
+            foreach (var fact in inParent.StateFacts)
             {
-                BFStateRange range = fact as BFStateRange;
-                if (range == null)
+                if (fact.PropertyId() != inPropertyId)
                     continue;
 
-                if (range.PropertyId() != inPropertyId)
-                    continue;
-
-                outRanges.Add(range);
-                ++count;
+                return fact;
             }
 
-            return count;
+            return null;
         }
 
         /// <summary>
@@ -124,30 +150,28 @@ namespace Aqua
         /// </summary>
         static public ActorStateTransitionRange FindStateTransitions(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
-            ActorStateTransitionRange transitionRange = ActorStateTransitionRange.Default;
-
-            foreach(var fact in inParent.StateFacts)
+            foreach (var fact in inParent.StateFacts)
             {
-                BFStateRange range = fact as BFStateRange;
+                BFState range = fact as BFState;
                 if (range == null)
                     continue;
 
                 if (range.PropertyId() != inPropertyId)
                     continue;
 
-                transitionRange.Encompass(range);
+                return range.Range();
             }
 
-            return transitionRange;
+            return ActorStateTransitionRange.Default;
         }
-    
+
         /// <summary>
         /// Generates the initial water chemistry properties for the given environment.
         /// </summary>
         static public WaterPropertyBlockF32 GenerateInitialState(BestiaryDesc inParent)
         {
             WaterPropertyBlockF32 properties = Services.Assets.WaterProp.DefaultValues();
-            foreach(var fact in inParent.Facts)
+            foreach (var fact in inParent.Facts)
             {
                 BFWaterProperty bfWater = fact as BFWaterProperty;
                 if (bfWater != null)

@@ -12,12 +12,7 @@ namespace Aqua
             return BFMode.Internal;
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        public override string GenerateSentence(PlayerFactParams inParams = null)
+        public override string GenerateSentence()
         {
             throw new System.NotSupportedException();
         }

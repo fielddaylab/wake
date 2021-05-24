@@ -26,7 +26,7 @@ namespace Aqua
             };
         }
 
-        static public BestiaryFactFragment CreateNoun(StringHash32 inWord)
+        static public BestiaryFactFragment CreateLocNoun(TextId inWord)
         {
             return new BestiaryFactFragment()
             {
@@ -44,12 +44,30 @@ namespace Aqua
             };
         }
 
+        static public BestiaryFactFragment CreateLocVerb(TextId inWord)
+        {
+            return new BestiaryFactFragment()
+            {
+                Type = BestiaryFactFragmentType.Verb,
+                String = Services.Loc.Localize(inWord, true)
+            };
+        }
+
         static public BestiaryFactFragment CreateAdjective(StringSlice inWord)
         {
             return new BestiaryFactFragment()
             {
                 Type = BestiaryFactFragmentType.Adjective,
                 String = inWord
+            };
+        }
+
+        static public BestiaryFactFragment CreateLocAdjective(TextId inWord)
+        {
+            return new BestiaryFactFragment()
+            {
+                Type = BestiaryFactFragmentType.Adjective,
+                String = Services.Loc.Localize(inWord, true)
             };
         }
 

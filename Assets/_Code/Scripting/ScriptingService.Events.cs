@@ -9,6 +9,7 @@ using Aqua.Scripting;
 using System.Collections;
 using AquaAudio;
 using System.Collections.Generic;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -59,7 +60,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
             m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
-            m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringData();
+            m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringHashData();
             m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
             m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
             m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
@@ -100,7 +101,7 @@ namespace Aqua
             
             if (sliceCount < 3)
             {
-                Debug.LogWarningFormat("[ScriptingService] Expected 3 arguments to '{0}' tag", inTag.Id);
+                Log.Warn("[ScriptingService] Expected 3 arguments to '{0}' tag", inTag.Id);
                 if (sliceCount == 0)
                 {
                     return playerPronouns.ToString();
@@ -171,7 +172,7 @@ namespace Aqua
             }
             else if (inTag.Id.EndsWith("-s"))
             {
-                return Services.Loc.Localize(variable.AsStringHash(), variable.ToDebugString(), inContext);
+                return Services.Loc.Localize(variable.AsStringHash(), variable.ToString(), inContext);
             }
             else
             {
@@ -545,12 +546,7 @@ namespace Aqua
 
         private void EventGiveFact(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
-
-            PlayerFactParams p;
-            Services.Data.Profile.Bestiary.RegisterFact(args[0].Hash32(), out p);
-
-            // TODO: Implement adding flags
+            Services.Data.Profile.Bestiary.RegisterFact(inEvent.Argument0.AsStringHash());
         }
 
         private void EventGiveEntity(TagEventData inEvent, object inContext)
@@ -571,7 +567,7 @@ namespace Aqua
 
             if (jobId.IsEmpty)
             {
-                Debug.LogErrorFormat("[ScriptingService] Attempting to complete job, but no job specified and no job active");
+                Log.Error("[ScriptingService] Attempting to complete job, but no job specified and no job active");
                 return;
             }
 

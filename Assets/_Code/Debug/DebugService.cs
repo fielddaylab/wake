@@ -320,8 +320,6 @@ namespace Aqua.Debugging
 
         static private uint s_LoggingMask = (uint) (LogMask.DEFAULT);
 
-        static private readonly object[] NullArgs = Array.Empty<object>();
-
         static internal void AllowLogs(LogMask inMask)
         {
             s_LoggingMask |= (uint) inMask;
@@ -334,11 +332,11 @@ namespace Aqua.Debugging
 
         static public bool IsLogging(LogMask inMask) { return (s_LoggingMask & (uint) inMask) != 0; }
 
-        static public void Log(LogMask inMask, string inMessage) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(inMessage, NullArgs); }
-        static public void Log(LogMask inMask, string inMessage, object inArg0) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0), NullArgs); }
-        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0, inArg1), NullArgs); }
-        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inArg0, inArg1, inArg2), NullArgs); }
-        static public void Log(LogMask inMask, string inMessage, params object[] inParams) { if ((s_LoggingMask & (uint) inMask) != 0) Debug.LogFormat(string.Format(inMessage, inParams), NullArgs); }
+        static public void Log(LogMask inMask, string inMessage) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inArg0); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inArg0, inArg1); }
+        static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inArg0, inArg1, inArg2); }
+        static public void Log(LogMask inMask, string inMessage, params object[] inParams) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inParams); }
 
         #else
 

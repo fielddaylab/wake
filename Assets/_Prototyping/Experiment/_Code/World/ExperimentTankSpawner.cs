@@ -11,6 +11,7 @@ using BeauRoutine.Extensions;
 using ProtoCP;
 using System.Collections.Generic;
 using Aqua;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Experiment
 {
@@ -115,7 +116,7 @@ namespace ProtoAqua.Experiment
                 }
             }
 
-            Debug.LogErrorFormat("[ExperimentTankSpawner] Unhandled tank selection type {0}+{1}", inData.Tank, inData.EcosystemId.ToDebugString());
+            Log.Error("[ExperimentTankSpawner] Unhandled tank selection type {0}+{1}", inData.Tank, inData.EcosystemId);
         }
 
         private void SetVars(ExperimentSetupData inData)

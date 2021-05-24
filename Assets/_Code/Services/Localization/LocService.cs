@@ -7,6 +7,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Blocks;
+using BeauUtil.Debugger;
 using BeauUtil.Tags;
 using UnityEngine;
 
@@ -101,7 +102,7 @@ namespace Aqua
                     content = tagStr.RichText;
                     if (tagStr.EventCount > 0)
                     {
-                        Debug.LogWarningFormat("[LocService] String '{0}' contains {1} embedded events, which are discarded when translating directly to string", inString, tagStr.EventCount);
+                        Log.Warn("[LocService] String '{0}' contains {1} embedded events, which are discarded when translating directly to string", inString, tagStr.EventCount);
                     }
                 }
             }
@@ -123,7 +124,7 @@ namespace Aqua
         {
             if (m_LoadRoutine)
             {
-                Debug.LogErrorFormat("[LocService] Localization is still loading");
+                Log.Error("[LocService] Localization is still loading");
                 return inDefault.ToString();
             }
 
@@ -133,7 +134,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
             {
-                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey.ToDebugString());
+                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
                 content = inDefault.ToString();
             }
             
@@ -146,7 +147,7 @@ namespace Aqua
                     content = tagStr.RichText;
                     if (tagStr.EventCount > 0)
                     {
-                        Debug.LogWarningFormat("[LocService] Entry for '{0}' contains {1} embedded events, which are discarded when translating directly to string", inKey, tagStr.EventCount);
+                        Log.Warn("[LocService] Entry for '{0}' contains {1} embedded events, which are discarded when translating directly to string", inKey, tagStr.EventCount);
                     }
                 }
             }
@@ -169,7 +170,7 @@ namespace Aqua
 
             if (m_LoadRoutine)
             {
-                Debug.LogErrorFormat("[LocService] Localization is still loading");
+                Log.Error("[LocService] Localization is still loading");
                 return false;
             }
 
@@ -181,7 +182,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
             {
-                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey.ToDebugString());
+                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
                 return false;
             }
 

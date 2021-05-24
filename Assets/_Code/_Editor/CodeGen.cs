@@ -6,6 +6,7 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using BeauUtil.Debugger;
 
 namespace Aqua.Editor
 {
@@ -29,7 +30,7 @@ namespace Aqua.Editor
                 {
                     if (!usedNames.Add(layerName))
                     {
-                        Debug.LogWarningFormat("[CodeGen] Duplicate Unity layer name '{0}'", layerName);
+                        Log.Warn("[CodeGen] Duplicate Unity layer name '{0}'", layerName);
                         continue;
                     }
 

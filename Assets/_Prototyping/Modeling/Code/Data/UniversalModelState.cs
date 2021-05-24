@@ -26,7 +26,7 @@ namespace ProtoAqua.Modeling
 
             foreach(var graphedFactId in inPlayerData.GraphedFacts())
             {
-                AddFact(inPlayerData.GetFact(graphedFactId));
+                AddFact(Services.Assets.Bestiary.Fact(graphedFactId));
             }
 
             inPlayerData.GetUngraphedFacts(m_UngraphedFacts);
@@ -47,11 +47,11 @@ namespace ProtoAqua.Modeling
             return m_UngraphedFacts.Count;
         }
 
-        public void AddFact(PlayerFactParams inFact)
+        public void AddFact(BFBase inFact)
         {
-            m_GraphedFacts.Add(inFact.FactId);
-            inFact.Fact.CollectReferences(m_GraphedCritters);
-            m_UngraphedFacts.Remove(inFact.FactId);
+            m_GraphedFacts.Add(inFact.Id());
+            inFact.CollectReferences(m_GraphedCritters);
+            m_UngraphedFacts.Remove(inFact.Id());
         }
     }
 }

@@ -75,10 +75,10 @@ namespace ProtoAqua.Argumentation
 
         public Link(string inId) : base(inId) { }
 
-        public Link(PlayerFactParams inPlayerFact)
-            : base(inPlayerFact.Fact.name)
+        public Link(BFBase inPlayerFact)
+            : base(inPlayerFact.name)
         {
-            m_DisplayText = inPlayerFact.Fact.GenerateSentence(inPlayerFact);
+            m_DisplayText = inPlayerFact.GenerateSentence();
         }
 
         public void InitializeLink()

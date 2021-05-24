@@ -40,7 +40,7 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         private ConceptMapData m_MapData = new ConceptMapData();
-        private HashSet<PlayerFactParams> m_AddedFacts = new HashSet<PlayerFactParams>();
+        private HashSet<BFBase> m_AddedFacts = new HashSet<BFBase>();
         private Dictionary<StringHash32, ConceptMapNode> m_AllocatedNodes = new Dictionary<StringHash32, ConceptMapNode>();
         private Dictionary<StringHash32, ConceptMapLink> m_AllocatedLinks = new Dictionary<StringHash32, ConceptMapLink>();
         private Routine m_QueuedRebuild;
@@ -120,7 +120,7 @@ namespace ProtoAqua.Modeling
 
         #region Add/Remove
 
-        public bool AddFact(PlayerFactParams inParams)
+        public bool AddFact(BFBase inParams)
         {
             if (m_AddedFacts.Add(inParams))
             {
@@ -132,7 +132,7 @@ namespace ProtoAqua.Modeling
             return false;
         }
 
-        public bool RemoveFact(PlayerFactParams inParams)
+        public bool RemoveFact(BFBase inParams)
         {
             if (m_AddedFacts.Remove(inParams))
             {
@@ -171,9 +171,9 @@ namespace ProtoAqua.Modeling
         private void ProcessGraphData()
         {
             m_MapData.ClearAll();
-            foreach(var factParams in m_AddedFacts)
+            foreach(var fact in m_AddedFacts)
             {
-                factParams.Fact.Accept(this, factParams);
+                fact.Accept(this);
             }
         }
 
@@ -268,40 +268,40 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBase inFact)
         {
             // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
-        void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBody inFact)
         {
             // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
-        void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFWaterProperty inFact)
         {
             var waterPropDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
             m_MapData.CreateNode(waterPropDef.Id(), "property", inFact);
         }
 
-        void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFEat inFact)
         {
             ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
             ushort target = m_MapData.CreateNode(inFact.Target().Id(), "critter", inFact.Target());
             m_MapData.CreateLink(inFact.Id(), self, target, "eat", inFact);
         }
 
-        void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFGrow inFact)
         {
             m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
-        void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFReproduce inFact)
         {
             m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
-        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFProduce inFact)
         {
             ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
             var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
@@ -309,7 +309,7 @@ namespace ProtoAqua.Modeling
             m_MapData.CreateLink(inFact.Id(), self, target, "produce", inFact);
         }
 
-        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFConsume inFact)
         {
             ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
             var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
@@ -317,12 +317,7 @@ namespace ProtoAqua.Modeling
             m_MapData.CreateLink(inFact.Id(), self, target, "consume", inFact);
         }
 
-        void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFState inFact)
         {
             ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
             var propertyDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
@@ -330,7 +325,12 @@ namespace ProtoAqua.Modeling
             m_MapData.CreateLink(inFact.Id(), self, target, "range", inFact);
         }
 
-        void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFDeath inFact)
+        {
+            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+        }
+
+        void IFactVisitor.Visit(BFModel inFact)
         {
             // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }

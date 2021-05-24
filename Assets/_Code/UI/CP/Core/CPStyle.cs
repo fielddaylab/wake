@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Aqua.Debugging;
+using BeauUtil.Debugger;
 
 namespace ProtoCP
 {
@@ -56,7 +57,7 @@ namespace ProtoCP
 
                 if (m_Variants.ContainsKey(variantId))
                 {
-                    Debug.LogErrorFormat("[CPStyle] Multiple controls with variant id '{0}' defined for type '{1}'", variantId, inTemplate.Type());
+                    Log.Error("[CPStyle] Multiple controls with variant id '{0}' defined for type '{1}'", variantId, inTemplate.Type());
                     return;
                 }
 
@@ -159,7 +160,7 @@ namespace ProtoCP
                 }
                 else
                 {
-                    Debug.LogErrorFormat("[CPStyle] No control pool available for control type '{0}'", inControlType);
+                    Log.Error("[CPStyle] No control pool available for control type '{0}'", inControlType);
                     return null;
                 }
             }
@@ -195,7 +196,7 @@ namespace ProtoCP
                 }
                 else
                 {
-                    Debug.LogErrorFormat("[CPStyle] No control pool available for control type '{0}' and c# type '{1}'", inControlType, typeof(T).Name);
+                    Log.Error("[CPStyle] No control pool available for control type '{0}' and c# type '{1}'", inControlType, typeof(T).Name);
                     return null;
                 }
             }
@@ -231,7 +232,7 @@ namespace ProtoCP
             }
             if (recycleCount > 0)
             {
-                Debug.LogWarningFormat("[CPStyle] Cleaned up {0} controls on style '{1}' from unloading scene...", recycleCount, name);
+                Log.Warn("[CPStyle] Cleaned up {0} controls on style '{1}' from unloading scene...", recycleCount, name);
             }
         }
 
@@ -311,7 +312,7 @@ namespace ProtoCP
             if (m_InheritFrom == this)
             {
                 m_InheritFrom = null;
-                Debug.LogErrorFormat("[CPStyle] Cannot inherit from self");
+                Log.Error("[CPStyle] Cannot inherit from self");
             }
             ValidationUtils.EnsureUnique(ref m_ControlTemplates);
         }

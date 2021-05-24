@@ -158,7 +158,7 @@ namespace ProtoAqua.Modeling
                     foreach(var fact in critter.Facts)
                     {
                         if (m_UniversalState.IsFactGraphed(fact.Id()))
-                            m_Buffer.AddFact(bestiaryData.GetFact(fact.Id()));
+                            m_Buffer.AddFact(fact);
                     }
                 }
             }

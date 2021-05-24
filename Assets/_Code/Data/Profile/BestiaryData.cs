@@ -11,21 +11,21 @@ namespace Aqua.Profile
     {
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
-        private List<PlayerFactParams> m_Facts = new List<PlayerFactParams>();
         private HashSet<StringHash32> m_GraphedFacts = new HashSet<StringHash32>();
 
-        [NonSerialized] private bool m_FactListDirty = true;
         [NonSerialized] private bool m_HasChanges = false;
 
         #region Observed Entities
 
         public bool HasEntity(StringHash32 inEntityId)
         {
+            Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);
             return m_ObservedEntities.Contains(inEntityId);
         }
 
         public bool RegisterEntity(StringHash32 inEntityId)
         {
+            Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);
             if (m_ObservedEntities.Add(inEntityId))
             {
                 m_HasChanges = true;
@@ -54,6 +54,8 @@ namespace Aqua.Profile
 
         public bool DeregisterEntity(StringHash32 inEntityId)
         {
+            Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);
+            
             if (m_ObservedEntities.Remove(inEntityId))
             {
                 m_HasChanges = true;
@@ -76,93 +78,66 @@ namespace Aqua.Profile
 
         public bool RegisterFact(StringHash32 inFactId)
         {
-            return RegisterFact(inFactId, out PlayerFactParams temp);
-        }
-
-        public bool RegisterFact(StringHash32 inFactId, out PlayerFactParams outParams)
-        {
             Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
 
             if (Services.Assets.Bestiary.IsAutoFact(inFactId))
             {
-                var fact = Services.Assets.Bestiary.Fact(inFactId);
-                if (fact.Mode() == BFMode.Always)
-                    outParams = PlayerFactParams.Wrap(fact);
-                else
-                    outParams = null;
                 return false;
             }
 
             if (m_ObservedFacts.Add(inFactId))
             {
                 m_HasChanges = true;
-                var factParams = AddFact(inFactId);
-                var fact = factParams.Fact; 
+                var fact = Services.Assets.Bestiary.Fact(inFactId);
                 m_ObservedEntities.Add(fact.Parent().Id());
                 Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
-                outParams = factParams;
                 return true;
             }
 
-            SortFacts();
-            m_Facts.TryBinarySearch(inFactId, out outParams);
-            Assert.NotNull(outParams);
             return false;
         }
 
-        public PlayerFactParams GetFact(StringHash32 inFactId)
-        {
-            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
-
-            if (Services.Assets.Bestiary.IsAutoFact(inFactId))
-            {
-                return PlayerFactParams.Wrap(Services.Assets.Bestiary.Fact(inFactId));
-            }
-
-            SortFacts();
-            
-            PlayerFactParams p;
-            if (!m_Facts.TryBinarySearch(inFactId, out p))
-            {
-                Debug.LogErrorFormat("[BestiaryData] No fact with id '{0}' has been registered", inFactId.ToDebugString());
-            }
-
-            return p;
-        }
-
-        public IEnumerable<PlayerFactParams> GetFactsForEntity(StringHash32 inEntityId)
+        public IEnumerable<BFBase> GetFactsForEntity(StringHash32 inEntityId)
         {
             BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
 
-            foreach(var fact in entry.AssumedFacts)
+            foreach(var fact in entry.Facts)
             {
-                yield return PlayerFactParams.Wrap(fact);
-            }
+                switch(fact.Mode())
+                {
+                    case BFMode.Player:
+                        if (m_ObservedFacts.Contains(fact.Id()))
+                            yield return fact;
+                        break;
 
-            foreach(var fact in m_Facts)
-            {
-                if (fact.Fact.Parent() == entry)
-                    yield return fact;
+                    case BFMode.Always:
+                        yield return fact;
+                        break;
+                }
             }
         }
 
-        public int GetFactsForEntity(StringHash32 inEntityId, ICollection<PlayerFactParams> outFacts)
+        public int GetFactsForEntity(StringHash32 inEntityId, ICollection<BFBase> outFacts)
         {
             BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
             int count = 0;
 
-            foreach(var fact in entry.AssumedFacts)
+            foreach(var fact in entry.Facts)
             {
-                outFacts.Add(PlayerFactParams.Wrap(fact));
-                count++;
-            }
-
-            foreach(var fact in m_Facts)
-            {
-                if (fact.Fact.Parent() == entry)
+                switch(fact.Mode())
                 {
-                    outFacts.Add(fact);
-                    ++count;
+                    case BFMode.Player:
+                        if (m_ObservedFacts.Contains(fact.Id()))
+                        {
+                            outFacts.Add(fact);
+                            count++;
+                        }
+                        break;
+
+                    case BFMode.Always:
+                        outFacts.Add(fact);
+                        count++;
+                        break;
                 }
             }
 
@@ -171,38 +146,17 @@ namespace Aqua.Profile
 
         public bool DeregisterFact(StringHash32 inFactId)
         {
-            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId.ToDebugString());
+            Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
 
             if (m_ObservedFacts.Remove(inFactId))
             {
                 m_HasChanges = true;
-                SortFacts();
-                int index = m_Facts.BinarySearch(inFactId);
-                m_Facts.FastRemoveAt(index);
-                m_FactListDirty = true;
                 m_GraphedFacts.Remove(inFactId);
                 Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
             }
 
             return false;
-        }
-
-        private PlayerFactParams AddFact(StringHash32 inFactId)
-        {
-            PlayerFactParams fact = new PlayerFactParams(inFactId);
-            m_Facts.Add(fact);
-            m_FactListDirty = true;
-            return fact;
-        }
-
-        private void SortFacts()
-        {
-            if (!m_FactListDirty)
-                return;
-
-            m_Facts.SortByKey<StringHash32, PlayerFactParams, PlayerFactParams>();
-            m_FactListDirty = false;
         }
 
         #endregion // Facts
@@ -280,13 +234,12 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32ProxySet("allEntities", ref m_ObservedEntities);
             ioSerializer.UInt32ProxySet("allFacts", ref m_ObservedFacts);
-            ioSerializer.ObjectArray("factStatus", ref m_Facts);
             ioSerializer.UInt32ProxySet("graphedFacts", ref m_GraphedFacts);
         }
 

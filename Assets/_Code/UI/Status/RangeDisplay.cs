@@ -9,6 +9,8 @@ namespace Aqua
     [RequireComponent(typeof(RectTransform))]
     public class RangeDisplay : MonoBehaviour
     {
+        [SerializeField] private bool m_ClampValues = true;
+
         [NonSerialized] private RectTransform m_RectTransform;
 
         public void Display(float inMin, float inMax, float inFullMin, float inFullMax)
@@ -16,6 +18,12 @@ namespace Aqua
             float fullDistance = (inFullMax - inFullMin);
             float minRatio = (inMin - inFullMin) / fullDistance;
             float maxRatio = (inMax - inFullMin) / fullDistance;
+
+            if (m_ClampValues)
+            {
+                minRatio = Mathf.Clamp01(minRatio);
+                maxRatio = Mathf.Clamp01(maxRatio);
+            }
 
             this.CacheComponent(ref m_RectTransform);
 

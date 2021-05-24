@@ -13,9 +13,8 @@ namespace Aqua
         [Label("Bestiary/Get Bestiary Fact")]
         AcquireFact,
 
-        // Player must have values for all the given facts
-        [Label("Bestiary/Upgrade Bestiary Fact")]
-        UpgradeFact,
+        [Hidden]
+        _Unused0,
 
         // Goto a specific scene
         [Label("Map/Go to Scene")]

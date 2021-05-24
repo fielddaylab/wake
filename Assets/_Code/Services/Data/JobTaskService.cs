@@ -292,7 +292,6 @@ namespace Aqua
                 {
                     case JobStepType.AcquireBestiaryEntry:
                     case JobStepType.AcquireFact:
-                    case JobStepType.UpgradeFact:
                         mask |= TaskEventMask.BestiaryUpdate;
                         break;
 
@@ -372,16 +371,6 @@ namespace Aqua
 
                 case JobStepType.AddFactToModel:
                     return inData.Bestiary.IsFactGraphed(inStep.Target);
-
-                case JobStepType.UpgradeFact:
-                    if (Services.Assets.Bestiary.IsAutoFact(inStep.Target))
-                        return true;
-                    
-                    if (!inData.Bestiary.HasFact(inStep.Target))
-                        return false;
-                    
-                    BFBase fact = Services.Assets.Bestiary.Fact(inStep.Target);
-                    return !fact.HasValue() || inData.Bestiary.GetFact(inStep.Target).Has(PlayerFactFlags.KnowValue);
 
                 default:
                     return true;

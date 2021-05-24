@@ -84,7 +84,7 @@ namespace Aqua
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint))
                 {
-                    Debug.LogWarningFormat("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id.ToDebugString(), existingEntrypoint.Package().Name(), entrypoint.Package().Name());
+                    Log.Warn("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id, existingEntrypoint.Package().Name(), entrypoint.Package().Name());
                     continue;
                 }
 

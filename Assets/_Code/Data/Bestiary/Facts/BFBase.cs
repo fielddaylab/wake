@@ -10,51 +10,38 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private string m_Title = null;
-        [SerializeField] private string m_Description = null;
         [SerializeField] private Sprite m_Icon = null;
 
         #endregion // Inspector
 
         [NonSerialized] private BestiaryDesc m_Parent;
-        [NonSerialized] private PlayerFactParams m_SelfParams;
 
         public BestiaryDesc Parent() { return m_Parent; }
-
-        public string Title() { return m_Title; }
-        public string Description() { return m_Description; }
         public Sprite Icon() { return m_Icon; }
-
         public virtual BFMode Mode() { return BFMode.Player; }
 
-        public virtual void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
-        {
-            inVisitor.Visit(this, inParams);
-        }
-
-        public abstract IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null);
-        public abstract string GenerateSentence(PlayerFactParams inParams = null);
-        
-        public virtual void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
-        {
-            outReferencedBestiary.Add(m_Parent.Id());
-        }
+        #region Lifecycle
 
         public virtual void Hook(BestiaryDesc inParent)
         {
             m_Parent = inParent;
         }
 
-        internal PlayerFactParams GetWrapper()
+        #endregion // Lifecycle
+
+        public virtual void Accept(IFactVisitor inVisitor)
         {
-            Assert.True(Mode() == BFMode.Always, "PlayerFactParams wrapper is not available for facts of type '{0}'", GetType().FullName);
-            return m_SelfParams ?? (m_SelfParams = new PlayerFactParams(this));
+            inVisitor.Visit(this);
         }
 
-        public virtual bool HasValue()
+        public abstract string GenerateSentence();
+        
+        public virtual void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
         {
-            return false;
+            outReferencedBestiary.Add(m_Parent.Id());
         }
+
+        #region Sorting
 
         public virtual int CompareTo(BFBase other)
         {
@@ -64,13 +51,28 @@ namespace Aqua
             return sort;
         }
 
-        protected virtual int GetSortingOrder() { return GetType().GetHashCode(); }
+        internal virtual int GetSortingOrder() { return GetType().GetHashCode(); }
+
+        #endregion // Sorting
+
+        #region Editor
 
         #if UNITY_EDITOR
 
         protected virtual void OnValidate() { }
 
         #endif // UNITY_EDITOR
+
+        #endregion // Editor
+
+        #region Utils
+
+        static protected WaterPropertyDesc Property(WaterPropertyId inId)
+        {
+            return Services.Assets.WaterProp.Property(inId);
+        }
+
+        #endregion // Utils
     }
 
     public enum BFMode : byte

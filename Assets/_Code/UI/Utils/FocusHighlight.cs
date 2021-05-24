@@ -7,6 +7,7 @@ using BeauPools;
 using System;
 using Aqua.Scripting;
 using Leaf.Runtime;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -62,7 +63,7 @@ namespace Aqua
             ScriptObject obj;
             if (!Services.Script.TryGetScriptObjectById(inObjectId, out obj))
             {
-                Debug.LogErrorFormat("[FocusHighlight] Unable to find script object with id '{0}'", inObjectId);
+                Log.Error("[FocusHighlight] Unable to find script object with id '{0}'", inObjectId);
                 return;
             }
 

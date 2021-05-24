@@ -10,6 +10,7 @@ using Aqua;
 using Aqua.Profile;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BeauUtil.Debugger;
 
 namespace Aqua.Scripting
 {
@@ -26,7 +27,7 @@ namespace Aqua.Scripting
         {
             if (m_FunctionNodes.Contains(inNode))
             {
-                Debug.LogErrorFormat("[FunctionSet] Cannot add node '{0} twice", inNode.Id().ToDebugString());
+                Log.Error("[FunctionSet] Cannot add node '{0} twice", inNode.Id());
                 return false;
             }
 

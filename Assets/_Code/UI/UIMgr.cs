@@ -5,6 +5,7 @@ using BeauData;
 using BeauPools;
 using BeauRoutine.Extensions;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -99,7 +100,7 @@ namespace Aqua
             if (!m_DialogStyleMap.TryGetValue(inStyleId, out panel))
             {
                 panel = m_DialogPanel;
-                Debug.LogErrorFormat("[UIMgr] Unable to retrieve dialog panel with style '{0}'", inStyleId.ToDebugString());
+                Log.Error("[UIMgr] Unable to retrieve dialog panel with style '{0}'", inStyleId);
             }
 
             return panel;
@@ -267,7 +268,7 @@ namespace Aqua
 
             if (removedPanelCount > 0)
             {
-                Debug.LogWarningFormat("[UIMgr] Unregistered {0} shared panels that were not deregistered at scene unload", removedPanelCount);
+                Log.Warn("[UIMgr] Unregistered {0} shared panels that were not deregistered at scene unload", removedPanelCount);
             }
         }
 

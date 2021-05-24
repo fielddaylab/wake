@@ -41,6 +41,7 @@ namespace Aqua.Option
     public enum ButtonMode : byte
     {
         Hold,
-        Toggle
+        Toggle,
+        Hybrid
     }
 }

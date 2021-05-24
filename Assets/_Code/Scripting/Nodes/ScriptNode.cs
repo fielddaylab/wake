@@ -7,6 +7,7 @@ using BeauPools;
 using BeauUtil.Variants;
 using UnityEngine;
 using Leaf;
+using BeauUtil.Debugger;
 
 namespace Aqua.Scripting
 {
@@ -173,7 +174,7 @@ namespace Aqua.Scripting
                         {
                             if (!VariantComparison.TryParse(conditions[i], out m_TriggerData.Conditions[i]))
                             {
-                                Debug.LogErrorFormat("[ScriptNode] Unable to parse condition '{0}'", conditions[i]);
+                                Log.Error("[ScriptNode] Unable to parse condition '{0}'", conditions[i]);
                             }
                         }
 

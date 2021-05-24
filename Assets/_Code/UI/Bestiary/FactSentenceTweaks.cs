@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using BeauUtil;
 using BeauUtil.Variants;
 using BeauPools;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -101,7 +102,7 @@ namespace Aqua
             int recycleCount = m_Default.FreeAllInScene(inBinding);
             if (recycleCount > 0)
             {
-                Debug.LogWarningFormat("[FactSentenceTweaks] Cleaned up {0} fragments still present in unloading scene", recycleCount);
+                Log.Warn("[FactSentenceTweaks] Cleaned up {0} fragments still present in unloading scene", recycleCount);
             }
         }
 

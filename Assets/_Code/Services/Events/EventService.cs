@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using BeauData;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Aqua
 {
@@ -167,8 +166,8 @@ namespace Aqua
                             if (bindingDestroyed)
                             {
                                 #if UNITY_EDITOR
-                                UnityEngine.Debug.LogWarningFormat("[EventService] Cleaning up binding on event '{0}' for dead object '{1}'",
-                                    m_EventId.ToDebugString(), m_Actions[i].Name);
+                                Log.Warn("[EventService] Cleaning up binding on event '{0}' for dead object '{1}'",
+                                    m_EventId, m_Actions[i].Name);
                                 #endif // UNITY_EDITOR
                                 ++cleanedUpFromDestroy;
                             }
@@ -401,7 +400,7 @@ namespace Aqua
 
             if (cleanedUpFromDestroyed > 0)
             {
-                Debug.LogWarningFormat("[EventService] Cleaned up {0} event listeners whose bindings were destroyed", cleanedUpFromDestroyed);
+                Log.Warn("[EventService] Cleaned up {0} event listeners whose bindings were destroyed", cleanedUpFromDestroyed);
             }
         }
 

@@ -7,6 +7,7 @@ using BeauRoutine;
 using System.Collections;
 using BeauPools;
 using Aqua;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
@@ -125,7 +126,7 @@ namespace ProtoAqua.Observation
             ScanData data = null;
             if (string.IsNullOrEmpty(m_ScanId) || !mgr.TryGetScanData(m_ScanId, out data))
             {
-                Debug.LogWarningFormat("[ScannableRegion] Unable to locate ScanData with id '{0}'", m_ScanId);
+                Log.Warn("[ScannableRegion] Unable to locate ScanData with id '{0}'", m_ScanId);
             }
             return data;
         }

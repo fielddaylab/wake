@@ -9,6 +9,10 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Behavior/Produce")]
     public class BFProduce : BFBehavior
     {
+        static private readonly TextId ProduceVerb = "words.produce";
+        static private readonly TextId ProduceSentence = "factFormat.produce";
+        static private readonly TextId ProduceSentenceStressed = "factFormat.produce.stressed";
+
         #region Inspector
 
         [Header("Produce")]
@@ -20,61 +24,38 @@ namespace Aqua
         public WaterPropertyId Target() { return m_Property; }
         public uint Amount() { return m_Amount; }
 
-        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        protected override TextId DefaultVerb()
         {
-            inVisitor.Visit(this, inParams);
+            return ProduceVerb;
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
+        protected override TextId DefaultSentence()
+        {
+            return OnlyWhenStressed() ? ProduceSentenceStressed : ProduceSentence;
+        }
+
+        public override void Accept(IFactVisitor inVisitor)
+        {
+            inVisitor.Visit(this);
+        }
+
+        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
         {
             // TODO: localization!!
-            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.Stressed);
 
-            bool kHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
-
-            yield return BestiaryFactFragment.CreateNoun(Parent().CommonName());
-            yield return BestiaryFactFragment.CreateVerb("Produces");
-            if(kHasValue)
-            {
-                yield return BestiaryFactFragment.CreateAmount(Amount());
-            }
-            yield return BestiaryFactFragment.CreateNoun(Services.Assets.WaterProp.Property(Target()).LabelId());
-            if(bHasValue)
-            {
-                yield return BestiaryFactFragment.CreateWord(BestiaryFactFragmentType.Conjunction, "When");
-                yield return BestiaryFactFragment.CreateNoun("Stressed");
-            }
+            yield return BestiaryFactFragment.CreateLocNoun(Parent().CommonName());
+            yield return BestiaryFactFragment.CreateLocVerb(Verb());
+            yield return BestiaryFactFragment.CreateAmount(Property(m_Property).FormatValue(m_Amount));
+            yield return BestiaryFactFragment.CreateLocNoun(Property(m_Property).LabelId());
+            yield return BestiaryFactFragment.CreateLocAdjective("words.perTick");
         }
 
-        public override string GenerateSentence(PlayerFactParams inParams = null)
+        public override string GenerateSentence()
         {
-            // TODO: localization!!!
-            bool bHasValue = inParams != null && inParams.Has(PlayerFactFlags.Stressed);
-
-            bool kHasValue = inParams != null && inParams.Has(PlayerFactFlags.KnowValue);
-
-            using(var psb = PooledStringBuilder.Create())
-            {
-                // TODO: Variants
-
-                psb.Builder.Append(Services.Loc.Localize(Parent().CommonName()))
-                    .Append(" produces ");
-                if(kHasValue)
-                {
-                    psb.Builder.Append(" " + Amount() + " ");
-                }
-                psb.Builder.Append(FormatValue(Target(), m_Amount)).Append(' ');
-                psb.Builder.Append(" per tick");
-                if(bHasValue)
-                {
-                    psb.Builder.Append("when stressed");
-                }
-
-                return psb.Builder.Flush();
-            }
+            return Loc.Format(SentenceFormat(), Parent().CommonName(), Property(m_Property).FormatValue(m_Amount), Property(m_Property).LabelId());
         }
 
-        protected override int GetSortingOrder()
+        internal override int GetSortingOrder()
         {
             return 11;
         }

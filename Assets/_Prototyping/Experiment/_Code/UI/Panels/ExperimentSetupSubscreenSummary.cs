@@ -69,35 +69,20 @@ namespace ProtoAqua.Experiment
             m_RangeFactButton.gameObject.SetActive(false);
             var form_text = "";
             BestiaryDesc critter = Services.Assets.Bestiary.Get(resData.Setup.Critter);
-            var consume = BestiaryUtils.FindConsumeRule(critter, resData.Setup.PropertyId);
-            var produce = BestiaryUtils.FindProduceRule(critter, resData.Setup.PropertyId);
             var state = critter.GetStateForEnvironment(resData.Setup.Values);
+            var consume = BestiaryUtils.FindConsumeRule(critter, resData.Setup.PropertyId, state);
+            var produce = BestiaryUtils.FindProduceRule(critter, resData.Setup.PropertyId, state);
             if(produce != null)
             {
                 if(Services.Data.Profile.Bestiary.RegisterFact(produce.Id())) 
                 {
-                    var fact = Services.Data.Profile.Bestiary.GetFact(produce.Id());
-                    fact.Add(PlayerFactFlags.KnowValue);
-                    if(state == ActorStateId.Stressed)
-                    {
-                        
-                        fact.Add(PlayerFactFlags.Stressed);
-                    }
-                    m_BehaviorDisplayPool.Alloc().Populate(produce, fact);
+                    m_BehaviorDisplayPool.Alloc().Populate(produce);
                 }
             }
             if(consume != null){
                 if(Services.Data.Profile.Bestiary.RegisterFact(consume.Id())) 
                 {
-                    var fact = Services.Data.Profile.Bestiary.GetFact(consume.Id());
-                    fact.Add(PlayerFactFlags.KnowValue);
-                    if(state == ActorStateId.Stressed)
-                    {
-                        
-                        fact.Add(PlayerFactFlags.Stressed);
-                        
-                    }
-                    m_BehaviorDisplayPool.Alloc().Populate(consume, fact);
+                    m_BehaviorDisplayPool.Alloc().Populate(consume);
                 }
             }
 
@@ -135,15 +120,7 @@ namespace ProtoAqua.Experiment
 
 
         private ActorStateId GetActorState(BestiaryDesc critter, WaterPropertyBlockF32 waterBlock) {
-            var allProperties = Services.Assets.WaterProp.Sorted();
-            var state = ActorStateId.Alive;
-            foreach(var prop in allProperties) {
-                if(!prop.HasFlags(WaterPropertyFlags.IsMeasureable)) continue;
-                var propState = BestiaryUtils.FindStateTransitions(
-                    critter, prop.Index()).Evaluate(waterBlock[prop.Index()]);
-                if(propState != ActorStateId.Alive) return propState;
-            }
-            return state;
+            return critter.GetStateForEnvironment(waterBlock);
         }
 
         private string GetState(ActorStateId id) {
@@ -162,8 +139,8 @@ namespace ProtoAqua.Experiment
         private void PopulateFoundational(ExperimentResultData inResultData) {
             foreach(var behaviorId in inResultData.ObservedBehaviorIds)
             {
-                var behavior = Services.Assets.Bestiary.Fact(behaviorId);
-                m_BehaviorDisplayPool.Alloc().Populate(behavior, null);
+                var behavior = Services.Assets.Bestiary.Fact<BFBehavior>(behaviorId);
+                m_BehaviorDisplayPool.Alloc().Populate(behavior);
             }
             m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
             m_SummaryText.SetText(Services.Loc.Localize("experiment.summary.countableSummary"));
@@ -173,14 +150,14 @@ namespace ProtoAqua.Experiment
         private void PopulateStressor(ExperimentResultData resData) {
 
             BestiaryDesc actor = GetSingleCritter(resData);
-            BFStateRange state = null;
+            BFState state = null;
             if(actor == null) throw new NullReferenceException("No actors");
             foreach(var fact in actor.Facts) {
-                if(fact.GetType().Equals(typeof(BFStateRange))) {
-                    state = (BFStateRange)fact;
+                if(fact.GetType().Equals(typeof(BFState))) {
+                    state = (BFState)fact;
                     if(state.PropertyId() == resData.Setup.PropertyId){
                         m_Button = m_RangeFactButton.GetComponent<BestiaryRangeFactButton>();
-                        m_Button.Initialize(state, null, false, false, null);
+                        m_Button.Initialize(state, false, false, null);
                         m_Button.gameObject.SetActive(true);
                     }
                     else { state = null; }

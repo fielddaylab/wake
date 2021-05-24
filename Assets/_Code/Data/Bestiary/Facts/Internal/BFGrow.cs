@@ -22,25 +22,19 @@ namespace Aqua
         public uint Amount() { return m_Amount; }
         public uint ScarcityLevel() { return m_ScarcityLevel; }
 
-        public override void Accept(IFactVisitor inVisitor, PlayerFactParams inParams = null)
+        public override void Accept(IFactVisitor inVisitor)
         {
-            inVisitor.Visit(this, inParams);
+            inVisitor.Visit(this);
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments(PlayerFactParams inParams = null)
+        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
         {
             throw new NotImplementedException();
         }
 
-        public override string GenerateSentence(PlayerFactParams inParams = null)
+        public override string GenerateSentence()
         {
             throw new NotImplementedException();
-        }
-
-        public override bool HasSameSlot(BFBehavior inBehavior)
-        {
-            BFGrow grow = inBehavior as BFGrow;
-            return grow != null;
         }
 
         public override BFMode Mode()

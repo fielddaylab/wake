@@ -99,12 +99,13 @@ namespace ProtoAqua.Argumentation
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
         }
 
-        private void OnFactSelected(PlayerFactParams inFact)
+        private void OnFactSelected(StringHash32 inId)
         {
-            Link link = m_Graph.FindLink(inFact.FactId);
+            Link link = m_Graph.FindLink(inId);
             if (link == null)
             {
-                link = new Link(inFact);
+                BFBase fact = Services.Assets.Bestiary.Fact(inId);
+                link = new Link(fact);
             }
 
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);

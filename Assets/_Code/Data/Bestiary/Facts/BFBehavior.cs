@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using BeauPools;
-using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
@@ -10,34 +8,37 @@ namespace Aqua
         #region Inspector
 
         [Header("Behavior")]
-        [SerializeField] private string m_Verb = null;
         [SerializeField] private bool m_Stressed = false;
+
+        [Header("Text")]
+        [SerializeField] private TextId m_VerbOverride = null;
+        [SerializeField] private TextId m_SentenceOverride = null;
+        [SerializeField] private TextId m_FragmentsOverride = null;
 
         #endregion // Inspector
 
-        public string Verb() { return m_Verb; }
         public bool OnlyWhenStressed() { return m_Stressed; }
-        
-        public bool CheckOverride(BFBehavior inBehavior, out BFBehavior outOverridden)
-        {
-            if (m_Stressed == inBehavior.m_Stressed || !HasSameSlot(inBehavior))
-            {
-                outOverridden = null;
-                return false;
-            }
 
-            outOverridden = m_Stressed ? this : inBehavior;
-            return true;
-        }
+        #region Text
 
-        public virtual bool HasSameSlot(BFBehavior inBehavior)
-        {
-            return GetType() == inBehavior.GetType();
-        }
+        public TextId Verb() { return !m_VerbOverride.IsEmpty ? m_VerbOverride : DefaultVerb(); }
+        protected TextId SentenceFormat() { return !m_SentenceOverride.IsEmpty ? m_SentenceOverride : DefaultSentence(); }
+        protected TextId FragmentFormat() { return !m_FragmentsOverride.IsEmpty ? m_FragmentsOverride : DefaultSentence(); }
 
-        protected string FormatValue(WaterPropertyId inId, float inValue)
+        protected virtual TextId DefaultVerb() { return null; }
+        protected virtual TextId DefaultSentence() { return null; }
+        protected virtual TextId DefaultFragments() { return null; }
+
+        #endregion // Text
+
+        public abstract IEnumerable<BestiaryFactFragment> GenerateFragments();
+
+        public override int CompareTo(BFBase other)
         {
-            return Services.Assets.WaterProp.Property(inId)?.FormatValue(inValue);
+            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
+            if (sort == 0)
+                sort = Id().CompareTo(other.Id());
+            return sort;
         }
     }
 }

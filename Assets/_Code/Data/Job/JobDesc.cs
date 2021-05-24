@@ -124,7 +124,7 @@ namespace Aqua
                     return m_OptimizedTaskList[i];
             }
 
-            Assert.True(false, "[JobDesc] No task with id '{0}' on job '{1}'", inId.ToDebugString(), Id().ToDebugString());
+            Assert.True(false, "[JobDesc] No task with id '{0}' on job '{1}'", inId, Id());
             return null;
         }
 

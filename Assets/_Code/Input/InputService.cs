@@ -1,6 +1,7 @@
 using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
+using BeauUtil.Debugger;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -129,7 +130,7 @@ namespace Aqua
             }
             else
             {
-                Debug.LogErrorFormat("[InputService] Attempting to pop priority with nothing on stack.");
+                Log.Error("[InputService] Attempting to pop priority with nothing on stack.");
                 m_CurrentPriority = DefaultPriority;
             }
         }
@@ -178,7 +179,7 @@ namespace Aqua
             }
             else
             {
-                Debug.LogErrorFormat("[InputService] Attempting to pop flags with nothing on stack.");
+                Log.Error("[InputService] Attempting to pop flags with nothing on stack.");
                 m_CurrentFlags = InputLayerFlags.Default;
             }
         }
@@ -237,7 +238,7 @@ namespace Aqua
         {
             if (m_PauseAllCounter == 0)
             {
-                Debug.LogErrorFormat("[InputService] Pause/Resume calls are mismatched");
+                Log.Error("[InputService] Pause/Resume calls are mismatched");
                 return;
             }
 

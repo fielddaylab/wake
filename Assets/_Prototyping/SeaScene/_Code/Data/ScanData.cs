@@ -73,7 +73,7 @@ namespace ProtoAqua.Observation
                 VariantModification modification;
                 if (!VariantModification.TryParse(s, out modification))
                 {
-                    Debug.LogErrorFormat("[ScanData] Unable to parse variable modification from '{0}'", s);
+                    Log.Error("[ScanData] Unable to parse variable modification from '{0}'", s);
                 }
                 return modification;
             });
@@ -82,7 +82,7 @@ namespace ProtoAqua.Observation
         void IValidatable.Validate()
         {
             Assert.True(m_BestiaryId.IsEmpty || Services.Assets.Bestiary.HasId(m_BestiaryId),
-                "Scan '{0}' was linked to invalid bestiary entry '{1}'", m_Id.ToDebugString(), m_BestiaryId.ToDebugString());
+                "Scan '{0}' was linked to invalid bestiary entry '{1}'", m_Id, m_BestiaryId);
         }
 
         #endregion // Scan

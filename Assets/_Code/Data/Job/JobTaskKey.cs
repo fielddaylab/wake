@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Aqua
 {
     [DebuggerDisplay("{ToDebugString()}")]
-    public struct JobTaskKey : IEquatable<JobTaskKey>, ISerializedObject
+    public struct JobTaskKey : IEquatable<JobTaskKey>, ISerializedObject, IDebugString
     {
         public StringHash32 JobId;
         public StringHash32 TaskId;

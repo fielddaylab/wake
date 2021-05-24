@@ -44,28 +44,11 @@ namespace ProtoAqua.Modeling
             {
                 DiscoverCritter(critter);
                 foreach(var fact in critter.Facts)
-                    DiscoverFact(fact, null);
+                    DiscoverFact(fact);
             }
 
             foreach(var fact in inEnvironment.Facts)
-                DiscoverFact(fact, null);
-
-            for(int i = 0; i < m_Profiles.Count; i++)
-                m_Profiles[i].PostProcess(this);
-        }
-
-        public void Construct(BestiaryDesc inEnvironment, IEnumerable<BestiaryDesc> inCritters, IEnumerable<PlayerFactParams> inFacts)
-        {
-            LimitedClear();
-
-            foreach(var critter in inCritters)
-                DiscoverCritter(critter);
-
-            foreach(var factParams in inFacts)
-                DiscoverFact(factParams.Fact, factParams);
-
-            foreach(var fact in inEnvironment.Facts)
-                DiscoverFact(fact, null);
+                DiscoverFact(fact);
 
             for(int i = 0; i < m_Profiles.Count; i++)
                 m_Profiles[i].PostProcess(this);
@@ -79,10 +62,10 @@ namespace ProtoAqua.Modeling
                 DiscoverCritter(critter);
 
             foreach(var fact in inFacts)
-                DiscoverFact(fact, null);
+                DiscoverFact(fact);
 
             foreach(var fact in inEnvironment.Facts)
-                DiscoverFact(fact, null);
+                DiscoverFact(fact);
 
             for(int i = 0; i < m_Profiles.Count; i++)
                 m_Profiles[i].PostProcess(this);
@@ -104,7 +87,7 @@ namespace ProtoAqua.Modeling
             CritterProfile profile;
             if (!m_Profiles.TryBinarySearch(inCritter.Id(), out profile))
             {
-                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Creating new profile for '{0}'", inCritter.Id().ToDebugString());
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Creating new profile for '{0}'", inCritter.Id());
                 profile = new CritterProfile(inCritter);
                 m_Profiles.PushBack(profile);
                 m_Profiles.SortByKey<StringHash32, CritterProfile>();
@@ -140,19 +123,19 @@ namespace ProtoAqua.Modeling
         {
             if (m_DiscoveredCritters.Add(inCritter))
             {
-                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing critter '{0}'", inCritter.Id().ToDebugString());
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing critter '{0}'", inCritter.Id());
                 foreach(var internalFact in inCritter.InternalFacts)
-                    DiscoverFact(internalFact, null);
+                    DiscoverFact(internalFact);
             }
         }
 
-        private void DiscoverFact(BFBase inFact, PlayerFactParams inParams)
+        private void DiscoverFact(BFBase inFact)
         {
             DiscoverCritter(inFact.Parent());
             if (m_DiscoveredFacts.Add(inFact))
             {
-                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing fact '{0}'", inFact.Id().ToDebugString());
-                inFact.Accept(this, inParams);
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing fact '{0}'", inFact.Id());
+                inFact.Accept(this);
             }
         }
 
@@ -160,60 +143,60 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBase inFact)
         {
             // Default
         }
 
-        void IFactVisitor.Visit(BFBody inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFBody inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFWaterProperty inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFWaterProperty inFact)
         {
             m_InitialState.Environment[inFact.PropertyId()] = inFact.Value();
         }
 
-        void IFactVisitor.Visit(BFEat inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFEat inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
             DiscoverCritter(inFact.Target());
         }
 
-        void IFactVisitor.Visit(BFGrow inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFGrow inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFReproduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFReproduce inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFProduce inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFProduce inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFConsume inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFConsume inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFStateStarvation inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFState inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFStateRange inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFDeath inFact)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
         }
 
-        void IFactVisitor.Visit(BFStateAge inFact, PlayerFactParams inParams)
+        void IFactVisitor.Visit(BFModel inModel)
         {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()), inParams);
+            // nothing...
         }
 
         #endregion // IFactVisitor

@@ -92,7 +92,7 @@ namespace Aqua
 
         public void LockPosition(StringHash32 inHash, Vector2 inScreenPosition)
         {
-            Assert.True(m_PosLock.IsEmpty || m_PosLock == inHash, "Current position lock is {0}, attempting to lock with mismatched key {1}", m_PosLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(m_PosLock.IsEmpty || m_PosLock == inHash, "Current position lock is {0}, attempting to lock with mismatched key {1}", m_PosLock, inHash);
             m_PosLock = inHash;
             inScreenPosition.x = (float) Math.Round(inScreenPosition.x);
             inScreenPosition.y = (float) Math.Round(inScreenPosition.y);
@@ -101,7 +101,7 @@ namespace Aqua
 
         public void ReleasePosition(StringHash32 inHash)
         {
-            Assert.True(inHash == m_PosLock, "Current position lock is {0}, attempting to unlock with mismatched key {1}", m_PosLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(inHash == m_PosLock, "Current position lock is {0}, attempting to unlock with mismatched key {1}", m_PosLock, inHash);
             m_PosLock = StringHash32.Null;
         }
     
@@ -111,14 +111,14 @@ namespace Aqua
 
         public void LockSprite(StringHash32 inHash, Sprite inSprite)
         {
-            Assert.True(m_SpriteLock.IsEmpty || m_SpriteLock == inHash, "Current sprite lock is {0}, attempting to lock with mismatched key {1}", m_SpriteLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(m_SpriteLock.IsEmpty || m_SpriteLock == inHash, "Current sprite lock is {0}, attempting to lock with mismatched key {1}", m_SpriteLock, inHash);
             m_SpriteLock = inHash;
             m_SpriteLockSprite = inSprite;
         }
 
         public void ReleaseSprite(StringHash32 inHash)
         {
-            Assert.True(inHash == m_SpriteLock, "Current sprite lock is {0}, attempting to unlock with mismatched key {1}", m_SpriteLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(inHash == m_SpriteLock, "Current sprite lock is {0}, attempting to unlock with mismatched key {1}", m_SpriteLock, inHash);
             m_SpriteLock = StringHash32.Null;
             m_SpriteLockSprite = null;
         }
@@ -129,14 +129,14 @@ namespace Aqua
 
         public void LockRotation(StringHash32 inHash, float inRotation)
         {
-            Assert.True(m_RotationLock.IsEmpty || m_RotationLock == inHash, "Current rotation lock is {0}, attempting to lock with mismatched key {1}", m_RotationLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(m_RotationLock.IsEmpty || m_RotationLock == inHash, "Current rotation lock is {0}, attempting to lock with mismatched key {1}", m_RotationLock, inHash);
             m_RotationLock = inHash;
             m_Transform.localEulerAngles = new Vector3(0, 0, inRotation);
         }
 
         public void ReleaseRotation(StringHash32 inHash)
         {
-            Assert.True(inHash == m_RotationLock, "Current rotation lock is {0}, attempting to unlock with mismatched key {1}", m_RotationLock.ToDebugString(), inHash.ToDebugString());
+            Assert.True(inHash == m_RotationLock, "Current rotation lock is {0}, attempting to unlock with mismatched key {1}", m_RotationLock, inHash);
             m_RotationLock = StringHash32.Null;
             m_Transform.localEulerAngles = default(Vector3);
         }

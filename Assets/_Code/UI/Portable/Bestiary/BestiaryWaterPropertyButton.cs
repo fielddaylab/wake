@@ -23,10 +23,10 @@ namespace Aqua.Portable
 
         #endregion // Inspector
 
-        private PlayerFactParams m_Params;
-        private Action<PlayerFactParams> m_Callback;
+        private BFBase m_Fact;
+        private Action<BFBase> m_Callback;
 
-        public void Initialize(BFWaterProperty inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
+        public void Initialize(BFWaterProperty inFact, bool inbButtonMode, bool inbInteractable, Action<BFBase> inCallback)
         {
             var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
 
@@ -42,16 +42,16 @@ namespace Aqua.Portable
             m_Button.interactable = inbInteractable;
             m_ButtonTail.gameObject.SetActive(inbButtonMode);
 
-            m_Params = inParams ?? new PlayerFactParams(inFact.Id());
+            m_Fact = inFact;
             m_Callback = inCallback;
         }
 
         private void OnClick()
         {
             Assert.NotNull(m_Callback);
-            Assert.NotNull(m_Params);
+            Assert.NotNull(m_Fact);
 
-            m_Callback(m_Params);
+            m_Callback(m_Fact);
         }
 
         private void Awake()
@@ -65,8 +65,7 @@ namespace Aqua.Portable
 
         void IPoolAllocHandler.OnFree()
         {
-            
-            m_Params = null;
+            m_Fact = null;
             m_Callback = null;
         }
     }

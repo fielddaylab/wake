@@ -17,14 +17,15 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_Button = null;
         [SerializeField, Required] private RectTransform m_ButtonTail = null;
         [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private RangeDisplay m_Range = null;
+        [SerializeField, Required] private RangeDisplay m_StressRange = null;
+        [SerializeField, Required] private RangeDisplay m_AliveRange = null;
 
         #endregion // Inspector
 
-        private PlayerFactParams m_Params;
-        private Action<PlayerFactParams> m_Callback;
+        private BFBase m_Fact;
+        private Action<BFBase> m_Callback;
 
-        public void Initialize(BFStateRange inFact, PlayerFactParams inParams, bool inbButtonMode, bool inbInteractable, Action<PlayerFactParams> inCallback)
+        public void Initialize(BFState inFact, bool inbButtonMode, bool inbInteractable, Action<BFBase> inCallback)
         {
             var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
 
@@ -35,22 +36,25 @@ namespace Aqua.Portable
             m_Icon.sprite = spr;
             m_Icon.gameObject.SetActive(spr);
 
-            m_Range.Display(inFact.MinSafe(), inFact.MaxSafe(), propData.MinValue(), propData.MaxValue());
+            ActorStateTransitionRange range = inFact.Range();
+
+            m_StressRange.Display(range.StressedMin, range.StressedMax, propData.MinValue(), propData.MaxValue());
+            m_AliveRange.Display(range.AliveMin, range.AliveMax, propData.MinValue(), propData.MaxValue());
 
             m_Button.targetGraphic.raycastTarget = inbButtonMode;
             m_Button.interactable = inbInteractable;
             m_ButtonTail.gameObject.SetActive(inbButtonMode);
 
-            m_Params = inParams ?? new PlayerFactParams(inFact.Id());
+            m_Fact = inFact;
             m_Callback = inCallback;
         }
 
         private void OnClick()
         {
             Assert.NotNull(m_Callback);
-            Assert.NotNull(m_Params);
+            Assert.NotNull(m_Fact);
 
-            m_Callback(m_Params);
+            m_Callback(m_Fact);
         }
 
         private void Awake()
@@ -65,7 +69,7 @@ namespace Aqua.Portable
         void IPoolAllocHandler.OnFree()
         {
             
-            m_Params = null;
+            m_Fact = null;
             m_Callback = null;
         }
     }

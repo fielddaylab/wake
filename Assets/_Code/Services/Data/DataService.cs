@@ -291,7 +291,7 @@ namespace Aqua
         {
             if (m_CurrentSaveData == null)
             {
-                Debug.LogErrorFormat("[DataService] No data to save!");
+                Log.Error("[DataService] No data to save!");
                 return null;
             }
 
@@ -306,11 +306,11 @@ namespace Aqua
                 if (inbForce)
                 {
                     m_SaveRoutine.Stop();
-                    Debug.LogWarningFormat("[DataService] Interrupting in-progress save");
+                    Log.Warn("[DataService] Interrupting in-progress save");
                 }
                 else
                 {
-                    Debug.LogErrorFormat("[DataService] Save is already in progress");
+                    Log.Error("[DataService] Save is already in progress");
                     return m_SaveRoutine.Wait();
                 }
             }
@@ -366,7 +366,7 @@ namespace Aqua
         {
             PlayerPrefs.DeleteKey(GetPrefsKeyForCode(inUserCode));
             PlayerPrefs.Save();
-            Debug.LogWarningFormat("[DataService] Local save data for user id '{0}' has been cleared", inUserCode);
+            Log.Warn("[DataService] Local save data for user id '{0}' has been cleared", inUserCode);
         }
 
         public bool AutosaveEnabled()
@@ -720,7 +720,7 @@ namespace Aqua
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
-            Debug.LogWarningFormat("[DataService] All local save data has been cleared");
+            Log.Warn("[DataService] All local save data has been cleared");
         }
 
         #endregion // IDebuggable
