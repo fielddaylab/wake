@@ -11,6 +11,30 @@ $set    player:seen.drJules = true
 {@drJules}  When you are done, come back to the office and tell me what you've learned.
 {@player} Taking out a sub?!? I'm on it!
 
+:: helpGoOutsideToSubShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !jobs:kelp-welcome.got.scans
+@cutscene
+$if global:nav.shipRoom != "exterior"
+	{@player}   Where should I go from here?
+	{@kevin}	Let's exit the ship and head to the sub.
+$else
+	{@player}   I made it outside, where is the sub?
+	{@kevin}	The sub should be at the back of the ship, let's see what we can find out there!
+$endif
+
+:: helpGoOutsideToSubExperimentPrototype
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentPrototype", !jobs:kelp-welcome.got.scans
+@cutscene
+$if global:nav.shipRoom != "exterior"
+	{@player}   Where should I go from here?
+	{@kevin}	Let's exit the ship and head to the sub.
+$else
+	{@player}   I made it outside, where is the sub?
+	{@kevin}	The sub should be at the back of the ship, let's see what we can find out there!
+$endif
+
 :: navigation
 @trigger    SceneStart
 @when       scene:name == "Station1"
@@ -20,6 +44,16 @@ $set    player:seen.kevin = true
 {@kevin} You're gonna want to take your sub over to Dive Site C.
                     It's marked for you to the east. When you're there, dive.
 
+//player does not have anything from site C yet, tell them to go there
+:: helpGoToSiteC 
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station1", !has.entity:WarmKelpForest, !has.entity:Urchin, !has.entity:GiantKelp, !has.entity:SeaOtter 
+@boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Site C should be to the east of the ship.
+{@kevin}	Let's head over there and dive down. 
+
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
@@ -27,6 +61,22 @@ $set    player:seen.kevin = true
 @cutscene
 $set    jobs:kelp-welcome.seen.bottom = true
 {@kevin}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+
+:: helpAtSiteC
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1C"
+@cutscene
+{@player} 	What should I do now?
+$if 		has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.entity:SeaOtter 
+	{@kevin}	It looks like that's everything we need from here. Let's head back up and return to the ship.
+$else
+	{@kevin}	I think there more things for us to find here. 
+	$if !has.entity:WarmKelpForest
+        {@kevin}   Have you tried scanning the research probe yet?
+    $else
+        {@kevin}   Lets's look around for some new creatures. 
+    $endif
+$endif
 
 :: navigation.goBackUp
 @trigger    JobTaskUpdated
@@ -54,6 +104,18 @@ $else
     $else
         {@kevin}   Are you sure you didn't miss any creatures down there?
     $endif
+$endif
+
+:: helpReturnToShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station1" 
+@boostScore 1
+@cutscene
+{@player} 	Where should we head next?
+$if 		has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.entity:SeaOtter 
+	{@kevin}	Let's head west and return to the ship.
+$else
+	{@kevin}	I think there are more things for us to find at Site C. Let's head back there 
 $endif
 
 :: navigation.return.again
@@ -87,6 +149,13 @@ $endif
 {@player}   Ok, how?
 {@kevin}   Let's go into the experiement room.
 
+:: helpGoToExperimentRoom
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", jobs:kelp-welcome.got.scans, !has.fact:Urchin.Eats.GiantKelp, !has.fact:SeaOtter.Eats.Urchin
+@cutscene
+{@player} 	What should I do now?
+{@kevin}	We scanned everything we needed, so let's head to the Experiment Room.
+
 :: firstExperiment
 @trigger    SceneStart
 @when       scene:name == "ExperimentPrototype", jobs:kelp-welcome.got.scans
@@ -96,3 +165,24 @@ $endif
 {@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviours.
 {@player}   Then what?
 {@kevin}   Then we can know for sure how they relate!
+
+:: helpFirstExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentPrototype", jobs:kelp-welcome.got.scans, !has.fact:Urchin.Eats.GiantKelp, !has.fact:SeaOtter.Eats.Urchin
+@boostScore -500
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	First select an observation tank, and fill it with the water from Site C.
+{@kevin}	Then add 2 or more species, and see what behaviors you can observe!
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		has.fact:Urchin.Eats.GiantKelp, has.fact:SeaOtter.Eats.Urchin
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin}	Now that we've finished the experiment, let's report back to Dr. Jules.
+$if global:nav.shipRoom != "office"
+	{@kevin}	We should first head to the office.
+$else
+	{@kevin}	You can report your findings using the comms in front of you.
+$endif
