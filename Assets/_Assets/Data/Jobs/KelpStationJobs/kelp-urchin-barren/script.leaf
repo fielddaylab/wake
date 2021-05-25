@@ -73,6 +73,7 @@ $else
 	{@kevin}	Now it's time to make a model! Head over to the Modeling Whiteboard.
 $endif
 
+
 :: ModelingSetup
 @trigger	UniversalModelStarted
 @once
@@ -129,13 +130,13 @@ $endif
 {@kevin}	Hit the "Save Predition" button to move on.
 
 
-
 :: ModelingGraphComplete
 @trigger	ModelCompleted
 @once
 @cutscene
 $set jobs:kelp-urchin-barren.doneModeling = true
 {@kevin} Ok. We have our answer. It's not looking good. Let's go to the office and report back to Dr. Jules
+
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
