@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Diagnostics;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;

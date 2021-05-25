@@ -156,6 +156,7 @@ namespace ProtoAqua.Experiment
             if (active != null)
             {
                 m_CachedData.EcosystemId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
+                m_CachedData.Values = BestiaryUtils.GenerateInitialState(Services.Assets.Bestiary.Get(m_CachedData.EcosystemId));
             }
             else
             {
