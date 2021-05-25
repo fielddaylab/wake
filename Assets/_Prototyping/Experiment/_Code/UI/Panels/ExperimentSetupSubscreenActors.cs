@@ -47,12 +47,17 @@ namespace ProtoAqua.Experiment
             Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             buttonDict = new Dictionary<StringHash32, ActorButton>();
 
+            string toggleLog = "";
+
             m_CachedButtons = m_ButtonRoot.GetComponentsInChildren<ActorToggleButton>();
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
                 ActorToggleButton button = m_CachedButtons[i];
                 button.Toggle.onValueChanged.AddListener((b) => UpdateFromButton(button.Id.AsStringHash(), b));
+                toggleLog += button.Toggle.IsActive();
             }
+
+            Debug.Log("actor screen is " + toggleLog);
 
 
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
