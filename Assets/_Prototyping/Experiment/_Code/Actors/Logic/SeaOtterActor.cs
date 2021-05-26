@@ -20,10 +20,12 @@ namespace ProtoAqua.Experiment
         [SerializeField, Required] private ActorSense m_FoodSense = null;
         [SerializeField, Required] private ParticleSystem m_EatParticles = null;
         [SerializeField, Required] private Transform Front = null;
+        [SerializeField, Required] private SpriteRenderer spriteRenderer;
 
         #endregion // Inspector
 
         [NonSerialized] private Routine m_Anim;
+        [NonSerialized] private ActorStateId m_stressSate; //tracks if this critter is currently stressed or not
 
         #region Events
 
@@ -46,6 +48,7 @@ namespace ProtoAqua.Experiment
         {
             if (!m_Anim)
             {
+                m_stressSate = Actor.getActorStressState();
                 m_Anim.Replace(this, Animation());
             }
         }
@@ -54,28 +57,35 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator Animation()
         {
-            int swims = GetIdleSwimCount();
-            while(true)
+            if (m_stressSate == ActorStateId.Alive)
             {
-                while(swims-- > 0)
+                int swims = GetIdleSwimCount();
+                while (true)
                 {
-                    Vector3 NextPosition = Actor.Nav.Helper.GetRandomSwimTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius);
-                    RotateActor(NextPosition);
+                    while (swims-- > 0)
+                    {
+                        Vector3 NextPosition = Actor.Nav.Helper.GetRandomSwimTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius);
+                        RotateActor(NextPosition);
 
-                    yield return Actor.Nav.SwimTo(NextPosition);
-                    yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
-                }
+                        yield return Actor.Nav.SwimTo(NextPosition);
+                        yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
+                    }
 
-                IFoodSource nearestFood = GetNearestFoodSource();
-                if (nearestFood == null)
-                {
-                    swims = 1;
+                    IFoodSource nearestFood = GetNearestFoodSource();
+                    if (nearestFood == null)
+                    {
+                        swims = 1;
+                    }
+                    else
+                    {
+                        yield return EatAnimation(nearestFood);
+                        swims = GetIdleSwimCount();
+                    }
                 }
-                else
-                {
-                    yield return EatAnimation(nearestFood);
-                    swims = GetIdleSwimCount();
-                }
+            }   
+            else if (m_stressSate == ActorStateId.Stressed)
+            {
+
             }
         }
 

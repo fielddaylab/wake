@@ -3,6 +3,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
+$set jobs:kelp-urchin-barren.doneModeling = false
 {@drJules} This next Job is going to be a little different.
 {@player} How is that?
 {@drJules} First, you are going to help us study Site B, which is not doing very well.
@@ -24,6 +25,55 @@
 // @cutscene
 // {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
 
+:: helpGoOutside
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !has.entity:UrchinBarren
+@cutscene
+{@player}   Any idea where I should go next?
+{@kevin}	First let's exit the ship and head over to Site B.
+
+:: helpGoToSiteB
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station1", !has.entity:UrchinBarren
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Site B should be southwest of the ship.
+{@kevin}	Let's head over there and dive down.
+
+:: helpAtSiteB
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1B"
+@cutscene
+$if !has.entity:UrchinBarren
+	{@player} 	I made it to Site B, what should I do now?
+	{@kevin}	Let's start by scanning the data from the research probe. 
+$else
+	{@player} 	Probe scan complete, what's next?
+	{@kevin}	We've seen what it's like here at Site B, so now we need to head back to the ship and make a model.
+	{@kevin}	Head back up to the surface when you're done looking around.
+$endif
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station1", has.entity:UrchinBarren
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We need to head back to the ship to make a model of what we've found. 
+{@kevin}	The ship should be to the northeast of Site B.
+
+:: helpGoToModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", has.entity:UrchinBarren, jobs:kelp-urchin-barren.doneModeling == false
+@cutscene
+$if global:nav.shipRoom != "modeling"
+	{@player} 	I'm back on the ship, what should I do next?
+	{@kevin}	Let's first head to the Modeling Room.
+$else
+	{@player} 	Made it to the modeling room, what do we do from here?
+	{@kevin}	Now it's time to make a model! Head over to the Modeling Whiteboard.
+$endif
+
+
 :: ModelingSetup
 @trigger	UniversalModelStarted
 @once
@@ -33,6 +83,16 @@
 {@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
 {@kevin} You can do this by using the "Import Rule" button and selcting behaviors from your bestiary.
 {@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
+
+::ModelHelp1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	The first step to making this model is to lay out all the information we know about how kelp, urchins, and otters interact.
+{@kevin}	Use the "Import Rule" button to add the behavious we've noticed so far. 
+{@kevin}	Once you've added everything, press the "Simulate" button
+
 
 :: GetSync
 @trigger	ModelGraphStarted
@@ -45,6 +105,14 @@
 {@kevin} If the model syncs with how the populations changed until now, it's likely it can help us figure out what's going to happen next! 
 {@kevin} If you can't get it to sync, you must be missing some detail in the model.
 
+::ModelHelp2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
+{@kevin}	Once everything lines up, press the "Sync" button to continue.
+
 
 :: ModelSynced
 @trigger	ModelSyncedImmediate
@@ -53,8 +121,32 @@
 {@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. 
 {@kevin} Now let's see what it predicts will happen next. Hit the Sync button.
 
+::ModelHelp3
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	The graph now shows a predition of what the populations should be in the future.
+{@kevin}	Hit the "Save Predition" button to move on.
+
+
 :: ModelingGraphComplete
 @trigger	ModelCompleted
 @once
 @cutscene
+$set jobs:kelp-urchin-barren.doneModeling = true
 {@kevin} Ok. We have our answer. It's not looking good. Let's go to the office and report back to Dr. Jules
+
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		jobs:kelp-urchin-barren.doneModeling == true
+@cutscene
+$if global:nav.shipRoom != "office"
+	{@player} 	What should we do now?
+	{@kevin}	We've completed the modeling, so let's report back to Dr. Jules.
+	{@kevin}	We should first head back to the office.
+$else
+	{@player} 	I made it back to the office, what should we do from here?
+	{@kevin}	Just like last time, you can report your findings to Dr. Jules using the comms.
+$endif

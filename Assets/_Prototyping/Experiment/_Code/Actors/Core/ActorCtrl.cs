@@ -42,6 +42,8 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private uint m_LastTimeTick;
         [NonSerialized] private uint m_NextThinkTick;
 
+        [NonSerialized] private ActorStateId m_actorStressState = ActorStateId.Alive; //tracks if this actor is currently stressed or not
+
         public StringHash32 Id { get { return m_Id; } }
         public BestiaryDesc Bestiary { get { return m_Config.BestiaryEntry(); } }
         public ActorConfig Config { get { return m_Config; } }
@@ -61,6 +63,16 @@ namespace ProtoAqua.Experiment
 
                 return m_TemporaryStorage.Object;
             }
+        }
+
+        public void UpdateStressState(WaterPropertyBlockF32 waterState)
+        {
+            m_actorStressState = Bestiary.GetStateForEnvironment(waterState);
+        }
+
+        public ActorStateId getActorStressState()
+        {
+            return m_actorStressState;
         }
 
         public void Tick(uint inCurrentTime, uint inCurrentThink)
