@@ -1,0 +1,42 @@
+# rootNodeId node.intro
+# endNodeId node.CoralClearSarg.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+
+// First Question
+
+:: node.intro
+@linkToNode Urchin, node.UrchinsPresented
+@invalidNodeId node.invalid.DoesNotEatSarg
+Is there an organism that can clear the Sargassum?
+
+:: node.invalid.DoesNotEatSarg
+@nextNodeId  node.intro
+Hmm. That doesn't eat Sargassum, does it? 
+
+
+// Second Question
+
+:: node.UrchinsPresented
+@linkToNode Urchin.Eats.SargassumCoveredReef, node.CoralClearSarg.end
+@invalidNodeId  node.invalid.UnrelatedEvidence
+Urchins?! No way! Did you see this happen?!
+
+:: node.invalid.UnrelatedEvidence
+@nextNodeId node.NoDataPresentedYet
+How does that help the Sargassum situation?
+
+:: node.AskAboutUrchinsAgain
+@linkToNode Urchin.Eats.SargassumCoveredReef, node.CoralClearSarg.end
+@invalidNodeId  node.invalid.UnrelatedEvidence
+How would the Urchins help clear the Sargassum?
+
+:: node.CoralClearSarg.end
+Perfect! I wonder if they can actually live here... I've heard they destroy the Kelp Forests...
+
+
+// Invalid 
+
+:: node.invalid.default
+[If this text is shown, something has gone very, very wrong]

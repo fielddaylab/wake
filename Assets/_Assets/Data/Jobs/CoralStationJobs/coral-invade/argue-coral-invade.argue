@@ -55,6 +55,12 @@ The sargassum is blocking the light
 
 // Nodes
 
+:: node.NoDataPresentedYet
+@linkToNode SargassumCoveredReef.Light, node.LightProbeDataFirst
+@linkToNode StaghornCoral.Light.Stressed, node.CoralStressedFirst
+@invalidNodeId  node.invalid.NoProof
+Do you have any information about the conditions down there, or maybe the state of the coral?
+
 :: node.LightProbeDataFirst
 @linkToNode SargassumCoveredReef.Light, node.invalid.LightProbeAgain
 @linkToNode StaghornCoral.Light.Stressed, node.CoralStressedSecond
@@ -85,7 +91,7 @@ I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum
 Hmmm, I'm not so sure that's right.
 
 :: node.invalid.NoProof
-@nextNodeId node.SiteBHopeless.Continue
+@nextNodeId node.NoDataPresentedYet
 I don't think that's important here. 
 
 :: node.invalid.LightProbeGiven
