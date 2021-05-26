@@ -44,6 +44,9 @@ namespace Aqua
         [Label("Bestiary/Add Fact to Visual Modeling Graph")]
         AddFactToModel,
 
+        [Label("Argumentation/Finish Argumentation")]
+        FinishArgumentation,
+
         [Hidden]
         Unknown = 255,
     }

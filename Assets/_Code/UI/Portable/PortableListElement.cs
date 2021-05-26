@@ -11,6 +11,8 @@ namespace Aqua.Portable
 {
     public class PortableListElement : MonoBehaviour, IPoolAllocHandler
     {
+        [Serializable] public class Pool : SerializablePool<PortableListElement> { }
+
         #region Inspector
 
         [SerializeField, Required] private Toggle m_Toggle = null;

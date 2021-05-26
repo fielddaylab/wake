@@ -27,7 +27,12 @@ namespace Aqua
             inVisitor.Visit(this);
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
+        public override Sprite GraphIcon()
+        {
+            return Services.Assets.Bestiary.DefaultReproduceIcon();
+        }
+
+        public override IEnumerable<BFFragment> GenerateFragments()
         {
             throw new NotImplementedException();
         }
@@ -39,7 +44,7 @@ namespace Aqua
 
         public override BFMode Mode()
         {
-            return BFMode.Internal;
+            return OnlyWhenStressed() ? BFMode.Player : BFMode.Internal;
         }
     }
 }

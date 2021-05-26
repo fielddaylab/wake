@@ -267,7 +267,23 @@ namespace Aqua
     /// </summary>
     public struct WaterPropertyMask
     {
+        private const byte FullMask = (1 << ((int) WaterPropertyId.TRACKED_MAX + 1)) - 1;
+
         public byte Mask;
+
+        public WaterPropertyMask(byte inMask)
+        {
+            Mask = inMask;
+        }
+
+        public WaterPropertyMask(WaterPropertyId[] inIds)
+        {
+            Mask = 0;
+            for(int i = 0; i < inIds.Length; ++i)
+            {
+                Mask |= (byte) (1 << (int) inIds[i]);
+            }
+        }
 
         public bool this[WaterPropertyId inId]
         {
@@ -297,6 +313,11 @@ namespace Aqua
         static public implicit operator byte(WaterPropertyMask inMask)
         {
             return inMask.Mask;
+        }
+
+        static public WaterPropertyMask All()
+        {
+            return new WaterPropertyMask(FullMask);
         }
     }
 

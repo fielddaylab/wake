@@ -34,6 +34,11 @@ namespace Aqua
             return BFMode.Always;
         }
 
+        protected override Sprite DefaultIcon()
+        {
+            return Property(m_PropertyId).Icon();
+        }
+
         public override string GenerateSentence()
         {
             WaterPropertyDesc property = Property(m_PropertyId);

@@ -56,7 +56,7 @@ namespace ProtoAqua.Modeling
             m_LineTransform.SetRotation(Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
 
             BFBase fact = inData.Tag as BFBase;
-            m_Icon.sprite = fact?.Icon();
+            m_Icon.sprite = fact?.GraphIcon();
 
             BFBehavior behavior = fact as BFBehavior;
             if (behavior != null)

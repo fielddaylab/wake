@@ -49,7 +49,7 @@ namespace Aqua
             m_Layout.ForceRebuild();
         }
 
-        private bool TryAllocFragment(in BestiaryFactFragment inFragment)
+        private bool TryAllocFragment(in BFFragment inFragment)
         {
             StringSlice str = inFragment.String;
 

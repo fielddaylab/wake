@@ -1,12 +1,9 @@
-using UnityEngine;
-using BeauRoutine;
-using BeauUtil;
-using UnityEngine.UI;
-using TMPro;
-using Aqua;
-using System;
-using BeauUtil.Debugger;
 using BeauPools;
+using BeauUtil;
+using BeauUtil.Debugger;
+using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Aqua.Portable
 {
@@ -14,24 +11,21 @@ namespace Aqua.Portable
     {
         #region Inspector
 
+        [SerializeField, Required] private CanvasGroup m_Group = null;
         [SerializeField, Required] private Button m_Button = null;
         [SerializeField, Required] private RectTransform m_ButtonTail = null;
-        [SerializeField, Required] private Image m_Icon = null;
-        [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
 
         #endregion // Inspector
 
         private BFBase m_Fact;
         private Action<BFBase> m_Callback;
 
-        public void Initialize(BFBehavior  inFact, bool inbButtonMode, bool inbInteractable, Action<BFBase> inCallback)
+        public void Initialize(BFBase inFact, bool inbButtonMode, bool inbInteractable, Action<BFBase> inCallback)
         {
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
-            m_Sentence.Populate(inFact);
+            m_Group.blocksRaycasts = inbButtonMode;
+            m_Group.alpha = inbButtonMode && !inbInteractable ? 0.5f : 1;
 
-            m_Button.targetGraphic.raycastTarget = inbButtonMode;
-            m_Button.interactable = inbInteractable;
+            m_Button.interactable = !inbButtonMode || inbInteractable;
             m_ButtonTail.gameObject.SetActive(inbButtonMode);
 
             m_Fact = inFact;
@@ -57,7 +51,6 @@ namespace Aqua.Portable
 
         void IPoolAllocHandler.OnFree()
         {
-            m_Sentence.Clear();
             m_Fact = null;
             m_Callback = null;
         }

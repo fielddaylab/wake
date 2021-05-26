@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aqua;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace ProtoAqua.Modeling
@@ -15,6 +16,18 @@ namespace ProtoAqua.Modeling
         public const float MaxDeathProportion = 0.5f;
         public const uint HungerPerCritter = 32;
 
+        static private readonly WaterPropertyId[] PreemptiveProperties = new WaterPropertyId[] { WaterPropertyId.Light };
+        static private readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature, WaterPropertyId.Salinity };
+        static private readonly WaterPropertyMask ConsumeMask;
+
+        private const int FixedShift = 12;
+        private const ulong FixedOne = 1 << FixedShift;
+
+        static Simulator()
+        {
+            ConsumeMask = new WaterPropertyMask(SecondaryProperties);
+        }
+
         /// <summary>
         /// Generates a single result from the given profile and initial data.
         /// </summary>
@@ -24,7 +37,7 @@ namespace ProtoAqua.Modeling
 
             if (bLogging && inInitial.Timestamp == 0)
             {
-                Debug.LogFormat(Dump(inInitial));
+                Log.Msg(Dump(inInitial));
             }
 
             WaterPropertyBlockF32 environment = inInitial.Environment;
@@ -34,13 +47,60 @@ namespace ProtoAqua.Modeling
 
             // no static cached arrays here - since CritterData is just a data struct we can allocate it all on the stack!
             CritterData* dataBlock = stackalloc CritterData[critterCount];
-            double* massToConsume = stackalloc double[MaxTrackedCritters];
+            uint* massToConsume = stackalloc uint[MaxTrackedCritters];
+
+            // ensure light levels are correct
+            WaterPropertyBlockF32 initialEnv = inProfile.InitialState.Environment;
+            environment.Light = initialEnv.Light;
+
+            if (bLogging)
+            {
+                Log.Format("[Simulator] Beginning tick {0}", inInitial.Timestamp);
+            }
 
             // setup
             for(int i = 0; i < critterCount; ++i)
             {
                 profiles[i].CopyFrom(ref dataBlock[i], inInitial);
                 profiles[i].SetupTick(ref dataBlock[i], environment, inFlags);
+            }
+
+            if (bLogging)
+            {
+                Log.Format("[Simulator] Performing preemptive consumption");
+            }
+
+            // preemptive consume
+            for(int i = 0; i < critterCount; ++i)
+            {
+                ref CritterData data = ref dataBlock[i];
+                for(int j = 0; j < PreemptiveProperties.Length; ++j)
+                {
+                    WaterPropertyId prop = PreemptiveProperties[j];
+                    float desired = data.ToConsume[prop];
+                    if (desired > 0)
+                    {
+                        float canConsume = Math.Min(desired, environment[prop]);
+                        environment[prop] -= canConsume;
+                        data.ToConsume[prop] -= canConsume;
+                        
+                        if (bLogging && canConsume > 0)
+                        {
+                            Log.Msg("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, prop);
+                        }
+                    }
+                }
+            }
+
+            // reevaluate state
+            for(int i = 0; i < critterCount; ++i)
+            {
+                profiles[i].ReevaluateState(ref dataBlock[i], environment, inFlags, ConsumeMask);
+            }
+
+            if (bLogging)
+            {
+                Log.Format("[Simulator] Performing production and consumption");
             }
 
             // produce stuff
@@ -52,7 +112,7 @@ namespace ProtoAqua.Modeling
 
                     if (bLogging)
                     {
-                        Debug.LogFormat("[Simulator] Critter '{0}' produced {1}", profiles[i].Id(), produce);
+                        Log.Msg("[Simulator] Critter '{0}' produced {1}", profiles[i].Id(), produce);
                     }
 
                     environment += produce;
@@ -60,7 +120,6 @@ namespace ProtoAqua.Modeling
             }
 
             // consume stuff
-
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
@@ -75,17 +134,17 @@ namespace ProtoAqua.Modeling
                         
                         if (bLogging && canConsume > 0)
                         {
-                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, j);
+                            Log.Msg("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, j);
                         }
                     }
                 }
             }
 
-            // initial food pass
+            // food pass
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
-                double remainingFood = data.Hunger;
+                uint remainingFood = data.Hunger;
                 if (remainingFood <= 0)
                     continue;
 
@@ -93,7 +152,7 @@ namespace ProtoAqua.Modeling
                 int eatCount = eatConfigs.Length;
                 CritterProfile.EatConfig eatTarget;
 
-                double foodToAllocate = remainingFood;
+                uint foodToAllocate = remainingFood;
 
                 // initial pass, proportional allocation
                 for(int j = 0; j < eatCount; j++)
@@ -103,12 +162,12 @@ namespace ProtoAqua.Modeling
                     if (targetIndex >= 0 && dataBlock[targetIndex].Population > 0)
                     {
                         uint targetTotalMass = profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population;
-                        double targetMass = remainingFood * eatTarget.MassScale * eatTarget.Proportion; // convert to mass units
+                        uint targetMass = FixedMultiply(FixedMultiply(remainingFood, eatTarget.MassScale), eatTarget.Proportion); // convert to mass units
                         if (targetMass > targetTotalMass)
                             targetMass = targetTotalMass;
 
                         massToConsume[j] = targetMass;
-                        foodToAllocate -= Math.Min(foodToAllocate, targetMass * eatTarget.MassScaleInv); // back to hunger units
+                        foodToAllocate -= Math.Min(foodToAllocate, FixedMultiply(targetMass, eatTarget.MassScaleInv)); // back to hunger units
                     }
                     else
                     {
@@ -125,13 +184,13 @@ namespace ProtoAqua.Modeling
                         short targetIndex = eatTarget.Index;
                         if (targetIndex >= 0 && dataBlock[targetIndex].Population > 0)
                         {
-                            double remainingTotalMass = Math.Max(0, profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population - massToConsume[j]);
-                            double targetMass = foodToAllocate * eatTarget.MassScale; // to mass units
+                            uint remainingTotalMass = Math.Max(0, profiles[targetIndex].MassPerPopulation() * dataBlock[targetIndex].Population - massToConsume[j]);
+                            uint targetMass = FixedMultiply(foodToAllocate, eatTarget.MassScale); // to mass units
                             if (targetMass > remainingTotalMass)
                                 targetMass = remainingTotalMass;
 
                             massToConsume[j] += targetMass;
-                            foodToAllocate -= Math.Min(foodToAllocate, targetMass * eatTarget.MassScaleInv); // to hunger units
+                            foodToAllocate -= Math.Min(foodToAllocate, FixedMultiply(targetMass, eatTarget.MassScaleInv)); // to hunger units
                         }
                     }
                 }
@@ -142,17 +201,17 @@ namespace ProtoAqua.Modeling
                     short targetIndex = eatTarget.Index;
                     if (eatTarget.Index >= 0 && massToConsume[j] > 0)
                     {
-                        uint massToEat = (uint) Math.Round(massToConsume[j]); // this accounts for any tiny errors between full model and player model
+                        uint massToEat = massToConsume[j];
                         uint actualEat = profiles[targetIndex].TryBeEaten(ref dataBlock[targetIndex], massToEat);
-                        remainingFood -= actualEat * eatTarget.MassScaleInv; // convert back from mass to hunger
+                        remainingFood -= FixedMultiply(actualEat, eatTarget.MassScaleInv); // convert back from mass to hunger
                         if (bLogging)
                         {
-                            Debug.LogFormat("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id(), actualEat, profiles[targetIndex].Id());
+                            Log.Msg("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id(), actualEat, profiles[targetIndex].Id());
                         }
                     }
                 }
 
-                data.Hunger = (uint) remainingFood;
+                data.Hunger = remainingFood;
             }
 
             SimulationResult result = default(SimulationResult);
@@ -168,7 +227,7 @@ namespace ProtoAqua.Modeling
 
             if (bLogging)
             {
-                Debug.LogFormat(Dump(result));
+                Log.Msg(Dump(result));
             }
 
             return result;
@@ -253,6 +312,43 @@ namespace ProtoAqua.Modeling
                 }
                 return psb.ToString();
             }
+        }
+
+        static private long ToFixed(float inValue)
+        {
+            return (long) Math.Round(inValue * FixedOne);
+        }
+
+        static private long ToFixed(uint inValue)
+        {
+            return (long) inValue << FixedShift;
+        }
+
+        static private uint ToUInt(long inFixed)
+        {
+            return (uint) (inFixed >> FixedShift);
+        }
+
+        /// <summary>
+        /// Fixed-point multiplication.
+        /// </summary>
+        static public uint FixedMultiply(uint inValue, float inMultiply)
+        {
+            long fixedA = ToFixed(inValue);
+            long fixedB = ToFixed(inMultiply);
+            long fixedC = (fixedA * fixedB) >> FixedShift;
+            return ToUInt(fixedC);
+        }
+
+        /// <summary>
+        /// Fixed-point division.
+        /// </summary>
+        static public uint FixedDivide(uint inValue, float inMultiply)
+        {
+            long fixedA = ToFixed(inValue);
+            long fixedB = ToFixed(inMultiply);
+            long fixedC = (fixedA << FixedShift) / fixedB;
+            return ToUInt(fixedC);
         }
     }
 

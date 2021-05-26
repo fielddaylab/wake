@@ -23,7 +23,7 @@ namespace Aqua
 
         public TextId Verb() { return !m_VerbOverride.IsEmpty ? m_VerbOverride : DefaultVerb(); }
         protected TextId SentenceFormat() { return !m_SentenceOverride.IsEmpty ? m_SentenceOverride : DefaultSentence(); }
-        protected TextId FragmentFormat() { return !m_FragmentsOverride.IsEmpty ? m_FragmentsOverride : DefaultSentence(); }
+        protected TextId FragmentFormat() { return !m_FragmentsOverride.IsEmpty ? m_FragmentsOverride : DefaultFragments(); }
 
         protected virtual TextId DefaultVerb() { return null; }
         protected virtual TextId DefaultSentence() { return null; }
@@ -31,7 +31,7 @@ namespace Aqua
 
         #endregion // Text
 
-        public abstract IEnumerable<BestiaryFactFragment> GenerateFragments();
+        public abstract IEnumerable<BFFragment> GenerateFragments();
 
         public override int CompareTo(BFBase other)
         {

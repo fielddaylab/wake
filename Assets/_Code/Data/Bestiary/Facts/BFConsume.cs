@@ -39,15 +39,24 @@ namespace Aqua
             inVisitor.Visit(this);
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
+        public override Sprite GraphIcon()
+        {
+            return Services.Assets.Bestiary.DefaultConsumeIcon();
+        }
+
+        protected override Sprite DefaultIcon()
+        {
+            return Property(m_Property).Icon();
+        }
+
+        public override IEnumerable<BFFragment> GenerateFragments()
         {
             // TODO: localization!!
 
-            yield return BestiaryFactFragment.CreateLocNoun(Parent().CommonName());
-            yield return BestiaryFactFragment.CreateLocVerb(Verb());
-            yield return BestiaryFactFragment.CreateAmount(Property(m_Property).FormatValue(m_Amount));
-            yield return BestiaryFactFragment.CreateLocNoun(Property(m_Property).LabelId());
-            yield return BestiaryFactFragment.CreateLocAdjective("words.perTick");
+            yield return BFFragment.CreateLocNoun(Parent().CommonName());
+            yield return BFFragment.CreateLocVerb(Verb());
+            yield return BFFragment.CreateAmount(Property(m_Property).FormatValue(m_Amount));
+            yield return BFFragment.CreateLocNoun(Property(m_Property).LabelId());
         }
 
         public override string GenerateSentence()

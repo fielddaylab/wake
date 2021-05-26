@@ -8,14 +8,11 @@ Eats
 :: produce
 Produces
 
-:: consumes
+:: consume
 Consumes
 
-:: absorbs
+:: absorb
 Absorbs
-
-:: perTick
-Per Tick
 
 :: whenStressed
 When Stressed
@@ -23,19 +20,19 @@ When Stressed
 #basePath factFormat
 
 :: eat
-{0} eats {1} {2} per tick
+{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name}
 
 :: eat.stressed
-{0} eats {1} {2} per tick when stressed
+{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name} when stressed
 
 :: produce
-{0} produces {1} {2} per tick
+{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name}
 
 :: produce.stressed
-{0} produces {1} {2} per tick when stressed
+{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name} when stressed
 
 :: consume
-{0} consumes {1} {2} per tick
+{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name}
 
 :: consume.stressed
-{0} consumes {1} {2} per tick when stressed
+{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name} when stressed

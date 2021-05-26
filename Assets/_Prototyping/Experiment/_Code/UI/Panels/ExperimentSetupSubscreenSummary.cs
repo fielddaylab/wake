@@ -30,7 +30,7 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
-        [NonSerialized] private BestiaryRangeFactButton m_Button = null;
+        [NonSerialized] private StateFactDisplay m_Button = null;
 
         protected override void OnDisable()
         {
@@ -156,8 +156,8 @@ namespace ProtoAqua.Experiment
                 if(fact.GetType().Equals(typeof(BFState))) {
                     state = (BFState)fact;
                     if(state.PropertyId() == resData.Setup.PropertyId){
-                        m_Button = m_RangeFactButton.GetComponent<BestiaryRangeFactButton>();
-                        m_Button.Initialize(state, false, false, null);
+                        m_Button = m_RangeFactButton.GetComponent<StateFactDisplay>();
+                        m_Button.Populate(state);
                         m_Button.gameObject.SetActive(true);
                     }
                     else { state = null; }

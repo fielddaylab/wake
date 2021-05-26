@@ -3,86 +3,86 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public struct BestiaryFactFragment
+    public struct BFFragment
     {
         public BestiaryFactFragmentType Type;
         public StringSlice String;
 
-        static public BestiaryFactFragment CreateWord(BestiaryFactFragmentType inType, StringSlice inWord)
+        static public BFFragment CreateWord(BestiaryFactFragmentType inType, StringSlice inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = inType,
                 String = inWord
             };
         }
 
-        static public BestiaryFactFragment CreateNoun(StringSlice inWord)
+        static public BFFragment CreateNoun(StringSlice inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Noun,
                 String = Services.Loc.MaybeLocalize(inWord, null, true)
             };
         }
 
-        static public BestiaryFactFragment CreateLocNoun(TextId inWord)
+        static public BFFragment CreateLocNoun(TextId inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Noun,
                 String = Services.Loc.Localize(inWord, true)
             };
         }
 
-        static public BestiaryFactFragment CreateVerb(StringSlice inWord)
+        static public BFFragment CreateVerb(StringSlice inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Verb,
                 String = inWord
             };
         }
 
-        static public BestiaryFactFragment CreateLocVerb(TextId inWord)
+        static public BFFragment CreateLocVerb(TextId inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Verb,
                 String = Services.Loc.Localize(inWord, true)
             };
         }
 
-        static public BestiaryFactFragment CreateAdjective(StringSlice inWord)
+        static public BFFragment CreateAdjective(StringSlice inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Adjective,
                 String = inWord
             };
         }
 
-        static public BestiaryFactFragment CreateLocAdjective(TextId inWord)
+        static public BFFragment CreateLocAdjective(TextId inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Adjective,
                 String = Services.Loc.Localize(inWord, true)
             };
         }
 
-        static public BestiaryFactFragment CreateAmount(float inAmount)
+        static public BFFragment CreateAmount(float inAmount)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Amount,
                 String = inAmount.ToString()
             };
         }
 
-        static public BestiaryFactFragment CreateAmount(StringSlice inWord)
+        static public BFFragment CreateAmount(StringSlice inWord)
         {
-            return new BestiaryFactFragment()
+            return new BFFragment()
             {
                 Type = BestiaryFactFragmentType.Amount,
                 String = inWord

@@ -18,17 +18,17 @@ namespace Aqua
 
         public float Proportion() { return m_Proportion; }
 
-        public override BFMode Mode()
-        {
-            return BFMode.Internal;
-        }
-
         public override void Accept(IFactVisitor inVisitor)
         {
             inVisitor.Visit(this);
         }
 
-        public override IEnumerable<BestiaryFactFragment> GenerateFragments()
+        public override Sprite GraphIcon()
+        {
+            return Services.Assets.Bestiary.DefaultDeathIcon();
+        }
+
+        public override IEnumerable<BFFragment> GenerateFragments()
         {
             throw new System.NotSupportedException();
         }
@@ -36,6 +36,11 @@ namespace Aqua
         public override string GenerateSentence()
         {
             throw new System.NotSupportedException();
+        }
+
+        public override BFMode Mode()
+        {
+            return OnlyWhenStressed() ? BFMode.Player : BFMode.Internal;
         }
     }
 }

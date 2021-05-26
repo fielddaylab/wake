@@ -9,6 +9,18 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Database", fileName = "BestiaryDB")]
     public class BestiaryDB : DBObjectCollection<BestiaryDesc>
     {
+        #region Inspector
+
+        [Header("Defaults")]
+        [SerializeField] private Sprite m_DefaultEatSprite = null;
+        [SerializeField] private Sprite m_DefaultProduceSprite = null;
+        [SerializeField] private Sprite m_DefaultConsumeSprite = null;
+        [SerializeField] private Sprite m_DefaultReproduceSprite = null;
+        [SerializeField] private Sprite m_DefaultGrowSprite = null;
+        [SerializeField] private Sprite m_DefaultDeathSprite = null;
+
+        #endregion // Inspector
+
         [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
 
         [NonSerialized] private List<BestiaryDesc> m_Critters;
@@ -16,6 +28,17 @@ namespace Aqua
         [NonSerialized] private List<BestiaryDesc> m_HumanFactors;
 
         [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
+
+        #region Defaults
+
+        public Sprite DefaultEatIcon() { return m_DefaultEatSprite; }
+        public Sprite DefaultProduceIcon() { return m_DefaultProduceSprite; }
+        public Sprite DefaultConsumeIcon() { return m_DefaultConsumeSprite; }
+        public Sprite DefaultReproduceIcon() { return m_DefaultReproduceSprite; }
+        public Sprite DefaultGrowIcon() { return m_DefaultGrowSprite; }
+        public Sprite DefaultDeathIcon() { return m_DefaultDeathSprite; }
+
+        #endregion // Defaults
 
         #region Lookup
 
@@ -109,7 +132,6 @@ namespace Aqua
             if (inItem.HasFlags(BestiaryDescFlags.Human))
             {
                 m_HumanFactors.Add(inItem);
-                return;
             }
 
             switch(inItem.Category())

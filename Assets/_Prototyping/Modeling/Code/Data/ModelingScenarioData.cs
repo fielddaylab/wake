@@ -105,7 +105,8 @@ namespace ProtoAqua.Modeling
             }
 
             KeyValueUtils.SortByKey<StringHash32, uint, ActorCountU32>(m_InitialActors);
-            KeyValueUtils.SortByKey<StringHash32, ActorCountRange, ActorCountRange>(m_TargetActors);
+            KeyValueUtils.SortByKey<StringHash32, ActorCountRange>(m_TargetActors);
+            
             m_Optimized = true;
         }
     }

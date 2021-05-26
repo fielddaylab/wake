@@ -115,7 +115,7 @@ namespace Aqua
 
         #region Alloc
 
-        public FactSentenceFragment Alloc(in BestiaryFactFragment inFragment, Transform inTarget)
+        public FactSentenceFragment Alloc(in BFFragment inFragment, Transform inTarget)
         {
             // TODO: Differentiate between different fragment types?
 
@@ -128,7 +128,7 @@ namespace Aqua
 
         #endregion // Alloc
 
-        private TextBackgroundColorPair FragmentColors(in BestiaryFactFragment inFragment)
+        private TextBackgroundColorPair FragmentColors(in BFFragment inFragment)
         {
             switch(inFragment.Type)
             {

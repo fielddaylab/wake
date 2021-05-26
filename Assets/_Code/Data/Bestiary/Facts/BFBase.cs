@@ -17,8 +17,11 @@ namespace Aqua
         [NonSerialized] private BestiaryDesc m_Parent;
 
         public BestiaryDesc Parent() { return m_Parent; }
-        public Sprite Icon() { return m_Icon; }
+        public Sprite Icon() { return !m_Icon ? DefaultIcon() : m_Icon; }
         public virtual BFMode Mode() { return BFMode.Player; }
+
+        public virtual Sprite GraphIcon() { return Icon(); }
+        protected virtual Sprite DefaultIcon() { return GraphIcon(); }
 
         #region Lifecycle
 

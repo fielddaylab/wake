@@ -10,17 +10,29 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private TextId m_Name = null;
-        [SerializeField] private TextId m_Description = null;
+        [Header("Data")]
+        [SerializeField, Required] private BestiaryDesc m_Environment = null;
+
+        [Header("Text")]
+        [SerializeField] private TextId m_NameId = null;
+        [SerializeField] private TextId m_DescriptionId = null;
+        [SerializeField] private TextId m_SentenceId = null;
 
         #endregion // Inspector
 
-        public TextId Name() { return m_Name; }
-        public TextId Description() { return m_Description; }
+        public BestiaryDesc Environment() { return m_Environment; }
+
+        public TextId NameId() { return m_NameId; }
+        public TextId DescriptionId() { return m_DescriptionId; }
 
         public override string GenerateSentence()
         {
-            return Loc.Find(m_Description);
+            return Loc.Find(m_SentenceId);
+        }
+
+        public override void Accept(IFactVisitor inVisitor)
+        {
+            inVisitor.Visit(this);
         }
     }
 }

@@ -200,7 +200,8 @@ namespace Aqua
         LargeCreature = 0x02,
         DoNotUseInExperimentation = 0x04,
         TreatAsHerd = 0x08,
-        Human = 0x10
+        Human = 0x10,
+        IgnoreStarvation = 0x20
     }
 
     public enum BestiaryDescSize

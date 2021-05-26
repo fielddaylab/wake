@@ -36,6 +36,7 @@ namespace ProtoAqua.Modeling
         private readonly BestiaryDesc m_Desc;
         private readonly StringHash32 m_Id;
         private readonly bool m_IsHerd;
+        private readonly bool m_IgnoreStarvation;
         private uint m_MassPerPopulation;
         private uint m_PopulationCap;
 
@@ -70,6 +71,7 @@ namespace ProtoAqua.Modeling
             m_Desc = inDesc;
             m_Id = inDesc.Id();
             m_IsHerd = inDesc.HasFlags(BestiaryDescFlags.TreatAsHerd);
+            m_IgnoreStarvation = inDesc.HasFlags(BestiaryDescFlags.IgnoreStarvation);
 
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
             {
@@ -164,6 +166,16 @@ namespace ProtoAqua.Modeling
                 return;
             }
 
+            ioData.Hunger = m_EatTypeCount > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
+
+            ReevaluateState(ref ioData, inEnvironment, inFlags, WaterPropertyMask.All());
+        }
+
+        public void ReevaluateState(ref CritterData ioData, in WaterPropertyBlockF32 inEnvironment, SimulatorFlags inFlags, in WaterPropertyMask inMask)
+        {
+            if (ioData.Population == 0)
+                return;
+
             ActorStateId state = ActorStateId.Alive;
             ActorStateId checkedState;
             for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX && state != ActorStateId.Dead; ++i)
@@ -180,20 +192,18 @@ namespace ProtoAqua.Modeling
                 Log.Msg("[CritterProfile] Critter '{0}' is {1}", Id(), state);
             }
 
-            ioData.Hunger = m_EatTypeCount > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
-
             ioData.State = state;
             switch(state)
             {
                 case ActorStateId.Alive:
                     {
-                        ioData.ToConsume = m_ToConsumePerPopulation * ioData.Population;
+                        ioData.ToConsume = (m_ToConsumePerPopulation * ioData.Population) & inMask;
                         break;
                     }
 
                 case ActorStateId.Stressed:
                     {
-                        ioData.ToConsume = m_ToConsumePerPopulationStressed * ioData.Population;
+                        ioData.ToConsume = (m_ToConsumePerPopulationStressed * ioData.Population) & inMask;
                         break;
                     }
 
@@ -209,7 +219,7 @@ namespace ProtoAqua.Modeling
 
         public void EndTick(ref CritterData ioData, SimulatorFlags inFlags)
         {
-            if (ioData.Population == 0)
+            if (ioData.Population == 0 || m_IgnoreStarvation)
                 return;
 
             uint toKillAbsolute = 0;
@@ -227,7 +237,7 @@ namespace ProtoAqua.Modeling
                 }
             }
 
-            uint toKill = CalculateMass((uint) (ioData.Population * m_DeathPerTick) + toKillAbsolute);
+            uint toKill = CalculateMass(Simulator.FixedMultiply(ioData.Population, m_DeathPerTick) + toKillAbsolute);
 
             if (toKill > 0)
             {
@@ -306,7 +316,7 @@ namespace ProtoAqua.Modeling
             uint consumedPopulation = consumedMass;
             if (!IsHerd())
             {
-                consumedPopulation = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
+                consumedPopulation = inMass / MassPerPopulation();
             }
 
             if (m_ScarcityLevel > 0)
@@ -314,11 +324,11 @@ namespace ProtoAqua.Modeling
                 float magicNumber = (float) ioData.Population / m_ScarcityLevel;
                 if (magicNumber < 1) //Magic number to correct for populations hiding from predators and not reaching 0
                 {
-                    consumedPopulation = (uint) (consumedPopulation * magicNumber);
+                    consumedPopulation = Simulator.FixedMultiply(consumedPopulation, magicNumber);
                 }
             }
 
-            uint maxPopulationLoss = (uint) (Simulator.MaxEatProportion * ioData.Population);
+            uint maxPopulationLoss = Simulator.FixedMultiply(ioData.Population, Simulator.MaxEatProportion);
             if (consumedPopulation > maxPopulationLoss)
             {
                 consumedPopulation = maxPopulationLoss;
@@ -341,10 +351,10 @@ namespace ProtoAqua.Modeling
             uint populationIncrease = inMass;
             if (!IsHerd())
             {
-                populationIncrease = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
+                populationIncrease = inMass / MassPerPopulation();
             }
 
-            uint maxIncrease = (uint) (Simulator.MaxReproduceProportion * (m_PopulationCap - ioData.Population));
+            uint maxIncrease = Simulator.FixedMultiply((m_PopulationCap - ioData.Population), Simulator.MaxReproduceProportion);
             if (populationIncrease > maxIncrease)
             {
                 populationIncrease = maxIncrease;
@@ -356,9 +366,9 @@ namespace ProtoAqua.Modeling
 
         private uint Reproduce(ref CritterData ioData, float inProportion)
         {
-            uint populationIncrease = (uint) Mathf.RoundToInt(inProportion * ioData.Population);
+            uint populationIncrease = Simulator.FixedMultiply(ioData.Population, inProportion);
 
-            uint maxIncrease = (uint) (Simulator.MaxReproduceProportion * (m_PopulationCap - ioData.Population));
+            uint maxIncrease = Simulator.FixedMultiply((m_PopulationCap - ioData.Population), Simulator.MaxReproduceProportion);
             if (populationIncrease > maxIncrease)
             {
                 populationIncrease = maxIncrease;
@@ -373,12 +383,12 @@ namespace ProtoAqua.Modeling
             uint populationDecrease = inMass;
             if (!IsHerd())
             {
-                populationDecrease = (uint) Mathf.CeilToInt((float) inMass / MassPerPopulation());
+                populationDecrease = inMass / MassPerPopulation();
             }
 
             if (populationDecrease >= ioData.Population) //Magic Nubmer to keep a species from completely dying out
             {
-                populationDecrease = (uint) (ioData.Population * Simulator.MaxDeathProportion);
+                populationDecrease = Simulator.FixedMultiply(ioData.Population, Simulator.MaxDeathProportion);
             }
 
             ioData.Population -= populationDecrease;

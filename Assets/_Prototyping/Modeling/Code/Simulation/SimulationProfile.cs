@@ -21,8 +21,7 @@ namespace ProtoAqua.Modeling
         public void Clear()
         {
             m_InitialState = default(SimulationResult);
-            for(int i = 0; i < m_Profiles.Count; ++i)
-                m_Profiles[i].Clear();
+            m_Profiles.Clear();
             m_DiscoveredCritters.Clear();
             m_DiscoveredFacts.Clear();
         }

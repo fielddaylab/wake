@@ -10,10 +10,12 @@ using BeauUtil.Services;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using BeauUtil.Debugger;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Aqua.Debugging
 {
+    [ServiceDependency(typeof(EventService))]
     public partial class DebugService : ServiceBehaviour, IDebuggable
     {
         #region Static
@@ -242,6 +244,15 @@ namespace Aqua.Debugging
 
         #endregion // Asset Reloading
 
+        private void OnProfileLoading()
+        {
+            if (m_DebugMenu.isActiveAndEnabled)
+            {
+                m_DebugMenu.gameObject.SetActive(false);
+                Resume();
+            }
+        }
+
         #region IService
 
         protected override void Initialize()
@@ -253,6 +264,7 @@ namespace Aqua.Debugging
             #endif // PREVIEW
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
+            Services.Events.Register(GameEvents.ProfileLoaded, OnProfileLoading, this);
 
             m_Canvas.gameObject.SetActive(true);
             m_Input = DeviceInput.Find(m_Canvas);
@@ -265,6 +277,7 @@ namespace Aqua.Debugging
         protected override void Shutdown()
         {
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
+            Services.Events?.DeregisterAll(this);
         }
 
         #endregion // IService

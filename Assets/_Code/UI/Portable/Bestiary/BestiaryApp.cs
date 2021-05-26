@@ -30,11 +30,6 @@ namespace Aqua.Portable
 
         #region Types
 
-        [Serializable] private class EntryPool : SerializablePool<PortableListElement> { }
-        [Serializable] private class FactPool : SerializablePool<BestiaryFactButton> { }
-        [Serializable] private class RangeFactPool : SerializablePool<BestiaryRangeFactButton> { }
-        [Serializable] private class WaterPropertyPool : SerializablePool<BestiaryWaterPropertyButton> { }
-
         public class OpenToRequest : IPortableRequest
         {
             public BestiaryUpdateParams Target;
@@ -166,7 +161,7 @@ namespace Aqua.Portable
         [Header("Entries")]
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
         [SerializeField, Required] private ToggleGroup m_EntryToggleGroup = null;
-        [SerializeField] private EntryPool m_EntryPool = null;
+        [SerializeField] private PortableListElement.Pool m_EntryPool = null;
         [SerializeField] private LocText m_CategoryLabel = null;
 
         [Header("Group")]
@@ -182,9 +177,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_SelectEntryButton = null;
 
         [Header("Facts")]
-        [SerializeField] private FactPool m_FactPool = null;
-        [SerializeField] private RangeFactPool m_RangeFactPool = null;
-        [SerializeField] private WaterPropertyPool m_WaterPropertyPool = null;
+        [SerializeField] private FactPools m_FactPools = null;
 
         #endregion // Inspector
 
@@ -296,9 +289,7 @@ namespace Aqua.Portable
         {
             Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
 
-            m_FactPool.Reset();
-            m_RangeFactPool.Reset();
-            m_WaterPropertyPool.Reset();
+            m_FactPools.FreeAll();
             m_NoSelectionGroup.gameObject.SetActive(true);
             m_HasSelectionGroup.gameObject.SetActive(false);
 
@@ -493,9 +484,7 @@ namespace Aqua.Portable
 
         private void LoadEntry(BestiaryDesc inEntry)
         {
-            m_FactPool.Reset();
-            m_RangeFactPool.Reset();
-            m_WaterPropertyPool.Reset();
+            m_FactPools.FreeAll();
 
             foreach(var button in m_EntryPool.ActiveObjects)
             {
@@ -572,29 +561,17 @@ namespace Aqua.Portable
             return false;
         }
 
-        private void InstantiateFactButton(BFBehavior inFact) 
+        private void InstantiateFactButton(BFBase inFact) 
         {
-            BestiaryFactButton factButton = m_FactPool.Alloc();
+            MonoBehaviour display = m_FactPools.Alloc(inFact);
+            BestiaryFactButton button = display.GetComponent<BestiaryFactButton>();
             if (m_SelectFactRequest != null)
             {
-                factButton.Initialize(inFact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inFact), OnFactClicked);
+                button.Initialize(inFact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inFact), OnFactClicked);
             }
             else
             {
-                factButton.Initialize(inFact, false, true, null);
-            }
-        }
-
-        private void InstantiateRangeFactButton(BFState inFact) 
-        {
-            BestiaryRangeFactButton factButton = m_RangeFactPool.Alloc();
-            if (m_SelectFactRequest != null)
-            {
-                factButton.Initialize(inFact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inFact), OnFactClicked);
-            }
-            else
-            {
-                factButton.Initialize(inFact, false, true, null);
+                button.Initialize(inFact, false, true, null);
             }
         }
 
@@ -612,20 +589,12 @@ namespace Aqua.Portable
 
         void IFactVisitor.Visit(BFWaterProperty inFact)
         {
-            BestiaryWaterPropertyButton factButton = m_WaterPropertyPool.Alloc();
-            if (m_SelectFactRequest != null)
-            {
-                factButton.Initialize(inFact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inFact), OnFactClicked);
-            }
-            else
-            {
-                factButton.Initialize(inFact, false, true, null);
-            }
+            InstantiateFactButton(inFact);
         }
 
         void IFactVisitor.Visit(BFModel inFact)
         {
-            // TODO: Implement
+            InstantiateFactButton(inFact);
         }
 
         void IFactVisitor.Visit(BFEat inFact)
@@ -655,7 +624,7 @@ namespace Aqua.Portable
 
         void IFactVisitor.Visit(BFState inFact)
         {
-            InstantiateRangeFactButton(inFact);
+            InstantiateFactButton(inFact);
         }
 
         void IFactVisitor.Visit(BFDeath inFact)

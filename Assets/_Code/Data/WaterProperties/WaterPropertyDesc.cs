@@ -18,8 +18,13 @@ namespace Aqua
         [SerializeField] private TextId m_LabelId = null;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private Color m_Color = ColorBank.White;
+        [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
+
+        [Header("Text")]
         [SerializeField] private string m_Format = "{0}";
         [SerializeField] private TextId m_EnvironmentFactFormat = null;
+        [SerializeField] private TextId m_StateChangeFormat = null;
+        [SerializeField] private TextId m_StateChangeStressOnlyFormat = null;
         [SerializeField] private float m_DisplayScale = 1;
 
         [Header("Ranges")]
@@ -36,8 +41,12 @@ namespace Aqua
 
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
-        public Color Color() { return m_Color; }
+        public Color Color() { return m_Palette.Background; }
+        public ColorPalette4 Palette() { return m_Palette; }
+        
         public TextId EnvironmentFactFormat() { return m_EnvironmentFactFormat; }
+        public TextId StateChangeFormat() { return m_StateChangeFormat; }
+        public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         
         public string FormatValue(float inValue)
         {
@@ -69,6 +78,7 @@ namespace Aqua
         HideAlways = 0x001,
         HideIfZero = 0x002,
         TransferThroughEating = 0x004,
-        IsMeasureable = 0x008
+        IsMeasureable = 0x008,
+        IsCountable = 0x010
     }
 }
