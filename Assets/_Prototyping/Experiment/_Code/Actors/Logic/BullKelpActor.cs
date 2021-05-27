@@ -18,6 +18,8 @@ namespace ProtoAqua.Experiment
         [Header("Height")]
         [SerializeField] private FloatRange m_Height = new FloatRange(6);
         [SerializeField] private Transform m_HeightOffset = null;
+
+        [SerializeField] private float m_LeafHeightRatio = 2f;
         [SerializeField] private SpriteRenderer m_SpineRenderer = null;
         [SerializeField] private Transform m_HeightCapOffset = null;
         [SerializeField] private KelpStem m_Stem = null;
@@ -54,11 +56,11 @@ namespace ProtoAqua.Experiment
             for(int i = 0, leafCount = m_AllLeaves.Length; i < leafCount; ++i)
             {
                 float lerp = 1 + RNG.Instance.NextFloat(-0.2f, 0f);
-                float leafHeight = height * lerp;
+                float leafHeight = (height/m_LeafHeightRatio) * lerp;
 
                 m_AllLeaves[i].Initialize(leafHeight, facing, Actor);
             }
-            m_Stem.Initialize(Actor);
+            m_Stem.Initialize(Actor, height);
         }
 
         public SpriteRenderer GetSpine() {
