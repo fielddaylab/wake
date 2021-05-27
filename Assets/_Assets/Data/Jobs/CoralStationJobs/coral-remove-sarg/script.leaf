@@ -1,4 +1,52 @@
 #basePath   job.coral-remove-sarg
 
 :: start
-:: end
+@trigger    JobStarted
+@cutscene
+{@profCempaka}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargussum.
+{@player} 		Alright, so what do you want me to do?
+{@profCempaka}	I need you to gather evidence that Sargussum is causing the coral to be stressed, so we know for sure it's our culprit.
+{@player} 		Got it, I'll get started on it now.
+{@kevin}		{player-name}, let's start by heading to the experiment lab!
+{@player} 		Good thinking, Kevin!
+
+:: startExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentPrototype", !has.fact:Sargassum.Consume.Light
+@once
+@cutscene
+{@player}   Any tips of what we should to this time?
+{@kevin}  	We want to know if Sargussum really does lower light, so I think a mesurement tank is our best bet!
+
+:: experiementEnd
+@trigger    JobTaskUpdated
+@when 		has.fact:Sargassum.Consume.Light
+@once
+@cutscene
+{@player}	Seems like we were right, Kevin!
+{@kevin}	Great! Now let's see how this affects the coral by making a model.
+
+:: InterventionModelingSetup
+@trigger	UniversalModelStarted
+@once
+@cutscene
+{@kevin} 	Make sure you add the rule we just learned, and let's get started!
+
+:: InterventionGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@kevin} 	Now, let's match up the historical data again.
+
+:: InterventionModelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} 	Looks good!!
+
+:: InterventionModelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+{@kevin} 	Nicely done! Looks like Sargassum is to blame for the low light at Site R. Let's report this back to Professor Cempaka.
