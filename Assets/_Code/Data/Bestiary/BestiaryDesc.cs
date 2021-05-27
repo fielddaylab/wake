@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -70,6 +71,8 @@ namespace Aqua
                 m_FactMap = new Dictionary<StringHash32, BFBase>();
                 foreach(var fact in m_Facts)
                 {
+                    Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
+                    
                     fact.Hook(this);
                     m_FactMap.Add(fact.Id(), fact);
 

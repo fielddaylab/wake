@@ -11,7 +11,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Property")]
-        [SerializeField] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
+        [SerializeField, AutoEnum] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
         [SerializeField] private float m_Value = 0;
 
         #endregion // Inspector

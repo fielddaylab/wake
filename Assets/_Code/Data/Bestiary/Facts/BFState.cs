@@ -12,7 +12,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Property Range")]
-        [SerializeField] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
+        [SerializeField, AutoEnum] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
         
         [Header("Alive State")]
         [SerializeField] private float m_MinSafe = 0;
