@@ -48,7 +48,20 @@ namespace Aqua
 
         static public IEnumerator LoadPreviousSceneWithWipe(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
+            string sceneToLoad = null;
+            var currentMap = MapDB.LookupMap(SceneHelper.ActiveScene());
+            if (!currentMap.IsEmpty)
+            {
+                sceneToLoad = Services.Assets.Map.Get(currentMap).Parent()?.SceneName();
+            }
+
             BeforeLoad();
+            if (!string.IsNullOrEmpty(sceneToLoad))
+            {
+                return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
+                () => Sequence.Create(Services.State.LoadScene(sceneToLoad, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+            );
+            }
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
                 () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
