@@ -24,6 +24,12 @@ namespace Aqua
         public WaterPropertyId Target() { return m_Property; }
         public uint Amount() { return m_Amount; }
 
+        protected override bool IsPair(BFBehavior inOther)
+        {
+            BFProduce produce = inOther as BFProduce;
+            return produce != null && produce.m_Property == m_Property;
+        }
+
         protected override TextId DefaultVerb()
         {
             return ProduceVerb;

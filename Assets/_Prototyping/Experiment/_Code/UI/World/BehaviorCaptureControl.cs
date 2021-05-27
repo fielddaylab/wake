@@ -46,6 +46,8 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
+        [NonSerialized] private ExperimentSetupData m_Setup;
+
         private void OnAttemptObserve(StringHash32 inBehaviorId)
         {
             Services.UI.WorldFaders.Flash(Color.white.WithAlpha(0.5f), 0.25f);
@@ -77,13 +79,22 @@ namespace ProtoAqua.Experiment
             }
         }
 
+        private void OnExperimentSetup(ExperimentSetupData inData)
+        {
+            m_Setup = inData;
+        }
+
         private void OnExperimentTeardown()
         {
+            m_Setup = null;
             m_LocationPool.Reset();
         }
 
         public CaptureInstance GetCaptureInstance(ActorCtrl inActor, StringHash32 inBehaviorId)
         {
+            if (m_Setup.Tank != TankType.Foundational)
+                return null;
+            
             return new CaptureInstance(m_LocationPool.Alloc(), inActor.transform, inBehaviorId);
         }
 
@@ -99,6 +110,7 @@ namespace ProtoAqua.Experiment
             base.Initialize();
 
             Services.Events.Register<StringHash32>(ExperimentEvents.AttemptObserveBehavior, OnAttemptObserve, this)
+                .Register<ExperimentSetupData>(ExperimentEvents.SetupInitialSubmit, OnExperimentSetup, this)
                 .Register(ExperimentEvents.ExperimentTeardown, OnExperimentTeardown, this);
         }
 

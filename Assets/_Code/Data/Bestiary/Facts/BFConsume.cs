@@ -49,6 +49,12 @@ namespace Aqua
             return Property(m_Property).Icon();
         }
 
+        protected override bool IsPair(BFBehavior inOther)
+        {
+            BFConsume consume = inOther as BFConsume;
+            return consume != null && consume.m_Property == m_Property;
+        }
+
         public override IEnumerable<BFFragment> GenerateFragments()
         {
             // TODO: localization!!

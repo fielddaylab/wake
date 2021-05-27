@@ -49,6 +49,12 @@ namespace Aqua
             return m_TargetEntry.Icon();
         }
 
+        protected override bool IsPair(BFBehavior inOther)
+        {
+            BFEat eat = inOther as BFEat;
+            return eat != null && eat.m_TargetEntry == m_TargetEntry;
+        }
+
         public override IEnumerable<BFFragment> GenerateFragments()
         {
             // TODO: localization!!

@@ -30,12 +30,14 @@ namespace Aqua
 
         public override IEnumerable<BFFragment> GenerateFragments()
         {
-            throw new System.NotSupportedException();
+            // throw new NotImplementedException();
+            yield break;
         }
 
         public override string GenerateSentence()
         {
-            throw new System.NotSupportedException();
+            // throw new NotImplementedException();
+            return string.Empty;
         }
 
         public override BFMode Mode()

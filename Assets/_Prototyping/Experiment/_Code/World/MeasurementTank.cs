@@ -29,8 +29,6 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private AudioHandle m_AudioLoop;
 
-        [NonSerialized] private Routine m_IdleRoutine;
-        [NonSerialized] private float m_IdleDuration = 0;
         [NonSerialized] private float min_Alpha = 0;
         [NonSerialized] private float max_Alpha = 0;
         [NonSerialized] private Color m_CurrentColor;
@@ -40,14 +38,6 @@ namespace ProtoAqua.Experiment
         protected override void Awake()
         {
             base.Awake();
-
-            m_BaseInput.OnInputDisabled.AddListener(() => {
-                m_IdleRoutine.Pause();
-            });
-            m_BaseInput.OnInputEnabled.AddListener(() => {
-                m_IdleRoutine.Resume();
-                m_IdleDuration /= 2;
-            });
 
             min_Alpha = m_WaterColor.GetAlpha();
             max_Alpha = min_Alpha + 0.25f;
@@ -77,28 +67,14 @@ namespace ProtoAqua.Experiment
             m_AudioLoop.Stop();
         }
 
-        public override void OnExperimentStart()
-        {
-            base.OnExperimentStart();
-            
-            ResetIdle();
-            m_IdleRoutine.Replace(this, IdleTimer());
-        }
-
-        public override void OnExperimentEnd()
-        {
-            m_IdleRoutine.Stop();
-
-            base.OnExperimentEnd();
-        }
-
         public override void GenerateResult(ExperimentResultData ioData)
         {
             base.GenerateResult(ioData);
 
             BestiaryDesc critter = Services.Assets.Bestiary.Get(ioData.Setup.CritterId);
-            BFProduce produceFact = BestiaryUtils.FindProduceRule(critter, ioData.Setup.PropertyId);
-            BFConsume consumeFact = BestiaryUtils.FindConsumeRule(critter, ioData.Setup.PropertyId);
+            ActorStateId state = critter.GetStateForEnvironment(ioData.Setup.EnvironmentProperties);
+            BFProduce produceFact = BestiaryUtils.FindProduceRule(critter, ioData.Setup.PropertyId, state);
+            BFConsume consumeFact = BestiaryUtils.FindConsumeRule(critter, ioData.Setup.PropertyId, state);
             
             if (produceFact != null)
             {
@@ -114,21 +90,6 @@ namespace ProtoAqua.Experiment
                 {
                     ioData.NewFactIds.Add(consumeFact.Id());
                 }
-            }
-        }
-
-        private IEnumerator IdleTimer()
-        {
-            while(true)
-            {
-                m_IdleDuration += Routine.DeltaTime;
-                if (m_IdleDuration >= 30)
-                {
-                    m_IdleDuration = 0;
-                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentIdle);
-                }
-
-                yield return null;
             }
         }
 
@@ -159,12 +120,6 @@ namespace ProtoAqua.Experiment
             ExperimentServices.Actors.Pools.Reset(inActorId);
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
         }
-
-        private void ResetIdle()
-        {
-            m_IdleDuration = 0;
-        }
-
     }
     
 }

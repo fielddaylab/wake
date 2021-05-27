@@ -204,6 +204,13 @@ namespace Aqua.Profile
             {
                 ioSerializer.Serialize("waterProps", ref m_WaterProperties);
             }
+            else
+            {
+                foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
+                {
+                    m_WaterProperties |= (1U << (int) property);
+                }
+            }
         }
 
         public bool HasChanges()

@@ -20,7 +20,7 @@ namespace Aqua
         public Sprite Icon() { return !m_Icon ? DefaultIcon() : m_Icon; }
         public virtual BFMode Mode() { return BFMode.Player; }
 
-        public virtual Sprite GraphIcon() { return Icon(); }
+        public virtual Sprite GraphIcon() { return null; }
         protected virtual Sprite DefaultIcon() { return GraphIcon(); }
 
         #region Lifecycle

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -179,6 +180,34 @@ namespace Aqua
                             m_Size = BestiaryDescSize.Ecosystem;
                         break;
                     }
+            }
+        }
+
+        [ContextMenu("Load All In Directory")]
+        private void FindAllFacts()
+        {
+            string myPath = UnityEditor.AssetDatabase.GetAssetPath(this);
+            string myDirectory = Path.GetDirectoryName(myPath);
+            m_Facts = ValidationUtils.FindAllAssets<BFBase>(myDirectory);
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        [UnityEditor.CustomEditor(typeof(BestiaryDesc)), UnityEditor.CanEditMultipleObjects]
+        private class Inspector : UnityEditor.Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                base.OnInspectorGUI();
+
+                UnityEditor.EditorGUILayout.Space();
+
+                if (GUILayout.Button("Load All In Directory"))
+                {
+                    foreach(BestiaryDesc bestiary in targets)
+                    {
+                        bestiary.FindAllFacts();
+                    }
+                }
             }
         }
 

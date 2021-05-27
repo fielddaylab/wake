@@ -31,6 +31,25 @@ namespace Aqua
 
         #endregion // Text
 
+        protected T FindPairedFact<T>() where T : BFBehavior
+        {
+            foreach(var behavior in Parent().FactsOfType<T>())
+            {
+                if (behavior == this)
+                    continue;
+
+                if (IsPair(behavior))
+                    return behavior;
+            }
+
+            return null;
+        }
+
+        protected virtual bool IsPair(BFBehavior inOther)
+        {
+            return inOther.GetType() == GetType();
+        }
+
         public abstract IEnumerable<BFFragment> GenerateFragments();
 
         public override int CompareTo(BFBase other)

@@ -20,21 +20,11 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private AudioHandle m_AudioLoop;
 
-        [NonSerialized] private Routine m_IdleRoutine;
-        [NonSerialized] private float m_IdleDuration = 0;
         [NonSerialized] private float m_defAlpha;
 
         protected override void Awake()
         {
             base.Awake();
-
-            m_BaseInput.OnInputDisabled.AddListener(() => {
-                m_IdleRoutine.Pause();
-            });
-            m_BaseInput.OnInputEnabled.AddListener(() => {
-                m_IdleRoutine.Resume();
-                m_IdleDuration /= 2;
-            });
             // m_CurrentColor = m_WaterColor.GetColor();
             // m_defAlpha = m_WaterColor.GetAlpha();
         }
@@ -63,15 +53,11 @@ namespace ProtoAqua.Experiment
         public override void OnExperimentStart()
         {
             base.OnExperimentStart();
-            
-            ResetIdle();
-            m_IdleRoutine.Replace(this, IdleTimer());
         }
 
         public override void OnExperimentEnd()
         {
             m_Text.SetText("");
-            m_IdleRoutine.Stop();
 
             base.OnExperimentEnd();
         }
@@ -89,21 +75,6 @@ namespace ProtoAqua.Experiment
                 {
                     ioData.NewFactIds.Add(fact.Id());
                 }
-            }
-        }
-
-        private IEnumerator IdleTimer()
-        {
-            while(true)
-            {
-                m_IdleDuration += Routine.DeltaTime;
-                if (m_IdleDuration >= 30)
-                {
-                    m_IdleDuration = 0;
-                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentIdle);
-                }
-
-                yield return null;
             }
         }
 
@@ -140,11 +111,6 @@ namespace ProtoAqua.Experiment
         {
             ExperimentServices.Actors.Pools.Reset(inActorId);
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
-        }
-
-        private void ResetIdle()
-        {
-            m_IdleDuration = 0;
         }
 
         public override int GetSpawnCount(StringHash32 inActorId)

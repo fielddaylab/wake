@@ -48,7 +48,7 @@ namespace AquaAudio
         }
 
         [ContextMenu("Load All In Directory")]
-        private void FindAllTweaks()
+        private void FindAllAudioEvents()
         {
             string myPath = UnityEditor.AssetDatabase.GetAssetPath(this);
             string myDirectory = Path.GetDirectoryName(myPath);
@@ -56,7 +56,7 @@ namespace AquaAudio
             UnityEditor.EditorUtility.SetDirty(this);
         }
 
-        [UnityEditor.CustomEditor(typeof(AudioPackage))]
+        [UnityEditor.CustomEditor(typeof(AudioPackage)), UnityEditor.CanEditMultipleObjects]
         private class Inspector : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
@@ -69,7 +69,7 @@ namespace AquaAudio
                 {
                     foreach(AudioPackage audioPackage in targets)
                     {
-                        audioPackage.FindAllTweaks();
+                        audioPackage.FindAllAudioEvents();
                     }
                 }
             }
