@@ -30,6 +30,9 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private uint m_NextId;
 
+        [NonSerialized] private WaterPropertyBlockF32 m_currentWaterState;
+        private bool m_currentWaterStateDirty;
+
         #region Register/Deregister
 
         public void Register(ActorCtrl inActor)
@@ -65,11 +68,29 @@ namespace ProtoAqua.Experiment
             float dt = Time.deltaTime;
             m_TimeTicker.Advance(dt);
             m_ThinkTicker.Advance(dt);
-            
+
+            if (m_currentWaterStateDirty)
+            {
+                foreach (var actor in m_AllActors)
+                {
+                    actor.UpdateStressState(m_currentWaterState);
+                }
+            }
+
             foreach(var actor in m_AllActors)
             {
                 actor.Tick(m_TimeTicker.CurrentTimeMS(), m_ThinkTicker.CurrentTimeMS());
             }
+        }
+
+        public void SetCurrentWaterState(WaterPropertyBlockF32 newState)
+        {
+            m_currentWaterState = newState;
+        }
+
+        public void SetCurrentWaterState(BestiaryDesc bestiaryDesc)
+        {
+            m_currentWaterState =  BestiaryUtils.GenerateInitialState(bestiaryDesc);
         }
 
         public void BeginTicking()

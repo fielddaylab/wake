@@ -30,7 +30,7 @@ MonoBehaviour:
     m_Source: 
     m_Hash: 0
   m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
+  m_ModelingDifficulty: 1
   m_ArgumentationDifficulty: 0
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: ffcb01ca3fde9498d999046d7660f28e, type: 2}
@@ -68,8 +68,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: 
-        m_Hash: 0
+        m_Source: Model.SargLightPrediction
+        m_Hash: 3265207088
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -82,7 +82,13 @@ MonoBehaviour:
     DescriptionId:
       m_Source: 
       m_Hash: 0
-    Steps: []
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Muzzins
+        m_Hash: 3202459133
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
@@ -116,8 +122,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: 
-        m_Hash: 0
+        m_Source: Model.SargLightPrediction
+        m_Hash: 3265207088
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -131,10 +137,16 @@ MonoBehaviour:
     DescriptionId:
       m_Source: 
       m_Hash: 0
-    Steps: []
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Muzzins
+        m_Hash: 3202459133
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 
-  m_CashReward: 23
-  m_GearReward: 200
+  m_CashReward: 10
+  m_GearReward: 10
   m_AdditionalRewards: []
   m_Icon: {fileID: 0}
   m_Scripting: {fileID: -1942890987711236906, guid: 09eadb3737e454dcd8e5fb4e26ee1ada,

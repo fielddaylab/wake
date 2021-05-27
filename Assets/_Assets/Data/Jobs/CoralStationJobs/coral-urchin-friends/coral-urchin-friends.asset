@@ -30,8 +30,8 @@ MonoBehaviour:
     m_Source: 
     m_Hash: 0
   m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 0
+  m_ModelingDifficulty: 1
+  m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: e9524ce99e0024d07a424d315aee33a1, type: 2}
   m_PrereqConditions: 
@@ -109,7 +109,13 @@ MonoBehaviour:
     DescriptionId:
       m_Source: 
       m_Hash: 0
-    Steps: []
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Muzzins
+        m_Hash: 3202459133
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
@@ -182,12 +188,19 @@ MonoBehaviour:
     DescriptionId:
       m_Source: 
       m_Hash: 0
-    Steps: []
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Muzzins
+        m_Hash: 3202459133
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 
-  m_CashReward: 0
-  m_GearReward: 0
+  m_CashReward: 10
+  m_GearReward: 10
   m_AdditionalRewards: []
   m_Icon: {fileID: 0}
   m_Scripting: {fileID: -1942890987711236906, guid: 70ecec1fb5d3143ab8b75561013d53e0,
     type: 3}
-  m_ExtraAssets: []
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: f9d283d2ecc6b46b2968f177b4de58bf, type: 3}

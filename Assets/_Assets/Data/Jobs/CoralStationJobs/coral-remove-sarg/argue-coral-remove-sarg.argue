@@ -1,0 +1,84 @@
+# rootNodeId node.intro
+# endNodeId node.CoralRemoveSarg.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+
+// First Claim
+
+:: node.intro
+@showClaims
+@linkToNode link.YesRemoveSarg, node.YesRemoveSarg
+@linkToNode link.NoRemoveSarg, node.NoRemoveSarg
+Should I get my people ready to start yanking out the Sargassum?
+
+:: node.NoRemoveSarg
+@invalidNodeId  node.invalid.BadEvidenceToKeepSarg
+Really? Well, that makes for less work. What is your evidence?
+
+:: node.invalid.BadEvidenceToKeepSarg
+@linkToNode link.YesRemoveSarg, node.YesRemoveSarg
+@linkToNode link.NoRemoveSarg, node.NoRemoveSarg
+Hmmm... That doesn't seem to fit, maybe we should reevaluate your claim to keep the Sargassum.
+
+
+// Claims
+
+:: link.YesRemoveSarg
+@factId YesRemoveSarg
+@tag claim
+@type claim
+Yes, we need to remove the Sargassum.
+
+:: link.NoRemoveSarg
+@factId NoRemoveSarg
+@tag claim
+@type claim
+No, the Sargassum can stay.
+
+
+// After First Claim
+
+:: node.YesRemoveSarg
+@linkToNode Model.SargLightPrediction, node.ModelLightPresented
+@linkToNode StaghornCoral.Light.Stressed, node.SomethingCoralRelated
+@linkToNode SargassumCoveredReef.Light, node.SomethingCoralRelated
+@invalidNodeId  node.invalid.UnrelatedEvidence
+I knew it! I'm going to need evidence to get people behind this decision.
+
+:: node.NoDataPresentedYet
+@linkToNode Model.SargLightPrediction, node.ModelLightPresented
+@linkToNode StaghornCoral.Light.Stressed, node.SomethingCoralRelated
+@linkToNode SargassumCoveredReef.Light, node.SomethingCoralRelated
+@invalidNodeId  node.invalid.UnrelatedEvidence
+Do you have any proof that the Sargassum is harmful to the coral?
+
+:: node.SomethingCoralRelated
+@linkToNode Model.SargLightPrediction, node.ModelLightPresented
+@linkToNode StaghornCoral.Light.Stressed, node.SomethingCoralRelatedAgain
+@linkToNode SargassumCoveredReef.Light, node.SomethingCoralRelatedAgain
+@invalidNodeId  node.invalid.UnrelatedEvidence
+I see where you're going, but this doesn't help me understand whether the Sargassum is changing the light.
+
+:: node.SomethingCoralRelatedAgain
+@linkToNode Model.SargLightPrediction, node.ModelLightPresented
+@linkToNode StaghornCoral.Light.Stressed, node.SomethingCoralRelatedAgain
+@linkToNode SargassumCoveredReef.Light, node.SomethingCoralRelatedAgain
+@invalidNodeId  node.invalid.UnrelatedEvidence
+Maybe you have a model?
+
+:: node.ModelLightPresented
+@nextNodeId node.CoralRemoveSarg.end
+So the light levels were fine until the Sargassum got there.
+
+:: node.CoralRemoveSarg.end
+Perfect! I was joking about getting people to remove it. That stuff STINKS! Maybe there's another solution...
+
+
+// Invalid
+:: node.invalid.UnrelatedEvidence
+@nextNodeId node.NoDataPresentedYet
+I don't think that's important here. 
+
+:: node.invalid.default
+[If this text is shown, something has gone very, very wrong]

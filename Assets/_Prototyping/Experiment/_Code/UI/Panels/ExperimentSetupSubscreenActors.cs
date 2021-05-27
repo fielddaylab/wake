@@ -26,8 +26,6 @@ namespace ProtoAqua.Experiment
         [NonSerialized] private int m_ButtonCount;
         [NonSerialized] private ExperimentSettings.TankDefinition m_CachedTank;
 
-        // private bool OnMeasurementCritterY;
-
         public Action OnSelectContinue;
 
         protected override void Awake()

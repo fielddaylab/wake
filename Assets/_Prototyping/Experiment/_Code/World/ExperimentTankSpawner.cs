@@ -49,6 +49,7 @@ namespace ProtoAqua.Experiment
         private void OnBegin()
         {
             ExperimentServices.Actors.BeginTicking();
+            ExperimentServices.Actors.SetCurrentWaterState(m_CurrentData.EnvironmentProperties);
             Services.Data.SetVariable(ExperimentVars.ExperimentRunning, true);
             m_CurrentTank.OnExperimentStart();
             if(m_CurrentTankType.Equals(TankType.Stressor)) {

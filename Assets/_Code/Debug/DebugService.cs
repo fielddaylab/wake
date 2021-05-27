@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Diagnostics;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -10,7 +11,6 @@ using BeauUtil.Services;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using BeauUtil.Debugger;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Aqua.Debugging

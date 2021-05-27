@@ -1,0 +1,118 @@
+# rootNodeId node.intro
+# endNodeId node.CoralUrchinFriends.end
+# defaultInvalidNodeId node.invalid.default
+# linksFile Links
+
+
+// First Question
+
+:: node.intro
+@showClaims
+@linkToNode link.UrchinsCanBeAdded, node.FirstQuestionPassed
+Is there an organism that can clear the Sargassum?
+
+:: node.invalid.DoesNotEatSarg
+@nextNodeId  node.intro
+Hmm. That doesn't eat Sargassum, does it? 
+
+
+// Claims
+
+:: link.UrchinsCanBeAdded
+@factId UrchinsCanBeAdded
+@tag claim
+@type claim
+No, Urchins are fine to be added.
+
+
+// Second Question
+
+//the 3 numbers represent evidence given or not, 0 = false, 1 = true
+
+:: node.FirstQuestionPassed
+@linkToNode URCHIN_IS_STRESSED, node.DataGiven100
+@linkToNode URCHIN_STRESSED_REPRO, node.DataGiven010
+@linkToNode EVERYTHING_IS_FINE_MODEL, node.DataGiven001
+@invalidNodeId node.invalid.000
+Oh! So you found something different. Can you explain?
+
+:: node.DataGiven000
+@linkToNode URCHIN_IS_STRESSED, node.DataGiven100
+@linkToNode URCHIN_STRESSED_REPRO, node.DataGiven010
+@linkToNode EVERYTHING_IS_FINE_MODEL, node.DataGiven001
+@invalidNodeId node.invalid.000
+Do you have any evidence it's fine to add urchin?
+
+:: node.DataGiven001
+@linkToNode URCHIN_IS_STRESSED, node.DataGiven101
+@linkToNode URCHIN_STRESSED_REPRO, node.DataGiven011
+@invalidNodeId node.invalid.001
+I see. You were able to model urchins not taking over. Why is that?
+
+:: node.DataGiven010
+@linkToNode URCHIN_IS_STRESSED, node.DataGiven110
+@linkToNode EVERYTHING_IS_FINE_MODEL, node.DataGiven011
+@invalidNodeId node.invalid.010
+So... When the urchins are stressed, they reproduce slower. Could you explain how that helps us here?
+
+:: node.DataGiven011
+@linkToNode URCHIN_IS_STRESSED, node.DataGiven111
+@invalidNodeId node.invalid.011
+But do you know that the urchins will be stressed? 
+
+:: node.DataGiven100
+@linkToNode URCHIN_STRESSED_REPRO, node.DataGiven110
+@linkToNode EVERYTHING_IS_FINE_MODEL, node.DataGiven101
+@invalidNodeId node.invalid.100
+Hmmm, so you're saying the urchins will be stressed. Could you explain how this information helps us?
+
+:: node.DataGiven101
+@linkToNode URCHIN_STRESSED_REPRO, node.DataGiven110
+@invalidNodeId node.invalid.101
+So the urchins will be stressed, but how does this lead to them not taking over?
+
+:: node.DataGiven110
+@linkToNode EVERYTHING_IS_FINE_MODEL, node.DataGiven111
+@invalidNodeId node.invalid.110
+So the stressed urchins would reproduce slower... Have you made any predictions if this will really work?
+
+:: node.DataGiven111
+@nextNodeId node.CoralUrchinFriends.end
+Ah! It's all coming together now, good work!
+
+:: node.CoralUrchinFriends.end
+So, urchins can stay because they will be stressed which makes them reproduce slower. That way they won't take over. Clever!
+
+
+// Invalid 
+
+:: node.invalid.default
+[If this text is shown, something has gone very, very wrong]
+
+:: node.invalid.000
+@nextNodeId node.DataGiven000
+That doesn't seem important here. 
+
+:: node.invalid.001
+@nextNodeId node.DataGiven001
+I don't see how that's relevant.
+
+:: node.invalid.010
+@nextNodeId node.DataGiven010
+That doesn't seem quite right.
+
+:: node.invalid.011
+@nextNodeId node.DataGiven011
+Hmm. I don't think that helps us here.
+
+:: node.invalid.100
+@nextNodeId node.DataGiven100
+Hmm. I don't think that helps us here.
+
+:: node.invalid.101
+@nextNodeId node.DataGiven101
+That doesn't seem quite right.
+
+:: node.invalid.110
+@nextNodeId node.DataGiven110
+I don't see how that's relevant.
