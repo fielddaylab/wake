@@ -1,13 +1,12 @@
-using UnityEngine;
-using BeauPools;
-using UnityEngine.UI;
-using TMPro;
-using BeauRoutine;
 using Aqua;
+using BeauPools;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.UI;
 using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace ProtoAqua.Modeling
 {
@@ -17,10 +16,7 @@ namespace ProtoAqua.Modeling
 
         [SerializeField] private RectTransform m_LineTransform = null;
         [SerializeField] private Image m_Icon = null;
-        [SerializeField] private RawImage m_Line = null;
         [SerializeField] private LocText m_Label = null;
-        [SerializeField] private Texture2D m_SolidLineTexture = null;
-        [SerializeField] private Texture2D m_DottedLineTexture = null;
 
         #endregion // Inspector
 

@@ -1,64 +1,52 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+using BeauUtil;
 
 namespace ProtoAqua.Experiment {
     
     public class SubscreenDirectory {
 
-        // TODO : Convert into hashmaps
-        private List<ExpSubscreen> SubEnum = new List<ExpSubscreen>((ExpSubscreen[])Enum.GetValues(typeof(ExpSubscreen)));
-
-        private List<ExperimentSetupSubscreen> SubScreens = new List<ExperimentSetupSubscreen>();
-
-        private List<bool> Visited = new List<bool>();
-
-        private List<ExpSubscreen> Sequence = new List<ExpSubscreen>();
+        private ExperimentSetupSubscreen[] m_Screens = null;
+        private ExpSubscreen[] m_Sequence = Array.Empty<ExpSubscreen>();
+        private uint m_VisitedMask;
 
         public SubscreenDirectory(params ExperimentSetupSubscreen[] screens) {
-            foreach(var sc in screens) {
-                SubScreens.Add(sc);
-            }
-            if (screens[0] != null) {
-                SubScreens.Insert(0, null);
-            }
+            m_Screens = (ExperimentSetupSubscreen[]) screens.Clone();
         }
-
         
         public ExperimentSetupSubscreen GetSubscreen(ExpSubscreen sEnum) {
-            return SubScreens[SubEnum.IndexOf(sEnum)];
+            return m_Screens[(int) sEnum];
         }
 
         public ExpSubscreen GetEnum(ExperimentSetupSubscreen screen) {
-            return SubEnum[SubScreens.IndexOf(screen)];
+            return (ExpSubscreen) Array.IndexOf(m_Screens, screen);
         }
 
         public void Refresh() {
-            Sequence.Clear();
-            Visited.Clear();
+            ArrayUtils.Clear(ref m_Sequence);
+            m_VisitedMask = 0;
         }
 
-        public List<ExperimentSetupSubscreen> AllSubscreens() {
-            return SubScreens;
+        public ListSlice<ExperimentSetupSubscreen> AllSubscreens() {
+            return m_Screens;
         }
 
         public bool HasSequence() {
-            return Sequence.Count > 0;
+            return m_Sequence.Length > 0;
         }
 
         public void SetSequence(ExpSubscreen[] Seq) {
-            if(Sequence.Count == 0 || !SeqEquals(Seq))
-                Sequence.Clear();
-                Visited.Clear();
-                Sequence = new List<ExpSubscreen>(Seq);
-                if(Sequence[0] != ExpSubscreen.Tank) Sequence.Add(ExpSubscreen.Tank);
-            Visited = new List<bool>(Enumerable.Repeat(false, Seq.Length));
+            if(SeqEquals(Seq))
+                return;
+
+            m_Sequence = (ExpSubscreen[]) Seq.Clone();
+            m_VisitedMask = 0;
         }
 
         public bool HasReuse(ExpSubscreen sEnum) {
             int i = 0;
-            foreach(var seq in Sequence) {
+            foreach(var seq in m_Sequence) {
                 if(seq == sEnum) ++i;
             }
 
@@ -67,70 +55,69 @@ namespace ProtoAqua.Experiment {
         }
 
         public bool SeqEquals(ExpSubscreen[] Seq) {
-            return Sequence.SequenceEqual(Seq);
+            return ArrayUtils.ContentEquals(m_Sequence, Seq);
         }
 
         public bool InSequence(ExpSubscreen sEnum) {
-            if(Sequence.Count < 1) return false;
-            return Sequence.Contains(sEnum);
+            if(m_Sequence.Length < 1) return false;
+            return ArrayUtils.Contains(m_Sequence, sEnum);
         }
 
         public void SetVisited(ExpSubscreen sEnum) {
-            if(Visited.Count > 0) Visited[Sequence.IndexOf(sEnum)] = true;
+            int index = Array.IndexOf(m_Sequence, sEnum);
+            Bits.Add(ref m_VisitedMask, index);
         }
 
         public bool IsVisited(ExpSubscreen sEnum) {
-            if(Visited.Count < 1) return false;
-            return Visited[Sequence.IndexOf(sEnum)];
+            int index = Array.IndexOf(m_Sequence, sEnum);
+            return Bits.Contains(m_VisitedMask, index);
         }
 
         public bool IsVisited(int idx) {
-            return Visited[idx];
+            return Bits.Contains(m_VisitedMask, idx);
         }
 
-
-        public ExpSubscreen[] GetSequence() {
-            return Sequence.ToArray();
+        public ListSlice<ExpSubscreen> GetSequence() {
+            return m_Sequence;
         }
+
         // TODO: Consider Reuses
         public ExperimentSetupSubscreen GetNext(ExpSubscreen curr) {
-            int currIdx = Sequence.IndexOf(curr);
+            int currIdx = Array.IndexOf(m_Sequence, curr);
             if(HasReuse(curr) && IsVisited(currIdx)) {
-                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+                currIdx = Array.IndexOf(m_Sequence, curr, currIdx + 1);
             } 
 
-            if((currIdx < Sequence.Count -1) && (currIdx >= 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[currIdx + 1])];
+            if((currIdx < m_Sequence.Length -1) && (currIdx >= 0))
+                return m_Screens[(int) m_Sequence[currIdx + 1]];
             else {
                 return null;
             }
         }
 
         public ExperimentSetupSubscreen GetPrevious(ExpSubscreen curr) {
-            int currIdx = Sequence.IndexOf(curr);
+            int currIdx = Array.IndexOf(m_Sequence, curr);
             if(HasReuse(curr) && IsVisited(currIdx)) {
-                currIdx = Sequence.IndexOf(curr, currIdx + 1);
+                currIdx = Array.LastIndexOf(m_Sequence, curr, 0, currIdx);
             }
-            if((currIdx <= Sequence.Count -1) && (currIdx > 0))
-                return SubScreens[SubEnum.IndexOf(Sequence[currIdx - 1])];
+            if((currIdx <= m_Sequence.Length -1) && (currIdx > 0))
+                return m_Screens[(int) m_Sequence[currIdx - 1]];
             else {
                 return null;
             }
         }
 
         public bool HasNext(ExpSubscreen curr) {
-            return Sequence.IndexOf(curr) < Sequence.Count - 1;
+            return Array.IndexOf(m_Sequence, curr) < m_Sequence.Length - 1;
         }
 
         public bool HasPrev(ExpSubscreen curr) {
-            return Sequence.IndexOf(curr) > 0;
+            return Array.IndexOf(m_Sequence, curr) > 0;
         }
 
         public bool HasPrevNext(ExpSubscreen curr) {
             return HasPrev(curr) & HasNext(curr);
         }
-
-
 
     }
 }

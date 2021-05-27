@@ -20,13 +20,13 @@ namespace Aqua
 
         static public string Find(TextId inText)
         {
-            return Service.Localize(inText, true);
+            return Service.Localize(inText);
         }
 
         static public string Format(TextId inText, object inArg0)
         {
             var locService = Service;
-            string format = locService.Localize(inText, true);
+            string format = locService.Localize(inText);
             Process(locService, ref inArg0);
             return string.Format(format, inArg0);
         }
@@ -34,7 +34,7 @@ namespace Aqua
         static public string Format(TextId inText, object inArg0, object inArg1)
         {
             var locService = Service;
-            string format = locService.Localize(inText, true);
+            string format = locService.Localize(inText);
             Process(locService, ref inArg0);
             Process(locService, ref inArg1);
             return string.Format(format, inArg0, inArg1);
@@ -43,7 +43,7 @@ namespace Aqua
         static public string Format(TextId inText, object inArg0, object inArg1, object inArg2)
         {
             var locService = Service;
-            string format = locService.Localize(inText, true);
+            string format = locService.Localize(inText);
             Process(locService, ref inArg0);
             Process(locService, ref inArg1);
             Process(locService, ref inArg2);

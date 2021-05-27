@@ -10,6 +10,7 @@ using BeauUtil.Variants;
 using BeauRoutine.Extensions;
 using ProtoCP;
 using Aqua;
+using System.Collections.Generic;
 
 namespace ProtoAqua.Experiment
 {
@@ -22,6 +23,7 @@ namespace ProtoAqua.Experiment
         #endregion // Inspector
 
         [NonSerialized] private AudioHandle m_AudioLoop;
+        [NonSerialized] private HashSet<StringHash32> m_ObservedBehaviors = new HashSet<StringHash32>();
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
@@ -46,6 +48,7 @@ namespace ProtoAqua.Experiment
 
             Services.Events.Register<StringHash32>(ExperimentEvents.SetupAddActor, SetupAddActor, this)
                 .Register<StringHash32>(ExperimentEvents.SetupRemoveActor, SetupRemoveActor, this)
+                .Register<StringHash32>(ExperimentEvents.BehaviorAddedToLog, OnBehaviorRecorded, this)
                 .Register(ExperimentEvents.AttemptObserveBehavior, ResetIdle, this);
 
             m_AudioLoop = Services.Audio.PostEvent("tank_water_loop");
@@ -71,8 +74,17 @@ namespace ProtoAqua.Experiment
         public override void OnExperimentEnd()
         {
             m_IdleRoutine.Stop();
+            m_ObservedBehaviors.Clear();
 
             base.OnExperimentEnd();
+        }
+
+        public override void GenerateResult(ExperimentResultData ioData)
+        {
+            base.GenerateResult(ioData);
+
+            foreach(var fact in m_ObservedBehaviors)
+                ioData.NewFactIds.Add(fact);
         }
 
         private IEnumerator IdleTimer()
@@ -106,9 +118,15 @@ namespace ProtoAqua.Experiment
             m_IdleDuration = 0;
         }
 
+        private void OnBehaviorRecorded(StringHash32 inBehaviorId)
+        {
+            m_ObservedBehaviors.Add(inBehaviorId);
+        }
+
         #endregion // Basic Functions
 
         #region Actors
+
         private void SetupAddActor(StringHash32 inActorId)
         {
             int spawnCount = GetSpawnCount(inActorId);

@@ -83,40 +83,14 @@ Sea Otter Eats Urchin
 
 // SUMMARY SCREEN
 
-:: summary.tankVarSummary
-{loc experiment.summary.tankType}
-{loc experiment.summary.ecoType}
-
-:: summary.tankStressorSummary
-{loc experiment.summary.tankType}
-
-:: summary.tankMeasureSummary
-{loc experiment.summary.tankType}
-
-
-:: summary.tankType
-{var-s experiment:tankTypeLabel}
-
-:: summary.ecoType
-{var-s experiment:ecoTypeLabel}
-
 :: summary.countableSummary
 {loc experiment.summary.duration}
-{loc experiment.summary.observedBehaviors}
 
 :: summary.duration
 Duration: {var-i experiment:experimentDuration} s.
 
 :: summary.observedBehaviors
 Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)
-
-// WATER PROPERTY
-
-:: waterproperty.temperature
-Temperature
-
-:: waterproperty.oxygen
-Oxygen
 
 // TOOLTIPS
 

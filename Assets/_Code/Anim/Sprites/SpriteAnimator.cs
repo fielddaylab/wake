@@ -64,6 +64,9 @@ namespace Aqua.Animation
 
         private void OnDisable()
         {
+            if (!Services.Valid)
+                return;
+            
             Manager?.DeregisterAnimator(this);
         }
 

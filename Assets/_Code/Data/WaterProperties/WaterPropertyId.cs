@@ -19,6 +19,8 @@ namespace Aqua
         MAX,
 
         [Hidden]
-        TRACKED_MAX = Salinity
+        TRACKED_MAX = Salinity,
+        [Hidden]
+        TRACKED_COUNT = TRACKED_MAX + 1
     }
 }

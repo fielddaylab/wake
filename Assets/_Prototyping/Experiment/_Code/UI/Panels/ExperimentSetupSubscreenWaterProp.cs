@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using Aqua;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Experiment
 {
@@ -16,37 +17,18 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private Button m_BackButton = null;
         [SerializeField] private LocText m_Label = null;
-        [SerializeField] private Sprite m_EmptyIcon = null;
 
         #endregion // Inspector
 
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
-        [NonSerialized] private ExperimentSetupData m_CachedData;
-        [NonSerialized] private ExperimentSettings m_CachedSettings;
-
+        [NonSerialized] private int m_ButtonCount;
 
         public Action OnSelectContinue;
         public Action OnSelectBack;
 
-        private class PropButton : IKeyValuePair<WaterPropertyId, PropButton>
-        {
-            public WaterPropertyId PropId;
-            public SetupToggleButton Button;
-
-            WaterPropertyId IKeyValuePair<WaterPropertyId, PropButton>.Key { get { return PropId; } }
-
-            PropButton IKeyValuePair<WaterPropertyId, PropButton>.Value { get { return this; } }
-        }
-
-        private Dictionary<WaterPropertyId, PropButton> buttonDict = new Dictionary<WaterPropertyId, PropButton>();
-
         protected override void Awake()
         {
-            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
-            m_CachedSettings = Services.Tweaks.Get<ExperimentSettings>();
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
-
-            buttonDict = new Dictionary<WaterPropertyId, PropButton>();
 
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -56,73 +38,51 @@ namespace ProtoAqua.Experiment
 
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
-
-            UpdateButtons();
         }
 
-        public override void SetData(ExperimentSetupData inData)
+        protected override void RestoreState()
         {
-            base.SetData(inData);
-            m_CachedData = inData;
-        }
+            base.RestoreState();
 
-        public override void Refresh()
-        {
-            base.Refresh();
-            UpdateButtons();
-            buttonDict.Clear();
-        }
-
-        private void UpdateButtons()
-        {
-            var properties = Services.Assets.WaterProp.Sorted();
             int buttonIdx = 0;
-
-            if(m_CachedButtons == null) return;
-
-            foreach(var prop in properties)
+            foreach(var property in Services.Assets.WaterProp.Measurable())
             {
-                if (buttonIdx >= m_CachedButtons.Length)
-                    break;
-                
-                if (!prop.HasFlags(WaterPropertyFlags.IsMeasureable))
+                Assert.True(buttonIdx < m_CachedButtons.Length);
+
+                if (!Services.Data.Profile.Inventory.IsPropertyUnlocked(property.Index()))
                     continue;
 
                 var button = m_CachedButtons[buttonIdx];
-                button.Load((int) prop.Index(), prop.Icon(), true);
+                button.gameObject.SetActive(true);
+                button.Load((int) property.Index(), property.Icon(), property.LabelId(), true);
+                button.Toggle.SetIsOnWithoutNotify(Setup.PropertyId == property.Index());
 
-                PropButton acb = new PropButton();
-                acb.PropId = prop.Index();
-                acb.Button = m_CachedButtons[buttonIdx];
-                if(!buttonDict.ContainsKey(acb.PropId)) buttonDict.Add(acb.PropId, acb);
-
-                ++buttonIdx;
+                buttonIdx++;
             }
+
+            m_ButtonCount = buttonIdx;
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(null, m_EmptyIcon, false);
-            }    
-        }
-
-        private void PresetButtons(ExpSubscreen sc) {
-            if(!sc.Equals(ExpSubscreen.Property)) return;
-            if(m_CachedData == null) {
-                throw new NullReferenceException("No cached data in actor.");
+                m_CachedButtons[buttonIdx].gameObject.SetActive(false);
             }
-            
-            var key = m_CachedData.PropertyId;
-            if(key == WaterPropertyId.MAX) return;
 
-            buttonDict.TryGetValue(key, out PropButton result);
-            if(result != null) result.Button.Toggle.SetIsOnWithoutNotify(true);
+            UpdateDisplay(WaterPropertyId.MAX);
         }
 
         private void UpdateDisplay(WaterPropertyId inWaterId)
         {
-            var def = Services.Assets.WaterProp.Property(inWaterId);
-            m_Label.SetText(def?.LabelId() ?? null);
-            m_NextButton.interactable = inWaterId != WaterPropertyId.MAX;
+            if (inWaterId == WaterPropertyId.MAX)
+            {
+                m_Label.SetText(string.Empty);
+                m_NextButton.interactable = false;
+            }
+            else
+            {
+                var def = Services.Assets.WaterProp.Property(inWaterId);
+                m_Label.SetText(def.LabelId());
+                m_NextButton.interactable = true;
+            }
         }
     
         private void UpdateFromSelection()
@@ -130,23 +90,17 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
-                Services.Events.Dispatch(ExperimentEvents.StressorColor, m_CachedData.PropertyId);
-                Services.Events.Dispatch(ExperimentEvents.SetupAddWaterProperty, m_CachedData.PropertyId);
+                Setup.PropertyId = (WaterPropertyId) active.GetComponent<SetupToggleButton>().Id.AsInt();
+                Services.Events.Dispatch(ExperimentEvents.StressorColor, Setup.PropertyId);
+                Services.Events.Dispatch(ExperimentEvents.SetupAddWaterProperty, Setup.PropertyId);
             }
             else
             {
-                m_CachedData.PropertyId = WaterPropertyId.MAX;
+                Setup.PropertyId = WaterPropertyId.MAX;
                 Services.Events.Dispatch(ExperimentEvents.SetupRemoveWaterProperty);
             }
 
-            UpdateDisplay(m_CachedData.PropertyId);
-        }
-
-        protected override void OnShowComplete(bool inbInstant)
-        {
-            base.OnShowComplete(inbInstant);
-            UpdateDisplay(m_CachedData.PropertyId);
+            UpdateDisplay(Setup.PropertyId);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Aqua.Portable
             m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
         }
 
-        public void Initialize(Sprite inIcon, Color inBackgroundColor, ToggleGroup inToggleGroup, string inText, object inData, Action<PortableListElement, bool> inCallback)
+        public void Initialize(Sprite inIcon, Color inBackgroundColor, ToggleGroup inToggleGroup, StringHash32 inLabel, object inData, Action<PortableListElement, bool> inCallback)
         {
             m_Toggle.SetIsOnWithoutNotify(false);
             m_Toggle.group = inToggleGroup;
@@ -40,7 +40,7 @@ namespace Aqua.Portable
             Data = inData;
             
             if (m_Text)
-                m_Text.SetText(inText);
+                m_Text.SetText(inLabel);
             
             m_Callback = inCallback;
         }

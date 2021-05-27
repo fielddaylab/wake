@@ -11,6 +11,7 @@ namespace Aqua.Profile
         private List<PlayerInv> m_Items = new List<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
+        private uint m_WaterProperties = 0;
 
         [NonSerialized] private bool m_ItemListDirty = true;
         [NonSerialized] private bool m_HasChanges;
@@ -37,6 +38,11 @@ namespace Aqua.Profile
                         m_HasChanges = true;
                     }
                 }
+            }
+
+            foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
+            {
+                m_WaterProperties |= (1U << (int) property);
             }
         }
 
@@ -152,15 +158,52 @@ namespace Aqua.Profile
 
         #endregion // Upgrades
 
+        #region Water Properties
+
+        public bool IsPropertyUnlocked(WaterPropertyId inId)
+        {
+            return Bits.Contains(m_WaterProperties, (int) inId);
+        }
+
+        public bool UnlockProperty(WaterPropertyId inId)
+        {
+            if (!Bits.Contains(m_WaterProperties, (int) inId))
+            {
+                Bits.Add(ref m_WaterProperties, (int) inId);
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool LockProperty(WaterPropertyId inId)
+        {
+            if (Bits.Contains(m_WaterProperties, (int) inId))
+            {
+                Bits.Remove(ref m_WaterProperties, (int) inId);
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Water Properties
+
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.ObjectArray("items", ref m_Items);
             ioSerializer.UInt32ProxySet("scannerIds", ref m_ScannerIds);
             ioSerializer.UInt32ProxySet("upgradeIds", ref m_UpgradeIds);
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Serialize("waterProps", ref m_WaterProperties);
+            }
         }
 
         public bool HasChanges()

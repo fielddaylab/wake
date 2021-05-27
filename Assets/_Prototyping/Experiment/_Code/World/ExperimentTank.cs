@@ -1,14 +1,7 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
-using AquaAudio;
 using BeauRoutine;
-using System.Collections;
-using System.Reflection;
-using BeauUtil.Variants;
-using BeauRoutine.Extensions;
-using ProtoCP;
 using Aqua;
 
 namespace ProtoAqua.Experiment
@@ -37,6 +30,8 @@ namespace ProtoAqua.Experiment
 
         public virtual void OnExperimentStart() { }
         public virtual void OnExperimentEnd() { }
+
+        public virtual void GenerateResult(ExperimentResultData ioData) { }
 
         public abstract bool TryHandle(ExperimentSetupData inSelection);
         public virtual void Hide()

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using BeauUtil;
 
 namespace ProtoAqua.Experiment
 {
@@ -13,14 +14,14 @@ namespace ProtoAqua.Experiment
         #region Inspector
 
         [SerializeField] private Button m_StartButton = null;
-        [SerializeField] private TMP_Text m_TankText = null;
-        [SerializeField] private TMP_Text m_ActorText = null;
-        [SerializeField] private TMP_Text m_PropText = null;
+        [SerializeField] private LayoutGroup m_PropertiesLayout = null;
+        [SerializeField] private SetupElementDisplay m_TankTypeDisplay = null;
+        [SerializeField] private SetupElementDisplay m_EnvironmentDisplay = null;
+        [SerializeField] private SetupElementDisplay m_CritterDisplay = null;
+        [SerializeField] private SetupElementDisplay m_PropertyDisplay = null;
         [SerializeField] private Button m_BackButton = null;
 
         #endregion // Inspector
-
-        private ExperimentSetupData m_CachedData;
 
         public Action OnSelectStart;
         public Action OnSelectBack;
@@ -31,56 +32,56 @@ namespace ProtoAqua.Experiment
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
         }
 
-        private void UpdateDisplay()
+        protected override void RestoreState()
         {
-            var experimentSettings = Services.Tweaks.Get<ExperimentSettings>();
+            base.RestoreState();
 
-            if(m_CachedData.Tank.Equals(TankType.Stressor)) {
-                m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankStressorSummary"));
-            }
-            else {
-                m_TankText.SetText(Services.Loc.Localize("experiment.summary.tankVarSummary"));
-            }
+            var tankType = Config.GetTank(Setup.Tank);
+            m_TankTypeDisplay.gameObject.SetActive(true);
+            m_TankTypeDisplay.Load(tankType.Icon, tankType.ShortLabelId);
 
-            if(m_CachedData.PropertyId != WaterPropertyId.MAX)
+            switch(tankType.Tank)
             {
-                m_PropText.gameObject.SetActive(true);
-                m_PropText.SetText(
-                    Services.Loc.Localize(Services.Assets.WaterProp.Property(m_CachedData.PropertyId).LabelId()));
+                case TankType.Measurement:
+                case TankType.Stressor:
+                    {
+                        m_EnvironmentDisplay.gameObject.SetActive(false);
+                        PopulateCritter(Setup.CritterId);
+                        PopulateProperty(Setup.PropertyId);
+                        break;
+                    }
+
+                default:
+                    {
+                        PopulateEnvironment(Setup.EnvironmentId);
+                        m_CritterDisplay.gameObject.SetActive(false);
+                        m_PropertyDisplay.gameObject.SetActive(false);
+                        break;
+                    }
             }
-            else
-            {
-                m_PropText.gameObject.SetActive(false);
-            }
 
-
-
-
-            using(PooledStringBuilder psb = PooledStringBuilder.Create())
-            {
-                foreach(var actor in m_CachedData.ActorIds)
-                {
-                    if (psb.Builder.Length > 0)
-                        psb.Builder.Append('\n');
-                    
-                    string label = Services.Loc.Localize(Services.Assets.Bestiary.Get(actor).CommonName());
-                    psb.Builder.Append(label);
-                }
-
-                m_ActorText.SetText(psb.Builder.ToString());
-            }
+            m_PropertiesLayout.ForceRebuild();
         }
 
-        public override void SetData(ExperimentSetupData inData)
+        private void PopulateCritter(StringHash32 inCritterId)
         {
-            base.SetData(inData);
-            m_CachedData = inData;
+            m_CritterDisplay.gameObject.SetActive(true);
+            var critter = Services.Assets.Bestiary.Get(inCritterId);
+            m_CritterDisplay.Load(critter.Icon(), critter.CommonName());
         }
 
-        protected override void OnShowComplete(bool inbInstant)
+        private void PopulateProperty(WaterPropertyId inProperty)
         {
-            base.OnShowComplete(inbInstant);
-            UpdateDisplay();
+            m_PropertyDisplay.gameObject.SetActive(true);
+            var prop = Services.Assets.WaterProp.Property(inProperty);
+            m_PropertyDisplay.Load(prop.Icon(), prop.LabelId());
+        }
+
+        private void PopulateEnvironment(StringHash32 inEnvironmentId)
+        {
+            m_EnvironmentDisplay.gameObject.SetActive(true);
+            var env = Services.Assets.Bestiary.Get(inEnvironmentId);
+            m_EnvironmentDisplay.Load(env.Icon(), env.CommonName());
         }
     }
 }

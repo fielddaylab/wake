@@ -12,7 +12,7 @@ namespace ProtoAqua.Experiment {
         Property,
         Tank,
         Boot,
-        Category,
+        Category_UNUSED,
         Slider,
     }
 }

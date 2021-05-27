@@ -1,18 +1,10 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
 using AquaAudio;
 using BeauRoutine;
 using System.Collections;
-using System.Reflection;
-using BeauUtil.Variants;
-using BeauRoutine.Extensions;
-using ProtoCP;
 using Aqua;
-using TMPro;
-using UnityEngine.UI;
-using System.Collections.Generic;
 
 namespace ProtoAqua.Experiment
 {
@@ -30,7 +22,6 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
-        // [NonSerialized] private Color m_CurrentColor;
         [NonSerialized] private float m_defAlpha;
 
         protected override void Awake()
@@ -83,6 +74,22 @@ namespace ProtoAqua.Experiment
             m_IdleRoutine.Stop();
 
             base.OnExperimentEnd();
+        }
+
+        public override void GenerateResult(ExperimentResultData ioData)
+        {
+            base.GenerateResult(ioData);
+
+            BestiaryDesc critter = Services.Assets.Bestiary.Get(ioData.Setup.CritterId);
+            BFState fact = BestiaryUtils.FindRangeRule(critter, ioData.Setup.PropertyId);
+
+            if (fact != null)
+            {
+                if (Services.Data.Profile.Bestiary.RegisterFact(fact.Id()))
+                {
+                    ioData.NewFactIds.Add(fact.Id());
+                }
+            }
         }
 
         private IEnumerator IdleTimer()

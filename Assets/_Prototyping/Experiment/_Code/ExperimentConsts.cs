@@ -29,8 +29,6 @@ namespace ProtoAqua.Experiment
         static public readonly StringHash32 ExperimentRequestSummary = "experiment:request-summary";
         static public readonly StringHash32 ExperimentTeardown = "experiment:teardown";
 
-        static public readonly StringHash32 SubscreenBack = "experiment:subscreen-back";
-
         static public readonly StringHash32 AttemptObserveBehavior = "experiment:attempt-observe-behavior";
         static public readonly StringHash32 BehaviorAddedToLog = "experiment:behavior-added-to-log";
     }
@@ -63,5 +61,10 @@ namespace ProtoAqua.Experiment
         static public readonly TableKeyPair ExperimentRunning = TableKeyPair.Parse("experiment:running");
         static public readonly TableKeyPair ExperimentDuration = TableKeyPair.Parse("experiment:experimentDuration");
         static public readonly TableKeyPair ExperimentBehaviorCount = TableKeyPair.Parse("experiment:observedBehaviorCount");
+    }
+
+    static public class ExperimentConsts
+    {
+        public const int MaxCritters = 4;
     }
 }

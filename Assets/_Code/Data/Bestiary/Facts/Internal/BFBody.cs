@@ -13,6 +13,7 @@ namespace Aqua
 
         [Header("Body")]
         [SerializeField, FormerlySerializedAs("m_StartingMass")] private uint m_MassPerPopulation = 0;
+        [SerializeField] private uint m_ScarcityLevel = 10000;
         
         [Header("Display")]
         [SerializeField] private float m_MassDisplayScale = 1;
@@ -23,6 +24,7 @@ namespace Aqua
         #endregion // Inspector
 
         public uint MassPerPopulation() { return m_MassPerPopulation; }
+        public uint ScarcityLevel() { return m_ScarcityLevel; }
 
         public float MassDisplayScale() { return m_MassDisplayScale; }
         public uint PopulationSoftCap() { return m_PopulationSoftCap; }

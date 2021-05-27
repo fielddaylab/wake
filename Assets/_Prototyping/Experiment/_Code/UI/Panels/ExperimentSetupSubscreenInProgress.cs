@@ -20,9 +20,5 @@ namespace ProtoAqua.Experiment
         {
             m_EndButton.onClick.AddListener(() => OnSelectEnd?.Invoke());
         }
-
-        public Action GetAction() {
-            return OnSelectEnd;
-        }
     }
 }

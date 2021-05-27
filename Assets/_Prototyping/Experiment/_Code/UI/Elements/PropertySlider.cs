@@ -1,13 +1,6 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
-using AquaAudio;
-using BeauRoutine;
-using System.Collections;
-using System.Reflection;
-using BeauUtil.Variants;
-using BeauRoutine.Extensions;
 using UnityEngine.UI;
 using Aqua;
 
@@ -19,6 +12,8 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private Slider m_Slider = null;
         [SerializeField] private Image m_Icon = null;
+        [SerializeField] private Graphic m_Background = null;
+        [SerializeField] private Graphic m_Fill = null;
 
         #endregion // Inspector
         [NonSerialized] private WaterPropertyId m_Id;
@@ -27,14 +22,19 @@ namespace ProtoAqua.Experiment
 
         public Slider Slider { get { return m_Slider; } }
         public WaterPropertyId Id { get { return m_Id; } }
-        public StringHash32 LabelId { get { return m_LabelId; } }
 
-        public void Load(WaterPropertyDesc PropertyDesc, Sprite inIcon, bool inbInteractable)
+        public void Load(WaterPropertyDesc inProperty, Sprite inIcon, bool inbInteractable)
         {
-            m_Id = PropertyDesc?.Index() ?? WaterPropertyId.MAX;
+            m_Id = inProperty.Index();
             m_Icon.sprite = inIcon;
-            m_LabelId = PropertyDesc?.LabelId() ?? StringHash32.Null;
+            m_LabelId = inProperty.LabelId();
+            m_Slider.minValue = inProperty.MinValue();
+            m_Slider.maxValue = inProperty.MaxValue();
+            m_Slider.SetValueWithoutNotify(inProperty.DefaultValue());
 
+            ColorPalette4 palette = inProperty.Palette();
+            m_Background.color = palette.Shadow;
+            m_Fill.color = palette.Background;
         }
     }
 }

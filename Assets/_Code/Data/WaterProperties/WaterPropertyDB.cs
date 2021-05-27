@@ -9,6 +9,12 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab/Water Property/Water Property DB", fileName = "WaterPropertyDB")]
     public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>
     {
+        #region Inspector
+
+        [SerializeField] private WaterPropertyId[] m_DefaultUnlockedProperties = null;
+
+        #endregion // Inspector
+
         [NonSerialized] private WaterPropertyDesc[] m_PropertyIdMap;
         [NonSerialized] private WaterPropertyDesc[] m_SortedMap;
         [NonSerialized] private WaterPropertyBlockF32 m_DefaultValues;
@@ -55,10 +61,20 @@ namespace Aqua
         }
 
         public WaterPropertyBlockF32 DefaultValues() { return m_DefaultValues; }
+        public ListSlice<WaterPropertyId> DefaultUnlocked() { return m_DefaultUnlockedProperties; }
 
-        public IReadOnlyList<WaterPropertyDesc> Sorted()
+        public ListSlice<WaterPropertyDesc> Sorted()
         {
             return m_SortedMap;
+        }
+
+        public IEnumerable<WaterPropertyDesc> Measurable()
+        {
+            foreach(var prop in m_SortedMap)
+            {
+                if (prop.HasFlags(WaterPropertyFlags.IsMeasureable))
+                    yield return prop;
+            }
         }
 
         static private readonly WaterPropertyId[] SortOrder = new WaterPropertyId[]

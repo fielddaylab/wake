@@ -92,6 +92,31 @@ namespace ProtoAqua.Experiment
             base.OnExperimentEnd();
         }
 
+        public override void GenerateResult(ExperimentResultData ioData)
+        {
+            base.GenerateResult(ioData);
+
+            BestiaryDesc critter = Services.Assets.Bestiary.Get(ioData.Setup.CritterId);
+            BFProduce produceFact = BestiaryUtils.FindProduceRule(critter, ioData.Setup.PropertyId);
+            BFConsume consumeFact = BestiaryUtils.FindConsumeRule(critter, ioData.Setup.PropertyId);
+            
+            if (produceFact != null)
+            {
+                if (Services.Data.Profile.Bestiary.RegisterFact(produceFact.Id()))
+                {
+                    ioData.NewFactIds.Add(produceFact.Id());
+                }
+            }
+
+            if (consumeFact != null)
+            {
+                if (Services.Data.Profile.Bestiary.RegisterFact(consumeFact.Id()))
+                {
+                    ioData.NewFactIds.Add(consumeFact.Id());
+                }
+            }
+        }
+
         private IEnumerator IdleTimer()
         {
             while(true)
@@ -134,16 +159,6 @@ namespace ProtoAqua.Experiment
             ExperimentServices.Actors.Pools.Reset(inActorId);
             Services.UI.WorldFaders.Flash(Color.black, 0.2f);
         }
-
-        // private void SetupWaterProperty(WaterPropertyId inPropId)
-        // {
-        //     m_Sprite.sprite = Services.Assets.WaterProp.Property(inPropId).Icon();
-        // }
-
-        // private void SetupRemoveWaterProperty()
-        // {
-        //     m_Sprite.sprite = null;
-        // }
 
         private void ResetIdle()
         {

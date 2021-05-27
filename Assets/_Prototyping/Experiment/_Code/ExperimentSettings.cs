@@ -47,7 +47,7 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
-        public IEnumerable<TankDefinition> TankTypes()
+        public ListSlice<TankDefinition> TankTypes()
         {
             return m_TankDefs;
         }

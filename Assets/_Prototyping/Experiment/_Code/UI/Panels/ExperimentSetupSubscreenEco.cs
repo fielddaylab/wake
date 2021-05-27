@@ -2,9 +2,8 @@ using System;
 using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
-using TMPro;
 using Aqua;
-using System.Collections.Generic;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Experiment
 {
@@ -15,38 +14,25 @@ namespace ProtoAqua.Experiment
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private Button m_NextButton = null;
         [SerializeField] private Button m_BackButton = null;
-        [SerializeField] private LocText m_Label = null;
-        [SerializeField] private Sprite m_EmptyIcon = null;
-
         [SerializeField] private Button m_ConstructButton = null;
+        [SerializeField] private LocText m_Label = null;
+        [SerializeField] private ScrollRect m_OptionsScroll = null;
+        [SerializeField] private RectTransform m_HasOptions = null;
+        [SerializeField] private RectTransform m_NoOptions = null;
 
         #endregion // Inspector
 
         [NonSerialized] private SetupToggleButton[] m_CachedButtons;
-        [NonSerialized] private ExperimentSetupData m_CachedData;
+        [NonSerialized] private int m_ButtonCount;
 
         public Action OnSelectContinue;
         public Action OnSelectBack;
 
         public Action OnSelectConstruct;
 
-        private Dictionary<StringHash32, EcoButton> buttonDict;
-
-        private class EcoButton : IKeyValuePair<StringHash32, EcoButton>
-        {
-            public StringHash32 EcoId;
-            public SetupToggleButton Button;
-
-            StringHash32 IKeyValuePair<StringHash32, EcoButton>.Key { get { return EcoId; } }
-
-            EcoButton IKeyValuePair<StringHash32, EcoButton>.Value { get { return this; } }
-        }
-
         protected override void Awake()
         {
-            Services.Events.Register<ExpSubscreen>(ExperimentEvents.SubscreenBack, PresetButtons, this);
             m_CachedButtons = m_ToggleGroup.GetComponentsInChildren<SetupToggleButton>();
-            buttonDict = new Dictionary<StringHash32, EcoButton>();
             
             for(int i = 0; i < m_CachedButtons.Length; ++i)
             {
@@ -57,63 +43,57 @@ namespace ProtoAqua.Experiment
             m_NextButton.onClick.AddListener(() => OnSelectContinue?.Invoke());
             m_BackButton.onClick.AddListener(() => OnSelectBack?.Invoke());
             m_ConstructButton.onClick.AddListener(() => OnSelectConstruct?.Invoke());
-
-            UpdateButtons();
         }
 
-        public override void SetData(ExperimentSetupData inData)
+        protected override void RestoreState()
         {
-            base.SetData(inData);
-            m_CachedData = inData;
-        }
-
-        public override void Refresh()
-        {
-            base.Refresh();
-            buttonDict.Clear();
-            UpdateButtons();
-        }
-
-        private void UpdateButtons()
-        {
-            var allWaterTypes = Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment);
+            base.RestoreState();
 
             int buttonIdx = 0;
-            foreach(var waterType in allWaterTypes)
+            foreach(var environmentType in Services.Data.Profile.Bestiary.GetEntities(BestiaryDescCategory.Environment))
             {
-                if (buttonIdx >= m_CachedButtons.Length)
-                    break;
+                Assert.True(buttonIdx < m_CachedButtons.Length);
 
+                if (environmentType.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
+                    continue;
+                
                 var button = m_CachedButtons[buttonIdx];
-                button.Load(waterType.Id(), waterType.Icon(), true);
-
-                EcoButton acb = new EcoButton();
-                acb.EcoId = waterType.Id();
-                acb.Button = m_CachedButtons[buttonIdx];
-                if(!buttonDict.ContainsKey(acb.EcoId)) buttonDict.Add(acb.EcoId, acb);
-
-                ++buttonIdx;
+                button.gameObject.SetActive(true);
+                button.Load(environmentType.Id(), environmentType.Icon(), environmentType.CommonName(), true);
+                button.Toggle.SetIsOnWithoutNotify(environmentType.Id() == Setup.EnvironmentId);
+                buttonIdx++;
             }
+
+            m_ButtonCount = buttonIdx;
+
+            m_HasOptions.gameObject.SetActive(m_ButtonCount > 0);
+            m_NoOptions.gameObject.SetActive(m_ButtonCount == 0);
 
             for(; buttonIdx < m_CachedButtons.Length; ++buttonIdx)
             {
-                m_CachedButtons[buttonIdx].Load(StringHash32.Null, m_EmptyIcon, false);
+                m_CachedButtons[buttonIdx].gameObject.SetActive(false);
             }
 
-            m_BackButton.interactable = true;
-        }
+            m_OptionsScroll.ForceRebuild();
 
-        private void PresetButtons(ExpSubscreen sc) {
-            if(!(sc == ExpSubscreen.Ecosystem)) return;
-            if(m_CachedData == null) {
-                throw new NullReferenceException("No cached data in actor.");
+            switch(Setup.Tank)
+            {
+                case TankType.Foundational:
+                    {
+                        m_NextButton.gameObject.SetActive(false);
+                        m_ConstructButton.gameObject.SetActive(true);
+                        break;
+                    }
+
+                default:
+                    {
+                        m_NextButton.gameObject.SetActive(true);
+                        m_ConstructButton.gameObject.SetActive(false);
+                        break;
+                    }
             }
 
-            var key = m_CachedData.EcosystemId;
-            if(key == StringHash32.Null) return;
-
-            buttonDict.TryGetValue(key, out EcoButton result);
-            if(result != null) result.Button.Toggle.SetIsOnWithoutNotify(true);
+            UpdateDisplay(Setup.EnvironmentId);
         }
 
         private void UpdateDisplay(StringHash32 inWaterId)
@@ -128,26 +108,9 @@ namespace ProtoAqua.Experiment
             {
                 var def = Services.Assets.Bestiary.Get(inWaterId);
                 m_Label.SetText(def.CommonName());
-
-
-                if (m_CachedData.Tank.Equals(TankType.Foundational))
-                {
-                    m_NextButton.gameObject.SetActive(false);
-                    m_ConstructButton.gameObject.SetActive(true);
-                    m_BackButton.interactable = true;
-                    m_ConstructButton.interactable = true;
-                }
-                else
-                {
-                    m_NextButton.gameObject.SetActive(true);
-                    m_ConstructButton.gameObject.SetActive(false);
-                    m_ConstructButton.interactable = false;
-                    m_NextButton.interactable = true;
-                    m_BackButton.interactable = true;
-                }
+                m_NextButton.interactable = true;
+                m_ConstructButton.interactable = true;
             }
-
-            Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, inWaterId);
         }
 
         private void UpdateFromSelection()
@@ -155,20 +118,21 @@ namespace ProtoAqua.Experiment
             Toggle active = m_ToggleGroup.ActiveToggle();
             if (active != null)
             {
-                m_CachedData.EcosystemId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
+                Setup.EnvironmentId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
+                var def = Services.Assets.Bestiary.Get(Setup.EnvironmentId);
+                Setup.EnvironmentProperties = BestiaryUtils.GenerateInitialState(def);
+
+                Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, Setup.EnvironmentId);
             }
             else
             {
-                m_CachedData.EcosystemId = StringHash32.Null;
+                Setup.EnvironmentId = StringHash32.Null;
+                Setup.EnvironmentProperties = default(WaterPropertyBlockF32);
+
+                Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, StringHash32.Null);
             }
 
-            UpdateDisplay(m_CachedData.EcosystemId);
-        }
-
-        protected override void OnShowComplete(bool inbInstant)
-        {
-            base.OnShowComplete(inbInstant);
-            UpdateDisplay(m_CachedData.EcosystemId);
+            UpdateDisplay(Setup.EnvironmentId);
         }
     }
 }

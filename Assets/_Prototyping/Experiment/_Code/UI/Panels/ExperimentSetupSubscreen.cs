@@ -15,8 +15,16 @@ namespace ProtoAqua.Experiment
 
         #endregion // Inspector
 
-        public virtual void SetData(ExperimentSetupData inData) { }
-        public virtual void Refresh() { }
+        [NonSerialized] private ExperimentSettings m_CachedSettings;
+
+        protected ExperimentSettings Config { get; private set; }
+        protected ExperimentSetupData Setup { get; private set; }
+
+        public virtual void Initialize(ExperimentSetupData inData, ExperimentSettings inConfig)
+        {
+            Setup = inData;
+            Config = inConfig;
+        }
 
         public virtual bool? ShouldCancelOnExit() { return null; }
 
@@ -24,6 +32,8 @@ namespace ProtoAqua.Experiment
         {
             Services.Events?.DeregisterAll(this);
         }
+
+        protected virtual void RestoreState() { }
 
         #region BasePanel
 
@@ -37,7 +47,7 @@ namespace ProtoAqua.Experiment
 
         protected override void OnShowComplete(bool inbInstant)
         {
-            Refresh();
+            RestoreState();
         }
 
         #endregion // BasePanel

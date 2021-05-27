@@ -25,7 +25,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("n", "\n").WithAliases("newline");
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").WithAliases("h").CloseWith("</color>");
             m_TagEventParser.AddReplace("property-name", "<#bb8fce>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("critter-name", "<#e59866").CloseWith("</color>");
+            m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");

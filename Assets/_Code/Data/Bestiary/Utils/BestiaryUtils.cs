@@ -148,7 +148,7 @@ namespace Aqua
         /// <summary>
         /// Locates the state change ranges associated with the given creature and water property.
         /// </summary>
-        static public ActorStateTransitionRange FindStateTransitions(BestiaryDesc inParent, WaterPropertyId inPropertyId)
+        static public ActorStateTransitionRange FindStateTransition(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
             foreach (var fact in inParent.StateFacts)
             {

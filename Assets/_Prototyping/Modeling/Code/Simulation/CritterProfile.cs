@@ -13,6 +13,9 @@ namespace ProtoAqua.Modeling
     /// </summary>
     public sealed class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
     {
+        private const uint NotAssignedU32 = uint.MaxValue;
+        private const float NotAssignedF32 = -1;
+
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
         public struct EatConfig
         {
@@ -37,16 +40,15 @@ namespace ProtoAqua.Modeling
         private readonly StringHash32 m_Id;
         private readonly bool m_IsHerd;
         private readonly bool m_IgnoreStarvation;
+
         private uint m_MassPerPopulation;
         private uint m_PopulationCap;
 
         private WaterPropertyBlockF32 m_ToProducePerPopulation;
         private WaterPropertyBlockF32 m_ToProducePerPopulationStressed;
-        private WaterPropertyMask m_AssignedProduceStressedMask;
 
         private WaterPropertyBlockF32 m_ToConsumePerPopulation;
         private WaterPropertyBlockF32 m_ToConsumePerPopulationStressed;
-        private WaterPropertyMask m_AssignedConsumeStressedMask;
 
         private int m_EatTypeCount;
         private uint m_EatAmountTotal;
@@ -59,9 +61,15 @@ namespace ProtoAqua.Modeling
         private WaterPropertyBlock<ActorStateTransitionRange> m_Transitions;
 
         private uint m_ScarcityLevel;
+
         private uint m_GrowthPerTick;
+        private uint m_GrowthPerTickStressed;
+
         private float m_ReproducePerTick;
+        private float m_ReproducePerTickStressed;
+
         private float m_DeathPerTick;
+        private float m_DeathPerTickStressed;
 
         public CritterProfile(BestiaryDesc inDesc)
         {
@@ -97,6 +105,8 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        #region Generation
+
         public void Clear()
         {
             m_MassPerPopulation = 0;
@@ -104,11 +114,9 @@ namespace ProtoAqua.Modeling
 
             m_ToProducePerPopulation = default(WaterPropertyBlockF32);
             m_ToProducePerPopulationStressed = default(WaterPropertyBlockF32);
-            m_AssignedProduceStressedMask = default(WaterPropertyMask);
 
             m_ToConsumePerPopulation = default(WaterPropertyBlockF32);
             m_ToConsumePerPopulationStressed = default(WaterPropertyBlockF32);
-            m_AssignedConsumeStressedMask = default(WaterPropertyMask);
 
             Array.Clear(m_EatTypes, 0, m_EatTypeCount);
             Array.Clear(m_EatTypesStressed, 0, m_EatTypeStressedCount);
@@ -117,19 +125,46 @@ namespace ProtoAqua.Modeling
             m_EatAmountTotal = 0;
             m_EatAmountStressedTotal = 0;
 
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
+            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; i++)
             {
                 m_Transitions[i] = ActorStateTransitionRange.Default;
+                m_ToProducePerPopulation[i] = m_ToProducePerPopulationStressed[i] = NotAssignedF32;
+                m_ToConsumePerPopulation[i] = m_ToConsumePerPopulationStressed[i] = NotAssignedF32;
             }
 
             m_ScarcityLevel = 0;
-            m_GrowthPerTick = 0;
-            m_ReproducePerTick = 0;
-            m_DeathPerTick = 0;
+
+            m_GrowthPerTick = NotAssignedU32;
+            m_GrowthPerTickStressed = NotAssignedU32;
+
+            m_ReproducePerTick = NotAssignedF32;
+            m_ReproducePerTickStressed = NotAssignedF32;
+
+            m_DeathPerTick = NotAssignedF32;
+            m_DeathPerTickStressed = NotAssignedF32;
         }
 
         public void PostProcess(SimulationProfile inProfile)
         {
+            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; i++)
+            {
+                float produceA = m_ToProducePerPopulation[i];
+                float produceS = m_ToProducePerPopulationStressed[i];
+                PostProcessStressValues(ref produceA, ref produceS);
+                m_ToProducePerPopulation[i] = produceA;
+                m_ToProducePerPopulationStressed[i] = produceS;
+
+                float consumeA = m_ToConsumePerPopulation[i];
+                float consumeS = m_ToConsumePerPopulationStressed[i];
+                PostProcessStressValues(ref produceA, ref produceS);
+                m_ToConsumePerPopulation[i] = produceA;
+                m_ToConsumePerPopulationStressed[i] = produceS;
+            }
+
+            PostProcessStressValues(ref m_DeathPerTick, ref m_DeathPerTickStressed);
+            PostProcessStressValues(ref m_GrowthPerTick, ref m_GrowthPerTickStressed);
+            PostProcessStressValues(ref m_ReproducePerTick, ref m_ReproducePerTickStressed);
+
             Array.Sort(m_EatTypes, 0, m_EatTypeCount, EatConfig.Comparer);
             Array.Sort(m_EatTypesStressed, 0, m_EatTypeStressedCount, EatConfig.Comparer);
 
@@ -152,6 +187,41 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        static private void PostProcessStressValues(ref float ioAlive, ref float ioStressed)
+        {
+            if (ioAlive == NotAssignedF32)
+                ioAlive = 0;
+            if (ioStressed == NotAssignedF32)
+                ioStressed = ioAlive;
+        }
+
+        static private void PostProcessStressValues(ref uint ioAlive, ref uint ioStressed)
+        {
+            if (ioAlive == NotAssignedU32)
+                ioAlive = 0;
+            if (ioStressed == NotAssignedU32)
+                ioStressed = ioAlive;
+        }
+
+        private ref EatConfig FindEatConfig(StringHash32 inTargetId, EatConfig[] ioConfigs, ref int ioCount, out bool outbNew)
+        {
+            for(int i = 0; i < ioCount; i++)
+            {
+                if (ioConfigs[i].Type == inTargetId)
+                {
+                    outbNew = false;
+                    return ref ioConfigs[i];
+                }
+            }
+
+            ref EatConfig config = ref ioConfigs[ioCount++];
+            config.Type = inTargetId;
+            outbNew = true;
+            return ref config;
+        }
+
+        #endregion // Generation
+
         #region Apply
 
         public void SetupTick(ref CritterData ioData, in WaterPropertyBlockF32 inEnvironment, SimulatorFlags inFlags)
@@ -165,8 +235,6 @@ namespace ProtoAqua.Modeling
                 ioData.State = ActorStateId.Dead;
                 return;
             }
-
-            ioData.Hunger = m_EatTypeCount > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
 
             ReevaluateState(ref ioData, inEnvironment, inFlags, WaterPropertyMask.All());
         }
@@ -198,12 +266,14 @@ namespace ProtoAqua.Modeling
                 case ActorStateId.Alive:
                     {
                         ioData.ToConsume = (m_ToConsumePerPopulation * ioData.Population) & inMask;
+                        ioData.Hunger = m_EatAmountTotal > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
                         break;
                     }
 
                 case ActorStateId.Stressed:
                     {
                         ioData.ToConsume = (m_ToConsumePerPopulationStressed * ioData.Population) & inMask;
+                        ioData.Hunger = m_EatAmountStressedTotal > 0 ? Simulator.HungerPerCritter * ioData.Population : 0;
                         break;
                     }
 
@@ -415,49 +485,71 @@ namespace ProtoAqua.Modeling
         void IFactVisitor.Visit(BFBody inFact)
         {
             m_MassPerPopulation = inFact.MassPerPopulation();
+            m_ScarcityLevel = inFact.ScarcityLevel();
             m_PopulationCap = inFact.PopulationHardCap();
         }
 
         void IFactVisitor.Visit(BFWaterProperty inFact)
         {
-            // Does not affect a critter
+            // Nothing
         }
 
         void IFactVisitor.Visit(BFEat inFact)
         {
-            // TODO: Account for stress?
-            m_EatAmountTotal += inFact.Amount();
-            m_EatTypes[m_EatTypeCount++] = new EatConfig()
+            if (inFact.OnlyWhenStressed())
             {
-                MassScale = inFact.Amount(),
-                Type = inFact.Target().Id(),
-            };
+                ref EatConfig config = ref FindEatConfig(inFact.Target().Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool discard);
+                long change = (long) inFact.Amount() - (long) config.MassScale;
+                m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + change);
+                config.MassScale = inFact.Amount();
+            }
+            else
+            {
+                ref EatConfig mainConfig = ref FindEatConfig(inFact.Target().Id(), m_EatTypes, ref m_EatTypeCount, out bool discard);
+                long mainChange = (long) inFact.Amount() - (long) mainConfig.MassScale;
+                m_EatAmountTotal = (uint) (m_EatAmountTotal + mainChange);
+                mainConfig.MassScale = inFact.Amount();
+
+                ref EatConfig stressConfig = ref FindEatConfig(inFact.Target().Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool bNewStress);
+                if (bNewStress)
+                {
+                    long stressChange = (long) inFact.Amount() - (long) stressConfig.MassScale;
+                    m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + stressChange);
+                    stressConfig.MassScale = inFact.Amount();
+                }
+            }
         }
 
         void IFactVisitor.Visit(BFGrow inFact)
         {
-            // TODO: Account for stress?
-            m_GrowthPerTick = inFact.Amount();
-            m_ScarcityLevel = inFact.ScarcityLevel();
+            if (inFact.OnlyWhenStressed())
+                m_GrowthPerTickStressed = inFact.Amount();
+            else
+                m_GrowthPerTick = inFact.Amount();
         }
 
         void IFactVisitor.Visit(BFReproduce inFact)
         {
-            // TODO: Account for stress?
-            m_ReproducePerTick = inFact.Amount();
-            m_ScarcityLevel = inFact.ScarcityLevel();
+            if (inFact.OnlyWhenStressed())
+                m_ReproducePerTickStressed = inFact.Amount();
+            else
+                m_ReproducePerTick = inFact.Amount();
         }
 
         void IFactVisitor.Visit(BFProduce inFact)
         {
-            // TODO: Account for stress?
-            m_ToProducePerPopulation[inFact.Target()] = inFact.Amount();
+            if (inFact.OnlyWhenStressed())
+                m_ToProducePerPopulationStressed[inFact.Target()] = inFact.Amount();
+            else
+                m_ToProducePerPopulation[inFact.Target()] = inFact.Amount();
         }
 
         void IFactVisitor.Visit(BFConsume inFact)
         {
-            // TODO: Account for stress?
-            m_ToConsumePerPopulation[inFact.Target()] = inFact.Amount();
+            if (inFact.OnlyWhenStressed())
+                m_ToConsumePerPopulationStressed[inFact.Target()] = inFact.Amount();
+            else
+                m_ToConsumePerPopulation[inFact.Target()] = inFact.Amount();
         }
 
         void IFactVisitor.Visit(BFState inFact)
@@ -467,8 +559,10 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFDeath inFact)
         {
-            // TODO: What if BFStateAge is for "Stressed"?
-            m_DeathPerTick = inFact.Proportion();
+            if (inFact.OnlyWhenStressed())
+                m_DeathPerTickStressed = inFact.Proportion();
+            else
+                m_DeathPerTick = inFact.Proportion();
         }
 
         void IFactVisitor.Visit(BFModel inModel)

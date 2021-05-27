@@ -52,7 +52,6 @@ namespace ProtoAqua.Modeling
         [NonSerialized] private Vector2 m_DragPointerStart;
         [NonSerialized] private Vector2 m_DragContentStart;
         [NonSerialized] private bool m_Dragging;
-        [NonSerialized] private bool m_Locked;
 
         public Action<BestiaryDesc> OnNodeRequestToggle;
 
@@ -112,11 +111,6 @@ namespace ProtoAqua.Modeling
         }
 
         #endregion // Handlers
-
-        public void Lock()
-        {
-            m_Locked = true;
-        }
 
         #region Add/Remove
 

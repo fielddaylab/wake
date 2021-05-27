@@ -185,6 +185,9 @@ namespace ProtoAqua.Experiment
             {
                 IFoodSource source = obj.Collider.GetComponentInParent<IFoodSource>();
 
+                if (source == null)
+                    continue;
+
                 if (source.EnergyRemaining <= 0)
                     continue;
 
