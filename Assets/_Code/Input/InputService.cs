@@ -54,6 +54,7 @@ namespace Aqua
         [NonSerialized] private int m_CurrentPriority = DefaultPriority;
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
         [NonSerialized] private int m_PauseAllCounter = 0;
+        [NonSerialized] private int m_ForceClick = 0;
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
@@ -206,12 +207,20 @@ namespace Aqua
             if (rectTransform && !rectTransform.IsPointerInteractable())
                 return false;
             
-            IPointerClickHandler clickHandler = inRoot.GetComponent<IPointerClickHandler>();
-            if (clickHandler == null)
-                return false;
-            
-            clickHandler.OnPointerClick(m_InputModule.GetPointerEventData());
-            return true;
+            return ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+        }
+
+        public bool ForceClick(GameObject inRoot)
+        {
+            ++m_ForceClick;
+            bool bSuccess = ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            --m_ForceClick;
+            return bSuccess;
+        }
+
+        public bool IsForcingInput()
+        {
+            return m_ForceClick > 0;
         }
 
         private void OnInputModeChanged(PointerInputMode inMode)

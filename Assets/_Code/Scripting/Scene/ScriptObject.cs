@@ -117,7 +117,7 @@ namespace Aqua
         static public ScriptThreadHandle Inspect(ScriptObject inObject)
         {
             Assert.NotNull(inObject);
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
                 return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, null, table);

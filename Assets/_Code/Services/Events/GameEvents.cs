@@ -1,7 +1,4 @@
-using System;
-using BeauRoutine;
 using BeauUtil;
-using UnityEngine;
 
 namespace Aqua
 {

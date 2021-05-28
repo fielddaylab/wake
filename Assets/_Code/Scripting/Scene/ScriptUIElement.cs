@@ -1,12 +1,9 @@
-using BeauUtil;
 using UnityEngine;
-using System.Collections;
-using BeauUtil.Debugger;
-using Leaf;
 using System;
-using BeauUtil.Variants;
 using Leaf.Runtime;
-using BeauRoutine.Extensions;
+using UnityEngine.EventSystems;
+using BeauUtil.Debugger;
+using BeauUtil;
 
 namespace Aqua.Scripting
 {
@@ -21,6 +18,7 @@ namespace Aqua.Scripting
 
         [NonSerialized] private int m_OriginalCanvasLayer;
         [NonSerialized] private bool m_OnTop;
+        [NonSerialized] private GameObject m_ClickHandler;
 
         [LeafMember]
         public void ForceOnTop()
@@ -43,6 +41,40 @@ namespace Aqua.Scripting
             m_Group.ignoreParentGroups = false;
             m_Canvas.sortingLayerID = m_OriginalCanvasLayer;
             m_OnTop = false;
+        }
+
+        [LeafMember]
+        public void Click()
+        {
+            GameObject handler = GetClickHandler();
+            if (handler)
+                Services.Input.ExecuteClick(handler);
+        }
+
+        [LeafMember]
+        public void ForceClick()
+        {
+            GameObject handler = GetClickHandler();
+            if (handler)
+                Services.Input.ForceClick(handler);
+        }
+
+        private GameObject GetClickHandler()
+        {
+            if (m_ClickHandler.IsReferenceNull())
+            {
+                IPointerClickHandler click = GetComponentInChildren<IPointerClickHandler>();
+                if (click != null)
+                {
+                    m_ClickHandler = ((Component) click).gameObject;
+                }
+                else
+                {
+                    Log.Error("[ScriptUIElement] Unable to find clickable element on {0}", this.m_Parent.Id());
+                }
+            }
+            
+            return m_ClickHandler;
         }
     }
 }

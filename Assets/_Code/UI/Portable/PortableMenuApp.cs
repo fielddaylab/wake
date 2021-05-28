@@ -4,6 +4,7 @@ using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using System;
+using Aqua.Scripting;
 
 namespace Aqua.Portable
 {
@@ -37,6 +38,17 @@ namespace Aqua.Portable
             base.OnShow(inbInstant);
 
             Services.Data.SetVariable("portable:app", m_Id.Hash());
+        }
+
+        protected override void OnShowComplete(bool inbInstant)
+        {
+            base.OnShowComplete(inbInstant);
+
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("appId", m_Id.Hash());
+                Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, null, null, table);
+            }
         }
 
         protected override void OnHide(bool inbInstant)

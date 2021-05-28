@@ -23,7 +23,7 @@ $set jobs:kelp-urchin-barren.doneModeling = false
 // @where		taskId = "getProbeData"
 // @once
 // @cutscene
-// {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" becasue the urchins have eaten everything.
+// {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" because the urchins have eaten everything.
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
@@ -81,7 +81,7 @@ $endif
 {@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. 
 {@kevin} It's what we call a model of the system.
 {@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
-{@kevin} You can do this by using the "Import Rule" button and selcting behaviors from your bestiary.
+{@kevin} You can do this by using the "Import Rule" button and selecting behaviors from your bestiary.
 {@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
 
 ::ModelHelp1
@@ -90,7 +90,7 @@ $endif
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The first step to making this model is to lay out all the information we know about how kelp, urchins, and otters interact.
-{@kevin}	Use the "Import Rule" button to add the behavious we've noticed so far. 
+{@kevin}	Use the "Import Rule" button to add the behaviors we've noticed so far. 
 {@kevin}	Once you've added everything, press the "Simulate" button
 
 
@@ -126,8 +126,8 @@ $endif
 @when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The graph now shows a predition of what the populations should be in the future.
-{@kevin}	Hit the "Save Predition" button to move on.
+{@kevin}	The graph now shows a prediction of what the populations should be in the future.
+{@kevin}	Hit the "Save Prediction" button to move on.
 
 
 :: ModelingGraphComplete

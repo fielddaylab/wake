@@ -7,6 +7,7 @@ using BeauData;
 using BeauUtil;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Scripting;
 
 namespace ProtoAqua.Experiment
 {
@@ -62,7 +63,7 @@ namespace ProtoAqua.Experiment
 
                 Services.UI.Popup.Display(factDef.name, factDef.GenerateSentence())
                     .OnComplete((r) => {
-                        using(var table = Services.Script.GetTempTable())
+                        using(var table = TempVarTable.Alloc())
                         {
                             table.Set("factId", inBehaviorId);
                             Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
@@ -71,7 +72,7 @@ namespace ProtoAqua.Experiment
             }
             else
             {
-                using(var table = Services.Script.GetTempTable())
+                using(var table = TempVarTable.Alloc())
                 {
                     table.Set("factId", inBehaviorId);
                     Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved);

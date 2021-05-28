@@ -130,6 +130,8 @@ namespace Aqua.Portable
             m_Input.PushPriority();
 
             base.OnShow(inbInstant);
+
+            Services.Script.TriggerResponse(GameTriggers.PortableOpened);
         }
 
         protected override void OnHide(bool inbInstant)

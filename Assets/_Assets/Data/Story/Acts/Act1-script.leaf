@@ -96,3 +96,69 @@ Have fun!
 {@kevin #happy}
     Great! 
     {#} if you need help, feel free to ask.
+
+:: portableIntro
+@trigger	PortableOpened
+@who		Kevin
+@once
+@cutscene
+{@kevin}	Ooh, what's that you've got here?
+$call Portable->ForceOnTop
+{@player}	It's a portable tablet I got with the ship.
+{@kevin}	That's cool!
+			What are those buttons on the bottom?
+
+$call FocusHighlight->Focus portable.statusAppButton
+	{@player}	Well, this seems to contain job information.
+	{hide-dialog}
+	{wait 0.5}
+	$call		portable.statusAppButton->ForceClick
+	{wait 0.25}
+$call FocusHighlight->Clear
+
+{wait 0.25}
+{@player}	Yep, it's the status app.
+
+$if player:currentJob
+	And a convenient checklist of our tasks for the job is here.
+$else
+	Once we take on a job, there'll be some tasks that show up here.
+$endif
+
+$call FocusHighlight->Focus portable.bestiaryAppButton
+	{@player}	And this takes us to the Bestiary.
+	{hide-dialog}
+	{wait 0.5}
+	$call		portable.bestiaryAppButton->ForceClick
+	{wait 0.25}
+$call FocusHighlight->Clear
+
+{wait 0.25}
+{@player}
+	This is where I record all of the stuff I learn.
+	Critters, environments, even models...
+	They can all be found in here.
+	
+{@kevin}	Huh. Well thanks for the tour!
+			{#happy} This seems like it'll come in handy.
+			
+$call Portable->ResetSorting
+
+// chatter
+
+:: chatter.jules.doYouKnow
+@trigger    PartnerTalk
+@once
+@cutscene
+{@kevin #confused}
+    So, this Dr. Jules...
+    Do you know them?
+{@player}
+    I think we were friends back in school.
+{@kevin #narrow}
+    Good friends?
+{@player}
+    For like a year. But we never kept in touch.
+    This is the first I've seen of them in... a while.
+{@kevin}
+    Ah, okay.

@@ -62,7 +62,7 @@ namespace Aqua
             Sprite spr;
             if (!m_Portraits.TryGetValue(inId, out spr))
             {
-                Log.Error("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId.ToString(), name);
+                Log.Error("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId, name);
                 spr = Services.Assets.Characters.ErrorPortrait();
             }
             
