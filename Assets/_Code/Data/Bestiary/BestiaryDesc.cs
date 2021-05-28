@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
-    public class BestiaryDesc : DBObject
+    public class BestiaryDesc : DBObject, IComparable<BestiaryDesc>
     {
         #region Inspector
 
@@ -160,6 +160,15 @@ namespace Aqua
         }
 
         #endregion // Checks
+
+        #region IComparable
+
+        int IComparable<BestiaryDesc>.CompareTo(BestiaryDesc other)
+        {
+            return Id().CompareTo(other.Id());
+        }
+
+        #endregion // IComparable
 
         #if UNITY_EDITOR
 

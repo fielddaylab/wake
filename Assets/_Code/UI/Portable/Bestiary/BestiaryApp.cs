@@ -166,15 +166,12 @@ namespace Aqua.Portable
 
         [Header("Group")]
         [SerializeField, Required] private RectTransform m_NoSelectionGroup = null;
-        [SerializeField, Required] private RectTransform m_HasSelectionGroup = null;
         [SerializeField, Required] private LocText m_PromptText = null;
 
         [Header("Info")]
-        [SerializeField, Required] private LocText m_ScientificNameLabel = null;
-        [SerializeField, Required] private LocText m_CommonNameLabel = null;
-        [SerializeField, Required] private Image m_SketchImage = null;
-        [SerializeField, Required] private VerticalLayoutGroup m_FactLayoutGroup = null;
-        [SerializeField, Required] private Button m_SelectEntryButton = null;
+        [SerializeField, Required] private BestiaryPage m_CritterPage = null;
+        [SerializeField, Required] private BestiaryPage m_EnvPage = null;
+        [SerializeField, Required] private BestiaryPage m_ModelPage = null;
 
         [Header("Facts")]
         [SerializeField] private FactPools m_FactPools = null;
@@ -184,6 +181,7 @@ namespace Aqua.Portable
         [NonSerialized] private PortableTweaks m_Tweaks = null;
         [NonSerialized] private BestiaryDescCategory m_CurrentEntryGroup = BestiaryDescCategory.Critter;
         [NonSerialized] private BestiaryDesc m_CurrentEntry;
+        [NonSerialized] private BestiaryPage m_CurrentPage;
         
         [NonSerialized] private SelectBestiaryEntryRequest m_SelectBestiaryRequest = null;
         [NonSerialized] private SelectFactRequest m_SelectFactRequest = null;
@@ -196,8 +194,18 @@ namespace Aqua.Portable
             m_EcosystemGroupToggle.onValueChanged.AddListener(OnEcosystemToggled);
             m_ModelGroupToggle.onValueChanged.AddListener(OnModelToggled);
 
-            m_SelectEntryButton.onClick.AddListener(OnEntrySelectClicked);
-            m_SelectEntryButton.gameObject.SetActive(false);
+            RegisterPage(m_CritterPage);
+            RegisterPage(m_EnvPage);
+            RegisterPage(m_ModelPage);
+        }
+
+        private void RegisterPage(BestiaryPage inPage)
+        {
+            if (inPage.SelectButton)
+            {
+                inPage.SelectButton.onClick.AddListener(OnEntrySelectClicked);
+                inPage.gameObject.SetActive(false);
+            }
         }
 
         #region Callbacks
@@ -241,18 +249,6 @@ namespace Aqua.Portable
             LoadEntry((BestiaryDesc) inElement.Data);
         }
 
-        // private void OnModelEntryToggled(PortableListElement inElement, bool inbOn)
-        // {
-        //     if (!inbOn)
-        //     {
-        //         if (!m_EntryToggleGroup.AnyTogglesOn())
-        //             LoadModelEntry(null);
-        //         return;
-        //     }
-
-        //     LoadModelEntry((Artifact) inElement.Data);
-        // }
-
         private void OnEntrySelectClicked()
         {
             Assert.NotNull(m_SelectBestiaryRequest);
@@ -291,12 +287,15 @@ namespace Aqua.Portable
 
             m_FactPools.FreeAll();
             m_NoSelectionGroup.gameObject.SetActive(true);
-            m_HasSelectionGroup.gameObject.SetActive(false);
 
             m_EntryPool.Reset();
             m_EntryToggleGroup.SetAllTogglesOff(false);
             
-            m_SelectEntryButton.gameObject.SetActive(false);
+            if (m_CurrentPage)
+            {
+                m_CurrentPage.gameObject.SetActive(false);
+                m_CurrentPage = null;
+            }
             m_PromptText.gameObject.SetActive(false);
 
             Ref.Dispose(ref m_SelectBestiaryRequest);
@@ -337,7 +336,6 @@ namespace Aqua.Portable
             m_SelectBestiaryRequest = inSelect;
 
             m_PromptText.gameObject.SetActive(true);
-            m_SelectEntryButton.gameObject.SetActive(true);
 
             BestiaryDescCategory category = inSelect.Category;
             switch(inSelect.Category)
@@ -443,6 +441,9 @@ namespace Aqua.Portable
             m_CurrentEntryGroup = inType;
             m_EntryPool.Reset();
 
+            if (m_CurrentPage)
+                m_CurrentPage.gameObject.SetActive(false);
+
             switch(inType)
             {
                 case BestiaryDescCategory.Critter:
@@ -451,6 +452,7 @@ namespace Aqua.Portable
                     m_ModelGroupToggle.SetIsOnWithoutNotify(false);
 
                     m_CategoryLabel.SetText(Critters_Label);
+                    m_CurrentPage = m_CritterPage;
                     break;
 
                 case BestiaryDescCategory.Environment:
@@ -459,6 +461,7 @@ namespace Aqua.Portable
                     m_ModelGroupToggle.SetIsOnWithoutNotify(false);
 
                     m_CategoryLabel.SetText(Ecosystems_Label);
+                    m_CurrentPage = m_EnvPage;
                     break;
 
                 case BestiaryDescCategory.Model:
@@ -467,18 +470,24 @@ namespace Aqua.Portable
                     m_CritterGroupToggle.SetIsOnWithoutNotify(false);
 
                     m_CategoryLabel.SetText(Models_Label);
+                    m_CurrentPage = m_ModelPage;
                     break;
             }
 
             Color buttonColor = m_Tweaks.BestiaryListColor(inType);
 
-            foreach(var entry in Services.Data.Profile.Bestiary.GetEntities(inType))
+            using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create())
             {
-                PortableListElement button = m_EntryPool.Alloc();
-                button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                Services.Data.Profile.Bestiary.GetEntities(inType, entities);
+                entities.Sort();
+                foreach(var entry in entities)
+                {
+                    PortableListElement button = m_EntryPool.Alloc();
+                    button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                }
             }
             
-            LayoutRebuilder.MarkLayoutForRebuild((RectTransform) m_EntryLayoutGroup.transform);
+            m_EntryLayoutGroup.ForceRebuild();
             LoadEntry(inTarget);
         }
 
@@ -495,39 +504,68 @@ namespace Aqua.Portable
 
             if (inEntry == null)
             {
+                m_CurrentPage.gameObject.SetActive(false);
                 Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
                 m_NoSelectionGroup.gameObject.SetActive(true);
-                m_HasSelectionGroup.gameObject.SetActive(false);
                 return;
             }
 
             Services.Data.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
 
             m_NoSelectionGroup.gameObject.SetActive(false);
-            m_HasSelectionGroup.gameObject.SetActive(true);
+            m_CurrentPage.gameObject.SetActive(true);
 
-            m_ScientificNameLabel.SetText(inEntry.ScientificName());
-            m_CommonNameLabel.SetText(inEntry.CommonName());
+            if (m_CurrentPage.ScientificName)
+                m_CurrentPage.ScientificName.SetText(inEntry.ScientificName());
 
-            m_SketchImage.sprite = inEntry.Sketch();
-            m_SketchImage.gameObject.SetActive(inEntry.Sketch());
+            if (m_CurrentPage.CommonName)
+                m_CurrentPage.CommonName.SetText(inEntry.CommonName());
 
-            if (m_SelectBestiaryRequest != null)
+            if (m_CurrentPage.Sketch)
             {
-                m_SelectEntryButton.interactable = m_SelectBestiaryRequest.CustomValidator == null || m_SelectBestiaryRequest.CustomValidator(inEntry);
+                m_CurrentPage.Sketch.sprite = inEntry.Sketch();
+                m_CurrentPage.Sketch.gameObject.SetActive(inEntry.Sketch());
+            }
+
+            if (m_CurrentPage.SelectButton)
+            {
+                if (m_SelectBestiaryRequest != null)
+                {
+                    m_CurrentPage.SelectButton.gameObject.SetActive(true);
+                    m_CurrentPage.SelectButton.interactable = m_SelectBestiaryRequest.CustomValidator == null || m_SelectBestiaryRequest.CustomValidator(inEntry);
+                }
+                else
+                {
+                    m_CurrentPage.SelectButton.gameObject.SetActive(false);
+                }
             }
 
             using(PooledList<BFBase> facts = PooledList<BFBase>.Create())
             {
                 Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
-                facts.Sort();
-                foreach(var fact in facts)
+                if (facts.Count > 0)
                 {
-                    fact.Accept(this);
+                    if (m_CurrentPage.NoFacts)
+                        m_CurrentPage.NoFacts.gameObject.SetActive(false);
+                    if (m_CurrentPage.HasFacts)
+                        m_CurrentPage.HasFacts.gameObject.SetActive(true);
+
+                    facts.Sort();
+                    foreach(var fact in facts)
+                    {
+                        fact.Accept(this);
+                    }
+                }
+                else
+                {
+                    if (m_CurrentPage.HasFacts)
+                        m_CurrentPage.HasFacts.gameObject.SetActive(false);
+                    if (m_CurrentPage.NoFacts)
+                        m_CurrentPage.NoFacts.gameObject.SetActive(true);
                 }
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_FactLayoutGroup.transform);
+            m_CurrentPage.FactLayout.ForceRebuild();
         }
 
         #endregion // Loading
@@ -563,7 +601,7 @@ namespace Aqua.Portable
 
         private void InstantiateFactButton(BFBase inFact) 
         {
-            MonoBehaviour display = m_FactPools.Alloc(inFact);
+            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentPage.FactLayout.transform);
             BestiaryFactButton button = display.GetComponent<BestiaryFactButton>();
             if (m_SelectFactRequest != null)
             {

@@ -52,6 +52,22 @@ namespace Aqua.Profile
             }
         }
 
+        public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
+        {
+            var db = Services.Assets.Bestiary;
+            int count = 0;
+            foreach(var entity in m_ObservedEntities)
+            {
+                BestiaryDesc desc = db.Get(entity);
+                if (desc.HasCategory(inCategory))
+                {
+                    outFacts.Add(desc);
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public bool DeregisterEntity(StringHash32 inEntityId)
         {
             Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);

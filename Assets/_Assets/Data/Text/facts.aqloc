@@ -14,6 +14,15 @@ Consumes
 :: absorb
 Absorbs
 
+:: reproduce
+Reproduces
+
+:: death
+Dies
+
+:: grow
+Grows
+
 :: whenStressed
 When Stressed
 
@@ -50,19 +59,37 @@ faster
 #basePath factFormat
 
 :: eat
-{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name}
+{critter-name}{0}{/critter-name} eats {critter-name}{1}{/critter-name}.
 
 :: eat.stressed
-{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name} when stressed
+{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name} when stressed.
 
 :: produce
-{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name}
+{critter-name}{0}{/critter-name} produces {property-name}{1}{/property-name}.
 
 :: produce.stressed
-{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name} when stressed
+{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name} when stressed.
 
 :: consume
-{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name}
+{critter-name}{0}{/critter-name} consumes {property-name}{1}{/property-name}.
 
 :: consume.stressed
-{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name} when stressed
+{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name} when stressed.
+
+:: reproduce
+{critter-name}{0}{/critter-name} reproduces.
+
+:: reproduce.stressed
+{critter-name}{0}{/critter-name} reproduces {1} when stressed.
+
+:: grow
+{critter-name}{0}{/critter-name} grows.
+
+:: grow.stressed
+{critter-name}{0}{/critter-name} grows {1} when stressed.
+
+:: death
+{critter-name}{0}{/critter-name} dies.
+
+:: death.stressed
+{critter-name}{0}{/critter-name} dies {1} when stressed.

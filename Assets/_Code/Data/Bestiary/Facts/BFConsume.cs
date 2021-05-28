@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
@@ -21,17 +22,30 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private QualCompare m_Relative;
+
         public WaterPropertyId Target() { return m_Property; }
         public uint Amount() { return m_Amount; }
+
+        public override void Hook(BestiaryDesc inParent)
+        {
+            base.Hook(inParent);
+
+            if (OnlyWhenStressed())
+            {
+                var pair = FindPairedFact<BFConsume>();
+                if (pair != null)
+                {
+                    long compare = (long) m_Amount - (long) pair.m_Amount;
+                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
+                    m_Relative = MapDescriptor(compare, QualCompare.Less, QualCompare.More);
+                }
+            }
+        }
 
         protected override TextId DefaultVerb()
         {
             return ConsumeVerb;
-        }
-
-        protected override TextId DefaultSentence()
-        {
-            return OnlyWhenStressed() ? ConsumeSentenceStressed : ConsumeSentence;
         }
 
         public override void Accept(IFactVisitor inVisitor)
@@ -61,13 +75,24 @@ namespace Aqua
 
             yield return BFFragment.CreateLocNoun(Parent().CommonName());
             yield return BFFragment.CreateLocVerb(Verb());
-            yield return BFFragment.CreateAmount(Property(m_Property).FormatValue(m_Amount));
+            if (OnlyWhenStressed())
+            {
+                yield return BFFragment.CreateLocAdjective(QualitativeId(m_Relative));
+            }
             yield return BFFragment.CreateLocNoun(Property(m_Property).LabelId());
         }
 
         public override string GenerateSentence()
         {
-            return Loc.Format(SentenceFormat(), Parent().CommonName(), Property(m_Property).FormatValue(m_Amount), Property(m_Property).LabelId());
+            TextId force = SentenceOverride();
+            if (!force.IsEmpty)
+                return Loc.Find(force);
+
+            if (OnlyWhenStressed())
+            {
+                return Loc.Format(ConsumeSentenceStressed, Parent().CommonName(), QualitativeLowerId(m_Relative), Property(m_Property).LabelId());
+            }
+            return Loc.Format(ConsumeSentence, Parent().CommonName(), Property(m_Property).LabelId());
         }
 
         internal override int GetSortingOrder()

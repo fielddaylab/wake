@@ -22,10 +22,13 @@ namespace Aqua
 
         [Header("Text")]
         [SerializeField] private string m_Format = "{0}";
+        [SerializeField] private float m_DisplayScale = 1;
+
+        [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = null;
         [SerializeField] private TextId m_StateChangeFormat = null;
         [SerializeField] private TextId m_StateChangeStressOnlyFormat = null;
-        [SerializeField] private float m_DisplayScale = 1;
+        [SerializeField] private TextId m_ToleranceLabel = null;
 
         [Header("Ranges")]
         [SerializeField] private float m_MinValue = 0;
@@ -41,12 +44,13 @@ namespace Aqua
 
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
-        public Color Color() { return m_Palette.Background; }
+        public Color Color() { return m_Color; }
         public ColorPalette4 Palette() { return m_Palette; }
         
         public TextId EnvironmentFactFormat() { return m_EnvironmentFactFormat; }
         public TextId StateChangeFormat() { return m_StateChangeFormat; }
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
+        public TextId ToleranceLabel() { return m_ToleranceLabel; }
         
         public string FormatValue(float inValue)
         {
@@ -55,7 +59,6 @@ namespace Aqua
 
         public float DisplayValue(float inValue)
         {
-            // TODO: Move all this to some kind of UnitFormatter?
             return inValue * m_DisplayScale;
         }
 

@@ -70,5 +70,10 @@ namespace Aqua
 
             return Loc.Format(property.StateChangeStressOnlyFormat(), Parent().CommonName(), property.FormatValue(m_MinSafe), property.FormatValue(m_MaxSafe));
         }
+
+        internal override int GetSortingOrder()
+        {
+            return (int) m_PropertyId;
+        }
     }
 }

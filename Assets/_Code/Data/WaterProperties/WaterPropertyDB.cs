@@ -87,6 +87,11 @@ namespace Aqua
             WaterPropertyId.PH
         };
 
+        static public int SortingOrder(WaterPropertyId inId)
+        {
+            return Array.IndexOf(SortOrder, inId);
+        }
+
         #if UNITY_EDITOR
 
         [UnityEditor.CustomEditor(typeof(WaterPropertyDB))]

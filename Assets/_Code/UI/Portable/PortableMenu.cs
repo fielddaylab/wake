@@ -74,8 +74,8 @@ namespace Aqua.Portable
         {
             m_Request = inRequest;
             
-            OnRequest();
             Show();
+            OnRequest();
         }
 
         private void OnRequest()
