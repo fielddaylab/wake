@@ -13,7 +13,7 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class SeaOtterActor : ActorModule
+    public class BlueTangActor : ActorModule
     {
         #region Inspector
 
@@ -92,26 +92,31 @@ namespace ProtoAqua.Experiment
 
         private void RotateActor(Vector3 nextPosition)
         {
-            Vector3 CurrPosition = Actor.Body.RenderGroup.transform.position;
-            Vector3 TargetDirection = nextPosition - CurrPosition;
-            Vector3 CurrDirection = GetCurrDirection();
-            float y = 0;
-            float angle = Vector3.Angle(GetCurrDirection(), TargetDirection);
-            if (angle > 90f)
-            {
-                angle = 180f - angle;
-                y = 180f;
-            }
-            Actor.Body.WorldTransform.Rotate(0f, y, angle);
+            float turnSpeed = GetProperty<float>("swimSpeed", 0.5f);
+            Vector3 LookAt = nextPosition - Actor.Body.RenderGroup.transform.position;
+            Actor.Body.WorldTransform.rotation = Quaternion.Slerp(Actor.Body.WorldTransform.rotation, Quaternion.LookRotation(LookAt), turnSpeed * Time.deltaTime);
 
             return;
+            // Vector3 CurrPosition = Actor.Body.RenderGroup.transform.position;
+            // Vector3 TargetDirection = nextPosition - CurrPosition;
+            // Vector3 CurrDirection = GetCurrDirection();
+            // float y = 0;
+            // float angle = Vector3.Angle(GetCurrDirection(), TargetDirection);
+            // if (angle > 90f)
+            // {
+            //     angle = 180f - angle;
+            //     y = 180f;
+            // }
+            // Actor.Body.WorldTransform.Rotate(0f, y, angle);
+
+            // return;
 
         }
 
-        private Vector3 GetCurrDirection()
-        {
-            return Front.position - Actor.Body.WorldTransform.position;
-        }
+        // private Vector3 GetCurrDirection()
+        // {
+        //     return Front.position - Actor.Body.WorldTransform.position;
+        // }
 
         private int GetIdleSwimCount()
         {

@@ -129,7 +129,12 @@ namespace ProtoAqua.Experiment
                 bool StemSearch = RNG.Instance.NextBool();
 
                 if(StemSearch) {
-                    if(m_CurrStem == null) m_CurrStem = GetNearestStem();
+                    if(m_CurrStem == null) 
+                    {
+                        m_CurrStem = GetNearestStem();
+                    }
+
+
                 }
 
                 IFoodSource nearestFood = GetNearestFoodSource();
@@ -175,6 +180,12 @@ namespace ProtoAqua.Experiment
             }
 
         }
+
+        // private IEnumerator ClimbWallAnimation()
+        // {
+            
+        // }
+        
 
         private IFoodSource GetNearestFoodSource()
         {

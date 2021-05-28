@@ -14,14 +14,18 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class StaghornCoralActor : ActorModule
+    public class SargassumActor : ActorModule
     {
         #region Inspector
 
         [Header("Height")]
         [SerializeField] private FloatRange m_Height = new FloatRange(6);
-        [SerializeField] private StaghornCoral m_Coral = null;
+
+        [SerializeField] private AmbientTransform m_Anim = null;
+
         #endregion // Inspector
+
+        [NonSerialized] private Sargassum m_Sarg = null;
 
         #region Events
 
@@ -33,13 +37,27 @@ namespace ProtoAqua.Experiment
             Actor.Callbacks.OnCreate = OnCreate;
 
             // DisableAmbient();
+
+            Services.Events.Register(ExperimentEvents.ExperimentBegin, StartAmbient, this);
+
+            m_Anim.enabled = false;
+
+            m_Sarg = GetComponent<Sargassum>();
+        }
+
+        private void StartAmbient() 
+        {
+            m_Anim.AnimationScale = 1;
+            m_Anim.enabled = true;
         }
 
         private void OnCreate()
         {
-            m_Coral.Initialize(Actor);
+            m_Anim.enabled = false;
+            m_Sarg.Initialize(Actor);
 
         }
+
 
         // private IEnumerator Animation()
         // {
