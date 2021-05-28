@@ -200,7 +200,7 @@ namespace ProtoAqua.Experiment
 
             }
 
-            food.FilterHigh(food.TotalWeight * GetProperty<float>("FoodFilterThreshold", 0.5f));
+            food.FilterHigh(food.TotalWeight * GetProperty<float>("FoodFilterThreshold", 0.2f));
             return food.GetItemNormalized(RNG.Instance.NextFloat());
         }
 
