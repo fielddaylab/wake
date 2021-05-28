@@ -1,4 +1,59 @@
 #basePath   job.coral-fishy-bizz
 
 :: start
-:: end
+@trigger    JobStarted
+@cutscene
+{@profCempaka}	Site V is a very popular fishing spot for Grouper. We need to set some guidelines for how much fishing can be done sustainably. 
+{@profCempaka}	I need you to determine how much Red Grouper can be harvested sustainably.
+{@profCempaka}	Start by heading to Site V and learning about the Grouper and the Fishers.
+{@player}		We're on it!
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station2"
+@once
+@cutscene
+{@kevin} 	Site V should be to the east of the ship, let's go!
+
+
+:: gotScan1
+@trigger    JobTaskUpdated
+@when 		scene:name == "RS-2V", has.entity:Fishers, !has.entity: Model.GrouperReproduction, !has.entity: Model.GrouperFishingRate
+@once
+@cutscene
+{@kevin} 	So that's the Fisher scan done.
+{@kevin} 	I think the rest of the data we need should be in the probe.
+
+:: gotScan2
+@trigger    JobTaskUpdated
+@when 		scene:name == "RS-2V", has.entity:Fishers, has.entity: Model.GrouperReproduction, has.entity: Model.GrouperFishingRate
+@once
+@cutscene
+{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
+
+:: backAtShip
+@trigger    SceneStart
+@when       scene:name == "Ship", has.entity:Fishers
+@once
+@cutscene
+{@kevin}   	Let's head to the modeling room and see if we can understand how the Grouper's population and Fisher population interacts.
+
+:: modelGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@kevin} 	Time to match up the historical data again.
+
+:: modelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} 	Nice!
+
+:: modelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+{@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
+{@kevin}	Let's report this back to Professor Cempaka.
