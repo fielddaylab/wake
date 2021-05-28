@@ -119,18 +119,20 @@ namespace ProtoAqua.Experiment
                     {
                         yield return ClimbAnimation(m_CurrStem, descend);
                     }
-                    else {
+                    else 
+                    {
                         yield return Actor.Nav.SwimTo(Actor.Nav.Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius));
                     }
                     
                     yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
                 }
 
-                bool StemSearch = RNG.Instance.NextBool();
-
-                if(StemSearch) {
+                float stemSearch = RNG.Instance.NextFloat(0, 1f) + 0.3f;
+                if(stemSearch > 0.5f)
+                {
                     if(m_CurrStem == null) m_CurrStem = GetNearestStem();
                 }
+                
 
                 IFoodSource nearestFood = GetNearestFoodSource();
                 if (nearestFood == null)
@@ -162,18 +164,21 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator ClimbAnimation(KelpStem stem, bool descend=false) {
             Vector2 myPos = Actor.Body.WorldTransform.position;
-            yield return Actor.Nav.SwimTo(
-                Actor.Nav.Helper.GetClimb(stem.root, Actor.Body.BodyRadius, GetProperty<float>("ClimbSpeed", 0.3f), myPos.y, descend));
-            yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
             if (Actor.Nav.Helper.ReachedTheFloor(myPos, Actor.Body.BodyRadius))
             {
                 descend = false;
                 m_CurrStem = null;
             }
-            else if(myPos.y >= stem.height) {
+            
+            if(Actor.Nav.Helper.ReachedTheTop(myPos, stem.height))
+            {
                 descend = true;
             }
 
+             yield return Actor.Nav.SwimTo(
+                Actor.Nav.Helper.GetClimb(
+                    stem.root, Actor.Body.BodyRadius, GetProperty<float>("ClimbSpeed", 0.3f), myPos.y, descend));
+            yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
         }
 
         private IFoodSource GetNearestFoodSource()
@@ -230,8 +235,9 @@ namespace ProtoAqua.Experiment
                     yield return RNG.Instance.NextFloat(0.8f, 1.2f);
                 }
             }
-            float height = (targetTransform.position + targetOffset).y;
-            if(m_CurrStem != null) {
+
+            if(m_CurrStem != null) 
+            {
                 descend = true;
             }
         }

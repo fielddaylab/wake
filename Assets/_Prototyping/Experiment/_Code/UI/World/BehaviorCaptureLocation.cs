@@ -75,7 +75,6 @@ namespace ProtoAqua.Experiment
 
         private void OnClick()
         {
-            Debug.Log("Clicked");
             if (!m_Showing)
                 return;
             

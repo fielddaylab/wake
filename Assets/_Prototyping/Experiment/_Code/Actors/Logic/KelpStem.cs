@@ -27,14 +27,14 @@ namespace ProtoAqua.Experiment
         private StringHash32 m_Id;
         private ActorCtrl m_Parent;
 
-        public void Initialize(ActorCtrl inParent) {
+        public void Initialize(ActorCtrl inParent, float stemHeight) {
             BullKelpActor bull = m_Body.GetComponentInParent<BullKelpActor>();
             GiantKelpActor giant = m_Body.GetComponentInParent<GiantKelpActor>();
             if(bull == null && giant == null) return;
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
             m_Spine = bull == null ? giant.GetSpine() : bull.GetSpine();
-            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
+            height = stemHeight;
             root = inParent.Body.WorldTransform.position.x;
             position = m_Spine.transform.position;
             m_Parent = inParent;
