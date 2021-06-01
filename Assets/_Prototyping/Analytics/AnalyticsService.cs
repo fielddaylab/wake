@@ -11,12 +11,14 @@ using UnityEngine;
 namespace Aqua
 {
     [ServiceDependency(typeof(EventService), typeof(ScriptingService))]
-    public partial class AnalyticsService : ServiceBehaviour
+    public partial class AnalyticsService : ServiceBehaviour, ISurveyHandler
     {
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
         [SerializeField] private int m_AppVersion = 1;
+        [SerializeField] private GameObject m_SurveyPrefab = null;
+        [SerializeField] private TextAsset m_DefaultSurveyJSON = null;
         
         #endregion // Inspector
 
@@ -78,7 +80,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
+            m_Logger = new SimpleLog(m_AppId, m_AppVersion);
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob)
@@ -88,7 +90,8 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Model_Begin, LogBeginModel)
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved)
-                .Register<string>(TitleController.Event_StartGame, OnTitleStart);
+                .Register<string>(TitleController.Event_StartGame, OnTitleStart)
+                .Register<string>(GameEvents.BeginSurvey, DisplaySurvey);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
         }
@@ -100,6 +103,21 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region ISurveyHandler
+
+        void ISurveyHandler.HandleSurveyResponse(Dictionary<string, string> surveyResponses)
+        {
+            Debug.Log("handled");
+        }
+
+        #endregion // ISurveyHandler
+
+        private void DisplaySurvey(string inSurveyName)
+        {
+            Survey survey = Instantiate(m_SurveyPrefab).GetComponent<Survey>();
+            survey.Initialize(inSurveyName, m_DefaultSurveyJSON, this);
+        }
 
         #region Log Events
 
