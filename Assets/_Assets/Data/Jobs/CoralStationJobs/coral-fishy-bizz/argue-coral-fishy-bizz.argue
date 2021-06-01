@@ -38,7 +38,7 @@ We can allow up to [TODO_GOOD_THRESHOLD] Grouper fishers in this area.
 :: link.TooManyFishers
 @tag claim
 @type claim
-Claim 2: We can have [TODO_TOO_MANY_FISHERMEN] Grouper fishers.
+We can have [TODO_TOO_MANY_FISHERMEN] Grouper fishers.
 
 :: link.NoFishers
 @tag claim
@@ -49,15 +49,21 @@ None. We can't sustainably harvest Grouper here.
 // After First Claim
 
 :: node.StartQ2AfterInvalid
+@linkToNode RedGrouper.Reproduce, node.RelatedIncorrectEvidence
+@linkToNode Fishers.Eats.RedGrouper, node.RelatedIncorrectEvidence
+@linkToNode Model.GrouperFishingRate, node.end
+@invalidNodeId  node.invalid.UnrelatedEvidence
+Did you gather any evidence that [TODO_GOOD_THRESHOLD] is a safe limit for the Grouper?
 
 :: node.SomeFishers
-@linkToNode 
-@linkToNode [TODO_FISHERMEN_GROUPER_MODEL], node.end
+@linkToNode RedGrouper.Reproduce, node.RelatedIncorrectEvidence
+@linkToNode Fishers.Eats.RedGrouper, node.RelatedIncorrectEvidence
+@linkToNode Model.GrouperFishingRate, node.end
 @invalidNodeId  node.invalid.UnrelatedEvidence
 Not too many, not too few. This seems reasonable. Do you have evidence?
 
 :: node.RelatedIncorrectEvidence
-@linkToNode [TODO_FISHERMEN_GROUPER_MODEL], node.end
+@linkToNode Model.GrouperFishingRate, node.end
 @invalidNodeId  node.invalid.UnrelatedEvidence
 I see how that might be related, but I need a model to show how many fishers we can support.
 
