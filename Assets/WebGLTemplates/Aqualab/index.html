@@ -22,6 +22,7 @@
     </div>
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-remote-config.js"></script>
     <script>
       var firebaseConfig = {
         apiKey: "AIzaSyDM8z5Q3ydHPPTXu374ZF_5Uwc6rX2B7q4",
@@ -34,6 +35,8 @@
       };
       firebase.initializeApp(firebaseConfig);
       const analytics = firebase.analytics();
+      const remoteConfig = firebase.remoteConfig();
+      remoteConfig.settings.minimumFetchIntervalMillis = 3600000;
     </script>
   </body>
 </html>

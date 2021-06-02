@@ -115,7 +115,9 @@ namespace Aqua
 
         private void DisplaySurvey(string inSurveyName)
         {
-            Survey survey = Instantiate(m_SurveyPrefab).GetComponent<Survey>();
+            GameObject go = Instantiate(m_SurveyPrefab);
+            DontDestroyOnLoad(go);
+            Survey survey = go.GetComponent<Survey>();
             survey.Initialize(inSurveyName, m_DefaultSurveyJSON, this);
         }
 
