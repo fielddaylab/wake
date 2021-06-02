@@ -57,7 +57,7 @@
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !has.fact:Sargassum.Consume.Light
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !has.fact:Model.SargLightPrediction
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
@@ -71,7 +71,7 @@
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !has.fact:Sargassum.Consume.Light
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !has.fact:Model.SargLightPrediction
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
@@ -86,7 +86,7 @@
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !has.fact:Sargassum.Consume.Light
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !has.fact:Model.SargLightPrediction
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a predition of how the light levels change over time. 

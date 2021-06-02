@@ -3,42 +3,103 @@
 :: start
 @trigger    JobStarted
 @cutscene
-$set coral-clear-sarg.siteRScans = 0
+$set jobs:coral-clear-sarg.siteRScans = 0
 {@profCempaka}	This time I need you to analyze the relations between Sargassum and everything else you've found so far.
 {@profCempaka}	Hopefully we can find something that can deal with that Sargassum!
 {@profCempaka}	Make sure you've scanned everything at Site R, and then experiment until you've figured out a solution. 
 $if has.entity:BlueheadWrasse, has.entity:BlueTang, has.entity:TurtleGrass, has.entity:RedGrouper
-	$set coral-clear-sarg.siteRScans = 2
+	$set jobs:coral-clear-sarg.siteRScans = 2 //Set to 2 instead of 1 so dialouge about returning to the ship is not seen
 	{@kevin}		I think we've already scanned all the critters at site R, so let's head right to the experiment lab!
 $else
 	{@kevin}		Back to Site R we go!
 $endif
 
+:: helpGoOutside
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", jobs:coral-clear-sarg.siteRScans == 0
+@cutscene
+{@player}   Any idea where I should go next?
+{@kevin}	First let's exit the ship and head over to Site R.
+
+:: helpGoToSiteB
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", jobs:coral-clear-sarg.siteRScans == 0
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We're still missing some scans from Site R.
+{@kevin}	Let's head north and dive down.
+
+:: helpAtSiteR
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2R", jobs:coral-clear-sarg.siteRScans == 0
+@cutscene
+$if !has.entity:TurtleGrass
+	{@player} 	I made it to Site R, what should I do now?
+	{@kevin}	Have you scanned that grass down at the floor?
+$else
+	{@player} 	What should I be looking for here?
+	{@kevin}	Do you see any new fish around you haven't scanned?
+$endif
+
+
 :: gotScans
 @trigger    JobTaskUpdated
-@when 		has.entity:BlueheadWrasse, has.entity:BlueTang, has.entity:TurtleGrass, has.entity:RedGrouper, coral-clear-sarg.siteRScans == 0
+@when 		has.entity:BlueheadWrasse, has.entity:BlueTang, has.entity:TurtleGrass, has.entity:RedGrouper, jobs:coral-clear-sarg.siteRScans == 0
 @once
 @cutscene
 $set jobs:coral-clear-sarg.siteRScans = 1
 {@kevin} I think that's everything from Site R!
 {@kevin} Time to head back and see how these all work together.
 
-:: backToShip
+:: helpAtSiteRScansDone
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2R", jobs:coral-clear-sarg.siteRScans > 0
+@cutscene
+{@player} 	Am I missing anything from here?
+{@kevin}	Nope! That's everything we need. Head back up to the ship when you're ready.
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", jobs:coral-clear-sarg.siteRScans > 0
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We've got all the scans we need from Site R, so lets head back south to the ship.
+
+
+:: backAtShip
 @trigger    SceneStart
 @when       scene:name == "Ship", jobs:coral-clear-sarg.siteRScans == 1
 @once
 @cutscene
-$set coral-clear-sarg.siteRScans = 2
+$set jobs:coral-clear-sarg.siteRScans = 2
 {@kevin}   Now that we're back, let's go to the experiement room!
+
+:: helpBackAtShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", jobs:coral-clear-sarg.siteRScans > 0, !has.fact:Urchin.Eats.Sargassum
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Let's head over to the experiment room and try to find something that can deal with the Sargassum. 
+
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", !has.fact:Urchin.Eats.Sargassum
+@when       scene:name == "ExperimentPrototype", jobs:coral-clear-sarg.siteRScans > 0, !has.fact:Urchin.Eats.Sargassum
 @once
 @cutscene
 {@player}   How should we set up the experiement this time?
 {@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
 {@kevin} 	Maybe try observing a tank with Sargassum and another critter until you find something interesting?
+
+::helpAtExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentPrototype", jobs:coral-clear-sarg.siteRScans > 0, !has.fact:Urchin.Eats.Sargassum
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	We want to figure out if there's anything that eats the Sargassum.
+{@kevin}	Try putting different critters in a tank with Sargassum and see if there's anything that eats it!
+{@kevin}	Maybe start with critters that weren't at Site R?
+
 
 :: experiementEnd
 @trigger    JobTaskUpdated
@@ -46,3 +107,13 @@ $set coral-clear-sarg.siteRScans = 2
 @once
 @cutscene
 {@kevin}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		has.fact:Urchin.Eats.Sargassum
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin}	Now that we've finished the experiment, let's report back to the Office.
+$if global:nav.shipRoom == "office"
+	{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+$endif
