@@ -79,7 +79,7 @@ namespace ProtoAqua.Experiment
             return position.y <= (r.yMin + inFloorOffset);
         }
 
-        private Rect Rect()
+        public Rect Rect()
         {
             Rect rect = new Rect();
             rect.size = m_Region.size;

@@ -8,17 +8,17 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5355756541682493959}
+  - component: {fileID: 3168195336157266034}
   - component: {fileID: 8021718572135166392}
   m_Layer: 0
   m_Name: Renderer
-  m_TagString: ClimbableSource
+  m_TagString: FoodSource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5355756541682493959
-Transform:
+--- !u!224 &3168195336157266034
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -31,6 +31,11 @@ Transform:
   m_Father: {fileID: 176437085871608103}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1.8, y: 12.9}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &8021718572135166392
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -69,7 +74,7 @@ GameObject:
   - component: {fileID: 1555922421803434964}
   m_Layer: 0
   m_Name: WallClimber
-  m_TagString: ClimbableSource
+  m_TagString: Climbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,7 +90,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5355756541682493959}
+  - {fileID: 3168195336157266034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -106,6 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb8c98e6fc906104682c1eb878b99eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  climbSettings: 1
-  m_Body: {fileID: 5355756541682493959}
+  m_Body: {fileID: 3168195336157266034}
   m_Collider: {fileID: 8021718572135166392}
+  m_Settings: 1
