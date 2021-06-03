@@ -38,7 +38,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 @when 		scene:name == "RS-2V", has.entity:Fishers, has.entity:RedGrouper, scene:name == "RS-2V"
 @cutscene
 $if has.fact:Fishers.Eats.RedGrouper
-	$if has.fact:RedGrouper.Reproduce
+	$if has.entity:ReefEdge
 		$set jobs:coral-fishy-bizz.gotScans = true
 		{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
 	$else
@@ -72,9 +72,9 @@ $if has.entity:Fishers
 $else
 	$if has.entity:RedGrouper
 		{@kevin} 	Looks like we still need some info on the fishers. 
-		{@kevin} 	Try scanning some of those boats on the surface.
+		{@kevin} 	Try scanning some of those nets near the surface.
 	$else
-		{@kevin} 	First, we need to scan some Red Grouper and the Fisher boats.
+		{@kevin} 	First, we need to scan some Red Grouper and the Fisher nets.
 		{@kevin} 	Drive around and see if you can find them!
 	$endif
 $endif
@@ -86,7 +86,7 @@ $endif
 @cutscene
 {@player} 	What should I do now?
 $if has.fact:Fishers.Eats.RedGrouper
-	$if has.fact:RedGrouper.Reproduce
+	$if has.entity:ReefEdge
 		{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
 	$else
 		{@kevin} 	Did you try scanning the probe yet? Some of the data we need should be in there.

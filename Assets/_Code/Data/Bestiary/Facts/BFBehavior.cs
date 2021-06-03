@@ -9,6 +9,7 @@ namespace Aqua
 
         [Header("Behavior")]
         [SerializeField] private bool m_Stressed = false;
+        [SerializeField] protected bool m_AutoGive = false;
 
         [Header("Text")]
         [SerializeField] private TextId m_VerbOverride = null;
@@ -18,6 +19,11 @@ namespace Aqua
         #endregion // Inspector
 
         public bool OnlyWhenStressed() { return m_Stressed; }
+
+        public override BFMode Mode()
+        {
+            return m_AutoGive ? BFMode.Always : base.Mode();
+        }
 
         #region Text
 
