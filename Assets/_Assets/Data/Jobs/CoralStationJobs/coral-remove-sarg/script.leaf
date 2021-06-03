@@ -10,6 +10,21 @@
 {@kevin}		{player-name}, let's start by heading to the experiment lab!
 {@player} 		Good thinking, Kevin!
 
+:: helpGoToExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name != "ExperimentPrototype", !has.fact:Sargassum.Consume.Light
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin}	Let's head over to the experiment room and try to learn more about Sargassum.
+
+:: helpAtExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentPrototype", !has.fact:Sargassum.Consume.Light
+@cutscene
+{@player} 	How should this go again?
+{@kevin}	We want to determine if Sargassum is really to blame for the low light at Site R.
+{@kevin}	Try putting some Sargassum in a mesurement tank and see if the light levels change.
+
 :: startExperiment
 @trigger    SceneStart
 @when       scene:name == "ExperimentPrototype", !has.fact:Sargassum.Consume.Light
@@ -26,17 +41,41 @@
 {@player}	Seems like we were right, Kevin!
 {@kevin}	Great! Now let's see how this affects the coral by making a model.
 
+:: helpAfterExperiment
+@trigger    RequestPartnerHelp
+@when 		has.fact:Sargassum.Consume.Light, scene:name != "ModelingPrototype", !has.fact:Model.SargLightPrediction
+@cutscene
+{@player} 	What should we be doing next?
+{@kevin}	We should take this new knowlege about Sargassum and make a model to know for sure what's causing the low light. 
+
+
 :: InterventionModelingSetup
 @trigger	UniversalModelStarted
 @once
 @cutscene
 {@kevin} 	Make sure you add the rule we just learned, and let's get started!
 
+::ModelHelp1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !has.fact:Model.SargLightPrediction
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
+
+
 :: InterventionGetSync
 @trigger	ModelGraphStarted
 @once
 @cutscene
 {@kevin} 	Now, let's match up the historical data again.
+
+::ModelHelp2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !has.fact:Model.SargLightPrediction
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
+
 
 :: InterventionModelSyncedImmediate
 @trigger	ModelSyncedImmediate
@@ -45,8 +84,24 @@
 @chatter
 {@kevin} 	Looks good!!
 
+::ModelHelp3
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !has.fact:Model.SargLightPrediction
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	The graph now shows a predition of how the light levels change over time. 
+{@kevin}	Hit the "Save Predition" button to move on.
+
+
 :: InterventionModelingGraphComplete
 @trigger	ModelCompleted
 @once
 @cutscene
 {@kevin} 	Nicely done! Looks like Sargassum is to blame for the low light at Site R. Let's report this back to Professor Cempaka.
+
+:: helpAfterModel
+@trigger    RequestPartnerHelp
+@when 		has.fact:Model.SargLightPrediction
+@cutscene
+{@player} 	What should we be doing next?
+{@kevin}	Let's report back to the office with our findings!

@@ -20,23 +20,27 @@ MonoBehaviour:
       m_Hash: 444981425
     Population: 1000
   - Id:
-      m_Source: SargassumCoveredReef.Light
-      m_Hash: 1302875441
-    Population: 2500
-  - Id:
       m_Source: StaghornCoral
       m_Hash: 2717353052
     Population: 250
   m_TickCount: 5
   m_TickScale: 1
-  m_PredictionTicks: 0
+  m_PredictionTicks: 50
   m_TargetActors:
   - Id:
       m_Source: StaghornCoral
       m_Hash: 2717353052
     Population: 0
-    Range: 0
-  m_AdjustableActors: []
+    Range: 1000
+  m_AdjustableActors:
+  - Id:
+      m_Source: Sargassum
+      m_Hash: 444981425
+    Population: 1000
+  - Id:
+      m_Source: StaghornCoral
+      m_Hash: 2717353052
+    Population: 1000
   m_TitleId:
     m_Source: modeling.coralSargPrediction.title
     m_Hash: 2317349987
