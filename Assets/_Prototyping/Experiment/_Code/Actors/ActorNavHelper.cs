@@ -69,7 +69,8 @@ namespace ProtoAqua.Experiment
 
         // public Vector2 GetClimbWall(float inSideOffset, float heightOffset, float currHeight, bool descend=false)
         // {
-        //     Rect r = 
+        //     Rect r = Rect();
+
 
         // }
 
