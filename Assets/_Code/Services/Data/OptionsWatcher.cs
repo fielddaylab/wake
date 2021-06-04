@@ -4,6 +4,7 @@ using AquaAudio;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
+using UnityEngine;
 
 namespace Aqua
 {
@@ -40,6 +41,24 @@ namespace Aqua
             inOptions.Audio.Music.Apply(ref audio.BusMix(AudioBusId.Music));
             inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.SFX));
             inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.Ambient));
+            inOptions.Audio.Voice.Apply(ref audio.BusMix(AudioBusId.Voice));
+
+            Application.targetFrameRate = GetFramerate(inOptions.Performance.Framerate);
+        }
+
+        static private int GetFramerate(OptionsPerformance.FramerateMode inFramerate)
+        {
+            switch(inFramerate)
+            {
+                case OptionsPerformance.FramerateMode.Stable:
+                    return 30;
+
+                case OptionsPerformance.FramerateMode.High:
+                    return 60;
+
+                default:
+                    return -1;
+            }
         }
     }
 }

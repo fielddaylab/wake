@@ -1,11 +1,13 @@
-#basePath   act1
+# basePath   act1
 
 :: atStation1
-@trigger    SceneStart
-@when       scene:name == "Ship", player:currentStation == "KelpStation"
+@trigger    RoomEnter
+@when       scene:name == "Ship", roomId == "helm", player:currentStation == "KelpStation"
 @once
 @boostScore 100
 @cutscene
+
+$yield
 $set    player:seen.drJules = true
 {@drJules}  Hi there folks! Welcome to the Kelpdom! $[jules-1]
                     At least that's what I call the Great Channel Kelp Research Station.

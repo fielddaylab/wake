@@ -41,11 +41,16 @@ namespace Aqua
                 m_Cursor.SetInteractionHint(bInteractable);
                 if (bInteractable)
                 {
+                    float prevTimer = m_TooltipTimer;
                     m_TooltipTimer += Time.deltaTime;
                     if (m_TooltipTimer >= inTooltipTime)
                     {
                         m_TooltipTimer = inTooltipTime;
                         m_Tooltip.SetId(m_CurrentHint.TooltipId);
+                        if (prevTimer < inTooltipTime)
+                        {
+                            Services.TTS.Tooltip(m_CurrentHint.TooltipId);
+                        }
                     }
                 }
                 else

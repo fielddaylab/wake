@@ -5,6 +5,7 @@ using TMPro;
 using System.Collections;
 using BeauPools;
 using System;
+using Aqua.Option;
 
 namespace Aqua
 {
@@ -51,6 +52,11 @@ namespace Aqua
 
         public IEnumerator Flash(Color inColor, float inDuration)
         {
+            if (Accessibility.Photosensitive)
+            {
+                return Routine.WaitSeconds(inDuration);
+            }
+            
             return m_RectPool.Alloc().Flash(inColor, inDuration);
         }
 
@@ -68,6 +74,8 @@ namespace Aqua
         {
             return m_RectPool.TempAlloc();
         }
+
+        public int FaderCount { get { return m_RectPool.ActiveObjects.Count; } }
 
         #endregion // Faders
 
@@ -87,6 +95,8 @@ namespace Aqua
         {
             return m_WipePool.TempAlloc();
         }
+
+        public int WipeCount { get { return m_WipePool.ActiveObjects.Count; } }
 
         #endregion // Screen Wipe
     }

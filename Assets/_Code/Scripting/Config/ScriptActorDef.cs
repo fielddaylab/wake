@@ -43,6 +43,7 @@ namespace Aqua
         
         [Header("Sounds")]
         [SerializeField] private SerializedHash32 m_DefaultTypeSFX = null;
+        [SerializeField, Range(0.1f, 2f)] private float m_TextToSpeechPitch = 1;
 
         #endregion // Inspector
 
@@ -70,6 +71,7 @@ namespace Aqua
         }
         
         public StringHash32 DefaultTypeSfx() { return m_DefaultTypeSFX; }
+        public float TTSPitch() { return m_TextToSpeechPitch; }
 
         public bool HasFlags(ScriptActorTypeFlags inFlags)
         {

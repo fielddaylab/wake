@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Debugging;
+using Aqua.Option;
 using BeauData;
 using BeauRoutine;
 using BeauUtil;
@@ -25,6 +26,7 @@ namespace ProtoAqua.Observation
         #endregion // Inspector
         
         [NonSerialized] private double m_Time = 0;
+        [NonSerialized] private OptionsData m_Options;
 
         [NonSerialized] private List<CameraConstraints.Bounds> m_BoundsConstraints = new List<CameraConstraints.Bounds>(8);
         [NonSerialized] private List<CameraConstraints.Hint> m_HintConstraints = new List<CameraConstraints.Hint>(8);
@@ -35,7 +37,7 @@ namespace ProtoAqua.Observation
 
         private void Awake()
         {
-            
+            m_Options = Services.Data.Options;
         }
 
         private void LateUpdate()
@@ -106,7 +108,12 @@ namespace ProtoAqua.Observation
             m_RootTransform.SetPosition(currentPos, Axis.XY, Space.Self);
 
             Vector2 offset = default(Vector2);
-            ApplyDrift(ref offset);
+            
+            // no drift if reducing camera movement
+            if (!m_Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceCameraMovement))
+            {
+                ApplyDrift(ref offset);
+            }
 
             m_EffectsTransform.SetPosition(offset, Axis.XY, Space.Self);
         }

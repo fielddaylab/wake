@@ -8,6 +8,7 @@ namespace Aqua
         static public readonly StringHash32 ProfileRefresh = "profile:refresh"; // no args
         static public readonly StringHash32 ProfileSaveBegin = "profile:save-begin"; // no args
         static public readonly StringHash32 ProfileSaveCompleted = "profile:save-completed"; // no args
+        static public readonly StringHash32 ProfileStarting = "profile:starting"; // string userName
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
         static public readonly StringHash32 ProfileAutosaveSuppress = "profile:autosave-suppress"; // no args

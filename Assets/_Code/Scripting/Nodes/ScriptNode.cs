@@ -23,7 +23,6 @@ namespace Aqua.Scripting
         private StringHash32 m_TriggerOrFunctionId = null;
         private StringHash32 m_Target = null;
         private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
-        private float m_InitialDelay;
 
         #endregion // Serialized
 
@@ -46,7 +45,6 @@ namespace Aqua.Scripting
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
         public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
-        public float InitialDelay() { return m_InitialDelay; }
 
         public override ILeafModule Module()
         {
@@ -129,11 +127,7 @@ namespace Aqua.Scripting
             // Mapping Shortcut - Partner requests are always towards kevin
             if (inTriggerId == GameTriggers.RequestPartnerHelp || inTriggerId == GameTriggers.PartnerTalk)
             {
-                m_Target = "kevin";
-            }
-            else if (inTriggerId == GameTriggers.SceneStart) // scene start needs a short delay
-            {
-                m_InitialDelay = 0.25f;
+                m_Target = GameConsts.Target_Kevin;;
             }
         }
 

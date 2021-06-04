@@ -7,6 +7,7 @@ using FieldDay;
 using ProtoAqua.Experiment;
 using ProtoAqua.Modeling;
 using UnityEngine;
+using Aqua.Title;
 
 namespace Aqua
 {
@@ -88,7 +89,7 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Model_Begin, LogBeginModel)
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved)
-                .Register<string>(TitleController.Event_StartGame, OnTitleStart);
+                .Register<string>(GameEvents.ProfileStarting, OnTitleStart);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
         }
