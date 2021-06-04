@@ -30,6 +30,10 @@ namespace Aqua
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
+        [Header("Experimentation")]
+
+        [SerializeField] private bool m_AvailableInExperimentation = true;
+
         #endregion // Inspector
 
         [SerializeField] private Dictionary<StringHash32, BFBase> m_FactMap;
@@ -58,6 +62,8 @@ namespace Aqua
         public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
+
+        public bool IsInExperimentation() { return m_AvailableInExperimentation; }
         public Sprite Sketch() { return m_Sketch; }
         public Color Color() { return m_Color; }
 

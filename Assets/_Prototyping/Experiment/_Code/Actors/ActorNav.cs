@@ -53,6 +53,10 @@ namespace ProtoAqua.Experiment
                     targetPos = m_Helper.GetWaterSpawnTarget(Actor.Body.BodyRadius, m_submergeOffset, m_FloorOffset);
                     spawnOffset = !m_IsFixedToFloor ? m_Helper.GetSpawnOffset() : default(Vector2);
                     break;
+                case ActorSpawnType.Surface:
+                    targetPos = m_Helper.GetSurfaceSpawnTarget(m_submergeOffset, Actor.Body.BodyRadius);
+                    spawnOffset = !m_IsFixedToFloor ? m_Helper.GetSpawnOffset() : default(Vector2);
+                    break;
                 case ActorSpawnType.Floor:
                 default:
                     targetPos = m_Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, m_FloorOffset);
@@ -146,6 +150,7 @@ namespace ProtoAqua.Experiment
     {
         Floor,
         Edge,
-        Water
+        Water,
+        Surface
     }
 }

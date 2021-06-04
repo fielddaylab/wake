@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301f5d014f7004884e65d7cb034fd1, type: 3}
+  m_Name: grouperFishingRateScenario
+  m_EditorClassIdentifier: 
+  m_Environment: {fileID: 11400000, guid: e73952a33d5a54bc5a38565cde5395b9, type: 2}
+  m_Seed: 54321
+  m_InitialActors:
+  - Id:
+      m_Source: RedGrouper
+      m_Hash: 1605956068
+    Population: 1000
+  - Id:
+      m_Source: Fishers
+      m_Hash: 4257683625
+    Population: 50
+  m_TickCount: 1000
+  m_TickScale: 10
+  m_PredictionTicks: 5
+  m_TargetActors:
+  - Id:
+      m_Source: RedGrouper
+      m_Hash: 1605956068
+    Population: 1000
+    Range: 250
+  m_AdjustableActors:
+  - Id:
+      m_Source: Fishers
+      m_Hash: 4257683625
+    Population: 500
+  m_TitleId:
+    m_Source: modeling.grouperFishingPrediction.title
+    m_Hash: 577724095
+  m_DescId:
+    m_Source: modeling.grouperFishingPrediction.description
+    m_Hash: 657313883
+  m_CompleteId:
+    m_Source: modeling.grouperFishingPrediction.complete
+    m_Hash: 858888468
+  m_TickLabelId:
+    m_Source: 
+    m_Hash: 0
+  m_BestiaryModelId:
+    m_Source: Model.GrouperFishingRate
+    m_Hash: 2289506904

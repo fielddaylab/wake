@@ -64,7 +64,8 @@ namespace ProtoAqua.Experiment
                 {
                     while (swims-- > 0)
                     {
-                        Vector3 NextPosition = Actor.Nav.Helper.GetRandomSwimTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius);
+                        Vector3 NextPosition = Actor.Nav.Helper.GetRandomSwimTarget(
+                            Actor.Body.BodyRadius, Actor.Body.BodyRadius, Actor.Body.BodyRadius);
                         RotateActor(NextPosition);
 
                         yield return Actor.Nav.SwimTo(NextPosition);

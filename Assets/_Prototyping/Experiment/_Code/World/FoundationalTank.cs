@@ -19,6 +19,8 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private float m_SpawnDelay = 0.05f;
 
+        [SerializeField] private GlassWall[] m_Walls = null;
+
         #endregion // Inspector
 
         [NonSerialized] private AudioHandle m_AudioLoop;
@@ -26,6 +28,7 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
+
 
         #region Basic Functions
         protected override void Awake()
@@ -39,6 +42,11 @@ namespace ProtoAqua.Experiment
                 m_IdleRoutine.Resume();
                 m_IdleDuration /= 2;
             });
+
+            foreach(GlassWall wall in m_Walls)
+            {
+                wall.Initialize();
+            }
         }
 
         protected override void OnEnable()

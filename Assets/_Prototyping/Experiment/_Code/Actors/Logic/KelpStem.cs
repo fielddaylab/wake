@@ -11,7 +11,7 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class KelpStem : MonoBehaviour, IFoodSource
+    public class KelpStem : Climbable, IFoodSource
     {
         #region Inspector
 
@@ -19,28 +19,35 @@ namespace ProtoAqua.Experiment
         [SerializeField] private Collider2D m_Collider = null;
 
         #endregion // Inspector
-
-        public float height {get; set;}
-        public float root { get; set; }
-        public Vector3 position { get; set; }
         private SpriteRenderer m_Spine;
         private StringHash32 m_Id;
         private ActorCtrl m_Parent;
 
-        public void Initialize(ActorCtrl inParent, float stemHeight) {
-            BullKelpActor bull = m_Body.GetComponentInParent<BullKelpActor>();
-            GiantKelpActor giant = m_Body.GetComponentInParent<GiantKelpActor>();
-            if(bull == null && giant == null) return;
+        public void Initialize(ActorCtrl inParent) 
+        {
+            if(!IsClimbable()) return;
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
-            m_Spine = bull == null ? giant.GetSpine() : bull.GetSpine();
-            height = stemHeight;
+            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
             root = inParent.Body.WorldTransform.position.x;
             position = m_Spine.transform.position;
             m_Parent = inParent;
         }
 
-        public void ResetPosition(Vector3 point) {
+        private bool IsClimbable()
+        {
+            GameObject parent = m_Body.parent.gameObject;
+            bool res = false;
+            res |= ComponentUtils.HasComponent<BullKelpActor>(parent);
+            if(res)  m_Spine = parent.GetComponent<BullKelpActor>().GetSpine();
+            res |= ComponentUtils.HasComponent<GiantKelpActor>(parent);
+            if(res)  m_Spine = parent.GetComponent<GiantKelpActor>().GetSpine();
+
+            return res;
+        }
+
+        public void ResetPosition(Vector3 point) 
+        {
             root = point.x;
             position = point;
         }

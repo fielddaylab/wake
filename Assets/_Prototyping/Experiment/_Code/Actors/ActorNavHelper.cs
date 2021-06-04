@@ -34,6 +34,14 @@ namespace ProtoAqua.Experiment
             return RNG.Instance.NextVector2(left, right);
         }
 
+        public Vector2 GetSurfaceSpawnTarget(float submergeOffset, float inSideOffset)
+        {
+            Rect r = Rect();
+            Vector2 left = new Vector2(r.xMin + inSideOffset, r.yMax - submergeOffset);
+            Vector2 right = new Vector2(r.xMax - inSideOffset, r.yMax - submergeOffset);
+            return RNG.Instance.NextVector2(left, right);
+        }
+
         public Vector2 GetWaterSpawnTarget(float inSideOffset, float submergeOffset, float inFloorOffset)
         {
             Rect r = Rect();
@@ -58,6 +66,13 @@ namespace ProtoAqua.Experiment
             return RNG.Instance.NextVector2(left, right);
 
         }
+
+        // public Vector2 GetClimbWall(float inSideOffset, float heightOffset, float currHeight, bool descend=false)
+        // {
+        //     Rect r = Rect();
+
+
+        // }
 
         public bool ReachedTheFloor(Vector2 position, float inFloorOffset) {
             Rect r = Rect();

@@ -51,6 +51,9 @@ namespace ProtoAqua.Experiment
             {
                 Assert.True(buttonIdx < m_CachedButtons.Length);
 
+                if(!actorType.IsInExperimentation())
+                    continue;
+
                 if (actorType.Size() > m_CachedTank.MaxSize || actorType.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
                     continue;
                 

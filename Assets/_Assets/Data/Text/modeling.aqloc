@@ -13,7 +13,6 @@ The urchin barren had Urchins and Giant Kelp. Simulate how these populations wil
 Prediciton successful. The simulator shows that the urchin barren at Site B is only going to get worse.
 
 
-
 // URCHIN BARREN Introduce Otters
 
 :: urchinBarrenIntroduceOtters.title
@@ -26,12 +25,6 @@ Can an urchin barren be repaired? Use what you've learned from healthy Kelp Fore
 Intervention successful. The simulator shows that the urchin barren can be repaired by releasing sea otters.
 
 
-
-
-
-
-
-
 // COOL KELP FOREST
 
 :: coolKelpForest.title
@@ -42,6 +35,29 @@ Is an urchin barren likely to occur in the cool kelp forest?
 
 :: coolKelpForest.complete
 Prediction successful. Ecosystem is sustainable for the forseeable future.
+
+// CORAL AND SARGASSUM LIGHT Prediction
+
+:: coralSargPrediction.title
+Sargassum Covered Reef Population Data
+
+:: coralSargPrediction.description
+How does Sargassum change the light levels and affect the Staghorn Coral?
+
+:: coralSargPrediction.complete
+Prediciton successful. The simulator shows Sargassum reduces the light to levels dangerous to Staghorn Coral.
+
+// GROUPER FISHING Prediction
+
+:: grouperFishingPrediction.title
+Reef Edge Population Data
+
+:: grouperFishingPrediction.description
+How does the number of Fishers affect the Red Grouper population?
+
+:: grouperFishingPrediction.complete
+Prediciton successful. The simulator shows [TODO_GOOD_THRESHOLD] Fishers can safely maintain the Red Grouper population. 
+
 
 // MESSAGES
 
@@ -57,6 +73,7 @@ This model has already been completed.
 
 #basePath models
 
+	//Kelp Station
 :: kelpStation.name
 Kelp Station Models
 
@@ -77,3 +94,20 @@ Urchin Barren Prediction
 
 :: kelpStation.urchinBarren.description
 The {env-name}Urchin Barren{/env-name} will continue to die.
+
+	//Coral Station
+:: coralStation.name
+Coral Station Models
+
+:: coralStation.sargLightPrediction.name
+Sargassum Covered Reef Light Predition
+
+:: coralStation.sargLightPrediction.description
+{critter-name}Sargassum{/critter-name} has been lowering the light levels in {env-name}Site R{/env-name}, causing {critter-name}Staghorn Coral{/critter-name} to become stressed.
+
+:: coralStation.grouperFishingRate.name
+Red Grouper population prediction from number of Fishers.
+
+:: coralStation.grouperFishingRate.description
+The {critter-name}Red Grouper{/critter-name} population can safely sustain [TODO_GOOD_THRESHOLD] {critter-name}Fishers{/critter-name}.
+
