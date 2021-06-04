@@ -28,5 +28,10 @@ namespace Aqua.Scripting
         {
             return inTable.m_Table?.Object;
         }
+
+        static public TempVarTable Alloc()
+        {
+            return Services.Script.GetTempTable();
+        }
     }
 }

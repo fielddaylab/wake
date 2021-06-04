@@ -50,8 +50,8 @@ MonoBehaviour:
     Steps:
     - Type: 0
       Target:
-        m_Source: CoralGrouper
-        m_Hash: 1575786998
+        m_Source: RedGrouper
+        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -73,14 +73,20 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Model.GrouperReproduction
-        m_Hash: 210601530
+        m_Source: Fishers.Eats.RedGrouper
+        m_Hash: 316344893
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Model.GrouperFishingRate
-        m_Hash: 2289506904
+        m_Source: RedGrouper.Reproduce
+        m_Hash: 2555751373
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ReefEdge
+        m_Hash: 1116546582
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -94,10 +100,10 @@ MonoBehaviour:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 1
       Target:
-        m_Source: Muzzins
-        m_Hash: 3202459133
+        m_Source: Model.GrouperFishingRate
+        m_Hash: 2289506904
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -132,8 +138,8 @@ MonoBehaviour:
     Steps:
     - Type: 0
       Target:
-        m_Source: CoralGrouper
-        m_Hash: 1575786998
+        m_Source: RedGrouper
+        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -156,14 +162,20 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Model.GrouperReproduction
-        m_Hash: 210601530
+        m_Source: Fishers.Eats.RedGrouper
+        m_Hash: 316344893
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Model.GrouperFishingRate
-        m_Hash: 2289506904
+        m_Source: RedGrouper.Reproduce
+        m_Hash: 2555751373
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ReefEdge
+        m_Hash: 1116546582
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -178,10 +190,10 @@ MonoBehaviour:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 1
       Target:
-        m_Source: Muzzins
-        m_Hash: 3202459133
+        m_Source: Model.GrouperFishingRate
+        m_Hash: 2289506904
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -211,3 +223,4 @@ MonoBehaviour:
     type: 3}
   m_ExtraAssets:
   - {fileID: -4270002856181823206, guid: bb42e365c68ce4eee8b9cdb731b5287e, type: 3}
+  - {fileID: 11400000, guid: 139c4f017cba2c74fb9da245cb7e46e8, type: 2}

@@ -103,10 +103,58 @@ namespace Aqua
             return null;
         }
 
+        public MonoBehaviour Alloc(BFBase inFact, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+
+            BFBehavior behavior = inFact as BFBehavior;
+            if (behavior != null)
+            {
+                BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
+                display.Populate(behavior);
+                return display;
+            }
+
+            BFModel model = inFact as BFModel;
+            if (model != null)
+            {
+                ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
+                display.Populate(model);
+                return display;
+            }
+
+            BFState state = inFact as BFState;
+            if (state != null)
+            {
+                StateFactDisplay display = m_StateFacts.Alloc(inParent);
+                display.Populate(state);
+                return display;
+            }
+
+            BFWaterProperty waterProp = inFact as BFWaterProperty;
+            if (waterProp != null)
+            {
+                WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
+                display.Populate(waterProp);
+                return display;
+            }
+
+            Assert.True(false, "Unable to find suitable fact");
+            return null;
+        }
+
         public BehaviorFactDisplay Alloc(BFBehavior inFact)
         {
             ConfigurePoolTransforms();
             BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
+            display.Populate(inFact);
+            return display;
+        }
+
+        public BehaviorFactDisplay Alloc(BFBehavior inFact, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+            BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
             display.Populate(inFact);
             return display;
         }
@@ -119,6 +167,14 @@ namespace Aqua
             return display;
         }
 
+        public ModelFactDisplay Alloc(BFModel inFact, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+            ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
+            display.Populate(inFact);
+            return display;
+        }
+
         public StateFactDisplay Alloc(BFState inFact)
         {
             ConfigurePoolTransforms();
@@ -127,10 +183,26 @@ namespace Aqua
             return display;
         }
 
+        public StateFactDisplay Alloc(BFState inFact, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+            StateFactDisplay display = m_StateFacts.Alloc(inParent);
+            display.Populate(inFact);
+            return display;
+        }
+
         public WaterPropertyFactDisplay Alloc(BFWaterProperty inFact)
         {
             ConfigurePoolTransforms();
             WaterPropertyFactDisplay display = m_PropertyFacts.Alloc();
+            display.Populate(inFact);
+            return display;
+        }
+
+        public WaterPropertyFactDisplay Alloc(BFWaterProperty inFact, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+            WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
             display.Populate(inFact);
             return display;
         }

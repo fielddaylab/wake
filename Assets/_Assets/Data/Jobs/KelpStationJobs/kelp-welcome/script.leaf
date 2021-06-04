@@ -124,7 +124,6 @@ $endif
 @cutscene
 {@player}   How about now?
 {@kevin}   Ummmm...
-
 $if has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.entity:SeaOtter // all scans?
     $set    jobs:kelp-welcome.got.scans = true
     {@kevin}   Yep, looks like you scanned everything I was expecting.
@@ -132,7 +131,7 @@ $if has.entity:WarmKelpForest, has.entity:Urchin, has.entity:GiantKelp, has.enti
 $else
     {@kevin}   No, looks like you're still missing something.
     $if !has.entity:WarmKelpForest
-        {@kevin}   The probe is the thing that looks like an archaeic, yet alien computer. Scan it just like a normal critter.
+        {@kevin}   The probe is the thing that looks like an archaic, yet alien computer. Scan it just like a normal critter.
     $else
         {@kevin}   Are you sure you didn't miss any creatures down there? Plants, Animals, Other? 
 	Not sure what would even count as other, but it sounded right.
@@ -147,7 +146,7 @@ $endif
 {@player}   We're back. Now what?
 {@kevin}   Now that you know some of the most important species in the kelp forest, it's time to learn how they interact.
 {@player}   Ok, how?
-{@kevin}   Let's go into the experiement room.
+{@kevin}   Let's go into the experiment room.
 
 :: helpGoToExperimentRoom
 @trigger    RequestPartnerHelp

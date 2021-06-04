@@ -1,4 +1,5 @@
 using System;
+using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
@@ -75,7 +76,7 @@ namespace Aqua
 
         private void OnJobStarted(StringHash32 inJobId)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
                 Services.Script.TriggerResponse(GameTriggers.JobStarted, null, null, table);
@@ -84,7 +85,7 @@ namespace Aqua
 
         private void OnJobSwitched(StringHash32 inJobId)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
                 Services.Script.TriggerResponse(GameTriggers.JobSwitched, null, null, table);
@@ -99,7 +100,7 @@ namespace Aqua
             Services.Data.Profile.Inventory.AdjustItem(GameConsts.CashId, job.CashReward());
             Services.Data.Profile.Inventory.AdjustItem(GameConsts.GearsId, job.GearReward());
 
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
                 Services.Script.TriggerResponse(GameTriggers.JobCompleted, null, null, table);
@@ -108,7 +109,7 @@ namespace Aqua
 
         private void OnJobTaskCompleted(StringHash32 inTaskId)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);
                 table.Set("taskId", inTaskId);
@@ -118,7 +119,7 @@ namespace Aqua
 
         private void OnJobTasksUpdated()
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);
                 Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, null, null, table);
@@ -127,7 +128,7 @@ namespace Aqua
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 switch(inUpdateParams.Type)
                 {
@@ -150,7 +151,7 @@ namespace Aqua
 
         private void OnModelUpdated(StringHash32 inFactAdded)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("factId", inFactAdded);
                 Services.Script.TriggerResponse(GameTriggers.BestiaryFactAddedToModel, null, null, table);

@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Tags;
@@ -31,7 +29,8 @@ namespace Aqua
                 thread.Dialog = Services.UI.GetDialog("cornerKevin");
             }
 
-            thread.Delay(inNode.InitialDelay());
+            if (Services.UI.IsLoadingScreenVisible() || Services.UI.ScreenFaders.WipeCount > 0)
+                thread.Delay(0.5f);
         }
 
         void ILeafPlugin<ScriptNode>.OnNodeExit(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)

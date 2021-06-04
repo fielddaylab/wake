@@ -18,7 +18,7 @@ namespace Aqua.Profile
 
         public SaveData()
         {
-            Options.SetDefaults();
+            Options.SetDefaults(OptionsData.Authority.All);
         }
         
         #region IProfileChunk

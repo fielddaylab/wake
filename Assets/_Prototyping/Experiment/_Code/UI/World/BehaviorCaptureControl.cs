@@ -1,5 +1,4 @@
 using UnityEngine;
-using ProtoCP;
 using System;
 using BeauRoutine;
 using BeauPools;
@@ -7,6 +6,7 @@ using BeauData;
 using BeauUtil;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Scripting;
 
 namespace ProtoAqua.Experiment
 {
@@ -60,9 +60,9 @@ namespace ProtoAqua.Experiment
                 Services.Audio.PostEvent("capture_new");
                 Services.Events.Dispatch(ExperimentEvents.BehaviorAddedToLog, inBehaviorId);
 
-                Services.UI.Popup.Display(factDef.name, factDef.GenerateSentence())
+                Services.UI.Popup.Display("'experiment.popup.newBehavior.header", factDef.GenerateSentence())
                     .OnComplete((r) => {
-                        using(var table = Services.Script.GetTempTable())
+                        using(var table = TempVarTable.Alloc())
                         {
                             table.Set("factId", inBehaviorId);
                             Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
@@ -71,7 +71,7 @@ namespace ProtoAqua.Experiment
             }
             else
             {
-                using(var table = Services.Script.GetTempTable())
+                using(var table = TempVarTable.Alloc())
                 {
                     table.Set("factId", inBehaviorId);
                     Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved);

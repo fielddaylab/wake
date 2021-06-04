@@ -113,7 +113,7 @@ namespace Aqua
             if (p.Contains("mute"))
             {
                 AudioListener.volume = 0;
-                Debug.LogFormat("[BootParams] Muting volume");
+                Log.Msg("[BootParams] Muting volume");
             }
 
             // antialiasing
@@ -124,7 +124,14 @@ namespace Aqua
                 if (aa.Type != VariantType.Null)
                     aaVal = aa.AsInt();
                 QualitySettings.antiAliasing = aaVal;
-                Debug.LogFormat("[BootParams] Antialiasing set to {0}", aaVal);
+                Log.Msg("[BootParams] Antialiasing set to {0}", aaVal);
+            }
+
+            if (p.Contains("clearData"))
+            {
+                PlayerPrefs.DeleteAll();
+                PlayerPrefs.Save();
+                Log.Msg("[BootParams] All save data deleted");
             }
 
             // debug
@@ -141,7 +148,7 @@ namespace Aqua
 
                 if (extraCategories != 0)
                 {
-                    Debug.LogFormat("[BootParams] Activating debug categories '{0}'", extraCategories.ToString());
+                    Log.Msg("[BootParams] Activating debug categories '{0}'", extraCategories);
                     DebugService.AllowLogs(extraCategories);
                 }
             }

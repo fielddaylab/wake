@@ -41,7 +41,7 @@ namespace ProtoAqua.Observation
         }
 
         private void OnToggle(bool inState)
-        {
+        {            
             Services.Events.Dispatch(ObservationEvents.ScannerSetState, inState);
         }
 

@@ -29,6 +29,7 @@ namespace Aqua.Scripting
         private int m_CutsceneCount;
         private Routine m_RunningRoutine;
         private bool m_Active;
+        private float m_QueuedDelay;
 
         // temp resources
         private TempAlloc<VariantTable> m_TempTable;
@@ -98,6 +99,11 @@ namespace Aqua.Scripting
         {
             m_RunningRoutine = inRoutine;
             inRoutine.OnComplete(m_KillCallback);
+            if (m_QueuedDelay > 0)
+            {
+                m_RunningRoutine.DelayBy(m_QueuedDelay);
+                m_QueuedDelay = 0;
+            }
         }
 
         public void SyncPriority(ScriptNode inNode)
@@ -110,7 +116,14 @@ namespace Aqua.Scripting
 
         public void Delay(float inDelay)
         {
-            m_RunningRoutine.DelayBy(inDelay);
+            if (m_RunningRoutine)
+            {
+                m_RunningRoutine.DelayBy(inDelay);
+            }
+            else
+            {
+                m_QueuedDelay += inDelay;
+            }
         }
 
         public bool HasId(uint inId)
@@ -430,6 +443,7 @@ namespace Aqua.Scripting
             m_Context = null;
             m_Name = null;
             m_Flags = 0;
+            m_QueuedDelay = 0;
 
             m_TriggerWho = StringHash32.Null;
             m_TriggerPriority = TriggerPriority.Low;

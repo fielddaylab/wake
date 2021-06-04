@@ -50,15 +50,23 @@ namespace ProtoAqua.Experiment
             m_HeightOffset.SetPosition(height * 0.5f, Axis.Y, Space.Self);
             m_HeightCapOffset.SetPosition(height * 0.5f + 1, Axis.Y, Space.Self);
 
+            int leafCount = (int)Math.Floor(RNG.Instance.NextFloat(GetProperty<float>("MinLeafCount", 2f), GetProperty<float>("MaxLeafCount", 4f)));
+
             float facing = RNG.Instance.Choose(-1, 1);
-            for(int i = 0, leafCount = m_AllLeaves.Length; i < leafCount; ++i)
+            for(int i = 0; i < leafCount; ++i)
             {
                 float lerp = 1 + RNG.Instance.NextFloat(-0.2f, 0f);
-                float leafHeight = height * lerp;
+                float leafHeight = (height * lerp);
 
                 m_AllLeaves[i].Initialize(leafHeight, facing, Actor);
+                m_AllLeaves[i].gameObject.SetActive(true);
             }
-            m_Stem.Initialize(Actor);
+
+            for(int i = leafCount; i < m_AllLeaves.Length; i++)
+            {
+                m_AllLeaves[i].gameObject.SetActive(false);
+            }
+            ((IClimbable) m_Stem).Initialize(Actor);
         }
 
         public SpriteRenderer GetSpine() {

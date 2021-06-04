@@ -10,6 +10,8 @@ namespace Aqua.Ship
 {
     public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader
     {
+        static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
+
         #region Inspector
 
         [SerializeField, Required] private Room m_DefaultRoom = null;
@@ -73,6 +75,12 @@ namespace Aqua.Ship
             else
             {
                 m_Transition.Replace(this, RoomTransition(inRoom)).TryManuallyUpdate(0);
+            }
+
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("roomId", inRoom.Id());
+                Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
             }
         }
 

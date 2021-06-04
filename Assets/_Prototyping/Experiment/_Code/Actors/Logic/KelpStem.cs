@@ -11,38 +11,59 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class KelpStem : MonoBehaviour, IFoodSource
+    public class KelpStem : MonoBehaviour, IClimbable, IFoodSource
     {
         #region Inspector
 
         [SerializeField] private Transform m_Body;
         [SerializeField] private Collider2D m_Collider = null;
+        [SerializeField] private ClimbSettings m_Settings = ClimbSettings.NONE;
 
         #endregion // Inspector
-
-        public float height {get; set;}
-        public float root { get; set; }
-        public Vector3 position { get; set; }
         private SpriteRenderer m_Spine;
         private StringHash32 m_Id;
         private ActorCtrl m_Parent;
 
-        public void Initialize(ActorCtrl inParent) {
-            BullKelpActor bull = m_Body.GetComponentInParent<BullKelpActor>();
-            GiantKelpActor giant = m_Body.GetComponentInParent<GiantKelpActor>();
-            if(bull == null && giant == null) return;
+        [NonSerialized] private Vector2 m_Position;
+        [NonSerialized] private float m_Root;
+        [NonSerialized] private float m_Height;
+
+        ClimbSettings IClimbable.Settings { get{return m_Settings;} }
+
+        Vector2 IClimbable.position { get{return m_Position;} }
+
+        float IClimbable.root { get{return m_Root; } }
+
+        float IClimbable.height { get{return m_Height; } }
+        Transform IClimbable.Transform { get { return m_Body; }}
+
+        Collider2D IClimbable.Collider{get { return m_Collider;}}
+
+        void IClimbable.Initialize(ActorCtrl inParent) 
+        {
+            if(!IsClimbable()) return;
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
-            m_Spine = bull == null ? giant.GetSpine() : bull.GetSpine();
-            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
-            root = inParent.Body.WorldTransform.position.x;
-            position = m_Spine.transform.position;
-            m_Parent = inParent;
+            m_Position = m_Spine.transform.position;
+            m_Height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
+            m_Root = inParent.Body.WorldTransform.position.x;
+        }
+        void IClimbable.ResetPosition(Vector3 point) 
+        {
+            m_Root = point.x;
+            m_Position = point;
         }
 
-        public void ResetPosition(Vector3 point) {
-            root = point.x;
-            position = point;
+        private bool IsClimbable()
+        {
+            GameObject parent = m_Body.parent.gameObject;
+            bool res = false;
+            res |= ComponentUtils.HasComponent<BullKelpActor>(parent);
+            if(res)  m_Spine = parent.GetComponent<BullKelpActor>().GetSpine();
+            res |= ComponentUtils.HasComponent<GiantKelpActor>(parent);
+            if(res)  m_Spine = parent.GetComponent<GiantKelpActor>().GetSpine();
+
+            return res;
         }
 
         Transform IFoodSource.Transform { get { return m_Body; } }

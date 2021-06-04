@@ -7,7 +7,7 @@ namespace Aqua.Option
     /// <summary>
     /// Gameplay options settings.
     /// </summary>
-    public struct OptionGameplay : ISerializedObject, ISerializedVersion
+    public struct OptionsGameplay : ISerializedObject, ISerializedVersion
     {
         public MovementMode Movement;
 

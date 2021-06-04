@@ -423,6 +423,15 @@ namespace Aqua
                 RebuildLayout();
                 while(m_RebuildRoutine)
                     yield return null;
+
+                if (Accessibility.TTSEnabled)
+                {
+                    float pitch = 1;
+                    if (m_CurrentState.TargetDef != null)
+                        pitch = m_CurrentState.TargetDef.TTSPitch();
+
+                    Services.TTS.Text(m_CurrentState.VisibleText, pitch);
+                }
             }
 
             float timeThisFrame = Routine.DeltaTime;

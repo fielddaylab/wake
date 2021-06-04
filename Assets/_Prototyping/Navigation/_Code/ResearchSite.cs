@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Aqua;
 using BeauUtil;
 using System;
+using Aqua.Scripting;
 
 namespace ProtoAqua.Navigation
 {
@@ -59,7 +60,7 @@ namespace ProtoAqua.Navigation
             {
                 Services.UI.FindPanel<NavigationUI>().DisplayDive(transform, m_siteLabel, m_siteId);
                 
-                using(var tempTable = Services.Script.GetTempTable())
+                using(var tempTable = TempVarTable.Alloc())
                 {
                     tempTable.Set("siteId", m_siteId);
                     tempTable.Set("siteHighlighted", m_Highlighted);

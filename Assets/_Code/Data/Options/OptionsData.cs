@@ -1,11 +1,5 @@
-using UnityEngine;
 using System;
-using System.Collections.Generic;
 using BeauData;
-using BeauUtil;
-using BeauUtil.Debugger;
-using Aqua;
-using AquaAudio;
 using Aqua.Profile;
 
 namespace Aqua.Option
@@ -15,21 +9,32 @@ namespace Aqua.Option
         [Flags]
         public enum Authority : byte
         {
-            Session = 0x01,
+            Local = 0x01,
             Profile = 0x02,
 
-            All = 0x04
+            All = Local | Profile
         }
 
-        public OptionAudio Audio;
-        public OptionGameplay Gameplay;
+        public OptionsAudio Audio;
+        public OptionsGameplay Gameplay;
+        public OptionsPerformance Performance;
+        public OptionsAccessibility Accessibility;
 
         private bool m_HasChanges = false;
 
-        public void SetDefaults()
+        public void SetDefaults(Authority inAuthority)
         {
-            Audio.SetDefaults();
-            Gameplay.SetDefaults();
+            if ((inAuthority & Authority.Local) != 0)
+            {
+                Audio.SetDefaults();
+                Performance.SetDefaults();
+            }
+
+            if ((inAuthority & Authority.Profile) != 0)
+            {
+                Gameplay.SetDefaults();
+                Accessibility.SetDefaults();
+            }
         }
 
         /// <summary>
@@ -37,25 +42,37 @@ namespace Aqua.Option
         /// </summary>
         static public void SyncFrom(OptionsData inSource, OptionsData inTarget, Authority inAuthority)
         {
-            if ((inAuthority & Authority.Session) != 0)
+            if ((inAuthority & Authority.Local) != 0)
             {
                 inTarget.Audio = inSource.Audio;
+                inTarget.Performance = inSource.Performance;
             }
 
             if ((inAuthority & Authority.Profile) != 0)
             {
                 inTarget.Gameplay = inSource.Gameplay;
+                inTarget.Accessibility = inSource.Accessibility;
             }
         }
 
         #region ISerializedObject
 
-        public ushort Version { get { return 1; } }
+        public ushort Version { get { return 2; } }
 
         public void Serialize(Serializer ioSerializer)
         {
             ioSerializer.Object("audio", ref Audio);
             ioSerializer.Object("gameplay", ref Gameplay);
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Object("performance", ref Performance);
+                ioSerializer.Object("accessibility", ref Accessibility);
+            }
+            else
+            {
+                Performance.SetDefaults();
+                Accessibility.SetDefaults();
+            }
         }
 
         #endregion // ISerializedObject

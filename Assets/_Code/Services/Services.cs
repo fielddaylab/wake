@@ -43,6 +43,7 @@ namespace Aqua
         [ServiceReference] static public PhysicsService Physics { get; private set; }
         [ServiceReference] static public ScriptingService Script { get; private set; }
         [ServiceReference] static public StateMgr State { get; private set; }
+        [ServiceReference] static public TTSService TTS { get; private set; }
         [ServiceReference] static public TweakMgr Tweaks { get; private set; }
         [ServiceReference] static public UIMgr UI { get; private set; }
 

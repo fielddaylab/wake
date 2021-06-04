@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Portable;
+using Aqua.Scripting;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -222,7 +223,7 @@ namespace ProtoAqua.Argumentation
         {
             m_InputRaycasterLayer.Override = null;
 
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", Services.Data.CurrentJobId());
                 yield return Services.Script.TriggerResponse("ArgumentationComplete");

@@ -30,15 +30,18 @@ namespace Aqua
             if (string.IsNullOrEmpty(inEventId))
                 return;
 
-            if (inbCheckPrevState)
+            if (!Services.Input.IsForcingInput())
             {
-                if (!m_WasInteractable)
-                    return;
-            }
-            else
-            {
-                if (!m_Selectable.IsInteractable())
-                    return;
+                if (inbCheckPrevState)
+                {
+                    if (!m_WasInteractable)
+                        return;
+                }
+                else
+                {
+                    if (!m_Selectable.IsInteractable())
+                        return;
+                }
             }
             
             Services.Audio.PostEvent(inEventId);

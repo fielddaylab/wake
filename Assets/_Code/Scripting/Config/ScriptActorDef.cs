@@ -43,6 +43,7 @@ namespace Aqua
         
         [Header("Sounds")]
         [SerializeField] private SerializedHash32 m_DefaultTypeSFX = null;
+        [SerializeField, Range(0.1f, 2f)] private float m_TextToSpeechPitch = 1;
 
         #endregion // Inspector
 
@@ -62,7 +63,7 @@ namespace Aqua
             Sprite spr;
             if (!m_Portraits.TryGetValue(inId, out spr))
             {
-                Log.Error("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId.ToString(), name);
+                Log.Error("[ScriptActorDefinition] No portrait with id '{0}' found on actor def {1}", inId, name);
                 spr = Services.Assets.Characters.ErrorPortrait();
             }
             
@@ -70,6 +71,7 @@ namespace Aqua
         }
         
         public StringHash32 DefaultTypeSfx() { return m_DefaultTypeSFX; }
+        public float TTSPitch() { return m_TextToSpeechPitch; }
 
         public bool HasFlags(ScriptActorTypeFlags inFlags)
         {

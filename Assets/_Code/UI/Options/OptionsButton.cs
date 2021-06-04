@@ -1,10 +1,7 @@
 using UnityEngine;
-using BeauRoutine;
 using BeauUtil;
 using UnityEngine.UI;
 using System;
-using System.Collections;
-using BeauRoutine.Extensions;
 
 namespace Aqua.Option
 {

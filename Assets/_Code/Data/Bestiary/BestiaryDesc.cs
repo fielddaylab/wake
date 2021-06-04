@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
-    public class BestiaryDesc : DBObject
+    public class BestiaryDesc : DBObject, IComparable<BestiaryDesc>
     {
         #region Inspector
 
@@ -29,6 +29,10 @@ namespace Aqua
         [SerializeField] private Sprite m_Sketch = null;
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
+
+        [Header("Experimentation")]
+
+        [SerializeField] private bool m_AvailableInExperimentation = true;
 
         #endregion // Inspector
 
@@ -58,6 +62,8 @@ namespace Aqua
         public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
+
+        public bool IsInExperimentation() { return m_AvailableInExperimentation; }
         public Sprite Sketch() { return m_Sketch; }
         public Color Color() { return m_Color; }
 
@@ -160,6 +166,15 @@ namespace Aqua
         }
 
         #endregion // Checks
+
+        #region IComparable
+
+        int IComparable<BestiaryDesc>.CompareTo(BestiaryDesc other)
+        {
+            return Id().CompareTo(other.Id());
+        }
+
+        #endregion // IComparable
 
         #if UNITY_EDITOR
 

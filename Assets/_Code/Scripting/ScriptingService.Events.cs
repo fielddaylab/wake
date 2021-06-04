@@ -67,6 +67,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
             m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
             m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
+            m_TagEventParser.AddEvent("unlock-station", ScriptEvents.Global.UnlockStation).WithStringHashData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -230,7 +231,8 @@ namespace Aqua
                 .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
                 .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob)
                 .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
-                .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
+                .Register(ScriptEvents.Global.DisableObject, EventDisableObject)
+                .Register(ScriptEvents.Global.UnlockStation, EventUnlockStation);
 
             m_SkippedEvents = new HashSet<StringHash32>();
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
@@ -393,7 +395,12 @@ namespace Aqua
                 context = args[2].ToString();
             }
 
-            return Services.State.LoadScene(args[0].ToString(), context, flags);
+            if ((flags & SceneLoadFlags.NoLoadingScreen) != 0)
+            {
+                return Services.State.LoadScene(args[0].ToString(), context, flags);
+            }
+            
+            return StateUtil.LoadSceneWithWipe(args[0].ToString(), context, flags);
         }
 
         private void EventSetBoxStyle(TagEventData inEvent, object inContext)
@@ -575,6 +582,18 @@ namespace Aqua
             }
 
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.Profile.Jobs.GetProgress(jobId));
+        }
+
+        private void EventUnlockStation(TagEventData inEvent, object inContext)
+        {
+            StringHash32 stationId = inEvent.Argument0.AsStringHash();
+            if (stationId.IsEmpty)
+            {
+                Log.Error("[ScriptingService] Attempting to unlock station, but no station specified");
+                return;
+            }
+
+            Services.Data.Profile.Map.UnlockStation(stationId);
         }
 
         #endregion // Event Callbacks

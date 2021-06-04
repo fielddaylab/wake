@@ -6,6 +6,7 @@ using AquaAudio;
 using BeauRoutine;
 using System.Collections;
 using Aqua;
+using Aqua.Scripting;
 
 namespace ProtoAqua.Observation
 {
@@ -31,7 +32,7 @@ namespace ProtoAqua.Observation
 
         private void OnEnter(Collider2D inCollider)
         {
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("regionId", m_RegionId);
                 Services.Script.TriggerResponse(ObservationTriggers.PlayerEnterRegion, null, null, table);
@@ -43,7 +44,7 @@ namespace ProtoAqua.Observation
             if (!Services.Script)
                 return;
             
-            using(var table = Services.Script.GetTempTable())
+            using(var table = TempVarTable.Alloc())
             {
                 table.Set("regionId", m_RegionId);
                 Services.Script.TriggerResponse(ObservationTriggers.PlayerExitRegion, null, null, table);

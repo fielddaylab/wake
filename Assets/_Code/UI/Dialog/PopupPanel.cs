@@ -176,6 +176,7 @@ namespace Aqua
                 }
 
                 SetInputState(true);
+                Services.TTS.Text(inText);
 
                 m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
@@ -192,6 +193,7 @@ namespace Aqua
                     yield return null;
                 }
 
+                Services.TTS.Cancel();
                 SetInputState(false);
 
                 ioFuture.Complete(m_SelectedOption);
@@ -222,6 +224,7 @@ namespace Aqua
                 }
 
                 SetInputState(true);
+                Services.TTS.Text(inText);
 
                 m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
@@ -235,6 +238,7 @@ namespace Aqua
                     yield return null;
                 }
 
+                Services.TTS.Cancel();
                 SetInputState(false);
 
                 ioFuture.Complete(new PopupInputResult(m_Input.text, m_SelectedOption));

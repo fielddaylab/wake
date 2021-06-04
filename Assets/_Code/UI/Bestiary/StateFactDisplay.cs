@@ -9,6 +9,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private Image m_Icon = null;
+        [SerializeField, Required] private LocText m_Label = null;
         [SerializeField, Required] private Graphic m_KillBackground = null;
         [SerializeField, Required] private RangeDisplay m_StressRange = null;
         [SerializeField, Required] private RangeDisplay m_AliveRange = null;
@@ -19,6 +20,8 @@ namespace Aqua
         {
             var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
             m_Icon.sprite = inFact.Icon();
+
+            m_Label.SetText(propData.ToleranceLabel());
 
             ActorStateTransitionRange range = inFact.Range();
 

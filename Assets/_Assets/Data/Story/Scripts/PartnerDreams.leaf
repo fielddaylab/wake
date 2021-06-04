@@ -1,5 +1,28 @@
 #basePath   partner.dreams
 
+// hints
+
+:: dreamHint1
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 1, !seen:partner.dreams.kevin.1, random:common
+@repeat     4
+@chatter
+{@kevin}    I think I might need a nap soon...
+
+:: dreamHint2
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 2, !seen:partner.dreams.kevin.2, random:common
+@repeat     4
+@chatter
+{@kevin}    {slow}Yawn...{/slow} I need a nap.
+
+:: dreamHint3
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 2, !seen:partner.dreams.kevin.2, random:common
+@repeat     4
+@chatter
+{@kevin}    I'm sleepy.
+
 // small sequences
 
 :: dreamStart
@@ -140,3 +163,23 @@ $branch .dreamEnd
 {@player}   Do you-{wait 0.3}{auto}
 {@kevin #wideEyes} No. {wait 0.2}{#}No.
             I'm fine.
+
+:: kevin.2.followup
+@trigger    PartnerTalk
+@when		seen:partner.dreams.kevin.2
+@once
+@cutscene
+
+{@player}	Kevin?
+{@kevin}	Yeah?
+{@player}	Can we talk about... what we saw?
+{@kevin #narrow}	No.
+{@player}	Are you sure?
+{@kevin #asleepWorried}		...
+	{#tired} You shouldn't have seen that.
+{@player}	Is it... the mental connection we have?
+{@kevin #tired}	I{wait 0.2} think so.
+				...that's really dangerous.
+{@player}	Dangerous?
+{@kevin}	Never mind. Just... let's not talk about it.
+{@player}	...
