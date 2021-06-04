@@ -20,6 +20,8 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private float m_SpawnDelay = 0.05f;
 
+        [SerializeField] private float m_ClimbOffset = 0.15f;
+
         #endregion // Inspector
 
         [NonSerialized] private AudioHandle m_AudioLoop;
@@ -145,6 +147,15 @@ namespace ProtoAqua.Experiment
         }
 
         #endregion // Actors
+
+        #region Helpers
+
+        public float ClimbOffset()
+        {
+            return m_ClimbOffset;
+        }
+
+        #endregion // Helpers
 
     }
 }

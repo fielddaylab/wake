@@ -27,18 +27,35 @@ namespace ProtoAqua.Experiment
         private StringHash32 m_Id;
         private ActorCtrl m_Parent;
 
+        private BullKelpActor bull = null;
+        private GiantKelpActor giant = null;
+
         public void Initialize(ActorCtrl inParent) {
-            BullKelpActor bull = m_Body.GetComponentInParent<BullKelpActor>();
-            GiantKelpActor giant = m_Body.GetComponentInParent<GiantKelpActor>();
-            if(bull == null && giant == null) return;
+            if(!IsClimbable()) return;
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
             m_Spine = bull == null ? giant.GetSpine() : bull.GetSpine();
-            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
+            if(bull != null)
+            {
+                height = ((BoxCollider2D) m_Collider).size.y;
+            }
+            else
+            {
+                height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
+            }
             root = inParent.Body.WorldTransform.position.x;
             position = m_Spine.transform.position;
             m_Parent = inParent;
         }
+
+        private bool IsClimbable()
+        {
+            bull = m_Body.GetComponentInParent<BullKelpActor>();
+            giant = m_Body.GetComponentInParent<GiantKelpActor>();
+            return bull != null | giant != null;
+
+        }
+
 
         public void ResetPosition(Vector3 point) {
             root = point.x;

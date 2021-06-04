@@ -26,7 +26,9 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_Anim;
         [NonSerialized] private KelpStem m_CurrStem = null;
-        [NonSerialized] private bool descend = false;
+
+        [NonSerialized] private TankWall m_CurrWall = null;
+        [NonSerialized] private bool localDescend = false;
         [NonSerialized] private float minKelpHeight = float.PositiveInfinity;
 
 
@@ -111,13 +113,19 @@ namespace ProtoAqua.Experiment
         private IEnumerator Animation()
         {
             int swims = GetIdleSwimCount();
+            int currRetries = 0;
             while(true)
             {
                 while(swims-- > 0)
                 {
+
                     if (m_CurrStem != null)
                     {
-                        yield return ClimbAnimation(m_CurrStem, descend);
+                        yield return ClimbAnimation(m_CurrStem, localDescend);
+                    }
+                    else if(m_CurrWall != null)
+                    {
+                        yield return ClimbWallAnimation(m_CurrWall, localDescend);
                     }
                     else {
                         yield return Actor.Nav.SwimTo(Actor.Nav.Helper.GetFloorSpawnTarget(Actor.Body.BodyRadius, Actor.Body.BodyRadius));
@@ -133,8 +141,23 @@ namespace ProtoAqua.Experiment
                     {
                         m_CurrStem = GetNearestStem();
                     }
+                }
 
-
+                if(m_CurrStem == null)
+                {
+                    if(m_CurrWall == null)
+                    {
+                        if(currRetries > GetProperty<int>("MaxSearchRetries", 5))
+                        {
+                            m_CurrWall = GetNearestWall();
+                            if(m_CurrWall != null)
+                            {
+                                currRetries = 0;
+                            }
+                            
+                        }
+                        currRetries++;
+                    }
                 }
 
                 IFoodSource nearestFood = GetNearestFoodSource();
@@ -165,28 +188,49 @@ namespace ProtoAqua.Experiment
             return null;
         }
 
-        private IEnumerator ClimbAnimation(KelpStem stem, bool descend=false) {
+        private TankWall GetNearestWall() {
+            Vector2 myPos = Actor.Body.WorldTransform.position;
+            foreach(var obj in m_FoodSense.SensedObjects) {
+                TankWall wall = obj.Collider.GetComponentInParent<TankWall>();
+                if(wall == null) continue;
+                return wall;
+            }
+            
+            return null;
+        }
+        private IEnumerator ClimbAnimation(KelpStem stem, bool descend) {
+            var helper = Actor.Nav.Helper;
             Vector2 myPos = Actor.Body.WorldTransform.position;
             yield return Actor.Nav.SwimTo(
-                Actor.Nav.Helper.GetClimb(stem.root, Actor.Body.BodyRadius, GetProperty<float>("ClimbSpeed", 0.3f), myPos.y, descend));
+                helper.GetClimb(stem.root, Actor.Body.BodyRadius, GetProperty<float>("ClimbSpeed", 0.3f), myPos.y, descend));
             yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
-            if (Actor.Nav.Helper.ReachedTheFloor(myPos, Actor.Body.BodyRadius))
+            if (helper.ReachedTheFloor(myPos, Actor.Body.BodyRadius))
             {
-                descend = false;
+                localDescend = false;
                 m_CurrStem = null;
             }
             else if(myPos.y >= stem.height) {
-                descend = true;
+                localDescend = true;
             }
 
         }
 
-        // private IEnumerator ClimbWallAnimation()
-        // {
-            
-        // }
-        
+        private IEnumerator ClimbWallAnimation(TankWall wall, bool descend) {
+            var helper = Actor.Nav.Helper;
+            Vector2 myPos = Actor.Body.WorldTransform.position;
+            yield return Actor.Nav.SwimTo(
+                helper.GetClimb(wall.root, 0f, GetProperty<float>("ClimbWallSpeed", 0.3f), myPos.y, descend));
+            yield return RNG.Instance.NextFloat(GetProperty<float>("MinSwimDelay", 0.5f), GetProperty<float>("MaxSwimDelay", 1));
+            if (helper.ReachedTheFloor(myPos, Actor.Body.BodyRadius-0.05f))
+            {
+                localDescend = false;
+                m_CurrWall = null;
+            }
+            else if(myPos.y >= wall.height) {
+                localDescend = true;
+            }
 
+        }
         private IFoodSource GetNearestFoodSource()
         {
             Vector2 myPos = Actor.Body.WorldTransform.position;
@@ -202,7 +246,7 @@ namespace ProtoAqua.Experiment
                 if (source.EnergyRemaining <= 0)
                     continue;
 
-                if (!source.HasTag("Kelp"))
+                if (!source.HasTag("Kelp") && !source.HasTag("Sargassum"))
                     continue;
 
                 float dist = Vector2.Distance(source.Transform.position, myPos);
@@ -242,8 +286,8 @@ namespace ProtoAqua.Experiment
                 }
             }
             float height = (targetTransform.position + targetOffset).y;
-            if(m_CurrStem != null) {
-                descend = true;
+            if(m_CurrStem != null || m_CurrWall != null) {
+                localDescend = true;
             }
         }
     }
