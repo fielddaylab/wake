@@ -7,13 +7,16 @@ O<sub>2</sub>
 O<sub>2</sub> Tolerance
 
 :: oxygen.sentence
-The {property-name}O<sub>2</sub>{/property-name} concentration at {0} is {1}
+The {property-name}O<sub>2</sub>{/property-name} concentration at {env-name}{0}{/env-name} is {1}
 
 :: oxygen.range
 {critter-name}{0}{/critter-name} is stressed when the {property-name}O<sub>2</sub>{/property-name} concentration is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}O<sub>2</sub>{/property-name} concentration is below {3} or above {4}.
 
 :: oxygen.range.onlyStress
-{0} is stressed when the {property-name}O<sub>2</sub>{/property-name} concentration is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}O<sub>2</sub>{/property-name} concentration is below {1} or above {2}.
+
+:: oxygen.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by {property-name}O<sub>2</sub>{/property-name} concentration.
 
 :: temperature.name
 Temperature
@@ -22,28 +25,34 @@ Temperature
 Temperature Tolerance
 
 :: temperature.sentence
-The {property-name}Temperature{/property-name} at {0} is {1}
+The {property-name}Temperature{/property-name} at {env-name}{0}{/env-name} is {1}
 
 :: temperature.range
 {critter-name}{0}{/critter-name} is stressed when the {property-name}Temperature{/property-name} is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}Temperature{/property-name} is below {3} or above {4}.
 
 :: temperature.range.onlyStress
-{0} is stressed when the {property-name}Temperature{/property-name} is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}Temperature{/property-name} is below {1} or above {2}.
+
+:: temperature.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by {property-name}Temperature{/property-name}.
 
 :: light.name
-Light
+Light Depth
 
 :: light.tolerance
-Light Tolerance
+Light Depth Tolerance
 
 :: light.sentence
-The {property-name}Light{/property-name} level at {0} is {1}
+The {property-name}Light Depth{/property-name} at {env-name}{0}{/env-name} is {1}
 
 :: light.range
-{critter-name}{0}{/critter-name} is stressed when the {property-name}Light{/property-name} level is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}Light{/property-name} level is below {3} or above {4}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}Light Depth{/property-name} is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}Light{/property-name} level is below {3} or above {4}.
 
 :: light.range.onlyStress
-{0} is stressed when the {property-name}Light{/property-name} level is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}Light Depth{/property-name} is below {1} or above {2}.
+
+:: light.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by {property-name}Light Depth{/property-name}.
 
 :: ph.name
 pH
@@ -52,13 +61,16 @@ pH
 pH Tolerance
 
 :: ph.sentence
-The {property-name}pH{/property-name} level at {0} is {1}
+The {property-name}pH{/property-name} level at {env-name}{0}{/env-name} is {1}
 
 :: ph.range
 {critter-name}{0}{/critter-name} is stressed when the {property-name}pH{/property-name} level is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}pH{/property-name} level is below {3} or above {4}.
 
 :: ph.range.onlyStress
-{0} is stressed when the {property-name}pH{/property-name} level is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}pH{/property-name} level is below {1} or above {2}.
+
+:: ph.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by the {property-name}pH{/property-name} level.
 
 :: co2.name
 CO<sub>2</sub>
@@ -67,13 +79,16 @@ CO<sub>2</sub>
 CO<sub>2</sub> Tolerance
 
 :: co2.sentence
-The {property-name}CO<sub>2</sub>{/property-name} concentration at {0} is {1}
+The {property-name}CO<sub>2</sub>{/property-name} concentration at {env-name}{0}{/env-name} is {1}
 
 :: co2.range
 {critter-name}{0}{/critter-name} is stressed when the {property-name}CO<sub>2</sub>{/property-name} concentration is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}CO<sub>2</sub>{/property-name} concentration is below {3} or above {4}.
 
 :: co2.range.onlyStress
-{0} is stressed when the {property-name}CO<sub>2</sub>{/property-name} concentration is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}CO<sub>2</sub>{/property-name} concentration is below {1} or above {2}.
+
+:: co2.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by {property-name}CO<sub>2</sub>{/property-name} concentration.
 
 :: salinity.name
 Salinity
@@ -82,10 +97,13 @@ Salinity
 Salinity Tolerance
 
 :: salinity.sentence
-The {property-name}Salinity{/property-name} level at {0} is {1}
+The {property-name}Salinity{/property-name} level at {env-name}{0}{/env-name} is {1}
 
 :: salinity.range
 {critter-name}{0}{/critter-name} is stressed when the {property-name}Salinity{/property-name} level is below {1} or above {2}. {critter-name}{0}{/critter-name} dies when the {property-name}Salinity{/property-name} level is below {3} or above {4}.
 
 :: salinity.range.onlyStress
-{0} is stressed when the {property-name}Salinity{/property-name} level is below {1} or above {2}.
+{critter-name}{0}{/critter-name} is stressed when the {property-name}Salinity{/property-name} level is below {1} or above {2}.
+
+:: salinity.range.unaffected
+{critter-name}{0}{/critter-name} is unaffected by {property-name}Salinity{/property-name} level.

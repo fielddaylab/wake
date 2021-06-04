@@ -15,8 +15,9 @@ namespace Aqua
         [SerializeField, AutoEnum] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
         
         [Header("Alive State")]
-        [SerializeField] private float m_MinSafe = 0;
-        [SerializeField] private float m_MaxSafe = 0;
+        [SerializeField] private bool m_HasStressed = true;
+        [SerializeField, ShowIfField("m_HasStressed")] private float m_MinSafe = 0;
+        [SerializeField, ShowIfField("m_HasStressed")] private float m_MaxSafe = 0;
 
         [Header("Stressed State")]
         [SerializeField] private bool m_HasDeath = false;
@@ -29,6 +30,7 @@ namespace Aqua
 
         public WaterPropertyId PropertyId() { return m_PropertyId; }
         public ActorStateTransitionRange Range() { return m_Range; }
+        public bool HasStressed() { return m_HasStressed; }
         public bool HasDeath() { return m_HasDeath; }
 
         public override void Hook(BestiaryDesc inParent)
@@ -37,8 +39,11 @@ namespace Aqua
 
             m_Range.Reset();
 
-            m_Range.AliveMin = m_MinSafe;
-            m_Range.AliveMax = m_MaxSafe;
+            if (m_HasStressed)
+            {
+                m_Range.AliveMin = m_MinSafe;
+                m_Range.AliveMax = m_MaxSafe;
+            }
 
             if (m_HasDeath)
             {
@@ -68,7 +73,12 @@ namespace Aqua
                 );
             }
 
-            return Loc.Format(property.StateChangeStressOnlyFormat(), Parent().CommonName(), property.FormatValue(m_MinSafe), property.FormatValue(m_MaxSafe));
+            if (m_HasStressed)
+            {
+                return Loc.Format(property.StateChangeStressOnlyFormat(), Parent().CommonName(), property.FormatValue(m_MinSafe), property.FormatValue(m_MaxSafe));
+            }
+
+            return Loc.Format(property.StateChangeUnaffectedFormat(), Parent().CommonName());
         }
 
         internal override int GetSortingOrder()
