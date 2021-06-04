@@ -56,7 +56,5 @@ namespace Aqua
 
         static public readonly StringHash32 ActChanged = "act:changed"; // uint actIndex
         static public readonly StringHash32 StationChanged = "station:changed"; // StringHash32 stationId
-
-        static public readonly string BeginSurvey = "survey:begin"; // StringHash32 surveyId
     }
 }

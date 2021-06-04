@@ -148,7 +148,6 @@ namespace Aqua
             Services.State.ClearSceneHistory();
             StateUtil.LoadMapWithWipe(mapId);
             AutoSave.Suppress();
-            Services.Events.Dispatch(GameEvents.BeginSurvey, "survey_string");
         }
 
         #if DEVELOPMENT

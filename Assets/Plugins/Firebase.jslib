@@ -1,5 +1,14 @@
 mergeInto(LibraryManager.library, {
 
+    FBSurveyResponse: function(id, surveyResponse) {
+        var id = Pointer_stringify(id);
+        var surveyResponse = Pointer_stringify(surveyResponse);
+
+        analytics.logEvent(id, {
+            survey_response: surveyResponse
+        });
+    },
+
     FBStartGameWithUserCode: function(userCode) {
         var userCode = Pointer_stringify(userCode);
 

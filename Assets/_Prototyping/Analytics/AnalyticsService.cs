@@ -25,6 +25,8 @@ namespace Aqua
         #region Firebase JS Functions
 
         [DllImport("__Internal")]
+        public static extern void FBSurveyResponse(string id, string surveyResponse);
+        [DllImport("__Internal")]
         public static extern void FBStartGameWithUserCode(string userCode);
         [DllImport("__Internal")]
         public static extern void FBAcceptJob(string jobId);
@@ -56,22 +58,6 @@ namespace Aqua
         #region Logging Variables
 
         private SimpleLog m_Logger;
-        private enum m_EventCategories
-        {
-            accept_job,
-            receive_fact,
-            complete_job,
-            begin_experiment,
-            begin_dive,
-            begin_argument,
-            begin_model,
-            begin_simulation,
-            ask_for_help,
-            talk_with_guide,
-            simulation_sync_achieved,
-            guide_script_triggered
-        }
-
         private string m_CurrentJobId = string.Empty;
 
         #endregion // Logging Variables
@@ -90,8 +76,7 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Model_Begin, LogBeginModel)
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved)
-                .Register<string>(TitleController.Event_StartGame, OnTitleStart)
-                .Register<string>(GameEvents.BeginSurvey, DisplaySurvey);
+                .Register<string>(TitleController.Event_StartGame, OnTitleStart);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
         }
@@ -108,16 +93,26 @@ namespace Aqua
 
         void ISurveyHandler.HandleSurveyResponse(Dictionary<string, string> surveyResponses)
         {
-            Debug.Log("handled");
+            foreach (string id in surveyResponses.Keys)
+            {
+                #if !UNITY_EDITOR
+                Dictionary<string,string> data = new Dictionary<string, string>()
+                {
+                    { id, surveyResponses[id] }
+                };
+
+                m_Logger.Log(new LogEvent(data, id));
+
+                FBSurveyResponse(id, surveyResponses[id]);
+                #endif
+            }
         }
 
         #endregion // ISurveyHandler
 
         private void DisplaySurvey(string inSurveyName)
         {
-            GameObject go = Instantiate(m_SurveyPrefab);
-            DontDestroyOnLoad(go);
-            Survey survey = go.GetComponent<Survey>();
+            Survey survey = Instantiate(m_SurveyPrefab).GetComponent<Survey>();
             survey.Initialize(inSurveyName, m_DefaultSurveyJSON, this);
         }
 
@@ -172,7 +167,7 @@ namespace Aqua
                 { "job_id", m_CurrentJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.accept_job));
+            m_Logger.Log(new LogEvent(data, "accept_job"));
 
             #if !UNITY_EDITOR
             FBAcceptJob(m_CurrentJobId);
@@ -202,7 +197,7 @@ namespace Aqua
                     { "fact_id", parsedFactId }
                 };
 
-                m_Logger.Log(new LogEvent(data, m_EventCategories.receive_fact));
+                m_Logger.Log(new LogEvent(data, "receive_fact"));
 
                 #if !UNITY_EDITOR
                 FBReceiveFact(parsedFactId);
@@ -219,7 +214,7 @@ namespace Aqua
                 { "job_id", parsedJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.complete_job));
+            m_Logger.Log(new LogEvent(data, "complete_job"));
 
             #if !UNITY_EDITOR
             FBCompleteJob(parsedJobId);
@@ -238,7 +233,7 @@ namespace Aqua
                 { "tank_type", tankType }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_experiment));
+            m_Logger.Log(new LogEvent(data, "begin_experiment"));
 
             #if !UNITY_EDITOR
             FBBeginExperiment(m_CurrentJobId, tankType);
@@ -253,7 +248,7 @@ namespace Aqua
                 { "site_id", inTargetScene }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_dive));
+            m_Logger.Log(new LogEvent(data, "begin_dive"));
 
             #if !UNITY_EDITOR
             FBBeginDive(m_CurrentJobId, inTargetScene);
@@ -267,7 +262,7 @@ namespace Aqua
                 { "job_id", m_CurrentJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_argument));
+            m_Logger.Log(new LogEvent(data, "begin_argument"));
 
             #if !UNITY_EDITOR
             FBBeginArgument(m_CurrentJobId);
@@ -281,7 +276,7 @@ namespace Aqua
                 { "job_id", m_CurrentJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_model));
+            m_Logger.Log(new LogEvent(data, "begin_model"));
 
             #if !UNITY_EDITOR
             FBBeginModel(m_CurrentJobId);
@@ -295,7 +290,7 @@ namespace Aqua
                 { "job_id", m_CurrentJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_simulation));
+            m_Logger.Log(new LogEvent(data, "begin_simulation"));
 
             #if !UNITY_EDITOR
             FBBeginSimulation(m_CurrentJobId);
@@ -309,7 +304,7 @@ namespace Aqua
                 { "node_id", nodeId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.ask_for_help));
+            m_Logger.Log(new LogEvent(data, "ask_for_help"));
 
             #if !UNITY_EDITOR
             FBAskForHelp(nodeId);
@@ -323,7 +318,7 @@ namespace Aqua
                 { "node_id", nodeId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.talk_with_guide));
+            m_Logger.Log(new LogEvent(data, "talk_with_guide"));
 
             #if !UNITY_EDITOR
             FBTalkWithGuide(nodeId);
@@ -337,7 +332,7 @@ namespace Aqua
                 { "job_id", m_CurrentJobId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.simulation_sync_achieved));
+            m_Logger.Log(new LogEvent(data, "simulation_sync_achieved"));
 
             #if !UNITY_EDITOR
             FBSimulationSyncAchieved(m_CurrentJobId);
@@ -351,7 +346,7 @@ namespace Aqua
                 { "node_id", nodeId }
             };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.guide_script_triggered));
+            m_Logger.Log(new LogEvent(data, "guide_script_triggered"));
 
             #if !UNITY_EDITOR
             FBGuideScriptTriggered(nodeId);
