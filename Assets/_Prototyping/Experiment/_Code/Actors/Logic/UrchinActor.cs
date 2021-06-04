@@ -112,7 +112,7 @@ namespace ProtoAqua.Experiment
 
         private IEnumerator Animation()
         {
-            int maxRetries = GetProperty<int>("NoSourceRetries", 20);
+            int maxRetries = GetProperty<int>("NoSourceRetries",10);
             int currRetries = 0;
             int swims = GetIdleSwimCount();
             while(true)
@@ -174,11 +174,12 @@ namespace ProtoAqua.Experiment
             foreach(var obj in m_FoodSense.SensedObjects) 
             {
                 KelpStem stem = obj.Collider.GetComponentInParent<KelpStem>();
+                IClimbable c_Stem = (IClimbable) stem;
                 if(stem == null) continue;
                 if(!stem.hasSpine()) return null;
-                stem.ResetPosition(obj.Collider.transform.position);
+                c_Stem.ResetPosition(obj.Collider.transform.position);
 
-                if(stem.height < minKelpHeight) minKelpHeight = stem.height;
+                if(c_Stem.height < minKelpHeight) minKelpHeight = c_Stem.height;
                 return stem;
             }
             
@@ -191,8 +192,9 @@ namespace ProtoAqua.Experiment
             foreach(var obj in m_FoodSense.SensedObjects)
             {
                 GlassWall wall = obj.Collider.GetComponentInParent<GlassWall>();
+                IClimbable c_Wall = (IClimbable)wall;
                 if(wall == null) continue;
-                wall.ResetPosition(obj.Collider.transform.position);
+                c_Wall.ResetPosition(obj.Collider.transform.position);
                 
                 return wall;
             }
@@ -200,7 +202,7 @@ namespace ProtoAqua.Experiment
             return null;
         }
 
-        private IEnumerator ClimbAnimation(Climbable stem, bool descend=false) {
+        private IEnumerator ClimbAnimation(IClimbable stem, bool descend) {
             Vector2 myPos = Actor.Body.WorldTransform.position;
             float insideOffset = stem.Settings == ClimbSettings.KelpStem? Actor.Body.BodyRadius : 0f;
             yield return Actor.Nav.SwimTo(
@@ -210,14 +212,15 @@ namespace ProtoAqua.Experiment
             {
                 descend = false;
                 m_CurrStem = null;
+                m_CurrWall = null;
             }
-            else if(myPos.y >= stem.height) {
+            else if(myPos.y >= stem.height) 
+            {
                 descend = true;
             }
 
         }
         
-
         private IFoodSource GetNearestFoodSource()
         {
             Vector2 myPos = Actor.Body.WorldTransform.position;
@@ -273,7 +276,7 @@ namespace ProtoAqua.Experiment
                 }
             }
             float height = (targetTransform.position + targetOffset).y;
-            if(m_CurrStem != null) {
+            if(m_CurrStem != null || m_CurrWall != null) {
                 descend = true;
             }
         }

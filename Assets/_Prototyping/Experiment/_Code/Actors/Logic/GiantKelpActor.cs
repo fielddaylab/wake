@@ -60,7 +60,7 @@ namespace ProtoAqua.Experiment
                 facing = -facing;
             }
 
-            m_Stem.Initialize(Actor);
+            ((IClimbable) m_Stem).Initialize(Actor);
         }
 
         public SpriteRenderer GetSpine() {

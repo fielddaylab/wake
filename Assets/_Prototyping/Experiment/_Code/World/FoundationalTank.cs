@@ -45,7 +45,8 @@ namespace ProtoAqua.Experiment
 
             foreach(GlassWall wall in m_Walls)
             {
-                wall.Initialize();
+                IClimbable c_Wall = (IClimbable) wall;
+                c_Wall.Initialize();
             }
         }
 

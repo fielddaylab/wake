@@ -66,7 +66,7 @@ namespace ProtoAqua.Experiment
             {
                 m_AllLeaves[i].gameObject.SetActive(false);
             }
-            m_Stem.Initialize(Actor);
+            ((IClimbable) m_Stem).Initialize(Actor);
         }
 
         public SpriteRenderer GetSpine() {

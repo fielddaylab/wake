@@ -11,27 +11,47 @@ using Aqua;
 
 namespace ProtoAqua.Experiment
 {
-    public class KelpStem : Climbable, IFoodSource
+    public class KelpStem : MonoBehaviour, IClimbable, IFoodSource
     {
         #region Inspector
 
         [SerializeField] private Transform m_Body;
         [SerializeField] private Collider2D m_Collider = null;
+        [SerializeField] private ClimbSettings m_Settings = ClimbSettings.NONE;
 
         #endregion // Inspector
         private SpriteRenderer m_Spine;
         private StringHash32 m_Id;
         private ActorCtrl m_Parent;
 
-        public void Initialize(ActorCtrl inParent) 
+        [NonSerialized] private Vector2 m_Position;
+        [NonSerialized] private float m_Root;
+        [NonSerialized] private float m_Height;
+
+        ClimbSettings IClimbable.Settings { get{return m_Settings;} }
+
+        Vector2 IClimbable.position { get{return m_Position;} }
+
+        float IClimbable.root { get{return m_Root; } }
+
+        float IClimbable.height { get{return m_Height; } }
+        Transform IClimbable.Transform { get { return m_Body; }}
+
+        Collider2D IClimbable.Collider{get { return m_Collider;}}
+
+        void IClimbable.Initialize(ActorCtrl inParent) 
         {
             if(!IsClimbable()) return;
 
             m_Id = ExperimentServices.Actors.NextId("KelpStem");
-            height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
-            root = inParent.Body.WorldTransform.position.x;
-            position = m_Spine.transform.position;
-            m_Parent = inParent;
+            m_Position = m_Spine.transform.position;
+            m_Height = inParent.Body.WorldTransform.GetPosition(Axis.Y, Space.World).y;
+            m_Root = inParent.Body.WorldTransform.position.x;
+        }
+        void IClimbable.ResetPosition(Vector3 point) 
+        {
+            m_Root = point.x;
+            m_Position = point;
         }
 
         private bool IsClimbable()
@@ -44,12 +64,6 @@ namespace ProtoAqua.Experiment
             if(res)  m_Spine = parent.GetComponent<GiantKelpActor>().GetSpine();
 
             return res;
-        }
-
-        public void ResetPosition(Vector3 point) 
-        {
-            root = point.x;
-            position = point;
         }
 
         Transform IFoodSource.Transform { get { return m_Body; } }

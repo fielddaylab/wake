@@ -79,13 +79,7 @@ namespace ProtoAqua.Experiment
             return position.y <= (r.yMin + inFloorOffset);
         }
 
-        public bool ReachedTheTop(Vector2 position, float height)
-        {
-            Rect r = Rect();
-            return position.y >= (r.yMin + height);
-        }
-
-        private Rect Rect()
+        public Rect Rect()
         {
             Rect rect = new Rect();
             rect.size = m_Region.size;
