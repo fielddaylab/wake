@@ -78,6 +78,11 @@ namespace Aqua.Option
             {
                 Services.Pause.Pause();
             }
+        }
+
+        protected override void OnShowComplete(bool inbInstant)
+        {
+            base.OnShowComplete(inbInstant);
 
             SetPage(s_LastPage, true);
         }

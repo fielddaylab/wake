@@ -304,7 +304,7 @@ namespace Aqua
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Bestiary.RegisterFact(inFactId);
+                        Services.Data.Profile.Bestiary.RegisterFact(inFactId, true);
                     else
                         Services.Data.Profile.Bestiary.DeregisterFact(inFactId);
                 }

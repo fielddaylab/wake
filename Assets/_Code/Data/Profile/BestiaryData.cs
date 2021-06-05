@@ -92,7 +92,7 @@ namespace Aqua.Profile
             return m_ObservedFacts.Contains(inFactId) || Services.Assets.Bestiary.IsAutoFact(inFactId);
         }
 
-        public bool RegisterFact(StringHash32 inFactId)
+        public bool RegisterFact(StringHash32 inFactId, bool inbIncludeEntity = false)
         {
             Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
 
@@ -105,8 +105,21 @@ namespace Aqua.Profile
             {
                 m_HasChanges = true;
                 var fact = Services.Assets.Bestiary.Fact(inFactId);
-                m_ObservedEntities.Add(fact.Parent().Id());
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                StringHash32 parentId = fact.Parent().Id();
+                bool bVisible;
+                if (inbIncludeEntity)
+                {
+                    m_ObservedEntities.Add(parentId);
+                    bVisible = true;
+                }
+                else
+                {
+                    bVisible = m_ObservedEntities.Contains(parentId);
+                }
+                if (bVisible)
+                {
+                    Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                }
                 return true;
             }
 

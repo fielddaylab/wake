@@ -44,7 +44,7 @@ namespace Aqua.Option
         public void Serialize(Serializer ioSerializer)
         {
             ioSerializer.Enum("tts", ref TTS);
-            ioSerializer.Serialize("ttsRate", ref TTSRate);
+            ioSerializer.Serialize("ttsRate", ref TTSRate, 1);
             ioSerializer.Enum("flags", ref Flags);
         }
 

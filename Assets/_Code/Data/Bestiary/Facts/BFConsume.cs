@@ -14,10 +14,14 @@ namespace Aqua
         static private readonly TextId ConsumeSentence = "factFormat.consume";
         static private readonly TextId ConsumeSentenceStressed = "factFormat.consume.stressed";
 
+        static private readonly TextId ReduceVerb = "words.reduce";
+        static private readonly TextId ReduceSentence = "factFormat.reduce";
+        static private readonly TextId ReduceSentenceStressed = "factFormat.reduce.stressed";
+
         #region Inspector
 
         [Header("Produce")]
-        [SerializeField] private WaterPropertyId m_Property = WaterPropertyId.Oxygen;
+        [SerializeField, AutoEnum] private WaterPropertyId m_Property = WaterPropertyId.Oxygen;
         [SerializeField] private uint m_Amount = 0;
 
         #endregion // Inspector
@@ -45,7 +49,7 @@ namespace Aqua
 
         protected override TextId DefaultVerb()
         {
-            return ConsumeVerb;
+            return m_Property == WaterPropertyId.Light ? ReduceVerb : ConsumeVerb;
         }
 
         public override void Accept(IFactVisitor inVisitor)
@@ -88,11 +92,13 @@ namespace Aqua
             if (!force.IsEmpty)
                 return Loc.Find(force);
 
+            bool bIsLight = m_Property == WaterPropertyId.Light;
+
             if (OnlyWhenStressed())
             {
-                return Loc.Format(ConsumeSentenceStressed, Parent().CommonName(), QualitativeLowerId(m_Relative), Property(m_Property).LabelId());
+                return Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, Parent().CommonName(), QualitativeLowerId(m_Relative), Property(m_Property).LabelId());
             }
-            return Loc.Format(ConsumeSentence, Parent().CommonName(), Property(m_Property).LabelId());
+            return Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, Parent().CommonName(), Property(m_Property).LabelId());
         }
 
         internal override int GetSortingOrder()

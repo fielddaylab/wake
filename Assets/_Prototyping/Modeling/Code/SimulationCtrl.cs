@@ -201,7 +201,7 @@ namespace ProtoAqua.Modeling
 
             StringHash32 fact = m_Buffer.Scenario().BestiaryModelId();
             if (!fact.IsEmpty)
-                Services.Data.Profile.Bestiary.RegisterFact(fact);
+                Services.Data.Profile.Bestiary.RegisterFact(fact, true);
             m_SimulationUI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");
