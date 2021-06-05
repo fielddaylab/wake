@@ -1,13 +1,9 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
 using AquaAudio;
 using BeauRoutine;
 using System.Collections;
-using System.Reflection;
-using BeauUtil.Variants;
-using BeauRoutine.Extensions;
 using Aqua;
 using System.Collections.Generic;
 
@@ -19,7 +15,7 @@ namespace ProtoAqua.Experiment
 
         [SerializeField] private float m_SpawnDelay = 0.05f;
 
-        [SerializeField] private GlassWall[] m_Walls = null;
+        [SerializeField] private float m_ClimbOffset = 0.15f;
 
         #endregion // Inspector
 
@@ -28,7 +24,6 @@ namespace ProtoAqua.Experiment
 
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleDuration = 0;
-
 
         #region Basic Functions
         protected override void Awake()
@@ -42,12 +37,6 @@ namespace ProtoAqua.Experiment
                 m_IdleRoutine.Resume();
                 m_IdleDuration /= 2;
             });
-
-            foreach(GlassWall wall in m_Walls)
-            {
-                IClimbable c_Wall = (IClimbable) wall;
-                c_Wall.Initialize();
-            }
         }
 
         protected override void OnEnable()
@@ -153,6 +142,15 @@ namespace ProtoAqua.Experiment
         }
 
         #endregion // Actors
+
+        #region Helpers
+
+        public float ClimbOffset()
+        {
+            return m_ClimbOffset;
+        }
+
+        #endregion // Helpers
 
     }
 }

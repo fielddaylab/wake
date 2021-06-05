@@ -73,7 +73,7 @@ namespace ProtoAqua.Experiment
         {
             outTransform = m_PivotTransform;
             
-            float dist = m_EnergyRemaining / 100f * m_Config.GetProperty<float>("MaxLeafLength") * RNG.Instance.NextFloat(0.25f, 1);
+            float dist = m_EnergyRemaining / 100f * RNG.Instance.NextFloat(0.25f, 1);
             outOffset = m_PivotTransform.right;
             outOffset.x *= m_PivotTransform.localScale.x;
             outOffset.Normalize();

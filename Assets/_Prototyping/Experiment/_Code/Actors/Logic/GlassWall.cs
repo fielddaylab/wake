@@ -40,7 +40,7 @@ namespace ProtoAqua.Experiment
 
         Collider2D IClimbable.Collider{get { return m_Collider;}}
 
-        void IClimbable.Initialize(ActorCtrl _=null) 
+        void IClimbable.Initialize(ActorCtrl _) 
         {
             m_Position = transform.position;
             m_Height = m_Helper.Rect().yMax;
