@@ -156,9 +156,9 @@ namespace ProtoAqua.Modeling
 
                 float consumeA = m_ToConsumePerPopulation[i];
                 float consumeS = m_ToConsumePerPopulationStressed[i];
-                PostProcessStressValues(ref produceA, ref produceS);
-                m_ToConsumePerPopulation[i] = produceA;
-                m_ToConsumePerPopulationStressed[i] = produceS;
+                PostProcessStressValues(ref consumeA, ref consumeS);
+                m_ToConsumePerPopulation[i] = consumeA;
+                m_ToConsumePerPopulationStressed[i] = consumeS;
             }
 
             PostProcessStressValues(ref m_DeathPerTick, ref m_DeathPerTickStressed);
