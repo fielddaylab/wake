@@ -95,6 +95,7 @@ namespace Aqua
                 if ((inB & mask) == 0)
                     *ptr = 0;
                 idx++;
+                ptr++;
                 mask <<= 1;
             }
 
@@ -193,6 +194,7 @@ namespace Aqua
                 if ((inB & mask) == 0)
                     *ptr = 0;
                 idx++;
+                ptr++;
                 mask <<= 1;
             }
 
@@ -255,6 +257,7 @@ namespace Aqua
                 if ((inB & mask) == 0)
                     *ptr = 0;
                 idx++;
+                ptr++;
                 mask <<= 1;
             }
             
