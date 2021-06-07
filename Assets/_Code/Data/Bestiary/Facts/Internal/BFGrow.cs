@@ -81,7 +81,7 @@ namespace Aqua
 
         public override BFMode Mode()
         {
-            return OnlyWhenStressed() ? BFMode.Player : BFMode.Always;
+            return m_AutoGive ? BFMode.Always : (OnlyWhenStressed() ? BFMode.Player : BFMode.Always);
         }
     }
 }

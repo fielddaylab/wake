@@ -50,7 +50,7 @@ namespace Aqua
 
         [Header("Behavior")]
         [SerializeField] private bool m_Stressed = false;
-        [SerializeField] private bool m_AutoGive = false;
+        [SerializeField] protected bool m_AutoGive = false;
 
         [Header("Text")]
         [SerializeField] private TextId m_VerbOverride = null;
