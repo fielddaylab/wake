@@ -13,10 +13,18 @@ namespace ProtoAqua.Modeling
         #region Inspector
 
         [SerializeField, Required] private GraphAxis m_Axis = null;
+
+        [Header("Critters")]
         [SerializeField, Required] private GraphDisplay m_Historical = null;
         [SerializeField, Required] private GraphDisplay m_Player = null;
         [SerializeField, Required] private GraphDisplay m_Predict = null;
         [SerializeField, Required] private GraphDisplay m_Targets = null;
+
+        [Header("Water Property")]
+        [SerializeField, Required] private GraphDisplay m_HistoricalWater = null;
+        [SerializeField, Required] private GraphDisplay m_PlayerWater = null;
+        [SerializeField, Required] private GraphDisplay m_PredictWater = null;
+        [SerializeField, Required] private GraphDisplay m_TargetsWater = null;
 
         [Header("Chart Regions")]
         [SerializeField, Required] private RectTransform m_SyncRegion = null;
@@ -27,6 +35,7 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         [NonSerialized] private bool m_PredictMode;
+        [NonSerialized] private WaterPropertyId m_PropertyId;
 
         private void Awake()
         {

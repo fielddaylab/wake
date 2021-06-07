@@ -32,6 +32,7 @@ namespace AquaAudio
         [NonSerialized] private AudioPropertyBlock m_EventSettings;
         [NonSerialized] private AudioPropertyBlock m_LocalSettings;
         [NonSerialized] private AudioPropertyBlock m_LastKnownSettings;
+        [NonSerialized] private float m_LastKnownTime;
 
         [NonSerialized] private Routine m_VolumeRoutine;
         [NonSerialized] private Routine m_PitchRoutine;
@@ -156,6 +157,18 @@ namespace AquaAudio
 
         #region Updates
 
+        public void Restore()
+        {
+            if (m_CurrentState != State.Playing)
+                return;
+
+            if (m_Source.loop || (m_LastKnownTime < m_Source.clip.length - 0.1f))
+            {
+                m_Source.time = m_LastKnownTime;
+                m_Source.Play();
+            }
+        }
+
         public bool UpdatePlayback(ref AudioPropertyBlock inParentSettings, in float inDeltaTime)
         {
             m_LastKnownSettings = inParentSettings;
@@ -207,6 +220,7 @@ namespace AquaAudio
                         }
                         else
                         {
+                            m_LastKnownTime = m_Source.time;
                             m_StopCounter = 0;
                         }
 

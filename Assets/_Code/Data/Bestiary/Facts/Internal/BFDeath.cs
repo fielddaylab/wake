@@ -16,7 +16,7 @@ namespace Aqua
 
         #region Inspector
 
-        [Header("Age")]
+        [Header("Death Rate")]
         [SerializeField, Range(0, 1)] private float m_Proportion = 0;
 
         #endregion // Inspector

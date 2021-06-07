@@ -91,7 +91,7 @@ namespace Aqua.Option
         {
             if (Services.Valid)
             {
-                Services.Data.SaveOptionsSettings();
+                Services.Data?.SaveOptionsSettings();
             }
 
             if (m_InputLayer.PopPriority())

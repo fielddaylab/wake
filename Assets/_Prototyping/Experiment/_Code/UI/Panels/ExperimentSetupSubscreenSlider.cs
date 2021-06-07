@@ -63,7 +63,7 @@ namespace ProtoAqua.Experiment
                 m_CachedSliders[sliderIdx].gameObject.SetActive(false);
             }
 
-            UpdateDisplay(WaterPropertyId.MAX, 0);
+            UpdateDisplay(WaterPropertyId.NONE, 0);
         }
 
         private void UpdateFromSlider(WaterPropertyId id, float value)
@@ -80,7 +80,7 @@ namespace ProtoAqua.Experiment
 
         private void UpdateDisplay(WaterPropertyId inWaterId, float value)
         {
-            if (inWaterId == WaterPropertyId.MAX)
+            if (inWaterId == WaterPropertyId.NONE)
             {
                 m_Label.SetText(null);
                 m_Value.SetText(string.Empty);

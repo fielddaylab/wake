@@ -364,6 +364,15 @@ namespace ProtoAqua.Modeling
         }
 
         /// <summary>
+        /// Returns the end state of the historical data.
+        /// </summary>
+        public SimulationResult HistoricalEndState()
+        {
+            RefreshHistorical();
+            return m_HistoricalResultBuffer[m_HistoricalResultBuffer.Length - 1];
+        }
+
+        /// <summary>
         /// Returns player model results.
         /// </summary>
         public SimulationResult[] PlayerData()
@@ -379,6 +388,15 @@ namespace ProtoAqua.Modeling
         {
             RefreshModel();
             return m_PredictionResultBuffer;
+        }
+
+        /// <summary>
+        /// Returns the end state of the prediction results.
+        /// </summary>
+        public SimulationResult PredictEndState()
+        {
+            RefreshModel();
+            return m_PredictionResultBuffer[m_PredictionResultBuffer.Length - 1];
         }
 
         /// <summary>

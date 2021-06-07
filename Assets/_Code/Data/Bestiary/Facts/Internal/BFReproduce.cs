@@ -17,7 +17,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Reproduction")]
-        [SerializeField] private float m_Amount = 0;
+        [SerializeField, Range(0, 5)] private float m_Amount = 0;
 
         #endregion // Inspector
 

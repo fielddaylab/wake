@@ -43,6 +43,12 @@ namespace Aqua
             inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.Ambient));
             inOptions.Audio.Voice.Apply(ref audio.BusMix(AudioBusId.Voice));
 
+            AudioConfiguration audioConfig = AudioSettings.GetConfiguration();
+            if (Ref.Replace(ref audioConfig.speakerMode, inOptions.Audio.Mono ? AudioSpeakerMode.Mono : AudioSpeakerMode.Stereo))
+            {
+                AudioSettings.Reset(audioConfig);
+            }
+
             Application.targetFrameRate = GetFramerate(inOptions.Performance.Framerate);
         }
 

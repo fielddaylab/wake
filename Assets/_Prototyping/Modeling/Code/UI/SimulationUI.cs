@@ -54,7 +54,6 @@ namespace ProtoAqua.Modeling
             m_Buffer = inBuffer;
 
             m_InitialCritters.SetBuffer(inBuffer);
-            m_CritterAdjust.SetBuffer(inBuffer);
         }
 
         public void Refresh(in ModelingState inState, SimulationBuffer.UpdateFlags inFlags)
@@ -83,7 +82,10 @@ namespace ProtoAqua.Modeling
         {
             m_PredictSync.gameObject.SetActive(true);
             m_ModelSync.gameObject.SetActive(false);
+
+            m_CritterAdjust.SetBuffer(m_Buffer);
             m_CritterAdjust.gameObject.SetActive(true);
+            
             m_Chart.ShowPrediction();
             m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.Model);
 

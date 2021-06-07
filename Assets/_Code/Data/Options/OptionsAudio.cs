@@ -2,6 +2,7 @@ using System;
 using AquaAudio;
 using BeauData;
 using BeauUtil;
+using UnityEngine;
 
 namespace Aqua.Option
 {
@@ -17,6 +18,7 @@ namespace Aqua.Option
         public OptionAudioBus SFX;
         public OptionAudioBus Music;
         public OptionAudioBus Voice;
+        public bool Mono;
 
         public OptionAudioBus this[AudioBusId inBusId]
         {
@@ -58,7 +60,7 @@ namespace Aqua.Option
             }
         }
 
-        public ushort Version { get { return 2; } }
+        public ushort Version { get { return 3; } }
 
         public void Serialize(Serializer ioSerializer)
         {
@@ -73,6 +75,11 @@ namespace Aqua.Option
             {
                 Voice.SetDefaults(0.8f);
             }
+
+            if (ioSerializer.ObjectVersion >= 3)
+            {
+                ioSerializer.Serialize("mono", ref Mono);
+            }
         }
 
         public void SetDefaults()
@@ -81,6 +88,7 @@ namespace Aqua.Option
             SFX.SetDefaults(0.8f);
             Music.SetDefaults(0.8f);
             Voice.SetDefaults(0.8f);
+            Mono = false;
         }
     }
 

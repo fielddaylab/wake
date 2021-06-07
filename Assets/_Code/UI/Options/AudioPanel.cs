@@ -15,6 +15,9 @@ namespace Aqua.Option
         [SerializeField] private SoundOptionBar m_SFXBus = null;
         [SerializeField] private SoundOptionBar m_VoiceBus = null;
 
+        [Header("Mono")]
+        [SerializeField] private CheckboxOption m_MonoCheckbox = null;
+
         #endregion // Inspector
 
         private void Awake()
@@ -25,6 +28,8 @@ namespace Aqua.Option
             m_MusicBus.Initialize(AudioBusId.Music, 0.8f);
             m_SFXBus.Initialize(AudioBusId.SFX, 0.8f);
             m_VoiceBus.Initialize(AudioBusId.Voice, 0.8f);
+
+            m_MonoCheckbox.Initialize("ui.options.audio.mono.label", "ui.options.audio.mono.description", (b) => Data.Audio.Mono = b);
         }
 
         public override void Load(OptionsData inOptions)
@@ -35,6 +40,7 @@ namespace Aqua.Option
             m_MusicBus.Sync(inOptions.Audio.Music);
             m_SFXBus.Sync(inOptions.Audio.SFX);
             m_VoiceBus.Sync(inOptions.Audio.Voice);
+            m_MonoCheckbox.Sync(inOptions.Audio.Mono);
 
             OnMasterBusChanged(AudioBusId.Master, inOptions.Audio.Master);
         }

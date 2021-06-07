@@ -30,7 +30,7 @@ namespace ProtoAqua.Modeling
                 
                 StringHash32 id = critter.Id();
                 var slider = m_SliderPool.Alloc();
-                slider.Load(id, (int) inBuffer.GetPlayerCritters(id), -1, (int) inBuffer.GetModelCritters(id));
+                slider.Load(id, (int) inBuffer.GetPlayerCritters(id), 0, -1, (int) inBuffer.GetModelCritters(id));
                 slider.OnPopulationChanged.AddListener(OnCritterPopulationChanged);
             }
         }

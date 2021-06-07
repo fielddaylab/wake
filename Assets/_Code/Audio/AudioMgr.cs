@@ -56,6 +56,8 @@ namespace AquaAudio
             m_EventLookup.Clear();
 
             SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
+
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioSettingsChanged;
         }
 
         protected override void Initialize()
@@ -74,6 +76,7 @@ namespace AquaAudio
                 Load(m_DefaultPackage);
 
             SceneHelper.OnSceneLoaded += OnGlobalSceneLoaded;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioSettingsChanged;
         }
 
         #endregion // IService
@@ -386,6 +389,14 @@ namespace AquaAudio
         #endregion // Load/Unload
 
         #region Callbacks
+
+        private void OnAudioSettingsChanged(bool deviceWasChanged)
+        {
+            foreach(var player in m_Playing)
+            {
+                player.Restore();
+            }
+        }
 
         private void OnGlobalSceneLoaded(SceneBinding inScene, object inContext)
         {

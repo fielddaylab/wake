@@ -26,10 +26,10 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         [NonSerialized] private ActorCountI32 m_Data;
-        [NonSerialized] private float m_MaxDisplayPopulation;
-
-        [NonSerialized] private float m_SliderScale;
+        [NonSerialized] private float m_MinValue;
+        [NonSerialized] private float m_MaxValue;
         [NonSerialized] private float m_DisplayScale;
+        [NonSerialized] private float m_Increment;
         
         public readonly ActorCountEvent OnPopulationChanged = new ActorCountEvent();
 
@@ -43,12 +43,12 @@ namespace ProtoAqua.Modeling
 
         #endregion // Unity Events
 
-        public void Load(StringHash32 inActorId, int inPopulation, int inRange = -1, int inDesired = -1)
+        public void Load(StringHash32 inActorId, int inPopulation, int inMin = 0, int inMax = -1, int inDesired = -1)
         {
-            Load(Services.Assets.Bestiary[inActorId], inPopulation, inRange, inDesired);
+            Load(Services.Assets.Bestiary[inActorId], inPopulation, inMin, inMax, inDesired);
         }
 
-        public void Load(BestiaryDesc inDesc, int inPopulation, int inRange = -1, int inDesired = -1)
+        public void Load(BestiaryDesc inDesc, int inPopulation, int inMin = 0, int inMax = -1, int inDesired = -1)
         {
             var body = inDesc.FactOfType<BFBody>();
 
@@ -58,21 +58,23 @@ namespace ProtoAqua.Modeling
             m_Data.Id = inDesc.Id();
             m_Data.Population = inPopulation;
 
-            m_SliderScale = body.PopulationSoftIncrement();
+            if (inMax <= 0)
+                inMax = (int) body.PopulationSoftCap();
+
+            m_MinValue = inMin;
+            m_MaxValue = inMax;
+
             m_DisplayScale = body.MassDisplayScale();
+            m_Increment = body.PopulationSoftIncrement();
 
-            if (inRange <= 0)
-                inRange = (int) body.PopulationSoftCap();
-
-            m_Slider.SetValueWithoutNotify(0);
-            m_Slider.minValue = 0;
-            m_Slider.maxValue = inRange / m_SliderScale;
             m_Slider.wholeNumbers = true;
+            m_Slider.minValue = (float) Math.Floor(m_MinValue / m_Increment);
+            m_Slider.maxValue = (float) Math.Ceiling(m_MaxValue / m_Increment);
+            m_Slider.SetValueWithoutNotify(inPopulation / m_Increment);
 
             if (inDesired > 0)
             {
-                Assert.True(inDesired <= inRange);
-                float fraction = (float) inDesired / inRange;
+                float fraction = Mathf.InverseLerp(m_MinValue, m_MaxValue, inDesired);
                 m_DesiredValue.anchorMin = m_DesiredValue.anchorMax = new Vector2(fraction, 0.5f);
                 m_DesiredValue.gameObject.SetActive(true);
             }
@@ -81,10 +83,7 @@ namespace ProtoAqua.Modeling
                 m_DesiredValue.gameObject.SetActive(false);
             }
 
-            m_MaxDisplayPopulation = ToDisplayPopulation(inRange);
             int displayPop = ToDisplayPopulation(inPopulation);
-
-            m_Slider.SetValueWithoutNotify(displayPop / m_SliderScale);
             m_Text.SetTextWithoutNotify(displayPop.ToString());
         }
 
@@ -102,14 +101,14 @@ namespace ProtoAqua.Modeling
 
         private void OnSliderValueChanged(float inValue)
         {
-            int val = (int) (inValue * m_SliderScale);
-            TryUpdateValue(val, true, false);
+            int actualValue = (int) Mathf.Clamp(inValue * m_Increment, m_MinValue, m_MaxValue);
+            TryUpdateValue(actualValue, true, false);
         }
 
         private void OnTextValueChanged(string inValue)
         {
             int val = StringParser.ParseInt(inValue);
-            val = Mathf.Clamp(val, 0, (int) m_MaxDisplayPopulation);
+            val = (int) Mathf.Clamp(val, m_MinValue * m_DisplayScale, m_MaxValue * m_DisplayScale);
             val = ToRealPopulation(val);
             TryUpdateValue(val, false, true);
         }
@@ -123,9 +122,13 @@ namespace ProtoAqua.Modeling
 
             int displayPop = ToDisplayPopulation(inPopulation);
             if (inbUpdateText)
+            {
                 m_Text.SetTextWithoutNotify(displayPop.ToString());
+            }
             if (inbUpdateSlider)
-                m_Slider.SetValueWithoutNotify(displayPop / m_SliderScale);
+            {
+                m_Slider.SetValueWithoutNotify(inPopulation / m_Increment);
+            }
 
             OnPopulationChanged.Invoke(m_Data);
         }
