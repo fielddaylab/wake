@@ -21,7 +21,6 @@ namespace ProtoAqua.Observation
         // Properties
         private ScanDataFlags m_Flags = 0;
         [BlockMeta("scanDuration")] private int m_ScanDuration = 1;
-        private VariantModification[] m_OnScanModifications;
 
         // Text
         [BlockMeta("header")] private string m_HeaderText = null;
@@ -32,6 +31,7 @@ namespace ProtoAqua.Observation
 
         [BlockMeta("logbook")] private StringHash32 m_LogbookId = null;
         [BlockMeta("bestiary")] private StringHash32 m_BestiaryId = null;
+        private StringHash32[] m_BestiaryFactIds = null;
 
         #endregion // Serialized
 
@@ -44,7 +44,6 @@ namespace ProtoAqua.Observation
 
         public ScanDataFlags Flags() { return m_Flags; }
         public int ScanSpeed() { return m_ScanDuration; }
-        public VariantModification[] OnScanModifications() { return m_OnScanModifications; }
 
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }
@@ -52,6 +51,8 @@ namespace ProtoAqua.Observation
         public string SpriteId() { return m_SpriteId; }
         public StringHash32 LogbookId() { return m_LogbookId; }
         public StringHash32 BestiaryId() { return m_BestiaryId; }
+
+        public ListSlice<StringHash32> FactIds() { return m_BestiaryFactIds; }
 
         #region Scan
 
@@ -64,25 +65,29 @@ namespace ProtoAqua.Observation
                 m_Flags &= ~ScanDataFlags.Important;
         }
 
-        [BlockMeta("setOnScan"), Preserve]
-        private void OnScan(StringSlice inData)
+        [BlockMeta("facts"), Preserve]
+        private void SetFacts(StringSlice inData)
         {
             TempList16<StringSlice> split = new TempList16<StringSlice>();
             int slices = inData.Split(Parsing.CommaChar, StringSplitOptions.RemoveEmptyEntries, ref split);
-            m_OnScanModifications = ArrayUtils.MapFrom(split, (s) => {
-                VariantModification modification;
-                if (!VariantModification.TryParse(s, out modification))
-                {
-                    Log.Error("[ScanData] Unable to parse variable modification from '{0}'", s);
-                }
-                return modification;
+            m_BestiaryFactIds = ArrayUtils.MapFrom(split, (s) => {
+                return new StringHash32(s);
             });
         }
 
         void IValidatable.Validate()
         {
             Assert.True(m_BestiaryId.IsEmpty || Services.Assets.Bestiary.HasId(m_BestiaryId),
-                "Scan '{0}' was linked to invalid bestiary entry '{1}'", m_Id, m_BestiaryId);
+                "Scan '{0}' was linked to unknown bestiary entry '{1}'", m_Id, m_BestiaryId);
+
+            if (m_BestiaryFactIds != null)
+            {
+                foreach(var factId in m_BestiaryFactIds)
+                {
+                    Assert.True(Services.Assets.Bestiary.HasFactWithId(factId),
+                        "Scan '{0}' was linked to unknown bestiary fact '{1}'", factId);
+                }
+            }
         }
 
         #endregion // Scan

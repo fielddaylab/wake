@@ -68,12 +68,12 @@ namespace ProtoAqua.Observation
 
                 // TODO: Logbook
 
-                // apply variables?
-                var scanModifications = inData.OnScanModifications();
-                if (scanModifications != null && scanModifications.Length > 0)
+                foreach(var factId in inData.FactIds())
                 {
-                    for(int i = 0; i < scanModifications.Length; ++i)
-                        scanModifications[i].Execute(Services.Data.VariableResolver, inData);
+                    if (Services.Data.Profile.Bestiary.RegisterFact(factId, false))
+                    {
+                        result |= ScanResult.NewBestiary;
+                    }
                 }
                 
                 return result;

@@ -34,7 +34,7 @@ namespace Aqua
                 var pair = FindPairedFact<BFGrow>();
                 if (pair != null)
                 {
-                    float compare = m_Amount - pair.m_Amount;
+                    float compare = (float) m_Amount - pair.m_Amount;
                     Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
                     m_Relative = MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster);
                 }
