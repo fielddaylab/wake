@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using BeauData;
+using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua.Profile
 {
-    public class BestiaryData : IProfileChunk, ISerializedVersion
+    public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializationCallbackReceiver
     {
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
@@ -270,6 +271,18 @@ namespace Aqua.Profile
             ioSerializer.UInt32ProxySet("allEntities", ref m_ObservedEntities);
             ioSerializer.UInt32ProxySet("allFacts", ref m_ObservedFacts);
             ioSerializer.UInt32ProxySet("graphedFacts", ref m_GraphedFacts);
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            using(PooledSet<StringHash32> toRemove = PooledSet<StringHash32>.Create())
+            {
+                
+            }
         }
 
         public bool HasChanges()

@@ -9,6 +9,16 @@ namespace ProtoAqua.Modeling
     [CreateAssetMenu(menuName = "Aqualab/Modeling/Scenario Data", fileName = "NewModelingScenario")]
     public sealed class ModelingScenarioData : ScriptableObject
     {
+        private enum DuplicatedWaterPropertyId : byte
+        {
+            Oxygen,
+            Temperature,
+            Light,
+            PH,
+            CarbonDioxide,
+            Salinity,
+        }
+
         #region Inspector
 
         [SerializeField] private BestiaryDesc m_Environment = null;
@@ -23,6 +33,10 @@ namespace ProtoAqua.Modeling
         [SerializeField] private uint m_PredictionTicks = 0;
         [SerializeField] private ActorCountRange[] m_TargetActors = null;
         [SerializeField] private ActorCountI32[] m_AdjustableActors = null;
+
+        [Header("Water Properties")]
+        [SerializeField] private bool m_DisplayWaterProperties = false;
+        [SerializeField, ShowIfField("m_DisplayWaterProperties")] private DuplicatedWaterPropertyId m_PropertyToDisplay = DuplicatedWaterPropertyId.Light;
 
         [Header("Labels")]
         [SerializeField] private TextId m_TitleId = null;
@@ -52,6 +66,9 @@ namespace ProtoAqua.Modeling
         public ListSlice<ActorCountRange> PredictionTargets() { return m_TargetActors; }
         public ListSlice<ActorCountI32> AdjustableActors() { return m_AdjustableActors; }
 
+        public bool DisplayWaterProperties() { return m_DisplayWaterProperties; }
+        public WaterPropertyId WaterProperty() { return m_DisplayWaterProperties ? (WaterPropertyId) m_PropertyToDisplay : WaterPropertyId.NONE; }
+
         public TextId TitleId() { return m_TitleId; }
         public TextId DescId() { return m_DescId; }
         public TextId CompleteId() { return m_CompleteId; }
@@ -64,7 +81,6 @@ namespace ProtoAqua.Modeling
         public bool ShouldGraph(StringHash32 inId)
         {
             return true;
-            // return m_AllowedLines.Contains(inId);
         }
 
         public bool IsInHistorical(StringHash32 inId)

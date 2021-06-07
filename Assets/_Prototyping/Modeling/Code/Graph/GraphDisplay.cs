@@ -161,6 +161,54 @@ namespace ProtoAqua.Modeling
             return (m_LastRect = varRange);
         }
 
+        public Rect LoadProperty(SimulationResult[] inResults, WaterPropertyId inProperty, ModelingScenarioData inScenario)
+        {
+            Assert.NotNull(inResults);
+            Assert.NotNull(inScenario);
+
+            Rect varRange = new Rect(0, 0, inResults[inResults.Length - 1].Timestamp, 0);
+
+            using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys))
+            {
+                GraphLine line;
+
+                int tickCount = inResults.Length;
+
+                WaterPropertyDesc critterEntry = Services.Assets.WaterProp.Property(inProperty);
+                StringHash32 id = critterEntry.Id();
+
+                unusedLines.Remove(id);
+                if (!m_LineMap.TryGetValue(id, out line))
+                {
+                    line = m_LinePool.Alloc();
+                    m_LineMap[id] = line;
+                    line.Renderer.color = critterEntry.Color();
+                    line.Renderer.LineThickness = m_LineThickness;
+                }
+
+                line.ClearPoints();
+
+                float value;
+                for(int tickIdx = 0; tickIdx < tickCount; ++tickIdx)
+                {
+                    value = inResults[tickIdx].Environment[inProperty];
+                    line.AddPoint(inResults[tickIdx].Timestamp, value);
+
+                    if (value > varRange.height)
+                        varRange.height = value;
+                }
+
+                foreach(var lineId in unusedLines)
+                {
+                    line = m_LineMap[lineId];
+                    m_LinePool.Free(line);
+                    m_LineMap.Remove(lineId);
+                }
+            }
+
+            return (m_LastRect = varRange);
+        }
+
         public void RenderLines(Rect inRange)
         {
             foreach(var line in m_LinePool.ActiveObjects)
