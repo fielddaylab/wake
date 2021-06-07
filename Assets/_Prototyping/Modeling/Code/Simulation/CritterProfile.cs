@@ -303,11 +303,13 @@ namespace ProtoAqua.Modeling
                 float remainder = ioData.ToConsume[i];
                 if (remainder > 0)
                 {
-                    toKillAbsolute = Math.Max(toKillAbsolute, (uint) (remainder / m_ToConsumePerPopulation[i]));
+                    float desired = ioData.State == ActorStateId.Stressed ? m_ToConsumePerPopulationStressed[i] : m_ToConsumePerPopulation[i];
+                    toKillAbsolute = Math.Max(toKillAbsolute, (uint) (remainder / desired));
                 }
             }
 
-            uint toKill = CalculateMass(Simulator.FixedMultiply(ioData.Population, m_DeathPerTick) + toKillAbsolute);
+            float deathPerTick = ioData.State == ActorStateId.Stressed ? m_DeathPerTickStressed : m_DeathPerTick;
+            uint toKill = CalculateMass(Simulator.FixedMultiply(ioData.Population, deathPerTick) + toKillAbsolute);
 
             if (toKill > 0)
             {
@@ -318,18 +320,20 @@ namespace ProtoAqua.Modeling
                 }
             }
 
-            if (m_GrowthPerTick > 0 && ioData.Population > 0)
+            uint growthPerTick = ioData.State == ActorStateId.Stressed ? m_GrowthPerTickStressed : m_GrowthPerTick;
+            if (growthPerTick > 0 && ioData.Population > 0)
             {
-                uint popIncrease = Grow(ref ioData, m_GrowthPerTick);
+                uint popIncrease = Grow(ref ioData, growthPerTick);
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
                     Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
                 }
             }
 
-            if (m_ReproducePerTick > 0 && ioData.Population > 0)
+            float reproPerTick = ioData.State == ActorStateId.Stressed ? m_ReproducePerTickStressed : m_ReproducePerTick;
+            if (reproPerTick > 0 && ioData.Population > 0)
             {
-                uint popIncrease = Reproduce(ref ioData, m_ReproducePerTick);
+                uint popIncrease = Reproduce(ref ioData, reproPerTick);
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
                     Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
