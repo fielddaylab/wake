@@ -8,9 +8,9 @@
 
 :: node.intro
 @showClaims
+@linkToNode link.NoFishers, node.NoFishers
 @linkToNode link.SomeFishers, node.SomeFishers
 @linkToNode link.TooManyFishers, node.TooManyFishers
-@linkToNode link.NoFishers, node.NoFishers
 So, how many people can we have fishing for Grouper?
 
 :: node.TooManyFishers
@@ -30,20 +30,20 @@ How many people can we have fishing for Grouper?
 
 // Claims
 
-:: link.SomeFishers
-@tag claim
-@type claim
-We can allow up to [TODO_GOOD_THRESHOLD] Grouper fishers in this area.
-
-:: link.TooManyFishers
-@tag claim
-@type claim
-We can have [TODO_TOO_MANY_FISHERMEN] Grouper fishers.
-
 :: link.NoFishers
 @tag claim
 @type claim
 None. We can't sustainably harvest Grouper here.
+
+:: link.SomeFishers
+@tag claim
+@type claim
+We can allow up to 40 Grouper Fishers in this area.
+
+:: link.TooManyFishers
+@tag claim
+@type claim
+We can allow up to 200 Grouper Fishers.
 
 
 // After First Claim
@@ -53,7 +53,7 @@ None. We can't sustainably harvest Grouper here.
 @linkToNode Fishers.Eats.RedGrouper, node.RelatedIncorrectEvidence
 @linkToNode Model.GrouperFishingRate, node.end
 @invalidNodeId  node.invalid.UnrelatedEvidence
-Did you gather any evidence that [TODO_GOOD_THRESHOLD] is a safe limit for the Grouper?
+Did you gather any evidence that up to 40 Fishers is a safe limit for the Grouper?
 
 :: node.SomeFishers
 @linkToNode RedGrouper.Reproduce, node.RelatedIncorrectEvidence
