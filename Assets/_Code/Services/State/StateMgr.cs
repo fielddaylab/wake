@@ -382,7 +382,10 @@ namespace Aqua
                     DebugService.Log(LogMask.Loading, "[StateMgr] Optimizing {0} objects...", allOptimizable.Count);
                     using(Profiling.Time("optimize objects"))
                     {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allOptimizable, (f) => f.Optimize(), 5));
+                        yield return Routine.Inline(Routine.ForEachAmortize(allOptimizable, (f) => {
+                            Debug.LogFormat("[StateMgr] ...optimizing {0}", f.ToString());
+                            f.Optimize(); 
+                        }, 5));
                     }
                 }
             }

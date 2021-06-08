@@ -8,17 +8,17 @@ using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader
+    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, ISceneOptimizable
     {
         static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
 
         #region Inspector
 
         [SerializeField, Required] private Room m_DefaultRoom = null;
+        [SerializeField, HideInInspector] private Room[] m_Rooms;
 
         #endregion // Inspector
 
-        [NonSerialized] private Room[] m_Rooms;
         [NonSerialized] private Room m_CurrentRoom;
         private Routine m_Transition;
 
@@ -26,12 +26,6 @@ namespace Aqua.Ship
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
         {
-            List<Room> rooms = new List<Room>(8);
-            inScene.Scene.GetAllComponents<Room>(true, rooms);
-            m_Rooms = rooms.ToArray();
-
-            yield return null;
-
             foreach(var room in m_Rooms)
             {
                 room.Initialize();
@@ -71,16 +65,16 @@ namespace Aqua.Ship
             {
                 m_CurrentRoom = inRoom;
                 m_CurrentRoom.Enter(Services.State.Camera);
+
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("roomId", inRoom.Id());
+                    Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
+                }
             }
             else
             {
                 m_Transition.Replace(this, RoomTransition(inRoom)).TryManuallyUpdate(0);
-            }
-
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("roomId", inRoom.Id());
-                Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
             }
         }
 
@@ -94,8 +88,13 @@ namespace Aqua.Ship
                 yield return fader.Object.Show();
                 m_CurrentRoom.Exit();
                 m_CurrentRoom = inNextRoom;
-                m_CurrentRoom.Enter(Services.State.Camera);
                 yield return 0.15f;
+                m_CurrentRoom.Enter(Services.State.Camera);
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("roomId", m_CurrentRoom.Id());
+                    Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
+                }
                 yield return fader.Object.Hide(false);
             }
 
@@ -113,6 +112,13 @@ namespace Aqua.Ship
                 room = m_DefaultRoom;
             }
             return room;
+        }
+
+        void ISceneOptimizable.Optimize()
+        {
+            List<Room> rooms = new List<Room>(8);
+            SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);
+            m_Rooms = rooms.ToArray();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescSize m_Size = 0;
 
         [Header("Info")]
-        [SerializeField] private string m_ScientificNameId = null;
+        [SerializeField, ShowIfField("IsCritter")] private string m_ScientificNameId = null;
         [SerializeField] private TextId m_CommonNameId = null;
         
         [Space]
@@ -26,9 +26,9 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private Sprite m_Sketch = null;
+        [SerializeField, ShowIfField("ShowSketch")] private Sprite m_Sketch = null;
         [SerializeField] private Color m_Color = ColorBank.White;
-        [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
+        [SerializeField, ShowIfField("IsCritter")] private SerializedHash32 m_ListenAudioEvent = null;
 
         [Header("Experimentation")]
 
@@ -36,7 +36,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [SerializeField] private Dictionary<StringHash32, BFBase> m_FactMap;
+        [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
         [NonSerialized] private BFBase[] m_InternalFacts;
         [NonSerialized] private BFBase[] m_AssumedFacts;
         [NonSerialized] private BFState[] m_StateChangeFacts;
@@ -196,6 +196,26 @@ namespace Aqua
                         break;
                     }
             }
+        }
+
+        private bool IsCritter()
+        {
+            return m_Type == BestiaryDescCategory.Critter;
+        }
+
+        private bool IsEnvironment()
+        {
+            return m_Type == BestiaryDescCategory.Environment;
+        }
+
+        private bool IsModels()
+        {
+            return m_Type == BestiaryDescCategory.Critter;
+        }
+
+        private bool ShowSketch()
+        {
+            return m_Type != BestiaryDescCategory.Model;
         }
 
         [ContextMenu("Load All In Directory")]

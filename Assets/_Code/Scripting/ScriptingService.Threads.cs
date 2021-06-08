@@ -29,7 +29,7 @@ namespace Aqua
                 thread.Dialog = Services.UI.GetDialog("cornerKevin");
             }
 
-            if (Services.UI.IsLoadingScreenVisible() || Services.UI.ScreenFaders.WipeCount > 0)
+            if (Services.UI.IsLoadingScreenVisible() || Services.UI.ScreenFaders.WipeCount > 0 || Services.UI.WorldFaders.WipeCount > 0)
                 thread.Delay(0.5f);
         }
 

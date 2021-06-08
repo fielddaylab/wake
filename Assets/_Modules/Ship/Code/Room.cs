@@ -5,7 +5,7 @@ using System;
 
 namespace Aqua.Ship
 {
-    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>
+    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>, ISceneOptimizable
     {
         #region Inspector
 
@@ -18,10 +18,9 @@ namespace Aqua.Ship
         [Header("Objects")]
         [SerializeField] private ColorGroup m_RootRenderingGroup = null;
         [SerializeField] private GameObject m_ScriptingGroup = null;
+        [SerializeField, HideInInspector] private RoomLink[] m_Links;
 
         #endregion // Inspector
-
-        [NonSerialized] private RoomLink[] m_Links;
 
         #region KeyValue
 
@@ -34,8 +33,6 @@ namespace Aqua.Ship
 
         public void Initialize()
         {
-            m_Links = GetComponentsInChildren<RoomLink>(true);
-
             Hide();
         }
 
@@ -82,6 +79,11 @@ namespace Aqua.Ship
             {
                 m_ScriptingGroup.gameObject.SetActive(false);
             }
+        }
+
+        void ISceneOptimizable.Optimize()
+        {
+            m_Links = GetComponentsInChildren<RoomLink>(true);
         }
     }
 }
