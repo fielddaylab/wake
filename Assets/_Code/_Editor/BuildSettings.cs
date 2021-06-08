@@ -48,6 +48,16 @@ namespace Aqua.Editor
                     BuildUtils.WriteDefines(null);
                 }
             }
+
+            EditorApplication.playModeStateChanged += OnPlayStateChanged;
+        }
+
+        static private void OnPlayStateChanged(PlayModeStateChange inChange)
+        {
+            if (inChange != PlayModeStateChange.EnteredPlayMode)
+                return;
+
+            AssetDatabase.SaveAssets();
         }
 
         private class BuildPreprocess : IPreprocessBuildWithReport
