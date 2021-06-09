@@ -27,6 +27,7 @@ namespace Aqua.Scripting
         #endregion // Serialized
 
         public ScriptNode(ScriptNodePackage inPackage, string inFullId)
+            : base(inFullId, inPackage)
         {
             m_Package = inPackage;
             m_Id = inFullId;
@@ -45,11 +46,6 @@ namespace Aqua.Scripting
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
         public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
-
-        public override ILeafModule Module()
-        {
-            return m_Package;
-        }
 
         public PersistenceLevel TrackingLevel()
         {

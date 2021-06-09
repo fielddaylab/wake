@@ -54,7 +54,7 @@ namespace Aqua
 
             using(Profiling.Time(string.Format("Loading script {0}", inAsset.name)))
             {
-                ScriptNodePackage package = BlockParser.Parse(inAsset.name, inAsset.Source(), Parsing.Block, ScriptNodePackage.Generator.Instance);
+                ScriptNodePackage package = LeafAsset.Compile(inAsset, ScriptNodePackage.Generator.Instance);
                 package.BindAsset(inAsset);
                 AddPackage(package);
                 m_LoadedPackageSourcesAssets.Add(inAsset, package);

@@ -108,7 +108,7 @@ namespace ProtoAqua.Observation
             if (m_Packages.Add(inPackage))
             {
                 inPackage.BindManager(this);
-                inPackage.Parse(Parsing.Block, ScanDataPackage.Generator.Instance);
+                inPackage.Parse(ScanDataPackage.Generator.Instance);
                 AddPackage(inPackage);
             }
         }

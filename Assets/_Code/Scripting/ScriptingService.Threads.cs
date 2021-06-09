@@ -5,6 +5,7 @@ using BeauUtil.Tags;
 using Aqua.Scripting;
 using Leaf;
 using Leaf.Runtime;
+using BeauUtil.Variants;
 
 namespace Aqua
 {
@@ -13,6 +14,8 @@ namespace Aqua
         #region ILeafPlugin
 
         IMethodCache ILeafPlugin<ScriptNode>.MethodCache { get { return m_LeafCache; } }
+
+        IVariantResolver ILeafVariableAccess.Resolver { get { return Services.Data.VariableResolver; }}
 
         void ILeafPlugin<ScriptNode>.OnNodeEnter(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
@@ -30,7 +33,7 @@ namespace Aqua
             }
 
             if (Services.UI.IsTransitioning())
-                thread.Delay(0.5f);
+                thread.DelayBy(0.5f);
         }
 
         void ILeafPlugin<ScriptNode>.OnNodeExit(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
@@ -111,12 +114,6 @@ namespace Aqua
             var thread = ScriptThread(inThreadState);
             var handle = StartThreadInternalNode(null, thread.Context, inForkNode, thread.Locals);
             return handle.GetThread();
-        }
-
-        void ILeafPlugin<ScriptNode>.Kill(LeafThreadState<ScriptNode> inThreadState)
-        {
-            var thread = ScriptThread(inThreadState);
-            thread.Kill();
         }
 
         #endregion // ILeafPlugin

@@ -33,7 +33,7 @@ namespace ProtoAqua.Argumentation
             
             foreach (var asset in m_DefaultAssets)
             {
-                asset.Parse(BlockParsingRules.Default, m_Generator);
+                asset.Parse(m_Generator);
                 m_Packages.Add(asset.name, asset);
             }
         }

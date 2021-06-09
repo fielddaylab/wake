@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BeauUtil;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -9,23 +10,16 @@ namespace Aqua.Scripting
     /// </summary>
     public struct ScriptThreadHandle : IEquatable<ScriptThreadHandle>
     {
-        private ScriptThread m_Thread;
-        private uint m_Id;
+        private LeafThreadHandle m_Thread;
         
-        internal ScriptThreadHandle(ScriptThread inThread, uint inId)
+        internal ScriptThreadHandle(LeafThreadHandle inHandle)
         {
-            m_Thread = inThread;
-            m_Id = inId;
+            m_Thread = inHandle;
         }
 
         internal ScriptThread GetThread()
         {
-            if (m_Thread != null && !m_Thread.HasId(m_Id))
-            {
-                m_Thread = null;
-                m_Id = 0;
-            }
-            return m_Thread;
+            return m_Thread.GetThread<ScriptThread>();
         }
 
         /// <summary>
@@ -117,7 +111,7 @@ namespace Aqua.Scripting
 
         public bool Equals(ScriptThreadHandle other)
         {
-            return m_Id == other.m_Id && m_Thread == other.m_Thread;
+            return m_Thread == other.m_Thread;
         }
     }
 }

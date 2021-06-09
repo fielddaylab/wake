@@ -15,21 +15,11 @@ namespace Aqua.Scripting
         // ownership
         private ScriptingService m_Mgr;
         private IPool<ScriptThread> m_Pool;
-        
-        public readonly CustomVariantResolver Resolver;
-        public TagString TagString;
-
-        // identification
-        private string m_Name;
-        private uint m_Id;
 
         // temp state
         private ScriptFlags m_Flags;
         private IScriptContext m_Context;
         private int m_CutsceneCount;
-        private Routine m_RunningRoutine;
-        private bool m_Active;
-        private float m_QueuedDelay;
 
         // temp resources
         private TempAlloc<VariantTable> m_TempTable;
@@ -49,34 +39,19 @@ namespace Aqua.Scripting
         private TriggerPriority m_TriggerPriority;
         private StringHash32 m_TriggerId;
 
-        // cached callbacks
-        private readonly Action m_KillCallback;
-
-        public ScriptThread()
+        public ScriptThread(ScriptingService inMgr)
+            : base(inMgr)
         {
-            Resolver = new CustomVariantResolver();
-            TagString = new TagString();
-
-            m_KillCallback = Kill;
+            m_Mgr = inMgr;
         }
 
         #region Lifecycle
 
-        public void Initialize(ScriptingService inMgr, IVariantResolver inBase)
-        {
-            m_Mgr = inMgr;
-            Resolver.Base = inBase;
-        }
-
         public ScriptThreadHandle Prep(string inName, IScriptContext inContext, TempAlloc<VariantTable> inTempTable)
         {
+            Setup(inName, inTempTable);
             m_Context = inContext;
             m_TempTable = inTempTable;
-
-            if (m_TempTable?.Object != null)
-            {
-                Resolver.SetDefaultTable(inTempTable);
-            }
 
             if (inContext?.Vars != null)
             {
@@ -84,26 +59,13 @@ namespace Aqua.Scripting
             }
 
             m_CutsceneCount = 0;
-            m_Name = inName;
-            m_Id = (m_Id == uint.MaxValue ? 1 : m_Id + 1);
 
             return GetHandle();
         }
 
-        public ScriptThreadHandle GetHandle()
+        public new ScriptThreadHandle GetHandle()
         {
-            return new ScriptThreadHandle(this, m_Id);
-        }
-
-        public void AttachToRoutine(Routine inRoutine)
-        {
-            m_RunningRoutine = inRoutine;
-            inRoutine.OnComplete(m_KillCallback);
-            if (m_QueuedDelay > 0)
-            {
-                m_RunningRoutine.DelayBy(m_QueuedDelay);
-                m_QueuedDelay = 0;
-            }
+            return new ScriptThreadHandle(base.GetHandle());
         }
 
         public void SyncPriority(ScriptNode inNode)
@@ -112,31 +74,6 @@ namespace Aqua.Scripting
             m_TriggerId = inNode.TriggerOrFunctionId();
             m_TriggerWho = inNode.TargetId();
             m_TriggerPriority = inNode.Priority();
-        }
-
-        public void Delay(float inDelay)
-        {
-            if (m_RunningRoutine)
-            {
-                m_RunningRoutine.DelayBy(inDelay);
-            }
-            else
-            {
-                m_QueuedDelay += inDelay;
-            }
-        }
-
-        public bool HasId(uint inId)
-        {
-            return m_Active && m_Id == inId;
-        }
-
-        public void Kill()
-        {
-            if (m_Active)
-            {
-                m_Pool.Free(this);
-            }
         }
 
         #endregion // Lifecycle
@@ -207,15 +144,7 @@ namespace Aqua.Scripting
 
         #region Temp State
 
-        public string Name { get { return m_Name; } }
         public IScriptContext Context { get { return m_Context; } }
-        public VariantTable Locals { get { return m_TempTable; } }
-
-        public bool IsRunning() { return m_RunningRoutine; }
-        public void Pause() { m_RunningRoutine.Pause(); }
-        public void Resume() { m_RunningRoutine.Resume(); }
-        public bool IsPaused() { return m_RunningRoutine.GetPaused(); }
-        public IEnumerator Wait() { return m_RunningRoutine.Wait(); }
 
         public bool IsCutscene() { return (m_Flags & ScriptFlags.Cutscene) != 0 || m_CutsceneCount > 0; }
         public string InitialNodeName() { return m_TriggerNodeName; }
@@ -292,11 +221,6 @@ namespace Aqua.Scripting
         
         #region Skipping
 
-        public void Tick()
-        {
-            m_RunningRoutine.TryManuallyUpdate(0);
-        }
-
         public void Skip()
         {
             if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice())
@@ -324,7 +248,7 @@ namespace Aqua.Scripting
                     Time.timeScale = 1;
                     Services.Input.ResumeAll();
                     Services.UI.StopSkipCutscene();
-                    m_RunningRoutine.SetTimeScale(1);
+                    m_Routine.SetTimeScale(1);
                 }
 
                 return true;
@@ -340,19 +264,19 @@ namespace Aqua.Scripting
 
         private IEnumerator SkipCutsceneRoutine()
         {
-            m_RunningRoutine.Pause();
+            m_Routine.Pause();
             Services.Input.PauseAll();
             yield return Services.UI.StartSkipCutscene();
             InternalSkip();
             yield return 0.1f;
-            m_RunningRoutine.Resume();
+            m_Routine.Resume();
         }
 
         private void InternalSkip()
         {
             m_Flags |= ScriptFlags.Skip;
             Time.timeScale = 100;
-            m_RunningRoutine.SetTimeScale(1000);
+            m_Routine.SetTimeScale(1000);
             if (IsCutscene())
             {
                 Services.Events.Dispatch(GameEvents.CutsceneSkip);
@@ -380,26 +304,8 @@ namespace Aqua.Scripting
 
         #endregion // Skipping
 
-        #region IPooledObject
-
-        void IPooledObject<ScriptThread>.OnAlloc()
+        protected override void Reset()
         {
-            m_Active = true;
-        }
-
-        void IPooledObject<ScriptThread>.OnConstruct(IPool<ScriptThread> inPool)
-        {
-            m_Pool = inPool;
-        }
-
-        void IPooledObject<ScriptThread>.OnDestruct()
-        {
-        }
-
-        void IPooledObject<ScriptThread>.OnFree()
-        {
-            m_Active = false;
-
             if (m_CurrentFader != null)
             {
                 m_CurrentFader.Hide(0.1f, true);
@@ -431,19 +337,13 @@ namespace Aqua.Scripting
                 --m_CutsceneCount;
             }
 
-            Reset(m_Mgr);
-
-            m_RunningRoutine.Stop();
             m_SkipRoutine.Stop();
 
             m_Mgr.UntrackThread(this);
 
-            Resolver.Clear();
             Ref.Dispose(ref m_TempTable);
             m_Context = null;
-            m_Name = null;
             m_Flags = 0;
-            m_QueuedDelay = 0;
 
             m_TriggerWho = StringHash32.Null;
             m_TriggerPriority = TriggerPriority.Low;
@@ -451,6 +351,29 @@ namespace Aqua.Scripting
             m_LastKnownCharacter = StringHash32.Null;
             m_LastKnownName = null;
             m_RecordedDialog = false;
+
+            base.Reset();
+
+            m_Pool.Free(this);
+        }
+
+        #region IPooledObject
+
+        void IPooledObject<ScriptThread>.OnAlloc()
+        {
+        }
+
+        void IPooledObject<ScriptThread>.OnConstruct(IPool<ScriptThread> inPool)
+        {
+            m_Pool = inPool;
+        }
+
+        void IPooledObject<ScriptThread>.OnDestruct()
+        {
+        }
+
+        void IPooledObject<ScriptThread>.OnFree()
+        {
         }
 
         #endregion // IPooledObject

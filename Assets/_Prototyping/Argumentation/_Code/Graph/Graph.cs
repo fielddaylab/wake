@@ -170,7 +170,7 @@ namespace ProtoAqua.Argumentation
         {
             ResetGraph();
 
-            inPackage.Parse(Parsing.Block, new GraphDataPackage.Generator());
+            inPackage.Parse(new GraphDataPackage.Generator());
 
             foreach (KeyValuePair<StringHash32, Node> kvp in inPackage.Nodes)
             {

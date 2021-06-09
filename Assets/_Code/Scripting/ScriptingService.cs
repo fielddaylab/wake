@@ -529,7 +529,7 @@ namespace Aqua
 
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, null);
-            thread.AttachToRoutine(Routine.Start(this, inEnumerator).SetPhase(RoutinePhase.Manual));
+            thread.AttachRoutine(Routine.Start(this, inEnumerator).SetPhase(RoutinePhase.Manual));
 
             m_ThreadList.Add(thread);
             if (!string.IsNullOrEmpty(inThreadName))
@@ -560,7 +560,7 @@ namespace Aqua
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, tempVars);
             thread.SyncPriority(inNode);
-            thread.AttachToRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual));
+            thread.AttachRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual));
 
             m_ThreadList.Add(thread);
             if (!string.IsNullOrEmpty(inThreadName))
@@ -579,7 +579,7 @@ namespace Aqua
             }
 
             if (!IsPaused())
-                thread.Tick();
+                thread.ForceTick();
             
             return handle;
         }
@@ -715,8 +715,7 @@ namespace Aqua
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
             m_TablePool.Config.RegisterOnFree((p, obj) => { obj.Reset(); });
 
-            m_ThreadPool = new DynamicPool<ScriptThread>(16, Pool.DefaultConstructor<ScriptThread>());
-            m_ThreadPool.Config.RegisterOnConstruct((p, obj) => { obj.Initialize(this, Services.Data.VariableResolver); });
+            m_ThreadPool = new DynamicPool<ScriptThread>(16, (p) => new ScriptThread(this));
         }
 
         protected override void Shutdown()
