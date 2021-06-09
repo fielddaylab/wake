@@ -22,9 +22,10 @@ namespace Aqua.Debugging
         Observation = 1 << 10,
         Argumentation = 1 << 11,
         Localization = 1 << 12,
+        Time = 1 << 13,
 
-        DEFAULT = Loading | DataService,
+        DEFAULT = Loading | DataService | Time,
         ALL = Input | Physics | Scripting | Modeling | Audio | Loading | Camera
-            | DataService | UI | Experimentation | Observation | Argumentation | Localization
+            | DataService | UI | Experimentation | Observation | Argumentation | Localization | Time
     }
 }

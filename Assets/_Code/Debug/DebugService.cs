@@ -302,6 +302,7 @@ namespace Aqua.Debugging
             RegisterLogToggle(loggingMenu, LogMask.Observation);
             RegisterLogToggle(loggingMenu, LogMask.Argumentation);
             RegisterLogToggle(loggingMenu, LogMask.Localization);
+            RegisterLogToggle(loggingMenu, LogMask.Time);
 
             yield return loggingMenu;
             

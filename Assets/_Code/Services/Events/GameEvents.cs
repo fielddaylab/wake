@@ -4,11 +4,15 @@ namespace Aqua
 {
     static public class GameEvents
     {
+        static public readonly StringHash32 ProfileUnloaded = "profile:unloaded"; // no args
         static public readonly StringHash32 ProfileLoaded = "profile:loaded"; // no args
         static public readonly StringHash32 ProfileRefresh = "profile:refresh"; // no args
+
+        static public readonly StringHash32 ProfileStarting = "profile:starting"; // string userName
+        static public readonly StringHash32 ProfileStarted = "profile:started"; // no args
+        
         static public readonly StringHash32 ProfileSaveBegin = "profile:save-begin"; // no args
         static public readonly StringHash32 ProfileSaveCompleted = "profile:save-completed"; // no args
-        static public readonly StringHash32 ProfileStarting = "profile:starting"; // string userName
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
         static public readonly StringHash32 ProfileAutosaveSuppress = "profile:autosave-suppress"; // no args
@@ -54,5 +58,9 @@ namespace Aqua
 
         static public readonly StringHash32 ActChanged = "act:changed"; // uint actIndex
         static public readonly StringHash32 StationChanged = "station:changed"; // StringHash32 stationId
+
+        static public readonly StringHash32 TimeDayChanged = "time:dayChanged"; // InGameTime time
+        static public readonly StringHash32 TimePhaseChanged = "time:phaseChanged"; // InGameTime time
+        static public readonly StringHash32 TimeDayNightChanged = "time:dayNightChanged"; // InGameTime time
     }
 }

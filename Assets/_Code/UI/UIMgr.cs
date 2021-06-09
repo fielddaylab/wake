@@ -56,9 +56,9 @@ namespace Aqua
             return m_Loading.Hide();
         }
 
-        public bool IsLoadingScreenVisible()
+        public bool IsTransitioning()
         {
-            return m_Loading.IsShowing() || m_Loading.IsTransitioning();
+            return m_Loading.IsShowing() || m_Loading.IsTransitioning() || m_ScreenFaders.WipeCount > 0 || m_WorldFaders.WipeCount > 0;
         }
 
         public void ForceLoadingScreen()

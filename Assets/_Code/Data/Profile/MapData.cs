@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Aqua.Debugging;
 using BeauData;
@@ -13,6 +14,11 @@ namespace Aqua.Profile
         private StringHash32 m_CurrentMapId;
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
 
+        public ushort TimeOfDay;
+        public ushort TotalDays;
+        public DayName CurrentDay;
+        public TimeMode TimeMode;
+        
         private bool m_HasChanges;
 
         #region Current Station
@@ -75,6 +81,10 @@ namespace Aqua.Profile
         {
             m_CurrentStationId = Services.Assets.Map.DefaultStationId();
             m_UnlockedStationIds.Add(m_CurrentStationId);
+
+            TimeOfDay = Services.Time.StartingTime();
+            TotalDays = 0;
+            CurrentDay = Services.Time.StartingDayName();
         }
 
         public bool SyncMapId()
@@ -91,18 +101,41 @@ namespace Aqua.Profile
             return false;
         }
 
+        public bool SyncTime()
+        {
+            InGameTime currentTime = Services.Time.Current;
+            if (currentTime.Day != TotalDays || currentTime.DayName != CurrentDay || currentTime.Ticks != TimeOfDay)
+            {
+                TotalDays = (ushort) currentTime.Day;
+                CurrentDay = currentTime.DayName;
+                TimeOfDay = (ushort) currentTime.Ticks;
+                m_HasChanges = true;
+                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", new InGameTime(TimeOfDay, TotalDays, CurrentDay));
+                return true;
+            }
+
+            return false;
+        }
+
         public StringHash32 SavedSceneId() { return m_CurrentMapId; }
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32Proxy("stationId", ref m_CurrentStationId);
             ioSerializer.UInt32ProxySet("unlockedStations", ref m_UnlockedStationIds);
-
             ioSerializer.UInt32Proxy("currentMapId", ref m_CurrentMapId);
+
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Serialize("timeOfDay", ref TimeOfDay);
+                ioSerializer.Serialize("days", ref TotalDays);
+                ioSerializer.Enum("weekday", ref CurrentDay);
+                ioSerializer.Enum("timeMode", ref TimeMode);
+            }
         }
 
         public bool HasChanges()

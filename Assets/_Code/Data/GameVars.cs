@@ -23,7 +23,13 @@ namespace Aqua
         static public readonly TableKeyPair JobsAnyComplete = TableKeyPair.Parse("jobs:anyComplete");
 
         // global
-        static public readonly TableKeyPair Weekday = TableKeyPair.Parse("date:weekday");
+        static public readonly TableKeyPair DayName = TableKeyPair.Parse("time:dayName");
+        static public readonly TableKeyPair DayPhase = TableKeyPair.Parse("time:dayPhase");
+        static public readonly TableKeyPair IsDay = TableKeyPair.Parse("time:isDay");
+        static public readonly TableKeyPair IsNight = TableKeyPair.Parse("time:isNight");
+        static public readonly TableKeyPair Hour = TableKeyPair.Parse("time:hour");
+        static public readonly TableKeyPair DayNumber = TableKeyPair.Parse("time:dayNumber");
+
         static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
@@ -37,6 +43,19 @@ namespace Aqua
 
         static public readonly StringHash32 Target_Kevin = "kevin";
         static public readonly StringHash32 Target_Player = "player";
+
+        static public readonly StringHash32 DayPhase_Morning = "morning";
+        static public readonly StringHash32 DayPhase_Day = "day";
+        static public readonly StringHash32 DayPhase_Evening = "evening";
+        static public readonly StringHash32 DayPhase_Night = "night";
+
+        static public readonly StringHash32 DayName_Sunday = "sunday";
+        static public readonly StringHash32 DayName_Monday = "monday";
+        static public readonly StringHash32 DayName_Tuesday = "tuesday";
+        static public readonly StringHash32 DayName_Wednesday = "wednesday";
+        static public readonly StringHash32 DayName_Thursday = "thursday";
+        static public readonly StringHash32 DayName_Friday = "friday";
+        static public readonly StringHash32 DayName_Saturday = "saturday";
 
         public const int GameSceneIndexStart = 2;
     }

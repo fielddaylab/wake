@@ -103,6 +103,14 @@ namespace Aqua
             return m_CurrentSaveData != null;
         }
 
+        public void UnloadProfile()
+        {
+            if (ClearOldProfile())
+            {
+                Services.Events.Dispatch(GameEvents.ProfileUnloaded);
+            }
+        }
+
         public Future<bool> HasProfile(string inUserCode)
         {
             if (string.IsNullOrEmpty(inUserCode))
@@ -194,12 +202,18 @@ namespace Aqua
             AutoSave.Suppress();
         }
 
-        private void ClearOldProfile()
+        private bool ClearOldProfile()
         {
             m_DialogHistory.Clear();
             m_SessionTable.Clear();
 
-            m_CurrentSaveData = null;
+            if (m_CurrentSaveData != null)
+            {
+                m_CurrentSaveData = null;
+                return true;
+            }
+
+            return false;
         }
 
         private SaveData CreateNewProfile()
@@ -267,6 +281,8 @@ namespace Aqua
 
             m_CurrentSaveData.Jobs.PostLoad();
             m_PostLoadQueued = false;
+            
+            Services.Events.Dispatch(GameEvents.ProfileStarted);
         }
 
         #endregion // Loading
@@ -282,6 +298,7 @@ namespace Aqua
         {
             m_CurrentSaveData.LastUpdated = DateTime.UtcNow.ToFileTime();
             OptionsData.SyncFrom(m_CurrentOptions, m_CurrentSaveData.Options, OptionsData.Authority.All);
+            m_CurrentSaveData.Map.SyncTime();
         }
 
         public bool NeedsSave()

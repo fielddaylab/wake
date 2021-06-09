@@ -200,10 +200,16 @@ namespace Aqua
         {
             m_VariableResolver = new CustomVariantResolver();
 
-            m_VariableResolver.SetVar(GameVars.Weekday, GetDayOfWeek);
             m_VariableResolver.SetVar(GameVars.SceneName, GetSceneName);
+            
+            m_VariableResolver.SetVar(GameVars.DayName, GetDayOfWeek);
+            m_VariableResolver.SetVar(GameVars.DayNumber, () => Services.Time.Current.Day);
+            m_VariableResolver.SetVar(GameVars.Hour, () => Services.Time.Current.TotalHour);
+            m_VariableResolver.SetVar(GameVars.DayPhase, GetDayPhase);
+            m_VariableResolver.SetVar(GameVars.IsDay, () => Services.Time.Current.IsDay);
+            m_VariableResolver.SetVar(GameVars.IsNight, () => Services.Time.Current.IsNight);
 
-            m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerGender);
+            m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerPronouns);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
@@ -251,28 +257,45 @@ namespace Aqua
 
         static private Variant GetDayOfWeek()
         {
-            switch(DateTime.Now.DayOfWeek)
+            switch(Services.Time.Current.DayName)
             {
-                case DayOfWeek.Sunday:
-                    return "s";
-                case DayOfWeek.Monday:
-                    return "m";
-                case DayOfWeek.Tuesday:
-                    return "t";
-                case DayOfWeek.Wednesday:
-                    return "w";
-                case DayOfWeek.Thursday:
-                    return "th";
-                case DayOfWeek.Friday:
-                    return "f";
-                case DayOfWeek.Saturday:
-                    return "sa";
+                case DayName.Sunday:
+                    return GameConsts.DayName_Sunday;
+                case DayName.Monday:
+                    return GameConsts.DayName_Monday;
+                case DayName.Tuesday:
+                    return GameConsts.DayName_Tuesday;
+                case DayName.Wednesday:
+                    return GameConsts.DayName_Wednesday;
+                case DayName.Thursday:
+                    return GameConsts.DayName_Thursday;
+                case DayName.Friday:
+                    return GameConsts.DayName_Friday;
+                case DayName.Saturday:
+                    return GameConsts.DayName_Saturday;
                 default:
                     return Variant.Null;
             }
         }
 
-        private Variant GetPlayerGender()
+        static private Variant GetDayPhase()
+        {
+            switch(Services.Time.Current.Phase)
+            {
+                case DayPhase.Morning:
+                    return GameConsts.DayPhase_Morning;
+                case DayPhase.Day:
+                    return GameConsts.DayPhase_Day;
+                case DayPhase.Evening:
+                    return GameConsts.DayPhase_Evening;
+                case DayPhase.Night:
+                    return GameConsts.DayPhase_Night;
+                default:
+                    return Variant.Null;
+            }
+        }
+
+        private Variant GetPlayerPronouns()
         {
             switch(CurrentCharacterPronouns())
             {

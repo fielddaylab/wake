@@ -76,6 +76,8 @@ namespace Aqua.Title
 
             m_WaterAmbience = Services.Audio.PostEvent(m_AmbienceEvent);
             Routine.Start(this, WhaleNoises());
+
+            Services.Data.UnloadProfile();
         }
 
         private void InitializeFromBootScene()
