@@ -37,6 +37,7 @@ namespace Aqua
 
         private readonly DayName m_DayName;
         private readonly DayPhase m_DayPhase;
+        private readonly float m_DayPhaseProgress;
 
         #region Constructors
 
@@ -46,7 +47,7 @@ namespace Aqua
             m_Day = inDay;
 
             m_DayName = (DayName) (inDay % MaxDayNames);
-            m_DayPhase = FindPhase(inTicks);
+            m_DayPhase = FindPhase(inTicks, out m_DayPhaseProgress);
         }
 
         public InGameTime(ushort inTicks, ushort inDay, DayName inDayName)
@@ -55,7 +56,7 @@ namespace Aqua
             m_Day = inDay;
 
             m_DayName = inDayName;
-            m_DayPhase = FindPhase(inTicks);
+            m_DayPhase = FindPhase(inTicks, out m_DayPhaseProgress);
         }
 
         public InGameTime(int inHours, int inMinutes, ushort inDay)
@@ -64,7 +65,7 @@ namespace Aqua
             m_Day = inDay;
 
             m_DayName = (DayName) (inDay % MaxDayNames);
-            m_DayPhase = FindPhase(m_Ticks);
+            m_DayPhase = FindPhase(m_Ticks, out m_DayPhaseProgress);
         }
 
         public InGameTime(int inHours, int inMinutes, ushort inDay, DayName inDayName)
@@ -73,7 +74,7 @@ namespace Aqua
             m_Day = inDay;
             
             m_DayName = inDayName;
-            m_DayPhase = FindPhase(m_Ticks);
+            m_DayPhase = FindPhase(m_Ticks, out m_DayPhaseProgress);
         }
 
         #endregion // Constructors
@@ -131,15 +132,7 @@ namespace Aqua
         /// <summary>
         /// Progress through the phase of the day.
         /// </summary>
-        public float PhaseProgress
-        {
-            get
-            {
-                float progress;
-                FindPhase(m_Ticks, out progress);
-                return progress;
-            }
-        }
+        public float PhaseProgress { get { return m_DayPhaseProgress; }}
 
         /// <summary>
         /// If this is considered day.
@@ -281,6 +274,7 @@ namespace Aqua
                 else
                     psb.Builder.Append(" PM");
 
+                psb.Builder.Append(" (").Append(m_DayPhase).Append(" ").Append(Math.Round(m_DayPhaseProgress * 100)).Append("%)");
                 psb.Builder.Append(", Day ").Append(m_Day).Append(", ").Append(m_DayName);
                 return psb.ToString();
             }

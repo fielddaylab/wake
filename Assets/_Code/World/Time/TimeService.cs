@@ -15,6 +15,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private float m_MinutesPerDay = DefaultMinutesPerDay;
+        [SerializeField] private float m_WorldUpdateDelay = 1f / 20f;
 
         [Header("Defaults")]
         [SerializeField, Range(0, 23.99f)] private float m_StartingTime = 7f;
@@ -33,11 +34,40 @@ namespace Aqua
         [NonSerialized] private float m_QueuedAdvance;
         [NonSerialized] private float m_QueuedSet = -1;
 
+        [NonSerialized] private float m_LastUpdatedTime = 0;
+        private BufferedCollection<TimeAnimatedObject> m_AnimatedObjects = new BufferedCollection<TimeAnimatedObject>(64);
+
         public InGameTime Current { get { return m_FullTime; } }
         public TimeMode Mode { get { return m_TimeMode; } }
 
         public ushort StartingTime() { return InGameTime.HoursToTicks(m_StartingTime); }
         public DayName StartingDayName() { return m_StartingDay; }
+
+        #region Objects
+
+        /// <summary>
+        /// Registers a time-animated object.
+        /// This object will be animated by the passage of in-game time.
+        /// </summary>
+        public void Register(TimeAnimatedObject inObject)
+        {
+            m_AnimatedObjects.Add(inObject);
+            
+            if (m_TimeCanFlow)
+                inObject.OnTimeChanged(m_FullTime);
+        }
+
+        /// <summary>
+        /// Deregisters a time-animated object.
+        /// </summary>
+        public void Deregister(TimeAnimatedObject inObject)
+        {
+            m_AnimatedObjects.Remove(inObject);
+        }
+
+        #endregion // Objects
+
+        #region Updates
 
         private void LateUpdate()
         {
@@ -77,6 +107,7 @@ namespace Aqua
                     diff += InGameTime.TicksPerDay;
                 ticks += diff;
                 m_QueuedSet = -1;
+                m_LastUpdatedTime = -1;
             }
 
             return ticks;
@@ -112,8 +143,16 @@ namespace Aqua
 
         private void UpdateTimeElements(InGameTime inPrev, InGameTime inNew)
         {
-            
+            float now = Time.timeSinceLevelLoad;
+            float timeDiff = now - m_LastUpdatedTime;
+            if (timeDiff >= m_WorldUpdateDelay)
+            {
+                m_AnimatedObjects.ForEach(UpdateAnimatedObject, inNew);
+                m_LastUpdatedTime = now;
+            }
         }
+
+        static private Action<TimeAnimatedObject, InGameTime> UpdateAnimatedObject = (o, t) => o.OnTimeChanged(t);
 
         static private void DispatchTimeChangeEvents(InGameTime inPrev, InGameTime inNew)
         {
@@ -136,6 +175,8 @@ namespace Aqua
             }
         }
     
+        #endregion // Updates
+
         #region IService
 
         protected override void Initialize()
@@ -143,11 +184,15 @@ namespace Aqua
             Services.Events.Register(GameEvents.ProfileUnloaded, OnProfileUnload, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
                 .Register(GameEvents.ProfileStarted, OnProfileStarted, this);
+
+            SceneHelper.OnSceneLoaded += OnSceneLoaded;
         }
 
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
+
+            SceneHelper.OnSceneLoaded -= OnSceneLoaded;
         }
 
         #endregion // IService
@@ -168,11 +213,23 @@ namespace Aqua
             m_CurrentDayName = mapData.CurrentDay;
             m_TimeMode = mapData.TimeMode;
             m_TimeCanFlow = false;
+
+            m_FullTime = new InGameTime((ushort) m_CurrentTime, m_TotalDays, m_CurrentDayName);
         }
 
         private void OnProfileStarted()
         {
             m_TimeCanFlow = true;
+            UpdateTimeElements(m_FullTime, m_FullTime);
+        }
+
+        private void OnSceneLoaded(SceneBinding _, object __)
+        {
+            m_LastUpdatedTime = -1;
+            if (m_TimeCanFlow)
+            {
+                UpdateTimeElements(m_FullTime, m_FullTime);
+            }
         }
 
         #endregion // Handlers
