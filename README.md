@@ -48,7 +48,7 @@ Player Actions
 * bestiary_open_environments_tab
 * bestiary_open_models_tab
 * bestiary_open_tasks_tab
-* bestiary_select_sepecies (species_id)
+* bestiary_select_species (species_id)
 * bestiary_select_environment (environment_id)
 * close_bestiary
 
