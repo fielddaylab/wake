@@ -23,14 +23,21 @@ namespace Aqua
 
         #region Firebase JS Functions
 
+        //Init
         [DllImport("__Internal")]
         public static extern void FBStartGameWithUserCode(string userCode);
+
+        //Progression
         [DllImport("__Internal")]
         public static extern void FBAcceptJob(string jobId);
         [DllImport("__Internal")]
         public static extern void FBReceiveFact(string factId);
         [DllImport("__Internal")]
         public static extern void FBCompleteJob(string jobId);
+        [DllImport("__Internal")]
+        public static extern void FBCompleteTask(string factId, string taskId);
+
+        //Player Actions
         [DllImport("__Internal")]
         public static extern void FBBeginExperiment(string jobId, string tankType);
         [DllImport("__Internal")]
@@ -45,6 +52,26 @@ namespace Aqua
         public static extern void FBAskForHelp(string nodeId);
         [DllImport("__Internal")]
         public static extern void FBTalkWithGuide(string nodeId);
+            //Bestiary Events
+            /*
+        [DllImport("__Internal")]
+        public static extern void FBOpenBestiary();
+        [DllImport("__Internal")]
+        public static extern void FBBestiaryOpenSpeciesTab();
+        [DllImport("__Internal")]
+        public static extern void FBBestiaryOpenEnvironmentsTab();
+        [DllImport("__Internal")]
+        public static extern void FBBestiaryOpenModelsTab();
+        [DllImport("__Internal")]
+        public static extern void FBBestiaryOpenTasksTab();
+        [DllImport("__Internal")]
+        public static extern void FBBestiarySelectSpecies(string speciesId);
+        [DllImport("__Internal")]
+        public static extern void FBBestiarySelectEnvironment(string environmentId);
+        [DllImport("__Internal")]
+        public static extern void FBCloseBestiary();*/
+
+        //Game Feedback
         [DllImport("__Internal")]
         public static extern void FBSimulationSyncAchieved(string jobId);
         [DllImport("__Internal")]
@@ -60,6 +87,7 @@ namespace Aqua
             accept_job,
             receive_fact,
             complete_job,
+            complete_task,
             begin_experiment,
             begin_dive,
             begin_argument,
@@ -67,6 +95,14 @@ namespace Aqua
             begin_simulation,
             ask_for_help,
             talk_with_guide,
+            /*open_bestiary,
+            bestiary_open_species_tab,
+            bestiary_open_environments_tab,
+            bestiary_open_models_tab,
+            bestiary_open_tasks_tab,
+            bestiary_select_species,
+            bestiary_select_environment,
+            close_bestiary,*/
             simulation_sync_achieved,
             guide_script_triggered
         }
@@ -83,6 +119,7 @@ namespace Aqua
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob)
+                .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive)
                 .Register(GameEvents.BeginArgument, LogBeginArgument)
@@ -207,6 +244,23 @@ namespace Aqua
             #endif
 
             m_CurrentJobId = string.Empty;
+        }
+
+        private void LogCompleteTask(StringHash32 inTaskId)
+        {
+            string taskId = inTaskId.ToString();
+
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId },
+                { "task_id", taskId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.complete_task));
+
+            #if !UNITY_EDITOR
+            FBCompleteTask(m_CurrentJobId, taskId);
+            #endif
         }
 
         private void LogBeginExperiment(TankType inTankType)

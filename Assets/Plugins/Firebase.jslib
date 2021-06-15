@@ -1,5 +1,4 @@
 mergeInto(LibraryManager.library, {
-
     FBStartGameWithUserCode: function(userCode) {
         var userCode = Pointer_stringify(userCode);
 
@@ -30,6 +29,17 @@ mergeInto(LibraryManager.library, {
         analytics.logEvent("complete_job", {
             job_id: jobId
         });
+    },
+
+    FBCompleteTask: function(jobId, taskId) {
+        var jobId = Pointer_stringify(jobId);
+        var taskId = Pointer_stringify(taskId);
+
+        analytics.logEvent("complete_task", {
+            job_id: jobId,
+            task_id: taskId
+        });
+        console.log("task with Id "+taskId.toString()+" completed.");
     },
 
     FBBeginExperiment: function(jobId, tankType) {
