@@ -40,9 +40,8 @@ Player Actions
 * begin_model (job_id)
 * MORE HERE
 * begin_simulation (job_id)
-* ask_for_help (node_id)
-* talk_with_guide (node_id) - User clicked the button for Kevin
 * ask_for_help (node_id) - User clicked the hint button
+* talk_with_guide (node_id) - User clicked the button for Kevin
 
 * open_bestiry
 * bestiary_open_species_tab
