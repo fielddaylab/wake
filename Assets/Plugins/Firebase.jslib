@@ -101,6 +101,78 @@ mergeInto(LibraryManager.library, {
         });
     },
 
+	//Bestiary stuff
+    FBOpenBestiary: function(jobId){
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("open_bestiary", {
+            job_id: jobId
+        });
+    },
+
+    FBBestiaryOpenSpeciesTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("bestiary_open_species_tab", {
+            job_id: jobId
+        });
+    },
+
+    FBBestiaryOpenEnvironmentsTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("bestiary_open_environments_tab", {
+            job_id: jobId
+        });
+    },
+
+    FBBestiaryOpenModelsTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("bestiary_open_models_tab", {
+            job_id: jobId
+        });
+    },
+
+    FBBestiaryOpenTasksTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("bestiary_open_tasks_tab", {
+            job_id: jobId
+        });
+    },
+
+    FBBestiarySelectSpecies: function(jobId, speciesId) {
+        var jobId = Pointer_stringify(jobId);
+        var speciesId = Pointer_stringify(speciesId);
+
+        analytics.logEvent("bestiary_select_species",
+        {
+            job_id: jobId,
+            species_id: speciesId
+        });
+    },
+
+    FBBestiarySelectEnvironment: function(jobId, environmentId) {
+        var jobId = Pointer_stringify(jobId);
+        var environmentId = Pointer_stringify(environmentId);
+
+        analytics.logEvent("bestiary_select_environment",
+        {
+            job_id: jobId,
+            environment_id: environmentId
+        });
+    },
+
+    FBCloseBestiary: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("close_bestiary", {
+            job_id: jobId
+        });
+    },
+
+
     FBSimulationSyncAchieved: function(jobId) {
         var jobId = Pointer_stringify(jobId);
 

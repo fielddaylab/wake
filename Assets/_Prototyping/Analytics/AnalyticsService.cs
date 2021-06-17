@@ -53,23 +53,22 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBTalkWithGuide(string nodeId);
             //Bestiary Events
-            /*
         [DllImport("__Internal")]
-        public static extern void FBOpenBestiary();
+        public static extern void FBOpenBestiary(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenSpeciesTab();
+        public static extern void FBBestiaryOpenSpeciesTab(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenEnvironmentsTab();
+        public static extern void FBBestiaryOpenEnvironmentsTab(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenModelsTab();
+        public static extern void FBBestiaryOpenModelsTab(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenTasksTab();
+        public static extern void FBBestiaryOpenTasksTab(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectSpecies(string speciesId);
+        public static extern void FBBestiarySelectSpecies(string jobId, string speciesId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectEnvironment(string environmentId);
+        public static extern void FBBestiarySelectEnvironment(string jobId, string environmentId);
         [DllImport("__Internal")]
-        public static extern void FBCloseBestiary();*/
+        public static extern void FBCloseBestiary(string jobId);
 
         //Game Feedback
         [DllImport("__Internal")]
@@ -95,14 +94,14 @@ namespace Aqua
             begin_simulation,
             ask_for_help,
             talk_with_guide,
-            /*open_bestiary,
+            open_bestiary,
             bestiary_open_species_tab,
             bestiary_open_environments_tab,
             bestiary_open_models_tab,
             bestiary_open_tasks_tab,
             bestiary_select_species,
             bestiary_select_environment,
-            close_bestiary,*/
+            close_bestiary,
             simulation_sync_achieved,
             guide_script_triggered
         }
@@ -362,6 +361,114 @@ namespace Aqua
 
             #if !UNITY_EDITOR
             FBTalkWithGuide(nodeId);
+            #endif
+        }
+
+        //Bestiary Log Events
+        private void LogOpenBestiary()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.open_bestiary));
+
+            #if !UNITY_EDITOR
+            FBOpenBestiary(m_CurrentJobId);
+            #endif
+        }
+        private void LogBestiaryOpenSpeciesTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_species_tab));
+
+            #if !UNITY_EDITOR
+            FBBestiaryOpenSpeciesTab(m_CurrentJobId);
+            #endif
+        }
+        private void LogBestiaryOpenEnvironmentsTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_environments_tab));
+
+            #if !UNITY_EDITOR
+            FBBestiaryOpenEnvironmentsTab(m_CurrentJobId);
+            #endif
+        }
+        private void LogBestiaryOpenModelsTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_models_tab));
+
+            #if !UNITY_EDITOR
+            FBBestiaryOpenModelsTab(m_CurrentJobId);
+            #endif
+        }
+        private void LogBestiaryOpenTasksTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_tasks_tab));
+
+            #if !UNITY_EDITOR
+            FBBestiaryOpenTasksTab(m_CurrentJobId);
+            #endif
+        }
+        private void LogBestiarySelectSpecies(string speciesId)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId },
+                { "species_id", speciesId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_species));
+
+            #if !UNITY_EDITOR
+            FBBestiarySelectSpecies(m_CurrentJobId, speciesId);
+            #endif
+        }
+        private void LogBestiarySelectEnvironment(string environmentId)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId },
+                { "environment_id", environmentId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_environment));
+
+            #if !UNITY_EDITOR
+            FBBestiarySelectEnvironment(m_CurrentJobId,environmentId);
+            #endif
+        }
+        private void LogCloseBestiary()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.close_bestiary));
+
+            #if !UNITY_EDITOR
+            FBCloseBestiary(m_CurrentJobId);
             #endif
         }
 
