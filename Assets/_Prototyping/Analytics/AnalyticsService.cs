@@ -8,6 +8,7 @@ using ProtoAqua.Experiment;
 using ProtoAqua.Modeling;
 using UnityEngine;
 using Aqua.Title;
+using System;
 
 namespace Aqua
 {
@@ -125,7 +126,11 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Model_Begin, LogBeginModel)
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved)
-                .Register<string>(GameEvents.ProfileStarting, OnTitleStart);
+                .Register<string>(GameEvents.ProfileStarting, OnTitleStart)
+                .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler)
+                .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler)
+                .Register<BestiaryDescCategory>(GameEvents.PortableTabSelected, PortableTabSelectedHandler)
+                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableEntrySelectedhandler);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
         }
@@ -172,6 +177,78 @@ namespace Aqua
                 LogGuideScriptTriggered(nodeId);
             }
         }
+
+        #region bestiary handlers
+        private void PortableAppOpenedHandler(string appId)
+        {
+            if (appId == "@A9D54520")
+            {
+                LogOpenBestiary();
+            }
+            else if (appId == "@BA4B77EF")
+            {
+                //Opened Status app
+                LogBestiaryOpenTasksTab();
+            }
+        }
+
+        private void PortableAppClosedHandler(string appId)
+        {
+            if (appId == "@A9D54520")
+            {
+                LogCloseBestiary();
+            }
+            else if (appId == "@BA4B77EF")
+            {
+                //Closed Status app
+            }
+        }
+
+        private void PortableTabSelectedHandler(BestiaryDescCategory tabName)
+        {
+            switch (tabName)
+            {
+                case (BestiaryDescCategory.Critter): //Critter Tab
+                    {
+                        LogBestiaryOpenSpeciesTab();
+                        break;
+                    }
+                case (BestiaryDescCategory.Environment): //Ecosystems Tab
+                    {
+                        LogBestiaryOpenEnvironmentsTab();
+                        break;
+                    }
+                case (BestiaryDescCategory.Model): //Models Tab
+                    {
+                        LogBestiaryOpenModelsTab();
+                        break;
+                    }
+            }
+        }
+
+        private void PortableEntrySelectedhandler(BestiaryDesc selectedData)
+        {
+            switch (selectedData.Category())
+            {
+                case (BestiaryDescCategory.Critter): //Critter Selected
+                    {
+                        LogBestiarySelectSpecies(selectedData.CommonName().ToDebugString());
+                        break;
+                    }
+                case (BestiaryDescCategory.Environment): //Ecosystem Selected
+                    {
+                        LogBestiarySelectEnvironment(selectedData.CommonName().ToDebugString());
+                        break;
+                    }
+                case (BestiaryDescCategory.Model): //Model Selected
+                    {
+                        //TODO: Select model logging not yet implemented
+                        //LogBestiarySelectModel(selectedData.CommonName().ToDebugString());
+                        break;
+                    }
+            }
+        }
+        #endregion
 
         private void LogAcceptJob(StringHash32 jobId)
         {
@@ -364,9 +441,13 @@ namespace Aqua
             #endif
         }
 
-        //Bestiary Log Events
+        #region Bestiary Log Events 
         private void LogOpenBestiary()
         {
+            //Debug.Log("LOG: opened bestiary");
+            LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
+
+            //Debug.Log("LOG: Bestiary Opened");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -380,6 +461,7 @@ namespace Aqua
         }
         private void LogBestiaryOpenSpeciesTab()
         {
+            //Debug.Log("LOG: opened species tab");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -393,6 +475,7 @@ namespace Aqua
         }
         private void LogBestiaryOpenEnvironmentsTab()
         {
+            //Debug.Log("LOG: opened environment tab");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -406,6 +489,7 @@ namespace Aqua
         }
         private void LogBestiaryOpenModelsTab()
         {
+            //Debug.Log("LOG: opened model tab");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -419,6 +503,7 @@ namespace Aqua
         }
         private void LogBestiaryOpenTasksTab()
         {
+            //Debug.Log("LOG: opened tasks");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -432,6 +517,7 @@ namespace Aqua
         }
         private void LogBestiarySelectSpecies(string speciesId)
         {
+            //Debug.Log("LOG: selected a species");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId },
@@ -446,6 +532,7 @@ namespace Aqua
         }
         private void LogBestiarySelectEnvironment(string environmentId)
         {
+            //Debug.Log("LOG: selected an environment");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId },
@@ -460,6 +547,7 @@ namespace Aqua
         }
         private void LogCloseBestiary()
         {
+            //Debug.Log("LOG: closed bestiary");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -471,6 +559,7 @@ namespace Aqua
             FBCloseBestiary(m_CurrentJobId);
             #endif
         }
+        #endregion
 
         private void LogSimulationSyncAchieved()
         {

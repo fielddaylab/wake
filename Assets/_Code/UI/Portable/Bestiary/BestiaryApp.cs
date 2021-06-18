@@ -212,6 +212,8 @@ namespace Aqua.Portable
 
         private void OnCritterToggled(bool inbOn)
         {
+            //Debug.Log("Critter Tab Opened");
+            Services.Events.Dispatch(GameEvents.PortableTabSelected, BestiaryDescCategory.Critter);
             if (!IsShowing())
                 return;
 
@@ -221,6 +223,8 @@ namespace Aqua.Portable
 
         private void OnModelToggled(bool inbOn)
         {
+            //Debug.Log("Model Tab Opened");
+            Services.Events.Dispatch(GameEvents.PortableTabSelected, BestiaryDescCategory.Model);
             if (!IsShowing())
                 return;
 
@@ -230,6 +234,8 @@ namespace Aqua.Portable
 
         private void OnEcosystemToggled(bool inbOn)
         {
+            //Debug.Log("Ecosystem Tab opened");
+            Services.Events.Dispatch(GameEvents.PortableTabSelected, BestiaryDescCategory.Environment);
             if (!IsShowing())
                 return;
                 
@@ -246,6 +252,8 @@ namespace Aqua.Portable
                 return;
             }
 
+            Services.Events.Dispatch(GameEvents.PortableEntrySelected, (BestiaryDesc)inElement.Data);
+            //Debug.Log("Clicked a thing. Name: "+ ((BestiaryDesc) inElement.Data).CommonName().ToDebugString() +", category: "+ ((BestiaryDesc)inElement.Data).Category());
             LoadEntry((BestiaryDesc) inElement.Data);
         }
 

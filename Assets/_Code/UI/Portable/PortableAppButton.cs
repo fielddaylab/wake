@@ -44,11 +44,19 @@ namespace Aqua.Portable
         {
             if (!m_App || !isActiveAndEnabled)
                 return;
-            
+
             if (inbValue)
+            {
+                //User clicked app button
+                //Debug.Log("App button with ID " + m_Id.ToString() + " clicked");
+                Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id.ToString());
                 m_App.Show();
+            }
             else
+            {
+                Services.Events.Dispatch(GameEvents.PortableAppClosed, m_Id.ToString());
                 m_App.Hide();
+            }
         }
 
         private void OnClosed(BasePanel.TransitionType inTransition)
