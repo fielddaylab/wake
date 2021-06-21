@@ -50,6 +50,7 @@ Portable Device Interactions
 * bestiary_open_models_tab
 * bestiary_select_species (species_id)
 * bestiary_select_environment (environment_id)
+* bestiary_select_model (model_id)
 * close_bestiary
 * open_status
 * status_open_job_tab
