@@ -49,12 +49,12 @@ namespace Aqua.Portable
             {
                 //User clicked app button
                 //Debug.Log("App button with ID " + m_Id.ToString() + " clicked");
-                Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id.ToString());
+                Services.Events.Dispatch(GameEvents.PortableAppOpened, gameObject.name);
                 m_App.Show();
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.PortableAppClosed, m_Id.ToString());
+                Services.Events.Dispatch(GameEvents.PortableAppClosed, gameObject.name);
                 m_App.Hide();
             }
         }

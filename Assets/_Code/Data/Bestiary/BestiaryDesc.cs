@@ -260,6 +260,14 @@ namespace Aqua
         ALL
     }
 
+    [LabeledEnum]
+    public enum PortableStatusAppTabs
+    {
+        Job,
+        Item,
+        Tech,
+    }
+
     [Flags]
     public enum BestiaryDescFlags
     {

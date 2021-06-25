@@ -1,14 +1,12 @@
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
 using FieldDay;
 using ProtoAqua.Experiment;
 using ProtoAqua.Modeling;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
-using Aqua.Title;
-using System;
 
 namespace Aqua
 {
@@ -63,13 +61,25 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBBestiaryOpenModelsTab(string jobId);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenTasksTab(string jobId);
-        [DllImport("__Internal")]
         public static extern void FBBestiarySelectSpecies(string jobId, string speciesId);
         [DllImport("__Internal")]
         public static extern void FBBestiarySelectEnvironment(string jobId, string environmentId);
         [DllImport("__Internal")]
+        public static extern void FBBestiarySelectModel(string jobId, string modelId);
+        [DllImport("__Internal")]
         public static extern void FBCloseBestiary(string jobId);
+
+            //Status Events
+        [DllImport("__Internal")]
+        public static extern void FBOpenStatus(string jobId);
+        [DllImport("__Internal")]
+        public static extern void FBStatusOpenJobTab(string jobId);
+        [DllImport("__Internal")]
+        public static extern void FBStatusOpenItemTab(string jobId);
+        [DllImport("__Internal")]
+        public static extern void FBStatusOpenTechTab(string jobId);
+        [DllImport("__Internal")]
+        public static extern void FBCloseStatus(string jobId);
 
         //Game Feedback
         [DllImport("__Internal")]
@@ -99,15 +109,23 @@ namespace Aqua
             bestiary_open_species_tab,
             bestiary_open_environments_tab,
             bestiary_open_models_tab,
-            bestiary_open_tasks_tab,
             bestiary_select_species,
             bestiary_select_environment,
+            bestiary_select_model,
             close_bestiary,
+            open_status,
+            status_open_job_tab,
+            status_open_item_tab,
+            status_open_tech_tab,
+            close_status,
             simulation_sync_achieved,
             guide_script_triggered
         }
 
         private string m_CurrentJobId = string.Empty;
+        private string m_CurrentPortableAppId = string.Empty;
+        private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
+        private PortableStatusAppTabs? m_CurrentPortableStatusTabId = null;
 
         #endregion // Logging Variables
 
@@ -129,8 +147,11 @@ namespace Aqua
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart)
                 .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler)
                 .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler)
-                .Register<BestiaryDescCategory>(GameEvents.PortableTabSelected, PortableTabSelectedHandler)
-                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableEntrySelectedhandler);
+                .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler)
+                .Register<PortableStatusAppTabs>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler)
+                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler)
+                .Register(GameEvents.ScenePreloading, ClearSceneState)
+                .Register(GameEvents.PortableClosed, PortableClosed);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
         }
@@ -140,11 +161,16 @@ namespace Aqua
             m_Logger?.Flush();
             m_Logger = null;
         }
-
         #endregion // IService
 
-        #region Log Events
+        private void ClearSceneState()
+        {
+            m_CurrentPortableAppId = string.Empty;
+            m_CurrentPortableBestiaryTabId = null;
+            m_CurrentPortableStatusTabId = null;
+        }
 
+        #region Log Events
         private void OnTitleStart(string inUserCode)
         {
             if (!string.IsNullOrEmpty(inUserCode))
@@ -181,31 +207,52 @@ namespace Aqua
         #region bestiary handlers
         private void PortableAppOpenedHandler(string appId)
         {
-            if (appId == "@A9D54520")
+
+            if (m_CurrentPortableAppId != string.Empty)
+                PortableAppClosedHandler(m_CurrentPortableAppId);
+
+            m_CurrentPortableAppId = appId;
+            if (appId == "Bestiary")
             {
                 LogOpenBestiary();
             }
-            else if (appId == "@BA4B77EF")
+            else if (appId == "Status")
             {
-                //Opened Status app
-                LogBestiaryOpenTasksTab();
+                LogOpenStatus();
             }
         }
 
         private void PortableAppClosedHandler(string appId)
         {
-            if (appId == "@A9D54520")
+            if (m_CurrentPortableAppId != appId)
+                return;
+
+            m_CurrentPortableAppId = string.Empty;
+            if (appId == "Bestiary")
             {
+                m_CurrentPortableBestiaryTabId = null;
                 LogCloseBestiary();
             }
-            else if (appId == "@BA4B77EF")
+            else if (appId == "Status")
             {
-                //Closed Status app
+                m_CurrentPortableStatusTabId = null;
+                LogCloseStatus();
             }
         }
 
-        private void PortableTabSelectedHandler(BestiaryDescCategory tabName)
+        private void PortableClosed()
         {
+            if (m_CurrentPortableAppId != string.Empty)
+                PortableAppClosedHandler(m_CurrentPortableAppId);
+        }
+
+        private void PortableBestiaryTabSelectedHandler(BestiaryDescCategory tabName)
+        {
+            if (tabName == m_CurrentPortableBestiaryTabId) //Tab already open, don't send another log
+                return;
+            else
+                m_CurrentPortableBestiaryTabId = tabName;
+
             switch (tabName)
             {
                 case (BestiaryDescCategory.Critter): //Critter Tab
@@ -226,24 +273,50 @@ namespace Aqua
             }
         }
 
-        private void PortableEntrySelectedhandler(BestiaryDesc selectedData)
+        private void PortableStatusTabSelectedHandler(PortableStatusAppTabs tabName)
+        {
+            if (tabName == m_CurrentPortableStatusTabId) //Tab already open, don't send another log
+                return;
+            else
+                m_CurrentPortableStatusTabId = tabName;
+
+            switch (tabName)
+            {
+                case (PortableStatusAppTabs.Job): //Tasks Tab
+                    {
+                        LogStatusOpenJobTab();
+                        break;
+                    }
+                case (PortableStatusAppTabs.Item): //Items Tab
+                    {
+                        LogStatusOpenItemTab();
+                        break;
+                    }
+                case (PortableStatusAppTabs.Tech): //Tech Tab
+                    {
+                        LogStatusOpenTechTab();
+                        break;
+                    }
+            }
+        }
+
+        private void PortableBestiaryEntrySelectedhandler(BestiaryDesc selectedData)
         {
             switch (selectedData.Category())
             {
                 case (BestiaryDescCategory.Critter): //Critter Selected
                     {
-                        LogBestiarySelectSpecies(selectedData.CommonName().ToDebugString());
+                        LogBestiarySelectSpecies(selectedData.name);
                         break;
                     }
                 case (BestiaryDescCategory.Environment): //Ecosystem Selected
                     {
-                        LogBestiarySelectEnvironment(selectedData.CommonName().ToDebugString());
+                        LogBestiarySelectEnvironment(selectedData.name);
                         break;
                     }
                 case (BestiaryDescCategory.Model): //Model Selected
                     {
-                        //TODO: Select model logging not yet implemented
-                        //LogBestiarySelectModel(selectedData.CommonName().ToDebugString());
+                        LogBestiarySelectModel(selectedData.name);
                         break;
                     }
             }
@@ -441,13 +514,11 @@ namespace Aqua
             #endif
         }
 
-        #region Bestiary Log Events 
+        #region Bestiary App Logging
         private void LogOpenBestiary()
         {
-            //Debug.Log("LOG: opened bestiary");
-            LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
+            m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
-            //Debug.Log("LOG: Bestiary Opened");
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }
@@ -458,7 +529,10 @@ namespace Aqua
             #if !UNITY_EDITOR
             FBOpenBestiary(m_CurrentJobId);
             #endif
+
+            LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
         }
+
         private void LogBestiaryOpenSpeciesTab()
         {
             //Debug.Log("LOG: opened species tab");
@@ -501,20 +575,7 @@ namespace Aqua
             FBBestiaryOpenModelsTab(m_CurrentJobId);
             #endif
         }
-        private void LogBestiaryOpenTasksTab()
-        {
-            //Debug.Log("LOG: opened tasks");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
 
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_tasks_tab));
-
-            #if !UNITY_EDITOR
-            FBBestiaryOpenTasksTab(m_CurrentJobId);
-            #endif
-        }
         private void LogBestiarySelectSpecies(string speciesId)
         {
             //Debug.Log("LOG: selected a species");
@@ -545,6 +606,21 @@ namespace Aqua
             FBBestiarySelectEnvironment(m_CurrentJobId,environmentId);
             #endif
         }
+        private void LogBestiarySelectModel(string modelId)
+        {
+            //Debug.Log("LOG: selected an environment");
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId },
+                { "model_id", modelId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_model));
+
+            #if !UNITY_EDITOR
+            FBBestiarySelectModel(m_CurrentJobId,modelId);
+            #endif
+        }
         private void LogCloseBestiary()
         {
             //Debug.Log("LOG: closed bestiary");
@@ -557,6 +633,82 @@ namespace Aqua
 
             #if !UNITY_EDITOR
             FBCloseBestiary(m_CurrentJobId);
+            #endif
+        }
+        #endregion
+
+        #region Status App Logging
+        private void LogOpenStatus()
+        {
+            m_CurrentPortableStatusTabId = PortableStatusAppTabs.Job;
+
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.open_status));
+
+            #if !UNITY_EDITOR
+            FBOpenStatus(m_CurrentJobId);
+            #endif
+
+            LogStatusOpenJobTab(); //Status starts by opening tasks tab
+        }
+
+        private void LogStatusOpenJobTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_job_tab));
+
+            #if !UNITY_EDITOR
+            FBStatusOpenJobTab(m_CurrentJobId);
+            #endif
+        }
+
+        private void LogStatusOpenItemTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_item_tab));
+
+            #if !UNITY_EDITOR
+            FBStatusOpenItemTab(m_CurrentJobId);
+            #endif
+        }
+
+        private void LogStatusOpenTechTab()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_tech_tab));
+
+            #if !UNITY_EDITOR
+            FBStatusOpenTechTab(m_CurrentJobId);
+            #endif
+        }
+
+        private void LogCloseStatus()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.close_status));
+
+            #if !UNITY_EDITOR
+            FBCloseStatus(m_CurrentJobId);
             #endif
         }
         #endregion

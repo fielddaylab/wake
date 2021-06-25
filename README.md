@@ -43,14 +43,20 @@ Player Actions
 * ask_for_help (node_id) - User clicked the hint button
 * talk_with_guide (node_id) - User clicked the button for Kevin
 
+Portable Device Interactions
 * open_bestiry
 * bestiary_open_species_tab
 * bestiary_open_environments_tab
 * bestiary_open_models_tab
-* bestiary_open_tasks_tab
 * bestiary_select_species (species_id)
 * bestiary_select_environment (environment_id)
+* bestiary_select_model (model_id)
 * close_bestiary
+* open_status
+* status_open_job_tab
+* status_open_item_tab
+* status_open_tech_tab
+* close_status
 
 Game Feedback
 * simulation_sync_achieved (job_id)

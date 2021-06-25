@@ -134,14 +134,6 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiaryOpenTasksTab: function(jobId) {
-        var jobId = Pointer_stringify(jobId);
-
-        analytics.logEvent("bestiary_open_tasks_tab", {
-            job_id: jobId
-        });
-    },
-
     FBBestiarySelectSpecies: function(jobId, speciesId) {
         var jobId = Pointer_stringify(jobId);
         var speciesId = Pointer_stringify(speciesId);
@@ -163,6 +155,17 @@ mergeInto(LibraryManager.library, {
             environment_id: environmentId
         });
     },
+	
+	FBBestiarySelectModel: function(jobId, modelId) {
+        var jobId = Pointer_stringify(jobId);
+        var modelId = Pointer_stringify(modelId);
+
+        analytics.logEvent("bestiary_select_model",
+        {
+            job_id: jobId,
+            model_id: modelId
+        });
+    },
 
     FBCloseBestiary: function(jobId) {
         var jobId = Pointer_stringify(jobId);
@@ -171,6 +174,49 @@ mergeInto(LibraryManager.library, {
             job_id: jobId
         });
     },
+	
+	
+	//Status App 
+	FBOpenStatus: function(jobId){
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("open_status", {
+            job_id: jobId
+        });
+    },
+	
+	FBStatusOpenJobTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("status_open_job_tab", {
+            job_id: jobId
+        });
+    },
+	
+	FBStatusOpenItemTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("status_open_item_tab", {
+            job_id: jobId
+        });
+    },
+	
+	FBStatusOpenTechTab: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("status_open_tech_tab", {
+            job_id: jobId
+        });
+    },
+	
+	FBCloseStatus: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("close_status", {
+            job_id: jobId
+        });
+    },
+	
 
 
     FBSimulationSyncAchieved: function(jobId) {

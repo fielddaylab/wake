@@ -133,6 +133,7 @@ namespace Aqua.Portable
 
         private void OnJobToggle(bool inbOn)
         {
+            Services.Events.Dispatch(GameEvents.PortableStatusTabSelected, PortableStatusAppTabs.Job);
             if (!inbOn || !IsShowing())
                 return;
 
@@ -141,6 +142,7 @@ namespace Aqua.Portable
 
         private void OnItemToggle(bool inbOn)
         {
+            Services.Events.Dispatch(GameEvents.PortableStatusTabSelected, PortableStatusAppTabs.Item);
             if (!inbOn || !IsShowing())
                 return;
 
@@ -149,6 +151,7 @@ namespace Aqua.Portable
 
         private void OnTechToggle(bool inbOn)
         {
+            Services.Events.Dispatch(GameEvents.PortableStatusTabSelected, PortableStatusAppTabs.Tech);
             if (!inbOn || !IsShowing())
                 return;
 
