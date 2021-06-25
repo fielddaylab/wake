@@ -1,3 +1,4 @@
+using Aqua.Portable;
 using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
@@ -125,7 +126,7 @@ namespace Aqua
         private string m_CurrentJobId = string.Empty;
         private string m_CurrentPortableAppId = string.Empty;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
-        private PortableStatusAppTabs? m_CurrentPortableStatusTabId = null;
+        private StatusApp.PageId? m_CurrentPortableStatusTabId = null;
 
         #endregion // Logging Variables
 
@@ -148,7 +149,7 @@ namespace Aqua
                 .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler)
                 .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler)
                 .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler)
-                .Register<PortableStatusAppTabs>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler)
+                .Register<StatusApp.PageId>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler)
                 .Register(GameEvents.ScenePreloading, ClearSceneState)
                 .Register(GameEvents.PortableClosed, PortableClosed);
@@ -273,7 +274,7 @@ namespace Aqua
             }
         }
 
-        private void PortableStatusTabSelectedHandler(PortableStatusAppTabs tabName)
+        private void PortableStatusTabSelectedHandler(StatusApp.PageId tabName)
         {
             if (tabName == m_CurrentPortableStatusTabId) //Tab already open, don't send another log
                 return;
@@ -282,17 +283,17 @@ namespace Aqua
 
             switch (tabName)
             {
-                case (PortableStatusAppTabs.Job): //Tasks Tab
+                case (StatusApp.PageId.Job): //Tasks Tab
                     {
                         LogStatusOpenJobTab();
                         break;
                     }
-                case (PortableStatusAppTabs.Item): //Items Tab
+                case (StatusApp.PageId.Item): //Items Tab
                     {
                         LogStatusOpenItemTab();
                         break;
                     }
-                case (PortableStatusAppTabs.Tech): //Tech Tab
+                case (StatusApp.PageId.Tech): //Tech Tab
                     {
                         LogStatusOpenTechTab();
                         break;
@@ -640,7 +641,7 @@ namespace Aqua
         #region Status App Logging
         private void LogOpenStatus()
         {
-            m_CurrentPortableStatusTabId = PortableStatusAppTabs.Job;
+            m_CurrentPortableStatusTabId = StatusApp.PageId.Job;
 
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
