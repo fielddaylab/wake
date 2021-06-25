@@ -8,6 +8,7 @@ namespace Aqua.Scripting
 {
     public interface IScriptComponent
     {
+        ScriptObject Parent { get; }
         void OnRegister(ScriptObject inObject);
         void OnDeregister(ScriptObject inObject);
     }

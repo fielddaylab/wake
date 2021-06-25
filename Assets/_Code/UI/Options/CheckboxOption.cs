@@ -42,7 +42,7 @@ namespace Aqua.Option
             OptionsData options = Services.Data.Options;
             options.SetDirty();
             
-            Services.Events.Dispatch(GameEvents.OptionsUpdated, options);
+            Services.Events.QueueForDispatch(GameEvents.OptionsUpdated, options);
         }
     }
 }

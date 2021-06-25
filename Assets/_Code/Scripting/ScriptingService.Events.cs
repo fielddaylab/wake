@@ -34,6 +34,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("loc", ReplaceLoc);
             m_TagEventParser.AddReplace("var", ReplaceVariable).WithAliases("var-i", "var-f", "var-b", "var-s");
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
+            m_TagEventParser.AddReplace('|', "{wait 0.25}");
 
             // Extra Replace Tags (with embedded events)
 
@@ -61,13 +62,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("wipe-in", ScriptEvents.Global.ScreenWipeIn).WithStringData();
             m_TagEventParser.AddEvent("screen-flash", ScriptEvents.Global.ScreenFlash).WithStringData();
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
-            m_TagEventParser.AddEvent("load-scene", ScriptEvents.Global.LoadScene).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
-            m_TagEventParser.AddEvent("give-fact", ScriptEvents.Global.GiveFact).WithStringHashData();
-            m_TagEventParser.AddEvent("give-entity", ScriptEvents.Global.GiveEntity).WithStringHashData();
-            m_TagEventParser.AddEvent("set-job", ScriptEvents.Global.SwitchJob).WithStringHashData();
-            m_TagEventParser.AddEvent("complete-job", ScriptEvents.Global.CompleteJob).WithStringHashData();
-            m_TagEventParser.AddEvent("unlock-station", ScriptEvents.Global.UnlockStation).WithStringHashData();
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -203,7 +198,6 @@ namespace Aqua
         private void InitHandlers()
         {
             m_TagEventHandler = new TagStringEventHandler();
-            m_ArgListSplitter = new StringUtils.ArgsList.Splitter();
 
             m_TagEventHandler
                 .Register(ScriptEvents.Global.HideDialog, EventHideDialog)
@@ -219,20 +213,14 @@ namespace Aqua
                 .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
-                .Register(ScriptEvents.Global.LoadScene, EventLoadScene)
                 .Register(ScriptEvents.Global.BoxStyle, EventSetBoxStyle)
                 .Register(ScriptEvents.Global.ScreenWipeOut, EventScreenWipeOut)
                 .Register(ScriptEvents.Global.ScreenWipeIn, EventScreenWipeIn)
                 .Register(ScriptEvents.Global.ScreenFlash, EventScreenFlash)
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
                 .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
-                .Register(ScriptEvents.Global.GiveFact, EventGiveFact)
-                .Register(ScriptEvents.Global.GiveEntity, EventGiveEntity)
-                .Register(ScriptEvents.Global.SwitchJob, EventSwitchJob)
-                .Register(ScriptEvents.Global.CompleteJob, EventCompleteJob)
                 .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
-                .Register(ScriptEvents.Global.DisableObject, EventDisableObject)
-                .Register(ScriptEvents.Global.UnlockStation, EventUnlockStation);
+                .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
 
             m_SkippedEvents = new HashSet<StringHash32>();
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
@@ -281,12 +269,6 @@ namespace Aqua
             return resolver ?? Thread(inObject)?.Resolver;
         }
 
-        private TempList8<StringSlice> ExtractArgs(StringSlice inString)
-        {
-            TempList8<StringSlice> args = new TempList8<StringSlice>();
-            inString.Split(m_ArgListSplitter, StringSplitOptions.None, ref args);
-            return args;
-        }
 
         private void EventHideDialog(TagEventData inEvent, object inContext)
         {
@@ -300,7 +282,7 @@ namespace Aqua
 
         private IEnumerator EventPlaySound(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             StringHash32 id = args[0];
             AudioHandle playback = Services.Audio.PostEvent(id);
@@ -314,7 +296,7 @@ namespace Aqua
 
         private void EventPlayBGM(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
             if (args.Count > 0)
             {
                 float crossFadeTime = 0.5f;
@@ -329,7 +311,7 @@ namespace Aqua
 
         private void EventPitchBGM(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
             float pitch = 1;
             float fadeTime = 0.5f;
             if (args.Count >= 1)
@@ -345,7 +327,7 @@ namespace Aqua
 
         private void EventVolumeBGM(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
             float volume = 1;
             float fadeTime = 0.5f;
             if (args.Count >= 1)
@@ -367,7 +349,7 @@ namespace Aqua
         private IEnumerator EventTriggerResponse(TagEventData inEvent, object inContext)
         {
             ScriptThread thread = Thread(inContext);
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             StringHash32 trigger = args[0];
             StringHash32 who = args.Count > 1 ? args[1] : StringHash32.Null;
@@ -380,29 +362,6 @@ namespace Aqua
             return null;
         }
 
-        private IEnumerator EventLoadScene(TagEventData inEvent, object inContext)
-        {
-            var args = ExtractArgs(inEvent.StringArgument);
-            
-            SceneLoadFlags flags = SceneLoadFlags.Default;
-            string context = null;
-            if (args.Count >= 2 && args[1] == "no-loading-screen")
-            {
-                flags |= SceneLoadFlags.NoLoadingScreen;
-            }
-            if (args.Count >= 3)
-            {
-                context = args[2].ToString();
-            }
-
-            if ((flags & SceneLoadFlags.NoLoadingScreen) != 0)
-            {
-                return Services.State.LoadScene(args[0].ToString(), context, flags);
-            }
-            
-            return StateUtil.LoadSceneWithWipe(args[0].ToString(), context, flags);
-        }
-
         private void EventSetBoxStyle(TagEventData inEvent, object inContext)
         {
             Thread(inContext).Dialog = Services.UI.GetDialog(inEvent.Argument0.AsStringHash());
@@ -410,7 +369,7 @@ namespace Aqua
 
         private IEnumerator EventScreenWipeOut(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             var faderSource = Services.UI.WorldFaders;
             if (args.Count > 0 && args[0] == "above-ui")
@@ -442,7 +401,7 @@ namespace Aqua
 
         private IEnumerator EventScreenFlash(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             Color color = Parsing.ParseColor(args[0]);
             float duration = StringParser.ParseFloat(args[1], 0.2f);
@@ -470,7 +429,7 @@ namespace Aqua
 
         private IEnumerator EventFadeOut(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             Color color = Parsing.ParseColor(args[0]);
             float duration = StringParser.ParseFloat(args[1], 0.2f);
@@ -505,7 +464,7 @@ namespace Aqua
 
         private IEnumerator EventFadeIn(TagEventData inEvent, object inContext)
         {
-            var args = ExtractArgs(inEvent.StringArgument);
+            var args = inEvent.ExtractStringArgs();
 
             float duration = StringParser.ParseFloat(args[0], 0.2f);
 
@@ -544,7 +503,7 @@ namespace Aqua
 
         private void EventEnableDisableObjectImpl(TagEventData inEvent, object inContext, bool inbActive)
         {
-            var ids = ExtractArgs(inEvent.StringArgument);
+            var ids = inEvent.ExtractStringArgs();
             foreach(var id in ids)
             {
                 foreach(var scriptObject in GetScriptObjects(id))
@@ -552,48 +511,6 @@ namespace Aqua
                     scriptObject.gameObject.SetActive(inbActive);
                 }
             }
-        }
-
-        private void EventGiveFact(TagEventData inEvent, object inContext)
-        {
-            Services.Data.Profile.Bestiary.RegisterFact(inEvent.Argument0.AsStringHash());
-        }
-
-        private void EventGiveEntity(TagEventData inEvent, object inContext)
-        {
-            Services.Data.Profile.Bestiary.RegisterEntity(inEvent.Argument0.AsStringHash());
-        }
-
-        private void EventSwitchJob(TagEventData inEvent, object inContext)
-        {
-            Services.Data.Profile.Jobs.SetCurrentJob(inEvent.Argument0.AsStringHash());
-        }
-
-        private void EventCompleteJob(TagEventData inEvent, object inContext)
-        {
-            StringHash32 jobId = inEvent.Argument0.AsStringHash();
-            if (jobId.IsEmpty)
-                jobId = Services.Data.CurrentJobId();
-
-            if (jobId.IsEmpty)
-            {
-                Log.Error("[ScriptingService] Attempting to complete job, but no job specified and no job active");
-                return;
-            }
-
-            Services.Data.Profile.Jobs.MarkComplete(Services.Data.Profile.Jobs.GetProgress(jobId));
-        }
-
-        private void EventUnlockStation(TagEventData inEvent, object inContext)
-        {
-            StringHash32 stationId = inEvent.Argument0.AsStringHash();
-            if (stationId.IsEmpty)
-            {
-                Log.Error("[ScriptingService] Attempting to unlock station, but no station specified");
-                return;
-            }
-
-            Services.Data.Profile.Map.UnlockStation(stationId);
         }
 
         #endregion // Event Callbacks

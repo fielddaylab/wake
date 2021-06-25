@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(EventService), typeof(AudioMgr))]
-    public partial class OptionsWatcher : ServiceBehaviour
+    internal partial class OptionsWatcher : ServiceBehaviour
     {
         protected override void Initialize()
         {

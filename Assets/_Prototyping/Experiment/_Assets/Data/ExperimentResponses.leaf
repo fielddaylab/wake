@@ -12,7 +12,7 @@
 // {@player}   Yup!
 // {@kevin}    ...what's that device there?
 // {@player}   No idea.
-// {@kevin}    Okay, so you have {wait 0.3}no{wait 0.3} idea.
+// {@kevin}    Okay, so you have |no| idea.
 // {@player}   ...Alright, I just know it's supposed to be a lab.
 //             My friend cleaned up some of my salvage and put this together.
 //             I've never actually used it before.
@@ -27,7 +27,7 @@
 {@kevin}    Well, your ship is {slow}metal{/slow} on the outside.
             But this room doesn't match.
 {@player}   That's...
-            Hmm{wait 0.25}, you know, I haven't really thought about it.
+            Hmm|, you know, I haven't really thought about it.
 {@kevin}    Maybe your {slow}friend{/slow} thought the contrast was "stylish" or something.
 
 // Boot Screen
@@ -41,7 +41,7 @@ $set player:seen.aqos + 1
 $set player:seen.aqos.experiment.tablet = true
 {@player}   {speed 0.5}"AQ-OS"{/speed}{wait 0.1}, huh?
             Have you ever heard of this?
-{@kevin}    Hmm{wait 0.2}, nope, nothing comes to mind.
+{@kevin}    Hmm|, nope, nothing comes to mind.
 
 // TODO: Merge the following nodes down once "if" statements are supported
 
@@ -54,19 +54,19 @@ $set kevin:experiment.notedTabletDamage = true
 {@kevin}    Looks like there's already someone logged in.
 {@player}   Wha-{wait 0.5}{auto}
 {@kevin}    Oh, never mind, "recovery". Probably an auto account.
-{@player}   What{wait 0.2} are you talking about?
+{@player}   What| are you talking about?
 {@kevin}    That user id in the corner. The upper left.
             You said you salvaged this, right? Might have suffered some internal damage at some point.
 
 :: screen.userId.hasNotedDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "boot", kevin:experiment.notedTabletDamage, !seen:partner.talk.experiment.screen.userId.didNotNoteDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", kevin:experiment.notedTabletDamage, !Seen(partner.talk.experiment.screen.userId.didNotNoteDamage)
 @once
 @cutscene
 {@kevin}    Looks like there's already someone logged in.
 {@player}   Wha-{wait 0.5}{auto}
 {@kevin}    Oh, never mind, "recovery". Probably an auto account.
-{@player}   What{wait 0.2} are you talking about?
+{@player}   What| are you talking about?
 {@kevin}    That user id in the corner. The upper left.
             Spotless on the outside, but I think this might have some internal damage.
 
@@ -81,12 +81,12 @@ $set kevin:experiment.notedTabletDamage = true
 {@kevin}    That version number looks like a date.
             If that's the case, this device is at least two hundred years old.
 {@player}   Well, my friend did clean this whole rig up for me.
-{@kevin}    Yeah, but this was {slow}salvage{/slow}{wait 0.2} from the {slow}ocean{/slow}.
+{@kevin}    Yeah, but this was {slow}salvage{/slow}| from the {slow}ocean{/slow}.
             Your friend is either {slow}really{/slow} skilled, or these things were made to last.
 
 :: screen.versionNumber.hasNotedDamage
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos.experiment.tablet, kevin:experiment.notedTabletDamage, !seen:partner.talk.experiment.screen.versionNumber.didNotNoteDamage
+@when       experiment:setup.on, experiment:setup.screen == "boot", player:seen.aqos.experiment.tablet, kevin:experiment.notedTabletDamage, !Seen(partner.talk.experiment.screen.versionNumber.didNotNoteDamage)
 @once
 @cutscene
 {@kevin}    Given that it's in some kind of "recovery"...
@@ -94,7 +94,7 @@ $set kevin:experiment.notedTabletDamage = true
             If that version number there is a date...
             This device is at least two hundred years old.
 {@player}   Well, my friend did clean this whole rig up for me.
-{@kevin}    Yeah, but this was {slow}salvage{/slow}{wait 0.2} from the {slow}ocean{/slow}.
+{@kevin}    Yeah, but this was {slow}salvage{/slow}| from the {slow}ocean{/slow}.
             Your friend is either {slow}really{/slow} skilled, or the outside of these things were made to last.
 
 // Hypothesis Screen
@@ -112,12 +112,12 @@ $set kevin:experiment.notedTabletDamage = true
 @when       experiment:setup.on, experiment:setup.screen == "hypothesis"
 @once
 @cutscene
-{@player}   So there's just{wait 0.2} a screen{wait 0.2} missing here?
+{@player}   So there's just| a screen| missing here?
             Whoever made this must have run out of time or something...
 
 :: screen.hypothesis.2
 @trigger    RequestPartnerHelp
-@when       experiment:setup.on, experiment:setup.screen == "hypothesis", player:seen.aqos.experiment.tablet, seen:partner.talk.experiment.screen.hypothesis.1, seen:partner.talk.experiment.screen.hypothesis.0
+@when       experiment:setup.on, experiment:setup.screen == "hypothesis", player:seen.aqos.experiment.tablet, Seen(partner.talk.experiment.screen.hypothesis.1), Seen(partner.talk.experiment.screen.hypothesis.0)
 @once
 @cutscene
 {@kevin}    This "AQ-OS" must not have been finished.
@@ -185,7 +185,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.exitHint
 @trigger    TryEndExperiment
-@when       experiment:tankType == "Foundational", experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:setup.urchin, experiment:setup.kelp, !HasFact(Urchin.Eats.Kelp)
 @who        Kevin
 @cutscene
 {@kevin}    Hold on, I think we missed something.
@@ -195,7 +195,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.hint.1
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !HasFact(Urchin.Eats.Kelp)
 @who        Kevin
 @repeat     1
 @chatter
@@ -203,7 +203,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.hint.2
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !has.fact:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, !HasFact(Urchin.Eats.Kelp)
 @who        Kevin
 @repeat     1
 @chatter
@@ -211,7 +211,7 @@ $set temp:newObservationTimer = 0
 
 :: idle.foundational.urchinEatsKelp.found
 @trigger    ExperimentIdle
-@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, has.fact:Urchin.Eats.Kelp
+@when       experiment:tankType == "Foundational", experiment:running, experiment:setup.urchin, experiment:setup.kelp, HasFact(Urchin.Eats.Kelp)
 @who        Kevin
 @repeat     1
 @chatter
@@ -233,7 +233,7 @@ $set temp:newObservationTimer = 0
 @who        Kevin
 @repeat     1
 @chatter
-{@kevin}    Yep.{wait 0.2} Those are kelp.
+{@kevin}    Yep.| Those are kelp.
             Are we done staring at plants?
 
 // On Complete
@@ -241,7 +241,7 @@ $set temp:newObservationTimer = 0
 // :: attemptExit
 // @trigger    ExperimentFinished
 // @who        Kevin
-// $if has.fact:Urchin.Eats.Kelp
+// $if HasFact(Urchin.Eats.Kelp)
 //     $goto demo.experimentationExit
 // $else
 //     {@kevin}    I don't know if we got anything out of that experiment.

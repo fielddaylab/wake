@@ -128,7 +128,7 @@ namespace Aqua.Profile
             if (m_ScannerIds.Add(inId))
             {
                 m_HasChanges = true;
-                Services.Events.Dispatch(GameEvents.ScanLogUpdated, inId);
+                Services.Events.QueueForDispatch(GameEvents.ScanLogUpdated, inId);
                 return true;
             }
 
@@ -149,7 +149,7 @@ namespace Aqua.Profile
             if (m_UpgradeIds.Add(inUpgradeId))
             {
                 m_HasChanges = true;
-                Services.Events.Dispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
                 return true;
             }
 

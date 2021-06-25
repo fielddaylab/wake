@@ -30,7 +30,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Add(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
+                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
 
@@ -76,7 +76,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Remove(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
+                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
                 return true;
             }
 
@@ -119,7 +119,7 @@ namespace Aqua.Profile
                 }
                 if (bVisible)
                 {
-                    Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
                 }
                 return true;
             }
@@ -182,7 +182,7 @@ namespace Aqua.Profile
             {
                 m_HasChanges = true;
                 m_GraphedFacts.Remove(inFactId);
-                Services.Events.Dispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
+                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
             }
 
@@ -207,7 +207,7 @@ namespace Aqua.Profile
             
             m_HasChanges = true;
             m_GraphedFacts.Add(inFactId);
-            Services.Events.Dispatch(GameEvents.ModelUpdated, inFactId);
+            Services.Events.QueueForDispatch(GameEvents.ModelUpdated, inFactId);
             return true;
         }
 

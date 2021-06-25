@@ -35,14 +35,15 @@ namespace Aqua
             EnsureCreated();
 
             var jobsData = Services.Data.Profile.Jobs;
+            var mapData = Services.Data.Profile.Map;
 
             foreach(var job in Objects)
             {
-                if (!job.IsAtStation())
+                if (!job.IsAtStation(mapData))
                     continue;
                 if (jobsData.IsStartedOrComplete(job.Id()))
                     continue;
-                if (!job.ShouldBeAvailable())
+                if (!job.ShouldBeAvailable(jobsData))
                     continue;
                 
                 yield return job;
@@ -62,8 +63,10 @@ namespace Aqua
             EnsureCreated();
 
             var jobsData = Services.Data.Profile.Jobs;
+            var mapData = Services.Data.Profile.Map;
+
             var job = Get(inId);
-            return job != null && job.IsAtStation() && !jobsData.IsStartedOrComplete(inId) && job.ShouldBeAvailable();
+            return job != null && job.IsAtStation(mapData) && !jobsData.IsStartedOrComplete(inId) && job.ShouldBeAvailable(jobsData);
         }
 
         public IEnumerable<JobDesc> VisibleJobs()
@@ -71,10 +74,11 @@ namespace Aqua
             EnsureCreated();
 
             var jobsData = Services.Data.Profile.Jobs;
+            var mapData = Services.Data.Profile.Map;
 
             foreach(var job in Objects)
             {
-                if (jobsData.IsStartedOrComplete(job.Id()) || (job.IsAtStation() && job.ShouldBeAvailable()))
+                if (jobsData.IsStartedOrComplete(job.Id()) || (job.IsAtStation(mapData) && job.ShouldBeAvailable(jobsData)))
                 {
                     yield return job;
                 }

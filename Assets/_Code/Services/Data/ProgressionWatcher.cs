@@ -7,7 +7,7 @@ using Leaf;
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(AssetsService), typeof(EventService))]
-    public partial class ProgressionWatcher : ServiceBehaviour
+    internal partial class ProgressionWatcher : ServiceBehaviour
     {
         [NonSerialized] private LeafAsset m_JobScript;
         [NonSerialized] private LeafAsset m_ActScript;

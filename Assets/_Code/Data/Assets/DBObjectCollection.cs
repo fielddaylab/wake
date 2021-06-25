@@ -170,12 +170,17 @@ namespace Aqua
                 if (GUILayout.Button("Refresh"))
                 {
                     DBObjectCollection<T> collection = (DBObjectCollection<T>) target;
-                    collection.m_Objects = ValidationUtils.FindAllAssets<T>();
+                    collection.RefreshCollection();
                     UnityEditor.EditorUtility.SetDirty(collection);
                 }
 
                 GUI.enabled = bGUIEnabled;
             }
+        }
+
+        internal void RefreshCollection()
+        {
+            m_Objects = ValidationUtils.FindAllAssets<T>();
         }
 
         #endif // UNITY_EDITOR

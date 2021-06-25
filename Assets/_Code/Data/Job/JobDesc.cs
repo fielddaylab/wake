@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Profile;
 using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf;
@@ -32,8 +33,8 @@ namespace Aqua
         [SerializeField] private string m_PrereqConditions = null;
 
         [Header("Locations")]
-        [SerializeField] private string m_StationId = null;
-        [SerializeField] private string[] m_DiveSiteIds = null;
+        [SerializeField] private SerializedHash32 m_StationId = null;
+        [SerializeField] private SerializedHash32[] m_DiveSiteIds = null;
 
         [Header("Steps")]
         [SerializeField] private EditorJobTask[] m_Tasks = null;
@@ -77,16 +78,14 @@ namespace Aqua
             }
         }
 
-        public bool ShouldBeAvailable()
+        public bool ShouldBeAvailable(JobsData inData)
         {
-            var jobs = Services.Data.Profile.Jobs;
-
-            if (HasFlags(JobDescFlags.Hidden) && !jobs.IsHiddenUnlocked(Id()))
+            if (HasFlags(JobDescFlags.Hidden) && !inData.IsHiddenUnlocked(Id()))
                 return false;
 
             foreach(var job in m_PrerequisiteJobs)
             {
-                if (!jobs.IsComplete(job.Id()))
+                if (!inData.IsComplete(job.Id()))
                     return false;
             }
 
@@ -96,20 +95,18 @@ namespace Aqua
             return true;
         }
 
-        public bool IsAtStation()
+        public bool IsAtStation(MapData inMap)
         {
-            var map = Services.Data.Profile.Map;
-
-            if (!string.IsNullOrEmpty(m_StationId))
+            if (!m_StationId.IsEmpty)
             {
-                if (map.CurrentStationId() != m_StationId)
+                if (inMap.CurrentStationId() != m_StationId)
                     return false;
             }
 
             return true;
         }
 
-        public bool UsesDiveSite(string inDiveSiteId)
+        public bool UsesDiveSite(StringHash32 inDiveSiteId)
         {
             return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
         }

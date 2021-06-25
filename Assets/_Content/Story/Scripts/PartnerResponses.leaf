@@ -1,0 +1,133 @@
+#basePath   partner.help
+
+// some regular reponses
+
+:: default.1
+@trigger    PartnerTalk
+@repeat     2
+@boostScore -5
+@chatter
+$set temp:defaultResponseCount + 1
+{@kevin}    Nope, sorry, got nothing right now.
+
+:: default.2
+@trigger    PartnerTalk
+@repeat     2
+@boostScore -5
+@chatter
+$set temp:defaultResponseCount + 1
+{@kevin}    Huh? Sorry, thinking right now.
+
+:: default.3
+@trigger    PartnerTalk
+@repeat     2
+@boostScore -5
+@chatter
+$set temp:defaultResponseCount + 1
+{@kevin}    Let's chat later, okay?
+
+:: default.irritated.1
+@trigger    PartnerTalk
+@when       temp:defaultResponseCount >= 4
+@chatter
+@boostScore -5
+$set temp:defaultResponseCount = 0
+{@kevin}    Back off for a minute, okay?
+
+:: default.irritated.2
+@trigger    PartnerTalk
+@when       temp:defaultResponseCount >= 4
+@chatter
+@boostScore -5
+$set temp:defaultResponseCount = 0
+{@kevin}    Ugh, please give me some space for a second.
+
+// trust conversations
+
+:: telepathy.first
+@trigger    PartnerTalk
+@when       kevin:help.requests >= 10
+@boostScore 1000
+@once       profile
+@cutscene
+$set        kevin:trust + 1
+{@player}   This is just... so weird. We're talking, but not speaking.
+{@kevin}    What did I tell you?
+            It's a jellyblob thing. We're connected now.
+{@player}   How does that work exactly?
+{@kevin}    Eh.| There's time for that later.
+            For now, let's just try getting used to it.
+
+:: telepathy.discomfort
+@trigger    PartnerTalk
+@when       kevin:help.requests >= 30, kevin:help.comfortTalks == 0
+@once       profile
+@cutscene
+$set        kevin:trust + 1
+$set kevin:help.comfortTalks + 1
+{@player}   Is this supposed to be... uncomfortable?
+{@kevin}    What do you mean?
+{@player}   It feels like you're in my head.
+{@kevin}    Oh. Yeah, that makes sense.
+            This kind of thing is pretty natural for me...
+            ...but I get that humans aren't familiar with this level of closeness.
+{@player}   No, I was definitely not prepared.
+{@kevin}    Well, good news is we're going to get a lot of practice.
+            So it should only get better from here on out.
+
+:: telepathy.trust
+@trigger    PartnerTalk
+@when       kevin:help.requests >= 45, kevin:help.comfortTalks == 1
+@once       profile
+@boostScore 3
+@cutscene
+$set        kevin:trust + 1
+$set kevin:help.comfortTalks + 1
+{@player}   So... You haven't been, like, in my thoughts, right?
+            Like my private thoughts?
+{@kevin}    No no, that's not how this works.
+            I can't look anywhere you don't want me to look.
+{@player}   Oh, okay... it's not that-{wait 0.5}{auto}
+{@kevin}    -"you don't trust me", right? Yeah|, don't worry, I get it.
+            This is still new to you.
+            Eventually we'll trust each other more. {wait 0.5}And we'll be able to help each other more too.
+{@player}   Thanks for understanding.
+            ...Does that mean... I'll eventually be able to look into {wait 0.1}your{wait 0.1} mind someday?
+{@kevin}    ...Sure. When I trust you the same way, maybe we can try that.
+
+// name conversations
+
+:: name.intro
+@trigger    PartnerTalk
+@when       Random(rare), kevin:trust >= 1, kevin:help.nameTalks == 0
+@once
+@cutscene
+$set kevin:help.nameTalks + 1
+{@player}   So, where'd you get the name "Kevin" from?
+{@kevin}    From{wait 0.5} one of my old friends.
+            I thought it was a nice name.
+{@player}   Oh, cool.
+
+:: name.introFollowup
+@trigger    PartnerTalk
+@when       Random(common), kevin:help.nameTalks == 1
+@once
+@cutscene
+$set kevin:help.nameTalks + 1
+{@player}   So was Kevin your friend's name?
+            Or did they just suggest "Kevin" to you?
+{@kevin}    Uh... a bit of both I guess?
+            {#tired} I don't know, can we not talk about them right now?
+
+:: name.sideComment
+@trigger    PartnerTalk
+@when       Random(rare), kevin:trust >= 2, kevin:help.nameTalks >= 2
+@once
+@cutscene
+$set kevin:help.nameTalks + 1
+{@player}   You know, I like the name Kevin.
+{@kevin #confused}    Really?
+{@player}   Yeah, it has good "science familiar" energy.
+{@kevin #happy} Why thank you.
+{@}	They do a little bow.
+{@kevin #happy}	I picked it out myself.

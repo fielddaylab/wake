@@ -12,6 +12,7 @@ using UnityEngine;
 using BeauUtil.Services;
 using UnityEngine.SceneManagement;
 using Aqua.Animation;
+using Aqua.Cameras;
 
 namespace Aqua
 {
@@ -35,6 +36,7 @@ namespace Aqua
 
         [ServiceReference] static public AssetsService Assets { get; private set; }
         [ServiceReference] static public AudioMgr Audio { get; private set; }
+        [ServiceReference] static public CameraService Camera { get; private set; }
         [ServiceReference] static public DataService Data { get; private set; }
         [ServiceReference] static public EventService Events { get; private set; }
         [ServiceReference] static public InputService Input { get; private set; }

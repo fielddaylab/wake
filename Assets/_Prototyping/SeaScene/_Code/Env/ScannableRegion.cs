@@ -218,7 +218,7 @@ namespace ProtoAqua.Observation
             
             if (m_ScannerOn)
             {
-                m_Collider.transform.position = ObservationServices.Camera.GameplayPlanePosition(transform);
+                m_Collider.transform.position = Services.Camera.GameplayPlanePosition(transform);
             }
         }
 

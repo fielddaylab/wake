@@ -8,18 +8,9 @@ namespace Aqua
     {
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            string targetScene = null;
-
-            if (!string.IsNullOrEmpty(targetScene))
-            {
-                Services.State.LoadScene("*" + targetScene, null);
-            }
-            else
-            {
-                int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
-                SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
-                Services.State.LoadScene(nextScene, null, SceneLoadFlags.NoLoadingScreen);
-            }
+            int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
+            SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
+            Services.State.LoadScene(nextScene, null, SceneLoadFlags.NoLoadingScreen);
         }
     }
 }

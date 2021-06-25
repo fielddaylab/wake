@@ -15,19 +15,35 @@ namespace Aqua
 
         #endregion // Inspector
 
-        private Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>();
-        private HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
+        private readonly Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>();
+        private readonly HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
+        private readonly HashSet<MapDesc> m_DiveSites = new HashSet<MapDesc>();
 
         public StringHash32 DefaultStationId() { return m_DefaultStationId; }
-        public ICollection<MapDesc> Stations() { return m_Stations; }
+
+        public IReadOnlyCollection<MapDesc> Stations() { return m_Stations; }
+        public IReadOnlyCollection<MapDesc> DiveSites() { return m_DiveSites; }
 
         protected override void ConstructLookupForItem(MapDesc inItem, int inIndex)
         {
             base.ConstructLookupForItem(inItem, inIndex);
             
             m_SceneMapping.Add(inItem.SceneName(), inItem.Id());
-            if (inItem.HasFlags(MapFlags.IsStation))
-                m_Stations.Add(inItem);
+
+            switch(inItem.Category())
+            {
+                case MapCategory.DiveSite:
+                    {
+                        m_DiveSites.Add(inItem);
+                        break;
+                    }
+
+                case MapCategory.Station:
+                    {
+                        m_Stations.Add(inItem);
+                        break;
+                    }
+            }
         }
 
         #if UNITY_EDITOR
@@ -48,6 +64,11 @@ namespace Aqua
             StringHash32 mapId;
             Services.Assets.Map.m_SceneMapping.TryGetValue(inScene.Name, out mapId);
             return mapId;
+        }
+
+        static public StringHash32 LookupCurrentMap()
+        {
+            return LookupMap(SceneHelper.ActiveScene());
         }
     }
 }

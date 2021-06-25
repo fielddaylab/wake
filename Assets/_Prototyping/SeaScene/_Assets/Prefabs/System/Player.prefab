@@ -44,10 +44,11 @@ GameObject:
   - component: {fileID: 7135260869252477138}
   - component: {fileID: 7135260869252477136}
   - component: {fileID: 7135260869252477137}
-  - component: {fileID: 7135260869252477151}
   - component: {fileID: 1809099619024997122}
   - component: {fileID: 4239190790123161061}
   - component: {fileID: 1556294208229602822}
+  - component: {fileID: 378967908632429550}
+  - component: {fileID: 1735466968741989519}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -124,18 +125,6 @@ MonoBehaviour:
   SolidMask:
     serializedVersion: 2
     m_Bits: 536870912
---- !u!114 &7135260869252477151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7135260869252477139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f9de48ef1de9847ba7d2603d3b7f02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1809099619024997122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +190,39 @@ MonoBehaviour:
     type: 3}
   m_ScanOn: {fileID: 2258710883620090256, guid: 58dd78c389de9d649b3e66c59c6436ba,
     type: 3}
+--- !u!114 &378967908632429550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135260869252477139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ClassName:
+    m_Source: 
+    m_Hash: 0
+  m_Id:
+    m_Source: Player
+    m_Hash: 477166624
+--- !u!114 &1735466968741989519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135260869252477139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aba82fdc1fdd1014aa91039649946da6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Lerp: 5
+  Zoom: 1
+  Flags: 7
 --- !u!1 &7135260869292614020
 GameObject:
   m_ObjectHideFlags: 0
@@ -5054,7 +5076,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9813,7 +9834,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9871,6 +9891,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -9886,6 +9911,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -9898,16 +9928,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8032358362419644786, guid: d0d8b7de4a2936740bc9a9f3eaa1c184,
         type: 3}

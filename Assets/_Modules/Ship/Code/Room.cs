@@ -2,6 +2,7 @@
 using BeauRoutine;
 using BeauUtil;
 using System;
+using Aqua.Cameras;
 
 namespace Aqua.Ship
 {
@@ -12,8 +13,7 @@ namespace Aqua.Ship
         [SerializeField] private SerializedHash32 m_Id = null;
         
         [Header("Camera Settings")]
-        [SerializeField, Required(ComponentLookupDirection.Self)] private Transform m_CameraTarget = null;
-        [SerializeField] private float m_CameraHeight = 10;
+        [SerializeField, Required(ComponentLookupDirection.Self)] private CameraPose m_CameraTarget = null;
 
         [Header("Objects")]
         [SerializeField] private ColorGroup m_RootRenderingGroup = null;
@@ -36,16 +36,9 @@ namespace Aqua.Ship
             Hide();
         }
 
-        public void Enter(Camera inCamera)
+        public void Enter()
         {
-            inCamera.transform.SetPosition(m_CameraTarget.position, Axis.XY);
-            
-            var fovPlane = inCamera.GetComponent<CameraFOVPlane>();
-            if (fovPlane != null)
-            {
-                fovPlane.Target = m_CameraTarget;
-                fovPlane.Height = m_CameraHeight;
-            }
+            Services.Camera.SnapToPose(m_CameraTarget);
 
             Show();
         }

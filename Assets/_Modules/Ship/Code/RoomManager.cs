@@ -46,7 +46,7 @@ namespace Aqua.Ship
 
         public void LoadNavRoom()
         {
-            StateUtil.LoadMapWithWipe(Services.Data.Profile.Map.CurrentStationId());
+            StateUtil.LoadMapWithWipe(Services.Data.Profile.Map.CurrentStationId(), "Ship");
         }
 
         public void LoadScene(string inScene)
@@ -64,7 +64,7 @@ namespace Aqua.Ship
             if (m_CurrentRoom == null)
             {
                 m_CurrentRoom = inRoom;
-                m_CurrentRoom.Enter(Services.State.Camera);
+                m_CurrentRoom.Enter();
 
                 using(var table = TempVarTable.Alloc())
                 {
@@ -89,7 +89,7 @@ namespace Aqua.Ship
                 m_CurrentRoom.Exit();
                 m_CurrentRoom = inNextRoom;
                 yield return 0.15f;
-                m_CurrentRoom.Enter(Services.State.Camera);
+                m_CurrentRoom.Enter();
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("roomId", m_CurrentRoom.Id());

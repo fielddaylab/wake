@@ -14,56 +14,58 @@ namespace Aqua
         private const float PauseDuration = 0.15f;
         private const string DefaultBackScene = "Ship";
 
-        static public IEnumerator LoadSceneWithFader(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        static public IEnumerator LoadSceneWithFader(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadSceneWithWipe(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        static public IEnumerator LoadSceneWithWipe(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithFader(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        static public IEnumerator LoadPreviousSceneWithFader(StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
             return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithWipe(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        static public IEnumerator LoadPreviousSceneWithWipe(StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             string sceneToLoad = null;
-            var currentMap = MapDB.LookupMap(SceneHelper.ActiveScene());
-            if (!currentMap.IsEmpty)
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            if (!currentMapId.IsEmpty)
             {
-                sceneToLoad = Services.Assets.Map.Get(currentMap).Parent()?.SceneName();
+                if (inEntrance.IsEmpty)
+                    inEntrance = currentMapId;
+                sceneToLoad = Services.Assets.Map.Get(currentMapId).Parent()?.SceneName();
             }
 
             BeforeLoad();
             if (!string.IsNullOrEmpty(sceneToLoad))
             {
                 return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(sceneToLoad, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadScene(sceneToLoad, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
             }
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inContext, LoadFlags | inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );
         }
 

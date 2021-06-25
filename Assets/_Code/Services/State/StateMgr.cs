@@ -27,22 +27,22 @@ namespace Aqua
         #endregion // Inspector
 
         private Routine m_SceneLoadRoutine;
+        [NonSerialized] private StringHash32 m_EntranceId;
         [NonSerialized] private bool m_SceneLock;
-        [NonSerialized] private Camera m_MainCamera;
 
         private VariantTable m_TempSceneTable;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
 
-        public Camera Camera { get { return m_MainCamera; } }
+        public StringHash32 LastEntranceId { get { return m_EntranceId; } }
 
         #region Scene Loading
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(string inSceneName, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        public IEnumerator LoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -58,14 +58,14 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene from a given map id.
         /// </summary>
-        public IEnumerator LoadSceneFromMap(StringHash32 inMapId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        public IEnumerator LoadSceneFromMap(StringHash32 inMapId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -88,14 +88,14 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(SceneBinding inScene, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        public IEnumerator LoadScene(SceneBinding inScene, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -110,14 +110,14 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to another scene.
         /// </summary>
-        public IEnumerator LoadScene(StringHash32 inSceneId, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        public IEnumerator LoadScene(StringHash32 inSceneId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -133,14 +133,14 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
         /// <summary>
         /// Loads to the previously loaded scene.
         /// </summary>
-        public IEnumerator LoadPreviousScene(string inDefault = null, object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
+        public IEnumerator LoadPreviousScene(string inDefault = null, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             if (m_SceneLock)
             {
@@ -152,7 +152,7 @@ namespace Aqua
             {
                 if (!string.IsNullOrEmpty(inDefault))
                 {
-                    return LoadScene(inDefault, inContext, inFlags);
+                    return LoadScene(inDefault, inEntrance, inContext, inFlags);
                 }
 
                 Log.Error("[StateMgr] No previous scene in scene history");
@@ -166,7 +166,7 @@ namespace Aqua
             SceneBinding prevScene = m_SceneHistory.PeekBack();
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inEntrance, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -175,7 +175,7 @@ namespace Aqua
         /// </summary>
         public IEnumerator ReloadCurrentScene(object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
-            return LoadScene(SceneHelper.ActiveScene(), inContext, inFlags);
+            return LoadScene(SceneHelper.ActiveScene(), m_EntranceId, inContext, inFlags);
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Aqua
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
-        private IEnumerator SceneSwap(SceneBinding inNextScene, object inContext, SceneLoadFlags inFlags)
+        private IEnumerator SceneSwap(SceneBinding inNextScene, StringHash32 inEntrance, object inContext, SceneLoadFlags inFlags)
         {
             Services.Input.PauseAll();
             Services.Script.KillLowPriorityThreads();
@@ -267,6 +267,7 @@ namespace Aqua
             #endif // DEVELOPMENT
 
             SceneBinding active = SceneHelper.ActiveScene();
+            m_EntranceId = inEntrance;
 
             // unloading instant
             DebugService.Log(LogMask.Loading, "[StateMgr] Unloading scene '{0}'", active.Path);
@@ -357,6 +358,33 @@ namespace Aqua
             return null;
         }
 
+        private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
+        {
+            using(PooledList<IScenePreloader> allPreloaders = PooledList<IScenePreloader>.Create())
+            {
+                inRoot.GetComponentsInChildren<IScenePreloader>(true, allPreloaders);
+                if (allPreloaders.Count > 0)
+                {
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
+                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
+                }
+            }
+
+            return null;
+        }
+
+        private IEnumerator WaitForCleanup()
+        {
+            using(Profiling.Time("gc collect"))
+            {
+                GC.Collect();
+            }
+            using(Profiling.Time("unload unused assets"))
+            {
+                yield return Resources.UnloadUnusedAssets();
+            }
+        }
+
         #if UNITY_EDITOR
         
         private IEnumerator WaitForOptimize(SceneBinding inBinding)
@@ -393,33 +421,6 @@ namespace Aqua
 
         #endif // UNITY_EDITOR
 
-        private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
-        {
-            using(PooledList<IScenePreloader> allPreloaders = PooledList<IScenePreloader>.Create())
-            {
-                inRoot.GetComponentsInChildren<IScenePreloader>(true, allPreloaders);
-                if (allPreloaders.Count > 0)
-                {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
-                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
-                }
-            }
-
-            return null;
-        }
-
-        private IEnumerator WaitForCleanup()
-        {
-            using(Profiling.Time("gc collect"))
-            {
-                GC.Collect();
-            }
-            using(Profiling.Time("unload unused assets"))
-            {
-                yield return Resources.UnloadUnusedAssets();
-            }
-        }
-
         #endregion // Scene Loading
 
         #region Scene History
@@ -450,9 +451,8 @@ namespace Aqua
             }
 
             // locate camera
-            m_MainCamera = Camera.main;
-
-            Services.UI.BindCamera(m_MainCamera);
+            Services.Camera.LocateCameraRig();
+            Services.UI.BindCamera(Services.Camera.Current);
         }
 
         #endregion // Scripting
@@ -570,6 +570,26 @@ namespace Aqua
         }
 
         #endregion // IDebuggable
+
+        #region Leaf
+
+        static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        {
+            SceneLoadFlags flags = SceneLoadFlags.Default;
+            if (inLoadingMode == "no-loading-screen")
+            {
+                flags |= SceneLoadFlags.NoLoadingScreen;
+            }
+            
+            if ((flags & SceneLoadFlags.NoLoadingScreen) != 0)
+            {
+                return Services.State.LoadScene(inSceneName, inEntrance, flags);
+            }
+            
+            return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+        }
+
+        #endregion // Leaf
     }
 
     public enum SceneLoadFlags

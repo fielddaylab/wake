@@ -1,0 +1,181 @@
+#basePath   job.coral-fishy-bizz
+
+:: start
+@trigger    JobStarted
+@cutscene
+$set jobs:coral-fishy-bizz.gotScans = false
+{@profCempaka}	Site V is a very popular fishing spot for Grouper. We need to set some guidelines for how much fishing can be done sustainably. 
+{@profCempaka}	I need you to determine how much Red Grouper can be harvested sustainably.
+{@profCempaka}	Start by heading to Site V and learning about the Grouper and the Fishers.
+{@player}		We're on it!
+
+:: helpGoOutside
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == false
+@cutscene
+{@player}   Any idea where I should go next?
+{@kevin}	First let's exit the ship and head over to Site V.
+
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station2"
+@once
+@cutscene
+{@kevin} 	Site V should be to the east of the ship, let's go!
+
+:: helpGoToSiteV
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == false
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Site V should be to the east of the ship.
+{@kevin}	Let's head over there and dive down. 
+
+
+:: gotScans
+@trigger    JobTaskUpdated
+@when 		scene:name == "RS-2V", HasEntity(Fishers), HasEntity(RedGrouper), scene:name == "RS-2V"
+@cutscene
+$if HasFact(Fishers.Eats.RedGrouper)
+	$if HasEntity(ReefEdge)
+		$set jobs:coral-fishy-bizz.gotScans = true
+		{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
+	$else
+		{@kevin} 	So that's the Fisher and Grouper scans done.
+		{@kevin} 	I think the rest of the data we need should be in the probe.
+	$endif
+$else
+	$if HasFact(RedGrouper.Reproduce)
+		{@kevin} 	So that's the Fisher and Grouper scans done.
+		{@kevin} 	Next all we need is the fishing rate. Maybe try scanning those nets?
+	$else
+		{@kevin} 	So that's the Fisher and Grouper scans done.
+		{@kevin} 	Now we just need the Grouper reproduction rate, and the fishing rate.
+		{@kevin} 	Try checking the probe and those nets!
+	$endif
+$endif
+
+:: helpAtSiteV_1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2V"
+@cutscene
+{@player} 	What should I be looking for here?
+$if HasEntity(Fishers)
+	$if HasEntity(RedGrouper)
+		{@kevin} 	Congrats! You have found a bug! 
+		{@kevin} 	If this text is shown something has gone very, very wrong...
+	$else
+		{@kevin} 	Now all that's left is the Red Grouper.
+		{@kevin} 	Try seeing if you can find any swimming around. 
+	$endif
+$else
+	$if HasEntity(RedGrouper)
+		{@kevin} 	Looks like we still need some info on the fishers. 
+		{@kevin} 	Try scanning some of those nets near the surface.
+	$else
+		{@kevin} 	First, we need to scan some Red Grouper and the Fisher nets.
+		{@kevin} 	Drive around and see if you can find them!
+	$endif
+$endif
+
+:: helpAtSiteV_2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2V", HasEntity(Fishers), HasEntity(RedGrouper)
+@boostScore 2 //just in case because I don't trust myself
+@cutscene
+{@player} 	What should I do now?
+$if HasFact(Fishers.Eats.RedGrouper)
+	$if HasEntity(ReefEdge)
+		{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
+	$else
+		{@kevin} 	Did you try scanning the probe yet? Some of the data we need should be in there.
+	$endif
+$else
+	$if HasFact(RedGrouper.Reproduce)
+		{@kevin} 	Next all we need is the fishing rate. Maybe try scanning those nets?
+	$else
+		{@kevin} 	Looks like we still need the Grouper reproduction rate, and the fishing rate.
+		{@kevin} 	Make sure to get the probe, and try scanning those nets.
+	$endif
+$endif
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == true
+@boostScore 2
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We've got all the scans we need from Site V, so lets head back west to the ship.
+
+
+:: backAtShip
+@trigger    SceneStart
+@when       scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == true
+@once
+@cutscene
+{@kevin}   	Let's head to the modeling room and see if we can understand how the Grouper's population and Fisher population interacts.
+
+:: helpAfterExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name != "ModelingPrototype", jobs:coral-fishy-bizz.gotScans == true, !HasFact(Model.GrouperFishingRate)
+@cutscene
+{@player} 	What should we be doing next?
+{@kevin}	Let's head to the modeling room and figure out how many Fishers we have have at Site V.
+
+
+::ModelHelp1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !HasFact(Model.GrouperFishingRate)
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
+
+
+:: modelGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@kevin} 	Time to match up the historical data again.
+
+::ModelHelp2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !HasFact(Model.GrouperFishingRate)
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
+
+
+:: modelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} 	Nice!
+
+::ModelHelp3
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	The graph now shows a predition of how the Fisher population affects the Grouper population. 
+{@kevin}	Try moving things around until the populations match the target on the right.
+{@kevin}	Then, hit "Save Predition" to move on.
+
+
+:: modelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+{@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
+{@kevin}	Let's report this back to Professor Cempaka.
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		HasFact(Urchin.Eats.Sargassum)
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
+$if global:nav.shipRoom == "office"
+	{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+$endif

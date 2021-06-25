@@ -84,7 +84,7 @@ namespace ProtoAqua.Observation
 
         private void LockPosition(Vector2 inOffset)
         {
-            Vector2 screenPos = Services.State.Camera.WorldToScreenPoint(this.CacheComponent(ref m_Transform).position + (Vector3) inOffset);
+            Vector2 screenPos = Services.Camera.Current.WorldToScreenPoint(this.CacheComponent(ref m_Transform).position + (Vector3) inOffset);
             Services.UI.Cursor.LockPosition(CursorLockKey, screenPos);
             m_PositionLocked = true;
         }

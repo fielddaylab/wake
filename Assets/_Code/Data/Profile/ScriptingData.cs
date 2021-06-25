@@ -12,6 +12,7 @@ namespace Aqua.Profile
 
         public VariantTable GlobalTable = new VariantTable("global");
         public VariantTable JobsTable = new VariantTable("jobs");
+        public VariantTable WorldTable = new VariantTable("world");
 
         public VariantTable PlayerTable = new VariantTable("player");
         public VariantTable PartnerTable = new VariantTable("partner");
@@ -21,6 +22,10 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_TrackedVisitedNodes = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_TrackedVisitedNodesForSession = new HashSet<StringHash32>();
         private RingBuffer<StringHash32> m_RecentNodeHistory = new RingBuffer<StringHash32>(32, RingBufferMode.Overwrite);
+
+        // scheduling
+
+        private RingBuffer<GTEventDate> m_ScheduledEvents = new RingBuffer<GTEventDate>(32, RingBufferMode.Expand);
 
         private uint m_ActIndex = 0;
 
@@ -50,6 +55,7 @@ namespace Aqua.Profile
             JobsTable.OnUpdated += OnTableUpdated;
             PlayerTable.OnUpdated += OnTableUpdated;
             PartnerTable.OnUpdated += OnTableUpdated;
+            WorldTable.OnUpdated += OnTableUpdated;
         }
 
         public void Reset()
@@ -58,10 +64,13 @@ namespace Aqua.Profile
             PlayerTable.Clear();
             PartnerTable.Clear();
             JobsTable.Clear();
+            WorldTable.Clear();
 
             m_TrackedVisitedNodes.Clear();
             m_TrackedVisitedNodesForSession.Clear();
             m_RecentNodeHistory.Clear();
+
+            m_ScheduledEvents.Clear();
         }
 
         #region Node Visits
@@ -113,10 +122,138 @@ namespace Aqua.Profile
                     }
             }
 
-            Services.Events.Dispatch(GameEvents.ScriptNodeSeen, inId);
+            Services.Events.QueueForDispatch(GameEvents.ScriptNodeSeen, inId);
         }
 
         #endregion // Node Visits
+
+        #region Scheduling
+
+        /// <summary>
+        /// Schedules an event at the given time.
+        /// </summary>
+        public void ScheduleEvent(StringHash32 inId, GTDate inTime)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    evt.Time = inTime;
+                    evt.Data = Variant.Null;
+                    return;
+                }
+            }
+
+            GTEventDate newEvt = new GTEventDate();
+            newEvt.Id = inId;
+            newEvt.Time = inTime;
+            m_ScheduledEvents.PushBack(newEvt);
+        }
+
+        /// <summary>
+        /// Schedules an event at the given time.
+        /// </summary>
+        public void ScheduleEvent(StringHash32 inId, GTDate inTime, Variant inData)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    evt.Time = inTime;
+                    evt.Data = inData;
+                    return;
+                }
+            }
+
+            GTEventDate newEvt = new GTEventDate();
+            newEvt.Id = inId;
+            newEvt.Time = inTime;
+            newEvt.Data = inData;
+            m_ScheduledEvents.PushBack(newEvt);
+        }
+
+        /// <summary>
+        /// Returns if an event with the given id is scheduled.
+        /// </summary>
+        public bool IsEventScheduled(StringHash32 inId)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the time until the scheduled event occurs.
+        /// </summary>
+        public GTTimeSpan TimeUntilScheduled(StringHash32 inId)
+        {
+            return TimeUntilScheduled(inId, Services.Time.Current);
+        }
+
+        /// <summary>
+        /// Returns the time until the scheduled event occurs, relative to the given reference date.
+        /// </summary>
+        public GTTimeSpan TimeUntilScheduled(StringHash32 inId, GTDate inReference)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    return evt.Time - inReference;
+                }
+            }
+
+            return new GTTimeSpan(long.MaxValue);
+        }
+
+        /// <summary>
+        /// Attempts to return the extra data for the given scheduled event.
+        /// </summary>
+        public bool TryGetScheduledEventData(StringHash32 inId, out Variant outData)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    outData = evt.Data;
+                    return true;
+                }
+            }
+
+            outData = default(Variant);
+            return false;
+        }
+
+        /// <summary>
+        /// Removes the scheduled event with the given id.
+        /// </summary>
+        public bool ClearScheduledEvent(StringHash32 inId)
+        {
+            for(int i = 0, len = m_ScheduledEvents.Count; i < len; i++)
+            {
+                ref GTEventDate evt = ref m_ScheduledEvents[i];
+                if (evt.Id == inId)
+                {
+                    m_ScheduledEvents.FastRemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion // Scheduling
 
         private void OnTableUpdated(NamedVariant inVariant)
         {
@@ -125,7 +262,7 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -136,6 +273,12 @@ namespace Aqua.Profile
             ioSerializer.Object("jobs", ref JobsTable);
             ioSerializer.Object("player", ref PlayerTable);
             ioSerializer.Object("partner", ref PartnerTable);
+
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Object("world", ref WorldTable);
+                ioSerializer.ObjectArray("scheduled", ref m_ScheduledEvents);
+            }
         }
 
         public bool HasChanges()

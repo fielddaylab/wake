@@ -15,6 +15,11 @@ namespace Aqua
         /// </summary>
         public TextId TooltipId;
 
+        /// <summary>
+        /// Tooltip text override.
+        /// </summary>
+        public string TooltipOverride;
+
         [NonSerialized] private Selectable m_Selectable = null;
         [NonSerialized] private int m_EnterMask = 0;
         [NonSerialized] private bool m_Initialized = false;

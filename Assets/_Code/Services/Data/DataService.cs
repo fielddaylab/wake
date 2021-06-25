@@ -192,7 +192,7 @@ namespace Aqua
             if (string.IsNullOrEmpty(inSceneOverride))
             {
                 StringHash32 mapId = FindMapId(m_CurrentSaveData);
-                StateUtil.LoadMapWithWipe(mapId);
+                StateUtil.LoadMapWithWipe(mapId, m_CurrentSaveData.Map.SavedSceneLocationId());
             }
             else
             {
@@ -306,12 +306,12 @@ namespace Aqua
             return m_CurrentSaveData != null && (m_CurrentSaveData.HasChanges() || m_CurrentOptions.HasChanges());
         }
 
-        public Future<bool> SaveProfile()
+        public Future<bool> SaveProfile(StringHash32 inLocationId)
         {
-            return SaveProfile(false);
+            return SaveProfile(inLocationId, false);
         }
 
-        public Future<bool> SaveProfile(bool inbForce)
+        public Future<bool> SaveProfile(StringHash32 inLocationId, bool inbForce)
         {
             if (m_CurrentSaveData == null)
             {
@@ -339,13 +339,14 @@ namespace Aqua
                 }
             }
 
-            m_SaveResult = Future.CreateLinked<bool>(SaveRoutine, this);
+            m_SaveResult = Future.CreateLinked<bool, StringHash32>(SaveRoutine, inLocationId, this);
             return m_SaveResult;
         }
 
-        private IEnumerator SaveRoutine(Future<bool> ioFuture)
+        private IEnumerator SaveRoutine(Future<bool> ioFuture, StringHash32 inLocationId)
         {
             SyncProfile();
+            m_CurrentSaveData.Map.SetEntranceId(inLocationId);
             yield return null;
 
             string key = GetPrefsKeyForCode(m_ProfileName);

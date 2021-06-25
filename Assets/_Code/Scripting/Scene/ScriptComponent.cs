@@ -15,6 +15,8 @@ namespace Aqua.Scripting
     {
         [NonSerialized] protected ScriptObject m_Parent;
 
+        public ScriptObject Parent { get { return m_Parent; } }
+
         public virtual void OnDeregister(ScriptObject inObject) { m_Parent = null; }
         public virtual void OnRegister(ScriptObject inObject) { m_Parent = inObject; }
     }

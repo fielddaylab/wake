@@ -61,7 +61,7 @@ namespace Aqua.Scripting
         /// <summary>
         /// Returns the highest-scoring nodes for this response set.
         /// </summary>
-        public int GetHighestScoringNodes(IVariantResolver inResolver, object inContext, ScriptingData inScriptData, StringHash32 inTarget, Dictionary<StringHash32, ScriptThread> inTargetStates, ICollection<ScriptNode> outNodes, ref int ioMinScore)
+        public int GetHighestScoringNodes(IVariantResolver inResolver, IMethodCache inInvoker, object inContext, ScriptingData inScriptData, StringHash32 inTarget, Dictionary<StringHash32, ScriptThread> inTargetStates, ICollection<ScriptNode> outNodes, ref int ioMinScore)
         {
             Optimize();
 
@@ -125,10 +125,10 @@ namespace Aqua.Scripting
                 if (triggerData.Conditions != null)
                 {
                     bool bFailed = false;
-                    for(int condIdx = 0, condCount = triggerData.Conditions.Length; condIdx < condCount; ++condIdx)
+                    for(int condIdx = 0, condCount = triggerData.Conditions.Length; condIdx < condCount; condIdx++)
                     {
                         ref var comp = ref triggerData.Conditions[condIdx];
-                        if (!comp.Evaluate(inResolver, inContext))
+                        if (!comp.Evaluate(inResolver, inContext, inInvoker))
                         {
                             if (DebugService.IsLogging(LogMask.Scripting))
                             {
@@ -158,52 +158,52 @@ namespace Aqua.Scripting
             {
                 case VariantCompareOperator.True:
                     {
-                        return string.Format("{0} == true", inComparison.VariableKey.ToDebugString());
+                        return string.Format("{0} == true", inComparison.Left.ToDebugString());
                     }
 
                 case VariantCompareOperator.False:
                     {
-                        return string.Format("{0} == true", inComparison.VariableKey.ToDebugString());
+                        return string.Format("{0} == true", inComparison.Left.ToDebugString());
                     }
 
                 case VariantCompareOperator.DoesNotExist:
                     {
-                        return string.Format("{0} does not exist", inComparison.VariableKey.ToDebugString());
+                        return string.Format("{0} does not exist", inComparison.Left.ToDebugString());
                     }
 
                 case VariantCompareOperator.EqualTo:
                     {
-                        return string.Format("{0} == {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} == {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 case VariantCompareOperator.Exists:
                     {
-                        return string.Format("{0} exists", inComparison.VariableKey.ToDebugString());
+                        return string.Format("{0} exists", inComparison.Left.ToDebugString());
                     }
 
                 case VariantCompareOperator.GreaterThan:
                     {
-                        return string.Format("{0} > {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} > {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 case VariantCompareOperator.GreaterThanOrEqualTo:
                     {
-                        return string.Format("{0} >= {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} >= {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 case VariantCompareOperator.LessThan:
                     {
-                        return string.Format("{0} < {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} < {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 case VariantCompareOperator.LessThanOrEqualTo:
                     {
-                        return string.Format("{0} <= {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} <= {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 case VariantCompareOperator.NotEqualTo:
                     {
-                        return string.Format("{0} != {1}", inComparison.VariableKey.ToDebugString(), inComparison.Operand.ToDebugString());
+                        return string.Format("{0} != {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
                     }
 
                 default:

@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 
 namespace Aqua.Scripting
 {
-    [RequireComponent(typeof(ScriptObject))]
     public class ScriptInspectable : ScriptComponent, IPointerClickHandler
     {
         [LeafMember]

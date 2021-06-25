@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aqua.Debugging;
 using BeauUtil;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 using UnityEngine;
 
 namespace Aqua
@@ -19,14 +20,12 @@ namespace Aqua
 
         [Header("Defaults")]
         [SerializeField, Range(0, 23.99f)] private float m_StartingTime = 7f;
-        [SerializeField, AutoEnum] private DayName m_StartingDay = DayName.Tuesday;
 
         #endregion // Inspector
 
         [NonSerialized] private float m_CurrentTime;
-        [NonSerialized] private InGameTime m_FullTime;
+        [NonSerialized] private GTDate m_FullTime;
         [NonSerialized] private ushort m_TotalDays;
-        [NonSerialized] private DayName m_CurrentDayName;
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_TimeCanFlow;
 
@@ -35,13 +34,15 @@ namespace Aqua
         [NonSerialized] private float m_QueuedSet = -1;
 
         [NonSerialized] private float m_LastUpdatedTime = 0;
-        private BufferedCollection<TimeAnimatedObject> m_AnimatedObjects = new BufferedCollection<TimeAnimatedObject>(64);
+        private RingBuffer<ITimeHandler> m_AllHandlers = new RingBuffer<ITimeHandler>(64);
+        private RingBuffer<ITimeHandler> m_TickHandlers = new RingBuffer<ITimeHandler>(32);
+        private RingBuffer<ITimeHandler> m_TransitionHandlers = new RingBuffer<ITimeHandler>(16);
+        private RingBuffer<ITimeHandler> m_DayNightHandlers = new RingBuffer<ITimeHandler>(16);
 
-        public InGameTime Current { get { return m_FullTime; } }
+        public GTDate Current { get { return m_FullTime; } }
         public TimeMode Mode { get { return m_TimeMode; } }
 
-        public ushort StartingTime() { return InGameTime.HoursToTicks(m_StartingTime); }
-        public DayName StartingDayName() { return m_StartingDay; }
+        public ushort StartingTime() { return GTDate.HoursToTicks(m_StartingTime); }
 
         #region Objects
 
@@ -49,9 +50,17 @@ namespace Aqua
         /// Registers a time-animated object.
         /// This object will be animated by the passage of in-game time.
         /// </summary>
-        public void Register(TimeAnimatedObject inObject)
+        public void Register(ITimeHandler inObject)
         {
-            m_AnimatedObjects.Add(inObject);
+            TimeEvent objectMask = inObject.EventMask();
+            if ((objectMask & TimeEvent.Tick) != 0)
+                m_TickHandlers.PushBack(inObject);
+            if ((objectMask & TimeEvent.DayNightChanged) != 0)
+                m_DayNightHandlers.PushBack(inObject);
+            if ((objectMask & TimeEvent.Transitioning) != 0)
+                m_TransitionHandlers.PushBack(inObject);
+
+            m_AllHandlers.PushFront(inObject);
             
             if (m_TimeCanFlow)
                 inObject.OnTimeChanged(m_FullTime);
@@ -60,12 +69,64 @@ namespace Aqua
         /// <summary>
         /// Deregisters a time-animated object.
         /// </summary>
-        public void Deregister(TimeAnimatedObject inObject)
+        public void Deregister(ITimeHandler inObject)
         {
-            m_AnimatedObjects.Remove(inObject);
+            m_AllHandlers.FastRemove(inObject);
+
+            TimeEvent objectMask = inObject.EventMask();
+            if ((objectMask & TimeEvent.Tick) != 0)
+                m_TickHandlers.FastRemove(inObject);
+            if ((objectMask & TimeEvent.DayNightChanged) != 0)
+                m_DayNightHandlers.FastRemove(inObject);
+            if ((objectMask & TimeEvent.Transitioning) != 0)
+                m_TransitionHandlers.FastRemove(inObject);
         }
 
         #endregion // Objects
+
+        #region Queued
+
+        /// <summary>
+        /// Queues time to advance by a certain amount.
+        /// </summary>
+        public void AdvanceTimeBy(float inHours)
+        {
+            m_QueuedAdvance = inHours * GTDate.TicksPerHour;
+        }
+
+        /// <summary>
+        /// Advances time to a specific hour.
+        /// </summary>
+        public void AdvanceTimeTo(float inHours)
+        {
+            m_QueuedSet = inHours * GTDate.TicksPerHour;
+        }
+
+        /// <summary>
+        /// Forces queued changes to process.
+        /// </summary>
+        public bool ProcessQueuedChanges()
+        {
+            switch(m_TimeMode)
+            {
+                case TimeMode.Normal:
+                case TimeMode.Realtime:
+                    float queuedAdvance = ConsumeQueuedAdvance();
+                    if (queuedAdvance > 0)
+                    {
+                        GTDate prevTime = m_FullTime;
+                        m_CurrentTime += queuedAdvance;
+                        PostUpdateTime(prevTime);
+                        return true;
+                    }
+                    
+                    break;
+            }
+
+            return false;
+        }
+
+        #endregion // Queued
 
         #region Updates
 
@@ -74,7 +135,7 @@ namespace Aqua
             if (m_Paused || !m_TimeCanFlow || Services.Script.IsCutscene() || Services.State.IsLoadingScene() || Services.UI.IsTransitioning())
                 return;
 
-            InGameTime prevTime = m_FullTime;
+            GTDate prevTime = m_FullTime;
 
             switch(m_TimeMode)
             {
@@ -97,14 +158,20 @@ namespace Aqua
 
         private float ConsumeQueuedAdvance()
         {
-            float ticks = m_QueuedAdvance;
-            m_QueuedAdvance = 0;
+            float ticks = 0;
+
+            if (m_QueuedAdvance > 0)
+            {
+                ticks += m_QueuedAdvance;
+                m_QueuedAdvance = 0;
+                m_LastUpdatedTime = -1;
+            }
             
             if (m_QueuedSet >= 0)
             {
                 float diff = m_QueuedSet - m_CurrentTime;
                 if (diff < 0)
-                    diff += InGameTime.TicksPerDay;
+                    diff += GTDate.TicksPerDay;
                 ticks += diff;
                 m_QueuedSet = -1;
                 m_LastUpdatedTime = -1;
@@ -116,45 +183,88 @@ namespace Aqua
         private void AdvanceTime(float inDeltaTime, float inMinutesPerDay)
         {
             float queuedAdvance = ConsumeQueuedAdvance();
-            float advancedTicks = queuedAdvance > 0 ? queuedAdvance : InGameTime.RealSecondsToTicks(inDeltaTime, inMinutesPerDay);
+            float advancedTicks = queuedAdvance > 0 ? queuedAdvance : GTDate.RealSecondsToTicks(inDeltaTime, inMinutesPerDay);
             m_CurrentTime += advancedTicks;
         }
 
         private void SetTime(int inHour, int inMinutes)
         {
-            m_CurrentTime = InGameTime.ClockToTicks(inHour, inMinutes);
+            m_CurrentTime = GTDate.ClockToTicks(inHour, inMinutes);
             ConsumeQueuedAdvance();
         }
 
-        private void PostUpdateTime(InGameTime inPrev)
+        private void PostUpdateTime(GTDate inPrev)
         {
-            while (m_CurrentTime >= InGameTime.TicksPerDay)
+            while (m_CurrentTime >= GTDate.TicksPerDay)
             {
-                m_CurrentTime -= InGameTime.TicksPerDay;
+                m_CurrentTime -= GTDate.TicksPerDay;
                 m_TotalDays++;
-                m_CurrentDayName = (DayName) (((int) m_CurrentDayName + 1) % InGameTime.MaxDayNames);
             }
 
-            InGameTime newTime = m_FullTime = new InGameTime((ushort) m_CurrentTime, m_TotalDays, m_CurrentDayName);
+            GTDate newTime = m_FullTime = new GTDate((ushort) m_CurrentTime, m_TotalDays);
 
             UpdateTimeElements(inPrev, newTime);
             DispatchTimeChangeEvents(inPrev, newTime);
         }
 
-        private void UpdateTimeElements(InGameTime inPrev, InGameTime inNew)
+        private void ForceUpdateElements(GTDate inNow)
         {
+            foreach(var obj in m_AllHandlers)
+            {
+                obj.OnTimeChanged(inNow);
+            }
+        }
+
+        private void UpdateTimeElements(GTDate inPrev, GTDate inNew)
+        {
+            if (inPrev == inNew)
+                return;
+
             float now = Time.timeSinceLevelLoad;
             float timeDiff = now - m_LastUpdatedTime;
-            if (timeDiff >= m_WorldUpdateDelay)
+
+            bool bTick = timeDiff >= m_WorldUpdateDelay;
+            bool bTransitioning = inNew.SubPhase.IsTransitioning();
+            bool bTransitionChanged = inPrev.SubPhase.IsTransitioning() != bTransitioning;
+            bool bDayNightChanged = inPrev.IsDay != inNew.IsNight;
+
+            if (bDayNightChanged)
             {
-                m_AnimatedObjects.ForEach(UpdateAnimatedObject, inNew);
+                foreach(var obj in m_DayNightHandlers)
+                {
+                    obj.OnTimeChanged(inNew);
+                }
+            }
+
+            if (!bTick)
+            {
+                if (bTransitionChanged)
+                {
+                    foreach(var obj in m_TransitionHandlers)
+                    {
+                        obj.OnTimeChanged(inNew);
+                    }
+                }
+            }
+            else
+            {
+                if (bTransitioning || bTransitionChanged)
+                {
+                    foreach(var obj in m_TransitionHandlers)
+                    {
+                        obj.OnTimeChanged(inNew);
+                    }
+                }
+                
+                foreach(var obj in m_TickHandlers)
+                {
+                    obj.OnTimeChanged(inNew);
+                }
                 m_LastUpdatedTime = now;
             }
         }
 
-        static private Action<TimeAnimatedObject, InGameTime> UpdateAnimatedObject = (o, t) => o.OnTimeChanged(t);
-
-        static private void DispatchTimeChangeEvents(InGameTime inPrev, InGameTime inNew)
+        static private void DispatchTimeChangeEvents(GTDate inPrev, GTDate inNew)
         {
             if (inNew.Day != inPrev.Day)
             {
@@ -210,17 +320,16 @@ namespace Aqua
 
             m_CurrentTime = mapData.TimeOfDay;
             m_TotalDays = mapData.TotalDays;
-            m_CurrentDayName = mapData.CurrentDay;
             m_TimeMode = mapData.TimeMode;
             m_TimeCanFlow = false;
 
-            m_FullTime = new InGameTime((ushort) m_CurrentTime, m_TotalDays, m_CurrentDayName);
+            m_FullTime = new GTDate((ushort) m_CurrentTime, m_TotalDays);
         }
 
         private void OnProfileStarted()
         {
             m_TimeCanFlow = true;
-            UpdateTimeElements(m_FullTime, m_FullTime);
+            ForceUpdateElements(m_FullTime);
         }
 
         private void OnSceneLoaded(SceneBinding _, object __)
@@ -228,7 +337,7 @@ namespace Aqua
             m_LastUpdatedTime = -1;
             if (m_TimeCanFlow)
             {
-                UpdateTimeElements(m_FullTime, m_FullTime);
+                ForceUpdateElements(m_FullTime);
             }
         }
 
@@ -252,5 +361,30 @@ namespace Aqua
         }
 
         #endregion // IPauseable
+    
+        #region Leaf
+
+        static private class LeafIntegration
+        {
+            [LeafMember("AdvanceTime")]
+            static private void AdvanceTime(float inHours)
+            {
+                Services.Time.AdvanceTimeBy(inHours);
+            }
+
+            [LeafMember("SetTime")]
+            static private void EventSetTime(float inHours)
+            {
+                Services.Time.AdvanceTimeTo(inHours);
+            }
+
+            [LeafMember("SyncTime")]
+            static private void EventApplyTime()
+            {
+                Services.Time.ProcessQueuedChanges();
+            }
+        }
+
+        #endregion // Leaf
     }
 }

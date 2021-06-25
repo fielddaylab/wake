@@ -60,9 +60,8 @@ namespace Aqua.Scripting
             if (!Services.Valid || !Services.Data.IsProfileLoaded())
                 return;
 
-            Services.Data.Profile.Map.SyncMapId();
-            Services.Data.Profile.Map.SyncTime();
-            OnAutosaveEvent();
+            Services.Data.Profile.Map.FullSync();
+            OnAutosaveEventPreserveEntrance();
         }
 
         private void OnHint(Mode inMode)
@@ -94,7 +93,20 @@ namespace Aqua.Scripting
             if (!m_InstantAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
-                m_InstantAutosave = Routine.Start(this, NearInstantSave());
+                m_InstantAutosave = Routine.Start(this, NearInstantSave(null));
+            }
+        }
+
+        private void OnAutosaveEventPreserveEntrance()
+        {
+            if (!CanSave())
+                return;
+            
+            m_DelayedAutosave.Stop();
+            if (!m_InstantAutosave)
+            {
+                DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
+                m_InstantAutosave = Routine.Start(this, NearInstantSave(Services.State.LastEntranceId));
             }
         }
 
@@ -108,7 +120,7 @@ namespace Aqua.Scripting
             if (!m_DelayedAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing delayed save");
-                m_DelayedAutosave = Routine.Start(this, DelayedSave());
+                m_DelayedAutosave = Routine.Start(this, DelayedSave(null));
             }
             else
             {
@@ -131,13 +143,13 @@ namespace Aqua.Scripting
 
         #region Saving
 
-        private IEnumerator NearInstantSave()
+        private IEnumerator NearInstantSave(StringHash32 inLocation)
         {
             yield return null;
-            Services.Data.SaveProfile(true);
+            Services.Data.SaveProfile(inLocation, true);
         }
 
-        private IEnumerator DelayedSave()
+        private IEnumerator DelayedSave(StringHash32 inLocation)
         {
             while(Services.Script.IsCutscene() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
             {
@@ -147,7 +159,7 @@ namespace Aqua.Scripting
                 yield return null;
             }
 
-            Services.Data.SaveProfile();
+            Services.Data.SaveProfile(inLocation);
         }
 
         #endregion // Saving

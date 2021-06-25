@@ -12,6 +12,18 @@ namespace Aqua
     {
         #region Types
 
+        private struct QueuedEvent
+        {
+            public readonly StringHash32 Id;
+            public readonly object Argument;
+
+            public QueuedEvent(StringHash32 inId, object inArgument)
+            {
+                Id = inId;
+                Argument = inArgument;
+            }
+        }
+
         private class HandlerBlock
         {
             private RingBuffer<Handler> m_Actions = new RingBuffer<Handler>(8, RingBufferMode.Expand);
@@ -248,6 +260,7 @@ namespace Aqua
 
         private Routine m_CleanupRoutine;
         private readonly Dictionary<StringHash32, HandlerBlock> m_Handlers = new Dictionary<StringHash32, HandlerBlock>(64);
+        private readonly RingBuffer<QueuedEvent> m_QueuedEvents = new RingBuffer<QueuedEvent>(64, RingBufferMode.Fixed);
 
         #region Registration
 
@@ -388,6 +401,14 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Queues the given event to dispatch at the end of the frame.
+        /// </summary>
+        public void QueueForDispatch(StringHash32 inEventId, object inContext = null)
+        {
+            m_QueuedEvents.PushBack(new QueuedEvent(inEventId, inContext));
+        }
+
+        /// <summary>
         /// Cleans up all floating handlers.
         /// </summary>
         public void Cleanup()
@@ -405,6 +426,15 @@ namespace Aqua
         }
 
         #endregion // Operations
+
+        private void LateUpdate()
+        {
+            QueuedEvent evt;
+            while(m_QueuedEvents.TryPopFront(out evt))
+            {
+                Dispatch(evt.Id, evt.Argument);
+            }
+        }
 
         #region Maintenance
 

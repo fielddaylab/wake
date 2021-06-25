@@ -11,6 +11,7 @@ namespace Aqua
     {
         #region Inspector
 
+        [SerializeField, AutoEnum] private MapCategory m_Category = MapCategory.Station;
         [SerializeField, AutoEnum] private MapFlags m_Flags = 0;
 
         [Header("Assets")]
@@ -24,6 +25,7 @@ namespace Aqua
 
         #endregion // Inspector
 
+        public MapCategory Category() { return m_Category; }
         public MapFlags Flags() { return m_Flags; }
 
         public bool HasFlags(MapFlags inFlags) { return (m_Flags & inFlags) != 0; }
@@ -39,9 +41,17 @@ namespace Aqua
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
     }
 
+    public enum MapCategory
+    {
+        ShipRoom,
+        Land,
+        Station,
+        DiveSite
+    }
+
     [Flags]
     public enum MapFlags
     {
-        IsStation = 0x01
+        UnlockedByDefault = 0x01,
     }
 }

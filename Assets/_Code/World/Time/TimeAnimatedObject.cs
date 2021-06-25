@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public abstract class TimeAnimatedObject : MonoBehaviour
+    public abstract class TimeAnimatedObject : MonoBehaviour, ITimeHandler
     {
         protected virtual void OnEnable()
         {
@@ -15,6 +15,7 @@ namespace Aqua
             Services.Time?.Deregister(this);
         }
 
-        public abstract void OnTimeChanged(InGameTime inGameTime);
+        public abstract void OnTimeChanged(GTDate inGameTime);
+        public abstract TimeEvent EventMask();
     }
 }

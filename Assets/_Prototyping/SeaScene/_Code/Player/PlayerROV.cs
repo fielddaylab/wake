@@ -57,9 +57,9 @@ namespace ProtoAqua.Observation
         [NonSerialized] private AudioHandle m_EngineSound;
         [NonSerialized] private InputData m_LastInputData;
 
-        [NonSerialized] private CameraConstraints.Hint m_VelocityHint;
-        [NonSerialized] private CameraConstraints.Hint m_MouseHint;
-        [NonSerialized] private CameraConstraints.Drift m_CameraDrift;
+        [NonSerialized] private uint m_VelocityHint;
+        [NonSerialized] private uint m_MouseHint;
+        [NonSerialized] private uint m_CameraDriftHint;
 
         private void Start()
         {
@@ -67,13 +67,10 @@ namespace ProtoAqua.Observation
 
             SetEngineState(false, true);
 
-            m_VelocityHint = ObservationServices.Camera.AddHint("Player Velocity Lead");
-            m_MouseHint = ObservationServices.Camera.AddHint("Player Mouse Lead");
+            m_VelocityHint = Services.Camera.AddHint(m_Transform, 1, 0).Id;
+            m_MouseHint = Services.Camera.AddHint(m_Transform, 1, m_CameraForwardLookWeight).Id;
 
-            m_CameraDrift = ObservationServices.Camera.AddDrift("Ocean Drift");
-            m_CameraDrift.Distance = new Vector2(0.1f, 0.1f);
-            m_CameraDrift.Offset = new Vector2(RNG.Instance.NextFloat(), RNG.Instance.NextFloat());
-            m_CameraDrift.Period = new Vector2(11, 7);
+            m_CameraDriftHint = Services.Camera.AddDrift(new Vector2(0.1f, 0.1f), new Vector2(11, 7), RNG.Instance.NextVector2()).Id;
         }
 
         private void FixedUpdate()
@@ -83,6 +80,9 @@ namespace ProtoAqua.Observation
 
         private void LateUpdate()
         {
+            ref var velocityHintData = ref Services.Camera.FindHint(m_VelocityHint);
+            ref var mouseHintData = ref Services.Camera.FindHint(m_MouseHint);
+
             KinematicMath2D.ApplyLimits(ref m_Kinematic.State, ref m_Kinematic.Config);
 
             if (m_EngineSound.Exists())
@@ -90,8 +90,8 @@ namespace ProtoAqua.Observation
                 m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematic.State.Velocity.magnitude / m_Kinematic.Config.MaxSpeed));
             }
 
-            m_VelocityHint.PositionAt(m_Transform, m_Kinematic.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove));
-            m_VelocityHint.SetWeight(m_CameraForwardLookWeight);
+            velocityHintData.WeightOffset = m_CameraForwardLookWeight;
+            velocityHintData.Offset = m_Kinematic.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove);
 
             if (m_Moving)
             {
@@ -118,13 +118,14 @@ namespace ProtoAqua.Observation
                     offset.Normalize();
                     offset *= m_TargetVectorMaxDistance;
                 }
-                m_MouseHint.PositionAt(m_Transform, offset);
-                m_MouseHint.SetWeight(m_CameraForwardLookWeight);
-                m_MouseHint.Zoom = m_LastInputData.ToolMode ? m_CameraZoomTool : 1f;
+
+                mouseHintData.Offset = offset;
+                mouseHintData.WeightOffset = m_CameraForwardLookWeight;
+                mouseHintData.Zoom = m_LastInputData.ToolMode ? m_CameraZoomTool : 1f;
             }
             else
             {
-                m_MouseHint.SetWeight(0);
+                mouseHintData.WeightOffset = 0;
             }
         }
 
@@ -222,7 +223,7 @@ namespace ProtoAqua.Observation
             m_Moving = inbOn;
             if (inbOn)
             {
-                m_EngineSound = ObservationServices.Audio.PostEvent("rov_engine_loop");
+                m_EngineSound = Services.Audio.PostEvent("rov_engine_loop");
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
 
                 m_Kinematic.Config.Drag = m_DragEngineOn;

@@ -58,7 +58,7 @@ namespace ProtoAqua.Observation
 
             if (inLockOn.HasValue)
             {
-                outInputData.Target = ObservationServices.Camera.GameplayPlanePosition(inLockOn.Value);
+                outInputData.Target = Services.Camera.GameplayPlanePosition(inLockOn.Value);
             }
             else
             {
@@ -98,7 +98,7 @@ namespace ProtoAqua.Observation
 
         private Vector2 GetMousePositionInWorld(Transform inTransform)
         {
-            return ObservationServices.Camera.ScreenToWorldOnPlane(Input.mousePosition, inTransform);
+            return Services.Camera.ScreenToWorldOnPlane(Input.mousePosition, inTransform);
         }
 
         #endregion // Input Generation

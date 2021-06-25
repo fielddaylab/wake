@@ -51,7 +51,7 @@ namespace Aqua
                 return false;
 
             m_CurrentValue += inValue;
-            Services.Events.Dispatch(GameEvents.InventoryUpdated, m_ItemId);
+            Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, m_ItemId);
             return true;
         }
 
@@ -65,7 +65,7 @@ namespace Aqua
             if (m_CurrentValue != inValue)
             {
                 m_CurrentValue = inValue;
-                Services.Events.Dispatch(GameEvents.InventoryUpdated, m_ItemId);
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, m_ItemId);
                 return true;
             }
 

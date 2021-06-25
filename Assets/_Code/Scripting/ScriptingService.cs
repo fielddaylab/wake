@@ -32,7 +32,6 @@ namespace Aqua
         // event parsing
         private TagStringEventHandler m_TagEventHandler;
         private CustomTagParserConfig m_TagEventParser;
-        private StringUtils.ArgsList.Splitter m_ArgListSplitter;
         private LeafRuntime<ScriptNode> m_ThreadRuntime;
         private HashSet<StringHash32> m_SkippedEvents;
         private HashSet<StringHash32> m_DialogOnlyEvents;
@@ -222,7 +221,7 @@ namespace Aqua
                     DebugService.Log(LogMask.Scripting, "[ScriptingService] Evaluating trigger {0}...", inTriggerId.ToDebugString());
                     
                     int minScore = int.MinValue;
-                    int responseCount = responseSet.GetHighestScoringNodes(resolver, inContext, Services.Data.Profile?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
+                    int responseCount = responseSet.GetHighestScoringNodes(resolver, m_LeafCache, inContext, Services.Data.Profile?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
@@ -499,6 +498,8 @@ namespace Aqua
         #endregion // Utils
 
         #region Internal
+
+        internal IMethodCache LeafInvoker { get { return m_LeafCache; } }
 
         internal void UntrackThread(ScriptThread inThread)
         {

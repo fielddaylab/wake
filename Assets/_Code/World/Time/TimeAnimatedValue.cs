@@ -6,7 +6,7 @@ namespace Aqua
 {
     public interface ITimeAnimatedValue<T> where T : struct
     {
-        T GetValueForTime(InGameTime inGameTime);
+        T GetValueForTime(GTDate inGameTime);
     }
 
     [Serializable]
@@ -17,34 +17,29 @@ namespace Aqua
         public Color32 Evening;
         public Color32 Night;
 
-        public Color32 GetValueForTime(InGameTime inGameTime)
+        public Color32 GetValueForTime(GTDate inGameTime)
         {
-            switch(inGameTime.Phase)
+            switch(inGameTime.SubPhase)
             {
-                case DayPhase.Day:
-                    {
-                        return Day;
-                    }
-
-                case DayPhase.Night:
-                    {
-                        return Night;
-                    }
-
-                case DayPhase.Morning:
-                    {
-                        var lerp = TimeUtils.DetermineLerp(inGameTime.PhaseProgress, Night, Morning, Day);
-                        return Color32.Lerp(lerp.Min, lerp.Max, lerp.Lerp);
-                    }
-
-                case DayPhase.Evening:
-                    {
-                        var lerp = TimeUtils.DetermineLerp(inGameTime.PhaseProgress, Day, Evening, Night);
-                        return Color32.Lerp(lerp.Min, lerp.Max, lerp.Lerp);
-                    }
-
+                case DaySubPhase.NightToMorning:
+                    return Color32.Lerp(Night, Morning, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Morning:
+                    return Morning;
+                case DaySubPhase.MorningToDay:
+                    return Color32.Lerp(Morning, Day, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Day:
+                    return Day;
+                case DaySubPhase.DayToEvening:
+                    return Color32.Lerp(Day, Evening, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Evening:
+                    return Evening;
+                case DaySubPhase.EveningToNight:
+                    return Color32.Lerp(Evening, Night, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Night:
+                    return Night;
+                
                 default:
-                    Assert.Fail("Unknown phase {0}", inGameTime.Phase);
+                    Assert.Fail("Unknown phase {0}", inGameTime.SubPhase);
                     return default(Color32);
             }
         }
@@ -58,34 +53,29 @@ namespace Aqua
         public float Evening;
         public float Night;
 
-        public float GetValueForTime(InGameTime inGameTime)
+        public float GetValueForTime(GTDate inGameTime)
         {
-            switch(inGameTime.Phase)
+            switch(inGameTime.SubPhase)
             {
-                case DayPhase.Day:
-                    {
-                        return Day;
-                    }
-
-                case DayPhase.Night:
-                    {
-                        return Night;
-                    }
-
-                case DayPhase.Morning:
-                    {
-                        var lerp = TimeUtils.DetermineLerp(inGameTime.PhaseProgress, Night, Morning, Day);
-                        return Mathf.Lerp(lerp.Min, lerp.Max, lerp.Lerp);
-                    }
-
-                case DayPhase.Evening:
-                    {
-                        var lerp = TimeUtils.DetermineLerp(inGameTime.PhaseProgress, Day, Evening, Night);
-                        return Mathf.Lerp(lerp.Min, lerp.Max, lerp.Lerp);
-                    }
-
+                case DaySubPhase.NightToMorning:
+                    return Mathf.Lerp(Night, Morning, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Morning:
+                    return Morning;
+                case DaySubPhase.MorningToDay:
+                    return Mathf.Lerp(Morning, Day, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Day:
+                    return Day;
+                case DaySubPhase.DayToEvening:
+                    return Mathf.Lerp(Day, Evening, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Evening:
+                    return Evening;
+                case DaySubPhase.EveningToNight:
+                    return Mathf.Lerp(Evening, Night, inGameTime.SubPhaseProgress);
+                case DaySubPhase.Night:
+                    return Night;
+                
                 default:
-                    Assert.Fail("Unknown phase {0}", inGameTime.Phase);
+                    Assert.Fail("Unknown phase {0}", inGameTime.SubPhase);
                     return default(float);
             }
         }

@@ -1,0 +1,113 @@
+#basePath   job.kelp-save-urchin-barren
+
+:: start
+@trigger    JobStarted
+@cutscene
+$set    player:seen.drJules = true
+$set 	jobs:kelp-save-urchin-barren.doneModeling = false
+{@drJules} Ok. Time to bring it all together. 
+{@drJules} See if you can come up with a way to repair Site B, the Urchin Barren.
+{@drJules} Use all the tools on your ship and meet me in the office when you have a plan. 
+
+:: end
+@trigger    JobCompleted
+@cutscene
+$call UnlockStation(CoralStation)
+{@drJules}  Absolutely Fantastic Work!
+{@player}   Thanks. It was nice being able to use some science to help.
+{@drJules}  I'll upload the location of the Coral Station to your map.
+{@drJules} 	You can travel over there by using the map in the Ship's Help, have fun out there!
+
+::helpGoToModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", jobs:kelp-save-urchin-barren.doneModeling == false
+@cutscene
+$if global:nav.shipRoom != "modeling"
+	{@player} 	How should we start making a plan to repair Site B?
+	{@kevin}	Maybe we could make another model to predict the future of the ecosystem.
+$else
+	{@player} 	Ok, made it to the modeling room, what next?
+	{@kevin}	Let's see if there's a new way for us to use the modeling system. 
+$endif
+
+:: InterventionModelingSetup
+@trigger	UniversalModelStarted
+@once
+@cutscene
+{@kevin} This time we will use the modeling tool to predict what would happen if we intervened with the ecosystem in some way.
+{@kevin} You should have all the rules from your bestiary added already, so hit that Simulate button.
+
+::ModelHelp1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
+@cutscene
+{@player} 	What should I do again?
+{@kevin}	Just like last time, use the "Import Rule" button to add anything we might be missing. 
+{@kevin}	Once you've added everything, press the "Simulate" button
+
+
+:: InterventionGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@kevin} Just like before, setup the historic populations to match the probe's recordings.
+{@kevin} If the model is correct, it will sync, and we can use it to predict.
+
+::ModelHelp2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@cutscene
+{@player} 	How do I do this again?
+{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
+{@kevin}	Once everything lines up, press the "Sync" button to continue.
+
+
+:: InterventionModelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} Nailed it!
+
+:: InterventionModelSynced
+@trigger	ModelSynced
+@once
+@cutscene
+{@kevin} Now what would happened if we added kelp, or removed Urchins, or even ...
+
+::ModelHelp3
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@cutscene
+{@player} 	I'm a bit stuck here, got any tips for me Kevin?
+{@kevin}	We want to change something so the kelp population increases to the target on the right.
+{@kevin}	It seems like the main problem now is that it keeps getting eaten by urchin.
+{@kevin}	I wonder if there's something we could add that would keep the urchin population under control...
+
+
+:: InterventionModelPredictImmediate
+@trigger	ModelPredictImmediate
+@who        kevin
+@once
+@chatter
+{@kevin} That looks promising! Let's save the result.
+
+:: InterventionModelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+$set 	jobs:kelp-save-urchin-barren.doneModeling = false
+{@kevin} Ok. It looks like we have a plan! I have no idea what adding Otters practically means, but let's report back to Dr. Jules at the office.
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		jobs:kelp-urchin-barren.doneModeling == true
+@cutscene
+$if global:nav.shipRoom != "office"
+	{@player} 	What should we do now?
+	{@kevin}	We've got a plan to help restore Site B, so let's report back to Dr. Jules.
+	{@kevin}	We should first head back to the office.
+$else
+	{@player} 	I made it back to the office, what should we do from here?
+	{@kevin}	Just like last time, you can report your findings to Dr. Jules using the comms.
+$endif

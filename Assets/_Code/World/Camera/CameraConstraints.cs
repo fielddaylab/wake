@@ -1,3 +1,4 @@
+using System;
 using BeauUtil;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Aqua.Cameras
     /// </summary>
     public struct CameraPointData
     {
-        public StringHash32 Id;
+        public uint Id;
 
         public float Zoom;
         public float Lerp;
@@ -24,8 +25,25 @@ namespace Aqua.Cameras
         public CameraWeightFunction Weight;
         public float WeightOffset;
 
-        public Vector2 CachedPosition;
-        public float CachedWeight;
+        internal Vector2 m_CachedPosition;
+        internal float m_CachedWeight;
+    }
+
+    /// <summary>
+    /// Data regarding a camera target.
+    /// </summary>
+    public struct CameraTargetData
+    {
+        public uint Id;
+        public CameraModifierFlags Flags;
+
+        public float Zoom;
+        public float Lerp;
+
+        public Transform Anchor;
+        public Vector2 Offset;
+
+        internal Vector2 m_CachedPosition;
     }
 
     /// <summary>
@@ -33,14 +51,14 @@ namespace Aqua.Cameras
     /// </summary>
     public struct CameraBoundsData
     {
-        public StringHash32 Id;
+        public uint Id;
 
         public BoxCollider2D Anchor2D;
         public Rect Region;
         public RectEdges SoftEdges;
         public RectEdges HardEdges;
 
-        public Rect CachedRegion;
+        internal Rect m_CachedRegion;
     }
 
     /// <summary>
@@ -48,10 +66,30 @@ namespace Aqua.Cameras
     /// </summary>
     public struct CameraDriftData
     {
-        public StringHash32 Id;
+        public uint Id;
 
         public Vector2 Distance;
         public Vector2 Period;
         public Vector2 Offset;
+    }
+
+    /// <summary>
+    /// Flags indicating which types of modifiers to apply.
+    /// </summary>
+    [Flags]
+    public enum CameraModifierFlags : byte
+    {
+        [Hidden]
+        None = 0,
+
+        Bounds = 0x01,
+        Hints = 0x02,
+        Drift = 0x04,
+
+        [Hidden]
+        NoHints = Bounds | Drift,
+        
+        [Hidden]
+        All = Bounds | Hints | Drift
     }
 }

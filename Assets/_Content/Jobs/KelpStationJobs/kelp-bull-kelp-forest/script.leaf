@@ -1,0 +1,69 @@
+#basePath   job.kelp-bull-kelp-forest
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@drJules} You are off to a great start. 
+{@drJules} Let's see if you can do it again.
+{@drJules} I need you to head out to Site A and see if there is anything different there.
+{@drJules}  When you are done, report back to me at the office.
+{@player} I'm on it!
+:: end
+
+:: helpGoOutside
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !HasEntity(BullKelp)
+@cutscene
+{@player}   Any idea where I should go next?
+{@kevin}	First let's exit the ship and head over to Site A.
+
+:: helpGoToSiteA
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station1", !HasEntity(BullKelp)
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Site A should be just west of the ship.
+{@kevin}	Let's head over there and see what we can find! 
+
+:: helpAtSiteA
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1A", !HasEntity(BullKelp)
+@cutscene
+{@player} 	What should I be doing now?
+{@kevin}	Let's look around and see if there are any new species to find. 
+
+::helpGoToLab
+@trigger    RequestPartnerHelp
+@when 		HasEntity(BullKelp), scene:name != "ExperimentPrototype"
+@cutscene
+{@player} 	Where should I go next?
+{@kevin}	Now that we've discovered Bull Kelp, let's head to the Experiment Lab.
+$if scene:name == "RS-1A"
+	{@kevin}	Drive the sub up to the surface and let's make our way back to the ship.
+$else
+	$if scene:name != "Ship"
+		{@kevin}	First, let's head back to the ship.
+	$endif
+$endif
+
+::helpDoExperiment
+@trigger    RequestPartnerHelp
+@when 		HasEntity(BullKelp), scene:name == "ExperimentPrototype"
+@cutscene
+{@player} 	Alright Kevin I made it to the Experiment Lab, what should I do next?
+{@kevin}	Similar to last time, construct an observation tank with water from Site A.
+{@kevin}	Then select some critters to add and see what behaviors you can observe!
+{@kevin}	(If you want to find new behaviors, try only adding critters that you haven't seen together before)
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		HasFact(Urchin.Eats.BullKelp)
+@boostScore 2
+@cutscene
+{@player} 	What should we do now?
+{@kevin}	We've found a new relationship, so let's report back to Dr. Jules.
+$if global:nav.shipRoom != "office"
+	{@kevin}	We should first head back to the office.
+$else
+	{@kevin}	Just like last time, you can report your findings using the comms.
+$endif

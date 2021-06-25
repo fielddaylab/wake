@@ -214,11 +214,6 @@ namespace Aqua.Scripting
         {
             static public readonly Generator Instance = new Generator();
 
-            public override ILeafExpression<ScriptNode> CompileExpression(StringSlice inExpression)
-            {
-                return new ScriptExpression(inExpression.ToString());
-            }
-
             public override bool IsVerbose
             {
                 get

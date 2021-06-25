@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(EventService))]
-    public partial class JobTaskService : ServiceBehaviour
+    internal partial class JobTaskService : ServiceBehaviour
     {
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
         private struct TaskState

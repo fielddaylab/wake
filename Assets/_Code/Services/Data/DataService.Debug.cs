@@ -202,7 +202,7 @@ namespace Aqua
             saveMenu.AddSubmenu(bookmarkMenu);
             saveMenu.AddDivider();
 
-            saveMenu.AddButton("Save", () => SaveProfile(), IsProfileLoaded);
+            saveMenu.AddButton("Save", () => SaveProfile("DEBUG"), IsProfileLoaded);
             saveMenu.AddButton("Save (Debug)", () => DebugSaveData(), IsProfileLoaded);
             #if UNITY_EDITOR
             saveMenu.AddButton("Save as Bookmark", () => BookmarkSaveData(), IsProfileLoaded);

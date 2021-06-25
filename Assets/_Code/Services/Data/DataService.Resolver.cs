@@ -1,17 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
 using BeauUtil.Variants;
 using Aqua.Profile;
 using Aqua.Scripting;
-using UnityEngine;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace Aqua
 {
@@ -68,7 +61,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -83,7 +76,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.VariableSet, inId);
+                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
             }
         }
 
@@ -100,7 +93,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -115,7 +108,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.VariableSet, inId);
+                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
             }
         }
 
@@ -191,7 +184,7 @@ namespace Aqua
         /// </summary>
         public bool CheckConditions(StringSlice inConditions, object inContext = null)
         {
-            return VariableResolver.TryEvaluate(inContext, inConditions);
+            return VariableResolver.TryEvaluate(inContext, inConditions, Services.Script.LeafInvoker);
         }
 
         #endregion // Conditions
@@ -201,6 +194,8 @@ namespace Aqua
             m_VariableResolver = new CustomVariantResolver();
 
             m_VariableResolver.SetVar(GameVars.SceneName, GetSceneName);
+            m_VariableResolver.SetVar(GameVars.MapId, () => MapDB.LookupCurrentMap());
+            m_VariableResolver.SetVar(GameVars.LastEntrance, () => Services.State.LastEntranceId);
             
             m_VariableResolver.SetVar(GameVars.DayName, GetDayOfWeek);
             m_VariableResolver.SetVar(GameVars.DayNumber, () => Services.Time.Current.Day);
@@ -213,47 +208,18 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
-
-            m_VariableResolver.SetTableVar("random", GetRandomByRarity);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
         {
             m_VariableResolver.SetTable("global", inData.Script.GlobalTable);
             m_VariableResolver.SetTable("jobs", inData.Script.JobsTable);
+            m_VariableResolver.SetTable("world", inData.Script.PartnerTable);
             m_VariableResolver.SetTable("player", inData.Script.PlayerTable);
             m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
-
-            m_VariableResolver.SetTableVar("scanned", (s) => inData.Inventory.WasScanned(s));
-            m_VariableResolver.SetTableVar("has.entity", (s) => inData.Bestiary.HasEntity(s));
-            m_VariableResolver.SetTableVar("has.fact", (s) => inData.Bestiary.HasFact(s));
-            m_VariableResolver.SetTableVar("has.item", (s) => inData.Inventory.HasItem(s));
-            m_VariableResolver.SetTableVar("item.count", (s) => inData.Inventory.ItemCount(s));
-            m_VariableResolver.SetTableVar("seen", (s) => inData.Script.HasSeen(s, PersistenceLevel.Profile));
-            m_VariableResolver.SetTableVar("job.isStartedOrComplete", (s) => inData.Jobs.IsStartedOrComplete(s));
-            m_VariableResolver.SetTableVar("job.inProgress", (s) => inData.Jobs.IsInProgress(s));
-            m_VariableResolver.SetTableVar("job.isComplete", (s) => inData.Jobs.IsComplete(s));
-            m_VariableResolver.SetTableVar("job.isAvailable", (s) => Services.Assets.Jobs.IsAvailableAndUnstarted(s));
-            m_VariableResolver.SetTableVar("job.taskActive", (s) => inData.Jobs.IsTaskActive(s));
-            m_VariableResolver.SetTableVar("job.taskComplete", (s) => inData.Jobs.IsTaskComplete(s));
-
-            m_VariableResolver.SetVar(GameVars.JobsAnyAvailable, CountUnstartedJobs);
-            m_VariableResolver.SetVar(GameVars.JobsAnyInProgress, () => inData.Jobs.InProgressJobs().Length);
-            m_VariableResolver.SetVar(GameVars.JobsAnyComplete, () => inData.Jobs.CompletedJobIds().Count);
         }
 
         #region Callbacks
-
-        static private Variant CountUnstartedJobs()
-        {
-            var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
-            int count = 0;
-            
-            while(unstarted.MoveNext())
-                ++count;
-
-            return count;
-        }
 
         static private Variant GetDayOfWeek()
         {
@@ -308,7 +274,7 @@ namespace Aqua
             }
         }
 
-        private Variant GetSceneName()
+        static private Variant GetSceneName()
         {
             return SceneHelper.ActiveScene().Name;
         }
@@ -328,23 +294,240 @@ namespace Aqua
             return Profile.Script.ActIndex;
         }
 
-        private Variant GetRandomByRarity(StringHash32 inId)
+        #endregion // Callbacks
+
+        #region Leaf
+
+        static private class LeafIntegration
         {
-            if (inId == RandomRare)
-                return RNG.Instance.Chance(m_RareChance);
-            if (inId == RandomUncommon)
-                return RNG.Instance.Chance(m_UncommonChance);
-            if (inId == RandomCommon)
-                return RNG.Instance.Chance(m_CommonChance);
-            
-            Log.Error("[DataService] Unknown rarity '{0}'", inId);
-            return false;
+            #region Bestiary/Inventory
+
+            [LeafMember("HasEntity")]
+            static private Variant HasEntity(StringHash32 inEntityId)
+            {
+                return Services.Data.Profile.Bestiary.HasEntity(inEntityId);
+            }
+
+            [LeafMember("GiveEntity")]
+            static private bool GiveEntity(StringHash32 inEntityId)
+            {
+                return Services.Data.Profile.Bestiary.RegisterEntity(inEntityId);
+            }
+
+            [LeafMember("HasFact")]
+            static private Variant HasFact(StringHash32 inFactId)
+            {
+                return Services.Data.Profile.Bestiary.HasFact(inFactId);
+            }
+
+            [LeafMember("GiveFact")]
+            static private bool GiveFact(StringHash32 inEntityId)
+            {
+                return Services.Data.Profile.Bestiary.RegisterFact(inEntityId);
+            }
+
+            [LeafMember("HasItem")]
+            static private Variant HasItem(StringHash32 inItemId)
+            {
+                return Services.Data.Profile.Inventory.HasItem(inItemId);
+            }
+
+            [LeafMember("ItemCount")]
+            static private Variant ItemCount(StringHash32 inItemId)
+            {
+                return Services.Data.Profile.Inventory.ItemCount(inItemId);
+            }
+
+            [LeafMember("HasUpgrade")]
+            static private Variant HasUpgrade(StringHash32 inFactId)
+            {
+                return Services.Data.Profile.Inventory.HasUpgrade(inFactId);
+            }
+
+            [LeafMember("HasScanned")]
+            static private Variant HasScanned(StringHash32 inNodeId)
+            {
+                return Services.Data.Profile.Inventory.WasScanned(inNodeId);
+            }
+
+            #endregion // Bestiary/Inventory
+
+            #region Jobs
+
+            [LeafMember("JobStartedOrComplete")]
+            static private Variant JobStartedOrComplete(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsStartedOrComplete(inId);
+            }
+
+            [LeafMember("JobInProgress")]
+            static private Variant JobInProgress(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsInProgress(inId);
+            }
+
+            [LeafMember("JobCompleted")]
+            static private Variant JobCompleted(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsComplete(inId);
+            }
+
+            [LeafMember("JobAvailable")]
+            static private Variant JobAvailable(StringHash32 inId)
+            {
+                return Services.Assets.Jobs.IsAvailableAndUnstarted(inId);
+            }
+
+            [LeafMember("JobTaskActive")]
+            static private Variant JobTaskActive(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsTaskActive(inId);
+            }
+
+            [LeafMember("JobTaskCompleted")]
+            static private Variant JobTaskCompleted(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsTaskComplete(inId);
+            }
+
+            [LeafMember("AnyJobsAvailable")]
+            static private Variant AnyJobsAvailable()
+            {
+                var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
+                int count = 0;
+                
+                while(unstarted.MoveNext())
+                    ++count;
+
+                return count;
+            }
+
+            [LeafMember("AnyJobsInProgress")]
+            static private Variant AnyJobsInProgress()
+            {
+                return Services.Data.Profile.Jobs.InProgressJobs().Length;
+            }
+
+            [LeafMember("AnyJobsCompleted")]
+            static private Variant AnyJobsCompleted()
+            {
+                return Services.Data.Profile.Jobs.CompletedJobIds().Count;
+            }
+
+            [LeafMember("UnlockJob")]
+            static private bool UnlockJob(StringHash32 inJobId)
+            {
+                return Services.Data.Profile.Jobs.UnlockHiddenJob(inJobId);
+            }
+
+            [LeafMember("SetJob")]
+            static private bool SetJob(StringHash32 inJobId)
+            {
+                return Services.Data.Profile.Jobs.SetCurrentJob(inJobId);
+            }
+
+            [LeafMember("CompleteJob")]
+            static private bool CompleteJob(StringHash32 inJobId = default(StringHash32))
+            {
+                if (inJobId.IsEmpty)
+                {
+                    inJobId = Services.Data.Profile.Jobs.CurrentJobId;
+                    if (inJobId.IsEmpty)
+                    {
+                        Log.Error("[ScriptingService] Attempting to complete job, but no job specified and no job active");
+                        return false;
+                    }
+                }
+                
+                return Services.Data.Profile.Jobs.MarkComplete(Services.Data.Profile.Jobs.GetProgress(inJobId));
+            }
+
+            #endregion // Jobs
+
+            #region World
+
+            [LeafMember("StationUnlocked")]
+            static private Variant StationUnlocked(StringHash32 inStationId)
+            {
+                return Services.Data.Profile.Map.IsStationUnlocked(inStationId);
+            }
+
+            [LeafMember("UnlockStation")]
+            static private bool UnlockStation(StringHash32 inStationId)
+            {
+                return Services.Data.Profile.Map.UnlockStation(inStationId);
+            }
+
+            [LeafMember("LockStation")]
+            static private bool LockStation(StringHash32 inStationId)
+            {
+                return Services.Data.Profile.Map.LockStation(inStationId);
+            }
+
+            #endregion // World
+
+            #region Scheduled Events
+
+            [LeafMember("IsEventScheduled")]
+            static private Variant IsEventScheduled(StringHash32 inEventId)
+            {
+                return Services.Data.Profile.Script.IsEventScheduled(inEventId);
+            }
+
+            [LeafMember("HoursUntilEvent")]
+            static private Variant HoursUntilEvent(StringHash32 inEventId)
+            {
+                return Services.Data.Profile.Script.TimeUntilScheduled(inEventId).TotalHours;
+            }
+
+            [LeafMember("IsEventReady")]
+            static private Variant IsEventReady(StringHash32 inEventId)
+            {
+                return Services.Data.Profile.Script.TimeUntilScheduled(inEventId).Ticks <= 0;
+            }
+
+            [LeafMember("GetEventData")]
+            static private Variant ScheduledEventData(StringHash32 inEventId)
+            {
+                Variant eventData;
+                Services.Data.Profile.Script.TryGetScheduledEventData(inEventId, out eventData);
+                return eventData;
+            }
+
+            #endregion // Scheduled Events
+
+            [LeafMember("Seen")]
+            static private Variant Seen(StringHash32 inNodeId)
+            {
+                return Services.Data.Profile.Script.HasSeen(inNodeId, PersistenceLevel.Profile);
+            }
+
+            [LeafMember("Random")]
+            static private Variant GetRandomByRarity(StringSlice inData)
+            {
+                float floatVal;
+                if (StringParser.TryParseFloat(inData, out floatVal))
+                {
+                    return RNG.Instance.Chance(floatVal);
+                }
+
+                StringHash32 id = inData.Hash32();
+                if (inData == RandomRare)
+                    return RNG.Instance.Chance(Services.Data.m_RareChance);
+                if (inData == RandomUncommon)
+                    return RNG.Instance.Chance(Services.Data.m_UncommonChance);
+                if (inData == RandomCommon)
+                    return RNG.Instance.Chance(Services.Data.m_CommonChance);
+                
+                Log.Error("[DataService] Unknown rarity '{0}'", inData);
+                return false;
+            }
+
+            static private readonly StringHash32 RandomRare = "rare";
+            static private readonly StringHash32 RandomUncommon = "uncommon";
+            static private readonly StringHash32 RandomCommon = "common";
         }
 
-        static private readonly StringHash32 RandomRare = "rare";
-        static private readonly StringHash32 RandomUncommon = "uncommon";
-        static private readonly StringHash32 RandomCommon = "common";
-
-        #endregion // Callbacks
+        #endregion // Leaf
     }
 }

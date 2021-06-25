@@ -12,11 +12,13 @@ namespace Aqua.Profile
     {
         private StringHash32 m_CurrentStationId;
         private StringHash32 m_CurrentMapId;
+        private StringHash32 m_CurrentMapEntranceId;
+
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
 
         public ushort TimeOfDay;
         public ushort TotalDays;
-        public DayName CurrentDay;
         public TimeMode TimeMode;
         
         private bool m_HasChanges;
@@ -29,7 +31,7 @@ namespace Aqua.Profile
             {
                 m_CurrentStationId = inNewStationId;
                 m_HasChanges = true;
-                Services.Events.Dispatch(GameEvents.StationChanged, inNewStationId);
+                Services.Events.QueueForDispatch(GameEvents.StationChanged, inNewStationId);
                 return true;
             }
 
@@ -84,17 +86,35 @@ namespace Aqua.Profile
 
             TimeOfDay = Services.Time.StartingTime();
             TotalDays = 0;
-            CurrentDay = Services.Time.StartingDayName();
+        }
+
+        public void FullSync()
+        {
+            SyncMapId();
+            SyncTime();
         }
 
         public bool SyncMapId()
         {
-            StringHash32 mapId = MapDB.LookupMap(SceneHelper.ActiveScene());
+            StringHash32 mapId = MapDB.LookupCurrentMap();
             if (!mapId.IsEmpty && m_CurrentMapId != mapId)
             {
                 m_CurrentMapId = mapId;
                 m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[MapData] Current map id is '{0}'", m_CurrentMapId);
+                DebugService.Log(LogMask.DataService, "[MapData] Current map id is '{0}' with entrance '{1}'", m_CurrentMapId, m_CurrentMapEntranceId);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SetEntranceId(StringHash32 inEntranceId)
+        {
+            if (inEntranceId != m_CurrentMapEntranceId)
+            {
+                m_CurrentMapEntranceId = inEntranceId;
+                m_HasChanges = true;
+                DebugService.Log(LogMask.DataService, "[MapData] Current map entrance is '{0}'", m_CurrentMapEntranceId);
                 return true;
             }
 
@@ -103,14 +123,15 @@ namespace Aqua.Profile
 
         public bool SyncTime()
         {
-            InGameTime currentTime = Services.Time.Current;
-            if (currentTime.Day != TotalDays || currentTime.DayName != CurrentDay || currentTime.Ticks != TimeOfDay)
+            Services.Time.ProcessQueuedChanges();
+
+            GTDate currentTime = Services.Time.Current;
+            if (currentTime.Day != TotalDays || currentTime.Ticks != TimeOfDay)
             {
                 TotalDays = (ushort) currentTime.Day;
-                CurrentDay = currentTime.DayName;
                 TimeOfDay = (ushort) currentTime.Ticks;
                 m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", new InGameTime(TimeOfDay, TotalDays, CurrentDay));
+                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", new GTDate(TimeOfDay, TotalDays));
                 return true;
             }
 
@@ -118,6 +139,7 @@ namespace Aqua.Profile
         }
 
         public StringHash32 SavedSceneId() { return m_CurrentMapId; }
+        public StringHash32 SavedSceneLocationId() { return m_CurrentMapEntranceId; }
 
         #region IProfileChunk
 
@@ -131,9 +153,9 @@ namespace Aqua.Profile
 
             if (ioSerializer.ObjectVersion >= 2)
             {
+                ioSerializer.UInt32Proxy("mapLocationId", ref m_CurrentMapEntranceId);
                 ioSerializer.Serialize("timeOfDay", ref TimeOfDay);
                 ioSerializer.Serialize("days", ref TotalDays);
-                ioSerializer.Enum("weekday", ref CurrentDay);
                 ioSerializer.Enum("timeMode", ref TimeMode);
             }
         }

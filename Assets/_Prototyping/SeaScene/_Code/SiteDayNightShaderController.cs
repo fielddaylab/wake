@@ -8,12 +8,6 @@ namespace Aqua
     [RequireComponent(typeof(ColorGroup))]
     public class SiteDayNightShaderController : TimeAnimatedObject
     {
-        /*private void Start()
-        {
-            Shader.SetGlobalColor("_LightColor", LightPalette.Evening);
-            Shader.SetGlobalColor("_ShadowColor", ShadowPalette.Night);
-        }*/
-
         #region Inspector
 
         [Inline(InlineAttribute.DisplayType.HeaderLabel)] public TimeColorPalette LightPalette;
@@ -21,10 +15,15 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public override void OnTimeChanged(InGameTime inGameTime)
+        public override void OnTimeChanged(GTDate inGameTime)
         {
-            Shader.SetGlobalColor("_LightColor", LightPalette.GetValueForTime(inGameTime));
-            Shader.SetGlobalColor("_ShadowColor", ShadowPalette.GetValueForTime(inGameTime));
+            Shader.SetGlobalColor(ShaderPalettes.LightColor, LightPalette.GetValueForTime(inGameTime));
+            Shader.SetGlobalColor(ShaderPalettes.ShadowColor, ShadowPalette.GetValueForTime(inGameTime));
+        }
+
+        public override TimeEvent EventMask()
+        {
+            return TimeEvent.Transitioning;
         }
     }
 }

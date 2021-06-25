@@ -1,0 +1,187 @@
+#basePath   partner.dreams
+
+// hints
+
+:: dreamHint1
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 1, !Seen(partner.dreams.kevin.1), Random(common)
+@repeat     4
+@chatter
+{@kevin}    I think I might need a nap soon...
+
+:: dreamHint2
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 2, !Seen(partner.dreams.kevin.2), Random(common)
+@repeat     4
+@chatter
+{@kevin}    {slow}Yawn...{/slow} I need a nap.
+
+:: dreamHint3
+@trigger    PartnerTalk
+@when       player:seenBed, kevin:trust >= 2, !Seen(partner.dreams.kevin.2), Random(common)
+@repeat     4
+@chatter
+{@kevin}    I'm sleepy.
+
+// small sequences
+
+:: dreamStart
+{bgm-volume 0, 1} {fade-out black, 1} {wait 2} {voice silent}
+
+:: dreamEnd
+$call SyncTime()
+{hide-dialog} {wait 1} {/voice} {bgm-volume 1, 1} {fade-in 1} {wait 1.5}
+
+:: dreamEndQuick
+$call SyncTime()
+{hide-dialog} {/voice} {bgm-volume 1, 0.25} {fade-in 0.25} {wait 0.5}
+
+// defaults
+
+:: default.1
+@trigger    PlayerDream
+@repeat 1
+@cutscene
+
+$branch .dreamStart
+{@player}   (The ocean.)
+            (The waves lap up against the boat.)
+            (No cares and no worries...)
+            (Everything is at peace.)
+$branch .dreamEnd
+
+:: default.2
+@trigger    PlayerDream
+@repeat 1
+@cutscene
+
+$branch .dreamStart
+{@player}   (I'm in a market.)
+            (I move happily between the stalls.)
+            (Everything here looks so tasty...)
+            $if Random(uncommon)
+                (But where are my favorite pastries?)
+            $elseif $Random(uncommon)
+                (But where is my favorite stall?)
+            $else
+                (But where is the baker?)
+            $endif
+            (They are not here.)
+            (Oh that's upsetting...)
+$branch .dreamEnd
+
+// default mysteries
+
+:: default.mystery.1
+@trigger    PlayerDream
+@repeat 4
+@cutscene
+
+$branch .dreamStart
+{@player}   (A howling wind.)
+            (A howling emptiness that expands and fills all the available space.)
+            (It grows louder... and louder...)
+            (I wish it would stop...)
+$branch .dreamEnd
+
+:: default.mystery.2
+@trigger    PlayerDream
+@repeat 4
+@cutscene
+
+$branch .dreamStart
+{@player}   (A boat, stranded on the coast.)
+            (Why is the boat on the coast?)
+            (What happened to put it there?)
+$branch .dreamEnd
+
+// weird
+
+:: fourthWallBreak
+@trigger    PlayerDream
+@when       Random(rare)
+@cutscene
+
+$branch .dreamStart
+{@player}   (Someone in front of a machine...)
+            (Reading text as it slowly appears in front of them...)
+            (Wait, are they aware I'm here?)
+            (Oh no...)
+$branch .dreamEnd
+
+// kevin
+
+:: kevin.1
+@trigger    PlayerDream
+@when       kevin:trust >= 1
+@cutscene
+@once
+
+$branch .dreamStart
+{@kevin #asleep}        ...
+{@player}               (Is... that Kevin?)
+{@kevin #asleep}        ...
+{@player}               {/voice}Hey, Kevin?
+{@kevin #asleep}        ...zzz...
+                        ...{screen-flash white, 0.25}a bright flash...
+                        {#asleepWorried}...no...no...
+{@player}               Kevin?
+{@kevin #asleepWorried} ...and then...
+                        ...zzz...
+{#asleep}               ...zzz...
+{@player}               {voice silent}(What was that? Are they asleep?)
+$branch .dreamEnd
+
+:: kevin.2
+@trigger    PlayerDream
+@when       kevin:trust >= 2
+@cutscene
+@once
+
+$branch .dreamStart
+{@kevin #asleep}    ...
+{@player}           (Okay, maybe if I just let them be this time...)
+{@kevin #asleep}    {/voice}...was... {screen-flash white, 0.25}a bright flash...
+                    and the...{#asleepWorried} no... no...
+                    don't... I don't... but...
+{@kevin #wideEyes}  Ah!
+{@player}           Kevin?
+{@kevin #wideEyes}     Leave me alone!
+{@player}           Whoa, hey! It's me! {player-name}!
+{@kevin #angry}     Get out!
+{screen-flash white, 0.25}
+                    {#tired} Before-{wait 0.5}{auto}
+{screen-flash white, 0.25}
+{hide-dialog}{wait 2}
+{@player}           Kevin?!
+{hide-dialog}{wait 2}
+{@player}           Kevin, are you okay?
+                    {voice silent}{wait 0.5}(Darn it, they vanished.)
+{hide-dialog}{wait 2}
+$branch .dreamEnd
+{wait 1}
+{@player}   ...
+{@kevin}    ...
+{@player}   Do you-{wait 0.3}{auto}
+{@kevin #wideEyes} No. |{#}No.
+            I'm fine.
+
+:: kevin.2.followup
+@trigger    PartnerTalk
+@when		Seen(partner.dreams.kevin.2)
+@once
+@cutscene
+
+{@player}	Kevin?
+{@kevin}	Yeah?
+{@player}	Can we talk about... what we saw?
+{@kevin #narrow}	No.
+{@player}	Are you sure?
+{@kevin #asleepWorried}		...
+	{#tired} You shouldn't have seen that.
+{@player}	Is it... the mental connection we have?
+{@kevin #tired}	I| think so.
+				...that's really dangerous.
+{@player}	Dangerous?
+{@kevin}	Never mind. Just... let's not talk about it.
+{@player}	...

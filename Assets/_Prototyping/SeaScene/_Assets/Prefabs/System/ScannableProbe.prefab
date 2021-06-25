@@ -4863,8 +4863,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5774820918032191204}
-  - component: {fileID: 5774820918032191210}
   - component: {fileID: 5774820918032191211}
+  - component: {fileID: 6428151762926246673}
+  - component: {fileID: 5703693516078522687}
   m_Layer: 0
   m_Name: CameraFocus
   m_TagString: Untagged
@@ -4886,26 +4887,6 @@ Transform:
   m_Father: {fileID: 5774820918325110237}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5774820918032191210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5774820918032191205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c499c76d399300428c068e162ae20c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Circle: {fileID: 5774820918032191211}
-  m_InnerRadius: 4
-  m_RegionName: EnvironmentModule
-  m_Zoom: 1.2
-  m_Lerp: 1
-  m_InitialWeight: 1
-  m_MaxWeight: 2
-  m_Curve: 0
 --- !u!58 &5774820918032191211
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4922,6 +4903,40 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 6
+--- !u!114 &6428151762926246673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774820918032191205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ClassName:
+    m_Source: 
+    m_Hash: 0
+  m_Id:
+    m_Source: ProbeCameraHint
+    m_Hash: 511216951
+--- !u!114 &5703693516078522687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774820918032191205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc7c3cc8d6830bf48b3b37d4d66178e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Region: {fileID: 5774820918032191211}
+  m_Zoom: 1.5
+  m_Lerp: 1
+  m_Weight: 0.8
 --- !u!1 &5774820918325110238
 GameObject:
   m_ObjectHideFlags: 0

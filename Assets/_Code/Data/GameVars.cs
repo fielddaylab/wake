@@ -13,14 +13,10 @@ namespace Aqua
         static public readonly TableKeyPair InteractObject = TableKeyPair.Parse("temp:interact.object");
 
         // session
-        static public readonly TableKeyPair DiveSite = TableKeyPair.Parse("session:nav.diveSite");
 
         // jobs
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
         static public readonly TableKeyPair CurrentStation = TableKeyPair.Parse("player:currentStation");
-        static public readonly TableKeyPair JobsAnyAvailable = TableKeyPair.Parse("jobs:anyAvailable");
-        static public readonly TableKeyPair JobsAnyInProgress = TableKeyPair.Parse("jobs:anyInProgress");
-        static public readonly TableKeyPair JobsAnyComplete = TableKeyPair.Parse("jobs:anyComplete");
 
         // global
         static public readonly TableKeyPair DayName = TableKeyPair.Parse("time:dayName");
@@ -32,6 +28,8 @@ namespace Aqua
 
         static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
+        static public readonly TableKeyPair MapId = TableKeyPair.Parse("scene:mapId");
+        static public readonly TableKeyPair LastEntrance = TableKeyPair.Parse("scene:lastEntrance");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
         static public readonly TableKeyPair ShipRoom = TableKeyPair.Parse("global:nav.shipRoom");
     }

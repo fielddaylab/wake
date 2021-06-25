@@ -14,9 +14,14 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public override void OnTimeChanged(InGameTime inGameTime)
+        public override void OnTimeChanged(GTDate inGameTime)
         {
             Light.color = Palette.GetValueForTime(inGameTime);
+        }
+
+        public override TimeEvent EventMask()
+        {
+            return TimeEvent.Transitioning;
         }
     }
 }

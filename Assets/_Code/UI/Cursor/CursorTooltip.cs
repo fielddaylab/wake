@@ -28,6 +28,7 @@ namespace Aqua
         #endregion // Inspector
         
         private StringHash32 m_LastId;
+        private string m_LastOverride;
 
         public void Process(Vector2 inCursorPosition)
         {
@@ -108,6 +109,7 @@ namespace Aqua
                 return;
 
             m_LastId = inId;
+            m_LastOverride = null;
 
             if (inId.IsEmpty)
             {
@@ -121,9 +123,34 @@ namespace Aqua
             }
         }
 
+        public void SetOverride(string inOverride)
+        {
+            if (m_LastOverride == inOverride)
+                return;
+
+            m_LastId = StringHash32.Null;
+            m_LastOverride = inOverride;
+
+            if (string.IsNullOrEmpty(inOverride))
+            {
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                gameObject.SetActive(true);
+                m_Text.SetText(inOverride);
+                m_Layout.ForceRebuild();
+            }
+        }
+
         public void Clear()
         {
-            SetId(StringHash32.Null);
+            if (gameObject.activeSelf)
+            {
+                m_LastId = null;
+                m_LastOverride = null;
+                gameObject.SetActive(false);
+            }
         }
     }
 }
