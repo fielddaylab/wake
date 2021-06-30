@@ -25,6 +25,7 @@ namespace Aqua
         public LayerMask SolidMask;
 
         [NonSerialized] public Transform Transform;
+        [NonSerialized] public RingBuffer<PhysicsContact> Contacts = new RingBuffer<PhysicsContact>(16, RingBufferMode.Overwrite);
 
         #endregion // Inspector
 

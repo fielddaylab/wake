@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using BeauRoutine;
-using Aqua;
 using UnityEngine.UI;
 using BeauUtil;
 using System;
@@ -100,16 +97,16 @@ namespace Aqua.StationMap
             Show();
         }
 
-        public void DisplayInspect(ScriptObject inObject, TextId inTextId, TextId inInspectId)
+        public void DisplayInspect(ScriptObject inObject, TextId inLabelId, TextId inTooltipId)
         {
             m_Mode = Mode.Inspect;
             m_TargetMap = null;
             m_TargetInspect = inObject;
 
             m_InteractButtonIcon.sprite = m_InspectIcon;
-            m_HoverHint.TooltipId = inInspectId;
+            m_HoverHint.TooltipId = inTooltipId;
             m_HoverHint.TooltipOverride = null;
-            m_InteractLabel.SetText(inTextId);
+            m_InteractLabel.SetText(inLabelId);
             m_PinGroup.Pin(inObject.transform);
             
             Show();

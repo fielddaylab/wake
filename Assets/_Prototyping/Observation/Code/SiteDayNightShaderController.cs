@@ -17,8 +17,8 @@ namespace Aqua
 
         public override void OnTimeChanged(GTDate inGameTime)
         {
-            Shader.SetGlobalColor(ShaderPalettes.LightColor, LightPalette.GetValueForTime(inGameTime));
-            Shader.SetGlobalColor(ShaderPalettes.ShadowColor, ShadowPalette.GetValueForTime(inGameTime));
+            Shader.SetGlobalColor(ShaderPalettes.WorldLightColor, LightPalette.Evaluate(inGameTime));
+            Shader.SetGlobalColor(ShaderPalettes.WorldShadowColor, ShadowPalette.Evaluate(inGameTime));
         }
 
         public override TimeEvent EventMask()

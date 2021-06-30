@@ -4815,15 +4815,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78f44466bdaff4f7abe034882cbb6a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerRigidBody: {fileID: 5302725472274256837}
-  playerInput: {fileID: 2635531021390785891}
-  playerAnimator: {fileID: 1950210926}
+  m_Kinematics: {fileID: 5302725472274256837}
+  m_Input: {fileID: 2635531021390785891}
+  m_Animator: {fileID: 1950210926}
   m_MovementParticles: {fileID: 962930143}
-  m_TargetVectorMaxDistance: 5
-  m_TargetVectorMinDistance: 0.2
-  m_TargetVectorSpeed: 1
-  m_DragEngineOn: 1
-  m_DragEngineOff: 2
+  m_MoveParams:
+    MaxSpeed: 6
+    SpeedCurve: 0
+    Acceleration: 6
+  m_RotateParams:
+    Lerp: 8
+  m_DragEngineOn: 0.5
+  m_DragEngineOff: 3
 --- !u!50 &2635531021390785892
 Rigidbody2D:
   serializedVersion: 4
@@ -4868,6 +4871,10 @@ MonoBehaviour:
   m_OnInputDisabled:
     m_PersistentCalls:
       m_Calls: []
+  m_Movement:
+    MinDistance: 1.2
+    MaxDistance: 3
+    DistanceCurve: 6
 --- !u!114 &1950210926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4880,7 +4887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5c183414153154b9f0c48ba5fdab24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boatRenderer: {fileID: 2635531021776982766}
+  m_BoatRenderer: {fileID: 2635531021776982766}
   m_DiveColor: {r: 0, g: 0, b: 0, a: 0.2509804}
 --- !u!114 &5302725472274256837
 MonoBehaviour:
@@ -4900,9 +4907,9 @@ MonoBehaviour:
   Config:
     Acceleration: {x: 0, y: 0}
     Gravity: {x: 0, y: 0}
-    Drag: 2.2
+    Drag: 2
     Friction: {x: 0.1, y: 0.1}
-    MaxSpeed: 5
+    MaxSpeed: 8
   Body: {fileID: 2635531021390785892}
   Collider: {fileID: 7688037859226998398}
   SolidMask:
@@ -4991,7 +4998,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e1df094bc1ac7b642bf8a58ab64e582a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

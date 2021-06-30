@@ -16,7 +16,7 @@ namespace Aqua
 
         public override void OnTimeChanged(GTDate inGameTime)
         {
-            Camera.backgroundColor = Palette.GetValueForTime(inGameTime);
+            Camera.backgroundColor = Palette.Evaluate(inGameTime);
         }
 
         public override TimeEvent EventMask()

@@ -5,14 +5,13 @@ using Aqua.Scripting;
 
 namespace Aqua.StationMap
 {
-    public class DiveSite : MonoBehaviour
+    public class DiveSite : ScriptComponent
     {
         static public readonly StringHash32 Trigger_Found = "DiveSiteFound";
 
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_MapId = null;
-        [SerializeField, Required] private Transform m_PlayerSpawnLocation = null;
 
         [Header("Components")]
         [SerializeField, Required] private ColorGroup m_RenderGroup = null;
@@ -23,14 +22,10 @@ namespace Aqua.StationMap
         [NonSerialized] private bool m_Highlighted;
 
         public StringHash32 MapId { get { return m_MapId; } }
-        public Transform PlayerSpawnLocation { get { return m_PlayerSpawnLocation; } }
 
         private void Awake()
         {
-            var listener = m_Collider.EnsureComponent<TriggerListener2D>();
-            listener.FilterByComponentInParent<PlayerController>();
-            listener.onTriggerEnter.AddListener(OnPlayerEnter);
-            listener.onTriggerExit.AddListener(OnPlayerExit);
+            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
         }
 
         public void CheckAllowed(JobDesc inCurrentJob)
@@ -49,13 +44,13 @@ namespace Aqua.StationMap
 
         private void OnPlayerEnter(Collider2D other)
         {
-            if (Services.Data.CompareExchange(GameVars.InteractObject, null, m_MapId.Hash()))
+            if (Services.Data.CompareExchange(GameVars.InteractObject, null, m_MapId))
             {
                 Services.UI.FindPanel<NavigationUI>().DisplayDive(transform, m_MapId);
                 
                 using(var tempTable = TempVarTable.Alloc())
                 {
-                    tempTable.Set("siteId", m_MapId.Hash());
+                    tempTable.Set("siteId", m_MapId);
                     tempTable.Set("siteHighlighted", m_Highlighted);
                     Services.Script.TriggerResponse(Trigger_Found, null, null, tempTable);
                 }
@@ -64,7 +59,7 @@ namespace Aqua.StationMap
 
         private void OnPlayerExit(Collider2D other)
         {
-            if (Services.Data && Services.Data.CompareExchange(GameVars.InteractObject, m_MapId.Hash(), null))
+            if (Services.Data && Services.Data.CompareExchange(GameVars.InteractObject, m_MapId, null))
             {
                 Services.UI?.FindPanel<NavigationUI>()?.Hide();
             }

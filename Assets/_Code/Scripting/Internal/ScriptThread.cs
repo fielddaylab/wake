@@ -18,11 +18,10 @@ namespace Aqua.Scripting
 
         // temp state
         private ScriptFlags m_Flags;
-        private IScriptContext m_Context;
+        private ScriptObject m_Actor;
         private int m_CutsceneCount;
 
         // temp resources
-        private TempAlloc<VariantTable> m_TempTable;
         private FaderRect m_CurrentFader;
         private ScreenWipe m_CurrentWipe;
         private DialogPanel m_CurrentDialog;
@@ -47,16 +46,10 @@ namespace Aqua.Scripting
 
         #region Lifecycle
 
-        public ScriptThreadHandle Prep(string inName, IScriptContext inContext, TempAlloc<VariantTable> inTempTable)
+        public ScriptThreadHandle Prep(string inName, ScriptObject inContext, TempAlloc<VariantTable> inTempTable)
         {
-            Setup(inName, inTempTable);
-            m_Context = inContext;
-            m_TempTable = inTempTable;
-
-            if (inContext?.Vars != null)
-            {
-                Resolver.SetTable("self", inContext.Vars);
-            }
+            Setup(inName, inContext, inTempTable);
+            m_Actor = inContext;
 
             m_CutsceneCount = 0;
 
@@ -144,7 +137,7 @@ namespace Aqua.Scripting
 
         #region Temp State
 
-        public IScriptContext Context { get { return m_Context; } }
+        public new ScriptObject Actor { get { return m_Actor; } }
 
         public bool IsCutscene() { return (m_Flags & ScriptFlags.Cutscene) != 0 || m_CutsceneCount > 0; }
         public string InitialNodeName() { return m_TriggerNodeName; }
@@ -341,8 +334,7 @@ namespace Aqua.Scripting
 
             m_Mgr.UntrackThread(this);
 
-            Ref.Dispose(ref m_TempTable);
-            m_Context = null;
+            m_Actor = null;
             m_Flags = 0;
 
             m_TriggerWho = StringHash32.Null;

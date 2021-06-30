@@ -3,12 +3,13 @@ using Aqua.Scripting;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
 using Leaf.Runtime;
 using UnityEngine;
 
 namespace Aqua
 {
-    public class ScriptObject : MonoBehaviour, IPoolAllocHandler, IKeyValuePair<StringHash32, ScriptObject>
+    public sealed class ScriptObject : MonoBehaviour, IPoolAllocHandler, IPoolConstructHandler, IKeyValuePair<StringHash32, ScriptObject>, ILeafActor
     {
         #region Inspector
 
@@ -18,6 +19,8 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private IScriptComponent[] m_ScriptComponents;
+        [NonSerialized] private VariantTable m_Locals;
+        // [NonSerialized] private bool m_Pooled;
 
         #region KeyValue
 
@@ -28,6 +31,13 @@ namespace Aqua
 
         public StringHash32 Id() { return m_Id; }
         public StringHash32 ClassName() { return m_ClassName; }
+
+        #region ILeafActor
+
+        StringHash32 ILeafActor.Id { get { return m_Id; } }
+        public VariantTable Locals { get { return m_Locals ?? (m_Locals = new VariantTable()); } }
+
+        #endregion // ILeafActor
 
         #region Leaf
 
@@ -53,22 +63,12 @@ namespace Aqua
 
         #region Events
 
-        protected virtual void Awake()
+        private void Awake()
         {
             RegisterScriptObject();
         }
 
-        protected virtual void OnDestroy()
-        {
-            DeregisterScriptObject();
-        }
-
-        protected virtual void OnAlloc()
-        {
-            RegisterScriptObject();
-        }
-
-        protected virtual void OnFree()
+        private void OnDestroy()
         {
             DeregisterScriptObject();
         }
@@ -77,7 +77,7 @@ namespace Aqua
 
         #region Register/Deregister
 
-        protected void RegisterScriptObject()
+        private void RegisterScriptObject()
         {
             if (Services.Script.TryRegisterObject(this))
             {
@@ -89,7 +89,7 @@ namespace Aqua
             }
         }
 
-        protected void DeregisterScriptObject()
+        private void DeregisterScriptObject()
         {
             if (Services.Script && Services.Script.TryDeregisterObject(this))
             {
@@ -104,12 +104,22 @@ namespace Aqua
 
         void IPoolAllocHandler.OnAlloc()
         {
-            OnAlloc();
+            RegisterScriptObject();
         }
 
         void IPoolAllocHandler.OnFree()
         {
-            OnFree();
+            DeregisterScriptObject();
+            m_Locals?.Clear();
+        }
+
+        void IPoolConstructHandler.OnConstruct()
+        {
+            // m_Pooled = true;
+        }
+
+        void IPoolConstructHandler.OnDestruct()
+        {
         }
 
         #endregion // IPoolAllocHandler

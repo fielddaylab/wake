@@ -1,15 +1,14 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
-using System;
 using BeauUtil;
-using Aqua;
+using Aqua.Cameras;
 
-namespace Aqua.StationMap {
-public class PlayerAnimator : MonoBehaviour {
-
-        [SerializeField] Transform boatRenderer = null;
+namespace Aqua.StationMap
+{
+    public class PlayerAnimator : MonoBehaviour
+    {
+        [SerializeField] private Transform m_BoatRenderer = null;
         [SerializeField] private Color m_DiveColor = Color.black;
 
         private Routine m_DiveRoutine;
@@ -31,16 +30,14 @@ public class PlayerAnimator : MonoBehaviour {
 
         private IEnumerator DiveRoutine()
         {
-            ColorGroup group = boatRenderer.GetComponent<ColorGroup>();
-            CameraFOVPlane fovPlane = Services.Camera.Rig.FOVPlane;
+            ColorGroup group = m_BoatRenderer.GetComponent<ColorGroup>();
+            CameraTarget target = m_BoatRenderer.GetComponentInParent<CameraTarget>();
 
             yield return Routine.Combine(
-                boatRenderer.MoveTo(5, 3, Axis.Z, Space.Self).Ease(Curve.QuadIn),
+                m_BoatRenderer.MoveTo(5, 3, Axis.Z, Space.Self).Ease(Curve.QuadIn),
                 Tween.Color(group.Color, m_DiveColor, group.SetColor, 3).Ease(Curve.QuadIn),
-                Tween.Float(fovPlane.Zoom, 3, (f) => fovPlane.Zoom = f, 3).Ease(Curve.QuadIn).DelayBy(0.5f)
+                Tween.Float(target.Zoom, 3, (f) => { target.Zoom = f; target.PushChanges(); }, 3).Ease(Curve.QuadIn).DelayBy(0.5f)
             );
-
-            yield return Routine.WaitForever();
         }
     }
 }

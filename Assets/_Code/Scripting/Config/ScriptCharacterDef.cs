@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Script Actor Definition")]
-    public class ScriptActorDef : DBObject
+    [CreateAssetMenu(menuName = "Aqualab/Script Character Definition")]
+    public class ScriptCharacterDef : DBObject
     {
         [Serializable]
         private struct PortraitDef : IKeyValuePair<StringHash32, Sprite>

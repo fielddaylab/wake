@@ -38,6 +38,9 @@ namespace Aqua.Cameras
 
         public void PushChanges()
         {
+            if (Services.State.IsLoadingScene())
+                return;
+            
             if (m_TargetHandle != 0)
             {
                 ref CameraTargetData data = ref Services.Camera.FindTarget(m_TargetHandle);

@@ -31,7 +31,7 @@ namespace Aqua
             public StringHash32 TypeSFX;
 
             public StringHash32 TargetId;
-            public ScriptActorDef TargetDef;
+            public ScriptCharacterDef TargetDef;
             public StringHash32 PortraitId;
 
             public bool Silent;
@@ -246,7 +246,7 @@ namespace Aqua
                 return false;
 
             m_CurrentState.TargetId = inTargetId;
-            ScriptActorDef actorDef = m_CurrentState.TargetDef = Services.Assets.Characters.Get(inTargetId);
+            ScriptCharacterDef actorDef = m_CurrentState.TargetDef = Services.Assets.Characters.Get(inTargetId);
 
             m_CurrentState.TypeSFX = actorDef.DefaultTypeSfx();
 

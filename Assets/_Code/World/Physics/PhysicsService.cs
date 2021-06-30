@@ -11,7 +11,7 @@ namespace Aqua
     {
         private const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
-        private const int TickIterations = 3;
+        private const int TickIterations = 2;
 
         #region Inspector
 
@@ -88,6 +88,12 @@ namespace Aqua
             if (contactCount > 0)
             {
                 DebugService.Log(LogMask.Physics, "[PhysicsService] Generated {0} contacts on tick {1}", contactCount, m_TickCount);
+
+                for(int i = 0; i < contactCount; i++)
+                {
+                    ref PhysicsContact contact = ref m_Contacts[i];
+                    contact.Object.Contacts.PushBack(contact);
+                }
             }
 
             // clear contacts
@@ -174,6 +180,7 @@ namespace Aqua
                 configs[objIdx] = obj.Config;
                 positions[objIdx] = obj.Body.position;
                 obj.Body.useFullKinematicContacts = true;
+                obj.Contacts.Clear();
                 objIdx++;
             }
 
@@ -374,6 +381,16 @@ namespace Aqua
 
             return inDirection;
         }
+
+        /// <summary>
+        /// Performs collision checks but does not update positions.
+        /// </summary>
+        static public void PerformCollisionChecks()
+        {
+            Physics2D.Simulate(CollisionCheckTick);
+        }
+
+        private const float CollisionCheckTick = 1f / 65536f;
 
         #endregion // Utils
     }

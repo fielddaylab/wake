@@ -1,5 +1,6 @@
 using BeauUtil;
 using UnityEngine;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -15,6 +16,8 @@ namespace Aqua.Cameras
         public Transform Target = null;
         public float Height = 10;
         public float Zoom = 1;
+
+        [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.All;
 
         #endregion // Inspector
 
@@ -72,5 +75,17 @@ namespace Aqua.Cameras
         #endif // UNITY_EDITOR
 
         #endregion // Editor
+    }
+
+    [Flags]
+    public enum CameraPoseProperties : byte
+    {
+        Position = 0x01,
+        Height = 0x02,
+        Zoom = 0x04,
+
+        [Hidden] PosAndZoom = Position | Zoom,
+        [Hidden] HeightAndZoom = Height | Zoom,
+        [Hidden] All = Position | Height | Zoom
     }
 }

@@ -40,7 +40,7 @@ namespace Aqua.Editor
             DBObject.RefreshCollection<JobDesc, JobDB>();
             DBObject.RefreshCollection<ActDesc, ActDB>();
             DBObject.RefreshCollection<WaterPropertyDesc, WaterPropertyDB>();
-            DBObject.RefreshCollection<ScriptActorDef, ScriptCharacterDB>();
+            DBObject.RefreshCollection<ScriptCharacterDef, ScriptCharacterDB>();
             DBObject.RefreshCollection<InvItem, InventoryDB>();
         }
     }

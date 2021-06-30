@@ -16,7 +16,7 @@ namespace Aqua
 
         public override void OnTimeChanged(GTDate inGameTime)
         {
-            Renderer.Color = Palette.GetValueForTime(inGameTime);
+            Renderer.Color = Palette.Evaluate(inGameTime);
         }
 
         public override TimeEvent EventMask()

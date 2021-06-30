@@ -47,8 +47,8 @@ namespace ProtoAqua.Argumentation
         #endregion // Inspector
 
         private Routine m_ChatRoutine;
-        [NonSerialized] private ScriptActorDef m_CharacterDef;
-        [NonSerialized] private ScriptActorDef m_PlayerDef;
+        [NonSerialized] private ScriptCharacterDef m_CharacterDef;
+        [NonSerialized] private ScriptCharacterDef m_PlayerDef;
         [NonSerialized] private List<Link> m_Claims = new List<Link>();
 
         private void Start()

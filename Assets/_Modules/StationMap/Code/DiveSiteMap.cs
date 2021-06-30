@@ -1,18 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BeauRoutine;
-using Aqua;
 using BeauUtil;
-using BeauUtil.Variants;
+using Aqua.Character;
 
 namespace Aqua.StationMap
 {
-    public class PlayerSpawner : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable
+    public class DiveSiteMap : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable
     {
         [SerializeField, HideInInspector] private PlayerController m_Player = null;
         [SerializeField, HideInInspector] private DiveSite[] m_DiveSites;
-        [SerializeField, HideInInspector] private ShipDock m_Dock;
+        [SerializeField, HideInInspector] private SpawnLocationMap m_Spawns;
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
@@ -25,20 +22,12 @@ namespace Aqua.StationMap
                 site.CheckAllowed(job);
             }
 
-            if (entrance.IsEmpty || entrance == "Ship")
-            {
-                m_Player.Teleport(m_Dock.PlayerSpawnLocation.position);
-                return;
-            }
-
-            foreach(var site in m_DiveSites)
-            {
-                if (site.MapId == entrance)
-                {
-                    m_Player.Teleport(site.PlayerSpawnLocation.position);
-                    break;
-                }
-            }
+            if (entrance.IsEmpty)
+                entrance = "Ship";
+            
+            SpawnLocation location = m_Spawns.FindLocation(entrance);
+            if (location != null)
+                m_Player.TeleportTo(location);
         }
 
         void ISceneOptimizable.Optimize()
@@ -46,9 +35,8 @@ namespace Aqua.StationMap
             List<DiveSite> diveSites = new List<DiveSite>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);
             m_DiveSites = diveSites.ToArray();
-
-            m_Dock = FindObjectOfType<ShipDock>();
             m_Player = FindObjectOfType<PlayerController>();
+            m_Spawns = FindObjectOfType<SpawnLocationMap>();
         }
     }
 }

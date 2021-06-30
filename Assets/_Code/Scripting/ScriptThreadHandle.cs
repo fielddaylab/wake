@@ -30,7 +30,7 @@ namespace Aqua.Scripting
         /// <summary>
         /// Context for the script thread.
         /// </summary>
-        public IScriptContext Context() { return GetThread()?.Context; }
+        public ScriptObject Actor() { return GetThread()?.Actor; }
 
         /// <summary>
         /// Target of the script thread.

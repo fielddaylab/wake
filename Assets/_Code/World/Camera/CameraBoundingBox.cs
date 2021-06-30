@@ -30,12 +30,7 @@ namespace Aqua.Cameras
 
         private void Awake()
         {
-            TriggerListener2D listener = m_Region.EnsureComponent<TriggerListener2D>();
-            listener.SetOccupantTracking(false);
-            listener.LayerFilter = GameLayers.Player_Mask;
-
-            listener.onTriggerEnter.AddListener(OnTargetEnter);
-            listener.onTriggerExit.AddListener(OnTargetExit);
+            WorldUtils.ListenForPlayer(m_Region, OnTargetEnter, OnTargetExit);
         }
 
         private void OnTargetEnter(Collider2D inCollider)

@@ -58,7 +58,7 @@ namespace ProtoAqua.Argumentation
             }
         }
 
-        public void Populate(string inText, ScriptActorDef inActor)
+        public void Populate(string inText, ScriptCharacterDef inActor)
         {
             m_Text.SetText(inText);
 

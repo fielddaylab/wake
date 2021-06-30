@@ -125,7 +125,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartThread(IScriptContext inContext, IEnumerator inEnumerator)
+        public ScriptThreadHandle StartThread(ScriptObject inContext, IEnumerator inEnumerator)
         {
             return StartThreadInternal(null, inContext, inEnumerator);
         }
@@ -133,7 +133,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartThread(IScriptContext inContext, IEnumerator inEnumerator, string inThreadId)
+        public ScriptThreadHandle StartThread(ScriptObject inContext, IEnumerator inEnumerator, string inThreadId)
         {
             return StartThreadInternal(inThreadId, inContext, inEnumerator);
         }
@@ -175,7 +175,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash32 inEntrypointId)
+        public ScriptThreadHandle StartNode(ScriptObject inContext, StringHash32 inEntrypointId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -190,7 +190,7 @@ namespace Aqua
         /// <summary>
         /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
         /// </summary>
-        public ScriptThreadHandle StartNode(IScriptContext inContext, StringHash32 inEntrypointId, string inThreadId)
+        public ScriptThreadHandle StartNode(ScriptObject inContext, StringHash32 inEntrypointId, string inThreadId)
         {
             ScriptNode node;
             if (!TryGetEntrypoint(inEntrypointId, out node))
@@ -209,7 +209,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null, string inThreadId = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), ScriptObject inContext = null, VariantTable inContextTable = null, string inThreadId = null)
         {
             ScriptThreadHandle handle = default(ScriptThreadHandle);
             IVariantResolver resolver = GetResolver(inContextTable);
@@ -268,7 +268,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public void TryCallFunctions(StringHash32 inFunctionId, StringHash32 inTarget = default(StringHash32), IScriptContext inContext = null, VariantTable inContextTable = null)
+        public void TryCallFunctions(StringHash32 inFunctionId, StringHash32 inTarget = default(StringHash32), ScriptObject inContext = null, VariantTable inContextTable = null)
         {
             IVariantResolver resolver = GetResolver(inContextTable);
             FunctionSet functionSet;
@@ -341,14 +341,14 @@ namespace Aqua
         /// <summary>
         /// Kills all currently running scripting threads for the given context.
         /// </summary>
-        public bool KillThreads(IScriptContext inContext)
+        public bool KillThreads(ScriptObject inContext)
         {
             bool bKilled = false;
             ScriptThread thread;
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 thread = m_ThreadList[i];
-                if (thread.Context == inContext)
+                if (thread.Actor == inContext)
                 {
                     string id = thread.Name;
                     thread.Kill();
@@ -431,7 +431,7 @@ namespace Aqua
             object result;
             if (target.IsEmpty)
             {
-                m_LeafCache.TryStaticInvoke(method, args, out result);
+                m_LeafCache.TryStaticInvoke(method, args, null, out result);
             }
             else
             {
@@ -443,7 +443,7 @@ namespace Aqua
                 }
                 else
                 {
-                    m_LeafCache.TryInvoke(targetObj, method, args, out result);
+                    m_LeafCache.TryInvoke(targetObj, method, args, null, out result);
                 }
             }
 
@@ -521,7 +521,7 @@ namespace Aqua
         }
 
         // Starts a scripting thread
-        private ScriptThreadHandle StartThreadInternal(string inThreadName, IScriptContext inContext, IEnumerator inEnumerator)
+        private ScriptThreadHandle StartThreadInternal(string inThreadName, ScriptObject inContext, IEnumerator inEnumerator)
         {
             if (inEnumerator == null || !FreeName(inThreadName))
             {
@@ -538,7 +538,7 @@ namespace Aqua
             return handle;
         }
 
-        private ScriptThreadHandle StartThreadInternalNode(string inThreadName, IScriptContext inContext, ScriptNode inNode, VariantTable inVars)
+        private ScriptThreadHandle StartThreadInternalNode(string inThreadName, ScriptObject inContext, ScriptNode inNode, VariantTable inVars)
         {
             if (inNode == null || !FreeName(inThreadName) || !CheckPriority(inNode))
             {

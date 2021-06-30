@@ -6,7 +6,7 @@ namespace Aqua
 {
     public interface ITimeAnimatedValue<T> where T : struct
     {
-        T GetValueForTime(GTDate inGameTime);
+        T Evaluate(GTDate inGameTime);
     }
 
     [Serializable]
@@ -17,7 +17,7 @@ namespace Aqua
         public Color32 Evening;
         public Color32 Night;
 
-        public Color32 GetValueForTime(GTDate inGameTime)
+        public Color32 Evaluate(GTDate inGameTime)
         {
             switch(inGameTime.SubPhase)
             {
@@ -53,7 +53,7 @@ namespace Aqua
         public float Evening;
         public float Night;
 
-        public float GetValueForTime(GTDate inGameTime)
+        public float Evaluate(GTDate inGameTime)
         {
             switch(inGameTime.SubPhase)
             {

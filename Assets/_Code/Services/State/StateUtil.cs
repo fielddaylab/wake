@@ -33,6 +33,13 @@ namespace Aqua
         static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default)
         {
             BeforeLoad();
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            if (!currentMapId.IsEmpty)
+            {
+                if (inEntrance.IsEmpty)
+                    inEntrance = currentMapId;
+            }
+            
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
                 () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inEntrance, inContext, LoadFlags | inFlags)).Then(AfterLoad)
             );

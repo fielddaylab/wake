@@ -24,5 +24,9 @@ namespace Aqua
         static public readonly StringHash32 JobCompleted = "JobCompleted";
         static public readonly StringHash32 JobTaskCompleted = "JobTaskCompleted";
         static public readonly StringHash32 JobTasksUpdated = "JobTaskUpdated";
+
+        static public readonly StringHash32 TryExitScene = "TryExitScene";
+        static public readonly StringHash32 PlayerEnterRegion = "PlayerEnterRegion";
+        static public readonly StringHash32 PlayerExitRegion = "PlayerExitRegion";
     }
 }

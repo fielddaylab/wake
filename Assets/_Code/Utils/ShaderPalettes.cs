@@ -11,8 +11,11 @@ namespace Aqua
         static private readonly Color DefaultLightColor = ColorBank.White;
         static private readonly Color DefaultShadowColor = ColorBank.DarkGray;
 
-        static public int LightColor;
-        static public int ShadowColor;
+        static public int WorldLightColor;
+        static public int WorldShadowColor;
+
+        static public int ActorLightColor;
+        static public int ActorShadowColor;
 
         static public int SeaColor0;
         static public int SeaColor1;
@@ -31,14 +34,23 @@ namespace Aqua
         
         static private void InitializeShaderValues()
         {
-            LightColor = Shader.PropertyToID("_LightColor");
-            ShadowColor = Shader.PropertyToID("_ShadowColor");
+            WorldLightColor = Shader.PropertyToID("_WorldLightColor");
+            WorldShadowColor = Shader.PropertyToID("_WorldShadowColor");
+
+            ActorLightColor = Shader.PropertyToID("_ActorLightColor");
+            ActorShadowColor = Shader.PropertyToID("_ActorShadowColor");
 
             SeaColor0 = Shader.PropertyToID("_SeaColor0");
             SeaColor1 = Shader.PropertyToID("_SeaColor1");
 
-            Shader.SetGlobalColor(LightColor, DefaultLightColor);
-            Shader.SetGlobalColor(ShadowColor, DefaultLightColor);
+            SkyColor0 = Shader.PropertyToID("_SkyColor0");
+            SkyColor1 = Shader.PropertyToID("_SkyColor1");
+
+            Shader.SetGlobalColor(WorldLightColor, DefaultLightColor);
+            Shader.SetGlobalColor(WorldShadowColor, DefaultShadowColor);
+
+            Shader.SetGlobalColor(ActorLightColor, DefaultLightColor);
+            Shader.SetGlobalColor(ActorShadowColor, DefaultShadowColor);
         }
     }
 }

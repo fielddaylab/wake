@@ -355,7 +355,7 @@ namespace Aqua
             StringHash32 who = args.Count > 1 ? args[1] : StringHash32.Null;
             bool bWait = args.Count > 2 && args[2] == "wait";
 
-            var response = Services.Script.TriggerResponse(trigger, who, thread?.Context, thread?.Locals);
+            var response = Services.Script.TriggerResponse(trigger, who, thread?.Actor, thread?.Locals);
             if (response.IsRunning() && bWait)
                 return response.Wait();
             

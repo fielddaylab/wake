@@ -3,62 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
 using Aqua;
+using Aqua.Character;
+using BeauUtil;
 
 namespace Aqua.StationMap
 {    
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : PlayerBody
     {
         #region Inspector
 
-        [SerializeField] KinematicObject2D playerRigidBody = null;
-        [SerializeField] PlayerInput playerInput = null;
-        [SerializeField] PlayerAnimator playerAnimator = null;
-
+        [SerializeField] private PlayerInput m_Input = null;
+        [SerializeField] private PlayerAnimator m_Animator = null;
         [SerializeField] private ParticleSystem m_MovementParticles = null;
         
         [Header("Movement Params")]
 
-        [SerializeField] private float m_TargetVectorMaxDistance = 5;
-        [SerializeField] private float m_TargetVectorMinDistance = 0.2f;
-        [SerializeField] private float m_TargetVectorSpeed = 1;
+        [SerializeField] private MovementFromOffset m_MoveParams = default;
+        [SerializeField] private RotationFromOffset m_RotateParams = default;
         [SerializeField] private float m_DragEngineOn = 1;
         [SerializeField] private float m_DragEngineOff = 2;
 
         #endregion // Inspector
 
-        void FixedUpdate()
+        protected override void Tick(float inDeltaTime)
         {
-            MovePlayer();
-            RotatePlayer();
-        }  
- 
-        private void MovePlayer()
-        {
-            Vector2 direction = playerInput.GetDirection();
-            float currentSpeed = playerInput.GetSpeed(0, playerRigidBody.Config.MaxSpeed);
+            PlayerInput.Input input;
+            m_Input.GenerateInput(out input);
 
-            Vector2 newVelocity = new Vector2(direction.x * currentSpeed, direction.y * currentSpeed);
-            Vector2 currentVelocity = playerRigidBody.State.Velocity;
-            
-            if (newVelocity.sqrMagnitude > currentVelocity.sqrMagnitude)
-                playerRigidBody.State.Velocity += (newVelocity - currentVelocity) * Time.fixedDeltaTime * 5;
-        }
+            if (input.Move && input.Mouse.NormalizedOffset.sqrMagnitude > 0)
+            {
+                m_MoveParams.Apply(input.Mouse.NormalizedOffset, m_Kinematics, inDeltaTime);
+                m_RotateParams.Apply(input.Mouse.NormalizedOffset, m_Transform, inDeltaTime);
 
-        private void RotatePlayer()
-        {
-            float angle = playerInput.GetRotateAngle();
-            if(angle != 0) {
-                transform.rotation =  Quaternion.Euler (new Vector3(0f,0f,angle));
+                m_Kinematics.Config.Drag = m_DragEngineOn;
+            }
+            else
+            {
+                m_Kinematics.Config.Drag = m_DragEngineOff;
             }
         }
 
-        public void Teleport(Vector2 inPosition)
+        public override void TeleportTo(Vector3 inPosition)
         {
-            transform.SetPosition(inPosition, Axis.XY);
+            base.TeleportTo(inPosition);
+
             m_MovementParticles.Stop();
             m_MovementParticles.Play();
         }
-
     }
 }
 

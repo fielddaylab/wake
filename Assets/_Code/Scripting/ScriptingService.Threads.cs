@@ -96,13 +96,6 @@ namespace Aqua
 
         bool ILeafPlugin<ScriptNode>.TryLookupObject(StringHash32 inObjectId, LeafThreadState<ScriptNode> inThreadState, out object outObject)
         {
-            var thread = ScriptThread(inThreadState);
-            if (inObjectId == "this")
-            {
-                outObject = thread.Context.Object;
-                return outObject != null;
-            }
-
             ScriptObject obj;
             bool bFound = TryGetScriptObjectById(inObjectId, out obj);
             outObject = obj;
@@ -112,7 +105,7 @@ namespace Aqua
         LeafThreadState<ScriptNode> ILeafPlugin<ScriptNode>.Fork(LeafThreadState<ScriptNode> inThreadState, ScriptNode inForkNode)
         {
             var thread = ScriptThread(inThreadState);
-            var handle = StartThreadInternalNode(null, thread.Context, inForkNode, thread.Locals);
+            var handle = StartThreadInternalNode(null, thread.Actor, inForkNode, thread.Locals);
             return handle.GetThread();
         }
 

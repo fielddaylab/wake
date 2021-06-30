@@ -98,7 +98,7 @@ namespace Aqua
                 if (record.CharacterId != currentCharacter)
                 {
                     currentCharacter = record.CharacterId;
-                    ScriptActorDef actorDef = Services.Assets.Characters.Get(record.CharacterId);
+                    ScriptCharacterDef actorDef = Services.Assets.Characters.Get(record.CharacterId);
                     textColor = actorDef.HistoryColorOverride() ?? m_DefaultTextColor;
                 }
 

@@ -78,6 +78,16 @@ namespace Aqua
             inHandler.HandleInput(inInput);
         }
 
+        public Vector3 ScreenMousePosition()
+        {
+            return IsActive() ? Input.mousePosition : default(Vector3);
+        }
+
+        public Vector3 WorldMousePosition()
+        {
+            return IsActive() ? Services.Camera.ScreenToGameplayPosition(Input.mousePosition) : default(Vector3);
+        }
+
         public bool KeyDown(KeyCode inKeyCode)
         {
             return IsActive() && Input.GetKey(inKeyCode);
