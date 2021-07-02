@@ -190,6 +190,8 @@ namespace ProtoAqua.Modeling
             SyncPhaseScriptVar();
             m_SimulationUI.SwitchToPredict();
 
+            m_SimulationUI.Refresh(m_GraphState, SimulationBuffer.UpdateFlags.Model);
+
             Services.Audio.PostEvent("modelSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_Synced);
         }

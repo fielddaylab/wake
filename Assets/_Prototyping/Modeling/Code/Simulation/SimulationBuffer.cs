@@ -34,13 +34,15 @@ namespace ProtoAqua.Modeling
             ALL = Historical | Model
         }
 
-        private readonly SimulationProfile m_HistoricalProfile = new SimulationProfile();
-        private readonly SimulationProfile m_PlayerProfile = new SimulationProfile();
+        public readonly SimulationProfile HistoricalProfile = new SimulationProfile();
+        public readonly SimulationProfile PlayerProfile = new SimulationProfile();
 
         private ModelingScenarioData m_Scenario;
         private SimulationResult[] m_HistoricalResultBuffer;
         private SimulationResult[] m_PlayerResultBuffer;
+        private SimulationResultDetails[] m_PlayerDetailBuffer;
         private SimulationResult[] m_PredictionResultBuffer;
+        private SimulationResultDetails[] m_PredictionDetailBuffer;
 
         private DirtyFlags m_HistoricalSimDirty;
         private DirtyFlags m_PlayerSimDirty;
@@ -71,10 +73,12 @@ namespace ProtoAqua.Modeling
             m_Scenario = inScenarioData;
             Array.Resize(ref m_HistoricalResultBuffer, (int) m_Scenario.TickCount() + 1);
             Array.Resize(ref m_PlayerResultBuffer, (int) m_Scenario.TickCount() + 1);
+            Array.Resize(ref m_PlayerDetailBuffer, (int) m_Scenario.TickCount() + 1);
             Array.Resize(ref m_PredictionResultBuffer, (int) m_Scenario.PredictionTicks() + 1);
+            Array.Resize(ref m_PredictionDetailBuffer, (int) m_Scenario.PredictionTicks() + 1);
 
-            m_HistoricalProfile.Clear();
-            m_PlayerProfile.Clear();
+            HistoricalProfile.Clear();
+            PlayerProfile.Clear();
 
             m_PlayerCritters.Clear();
             m_PlayerFacts.Clear();
@@ -102,7 +106,9 @@ namespace ProtoAqua.Modeling
             {
                 Array.Resize(ref m_HistoricalResultBuffer, (int) m_Scenario.TickCount() + 1);
                 Array.Resize(ref m_PlayerResultBuffer, (int) m_Scenario.TickCount() + 1);
+                Array.Resize(ref m_PlayerDetailBuffer, (int) m_Scenario.TickCount() + 1);
                 Array.Resize(ref m_PredictionResultBuffer, (int) m_Scenario.PredictionTicks() + 1);
+                Array.Resize(ref m_PredictionDetailBuffer, (int) m_Scenario.PredictionTicks() + 1);
 
                 m_PlayerSimDirty = DirtyFlags.ALL;
                 m_HistoricalSimDirty = DirtyFlags.ALL;
@@ -382,12 +388,30 @@ namespace ProtoAqua.Modeling
         }
 
         /// <summary>
+        /// Returns player model results details.
+        /// </summary>
+        public SimulationResultDetails[] PlayerDataDetails()
+        {
+            RefreshModel();
+            return m_PlayerDetailBuffer;
+        }
+
+        /// <summary>
         /// Returns player model prediction results.
         /// </summary>
         public SimulationResult[] PredictData()
         {
             RefreshModel();
             return m_PredictionResultBuffer;
+        }
+
+        /// <summary>
+        /// Returns player model prediction result details.
+        /// </summary>
+        public SimulationResultDetails[] PredictDataDetails()
+        {
+            RefreshModel();
+            return m_PredictionDetailBuffer;
         }
 
         /// <summary>
@@ -426,8 +450,8 @@ namespace ProtoAqua.Modeling
             {
                 using(Profiling.Time("Generating historical profile"))
                 {
-                    m_HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters());
-                    m_HistoricalProfile.InitialState.Random = new SimulationRandom(m_Scenario.Seed());
+                    HistoricalProfile.Construct(m_Scenario.Environment(), m_Scenario.Critters());
+                    HistoricalProfile.InitialState.Random = new SimulationRandom(m_Scenario.Seed());
                 }
             }
 
@@ -436,18 +460,18 @@ namespace ProtoAqua.Modeling
                 using(Profiling.Time("Generating historical populations"))
                 {
                     // initialize to 0, in proper order
-                    m_HistoricalProfile.InitialState.ClearCritters();
-                    foreach(var critter in m_HistoricalProfile.Critters())
-                        m_HistoricalProfile.InitialState.SetCritters(critter.Id(), 0);
+                    HistoricalProfile.InitialState.ClearCritters();
+                    foreach(var critter in HistoricalProfile.Critters())
+                        HistoricalProfile.InitialState.SetCritters(critter.Id(), 0);
 
                     foreach(var critter in m_Scenario.Actors())
-                        m_HistoricalProfile.InitialState.SetCritters(critter.Id, critter.Population);
+                        HistoricalProfile.InitialState.SetCritters(critter.Id, critter.Population);
                 }
             }
 
             using(Profiling.Time("Generating historical model"))
             {
-                Simulator.GenerateToBuffer(m_HistoricalProfile, m_HistoricalResultBuffer, m_Scenario.TickScale(), Flags);
+                Simulator.GenerateToBuffer(HistoricalProfile, m_HistoricalResultBuffer, Flags);
             }
             m_HistoricalSimDirty = 0;
             return true;
@@ -467,8 +491,8 @@ namespace ProtoAqua.Modeling
             {
                 using(Profiling.Time("Generating player profile"))
                 {
-                    m_PlayerProfile.Construct(m_Scenario.Environment(), m_PlayerCritters, m_PlayerFacts);
-                    m_PlayerProfile.InitialState.Random = m_HistoricalProfile.InitialState.Random;
+                    PlayerProfile.Construct(m_Scenario.Environment(), m_PlayerCritters, m_PlayerFacts);
+                    PlayerProfile.InitialState.Random = HistoricalProfile.InitialState.Random;
                 }
                 bUpdateModel = true;
             }
@@ -478,12 +502,12 @@ namespace ProtoAqua.Modeling
                 using(Profiling.Time("Generating player populations"))
                 {
                     // initialize to 0, in proper order
-                    m_PlayerProfile.InitialState.ClearCritters();
-                    foreach(var critter in m_PlayerProfile.Critters())
-                        m_PlayerProfile.InitialState.SetCritters(critter.Id(), 0);
+                    PlayerProfile.InitialState.ClearCritters();
+                    foreach(var critter in PlayerProfile.Critters())
+                        PlayerProfile.InitialState.SetCritters(critter.Id(), 0);
 
                     foreach(var critter in m_PlayerActors)
-                        m_PlayerProfile.InitialState.SetCritters(critter.Id, critter.Population);
+                        PlayerProfile.InitialState.SetCritters(critter.Id, critter.Population);
                 }
 
                 bUpdateModel = true;
@@ -491,9 +515,9 @@ namespace ProtoAqua.Modeling
 
             if (bUpdateModel)
             {
-                using(Profiling.Time("Generating player model"))
+                using(Profiling.Time("Generating player model")) 
                 {
-                    Simulator.GenerateToBuffer(m_PlayerProfile, m_PlayerResultBuffer, m_Scenario.TickScale(), Flags);
+                    Simulator.GenerateToBuffer(PlayerProfile, m_PlayerResultBuffer, m_PlayerDetailBuffer, Flags);
                 }
             }
 
@@ -511,7 +535,7 @@ namespace ProtoAqua.Modeling
                 
                 using(Profiling.Time("Generating player prediction"))
                 {
-                    Simulator.GenerateToBuffer(m_PlayerProfile, initialPredictResult, m_PredictionResultBuffer, m_Scenario.TickScale(), Flags);
+                    Simulator.GenerateToBuffer(PlayerProfile, initialPredictResult, m_PredictionResultBuffer, m_PredictionDetailBuffer, Flags);
                 }
             }
 

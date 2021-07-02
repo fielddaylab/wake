@@ -198,7 +198,7 @@ namespace ProtoAqua.Argumentation
 
         private IEnumerator ScrollDown()
         {
-            yield return m_ScrollRect.NormalizedPosTo(0, 0.5f, Axis.Y).Ease(Curve.CubeOut);
+            yield return m_ScrollRect.NormalizedPosTo(0, m_ScrollTime, Axis.Y).Ease(Curve.CubeOut);
         }
 
         private IEnumerator ShakeNode(ArgueChatLine inLine)

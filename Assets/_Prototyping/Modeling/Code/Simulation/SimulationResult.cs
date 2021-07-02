@@ -11,7 +11,7 @@ namespace ProtoAqua.Modeling
         public ushort Timestamp;
         public SimulationRandom Random;
         public WaterPropertyBlockF32 Environment;
-        public TempList16<CritterResult> Actors;
+        public TempList8<CritterResult> Actors;
 
         public void ClearCritters()
         {
@@ -38,7 +38,14 @@ namespace ProtoAqua.Modeling
             });
         }
 
-        public void AdjustCritters(StringHash32 inActorId, int inAdjust)
+        public void SetCritters(int inIndex, uint inPopulation, ActorStateId inStateId = ActorStateId.Alive)
+        {
+            CritterResult crit = Actors[inIndex];
+            crit.Population = inPopulation;
+            Actors[inIndex] = crit;
+        }
+
+        public uint AdjustCritters(StringHash32 inActorId, int inAdjust)
         {
             CritterResult crit;
             for(int i = Actors.Count - 1; i >= 0; i--)
@@ -51,7 +58,7 @@ namespace ProtoAqua.Modeling
                         newPop = 0;
                     crit.Population = (uint) newPop;
                     Actors[i] = crit;
-                    return;
+                    return (uint) newPop;
                 }
             }
             
@@ -63,6 +70,19 @@ namespace ProtoAqua.Modeling
                 Id = inActorId,
                 Population = (uint) inAdjust,
             });
+
+            return (uint) inAdjust;
+        }
+
+        public uint AdjustCritters(int inCritterIndex, int inAdjust)
+        {
+            CritterResult crit = Actors[inCritterIndex];
+            long newPop = crit.Population + inAdjust;
+            if (newPop < 0)
+                newPop = 0;
+            crit.Population = (uint) newPop;
+            Actors[inCritterIndex] = crit;
+            return (uint) newPop;
         }
 
         public CritterResult GetCritters(StringHash32 inActorId)

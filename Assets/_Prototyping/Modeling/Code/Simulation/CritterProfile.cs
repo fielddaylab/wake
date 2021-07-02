@@ -287,10 +287,19 @@ namespace ProtoAqua.Modeling
             }
         }
 
-        public void EndTick(ref CritterData ioData, SimulatorFlags inFlags)
+        public void EndTick(ref CritterData ioData, SimulatorFlags inFlags, ref SimulationResultDetails ioDetails)
         {
+            bool bDetails = (inFlags & SimulatorFlags.OutputDetails) != 0;
+
             if (ioData.Population == 0 || m_IgnoreStarvation)
+            {
+                if (bDetails)
+                {
+                    ioDetails.Deaths.Add(0);
+                    ioDetails.Growth.Add(0);
+                }
                 return;
+            }
 
             uint toKillAbsolute = 0;
             if (ioData.Hunger > 0)
@@ -318,12 +327,27 @@ namespace ProtoAqua.Modeling
                 {
                     Log.Msg("[CritterProfile] {0} of critter '{1}' died", popDecrease, Id());
                 }
+                if (bDetails)
+                {
+                    ioDetails.Deaths.Add(popDecrease);
+                }
             }
+            else
+            {
+                if (bDetails)
+                {
+                    ioDetails.Deaths.Add(0);
+                }
+            }
+
+            uint totalGrowth = 0;
 
             uint growthPerTick = ioData.State == ActorStateId.Stressed ? m_GrowthPerTickStressed : m_GrowthPerTick;
             if (growthPerTick > 0 && ioData.Population > 0)
             {
                 uint popIncrease = Grow(ref ioData, growthPerTick);
+                totalGrowth += popIncrease;
+
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
                     Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
@@ -334,10 +358,17 @@ namespace ProtoAqua.Modeling
             if (reproPerTick > 0 && ioData.Population > 0)
             {
                 uint popIncrease = Reproduce(ref ioData, reproPerTick);
+                totalGrowth += popIncrease;
+
                 if ((inFlags & SimulatorFlags.Debug) != 0)
                 {
                     Log.Msg("[CritterProfile] {0} of critter '{1}' added by reproduction", popIncrease, Id());
                 }
+            }
+
+            if (bDetails)
+            {
+                ioDetails.Growth.Add(totalGrowth);
             }
 
             if (ioData.Population == 0)

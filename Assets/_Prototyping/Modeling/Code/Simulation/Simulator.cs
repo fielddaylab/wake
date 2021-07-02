@@ -10,14 +10,14 @@ namespace ProtoAqua.Modeling
 {
     static public class Simulator
     {
-        public const int MaxTrackedCritters = 16;
+        public const int MaxTrackedCritters = 8;
         public const float MaxEatProportion = 0.75f;
         public const float MaxReproduceProportion = 0.75f;
         public const float MaxDeathProportion = 0.5f;
         public const uint HungerPerCritter = 32;
 
-        static private readonly WaterPropertyId[] PreemptiveProperties = new WaterPropertyId[] { WaterPropertyId.Light };
-        static private readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature, WaterPropertyId.Salinity };
+        static public readonly WaterPropertyId[] PreemptiveProperties = new WaterPropertyId[] { WaterPropertyId.Light };
+        static public readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature, WaterPropertyId.Salinity };
         static private readonly WaterPropertyMask ConsumeMask;
 
         private const int FixedShift = 12;
@@ -33,12 +33,24 @@ namespace ProtoAqua.Modeling
         /// </summary>
         static public unsafe SimulationResult Simulate(SimulationProfile inProfile, in SimulationResult inInitial, SimulatorFlags inFlags)
         {
+            SimulationResultDetails _;
+            return Simulate(inProfile, inInitial, inFlags, out _);
+        }
+
+        /// <summary>
+        /// Generates a single result from the given profile and initial data.
+        /// </summary>
+        static public unsafe SimulationResult Simulate(SimulationProfile inProfile, in SimulationResult inInitial, SimulatorFlags inFlags, out SimulationResultDetails outDetails)
+        {
             bool bLogging = (inFlags & SimulatorFlags.Debug) != 0;
+            bool bDetails = (inFlags & SimulatorFlags.OutputDetails) != 0;
 
             if (bLogging && inInitial.Timestamp == 0)
             {
                 Log.Msg(Dump(inInitial));
             }
+
+            outDetails = default(SimulationResultDetails);
 
             WaterPropertyBlockF32 environment = inInitial.Environment;
             SimulationRandom random = inInitial.Random;
@@ -57,12 +69,21 @@ namespace ProtoAqua.Modeling
             {
                 Log.Format("[Simulator] Beginning tick {0}", inInitial.Timestamp);
             }
+            if (bDetails)
+            {
+                outDetails.StartingEnvironment = environment;
+            }
 
             // setup
             for(int i = 0; i < critterCount; ++i)
             {
                 profiles[i].CopyFrom(ref dataBlock[i], inInitial);
                 profiles[i].SetupTick(ref dataBlock[i], environment, inFlags);
+
+                if (bDetails)
+                {
+                    outDetails.StartingStates.Add(dataBlock[i].State);
+                }
             }
 
             if (bLogging)
@@ -74,6 +95,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
+                WaterPropertyBlockF32 toConsume = default;
                 for(int j = 0; j < PreemptiveProperties.Length; ++j)
                 {
                     WaterPropertyId prop = PreemptiveProperties[j];
@@ -88,7 +110,14 @@ namespace ProtoAqua.Modeling
                         {
                             Log.Msg("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, prop);
                         }
+
+                        toConsume[prop] = canConsume;
                     }
+                }
+
+                if (bDetails)
+                {
+                    outDetails.Consumed.Add(toConsume);
                 }
             }
 
@@ -96,6 +125,10 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critterCount; ++i)
             {
                 profiles[i].ReevaluateState(ref dataBlock[i], environment, inFlags, ConsumeMask);
+                if (bDetails)
+                {
+                    outDetails.AfterLightStates.Add(dataBlock[i].State);
+                }
             }
 
             if (bLogging)
@@ -116,6 +149,10 @@ namespace ProtoAqua.Modeling
                     }
 
                     environment += produce;
+                    if (bDetails)
+                    {
+                        outDetails.Produced.Add(produce);
+                    }
                 }
             }
 
@@ -123,20 +160,33 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critterCount; ++i)
             {
                 ref CritterData data = ref dataBlock[i];
-                for(WaterPropertyId j = 0; j <= WaterPropertyId.TRACKED_MAX; ++j)
+                WaterPropertyBlockF32 consumed = default;
+                if (bDetails)
                 {
-                    float desired = data.ToConsume[j];
+                    consumed = outDetails.Consumed[i];
+                }
+
+                for(WaterPropertyId prop = 0; prop <= WaterPropertyId.TRACKED_MAX; ++prop)
+                {
+                    float desired = data.ToConsume[prop];
                     if (desired > 0)
                     {
-                        float canConsume = Math.Min(desired, environment[j]);
-                        environment[j] -= canConsume;
-                        data.ToConsume[j] -= canConsume;
+                        float canConsume = Math.Min(desired, environment[prop]);
+                        environment[prop] -= canConsume;
+                        data.ToConsume[prop] -= canConsume;
                         
                         if (bLogging && canConsume > 0)
                         {
-                            Log.Msg("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, j);
+                            Log.Msg("[Simulator] Critter '{0}' consumed {1} of {2}", profiles[i].Id(), canConsume, prop);
                         }
+
+                        consumed[prop] += canConsume;
                     }
+                }
+
+                if (bDetails)
+                {
+                    outDetails.Consumed[i] = consumed;
                 }
             }
 
@@ -203,10 +253,19 @@ namespace ProtoAqua.Modeling
                     {
                         uint massToEat = massToConsume[j];
                         uint actualEat = profiles[targetIndex].TryBeEaten(ref dataBlock[targetIndex], massToEat);
-                        remainingFood -= FixedMultiply(actualEat, eatTarget.MassScaleInv); // convert back from mass to hunger
-                        if (bLogging)
+                        if (actualEat > 0)
                         {
-                            Log.Msg("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id(), actualEat, profiles[targetIndex].Id());
+                            remainingFood -= FixedMultiply(actualEat, eatTarget.MassScaleInv); // convert back from mass to hunger
+                            if (bLogging)
+                            {
+                                Log.Msg("[Simulator] Critter '{0}' consumed {1} mass of '{2}'", profiles[i].Id(), actualEat, profiles[targetIndex].Id());
+                            }
+
+                            if (bDetails)
+                            {
+                                uint popEaten = actualEat / profiles[targetIndex].MassPerPopulation();
+                                outDetails.Eaten.Add(new CritterEatDetails((ushort) i, (ushort) targetIndex, popEaten));
+                            }
                         }
                     }
                 }
@@ -221,7 +280,7 @@ namespace ProtoAqua.Modeling
 
             for(int i = 0; i < critterCount; ++i)
             {
-                profiles[i].EndTick(ref dataBlock[i], inFlags);
+                profiles[i].EndTick(ref dataBlock[i], inFlags, ref outDetails);
                 profiles[i].CopyTo(dataBlock[i], ref result);
             }
 
@@ -262,35 +321,64 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Fills the given buffer with simulation results.
         /// </summary>
-        static public void GenerateToBuffer(SimulationProfile inProfile, SimulationResult[] ioResults, int inTickScale = 1, SimulatorFlags inFlags = 0)
+        static public void GenerateToBuffer(SimulationProfile inProfile, SimulationResult[] ioResults, SimulatorFlags inFlags = 0)
         {
             SimulationResult initial = inProfile.InitialState;
             ioResults[0] = initial;
-            GenerateToBuffer(inProfile, initial, ioResults, 1, ioResults.Length - 1, inTickScale, inFlags);
+            GenerateToBuffer(inProfile, initial, ioResults, 1, ioResults.Length - 1, inFlags);
         }
 
         /// <summary>
         /// Fills the given buffer with simulation results.
         /// </summary>
-        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, int inTickScale = 1, SimulatorFlags inFlags = 0)
+        static public void GenerateToBuffer(SimulationProfile inProfile, SimulationResult[] ioResults, SimulationResultDetails[] ioDetails, SimulatorFlags inFlags = 0)
+        {
+            SimulationResult initial = inProfile.InitialState;
+            ioResults[0] = initial;
+            GenerateToBuffer(inProfile, initial, ioResults, ioDetails, 1, ioResults.Length - 1, inFlags);
+        }
+
+        /// <summary>
+        /// Fills the given buffer with simulation results.
+        /// </summary>
+        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, SimulatorFlags inFlags = 0)
         {
             ioResults[0] = inInitial;
-            GenerateToBuffer(inProfile, inInitial, ioResults, 1, ioResults.Length - 1, inTickScale, inFlags);
+            GenerateToBuffer(inProfile, inInitial, ioResults, 1, ioResults.Length - 1, inFlags);
         }
 
         /// <summary>
         /// Fills the given buffer with simulation results.
         /// </summary>
-        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, int inStartIdx, int inLength, int inTickScale = 1, SimulatorFlags inFlags = 0)
+        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, SimulationResultDetails[] ioDetails, SimulatorFlags inFlags = 0)
+        {
+            ioResults[0] = inInitial;
+            GenerateToBuffer(inProfile, inInitial, ioResults, ioDetails, 1, ioResults.Length - 1, inFlags);
+        }
+
+        /// <summary>
+        /// Fills the given buffer with simulation results.
+        /// </summary>
+        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, int inStartIdx, int inLength, SimulatorFlags inFlags = 0)
         {
             SimulationResult current = inInitial;
             for(int i = 0; i < inLength; ++i)
             {
-                int counter = inTickScale;
-                while(counter-- > 0)
-                {
-                    current = Simulator.Simulate(inProfile, current, inFlags);
-                }
+                current = Simulator.Simulate(inProfile, current, inFlags);
+                ioResults[inStartIdx + i] = current;
+            }
+        }
+
+        /// <summary>
+        /// Fills the given buffer with simulation results.
+        /// </summary>
+        static public void GenerateToBuffer(SimulationProfile inProfile, in SimulationResult inInitial, SimulationResult[] ioResults, SimulationResultDetails[] ioDetails, int inStartIdx, int inLength, SimulatorFlags inFlags = 0)
+        {
+            SimulationResult current = inInitial;
+            inFlags |= SimulatorFlags.OutputDetails;
+            for(int i = 0; i < inLength; ++i)
+            {
+                current = Simulator.Simulate(inProfile, current, inFlags, out ioDetails[inStartIdx + i]);
                 ioResults[inStartIdx + i] = current;
             }
         }
@@ -355,6 +443,7 @@ namespace ProtoAqua.Modeling
     [Flags]
     public enum SimulatorFlags : byte
     {
-        Debug = 0x01
+        Debug = 0x01,
+        OutputDetails = 0x02
     }
 }

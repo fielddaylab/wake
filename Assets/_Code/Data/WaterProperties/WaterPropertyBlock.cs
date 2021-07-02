@@ -203,6 +203,105 @@ namespace Aqua
     }
 
     /// <summary>
+    /// Mapping of property to unsigned 32-bit int.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    public struct WaterPropertyBlockU32
+    {
+        public uint Oxygen;
+        public uint Temperature;
+        public uint Light;
+        public uint PH;
+        public uint CarbonDioxide;
+        public uint Salinity;
+
+        public unsafe uint this[WaterPropertyId inId]
+        {
+            get
+            {
+                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                    throw new ArgumentOutOfRangeException("inId");
+
+                fixed(uint* start = &this.Oxygen)
+                {
+                    return *((uint*) (start + (int) inId));
+                }
+            }
+            set
+            {
+                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                    throw new ArgumentOutOfRangeException("inId");
+
+                fixed(uint* start = &this.Oxygen)
+                {
+                    *((uint*) (start + (int) inId)) = value;
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+        }
+
+        static public WaterPropertyBlockU32 operator *(WaterPropertyBlockU32 inA, float inB)
+        {
+            WaterPropertyBlockU32 result = inA;
+            result.Oxygen = (uint) (result.Oxygen * inB);
+            result.Temperature = (uint) (result.Temperature * inB);
+            result.Light = (uint) (result.Light * inB);
+            result.PH = (uint) (result.PH * inB);
+            result.CarbonDioxide = (uint) (result.CarbonDioxide * inB);
+            result.Salinity = (uint) (result.Salinity * inB);
+            return result;
+        }
+
+        static public WaterPropertyBlockU32 operator +(WaterPropertyBlockU32 inA, WaterPropertyBlockU32 inB)
+        {
+            WaterPropertyBlockU32 result = inA;
+            result.Oxygen += inB.Oxygen;
+            result.Temperature += inB.Temperature;
+            result.Light += inB.Light;
+            result.PH += inB.PH;
+            result.CarbonDioxide += inB.CarbonDioxide;
+            result.Salinity += inB.Salinity;
+            return result;
+        }
+
+        static public WaterPropertyBlockU32 operator -(WaterPropertyBlockU32 inA, WaterPropertyBlockU32 inB)
+        {
+            WaterPropertyBlockU32 result = inA;
+            result.Oxygen -= inB.Oxygen;
+            result.Temperature -= inB.Temperature;
+            result.Light -= inB.Light;
+            result.PH -= inB.PH;
+            result.CarbonDioxide -= inB.CarbonDioxide;
+            result.Salinity -= inB.Salinity;
+            return result;
+        }
+
+        static public unsafe WaterPropertyBlockU32 operator &(WaterPropertyBlockU32 inA, WaterPropertyMask inB)
+        {
+            WaterPropertyBlockU32 result = inA;
+            
+            uint* ptr = &result.Oxygen;
+            int idx = 0;
+            int mask = 1;
+            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
+            {
+                if ((inB & mask) == 0)
+                    *ptr = 0;
+                idx++;
+                ptr++;
+                mask <<= 1;
+            }
+
+            return result;
+        }
+    }
+
+    /// <summary>
     /// Mapping of property to unsigned 8-bit integer.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack=1)]

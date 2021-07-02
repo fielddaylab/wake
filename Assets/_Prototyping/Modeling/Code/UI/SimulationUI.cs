@@ -13,6 +13,8 @@ namespace ProtoAqua.Modeling
     {
         #region Inspector
 
+        [SerializeField] private RectTransform m_OutputPanel = null;
+        [SerializeField] private BattleAnimationPrototype m_Battle = null;
         [SerializeField] private ChartUI m_Chart = null;
         [SerializeField] private ModelingCompleteUI m_Complete = null;
         
@@ -33,7 +35,6 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private SimulationBuffer m_Buffer;
 
-        [NonSerialized] private RectTransform m_ChartTransform;
         [NonSerialized] private float m_OriginalChartX;
 
         public Action OnAdvanceClicked;
@@ -41,8 +42,7 @@ namespace ProtoAqua.Modeling
 
         private void Awake()
         {
-            m_Chart.CacheComponent(ref m_ChartTransform);
-            m_OriginalChartX = m_ChartTransform.anchoredPosition.x;
+            m_OriginalChartX = m_OutputPanel.anchoredPosition.x;
 
             m_ModelSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
             m_PredictSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
@@ -59,10 +59,26 @@ namespace ProtoAqua.Modeling
         public void Refresh(in ModelingState inState, SimulationBuffer.UpdateFlags inFlags)
         {
             m_Chart.Refresh(m_Buffer, inFlags);
+            m_Battle.SetBuffer(m_Buffer);
+
             if (inFlags != 0)
             {
                 m_ModelSync.Display(inState.ModelSync);
                 m_PredictSync.Display(inState.PredictSync);
+
+                if ((inFlags & SimulationBuffer.UpdateFlags.Model) != 0)
+                {
+                    switch(inState.Phase)
+                    {
+                        case ModelingPhase.Sync:
+                            m_Battle.Animate(m_Buffer.PlayerData(), m_Buffer.PlayerDataDetails());
+                            break;
+
+                        case ModelingPhase.Predict:
+                            m_Battle.Animate(m_Buffer.PredictData(), m_Buffer.PredictDataDetails());
+                            break;
+                    }
+                }
             }
         }
 
@@ -73,7 +89,7 @@ namespace ProtoAqua.Modeling
 
             m_CritterAdjust.gameObject.SetActive(false);
             m_InitialCritters.gameObject.SetActive(true);
-            m_ChartTransform.SetAnchorPos(m_OriginalChartX, Axis.X);
+            m_OutputPanel.SetAnchorPos(m_OriginalChartX, Axis.X);
 
             m_Chart.HidePrediction();
         }
@@ -101,7 +117,7 @@ namespace ProtoAqua.Modeling
         {
             Services.Input.PauseAll();
             yield return Routine.Combine(
-                m_ChartTransform.AnchorPosTo(-m_OriginalChartX, 0.5f, Axis.X).Ease(Curve.CubeInOut)
+                m_OutputPanel.AnchorPosTo(-m_OriginalChartX, 0.5f, Axis.X).Ease(Curve.CubeInOut)
             );
             m_InitialCritters.gameObject.SetActive(false);
             Services.Input.ResumeAll();
