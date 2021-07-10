@@ -208,6 +208,7 @@ namespace ProtoAqua.Modeling
 
             Services.Audio.PostEvent("predictionSynced");
             Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphCompleted);
+            Services.Events.Dispatch(SimulationConsts.Event_Simulation_Complete);
 
             m_Input.Device.DeregisterHandler(this);
         }

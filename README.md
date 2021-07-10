@@ -26,11 +26,14 @@ Init
 
 Progression
 * accept_job (job_id)
+* switch_job (job_id)
 * receive_fact (fact_id)
 * complete_job (job_id)
 * complete_task (job_id, task_id)
 
 Player Actions
+* scene_changed (scene_name)
+* room_changed (room_name)
 * begin_experiment (job_id, (enum)tank_type)
 * MORE HERE
 * begin_dive (job_id, site_id)

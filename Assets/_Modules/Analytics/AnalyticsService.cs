@@ -31,6 +31,8 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBAcceptJob(string jobId);
         [DllImport("__Internal")]
+        public static extern void FBSwitchJob(string jobId);
+        [DllImport("__Internal")]
         public static extern void FBReceiveFact(string factId);
         [DllImport("__Internal")]
         public static extern void FBCompleteJob(string jobId);
@@ -38,6 +40,10 @@ namespace Aqua
         public static extern void FBCompleteTask(string factId, string taskId);
 
         //Player Actions
+        [DllImport("__Internal")]
+        public static extern void FBSceneChanged(string sceneName);
+        [DllImport("__Internal")]
+        public static extern void FBRoomChanged(string roomName);
         [DllImport("__Internal")]
         public static extern void FBBeginExperiment(string jobId, string tankType);
         [DllImport("__Internal")]
@@ -96,9 +102,12 @@ namespace Aqua
         private enum m_EventCategories
         {
             accept_job,
+            switch_job,
             receive_fact,
             complete_job,
             complete_task,
+            scene_changed,
+            room_changed,
             begin_experiment,
             begin_dive,
             begin_argument,
@@ -124,6 +133,7 @@ namespace Aqua
         }
 
         private string m_CurrentJobId = string.Empty;
+        private string m_PreviousJobId = string.Empty;
         private string m_CurrentPortableAppId = string.Empty;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
         private StatusApp.PageId? m_CurrentPortableStatusTabId = null;
@@ -136,9 +146,12 @@ namespace Aqua
         {
             m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob)
+                .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask)
+                .Register<string>(GameEvents.SceneChanged, LogSceneChanged)
+                .Register<string>(GameEvents.RoomChanged, LogRoomChanged)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive)
                 .Register(GameEvents.BeginArgument, LogBeginArgument)
@@ -203,6 +216,34 @@ namespace Aqua
             {
                 LogGuideScriptTriggered(nodeId);
             }
+        }
+
+        private void LogSceneChanged(string sceneName)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "scene_name", sceneName }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.scene_changed));
+
+            #if !UNITY_EDITOR
+            FBSceneChanged(sceneName);
+            #endif
+        }
+
+        private void LogRoomChanged(string roomName)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "room_name", roomName }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.room_changed));
+
+            #if !UNITY_EDITOR
+            FBRoomChanged(roomName);
+            #endif
         }
 
         #region bestiary handlers
@@ -326,6 +367,8 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
+            m_PreviousJobId = m_CurrentJobId;
+
             if (jobId.IsEmpty)
             {
                 m_CurrentJobId = string.Empty;
@@ -349,6 +392,11 @@ namespace Aqua
 
         private void LogSwitchJob(StringHash32 jobId)
         {
+            // ignore case where GameEvents.JobSwitched is dispatched when accepting a new job with no current one selected
+            if (m_PreviousJobId.Equals(string.Empty)) return;
+
+            m_PreviousJobId = m_CurrentJobId;
+
             if (jobId.IsEmpty)
             {
                 m_CurrentJobId = string.Empty;
@@ -357,6 +405,17 @@ namespace Aqua
             {
                 m_CurrentJobId = Services.Assets.Jobs.Get(jobId).name;
             }
+
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "job_id", m_CurrentJobId }
+            };
+
+            m_Logger.Log(new LogEvent(data, m_EventCategories.switch_job));
+
+            #if !UNITY_EDITOR
+            FBSwitchJob(m_CurrentJobId);
+            #endif
         }
 
         private void LogReceiveFact(BestiaryUpdateParams inParams)
@@ -365,7 +424,7 @@ namespace Aqua
             {
                 string parsedFactId = Services.Assets.Bestiary.Fact(inParams.Id).name;
                 
-                Dictionary<string, string> data = new Dictionary<string ,string>()
+                Dictionary<string, string> data = new Dictionary<string, string>()
                 {
                     { "fact_id", parsedFactId }
                 };
@@ -393,6 +452,7 @@ namespace Aqua
             FBCompleteJob(parsedJobId);
             #endif
 
+            m_PreviousJobId = m_CurrentJobId;
             m_CurrentJobId = string.Empty;
         }
 

@@ -15,6 +15,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
+    FBSwitchJob: function(jobId) {
+        var jobId = Pointer_stringify(jobId);
+
+        analytics.logEvent("switch_job", {
+            job_id: jobId
+        });
+    },
+
     FBReceiveFact: function(factId) {
         var factId = Pointer_stringify(factId);
 
@@ -40,6 +48,22 @@ mergeInto(LibraryManager.library, {
             task_id: taskId
         });
         console.log("task with Id "+taskId.toString()+" completed.");
+    },
+
+    FBSceneChanged: function(sceneName) {
+        var sceneName = Pointer_stringify(sceneName)
+
+        analytics.logEvent("scene_changed", {
+            scene_name: sceneName
+        });
+    },
+
+    FBRoomChanged: function(roomName) {
+        var roomName = Pointer_stringify(roomName)
+
+        analytics.logEvent("room_changed", {
+            room_name: roomName
+        });
     },
 
     FBBeginExperiment: function(jobId, tankType) {

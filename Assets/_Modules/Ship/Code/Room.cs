@@ -39,6 +39,7 @@ namespace Aqua.Ship
         public void Enter()
         {
             Services.Camera.SnapToPose(m_CameraTarget);
+            Services.Events.Dispatch(GameEvents.RoomChanged, m_Id.Source());
 
             Show();
         }

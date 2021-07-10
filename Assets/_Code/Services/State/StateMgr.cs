@@ -323,6 +323,7 @@ namespace Aqua
             m_SceneLock = false;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
+            Services.Events.Dispatch(GameEvents.SceneChanged, inNextScene.Name);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
