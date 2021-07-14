@@ -574,7 +574,7 @@ namespace Aqua
 
         #region Leaf
 
-        [LeafMember]
+        [LeafMember("LoadScene")]
         static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
