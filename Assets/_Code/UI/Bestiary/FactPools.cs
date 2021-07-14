@@ -63,7 +63,7 @@ namespace Aqua
             m_PropertyFacts.Reset();
         }
 
-        public MonoBehaviour Alloc(BFBase inFact)
+        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference)
         {
             ConfigurePoolTransforms();
 
@@ -71,7 +71,7 @@ namespace Aqua
             if (behavior != null)
             {
                 BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-                display.Populate(behavior);
+                display.Populate(behavior, inReference);
                 return display;
             }
 
@@ -103,7 +103,7 @@ namespace Aqua
             return null;
         }
 
-        public MonoBehaviour Alloc(BFBase inFact, Transform inParent)
+        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, Transform inParent)
         {
             ConfigurePoolTransforms();
 
@@ -111,7 +111,7 @@ namespace Aqua
             if (behavior != null)
             {
                 BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                display.Populate(behavior);
+                display.Populate(behavior, inReference);
                 return display;
             }
 
@@ -143,19 +143,19 @@ namespace Aqua
             return null;
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact)
+        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference)
         {
             ConfigurePoolTransforms();
             BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-            display.Populate(inFact);
+            display.Populate(inFact, inReference);
             return display;
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact, Transform inParent)
+        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, Transform inParent)
         {
             ConfigurePoolTransforms();
             BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-            display.Populate(inFact);
+            display.Populate(inFact, inReference);
             return display;
         }
 

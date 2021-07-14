@@ -32,6 +32,8 @@ namespace ProtoAqua.Modeling
         [SerializeField] private NodePool m_NodePool = null;
         [SerializeField] private LinkPool m_LinkPool = null;
         [SerializeField] private float m_NodeSpacingRatio = 2.5f;
+        [SerializeField] private Texture2D m_SolidLineTexture = null;
+        [SerializeField] private Texture2D m_DottedLineTexture = null;
 
         [Header("Input")]
         [SerializeField] private Vector2 m_ContentSizeBuffer = new Vector2(64, 64);
@@ -245,8 +247,16 @@ namespace ProtoAqua.Modeling
                     ConceptMapNode start = m_AllocatedNodes[m_MapData.Node(linkData.Start).Name];
                     ConceptMapNode end = m_AllocatedNodes[m_MapData.Node(linkData.End).Name];
 
+                    Texture2D lineTexture = m_SolidLineTexture;
+                    
+                    BFBase fact = linkData.Tag as BFBase;
+                    if (fact != null && !Services.Data.Profile.Bestiary.IsFactFullyUpgraded(fact.Id()))
+                    {
+                        lineTexture = m_DottedLineTexture;
+                    }
+
                     visualLink.OnClick = m_CachedLinkClicked ?? (m_CachedLinkClicked = OnLinkClicked);
-                    visualLink.Load(start, end, linkData);
+                    visualLink.Load(start, end, linkData, lineTexture);
                 }
 
                 foreach(var name in unusedNames)

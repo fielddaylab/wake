@@ -73,7 +73,7 @@ namespace Aqua
             return consume != null && consume.m_Property == m_Property;
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments()
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
         {
             // TODO: localization!!
 

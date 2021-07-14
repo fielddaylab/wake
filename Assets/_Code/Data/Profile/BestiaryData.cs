@@ -10,9 +10,29 @@ namespace Aqua.Profile
 {
     public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializationCallbackReceiver
     {
+        #region Types
+
+        private struct FactData : ISerializedObject, IKeyValuePair<StringHash32, FactData>
+        {
+            public StringHash32 FactId;
+            public BFDiscoveredFlags Flags;
+
+            public StringHash32 Key { get { return FactId; } }
+            public FactData Value { get { return this; } }
+
+            public void Serialize(Serializer ioSerializer)
+            {
+                ioSerializer.UInt32Proxy("id", ref FactId);
+                ioSerializer.Enum("flags", ref Flags);
+            }
+        }
+
+        #endregion // Types
+
         private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_GraphedFacts = new HashSet<StringHash32>();
+        private RingBuffer<FactData> m_FactMetas = new RingBuffer<FactData>();
 
         [NonSerialized] private bool m_HasChanges = false;
 
@@ -189,6 +209,61 @@ namespace Aqua.Profile
             return false;
         }
 
+        public BFDiscoveredFlags GetDiscoveredFlags(StringHash32 inFactId)
+        {
+            if (!HasFact(inFactId))
+                return BFDiscoveredFlags.None;
+
+            BFDiscoveredFlags flags = Services.Assets.Bestiary.Fact(inFactId).DefaultInformationFlags();
+            int metaIdx = m_FactMetas.BinarySearch(inFactId);
+            if (metaIdx > 0)
+                flags |= m_FactMetas[metaIdx].Flags;
+            return flags;
+        }
+
+        public BFDiscoveredFlags SetDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
+        {
+            if (inFlags <= 0)
+                return GetDiscoveredFlags(inFactId);
+            
+            RegisterFact(inFactId);
+            BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
+
+            BFDiscoveredFlags existingFlags = fact.DefaultInformationFlags();
+            int metaIdx = m_FactMetas.BinarySearch(inFactId);
+            if (metaIdx > 0)
+                existingFlags |= m_FactMetas[metaIdx].Flags;
+            if ((existingFlags & inFlags) == inFlags)
+                return existingFlags;
+
+            if (metaIdx > 0)
+            {
+                m_FactMetas[metaIdx].Flags |= inFlags;
+            }
+            else
+            {
+                FactData data;
+                data.FactId = inFactId;
+                data.Flags = inFlags;
+                m_FactMetas.PushBack(data);
+                m_FactMetas.SortByKey<StringHash32, FactData>();
+            }
+
+            bool bVisible = m_ObservedEntities.Contains(fact.Parent().Id());
+            if (bVisible)
+            {
+                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+            }
+
+            m_HasChanges = true;
+            return existingFlags | inFlags;
+        }
+
+        public bool IsFactFullyUpgraded(StringHash32 inFactId)
+        {
+            return GetDiscoveredFlags(inFactId) == BFDiscoveredFlags.All;
+        }
+
         #endregion // Facts
 
         #region Graphed
@@ -264,13 +339,17 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 2; } }
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32ProxySet("allEntities", ref m_ObservedEntities);
             ioSerializer.UInt32ProxySet("allFacts", ref m_ObservedFacts);
             ioSerializer.UInt32ProxySet("graphedFacts", ref m_GraphedFacts);
+            if (ioSerializer.ObjectVersion >= 3)
+            {
+                ioSerializer.ObjectArray("factMetas", ref m_FactMetas);
+            }
         }
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()

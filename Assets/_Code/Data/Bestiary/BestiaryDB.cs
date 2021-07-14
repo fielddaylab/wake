@@ -120,7 +120,7 @@ namespace Aqua
 
             inItem.Initialize();
 
-            foreach(var fact in inItem.Facts)
+            foreach(var fact in inItem.SelfFacts)
             {
                 m_FactMap.Add(fact.Id(), fact);
                 if (fact.Mode() != BFMode.Player)
@@ -143,6 +143,14 @@ namespace Aqua
                 case BestiaryDescCategory.Environment:
                     m_Ecosystems.Add(inItem);
                     break;
+            }
+        }
+
+        protected override void PostLookupConstruct()
+        {
+            foreach(var item in Objects)
+            {
+                item.PostInitialize();
             }
         }
 

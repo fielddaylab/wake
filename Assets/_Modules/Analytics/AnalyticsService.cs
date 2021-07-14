@@ -150,7 +150,6 @@ namespace Aqua
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask)
-                .Register<string>(GameEvents.SceneChanged, LogSceneChanged)
                 .Register<string>(GameEvents.RoomChanged, LogRoomChanged)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive)
@@ -168,6 +167,7 @@ namespace Aqua
                 .Register(GameEvents.PortableClosed, PortableClosed);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
+            SceneHelper.OnSceneLoaded += LogSceneChanged;
         }
 
         protected override void Shutdown()
@@ -218,8 +218,10 @@ namespace Aqua
             }
         }
 
-        private void LogSceneChanged(string sceneName)
+        private void LogSceneChanged(SceneBinding scene, object context)
         {
+            string sceneName = scene.Name;
+            
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "scene_name", sceneName }

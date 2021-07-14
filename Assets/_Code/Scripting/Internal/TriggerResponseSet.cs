@@ -132,7 +132,7 @@ namespace Aqua.Scripting
                         {
                             if (DebugService.IsLogging(LogMask.Scripting))
                             {
-                                DebugService.Log(LogMask.Scripting, "...node condition '{0}' failed", Stringify(comp));
+                                DebugService.Log(LogMask.Scripting, "...node condition '{0}' failed", comp);
                             }
                             bFailed = true;
                             break;
@@ -150,65 +150,6 @@ namespace Aqua.Scripting
             }
 
             return count;
-        }
-
-        static private string Stringify(in VariantComparison inComparison)
-        {
-            switch(inComparison.Operator)
-            {
-                case VariantCompareOperator.True:
-                    {
-                        return string.Format("{0} == true", inComparison.Left.ToDebugString());
-                    }
-
-                case VariantCompareOperator.False:
-                    {
-                        return string.Format("{0} == true", inComparison.Left.ToDebugString());
-                    }
-
-                case VariantCompareOperator.DoesNotExist:
-                    {
-                        return string.Format("{0} does not exist", inComparison.Left.ToDebugString());
-                    }
-
-                case VariantCompareOperator.EqualTo:
-                    {
-                        return string.Format("{0} == {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                case VariantCompareOperator.Exists:
-                    {
-                        return string.Format("{0} exists", inComparison.Left.ToDebugString());
-                    }
-
-                case VariantCompareOperator.GreaterThan:
-                    {
-                        return string.Format("{0} > {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                case VariantCompareOperator.GreaterThanOrEqualTo:
-                    {
-                        return string.Format("{0} >= {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                case VariantCompareOperator.LessThan:
-                    {
-                        return string.Format("{0} < {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                case VariantCompareOperator.LessThanOrEqualTo:
-                    {
-                        return string.Format("{0} <= {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                case VariantCompareOperator.NotEqualTo:
-                    {
-                        return string.Format("{0} != {1}", inComparison.Left.ToDebugString(), inComparison.Right.ToDebugString());
-                    }
-
-                default:
-                    throw new ArgumentException("inComparison");
-            }
         }
 
         #endregion // Locating

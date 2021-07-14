@@ -8,6 +8,7 @@ namespace Aqua
         {
             Entity,
             Fact,
+            UpgradeFact,
 
             RemovedEntity,
             RemovedFact

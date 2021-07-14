@@ -65,6 +65,11 @@ namespace Aqua
             return m_AutoGive ? BFMode.Always : base.Mode();
         }
 
+        public override BFDiscoveredFlags DefaultInformationFlags()
+        {
+            return BFDiscoveredFlags.Base;
+        }
+
         #region Text
 
         public TextId Verb() { return !m_VerbOverride.IsEmpty ? m_VerbOverride : DefaultVerb(); }
@@ -95,7 +100,7 @@ namespace Aqua
             return inOther.GetType() == GetType();
         }
 
-        public abstract IEnumerable<BFFragment> GenerateFragments();
+        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference);
 
         public override int CompareTo(BFBase other)
         {

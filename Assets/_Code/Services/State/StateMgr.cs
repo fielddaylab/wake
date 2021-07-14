@@ -14,6 +14,7 @@ using BeauUtil.Debugger;
 using BeauUtil.Variants;
 using Aqua.Debugging;
 using BeauUtil.Services;
+using Leaf.Runtime;
 
 namespace Aqua
 {
@@ -323,7 +324,6 @@ namespace Aqua
             m_SceneLock = false;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
-            Services.Events.Dispatch(GameEvents.SceneChanged, inNextScene.Name);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
 
@@ -574,6 +574,7 @@ namespace Aqua
 
         #region Leaf
 
+        [LeafMember]
         static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;

@@ -157,7 +157,7 @@ namespace ProtoAqua.Modeling
                     m_Buffer.SelectCritter(critter);
                     foreach(var fact in critter.Facts)
                     {
-                        if (m_UniversalState.IsFactGraphed(fact.Id()))
+                        if (m_UniversalState.IsFactGraphed(fact.Id()) && bestiaryData.IsFactFullyUpgraded(fact.Id()))
                             m_Buffer.AddFact(fact);
                     }
                 }

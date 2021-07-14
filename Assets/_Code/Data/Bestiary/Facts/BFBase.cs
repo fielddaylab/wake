@@ -44,6 +44,11 @@ namespace Aqua
             outReferencedBestiary.Add(m_Parent.Id());
         }
 
+        public virtual BFDiscoveredFlags DefaultInformationFlags()
+        {
+            return BFDiscoveredFlags.All;
+        }
+
         #region Sorting
 
         public virtual int CompareTo(BFBase other)

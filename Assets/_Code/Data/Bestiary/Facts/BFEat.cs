@@ -11,6 +11,7 @@ namespace Aqua
     public class BFEat : BFBehavior
     {
         static private readonly TextId EatVerb = "words.eat";
+        static private readonly TextId IsEatenByVerb = "words.isEatenBy";
         static private readonly TextId EatSentence = "factFormat.eat";
         static private readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
 
@@ -69,17 +70,29 @@ namespace Aqua
             return eat != null && eat.m_TargetEntry == m_TargetEntry;
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments()
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference)
         {
             // TODO: localization!!
-
-            yield return BFFragment.CreateLocNoun(Parent().CommonName());
-            yield return BFFragment.CreateLocVerb(Verb());
-            if (OnlyWhenStressed())
+            if (inReference == null || inReference == Parent())
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(m_Relative));
+                yield return BFFragment.CreateLocNoun(Parent().CommonName());
+                yield return BFFragment.CreateLocVerb(Verb());
+                if (OnlyWhenStressed())
+                {
+                    yield return BFFragment.CreateLocAdjective(QualitativeId(m_Relative));
+                }
+                yield return BFFragment.CreateLocNoun(m_TargetEntry.CommonName());
             }
-            yield return BFFragment.CreateLocNoun(m_TargetEntry.CommonName());
+            else
+            {
+                yield return BFFragment.CreateLocNoun(m_TargetEntry.CommonName());
+                yield return BFFragment.CreateLocVerb(IsEatenByVerb);
+                yield return BFFragment.CreateLocNoun(Parent().CommonName());
+                if (OnlyWhenStressed())
+                {
+                    yield return BFFragment.CreateLocAdjective(QualitativeId(m_Relative));
+                }
+            }
         }
 
         public override string GenerateSentence()

@@ -126,6 +126,8 @@ namespace Aqua
                 T obj = m_Objects[i];
                 ConstructLookupForItem(obj, i);
             }
+
+            PostLookupConstruct();
         }
 
         protected virtual void PreLookupConstruct()
@@ -144,6 +146,10 @@ namespace Aqua
             m_IdMap.Add(id, inItem);
             if (!scriptName.IsEmpty)
                 m_ScriptNameMap.Add(scriptName, id);
+        }
+
+        protected virtual void PostLookupConstruct()
+        {
         }
 
         #endregion // Internal

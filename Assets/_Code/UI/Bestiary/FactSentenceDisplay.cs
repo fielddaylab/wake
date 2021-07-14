@@ -32,7 +32,7 @@ namespace Aqua
             m_AllocatedFragments.Clear();
         }
 
-        public void Populate(BFBehavior inFact)
+        public void Populate(BFBehavior inFact, BestiaryDesc inReference)
         {
             if (!m_Tweaks)
             {
@@ -41,7 +41,7 @@ namespace Aqua
 
             Clear();
 
-            foreach(var fragment in inFact.GenerateFragments())
+            foreach(var fragment in inFact.GenerateFragments(inReference))
             {
                 TryAllocFragment(fragment);
             }

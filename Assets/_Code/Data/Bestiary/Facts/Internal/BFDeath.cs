@@ -56,7 +56,7 @@ namespace Aqua
             return Services.Assets.Bestiary.DefaultDeathIcon();
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments()
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
         {
             yield return BFFragment.CreateLocNoun(Parent().CommonName());
             yield return BFFragment.CreateLocVerb(Verb());
@@ -82,6 +82,11 @@ namespace Aqua
         public override BFMode Mode()
         {
             return m_AutoGive ? BFMode.Always : (OnlyWhenStressed() ? BFMode.Player : BFMode.Internal);
+        }
+
+        public override BFDiscoveredFlags DefaultInformationFlags()
+        {
+            return BFDiscoveredFlags.All;
         }
     }
 }

@@ -605,7 +605,7 @@ namespace Aqua.Portable
 
         private void InstantiateFactButton(BFBase inFact) 
         {
-            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentPage.FactLayout.transform);
+            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentEntry, m_CurrentPage.FactLayout.transform);
             BestiaryFactButton button = display.GetComponent<BestiaryFactButton>();
             if (m_SelectFactRequest != null)
             {

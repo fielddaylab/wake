@@ -30,16 +30,14 @@ namespace Aqua
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField, ShowIfField("IsCritter")] private SerializedHash32 m_ListenAudioEvent = null;
 
-        [Header("Experimentation")]
-
-        [SerializeField] private bool m_AvailableInExperimentation = true;
-
         #endregion // Inspector
 
         [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
+        [NonSerialized] private BFBase[] m_AllFacts;
         [NonSerialized] private BFBase[] m_InternalFacts;
         [NonSerialized] private BFBase[] m_AssumedFacts;
         [NonSerialized] private BFState[] m_StateChangeFacts;
+        [NonSerialized] private List<BFBase> m_ReciprocalFacts;
 
         public BestiaryDescCategory Category() { return m_Type; }
         public BestiaryDescFlags Flags() { return m_Flags; }
@@ -48,10 +46,12 @@ namespace Aqua
         public string ScientificName() { return m_ScientificNameId; }
         public TextId CommonName() { return m_CommonNameId; }
 
-        public IReadOnlyList<BFBase> Facts { get { return m_Facts; } }
+        public IReadOnlyList<BFBase> Facts { get { return m_AllFacts; } }
         public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
         public IReadOnlyList<BFBase> AssumedFacts { get { return m_AssumedFacts; } }
         public IReadOnlyList<BFState> StateFacts { get { return m_StateChangeFacts; } }
+
+        internal IReadOnlyList<BFBase> SelfFacts { get { return m_Facts; } }
 
         public bool HasCategory(BestiaryDescCategory inCategory)
         {
@@ -63,13 +63,29 @@ namespace Aqua
 
         public Sprite Icon() { return m_Icon; }
 
-        public bool IsInExperimentation() { return m_AvailableInExperimentation; }
         public Sprite Sketch() { return m_Sketch; }
         public Color Color() { return m_Color; }
 
         public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
 
-        public void Initialize()
+        internal void Initialize()
+        {
+            foreach(var fact in m_Facts)
+            {
+                BFEat eat = fact as BFEat;
+                if (eat != null)
+                {
+                    BestiaryDesc reciprocal = eat.Target();
+                    if (reciprocal.m_ReciprocalFacts == null)
+                    {
+                        reciprocal.m_ReciprocalFacts = new List<BFBase>();
+                    }
+                    reciprocal.m_ReciprocalFacts.Add(eat);
+                }
+            }
+        }
+
+        internal void PostInitialize()
         {
             using(PooledList<BFBase> internalFacts = PooledList<BFBase>.Create())
             using(PooledList<BFBase> assumedFacts = PooledList<BFBase>.Create())
@@ -78,32 +94,50 @@ namespace Aqua
                 m_FactMap = new Dictionary<StringHash32, BFBase>();
                 foreach(var fact in m_Facts)
                 {
-                    Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
-                    
-                    fact.Hook(this);
-                    m_FactMap.Add(fact.Id(), fact);
+                    ProcessFact(fact, internalFacts, assumedFacts, stateFacts, true);
+                }
 
-                    switch(fact.Mode())
+                if (m_ReciprocalFacts != null)
+                {
+                    foreach(var fact in m_ReciprocalFacts)
                     {
-                        case BFMode.Internal:
-                            internalFacts.Add(fact);
-                            break;
-
-                        case BFMode.Always:
-                            assumedFacts.Add(fact);
-                            break;
-                    }
-
-                    BFState state;
-                    if ((state = fact as BFState) != null)
-                    {
-                        stateFacts.Add(state);
+                        ProcessFact(fact, internalFacts, assumedFacts, stateFacts, false);
                     }
                 }
 
                 m_InternalFacts = internalFacts.ToArray();
                 m_AssumedFacts = assumedFacts.ToArray();
                 m_StateChangeFacts = stateFacts.ToArray();
+
+                m_AllFacts = new BFBase[m_FactMap.Count];
+                m_FactMap.Values.CopyTo(m_AllFacts, 0);
+            }
+        }
+
+        private void ProcessFact(BFBase inFact, List<BFBase> ioInternal, List<BFBase> ioAssumed, List<BFState> ioState, bool inbHook)
+        {
+            Assert.NotNull(inFact, "Null fact on BestiaryDesc '{0}'", name);
+
+            if (inbHook)
+                inFact.Hook(this);
+
+            m_FactMap.Add(inFact.Id(), inFact);
+
+            switch(inFact.Mode())
+            {
+                case BFMode.Internal:
+                    ioInternal.Add(inFact);
+                    break;
+
+                case BFMode.Always:
+                    ioAssumed.Add(inFact);
+                    break;
+            }
+
+            BFState state;
+            if ((state = inFact as BFState) != null)
+            {
+                ioState.Add(state);
             }
         }
 
@@ -124,7 +158,7 @@ namespace Aqua
         public TFact FactOfType<TFact>() where TFact : BFBase
         {
             TFact result;
-            foreach(var fact in m_Facts)
+            foreach(var fact in m_AllFacts ?? m_Facts)
             {
                 if ((result = fact as TFact) != null)
                     return result;
@@ -136,7 +170,7 @@ namespace Aqua
         public IEnumerable<TFact> FactsOfType<TFact>() where TFact : BFBase
         {
             TFact result;
-            foreach(var fact in m_Facts)
+            foreach(var fact in m_AllFacts ?? m_Facts)
             {
                 if ((result = fact as TFact) != null)
                     yield return result;

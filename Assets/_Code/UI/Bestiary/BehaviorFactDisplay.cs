@@ -15,11 +15,11 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public void Populate(BFBehavior inFact)
+        public void Populate(BFBehavior inFact, BestiaryDesc inReference)
         {
             m_Icon.sprite = inFact.Icon();
             m_Icon.gameObject.SetActive(inFact.Icon());
-            m_Sentence.Populate(inFact);
+            m_Sentence.Populate(inFact, inReference);
 
             m_StressedBadge.gameObject.SetActive(inFact.OnlyWhenStressed());
         }

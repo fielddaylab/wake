@@ -17,6 +17,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private RectTransform m_LineTransform = null;
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private TiledRawImage m_LineTiler = null;
 
         #endregion // Inspector
 
@@ -35,7 +36,7 @@ namespace ProtoAqua.Modeling
             OnClick?.Invoke(m_Tag);
         }
 
-        public void Load(ConceptMapNode inStart, ConceptMapNode inEnd, in ConceptMapLinkData inData)
+        public void Load(ConceptMapNode inStart, ConceptMapNode inEnd, in ConceptMapLinkData inData, Texture2D inLineTexture)
         {
             m_Tag = inData.Tag;
 
@@ -50,6 +51,7 @@ namespace ProtoAqua.Modeling
             self.SetAnchorPos(startPos + vector * 0.5f);
             m_LineTransform.SetSizeDelta(distance - inStart.Radius() - inEnd.Radius(), Axis.X);
             m_LineTransform.SetRotation(Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
+            m_LineTiler.texture = inLineTexture;
 
             BFBase fact = inData.Tag as BFBase;
             m_Icon.sprite = fact?.GraphIcon();
@@ -57,8 +59,6 @@ namespace ProtoAqua.Modeling
             BFBehavior behavior = fact as BFBehavior;
             if (behavior != null)
             {
-                // TODO: dotted vs solid line
-
                 if (m_Label)
                 {
                     m_Label.SetText(behavior.Verb());
