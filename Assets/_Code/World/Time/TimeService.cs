@@ -42,7 +42,7 @@ namespace Aqua
         public GTDate Current { get { return m_FullTime; } }
         public TimeMode Mode { get { return m_TimeMode; } }
 
-        public ushort StartingTime() { return GTDate.HoursToTicks(m_StartingTime); }
+        public GTDate StartingTime() { return new GTDate((ushort) (m_StartingTime * GTDate.TicksPerHour), 0); }
 
         #region Objects
 
@@ -318,8 +318,8 @@ namespace Aqua
         {
             var mapData = Services.Data.Profile.Map;
 
-            m_CurrentTime = mapData.TimeOfDay;
-            m_TotalDays = mapData.TotalDays;
+            m_CurrentTime = mapData.CurrentTime.Ticks;
+            m_TotalDays = (ushort) mapData.CurrentTime.Day;
             m_TimeMode = mapData.TimeMode;
             m_TimeCanFlow = false;
 

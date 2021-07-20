@@ -18,6 +18,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescSize m_Size = 0;
 
         [Header("Info")]
+        [SerializeField, ShowIfField("IsCritter")] private BestiaryDesc m_ParentEnvironment = null;
         [SerializeField, ShowIfField("IsCritter")] private string m_ScientificNameId = null;
         [SerializeField] private TextId m_CommonNameId = null;
         
@@ -38,10 +39,25 @@ namespace Aqua
         [NonSerialized] private BFBase[] m_AssumedFacts;
         [NonSerialized] private BFState[] m_StateChangeFacts;
         [NonSerialized] private List<BFBase> m_ReciprocalFacts;
+        [NonSerialized] private List<BestiaryDesc> m_ChildCritters;
 
         public BestiaryDescCategory Category() { return m_Type; }
         public BestiaryDescFlags Flags() { return m_Flags; }
         public BestiaryDescSize Size() { return m_Size; }
+
+        public BestiaryDesc ParentEnvironment()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter!", Id());
+            return m_ParentEnvironment;
+        }
+        public IReadOnlyList<BestiaryDesc> ChildCritters
+        {
+            get
+            {
+                Assert.True(m_Type == BestiaryDescCategory.Environment, "BestiaryDesc '{0}' is not an environment!", Id());
+                return m_ChildCritters;
+            }
+        }
 
         public string ScientificName() { return m_ScientificNameId; }
         public TextId CommonName() { return m_CommonNameId; }
@@ -70,6 +86,14 @@ namespace Aqua
 
         internal void Initialize()
         {
+            if (m_Type == BestiaryDescCategory.Environment)
+            {
+                if (m_ChildCritters == null)
+                {
+                    m_ChildCritters = new List<BestiaryDesc>();
+                }
+            }
+
             foreach(var fact in m_Facts)
             {
                 BFEat eat = fact as BFEat;
@@ -82,6 +106,16 @@ namespace Aqua
                     }
                     reciprocal.m_ReciprocalFacts.Add(eat);
                 }
+            }
+
+            if (m_ParentEnvironment != null)
+            {
+                if (m_ParentEnvironment.m_ChildCritters == null)
+                {
+                    m_ParentEnvironment.m_ChildCritters = new List<BestiaryDesc>();
+                }
+
+                m_ParentEnvironment.m_ChildCritters.Add(this);
             }
         }
 
@@ -108,6 +142,8 @@ namespace Aqua
                 m_InternalFacts = internalFacts.ToArray();
                 m_AssumedFacts = assumedFacts.ToArray();
                 m_StateChangeFacts = stateFacts.ToArray();
+                m_ReciprocalFacts?.Clear();
+                m_ReciprocalFacts = null;
 
                 m_AllFacts = new BFBase[m_FactMap.Count];
                 m_FactMap.Values.CopyTo(m_AllFacts, 0);

@@ -871,7 +871,7 @@ namespace Aqua.Cameras
                 return null;
 
             CameraTargetData target = UpdateCameraTargetPosition();
-            return MoveCameraTo(target.m_CachedPosition, target.Zoom, inDuration, inCurve);
+            return MoveToPosition(target.m_CachedPosition, target.Zoom, inDuration, inCurve);
         }
 
         /// <summary>
@@ -916,7 +916,7 @@ namespace Aqua.Cameras
         /// <summary>
         /// Moves the camera to a specific position.
         /// </summary>
-        public IEnumerator MoveCameraTo(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth)
+        public IEnumerator MoveToPosition(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth)
         {
             SetAsScripted();
 
@@ -938,9 +938,9 @@ namespace Aqua.Cameras
         }
 
         /// <summary>
-        /// Moves the camera to a specific position.
+        /// Moves the camera to a specific pose.
         /// </summary>
-        public IEnumerator MoveCameraTo(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        public IEnumerator MoveToPose(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth)
         {
             Assert.NotNull(inPose);
 

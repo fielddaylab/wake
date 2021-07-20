@@ -31,15 +31,18 @@ namespace Aqua
 
         protected override void Reset()
         {
+            m_Raycasters = null;
             CacheRaycasters();
             ResetPriority();
         }
 
         protected override void OnValidate()
         {
+            if (Application.IsPlaying(this))
+                return;
+            
+            m_Raycasters = null;
             CacheRaycasters();
-            // if (Application.isPlaying && Time.frameCount > 2)
-            //     UpdateEnabled(true);
         }
 
         #endif // UNITY_EDITOR

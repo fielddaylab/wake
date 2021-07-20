@@ -2,10 +2,11 @@ using System;
 using BeauData;
 using BeauPools;
 using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace Aqua
 {
-    public struct GTDate : IEquatable<GTDate>, IComparable<GTDate>, ISerializedObject
+    public struct GTDate : IEquatable<GTDate>, IComparable<GTDate>, ISerializedProxy<long>
     {
         #region Consts
 
@@ -124,7 +125,7 @@ namespace Aqua
         /// <summary>
         /// Hour and fraction part of the hour.
         /// </summary>
-        public float TotalHour { get { return Hour + Minute / 60f; } }
+        public float HourF { get { return Hour + Minute / 60f; } }
         
         /// <summary>
         /// Progress through the phase of the day.
@@ -241,6 +242,14 @@ namespace Aqua
             return (ushort) (inTotalHours * TicksPerHour);
         }
 
+        /// <summary>
+        /// Calculates progress through a time period based on the current time.
+        /// </summary>
+        static public float Progress(GTDate inStart, GTTimeSpan inDuration, GTDate inCurrent)
+        {
+            return Mathf.Clamp01((inCurrent - inStart) / inDuration);
+        }
+
         #endregion // Calculate
 
         #region Interfaces
@@ -257,6 +266,16 @@ namespace Aqua
         public bool Equals(GTDate other)
         {
             return m_Ticks == other.m_Ticks && m_Day == other.m_Day && DayName == other.DayName && Phase == other.Phase && SubPhaseProgress == other.SubPhaseProgress;
+        }
+
+        public long GetProxyValue(ISerializerContext inContext)
+        {
+            return TotalTicks;
+        }
+
+        public void SetProxyValue(long inValue, ISerializerContext inContext)
+        {
+            this = new GTDate(inValue);
         }
 
         public void Serialize(Serializer ioSerializer)

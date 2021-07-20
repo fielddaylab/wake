@@ -13,7 +13,7 @@ namespace Aqua
         public void Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32Proxy("id", ref Id);
-            ioSerializer.Object("time", ref Time);
+            ioSerializer.Int64Proxy("time", ref Time);
             ioSerializer.Object("data", ref Data);
         }
     }

@@ -282,6 +282,8 @@ namespace Aqua.Editor
         static public void AttemptOpenFile(string inKey)
         {
             var instance = GetInstance();
+            instance.EnsureFullInitialize();
+
             GUIUtility.systemCopyBuffer = inKey;
             instance.m_OpenPackageFileMenu.ShowAsContext();
         }
@@ -289,6 +291,8 @@ namespace Aqua.Editor
         static public void OpenFile(string inKey)
         {
             var instance = GetInstance();
+            instance.EnsureFullInitialize();
+            
             TextRecord text;
             if (instance.m_TextMap.TryGetValue(inKey, out text))
             {

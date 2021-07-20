@@ -17,8 +17,7 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
 
-        public ushort TimeOfDay;
-        public ushort TotalDays;
+        public GTDate CurrentTime;
         public TimeMode TimeMode;
         
         private bool m_HasChanges;
@@ -84,8 +83,7 @@ namespace Aqua.Profile
             m_CurrentStationId = Services.Assets.Map.DefaultStationId();
             m_UnlockedStationIds.Add(m_CurrentStationId);
 
-            TimeOfDay = Services.Time.StartingTime();
-            TotalDays = 0;
+            CurrentTime = Services.Time.StartingTime();
         }
 
         public void FullSync()
@@ -126,12 +124,11 @@ namespace Aqua.Profile
             Services.Time.ProcessQueuedChanges();
 
             GTDate currentTime = Services.Time.Current;
-            if (currentTime.Day != TotalDays || currentTime.Ticks != TimeOfDay)
+            if (currentTime != CurrentTime)
             {
-                TotalDays = (ushort) currentTime.Day;
-                TimeOfDay = (ushort) currentTime.Ticks;
+                CurrentTime = currentTime;
                 m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", new GTDate(TimeOfDay, TotalDays));
+                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", currentTime);
                 return true;
             }
 
@@ -154,8 +151,7 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 2)
             {
                 ioSerializer.UInt32Proxy("mapLocationId", ref m_CurrentMapEntranceId);
-                ioSerializer.Serialize("timeOfDay", ref TimeOfDay);
-                ioSerializer.Serialize("days", ref TotalDays);
+                ioSerializer.Int64Proxy("time", ref CurrentTime);
                 ioSerializer.Enum("timeMode", ref TimeMode);
             }
         }

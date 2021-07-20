@@ -4,7 +4,7 @@ using BeauPools;
 
 namespace Aqua
 {
-    public struct GTTimeSpan : IEquatable<GTTimeSpan>, IComparable<GTTimeSpan>, ISerializedObject
+    public struct GTTimeSpan : IEquatable<GTTimeSpan>, IComparable<GTTimeSpan>, ISerializedProxy<long>
     {
         private long m_Ticks;
 
@@ -63,9 +63,14 @@ namespace Aqua
             return m_Ticks == other.m_Ticks;
         }
 
-        public void Serialize(Serializer ioSerializer)
+        public long GetProxyValue(ISerializerContext inContext)
         {
-            ioSerializer.Serialize("ticks", ref m_Ticks);
+            return m_Ticks;
+        }
+
+        public void SetProxyValue(long inValue, ISerializerContext inContext)
+        {
+            m_Ticks = inValue;
         }
 
         #endregion // Interfaces
@@ -130,6 +135,26 @@ namespace Aqua
         static public GTTimeSpan operator-(GTTimeSpan left, GTTimeSpan right)
         {
             return new GTTimeSpan(left.m_Ticks - right.m_Ticks);
+        }
+
+        static public GTTimeSpan operator*(GTTimeSpan left, float right)
+        {
+            return new GTTimeSpan((long) ((double) left.m_Ticks * right));
+        }
+
+        static public float operator/(GTTimeSpan left, GTTimeSpan right)
+        {
+            return (float) ((double) left.m_Ticks / (double) right.m_Ticks);
+        }
+
+        static public GTTimeSpan operator/(GTTimeSpan left, float right)
+        {
+            return new GTTimeSpan((long) ((double) left.m_Ticks / right));
+        }
+
+        static public GTTimeSpan operator-(GTTimeSpan toNegate)
+        {
+            return new GTTimeSpan(-toNegate.m_Ticks);
         }
 
         #endregion // Overrides

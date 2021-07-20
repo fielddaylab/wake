@@ -9,7 +9,7 @@ namespace Aqua
     [RequireComponent(typeof(Canvas)), ExecuteAlways]
     public class AttachToUICamera : MonoBehaviour
     {
-        private void OnEnable()
+        private void OnEnable() 
         {
             #if UNITY_EDITOR
             if (PrefabStageUtility.GetPrefabStage(gameObject) != null)

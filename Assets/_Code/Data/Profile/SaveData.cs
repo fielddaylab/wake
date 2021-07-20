@@ -15,6 +15,7 @@ namespace Aqua.Profile
         public MapData Map = new MapData();
         public JobsData Jobs = new JobsData();
         public OptionsData Options = new OptionsData();
+        public ScienceData Science = new ScienceData();
 
         public SaveData()
         {
@@ -24,7 +25,7 @@ namespace Aqua.Profile
         #region IProfileChunk
 
         // v2: added options
-        ushort ISerializedVersion.Version { get { return 2; } }
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -40,6 +41,9 @@ namespace Aqua.Profile
             
             if (ioSerializer.ObjectVersion >= 2)
                 ioSerializer.Object("options", ref Options);
+
+            if (ioSerializer.ObjectVersion >= 3)
+                ioSerializer.Object("science", ref Science);
         }
 
         public void MarkChangesPersisted()
@@ -51,11 +55,15 @@ namespace Aqua.Profile
             Map.MarkChangesPersisted();
             Jobs.MarkChangesPersisted();
             Options.MarkChangesPersisted();
+            Science.MarkChangesPersisted();
         }
 
         public bool HasChanges()
         {
-            return Character.HasChanges() || Inventory.HasChanges() || Script.HasChanges() || Bestiary.HasChanges() || Map.HasChanges() || Jobs.HasChanges();
+            return Character.HasChanges() || Inventory.HasChanges()
+                || Script.HasChanges() || Bestiary.HasChanges()
+                || Map.HasChanges() || Jobs.HasChanges()
+                || Science.HasChanges();;
         }
 
         #endregion // IProfileChunk

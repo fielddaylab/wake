@@ -136,6 +136,7 @@ namespace Aqua.Title
                 if (overwrite.Get() != PopupPanel.Option_Yes)
                     yield break;
 
+                Services.Input.PauseAll();
                 Future<bool> newProfile = Services.Data.NewProfile(profileName);
                 yield return newProfile;
                 // TODO: Handle failure

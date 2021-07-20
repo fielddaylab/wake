@@ -199,7 +199,7 @@ namespace Aqua
             
             m_VariableResolver.SetVar(GameVars.DayName, GetDayOfWeek);
             m_VariableResolver.SetVar(GameVars.DayNumber, () => Services.Time.Current.Day);
-            m_VariableResolver.SetVar(GameVars.Hour, () => Services.Time.Current.TotalHour);
+            m_VariableResolver.SetVar(GameVars.Hour, () => Services.Time.Current.HourF);
             m_VariableResolver.SetVar(GameVars.DayPhase, GetDayPhase);
             m_VariableResolver.SetVar(GameVars.IsDay, () => Services.Time.Current.IsDay);
             m_VariableResolver.SetVar(GameVars.IsNight, () => Services.Time.Current.IsNight);
