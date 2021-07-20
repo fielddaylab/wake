@@ -145,26 +145,26 @@ namespace Aqua
         protected override void Initialize()
         {
             m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
-            Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob)
-                .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob)
-                .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
-                .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob)
-                .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask)
-                .Register<string>(GameEvents.RoomChanged, LogRoomChanged)
-                .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment)
-                .Register<string>(GameEvents.BeginDive, LogBeginDive)
-                .Register(GameEvents.BeginArgument, LogBeginArgument)
-                .Register(SimulationConsts.Event_Model_Begin, LogBeginModel)
-                .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation)
-                .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved)
-                .Register<string>(GameEvents.ProfileStarting, OnTitleStart)
-                .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler)
-                .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler)
-                .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler)
-                .Register<StatusApp.PageId>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler)
-                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler)
-                .Register(GameEvents.ScenePreloading, ClearSceneState)
-                .Register(GameEvents.PortableClosed, PortableClosed);
+            Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
+                .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
+                .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact, this)
+                .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
+                .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
+                .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
+                .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
+                .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
+                .Register(GameEvents.BeginArgument, LogBeginArgument, this)
+                .Register(SimulationConsts.Event_Model_Begin, LogBeginModel, this)
+                .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation, this)
+                .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
+                .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
+                .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
+                .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
+                .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
+                .Register<StatusApp.PageId>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler, this)
+                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
+                .Register(GameEvents.ScenePreloading, ClearSceneState, this)
+                .Register(GameEvents.PortableClosed, PortableClosed, this);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
@@ -172,6 +172,7 @@ namespace Aqua
 
         protected override void Shutdown()
         {
+            Services.Events?.DeregisterAll(this);
             m_Logger?.Flush();
             m_Logger = null;
         }
