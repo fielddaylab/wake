@@ -30,6 +30,8 @@ namespace Aqua.StationMap
                 m_Player.TeleportTo(location);
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             List<DiveSite> diveSites = new List<DiveSite>(8);
@@ -38,5 +40,7 @@ namespace Aqua.StationMap
             m_Player = FindObjectOfType<PlayerController>();
             m_Spawns = FindObjectOfType<SpawnLocationMap>();
         }
+
+        #endif // UNITY_EDITOR
     }
 }

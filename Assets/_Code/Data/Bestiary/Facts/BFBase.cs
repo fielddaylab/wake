@@ -11,10 +11,9 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private Sprite m_Icon = null;
+        [SerializeField, HideInInspector] private BestiaryDesc m_Parent;
 
         #endregion // Inspector
-
-        [NonSerialized] private BestiaryDesc m_Parent;
 
         public BestiaryDesc Parent() { return m_Parent; }
         public Sprite Icon() { return !m_Icon ? DefaultIcon() : m_Icon; }
@@ -22,15 +21,6 @@ namespace Aqua
 
         public virtual Sprite GraphIcon() { return null; }
         protected virtual Sprite DefaultIcon() { return GraphIcon(); }
-
-        #region Lifecycle
-
-        public virtual void Hook(BestiaryDesc inParent)
-        {
-            m_Parent = inParent;
-        }
-
-        #endregion // Lifecycle
 
         public virtual void Accept(IFactVisitor inVisitor)
         {
@@ -66,6 +56,14 @@ namespace Aqua
         #region Editor
 
         #if UNITY_EDITOR
+
+        internal void SetParent(BestiaryDesc inParent)
+        {
+            if (Ref.Replace(ref m_Parent, inParent))
+            {
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
 
         protected virtual void OnValidate() { }
 

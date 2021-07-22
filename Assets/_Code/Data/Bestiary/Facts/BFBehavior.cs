@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public abstract class BFBehavior : BFBase
+    public abstract class BFBehavior : BFBase, IOptimizableAsset
     {
         #region Consts
 
@@ -81,11 +81,39 @@ namespace Aqua
 
         #endregion // Text
 
+        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference);
+
+        public override int CompareTo(BFBase other)
+        {
+            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
+            if (sort == 0)
+            {
+                BFBehavior behavior = other as BFBehavior;
+                // if (behavior != null && IsPair(behavior))
+                // {
+                //     if (m_Stressed)
+                //         return 1;
+                //     return -1;
+                // }
+                sort = Id().CompareTo(other.Id());
+            }
+            return sort;
+        }
+
+        #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return 15; } }
+
+        public abstract bool Optimize();
+
         protected T FindPairedFact<T>() where T : BFBehavior
         {
             foreach(var behavior in Parent().FactsOfType<T>())
             {
                 if (behavior == this)
+                    continue;
+
+                if (behavior.Parent() != Parent())
                     continue;
 
                 if (IsPair(behavior))
@@ -100,23 +128,6 @@ namespace Aqua
             return inOther.GetType() == GetType();
         }
 
-        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference);
-
-        public override int CompareTo(BFBase other)
-        {
-            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
-            if (sort == 0)
-            {
-                BFBehavior behavior = other as BFBehavior;
-                if (behavior != null && IsPair(behavior))
-                {
-                    if (m_Stressed)
-                        return 1;
-                    return -1;
-                }
-                sort = Id().CompareTo(other.Id());
-            }
-            return sort;
-        }
+        #endif // UNITY_EDITOR
     }
 }

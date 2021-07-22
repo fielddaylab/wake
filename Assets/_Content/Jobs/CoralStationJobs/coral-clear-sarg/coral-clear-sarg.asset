@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
   m_Name: coral-clear-sarg
   m_EditorClassIdentifier: 
-  m_ScriptName:
-    m_Source: 
-    m_Hash: 0
   m_Category: 0
   m_Flags: 0
   m_NameId:
@@ -35,9 +32,12 @@ MonoBehaviour:
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: ffcb01ca3fde9498d999046d7660f28e, type: 2}
   m_PrereqConditions: 
-  m_StationId: CoralStation
+  m_StationId:
+    m_Source: 
+    m_Hash: 0
   m_DiveSiteIds:
-  - RS-2R
+  - m_Source: 
+    m_Hash: 0
   m_Tasks:
   - Id:
       m_Source: relationship
@@ -103,10 +103,10 @@ MonoBehaviour:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 10
       Target:
-        m_Source: Muzzins
-        m_Hash: 3202459133
+        m_Source: 
+        m_Hash: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -166,8 +166,8 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: urchinSagArgue
-      m_Hash: 1556930087
+      m_Source: urchinSargArgue
+      m_Hash: 1996554441
     Index: 2
     LabelId:
       m_Source: jobs.coral-clear-sarg.task.urchinSargArgue
@@ -176,10 +176,10 @@ MonoBehaviour:
       m_Source: 
       m_Hash: 0
     Steps:
-    - Type: 3
+    - Type: 10
       Target:
-        m_Source: Muzzins
-        m_Hash: 3202459133
+        m_Source: 
+        m_Hash: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

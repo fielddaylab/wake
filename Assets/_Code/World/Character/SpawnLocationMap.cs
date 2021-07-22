@@ -26,11 +26,15 @@ namespace Aqua.Character
             return FindLocation(Services.State.LastEntranceId);
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             List<SpawnLocation> locations = new List<SpawnLocation>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<SpawnLocation>(true, locations);
             m_Locations = locations.ToArray();
         }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using BeauUtil.Editor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
+using BeauUtil.Debugger;
 
 namespace Aqua.Editor
 {
@@ -54,10 +55,51 @@ namespace Aqua.Editor
 
         static private void OnPlayStateChanged(PlayModeStateChange inChange)
         {
-            if (inChange != PlayModeStateChange.EnteredPlayMode)
+            if (inChange != PlayModeStateChange.ExitingEditMode)
                 return;
 
+            OptimizeAllAssets();
             AssetDatabase.SaveAssets();
+        }
+
+        [MenuItem("Aqualab/Optimize Assets")]
+        static private void OptimizeAllAssets()
+        {
+            List<IOptimizableAsset> allOptimizable = new List<IOptimizableAsset>(512);
+            using(Profiling.Time("optimize scriptable objects"))
+            {
+                foreach(var asset in AssetDBUtils.FindAssets<ScriptableObject>())
+                {
+                    IOptimizableAsset optimizable;
+                    if ((optimizable = asset as IOptimizableAsset) != null)
+                    {
+                        allOptimizable.Add(optimizable);
+                    }
+                }
+
+                allOptimizable.Sort((a, b) => a.Order.CompareTo(b.Order));
+                int count = allOptimizable.Count;
+                int current = 0;
+                ScriptableObject scriptableAsset;
+                try
+                {
+                    foreach(var optimizable in allOptimizable)
+                    {
+                        scriptableAsset = (ScriptableObject) optimizable;
+                        EditorUtility.DisplayProgressBar("Optimizing Scriptable Objects", string.Format("{0} ({1}/{2})", scriptableAsset.name, current + 1, count), current / (float) count);
+                        if (optimizable.Optimize())
+                        {
+                            EditorUtility.SetDirty(scriptableAsset);
+                            Debug.LogFormat("[BuildSettings] Optimized asset '{0}' of type '{1}'", scriptableAsset.name, optimizable.GetType().Name);
+                        }
+                        current++;
+                    }
+                }
+                finally
+                {
+                    EditorUtility.ClearProgressBar();
+                }
+            }
         }
 
         private class BuildPreprocess : IPreprocessBuildWithReport
@@ -68,6 +110,7 @@ namespace Aqua.Editor
             {
                 string branch = BuildUtils.GetSourceControlBranchName();
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
+                OptimizeAllAssets();
             }
         }
     }

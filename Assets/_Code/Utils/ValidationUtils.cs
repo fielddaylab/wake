@@ -51,6 +51,26 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        static public T FindAsset<T>() where T : UnityEngine.Object
+        {
+            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName);
+            if (assetGuids == null)
+                return null;
+            
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    T asset = obj as T;
+                    if (asset)
+                        return asset;
+                }
+            }
+
+            return null;
+        }
+
         static public T[] FindAllAssets<T>(params string[] inDirectories) where T : UnityEngine.Object
         {
             if (inDirectories.Length == 0)

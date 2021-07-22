@@ -37,7 +37,16 @@ namespace Aqua.Cameras
             FOVPlane.Height = inHeight;
         }
 
-        #region ISceneOptimizable
+        #if UNITY_EDITOR
+
+        private void Reset()
+        {
+            Camera = GetComponentInChildren<Camera>(true);
+            FOVPlane = GetComponentInChildren<CameraFOVPlane>(true);
+            RootTransform = transform;
+            if (Camera.transform != transform)
+                EffectsTransform = Camera.transform;
+        }
 
         void ISceneOptimizable.Optimize()
         {
@@ -52,19 +61,6 @@ namespace Aqua.Cameras
                     break;
                 }
             }
-        }
-
-        #endregion // ISceneOptimizable
-
-        #if UNITY_EDITOR
-
-        private void Reset()
-        {
-            Camera = GetComponentInChildren<Camera>(true);
-            FOVPlane = GetComponentInChildren<CameraFOVPlane>(true);
-            RootTransform = transform;
-            if (Camera.transform != transform)
-                EffectsTransform = Camera.transform;
         }
 
         [UnityEditor.CustomEditor(typeof(CameraRig))]

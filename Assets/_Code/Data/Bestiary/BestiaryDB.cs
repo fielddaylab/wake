@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Database", fileName = "BestiaryDB")]
-    public class BestiaryDB : DBObjectCollection<BestiaryDesc>
+    public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IOptimizableAsset
     {
         #region Inspector
 
@@ -19,14 +19,15 @@ namespace Aqua
         [SerializeField] private Sprite m_DefaultGrowSprite = null;
         [SerializeField] private Sprite m_DefaultDeathSprite = null;
 
+        // HIDDEN
+
+        [SerializeField, HideInInspector] private BFBase[] m_AllFacts = null;
+        [SerializeField, HideInInspector] private ushort m_CritterCount;
+        [SerializeField, HideInInspector] private ushort m_EnvironmentCount;
+
         #endregion // Inspector
 
         [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
-
-        [NonSerialized] private List<BestiaryDesc> m_Critters;
-        [NonSerialized] private List<BestiaryDesc> m_Ecosystems;
-        [NonSerialized] private List<BestiaryDesc> m_HumanFactors;
-
         [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
 
         #region Defaults
@@ -42,19 +43,27 @@ namespace Aqua
 
         #region Lookup
 
-        public IReadOnlyList<BestiaryDesc> AllHumanFactors()
+        public ListSlice<BestiaryDesc> Critters
         {
-            return m_HumanFactors;
+            get { return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount); }
         }
 
-        public IReadOnlyList<BestiaryDesc> AllEntriesForCategory(BestiaryDescCategory inCategory)
+        public ListSlice<BestiaryDesc> Environments
+        {
+            get { return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount); }
+        }
+
+        public ListSlice<BestiaryDesc> AllEntriesForCategory(BestiaryDescCategory inCategory)
         {
             switch(inCategory)
             {
                 case BestiaryDescCategory.Environment:
-                    return m_Ecosystems;
+                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
                 case BestiaryDescCategory.Critter:
-                    return m_Critters;
+                    return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount);
+
+                case BestiaryDescCategory.ALL:
+                    return m_Objects;
                 
                 default:
                     throw new ArgumentOutOfRangeException("inCategory");
@@ -79,22 +88,19 @@ namespace Aqua
         public bool IsAutoFact(StringHash32 inFactId)
         {
             EnsureCreated();
-
             return m_AutoFacts.Contains(inFactId);
         }
 
         public bool HasFactWithId(StringHash32 inFactId)
         {
             EnsureCreated();
-
             return m_FactMap.ContainsKey(inFactId);
         }
 
-        public IEnumerable<BFBase> AllFacts()
+        public ListSlice<BFBase> AllFacts()
         {
             EnsureCreated();
-            
-            return m_FactMap.Values;
+            return m_AllFacts;
         }
 
         #endregion // Facts
@@ -104,23 +110,10 @@ namespace Aqua
         protected override void PreLookupConstruct()
         {
             base.PreLookupConstruct();
-
-            int listSize = Mathf.Max(4, Count() / 3 + 1);
-            m_Ecosystems = new List<BestiaryDesc>(listSize);
-            m_Critters = new List<BestiaryDesc>(listSize);
-            m_HumanFactors = new List<BestiaryDesc>(listSize);
-
             m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
             m_AutoFacts = new HashSet<StringHash32>();
-        }
 
-        protected override void ConstructLookupForItem(BestiaryDesc inItem, int inIndex)
-        {
-            base.ConstructLookupForItem(inItem, inIndex);
-
-            inItem.Initialize();
-
-            foreach(var fact in inItem.SelfFacts)
+            foreach(var fact in m_AllFacts)
             {
                 m_FactMap.Add(fact.Id(), fact);
                 if (fact.Mode() != BFMode.Player)
@@ -128,35 +121,102 @@ namespace Aqua
                     m_AutoFacts.Add(fact.Id());
                 }
             }
-
-            if (inItem.HasFlags(BestiaryDescFlags.Human))
-            {
-                m_HumanFactors.Add(inItem);
-            }
-
-            switch(inItem.Category())
-            {
-                case BestiaryDescCategory.Critter:
-                    m_Critters.Add(inItem);
-                    break;
-
-                case BestiaryDescCategory.Environment:
-                    m_Ecosystems.Add(inItem);
-                    break;
-            }
-        }
-
-        protected override void PostLookupConstruct()
-        {
-            foreach(var item in Objects)
-            {
-                item.PostInitialize();
-            }
         }
 
         #endregion // Internal
 
         #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return 10; } }
+
+        bool IOptimizableAsset.Optimize()
+        {
+            SortObjects((a, b) => a.Category().CompareTo(b.Category()));
+
+            List<BFBase> allFacts = new List<BFBase>(512);
+            Dictionary<BestiaryDesc, List<BestiaryDesc>> environmentChildLists = new Dictionary<BestiaryDesc, List<BestiaryDesc>>();
+            Dictionary<BestiaryDesc, List<BFBase>> critterReciprocalFactLists = new Dictionary<BestiaryDesc, List<BFBase>>();
+
+            m_CritterCount = 0;
+            m_EnvironmentCount = 0;
+
+            BestiaryDesc entry;
+            BestiaryDesc env;
+            BFEat eat;
+            for(int i = 0; i < m_Objects.Length; i++)
+            {
+                entry = m_Objects[i];
+
+                foreach(var fact in entry.OwnedFacts)
+                {
+                    allFacts.Add(fact);
+                }
+
+                switch(entry.Category())
+                {
+                    case BestiaryDescCategory.Critter:
+                        {
+                            m_CritterCount++;
+                            env = entry.ParentEnvironment();
+                            if (env != null)
+                                AddToListMap(environmentChildLists, env, entry);
+
+                            foreach(var fact in entry.OwnedFacts)
+                            {
+                                eat = fact as BFEat;
+                                if (eat != null)
+                                {
+                                    AddToListMap(critterReciprocalFactLists, eat.Target(), eat);
+                                }
+                            }
+                            break;
+                        }
+
+                    case BestiaryDescCategory.Environment:
+                        {
+                            m_EnvironmentCount++;
+                            break;
+                        }
+                }
+            }
+
+            foreach(var environment in Environments)
+            {
+                environment.SetChildCritters(GetList(environmentChildLists, environment));
+            }
+
+            foreach(var obj in m_Objects)
+            {
+                obj.OptimizeSecondPass(GetList(critterReciprocalFactLists, obj));
+            }
+
+            m_AllFacts = allFacts.ToArray();
+
+            return true;
+        }
+
+        static private void AddToListMap<T, U>(Dictionary<T, List<U>> ioMap, T inKey, U inValue)
+        {
+            if (inValue == null)
+                return;
+
+            List<U> list;
+            if (!ioMap.TryGetValue(inKey, out list))
+            {
+                list = ioMap[inKey] = new List<U>() { inValue };
+            }
+            else
+            {
+                list.Add(inValue);
+            }
+        }
+
+        static private List<U> GetList<T, U>(Dictionary<T, List<U>> ioMap, T inKey)
+        {
+            List<U> list;
+            ioMap.TryGetValue(inKey, out list);
+            return list;
+        }
 
         [UnityEditor.CustomEditor(typeof(BestiaryDB))]
         private class Inspector : BaseInspector

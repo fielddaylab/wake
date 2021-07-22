@@ -481,7 +481,7 @@ namespace Aqua.Portable
             using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create())
             {
                 Services.Data.Profile.Bestiary.GetEntities(inType, entities);
-                entities.Sort();
+                entities.Sort(BestiaryDesc.SortByEnvironment);
                 foreach(var entry in entities)
                 {
                     PortableListElement button = m_EntryPool.Alloc();

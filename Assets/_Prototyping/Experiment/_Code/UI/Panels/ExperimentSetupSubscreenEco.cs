@@ -120,7 +120,7 @@ namespace ProtoAqua.Experiment
             {
                 Setup.EnvironmentId = active.GetComponent<SetupToggleButton>().Id.AsStringHash();
                 var def = Services.Assets.Bestiary.Get(Setup.EnvironmentId);
-                Setup.EnvironmentProperties = BestiaryUtils.GenerateInitialState(def);
+                Setup.EnvironmentProperties = def.GetEnvironment();
 
                 Services.Data.SetVariable(ExperimentVars.SetupPanelEcoType, Setup.EnvironmentId);
             }

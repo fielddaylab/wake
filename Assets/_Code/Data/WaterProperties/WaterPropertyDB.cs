@@ -7,48 +7,15 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Water Property/Water Property DB", fileName = "WaterPropertyDB")]
-    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>
+    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>, IOptimizableAsset
     {
         #region Inspector
 
         [SerializeField] private WaterPropertyId[] m_DefaultUnlockedProperties = null;
+        [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_DefaultValues;
+        [SerializeField, HideInInspector] private WaterPropertyDesc[] m_DisplaySortedMap;
 
         #endregion // Inspector
-
-        [NonSerialized] private WaterPropertyDesc[] m_PropertyIdMap;
-        [NonSerialized] private WaterPropertyDesc[] m_SortedMap;
-        [NonSerialized] private WaterPropertyBlockF32 m_DefaultValues;
-
-        protected override void PreLookupConstruct()
-        {
-            base.PreLookupConstruct();
-            m_PropertyIdMap = new WaterPropertyDesc[(int) WaterPropertyId.MAX];
-            m_SortedMap = new WaterPropertyDesc[SortOrder.Length];
-        }
-
-        protected override void ConstructLookupForItem(WaterPropertyDesc inItem, int inIndex)
-        {
-            base.ConstructLookupForItem(inItem, inIndex);
-
-            WaterPropertyId propIndex = inItem.Index();
-            if (m_PropertyIdMap[(int) propIndex] != null)
-            {
-                Log.Error("[WaterPropertyDB] Multiple properties mapped to id '{0}'", propIndex);
-            }
-            else
-            {
-                m_PropertyIdMap[(int) propIndex] = inItem;
-            }
-
-            if (propIndex <= WaterPropertyId.TRACKED_MAX)
-            {
-                m_DefaultValues[propIndex] = inItem.DefaultValue();
-            }
-
-            int sortIndex = Array.IndexOf(SortOrder, propIndex);
-            if (sortIndex >= 0)
-                m_SortedMap[sortIndex] = inItem;
-        }
 
         public WaterPropertyDesc Property(WaterPropertyId inId)
         {
@@ -57,7 +24,7 @@ namespace Aqua
             if (inId < 0 || inId >= WaterPropertyId.MAX)
                 return null;
 
-            return m_PropertyIdMap[(int) inId];
+            return m_Objects[(int) inId];
         }
 
         public WaterPropertyBlockF32 DefaultValues() { return m_DefaultValues; }
@@ -65,12 +32,12 @@ namespace Aqua
 
         public ListSlice<WaterPropertyDesc> Sorted()
         {
-            return m_SortedMap;
+            return m_DisplaySortedMap;
         }
 
         public IEnumerable<WaterPropertyDesc> Measurable()
         {
-            foreach(var prop in m_SortedMap)
+            foreach(var prop in m_DisplaySortedMap)
             {
                 if (prop.HasFlags(WaterPropertyFlags.IsMeasureable))
                     yield return prop;
@@ -91,6 +58,34 @@ namespace Aqua
         {
             return Array.IndexOf(SortOrder, inId);
         }
+
+        #region IOptimizedAsset
+        
+        #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return -10; } }
+
+        bool IOptimizableAsset.Optimize()
+        {
+            SortObjects((a, b) => a.Index().CompareTo(b.Index()));
+            m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];
+
+            foreach(var property in m_Objects)
+            {
+                WaterPropertyId propIndex = property.Index();
+                if (propIndex <= WaterPropertyId.TRACKED_MAX)
+                    m_DefaultValues[propIndex] = property.DefaultValue();
+
+                int sortIndex = Array.IndexOf(SortOrder, propIndex);
+                if (sortIndex >= 0)
+                    m_DisplaySortedMap[sortIndex] = property;
+            }
+            return true;
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // IOptimizedAsset
 
         #if UNITY_EDITOR
 

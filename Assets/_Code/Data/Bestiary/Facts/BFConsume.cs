@@ -23,29 +23,12 @@ namespace Aqua
         [Header("Consume")]
         [SerializeField, AutoEnum] private WaterPropertyId m_Property = WaterPropertyId.Oxygen;
         [SerializeField] private uint m_Amount = 0;
+        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
-        [NonSerialized] private QualCompare m_Relative;
-
         public WaterPropertyId Target() { return m_Property; }
         public uint Amount() { return m_Amount; }
-
-        public override void Hook(BestiaryDesc inParent)
-        {
-            base.Hook(inParent);
-
-            if (OnlyWhenStressed())
-            {
-                var pair = FindPairedFact<BFConsume>();
-                if (pair != null)
-                {
-                    long compare = (long) m_Amount - (long) pair.m_Amount;
-                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
-                    m_Relative = MapDescriptor(compare, QualCompare.Less, QualCompare.More);
-                }
-            }
-        }
 
         protected override TextId DefaultVerb()
         {
@@ -65,12 +48,6 @@ namespace Aqua
         protected override Sprite DefaultIcon()
         {
             return Property(m_Property).Icon();
-        }
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            BFConsume consume = inOther as BFConsume;
-            return consume != null && consume.m_Property == m_Property;
         }
 
         public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
@@ -105,5 +82,31 @@ namespace Aqua
         {
             return 11;
         }
+
+        #if UNITY_EDITOR
+
+        protected override bool IsPair(BFBehavior inOther)
+        {
+            BFConsume consume = inOther as BFConsume;
+            return consume != null && consume.m_Property == m_Property;
+        }
+
+        public override bool Optimize()
+        {
+            if (OnlyWhenStressed())
+            {
+                var pair = FindPairedFact<BFConsume>();
+                if (pair != null)
+                {
+                    long compare = (long) m_Amount - (long) pair.m_Amount;
+                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
+                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More));
+                }
+            }
+
+            return Ref.Replace(ref m_Relative, QualCompare.Null);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class JobDesc : DBObject
+    public partial class JobDesc : DBObject, IOptimizableAsset
     {
         private const int MaxTasks = ushort.MaxValue;
 
@@ -32,14 +32,10 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        private void OnValidate()
+        int IOptimizableAsset.Order { get { return 1; }}
+
+        bool IOptimizableAsset.Optimize()
         {
-            if (Application.IsPlaying(this))
-                return;
-
-            if (m_Tasks == null)
-                return;
-
             if (m_Tasks.Length > MaxTasks)
             {
                 Log.Error("Job cannot have more than {0} tasks", MaxTasks);
@@ -47,6 +43,7 @@ namespace Aqua
             }
 
             m_OptimizedTaskList = GenerateOptimizedTasks(m_Tasks);
+            return true;
         }
 
         static private JobTask[] GenerateOptimizedTasks(EditorJobTask[] inTasks)

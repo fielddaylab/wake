@@ -75,10 +75,14 @@ namespace Aqua.Ship
             }
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             m_Links = GetComponentsInChildren<RoomLink>(true);
         }
+
+        #endif // UNITY_EDITOR
     }
 }
 

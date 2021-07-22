@@ -90,7 +90,7 @@ namespace ProtoAqua.Experiment
 
         public void SetCurrentWaterState(BestiaryDesc bestiaryDesc)
         {
-            m_currentWaterState =  BestiaryUtils.GenerateInitialState(bestiaryDesc);
+            m_currentWaterState = bestiaryDesc.GetEnvironment();
         }
 
         public void BeginTicking()

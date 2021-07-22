@@ -149,7 +149,7 @@ namespace ProtoAqua.ExperimentV2
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
                 CollectCritters(Services.Data.Profile.Bestiary, m_Category, availableCritters);
-                availableCritters.Sort();
+                availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);
             }
@@ -252,6 +252,8 @@ namespace ProtoAqua.ExperimentV2
 
         #region ISceneOptimizable
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             m_CurrentText.SetText("0");
@@ -260,6 +262,8 @@ namespace ProtoAqua.ExperimentV2
             if (m_MaxAllowed > 1)
                 m_ToggleGroup = null;
         }
+
+        #endif // UNITY_EDITOR
 
         #endregion // ISceneOptimizable
 

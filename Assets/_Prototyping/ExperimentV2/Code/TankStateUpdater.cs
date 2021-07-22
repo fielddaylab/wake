@@ -125,10 +125,14 @@ namespace ProtoAqua.ExperimentV2
 
         #region ISceneOptimizable
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
         }
+
+        #endif // UNITY_EDITOR
 
         #endregion // ISceneOptimizable
 

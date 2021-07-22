@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/State/Range State Change")]
-    public class BFState : BFBase
+    public class BFState : BFBase, IOptimizableAsset
     {
         #region Inspector
 
@@ -26,31 +26,12 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private ActorStateTransitionRange m_Range;
+        [SerializeField, HideInInspector] private ActorStateTransitionRange m_Range;
 
         public WaterPropertyId PropertyId() { return m_PropertyId; }
         public ActorStateTransitionRange Range() { return m_Range; }
         public bool HasStressed() { return m_HasStressed; }
         public bool HasDeath() { return m_HasDeath; }
-
-        public override void Hook(BestiaryDesc inParent)
-        {
-            base.Hook(inParent);
-
-            m_Range.Reset();
-
-            if (m_HasStressed)
-            {
-                m_Range.AliveMin = m_MinSafe;
-                m_Range.AliveMax = m_MaxSafe;
-            }
-
-            if (m_HasDeath)
-            {
-                m_Range.StressedMin = m_MinStressed;
-                m_Range.StressedMax = m_MaxStressed;
-            }
-        }
 
         public override void Accept(IFactVisitor inVisitor)
         {
@@ -85,5 +66,30 @@ namespace Aqua
         {
             return (int) m_PropertyId;
         }
+
+        #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return -9; } }
+
+        bool IOptimizableAsset.Optimize()
+        {
+            ActorStateTransitionRange range = ActorStateTransitionRange.Default;
+
+            if (m_HasStressed)
+            {
+                range.AliveMin = m_MinSafe;
+                range.AliveMax = m_MaxSafe;
+            }
+
+            if (m_HasDeath)
+            {
+                range.StressedMin = m_MinStressed;
+                range.StressedMax = m_MaxStressed;
+            }
+
+            return Ref.Replace(ref m_Range, range);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

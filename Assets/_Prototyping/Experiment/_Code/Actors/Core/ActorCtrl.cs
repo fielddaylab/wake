@@ -67,7 +67,7 @@ namespace ProtoAqua.Experiment
 
         public void UpdateStressState(WaterPropertyBlockF32 waterState)
         {
-            m_actorStressState = Bestiary.GetStateForEnvironment(waterState);
+            m_actorStressState = Bestiary.EvaluateActorState(waterState, out var _);
         }
 
         public ActorStateId getActorStressState()

@@ -20,13 +20,13 @@ namespace Aqua.Character
                 m_Id = m_Parent.Id();
         }
 
-        #endif // UNITY_EDITOR
-
         void ISceneOptimizable.Optimize()
         {
             m_Parent = GetComponentInParent<ScriptObject>();
             if (m_Parent != null)
                 m_Id = m_Parent.Id();
         }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -6,24 +6,22 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public abstract class DBObjectCollection<T> : ScriptableObject
+    public abstract class DBObjectCollection : ScriptableObject { }
+
+    public abstract class DBObjectCollection<T> : DBObjectCollection
         where T : DBObject
     {
         #region Inspector
 
-        [SerializeField] private T[] m_Objects = null;
+        [SerializeField] protected T[] m_Objects = null;
 
         #endregion // Inspector
 
         [NonSerialized] private bool m_Constructed;
-        [NonSerialized] private StringHash32[] m_Ids;
         protected Dictionary<StringHash32, T> m_IdMap;
-        protected Dictionary<StringHash32, StringHash32> m_ScriptNameMap;
 
         public int Count() { return m_Objects.Length; }
-
         public IReadOnlyList<T> Objects { get { return m_Objects; } }
-        public IReadOnlyList<StringHash32> Ids { get { EnsureCreated(); return m_Ids; } }
 
         #region Unity Events
 
@@ -44,18 +42,6 @@ namespace Aqua
         #endregion // Unity Events
 
         #region Id Resolution
-
-        public StringHash32 ScriptNameToId(StringHash32 inScriptName)
-        {
-            EnsureCreated();
-
-            if (inScriptName.IsEmpty)
-                return null;
-
-            StringHash32 id;
-            m_ScriptNameMap.TryGetValue(inScriptName, out id);
-            return id;
-        }
 
         public bool HasId(StringHash32 inId)
         {
@@ -126,30 +112,17 @@ namespace Aqua
                 T obj = m_Objects[i];
                 ConstructLookupForItem(obj, i);
             }
-
-            PostLookupConstruct();
         }
 
         protected virtual void PreLookupConstruct()
         {
-            m_Ids = new StringHash32[m_Objects.Length];
             m_IdMap = new Dictionary<StringHash32, T>(m_Objects.Length);
-            m_ScriptNameMap = new Dictionary<StringHash32, StringHash32>(m_Objects.Length);
         }
 
         protected virtual void ConstructLookupForItem(T inItem, int inIndex)
         {
             StringHash32 id = inItem.Id();
-            StringHash32 scriptName = inItem.ScriptName();
-
-            m_Ids[inIndex] = id;
             m_IdMap.Add(id, inItem);
-            if (!scriptName.IsEmpty)
-                m_ScriptNameMap.Add(scriptName, id);
-        }
-
-        protected virtual void PostLookupConstruct()
-        {
         }
 
         #endregion // Internal
@@ -157,6 +130,11 @@ namespace Aqua
         #region Editor
 
         #if UNITY_EDITOR
+
+        protected void SortObjects(Comparison<T> inComparison)
+        {
+            Array.Sort(m_Objects, inComparison);
+        }
 
         [UnityEditor.CustomEditor(typeof(DBObjectCollection<>))]
         protected class BaseInspector : UnityEditor.Editor

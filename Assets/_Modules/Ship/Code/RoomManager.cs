@@ -114,11 +114,15 @@ namespace Aqua.Ship
             return room;
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);
             m_Rooms = rooms.ToArray();
         }
+
+        #endif // UNITY_EDITOR
     }
 }

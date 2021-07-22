@@ -260,7 +260,7 @@ namespace Aqua
 
         private Routine m_CleanupRoutine;
         private readonly Dictionary<StringHash32, HandlerBlock> m_Handlers = new Dictionary<StringHash32, HandlerBlock>(64);
-        private readonly RingBuffer<QueuedEvent> m_QueuedEvents = new RingBuffer<QueuedEvent>(64, RingBufferMode.Fixed);
+        private readonly RingBuffer<QueuedEvent> m_QueuedEvents = new RingBuffer<QueuedEvent>(64, RingBufferMode.Expand);
 
         #region Registration
 

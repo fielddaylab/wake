@@ -136,10 +136,14 @@ namespace ProtoAqua.ExperimentV2
             Services.Camera.SnapToPose(m_Pose);
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
         }
+
+        #endif // UNITY_EDITOR
     
         #endregion // Interfaces
     }

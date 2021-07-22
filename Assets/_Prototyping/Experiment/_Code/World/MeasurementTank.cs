@@ -71,7 +71,7 @@ namespace ProtoAqua.Experiment
             base.GenerateResult(ioData);
 
             BestiaryDesc critter = Services.Assets.Bestiary.Get(ioData.Setup.CritterId);
-            ActorStateId state = critter.GetStateForEnvironment(ioData.Setup.EnvironmentProperties);
+            ActorStateId state = critter.EvaluateActorState(ioData.Setup.EnvironmentProperties, out var _);
             BFProduce produceFact = BestiaryUtils.FindProduceRule(critter, ioData.Setup.PropertyId, state);
             BFConsume consumeFact = BestiaryUtils.FindConsumeRule(critter, ioData.Setup.PropertyId, state);
             

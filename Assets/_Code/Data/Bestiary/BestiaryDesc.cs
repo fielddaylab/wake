@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
-    public class BestiaryDesc : DBObject, IComparable<BestiaryDesc>
+    public class BestiaryDesc : DBObject, IOptimizableAsset
     {
         #region Inspector
 
@@ -18,7 +18,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescSize m_Size = 0;
 
         [Header("Info")]
-        [SerializeField, ShowIfField("IsCritter")] private BestiaryDesc m_ParentEnvironment = null;
+        [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_ParentEnvironment = null;
         [SerializeField, ShowIfField("IsCritter")] private string m_ScientificNameId = null;
         [SerializeField] private TextId m_CommonNameId = null;
         
@@ -31,15 +31,21 @@ namespace Aqua
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField, ShowIfField("IsCritter")] private SerializedHash32 m_ListenAudioEvent = null;
 
-        #endregion // Inspector
+        [Header("Sorting")]
+        [SerializeField] private ushort m_SortingOrder = 0;
 
-        [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
-        [NonSerialized] private BFBase[] m_AllFacts;
-        [NonSerialized] private BFBase[] m_InternalFacts;
-        [NonSerialized] private BFBase[] m_AssumedFacts;
-        [NonSerialized] private BFState[] m_StateChangeFacts;
-        [NonSerialized] private List<BFBase> m_ReciprocalFacts;
-        [NonSerialized] private List<BestiaryDesc> m_ChildCritters;
+        // HIDDEN
+
+        [SerializeField, HideInInspector] private BFBase[] m_AllFacts;
+        [SerializeField, HideInInspector] private BestiaryDesc[] m_ChildCritters;
+        [SerializeField, HideInInspector] private ushort m_PlayerFactCount;
+        [SerializeField, HideInInspector] private ushort m_AlwaysFactCount;
+        [SerializeField, HideInInspector] private ushort m_InternalFactOffset;
+        [SerializeField, HideInInspector] private ushort m_InternalFactCount;
+        [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_EnvState;
+        [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
+
+        #endregion // Inspector
 
         public BestiaryDescCategory Category() { return m_Type; }
         public BestiaryDescFlags Flags() { return m_Flags; }
@@ -62,12 +68,9 @@ namespace Aqua
         public string ScientificName() { return m_ScientificNameId; }
         public TextId CommonName() { return m_CommonNameId; }
 
-        public IReadOnlyList<BFBase> Facts { get { return m_AllFacts; } }
-        public IReadOnlyList<BFBase> InternalFacts { get { return m_InternalFacts; } }
-        public IReadOnlyList<BFBase> AssumedFacts { get { return m_AssumedFacts; } }
-        public IReadOnlyList<BFState> StateFacts { get { return m_StateChangeFacts; } }
-
-        internal IReadOnlyList<BFBase> SelfFacts { get { return m_Facts; } }
+        public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
+        public ListSlice<BFBase> AssumedFacts { get { return new ListSlice<BFBase>(m_AllFacts, m_PlayerFactCount, m_AlwaysFactCount); } }
+        public ListSlice<BFBase> InternalFacts { get { return new ListSlice<BFBase>(m_AllFacts, m_InternalFactOffset, m_InternalFactCount); } }
 
         public bool HasCategory(BestiaryDescCategory inCategory)
         {
@@ -84,117 +87,12 @@ namespace Aqua
 
         public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
 
-        internal void Initialize()
-        {
-            if (m_Type == BestiaryDescCategory.Environment)
-            {
-                if (m_ChildCritters == null)
-                {
-                    m_ChildCritters = new List<BestiaryDesc>();
-                }
-            }
-
-            foreach(var fact in m_Facts)
-            {
-                BFEat eat = fact as BFEat;
-                if (eat != null)
-                {
-                    BestiaryDesc reciprocal = eat.Target();
-                    if (reciprocal.m_ReciprocalFacts == null)
-                    {
-                        reciprocal.m_ReciprocalFacts = new List<BFBase>();
-                    }
-                    reciprocal.m_ReciprocalFacts.Add(eat);
-                }
-            }
-
-            if (m_ParentEnvironment != null)
-            {
-                if (m_ParentEnvironment.m_ChildCritters == null)
-                {
-                    m_ParentEnvironment.m_ChildCritters = new List<BestiaryDesc>();
-                }
-
-                m_ParentEnvironment.m_ChildCritters.Add(this);
-            }
-        }
-
-        internal void PostInitialize()
-        {
-            using(PooledList<BFBase> internalFacts = PooledList<BFBase>.Create())
-            using(PooledList<BFBase> assumedFacts = PooledList<BFBase>.Create())
-            using(PooledList<BFState> stateFacts = PooledList<BFState>.Create())
-            {
-                m_FactMap = new Dictionary<StringHash32, BFBase>();
-                foreach(var fact in m_Facts)
-                {
-                    ProcessFact(fact, internalFacts, assumedFacts, stateFacts, true);
-                }
-
-                if (m_ReciprocalFacts != null)
-                {
-                    foreach(var fact in m_ReciprocalFacts)
-                    {
-                        ProcessFact(fact, internalFacts, assumedFacts, stateFacts, false);
-                    }
-                }
-
-                m_InternalFacts = internalFacts.ToArray();
-                m_AssumedFacts = assumedFacts.ToArray();
-                m_StateChangeFacts = stateFacts.ToArray();
-                m_ReciprocalFacts?.Clear();
-                m_ReciprocalFacts = null;
-
-                m_AllFacts = new BFBase[m_FactMap.Count];
-                m_FactMap.Values.CopyTo(m_AllFacts, 0);
-            }
-        }
-
-        private void ProcessFact(BFBase inFact, List<BFBase> ioInternal, List<BFBase> ioAssumed, List<BFState> ioState, bool inbHook)
-        {
-            Assert.NotNull(inFact, "Null fact on BestiaryDesc '{0}'", name);
-
-            if (inbHook)
-                inFact.Hook(this);
-
-            m_FactMap.Add(inFact.Id(), inFact);
-
-            switch(inFact.Mode())
-            {
-                case BFMode.Internal:
-                    ioInternal.Add(inFact);
-                    break;
-
-                case BFMode.Always:
-                    ioAssumed.Add(inFact);
-                    break;
-            }
-
-            BFState state;
-            if ((state = inFact as BFState) != null)
-            {
-                ioState.Add(state);
-            }
-        }
-
         #region Facts
-
-        public BFBase Fact(StringHash32 inFactId)
-        {
-            BFBase fact;
-            m_FactMap.TryGetValue(inFactId, out fact);
-            return fact;
-        }
-
-        public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
-        {
-            return (TFact) Fact(inFactId);
-        }
 
         public TFact FactOfType<TFact>() where TFact : BFBase
         {
             TFact result;
-            foreach(var fact in m_AllFacts ?? m_Facts)
+            foreach(var fact in m_AllFacts)
             {
                 if ((result = fact as TFact) != null)
                     return result;
@@ -206,7 +104,7 @@ namespace Aqua
         public IEnumerable<TFact> FactsOfType<TFact>() where TFact : BFBase
         {
             TFact result;
-            foreach(var fact in m_AllFacts ?? m_Facts)
+            foreach(var fact in m_AllFacts)
             {
                 if ((result = fact as TFact) != null)
                     yield return result;
@@ -217,36 +115,154 @@ namespace Aqua
 
         #region Checks
 
-        public ActorStateId GetStateForEnvironment(in WaterPropertyBlockF32 inEnvironment)
+        public WaterPropertyBlockF32 GetEnvironment()
         {
-            // param: in WaterPropertyBlockU8 inStarvation)
-            ActorStateId actorState = ActorStateId.Alive;
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "BestiaryDesc '{0}' is not an environment", name);
+            return m_EnvState;
+        }
 
-            for(int i = m_StateChangeFacts.Length - 1; i >= 0 && actorState < ActorStateId.Dead; --i)
-            {
-                BFState fact = m_StateChangeFacts[i];
-                ActorStateId desiredState = fact.Range().Evaluate(inEnvironment[fact.PropertyId()]);
-                if (desiredState > actorState)
-                {
-                    actorState = desiredState;
-                }
-            }
+        public ActorStateTransitionSet GetActorStateTransitions()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter", name);
+            return m_StateTransitions;
+        }
 
-            return actorState;
+        public ActorStateId EvaluateActorState(in WaterPropertyBlockF32 inEnvironment, out WaterPropertyMask outAffected)
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter", name);
+            return m_StateTransitions.Evaluate(inEnvironment, out outAffected);
         }
 
         #endregion // Checks
 
-        #region IComparable
+        #region Sorting
 
-        int IComparable<BestiaryDesc>.CompareTo(BestiaryDesc other)
+        static public readonly Comparison<BestiaryDesc> SortById = (x, y) => x.Id().CompareTo(y.Id());
+        static public readonly Comparison<BestiaryDesc> SortByOrder = (x, y) => x.m_SortingOrder.CompareTo(y.m_SortingOrder);
+        static public readonly Comparison<BestiaryDesc> SortByEnvironment = (x, y) => EnvironmentSortingFirst(x, y, SortByOrder);
+
+        static private int EnvironmentSortingFirst(BestiaryDesc x, BestiaryDesc y, Comparison<BestiaryDesc> inComparison)
         {
-            return Id().CompareTo(other.Id());
+            BestiaryDesc envX = x.m_ParentEnvironment,
+                        envY = y.m_ParentEnvironment;
+
+            if (envX == envY)
+            {
+                return inComparison(x, y);
+            }
+            else if (envX == null)
+            {
+                return -1;
+            }
+            else if (envY == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return envX.m_SortingOrder.CompareTo(envY.m_SortingOrder);
+            }
         }
 
-        #endregion // IComparable
+        #endregion // Sorting
+
+        #region Editor
 
         #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return (int) m_Type; } }
+
+        bool IOptimizableAsset.Optimize()
+        {
+            foreach(var fact in m_Facts)
+                fact.SetParent(this);
+
+            switch(m_Type)
+            {
+                case BestiaryDescCategory.Environment:
+                    {
+                        m_EnvState = ValidationUtils.FindAsset<WaterPropertyDB>().DefaultValues();
+                        foreach(var fact in m_Facts)
+                        {
+                            BFWaterProperty waterProp = fact as BFWaterProperty;
+                            if (waterProp != null)
+                            {
+                                m_EnvState[waterProp.PropertyId()] = waterProp.Value();
+                            }
+                        }
+
+                        return true;
+                    }
+
+                case BestiaryDescCategory.Critter:
+                    {
+                        m_StateTransitions.Reset();
+                        foreach(var fact in m_Facts)
+                        {
+                            BFState state = fact as BFState;
+                            if (state != null)
+                            {
+                                m_StateTransitions[state.PropertyId()] = state.Range();
+                            }
+                        }
+
+                        return true;
+                    }
+
+                default:
+                    {
+                        return false;
+                    }
+            }
+        }
+
+        internal BFBase[] OwnedFacts { get { return m_Facts; } }
+
+        internal void SetChildCritters(List<BestiaryDesc> inChildren)
+        {
+            m_ChildCritters = inChildren == null || inChildren.Count == 0 ? Array.Empty<BestiaryDesc>() : inChildren.ToArray();
+        }
+
+        internal void OptimizeSecondPass(List<BFBase> inReciprocalFacts)
+        {
+            if (inReciprocalFacts != null && inReciprocalFacts.Count > 0)
+            {
+                m_AllFacts = new BFBase[m_Facts.Length + inReciprocalFacts.Count];
+                Array.Copy(m_Facts, 0, m_AllFacts, 0, m_Facts.Length);
+                inReciprocalFacts.CopyTo(0, m_AllFacts, m_Facts.Length, inReciprocalFacts.Count);
+            }
+            else
+            {
+                m_AllFacts = (BFBase[]) m_Facts.Clone();
+            }
+
+            Array.Sort(m_AllFacts, (a, b) => a.Mode().CompareTo(b.Mode()));
+            m_PlayerFactCount = 0;
+            m_InternalFactCount = 0;
+            m_AlwaysFactCount = 0;
+
+            for(int i = 0; i < m_AllFacts.Length; i++)
+            {
+                switch(m_AllFacts[i].Mode())
+                {
+                    case BFMode.Player:
+                        m_PlayerFactCount++;
+                        break;
+
+                    case BFMode.Internal:
+                        m_InternalFactCount++;
+                        break;
+
+                    case BFMode.Always:
+                        m_AlwaysFactCount++;
+                        break;
+                }
+            }
+
+            m_InternalFactOffset = (ushort) (m_AlwaysFactCount + m_PlayerFactCount);
+
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
 
         private void OnValidate()
         {
@@ -317,6 +333,8 @@ namespace Aqua
         }
 
         #endif // UNITY_EDITOR
+
+        #endregion // Editor
     }
 
     [LabeledEnum]

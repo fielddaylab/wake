@@ -18,28 +18,11 @@ namespace Aqua
 
         [Header("Growth")]
         [SerializeField] private uint m_Amount = 0;
+        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
-        [NonSerialized] private QualCompare m_Relative;
-
         public uint Amount() { return m_Amount; }
-
-        public override void Hook(BestiaryDesc inParent)
-        {
-            base.Hook(inParent);
-
-            if (OnlyWhenStressed())
-            {
-                var pair = FindPairedFact<BFGrow>();
-                if (pair != null)
-                {
-                    float compare = (float) m_Amount - pair.m_Amount;
-                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
-                    m_Relative = MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster);
-                }
-            }
-        }
 
         public override void Accept(IFactVisitor inVisitor)
         {
@@ -83,5 +66,25 @@ namespace Aqua
         {
             return m_AutoGive ? BFMode.Always : (OnlyWhenStressed() ? BFMode.Player : BFMode.Always);
         }
+
+        #if UNITY_EDITOR
+
+        public override bool Optimize()
+        {
+            if (OnlyWhenStressed())
+            {
+                var pair = FindPairedFact<BFGrow>();
+                if (pair != null)
+                {
+                    float compare = (float) m_Amount - pair.m_Amount;
+                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Amount);
+                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster));
+                }
+            }
+
+            return Ref.Replace(ref m_Relative, QualCompare.Null);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

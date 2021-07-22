@@ -103,12 +103,16 @@ namespace Aqua.WorldMap
             m_ShipOutButton.gameObject.SetActive(false);
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             List<StationButton> stations = new List<StationButton>();
             SceneHelper.ActiveScene().Scene.GetAllComponents<StationButton>(stations);
             m_AllStations = stations.ToArray();
         }
+
+        #endif // UNITY_EDITOR
     
         #endregion // IScene
     }

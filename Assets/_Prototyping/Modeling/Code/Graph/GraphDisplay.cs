@@ -174,15 +174,15 @@ namespace ProtoAqua.Modeling
 
                 int tickCount = inResults.Length;
 
-                WaterPropertyDesc critterEntry = Services.Assets.WaterProp.Property(inProperty);
-                StringHash32 id = critterEntry.Id();
+                WaterPropertyDesc propertyEntry = Services.Assets.WaterProp.Property(inProperty);
+                StringHash32 id = propertyEntry.Id();
 
                 unusedLines.Remove(id);
                 if (!m_LineMap.TryGetValue(id, out line))
                 {
                     line = m_LinePool.Alloc();
                     m_LineMap[id] = line;
-                    line.Renderer.color = critterEntry.Color();
+                    line.Renderer.color = propertyEntry.Color();
                     line.Renderer.LineThickness = m_LineThickness;
                 }
 

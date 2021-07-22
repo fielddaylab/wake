@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
   m_Name: coral-invade
   m_EditorClassIdentifier: 
-  m_ScriptName:
-    m_Source: 
-    m_Hash: 0
   m_Category: 0
   m_Flags: 0
   m_NameId:
@@ -34,9 +31,12 @@ MonoBehaviour:
   m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs: []
   m_PrereqConditions: 
-  m_StationId: CoralStation
+  m_StationId:
+    m_Source: 
+    m_Hash: 0
   m_DiveSiteIds:
-  - RS-2R
+  - m_Source: 
+    m_Hash: 0
   m_Tasks:
   - Id:
       m_Source: siteR
@@ -123,6 +123,12 @@ MonoBehaviour:
       Target:
         m_Source: StaghornCoral
         m_Hash: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SargassumCoveredReef
+        m_Hash: 2515708323
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

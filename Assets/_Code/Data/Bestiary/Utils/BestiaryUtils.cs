@@ -134,7 +134,7 @@ namespace Aqua
         /// </summary>
         static public BFState FindRangeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
-            foreach (var fact in inParent.StateFacts)
+            foreach (var fact in inParent.FactsOfType<BFState>())
             {
                 if (fact.PropertyId() != inPropertyId)
                     continue;
@@ -143,43 +143,6 @@ namespace Aqua
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Locates the state change ranges associated with the given creature and water property.
-        /// </summary>
-        static public ActorStateTransitionRange FindStateTransition(BestiaryDesc inParent, WaterPropertyId inPropertyId)
-        {
-            foreach (var fact in inParent.StateFacts)
-            {
-                BFState range = fact as BFState;
-                if (range == null)
-                    continue;
-
-                if (range.PropertyId() != inPropertyId)
-                    continue;
-
-                return range.Range();
-            }
-
-            return ActorStateTransitionRange.Default;
-        }
-
-        /// <summary>
-        /// Generates the initial water chemistry properties for the given environment.
-        /// </summary>
-        static public WaterPropertyBlockF32 GenerateInitialState(BestiaryDesc inParent)
-        {
-            WaterPropertyBlockF32 properties = Services.Assets.WaterProp.DefaultValues();
-            foreach (var fact in inParent.Facts)
-            {
-                BFWaterProperty bfWater = fact as BFWaterProperty;
-                if (bfWater != null)
-                {
-                    properties[bfWater.PropertyId()] = bfWater.Value();
-                }
-            }
-            return properties;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace ProtoAqua.ExperimentV2
 {
     public class EnvIconDisplay : MonoBehaviour
     {
-        public Image Placeholder;
+        public GameObject Placeholder;
         public Image Icon;
         public LocText Label;
         public TextId EmptyText;
@@ -15,14 +15,14 @@ namespace ProtoAqua.ExperimentV2
         {
             if (inEnv)
             {
-                inDisplay.Placeholder.gameObject.SetActive(false);
+                inDisplay.Placeholder.SetActive(false);
                 inDisplay.Icon.sprite = inEnv.Icon();
                 inDisplay.Icon.gameObject.SetActive(true);
                 inDisplay.Label.SetText(inEnv.CommonName());
             }
             else
             {
-                inDisplay.Placeholder.gameObject.SetActive(true);
+                inDisplay.Placeholder.SetActive(true);
                 inDisplay.Icon.gameObject.SetActive(false);
                 inDisplay.Label.SetText(inDisplay.EmptyText);
             }

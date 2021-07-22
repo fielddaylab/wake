@@ -18,28 +18,11 @@ namespace Aqua
 
         [Header("Death Rate")]
         [SerializeField, Range(0, 1)] private float m_Proportion = 0;
+        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
-        [NonSerialized] private QualCompare m_Relative;
-
         public float Proportion() { return m_Proportion; }
-
-        public override void Hook(BestiaryDesc inParent)
-        {
-            base.Hook(inParent);
-
-            if (OnlyWhenStressed())
-            {
-                var pair = FindPairedFact<BFDeath>();
-                if (pair != null)
-                {
-                    float compare = m_Proportion - pair.m_Proportion;
-                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Proportion);
-                    m_Relative = MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster);
-                }
-            }
-        }
 
         public override void Accept(IFactVisitor inVisitor)
         {
@@ -88,5 +71,25 @@ namespace Aqua
         {
             return BFDiscoveredFlags.All;
         }
+
+        #if UNITY_EDITOR
+
+        public override bool Optimize()
+        {
+            if (OnlyWhenStressed())
+            {
+                var pair = FindPairedFact<BFDeath>();
+                if (pair != null)
+                {
+                    float compare = m_Proportion - pair.m_Proportion;
+                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id(), pair.Id(), m_Proportion);
+                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster));
+                }
+            }
+
+            return Ref.Replace(ref m_Relative, QualCompare.Null);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }
