@@ -144,7 +144,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
+            m_Logger = new SimpleLog(m_AppId, m_AppVersion);
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob)
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact)
