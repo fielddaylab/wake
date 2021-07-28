@@ -2,6 +2,7 @@ using System;
 using BeauUtil;
 using System.Runtime.InteropServices;
 using BeauUtil.Debugger;
+using BeauData;
 
 namespace Aqua
 {
@@ -9,7 +10,7 @@ namespace Aqua
     /// Mapping of property to 32-bit float.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential, Pack=4)]
-    public struct WaterPropertyBlockF32
+    public struct WaterPropertyBlockF32 : ISerializedObject
     {
         public float Oxygen;
         public float Temperature;
@@ -46,6 +47,16 @@ namespace Aqua
         {
             return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
                 Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+        }
+
+        public void Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("oxygen", ref Oxygen);
+            ioSerializer.Serialize("temperature", ref Temperature);
+            ioSerializer.Serialize("light", ref Light);
+            ioSerializer.Serialize("ph", ref PH);
+            ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
+            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockF32 operator *(WaterPropertyBlockF32 inA, float inB)
@@ -108,7 +119,7 @@ namespace Aqua
     /// Mapping of property to unsigned 16-bit int.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential, Pack=2)]
-    public struct WaterPropertyBlockU16
+    public struct WaterPropertyBlockU16 : ISerializedObject
     {
         public ushort Oxygen;
         public ushort Temperature;
@@ -145,6 +156,16 @@ namespace Aqua
         {
             return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
                 Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+        }
+
+        public void Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("oxygen", ref Oxygen);
+            ioSerializer.Serialize("temperature", ref Temperature);
+            ioSerializer.Serialize("light", ref Light);
+            ioSerializer.Serialize("ph", ref PH);
+            ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
+            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockU16 operator *(WaterPropertyBlockU16 inA, float inB)
@@ -207,7 +228,7 @@ namespace Aqua
     /// Mapping of property to unsigned 32-bit int.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential, Pack=4)]
-    public struct WaterPropertyBlockU32
+    public struct WaterPropertyBlockU32 : ISerializedObject
     {
         public uint Oxygen;
         public uint Temperature;
@@ -244,6 +265,16 @@ namespace Aqua
         {
             return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
                 Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+        }
+
+        public void Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("oxygen", ref Oxygen);
+            ioSerializer.Serialize("temperature", ref Temperature);
+            ioSerializer.Serialize("light", ref Light);
+            ioSerializer.Serialize("ph", ref PH);
+            ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
+            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockU32 operator *(WaterPropertyBlockU32 inA, float inB)
@@ -306,7 +337,7 @@ namespace Aqua
     /// Mapping of property to unsigned 8-bit integer.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct WaterPropertyBlockU8
+    public struct WaterPropertyBlockU8 : ISerializedObject
     {
         public byte Oxygen;
         public byte Temperature;
@@ -343,6 +374,16 @@ namespace Aqua
                 Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
         }
 
+        public void Serialize(Serializer ioSerializer)
+        {
+            ioSerializer.Serialize("oxygen", ref Oxygen);
+            ioSerializer.Serialize("temperature", ref Temperature);
+            ioSerializer.Serialize("light", ref Light);
+            ioSerializer.Serialize("ph", ref PH);
+            ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
+            ioSerializer.Serialize("salinity", ref Salinity);
+        }
+
         static public unsafe WaterPropertyBlockU8 operator &(WaterPropertyBlockU8 inA, WaterPropertyMask inB)
         {
             WaterPropertyBlockU8 result = inA;
@@ -366,7 +407,7 @@ namespace Aqua
     /// <summary>
     /// Bit mask for property ids.
     /// </summary>
-    public struct WaterPropertyMask
+    public struct WaterPropertyMask : ISerializedProxy<byte>
     {
         private const byte FullMask = (1 << ((int) WaterPropertyId.TRACKED_COUNT)) - 1;
 
@@ -407,6 +448,16 @@ namespace Aqua
                     Mask &= (byte)(~(1 << (int) inId));
                 }
             }
+        }
+
+        public byte GetProxyValue(ISerializerContext inContext)
+        {
+            return Mask;
+        }
+
+        public void SetProxyValue(byte inValue, ISerializerContext inContext)
+        {
+            Mask = inValue;
         }
 
         static public implicit operator byte(WaterPropertyMask inMask)

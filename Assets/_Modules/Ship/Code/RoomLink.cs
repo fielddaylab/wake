@@ -28,7 +28,7 @@ namespace Aqua.Ship
         
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            var roomMgr = Services.State.FindManager<RoomManager>();
+            var roomMgr = RoomManager.Find<RoomManager>();
 
             switch(m_LinkType)
             {

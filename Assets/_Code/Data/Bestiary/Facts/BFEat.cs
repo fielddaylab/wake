@@ -37,6 +37,11 @@ namespace Aqua
             inVisitor.Visit(this);
         }
 
+        public override BFDiscoveredFlags DefaultInformationFlags()
+        {
+            return BFDiscoveredFlags.Base;
+        }
+
         public override Sprite GraphIcon()
         {
             return Services.Assets.Bestiary.DefaultConsumeIcon();

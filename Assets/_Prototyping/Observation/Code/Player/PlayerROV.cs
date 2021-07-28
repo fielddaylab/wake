@@ -1,11 +1,8 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
 using AquaAudio;
 using BeauRoutine;
-using System.Collections;
-using UnityEngine.SceneManagement;
 using Aqua;
 
 namespace ProtoAqua.Observation
@@ -21,8 +18,6 @@ namespace ProtoAqua.Observation
 
             public bool UsePress;
             public bool UseHold;
-            
-            public bool ToolMode;
         }
 
         #endregion // Types
@@ -71,6 +66,12 @@ namespace ProtoAqua.Observation
             m_MouseHint = Services.Camera.AddHint(m_Transform, 1, m_CameraForwardLookWeight).Id;
 
             m_CameraDriftHint = Services.Camera.AddDrift(new Vector2(0.1f, 0.1f), new Vector2(11, 7), RNG.Instance.NextVector2()).Id;
+
+            m_Input.OnInputDisabled.AddListener(OnInputDisabled);
+            m_Input.OnInputEnabled.AddListener(OnInputEnabled);
+
+            if (m_Input.IsInputEnabled)
+                OnInputEnabled();
         }
 
         private void FixedUpdate()
@@ -104,9 +105,9 @@ namespace ProtoAqua.Observation
                 float scaleX = Math.Abs(m_Renderer.transform.localScale.x) * Math.Sign(m_LastInputData.Offset.x);
                 m_Renderer.transform.SetScale(scaleX, Axis.X);
             }
-            else if (m_LastInputData.ToolMode)
+            else if (m_Scanner.CurrentTarget() != null)
             {
-                m_WorldUI.ShowScan(m_LastInputData.Offset, m_Scanner.CurrentTarget() != null);
+                m_WorldUI.ShowScan(m_LastInputData.Offset, true);
             }
             else
             {
@@ -124,7 +125,7 @@ namespace ProtoAqua.Observation
 
                 mouseHintData.Offset = offset;
                 mouseHintData.WeightOffset = m_CameraForwardLookWeight;
-                mouseHintData.Zoom = m_LastInputData.ToolMode ? m_CameraZoomTool : 1f;
+                mouseHintData.Zoom = m_Scanner.CurrentTarget() != null ? m_CameraZoomTool : 1f;
             }
             else
             {
@@ -138,11 +139,7 @@ namespace ProtoAqua.Observation
 
             m_Input.GenerateInput(m_Transform, lockOn, out m_LastInputData);
 
-            if (m_LastInputData.ToolMode)
-            {
-                UpdateTool();
-            }
-            else
+            if (m_Moving || !UpdateTool())
             {
                 UpdateMove();
             }
@@ -155,33 +152,37 @@ namespace ProtoAqua.Observation
             ScannableRegion currentScan = m_Scanner.CurrentTarget();
             if (currentScan && currentScan.isActiveAndEnabled)
             {
-                if (currentScan.LockToCursor())
-                {
-                    Vector3 pos = m_Scanner.CurrentTargetStartCursorPos();
-                    pos.z = m_Transform.position.z;
-                    return pos;
-                }
-                else
-                {
-                    return currentScan.transform.position;
-                }
+                Vector3 pos = currentScan.Collider.transform.position;
+                pos.z = m_Transform.position.z;
+                return pos;
             }
 
             return null;
         }
 
-        private void UpdateTool()
+        private bool UpdateTool()
         {
-            SetEngineState(false);
+            if (m_Scanner.UpdateScan(m_LastInputData))
+            {
+                SetEngineState(false);
+                return true;
+            }
 
+            return false;
+        }
+
+        private void OnInputEnabled()
+        {
             m_Scanner.Enable();
-            m_Scanner.UpdateScan(m_LastInputData);
+        }
+
+        private void OnInputDisabled()
+        {
+            m_Scanner.Disable();
         }
 
         private void UpdateMove()
         {
-            m_Scanner.Disable();
-
             if (m_LastInputData.UseHold)
             {
                 Vector2 vector = m_LastInputData.Offset;
@@ -230,6 +231,7 @@ namespace ProtoAqua.Observation
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
 
                 m_Kinematic.Config.Drag = m_DragEngineOn;
+                Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             }
             else
             {

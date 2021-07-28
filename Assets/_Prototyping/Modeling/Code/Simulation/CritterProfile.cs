@@ -58,7 +58,7 @@ namespace ProtoAqua.Modeling
         private uint m_EatAmountStressedTotal;
         private EatConfig[] m_EatTypesStressed = new EatConfig[Simulator.MaxTrackedCritters];
 
-        private WaterPropertyBlock<ActorStateTransitionRange> m_Transitions;
+        private ActorStateTransitionSet m_Transitions;
 
         private uint m_ScarcityLevel;
 
@@ -525,6 +525,11 @@ namespace ProtoAqua.Modeling
         }
 
         void IFactVisitor.Visit(BFWaterProperty inFact)
+        {
+            // Nothing
+        }
+
+        void IFactVisitor.Visit(BFPopulation inFact)
         {
             // Nothing
         }

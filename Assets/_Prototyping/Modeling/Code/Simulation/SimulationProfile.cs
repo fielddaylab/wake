@@ -159,6 +159,11 @@ namespace ProtoAqua.Modeling
             m_InitialState.Environment[inFact.PropertyId()] = inFact.Value();
         }
 
+        void IFactVisitor.Visit(BFPopulation inFact)
+        {
+            // Nothing
+        }
+
         void IFactVisitor.Visit(BFEat inFact)
         {
             inFact.Accept(FindOrCreateProfile(inFact.Parent()));

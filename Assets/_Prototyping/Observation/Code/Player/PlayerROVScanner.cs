@@ -1,11 +1,8 @@
 using System;
 using UnityEngine;
-using BeauData;
 using BeauUtil;
-using AquaAudio;
 using BeauRoutine;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using Aqua;
 
 namespace ProtoAqua.Observation
@@ -26,18 +23,18 @@ namespace ProtoAqua.Observation
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
         [NonSerialized] private StringHash32 m_TargetScanId = StringHash32.Null;
         [NonSerialized] private float m_CurrentRange;
-        [NonSerialized] private Vector2 m_TargetScannableStartPosition;
 
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
 
-        [NonSerialized] private Collider2D[] m_ColliderBuffer = new Collider2D[4];
+        [NonSerialized] private Collider2D[] m_ColliderBuffer = new Collider2D[1];
 
         #region Unity Events
 
-        private void Awake()
+        private void Start()
         {
             SetRange(0);
+            ScanSystem.Find<ScanSystem>().SetScanRange(m_RangeCollider);
         }
 
         #endregion // Unity Events
@@ -50,7 +47,6 @@ namespace ProtoAqua.Observation
                 return;
 
             m_ScannerOn = true;
-            Services.Events.Dispatch(ObservationEvents.ScannerOn);
             m_ScanEnableRoutine.Replace(this, TurnOnAnim());
         }
 
@@ -60,9 +56,8 @@ namespace ProtoAqua.Observation
                 return;
 
             CancelScan();
-            Services.UI.FindPanel<ScannerDisplay>().Hide();
+            Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             m_ScannerOn = false;
-            Services.Events.Dispatch(ObservationEvents.ScannerOff);
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
         }
 
@@ -70,33 +65,35 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public void UpdateScan(in PlayerROV.InputData inInput)
+        public bool UpdateScan(in PlayerROV.InputData inInput)
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
-                if (!inInput.UseHold || !m_TargetScannable || !m_TargetScannable.CanScan() || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanId() != m_TargetScanId)
+                if (!inInput.UseHold || !m_TargetScannable || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanId != m_TargetScanId || !m_TargetScannable.InRange)
                 {
                     CancelScan();
+                    return false;
                 }
+
+                return true;
             }
             else
             {
                 if (inInput.UseHold && inInput.Target.HasValue)
                 {
                     int overlappingColliders = Physics2D.OverlapCircleNonAlloc(inInput.Target.Value, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
-                    Collider2D scannableCollider = ScoringUtils.GetMaxElement(new ListSlice<Collider2D>(m_ColliderBuffer, 0, overlappingColliders), (c) => {
-                        return c.GetComponentInParent<ScannableRegion>().LockToCursor() ? 0 : 1;
-                    });
+                    Collider2D scannableCollider = overlappingColliders > 0 ? m_ColliderBuffer[0] : null;
                     Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
 
                     bool bFound = false;
                     if (scannableCollider != null)
                     {
                         ScannableRegion scannable = scannableCollider.GetComponentInParent<ScannableRegion>();
-                        if (scannable != null && scannable.isActiveAndEnabled && scannable.CanScan())
+                        if (scannable != null && scannable.isActiveAndEnabled && scannable.InRange)
                         {
                             bFound = true;
                             StartScan(scannable, inInput.Target.Value);
+                            return true;
                         }
                     }
                     if (!bFound)
@@ -104,17 +101,14 @@ namespace ProtoAqua.Observation
                         Services.UI.FindPanel<ScannerDisplay>().Hide();
                     }
                 }
+
+                return false;
             }
         }
 
         public ScannableRegion CurrentTarget()
         {
             return m_TargetScannable;
-        }
-
-        public Vector3 CurrentTargetStartCursorPos()
-        {
-            return m_TargetScannableStartPosition;
         }
 
         private void StartScan(ScannableRegion inRegion, Vector2 inStartPos)
@@ -124,13 +118,9 @@ namespace ProtoAqua.Observation
             if (inRegion != null)
             {
                 m_TargetScannable = inRegion;
-                m_TargetScanId = inRegion.ScanId();
+                m_TargetScanId = inRegion.ScanId;
 
                 m_ScanRoutine.Replace(this, ScanRoutine());
-                m_TargetScannable.StartScan();
-                m_TargetScannable.UpdateScan(0);
-
-                m_TargetScannableStartPosition = inStartPos;
 
                 Services.Audio.PostEvent("scan_start");
             }
@@ -140,16 +130,16 @@ namespace ProtoAqua.Observation
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
-                if (m_TargetScannable)
-                {
-                    m_TargetScannable.CancelScan();
-                }
-
                 Services.UI.FindPanel<ScannerDisplay>().CancelIfProgress();
+
+                if (m_TargetScannable.CurrentIcon)
+                {
+                    m_TargetScannable.CurrentIcon.SetFill(0);
+                    m_TargetScannable.CurrentIcon.SetSpinning(false);
+                }
 
                 m_TargetScannable = null;
                 m_TargetScanId = null;
-                m_TargetScannableStartPosition = default(Vector2);
 
                 m_ScanRoutine.Stop();
             }
@@ -157,7 +147,7 @@ namespace ProtoAqua.Observation
 
         private IEnumerator ScanRoutine()
         {
-            var mgr = Services.Tweaks.Get<ScanDataMgr>();
+            var mgr = ScanSystem.Find<ScanSystem>();
             var scanUI = Services.UI.FindPanel<ScannerDisplay>();
 
             ScanData data;
@@ -167,19 +157,23 @@ namespace ProtoAqua.Observation
             float duration = mgr.GetScanDuration(data);
             float increment = 1f / duration;
 
-            scanUI.AdjustForScannableVisibility(m_TargetScannableStartPosition, gameObject.transform.parent.position);
+            scanUI.AdjustForScannableVisibility(m_TargetScannable.Collider.transform.position, gameObject.transform.parent.position);
 
-            while(progress < 1)
+            m_TargetScannable.CurrentIcon.SetSpinning(true);
+
+            while(progress < 1 && m_TargetScannable.InRange)
             {
                 progress += increment * Routine.DeltaTime;
                 if (progress > 1)
                     progress = 1;
                 scanUI.ShowProgress(progress);
-                m_TargetScannable.UpdateScan(progress);
+                m_TargetScannable.CurrentIcon.SetFill(progress);
                 yield return null;
             }
 
-            ScanResult result = m_TargetScannable.CompleteScan();
+            m_TargetScannable.CurrentIcon.SetSpinning(false);
+
+            ScanResult result = mgr.RegisterScanned(data);
             if (result != 0)
             {
                 if (data != null && !data.BestiaryId().IsEmpty)

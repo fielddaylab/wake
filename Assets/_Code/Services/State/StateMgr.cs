@@ -390,6 +390,22 @@ namespace Aqua
         
         private IEnumerator WaitForOptimize(SceneBinding inBinding)
         {
+            using(PooledList<SubScene> subScenes = PooledList<SubScene>.Create())
+            {
+                inBinding.Scene.GetAllComponents<SubScene>(false, subScenes);
+                if (subScenes.Count > 0)
+                {
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Loading {0} subscenes...", subScenes.Count);
+                    using(Profiling.Time("load subscenes"))
+                    {
+                        foreach(var subscene in subScenes)
+                        {
+                            yield return LoadSubScene(subscene, inBinding);
+                        }
+                    }
+                }
+            }
+
             using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
             {
                 inBinding.Scene.GetAllComponents<FlattenHierarchy>(false, allFlatten);
@@ -418,6 +434,20 @@ namespace Aqua
                     }
                 }
             }
+        }
+        
+        static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
+        {
+            string path = inSubScene.Scene.Path;
+            Destroy(inSubScene.gameObject);
+            yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            SceneBinding unityScene = SceneHelper.FindSceneByPath(path, SceneCategories.Loaded);
+            GameObject[] roots = unityScene.Scene.GetRootGameObjects();
+            foreach(var root in roots)
+            {
+                SceneManager.MoveGameObjectToScene(root, inActiveScene);
+            }
+            yield return SceneManager.UnloadSceneAsync(unityScene);
         }
 
         #endif // UNITY_EDITOR

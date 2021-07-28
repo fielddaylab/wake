@@ -14,6 +14,9 @@ namespace ProtoAqua.ExperimentV2
 
         public TankType Type = TankType.Observation;
         [Required] public CameraPose CameraPose = null;
+        [Required] public BoxCollider BoundsCollider;
+        [Required] public BoxCollider2D WaterCollider;
+        [HideInInspector] public Bounds Bounds;
         
         [Header("In Use State")]
         [Required] public GameObject InUseRoot = null;

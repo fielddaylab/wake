@@ -21,22 +21,22 @@ namespace Aqua.Option
 
         private void Awake()
         {
-            m_PhotosensitiveOption.Initialize("ui.options.accessibility.photosensitive.label",
-                "ui.options.accessibility.photosensitive.tooltip",
+            m_PhotosensitiveOption.Initialize("options.accessibility.photosensitive.label",
+                "options.accessibility.photosensitive.tooltip",
                 (b) => { Data.Accessibility.SetFlag(OptionAccessibilityFlags.ReduceFlashing, b); });
 
-            m_ReduceCameraOption.Initialize("ui.options.accessibility.reduceCamera.label",
-                "ui.options.accessibility.reduceCamera.tooltip",
+            m_ReduceCameraOption.Initialize("options.accessibility.reduceCamera.label",
+                "options.accessibility.reduceCamera.tooltip",
                 (b) => { Data.Accessibility.SetFlag(OptionAccessibilityFlags.ReduceCameraMovement, b); });
 
-            m_TTSToggle.Initialize<OptionsAccessibility.TTSMode>("ui.options.accessibility.tts.label", "ui.options.accessibility.tts.tooltip", OnTTSChanged)
-                .AddOption("ui.options.accessibility.tts.off.label", "ui.options.accessibility.tts.off.tooltip", OptionsAccessibility.TTSMode.Off)
-                .AddOption("ui.options.accessibility.tts.tooltips.label", "ui.options.accessibility.tts.tooltips.tooltip", OptionsAccessibility.TTSMode.Tooltips)
-                .AddOption("ui.options.accessibility.tts.full.label", "ui.options.accessibility.tts.full.tooltip", OptionsAccessibility.TTSMode.Full)
+            m_TTSToggle.Initialize<OptionsAccessibility.TTSMode>("options.accessibility.tts.label", "options.accessibility.tts.tooltip", OnTTSChanged)
+                .AddOption("options.accessibility.tts.off.label", "options.accessibility.tts.off.tooltip", OptionsAccessibility.TTSMode.Off)
+                .AddOption("options.accessibility.tts.tooltips.label", "options.accessibility.tts.tooltips.tooltip", OptionsAccessibility.TTSMode.Tooltips)
+                .AddOption("options.accessibility.tts.full.label", "options.accessibility.tts.full.tooltip", OptionsAccessibility.TTSMode.Full)
                 .Build();
 
-            m_TTSRateSlider.Initialize("ui.options.accessibility.ttsRate.label",
-                "ui.options.accessibility.ttsRate.tooltip",
+            m_TTSRateSlider.Initialize("options.accessibility.ttsRate.label",
+                "options.accessibility.ttsRate.tooltip",
                 (f) => { Data.Accessibility.TTSRate = f; },
                 0.25f, 2f, 1, 0.25f);
             m_TTSRateSlider.GenerateString = (f) => string.Format("{0}x", f);
@@ -67,7 +67,7 @@ namespace Aqua.Option
 
             if (bHasTTS)
             {
-                m_TTSLabel.SetText(Loc.Find("ui.options.accessibility.tts.available"));
+                m_TTSLabel.SetText(Loc.Find("options.accessibility.tts.available"));
 
                 m_TTSGroup.interactable = true;
                 m_TTSGroup.alpha = 1;
@@ -85,7 +85,7 @@ namespace Aqua.Option
             }
             else
             {
-                m_TTSLabel.SetText(Loc.Find("ui.options.accessibility.notAvailable"));
+                m_TTSLabel.SetText(Loc.Find("options.accessibility.notAvailable"));
 
                 m_TTSGroup.interactable = false;
                 m_TTSGroup.alpha = 0.5f;

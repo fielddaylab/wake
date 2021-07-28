@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3722213931737979247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3722213931737979246}
+  m_Layer: 0
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3722213931737979246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3722213931737979247}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3722213933135545028}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3722213933135545029
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3722213933135545028}
+  - component: {fileID: 3722213933135545031}
+  m_Layer: 0
+  m_Name: ScanSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3722213933135545028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3722213933135545029}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3722213931737979246}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3722213933135545031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3722213933135545029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0444266f9e3ecab4998e761ff8d01088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IconPool:
+    m_Prefab: {fileID: 1209636405414293348, guid: 2010bcf218f04e447af1dbb1a8156dac,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 16
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 16
+    m_DefaultPoolRoot: {fileID: 3722213931737979246}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+  m_DefaultScanAssets:
+  - {fileID: -4270002856181823206, guid: ee85d6617f4bf174cb724e0a5720ac11, type: 3}
+  m_DefaultScanConfig:
+    BackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+    HeaderColor: {r: 1, g: 1, b: 0, a: 1}
+    TextColor: {r: 1, g: 1, b: 1, a: 1}
+    OpenSound:
+      m_Source: 
+      m_Hash: 0
+    NodeConfig:
+      UnscannedLineColor: {r: 1, g: 1, b: 1, a: 1}
+      UnscannedFillColor: {r: 0, g: 0.60878164, b: 0.6415094, a: 0.7490196}
+      ScannedLineColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 1}
+      ScannedFillColor: {r: 0, g: 0.30621952, b: 0.324, a: 0.7490196}
+  m_ImportantScanConfig:
+    BackgroundColor: {r: 0.254717, g: 0.13336597, b: 0.13336597, a: 1}
+    HeaderColor: {r: 1, g: 0.525, b: 0.525, a: 1}
+    TextColor: {r: 1, g: 1, b: 1, a: 1}
+    OpenSound:
+      m_Source: 
+      m_Hash: 0
+    NodeConfig:
+      UnscannedLineColor: {r: 1, g: 0.4009434, b: 0.4009434, a: 1}
+      UnscannedFillColor: {r: 0.7264151, g: 0.22957456, b: 0.22957456, a: 0.7490196}
+      ScannedLineColor: {r: 0.624, g: 0.2496, b: 0.2496, a: 1}
+      ScannedFillColor: {r: 0.34, g: 0.10843242, b: 0.10843242, a: 0.7490196}
+  m_BaseScanDuration: 0.75
+  m_CompletedScanDuration: 0.1

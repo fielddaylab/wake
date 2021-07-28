@@ -65,11 +65,6 @@ namespace Aqua
             return m_AutoGive ? BFMode.Always : base.Mode();
         }
 
-        public override BFDiscoveredFlags DefaultInformationFlags()
-        {
-            return BFDiscoveredFlags.Base;
-        }
-
         #region Text
 
         public TextId Verb() { return !m_VerbOverride.IsEmpty ? m_VerbOverride : DefaultVerb(); }

@@ -24,5 +24,10 @@ namespace Aqua
         {
             Services.State?.DeregisterManager(this);
         }
+
+        static public T Find<T>() where T : SharedManager
+        {
+            return Services.State?.FindManager<T>();
+        }
     }
 }

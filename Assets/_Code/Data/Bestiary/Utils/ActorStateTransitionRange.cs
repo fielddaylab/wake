@@ -90,6 +90,11 @@ namespace Aqua
             }
         }
 
+        public ActorStateId Evaluate(in WaterPropertyBlockF32 inEnvironment)
+        {
+            return Evaluate(inEnvironment, out var _);
+        }
+
         public ActorStateId Evaluate(in WaterPropertyBlockF32 inEnvironment, out WaterPropertyMask outAffectedRange)
         {
             ActorStateId current = ActorStateId.Alive;

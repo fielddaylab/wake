@@ -16,14 +16,7 @@ namespace ProtoAqua.Observation
 
         [BlockMeta("basePath")] private string m_RootPath = string.Empty;
 
-        private ScanDataMgr m_Mgr;
-
         #region Manager
-
-        public void BindManager(ScanDataMgr inMgr)
-        {
-            m_Mgr = inMgr;
-        }
 
         #endregion // Manager
 

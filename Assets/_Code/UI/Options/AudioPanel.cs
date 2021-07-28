@@ -29,7 +29,7 @@ namespace Aqua.Option
             m_SFXBus.Initialize(AudioBusId.SFX, 0.8f);
             m_VoiceBus.Initialize(AudioBusId.Voice, 0.8f);
 
-            m_MonoCheckbox.Initialize("ui.options.audio.mono.label", "ui.options.audio.mono.description", (b) => Data.Audio.Mono = b);
+            m_MonoCheckbox.Initialize("options.audio.mono.label", "options.audio.mono.description", (b) => Data.Audio.Mono = b);
         }
 
         public override void Load(OptionsData inOptions)

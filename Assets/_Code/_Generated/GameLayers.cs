@@ -36,6 +36,10 @@ static public class GameLayers
 	public const int CreatureSense_Index = 11;
 	public const int CreatureSense_Mask = 2048;
 
+	// Layer 12: Critter
+	public const int Critter_Index = 12;
+	public const int Critter_Mask = 4096;
+
 	// Layer 29: Solid
 	public const int Solid_Index = 29;
 	public const int Solid_Mask = 536870912;

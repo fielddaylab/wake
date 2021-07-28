@@ -284,8 +284,13 @@ namespace ProtoAqua.Modeling
 
         void IFactVisitor.Visit(BFWaterProperty inFact)
         {
-            var waterPropDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
-            m_MapData.CreateNode(waterPropDef.Id(), "property", inFact);
+            // var waterPropDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
+            // m_MapData.CreateNode(waterPropDef.Id(), "property", inFact);
+        }
+
+        void IFactVisitor.Visit(BFPopulation inFact)
+        {
+            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
         void IFactVisitor.Visit(BFEat inFact)

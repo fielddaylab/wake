@@ -1,12 +1,7 @@
 using System;
 using UnityEngine;
-using BeauData;
-using BeauUtil;
-using AquaAudio;
 using BeauRoutine;
 using System.Collections;
-using BeauRoutine.Extensions;
-using TMPro;
 using UnityEngine.UI;
 using Aqua;
 
@@ -88,7 +83,7 @@ namespace ProtoAqua.Observation
         {
             Show();
 
-            var mgr = Services.Tweaks.Get<ScanDataMgr>();
+            var mgr = ScanSystem.Find<ScanSystem>();
             var config = mgr.GetConfig(inData == null ? 0 : inData.Flags());
 
             m_CurrentScanData = inData;

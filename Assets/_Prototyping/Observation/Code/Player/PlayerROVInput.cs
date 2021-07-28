@@ -1,11 +1,4 @@
-using System;
 using UnityEngine;
-using BeauData;
-using BeauUtil;
-using AquaAudio;
-using BeauRoutine;
-using System.Collections;
-using UnityEngine.SceneManagement;
 using Aqua;
 
 namespace ProtoAqua.Observation
@@ -18,30 +11,14 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-        [NonSerialized] private bool m_ToolModeToggle = false;
-        [NonSerialized] private float m_LastToolModeDown = -1;
-
         protected override void Awake()
         {
             base.Awake();
-            OnInputDisabled.AddListener(HandleInputDisabled);
-            Services.Events.Register<bool>(ObservationEvents.ScannerSetState, ScannerSetState, this);
         }
 
         private void OnDestroy() 
         {
             Services.Events?.DeregisterAll(this);
-        }
-
-        private void HandleInputDisabled()
-        {
-            m_ToolModeToggle = false;
-            m_LastToolModeDown = -1;
-        }
-
-        private void ScannerSetState(bool inState)
-        {
-            m_ToolModeToggle = inState;
         }
 
         #region Input Generation
@@ -69,31 +46,6 @@ namespace ProtoAqua.Observation
 
             outInputData.UseHold = bAllowLeftClick && Input.GetMouseButton(0);
             outInputData.UsePress = bAllowLeftClick && Input.GetMouseButtonDown(0);
-
-            bool bToolButtonDown = Input.GetKey(KeyCode.Space);
-
-            if (bToolButtonDown)
-            {
-                if (m_LastToolModeDown == -1)
-                {
-                    m_LastToolModeDown = Time.timeSinceLevelLoad;
-                }
-            }
-            else
-            {
-                if (m_LastToolModeDown >= 0)
-                {
-                    float deltaTime = Time.timeSinceLevelLoad - m_LastToolModeDown;
-                    m_LastToolModeDown = -1;
-
-                    if (deltaTime <= m_TapThreshold)
-                    {
-                        m_ToolModeToggle = !m_ToolModeToggle;
-                    }
-                }
-            }
-
-            outInputData.ToolMode = m_ToolModeToggle || bToolButtonDown;
         }
 
         private Vector2 GetMousePositionInWorld(Transform inTransform)

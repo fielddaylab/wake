@@ -9,6 +9,7 @@ using UnityEditor.Build;
 using UnityEngine.SceneManagement;
 using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
+using UnityEditor.SceneManagement;
 
 namespace Aqua.Editor
 {
@@ -21,6 +22,7 @@ namespace Aqua.Editor
             if (EditorApplication.isPlaying)
                 return;
             
+            LoadSubscenes(scene);
             RemoveBootstrap(scene);
             Flatten(scene);
             Optimize(scene);
@@ -30,11 +32,39 @@ namespace Aqua.Editor
         {
             if (scene.buildIndex > 0)
             {
-                BootParams bootstrap = GameObject.FindObjectOfType<BootParams>();
-                if (bootstrap != null)
+                BootParams[] bootstraps = GameObject.FindObjectsOfType<BootParams>();
+                if (bootstraps.Length > 0)
                 {
-                    Debug.LogFormat("[SceneProcessor] Removing bootstrap from scene '{0}'...", scene.name);
-                    GameObject.DestroyImmediate(bootstrap.gameObject);
+                    Debug.LogFormat("[SceneProcessor] Removing bootstraps from scene '{0}'...", scene.name);
+                    foreach(var bootstrap in bootstraps)
+                    {
+                        GameObject.DestroyImmediate(bootstrap.gameObject);
+                    }
+                }
+            }
+        }
+
+        static private void LoadSubscenes(Scene scene)
+        {
+            List<SubScene> allSubscenes = new List<SubScene>(4);
+            scene.GetAllComponents<SubScene>(false, allSubscenes);
+            if (allSubscenes.Count > 0)
+            {
+                Debug.LogFormat("[SceneProcessor] Loading {0} subscenes in scene '{1}'...", allSubscenes.Count, scene.name);
+                using(Profiling.Time("load subscenes"))
+                {
+                    foreach(var subscene in allSubscenes)
+                    {
+                        string path = subscene.Scene.Path;
+                        GameObject.DestroyImmediate(subscene.gameObject);
+                        EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                        Scene unitySubScene = EditorSceneManager.GetSceneByPath(path);
+                        foreach(var root in unitySubScene.GetRootGameObjects())
+                        {
+                            EditorSceneManager.MoveGameObjectToScene(root, scene);
+                        }
+                        EditorSceneManager.CloseScene(unitySubScene, true);
+                    }
                 }
             }
         }

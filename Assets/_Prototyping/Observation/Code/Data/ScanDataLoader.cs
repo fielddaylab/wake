@@ -16,7 +16,7 @@ namespace ProtoAqua.Observation
 
         public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext)
         {
-            var scanMgr = Services.Tweaks.Get<ScanDataMgr>();
+            var scanMgr = ScanSystem.Find<ScanSystem>();
             using(Profiling.Time("loading scan data"))
             {
                 for(int i = 0; i < m_ScanData.Length; ++i)
@@ -29,7 +29,7 @@ namespace ProtoAqua.Observation
 
         public void OnSceneUnload(SceneBinding inScene, object inContext)
         {
-            var scanMgr = Services.Tweaks.Get<ScanDataMgr>();
+            var scanMgr = ScanSystem.Find<ScanSystem>();
             for(int i = 0; i < m_ScanData.Length; ++i)
             {
                 scanMgr.Unload(m_ScanData[i]);

@@ -10,13 +10,13 @@ namespace Aqua.Option
     {
         #region Consts
 
-        static private readonly TextId MasterLabel = "ui.options.audio.master";
-        static private readonly TextId MusicLabel = "ui.options.audio.music";
-        static private readonly TextId SFXLabel = "ui.options.audio.sfx";
-        static private readonly TextId VoiceLabel = "ui.options.audio.voice";
+        static private readonly TextId MasterLabel = "options.audio.master";
+        static private readonly TextId MusicLabel = "options.audio.music";
+        static private readonly TextId SFXLabel = "options.audio.sfx";
+        static private readonly TextId VoiceLabel = "options.audio.voice";
 
-        static private readonly TextId MuteLabel = "ui.options.audio.mute";
-        static private readonly TextId UnmuteLabel = "ui.options.audio.unmute";
+        static private readonly TextId MuteLabel = "options.audio.mute";
+        static private readonly TextId UnmuteLabel = "options.audio.unmute";
 
         #endregion // Consts
 

@@ -23,7 +23,6 @@ namespace Aqua
 
         #endregion // Inspector
 
-
         public WaterPropertyId Target() { return m_Property; }
         public uint Amount() { return m_Amount; }
 

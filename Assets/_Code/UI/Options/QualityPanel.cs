@@ -13,10 +13,10 @@ namespace Aqua.Option
 
         private void Awake()
         {
-            m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("ui.options.quality.level.label",
-                "ui.options.quality.level.tooltip", OnQualityLevelChanged)
-                .AddOption("ui.options.quality.level.stable.label", "ui.options.quality.level.stable.tooltip", OptionsPerformance.FramerateMode.Stable)
-                .AddOption("ui.options.quality.level.high.label", "ui.options.quality.level.high.tooltip", OptionsPerformance.FramerateMode.High)
+            m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("options.quality.level.label",
+                "options.quality.level.tooltip", OnQualityLevelChanged)
+                .AddOption("options.quality.level.stable.label", "options.quality.level.stable.tooltip", OptionsPerformance.FramerateMode.Stable)
+                .AddOption("options.quality.level.high.label", "options.quality.level.high.tooltip", OptionsPerformance.FramerateMode.High)
                 .Build();
         }
 

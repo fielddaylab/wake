@@ -47,6 +47,9 @@ namespace ProtoAqua.ExperimentV2
             inTank.Interface.enabled = false;
             inTank.InterfaceRaycaster.Override = false;
             inTank.InterfaceFader.alpha = 0;
+            inTank.Clickable.UserData = inTank;
+
+            WorldUtils.ListenForLayerMask(inTank.WaterCollider, GameLayers.Critter_Mask, (c) => OnWaterEnter(inTank, c), null);
         }
 
         static private IEnumerator SelectTankTransition(SelectableTank inTank)
@@ -90,13 +93,28 @@ namespace ProtoAqua.ExperimentV2
             Services.Input.ResumeAll();
         }
 
+        static private void OnWaterEnter(SelectableTank inTank, Collider2D inCreature)
+        {
+            Vector3 critterPosition = inCreature.transform.position;
+            Vector3 splashPosition;
+            splashPosition.x = critterPosition.x;
+            splashPosition.z = critterPosition.z;
+            splashPosition.y = inTank.Bounds.max.y;
+
+            ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
+            actor.InWater = true;
+
+            // TODO: Splash
+        }
+
         #endregion // Tank Anims
 
         #region Handlers
 
         private void OnTankClicked(PointerEventData inTankPointer)
         {
-            SelectableTank tank = inTankPointer.pointerCurrentRaycast.gameObject.GetComponentInParent<SelectableTank>();
+            PointerListener.TryGetComponentUserData<SelectableTank>(inTankPointer, out SelectableTank tank);
+            
             m_SelectedTank = tank;
             DeactivateTankClickHandlers();
             m_BackButton.gameObject.SetActive(true);
@@ -130,8 +148,8 @@ namespace ProtoAqua.ExperimentV2
 
             foreach(var tank in m_Tanks)
             {
-                tank.Clickable.onClick.AddListener(OnTankClicked);
                 InitializeTank(tank);
+                tank.Clickable.onClick.AddListener(OnTankClicked);
             }
             Services.Camera.SnapToPose(m_Pose);
         }
@@ -141,6 +159,10 @@ namespace ProtoAqua.ExperimentV2
         void ISceneOptimizable.Optimize()
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
+            foreach(var tank in m_Tanks)
+            {
+                tank.Bounds = tank.BoundsCollider.bounds;
+            }
         }
 
         #endif // UNITY_EDITOR
