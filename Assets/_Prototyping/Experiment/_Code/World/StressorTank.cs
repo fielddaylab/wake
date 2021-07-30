@@ -67,7 +67,7 @@ namespace ProtoAqua.Experiment
             base.GenerateResult(ioData);
 
             BestiaryDesc critter = Services.Assets.Bestiary.Get(ioData.Setup.CritterId);
-            BFState fact = BestiaryUtils.FindRangeRule(critter, ioData.Setup.PropertyId);
+            BFState fact = BestiaryUtils.FindStateRangeRule(critter, ioData.Setup.PropertyId);
 
             if (fact != null)
             {

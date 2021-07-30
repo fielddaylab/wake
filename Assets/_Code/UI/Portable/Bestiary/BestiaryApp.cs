@@ -639,6 +639,11 @@ namespace Aqua.Portable
             InstantiateFactButton(inFact);
         }
 
+        void IFactVisitor.Visit(BFPopulationHistory inFact)
+        {
+            InstantiateFactButton(inFact);
+        }
+
         void IFactVisitor.Visit(BFModel inFact)
         {
             InstantiateFactButton(inFact);

@@ -6,7 +6,7 @@ using BeauUtil.Debugger;
 
 namespace Aqua.Profile
 {
-    public class ScienceData : IProfileChunk, ISerializedVersion
+    public class ScienceData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
         private List<InProgressExperimentData> m_CurrentExperiments = new List<InProgressExperimentData>();
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
@@ -83,18 +83,20 @@ namespace Aqua.Profile
             {
                 data = new SiteSurveyData();
                 data.MapId = inMapId;
+                data.OnChanged = MarkChanged;
                 m_SiteData.Add(data);
                 m_HasChanges = true;
             }
             return data;
         }
 
-        public void ClearSite(StringHash32 inMapId)
+        public void SetSiteVersion(StringHash32 inMapId, byte inVersion)
         {
-            SiteSurveyData data;
-            if (m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data))
+            SiteSurveyData data = GetSiteData(inMapId);
+            if (data.SiteVersion != inVersion)
             {
                 data.TaggedCritters.Clear();
+                data.SiteVersion = inVersion;
                 m_HasChanges = true;
             }
         }
@@ -110,6 +112,11 @@ namespace Aqua.Profile
             return m_HasChanges;
         }
 
+        private void MarkChanged()
+        {
+            m_HasChanges = true;
+        }
+
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
@@ -122,6 +129,14 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 2)
             {
                 ioSerializer.ObjectArray("siteSurveys", ref m_SiteData);
+            }
+        }
+
+        void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
+        {
+            foreach(var data in m_SiteData)
+            {
+                data.OnChanged = MarkChanged;
             }
         }
 

@@ -132,14 +132,34 @@ namespace Aqua
         /// <summary>
         /// Locates the range rule associated with the given creature and water property.
         /// </summary>
-        static public BFState FindRangeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId)
+        static public BFState FindStateRangeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId)
         {
             foreach (var fact in inParent.FactsOfType<BFState>())
             {
-                if (fact.PropertyId() != inPropertyId)
-                    continue;
+                if (fact.PropertyId() == inPropertyId)
+                    return fact;
+            }
 
-                return fact;
+            return null;
+        }
+
+        /// <summary>
+        /// Locates the population rule associated with the given environment and critter type.
+        /// </summary>
+        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, StringHash32 inCritterId, byte inSiteVersion = 0)
+        {
+            return FindPopulationRule(inEnvironment, Services.Assets.Bestiary[inCritterId], inSiteVersion);
+        }
+
+        /// <summary>
+        /// Locates the population rule associated with the given environment and critter type.
+        /// </summary>
+        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, BestiaryDesc inCritter, byte inSiteVersion = 0)
+        {
+            foreach(var fact in inEnvironment.FactsOfType<BFPopulation>())
+            {
+                if (fact.SiteVersion() == inSiteVersion && fact.Critter() == inCritter)
+                    return fact;
             }
 
             return null;

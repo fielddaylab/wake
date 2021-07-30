@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Aqua.Profile
 {
-    public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializationCallbackReceiver
+    public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
         #region Types
 
@@ -352,30 +352,39 @@ namespace Aqua.Profile
             }
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-        }
-
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
             var bestiary = Services.Assets.Bestiary;
 
-            using(PooledSet<StringHash32> toRemove = PooledSet<StringHash32>.Create())
-            {
-                foreach(var entityId in m_ObservedEntities)
-                {
-                    if (!bestiary.HasId(entityId))
-                        toRemove.Add(entityId);
-                }
-
-                foreach(var entityId in toRemove)
+            m_ObservedEntities.RemoveWhere((entityId) => {
+                if (!bestiary.HasId(entityId))
                 {
                     Log.Warn("[BestiaryData] Unknown entity id '{0}'", entityId);
-                    m_ObservedEntities.Remove(entityId);
+                    return true;
                 }
 
-                toRemove.Clear();
-            }
+                return false;
+            });
+
+            m_ObservedFacts.RemoveWhere((factId) => {
+                if (!bestiary.HasFactWithId(factId))
+                {
+                    Log.Warn("[BestiaryData] Unknown fact id '{0}'", factId);
+                    return true;
+                }
+
+                return false;
+            });
+
+            m_GraphedFacts.RemoveWhere((factId) => {
+                if (!bestiary.HasFactWithId(factId))
+                {
+                    Log.Warn("[BestiaryData] Unknown fact id '{0}'", factId);
+                    return true;
+                }
+
+                return false;
+            });
         }
 
         public bool HasChanges()

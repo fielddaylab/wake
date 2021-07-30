@@ -534,6 +534,11 @@ namespace ProtoAqua.Modeling
             // Nothing
         }
 
+        void IFactVisitor.Visit(BFPopulationHistory inFact)
+        {
+            // Nothing
+        }
+
         void IFactVisitor.Visit(BFEat inFact)
         {
             if (inFact.OnlyWhenStressed())

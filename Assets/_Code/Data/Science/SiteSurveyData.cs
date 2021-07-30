@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
@@ -8,6 +9,9 @@ namespace Aqua
     {
         public StringHash32 MapId;
         public HashSet<StringHash32> TaggedCritters = new HashSet<StringHash32>();
+        public byte SiteVersion;
+
+        public Action OnChanged;
 
         #region KeyValue
 
@@ -24,6 +28,7 @@ namespace Aqua
         {
             ioSerializer.UInt32Proxy("mapId", ref MapId);
             ioSerializer.UInt32ProxySet("taggedCritters", ref TaggedCritters);
+            ioSerializer.Serialize("siteVersion", ref SiteVersion);
         }
 
         #endregion // ISerializedObject

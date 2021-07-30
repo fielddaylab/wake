@@ -41,6 +41,7 @@ namespace ProtoAqua.Observation
 
             m_On = true;
             m_EnableRoutine.Replace(this, TurnOnAnim());
+            Services.UI.FindPanel<TaggingUI>().Show();
         }
 
         public void Disable()
@@ -50,6 +51,7 @@ namespace ProtoAqua.Observation
 
             m_On = false;
             m_EnableRoutine.Replace(this, TurnOffAnim());
+            Services.UI?.FindPanel<TaggingUI>()?.Hide();
         }
 
         public bool UpdateTool(in PlayerROV.InputData inInput)

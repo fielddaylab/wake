@@ -36,5 +36,18 @@ namespace Aqua
         {
             inVisitor.Visit(this);
         }
+
+        public string FormatPopulation(uint inPopulation)
+        {
+            if (Parent().HasFlags(BestiaryDescFlags.TreatAsHerd))
+            {
+                float mass = m_MassDisplayScale * m_MassPerPopulation * inPopulation;
+                return Property(WaterPropertyId.Mass).FormatValue(mass);
+            }
+            else
+            {
+                return inPopulation.ToString();
+            }
+        }
     }
 }

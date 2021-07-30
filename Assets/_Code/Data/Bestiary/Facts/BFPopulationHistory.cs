@@ -5,18 +5,19 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Population")]
-    public class BFPopulation : BFBase, IOptimizableAsset
+    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Population History")]
+    public class BFPopulationHistory : BFBase, IOptimizableAsset
     {
-        static private readonly TextId PopulationSentence = "factFormat.population";
-        static private readonly TextId PopulationHerdSentence = "factFormat.population.herd";
+        // TODO: Finish
+
+        static private readonly TextId PopulationSentence = "factFormat.populationHistory";
+        static private readonly TextId PopulationHerdSentence = "factFormat.populationHistory.herd";
 
         #region Inspector
 
-        [Header("Population")]
+        [Header("Population History")]
         [SerializeField, FilterBestiary(BestiaryDescCategory.Critter)] private BestiaryDesc m_Critter = null;
         [SerializeField] private uint m_Value = 0;
-        [SerializeField] private byte m_SiteVersion = 0;
 
         #endregion // Inspector
 
@@ -24,12 +25,6 @@ namespace Aqua
 
         public BestiaryDesc Critter() { return m_Critter; }
         public uint Population() { return m_Value; }
-        public byte SiteVersion() { return m_SiteVersion; }
-
-        public string FormattedPopulation()
-        {
-            return m_Body.FormatPopulation(m_Value);
-        }
 
         public override void Accept(IFactVisitor inVisitor)
         {
@@ -56,7 +51,7 @@ namespace Aqua
             TextId format = PopulationSentence;
             if (m_Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
                 format = PopulationHerdSentence;
-            return Loc.Format(format, m_Body.FormatPopulation(m_Value), m_Critter.CommonName(), Parent().CommonName());
+            return Loc.Format(format, (uint) (m_Body.MassPerPopulation() * m_Body.MassDisplayScale() * m_Value), m_Critter.CommonName(), Parent().CommonName());
         }
 
         #if UNITY_EDITOR

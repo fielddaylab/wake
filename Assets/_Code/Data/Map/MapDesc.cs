@@ -20,6 +20,9 @@ namespace Aqua
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private MapDesc m_Parent = null;
 
+        [Header("Environment")]
+        [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_EnvironmentEntry = null;
+
         [Header("Misc")]
         [SerializeField] private PropertyBlock m_AdditionalProperties = null;
 
@@ -35,6 +38,8 @@ namespace Aqua
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
         public MapDesc Parent() { return m_Parent; }
+
+        public BestiaryDesc Environment() { return m_EnvironmentEntry; }
 
         public PropertyBlock AdditionalProperties() { return m_AdditionalProperties; }
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }

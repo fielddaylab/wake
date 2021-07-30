@@ -164,6 +164,11 @@ namespace ProtoAqua.Modeling
             // Nothing
         }
 
+        void IFactVisitor.Visit(BFPopulationHistory inFact)
+        {
+            // Nothing
+        }
+
         void IFactVisitor.Visit(BFEat inFact)
         {
             inFact.Accept(FindOrCreateProfile(inFact.Parent()));

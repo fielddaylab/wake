@@ -293,6 +293,11 @@ namespace ProtoAqua.Modeling
             // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
         }
 
+        void IFactVisitor.Visit(BFPopulationHistory inFact)
+        {
+            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+        }
+
         void IFactVisitor.Visit(BFEat inFact)
         {
             ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());

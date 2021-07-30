@@ -10,36 +10,27 @@ using System.Collections.Generic;
 using Aqua.Debugging;
 using Aqua.Cameras;
 using Aqua.Profile;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
     [DefaultExecutionOrder(-100)]
     public class TaggingSystem : SharedManager, IScenePreloader
     {
-        #region Types
-
-        private struct CritterCategory
-        {
-            public StringHash32 Id;
-            public ushort Total;
-            public ushort Tagged;
-        }
-
-        #endregion // Types
-
         #region Inspector
 
         [SerializeField] private VFX.Pool m_EffectPool = null;
 
         #endregion // Inspector
 
-        private readonly RingBuffer<CritterCategory> m_CritterCategories = new RingBuffer<CritterCategory>();
+        private readonly RingBuffer<TaggingProgress> m_CritterTypes = new RingBuffer<TaggingProgress>();
         private readonly RingBuffer<TaggableCritter> m_RemainingCritters = new RingBuffer<TaggableCritter>(64, RingBufferMode.Expand);
         private readonly RingBuffer<TaggableCritter> m_UntaggedCrittersInRange = new RingBuffer<TaggableCritter>(16, RingBufferMode.Expand);
         private readonly HashSet<TaggableCritter> m_TaggedCritterObjects = new HashSet<TaggableCritter>();
 
         private SiteSurveyData m_SiteData;
         private BestiaryData m_BestiaryData;
+        [NonSerialized] private BestiaryDesc m_EnvironmentType;
 
         [NonSerialized] private Collider2D m_Range;
         [NonSerialized] private TriggerListener2D m_Listener;
@@ -81,8 +72,12 @@ namespace ProtoAqua.Observation
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
         {
+            StringHash32 mapId = MapDB.LookupCurrentMap();
+            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", inScene.Name);
+            
+            m_SiteData = Services.Data.Profile.Science.GetSiteData(mapId);
+            m_EnvironmentType = Services.Assets.Map[mapId].Environment();
             m_BestiaryData = Services.Data.Profile.Bestiary;
-            m_SiteData = Services.Data.Profile.Science.GetSiteData(MapDB.LookupCurrentMap());
             
             TaggableCritter critter;
             for(int i = m_RemainingCritters.Count - 1; i >= 0; i--)
@@ -94,6 +89,8 @@ namespace ProtoAqua.Observation
                     m_RemainingCritters.FastRemoveAt(i);
                 }
             }
+
+            Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
             return null;
         }
 
@@ -103,7 +100,6 @@ namespace ProtoAqua.Observation
 
         public void Register(TaggableCritter inCritter)
         {
-            m_RemainingCritters.PushBack(inCritter);
             if (m_SiteData != null)
             {
                 if (TrackCritterType(inCritter.CritterId))
@@ -134,7 +130,7 @@ namespace ProtoAqua.Observation
             if (!IsUnfinished(inCritterId))
                 return false;
 
-            Category(inCritterId).Total++;
+            Category(inCritterId).TotalInScene++;
             return true;
         }
 
@@ -146,15 +142,15 @@ namespace ProtoAqua.Observation
             int idx = IndexOfCategory(inCritterId);
             if (idx >= 0)
             {
-                m_CritterCategories[idx].Total--;
+                m_CritterTypes[idx].TotalInScene--;
             }
         }
 
         private int IndexOfCategory(StringHash32 inId)
         {
-            for(int i = 0, length = m_CritterCategories.Count; i < length; i++)
+            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
             {
-                ref CritterCategory category = ref m_CritterCategories[i];
+                ref TaggingProgress category = ref m_CritterTypes[i];
                 if (category.Id == inId)
                     return i;
             }
@@ -162,21 +158,21 @@ namespace ProtoAqua.Observation
             return -1;
         }
 
-        private ref CritterCategory Category(StringHash32 inId)
+        private ref TaggingProgress Category(StringHash32 inId)
         {
-            for(int i = 0, length = m_CritterCategories.Count; i < length; i++)
+            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
             {
-                ref CritterCategory category = ref m_CritterCategories[i];
+                ref TaggingProgress category = ref m_CritterTypes[i];
                 if (category.Id == inId)
                     return ref category;
             }
 
-            CritterCategory newCategory;
+            TaggingProgress newCategory;
             newCategory.Id = inId;
             newCategory.Tagged = 0;
-            newCategory.Total = 0;
-            m_CritterCategories.PushBack(newCategory);
-            return ref m_CritterCategories[m_CritterCategories.Count - 1];
+            newCategory.TotalInScene = 0;
+            m_CritterTypes.PushBack(newCategory);
+            return ref m_CritterTypes[m_CritterTypes.Count - 1];
         }
 
         private bool IsUnfinished(StringHash32 inId)
@@ -204,14 +200,22 @@ namespace ProtoAqua.Observation
                 Services.Audio.PostEvent("dive.critterTagged");
 
                 int idx = IndexOfCategory(inCritter.CritterId);
-                ref var category = ref m_CritterCategories[idx];
+                ref var category = ref m_CritterTypes[idx];
                 category.Tagged++;
-                if (category.Tagged >= category.Total)
+                
+                Log.Msg("[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
+
+                if (category.Tagged >= category.TotalInScene)
                 {
+                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, category.Id, m_SiteData.SiteVersion);
+                    Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", category.Id, m_EnvironmentType.Id());
+                    m_BestiaryData.RegisterFact(population.Id());
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
-                    m_CritterCategories.FastRemoveAt(idx);
-                    // TODO: category is done!
+                    m_CritterTypes.FastRemoveAt(idx);
+                    m_SiteData.OnChanged();
                 }
+
+                Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
                 return true;
             }
 
