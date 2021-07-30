@@ -66,6 +66,20 @@ namespace Aqua
                     mapping.Image = m_MediumKey;
                     break;
 
+                case KeyCode.Alpha0:
+                case KeyCode.Alpha1:
+                case KeyCode.Alpha2:
+                case KeyCode.Alpha3:
+                case KeyCode.Alpha4:
+                case KeyCode.Alpha5:
+                case KeyCode.Alpha6:
+                case KeyCode.Alpha7:
+                case KeyCode.Alpha8:
+                case KeyCode.Alpha9:
+                    mapping.Image = m_SmallKey;
+                    mapping.Text = ((int)(inKeycode - KeyCode.Alpha0)).ToString();
+                    break;
+
                 default:
                     mapping.Image = m_SmallKey;
                     break;

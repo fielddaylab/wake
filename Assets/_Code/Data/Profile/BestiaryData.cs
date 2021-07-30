@@ -358,9 +358,23 @@ namespace Aqua.Profile
 
         void ISerializationCallbackReceiver.OnAfterDeserialize()
         {
+            var bestiary = Services.Assets.Bestiary;
+
             using(PooledSet<StringHash32> toRemove = PooledSet<StringHash32>.Create())
             {
-                
+                foreach(var entityId in m_ObservedEntities)
+                {
+                    if (!bestiary.HasId(entityId))
+                        toRemove.Add(entityId);
+                }
+
+                foreach(var entityId in toRemove)
+                {
+                    Log.Warn("[BestiaryData] Unknown entity id '{0}'", entityId);
+                    m_ObservedEntities.Remove(entityId);
+                }
+
+                toRemove.Clear();
             }
         }
 

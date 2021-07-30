@@ -44,8 +44,8 @@ namespace ProtoAqua.Observation
             
             outInputData.Offset = outInputData.Target.Value - (Vector2) inPlayerTransform.position;
 
-            outInputData.UseHold = bAllowLeftClick && Input.GetMouseButton(0);
-            outInputData.UsePress = bAllowLeftClick && Input.GetMouseButtonDown(0);
+            outInputData.UseHold = bAllowLeftClick && Device.MouseDown(0);
+            outInputData.UsePress = bAllowLeftClick && Device.MousePressed(0);
         }
 
         private Vector2 GetMousePositionInWorld(Transform inTransform)

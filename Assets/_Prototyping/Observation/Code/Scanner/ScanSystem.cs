@@ -97,8 +97,10 @@ namespace ProtoAqua.Observation
             if (Services.Pause.IsPaused() || Services.State.IsLoadingScene())
                 return;
 
-            if (m_Listener != null)
-                m_Listener.ProcessOccupants();
+            if (m_Listener == null || !m_Listener.isActiveAndEnabled)
+                return;
+            
+            m_Listener.ProcessOccupants();
 
             CameraService cameraService = Services.Camera;
             ScannableRegion region;
@@ -228,13 +230,13 @@ namespace ProtoAqua.Observation
 
         #region Scannable Regions
 
-        public void RegisterScannable(ScannableRegion inRegion)
+        public void Register(ScannableRegion inRegion)
         {
             m_AllRegions.PushBack(inRegion);
             TryGetScanData(inRegion.ScanId, out inRegion.ScanData);
         }
 
-        public void DeregisterScannable(ScannableRegion inRegion)
+        public void Deregister(ScannableRegion inRegion)
         {
             m_AllRegions.FastRemove(inRegion);
             if (m_RegionsInRange.FastRemove(inRegion))
@@ -249,7 +251,7 @@ namespace ProtoAqua.Observation
     
         #region Scan Range
 
-        public void SetScanRange(Collider2D inCollider)
+        public void SetDetector(Collider2D inCollider)
         {
             if (m_Range == inCollider)
                 return;
@@ -261,12 +263,20 @@ namespace ProtoAqua.Observation
             }
 
             m_Range = inCollider;
-            m_Listener = inCollider.EnsureComponent<TriggerListener2D>();
-            m_Listener.LayerFilter = GameLayers.Scannable_Mask;
-            m_Listener.SetOccupantTracking(true);
 
-            m_Listener.onTriggerEnter.AddListener(OnScannableEnterRegion);
-            m_Listener.onTriggerExit.AddListener(OnScannableExitRegion);
+            if (inCollider != null)
+            {
+                m_Listener = inCollider.EnsureComponent<TriggerListener2D>();
+                m_Listener.LayerFilter = GameLayers.Scannable_Mask;
+                m_Listener.SetOccupantTracking(true);
+
+                m_Listener.onTriggerEnter.AddListener(OnScannableEnterRegion);
+                m_Listener.onTriggerExit.AddListener(OnScannableExitRegion);
+            }
+            else
+            {
+                m_Listener = null;
+            }
         }
 
         #endregion // Scan Range
@@ -297,6 +307,9 @@ namespace ProtoAqua.Observation
 
         private void OnScannableExitRegion(Collider2D inCollider)
         {
+            if (!inCollider)
+                return;
+            
             ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
             if (region != null)
             {

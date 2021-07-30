@@ -40,8 +40,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3722213933135545028}
   - component: {fileID: 3722213933135545031}
+  - component: {fileID: 5692682611703932763}
   m_Layer: 0
-  m_Name: ScanSystem
+  m_Name: ToolSystems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,3 +113,25 @@ MonoBehaviour:
       ScannedFillColor: {r: 0.34, g: 0.10843242, b: 0.10843242, a: 0.7490196}
   m_BaseScanDuration: 0.75
   m_CompletedScanDuration: 0.1
+--- !u!114 &5692682611703932763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3722213933135545029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c969c7a9b65b547865ea9266290890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectPool:
+    m_Prefab: {fileID: 6734336683219992853, guid: 48603da7c311b2543a4ba95ead24c39d,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 32
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 16
+    m_DefaultPoolRoot: {fileID: 3722213931737979246}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0

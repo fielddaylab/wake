@@ -19,6 +19,18 @@ namespace Aqua
         [NonSerialized] private DeviceInput m_DeviceInput;
         [NonSerialized] private bool m_Registered;
 
+        public KeyCode Key
+        {
+            get { return m_KeyCode; }
+            set
+            {
+                if (Ref.Replace(ref m_KeyCode, value))
+                {
+                    m_ButtonDisplay.Assign(m_KeyCode);
+                }
+            }
+        }
+
         private void Awake()
         {
             m_ButtonDisplay.Assign(m_KeyCode);

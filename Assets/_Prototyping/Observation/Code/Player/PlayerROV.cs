@@ -4,11 +4,15 @@ using BeauUtil;
 using AquaAudio;
 using BeauRoutine;
 using Aqua;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
     public class PlayerROV : MonoBehaviour
     {
+        static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch";
+        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched";
+
         #region Types
 
         public struct InputData
@@ -20,6 +24,21 @@ namespace ProtoAqua.Observation
             public bool UseHold;
         }
 
+        public enum ToolId
+        {
+            Scanner,
+            Tagger
+        }
+
+        public interface ITool
+        {
+            void Enable();
+            void Disable();
+            bool UpdateTool(in PlayerROV.InputData inInput);
+            bool HasTarget();
+            Vector3? GetTargetPosition();
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -28,6 +47,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVWorldUI m_WorldUI = null;
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
+        [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
         [SerializeField, Required] private Transform m_Renderer = null;
 
         [Header("Movement Params")]
@@ -55,10 +75,14 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_VelocityHint;
         [NonSerialized] private uint m_MouseHint;
         [NonSerialized] private uint m_CameraDriftHint;
+        [NonSerialized] private ITool m_CurrentTool;
+        [NonSerialized] private ToolId m_CurrentToolId = ToolId.Scanner;
 
         private void Start()
         {
             this.CacheComponent(ref m_Transform);
+
+            Services.Events.Register<ToolId>(Event_RequestToolSwitch, (toolId) => SetTool(toolId, false));
 
             SetEngineState(false, true);
 
@@ -70,8 +94,15 @@ namespace ProtoAqua.Observation
             m_Input.OnInputDisabled.AddListener(OnInputDisabled);
             m_Input.OnInputEnabled.AddListener(OnInputEnabled);
 
+            SetTool(ToolId.Scanner, true);
+
             if (m_Input.IsInputEnabled)
                 OnInputEnabled();
+        }
+
+        private void OnDestroy()
+        {
+            Services.Events?.DeregisterAll(this);
         }
 
         private void FixedUpdate()
@@ -105,7 +136,7 @@ namespace ProtoAqua.Observation
                 float scaleX = Math.Abs(m_Renderer.transform.localScale.x) * Math.Sign(m_LastInputData.Offset.x);
                 m_Renderer.transform.SetScale(scaleX, Axis.X);
             }
-            else if (m_Scanner.CurrentTarget() != null)
+            else if (m_CurrentTool.HasTarget())
             {
                 m_WorldUI.ShowScan(m_LastInputData.Offset, true);
             }
@@ -125,7 +156,7 @@ namespace ProtoAqua.Observation
 
                 mouseHintData.Offset = offset;
                 mouseHintData.WeightOffset = m_CameraForwardLookWeight;
-                mouseHintData.Zoom = m_Scanner.CurrentTarget() != null ? m_CameraZoomTool : 1f;
+                mouseHintData.Zoom = m_CurrentTool.HasTarget() ? m_CameraZoomTool : 1f;
             }
             else
             {
@@ -149,10 +180,10 @@ namespace ProtoAqua.Observation
 
         private Vector3? GetLockOn()
         {
-            ScannableRegion currentScan = m_Scanner.CurrentTarget();
-            if (currentScan && currentScan.isActiveAndEnabled)
+            Vector3? currentScanPos = m_CurrentTool.GetTargetPosition();
+            if (currentScanPos.HasValue)
             {
-                Vector3 pos = currentScan.Collider.transform.position;
+                Vector3 pos = currentScanPos.Value;
                 pos.z = m_Transform.position.z;
                 return pos;
             }
@@ -162,7 +193,7 @@ namespace ProtoAqua.Observation
 
         private bool UpdateTool()
         {
-            if (m_Scanner.UpdateScan(m_LastInputData))
+            if (m_CurrentTool.UpdateTool(m_LastInputData))
             {
                 SetEngineState(false);
                 return true;
@@ -173,12 +204,12 @@ namespace ProtoAqua.Observation
 
         private void OnInputEnabled()
         {
-            m_Scanner.Enable();
+            m_CurrentTool.Enable();
         }
 
         private void OnInputDisabled()
         {
-            m_Scanner.Disable();
+            m_CurrentTool.Disable();
         }
 
         private void UpdateMove()
@@ -238,6 +269,40 @@ namespace ProtoAqua.Observation
                 m_EngineSound.Stop(0.25f);
 
                 m_Kinematic.Config.Drag = m_DragEngineOff;
+            }
+        }
+    
+        private bool SetTool(ToolId inTool, bool inbForce)
+        {
+            if (!inbForce && m_CurrentToolId == inTool)
+                return false;
+
+            if (m_CurrentTool != null)
+            {
+                m_CurrentTool.Disable();
+            }
+
+            m_CurrentToolId = inTool;
+            m_CurrentTool = GetTool(inTool);
+
+            if (m_CurrentTool != null && m_Input.IsInputEnabled)
+                m_CurrentTool.Enable();
+
+            Services.Events.Dispatch(Event_ToolSwitched, inTool);
+            return true;
+        }
+
+        private ITool GetTool(ToolId inToolId)
+        {
+            switch(inToolId)
+            {
+                case ToolId.Scanner:
+                    return m_Scanner;
+                case ToolId.Tagger:
+                    return m_Tagger;
+                default:
+                    Assert.Fail("unknown toolid {0}", inToolId);
+                    return null;
             }
         }
     }

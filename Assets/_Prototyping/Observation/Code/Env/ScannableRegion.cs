@@ -20,12 +20,12 @@ namespace ProtoAqua.Observation
 
         private void OnEnable()
         {
-            ScanSystem.Find<ScanSystem>().RegisterScannable(this);
+            ScanSystem.Find<ScanSystem>().Register(this);
         }
 
         private void OnDisable()
         {
-            ScanSystem.Find<ScanSystem>()?.DeregisterScannable(this);
+            ScanSystem.Find<ScanSystem>()?.Deregister(this);
         }
     }
 }

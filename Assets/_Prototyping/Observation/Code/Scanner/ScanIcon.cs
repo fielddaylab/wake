@@ -104,17 +104,19 @@ namespace ProtoAqua.Observation
             m_FillTransform.SetScale(0, Axis.XY);
 
             m_IconTransform = m_Icon.transform;
-            m_Root.SetScale(0, Axis.XY);
 
             m_Pool = inPool;
         }
 
         void IPooledObject<ScanIcon>.OnDestruct() { }
-        void IPooledObject<ScanIcon>.OnAlloc() { }
+        
+        void IPooledObject<ScanIcon>.OnAlloc()
+        {
+            m_Root.SetScale(0, Axis.XY);
+        }
 
         void IPooledObject<ScanIcon>.OnFree()
         {
-            m_Root.SetScale(0, Axis.XY);
             m_RootRoutine.Stop();
             m_SpinRoutine.Stop();
             m_IconTransform.SetRotation(0, Axis.Y, Space.Self);

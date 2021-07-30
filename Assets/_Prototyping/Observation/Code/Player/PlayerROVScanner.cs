@@ -7,7 +7,7 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class PlayerROVScanner : MonoBehaviour
+    public class PlayerROVScanner : MonoBehaviour, PlayerROV.ITool
     {
         #region Inspector
 
@@ -34,7 +34,7 @@ namespace ProtoAqua.Observation
         private void Start()
         {
             SetRange(0);
-            ScanSystem.Find<ScanSystem>().SetScanRange(m_RangeCollider);
+            ScanSystem.Find<ScanSystem>().SetDetector(m_RangeCollider);
         }
 
         #endregion // Unity Events
@@ -65,7 +65,7 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public bool UpdateScan(in PlayerROV.InputData inInput)
+        public bool UpdateTool(in PlayerROV.InputData inInput)
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
@@ -106,9 +106,19 @@ namespace ProtoAqua.Observation
             }
         }
 
-        public ScannableRegion CurrentTarget()
+        public bool HasTarget()
         {
-            return m_TargetScannable;
+            return m_TargetScannable != null;
+        }
+
+        public Vector3? GetTargetPosition()
+        {
+            if (m_TargetScannable != null && m_TargetScannable.isActiveAndEnabled)
+            {
+                return m_TargetScannable.Collider.transform.position;
+            }
+
+            return null;
         }
 
         private void StartScan(ScannableRegion inRegion, Vector2 inStartPos)

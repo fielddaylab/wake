@@ -194,62 +194,12 @@ namespace Aqua
             return m_ScriptObjects.TryBinarySearch(inId, out outObject);
         }
 
-        public bool TryGetScriptObjectByClass(StringHash32 inClass, out ScriptObject outObject)
-        {
-            UndirtyScriptObjectList();
-            
-            for(int i = 0; i < m_ScriptObjects.Count; ++i)
-            {
-                var obj = m_ScriptObjects[i];
-                if (obj.ClassName() == inClass)
-                {
-                    outObject = obj;
-                    return true;
-                }
-            }
-
-            outObject = null;
-            return false;
-        }
-
-        public int GetScriptObjectsByClass(StringHash32 inClass, IList<ScriptObject> outObjects)
-        {
-            UndirtyScriptObjectList();
-
-            int count = 0;
-            for(int i = 0; i < m_ScriptObjects.Count; ++i)
-            {
-                var obj = m_ScriptObjects[i];
-                if (obj.ClassName() == inClass)
-                {
-                    outObjects.Add(obj);
-                    ++count;
-                }
-            }
-
-            return count;
-        }
-
         public IEnumerable<ScriptObject> GetScriptObjects(StringSlice inIdentifier)
         {
-            if (inIdentifier.StartsWith('@'))
+            ScriptObject scObj;
+            if (TryGetScriptObjectById(inIdentifier.Substring(1), out scObj))
             {
-                ScriptObject scObj;
-                if (TryGetScriptObjectById(inIdentifier.Substring(1), out scObj))
-                {
-                    yield return scObj;
-                }
-            }
-            else
-            {
-                using(PooledList<ScriptObject> scObjs = PooledList<ScriptObject>.Create())
-                {
-                    GetScriptObjectsByClass(inIdentifier.Substring(1), scObjs);
-                    foreach(var scObj in scObjs)
-                    {
-                        yield return scObj;
-                    }
-                }
+                yield return scObj;
             }
         }
 

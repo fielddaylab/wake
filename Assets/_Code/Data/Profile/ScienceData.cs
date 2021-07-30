@@ -9,6 +9,7 @@ namespace Aqua.Profile
     public class ScienceData : IProfileChunk, ISerializedVersion
     {
         private List<InProgressExperimentData> m_CurrentExperiments = new List<InProgressExperimentData>();
+        private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private HashSet<StringHash32> m_DirtyTanks = new HashSet<StringHash32>();
 
         private bool m_HasChanges;
@@ -71,9 +72,38 @@ namespace Aqua.Profile
 
         #endregion // Tanks
 
+        #region Sites
+
+        public IReadOnlyList<SiteSurveyData> Sites() { return m_SiteData; }
+
+        public SiteSurveyData GetSiteData(StringHash32 inMapId)
+        {
+            SiteSurveyData data;
+            if (!m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data))
+            {
+                data = new SiteSurveyData();
+                data.MapId = inMapId;
+                m_SiteData.Add(data);
+                m_HasChanges = true;
+            }
+            return data;
+        }
+
+        public void ClearSite(StringHash32 inMapId)
+        {
+            SiteSurveyData data;
+            if (m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data))
+            {
+                data.TaggedCritters.Clear();
+                m_HasChanges = true;
+            }
+        }
+
+        #endregion // Sites
+
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 1; } }
+        ushort ISerializedVersion.Version { get { return 2; } }
 
         public bool HasChanges()
         {
@@ -89,6 +119,10 @@ namespace Aqua.Profile
         {
             ioSerializer.ObjectArray("ongoingExperiments", ref m_CurrentExperiments);
             ioSerializer.UInt32ProxySet("dirtyTanks", ref m_DirtyTanks);
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.ObjectArray("siteSurveys", ref m_SiteData);
+            }
         }
 
         #endregion // IProfileChunk
