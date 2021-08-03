@@ -21,6 +21,9 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.urchin.commonName
     m_Hash: 2447506618
+  m_PluralCommonNameId:
+    m_Source: critters.urchin.commonName.plural
+    m_Hash: 3771525602
   m_Facts:
   - {fileID: 11400000, guid: 0f844c02e1a26314b9f40b1190c22357, type: 2}
   - {fileID: 11400000, guid: ca6f9689a9d0742aaa7c9a5adcf19b5f, type: 2}
@@ -33,6 +36,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3633c693a2ddf184081820fe9dc1e3d3, type: 2}
   - {fileID: 11400000, guid: 28108bcb7b343dc4fa8d1ed9d899bc2d, type: 2}
   - {fileID: 11400000, guid: 9b2f01c1e074fb3448a91bd3afb5c81e, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: -5858043881073471752, guid: cc4f86ee3cca1e649bcb76a08e75c622, type: 3}
   m_Sketch: {fileID: -2638544873606570238, guid: eb67f2ec220901a48ab5379046271b47,
     type: 3}
@@ -65,7 +69,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -88,11 +91,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity

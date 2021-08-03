@@ -17,7 +17,6 @@ namespace Aqua
         public float Light;
         public float PH;
         public float CarbonDioxide;
-        public float Salinity;
 
         public unsafe float this[WaterPropertyId inId]
         {
@@ -45,8 +44,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide);
         }
 
         public void Serialize(Serializer ioSerializer)
@@ -56,7 +55,6 @@ namespace Aqua
             ioSerializer.Serialize("light", ref Light);
             ioSerializer.Serialize("ph", ref PH);
             ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
-            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockF32 operator *(WaterPropertyBlockF32 inA, float inB)
@@ -67,7 +65,6 @@ namespace Aqua
             result.Light *= inB;
             result.PH *= inB;
             result.CarbonDioxide *= inB;
-            result.Salinity *= inB;
             return result;
         }
 
@@ -79,7 +76,6 @@ namespace Aqua
             result.Light += inB.Light;
             result.PH += inB.PH;
             result.CarbonDioxide += inB.CarbonDioxide;
-            result.Salinity += inB.Salinity;
             return result;
         }
 
@@ -91,7 +87,6 @@ namespace Aqua
             result.Light -= inB.Light;
             result.PH -= inB.PH;
             result.CarbonDioxide -= inB.CarbonDioxide;
-            result.Salinity -= inB.Salinity;
             return result;
         }
 
@@ -126,7 +121,6 @@ namespace Aqua
         public ushort Light;
         public ushort PH;
         public ushort CarbonDioxide;
-        public ushort Salinity;
 
         public unsafe ushort this[WaterPropertyId inId]
         {
@@ -154,8 +148,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide);
         }
 
         public void Serialize(Serializer ioSerializer)
@@ -165,7 +159,6 @@ namespace Aqua
             ioSerializer.Serialize("light", ref Light);
             ioSerializer.Serialize("ph", ref PH);
             ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
-            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockU16 operator *(WaterPropertyBlockU16 inA, float inB)
@@ -176,7 +169,6 @@ namespace Aqua
             result.Light = (ushort) (result.Light * inB);
             result.PH = (ushort) (result.PH * inB);
             result.CarbonDioxide = (ushort) (result.CarbonDioxide * inB);
-            result.Salinity = (ushort) (result.Salinity * inB);
             return result;
         }
 
@@ -188,7 +180,6 @@ namespace Aqua
             result.Light += inB.Light;
             result.PH += inB.PH;
             result.CarbonDioxide += inB.CarbonDioxide;
-            result.Salinity += inB.Salinity;
             return result;
         }
 
@@ -200,7 +191,6 @@ namespace Aqua
             result.Light -= inB.Light;
             result.PH -= inB.PH;
             result.CarbonDioxide -= inB.CarbonDioxide;
-            result.Salinity -= inB.Salinity;
             return result;
         }
 
@@ -235,7 +225,6 @@ namespace Aqua
         public uint Light;
         public uint PH;
         public uint CarbonDioxide;
-        public uint Salinity;
 
         public unsafe uint this[WaterPropertyId inId]
         {
@@ -263,8 +252,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide);
         }
 
         public void Serialize(Serializer ioSerializer)
@@ -274,7 +263,6 @@ namespace Aqua
             ioSerializer.Serialize("light", ref Light);
             ioSerializer.Serialize("ph", ref PH);
             ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
-            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public WaterPropertyBlockU32 operator *(WaterPropertyBlockU32 inA, float inB)
@@ -285,7 +273,6 @@ namespace Aqua
             result.Light = (uint) (result.Light * inB);
             result.PH = (uint) (result.PH * inB);
             result.CarbonDioxide = (uint) (result.CarbonDioxide * inB);
-            result.Salinity = (uint) (result.Salinity * inB);
             return result;
         }
 
@@ -297,7 +284,6 @@ namespace Aqua
             result.Light += inB.Light;
             result.PH += inB.PH;
             result.CarbonDioxide += inB.CarbonDioxide;
-            result.Salinity += inB.Salinity;
             return result;
         }
 
@@ -309,7 +295,6 @@ namespace Aqua
             result.Light -= inB.Light;
             result.PH -= inB.PH;
             result.CarbonDioxide -= inB.CarbonDioxide;
-            result.Salinity -= inB.Salinity;
             return result;
         }
 
@@ -344,7 +329,6 @@ namespace Aqua
         public byte Light;
         public byte PH;
         public byte CarbonDioxide;
-        public byte Salinity;
 
         public unsafe byte this[WaterPropertyId inId]
         {
@@ -371,7 +355,7 @@ namespace Aqua
         public override string ToString()
         {
             return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+                Oxygen, Temperature, Light, PH, CarbonDioxide);
         }
 
         public void Serialize(Serializer ioSerializer)
@@ -381,7 +365,6 @@ namespace Aqua
             ioSerializer.Serialize("light", ref Light);
             ioSerializer.Serialize("ph", ref PH);
             ioSerializer.Serialize("carbonDioxide", ref CarbonDioxide);
-            ioSerializer.Serialize("salinity", ref Salinity);
         }
 
         static public unsafe WaterPropertyBlockU8 operator &(WaterPropertyBlockU8 inA, WaterPropertyMask inB)
@@ -481,7 +464,6 @@ namespace Aqua
         public T Light;
         public T PH;
         public T CarbonDioxide;
-        public T Salinity;
 
         public T this[WaterPropertyId inId]
         {
@@ -499,8 +481,6 @@ namespace Aqua
                         return PH;
                     case WaterPropertyId.CarbonDioxide:
                         return CarbonDioxide;
-                    case WaterPropertyId.Salinity:
-                        return Salinity;
 
                     default:
                         throw new ArgumentOutOfRangeException("inId");
@@ -525,9 +505,6 @@ namespace Aqua
                     case WaterPropertyId.CarbonDioxide:
                         CarbonDioxide = value;
                         break;
-                    case WaterPropertyId.Salinity:
-                        Salinity = value;
-                        break;
 
                     default:
                         throw new ArgumentOutOfRangeException("inId");
@@ -537,8 +514,8 @@ namespace Aqua
 
         public override string ToString()
         {
-            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}, Salt={5}]",
-                Oxygen, Temperature, Light, PH, CarbonDioxide, Salinity);
+            return string.Format("[O2={0}, Temp={1}, Light={2}, PH={3}, CO2={4}]",
+                Oxygen, Temperature, Light, PH, CarbonDioxide);
         }
     }
 }

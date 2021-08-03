@@ -284,10 +284,10 @@ namespace Aqua.Debugging
 
         #region IDebuggable
 
+        #if DEVELOPMENT
+
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
-            #if DEVELOPMENT
-
             DMInfo loggingMenu = new DMInfo("Logging");
             RegisterLogToggle(loggingMenu, LogMask.Input);
             RegisterLogToggle(loggingMenu, LogMask.Physics);
@@ -303,15 +303,8 @@ namespace Aqua.Debugging
             RegisterLogToggle(loggingMenu, LogMask.Argumentation);
             RegisterLogToggle(loggingMenu, LogMask.Localization);
             RegisterLogToggle(loggingMenu, LogMask.Time);
-
-            yield return loggingMenu;
-            
-            #endif // DEVELOPMENT
-
             yield break;
         }
-
-        #if DEVELOPMENT
 
         static private void RegisterLogToggle(DMInfo inMenu, LogMask inMask, string inName = null)
         {

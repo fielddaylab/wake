@@ -21,6 +21,9 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.staghornCoral.commonName
     m_Hash: 3511594172
+  m_PluralCommonNameId:
+    m_Source: 
+    m_Hash: 0
   m_Facts:
   - {fileID: 11400000, guid: 55675e42bc8b44543811302d87ee5270, type: 2}
   - {fileID: 11400000, guid: c2bfa4284d41959488cbe8c21276bb97, type: 2}
@@ -31,6 +34,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8f76c4b02ff91a64f80d2c5f16930634, type: 2}
   - {fileID: 11400000, guid: e8e25b16c1a659e45ba11b4d5c771f2f, type: 2}
   - {fileID: 11400000, guid: 92c679504b7e1fa4ea8e571a6a2a3c21, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: 21300000, guid: 70eae59fd748e472c8161518873f62fd, type: 3}
   m_Sketch: {fileID: 0}
   m_Color: {r: 1, g: 0.7713561, b: 0.6179246, a: 1}
@@ -59,7 +63,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -82,11 +85,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity

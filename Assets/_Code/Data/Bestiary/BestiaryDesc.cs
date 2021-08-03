@@ -21,9 +21,13 @@ namespace Aqua
         [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_ParentEnvironment = null;
         [SerializeField, ShowIfField("IsCritter")] private string m_ScientificNameId = null;
         [SerializeField] private TextId m_CommonNameId = null;
+        [SerializeField] private TextId m_PluralCommonNameId = null;
         
         [Space]
         [SerializeField] private BFBase[] m_Facts = null;
+
+        [Space]
+        [SerializeField, ShowIfField("IsEnvironment")] private uint m_HistoricalRecordDuration = 2;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
@@ -67,6 +71,7 @@ namespace Aqua
 
         public string ScientificName() { return m_ScientificNameId; }
         public TextId CommonName() { return m_CommonNameId; }
+        public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
         public ListSlice<BFBase> AssumedFacts { get { return new ListSlice<BFBase>(m_AllFacts, m_PlayerFactCount, m_AlwaysFactCount); } }
@@ -81,6 +86,12 @@ namespace Aqua
         public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
+
+        public uint HistoricalRecordDuration()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
+            return m_HistoricalRecordDuration;
+        }
 
         public Sprite Sketch() { return m_Sketch; }
         public Color Color() { return m_Color; }

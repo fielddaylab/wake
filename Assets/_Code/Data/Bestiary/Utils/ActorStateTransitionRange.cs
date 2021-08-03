@@ -56,7 +56,6 @@ namespace Aqua
         public ActorStateTransitionRange Light;
         public ActorStateTransitionRange PH;
         public ActorStateTransitionRange CarbonDioxide;
-        public ActorStateTransitionRange Salinity;
 
         public void Reset()
         {
@@ -65,7 +64,6 @@ namespace Aqua
             Light.Reset();
             PH.Reset();
             CarbonDioxide.Reset();
-            Salinity.Reset();
         }
 
         public unsafe ActorStateTransitionRange this[WaterPropertyId inId]
@@ -134,13 +132,6 @@ namespace Aqua
                 if (evaluated > current)
                     current = evaluated;
                 outAffectedRange[WaterPropertyId.CarbonDioxide] = true;
-            }
-
-            if ((evaluated = PH.Evaluate(inEnvironment.Salinity)) > 0)
-            {
-                if (evaluated > current)
-                    current = evaluated;
-                outAffectedRange[WaterPropertyId.Salinity] = true;
             }
 
             return current;

@@ -11,7 +11,9 @@ namespace Aqua
             UpgradeFact,
 
             RemovedEntity,
-            RemovedFact
+            RemovedFact,
+
+            Unknown = 255
         }
 
         public UpdateType Type;

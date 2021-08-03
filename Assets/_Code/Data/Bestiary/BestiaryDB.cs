@@ -13,11 +13,15 @@ namespace Aqua
 
         [Header("Defaults")]
         [SerializeField] private Sprite m_DefaultEatSprite = null;
+        [SerializeField] private Sprite m_DefaultHumanCatchSprite = null;
         [SerializeField] private Sprite m_DefaultProduceSprite = null;
         [SerializeField] private Sprite m_DefaultConsumeSprite = null;
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
         [SerializeField] private Sprite m_DefaultGrowSprite = null;
         [SerializeField] private Sprite m_DefaultDeathSprite = null;
+
+        [Header("Graphs")]
+        [SerializeField] private Sprite[] m_Graphs = new Sprite[(int) BFGraphType.MAX];
 
         // HIDDEN
 
@@ -33,11 +37,17 @@ namespace Aqua
         #region Defaults
 
         public Sprite DefaultEatIcon() { return m_DefaultEatSprite; }
+        public Sprite DefaultHumanCatchIcon() { return m_DefaultHumanCatchSprite; }
         public Sprite DefaultProduceIcon() { return m_DefaultProduceSprite; }
         public Sprite DefaultConsumeIcon() { return m_DefaultConsumeSprite; }
         public Sprite DefaultReproduceIcon() { return m_DefaultReproduceSprite; }
         public Sprite DefaultGrowIcon() { return m_DefaultGrowSprite; }
         public Sprite DefaultDeathIcon() { return m_DefaultDeathSprite; }
+
+        public Sprite GraphTypeToImage(BFGraphType inGraphType)
+        {
+            return m_Graphs[(int) inGraphType];
+        }
 
         #endregion // Defaults
 
@@ -220,7 +230,7 @@ namespace Aqua
 
         [UnityEditor.CustomEditor(typeof(BestiaryDB))]
         private class Inspector : BaseInspector
-        {}  
+        {}
 
         #endif // UNITY_EDITOR
     }

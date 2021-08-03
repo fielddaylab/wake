@@ -102,6 +102,7 @@ namespace ProtoAqua.ExperimentV2
                     break;
 
                 case BestiaryUpdateParams.UpdateType.RemovedEntity:
+                case BestiaryUpdateParams.UpdateType.Unknown:
                     InvalidateListAndClearSet();
                     break;
             }

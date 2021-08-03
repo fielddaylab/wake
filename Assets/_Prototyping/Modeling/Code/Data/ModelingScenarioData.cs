@@ -16,7 +16,6 @@ namespace ProtoAqua.Modeling
             Light,
             PH,
             CarbonDioxide,
-            Salinity,
         }
 
         #region Inspector

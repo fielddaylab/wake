@@ -21,10 +21,14 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.queenConch.commonName
     m_Hash: 595292572
+  m_PluralCommonNameId:
+    m_Source: critters.queenConch.commonName.plural
+    m_Hash: 449969960
   m_Facts:
   - {fileID: 11400000, guid: 877c119826f209d45b3dd16f2c03bbcb, type: 2}
   - {fileID: 11400000, guid: 4b09844156b88b349be261f83c2852e9, type: 2}
   - {fileID: 11400000, guid: 96337ffb2904a054aaf76e5d29bfd40c, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: 21300000, guid: 6a830f8441093c54193ab16bf9ae54f2, type: 3}
   m_Sketch: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -47,7 +51,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -70,11 +73,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity

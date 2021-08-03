@@ -10,7 +10,9 @@ namespace Aqua
         Light, // calculated
         PH,
         CarbonDioxide,
-        Salinity, // environmental
+
+        [Hidden]
+        _Unused, // environmental
 
         Food, // food (for eating)
         Mass, // mass (for growth)
@@ -19,7 +21,7 @@ namespace Aqua
         MAX,
 
         [Hidden]
-        TRACKED_MAX = Salinity,
+        TRACKED_MAX = CarbonDioxide,
         [Hidden]
         TRACKED_COUNT = TRACKED_MAX + 1,
         [Hidden]

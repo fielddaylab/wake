@@ -734,6 +734,8 @@ namespace Aqua
 
         #region IDebuggable
 
+        #if DEVELOPMENT
+
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             DMInfo scriptingMenu = DebugService.NewDebugMenu("Scripting");
@@ -818,6 +820,8 @@ namespace Aqua
             Services.Data.Profile.Script.Reset();
             Log.Warn("[DebugService] Cleared all scripting state");
         }
+
+        #endif // DEVELOPMENT
 
         #endregion // IDebuggable
 

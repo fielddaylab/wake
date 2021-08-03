@@ -17,7 +17,7 @@ namespace ProtoAqua.Modeling
         public const uint HungerPerCritter = 32;
 
         static public readonly WaterPropertyId[] PreemptiveProperties = new WaterPropertyId[] { WaterPropertyId.Light };
-        static public readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature, WaterPropertyId.Salinity };
+        static public readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature };
         static private readonly WaterPropertyMask ConsumeMask;
 
         private const int FixedShift = 12;

@@ -164,5 +164,15 @@ namespace Aqua
 
             return null;
         }
+
+        static private readonly TextId[] GraphTypeToTextMap = new TextId[]
+        {
+            "words.flatGraph.lower", "words.increaseGraph.lower", "words.decreaseGraph.lower", "words.cycleGraph.lower"
+        };
+
+        static public TextId GraphTypeToTextId(BFGraphType inType)
+        {
+            return GraphTypeToTextMap[(int) inType];
+        }
     }
 }
