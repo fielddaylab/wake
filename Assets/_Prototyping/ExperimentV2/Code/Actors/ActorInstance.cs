@@ -12,7 +12,7 @@ namespace ProtoAqua.ExperimentV2
     public sealed class ActorInstance : MonoBehaviour, IPooledObject<ActorInstance>
     {
         public const float DropSpawnAnimationDistance = 8;
-        public delegate void ActionStartDelegate(ActorInstance inActor, ActorWorld inSystem);
+        public delegate void ActionEnterExitDelegate(ActorInstance inActor, ActorWorld inSystem);
 
         #region Inspector
 
@@ -62,30 +62,12 @@ namespace ProtoAqua.ExperimentV2
             if (!Ref.Replace(ref ioInstance.CurrentState, inStateId))   
                 return false;
 
+            OnExitStateDelegates[(int) oldState]?.Invoke(ioInstance, inWorld);
+
             Ref.Dispose(ref ioInstance.StateEffect);
             ioInstance.StateAnimation.Stop();
 
-            switch(oldState)
-            {
-                case ActorStateId.Stressed:
-                    OnEndStressedState(ioInstance, inWorld);
-                    break;
-
-                case ActorStateId.Dead:
-                    OnEndDeadState(ioInstance, inWorld);
-                    break;
-            }
-
-            switch(inStateId)
-            {
-                case ActorStateId.Stressed:
-                    OnBeginStressedState(ioInstance, inWorld);
-                    break;
-
-                case ActorStateId.Dead:
-                    OnBeginDeadState(ioInstance, inWorld);
-                    break;
-            }
+            OnEnterStateDelegates[(int) inStateId]?.Invoke(ioInstance, inWorld);
             return true;
         }
 
@@ -98,7 +80,7 @@ namespace ProtoAqua.ExperimentV2
             return true;
         }
 
-        static public bool SetActorAction(ActorInstance ioInstance, ActorActionId inActionId, ActorWorld inWorld, ActionStartDelegate inOnSet)
+        static public bool SetActorAction(ActorInstance ioInstance, ActorActionId inActionId, ActorWorld inWorld, ActionEnterExitDelegate inOnSet)
         {
             if (!Ref.Replace(ref ioInstance.CurrentAction, inActionId))   
                 return false;
@@ -108,7 +90,7 @@ namespace ProtoAqua.ExperimentV2
             return true;
         }
 
-        static public void ForceActorAction(ActorInstance ioInstance, ActorActionId inActionId, ActorWorld inWorld, ActionStartDelegate inOnSet)
+        static public void ForceActorAction(ActorInstance ioInstance, ActorActionId inActionId, ActorWorld inWorld, ActionEnterExitDelegate inOnSet)
         {
             ioInstance.CurrentAction = inActionId;
             ioInstance.ActionAnimation.Stop();
@@ -192,6 +174,9 @@ namespace ProtoAqua.ExperimentV2
             if (inInstance.ColorAdjust)
                 inInstance.ColorAdjust.SetColor(Color.white);
         }
+
+        static private readonly ActionEnterExitDelegate[] OnEnterStateDelegates = { null, OnBeginStressedState, OnBeginDeadState };
+        static private readonly ActionEnterExitDelegate[] OnExitStateDelegates = { null, OnEndStressedState, OnEndDeadState };
 
         #endregion // States
 

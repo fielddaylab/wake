@@ -170,9 +170,60 @@ namespace Aqua
             "words.flatGraph.lower", "words.increaseGraph.lower", "words.decreaseGraph.lower", "words.cycleGraph.lower"
         };
 
+        /// <summary>
+        /// Returns the TextId associated with the given graph type.
+        /// </summary>
         static public TextId GraphTypeToTextId(BFGraphType inType)
         {
             return GraphTypeToTextMap[(int) inType];
+        }
+
+        /// <summary>
+        /// Returns a set of values in which the given critter is healthy.
+        /// </summary>
+        static public WaterPropertyBlockF32 FindHealthyWaterValues(BestiaryDesc inCritter)
+        {
+            return FindHealthyWaterValues(inCritter.GetActorStateTransitions(), Services.Assets.WaterProp.DefaultValues());
+        }
+
+        /// <summary>
+        /// Returns a set of values in which the given critter is healthy.
+        /// </summary>
+        static public WaterPropertyBlockF32 FindHealthyWaterValues(ActorStateTransitionSet inStates, WaterPropertyBlockF32 inDefaultValues)
+        {
+            WaterPropertyBlockF32 waterProperties;
+            waterProperties.Oxygen = FindHealthyWaterValue(inStates.Oxygen, inDefaultValues.Oxygen);
+            waterProperties.Temperature = FindHealthyWaterValue(inStates.Temperature, inDefaultValues.Temperature);
+            waterProperties.Light = FindHealthyWaterValue(inStates.Light, inDefaultValues.Light);
+            waterProperties.PH = FindHealthyWaterValue(inStates.PH, inDefaultValues.PH);
+            waterProperties.CarbonDioxide = FindHealthyWaterValue(inStates.CarbonDioxide, inDefaultValues.CarbonDioxide);
+            return waterProperties;
+        }
+
+        /// <summary>
+        /// Returns a value in which the given state evaluates to Alive.
+        /// </summary>
+        static public float FindHealthyWaterValue(in ActorStateTransitionRange inRange, float inDefaultValue)
+        {
+            if (float.IsInfinity(inRange.AliveMin))
+            {
+                if (float.IsInfinity(inRange.AliveMax))
+                {
+                    return inDefaultValue;
+                }
+                else
+                {
+                    return (inRange.AliveMax + inDefaultValue) / 2;
+                }
+            }
+            else if (float.IsInfinity(inRange.AliveMax))
+            {
+                return (inRange.AliveMin + inDefaultValue) / 2;
+            }
+            else
+            {
+                return (inRange.AliveMin + inRange.AliveMax) / 2;
+            }
         }
     }
 }

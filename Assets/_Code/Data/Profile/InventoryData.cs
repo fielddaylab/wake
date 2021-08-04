@@ -171,6 +171,7 @@ namespace Aqua.Profile
             {
                 Bits.Add(ref m_WaterProperties, (int) inId);
                 m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.WaterPropertiesUpdated, inId);
                 return true;
             }
 
@@ -183,6 +184,7 @@ namespace Aqua.Profile
             {
                 Bits.Remove(ref m_WaterProperties, (int) inId);
                 m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.WaterPropertiesUpdated, inId);
                 return true;
             }
 

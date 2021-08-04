@@ -323,6 +323,12 @@ namespace Aqua.Portable
                         break;
                     }
 
+                case BestiaryUpdateParams.UpdateType.Unknown:
+                    {
+                        targetEntry = null;
+                        break;
+                    }
+
                 default:
                     {
                         targetEntry = Services.Assets.Bestiary.Fact(inTarget.Id).Parent();
@@ -330,7 +336,7 @@ namespace Aqua.Portable
                     }
             }
 
-            LoadEntryGroup(targetEntry.Category(), targetEntry, true);
+            LoadEntryGroup(targetEntry == null ? BestiaryDescCategory.Critter : targetEntry.Category(), targetEntry, true);
         }
 
         private void LoadBestiarySelection(SelectBestiaryEntryRequest inSelect)

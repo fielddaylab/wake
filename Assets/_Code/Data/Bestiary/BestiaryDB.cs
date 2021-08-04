@@ -67,9 +67,9 @@ namespace Aqua
         {
             switch(inCategory)
             {
-                case BestiaryDescCategory.Environment:
-                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
                 case BestiaryDescCategory.Critter:
+                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
+                case BestiaryDescCategory.Environment:
                     return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount);
 
                 case BestiaryDescCategory.ALL:
@@ -125,10 +125,12 @@ namespace Aqua
 
             foreach(var fact in m_AllFacts)
             {
-                m_FactMap.Add(fact.Id(), fact);
+                StringHash32 factId = fact.Id();
+                Assert.False(m_FactMap.ContainsKey(factId), "Duplicate fact id '{0}'", factId);
+                m_FactMap.Add(factId, fact);
                 if (fact.Mode() != BFMode.Player)
                 {
-                    m_AutoFacts.Add(fact.Id());
+                    m_AutoFacts.Add(factId);
                 }
             }
         }

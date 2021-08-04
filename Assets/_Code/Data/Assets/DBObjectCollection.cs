@@ -122,6 +122,7 @@ namespace Aqua
         protected virtual void ConstructLookupForItem(T inItem, int inIndex)
         {
             StringHash32 id = inItem.Id();
+            Assert.False(m_IdMap.ContainsKey(id), "Duplicate {0} entry '{1}'", typeof(T).Name, id);
             m_IdMap.Add(id, inItem);
         }
 

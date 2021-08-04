@@ -21,6 +21,7 @@ namespace Aqua.Editor
         static private LocEditor s_Instance;
 
         public const string EditorDatabasePath = "Assets/Editor/LocDatabase.asset";
+        public const string EditorDatabaseExportPath = "Assets/_Content/Text/english.bytes";
 
         static private LocEditor GetInstance()
         {
@@ -136,6 +137,21 @@ namespace Aqua.Editor
         {
             var instance = GetInstance();
             instance.ReloadPackages();
+        }
+
+        [MenuItem("Aqualab/Export Loc Database")]
+        static private void ExportLocDatabase()
+        {
+            var instance = GetInstance();
+            instance.ReloadPackages();
+            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.CreateNew)))
+            {
+                foreach(var text in instance.m_TextMap)
+                {
+                    writer.Write(text.Key.HashValue);
+                    writer.Write(text.Value.Content);
+                }
+            }
         }
 
         [ContextMenu("Force Reload")]

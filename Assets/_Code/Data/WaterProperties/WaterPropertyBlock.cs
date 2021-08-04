@@ -3,6 +3,8 @@ using BeauUtil;
 using System.Runtime.InteropServices;
 using BeauUtil.Debugger;
 using BeauData;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Aqua
 {
@@ -390,7 +392,7 @@ namespace Aqua
     /// <summary>
     /// Bit mask for property ids.
     /// </summary>
-    public struct WaterPropertyMask : ISerializedProxy<byte>
+    public struct WaterPropertyMask : ISerializedProxy<byte>, IEnumerable<WaterPropertyId>
     {
         private const byte FullMask = (1 << ((int) WaterPropertyId.TRACKED_COUNT)) - 1;
 
@@ -443,9 +445,63 @@ namespace Aqua
             Mask = inValue;
         }
 
+        public IEnumerator<WaterPropertyId> GetEnumerator()
+        {
+            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
+            {
+                if (this[id])
+                    yield return id;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public override int GetHashCode()
+        {
+            return Mask;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is WaterPropertyMask)
+            {
+                return Mask == ((WaterPropertyMask) obj).Mask;
+            }
+
+            return false;
+        }
+
         static public implicit operator byte(WaterPropertyMask inMask)
         {
             return inMask.Mask;
+        }
+
+        static public bool operator ==(WaterPropertyMask inA, WaterPropertyMask inB)
+        {
+            return inA.Mask == inB.Mask;
+        }
+
+        static public bool operator !=(WaterPropertyMask inA, WaterPropertyMask inB)
+        {
+            return inA.Mask != inB.Mask;
+        }
+
+        static public WaterPropertyMask operator |(WaterPropertyMask inA, WaterPropertyMask inB)
+        {
+            return new WaterPropertyMask((byte) (inA.Mask | inB.Mask));
+        }
+
+        static public WaterPropertyMask operator &(WaterPropertyMask inA, WaterPropertyMask inB)
+        {
+            return new WaterPropertyMask((byte) (inA.Mask & inB.Mask));
+        }
+
+        static public WaterPropertyMask operator ^(WaterPropertyMask inA, WaterPropertyMask inB)
+        {
+            return new WaterPropertyMask((byte) (inA.Mask ^ inB.Mask));
         }
 
         static public WaterPropertyMask All()

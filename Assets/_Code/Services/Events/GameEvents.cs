@@ -35,6 +35,7 @@ namespace Aqua
 
         static public readonly StringHash32 BestiaryUpdated = "bestiary:updated"; // BestiaryUpdateParams bestiaryParams
         static public readonly StringHash32 InventoryUpdated = "inventory:updated"; // StringHash32 itemId
+        static public readonly StringHash32 WaterPropertiesUpdated = "inventory:waterPropertiesUpdated"; // WaterPropertyId property
         static public readonly StringHash32 ModelUpdated = "model:updated"; // StringHash32 factId
         static public readonly StringHash32 ScanLogUpdated = "scan-log:updated"; // StringHash32 scanId
 

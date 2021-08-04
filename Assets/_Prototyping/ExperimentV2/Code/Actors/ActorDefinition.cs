@@ -110,7 +110,7 @@ namespace ProtoAqua.ExperimentV2
             Vector3 extents = inBounds.extents;
             float bottomY = center.y - extents.y + inBottomOffset;
             float limitX = extents.x - inSidesOffset;
-            return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), bottomY, center.x);
+            return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), bottomY, center.z);
         }
 
         static public Vector3 FindRandomLocationOnTop(System.Random inRandom, in Bounds inBounds, float inTopOffset, float inSidesOffset)
@@ -119,7 +119,7 @@ namespace ProtoAqua.ExperimentV2
             Vector3 extents = inBounds.extents;
             float topY = center.y + extents.y - inTopOffset;
             float limitX = extents.x - inSidesOffset;
-            return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), topY, center.x);
+            return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), topY, center.z);
         }
 
         static public Vector3 FindRandomLocationInTank(System.Random inRandom, in Bounds inBounds, float inTopBottomOffset, float inSidesOffset)
@@ -180,7 +180,7 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        static internal void LoadFromBestiary(ActorDefinition inDef, BestiaryDesc inBestiary)
+        static internal void LoadFromBestiary(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab)
         {
             Assert.NotNull(inDef);
             Assert.NotNull(inBestiary);
@@ -190,6 +190,8 @@ namespace ProtoAqua.ExperimentV2
             inDef.Id = inBestiary.Id();
             inDef.Type = inBestiary;
             inDef.StateEvaluator = inBestiary.GetActorStateTransitions();
+            if (inPrefab != null)
+                inDef.Prefab = inPrefab;
 
             RingBuffer<ValidEatTarget> aliveEatTargets = new RingBuffer<ValidEatTarget>();
             RingBuffer<ValidEatTarget> stressedEatTargets = new RingBuffer<ValidEatTarget>();
