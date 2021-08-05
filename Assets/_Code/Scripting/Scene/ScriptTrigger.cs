@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Aqua.Scripting
 {
-    public class SceneTrigger : ScriptComponent
+    public class ScriptTrigger : ScriptComponent
     {
         #region Inspector
 
