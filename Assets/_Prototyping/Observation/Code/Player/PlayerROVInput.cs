@@ -5,12 +5,6 @@ namespace ProtoAqua.Observation
 {
     public class PlayerROVInput : WorldInput
     {
-        #region Inspector
-
-        [SerializeField] private float m_TapThreshold = 0.5f;
-
-        #endregion // Inspector
-
         protected override void Awake()
         {
             base.Awake();

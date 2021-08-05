@@ -28,6 +28,7 @@ namespace Aqua.Editor
                 if (cameraData != null)
                 {
                     cameraData.hideFlags = HideFlags.HideAndDontSave;
+                    GameObject.DestroyImmediate(cameraData);
                 }
             }
         }

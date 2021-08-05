@@ -6,25 +6,22 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Population History")]
-    public class BFPopulationHistory : BFBase, IOptimizableAsset
+    public class BFPopulationHistory : BFBase
     {
         // TODO: Finish
 
         static private readonly TextId PopulationSentence = "factFormat.populationHistory";
-        static private readonly TextId PopulationHerdSentence = "factFormat.populationHistory.herd";
 
         #region Inspector
 
         [Header("Population History")]
         [SerializeField, FilterBestiary(BestiaryDescCategory.Critter)] private BestiaryDesc m_Critter = null;
-        [SerializeField] private uint m_Value = 0;
+        [SerializeField, AutoEnum] private BFGraphType m_Graph = BFGraphType.Flat;
 
         #endregion // Inspector
 
-        [SerializeField, HideInInspector] private BFBody m_Body;
-
         public BestiaryDesc Critter() { return m_Critter; }
-        public uint Population() { return m_Value; }
+        public BFGraphType Graph() { return m_Graph; }
 
         public override void Accept(IFactVisitor inVisitor)
         {
@@ -48,21 +45,7 @@ namespace Aqua
 
         public override string GenerateSentence()
         {
-            TextId format = PopulationSentence;
-            if (m_Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
-                format = PopulationHerdSentence;
-            return Loc.Format(format, (uint) (m_Body.MassPerPopulation() * m_Body.MassDisplayScale() * m_Value), m_Critter.CommonName(), Parent().CommonName());
+            return Loc.Format(PopulationSentence, m_Critter.CommonName(), Parent().CommonName(), BestiaryUtils.GraphTypeToTextId(m_Graph), Parent().HistoricalRecordDuration());
         }
-
-        #if UNITY_EDITOR
-
-        int IOptimizableAsset.Order { get { return 10; } }
-
-        bool IOptimizableAsset.Optimize()
-        {
-            return Ref.Replace(ref m_Body, m_Critter.FactOfType<BFBody>());
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

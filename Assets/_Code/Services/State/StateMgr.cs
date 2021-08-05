@@ -575,6 +575,8 @@ namespace Aqua
 
         #region IDebuggable
 
+        #if DEVELOPMENT
+
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             var menu = DebugService.NewDebugMenu("Load Scene", 8);
@@ -599,6 +601,8 @@ namespace Aqua
             Services.Audio.StopAll();
             Services.State.LoadScene(inBinding);
         }
+
+        #endif // DEVELOPMENT
 
         #endregion // IDebuggable
 

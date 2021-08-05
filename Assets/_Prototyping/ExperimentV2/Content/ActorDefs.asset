@@ -16,12 +16,13 @@ MonoBehaviour:
   - Id:
       m_HashValue: 193540374
     Type: {fileID: 11400000, guid: 335b0449001ff4ede80b31a304345dcc, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 6c088cf9dfa1ae4448fde19ce6eae080,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 0.5
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -58,11 +59,6 @@ MonoBehaviour:
         StressedMin: -Infinity
         StressedMax: Infinity
       CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
         AliveMin: -Infinity
         AliveMax: Infinity
         StressedMin: -Infinity
@@ -71,14 +67,15 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
   - Id:
-      m_HashValue: 2098174204
-    Type: {fileID: 11400000, guid: 6a167075954de4f098981ff3de4bac04, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
+      m_HashValue: 2717353052
+    Type: {fileID: 11400000, guid: 177ab80db73df42b0b65ebdba5d6bc78, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 73a42e1af005edd489e6b9523ee769ab,
+      type: 3}
+    SpawnAmountOverride: 2
     Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      SpawnType: 1
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: -0.1
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -105,8 +102,8 @@ MonoBehaviour:
         StressedMin: -Infinity
         StressedMax: Infinity
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 40000
+        AliveMax: 65000
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
@@ -119,23 +116,19 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 10
+    SpawnCount: 2
   - Id:
-      m_HashValue: 1734724709
-    Type: {fileID: 11400000, guid: 2ce2e71ea92ee4089a7901052ba11dde, type: 2}
-    Prefab: {fileID: 0}
+      m_HashValue: 3836809010
+    Type: {fileID: 11400000, guid: d9e0c562335fe4048800beedd01d8010, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 3a920dfc7b9e76940ab1e11b563ed99b,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      AvoidTankSidesRadius: 1.5
+      AvoidTankTopBottomRadius: 1.5
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -176,138 +169,26 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 10
-  - Id:
-      m_HashValue: 3363669640
-    Type: {fileID: 11400000, guid: b18cc60137e38d44c9001747739e9517, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: 50
-        AliveMax: 90
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Urchin
+        m_Hash: 1973276590
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Urchin
+        m_Hash: 1973276590
     SpawnCount: 4
   - Id:
-      m_HashValue: 3510470690
-    Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}
-    Prefab: {fileID: 0}
+      m_HashValue: 3187223953
+    Type: {fileID: 11400000, guid: a9192863128be4fe582bfc1163a9a4e1, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 48d9b6d2eb2338c46a87dc0b601a5350,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: 30
-        AliveMax: 90
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 1
-  - Id:
-      m_HashValue: 3290936401
-    Type: {fileID: 11400000, guid: e23b1f197e0fb4c85b3910deb525d158, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
+      AvoidTankSidesRadius: 0.5
+      AvoidTankTopBottomRadius: 0.5
+      AvoidActorRadius: 0.5
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
@@ -343,239 +224,6 @@ MonoBehaviour:
         StressedMin: -Infinity
         StressedMax: Infinity
       CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 4
-  - Id:
-      m_HashValue: 1053183451
-    Type: {fileID: 11400000, guid: e57fea154bc6644f9a52e6aceb46d096, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 10
-  - Id:
-      m_HashValue: 1605956068
-    Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 10
-  - Id:
-      m_HashValue: 444981425
-    Type: {fileID: 11400000, guid: c3bd9a227336a470ab889aaef6144136, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    SpawnCount: 10
-  - Id:
-      m_HashValue: 793706139
-    Type: {fileID: 11400000, guid: 3f674716111b84040aed484cff396126, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
-      AvoidActorRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
-    Eating:
-      EatType: 0
-      SenseRadius: 0
-    Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
-    StateEvaluator:
-      Oxygen:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      CarbonDioxide:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Salinity:
         AliveMin: -Infinity
         AliveMax: Infinity
         StressedMin: -Infinity
@@ -633,11 +281,6 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
         m_Source: BullKelp
@@ -660,14 +303,15 @@ MonoBehaviour:
         m_Hash: 444981425
     SpawnCount: 10
   - Id:
-      m_HashValue: 3187223953
-    Type: {fileID: 11400000, guid: a9192863128be4fe582bfc1163a9a4e1, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
+      m_HashValue: 444981425
+    Type: {fileID: 11400000, guid: c3bd9a227336a470ab889aaef6144136, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 440f446fc9fe13f4daac8bdeb988c5be,
+      type: 3}
+    SpawnAmountOverride: 4
     Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      SpawnType: 2
+      AvoidTankSidesRadius: 1.3
+      AvoidTankTopBottomRadius: 0.3
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -708,7 +352,55 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 4
+  - Id:
+      m_HashValue: 1605956068
+    Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 536b2dab95630d740b8118eae91b9fe7,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnType: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 0.5
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
         AliveMin: -Infinity
         AliveMax: Infinity
         StressedMin: -Infinity
@@ -717,14 +409,15 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
   - Id:
-      m_HashValue: 3836809010
-    Type: {fileID: 11400000, guid: d9e0c562335fe4048800beedd01d8010, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
+      m_HashValue: 793706139
+    Type: {fileID: 11400000, guid: 3f674716111b84040aed484cff396126, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: db33b14c9e87b8b43945c6f6722bff5a,
+      type: 3}
+    SpawnAmountOverride: 2
     Spawning:
-      SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      SpawnType: 1
+      AvoidTankSidesRadius: 2.5
+      AvoidTankTopBottomRadius: 0.2
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -765,29 +458,178 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 2
+  - Id:
+      m_HashValue: 3290936401
+    Type: {fileID: 11400000, guid: e23b1f197e0fb4c85b3910deb525d158, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 2920e93be6b54184083df24ae888f582,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnType: 0
+      AvoidTankSidesRadius: 2.5
+      AvoidTankTopBottomRadius: 1
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
         AliveMin: -Infinity
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets:
-    - TargetId:
-        m_Source: Urchin
-        m_Hash: 1973276590
-    StressedEatTargets:
-    - TargetId:
-        m_Source: Urchin
-        m_Hash: 1973276590
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
     SpawnCount: 4
   - Id:
-      m_HashValue: 2717353052
-    Type: {fileID: 11400000, guid: 177ab80db73df42b0b65ebdba5d6bc78, type: 2}
-    Prefab: {fileID: 0}
+      m_HashValue: 3510470690
+    Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: aad6757ecdffa7547a17c02fa69cd6c4,
+      type: 3}
+    SpawnAmountOverride: 3
+    Spawning:
+      SpawnType: 1
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 0
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: 30
+        AliveMax: 90
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 3
+  - Id:
+      m_HashValue: 3363669640
+    Type: {fileID: 11400000, guid: b18cc60137e38d44c9001747739e9517, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 38d1ac26a1481364d81dfc8379208a9e,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnType: 1
+      AvoidTankSidesRadius: 3
+      AvoidTankTopBottomRadius: 0
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: 50
+        AliveMax: 90
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 4
+  - Id:
+      m_HashValue: 1734724709
+    Type: {fileID: 11400000, guid: 2ce2e71ea92ee4089a7901052ba11dde, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 00ebbf9b6bc63e543867f75736a5b9aa,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnType: 0
-      AvoidTankSidesRadius: 0
-      AvoidTankTopBottomRadius: 0
+      AvoidTankSidesRadius: 0.8
+      AvoidTankTopBottomRadius: 0.6
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
@@ -814,8 +656,8 @@ MonoBehaviour:
         StressedMin: -Infinity
         StressedMax: Infinity
       Light:
-        AliveMin: 40000
-        AliveMax: 65000
+        AliveMin: -Infinity
+        AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
@@ -828,7 +670,108 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-      Salinity:
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+  - Id:
+      m_HashValue: 2098174204
+    Type: {fileID: 11400000, guid: 6a167075954de4f098981ff3de4bac04, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 8439436f83e9f1d46add24a1f1c5adf2,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnType: 1
+      AvoidTankSidesRadius: 0.25
+      AvoidTankTopBottomRadius: 0.25
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+  - Id:
+      m_HashValue: 1053183451
+    Type: {fileID: 11400000, guid: e57fea154bc6644f9a52e6aceb46d096, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 95c8a45298c7e144a9767ed8f67e11e5,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnType: 0
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0.2
+      AvoidActorRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 0
+      MovementIdleDistanceMax: 0
+      MovementSpeed: 0
+      MovementInterval: 0
+      MovementIntervalRandom: 0
+    Eating:
+      EatType: 0
+      SenseRadius: 0
+    Stress:
+      MovementSpeedMultiplier: 0
+      MovementIntervalMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
         AliveMin: -Infinity
         AliveMax: Infinity
         StressedMin: -Infinity

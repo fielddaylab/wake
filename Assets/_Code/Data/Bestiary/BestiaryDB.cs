@@ -13,11 +13,15 @@ namespace Aqua
 
         [Header("Defaults")]
         [SerializeField] private Sprite m_DefaultEatSprite = null;
+        [SerializeField] private Sprite m_DefaultHumanCatchSprite = null;
         [SerializeField] private Sprite m_DefaultProduceSprite = null;
         [SerializeField] private Sprite m_DefaultConsumeSprite = null;
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
         [SerializeField] private Sprite m_DefaultGrowSprite = null;
         [SerializeField] private Sprite m_DefaultDeathSprite = null;
+
+        [Header("Graphs")]
+        [SerializeField] private Sprite[] m_Graphs = new Sprite[(int) BFGraphType.MAX];
 
         // HIDDEN
 
@@ -33,11 +37,17 @@ namespace Aqua
         #region Defaults
 
         public Sprite DefaultEatIcon() { return m_DefaultEatSprite; }
+        public Sprite DefaultHumanCatchIcon() { return m_DefaultHumanCatchSprite; }
         public Sprite DefaultProduceIcon() { return m_DefaultProduceSprite; }
         public Sprite DefaultConsumeIcon() { return m_DefaultConsumeSprite; }
         public Sprite DefaultReproduceIcon() { return m_DefaultReproduceSprite; }
         public Sprite DefaultGrowIcon() { return m_DefaultGrowSprite; }
         public Sprite DefaultDeathIcon() { return m_DefaultDeathSprite; }
+
+        public Sprite GraphTypeToImage(BFGraphType inGraphType)
+        {
+            return m_Graphs[(int) inGraphType];
+        }
 
         #endregion // Defaults
 
@@ -57,9 +67,9 @@ namespace Aqua
         {
             switch(inCategory)
             {
-                case BestiaryDescCategory.Environment:
-                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
                 case BestiaryDescCategory.Critter:
+                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
+                case BestiaryDescCategory.Environment:
                     return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount);
 
                 case BestiaryDescCategory.ALL:
@@ -115,10 +125,12 @@ namespace Aqua
 
             foreach(var fact in m_AllFacts)
             {
-                m_FactMap.Add(fact.Id(), fact);
+                StringHash32 factId = fact.Id();
+                Assert.False(m_FactMap.ContainsKey(factId), "Duplicate fact id '{0}'", factId);
+                m_FactMap.Add(factId, fact);
                 if (fact.Mode() != BFMode.Player)
                 {
-                    m_AutoFacts.Add(fact.Id());
+                    m_AutoFacts.Add(factId);
                 }
             }
         }
@@ -220,7 +232,7 @@ namespace Aqua
 
         [UnityEditor.CustomEditor(typeof(BestiaryDB))]
         private class Inspector : BaseInspector
-        {}  
+        {}
 
         #endif // UNITY_EDITOR
     }

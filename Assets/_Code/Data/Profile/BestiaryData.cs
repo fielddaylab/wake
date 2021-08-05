@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections.Generic;
 using BeauData;
@@ -398,5 +402,47 @@ namespace Aqua.Profile
         }
 
         #endregion // IProfileChunk
+
+        #region Debug
+
+        #if DEVELOPMENT
+
+        internal bool DebugRegisterEntityNoEvent(StringHash32 inEntityId)
+        {
+            Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);
+            if (m_ObservedEntities.Add(inEntityId))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        internal bool DebugRegisterFactNoEvent(StringHash32 inFactId, bool inbIncludeEntity = false)
+        {
+            if (Services.Assets.Bestiary.IsAutoFact(inFactId))
+            {
+                return false;
+            }
+
+            if (m_ObservedFacts.Add(inFactId))
+            {
+                m_HasChanges = true;
+                var fact = Services.Assets.Bestiary.Fact(inFactId);
+                StringHash32 parentId = fact.Parent().Id();
+                if (inbIncludeEntity)
+                {
+                    m_ObservedEntities.Add(parentId);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // Debug
     }
 }

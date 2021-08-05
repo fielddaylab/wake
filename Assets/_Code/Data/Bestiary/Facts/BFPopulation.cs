@@ -56,7 +56,7 @@ namespace Aqua
             TextId format = PopulationSentence;
             if (m_Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
                 format = PopulationHerdSentence;
-            return Loc.Format(format, m_Body.FormatPopulation(m_Value), m_Critter.CommonName(), Parent().CommonName());
+            return Loc.Format(format, m_Body.FormatPopulation(m_Value), m_Critter.PluralCommonName(), Parent().CommonName());
         }
 
         #if UNITY_EDITOR

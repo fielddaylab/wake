@@ -21,11 +21,15 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.loggerheadTurtle.commonName
     m_Hash: 101744543
+  m_PluralCommonNameId:
+    m_Source: critters.loggerheadTurtle.commonName.plural
+    m_Hash: 4057655465
   m_Facts:
   - {fileID: 11400000, guid: 599b15de71b825040bd007ee0c936af5, type: 2}
   - {fileID: 11400000, guid: ad4c93d3a75e0e040b1fbbaefad3a4cb, type: 2}
   - {fileID: 11400000, guid: ff016a1b378239745a8ca741e52b602a, type: 2}
   - {fileID: 11400000, guid: 3e954a3e2e323ad4da2ab4f44cc089bc, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: 21300000, guid: 78a4d1b72b264a544823d97c5a2a56f1, type: 3}
   m_Sketch: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -49,7 +53,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -72,11 +75,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity

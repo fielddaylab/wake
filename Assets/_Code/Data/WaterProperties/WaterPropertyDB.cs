@@ -49,7 +49,6 @@ namespace Aqua
             WaterPropertyId.Temperature,
             WaterPropertyId.Light,
             WaterPropertyId.Oxygen,
-            WaterPropertyId.Salinity,
             WaterPropertyId.CarbonDioxide,
             WaterPropertyId.PH
         };

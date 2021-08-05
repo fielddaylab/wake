@@ -10,13 +10,19 @@ namespace Aqua.Character
     {
         public float Lerp;
 
-        public void Apply(Vector2 inNormalizedOffset, Transform inTransform, float inDeltaTime)
+        public bool Apply(Vector2 inNormalizedOffset, Transform inTransform, float inDeltaTime)
         {
             float desiredRotation = Mathf.Atan2(inNormalizedOffset.y, inNormalizedOffset.x) * Mathf.Rad2Deg;
             float currentRotation = inTransform.localEulerAngles.z;
             float delta = MathUtil.DegreeAngleDifference(currentRotation, desiredRotation);
-            float newRotation = currentRotation + delta * TweenUtil.Lerp(Lerp, 1, inDeltaTime);
-            inTransform.SetRotation(newRotation, Axis.Z, Space.Self);
+            if (delta > 1)
+            {
+                float newRotation = currentRotation + delta * TweenUtil.Lerp(Lerp, 1, inDeltaTime);
+                inTransform.SetRotation(newRotation, Axis.Z, Space.Self);
+                return true;
+            }
+
+            return false;
         }
     }
 }

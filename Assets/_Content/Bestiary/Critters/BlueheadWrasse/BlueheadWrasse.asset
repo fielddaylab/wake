@@ -21,11 +21,15 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.blueheadWrasse.commonName
     m_Hash: 4084239810
+  m_PluralCommonNameId:
+    m_Source: 
+    m_Hash: 0
   m_Facts:
   - {fileID: 11400000, guid: 3d29e17a18a3eb44e9a81eff30d8714b, type: 2}
   - {fileID: 11400000, guid: 02419da031333674192a12cd6dd5119b, type: 2}
   - {fileID: 11400000, guid: 012a5aeb6c99b7643bef7b1338842408, type: 2}
   - {fileID: 11400000, guid: f10399dd2117fec468ec32464eb0129f, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: 21300000, guid: fc0b2ef76f0e6eb4e8dc1467f1f2219a, type: 3}
   m_Sketch: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -49,7 +53,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -72,11 +75,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity

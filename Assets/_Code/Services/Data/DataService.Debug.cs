@@ -1,6 +1,5 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 #define DEVELOPMENT
-#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
 
 using Aqua.Debugging;
 using Aqua.Profile;
@@ -314,14 +313,19 @@ namespace Aqua
 
         static private void UnlockAllBestiaryEntries(bool inbIncludeFacts)
         {
+            bool bChanged = false;
             foreach(var entry in Services.Assets.Bestiary.Objects)
             {
-                Services.Data.Profile.Bestiary.RegisterEntity(entry.Id());
+                bChanged |= Services.Data.Profile.Bestiary.DebugRegisterEntityNoEvent(entry.Id());
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
-                        Services.Data.Profile.Bestiary.RegisterFact(fact.Id());
+                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactNoEvent(fact.Id());
                 }
+            }
+            if (bChanged)
+            {
+                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Unknown, StringHash32.Null));
             }
         }
 
@@ -367,3 +371,5 @@ namespace Aqua
         #endregion // IDebuggable
     }
 }
+
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD

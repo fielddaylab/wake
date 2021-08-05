@@ -25,6 +25,7 @@ namespace Aqua
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = null;
+        [SerializeField] private TextId m_EnvironmentHistoryFormat = null;
         [SerializeField] private TextId m_StateChangeFormat = null;
         [SerializeField] private TextId m_StateChangeStressOnlyFormat = null;
         [SerializeField] private TextId m_StateChangeUnaffectedFormat = null;
@@ -48,6 +49,7 @@ namespace Aqua
         public ColorPalette4 Palette() { return m_Palette; }
         
         public TextId EnvironmentFactFormat() { return m_EnvironmentFactFormat; }
+        public TextId EnvironmentHistoryFactFormat() { return m_EnvironmentHistoryFormat; }
         public TextId StateChangeFormat() { return m_StateChangeFormat; }
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         public TextId StateChangeUnaffectedFormat() { return m_StateChangeUnaffectedFormat; }
@@ -73,6 +75,14 @@ namespace Aqua
         public float RemapValue(float inValue)
         {
             return (inValue - m_MinValue) / (m_MaxValue - m_MinValue);
+        }
+
+        /// <summary>
+        /// Remaps the given fraction to a value between the min and max property values.
+        /// </summary>
+        public float InverseRemap(float inFraction)
+        {
+            return m_MinValue + (m_MaxValue - m_MinValue) * inFraction;
         }
     }
 

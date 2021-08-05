@@ -21,11 +21,15 @@ MonoBehaviour:
   m_CommonNameId:
     m_Source: critters.copepod.commonName
     m_Hash: 3639984253
+  m_PluralCommonNameId:
+    m_Source: critters.copepod.commonName.plural
+    m_Hash: 2082261371
   m_Facts:
   - {fileID: 11400000, guid: bf87d89401ce87440b3f88f8659074bc, type: 2}
   - {fileID: 11400000, guid: 54324cd132fd8ec429101222df5ae004, type: 2}
   - {fileID: 11400000, guid: f309886ba0ac52843a242d8654877e56, type: 2}
   - {fileID: 11400000, guid: 5bbd507d0b8810e4aafb61d4372dc6e6, type: 2}
+  m_HistoricalRecordDuration: 2
   m_Icon: {fileID: 21300000, guid: 1a609cef6688b524188ec8e8bc99ceac, type: 3}
   m_Sketch: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -49,7 +53,6 @@ MonoBehaviour:
     Light: 0
     PH: 0
     CarbonDioxide: 0
-    Salinity: 0
   m_StateTransitions:
     Oxygen:
       AliveMin: -Infinity
@@ -72,11 +75,6 @@ MonoBehaviour:
       StressedMin: -Infinity
       StressedMax: Infinity
     CarbonDioxide:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
-    Salinity:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity
