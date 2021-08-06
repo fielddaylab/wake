@@ -11,15 +11,15 @@ namespace Aqua
 
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField, Required] private LocText m_Label = null;
-        [SerializeField, Required] private TMP_Text m_Population = null;
+        [SerializeField, Required] private Image m_GraphIcon = null;
 
         #endregion // Inspector
 
-        public void Populate(BFPopulation inFact)
+        public void Populate(BFPopulationHistory inFact)
         {
             m_Icon.sprite = inFact.Icon();
             m_Label.SetText(inFact.Critter().CommonName());
-            m_Population.SetText(inFact.FormattedPopulation());
+            m_GraphIcon.sprite = Services.Assets.Bestiary.GraphTypeToImage(inFact.Graph());
         }
     }
 }
