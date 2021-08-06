@@ -529,6 +529,11 @@ namespace ProtoAqua.Modeling
             // Nothing
         }
 
+        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
+        {
+            // Nothing
+        }
+
         void IFactVisitor.Visit(BFPopulation inFact)
         {
             // Nothing
