@@ -71,7 +71,7 @@ namespace ProtoAqua.Observation
             TempList16<StringSlice> split = new TempList16<StringSlice>();
             int slices = inData.Split(Parsing.CommaChar, StringSplitOptions.RemoveEmptyEntries, ref split);
             m_BestiaryFactIds = ArrayUtils.MapFrom(split, (s) => {
-                return new StringHash32(s);
+                return new StringHash32(s.Trim());
             });
         }
 
@@ -85,7 +85,7 @@ namespace ProtoAqua.Observation
                 foreach(var factId in m_BestiaryFactIds)
                 {
                     Assert.True(Services.Assets.Bestiary.HasFactWithId(factId),
-                        "Scan '{0}' was linked to unknown bestiary fact '{1}'", factId);
+                        "Scan '{0}' was linked to unknown bestiary fact '{1}'", m_Id, factId);
                 }
             }
         }
