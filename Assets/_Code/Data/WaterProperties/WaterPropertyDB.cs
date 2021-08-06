@@ -25,7 +25,7 @@ namespace Aqua
             if (inId < 0 || inId >= WaterPropertyId.MAX)
                 return null;
 
-            return m_Objects[(int) inId];
+            return m_IndexMap[(int) inId];
         }
 
         public WaterPropertyBlockF32 DefaultValues() { return m_DefaultValues; }
