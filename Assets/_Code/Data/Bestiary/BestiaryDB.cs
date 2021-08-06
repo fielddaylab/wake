@@ -143,7 +143,7 @@ namespace Aqua
 
         bool IOptimizableAsset.Optimize()
         {
-            SortObjects((a, b) => a.Category().CompareTo(b.Category()));
+            SortObjects(SortByCategory);
 
             List<BFBase> allFacts = new List<BFBase>(512);
             Dictionary<BestiaryDesc, List<BestiaryDesc>> environmentChildLists = new Dictionary<BestiaryDesc, List<BestiaryDesc>>();
@@ -206,6 +206,13 @@ namespace Aqua
 
             return true;
         }
+
+        static private readonly Comparison<BestiaryDesc> SortByCategory = (a, b) => {
+            int compare = a.Category().CompareTo(b.Category());
+            if (compare == 0)
+                compare = a.name.CompareTo(b.name);
+            return compare;
+        };
 
         static private void AddToListMap<T, U>(Dictionary<T, List<U>> ioMap, T inKey, U inValue)
         {
