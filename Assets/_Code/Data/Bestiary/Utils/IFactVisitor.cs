@@ -6,6 +6,7 @@ namespace Aqua
 
         void Visit(BFBody inFact);
         void Visit(BFWaterProperty inFact);
+        void Visit(BFWaterPropertyHistory inFact);
         void Visit(BFPopulation inFact);
         void Visit(BFPopulationHistory inFact);
         void Visit(BFModel inModel);

@@ -20,7 +20,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [SerializeField, HideInInspector] private BFBody m_Body;
+        [SerializeField] private BFBody m_Body;
 
         public BestiaryDesc Critter() { return m_Critter; }
         public uint Population() { return m_Value; }
