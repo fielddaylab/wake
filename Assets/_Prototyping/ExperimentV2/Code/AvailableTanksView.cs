@@ -99,10 +99,27 @@ namespace ProtoAqua.ExperimentV2
             Vector3 splashPosition;
             splashPosition.x = critterPosition.x;
             splashPosition.z = critterPosition.z;
-            splashPosition.y = inTank.Bounds.max.y;
 
             ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
             actor.InWater = true;
+
+            switch(actor.Definition.Spawning.SpawnType)
+            {
+                case ActorDefinition.SpawnTypeId.Top:
+                case ActorDefinition.SpawnTypeId.Anywhere:
+                    {
+                        splashPosition.y = inTank.Bounds.max.y;
+                        Services.Audio.PostEvent("tank_water_splash");
+                        break;
+                    }
+
+                case ActorDefinition.SpawnTypeId.Bottom:
+                    {
+                        splashPosition.y = inTank.Bounds.min.y;
+                        Services.Audio.PostEvent("tank_water_splash");
+                        break;
+                    }
+            }
 
             // TODO: Splash
         }

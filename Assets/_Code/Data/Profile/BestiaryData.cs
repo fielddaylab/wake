@@ -225,7 +225,7 @@ namespace Aqua.Profile
             return flags;
         }
 
-        public BFDiscoveredFlags SetDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
+        public BFDiscoveredFlags AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
             if (inFlags <= 0)
                 return GetDiscoveredFlags(inFactId);

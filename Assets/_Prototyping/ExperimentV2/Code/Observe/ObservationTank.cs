@@ -25,7 +25,7 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // Inspector
 
-        private readonly HashSet<BestiaryDesc> m_ActiveCritters = new HashSet<BestiaryDesc>();
+        [NonSerialized] private ActorWorld m_World;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
         [NonSerialized] private bool m_IsRunning;
 
@@ -56,8 +56,12 @@ namespace ProtoAqua.ExperimentV2
             m_ActorBehavior.TickBehaviors(Time.deltaTime);
         }
 
+        #region Tank
+
         private void Activate()
         {
+            m_World = m_ActorBehavior.World();
+
             EnvIconDisplay.Populate(m_EnvIcon, null);
             m_BottomPanelGroup.alpha = 1;
             m_BottomPanelGroup.blocksRaycasts = true;
@@ -73,36 +77,37 @@ namespace ProtoAqua.ExperimentV2
             m_ActorBehavior.ClearAll();
             m_IsRunning = false;
         }
+        
+        #endregion // Tank
+
+        #region Critter Callbacks
 
         private void OnCritterAdded(BestiaryDesc inDesc)
         {
-            Assert.False(m_ActiveCritters.Contains(inDesc));
-            m_ActiveCritters.Add(inDesc);
             m_RunButton.interactable = m_SelectedEnvironment != null;
-
             m_ActorBehavior.Alloc(inDesc.Id());
         }
 
         private void OnCritterRemoved(BestiaryDesc inDesc)
         {
-            Assert.True(m_ActiveCritters.Contains(inDesc));
-            m_ActiveCritters.Remove(inDesc);
-            m_RunButton.interactable = m_ActiveCritters.Count > 0 && m_SelectedEnvironment != null;
-
-            m_ActorBehavior.Free(inDesc.Id());
+            m_ActorBehavior.FreeAll(inDesc.Id());
+            m_RunButton.interactable = m_World.Actors.Count > 0 && m_SelectedEnvironment != null;
         }
 
         private void OnCrittersCleared()
         {
-            m_ActiveCritters.Clear();
             m_RunButton.interactable = false;
             m_ActorBehavior.ClearAll();
         }
 
+        #endregion // Critter Callbacks
+
+        #region Environment Callbacks
+
         private void OnEnvironmentAdded(BestiaryDesc inDesc)
         {
             m_SelectedEnvironment = inDesc;
-            m_RunButton.interactable = m_ActiveCritters.Count > 0;
+            m_RunButton.interactable = m_World.Actors.Count > 0;
             EnvIconDisplay.Populate(m_EnvIcon, inDesc);
             m_ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
         }
@@ -124,6 +129,8 @@ namespace ProtoAqua.ExperimentV2
             EnvIconDisplay.Populate(m_EnvIcon, null);
             m_ActorBehavior.ClearEnvState();
         }
+
+        #endregion // Environment Callbacks
 
         private void OnRunClick()
         {

@@ -79,7 +79,7 @@ namespace ProtoAqua.Experiment
 
                 foreach(var factId in m_Result.NewFactIds)
                 {
-                    m_FactPools.Alloc(Services.Assets.Bestiary.Fact(factId), (BestiaryDesc) null);
+                    m_FactPools.Alloc(Services.Assets.Bestiary.Fact(factId), (BestiaryDesc) null, 0);
                 }
                 m_BehaviorLayout.ForceRebuild();
             }

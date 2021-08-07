@@ -85,7 +85,7 @@ namespace ProtoAqua.Observation
                 foreach(var factId in m_BestiaryFactIds)
                 {
                     Assert.True(Services.Assets.Bestiary.HasFactWithId(factId),
-                        "Scan '{0}' was linked to unknown bestiary fact '{1}'", factId);
+                        "Scan '{0}' was linked to unknown bestiary fact '{1}'", m_Id, factId);
                 }
             }
         }

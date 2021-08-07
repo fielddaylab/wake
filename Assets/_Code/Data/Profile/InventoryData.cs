@@ -165,6 +165,11 @@ namespace Aqua.Profile
             return Bits.Contains(m_WaterProperties, (int) inId);
         }
 
+        public WaterPropertyMask GetPropertyUnlockedMask()
+        {
+            return new WaterPropertyMask((byte) m_WaterProperties);
+        }
+
         public bool UnlockProperty(WaterPropertyId inId)
         {
             if (!Bits.Contains(m_WaterProperties, (int) inId))

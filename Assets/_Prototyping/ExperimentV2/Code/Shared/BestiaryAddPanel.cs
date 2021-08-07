@@ -81,6 +81,11 @@ namespace ProtoAqua.ExperimentV2
 
         #region Selected Set
 
+        public IReadOnlyCollection<BestiaryDesc> Selected
+        {
+            get { return m_SelectedSet; }
+        }
+
         public void ClearSelection()
         {
             if (ClearSelectedSet())

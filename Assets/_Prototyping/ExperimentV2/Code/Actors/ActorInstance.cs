@@ -43,6 +43,7 @@ namespace ProtoAqua.ExperimentV2
             CurrentAction = ActorActionId.Waiting;
             StateAnimation.Stop();
             ActionAnimation.Stop();
+            CachedCollider.enabled = true;
             Ref.Dispose(ref StateEffect);
             InWater = false;
             if (ColorAdjust)
@@ -115,25 +116,30 @@ namespace ProtoAqua.ExperimentV2
             {
                 inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
                 inInstance.CachedTransform.SetScale(0);
-                inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld));
+                inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld)).TryManuallyUpdate(0);
             }
             else
             {
                 Vector3 offsetPos = targetPos;
                 offsetPos.y += DropSpawnAnimationDistance;
                 inInstance.CachedTransform.SetPosition(offsetPos, Axis.XYZ, Space.Self);
-                inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld));
+                inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).TryManuallyUpdate(0);
             }
         }
 
         static private IEnumerator SproutFromBottom(ActorInstance inInstance, ActorWorld inWorld)
         {
+            inInstance.CachedCollider.enabled = false;
+            yield return RNG.Instance.NextFloat(0, 0.2f);
+            inInstance.CachedCollider.enabled = true;
+
             yield return inInstance.CachedTransform.ScaleTo(1, 0.2f).Ease(Curve.CubeOut);
             SetActorAction(inInstance, ActorActionId.Waiting, inWorld, OnEnterWaiting);
         }
 
         static private IEnumerator FallToPosition(ActorInstance inInstance, Vector3 inTargetPosition, ActorWorld inWorld)
         {
+            yield return RNG.Instance.NextFloat(0, 0.2f);
             yield return inInstance.CachedTransform.MoveTo(inTargetPosition, 0.2f, Axis.XYZ, Space.Self).Ease(Curve.CubeOut);
             SetActorAction(inInstance, ActorActionId.Waiting, inWorld, OnEnterWaiting);
         }

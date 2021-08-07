@@ -21,58 +21,24 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField] private SelectableTank m_Tank = null;
         [SerializeField] private ActorAllocator m_Allocator = null;
 
-        [NonSerialized] private WaterPropertyBlockF32 m_EnvironmentState;
-        [NonSerialized] private bool m_HasEnvironment;
-        [NonSerialized] private RingBuffer<ActorInstance> m_AllocatedActors = new RingBuffer<ActorInstance>();
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         [NonSerialized] private ActorWorld m_World;
+
+        public ActorWorld World()
+        {
+            return m_World ?? (m_World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, 16));
+        }
 
         #region Critters
 
         public void Alloc(StringHash32 inId)
         {
-            if (m_World == null)
-            {
-                m_World = new ActorWorld(m_Tank.Bounds, FreeCritter);
-            }
-
-            ActorDefinition define = m_Allocator.Define(inId);
-            int spawnCount = define.SpawnCount;
-            ActorDefinition.SpawnConfiguration spawnConfig = define.Spawning;
-            ActorInstance instance;
-
-            int countStart = m_AllocatedActors.Count;
-            int countEnd = countStart + spawnCount;
-
-            // spawn everything first
-            while(spawnCount-- > 0)
-            {
-                instance = m_Allocator.Alloc(inId, null);
-                m_AllocatedActors.PushBack(instance);
-            }
-
-            // then set spawn states
-            for(int i = countStart; i < countEnd; i++)
-            {
-                instance = m_AllocatedActors[i];
-                ActorInstance.ForceActorAction(instance, ActorActionId.Spawning, m_World, ActorInstance.StartSpawning);
-                if (m_HasEnvironment)
-                    ActorInstance.SetActorState(instance, instance.Definition.StateEvaluator.Evaluate(m_EnvironmentState), m_World);
-            }
+            ActorWorld.AllocWithDefaultCount(World(), inId);
         }
 
-        public void Free(StringHash32 inId)
+        public void FreeAll(StringHash32 inId)
         {
-            ActorInstance instance;
-            for(int i = m_AllocatedActors.Count - 1; i >= 0; i--)
-            {
-                instance = m_AllocatedActors[i];
-                if (instance.Definition.Id == inId)
-                {
-                    m_AllocatedActors.FastRemoveAt(i);
-                    m_Allocator.Free(instance);
-                }
-            }
+            ActorWorld.FreeAll(m_World, inId);
         }
 
         #endregion // Critters
@@ -81,18 +47,12 @@ namespace ProtoAqua.ExperimentV2
 
         public void UpdateEnvState(WaterPropertyBlockF32 inEnvironment)
         {
-            m_EnvironmentState = inEnvironment;
-            m_HasEnvironment = true;
-            foreach(var critter in m_AllocatedActors)
-                ActorInstance.SetActorState(critter, critter.Definition.StateEvaluator.Evaluate(inEnvironment), m_World);
+            ActorWorld.SetWaterState(m_World, inEnvironment);
         }
 
         public void ClearEnvState()
         {
-            m_EnvironmentState = Services.Assets.WaterProp.DefaultValues();
-            m_HasEnvironment = false;
-            foreach(var critter in m_AllocatedActors)
-                ActorInstance.SetActorState(critter, ActorStateId.Alive, m_World);
+            ActorWorld.SetWaterState(m_World, null);
         }
 
         #endregion // Env State
@@ -111,7 +71,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_Phase == Phase.Spawning)
             {
-                foreach(var critter in m_AllocatedActors)
+                foreach(var critter in m_World.Actors)
                 {
                     if (critter.CurrentAction == ActorActionId.Spawning)
                         return false;
@@ -130,9 +90,9 @@ namespace ProtoAqua.ExperimentV2
         private void FinalizeCritterInitialization()
         {
             ActorInstance critter;
-            for(int i = m_AllocatedActors.Count - 1; i >= 0; i--)
+            for(int i = m_World.Actors.Count - 1; i >= 0; i--)
             {
-                critter = m_AllocatedActors[i];
+                critter = m_World.Actors[i];
                 if (critter.CurrentState == ActorStateId.Dead)
                 {
                     ActorInstance.SetActorAction(critter, ActorActionId.Dying, m_World, OnActorDyingStart);
@@ -142,12 +102,6 @@ namespace ProtoAqua.ExperimentV2
                     ActorInstance.SetActorAction(critter, ActorActionId.Idle, m_World, OnActorIdleStart);
                 }
             }
-        }
-
-        private void FreeCritter(ActorInstance inInstance)
-        {
-            m_AllocatedActors.FastRemove(inInstance);
-            m_Allocator.Free(inInstance);
         }
 
         #endregion // Tick
@@ -168,11 +122,12 @@ namespace ProtoAqua.ExperimentV2
 
         public void ClearAll()
         {
-            m_EnvironmentState = default(WaterPropertyBlockF32);
-            m_AllocatedActors.Clear();
-            m_Allocator.FreeAll();
+            m_World.Water = default(WaterPropertyBlockF32);
+            if (m_World != null)
+            {
+                ActorWorld.FreeAll(m_World);
+            }
             m_Phase = Phase.Spawning;
-            m_HasEnvironment = false;
         }
 
         #if UNITY_EDITOR

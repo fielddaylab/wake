@@ -52,7 +52,7 @@ namespace Aqua
             return m_TargetEntry.Icon();
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference)
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
             // TODO: localization!!
             if (inReference == null || inReference == Parent())

@@ -67,7 +67,7 @@ namespace Aqua
             m_PopulationFacts.Reset();
         }
 
-        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference)
+        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
             ConfigurePoolTransforms();
 
@@ -75,7 +75,7 @@ namespace Aqua
             if (behavior != null)
             {
                 BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-                display.Populate(behavior, inReference);
+                display.Populate(behavior, inReference, inFlags);
                 return display;
             }
 
@@ -115,7 +115,7 @@ namespace Aqua
             return null;
         }
 
-        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, Transform inParent)
+        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags, Transform inParent)
         {
             ConfigurePoolTransforms();
 
@@ -123,7 +123,7 @@ namespace Aqua
             if (behavior != null)
             {
                 BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                display.Populate(behavior, inReference);
+                display.Populate(behavior, inReference, inFlags);
                 return display;
             }
 
@@ -163,19 +163,19 @@ namespace Aqua
             return null;
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference)
+        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
             ConfigurePoolTransforms();
             BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-            display.Populate(inFact, inReference);
+            display.Populate(inFact, inReference, inFlags);
             return display;
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, Transform inParent)
+        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags, Transform inParent)
         {
             ConfigurePoolTransforms();
             BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-            display.Populate(inFact, inReference);
+            display.Populate(inFact, inReference, inFlags);
             return display;
         }
 

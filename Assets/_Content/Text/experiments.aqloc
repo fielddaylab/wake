@@ -3,107 +3,20 @@
 :: env.none
 <color=yellow>No Environment Set</color>
 
-// ----------- OLD ---------------- //
+:: env.button.tooltip
+Select Environment
 
-// TANKS
+:: critter.button.tooltip
+Select Critter
 
-:: tank.none.label
-\ -- No Tank Selected --
+:: critter.button.multi.tooltip
+Select Critters
 
-:: tank.foundational.label
-\ -- Behavior Observation Tank --
-Single tank. Use to observe creatures.
+:: run.button.tooltip
+Run Experiment
 
-:: tank.foundational.label.short
-Behavior Observation Tank
+:: waterStabilizer.button.tooltip
+Water Stabilizer
 
-:: tank.stressor.label
-\ -- Stressor Tank --
-Environment tank. Use to observe creature in different environments.
-
-:: tank.stressor.label.short
-Stressor Tank
-
-:: tank.measurement.label
-\ -- Measurement Tank --
-Environment tank. Use to observe creatures.
-
-:: tank.measurement.label.short
-Measurement Tank
-
-// ECOSYSTEMS
-
-:: ecosystem.none.label
-\ -- No Ecosystem Selected --
-
-:: ecosystem.default.label
-\ -- Default --
-Default water settings.
-
-:: ecosystem.default.label.short
-Default Ecosystem
-
-:: ecosystem.kelpForest.label
-\ -- Kelp Forest --
-Ideal for the ecosystem around kelp.
-
-:: ecosystem.kelpForest.label.short
-Kelp Forest Ecosystem
-
-// ACTORS
-
-:: actor.kelp.label
-\ -- Kelp --
-Underrated green "plant" thing.
-
-:: actor.kelp.label.short
-Kelp
-
-:: actor.urchin.label
-\ -- Urchin --
-Tiny kelp eater.
-
-:: actor.urchin.label.short
-Urchin
-
-// BEHAVIORS
-
-:: popup.newBehavior.header
-New Fact Obtained!
-
-:: behavior.urchin.eats.kelp.title
-Behavior Observed: Urchin Eats Kelp
-
-:: behavior.urchin.eats.kelp.desc
-Urchins have been observed to eat kelp.
-
-:: behavior.urchin.eats.kelp.short
-Urchin Eats Kelp
-
-:: behavior.seaottter.eats.urchin.title
-Behavior Observed: Sea Otter Eats Urchin
-
-:: behavior.seaotter.eats.urchin.desc
-Sea otters have been observed to eat urchins.
-
-:: behavior.seaotter.eats.urchin.short
-Sea Otter Eats Urchin
-
-// SUMMARY SCREEN
-
-:: summary.countableSummary
-{loc experiment.summary.duration}
-
-:: summary.duration
-Duration: {var-i experiment:experimentDuration} s.
-
-:: summary.observedBehaviors
-Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)
-
-// TOOLTIPS
-
-:: device.unstarted.tooltip
-Start Experiment
-
-:: device.inProgress.tooltip
-End Experiment
+:: autoFeeder.button.tooltip
+Auto-Feeder

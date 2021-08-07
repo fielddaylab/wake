@@ -95,6 +95,14 @@ namespace Aqua
             return new GTDate((ushort) 0, inDay);
         }
 
+        /// <summary>
+        /// Current time.
+        /// </summary>
+        static public GTDate Now
+        {
+            get { return Services.Time.Current; }
+        }
+
         #region Accessors
 
         /// <summary>

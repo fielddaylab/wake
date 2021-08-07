@@ -39,7 +39,7 @@ namespace Aqua
             return Services.Assets.Bestiary.DefaultGrowIcon();
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _, BFDiscoveredFlags __)
         {
             yield return BFFragment.CreateLocNoun(Parent().CommonName());
             yield return BFFragment.CreateLocVerb(Verb());
@@ -64,7 +64,7 @@ namespace Aqua
 
         public override BFMode Mode()
         {
-            return m_AutoGive ? BFMode.Always : (OnlyWhenStressed() ? BFMode.Player : BFMode.Always);
+            return m_AutoGive ? BFMode.Always : BFMode.Player;
         }
 
         #if UNITY_EDITOR

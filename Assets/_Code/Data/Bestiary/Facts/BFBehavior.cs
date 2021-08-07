@@ -76,7 +76,7 @@ namespace Aqua
 
         #endregion // Text
 
-        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference);
+        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference, BFDiscoveredFlags inFlags);
 
         public override int CompareTo(BFBase other)
         {
