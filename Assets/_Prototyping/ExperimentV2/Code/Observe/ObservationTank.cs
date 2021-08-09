@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Animation;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -22,6 +23,7 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required(ComponentLookupDirection.Children)] private EnvIconDisplay m_EnvIcon = null;
         [SerializeField, Required] private Button m_RunButton = null;
         [SerializeField, Required] private ObservationBehaviorSystem m_ActorBehavior = null;
+        [SerializeField, Required] private AmbientRenderer m_CameraBlinking = null;
 
         #endregion // Inspector
 
@@ -44,6 +46,7 @@ namespace ProtoAqua.ExperimentV2
             m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
 
             m_RunButton.interactable = false;
+            m_CameraBlinking.enabled = false;
 
             m_RunButton.onClick.AddListener(OnRunClick);
         }
@@ -76,6 +79,7 @@ namespace ProtoAqua.ExperimentV2
             m_AddCrittersPanel.ClearSelection();
             m_ActorBehavior.ClearAll();
             m_IsRunning = false;
+            m_CameraBlinking.enabled = false;
         }
         
         #endregion // Tank
@@ -139,6 +143,7 @@ namespace ProtoAqua.ExperimentV2
             m_AddCrittersPanel.Hide();
             m_SelectEnvPanel.Hide();
             
+            m_CameraBlinking.enabled = true;
             m_BottomPanelGroup.blocksRaycasts = false;
             Routine.Start(this, m_BottomPanelGroup.Hide(0.1f, false));
         }

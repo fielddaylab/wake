@@ -103,17 +103,17 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
             actor.InWater = true;
 
-            switch(actor.Definition.Spawning.SpawnType)
+            switch(actor.Definition.Spawning.SpawnLocation)
             {
-                case ActorDefinition.SpawnTypeId.Top:
-                case ActorDefinition.SpawnTypeId.Anywhere:
+                case ActorDefinition.SpawnPositionId.Top:
+                case ActorDefinition.SpawnPositionId.Anywhere:
                     {
                         splashPosition.y = inTank.Bounds.max.y;
                         Services.Audio.PostEvent("tank_water_splash");
                         break;
                     }
 
-                case ActorDefinition.SpawnTypeId.Bottom:
+                case ActorDefinition.SpawnPositionId.Bottom:
                     {
                         splashPosition.y = inTank.Bounds.min.y;
                         Services.Audio.PostEvent("tank_water_splash");

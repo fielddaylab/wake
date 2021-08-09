@@ -12,17 +12,24 @@ namespace ProtoAqua.ExperimentV2
     {
         #region Types
 
-        public enum SpawnTypeId : byte
+        public enum SpawnPositionId : byte
         {
             Anywhere, // actor spawns anywhere
             Bottom, // actor spawns on the bottom of the tank
             Top // actor spawns on the water surface of the tank
         }
 
+        public enum SpawnAnimationId : byte
+        {
+            Drop,
+            Sprout
+        }
+
         [Serializable]
         public struct SpawnConfiguration
         {
-            [AutoEnum] public SpawnTypeId SpawnType;
+            [AutoEnum] public SpawnPositionId SpawnLocation;
+            [AutoEnum] public SpawnAnimationId SpawnAnimation;
             public float AvoidTankSidesRadius;
             public float AvoidTankTopBottomRadius;
             public float AvoidActorRadius;
@@ -131,19 +138,19 @@ namespace ProtoAqua.ExperimentV2
 
         static public Vector3 FindRandomSpawnLocation(System.Random inRandom, in Bounds inBounds, in SpawnConfiguration inConfiguration)
         {
-            switch(inConfiguration.SpawnType)
+            switch(inConfiguration.SpawnLocation)
             {
-                case SpawnTypeId.Bottom:
+                case SpawnPositionId.Bottom:
                     return FindRandomLocationOnBottom(inRandom, inBounds, inConfiguration.AvoidTankTopBottomRadius, inConfiguration.AvoidTankSidesRadius);
 
-                case SpawnTypeId.Top:
+                case SpawnPositionId.Top:
                     return FindRandomLocationOnTop(inRandom, inBounds, inConfiguration.AvoidTankTopBottomRadius, inConfiguration.AvoidTankSidesRadius);
 
-                case SpawnTypeId.Anywhere:
+                case SpawnPositionId.Anywhere:
                     return FindRandomLocationInTank(inRandom, inBounds, inConfiguration.AvoidTankTopBottomRadius, inConfiguration.AvoidTankSidesRadius);
 
                 default:
-                    Assert.Fail("Unknown spawn type {0}", inConfiguration.SpawnType);
+                    Assert.Fail("Unknown spawn type {0}", inConfiguration.SpawnLocation);
                     return default(Vector3);
             }
         }

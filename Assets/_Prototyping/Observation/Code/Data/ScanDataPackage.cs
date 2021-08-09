@@ -16,10 +16,6 @@ namespace ProtoAqua.Observation
 
         [BlockMeta("basePath")] private string m_RootPath = string.Empty;
 
-        #region Manager
-
-        #endregion // Manager
-
         #region ICollection
 
         public override int Count { get { return m_Data.Count; } }

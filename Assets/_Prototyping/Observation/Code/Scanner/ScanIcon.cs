@@ -44,6 +44,11 @@ namespace ProtoAqua.Observation
             }
         }
 
+        public void SetIcon(Sprite inIcon)
+        {
+            m_Icon.sprite = inIcon;
+        }
+
         public void SetColor(Color inLineColor, Color inFillColor)
         {
             m_Border.color = m_Icon.color = inLineColor;

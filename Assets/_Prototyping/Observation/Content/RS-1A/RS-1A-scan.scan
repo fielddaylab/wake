@@ -12,3 +12,15 @@ Classification: Cool Kelp Forest
 Temperature: Cool
 Oxygen: High
 Kelp Population: Stable
+
+:: microscope
+@tool true
+@requires HasFact("KelpForest.SeaOtterPopulation")
+@fallback RS-1A.microscope.notYetActive
+@header	Opening Microscope
+Microscopic view engaged.
+
+:: microscope.notYetActive
+@tool false
+@header	Arbitrary Blocker
+All critters must be tagged first before microscope can be used.

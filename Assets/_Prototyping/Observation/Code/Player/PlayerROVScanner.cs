@@ -19,9 +19,11 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
+        [NonSerialized] private ScanSystem m_ScanSystem;
         [NonSerialized] private bool m_ScannerOn = false;
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
-        [NonSerialized] private StringHash32 m_TargetScanId = StringHash32.Null;
+        [NonSerialized] private ToolView m_CurrentToolView = null;
+        [NonSerialized] private ScanData m_TargetScanData = null;
         [NonSerialized] private float m_CurrentRange;
 
         [NonSerialized] private Routine m_ScanEnableRoutine;
@@ -34,7 +36,8 @@ namespace ProtoAqua.Observation
         private void Start()
         {
             SetRange(0);
-            ScanSystem.Find<ScanSystem>().SetDetector(m_RangeCollider);
+            m_ScanSystem = ScanSystem.Find<ScanSystem>();
+            m_ScanSystem.SetDetector(m_RangeCollider);
         }
 
         #endregion // Unity Events
@@ -56,6 +59,7 @@ namespace ProtoAqua.Observation
                 return;
 
             CancelScan();
+            HideCurrentToolView();
             Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             m_ScannerOn = false;
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
@@ -69,9 +73,14 @@ namespace ProtoAqua.Observation
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
-                if (!inInput.UseHold || !m_TargetScannable || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanId != m_TargetScanId || !m_TargetScannable.InRange)
+                if (!inInput.UseHold)
                 {
                     CancelScan();
+                }
+                else if (!m_TargetScannable || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanData != m_TargetScanData || !m_TargetScannable.InRange)
+                {
+                    CancelScan();
+                    HideCurrentToolView();
                     return false;
                 }
 
@@ -127,10 +136,13 @@ namespace ProtoAqua.Observation
 
             if (inRegion != null)
             {
-                m_TargetScannable = inRegion;
-                m_TargetScanId = inRegion.ScanId;
+                if (!inRegion.InsideToolView && inRegion.ToolView != m_CurrentToolView)
+                    HideCurrentToolView();
 
-                m_ScanRoutine.Replace(this, ScanRoutine());
+                m_TargetScannable = inRegion;
+                m_TargetScanData = m_ScanSystem.RefreshData(inRegion);
+
+                m_ScanRoutine.Replace(this, ScanRoutine()).TryManuallyUpdate(0);
 
                 Services.Audio.PostEvent("scan_start");
             }
@@ -149,7 +161,7 @@ namespace ProtoAqua.Observation
                 }
 
                 m_TargetScannable = null;
-                m_TargetScanId = null;
+                m_TargetScanData = null;
 
                 m_ScanRoutine.Stop();
             }
@@ -157,14 +169,12 @@ namespace ProtoAqua.Observation
 
         private IEnumerator ScanRoutine()
         {
-            var mgr = ScanSystem.Find<ScanSystem>();
             var scanUI = Services.UI.FindPanel<ScannerDisplay>();
 
-            ScanData data;
-            mgr.TryGetScanData(m_TargetScanId, out data);
+            ScanData data = m_TargetScanData;
 
             float progress = 0;
-            float duration = mgr.GetScanDuration(data);
+            float duration = m_ScanSystem.GetScanDuration(data);
             float increment = 1f / duration;
 
             scanUI.AdjustForScannableVisibility(m_TargetScannable.Collider.transform.position, gameObject.transform.parent.position);
@@ -183,7 +193,7 @@ namespace ProtoAqua.Observation
 
             m_TargetScannable.CurrentIcon.SetSpinning(false);
 
-            ScanResult result = mgr.RegisterScanned(data);
+            ScanResult result = m_ScanSystem.RegisterScanned(data);
             if (result != 0)
             {
                 if (data != null && !data.BestiaryId().IsEmpty)
@@ -199,7 +209,24 @@ namespace ProtoAqua.Observation
                     Services.Audio.PostEvent("scan_complete");
                 }
             }
+
+            ScanDataFlags flags = data.Flags();
+            if ((flags & ScanDataFlags.ActivateTool) != 0)
+            {
+                m_CurrentToolView = m_TargetScannable.ToolView;
+                m_CurrentToolView.Root.gameObject.SetActive(true);
+                scanUI.Hide();
+            }
             scanUI.ShowScan(data, result);
+        }
+
+        public void HideCurrentToolView()
+        {
+            if (m_CurrentToolView != null)
+            {
+                m_CurrentToolView.Root.gameObject.SetActive(false);
+                m_CurrentToolView = null;
+            }
         }
 
         #endregion // Scanning

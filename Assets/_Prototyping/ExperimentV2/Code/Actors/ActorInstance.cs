@@ -112,7 +112,7 @@ namespace ProtoAqua.ExperimentV2
             if (inInstance.IdleAnimation)
                 inInstance.IdleAnimation.AnimationScale = 0;
 
-            if (def.Spawning.SpawnType == ActorDefinition.SpawnTypeId.Bottom)
+            if (def.Spawning.SpawnAnimation == ActorDefinition.SpawnAnimationId.Sprout)
             {
                 inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
                 inInstance.CachedTransform.SetScale(0);
