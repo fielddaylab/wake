@@ -1,5 +1,6 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 #define DEVELOPMENT
+#endif // DEVELOPMENT
 
 using Aqua.Debugging;
 using Aqua.Profile;
@@ -19,6 +20,8 @@ namespace Aqua
 {
     public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable
     {
+        #if DEVELOPMENT
+
         #if UNITY_EDITOR
         [NonSerialized] private DMInfo m_BookmarksMenu;
         #endif // UNITY_EDITOR
@@ -369,7 +372,7 @@ namespace Aqua
         }
 
         #endregion // IDebuggable
+
+        #endif // DEVELOPMENT
     }
 }
-
-#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
