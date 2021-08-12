@@ -15,7 +15,10 @@ namespace Aqua
         [Serializable] private class ModelPool : SerializablePool<ModelFactDisplay> { }
         [Serializable] private class StatePool : SerializablePool<StateFactDisplay> { }
         [Serializable] private class PropertyPool : SerializablePool<WaterPropertyFactDisplay> { }
+        [Serializable] private class PropertyHistoryPool : SerializablePool<WaterPropertyHistoryFactDisplay> { }
         [Serializable] private class PopulationPool : SerializablePool<PopulationFactDisplay> { }
+        [Serializable] private class PopulationHistoryPool : SerializablePool<PopulationHistoryFactDisplay> { }
+
 
         #endregion // Types
 
@@ -25,7 +28,9 @@ namespace Aqua
         [SerializeField] private ModelPool m_ModelFacts = null;
         [SerializeField] private StatePool m_StateFacts = null;
         [SerializeField] private PropertyPool m_PropertyFacts = null;
+        [SerializeField] private PropertyHistoryPool m_PropertyHistoryFacts = null;
         [SerializeField] private PopulationPool m_PopulationFacts = null;
+        [SerializeField] private PopulationHistoryPool m_PopulationHistoryFacts = null;
 
         [SerializeField] private Transform m_TransformPool = null;
         [SerializeField] private Transform m_TransformTarget = null;
@@ -53,7 +58,9 @@ namespace Aqua
             m_ModelFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
             m_StateFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
             m_PropertyFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
+            m_PropertyHistoryFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
             m_PopulationFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
+            m_PopulationHistoryFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
 
             m_ConfiguredPools = true;
         }
@@ -64,7 +71,9 @@ namespace Aqua
             m_ModelFacts.Reset();
             m_StateFacts.Reset();
             m_PropertyFacts.Reset();
+            m_PropertyHistoryFacts.Reset();
             m_PopulationFacts.Reset();
+            m_PopulationHistoryFacts.Reset();
         }
 
         public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
@@ -103,11 +112,27 @@ namespace Aqua
                 return display;
             }
 
+            BFWaterPropertyHistory waterPropHistory = inFact as BFWaterPropertyHistory;
+            if (waterPropHistory != null)
+            {
+                WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc();
+                display.Populate(waterPropHistory);
+                return display;
+            }
+
             BFPopulation populationProp = inFact as BFPopulation;
             if (populationProp != null)
             {
                 PopulationFactDisplay display = m_PopulationFacts.Alloc();
                 display.Populate(populationProp);
+                return display;
+            }
+
+            BFPopulationHistory populationHistoryProp = inFact as BFPopulationHistory;
+            if (populationHistoryProp != null)
+            {
+                PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc();
+                display.Populate(populationHistoryProp);
                 return display;
             }
 
@@ -151,11 +176,27 @@ namespace Aqua
                 return display;
             }
 
+            BFWaterPropertyHistory waterPropHistory = inFact as BFWaterPropertyHistory;
+            if (waterPropHistory != null)
+            {
+                WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
+                display.Populate(waterPropHistory);
+                return display;
+            }
+
             BFPopulation populationProp = inFact as BFPopulation;
             if (populationProp != null)
             {
                 PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
                 display.Populate(populationProp);
+                return display;
+            }
+
+            BFPopulationHistory populationHistoryProp = inFact as BFPopulationHistory;
+            if (populationHistoryProp != null)
+            {
+                PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
+                display.Populate(populationHistoryProp);
                 return display;
             }
 

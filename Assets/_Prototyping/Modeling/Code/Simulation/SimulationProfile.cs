@@ -159,6 +159,11 @@ namespace ProtoAqua.Modeling
             m_InitialState.Environment[inFact.PropertyId()] = inFact.Value();
         }
 
+        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
+        {
+            // Nothing
+        }
+
         void IFactVisitor.Visit(BFPopulation inFact)
         {
             // Nothing

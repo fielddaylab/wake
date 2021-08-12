@@ -14,6 +14,7 @@ namespace Aqua
         [SerializeField] private WaterPropertyId[] m_DefaultUnlockedProperties = null;
         [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_DefaultValues;
         [SerializeField, HideInInspector] private WaterPropertyDesc[] m_DisplaySortedMap;
+        [SerializeField, HideInInspector] private WaterPropertyDesc[] m_IndexMap;
 
         #endregion // Inspector
 
@@ -24,7 +25,7 @@ namespace Aqua
             if (inId < 0 || inId >= WaterPropertyId.MAX)
                 return null;
 
-            return m_Objects[(int) inId];
+            return m_IndexMap[(int) inId];
         }
 
         public WaterPropertyBlockF32 DefaultValues() { return m_DefaultValues; }
@@ -68,12 +69,15 @@ namespace Aqua
         {
             SortObjects((a, b) => a.Index().CompareTo(b.Index()));
             m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];
+            m_IndexMap = new WaterPropertyDesc[(int) WaterPropertyId.MAX];
 
             foreach(var property in m_Objects)
             {
                 WaterPropertyId propIndex = property.Index();
                 if (propIndex <= WaterPropertyId.TRACKED_MAX)
                     m_DefaultValues[propIndex] = property.DefaultValue();
+
+                m_IndexMap[(int) propIndex] = property;
 
                 int sortIndex = Array.IndexOf(SortOrder, propIndex);
                 if (sortIndex >= 0)
