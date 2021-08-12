@@ -368,7 +368,8 @@ namespace Aqua
         TreatAsHerd = 0x08,
         Human = 0x10,
         IgnoreStarvation = 0x20,
-        IsMicroscopic = 0x40
+        IsMicroscopic = 0x40,
+        TreatAsPlant = 0x80,
     }
 
     public enum BestiaryDescSize

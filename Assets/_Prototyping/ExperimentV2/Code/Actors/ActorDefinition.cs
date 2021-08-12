@@ -46,8 +46,8 @@ namespace ProtoAqua.ExperimentV2
         {
             [AutoEnum] public MovementTypeId MoveType;
             public float MovementIdleDistance;
-            public float MovementIdleDistanceMax;
             public float MovementSpeed;
+            public Curve MovementCurve;
             public float MovementInterval;
             public float MovementIntervalRandom;
         }
@@ -63,10 +63,7 @@ namespace ProtoAqua.ExperimentV2
         public struct EatingConfiguration
         {
             [AutoEnum] public EatTypeId EatType;
-            public float SenseRadius;
-            private float MovementMultiplier;
-            private int NibbleCount;
-            private int NibbleCountRandom;
+            public float MovementMultiplier;
         }
 
         [Serializable]
@@ -100,12 +97,16 @@ namespace ProtoAqua.ExperimentV2
         public EatingConfiguration Eating = default(EatingConfiguration);
         public StressConfiguration Stress = default(StressConfiguration);
         
-        [Header("Derived From Facts")]
+        // [Header("Derived From Facts")]
 
-        public ActorStateTransitionSet StateEvaluator;
-        public ValidEatTarget[] AliveEatTargets;
-        public ValidEatTarget[] StressedEatTargets;
-        public int SpawnCount;
+        [HideInInspector] public ActorStateTransitionSet StateEvaluator;
+        [HideInInspector] public ValidEatTarget[] AliveEatTargets;
+        [HideInInspector] public ValidEatTarget[] StressedEatTargets;
+        [HideInInspector] public int SpawnCount;
+        [HideInInspector] public bool IsPlant;
+        [HideInInspector] public int TargetLimit;
+        [HideInInspector] public bool FreeOnEaten;
+        [HideInInspector] public Rect EatOffsetRange;
 
         #region Utility
 
@@ -181,7 +182,64 @@ namespace ProtoAqua.ExperimentV2
             return inCurrentPosition;
         }
 
+        static public Vector3 ClampToTank(in Bounds inBounds, Vector3 inCurrentPosition, float inTopBottomOffset, float inSidesOffset)
+        {
+            Vector3 center = inBounds.center;
+            Vector3 extents = inBounds.extents;
+            float limitX = extents.x - inSidesOffset;
+            float limitY = extents.y - inTopBottomOffset;
+
+            Vector3 currentOffset = inCurrentPosition;
+            currentOffset.x = Mathf.Clamp(currentOffset.x, center.x - limitX, center.x + limitY);
+            currentOffset.y = Mathf.Clamp(currentOffset.y, center.y - limitY, center.y + limitY);
+            return currentOffset;
+        }
+
+        static public ValidEatTarget[] GetEatTargets(ActorDefinition inDefinition, ActorStateId inStateId)
+        {
+            switch(inStateId)
+            {
+                case ActorStateId.Dead:
+                default:
+                    return Array.Empty<ValidEatTarget>();
+                case ActorStateId.Alive:
+                    return inDefinition.AliveEatTargets;
+                case ActorStateId.Stressed:
+                    return inDefinition.StressedEatTargets;
+            }
+        }
+
+        static public float GetMovementSpeedMultiplier(ActorDefinition inDefinition, ActorStateId inStateId)
+        {
+            switch(inStateId)
+            {
+                case ActorStateId.Alive:
+                    return 1;
+                case ActorStateId.Stressed:
+                    return inDefinition.Stress.MovementSpeedMultiplier;
+                case ActorStateId.Dead:
+                default:
+                    return 0;
+            }
+        }
+
+        static public float GetMovementIntervalMultiplier(ActorDefinition inDefinition, ActorStateId inStateId)
+        {
+            switch(inStateId)
+            {
+                case ActorStateId.Alive:
+                    return 1;
+                case ActorStateId.Stressed:
+                    return inDefinition.Stress.MovementIntervalMultiplier;
+                case ActorStateId.Dead:
+                default:
+                    return 0;
+            }
+        }
+
         #endregion // Utility
+
+        #region Editor
 
         #if UNITY_EDITOR
 
@@ -191,12 +249,13 @@ namespace ProtoAqua.ExperimentV2
             Assert.NotNull(inBestiary);
             Assert.True(inBestiary.Category() == BestiaryDescCategory.Critter, "Provided entry is not for a critter");
             Assert.True(!inBestiary.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation), "Provided entry is not usable in experimentation");
-            
+
             inDef.Id = inBestiary.Id();
             inDef.Type = inBestiary;
             inDef.StateEvaluator = inBestiary.GetActorStateTransitions();
-            if (inPrefab != null)
-                inDef.Prefab = inPrefab;
+            inDef.IsPlant = inBestiary.HasFlags(BestiaryDescFlags.TreatAsPlant);
+            inDef.FreeOnEaten = !inDef.IsPlant && !inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
+            inDef.TargetLimit = inDef.IsPlant ? 4 : 1;
 
             RingBuffer<ValidEatTarget> aliveEatTargets = new RingBuffer<ValidEatTarget>();
             RingBuffer<ValidEatTarget> stressedEatTargets = new RingBuffer<ValidEatTarget>();
@@ -224,6 +283,20 @@ namespace ProtoAqua.ExperimentV2
                 inDef.SpawnCount = inDef.SpawnAmountOverride;
             else
                 inDef.SpawnCount = GetDefaultSpawnAmount(inBestiary.Size());
+
+            if (inPrefab != null)
+                ProcessPrefab(inDef, inBestiary, inPrefab);
+        }
+
+        static private void ProcessPrefab(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab)
+        {
+            inDef.Prefab = inPrefab;
+
+            Vector3 offsetPos = inPrefab.CachedTransform.position;
+            Bounds bounds = inPrefab.CachedCollider.bounds;
+            bounds.extents *= 0.9f;
+
+            inDef.EatOffsetRange = Rect.MinMaxRect(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
         }
 
         static private int GetDefaultSpawnAmount(BestiaryDescSize inSize)
@@ -274,5 +347,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         #endif // UNITY_EDITOR
+
+        #endregion // Editor
     }
 }

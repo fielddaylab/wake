@@ -26,18 +26,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 0.5
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -67,6 +67,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 2717353052
     Type: {fileID: 11400000, guid: 177ab80db73df42b0b65ebdba5d6bc78, type: 2}
@@ -82,13 +91,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 3
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -121,6 +130,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 2
+    IsPlant: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3836809010
     Type: {fileID: 11400000, guid: d9e0c562335fe4048800beedd01d8010, type: 2}
@@ -134,18 +152,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 1.5
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 2
+      MovementSpeed: 2
+      MovementCurve: 1
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
-      EatType: 0
-      SenseRadius: 0
+      EatType: 2
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -181,6 +199,15 @@ MonoBehaviour:
         m_Source: Urchin
         m_Hash: 1973276590
     SpawnCount: 4
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3187223953
     Type: {fileID: 11400000, guid: a9192863128be4fe582bfc1163a9a4e1, type: 2}
@@ -196,13 +223,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 0
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -235,6 +262,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1973276590
     Type: {fileID: 11400000, guid: bd27221a66e313745bb1d0f7e438e201, type: 2}
@@ -250,13 +286,13 @@ MonoBehaviour:
     Movement:
       MoveType: 1
       MovementIdleDistance: 2
-      MovementIdleDistanceMax: 3
       MovementSpeed: 1
+      MovementCurve: 0
       MovementInterval: 2
       MovementIntervalRandom: 3
     Eating:
       EatType: 1
-      SenseRadius: 4
+      MovementMultiplier: 1
     Stress:
       MovementSpeedMultiplier: 0.8
       MovementIntervalMultiplier: 0.5
@@ -307,6 +343,15 @@ MonoBehaviour:
         m_Source: Sargassum
         m_Hash: 444981425
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 444981425
     Type: {fileID: 11400000, guid: c3bd9a227336a470ab889aaef6144136, type: 2}
@@ -322,13 +367,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 0
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -361,6 +406,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    IsPlant: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1605956068
     Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
@@ -374,18 +428,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 0.5
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -415,6 +469,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 793706139
     Type: {fileID: 11400000, guid: 3f674716111b84040aed484cff396126, type: 2}
@@ -430,13 +493,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 0
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -469,6 +532,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 2
+    IsPlant: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3290936401
     Type: {fileID: 11400000, guid: e23b1f197e0fb4c85b3910deb525d158, type: 2}
@@ -482,18 +554,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 1
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 0.2
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
-      EatType: 0
-      SenseRadius: 0
+      EatType: 1
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -523,6 +595,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3510470690
     Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}
@@ -538,13 +619,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 0
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -577,6 +658,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 3
+    IsPlant: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3363669640
     Type: {fileID: 11400000, guid: b18cc60137e38d44c9001747739e9517, type: 2}
@@ -592,13 +682,13 @@ MonoBehaviour:
     Movement:
       MoveType: 0
       MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
       MovementSpeed: 0
+      MovementCurve: 0
       MovementInterval: 0
       MovementIntervalRandom: 0
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 0
     Stress:
       MovementSpeedMultiplier: 0
       MovementIntervalMultiplier: 0
@@ -631,6 +721,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    IsPlant: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1734724709
     Type: {fileID: 11400000, guid: 2ce2e71ea92ee4089a7901052ba11dde, type: 2}
@@ -644,18 +743,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 0.6
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -685,6 +784,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 2098174204
     Type: {fileID: 11400000, guid: 6a167075954de4f098981ff3de4bac04, type: 2}
@@ -699,17 +807,17 @@ MonoBehaviour:
       AvoidActorRadius: 0
     Movement:
       MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 1
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -739,6 +847,15 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1053183451
     Type: {fileID: 11400000, guid: e57fea154bc6644f9a52e6aceb46d096, type: 2}
@@ -752,18 +869,18 @@ MonoBehaviour:
       AvoidTankTopBottomRadius: 0.2
       AvoidActorRadius: 0
     Movement:
-      MoveType: 0
-      MovementIdleDistance: 0
-      MovementIdleDistanceMax: 0
-      MovementSpeed: 0
-      MovementInterval: 0
-      MovementIntervalRandom: 0
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 0
+      MovementInterval: 1
+      MovementIntervalRandom: 0.5
     Eating:
       EatType: 0
-      SenseRadius: 0
+      MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 1
+      MovementIntervalMultiplier: 1
     StateEvaluator:
       Oxygen:
         AliveMin: -Infinity
@@ -793,3 +910,12 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0

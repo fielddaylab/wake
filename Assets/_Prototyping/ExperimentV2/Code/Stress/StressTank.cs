@@ -65,7 +65,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, 1);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1);
             }
 
             m_WaterPropertyGroup.alpha = 0;
@@ -124,7 +124,6 @@ namespace ProtoAqua.ExperimentV2
                 ResetWaterPropertiesForCritter(Services.Data.Profile.Bestiary);
 
                 m_SelectedCritterInstance = m_Allocator.Alloc(inDesc.Id(), null);
-                ActorInstance.ForceActorAction(m_SelectedCritterInstance, ActorActionId.Spawning, m_World, ActorInstance.StartSpawning);
 
                 m_AddCrittersPanel.Hide();
             }

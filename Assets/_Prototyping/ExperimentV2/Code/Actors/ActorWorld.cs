@@ -6,20 +6,20 @@ namespace ProtoAqua.ExperimentV2
 {
     public sealed class ActorWorld
     {
-        public delegate void ActorAction(ActorWorld inWorld, ActorInstance inInstance);
-
         public readonly ActorAllocator Allocator;
         public readonly Bounds WorldBounds;
         public readonly Transform ActorRoot;
         public readonly RingBuffer<ActorInstance> Actors;
         public WaterPropertyBlockF32 Water;
+        public readonly ActorInstance.GeneralDelegate OnFree;
         public bool HasEnvironment;
 
-        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, int inExpectedSize = 0)
+        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0)
         {
             Allocator = inAllocator;
             WorldBounds = inBounds;
             ActorRoot = inActorRoot;
+            OnFree = inOnFree;
             Actors = new RingBuffer<ActorInstance>(inExpectedSize, RingBufferMode.Expand);
             Water = Services.Assets.WaterProp.DefaultValues();
         }
@@ -31,7 +31,7 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance actor = inWorld.Allocator.Alloc(inActorId, inWorld.ActorRoot);
             inWorld.Actors.PushBack(actor);
 
-            ActorInstance.ForceActorAction(actor, ActorActionId.Spawning, inWorld, ActorInstance.StartSpawning);
+            ActorInstance.ForceActorAction(actor, ActorActionId.Spawning, inWorld);
             ActorInstance.SetActorState(actor, inWorld.HasEnvironment ? actor.Definition.StateEvaluator.Evaluate(inWorld.Water) : ActorStateId.Alive, inWorld);
             return actor;
         }
@@ -52,7 +52,7 @@ namespace ProtoAqua.ExperimentV2
 
             for(int i = 0; i < newActors.Length; i++)
             {
-                ActorInstance.ForceActorAction(newActors[i], ActorActionId.Spawning, inWorld, ActorInstance.StartSpawning);
+                ActorInstance.ForceActorAction(newActors[i], ActorActionId.Spawning, inWorld);
             }
 
             if (inWorld.HasEnvironment)
@@ -72,6 +72,7 @@ namespace ProtoAqua.ExperimentV2
 
         static public void Free(ActorWorld inWorld, ActorInstance inInstance)
         {
+            inWorld.OnFree?.Invoke(inInstance, inWorld);
             inWorld.Actors.FastRemove(inInstance);
             inWorld.Allocator.Free(inInstance);
         }
@@ -80,6 +81,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (ioInstance != null)
             {
+                inWorld.OnFree?.Invoke(ioInstance, inWorld);
                 inWorld.Actors.FastRemove(ioInstance);
                 inWorld.Allocator.Free(ioInstance);
                 ioInstance = null;
@@ -88,6 +90,11 @@ namespace ProtoAqua.ExperimentV2
 
         static public void FreeAll(ActorWorld inWorld)
         {
+            if (inWorld.OnFree != null)
+            {
+                for(int i = 0, length = inWorld.Actors.Count; i < length; i++)
+                    inWorld.OnFree(inWorld.Actors[i], inWorld);
+            }
             inWorld.Actors.Clear();
             inWorld.Allocator.FreeAll();
         }
@@ -101,6 +108,7 @@ namespace ProtoAqua.ExperimentV2
                 actor = actorList[i];
                 if (actor.Definition.Id == inActorId)
                 {
+                    inWorld.OnFree?.Invoke(actor, inWorld);
                     actorList.FastRemoveAt(i);
                     inWorld.Allocator.Free(actor);
                 }
@@ -165,5 +173,9 @@ namespace ProtoAqua.ExperimentV2
         }
 
         #endregion // Update States
+
+        #region Actor Queries
+
+        #endregion // Actor Queries
     }
 }

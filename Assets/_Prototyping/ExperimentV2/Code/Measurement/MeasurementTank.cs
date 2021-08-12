@@ -22,7 +22,7 @@ namespace ProtoAqua.ExperimentV2
 
         [SerializeField, Required(ComponentLookupDirection.Self)] private SelectableTank m_ParentTank = null;
 
-        [SerializeField, Required] private CanvasGroup m_BottomPanelGroup = null;
+        // [SerializeField, Required] private CanvasGroup m_BottomPanelGroup = null;
         [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
         [SerializeField, Required] private BestiaryAddPanel m_SelectEnvPanel = null;
         [SerializeField, Required(ComponentLookupDirection.Children)] private EnvIconDisplay m_EnvIcon = null;
@@ -77,7 +77,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, 16);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 16);
             }
 
             if (m_DialsDirty)

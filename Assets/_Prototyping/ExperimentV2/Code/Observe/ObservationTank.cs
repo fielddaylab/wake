@@ -63,6 +63,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void Activate()
         {
+            ObservationBehaviorSystem.ConfigureStates();
             m_World = m_ActorBehavior.World();
 
             EnvIconDisplay.Populate(m_EnvIcon, null);
