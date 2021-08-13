@@ -92,10 +92,10 @@ namespace ProtoAqua.ExperimentV2
         public int SpawnAmountOverride = -1;
 
         [Header("Behavior")]
-        public SpawnConfiguration Spawning = default(SpawnConfiguration);
-        public MovementConfiguration Movement = default(MovementConfiguration);
-        public EatingConfiguration Eating = default(EatingConfiguration);
-        public StressConfiguration Stress = default(StressConfiguration);
+        [Inline(InlineAttribute.DisplayType.HeaderLabel)] public SpawnConfiguration Spawning = default(SpawnConfiguration);
+        [Inline(InlineAttribute.DisplayType.HeaderLabel)] public MovementConfiguration Movement = default(MovementConfiguration);
+        [Inline(InlineAttribute.DisplayType.HeaderLabel)] public EatingConfiguration Eating = default(EatingConfiguration);
+        [Inline(InlineAttribute.DisplayType.HeaderLabel)] public StressConfiguration Stress = default(StressConfiguration);
         
         // [Header("Derived From Facts")]
 
@@ -106,7 +106,7 @@ namespace ProtoAqua.ExperimentV2
         [HideInInspector] public bool IsPlant;
         [HideInInspector] public int TargetLimit;
         [HideInInspector] public bool FreeOnEaten;
-        [HideInInspector] public Rect EatOffsetRange;
+        public Rect EatOffsetRange;
 
         #region Utility
 
@@ -293,10 +293,10 @@ namespace ProtoAqua.ExperimentV2
             inDef.Prefab = inPrefab;
 
             Vector3 offsetPos = inPrefab.CachedTransform.position;
-            Bounds bounds = inPrefab.CachedCollider.bounds;
+            Bounds bounds = PhysicsUtils.GetLocalBounds(inPrefab.CachedCollider);
             bounds.extents *= 0.9f;
 
-            inDef.EatOffsetRange = Rect.MinMaxRect(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
+            inDef.EatOffsetRange = Geom.BoundsToRect(bounds);
         }
 
         static private int GetDefaultSpawnAmount(BestiaryDescSize inSize)

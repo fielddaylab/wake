@@ -62,9 +62,4 @@ namespace ProtoAqua.Experiment
         static public readonly TableKeyPair ExperimentDuration = TableKeyPair.Parse("experiment:experimentDuration");
         static public readonly TableKeyPair ExperimentBehaviorCount = TableKeyPair.Parse("experiment:observedBehaviorCount");
     }
-
-    static public class ExperimentConsts
-    {
-        public const int MaxCritters = 4;
-    }
 }
