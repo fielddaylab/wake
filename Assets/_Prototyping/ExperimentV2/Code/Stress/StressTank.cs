@@ -5,6 +5,8 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -18,6 +20,15 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private CanvasGroup m_WaterPropertyGroup = null;
 
         [SerializeField] private ActorAllocator m_Allocator = null;
+
+        [Header("Summary Popup")]
+        [SerializeField] private GameObject m_SummaryParent = null;
+        [SerializeField] private LocText m_CritterNameText = null;
+        [SerializeField] private Image m_CritterImage = null;
+        [SerializeField] private Transform m_StateFactParent = null;
+        [SerializeField] private CanvasGroup m_BottomBarCanvasGroup = null;
+        [NonSerialized] private StateFactDisplay[] m_stateFactArray = null;
+        [NonSerialized] private ExperimentResult m_ExpResult = null;
 
         #endregion // Inspector
 
@@ -52,6 +63,15 @@ namespace ProtoAqua.ExperimentV2
             m_AddCrittersPanel.OnCleared = OnCrittersCleared;
 
             Services.Events.Register(GameEvents.WaterPropertiesUpdated, RebuildPropertyDials);
+
+            //Populate StateFact Array
+            m_stateFactArray = new StateFactDisplay[m_StateFactParent.childCount];
+            for(int i = 0; i< m_StateFactParent.childCount; i++)
+            {
+                m_stateFactArray[i] = m_StateFactParent.GetChild(i).GetComponent<StateFactDisplay>();
+            }
+
+            m_SummaryParent.SetActive(false);
         }
 
         private void OnDestroy()
@@ -79,6 +99,8 @@ namespace ProtoAqua.ExperimentV2
 
         private void Deactivate()
         {
+            HideSummaryPopup();
+
             m_AddCrittersPanel.Hide();
             m_AddCrittersPanel.ClearSelection();
 
@@ -98,15 +120,62 @@ namespace ProtoAqua.ExperimentV2
 
             BFState state;
             BestiaryData saveData = Services.Data.Profile.Bestiary;
-            foreach(WaterPropertyId id in m_RequiredReveals)
+
+            List<ExperimentFactResult> experimentFacts = new List<ExperimentFactResult>();
+
+            foreach (WaterPropertyId id in m_RequiredReveals)
             {
                 state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, id);
                 Assert.NotNull(state, "No BFState {0} fact found for critter {1}", id, m_SelectedCritter.Id());
+
+                experimentFacts.Add(ExperimentUtil.NewFact(state.Id()));
+
                 saveData.RegisterFact(state.Id());
             }
 
+            m_ExpResult = new ExperimentResult();
+            m_ExpResult.Facts = experimentFacts.ToArray();
+
+            DisplaySummaryPopup();
+
             m_AddCrittersPanel.ClearSelection();
         }
+
+        private void DisplaySummaryPopup()
+        {
+            Routine.Start(this, m_BottomBarCanvasGroup.Hide(0.1f));
+            m_SummaryParent.SetActive(true);
+
+            m_CritterNameText.SetText(m_SelectedCritter.CommonName());
+            Canvas.ForceUpdateCanvases();
+            m_CritterNameText.transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = false;
+            m_CritterNameText.transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = true;
+
+            m_CritterImage.sprite = m_SelectedCritter.Icon();
+
+            for (int i = 0; i < m_ExpResult.Facts.Length; i++)
+            {
+                StateFactDisplay currStateFact = m_stateFactArray[i];
+                ExperimentFactResult currExpResult = m_ExpResult.Facts[i];
+
+                bool isNewFact = false;
+                if (currExpResult.Type == ExperimentFactResultType.NewFact)
+                    isNewFact = true;
+
+                //Set new fact icon to active/not active
+                currStateFact.transform.GetChild(4).gameObject.SetActive(isNewFact);
+
+                currStateFact.Populate(Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id));
+            }
+        }
+
+        public void HideSummaryPopup()
+        {
+            m_SummaryParent.SetActive(false);
+            Routine.Start(this, m_BottomBarCanvasGroup.Show(0.1f));
+        }
+
+
 
         #region Critter Callbacks
 
