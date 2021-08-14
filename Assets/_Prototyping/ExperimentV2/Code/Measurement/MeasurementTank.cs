@@ -77,7 +77,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 16);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 16, this);
             }
 
             if (m_DialsDirty)
@@ -189,12 +189,13 @@ namespace ProtoAqua.ExperimentV2
         private IEnumerator RunExperiment(InProgressExperimentData inExperiment)
         {
             ExperimentResult result = Evaluate(inExperiment);
+            Services.Input.PauseAll();
             Services.UI.ShowLetterbox();
             using(var fader = Services.UI.WorldFaders.AllocFader())
             {
                 yield return fader.Object.Show(Color.black, 0.5f);
                 yield return 0.5f;
-                Deactivate();
+                ClearStateAfterExperiment();
                 yield return fader.Object.Hide(0.5f, false);
             }
             foreach(var fact in result.Facts)
@@ -216,6 +217,16 @@ namespace ProtoAqua.ExperimentV2
                 Log.Msg("[MeasurementTank] {0}: {1}", feedback.Category, feedback.Id);
             }
             Services.UI.HideLetterbox();
+            Services.Input.ResumeAll();
+        }
+
+        private void ClearStateAfterExperiment()
+        {
+            m_AddCrittersPanel.Hide();
+            m_AddCrittersPanel.ClearSelection();
+
+            m_SelectEnvPanel.Hide();
+            m_SelectEnvPanel.ClearSelection();
         }
 
         #endregion // Run

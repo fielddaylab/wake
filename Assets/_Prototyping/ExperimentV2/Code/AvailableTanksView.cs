@@ -18,6 +18,7 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private CameraPose m_Pose = null;
         [SerializeField, Required] private PointerListener m_BackButton = null;
         [SerializeField, HideInInspector] private SelectableTank[] m_Tanks = null;
+        [SerializeField, Required] private CanvasGroup m_ExitSceneButtonGroup = null;
 
         #endregion // Inspector
 
@@ -136,7 +137,10 @@ namespace ProtoAqua.ExperimentV2
             DeactivateTankClickHandlers();
             m_BackButton.gameObject.SetActive(true);
 
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, tank.Type);
+
             m_SelectedTank.ActivateMethod?.Invoke();
+            Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_TankTransitionAnim.Replace(this, SelectTankTransition(tank)).TryManuallyUpdate(0);
         }
 
@@ -152,6 +156,7 @@ namespace ProtoAqua.ExperimentV2
 
             m_BackButton.gameObject.SetActive(false);
             ActivateTankClickHandlers();
+            Routine.Start(this, m_ExitSceneButtonGroup.Show(0.2f, true));
         }
 
         #endregion // Handlers

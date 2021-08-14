@@ -65,7 +65,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1, this);
             }
 
             m_WaterPropertyGroup.alpha = 0;

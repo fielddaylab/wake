@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -22,27 +23,32 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField] private ActorAllocator m_Allocator = null;
 
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
-        [NonSerialized] private ActorWorld m_World;
+        
+        [NonSerialized] public ActorWorld World;
 
-        public ActorWorld World()
+        public void Initialize(ObservationTank inTank)
         {
-            return m_World ?? (m_World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, OnFree, 16));
+            if (World != null)
+                return;
+
+            World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, OnFree, 16, inTank);
         }
 
         #region Critters
 
         public void Alloc(StringHash32 inId)
         {
-            ActorWorld.AllocWithDefaultCount(World(), inId);
+            ActorWorld.AllocWithDefaultCount(World, inId);
         }
 
         public void FreeAll(StringHash32 inId)
         {
-            ActorWorld.FreeAll(m_World, inId);
+            ActorWorld.FreeAll(World, inId);
         }
 
         private void OnFree(ActorInstance inCritter, ActorWorld inWorld)
         {
+            ActorWorld.ModifyPopulation(inWorld, inCritter.Definition.Id, -1);
             ActorInstance.ReleaseTargetsAndInteractions(inCritter, inWorld);
         }
 
@@ -52,12 +58,12 @@ namespace ProtoAqua.ExperimentV2
 
         public void UpdateEnvState(WaterPropertyBlockF32 inEnvironment)
         {
-            ActorWorld.SetWaterState(m_World, inEnvironment);
+            ActorWorld.SetWaterState(World, inEnvironment);
         }
 
         public void ClearEnvState()
         {
-            ActorWorld.SetWaterState(m_World, null);
+            ActorWorld.SetWaterState(World, null);
         }
 
         #endregion // Env State
@@ -71,23 +77,19 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance.ConfigureActionMethods(ActorActionId.Eating, OnActorEatStart, null, ActorEatAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.BeingEaten, OnActorBeingEatenStart, OnActorBeingEatenEnd, ActorBeingEatenAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.Dying, OnActorDyingStart, null, ActorDyingAnimation);
-
             ActorInstance.ConfigureInteractionMethods(OnInteractionAcquired, OnInteractionReleased);
         }
 
         public void TickBehaviors(float inDeltaTime)
         {
-            if (!IsSpawningComplete())
-                return;
-
-            
+            IsSpawningComplete();
         }
 
         private bool IsSpawningComplete()
         {
             if (m_Phase == Phase.Spawning)
             {
-                foreach(var critter in m_World.Actors)
+                foreach(var critter in World.Actors)
                 {
                     if (critter.CurrentAction == ActorActionId.Spawning)
                         return false;
@@ -106,18 +108,20 @@ namespace ProtoAqua.ExperimentV2
         private void FinalizeCritterInitialization()
         {
             ActorInstance critter;
-            for(int i = m_World.Actors.Count - 1; i >= 0; i--)
+            for(int i = World.Actors.Count - 1; i >= 0; i--)
             {
-                critter = m_World.Actors[i];
+                critter = World.Actors[i];
                 if (critter.CurrentState == ActorStateId.Dead)
                 {
-                    ActorInstance.SetActorAction(critter, ActorActionId.Dying, m_World);
+                    ActorInstance.SetActorAction(critter, ActorActionId.Dying, World);
                 }
                 else
                 {
-                    ActorInstance.SetActorAction(critter, ActorActionId.Idle, m_World);
+                    ActorInstance.SetActorAction(critter, ActorActionId.Idle, World);
                 }
             }
+
+            ActorWorld.RegenerateActorCounts(World);
         }
 
         #endregion // Tick
@@ -158,7 +162,7 @@ namespace ProtoAqua.ExperimentV2
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
-            int moveCount = !bLimitMovement ? 0 : RNG.Instance.Next(2, 4);
+            int moveCount = !bLimitMovement ? 0 : RNG.Instance.Next(3, 6);
             Vector3 current;
             Vector3 target;
             float duration;
@@ -262,31 +266,39 @@ namespace ProtoAqua.ExperimentV2
         static private IEnumerator ActorEatAnimation(ActorInstance inActor, ActorWorld inWorld)
         {
             ActorInstance target = inActor.CurrentInteractionActor;
-            BFEat eatRule = BestiaryUtils.FindEatingRule(inActor.Definition.Id, target.Definition.Id, inActor.CurrentState);
-            switch(inActor.Definition.Eating.EatType)
+            BFEat eatRule = Services.Assets.Bestiary.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
+            using(ObservationTank.CaptureCircle(eatRule.Id(), inActor, inWorld))
             {
-                case ActorDefinition.EatTypeId.Nibble:
-                    {
-                        int nibbleCount = RNG.Instance.Next(2, 5);
-                        while(nibbleCount-- > 0)
+                switch(inActor.Definition.Eating.EatType)
+                {
+                    case ActorDefinition.EatTypeId.Nibble:
                         {
-                            yield return EatPulse(inActor, 0.2f);
-                            if (nibbleCount > 0)
-                                yield return 0.3f;
+                            int nibbleCount = RNG.Instance.Next(3, 5);
+                            while(nibbleCount-- > 0)
+                            {
+                                yield return EatPulse(inActor, 0.2f);
+                                ObservationTank.EmitEmoji(eatRule, inActor, inWorld);
+                                if (nibbleCount > 0)
+                                    yield return 0.3f;
+                            }
+                            break;
                         }
-                        break;
-                    }
 
-                case ActorDefinition.EatTypeId.LargeBite:
-                default:
-                    {
-                        yield return EatPulse(inActor, 0.3f);
-                        break;
-                    }
+                    case ActorDefinition.EatTypeId.LargeBite:
+                    default:
+                        {
+                            yield return EatPulse(inActor, 0.3f);
+                            ObservationTank.EmitEmoji(eatRule, inActor, inWorld); 
+                            break;
+                        }
+                }
+                
+                if (target.Definition.FreeOnEaten)
+                    ActorWorld.Free(inWorld, target);
+                
+                yield return 1;
             }
-            if (target.Definition.FreeOnEaten)
-                ActorWorld.Free(inWorld, target);
-            yield return 1;
+
             ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
         }
 
@@ -317,7 +329,7 @@ namespace ProtoAqua.ExperimentV2
 
         static private IEnumerator ActorBeingEatenAnimation(ActorInstance inActor, ActorWorld inWorld)
         {
-            yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.03f, 0.15f, Axis.X, Space.Self)
+            yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.01f, 0.15f, Axis.X, Space.Self)
                 .Wave(Wave.Function.Sin, 1).Loop().RevertOnCancel();
         }
 
@@ -345,6 +357,8 @@ namespace ProtoAqua.ExperimentV2
         }
 
         #endregion // Actor States
+
+        #region Eating
 
         static private RingBuffer<PriorityValue<ActorInstance>> s_EatTargetBuffer;
 
@@ -385,6 +399,21 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
+        static public bool HasPotentialEatTarget(ActorInstance inInstance, ActorWorld inWorld)
+        {
+            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
+            
+            foreach(var critter in inWorld.Actors)
+            {
+                if (!IsValidEatTarget(validTargets, critter))
+                    continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
         static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget)
         {
             return RNG.Instance.NextVector2(inEatTarget.Definition.EatOffsetRange);
@@ -404,12 +433,14 @@ namespace ProtoAqua.ExperimentV2
             return false;
         }
 
+        #endregion // Eating
+
         public void ClearAll()
         {
-            m_World.Water = default(WaterPropertyBlockF32);
-            if (m_World != null)
+            if (World != null)
             {
-                ActorWorld.FreeAll(m_World);
+                World.Water = default(WaterPropertyBlockF32);
+                ActorWorld.FreeAll(World);
             }
             m_Phase = Phase.Spawning;
         }
