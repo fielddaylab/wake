@@ -21,13 +21,18 @@ namespace ProtoAqua.ExperimentV2
 
         [SerializeField] private ActorAllocator m_Allocator = null;
 
+        [SerializeField, Required] private BestiaryAddPanel m_SelectEnvPanel = null;
+        [SerializeField, Required(ComponentLookupDirection.Children)] private EnvIconDisplay m_EnvIcon = null;
+
         [Header("Summary Popup")]
         [SerializeField] private GameObject m_SummaryParent = null;
         [SerializeField] private LocText m_CritterNameText = null;
         [SerializeField] private Image m_CritterImage = null;
         [SerializeField] private Transform m_StateFactParent = null;
         [SerializeField] private CanvasGroup m_BottomBarCanvasGroup = null;
-        [NonSerialized] private StateFactDisplay[] m_stateFactArray = null;
+        [NonSerialized] private StateFactDisplay[] m_StateFactArray = null;
+        [NonSerialized] private WaterPropertyId[] m_StateFactWaterProperties = null;
+        [SerializeField] private GameObject[] m_EnvIndicatorArray = null; 
         [NonSerialized] private ExperimentResult m_ExpResult = null;
 
         #endregion // Inspector
@@ -53,6 +58,8 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private WaterPropertyMask m_RequiredReveals;
         [NonSerialized] private WaterPropertyMask m_VisiblePropertiesMask;
 
+        [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
+
         private void Awake()
         {
             m_ParentTank.ActivateMethod = Activate;
@@ -62,14 +69,20 @@ namespace ProtoAqua.ExperimentV2
             m_AddCrittersPanel.OnRemoved = OnCritterRemoved;
             m_AddCrittersPanel.OnCleared = OnCrittersCleared;
 
+            m_SelectEnvPanel.OnAdded = OnEnvironmentAdded;
+            m_SelectEnvPanel.OnRemoved = OnEnvironmentRemoved;
+            m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
+
             Services.Events.Register(GameEvents.WaterPropertiesUpdated, RebuildPropertyDials);
 
             //Populate StateFact Array
-            m_stateFactArray = new StateFactDisplay[m_StateFactParent.childCount];
+            m_StateFactArray = new StateFactDisplay[m_StateFactParent.childCount];
             for(int i = 0; i< m_StateFactParent.childCount; i++)
             {
-                m_stateFactArray[i] = m_StateFactParent.GetChild(i).GetComponent<StateFactDisplay>();
+                m_StateFactArray[i] = m_StateFactParent.GetChild(i).GetComponent<StateFactDisplay>();
             }
+
+            m_StateFactWaterProperties = new WaterPropertyId[m_StateFactParent.childCount];
 
             m_SummaryParent.SetActive(false);
         }
@@ -110,6 +123,57 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // Tank
 
+        #region Environment Callbacks
+
+        private void OnEnvironmentAdded(BestiaryDesc inDesc)
+        {
+            m_SelectedEnvironment = inDesc;
+            EnvIconDisplay.Populate(m_EnvIcon, inDesc);
+            SetEnvironmentMarkers();
+        }
+
+        private void OnEnvironmentRemoved(BestiaryDesc inDesc)
+        {
+            ResetEnvironmentMarkers();
+
+            if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null))
+            {
+                EnvIconDisplay.Populate(m_EnvIcon, null);
+            }
+        }
+
+        private void OnEnvironmentCleared()
+        {
+            ResetEnvironmentMarkers();
+
+            m_SelectedEnvironment = null;
+            EnvIconDisplay.Populate(m_EnvIcon, null);
+        }
+
+        #endregion // Environment Callbacks
+
+        private void SetEnvironmentMarkers()
+        {
+            for (int i = 0; i < m_ExpResult.Facts.Length; i++)
+            {
+                WaterPropertyId currFactType = m_StateFactWaterProperties[i];
+                GameObject currEnvIndicator = m_EnvIndicatorArray[i];
+
+                float value = m_SelectedEnvironment.GetEnvironment()[currFactType];
+
+                float ratio = Services.Assets.WaterProp.Property(currFactType).RemapValue(value);
+                Debug.Log("Value, Ratio:" + value + ", " + ratio);
+
+                currEnvIndicator.GetComponent<RectTransform>().anchoredPosition = new Vector2(ratio,0);
+            }
+        }
+
+        private void ResetEnvironmentMarkers()
+        {
+            foreach (GameObject envMarker in m_EnvIndicatorArray)
+                envMarker.GetComponent<RectTransform>().anchoredPosition = new Vector2(-5, 0);
+        }
+
         private void CheckForAllRangesFound()
         {
             if (m_RequiredReveals.Mask == 0)
@@ -143,6 +207,9 @@ namespace ProtoAqua.ExperimentV2
 
         private void DisplaySummaryPopup()
         {
+            foreach (StateFactDisplay stateFact in m_StateFactArray)
+                stateFact.gameObject.SetActive(false);
+
             Routine.Start(this, m_BottomBarCanvasGroup.Hide(0.1f));
             m_SummaryParent.SetActive(true);
 
@@ -155,8 +222,12 @@ namespace ProtoAqua.ExperimentV2
 
             for (int i = 0; i < m_ExpResult.Facts.Length; i++)
             {
-                StateFactDisplay currStateFact = m_stateFactArray[i];
+                StateFactDisplay currStateFact = m_StateFactArray[i];
                 ExperimentFactResult currExpResult = m_ExpResult.Facts[i];
+
+                currStateFact.gameObject.SetActive(true);
+
+                m_StateFactWaterProperties[i] = Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id).PropertyId();
 
                 bool isNewFact = false;
                 if (currExpResult.Type == ExperimentFactResultType.NewFact)
@@ -174,8 +245,6 @@ namespace ProtoAqua.ExperimentV2
             m_SummaryParent.SetActive(false);
             Routine.Start(this, m_BottomBarCanvasGroup.Show(0.1f));
         }
-
-
 
         #region Critter Callbacks
 
