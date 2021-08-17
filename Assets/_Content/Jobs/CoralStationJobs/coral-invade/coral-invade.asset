@@ -60,10 +60,16 @@ MonoBehaviour:
         m_Hash: 2717353052
       ConditionString: 
       Amount: 0
-    - Type: 0
+    - Type: 1
       Target:
-        m_Source: SargassumCoveredReef
-        m_Hash: 2515708323
+        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
+        m_Hash: 2762679420
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.PopulationHistory.StaghornCoral
+        m_Hash: 2773834985
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -90,6 +96,23 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-invade.task.coralLight
       m_Hash: 1288826080
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.WaterChemHistory.Light
+        m_Hash: 2480504015
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: jobs.coral-invade.task.reportBack
+      m_Hash: 1677863150
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -125,10 +148,16 @@ MonoBehaviour:
         m_Hash: 2717353052
       ConditionString: 
       Amount: 0
-    - Type: 0
+    - Type: 1
       Target:
-        m_Source: SargassumCoveredReef
-        m_Hash: 2515708323
+        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
+        m_Hash: 2762679420
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.PopulationHistory.StaghornCoral
+        m_Hash: 2773834985
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -157,6 +186,24 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-invade.task.coralLight
       m_Hash: 1288826080
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.WaterChemHistory.Light
+        m_Hash: 2480504015
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 3
+    LabelId:
+      m_Source: jobs.coral-invade.task.reportBack
+      m_Hash: 1677863150
     DescriptionId:
       m_Source: 
       m_Hash: 0

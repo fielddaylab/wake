@@ -3,10 +3,8 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
-{@profCempaka}	I need you to head over to Site R and see what you can find.
-{@profCempaka}	You can travel to the coral research station by interating with the map in your Ship's Helm. 
+{@profCempaka}	I've given you coordinates to the right site. Can you identify the organisms there and get some historic population counts from our probe while you're there? 
+{@profCempaka}  It should have detected the new species. You'll just need to provide scanning details.
 {@player} 	We'll be right over there!
 
 :: helpLeaveShip
@@ -19,7 +17,7 @@
 
 :: navigation
 @trigger    SceneStart
-@when       scene:name == "Station2"
+@when       scene:name == "CoralStation"
 @once
 @cutscene
 {@kevin} You're gonna want to take your sub over to Dive Site R.
@@ -27,7 +25,7 @@
 					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-invade.got.scans
+@when 		scene:name == "CoralStation", !jobs:coral-invade.got.scans
 @cutscene
 {@player}   Where should we go next?
 {@kevin}	Site R should be to the north of the ship, let's head over and dive down!
@@ -46,20 +44,20 @@ $set    	jobs:coral-invade.seen.bottom = true
 @when 		scene:name == "RS-2R"
 @cutscene
 {@player}   What should I be doing here?
-$if !HasEntity(SargassumCoveredReef)
+$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}   Did you remember to scan the probe?
 $else
 	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
 		$set    jobs:coral-invade.got.scans = true
 		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
+		{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
 	$endif
 $endif
 
 :: navigation.goBackUp
 @trigger    JobTaskUpdated
-@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
+@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @once
 @cutscene
 $set jobs:coral-invade.gotScans = true
@@ -67,32 +65,32 @@ $set jobs:coral-invade.gotScans = true
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
+@when       scene:name == "CoralStation", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
 @once
 @cutscene
 {@player}   Alright, I think we got everything?
 {@kevin}   Let me check...
-$if !HasEntity(SargassumCoveredReef)
+$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Did you remember to scan the probe?
+	{@kevin}   Did you remember to scan the population probe?
 $else
 	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
 		$set    jobs:coral-invade.got.scans = true
 		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 	$else
-    {@kevin}   Hmm... I think there's more we need to find. Let's head back down
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
+		{@kevin}   Hmm... I think there's more we need to find. Let's head back down
+		{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
 	$endif
 $endif
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
+@when       scene:name == "CoralStation", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
 @cutscene
 {@player}   Alright, what about now?
 {@kevin}   	Let me take a look...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Looks like you didn't scan the probe, let's dive down and get that!
+$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+	{@kevin}   Looks like you didn't scan the population probe, let's dive down and get that!
 $else
 	$if HasEntity(Sargassum)
 		$if HasEntity(StaghornCoral)
@@ -112,7 +110,7 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-invade.got.scans
+@when 		scene:name == "CoralStation", jobs:coral-invade.got.scans
 @cutscene
 {@player} 	Where should we go from here?
 {@kevin}	Let's head south and return to the ship.
@@ -158,11 +156,23 @@ $endif
 @once
 @cutscene
 {@kevin}	So the low light must be causing the coral to be stressed...
-{@kevin}	Let's report this information back to Professor Cempaka!
+$if HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+	{@kevin}	Let's report this information back to Professor Cempaka!
+$else
+	{@kevin}	Let's head back to Site R and gather information on the light levels
+$endif
+
+:: helpGetLightLevel
+@trigger    RequestPartnerHelp
+@when 		!HasFact(SargassumCoveredReef.WaterChemHistory.Light), HasFact(StaghornCoral.Light.Stressed)
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	This time, select the stressor tank instead of an observation one.
+{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@when 		HasFact(StaghornCoral.Light.Stressed), HasFact(SargassumCoveredReef.WaterChemHistory.Light)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
