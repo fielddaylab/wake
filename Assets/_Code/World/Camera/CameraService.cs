@@ -947,7 +947,7 @@ namespace Aqua.Cameras
             SetAsScripted();
 
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
-                SetTargetSeamless(m_Camera, m_FOVPlane, inPose.Target);
+                m_FOVPlane.SetTargetPreserveFOV(inPose.Target);
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPose.transform.position, inPose.Height, inPose.Zoom);
@@ -1106,26 +1106,6 @@ namespace Aqua.Cameras
             size.y = inPlane.ZoomedHeight(inZoom);
             size.x = inCamera.aspect * size.y;
             return size;
-        }
-
-        static private void SetTargetSeamless(Camera inCamera, CameraFOVPlane ioPlane, Transform inTarget)
-        {
-            if (inTarget == null)
-            {
-                ioPlane.Target = null;
-                return;
-            }
-
-            CameraFOVPlane.CameraSettings current;
-            ioPlane.GetSettings(out current);
-
-            float newDist;
-            inCamera.TryGetDistanceToObjectPlane(inTarget, out newDist);
-
-            float newZoom = current.Zoom * current.Distance / newDist;
-
-            ioPlane.Target = inTarget;
-            ioPlane.Zoom = newZoom;
         }
 
         #endregion // Utils

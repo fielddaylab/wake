@@ -698,7 +698,7 @@ namespace Aqua
             InitParsers();
             InitHandlers();
 
-            m_LeafCache = new MethodCache<LeafMember>(typeof(IScriptComponent), DefaultStringConverter.Instance);
+            m_LeafCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             m_LeafCache.LoadStatic();
 
             m_ParserPool = new DynamicPool<TagStringParser>(4, (p) => {
