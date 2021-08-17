@@ -180,7 +180,6 @@ namespace ProtoAqua.ExperimentV2
                 {
                     emptyCount = 0;
                 }
-                emptyCount = m_PerRow - (critterCount - 1) % m_PerRow;
             }
             else
             {

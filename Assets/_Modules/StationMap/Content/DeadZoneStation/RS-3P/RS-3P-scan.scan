@@ -1,11 +1,25 @@
-#basePath   RS-2V
+#basePath   RS-3P
 
 :: probe
 @scanDuration 2
 @important
 @header Dead Zone
-@bestiary   DeadZone
+@bestiary   P_DeadZone
+@facts P_DeadZone.WaterChemHistory.Light, P_DeadZone.WaterChemHistory.Oxygen, P_DeadZone.WaterChemHistory.Temperature
 AQ-EV Probe S271
 Downloaded ecosystem data.
 
 Classification: Dead Zone
+
+:: populationProbe
+@scanDuration 2
+@important
+@header Dead Zone
+@bestiary   P_DeadZone
+@facts   P_DeadZone.PopulationHistory.Muck
+AQ-EV Probe O271
+Downloaded historical population data.
+
+Classification: Dead Zone
+Muck Population: Increasing
+Death: Yes
