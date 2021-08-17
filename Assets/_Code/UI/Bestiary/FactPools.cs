@@ -19,7 +19,6 @@ namespace Aqua
         [Serializable] private class PopulationPool : SerializablePool<PopulationFactDisplay> { }
         [Serializable] private class PopulationHistoryPool : SerializablePool<PopulationHistoryFactDisplay> { }
 
-
         #endregion // Types
 
         #region Inspector
@@ -33,7 +32,6 @@ namespace Aqua
         [SerializeField] private PopulationHistoryPool m_PopulationHistoryFacts = null;
 
         [SerializeField] private Transform m_TransformPool = null;
-        [SerializeField] private Transform m_TransformTarget = null;
 
         #endregion // Inspector
 
@@ -46,6 +44,9 @@ namespace Aqua
 
         private void OnDisable()
         {
+            if (!Services.Valid)
+                return;
+            
             FreeAll();
         }
 
@@ -54,13 +55,13 @@ namespace Aqua
             if (m_ConfiguredPools)
                 return;
 
-            m_BehaviorFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_ModelFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_StateFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_PropertyFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_PropertyHistoryFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_PopulationFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
-            m_PopulationHistoryFacts.ConfigureTransforms(m_TransformPool, m_TransformTarget, false);
+            m_BehaviorFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_ModelFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_StateFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_PropertyFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_PropertyHistoryFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_PopulationFacts.ConfigureTransforms(m_TransformPool, null, false);
+            m_PopulationHistoryFacts.ConfigureTransforms(m_TransformPool, null, false);
 
             m_ConfiguredPools = true;
         }
@@ -74,70 +75,6 @@ namespace Aqua
             m_PropertyHistoryFacts.Reset();
             m_PopulationFacts.Reset();
             m_PopulationHistoryFacts.Reset();
-        }
-
-        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
-        {
-            ConfigurePoolTransforms();
-
-            BFBehavior behavior = inFact as BFBehavior;
-            if (behavior != null)
-            {
-                BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-                display.Populate(behavior, inReference, inFlags);
-                return display;
-            }
-
-            BFModel model = inFact as BFModel;
-            if (model != null)
-            {
-                ModelFactDisplay display = m_ModelFacts.Alloc();
-                display.Populate(model);
-                return display;
-            }
-
-            BFState state = inFact as BFState;
-            if (state != null)
-            {
-                StateFactDisplay display = m_StateFacts.Alloc();
-                display.Populate(state);
-                return display;
-            }
-
-            BFWaterProperty waterProp = inFact as BFWaterProperty;
-            if (waterProp != null)
-            {
-                WaterPropertyFactDisplay display = m_PropertyFacts.Alloc();
-                display.Populate(waterProp);
-                return display;
-            }
-
-            BFWaterPropertyHistory waterPropHistory = inFact as BFWaterPropertyHistory;
-            if (waterPropHistory != null)
-            {
-                WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc();
-                display.Populate(waterPropHistory);
-                return display;
-            }
-
-            BFPopulation populationProp = inFact as BFPopulation;
-            if (populationProp != null)
-            {
-                PopulationFactDisplay display = m_PopulationFacts.Alloc();
-                display.Populate(populationProp);
-                return display;
-            }
-
-            BFPopulationHistory populationHistoryProp = inFact as BFPopulationHistory;
-            if (populationHistoryProp != null)
-            {
-                PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc();
-                display.Populate(populationHistoryProp);
-                return display;
-            }
-
-            Assert.True(false, "Unable to find suitable fact");
-            return null;
         }
 
         public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags, Transform inParent)
@@ -200,88 +137,34 @@ namespace Aqua
                 return display;
             }
 
-            Assert.True(false, "Unable to find suitable fact");
+            Assert.Fail("Unable to find suitable fact");
             return null;
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        public void Free(MonoBehaviour inDisplay)
         {
-            ConfigurePoolTransforms();
-            BehaviorFactDisplay display = m_BehaviorFacts.Alloc();
-            display.Populate(inFact, inReference, inFlags);
-            return display;
+            if (!TryFree(inDisplay, m_BehaviorFacts)
+                && !TryFree(inDisplay, m_ModelFacts)
+                && !TryFree(inDisplay, m_StateFacts)
+                && !TryFree(inDisplay, m_PopulationFacts)
+                && !TryFree(inDisplay, m_PropertyFacts)
+                && !TryFree(inDisplay, m_PropertyHistoryFacts)
+                && !TryFree(inDisplay, m_PopulationHistoryFacts))
+            {
+                Assert.Fail("Unable to find suitable pool");
+            }
         }
 
-        public BehaviorFactDisplay Alloc(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags, Transform inParent)
+        static private bool TryFree<T>(MonoBehaviour inBehavior, IPool<T> inPool) where T : MonoBehaviour
         {
-            ConfigurePoolTransforms();
-            BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-            display.Populate(inFact, inReference, inFlags);
-            return display;
-        }
+            T asType = inBehavior as T;
+            if (asType != null)
+            {
+                inPool.Free(asType);
+                return true;
+            }
 
-        public ModelFactDisplay Alloc(BFModel inFact)
-        {
-            ConfigurePoolTransforms();
-            ModelFactDisplay display = m_ModelFacts.Alloc();
-            display.Populate(inFact);
-            return display;
-        }
-
-        public ModelFactDisplay Alloc(BFModel inFact, Transform inParent)
-        {
-            ConfigurePoolTransforms();
-            ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
-            display.Populate(inFact);
-            return display;
-        }
-
-        public StateFactDisplay Alloc(BFState inFact)
-        {
-            ConfigurePoolTransforms();
-            StateFactDisplay display = m_StateFacts.Alloc();
-            display.Populate(inFact);
-            return display;
-        }
-
-        public StateFactDisplay Alloc(BFState inFact, Transform inParent)
-        {
-            ConfigurePoolTransforms();
-            StateFactDisplay display = m_StateFacts.Alloc(inParent);
-            display.Populate(inFact);
-            return display;
-        }
-
-        public WaterPropertyFactDisplay Alloc(BFWaterProperty inFact)
-        {
-            ConfigurePoolTransforms();
-            WaterPropertyFactDisplay display = m_PropertyFacts.Alloc();
-            display.Populate(inFact);
-            return display;
-        }
-
-        public WaterPropertyFactDisplay Alloc(BFWaterProperty inFact, Transform inParent)
-        {
-            ConfigurePoolTransforms();
-            WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
-            display.Populate(inFact);
-            return display;
-        }
-
-        public PopulationFactDisplay Alloc(BFPopulation inFact)
-        {
-            ConfigurePoolTransforms();
-            PopulationFactDisplay display = m_PopulationFacts.Alloc();
-            display.Populate(inFact);
-            return display;
-        }
-
-        public PopulationFactDisplay Alloc(BFPopulation inFact, Transform inParent)
-        {
-            ConfigurePoolTransforms();
-            PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
-            display.Populate(inFact);
-            return display;
+            return false;
         }
     }
 }

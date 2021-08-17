@@ -141,11 +141,13 @@ namespace Aqua.Profile
 
         public bool HasUpgrade(StringHash32 inUpgradeId)
         {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
             return m_UpgradeIds.Contains(inUpgradeId);
         }
 
         public bool AddUpgrade(StringHash32 inUpgradeId)
         {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
             if (m_UpgradeIds.Add(inUpgradeId))
             {
                 m_HasChanges = true;

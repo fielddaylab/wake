@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using BeauPools;
 using BeauUtil;
 using BeauUtil.Tags;
 using TMPro;
@@ -10,6 +11,8 @@ namespace Aqua
     [RequireComponent(typeof(TMP_Text))]
     public class LocText : MonoBehaviour
     {
+        [Serializable] public class Pool : SerializablePool<LocText> { }
+
         #region Inspector
 
         [SerializeField, HideInEditor] private TMP_Text m_Text = null;

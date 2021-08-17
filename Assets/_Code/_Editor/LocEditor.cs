@@ -144,12 +144,13 @@ namespace Aqua.Editor
         {
             var instance = GetInstance();
             instance.ReloadPackages();
-            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.CreateNew)))
+
+            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.Create)))
             {
                 foreach(var text in instance.m_TextMap)
                 {
                     writer.Write(text.Key.HashValue);
-                    writer.Write(text.Value.Content);
+                    writer.Write(text.Value.Content ?? string.Empty);
                 }
             }
         }

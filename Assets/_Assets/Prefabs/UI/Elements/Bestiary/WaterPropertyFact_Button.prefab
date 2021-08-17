@@ -74,18 +74,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!225 &2356589440319652461
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3020090428457508188}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!114 &3553836061600467168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +86,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093e95e0f219fd846a22da3104d0aea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 2356589440319652461}
+  m_Group: {fileID: 8865123947884444607}
   m_Button: {fileID: 6391743624636448275}
   m_ButtonTail: {fileID: 7450527455359135337}
 --- !u!114 &4411120073987878824
@@ -116,6 +104,7 @@ MonoBehaviour:
   TooltipId:
     m_Source: 
     m_Hash: 0
+  TooltipOverride: 
 --- !u!114 &6049232823767256947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,6 +237,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 785327720202951657, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
+      propertyPath: m_UVRect.width
+      value: 13.375
+      objectReference: {fileID: 0}
     - target: {fileID: 4136018540849879262, guid: 90d1ff9d388fe8c468a25cd6a2742833,
         type: 3}
       propertyPath: m_Pivot.x
@@ -369,6 +363,12 @@ GameObject:
 --- !u!224 &8881146263207413313 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4136018540849879262, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+    type: 3}
+  m_PrefabInstance: {fileID: 4766564926570192543}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &8865123947884444607 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 4116574596780041504, guid: 90d1ff9d388fe8c468a25cd6a2742833,
     type: 3}
   m_PrefabInstance: {fileID: 4766564926570192543}
   m_PrefabAsset: {fileID: 0}

@@ -65,7 +65,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1, this);
             }
 
             m_WaterPropertyGroup.alpha = 0;
@@ -80,7 +80,6 @@ namespace ProtoAqua.ExperimentV2
         private void Deactivate()
         {
             m_AddCrittersPanel.Hide();
-            m_AddCrittersPanel.ClearSelection();
 
             m_RevealedLeftMask = default;
             m_RevealedRightMask = default;
@@ -123,7 +122,7 @@ namespace ProtoAqua.ExperimentV2
                 m_CritterTransitions = m_SelectedCritter.GetActorStateTransitions();
                 ResetWaterPropertiesForCritter(Services.Data.Profile.Bestiary);
 
-                m_SelectedCritterInstance = m_Allocator.Alloc(inDesc.Id(), null);
+                m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
                 m_AddCrittersPanel.Hide();
             }

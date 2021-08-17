@@ -1,6 +1,7 @@
 using BeauUtil;
 using UnityEngine;
 using Aqua;
+using System;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -10,18 +11,22 @@ namespace ProtoAqua.ExperimentV2
         public readonly Bounds WorldBounds;
         public readonly Transform ActorRoot;
         public readonly RingBuffer<ActorInstance> Actors;
-        public WaterPropertyBlockF32 Water;
+        public readonly RingBuffer<ActorCountU32> ActorCounts;
         public readonly ActorInstance.GeneralDelegate OnFree;
+        public WaterPropertyBlockF32 Water;
         public bool HasEnvironment;
+        public object Tag;
 
-        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0)
+        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, object inTag = null)
         {
             Allocator = inAllocator;
             WorldBounds = inBounds;
             ActorRoot = inActorRoot;
             OnFree = inOnFree;
             Actors = new RingBuffer<ActorInstance>(inExpectedSize, RingBufferMode.Expand);
+            ActorCounts = new RingBuffer<ActorCountU32>(8, RingBufferMode.Expand);
             Water = Services.Assets.WaterProp.DefaultValues();
+            Tag = inTag;
         }
 
         #region Alloc/Free
@@ -175,6 +180,66 @@ namespace ProtoAqua.ExperimentV2
         #endregion // Update States
 
         #region Actor Queries
+
+        static public void RegenerateActorCounts(ActorWorld inWorld)
+        {
+            inWorld.ActorCounts.Clear();
+            if (inWorld.Actors.Count == 0)
+                return;
+
+            inWorld.Actors.Sort(SortActorsByType);
+            ActorCountU32 population;
+            StringHash32 currentId = inWorld.Actors[0].Definition.Id;
+            population.Id = currentId;
+            population.Population = 1;
+
+            for(int i = 1, count = inWorld.Actors.Count; i < count; i++)
+            {
+                currentId = inWorld.Actors[i].Definition.Id;
+                if (currentId != population.Id)
+                {
+                    inWorld.ActorCounts.PushBack(population);
+                    population.Id = currentId;
+                    population.Population = 1;
+                }
+                else
+                {
+                    population.Population++;
+                }
+            }
+
+            inWorld.ActorCounts.PushBack(population);
+            inWorld.ActorCounts.SortByKey<StringHash32, uint, ActorCountU32>();
+        }
+
+        static public uint GetPopulation(ActorWorld inWorld, StringHash32 inId)
+        {
+            for(int i = 0, count = inWorld.ActorCounts.Count; i < count; i++)
+            {
+                if (inWorld.ActorCounts[i].Id == inId)
+                    return inWorld.ActorCounts[i].Population;
+            }
+
+            return 0;
+        }
+
+        static public uint ModifyPopulation(ActorWorld inWorld, StringHash32 inId, int inAmount)
+        {
+            for(int i = 0, count = inWorld.ActorCounts.Count; i < count; i++)
+            {
+                if (inWorld.ActorCounts[i].Id == inId)
+                {
+                    uint next = (uint) Math.Max(0, inWorld.ActorCounts[i].Population + inAmount);
+                    return inWorld.ActorCounts[i].Population = next;
+                }
+            }
+
+            return 0;
+        }
+
+        static public readonly Comparison<ActorInstance> SortActorsByType = (x, y) => {
+            return x.Definition.Id.CompareTo(y.Definition.Id);
+        };
 
         #endregion // Actor Queries
     }

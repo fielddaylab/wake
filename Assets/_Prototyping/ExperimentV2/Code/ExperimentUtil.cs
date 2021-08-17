@@ -1,6 +1,9 @@
+using System.Collections;
 using Aqua;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -52,6 +55,18 @@ namespace ProtoAqua.ExperimentV2
             if ((bestiaryData.GetDiscoveredFlags(inFactId) & inFlags) != inFlags)
                 return new ExperimentFactResult(inFactId, ExperimentFactResultType.UpgradedFact, inFlags);
             return new ExperimentFactResult(inFactId, ExperimentFactResultType.Known, BFDiscoveredFlags.None);
+        }
+
+        static public IEnumerator AnimateFeedbackItemToOn(MonoBehaviour inBehavior, float inAlpha = 1)
+        {
+            RectTransform transform = (RectTransform) inBehavior.transform;
+            CanvasGroup fader = inBehavior.GetComponent<CanvasGroup>();
+            Assert.NotNull(fader);
+            transform.SetScale(1.05f, Axis.XY);
+            fader.alpha = 0;
+            return Routine.Combine(transform.ScaleTo(1, 0.1f, Axis.XY),
+                fader.FadeTo(inAlpha, 0.1f)
+            );
         }
     }
 }

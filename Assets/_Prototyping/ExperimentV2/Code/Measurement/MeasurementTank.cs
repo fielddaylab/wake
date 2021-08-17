@@ -13,24 +13,27 @@ namespace ProtoAqua.ExperimentV2
 {
     public class MeasurementTank : MonoBehaviour, ISceneOptimizable
     {
-        static public readonly StringHash32 FeedbackCategory_All = "All";
-        static public readonly StringHash32 FeedbackCategory_Repro = "Repro";
-        static public readonly StringHash32 FeedbackCategory_Eat = "Eat";
-        static public readonly StringHash32 FeedbackCategory_Water = "Water";
+        static public readonly TextId FeedbackCategory_All = "experiment.measure.feedback.header.all";
+        static public readonly TextId FeedbackCategory_Repro = "experiment.measure.feedback.header.repro";
+        static public readonly TextId FeedbackCategory_Eat = "experiment.measure.feedback.header.eat";
+        static public readonly TextId FeedbackCategory_Water = "experiment.measure.feedback.header.water";
 
         #region Inspector
 
         [SerializeField, Required(ComponentLookupDirection.Self)] private SelectableTank m_ParentTank = null;
 
-        // [SerializeField, Required] private CanvasGroup m_BottomPanelGroup = null;
+        [Header("Setup")]
+        [SerializeField, Required] private CanvasGroup m_SetupPanelGroup = null;
         [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
         [SerializeField, Required] private BestiaryAddPanel m_SelectEnvPanel = null;
         [SerializeField, Required(ComponentLookupDirection.Children)] private EnvIconDisplay m_EnvIcon = null;
         [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
         [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
         [SerializeField, Required] private Button m_RunButton = null;
-
         [SerializeField] private ActorAllocator m_Allocator = null;
+
+        [Header("Summary")]
+        [SerializeField] private MeasurementSummary m_SummaryPanel = null;
 
         #endregion // Inspector
 
@@ -64,6 +67,7 @@ namespace ProtoAqua.ExperimentV2
 
             m_RunButton.interactable = false;
             m_RunButton.onClick.AddListener(OnRunClicked);
+            m_SummaryPanel.Base.ContinueButton.onClick.AddListener(OnSummaryCloseClick);
         }
 
         private void OnDestroy()
@@ -77,13 +81,17 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 16);
+                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 16, this);
             }
 
             if (m_DialsDirty)
             {
                 RebuildPropertyDials();
             }
+
+            m_SetupPanelGroup.alpha = 1;
+            m_SetupPanelGroup.blocksRaycasts = true;
+            m_SetupPanelGroup.gameObject.SetActive(true);
         }
 
         private void Deactivate()
@@ -93,6 +101,12 @@ namespace ProtoAqua.ExperimentV2
 
             m_SelectEnvPanel.Hide();
             m_SelectEnvPanel.ClearSelection();
+
+            if (m_SummaryPanel.gameObject.activeSelf)
+            {
+                m_SummaryPanel.gameObject.SetActive(false);
+                m_SummaryPanel.Base.FactPools.FreeAll();
+            }
         }
 
         #endregion // Tank
@@ -189,14 +203,16 @@ namespace ProtoAqua.ExperimentV2
         private IEnumerator RunExperiment(InProgressExperimentData inExperiment)
         {
             ExperimentResult result = Evaluate(inExperiment);
+            Services.Input.PauseAll();
             Services.UI.ShowLetterbox();
             using(var fader = Services.UI.WorldFaders.AllocFader())
             {
                 yield return fader.Object.Show(Color.black, 0.5f);
                 yield return 0.5f;
-                Deactivate();
+                ClearStateAfterExperiment();
                 yield return fader.Object.Hide(0.5f, false);
             }
+
             foreach(var fact in result.Facts)
             {
                 switch(fact.Type)
@@ -211,11 +227,64 @@ namespace ProtoAqua.ExperimentV2
                         break;
                 }
             }
+            
             foreach(var feedback in result.Feedback)
             {
                 Log.Msg("[MeasurementTank] {0}: {1}", feedback.Category, feedback.Id);
             }
+
+            yield return PopulateSummaryScreen(result);
             Services.UI.HideLetterbox();
+            Services.Input.ResumeAll();
+        }
+
+        private void ClearStateAfterExperiment()
+        {
+            m_AddCrittersPanel.Hide();
+            m_AddCrittersPanel.ClearSelection();
+
+            m_SelectEnvPanel.Hide();
+
+            m_SetupPanelGroup.alpha = 0;
+            m_SetupPanelGroup.blocksRaycasts = false;
+            m_SetupPanelGroup.gameObject.SetActive(false);
+
+            m_SummaryPanel.gameObject.SetActive(true);
+        }
+
+        private IEnumerator PopulateSummaryScreen(ExperimentResult inResult)
+        {
+            MonoBehaviour newFact;
+            foreach(var fact in inResult.Facts)
+            {
+                newFact = m_SummaryPanel.Base.FactPools.Alloc(Services.Assets.Bestiary.Fact(fact.Id), null, 0, m_SummaryPanel.Base.FactListRoot);
+                m_SummaryPanel.Base.FactListLayout.ForceRebuild();
+                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, fact.Type == ExperimentFactResultType.Known ? 0.5f : 1);
+                yield return 0.1f;
+            }
+
+            LocText newFeedback;
+            foreach(var feedback in inResult.Feedback)
+            {
+                newFeedback = m_SummaryPanel.HeaderPool.Alloc(m_SummaryPanel.Base.FactListRoot);
+                m_SummaryPanel.Base.FactListLayout.ForceRebuild();
+                newFeedback.SetText(feedback.Category);
+                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFeedback, 1);
+                newFeedback = m_SummaryPanel.TextPool.Alloc(m_SummaryPanel.Base.FactListRoot);
+                m_SummaryPanel.Base.FactListLayout.ForceRebuild();
+                newFeedback.SetText(feedback.Id);
+                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFeedback, 1);
+                yield return 0.1f;
+            }
+        }
+
+        private void OnSummaryCloseClick()
+        {
+            m_SummaryPanel.gameObject.SetActive(false);
+            m_SummaryPanel.Base.FactPools.FreeAll();
+            m_SummaryPanel.HeaderPool.Reset();
+            m_SummaryPanel.TextPool.Reset();
+            Routine.Start(this, m_SetupPanelGroup.Show(0.1f, true));
         }
 
         #endregion // Run
@@ -393,13 +462,34 @@ namespace ProtoAqua.ExperimentV2
                 ActorStateId rightState = Services.Assets.Bestiary[inData.CritterIds[1]].EvaluateActorState(env, out var _);
                 BFEat leftEatsRight = BestiaryUtils.FindEatingRule(inData.CritterIds[0], inData.CritterIds[1], leftState);
                 BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(inData.CritterIds[1], inData.CritterIds[0], rightState);
+                BestiaryData bestiaryData = Services.Data.Profile.Bestiary;
+
                 if (leftEatsRight != null)
                 {
-                    ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id(), BFDiscoveredFlags.Rate));
+                    if (bestiaryData.HasFact(leftEatsRight.Id()))
+                    {
+                        ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id(), BFDiscoveredFlags.Rate));
+                    }
+                    else
+                    {
+                        leftEatsRight = null;
+                    }
                 }
                 if (rightEatsLeft != null)
                 {
-                    ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id(), BFDiscoveredFlags.Rate));
+                    if (bestiaryData.HasFact(rightEatsLeft.Id()))
+                    {
+                        ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id(), BFDiscoveredFlags.Rate));
+                    }
+                    else
+                    {
+                        rightEatsLeft = null;
+                    }
+                }
+
+                if (leftEatsRight == null && rightEatsLeft == null)
+                {
+                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Eat, ExperimentFeedback.NoRelationship));
                 }
             }
         }

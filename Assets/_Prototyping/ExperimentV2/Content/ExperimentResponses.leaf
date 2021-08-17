@@ -1,0 +1,60 @@
+#basePath   partner.talk.experiment
+
+// Room Stuff
+
+:: room.wood
+@trigger    RequestPartnerHelp
+@when       !experiment:setup.on
+@once
+@cutscene
+{@kevin}    Why's this room made out of wood?
+{@player}   What do you mean?
+{@kevin}    Well, your ship is {slow}metal{/slow} on the outside.
+            But this room doesn't match.
+{@player}   That's...
+            Hmm|, you know, I haven't really thought about it.
+{@kevin}    Maybe your {slow}friend{/slow} thought the contrast was "stylish" or something.
+
+// Behavior Already Observed
+
+:: behavior.alreadyObserved.1
+@trigger    BehaviorAlreadyObserved
+@who        kevin
+@repeat 1
+@chatter
+$set temp:newObservationTimer + 1
+{@kevin}    I think we already got this one.
+
+:: behavior.alreadyObserved.2
+@trigger    BehaviorAlreadyObserved
+@who        kevin
+@repeat 1
+@chatter
+$set temp:newObservationTimer + 1
+{@kevin}    We already know this.
+
+:: behavior.alreadyObserved.exitHint
+@trigger    BehaviorAlreadyObserved
+@who        kevin
+@when       temp:newObservationTimer > 2
+@triggerPriority    High
+@repeat     1
+@chatter
+$set temp:newObservationTimer = 0
+{@kevin}    We might be done here...
+
+:: behavior.newObservation.1
+@trigger    NewBehaviorObserved
+@who        kevin
+@repeat 1
+@chatter
+$set temp:newObservationTimer = 0
+{@kevin}    Nice one! 
+
+:: behavior.newObservation.2
+@trigger    NewBehaviorObserved
+@who        kevin
+@repeat 1
+@chatter
+$set temp:newObservationTimer = 0
+{@kevin}    Good catch.
