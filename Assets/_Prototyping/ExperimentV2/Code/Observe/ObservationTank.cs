@@ -91,6 +91,7 @@ namespace ProtoAqua.ExperimentV2
             m_World = m_ActorBehavior.World;
 
             EnvIconDisplay.Populate(m_EnvIcon, null);
+
             m_BottomPanelGroup.alpha = 1;
             m_BottomPanelGroup.blocksRaycasts = true;
             m_BottomPanelGroup.gameObject.SetActive(true);
@@ -104,11 +105,11 @@ namespace ProtoAqua.ExperimentV2
 
         private void Deactivate()
         {
+            m_ActorBehavior.ClearAll();
             m_SelectEnvPanel.Hide();
             m_SelectEnvPanel.ClearSelection();
             m_AddCrittersPanel.Hide();
             m_AddCrittersPanel.ClearSelection();
-            m_ActorBehavior.ClearAll();
             m_BehaviorCircles.Reset();
             m_FactResults.Clear();
             if (m_SummaryPanel.gameObject.activeSelf)
@@ -139,7 +140,7 @@ namespace ProtoAqua.ExperimentV2
         private void OnCrittersCleared()
         {
             m_RunButton.interactable = false;
-            m_ActorBehavior.ClearAll();
+            m_ActorBehavior.ClearActors();
         }
 
         #endregion // Critter Callbacks
@@ -344,9 +345,11 @@ namespace ProtoAqua.ExperimentV2
         {
             m_BottomPanelGroup.blocksRaycasts = false;
             m_InProgressGroup.blocksRaycasts = false;
+            m_ParentTank.BackClickable.gameObject.SetActive(false);
             yield return Routine.Combine(
                 m_BottomPanelGroup.Hide(0.1f, false),
-                m_InProgressGroup.Show(0.1f, true)
+                m_InProgressGroup.Show(0.1f, true),
+                Tween.OneToZero(m_ParentTank.BackIndicators.SetAlpha, 0.1f)
             );
         }
 
@@ -377,9 +380,10 @@ namespace ProtoAqua.ExperimentV2
                 yield return fader.Object.Show(Color.black, 0.5f);
                 ClearStateAfterExperiment();
                 yield return 0.5f;
-                PopulateSummaryScreen(inResult);
+                InitializeSummaryScreen(inResult);
                 yield return fader.Object.Hide(0.5f, false);
             }
+            yield return PopulateSummaryScreen(inResult);
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();
         }
@@ -387,19 +391,23 @@ namespace ProtoAqua.ExperimentV2
         private void ClearStateAfterExperiment()
         {
             m_SelectEnvPanel.Hide();
-            m_SelectEnvPanel.ClearSelection();
+
             m_AddCrittersPanel.Hide();
             m_AddCrittersPanel.ClearSelection();
-            m_ActorBehavior.ClearAll();
+            m_ActorBehavior.ClearActors();
+            
             m_BehaviorCircles.Reset();
             m_IsRunning = false;
             m_CameraBlinking.enabled = false;
+
+            m_ParentTank.BackClickable.gameObject.SetActive(true);
+            m_ParentTank.BackIndicators.SetAlpha(1);
 
             m_InProgressGroup.alpha = 0;
             m_InProgressGroup.gameObject.SetActive(false);
         }
 
-        private void PopulateSummaryScreen(ExperimentResult inResult)
+        private void InitializeSummaryScreen(ExperimentResult inResult)
         {
             m_SummaryPanel.gameObject.SetActive(true);
 
@@ -412,9 +420,17 @@ namespace ProtoAqua.ExperimentV2
 
             m_SummaryPanel.NoFacts.SetActive(false);
             m_SummaryPanel.HasFacts.SetActive(true);
+        }
+
+        private IEnumerator PopulateSummaryScreen(ExperimentResult inResult)
+        {
+            MonoBehaviour newFact;
             foreach(var fact in inResult.Facts)
             {
-                m_SummaryPanel.FactPools.Alloc(Services.Assets.Bestiary.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
+                newFact = m_SummaryPanel.FactPools.Alloc(Services.Assets.Bestiary.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
+                m_SummaryPanel.FactListLayout.ForceRebuild();
+                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, 1);
+                yield return 0.1f;
             }
         }
 

@@ -14,6 +14,7 @@ namespace ProtoAqua.ExperimentV2
         public GameObject HasFacts;
         public GameObject NoFacts;
         public Transform FactListRoot;
+        public LayoutGroup FactListLayout;
 
         [HideInInspector] public FactPools FactPools;
 
@@ -23,7 +24,7 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneOptimizable.Optimize()
         {
-            FactPools = FindObjectOfType<FactPools>();
+            FactPools = this.GetComponentInParent<FactPools>(true);
         }
 
         #endif // UNITY_EDITOR

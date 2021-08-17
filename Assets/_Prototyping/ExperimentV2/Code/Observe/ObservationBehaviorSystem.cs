@@ -439,7 +439,16 @@ namespace ProtoAqua.ExperimentV2
         {
             if (World != null)
             {
-                World.Water = default(WaterPropertyBlockF32);
+                ActorWorld.FreeAll(World);
+                ActorWorld.SetWaterState(World, null);
+            }
+            m_Phase = Phase.Spawning;
+        }
+
+        public void ClearActors()
+        {
+            if (World != null)
+            {
                 ActorWorld.FreeAll(World);
             }
             m_Phase = Phase.Spawning;

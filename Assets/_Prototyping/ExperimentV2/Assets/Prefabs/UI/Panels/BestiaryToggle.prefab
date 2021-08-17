@@ -165,8 +165,9 @@ GameObject:
   - component: {fileID: 5213301895612026476}
   - component: {fileID: 3579931408871302254}
   - component: {fileID: 41537090168980609}
+  - component: {fileID: 1764924171436781470}
   m_Layer: 0
-  m_Name: CritterAddButton
+  m_Name: BestiaryToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -300,6 +301,24 @@ MonoBehaviour:
     m_Source: 
     m_Hash: 0
   TooltipOverride: 
+--- !u!114 &1764924171436781470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944032297157232475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 3579931408871302254}
+  m_EnterEvent: 
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: tank_ui_click
 --- !u!1 &4328163344910562708
 GameObject:
   m_ObjectHideFlags: 0

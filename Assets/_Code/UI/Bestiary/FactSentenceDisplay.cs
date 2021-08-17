@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using BeauUtil;
 using BeauUtil.Variants;
 using BeauPools;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -16,6 +17,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private LayoutGroup m_Layout = null;
+        [SerializeField] private RectMask2D m_Mask = null;
 
         #endregion // Inspector
 

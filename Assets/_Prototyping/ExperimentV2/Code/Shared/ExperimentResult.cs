@@ -34,14 +34,16 @@ namespace ProtoAqua.ExperimentV2
 
     public struct ExperimentFeedback
     {
-        static public readonly StringHash32 MoreThanOneSpecies = "MoreThanOneSpecies";
-        static public readonly StringHash32 LessThanTwoSpecies = "LessThanTwoSpecies";
-        static public readonly StringHash32 MoreThanTwoSpecies = "MoreThanTwoSpecies";
-        static public readonly StringHash32 AutoFeederEnabled = "AutoFeederEnabled";
-        static public readonly StringHash32 AutoFeederDisabled = "AutoFeederDisabled";
-        static public readonly StringHash32 StabilizerEnabled = "StabilizerEnabled";
-        static public readonly StringHash32 StabilizerDisabled = "StabilizerDisabled";
-        static public readonly StringHash32 DeadCritters = "DeadCritters";
+        static public readonly TextId MoreThanOneSpecies = "experiment.measure.feedback.moreThanOne";
+        static public readonly TextId LessThanTwoSpecies = "experiment.measure.feedback.lessThanTwo";
+        static public readonly TextId MoreThanTwoSpecies = "experiment.measure.feedback.moreThanTwo";
+        static public readonly TextId AutoFeederEnabled = "experiment.measure.feedback.feederOn";
+        static public readonly TextId AutoFeederDisabled = "experiment.measure.feedback.feederOff";
+        static public readonly TextId StabilizerEnabled = "experiment.measure.feedback.stabilizerOn";
+        static public readonly TextId StabilizerDisabled = "experiment.measure.feedback.stabilizerOff";
+        static public readonly TextId NoRelationship = "experiment.measure.feedback.noRelationship";
+        static public readonly TextId NoRelationshipObserved = "experiment.measure.feedback.noRelationshipObserved";
+        static public readonly TextId DeadCritters = "experiment.measure.feedback.dead";
 
         public StringHash32 Category;
         public StringHash32 Id;
