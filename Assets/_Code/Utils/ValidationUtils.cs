@@ -137,6 +137,32 @@ namespace Aqua
             return arr;
         }
 
+        static public T[] FindAllAssets<T>(Predicate<T> inPredicate, params string[] inDirectories) where T : UnityEngine.Object
+        {
+            if (inDirectories.Length == 0)
+                inDirectories = null;
+            
+            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName, inDirectories);
+            if (assetGuids == null)
+                return null;
+            
+            HashSet<T> assets = new HashSet<T>();
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    T asset = obj as T;
+                    if (asset && inPredicate(asset))
+                        assets.Add(asset);
+                }
+            }
+
+            T[] arr = new T[assets.Count];
+            assets.CopyTo(arr);
+            return arr;
+        }
+
         #endif // UNITY_EDITOR
     }
 }

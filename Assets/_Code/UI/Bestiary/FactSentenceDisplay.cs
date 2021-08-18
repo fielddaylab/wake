@@ -17,7 +17,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private LayoutGroup m_Layout = null;
-        [SerializeField] private RectMask2D m_Mask = null;
+        // [SerializeField] private RectMask2D m_Mask = null;
 
         #endregion // Inspector
 

@@ -23,6 +23,9 @@ namespace AquaAudio
 
         public void Tooltip(TextId inTextId)
         {
+            if (inTextId.IsEmpty)
+                return;
+
             if (!CheckMode(OptionsAccessibility.TTSMode.Tooltips))
                 return;
 
@@ -34,6 +37,9 @@ namespace AquaAudio
 
         public void Tooltip(string inText)
         {
+            if (string.IsNullOrEmpty(inText))
+                return;
+
             if (!CheckMode(OptionsAccessibility.TTSMode.Tooltips))
                 return;
 
@@ -45,6 +51,9 @@ namespace AquaAudio
 
         public void Text(string inText)
         {
+            if (string.IsNullOrEmpty(inText))
+                return;
+
             if (!CheckMode(OptionsAccessibility.TTSMode.Full))
                 return;
 
@@ -56,6 +65,9 @@ namespace AquaAudio
 
         public void Text(string inText, float inPitch)
         {
+            if (string.IsNullOrEmpty(inText))
+                return;
+
             if (!CheckMode(OptionsAccessibility.TTSMode.Full))
                 return;
 

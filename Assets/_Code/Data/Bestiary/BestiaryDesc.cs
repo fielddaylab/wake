@@ -5,6 +5,7 @@ using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Aqua
 {
@@ -19,7 +20,7 @@ namespace Aqua
 
         [Header("Info")]
         [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_ParentEnvironment = null;
-        [SerializeField, ShowIfField("IsCritter")] private string m_ScientificNameId = null;
+        [SerializeField, FormerlySerializedAs("m_ScientificNameId"), ShowIfField("IsCritter")] private string m_ScientificName = null;
         [SerializeField] private TextId m_CommonNameId = null;
         [SerializeField] private TextId m_PluralCommonNameId = null;
         
@@ -69,7 +70,7 @@ namespace Aqua
             }
         }
 
-        public string ScientificName() { return m_ScientificNameId; }
+        public string ScientificName() { return m_ScientificName; }
         public TextId CommonName() { return m_CommonNameId; }
         public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
 
@@ -370,6 +371,8 @@ namespace Aqua
         IgnoreStarvation = 0x20,
         IsMicroscopic = 0x40,
         TreatAsPlant = 0x80,
+        DoNotUseInStressTank = 0x100,
+        IsNotLiving = 0x200
     }
 
     public enum BestiaryDescSize

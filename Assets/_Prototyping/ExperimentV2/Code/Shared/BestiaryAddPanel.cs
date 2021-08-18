@@ -31,6 +31,7 @@ namespace ProtoAqua.ExperimentV2
 
         [Header("List")]
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Category = BestiaryDescCategory.Critter;
+        [SerializeField, AutoEnum] private BestiaryDescFlags m_IgnoreFlags = 0;
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private BestiaryButtonPool m_ButtonPool = null;
         [SerializeField] private RectTransformPool m_EmptySlotPool = null;
@@ -154,7 +155,7 @@ namespace ProtoAqua.ExperimentV2
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
-                CollectCritters(Services.Data.Profile.Bestiary, m_Category, availableCritters);
+                CollectCritters(Services.Data.Profile.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
                 availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);
@@ -274,11 +275,11 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // ISceneOptimizable
 
-        static private void CollectCritters(BestiaryData inSaveData, BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outCritters)
+        static private void CollectCritters(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, ICollection<BestiaryDesc> outCritters)
         {
             foreach(var critter in inSaveData.GetEntities(inCategory))
             {
-                if (critter.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
+                if (critter.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | inIgnore))
                     continue;
 
                 outCritters.Add(critter);
