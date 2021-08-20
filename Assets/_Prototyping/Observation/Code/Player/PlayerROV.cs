@@ -263,6 +263,7 @@ namespace ProtoAqua.Observation
 
                 m_Kinematic.Config.Drag = m_DragEngineOn;
                 Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
+                m_Scanner.HideCurrentToolView();
             }
             else
             {

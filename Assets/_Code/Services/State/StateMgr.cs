@@ -579,7 +579,7 @@ namespace Aqua
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
-            var menu = DebugService.NewDebugMenu("Load Scene", 8);
+            var menu = new DMInfo("Load Scene", 16);
             
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {

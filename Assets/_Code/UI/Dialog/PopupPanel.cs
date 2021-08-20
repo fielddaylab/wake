@@ -40,7 +40,6 @@ namespace Aqua
         [Header("Contents")]
         [SerializeField] private LocText m_HeaderText = null;
         [SerializeField] private LocText m_ContentsText = null;
-        [SerializeField] private TMP_InputField m_Input = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;
 
@@ -64,15 +63,6 @@ namespace Aqua
                 int cachedIdx = i;
                 m_Buttons[i].Button.onClick.AddListener(() => OnButtonClicked(cachedIdx));
             }
-
-            m_Input.onSubmit.AddListener((s) => OnTextSubmit());
-
-            m_RaycastBlocker.OnInputDisabled.AddListener(OnInputDisabled);
-        }
-
-        private void OnDestroy()
-        {
-            m_RaycastBlocker.OnInputDisabled.RemoveListener(OnInputDisabled);
         }
 
         #endregion // Initialization
@@ -84,32 +74,15 @@ namespace Aqua
             return Present(inHeader, inText, DefaultOkay);
         }
 
-        public Future<PopupInputResult> ForcedTextEntry(string inHeader, string inText)
-        {
-            return TextEntry(inHeader, inText, DefaultOkay);
-        }
-
         public Future<StringHash32> AskYesNo(string inHeader, string inText)
         {
             return Present(inHeader, inText, DefaultYesNo);
-        }
-
-        public Future<PopupInputResult> CancelableTextEntry(string inHeader, string inText)
-        {
-            return TextEntry(inHeader, inText, DefaultSubmitCancel);
         }
 
         public Future<StringHash32> Present(string inHeader, string inText, params NamedOption[] inOptions)
         {
             Future<StringHash32> future = new Future<StringHash32>();
             m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inOptions));
-            return future;
-        }
-
-        public Future<PopupInputResult> TextEntry(string inHeader, string inText, params NamedOption[] inOptions)
-        {
-            Future<PopupInputResult> future = new Future<PopupInputResult>();
-            m_DisplayRoutine.Replace(this, PresentInputRoutine(future, inHeader, inText, inOptions));
             return future;
         }
 
@@ -136,9 +109,6 @@ namespace Aqua
                 m_ContentsText.gameObject.SetActive(false);
                 m_ContentsText.SetText(string.Empty);
             }
-
-            m_Input.SetTextWithoutNotify(string.Empty);
-            m_Input.gameObject.SetActive(inbInput);
 
             m_OptionCount = inOptions.Length;
             for(int i = 0; i < m_Buttons.Length; ++i)
@@ -208,51 +178,6 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentInputRoutine(Future<PopupInputResult> ioFuture, string inHeader, string inText, NamedOption[] inOptions)
-        {
-            using(ioFuture)
-            {
-                Configure(inHeader, inText, true, inOptions);
-
-                if (IsShowing())
-                {
-                    m_BoxAnim.Replace(this, BounceAnim());
-                }
-                else
-                {
-                    Show();
-                }
-
-                SetInputState(true);
-                Services.TTS.Text(inText);
-
-                m_SelectedOption = StringHash32.Null;
-                m_OptionWasSelected = false;
-                while(!m_OptionWasSelected)
-                {
-                    for(int i = 0; i < m_OptionCount; ++i)
-                    {
-                        if (!inOptions[i].Id.IsEmpty)
-                            m_Buttons[i].Button.interactable = !string.IsNullOrEmpty(m_Input.text);
-                    }
-                    yield return null;
-                }
-
-                Services.TTS.Cancel();
-                SetInputState(false);
-
-                ioFuture.Complete(new PopupInputResult(m_Input.text, m_SelectedOption));
-                m_SelectedOption = StringHash32.Null;
-
-                yield return null;
-
-                if (m_AutoCloseDelay > 0)
-                    yield return m_AutoCloseDelay;
-
-                Hide();
-            }
-        }
-
         #endregion // Display
 
         #region Animation
@@ -295,34 +220,6 @@ namespace Aqua
         {
             m_SelectedOption = m_Buttons[inIndex].OptionId;
             m_OptionWasSelected = true;
-        }
-
-        private void OnTextSubmit()
-        {
-            if (!string.IsNullOrEmpty(m_Input.text))
-            {
-                int nonEmptyIdx = -1;
-                for(int i = 0; i < m_OptionCount; ++i)
-                {
-                    if (m_Buttons[i].OptionId.IsEmpty)
-                        continue;
-
-                    if (nonEmptyIdx >= 0)
-                        return;
-
-                    nonEmptyIdx = i;
-                }
-
-                if (nonEmptyIdx >= 0)
-                {
-                    OnButtonClicked(nonEmptyIdx);
-                }
-            }
-        }
-
-        private void OnInputDisabled()
-        {
-            m_Input.DeactivateInputField();
         }
 
         #endregion // Callbacks

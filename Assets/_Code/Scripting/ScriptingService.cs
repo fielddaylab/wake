@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -694,7 +698,7 @@ namespace Aqua
             InitParsers();
             InitHandlers();
 
-            m_LeafCache = new MethodCache<LeafMember>(typeof(IScriptComponent), DefaultStringConverter.Instance);
+            m_LeafCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             m_LeafCache.LoadStatic();
 
             m_ParserPool = new DynamicPool<TagStringParser>(4, (p) => {
@@ -738,9 +742,9 @@ namespace Aqua
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
-            DMInfo scriptingMenu = DebugService.NewDebugMenu("Scripting");
+            DMInfo scriptingMenu = new DMInfo("Scripting");
 
-            DMInfo triggerMenu = DebugService.NewDebugMenu("Trigger Response");
+            DMInfo triggerMenu = new DMInfo("Trigger Response");
             RegisterTriggerResponse(triggerMenu, GameTriggers.SceneStart);
             RegisterTriggerResponse(triggerMenu, GameTriggers.RequestPartnerHelp);
             RegisterTriggerResponse(triggerMenu, GameTriggers.PartnerTalk);

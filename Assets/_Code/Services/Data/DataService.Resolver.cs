@@ -339,9 +339,15 @@ namespace Aqua
             }
 
             [LeafMember("HasUpgrade")]
-            static private Variant HasUpgrade(StringHash32 inFactId)
+            static private Variant HasUpgrade(StringHash32 inUpgradeId)
             {
-                return Services.Data.Profile.Inventory.HasUpgrade(inFactId);
+                return Services.Data.Profile.Inventory.HasUpgrade(inUpgradeId);
+            }
+
+            [LeafMember("GiveUpgrade")]
+            static private bool GiveUpgrade(StringHash32 inUpgradeId)
+            {
+                return Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId);
             }
 
             [LeafMember("HasScanned")]

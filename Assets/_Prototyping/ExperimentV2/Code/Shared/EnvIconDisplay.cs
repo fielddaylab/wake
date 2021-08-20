@@ -18,13 +18,19 @@ namespace ProtoAqua.ExperimentV2
                 inDisplay.Placeholder.SetActive(false);
                 inDisplay.Icon.sprite = inEnv.Icon();
                 inDisplay.Icon.gameObject.SetActive(true);
-                inDisplay.Label.SetText(inEnv.CommonName());
+                if (inDisplay.Label)
+                {
+                    inDisplay.Label.SetText(inEnv.CommonName());
+                }
             }
             else
             {
                 inDisplay.Placeholder.SetActive(true);
                 inDisplay.Icon.gameObject.SetActive(false);
-                inDisplay.Label.SetText(inDisplay.EmptyText);
+                if (inDisplay.Label)
+                {
+                    inDisplay.Label.SetText(inDisplay.EmptyText);
+                }
             }
         }
     }

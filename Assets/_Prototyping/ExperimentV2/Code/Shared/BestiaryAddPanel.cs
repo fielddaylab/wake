@@ -31,11 +31,12 @@ namespace ProtoAqua.ExperimentV2
 
         [Header("List")]
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Category = BestiaryDescCategory.Critter;
-        [SerializeField] private GridLayoutGroup m_Layout = null;
+        [SerializeField, AutoEnum] private BestiaryDescFlags m_IgnoreFlags = 0;
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private BestiaryButtonPool m_ButtonPool = null;
         [SerializeField] private RectTransformPool m_EmptySlotPool = null;
-        [SerializeField] private int m_RowsToFill = 3;
+        [SerializeField] private int m_MinIcons = 30;
+        [SerializeField] private int m_PerRow = 0;
 
         #endregion // Inspector
 
@@ -80,6 +81,11 @@ namespace ProtoAqua.ExperimentV2
         #endregion // BasePanel
 
         #region Selected Set
+
+        public IReadOnlyCollection<BestiaryDesc> Selected
+        {
+            get { return m_SelectedSet; }
+        }
 
         public void ClearSelection()
         {
@@ -149,7 +155,7 @@ namespace ProtoAqua.ExperimentV2
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
-                CollectCritters(Services.Data.Profile.Bestiary, m_Category, availableCritters);
+                CollectCritters(Services.Data.Profile.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
                 availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);
@@ -159,25 +165,26 @@ namespace ProtoAqua.ExperimentV2
         private void PopulateCritters(ICollection<BestiaryDesc> inCritters)
         {
             int critterCount = inCritters.Count;
-            int maxPerRow = m_Layout.constraintCount;
-            int minIcons = m_RowsToFill * maxPerRow;
             int emptyCount;
-            if (critterCount <= minIcons)
+            if (critterCount <= m_MinIcons)
             {
-                emptyCount = minIcons - critterCount;
+                emptyCount = m_MinIcons - critterCount;
             }
-            else
+            else if (m_PerRow > 0)
             {
-                int onRow = critterCount % maxPerRow;
+                int onRow = critterCount % m_PerRow;
                 if (onRow > 0)
                 {
-                    emptyCount = maxPerRow - onRow;
+                    emptyCount = m_PerRow - onRow;
                 }
                 else
                 {
                     emptyCount = 0;
                 }
-                emptyCount = maxPerRow - (critterCount - 1) % maxPerRow;
+            }
+            else
+            {
+                emptyCount = 0;
             }
 
             m_EmptySlotPool.Reset();
@@ -268,11 +275,11 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // ISceneOptimizable
 
-        static private void CollectCritters(BestiaryData inSaveData, BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outCritters)
+        static private void CollectCritters(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, ICollection<BestiaryDesc> outCritters)
         {
             foreach(var critter in inSaveData.GetEntities(inCategory))
             {
-                if (critter.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
+                if (critter.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | inIgnore))
                     continue;
 
                 outCritters.Add(critter);

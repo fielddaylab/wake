@@ -1,7 +1,6 @@
 using System;
 using Aqua;
 using Aqua.Cameras;
-using BeauRoutine;
 using BeauUtil;
 using BeauUtil.UI;
 using UnityEngine;
@@ -23,10 +22,12 @@ namespace ProtoAqua.ExperimentV2
         [Required] public GameObject InProgressRoot = null;
         [Required] public Transform InProgressTimerScaler = null;
         [Required] public GameObject ReadyRoot = null;
+        [Required] public ColorGroup BackIndicators = null;
         
         [Header("Click")]
         [Required(ComponentLookupDirection.Children)] public PointerListener Clickable = null;
         [Required(ComponentLookupDirection.Children)] public CursorInteractionHint InteractionHint = null;
+        [Required(ComponentLookupDirection.Children)] public PointerListener BackClickable = null;
 
         [Header("Canvas")]
         [Required] public Canvas Interface = null;

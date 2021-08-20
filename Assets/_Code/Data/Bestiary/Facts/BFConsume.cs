@@ -50,7 +50,7 @@ namespace Aqua
             return Property(m_Property).Icon();
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _, BFDiscoveredFlags __)
         {
             // TODO: localization!!
 

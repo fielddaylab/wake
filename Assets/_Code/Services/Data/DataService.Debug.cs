@@ -1,5 +1,6 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 #define DEVELOPMENT
+#endif // DEVELOPMENT
 
 using Aqua.Debugging;
 using Aqua.Profile;
@@ -19,6 +20,8 @@ namespace Aqua
 {
     public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable
     {
+        #if DEVELOPMENT
+
         #if UNITY_EDITOR
         [NonSerialized] private DMInfo m_BookmarksMenu;
         #endif // UNITY_EDITOR
@@ -117,9 +120,9 @@ namespace Aqua
         {
             // jobs menu
 
-            DMInfo jobsMenu = DebugService.NewDebugMenu("Jobs");
+            DMInfo jobsMenu = new DMInfo("Jobs");
 
-            DMInfo startJobMenu = DebugService.NewDebugMenu("Start Job");
+            DMInfo startJobMenu = new DMInfo("Start Job");
             foreach(var job in Services.Assets.Jobs.Objects)
                 RegisterJobStart(startJobMenu, job.Id());
 
@@ -132,17 +135,17 @@ namespace Aqua
 
             // bestiary menu
 
-            DMInfo bestiaryMenu = DebugService.NewDebugMenu("Bestiary");
+            DMInfo bestiaryMenu = new DMInfo("Bestiary");
 
-            DMInfo critterMenu = DebugService.NewDebugMenu("Critters");
+            DMInfo critterMenu = new DMInfo("Critters");
             foreach(var critter in Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Critter))
                 RegisterEntityToggle(critterMenu, critter.Id());
 
-            DMInfo envMenu = DebugService.NewDebugMenu("Environments");
+            DMInfo envMenu = new DMInfo("Environments");
             foreach(var env in Services.Assets.Bestiary.AllEntriesForCategory(BestiaryDescCategory.Environment))
                 RegisterEntityToggle(envMenu, env.Id());
 
-            DMInfo factMenu = DebugService.NewDebugMenu("Facts");
+            DMInfo factMenu = new DMInfo("Facts");
             Dictionary<StringHash32, DMInfo> factSubmenus = new Dictionary<StringHash32, DMInfo>();
             foreach(var fact in Services.Assets.Bestiary.AllFacts())
             {
@@ -153,7 +156,7 @@ namespace Aqua
                 StringHash32 submenuKey = fact.Parent().Id();
                 if (!factSubmenus.TryGetValue(submenuKey, out submenu))
                 {
-                    submenu = DebugService.NewDebugMenu(submenuKey.ToDebugString());
+                    submenu = new DMInfo(submenuKey.ToDebugString());
                     factSubmenus.Add(submenuKey, submenu);
                     factMenu.AddSubmenu(submenu);
                 }
@@ -175,7 +178,7 @@ namespace Aqua
 
             // map menu
 
-            DMInfo mapMenu = DebugService.NewDebugMenu("World Map");
+            DMInfo mapMenu = new DMInfo("World Map");
 
             foreach(var map in Services.Assets.Map.Stations())
             {
@@ -188,11 +191,26 @@ namespace Aqua
 
             yield return mapMenu;
 
+            // inventory menu
+
+            DMInfo invMenu = new DMInfo("Inventory");
+
+            DMInfo upgradesMenu = new DMInfo("Upgrades");
+
+            foreach(var upgrade in Services.Assets.Inventory.Upgrades)
+            {
+                RegisterUpgradeToggle(upgradesMenu, upgrade.Id());
+            }
+
+            invMenu.AddSubmenu(upgradesMenu);
+
+            yield return invMenu;
+
             // save data menu
 
-            DMInfo saveMenu = DebugService.NewDebugMenu("Player Profile");
+            DMInfo saveMenu = new DMInfo("Player Profile");
 
-            DMInfo bookmarkMenu = DebugService.NewDebugMenu("Bookmarks");
+            DMInfo bookmarkMenu = new DMInfo("Bookmarks");
             #if UNITY_EDITOR
             m_BookmarksMenu = bookmarkMenu;
             #endif // UNITY_EDITOR
@@ -310,7 +328,6 @@ namespace Aqua
             );
         }
 
-
         static private void UnlockAllBestiaryEntries(bool inbIncludeFacts)
         {
             bool bChanged = false;
@@ -337,6 +354,19 @@ namespace Aqua
                 foreach(var fact in entry.Facts)
                     Services.Data.Profile.Bestiary.DeregisterFact(fact.Id());
             }
+        }
+
+        static private void RegisterUpgradeToggle(DMInfo inMenu, StringHash32 inItem)
+        {
+            inMenu.AddToggle(inItem.ToDebugString(),
+                () => { return Services.Data.Profile.Inventory.HasUpgrade(inItem); },
+                (b) =>
+                {
+                    if (b)
+                        Services.Data.Profile.Inventory.AddUpgrade(inItem);
+                    else
+                        Services.Data.Profile.Inventory.RemoveUpgrade(inItem);
+                });
         }
 
         static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)
@@ -369,7 +399,7 @@ namespace Aqua
         }
 
         #endregion // IDebuggable
+
+        #endif // DEVELOPMENT
     }
 }
-
-#endif // UNITY_EDITOR || DEVELOPMENT_BUILD

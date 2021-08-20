@@ -11,7 +11,8 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private InvItemFlags m_Flags = InvItemFlags.None;
+        [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
+        [SerializeField, AutoEnum] private InvItemFlags m_Flags = InvItemFlags.None;
 
         [Header("Text")]
         [SerializeField] private TextId m_NameTextId = null;
@@ -25,7 +26,11 @@ namespace Aqua
 
         #endregion
 
+        public InvItemCategory Category() { return m_Category; }
         public InvItemFlags Flags() { return m_Flags; }
+
+        public bool HasFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) != 0; }
+        public bool HasAllFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public TextId NameTextId() { return m_NameTextId; }
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
@@ -33,5 +38,21 @@ namespace Aqua
         public Sprite Icon() { return m_Icon; }
 
         public int DefaultValue() { return m_Default; }
+    }
+
+    public enum InvItemCategory : byte
+    {
+        Currency,
+        Upgrade,
+        Artifact
+    }
+
+    [Flags]
+    public enum InvItemFlags : byte
+    {
+        [Hidden]
+        None = 0x00,
+
+        Hidden = 0x01
     }
 }

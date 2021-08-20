@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -21,58 +22,34 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField] private SelectableTank m_Tank = null;
         [SerializeField] private ActorAllocator m_Allocator = null;
 
-        [NonSerialized] private WaterPropertyBlockF32 m_EnvironmentState;
-        [NonSerialized] private bool m_HasEnvironment;
-        [NonSerialized] private RingBuffer<ActorInstance> m_AllocatedActors = new RingBuffer<ActorInstance>();
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
-        [NonSerialized] private ActorWorld m_World;
+        
+        [NonSerialized] public ActorWorld World;
+
+        public void Initialize(ObservationTank inTank)
+        {
+            if (World != null)
+                return;
+
+            World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, OnFree, 16, inTank);
+        }
 
         #region Critters
 
         public void Alloc(StringHash32 inId)
         {
-            if (m_World == null)
-            {
-                m_World = new ActorWorld(m_Tank.Bounds, FreeCritter);
-            }
-
-            ActorDefinition define = m_Allocator.Define(inId);
-            int spawnCount = define.SpawnCount;
-            ActorDefinition.SpawnConfiguration spawnConfig = define.Spawning;
-            ActorInstance instance;
-
-            int countStart = m_AllocatedActors.Count;
-            int countEnd = countStart + spawnCount;
-
-            // spawn everything first
-            while(spawnCount-- > 0)
-            {
-                instance = m_Allocator.Alloc(inId, null);
-                m_AllocatedActors.PushBack(instance);
-            }
-
-            // then set spawn states
-            for(int i = countStart; i < countEnd; i++)
-            {
-                instance = m_AllocatedActors[i];
-                ActorInstance.ForceActorAction(instance, ActorActionId.Spawning, m_World, ActorInstance.StartSpawning);
-                if (m_HasEnvironment)
-                    ActorInstance.SetActorState(instance, instance.Definition.StateEvaluator.Evaluate(m_EnvironmentState), m_World);
-            }
+            ActorWorld.AllocWithDefaultCount(World, inId);
         }
 
-        public void Free(StringHash32 inId)
+        public void FreeAll(StringHash32 inId)
         {
-            ActorInstance instance;
-            for(int i = m_AllocatedActors.Count - 1; i >= 0; i--)
-            {
-                instance = m_AllocatedActors[i];
-                if (instance.Definition.Id == inId)
-                {
-                    m_AllocatedActors.FastRemoveAt(i);
-                    m_Allocator.Free(instance);
-                }
-            }
+            ActorWorld.FreeAll(World, inId);
+        }
+
+        private void OnFree(ActorInstance inCritter, ActorWorld inWorld)
+        {
+            ActorWorld.ModifyPopulation(inWorld, inCritter.Definition.Id, -1);
+            ActorInstance.ReleaseTargetsAndInteractions(inCritter, inWorld);
         }
 
         #endregion // Critters
@@ -81,37 +58,38 @@ namespace ProtoAqua.ExperimentV2
 
         public void UpdateEnvState(WaterPropertyBlockF32 inEnvironment)
         {
-            m_EnvironmentState = inEnvironment;
-            m_HasEnvironment = true;
-            foreach(var critter in m_AllocatedActors)
-                ActorInstance.SetActorState(critter, critter.Definition.StateEvaluator.Evaluate(inEnvironment), m_World);
+            ActorWorld.SetWaterState(World, inEnvironment);
         }
 
         public void ClearEnvState()
         {
-            m_EnvironmentState = Services.Assets.WaterProp.DefaultValues();
-            m_HasEnvironment = false;
-            foreach(var critter in m_AllocatedActors)
-                ActorInstance.SetActorState(critter, ActorStateId.Alive, m_World);
+            ActorWorld.SetWaterState(World, null);
         }
 
         #endregion // Env State
 
         #region Tick
 
+        static public void ConfigureStates()
+        {
+            ActorInstance.ConfigureActionMethods(ActorActionId.Idle, OnActorIdleStart, null, null);
+            ActorInstance.ConfigureActionMethods(ActorActionId.Hungry, OnActorHungryStart, null, ActorHungryAnimation);
+            ActorInstance.ConfigureActionMethods(ActorActionId.Eating, OnActorEatStart, null, ActorEatAnimation);
+            ActorInstance.ConfigureActionMethods(ActorActionId.BeingEaten, OnActorBeingEatenStart, OnActorBeingEatenEnd, ActorBeingEatenAnimation);
+            ActorInstance.ConfigureActionMethods(ActorActionId.Dying, OnActorDyingStart, null, ActorDyingAnimation);
+            ActorInstance.ConfigureInteractionMethods(OnInteractionAcquired, OnInteractionReleased);
+        }
+
         public void TickBehaviors(float inDeltaTime)
         {
-            if (!IsSpawningComplete())
-                return;
-
-            
+            IsSpawningComplete();
         }
 
         private bool IsSpawningComplete()
         {
             if (m_Phase == Phase.Spawning)
             {
-                foreach(var critter in m_AllocatedActors)
+                foreach(var critter in World.Actors)
                 {
                     if (critter.CurrentAction == ActorActionId.Spawning)
                         return false;
@@ -130,49 +108,350 @@ namespace ProtoAqua.ExperimentV2
         private void FinalizeCritterInitialization()
         {
             ActorInstance critter;
-            for(int i = m_AllocatedActors.Count - 1; i >= 0; i--)
+            for(int i = World.Actors.Count - 1; i >= 0; i--)
             {
-                critter = m_AllocatedActors[i];
+                critter = World.Actors[i];
                 if (critter.CurrentState == ActorStateId.Dead)
                 {
-                    ActorInstance.SetActorAction(critter, ActorActionId.Dying, m_World, OnActorDyingStart);
+                    ActorInstance.SetActorAction(critter, ActorActionId.Dying, World);
                 }
                 else
                 {
-                    ActorInstance.SetActorAction(critter, ActorActionId.Idle, m_World, OnActorIdleStart);
+                    ActorInstance.SetActorAction(critter, ActorActionId.Idle, World);
                 }
             }
-        }
 
-        private void FreeCritter(ActorInstance inInstance)
-        {
-            m_AllocatedActors.FastRemove(inInstance);
-            m_Allocator.Free(inInstance);
+            ActorWorld.RegenerateActorCounts(World);
         }
 
         #endregion // Tick
 
         #region Actor States
 
-        static private void OnActorDyingStart(ActorInstance inActor, ActorWorld inSystem)
-        {
+        #region Dying
 
+        static private void OnActorDyingStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev)
+        {
+            ActorInstance.ReleaseTargetsAndInteractions(inActor, inWorld);
         }
 
-        static private void OnActorIdleStart(ActorInstance inActor, ActorWorld inSystem)
+        static private IEnumerator ActorDyingAnimation(ActorInstance inActor, ActorWorld inWorld)
         {
+            yield return Tween.Color(inActor.ColorAdjust.Color, Color.black, inActor.ColorAdjust.SetColor, 1);
+            yield return Tween.Float(1, 0, inActor.ColorAdjust.SetAlpha, 0.5f);
+            ActorWorld.Free(inWorld, inActor);
+        }
 
+        #endregion // Dying
+
+        #region Idle
+
+        static private void OnActorIdleStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev)
+        {
+            ActorInstance.ReleaseInteraction(inActor, inWorld);
+            ActorInstance.ReleaseTarget(inActor, inWorld);
+
+            if (!inActor.Definition.IsPlant && inActor.Definition.Movement.MoveType != ActorDefinition.MovementTypeId.Stationary)
+                inActor.ActionAnimation.Replace(inActor, ActorIdleAnimation(inActor, inWorld));
+        }
+
+        static private IEnumerator ActorIdleAnimation(ActorInstance inActor, ActorWorld inWorld)
+        {
+            ActorDefinition def = inActor.Definition;
+            bool bLimitMovement = ActorDefinition.GetEatTargets(def, inActor.CurrentState).Length > 0;
+
+            float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
+            float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
+            int moveCount = !bLimitMovement ? 0 : RNG.Instance.Next(3, 6);
+            Vector3 current;
+            Vector3 target;
+            float duration;
+            float interval = intervalMultiplier * RNG.Instance.NextFloat() * (def.Movement.MovementInterval + def.Movement.MovementIntervalRandom);
+            yield return interval;
+            
+            while(!bLimitMovement || moveCount-- > 0)
+            {
+                current = inActor.CachedTransform.localPosition;
+                target = ActorDefinition.FindRandomTankLocationInRange(RNG.Instance, inWorld.WorldBounds, inActor.CachedTransform.localPosition, def.Movement.MovementIdleDistance, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
+                duration = Vector3.Distance(current, target) / movementSpeed;
+                interval = intervalMultiplier * (def.Movement.MovementInterval + RNG.Instance.NextFloat(def.Movement.MovementIntervalRandom));
+
+                yield return inActor.CachedTransform.MoveTo(target, duration, Axis.XY, Space.Self).Ease(def.Movement.MovementCurve);
+                yield return interval;
+            }
+
+            ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
+        }
+
+        #endregion // Idle
+
+        #region Hungry
+
+        static private void OnActorHungryStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev)
+        {
+            ActorInstance eatTarget = FindGoodEatTarget(inActor, inWorld);
+            if (eatTarget == null || !ActorInstance.AcquireTarget(inActor, eatTarget, inWorld))
+            {
+                ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+            }
+        }
+
+        static private IEnumerator ActorHungryAnimation(ActorInstance inActor, ActorWorld inWorld)
+        {
+            ActorDefinition def = inActor.Definition;
+            ActorInstance target = inActor.CurrentTargetActor;
+
+            if (!ActorInstance.IsValidTarget(target))
+            {
+                ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+                yield break;
+            }
+
+            float movementSpeed = def.Movement.MovementSpeed * def.Eating.MovementMultiplier * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
+
+            Vector3 currentPos;
+            Vector3 targetPos;
+            Vector3 targetPosOffset = FindGoodEatPositionOffset(target);
+            Vector3 distanceVector;
+            while(ActorInstance.IsValidTarget(target))
+            {
+                currentPos = inActor.CachedTransform.localPosition;
+                targetPos = target.CachedTransform.localPosition + targetPosOffset;
+                targetPos.z = currentPos.z;
+                targetPos = ActorDefinition.ClampToTank(inWorld.WorldBounds, targetPos, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
+
+                distanceVector = targetPos - currentPos;
+                if (distanceVector.sqrMagnitude < 0.05f)
+                {
+                    if (ActorInstance.AcquireInteraction(inActor, target, inWorld))
+                    {
+                        ActorInstance.SetActorAction(inActor, ActorActionId.Eating, inWorld);
+                        yield break;
+                    }
+                    else
+                    {
+                        ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+                    }
+                }
+                else
+                {
+                    float distanceToMove = movementSpeed * Routine.DeltaTime;
+                    float distanceScalar = distanceVector.magnitude;
+                    if (distanceScalar < movementSpeed)
+                    {
+                        distanceToMove *= 1f - 0.7f * (distanceScalar / movementSpeed);
+                    }
+                    currentPos = Vector3.MoveTowards(currentPos, targetPos, distanceToMove);
+                    inActor.CachedTransform.SetPosition(currentPos, Axis.XY, Space.Self);
+                }
+
+                yield return null;
+            }
+
+            ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+        }
+
+        #endregion // Hungry
+
+        #region Eat
+
+        static private void OnActorEatStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev)
+        {
+            ActorInstance.ResetAnimationTransform(inActor);
+
+            if (inActor.IdleAnimation)
+                inActor.IdleAnimation.AnimationScale = 0;
+        }
+
+        static private IEnumerator ActorEatAnimation(ActorInstance inActor, ActorWorld inWorld)
+        {
+            ActorInstance target = inActor.CurrentInteractionActor;
+            BFEat eatRule = Services.Assets.Bestiary.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
+            using(ObservationTank.CaptureCircle(eatRule.Id(), inActor, inWorld))
+            {
+                switch(inActor.Definition.Eating.EatType)
+                {
+                    case ActorDefinition.EatTypeId.Nibble:
+                        {
+                            int nibbleCount = RNG.Instance.Next(3, 5);
+                            while(nibbleCount-- > 0)
+                            {
+                                yield return EatPulse(inActor, 0.2f);
+                                ObservationTank.EmitEmoji(eatRule, inActor, inWorld);
+                                if (nibbleCount > 0)
+                                    yield return 0.3f;
+                            }
+                            break;
+                        }
+
+                    case ActorDefinition.EatTypeId.LargeBite:
+                    default:
+                        {
+                            yield return EatPulse(inActor, 0.3f);
+                            ObservationTank.EmitEmoji(eatRule, inActor, inWorld); 
+                            break;
+                        }
+                }
+                
+                if (target.Definition.FreeOnEaten)
+                    ActorWorld.Free(inWorld, target);
+                
+                yield return 1;
+            }
+
+            ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+        }
+
+        static private IEnumerator EatPulse(ActorInstance inInstance, float inDuration)
+        {
+            yield return inInstance.CachedTransform.ScaleTo(1.05f, inDuration, Axis.XY).Yoyo(true).Ease(Curve.CubeOut).RevertOnCancel();
+            Services.Audio.PostEvent("urchin_eat");
+        }
+
+        static private void OnActorEatEnd(ActorInstance inActor, ActorWorld inWorld, ActorActionId inNext)
+        {
+            if (inActor.IdleAnimation)
+                inActor.IdleAnimation.AnimationScale = 1;
+        }
+
+        #endregion // Eat
+
+        #region Being Eaten
+
+        static private void OnActorBeingEatenStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev)
+        {
+            ActorInstance.ReleaseTargetsAndInteractions(inActor, inWorld);
+            ActorInstance.ResetAnimationTransform(inActor);
+
+            if (inActor.IdleAnimation)
+                inActor.IdleAnimation.AnimationScale = 0;
+        }
+
+        static private IEnumerator ActorBeingEatenAnimation(ActorInstance inActor, ActorWorld inWorld)
+        {
+            yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.01f, 0.15f, Axis.X, Space.Self)
+                .Wave(Wave.Function.Sin, 1).Loop().RevertOnCancel();
+        }
+
+        static private void OnActorBeingEatenEnd(ActorInstance inActor, ActorWorld inWorld, ActorActionId inNext)
+        {
+            ActorInstance.ResetAnimationTransform(inActor);
+
+            if (inActor.IdleAnimation)
+                inActor.IdleAnimation.AnimationScale = 1;
+        }
+
+        #endregion // Being Eaten
+
+        static private void OnInteractionAcquired(ActorInstance inActor, ActorWorld inWorld)
+        {
+            ActorInstance.SetActorAction(inActor, ActorActionId.BeingEaten, inWorld);
+        }
+
+        static private void OnInteractionReleased(ActorInstance inActor, ActorWorld inWorld)
+        {
+            if (inActor.IncomingInteractionCount > 0 || inActor.CurrentAction != ActorActionId.BeingEaten)
+                return;
+
+            ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
         }
 
         #endregion // Actor States
 
+        #region Eating
+
+        static private RingBuffer<PriorityValue<ActorInstance>> s_EatTargetBuffer;
+
+        static private ActorInstance FindGoodEatTarget(ActorInstance inInstance, ActorWorld inWorld)
+        {
+            RingBuffer<PriorityValue<ActorInstance>> eatBuffer = s_EatTargetBuffer ?? (s_EatTargetBuffer = new RingBuffer<PriorityValue<ActorInstance>>(16, RingBufferMode.Expand));
+            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
+            eatBuffer.Clear();
+            Vector3 instancePosition = inInstance.CachedTransform.localPosition;
+            Vector3 critterPosition;
+            float critterDistance, priority;
+
+            foreach(var critter in inWorld.Actors)
+            {
+                if (!IsValidEatTarget(validTargets, critter))
+                    continue;
+
+                critterPosition = critter.CachedTransform.localPosition;
+                critterDistance = Vector3.Distance(instancePosition, critterPosition);
+                priority = (critter.Definition.TargetLimit - critter.IncomingTargetCount) * (5 - critterDistance);
+                eatBuffer.PushBack(new PriorityValue<ActorInstance>(critter, priority));
+            }
+
+            if (eatBuffer.Count == 0)
+            {
+                return null;
+            }
+            else if (eatBuffer.Count == 1)
+            {
+                return eatBuffer.PopFront();
+            }
+            else
+            {
+                eatBuffer.Sort();
+                ActorInstance actor = eatBuffer.PopFront().Value;
+                eatBuffer.Clear();
+                return actor;
+            }
+        }
+
+        static public bool HasPotentialEatTarget(ActorInstance inInstance, ActorWorld inWorld)
+        {
+            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
+            
+            foreach(var critter in inWorld.Actors)
+            {
+                if (!IsValidEatTarget(validTargets, critter))
+                    continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget)
+        {
+            return RNG.Instance.NextVector2(inEatTarget.Definition.EatOffsetRange);
+        }
+
+        static private bool IsValidEatTarget(ActorDefinition.ValidEatTarget[] inTargets, ActorInstance inPossibleTarget)
+        {
+            if (!ActorInstance.IsValidTarget(inPossibleTarget))
+                return false;
+
+            for(int i = 0, length = inTargets.Length; i < length; i++)
+            {
+                if (inTargets[i].TargetId == inPossibleTarget.Definition.Id)
+                    return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Eating
+
         public void ClearAll()
         {
-            m_EnvironmentState = default(WaterPropertyBlockF32);
-            m_AllocatedActors.Clear();
-            m_Allocator.FreeAll();
+            if (World != null)
+            {
+                ActorWorld.FreeAll(World);
+                ActorWorld.SetWaterState(World, null);
+            }
             m_Phase = Phase.Spawning;
-            m_HasEnvironment = false;
+        }
+
+        public void ClearActors()
+        {
+            if (World != null)
+            {
+                ActorWorld.FreeAll(World);
+            }
+            m_Phase = Phase.Spawning;
         }
 
         #if UNITY_EDITOR

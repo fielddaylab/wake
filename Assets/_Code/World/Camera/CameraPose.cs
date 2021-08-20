@@ -64,7 +64,7 @@ namespace Aqua.Cameras
             Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
             Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
 
-            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 1;
+            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 0.0001f;
 
             Gizmos.DrawLine(bottomLeft, topLeft);
             Gizmos.DrawLine(bottomRight, topRight);

@@ -26,14 +26,20 @@ namespace Aqua
             {
                 if (Ref.Replace(ref m_KeyCode, value))
                 {
-                    m_ButtonDisplay.Assign(m_KeyCode);
+                    if (m_ButtonDisplay != null)
+                    {
+                        m_ButtonDisplay.Assign(m_KeyCode);
+                    }
                 }
             }
         }
 
         private void Awake()
         {
-            m_ButtonDisplay.Assign(m_KeyCode);
+            if (m_ButtonDisplay != null)
+            {
+                m_ButtonDisplay.Assign(m_KeyCode);
+            }
         }
 
         private void OnEnable()
@@ -62,7 +68,10 @@ namespace Aqua
             {
                 if (Services.Input.ExecuteClick(gameObject))
                 {
-                    m_ButtonDisplay.PlayAnimation();
+                    if (m_ButtonDisplay != null)
+                    {
+                        m_ButtonDisplay.PlayAnimation();
+                    }
                 }
             }
         }

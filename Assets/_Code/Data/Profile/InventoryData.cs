@@ -141,12 +141,27 @@ namespace Aqua.Profile
 
         public bool HasUpgrade(StringHash32 inUpgradeId)
         {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
             return m_UpgradeIds.Contains(inUpgradeId);
         }
 
         public bool AddUpgrade(StringHash32 inUpgradeId)
         {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
             if (m_UpgradeIds.Add(inUpgradeId))
+            {
+                m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool RemoveUpgrade(StringHash32 inUpgradeId)
+        {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
+            if (m_UpgradeIds.Remove(inUpgradeId))
             {
                 m_HasChanges = true;
                 Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
@@ -163,6 +178,11 @@ namespace Aqua.Profile
         public bool IsPropertyUnlocked(WaterPropertyId inId)
         {
             return Bits.Contains(m_WaterProperties, (int) inId);
+        }
+
+        public WaterPropertyMask GetPropertyUnlockedMask()
+        {
+            return new WaterPropertyMask((byte) m_WaterProperties);
         }
 
         public bool UnlockProperty(WaterPropertyId inId)

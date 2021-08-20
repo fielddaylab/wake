@@ -130,6 +130,76 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Locates reproduce rule associated with the given creature.
+        /// </summary>
+        static public BFReproduce FindReproduceRule(BestiaryDesc inParent, ActorStateId inState = ActorStateId.Alive)
+        {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            if (inState == ActorStateId.Dead)
+                return null;
+
+            BFReproduce defaultReproduce = null;
+            foreach (var fact in inParent.Facts)
+            {
+                BFReproduce reproduce = fact as BFReproduce;
+                if (reproduce == null)
+                    continue;
+
+                if (reproduce.OnlyWhenStressed())
+                {
+                    if (inState == ActorStateId.Stressed)
+                        return reproduce;
+                }
+                else
+                {
+                    if (inState == ActorStateId.Alive)
+                        return reproduce;
+
+                    defaultReproduce = reproduce;
+                }
+            }
+
+            return defaultReproduce;
+        }
+
+        /// <summary>
+        /// Locates growth rule associated with the given creature.
+        /// </summary>
+        static public BFGrow FindGrowRule(BestiaryDesc inParent, ActorStateId inState = ActorStateId.Alive)
+        {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            if (inState == ActorStateId.Dead)
+                return null;
+
+            BFGrow defaultGrow = null;
+            foreach (var fact in inParent.Facts)
+            {
+                BFGrow grow = fact as BFGrow;
+                if (grow == null)
+                    continue;
+
+                if (grow.OnlyWhenStressed())
+                {
+                    if (inState == ActorStateId.Stressed)
+                        return grow;
+                }
+                else
+                {
+                    if (inState == ActorStateId.Alive)
+                        return grow;
+
+                    defaultGrow = grow;
+                }
+            }
+
+            return defaultGrow;
+        }
+
+        /// <summary>
         /// Locates the range rule associated with the given creature and water property.
         /// </summary>
         static public BFState FindStateRangeRule(BestiaryDesc inParent, WaterPropertyId inPropertyId)

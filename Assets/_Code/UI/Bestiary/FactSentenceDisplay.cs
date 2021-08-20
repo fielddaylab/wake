@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using BeauUtil;
 using BeauUtil.Variants;
 using BeauPools;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -16,6 +17,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private LayoutGroup m_Layout = null;
+        // [SerializeField] private RectMask2D m_Mask = null;
 
         #endregion // Inspector
 
@@ -32,7 +34,7 @@ namespace Aqua
             m_AllocatedFragments.Clear();
         }
 
-        public void Populate(BFBehavior inFact, BestiaryDesc inReference)
+        public void Populate(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
             if (!m_Tweaks)
             {
@@ -41,7 +43,7 @@ namespace Aqua
 
             Clear();
 
-            foreach(var fragment in inFact.GenerateFragments(inReference))
+            foreach(var fragment in inFact.GenerateFragments(inReference, inFlags))
             {
                 TryAllocFragment(fragment);
             }

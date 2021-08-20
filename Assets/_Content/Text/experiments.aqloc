@@ -3,107 +3,67 @@
 :: env.none
 <color=yellow>No Environment Set</color>
 
-// ----------- OLD ---------------- //
+:: env.button.tooltip
+Select Environment
 
-// TANKS
+:: critter.button.tooltip
+Select Critter
 
-:: tank.none.label
-\ -- No Tank Selected --
+:: critter.button.multi.tooltip
+Select Critters
 
-:: tank.foundational.label
-\ -- Behavior Observation Tank --
-Single tank. Use to observe creatures.
+:: run.button.tooltip
+Run Experiment
 
-:: tank.foundational.label.short
-Behavior Observation Tank
+:: waterStabilizer.button.tooltip
+Water Stabilizer
 
-:: tank.stressor.label
-\ -- Stressor Tank --
-Environment tank. Use to observe creature in different environments.
+:: autoFeeder.button.tooltip
+Auto-Feeder
 
-:: tank.stressor.label.short
-Stressor Tank
+:: observation.newBehavior.header
+New Fact Observed
 
-:: tank.measurement.label
-\ -- Measurement Tank --
-Environment tank. Use to observe creatures.
+:: backToShip.tooltip
+Return to Ship Exterior
 
-:: tank.measurement.label.short
-Measurement Tank
+// feedback
 
-// ECOSYSTEMS
+:: measure.feedback.dead
+Dead critters
 
-:: ecosystem.none.label
-\ -- No Ecosystem Selected --
+:: measure.feedback.header.all
+Results Unavailable
 
-:: ecosystem.default.label
-\ -- Default --
-Default water settings.
+:: measure.feedback.header.repro
+Reproduction Rates Unavailable
 
-:: ecosystem.default.label.short
-Default Ecosystem
+:: measure.feedback.header.eat
+Eating Rates Unavailable
 
-:: ecosystem.kelpForest.label
-\ -- Kelp Forest --
-Ideal for the ecosystem around kelp.
+:: measure.feedback.header.water
+Water Interactions Unavailable
 
-:: ecosystem.kelpForest.label.short
-Kelp Forest Ecosystem
+:: measure.feedback.moreThanOne
+More than one species present
 
-// ACTORS
+:: measure.feedback.moreThanTwo
+More than two species present
 
-:: actor.kelp.label
-\ -- Kelp --
-Underrated green "plant" thing.
+:: measure.feedback.lessThanTwo
+Less than two species present
 
-:: actor.kelp.label.short
-Kelp
+:: measure.feedback.feederOn
+Auto-Feeder enabled
 
-:: actor.urchin.label
-\ -- Urchin --
-Tiny kelp eater.
+:: measure.feedback.feederOff
+Auto-Feeder disabled
 
-:: actor.urchin.label.short
-Urchin
+:: measure.feedback.stabilizerOn
+Water Stabilizer enabled
 
-// BEHAVIORS
+:: measure.feedback.stabilizerOff
+Water Stabilizer disabled
 
-:: popup.newBehavior.header
-New Fact Obtained!
-
-:: behavior.urchin.eats.kelp.title
-Behavior Observed: Urchin Eats Kelp
-
-:: behavior.urchin.eats.kelp.desc
-Urchins have been observed to eat kelp.
-
-:: behavior.urchin.eats.kelp.short
-Urchin Eats Kelp
-
-:: behavior.seaottter.eats.urchin.title
-Behavior Observed: Sea Otter Eats Urchin
-
-:: behavior.seaotter.eats.urchin.desc
-Sea otters have been observed to eat urchins.
-
-:: behavior.seaotter.eats.urchin.short
-Sea Otter Eats Urchin
-
-// SUMMARY SCREEN
-
-:: summary.countableSummary
-{loc experiment.summary.duration}
-
-:: summary.duration
-Duration: {var-i experiment:experimentDuration} s.
-
-:: summary.observedBehaviors
-Observed {highlight}{var-i experiment:observedBehaviorCount}{/highlight} new behavior(s)
-
-// TOOLTIPS
-
-:: device.unstarted.tooltip
-Start Experiment
-
-:: device.inProgress.tooltip
-End Experiment
+:: measure.feedback.noRelationship
+Relationship between species is undocumented

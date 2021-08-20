@@ -4,6 +4,7 @@ using BeauRoutine;
 using System.Collections;
 using UnityEngine.UI;
 using Aqua;
+using BeauUtil;
 
 namespace ProtoAqua.Observation
 {
@@ -22,6 +23,7 @@ namespace ProtoAqua.Observation
         [Header("Data")]
         [SerializeField] private CanvasGroup m_DataGroup = null;
         [SerializeField] private LocText m_HeaderText = null;
+        [SerializeField] private Image m_ImageDisplay = null;
         [SerializeField] private LocText m_DescriptionText = null;
 
         #endregion // Inspector
@@ -96,6 +98,7 @@ namespace ProtoAqua.Observation
             if (inData == null)
             {
                 m_HeaderText.SetText("Missing Scan");
+                m_ImageDisplay.gameObject.SetActive(false);
                 m_DescriptionText.SetText("This scan data was either not set or not loaded.");
             }
             else
@@ -130,6 +133,18 @@ namespace ProtoAqua.Observation
                     m_DescriptionText.Graphic.maxVisibleCharacters = 0;
 
                     m_TypeRoutine.Replace(this, TypeOut());
+                }
+
+                StringHash32 spriteId = inData.SpriteId();
+                if (spriteId.IsEmpty)
+                {
+                    m_ImageDisplay.gameObject.SetActive(false);
+                    m_ImageDisplay.sprite = null;
+                }
+                else
+                {
+                    m_ImageDisplay.gameObject.SetActive(true);
+                    m_ImageDisplay.sprite = null ; // TODO: Find sprite with id
                 }
             }
 
@@ -236,6 +251,7 @@ namespace ProtoAqua.Observation
         {
             m_HeaderText.SetText(string.Empty);
             m_DescriptionText.SetText(string.Empty);
+            m_ImageDisplay.sprite = null;
         }
 
         #endregion // Callbacks

@@ -1,11 +1,7 @@
 using System;
-using UnityEngine;
-using BeauData;
 using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine.Scripting;
-using BeauUtil.Variants;
-using BeauPools;
 using Aqua;
 using BeauUtil.Debugger;
 
@@ -27,11 +23,14 @@ namespace ProtoAqua.Observation
         [BlockContent] private string m_DescText = null;
 
         // Links
-        [BlockMeta("spriteId")] private string m_SpriteId = null;
-
+        [BlockMeta("spriteId")] private StringHash32 m_SpriteId = null;
         [BlockMeta("logbook")] private StringHash32 m_LogbookId = null;
         [BlockMeta("bestiary")] private StringHash32 m_BestiaryId = null;
         private StringHash32[] m_BestiaryFactIds = null;
+
+        // Requirements
+        [BlockMeta("requires")] private string m_Requirements = null;
+        [BlockMeta("fallback")] private StringHash32 m_Fallback = null;
 
         #endregion // Serialized
 
@@ -48,13 +47,24 @@ namespace ProtoAqua.Observation
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }
 
-        public string SpriteId() { return m_SpriteId; }
+        public StringHash32 SpriteId() { return m_SpriteId; }
         public StringHash32 LogbookId() { return m_LogbookId; }
         public StringHash32 BestiaryId() { return m_BestiaryId; }
 
         public ListSlice<StringHash32> FactIds() { return m_BestiaryFactIds; }
 
+        public StringSlice Requirements() { return m_Requirements; }
+        public StringHash32 FallbackId() { return m_Fallback; }
+
         #region Scan
+
+        [BlockMeta("tool")]
+        private void ActivateTool(bool inbActivate)
+        {
+            m_Flags |= ScanDataFlags.Tool;
+            if (inbActivate)
+                m_Flags |= ScanDataFlags.ActivateTool;
+        }
 
         [BlockMeta("important"), Preserve]
         private void SetImportant(bool inbImportant = true)
@@ -91,6 +101,19 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Scan
+
+        #region Default
+
+        static public readonly ScanData Error;
+
+        static ScanData()
+        {
+            Error = new ScanData("");
+            Error.m_HeaderText = "MISSING SCAN DATA";
+            Error.m_DescText = "Scan is missing";
+        }
+
+        #endregion // Default
     }
 
     [Flags]
@@ -99,7 +122,9 @@ namespace ProtoAqua.Observation
         Actor       = 0x01,
         Environment = 0x02,
         Character   = 0x04,
+        Tool        = 0x08,
 
         Important   = 0x10,
+        ActivateTool = 0x20,
     }
 }

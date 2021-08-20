@@ -39,7 +39,7 @@ namespace Aqua
             return Services.Assets.Bestiary.DefaultDeathIcon();
         }
 
-        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _)
+        public override IEnumerable<BFFragment> GenerateFragments(BestiaryDesc _, BFDiscoveredFlags __)
         {
             yield return BFFragment.CreateLocNoun(Parent().CommonName());
             yield return BFFragment.CreateLocVerb(Verb());

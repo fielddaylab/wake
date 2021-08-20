@@ -39,8 +39,11 @@ namespace ProtoAqua.ExperimentV2
 
         private void Awake()
         {
-            Slider.onValueChanged.AddListener(InvokeChanged);
-            Slider.EnsureComponent<PointerListener>().onPointerUp.AddListener(InvokeReleased);
+            if (Slider)
+            {
+                Slider.onValueChanged.AddListener(InvokeChanged);
+                Slider.EnsureComponent<PointerListener>().onPointerUp.AddListener(InvokeReleased);
+            }
         }
 
         private void InvokeChanged(float inSliderValue)
@@ -59,9 +62,13 @@ namespace ProtoAqua.ExperimentV2
         public void SetValue(float inValue)
         {
             float ratio = Property.RemapValue(inValue);
-            float dialValue = ratio * Slider.maxValue;
-            Slider.SetValueWithoutNotify(dialValue);
             UpdateNeedle(ratio);
+            
+            if (Slider != null)
+            {
+                float dialValue = ratio * Slider.maxValue;
+                Slider.SetValueWithoutNotify(dialValue);
+            }
         }
 
         private void UpdateNeedle(float inRatio)

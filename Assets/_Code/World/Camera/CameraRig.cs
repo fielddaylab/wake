@@ -81,6 +81,36 @@ namespace Aqua.Cameras
             }
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            CameraFOVPlane plane = FOVPlane;
+            
+            Vector3 center = plane.transform.position;
+            if (plane.Target != null)
+                center.z = plane.Target.position.z;
+            
+            Vector3 size;
+            size.y = plane.Height / plane.Zoom;
+            size.x = plane.Height * Camera.aspect / plane.Zoom;
+            size.z = 0.01f;
+            Gizmos.color = ColorBank.Green.WithAlpha(0.25f);
+            Gizmos.DrawCube(center, size);
+
+            Gizmos.color = ColorBank.White.WithAlpha(0.8f);
+
+            Vector3 topRight = center + size / 2;
+            Vector3 bottomLeft = center - size / 2;
+            Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
+            Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
+
+            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 0.0001f;
+
+            Gizmos.DrawLine(bottomLeft, topLeft);
+            Gizmos.DrawLine(bottomRight, topRight);
+            Gizmos.DrawLine(topLeft, topRight);
+            Gizmos.DrawLine(bottomLeft, bottomRight);
+        }
+
         #endif // UNITY_EDITOR
     }
 }

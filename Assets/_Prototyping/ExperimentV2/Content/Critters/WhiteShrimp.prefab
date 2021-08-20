@@ -269,7 +269,9 @@ GameObject:
   - component: {fileID: 1264615091982000645}
   - component: {fileID: 1264615091982000646}
   - component: {fileID: 1264615091982000647}
-  m_Layer: 0
+  - component: {fileID: -7229162972949152905}
+  - component: {fileID: 605353041250691620}
+  m_Layer: 12
   m_Name: WhiteShrimp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,8 +307,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CachedTransform: {fileID: 1264615091982000664}
   CachedCollider: {fileID: 1264615091982000647}
-  IdleAnimation: {fileID: 1264615091495270851}
   ColorAdjust: {fileID: 1264615091982000646}
+  IdleAnimation: {fileID: 1264615091495270851}
+  AnimationTransform: {fileID: 0}
 --- !u!114 &1264615091982000646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,3 +359,35 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!50 &-7229162972949152905
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264615091982000665}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!210 &605353041250691620
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264615091982000665}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0

@@ -1,0 +1,13 @@
+#basePath   tools
+
+:: microscope
+@tool true
+@requires HasUpgrade("Microscope")
+@fallback tools.microscope.disabled
+@header	Opening Microscope
+Microscopic view engaged.
+
+:: microscope.disabled
+@tool false
+@header Unknown Deposit
+Contents unable to be viewed with current equipment.

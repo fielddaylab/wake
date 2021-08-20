@@ -71,6 +71,26 @@ namespace Aqua
             return null;
         }
 
+        static public T FindAsset<T>(string inName) where T : UnityEngine.Object
+        {
+            string[] assetGuids = AssetDatabase.FindAssets(inName + " t:" + typeof(T).FullName);
+            if (assetGuids == null)
+                return null;
+            
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    T asset = obj as T;
+                    if (asset)
+                        return asset;
+                }
+            }
+
+            return null;
+        }
+
         static public T FindPrefab<T>(string inName) where T : Component
         {
             string[] assetGuids = AssetDatabase.FindAssets("t:GameObject");
@@ -108,6 +128,32 @@ namespace Aqua
                 {
                     T asset = obj as T;
                     if (asset)
+                        assets.Add(asset);
+                }
+            }
+
+            T[] arr = new T[assets.Count];
+            assets.CopyTo(arr);
+            return arr;
+        }
+
+        static public T[] FindAllAssets<T>(Predicate<T> inPredicate, params string[] inDirectories) where T : UnityEngine.Object
+        {
+            if (inDirectories.Length == 0)
+                inDirectories = null;
+            
+            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName, inDirectories);
+            if (assetGuids == null)
+                return null;
+            
+            HashSet<T> assets = new HashSet<T>();
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
+                {
+                    T asset = obj as T;
+                    if (asset && inPredicate(asset))
                         assets.Add(asset);
                 }
             }
