@@ -4,8 +4,8 @@
 @trigger    JobStarted
 @cutscene
 $set jobs:bayou-save-our-shrimp.gotScans = 0
-{@profCempaka}	There seems to be something strange going on with the shrimp at Site P.
-{@profCempaka}	I want you to head over there and investigate the environment and shrimp population.
+{@profHarper}	There seems to be something strange going on with the shrimp at Site P.
+{@profHarper}	I want you to head over there and investigate the environment and shrimp population.
 {@player} 	On it!
 
 :: helpGetScans
@@ -28,4 +28,4 @@ $set jobs:bayou-save-our-shrimp.gotScans = 1
 @when 		jobs:bayou-save-our-shrimp.gotScans == 1
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We got all the data from Site P, so let's report back to [Bayou_Station_Researcher_Name].
+{@kevin}	We got all the data from Site P, so let's report back to {@profHarper}.

@@ -149,9 +149,9 @@ SOS: Save Our Shrimp
 [Bayou_Station_Researcher_Name] 
 :: bayou-save-our-shrimp.desc
 Why is the shrimp catch going down?
-:: bayou-save-our-shrimp.getScans
+:: bayou-save-our-shrimp.task.getScans
 Gather environment data + Shrimp population
-:: bayou-save-our-shrimp.reportBack
+:: bayou-save-our-shrimp.task.reportBack
 Report about the Shrimp populations.
 
 //Arctic Station Jobs
@@ -165,4 +165,17 @@ Some researchers down south counted the pod on arrival and one is missing. They 
 :: arctic-missing-whale.task.findWhale
 Search Sites Z and W for signs of the missing whale
 :: arctic-missing-whale.task.reportBack
+Report back with your findings
+
+:: arctic-whale-csi.name
+Missing Whale!
+:: arctic-whale-csi.poster
+[Arctic_Station_Researcher_Name] 
+:: arctic-whale-csi.desc
+Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
+:: arctic-whale-csi.task.scanAndTag
+Search Sites Z and W for signs of the missing whale
+:: arctic-whale-csi.task.scanIceAlgae
+Search Sites Z and W for signs of the missing whale
+:: arctic-whale-csi.task.reportBack
 Report back with your findings

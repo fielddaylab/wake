@@ -1,0 +1,28 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid
+# linksFile Links
+
+
+// Intro
+
+:: node.intro
+@linkToNode W_WhaleFall.Population.Detritus, node.end
+@invalidNodeId node.invalid
+"Shoot. You found her? Where was she?"
+
+:: node.invalid
+@linkToNode W_WhaleFall.Population.Detritus, node.end
+@invalidNodeId node.invalid.again
+Are you sure you were able to find her?
+
+:: node.invalid.again
+@linkToNode W_WhaleFall.Population.Detritus, node.end
+@invalidNodeId node.invalid.again
+Was there something you scanned related to her?
+
+
+//End
+
+:: node.end
+So you found her at the bottom of Site W... I wonder what the cause of death was?
