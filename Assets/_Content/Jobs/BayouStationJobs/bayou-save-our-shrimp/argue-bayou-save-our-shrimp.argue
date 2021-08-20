@@ -1,0 +1,41 @@
+# rootNodeId node.intro
+# endNodeId node.end
+# defaultInvalidNodeId node.invalid
+# linksFile Links
+
+
+// Intro
+:: node.intro
+@showClaims
+@linkToNode link.YesAccurate, node.whatEvidence
+@linkToNode link.NoNotAccurate, node.whatEvidence
+So, are the reports accurate?
+
+
+//Claims
+:: link.YesAccurate
+@tag claim
+@type claim
+Yes
+
+:: link.NoNotAccurate
+@tag claim
+@type claim
+No, not really
+
+
+//Evidence
+:: node.whatEvidence
+@linkToNode P_DeadZone.Population.WhiteShrimp, node.end
+@invalidNodeId node.invalid
+What evidence do you have?
+
+:: node.invalid
+@linkToNode P_DeadZone.Population.WhiteShrimp, node.end
+@invalidNodeId node.invalid
+Not sure that helps us here, were you able to get information about the shrimp's population?
+
+
+//End
+:: node.end
+Oh wow! This is bad! We need to get to the bottom of this.

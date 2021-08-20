@@ -1,0 +1,31 @@
+#basePath   job.bayou-save-our-shrimp
+
+:: start
+@trigger    JobStarted
+@cutscene
+$set jobs:bayou-save-our-shrimp.gotScans = 0
+{@profCempaka}	There seems to be something strange going on with the shrimp at Site P.
+{@profCempaka}	I want you to head over there and investigate the environment and shrimp population.
+{@player} 	On it!
+
+:: helpGetScans
+@trigger    RequestPartnerHelp
+@when 		jobs:bayou-save-our-shrimp.gotScans == 0
+@cutscene
+{@player} 	What should I be doing again?
+{@kevin}	We need to investigate the environment at site P and check on the shrimp population.
+{@kevin}	Make sure to scan the probe and shrimp, and then use the tagging functionality of your sub to get the shrimp's population.
+
+:: gotScans
+@trigger    JobTaskUpdated
+@once
+@cutscene
+$set jobs:bayou-save-our-shrimp.gotScans = 1
+{@kevin} I think that's all we needed from here, time to head back.
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		jobs:bayou-save-our-shrimp.gotScans == 1
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We got all the data from Site P, so let's report back to [Bayou_Station_Researcher_Name].

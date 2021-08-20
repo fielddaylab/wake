@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: arctic-missing-whale
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.arctic-missing-whale.name
+    m_Hash: 4043326469
+  m_PosterId:
+    m_Source: jobs.arctic-missing-whale.poster
+    m_Hash: 2865183263
+  m_DescId:
+    m_Source: jobs.arctic-missing-whale.desc
+    m_Hash: 3633731623
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 1
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_StationId:
+    m_Source: ArcticStation
+    m_Hash: 1297447963
+  m_DiveSiteIds:
+  - m_Source: RS-4W
+    m_Hash: 2144695524
+  m_Tasks:
+  - Id:
+      m_Source: findWhale
+      m_Hash: 2388539047
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.findWhale
+      m_Hash: 3913478049
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 7
+      Target:
+        m_Source: RS-4W.deadWhale
+        m_Hash: 1529514489
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.reportBack
+      m_Hash: 3992557886
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Something_Impossible
+        m_Hash: 1027975093
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: findWhale
+      m_Hash: 2388539047
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.findWhale
+      m_Hash: 3913478049
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 7
+      Target:
+        m_Source: RS-4W.deadWhale
+        m_Hash: 1529514489
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.reportBack
+      m_Hash: 3992557886
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Something_Impossible
+        m_Hash: 1027975093
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 10
+  m_GearReward: 10
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: -1942890987711236906, guid: 23a2037eaf75e6341809358900d488a9,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: 1d95d00f263974643a778d27d911ffac, type: 3}

@@ -46,8 +46,8 @@ $set    	jobs:coral-invade.seen.bottom = true
 @when 		scene:name == "RS-2R"
 @cutscene
 {@player}   What should I be doing here?
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Did you remember to scan the probe?
+$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+	{@kevin}   Did you remember to scan the population probe?
 $else
 	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
 		$set    jobs:coral-invade.got.scans = true

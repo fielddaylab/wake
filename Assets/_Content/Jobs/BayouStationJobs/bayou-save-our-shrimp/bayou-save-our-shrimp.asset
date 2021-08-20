@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: bayou-save-our-shrimp
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-save-our-shrimp.name
+    m_Hash: 4024410165
+  m_PosterId:
+    m_Source: jobs.bayou-save-our-shrimp.poster
+    m_Hash: 1733117711
+  m_DescId:
+    m_Source: jobs.bayou-save-our-shrimp.desc
+    m_Hash: 3534737975
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 1
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_StationId:
+    m_Source: BayouStation
+    m_Hash: 2992071853
+  m_DiveSiteIds:
+  - m_Source: RS-3P
+    m_Hash: 3168968926
+  m_Tasks:
+  - Id:
+      m_Source: getScans
+      m_Hash: 1025619015
+    LabelId:
+      m_Source: jobs.bayou-save-our-shrimp.getScans
+      m_Hash: 2338486572
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: P_DeadZone
+        m_Hash: 1572930800
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_Hash: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_Hash: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-save-our-shrimp.reportBack
+      m_Hash: 3024555007
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Something_Impossible
+        m_Hash: 1027975093
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: getScans
+      m_Hash: 1025619015
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-save-our-shrimp.getScans
+      m_Hash: 2338486572
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: P_DeadZone
+        m_Hash: 1572930800
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_Hash: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_Hash: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-save-our-shrimp.reportBack
+      m_Hash: 3024555007
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Something_Impossible
+        m_Hash: 1027975093
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 10
+  m_GearReward: 10
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: -1942890987711236906, guid: c1d1c215de0c5a04596c0dead6b01be1,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: b4267c20a5722674b8fd0b92fb2d9e2d, type: 3}

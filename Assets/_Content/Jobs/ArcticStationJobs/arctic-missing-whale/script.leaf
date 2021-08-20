@@ -1,0 +1,32 @@
+#basePath   job.arctic-missing-whale
+
+:: start
+@trigger    JobStarted
+@cutscene
+$set jobs:arctic-missing-whale.foundWhale = 0
+{@profCempaka}	Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
+{@profCempaka}  I'm adding two possible locations to your map. The first is more likely than the second.
+{@player} 	Off we go!
+
+:: helpFindWhale
+@trigger    RequestPartnerHelp
+@when 		jobs:arctic-missing-whale.foundWhale == 0
+@cutscene
+{@player} 	What should I be doing again?
+{@kevin}	We need to see if we can locate the missing whale.
+{@kevin}	Have you explored Sites W and Z?
+
+:: gotScans
+@trigger    JobTaskUpdated
+@once
+@cutscene
+$set jobs:arctic-missing-whale.foundWhale = 1
+{@kevin} Looks like we were able to find her...
+{@kevin} Time to head back and let [Arctic_Station_Researcher_Name] know.
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		jobs:arctic-missing-whale.foundWhale == 1
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We located the whale, so let's report back to [researcher_name].

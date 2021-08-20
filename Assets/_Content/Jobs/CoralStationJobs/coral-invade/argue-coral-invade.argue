@@ -3,7 +3,7 @@
 # defaultInvalidNodeId node.invalid.default
 # linksFile Links
 
-// General
+// Intro
 
 :: node.intro
 @showClaims
@@ -50,13 +50,16 @@ The coral is old.
 The sargassum is blocking the light
 
 
-// Nodes
+// Final Intro Node
 
 :: node.NoDataPresentedYet
 @linkToNode SargassumCoveredReef.Light, node.LightProbeDataFirst
 @linkToNode StaghornCoral.Light.Stressed, node.CoralStressedFirst
 @invalidNodeId  node.invalid.NoProof
 Do you have any information about the conditions down there, or maybe the state of the coral?
+
+
+// After Claim
 
 :: node.LightProbeDataFirst
 @linkToNode SargassumCoveredReef.Light, node.invalid.LightProbeAgain
