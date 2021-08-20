@@ -742,9 +742,9 @@ namespace Aqua
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
-            DMInfo scriptingMenu = DebugService.NewDebugMenu("Scripting");
+            DMInfo scriptingMenu = new DMInfo("Scripting");
 
-            DMInfo triggerMenu = DebugService.NewDebugMenu("Trigger Response");
+            DMInfo triggerMenu = new DMInfo("Trigger Response");
             RegisterTriggerResponse(triggerMenu, GameTriggers.SceneStart);
             RegisterTriggerResponse(triggerMenu, GameTriggers.RequestPartnerHelp);
             RegisterTriggerResponse(triggerMenu, GameTriggers.PartnerTalk);

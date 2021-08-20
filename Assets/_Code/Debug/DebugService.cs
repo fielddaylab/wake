@@ -371,11 +371,6 @@ namespace Aqua.Debugging
             return new DMInfo(inLabel, inCapacity);
         }
 
-        #else
-
-        static public DMInfo RootDebugMenu() { return null; }
-        static public DMInfo NewDebugMenu(string inLabel, int inCapacity = 0) { return null; }
-
         #endif // DEVELOPMENT
 
         #endregion // Debug Menu

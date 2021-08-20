@@ -44,6 +44,7 @@ namespace Aqua
     {
         Currency,
         Upgrade,
+        Artifact
     }
 
     [Flags]

@@ -158,6 +158,19 @@ namespace Aqua.Profile
             return false;
         }
 
+        public bool RemoveUpgrade(StringHash32 inUpgradeId)
+        {
+            Assert.True(Services.Assets.Inventory.HasId(inUpgradeId), "Could not find ItemDesc with id '{0}'", inUpgradeId);
+            if (m_UpgradeIds.Remove(inUpgradeId))
+            {
+                m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion // Upgrades
 
         #region Water Properties

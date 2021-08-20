@@ -191,6 +191,9 @@ namespace ProtoAqua.Observation
                 yield return null;
             }
 
+            if (!m_TargetScannable.InRange)
+                yield break;
+
             m_TargetScannable.CurrentIcon.SetSpinning(false);
 
             ScanResult result = m_ScanSystem.RegisterScanned(data);
@@ -214,9 +217,9 @@ namespace ProtoAqua.Observation
             if ((flags & ScanDataFlags.ActivateTool) != 0)
             {
                 m_CurrentToolView = m_TargetScannable.ToolView;
-                m_CurrentToolView.Root.gameObject.SetActive(true);
-                scanUI.Hide();
+                ShowTool(transform.parent.position, m_TargetScannable.transform.position, m_CurrentToolView);
             }
+
             scanUI.ShowScan(data, result);
         }
 
@@ -224,7 +227,7 @@ namespace ProtoAqua.Observation
         {
             if (m_CurrentToolView != null)
             {
-                m_CurrentToolView.Root.gameObject.SetActive(false);
+                HideTool(m_CurrentToolView);
                 m_CurrentToolView = null;
             }
         }
@@ -282,5 +285,59 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Animation
+    
+        #region Tools
+
+        static private void ShowTool(Vector3 inPlayerPos, Vector3 inScannablePosition, ToolView inToolView)
+        {
+            switch(inToolView.Placement)
+            {
+                case ToolView.PlacementMode.Fixed:
+                    {
+                        break;
+                    }
+
+                case ToolView.PlacementMode.AwayFromPlayer:
+                    {
+                        Vector3 delta = inScannablePosition - inPlayerPos;
+                        delta.z = 0;
+                        delta.Normalize();
+
+                        if (delta.x == 0 && delta.y == 0)
+                            delta.x = 1;
+
+                        inToolView.Root.position = inScannablePosition + delta * inToolView.DistanceAway;
+                        break;
+                    }
+            }
+
+            inToolView.Root.gameObject.SetActive(true);
+            inToolView.Animation.Replace(inToolView, ShowToolAnimation(inToolView)).TryManuallyUpdate(0);
+        }
+
+        static private IEnumerator ShowToolAnimation(ToolView inTool)
+        {
+            inTool.Root.SetScale(0);
+            yield return inTool.Root.ScaleTo(1, 0.2f).Ease(Curve.BackOut);
+        }
+
+        static private void HideTool(ToolView inToolView)
+        {
+            if (inToolView.Root.gameObject.activeSelf)
+            {
+                inToolView.Animation.Replace(inToolView, HideToolAnimation(inToolView)).TryManuallyUpdate(0);
+            }
+        }
+
+        static private IEnumerator HideToolAnimation(ToolView inTool)
+        {
+            if (inTool.Root.gameObject.activeSelf)
+            {
+                yield return inTool.Root.ScaleTo(0, 0.2f).Ease(Curve.BackIn);
+                inTool.Root.gameObject.SetActive(false);
+            }
+        }
+
+        #endregion // Tools
     }
 }
