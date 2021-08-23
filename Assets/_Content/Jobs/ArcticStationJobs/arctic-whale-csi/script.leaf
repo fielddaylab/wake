@@ -3,7 +3,8 @@
 :: start
 @trigger    JobStarted
 @cutscene
-$set jobs:arctic-whale-csi.jobProgress = 0
+$set jobs:arctic-whale-csi.gotScans = 0
+$call GiveEntity(W_WhaleFall)
 $call GiveEntity(BowheadWhale)
 $call GiveFact(BowheadWhale.Reproduce)
 $call GiveFact(BowheadWhale.Eats.IceAlgae)
@@ -13,23 +14,42 @@ $call GiveUpgrade(Microscope)
 
 :: helpScanAndTag
 @trigger    RequestPartnerHelp
-@when 		jobs:arctic-whale-csi.jobProgress == 0
+@when 		jobs:arctic-whale-csi.gotScans == 0
 @cutscene
 {@player} 	What should I be doing again?
 {@kevin}	We need to scan and tag the curface critters at Site W.
 {@kevin}	Looks like in total we'll need data about the salmon, sharks, and cod.
 
-:: gotScans
+:: finishedScans
 @trigger    JobTaskUpdated
+@when 		jobs:arctic-whale-csi.gotScans == 0, !HasScanned(RS-4W.iceAlgae)
 @once
 @cutscene
-$set jobs:arctic-whale-csi.jobProgress = 1
-{@kevin} Looks like we were able to find her...
-{@kevin} Time to head back and let Prof Whalen know.
+$set jobs:arctic-whale-csi.gotScans = 1
+{@kevin} Great! That should be all we need for the surface critters.
+{@kevin} Now all that's next is to scan the ice to see if there's any microscopic organisms inside.
+{@kevin} It's just like how you'd see a critter, except you should see the microscope view popup instead.
+
+:: helpScanIceAlgae
+@trigger    RequestPartnerHelp
+@when 		jobs:arctic-whale-csi.gotScans == 1, !HasScanned(RS-4W.iceAlgae)
+@cutscene
+{@player} 	What should I be doing again?
+{@kevin}	The next step to scan the ice to see if there's any microscopic organisms inside.
+{@kevin}	Try looking around that iceberg to see if there's anything you can scan.
+
+// :: finishedScanAlgae
+// @trigger    JobTaskUpdated
+// @when 		jobs:arctic-whale-csi.gotScans == 1
+// @once
+// @cutscene
+// $set jobs:arctic-whale-csi.gotScans = 2
+// {@kevin} That should be it for our population study!
+// {@kevin} Let's head on back to Professor Whalen. 
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		jobs:arctic-whale-csi.jobProgress == 2
+@when 		jobs:arctic-whale-csi.gotScans == 1, HasScanned(RS-4W.iceAlgae)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We located the whale, so let's report back to Prof Whalen.
+{@kevin}	We finished the population study, so let's report back to Prof Whalen.
