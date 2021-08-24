@@ -29,7 +29,7 @@ namespace ProtoAqua.Modeling
 
         public void SetBuffer(SimulationBuffer inBuffer)
         {
-            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_MAX; id++)
+            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
             {
                 m_WaterProps[(int) id].Initialize(Services.Assets.WaterProp.Property(id));
             }
@@ -89,9 +89,15 @@ namespace ProtoAqua.Modeling
 
             foreach(var prop in Simulator.PreemptiveProperties)
             {
+                int critterIdx = 0;
                 foreach(var critter in inDetails.Consumed)
                 {
                     properties[prop] -= critter[prop];
+                    if (critter[prop] > 0)
+                    {
+                        m_WaterProps[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform);
+                    }
+                    ++critterIdx;
                 }
 
                 m_WaterProps[(int) prop].AnimateValue(properties[prop]);
@@ -104,7 +110,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < actorTypes.Count; i++)
             {
                 ActorStateId state = inDetails.AfterLightStates[i];
-                bChanged |= m_Actors[i].AnimatePopulation(state == ActorStateId.Dead ? 0 : inResult.GetCritters(actorTypes[i].Id()).Population, state);
+                bChanged |= m_Actors[i].AnimatePopulation(state == ActorStateId.Dead ? 0 : inResult.GetCritters(actorTypes[i].Id()).Population, state, false);
                 if (state == ActorStateId.Dead)
                     inResult.SetCritters(i, 0);
             }
@@ -116,14 +122,26 @@ namespace ProtoAqua.Modeling
 
             foreach(var prop in Simulator.SecondaryProperties)
             {
+                int critterIdx = 0;
                 foreach(var critter in inDetails.Consumed)
                 {
                     properties[prop] -= critter[prop];
+                    if (critter[prop] > 0)
+                    {
+                        m_WaterProps[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform);
+                    }
+                    critterIdx++;
                 }
 
+                critterIdx = 0;
                 foreach(var critter in inDetails.Produced)
                 {
                     properties[prop] += critter[prop];
+                    if (critter[prop] > 0)
+                    {
+                        m_WaterProps[(int) prop].PlayIncoming(m_Actors[critterIdx].transform);
+                    }
+                    critterIdx++;
                 }
 
                 m_WaterProps[(int) prop].AnimateValue(properties[prop]);
@@ -155,7 +173,7 @@ namespace ProtoAqua.Modeling
                     yield return Routine.Combine(
                         eater.transform.MoveTo(eaterPos + vec, 0.3f, Axis.XY, Space.Self).Ease(Curve.CubeIn),
                         eater.transform.MoveTo(eaterPos, 0.3f, Axis.XY, Space.Self).Ease(Curve.Smooth).DelayBy(0.35f),
-                        Routine.Delay(() => eaten.AnimatePopulation(newEaten), 0.3f),
+                        Routine.Delay(() => eaten.AnimatePopulation(newEaten, false), 0.3f),
                         eaten.transform.MoveTo(eatenPos.x + 5, 0.3f, Axis.X, Space.Self).Wave(Wave.Function.Cos, 4).DelayBy(0.3f)
                     );
                 }
@@ -164,7 +182,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < inDetails.Deaths.Count; i++)
             {
                 uint pop = inResult.AdjustCritters(i, -(int) inDetails.Deaths[i]);
-                m_Actors[i].AnimatePopulation(pop);
+                m_Actors[i].AnimatePopulation(pop, true);
             }
 
             yield return 0.2f;
@@ -172,7 +190,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < inDetails.Growth.Count; i++)
             {
                 uint pop = inResult.AdjustCritters(i, (int) inDetails.Growth[i]);
-                m_Actors[i].AnimatePopulation(pop);
+                m_Actors[i].AnimatePopulation(pop, true);
             }
 
             yield return 0.2f;

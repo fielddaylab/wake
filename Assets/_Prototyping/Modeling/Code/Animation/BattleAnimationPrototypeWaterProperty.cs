@@ -6,6 +6,7 @@ using Aqua;
 using System.Collections;
 using BeauRoutine;
 using BeauPools;
+using BeauRoutine.Splines;
 
 namespace ProtoAqua.Modeling
 {
@@ -16,6 +17,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private Image m_Background = null;
         [SerializeField] private Image m_Meter = null;
         [SerializeField] private Image m_Icon = null;
+        [SerializeField] private VFX.Pool m_EffectPool = null;
 
         #endregion // Inspector
 
@@ -48,6 +50,8 @@ namespace ProtoAqua.Modeling
 
             float valuePercent = m_WaterProp.RemapValue(inValue);
             InstantMeter(m_Meter, valuePercent);
+
+            m_EffectPool.Reset();
         }
 
         public void AnimateValue(float inValue)
@@ -61,6 +65,20 @@ namespace ProtoAqua.Modeling
             m_Animation.Replace(this, AnimateMeter(m_Meter, valuePercent));
         }
 
+        public void PlayIncoming(Transform inOriginator)
+        {
+            VFX effect = m_EffectPool.Alloc();
+            effect.Graphic.color = m_WaterProp.Color();
+            effect.Animation.Replace(effect, AnimateIncrease(effect, inOriginator.transform, transform)).TryManuallyUpdate(0);
+        }
+
+        public void PlayOutgoing(Transform inTarget)
+        {
+            VFX effect = m_EffectPool.Alloc();
+            effect.Graphic.color = m_WaterProp.Color();
+            effect.Animation.Replace(effect, AnimateIncrease(effect, transform, inTarget.transform)).TryManuallyUpdate(0);
+        }
+
         #region Animations
 
         static private void InstantMeter(Image inImage, float inPercent)
@@ -71,6 +89,14 @@ namespace ProtoAqua.Modeling
         static private IEnumerator AnimateMeter(Image inImage, float inPercent)
         {
             yield return inImage.FillTo(inPercent, 0.2f).Ease(Curve.CubeOut).ForceOnCancel();
+        }
+
+        static private IEnumerator AnimateIncrease(VFX inEffect, Transform inA, Transform inB)
+        {
+            inEffect.Transform.SetPosition(inA.localPosition, Axis.XY, Space.Self);
+            SimpleSpline simple = Spline.Simple(inA.localPosition, inB.localPosition, new Vector3(0, 100, 0));
+            yield return inEffect.transform.MoveAlong(simple, 0.5f, Axis.XY, Space.Self).Ease(Curve.Smooth);
+            inEffect.Free();
         }
 
         #endregion // Animations

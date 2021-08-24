@@ -4,6 +4,7 @@ using BeauUtil;
 using UnityEditor;
 using UnityEngine;
 using BeauPools;
+using UnityEngine.UI;
 
 namespace Aqua
 {
@@ -12,6 +13,7 @@ namespace Aqua
         [Serializable] public sealed class Pool : SerializablePool<VFX> { }
 
         [Required(ComponentLookupDirection.Self)] public Transform Transform;
+        public Graphic Graphic;
         public SpriteRenderer Sprite;
         public ParticleSystem Particles;
 

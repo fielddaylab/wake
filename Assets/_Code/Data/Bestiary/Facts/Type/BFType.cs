@@ -11,7 +11,7 @@ namespace Aqua
     {
         #region Consts
 
-        public const int TypeCount = (int) BFTypeId._MAX;
+        public const int TypeCount = (int) BFTypeId._COUNT;
 
         static private readonly BFTypeId[] TypeSortingOrder = new BFTypeId[] {
             BFTypeId.WaterProperty, BFTypeId.Population, BFTypeId.WaterPropertyHistory, BFTypeId.PopulationHistory,
@@ -50,6 +50,8 @@ namespace Aqua
 
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact)
         {
+            if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+                return BFDiscoveredFlags.All;
             return s_DefaultDiscoveredFlags[(int) inFact.Type];
         }
 
@@ -59,7 +61,7 @@ namespace Aqua
 
         static public void CollectReferences(BFBase inFact, HashSet<StringHash32> outCritterIds)
         {
-            outCritterIds.Add(inFact.Id);
+            outCritterIds.Add(inFact.Parent.Id());
             s_CollectReferencesDelegates[(int) inFact.Type]?.Invoke(inFact, outCritterIds);
         }
 

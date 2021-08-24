@@ -28,6 +28,6 @@ namespace Aqua
         
         Model,
 
-        _MAX
+        _COUNT
     }
 }
