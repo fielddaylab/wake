@@ -9,7 +9,7 @@ namespace ProtoAqua.Modeling
     /// <summary>
     /// Initial state and critter profiles.
     /// </summary>
-    public sealed class SimulationProfile : IFactVisitor
+    public sealed class SimulationProfile
     {
         private RingBuffer<CritterProfile> m_Profiles = new RingBuffer<CritterProfile>(Simulator.MaxTrackedCritters, RingBufferMode.Fixed);
         private SimulationResult m_InitialState;
@@ -132,11 +132,11 @@ namespace ProtoAqua.Modeling
 
         private void DiscoverFact(BFBase inFact)
         {
-            DiscoverCritter(inFact.Parent());
+            DiscoverCritter(inFact.Parent);
             if (m_DiscoveredFacts.Add(inFact))
             {
-                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing fact '{0}'", inFact.Id());
-                inFact.Accept(this);
+                DebugService.Log(LogMask.Modeling, "[SimulationProfile] Importing fact '{0}'", inFact.Id);
+                VisitFact(inFact);
             }
         }
 
@@ -144,75 +144,29 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact)
+        private void VisitFact(BFBase inFact)
         {
-            // Default
-        }
+            switch(inFact.Type)
+            {
+                case BFTypeId.WaterProperty:
+                    {
+                        BFWaterProperty water = (BFWaterProperty) inFact;
+                        m_InitialState.Environment[water.Property] = water.Value;
+                        break;
+                    }
 
-        void IFactVisitor.Visit(BFBody inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFWaterProperty inFact)
-        {
-            m_InitialState.Environment[inFact.PropertyId()] = inFact.Value();
-        }
-
-        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFPopulation inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFPopulationHistory inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFEat inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-            DiscoverCritter(inFact.Target());
-        }
-
-        void IFactVisitor.Visit(BFGrow inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFReproduce inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFProduce inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFConsume inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFState inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFDeath inFact)
-        {
-            inFact.Accept(FindOrCreateProfile(inFact.Parent()));
-        }
-
-        void IFactVisitor.Visit(BFModel inModel)
-        {
-            // nothing...
+                case BFTypeId.Body:
+                case BFTypeId.Consume:
+                case BFTypeId.Death:
+                case BFTypeId.Eat:
+                case BFTypeId.Produce:
+                case BFTypeId.Parasites:
+                case BFTypeId.Grow:
+                case BFTypeId.Reproduce:
+                case BFTypeId.State:
+                    FindOrCreateProfile(inFact.Parent).VisitFact(inFact);
+                    break;
+            }
         }
 
         #endregion // IFactVisitor

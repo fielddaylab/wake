@@ -241,7 +241,7 @@ namespace ProtoAqua.ExperimentV2
 
                 Services.Audio.PostEvent("capture_new");
 
-                Services.UI.Popup.Display("'experiment.observation.newBehavior.header", factDef.GenerateSentence())
+                Services.UI.Popup.Display("'experiment.observation.newBehavior.header", BFType.GenerateSentence(factDef))
                     .OnComplete((r) => {
                         using(var table = TempVarTable.Alloc())
                         {
@@ -319,7 +319,7 @@ namespace ProtoAqua.ExperimentV2
 
         static public void EmitEmoji(BFBase inFact, ActorInstance inActor, ActorWorld inWorld)
         {
-            if (!Services.Data.Profile.Bestiary.HasFact(inFact.Id()))
+            if (!Services.Data.Profile.Bestiary.HasFact(inFact.Id))
                 return;
             
             ObservationTank tank = (ObservationTank) inWorld.Tag;

@@ -1,0 +1,200 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using BeauPools;
+using BeauUtil;
+using UnityEngine;
+
+namespace Aqua
+{
+    static public class BFType
+    {
+        #region Consts
+
+        public const int TypeCount = (int) BFTypeId._MAX;
+
+        static private readonly BFTypeId[] TypeSortingOrder = new BFTypeId[] {
+            BFTypeId.WaterProperty, BFTypeId.Population, BFTypeId.WaterPropertyHistory, BFTypeId.PopulationHistory,
+            BFTypeId.State, BFTypeId.Parasites, BFTypeId.Eat, BFTypeId.Produce, BFTypeId.Consume, BFTypeId.Grow, BFTypeId.Reproduce, BFTypeId.Death 
+        };
+        static private readonly int[] TypeSortingOrderIndices = new int[TypeCount];
+
+        static BFType()
+        {
+            for(int i = 0; i < TypeCount; i++)
+            {
+                TypeSortingOrderIndices[i] = Array.IndexOf(TypeSortingOrder, (BFTypeId) i);
+                s_DefaultDiscoveredFlags[i] = BFDiscoveredFlags.All;
+            }
+        }
+
+        #endregion // Consts
+
+        #region Types
+
+        internal delegate void CollectReferencesDelegate(BFBase inFact, HashSet<StringHash32> outCritterIds);
+        internal delegate string GenerateSentenceDelegate(BFBase inFact, BFDiscoveredFlags inFlags);
+        internal delegate IEnumerable<BFFragment> GenerateFragmentsDelegate(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags);
+        internal delegate Sprite DefaultIconDelegate(BFBase inFact);
+        internal delegate BFMode ModeDelegate(BFBase inFact);
+
+        #endregion // Types
+
+        static private readonly BFDiscoveredFlags[] s_DefaultDiscoveredFlags = new BFDiscoveredFlags[TypeCount];
+        static private readonly CollectReferencesDelegate[] s_CollectReferencesDelegates = new CollectReferencesDelegate[TypeCount];
+        static private readonly GenerateSentenceDelegate[] s_GenerateSentenceDelegates = new GenerateSentenceDelegate[TypeCount];
+        static private readonly GenerateFragmentsDelegate[] s_GenerateFragmentsDelegates = new GenerateFragmentsDelegate[TypeCount];
+        static private readonly Comparison<BFBase>[] s_ComparisonDelegates = new Comparison<BFBase>[TypeCount];
+
+        #region Attributes
+
+        static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact)
+        {
+            return s_DefaultDiscoveredFlags[(int) inFact.Type];
+        }
+
+        #endregion // Attributes
+
+        #region Methods
+
+        static public void CollectReferences(BFBase inFact, HashSet<StringHash32> outCritterIds)
+        {
+            outCritterIds.Add(inFact.Id);
+            s_CollectReferencesDelegates[(int) inFact.Type]?.Invoke(inFact, outCritterIds);
+        }
+
+        static public string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        {
+            return s_GenerateSentenceDelegates[(int) inFact.Type]?.Invoke(inFact, inFlags);
+        }
+
+        static public string GenerateSentence(BFBase inFact)
+        {
+            return GenerateSentence(inFact, s_DefaultDiscoveredFlags[(int) inFact.Type]);
+        }
+
+        static public IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        {
+            GenerateFragmentsDelegate custom = s_GenerateFragmentsDelegates[(int) inFact.Type];
+            if (custom != null)
+                return custom(inFact, inReference, inFlags);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sorts facts by their visual order.
+        /// </summary>
+        static public Comparison<BFBase> SortByVisualOrder = (x, y) =>
+        {
+            int compareTypeSorting = TypeSortingOrderIndices[(int) x.Type] - TypeSortingOrderIndices[(int) y.Type];
+            if (compareTypeSorting != 0)
+                return Math.Sign(compareTypeSorting);
+
+            int compareTypes = x.Type - y.Type;
+            if (compareTypes != 0)
+                return Math.Sign(compareTypes);
+            
+            Comparison<BFBase> comparer = s_ComparisonDelegates[(int) x.Type];
+            if (comparer != null)
+            {
+                int compareCustom = comparer(x, y);
+                if (compareCustom != 0)
+                    return compareCustom;
+            }
+
+            return x.Id.Hash().CompareTo(y.Id.Hash());
+        };
+
+        #endregion // Methods
+
+        #region Definitions
+
+        static internal void DefineAttributes(BFTypeId inType, BFDiscoveredFlags inFlags, Comparison<BFBase> inComparison)
+        {
+            s_DefaultDiscoveredFlags[(int) inType] = inFlags;
+            s_ComparisonDelegates[(int) inType] = inComparison;
+        }
+
+        static internal void DefineMethods(BFTypeId inType, CollectReferencesDelegate inCollectReferences, GenerateSentenceDelegate inGenerateSentences, GenerateFragmentsDelegate inGenerateFragments)
+        {
+            s_CollectReferencesDelegates[(int) inType] = inCollectReferences;
+            s_GenerateSentenceDelegates[(int) inType] = inGenerateSentences;
+            s_GenerateFragmentsDelegates[(int) inType] = inGenerateFragments;
+        }
+
+        #endregion // Definitions
+
+        #if UNITY_EDITOR
+
+        static private readonly DefaultIconDelegate[] s_DefaultIconDelegates = new DefaultIconDelegate[TypeCount];
+        static private readonly ModeDelegate[] s_ModeDelegates = new ModeDelegate[TypeCount];
+
+        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, BFMode inMode)
+        {
+            s_DefaultIconDelegates[(int) inType] = (b) => inDefaultIcon;
+            s_ModeDelegates[(int) inType] = (b) => inMode;
+        }
+
+        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, ModeDelegate inModeDelegate)
+        {
+            s_DefaultIconDelegates[(int) inType] = (b) => inDefaultIcon;
+            s_ModeDelegates[(int) inType] = inModeDelegate;
+        }
+
+        static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, BFMode inMode)
+        {
+            s_DefaultIconDelegates[(int) inType] = inIconDelegate;
+            s_ModeDelegates[(int) inType] = (b) => inMode;
+        }
+
+        static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, ModeDelegate inModeDelegate)
+        {
+            s_DefaultIconDelegates[(int) inType] = inIconDelegate;
+            s_ModeDelegates[(int) inType] = inModeDelegate;
+        }
+
+        static internal Sprite ResolveIcon(BFBase inFact, Sprite inOverride)
+        {
+            if (inOverride != null)
+                return inOverride;
+            
+            Sprite icon = s_DefaultIconDelegates[(int) inFact.Type]?.Invoke(inFact);
+            if (icon == null)
+                icon = ValidationUtils.FindAsset<BestiaryDB>().DefaultIcon(inFact.Type);
+            return icon;
+        }
+
+        static public BFMode ResolveMode(BFBase inFact)
+        {
+            BFBehavior behavior = inFact as BFBehavior;
+            if (behavior != null && behavior.AutoGive)
+                return BFMode.Always;
+            return s_ModeDelegates[(int) inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+        }
+
+        #else
+
+        [Conditional("UNITY_EDITOR")]
+        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, BFMode inMode)
+        {
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, ModeDelegate inModeDelegate)
+        {
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, BFMode inMode)
+        {
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, ModeDelegate inModeDelegate)
+        {
+        }
+
+        #endif // UNITY_EDITOR
+    }
+}

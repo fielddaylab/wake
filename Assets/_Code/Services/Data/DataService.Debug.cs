@@ -149,11 +149,11 @@ namespace Aqua
             Dictionary<StringHash32, DMInfo> factSubmenus = new Dictionary<StringHash32, DMInfo>();
             foreach(var fact in Services.Assets.Bestiary.AllFacts())
             {
-                if (Services.Assets.Bestiary.IsAutoFact(fact.Id()))
+                if (Services.Assets.Bestiary.IsAutoFact(fact.Id))
                     continue;
 
                 DMInfo submenu;
-                StringHash32 submenuKey = fact.Parent().Id();
+                StringHash32 submenuKey = fact.Parent.Id();
                 if (!factSubmenus.TryGetValue(submenuKey, out submenu))
                 {
                     submenu = new DMInfo(submenuKey.ToDebugString());
@@ -161,7 +161,7 @@ namespace Aqua
                     factMenu.AddSubmenu(submenu);
                 }
 
-                RegisterFactToggle(submenu, fact.Id());
+                RegisterFactToggle(submenu, fact.Id);
             }
 
             bestiaryMenu.AddSubmenu(critterMenu);
@@ -337,7 +337,7 @@ namespace Aqua
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
-                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactNoEvent(fact.Id());
+                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactNoEvent(fact.Id);
                 }
             }
             if (bChanged)
@@ -352,7 +352,7 @@ namespace Aqua
             {
                 Services.Data.Profile.Bestiary.DeregisterEntity(entry.Id());
                 foreach(var fact in entry.Facts)
-                    Services.Data.Profile.Bestiary.DeregisterFact(fact.Id());
+                    Services.Data.Profile.Bestiary.DeregisterFact(fact.Id);
             }
         }
 

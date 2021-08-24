@@ -59,7 +59,7 @@ namespace ProtoAqua.Modeling
 
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
                     BFBody body = critterEntry.FactOfType<BFBody>();
-                    float populationScale = body.MassPerPopulation() * body.MassDisplayScale();
+                    float populationScale = body.MassPerPopulation * body.MassDisplayScale;
 
                     unusedLines.Remove(id);
                     if (!m_LineMap.TryGetValue(id, out line))
@@ -118,7 +118,7 @@ namespace ProtoAqua.Modeling
                     int resultIdx = inResults[0].IndexOf(id); // this only works if this appears in the same place every time!
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
                     BFBody body = critterEntry.FactOfType<BFBody>();
-                    float populationScale = body.MassPerPopulation() * body.MassDisplayScale();
+                    float populationScale = body.MassPerPopulation * body.MassDisplayScale;
 
                     // if population starts at 0, don't graph
                     if (inResults[0].Actors[resultIdx].Population == 0)

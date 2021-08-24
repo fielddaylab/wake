@@ -3,7 +3,7 @@ using BeauUtil;
 using UnityEngine.UI.Extensions;
 using System;
 
-namespace ProtoAqua.Modeling
+namespace Aqua
 {
     public class GraphLine : MonoBehaviour
     {

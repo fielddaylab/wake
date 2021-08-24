@@ -17,9 +17,9 @@ namespace Aqua
 
         public void Populate(BFPopulation inFact)
         {
-            m_Icon.sprite = inFact.Icon();
-            m_Label.SetText(inFact.Critter().CommonName());
-            m_Population.SetText(inFact.FormattedPopulation());
+            m_Icon.sprite = inFact.Icon;
+            m_Label.SetText(inFact.Critter.CommonName());
+            m_Population.SetText(BestiaryUtils.FormatPopulation(inFact.Critter, inFact.Value));
         }
     }
 }

@@ -4,6 +4,8 @@ namespace Aqua
     {
         Alive,
         Stressed,
-        Dead
+        Dead,
+
+        UNUSED
     }
 }

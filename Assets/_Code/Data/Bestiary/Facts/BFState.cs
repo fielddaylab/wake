@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Aqua
 {
@@ -12,60 +13,66 @@ namespace Aqua
         #region Inspector
 
         [Header("Property Range")]
-        [SerializeField, AutoEnum] private WaterPropertyId m_PropertyId = WaterPropertyId.Temperature;
+        [AutoEnum, FormerlySerializedAs("m_PropertyId")] public WaterPropertyId Property = WaterPropertyId.Temperature;
         
         [Header("Alive State")]
-        [SerializeField] private bool m_HasStressed = true;
-        [SerializeField, ShowIfField("m_HasStressed")] private float m_MinSafe = 0;
-        [SerializeField, ShowIfField("m_HasStressed")] private float m_MaxSafe = 0;
+        [SerializeField, FormerlySerializedAs("m_HasStressed")] public bool HasStressed = true;
+        [SerializeField, ShowIfField("HasStressed")] private float m_MinSafe = 0;
+        [SerializeField, ShowIfField("HasStressed")] private float m_MaxSafe = 0;
 
         [Header("Stressed State")]
-        [SerializeField] private bool m_HasDeath = false;
-        [SerializeField, ShowIfField("m_HasDeath")] private float m_MinStressed = float.MinValue;
-        [SerializeField, ShowIfField("m_HasDeath")] private float m_MaxStressed = float.MaxValue;
+        [SerializeField, FormerlySerializedAs("m_HasDeath")] public bool HasDeath = false;
+        [SerializeField, ShowIfField("HasDeath")] private float m_MinStressed = float.MinValue;
+        [SerializeField, ShowIfField("HasDeath")] private float m_MaxStressed = float.MaxValue;
 
         #endregion // Inspector
 
-        [SerializeField, HideInInspector] private ActorStateTransitionRange m_Range;
+        [SerializeField, HideInInspector] public ActorStateTransitionRange Range;
 
-        public WaterPropertyId PropertyId() { return m_PropertyId; }
-        public ActorStateTransitionRange Range() { return m_Range; }
-        public bool HasStressed() { return m_HasStressed; }
-        public bool HasDeath() { return m_HasDeath; }
+        private BFState() : base(BFTypeId.State) { }
 
-        public override void Accept(IFactVisitor inVisitor)
+        #region Behavior
+
+        static public void Configure()
         {
-            inVisitor.Visit(this);
+            BFType.DefineAttributes(BFTypeId.State, BFDiscoveredFlags.All, Compare);
+            BFType.DefineMethods(BFTypeId.State, null, GenerateSentence, null);
+            BFType.DefineEditor(BFTypeId.State, DefaultIcon, BFMode.Player);
         }
 
-        protected override Sprite DefaultIcon()
+        static private int Compare(BFBase x, BFBase y)
         {
-            return Property(m_PropertyId).Icon();
+            return WaterPropertyDB.SortByVisualOrder(((BFState) x).Property, ((BFState) y).Property);
         }
 
-        public override string GenerateSentence()
+        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
         {
-            WaterPropertyDesc property = Property(m_PropertyId);
-            if (m_HasDeath)
+            BFState stateFact = (BFState) inFact;
+            WaterPropertyDesc desc = BestiaryUtils.Property(stateFact.Property);
+            
+            if (stateFact.HasDeath)
             {
-                return Loc.Format(property.StateChangeFormat(), Parent().CommonName()
-                    , property.FormatValue(m_MinSafe), property.FormatValue(m_MaxSafe)
-                    , property.FormatValue(m_MinStressed), property.FormatValue(m_MaxStressed)
+                return Loc.Format(desc.StateChangeFormat(), stateFact.Parent.CommonName()
+                    , desc.FormatValue(stateFact.m_MinSafe), desc.FormatValue(stateFact.m_MaxSafe)
+                    , desc.FormatValue(stateFact.m_MinStressed), desc.FormatValue(stateFact.m_MaxStressed)
                 );
             }
 
-            if (m_HasStressed)
+            if (stateFact.HasStressed)
             {
-                return Loc.Format(property.StateChangeStressOnlyFormat(), Parent().CommonName(), property.FormatValue(m_MinSafe), property.FormatValue(m_MaxSafe));
+                return Loc.Format(desc.StateChangeStressOnlyFormat(), stateFact.Parent.CommonName(), desc.FormatValue(stateFact.m_MinSafe), desc.FormatValue(stateFact.m_MaxSafe));
             }
 
-            return Loc.Format(property.StateChangeUnaffectedFormat(), Parent().CommonName());
+            return Loc.Format(desc.StateChangeUnaffectedFormat(), stateFact.Parent.CommonName());
         }
 
-        internal override int GetSortingOrder()
+        static private Sprite DefaultIcon(BFBase inFact)
         {
-            return (int) m_PropertyId;
+            BFState stateFact = (BFState) inFact;
+            return BestiaryUtils.Property(stateFact.Property).Icon();
         }
+
+        #endregion // Behavior
 
         #if UNITY_EDITOR
 
@@ -75,19 +82,19 @@ namespace Aqua
         {
             ActorStateTransitionRange range = ActorStateTransitionRange.Default;
 
-            if (m_HasStressed)
+            if (HasStressed)
             {
                 range.AliveMin = m_MinSafe;
                 range.AliveMax = m_MaxSafe;
             }
 
-            if (m_HasDeath)
+            if (HasDeath)
             {
                 range.StressedMin = m_MinStressed;
                 range.StressedMax = m_MaxStressed;
             }
 
-            return Ref.Replace(ref m_Range, range);
+            return Ref.Replace(ref Range, range);
         }
 
         #endif // UNITY_EDITOR

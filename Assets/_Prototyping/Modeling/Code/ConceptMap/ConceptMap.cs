@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 
 namespace ProtoAqua.Modeling
 {
-    public class ConceptMap : MonoBehaviour, IFactVisitor, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class ConceptMap : MonoBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         #region Types
 
@@ -169,7 +169,7 @@ namespace ProtoAqua.Modeling
             m_MapData.ClearAll();
             foreach(var fact in m_AddedFacts)
             {
-                fact.Accept(this);
+                VisitFact(fact);
             }
         }
 
@@ -250,7 +250,7 @@ namespace ProtoAqua.Modeling
                     Texture2D lineTexture = m_SolidLineTexture;
                     
                     BFBase fact = linkData.Tag as BFBase;
-                    if (fact != null && !Services.Data.Profile.Bestiary.IsFactFullyUpgraded(fact.Id()))
+                    if (fact != null && !Services.Data.Profile.Bestiary.IsFactFullyUpgraded(fact.Id))
                     {
                         lineTexture = m_DottedLineTexture;
                     }
@@ -272,87 +272,47 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact)
+        private void VisitFact(BFBase inFact)
         {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
+            switch(inFact.Type)
+            {
+                case BFTypeId.Eat:
+                    {
+                        BFEat eat = (BFEat) inFact;
+                        ushort self = m_MapData.CreateNode(eat.Parent.Id(), "critter", eat.Parent);
+                        ushort target = m_MapData.CreateNode(eat.Critter.Id(), "critter", eat.Critter);
+                        m_MapData.CreateLink(inFact.Id, self, target, "eat", inFact);
+                        break;
+                    }
 
-        void IFactVisitor.Visit(BFBody inFact)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
+                case BFTypeId.Grow:
+                case BFTypeId.Reproduce:
+                case BFTypeId.State:
+                    {
+                        m_MapData.CreateNode(inFact.Parent.Id(), "critter", inFact.Parent);
+                        break;
+                    }
 
-        void IFactVisitor.Visit(BFWaterProperty inFact)
-        {
-            // var waterPropDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
-            // m_MapData.CreateNode(waterPropDef.Id(), "property", inFact);
-        }
+                case BFTypeId.Consume:
+                    {
+                        BFConsume consume = (BFConsume) inFact;
+                        ushort self = m_MapData.CreateNode(consume.Parent.Id(), "critter", consume.Parent);
+                        var propertyDef = Services.Assets.WaterProp.Property(consume.Property);
+                        ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
+                        m_MapData.CreateLink(inFact.Id, target, self, "consume", inFact);
+                        break;
+                    }
 
-        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
-        {
-            // var waterPropDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
-            // m_MapData.CreateNode(waterPropDef.Id(), "property", inFact);
-        }
-
-        void IFactVisitor.Visit(BFPopulation inFact)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFPopulationHistory inFact)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFEat inFact)
-        {
-            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-            ushort target = m_MapData.CreateNode(inFact.Target().Id(), "critter", inFact.Target());
-            m_MapData.CreateLink(inFact.Id(), self, target, "eat", inFact);
-        }
-
-        void IFactVisitor.Visit(BFGrow inFact)
-        {
-            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFReproduce inFact)
-        {
-            m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFProduce inFact)
-        {
-            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-            var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
-            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
-            m_MapData.CreateLink(inFact.Id(), self, target, "produce", inFact);
-        }
-
-        void IFactVisitor.Visit(BFConsume inFact)
-        {
-            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-            var propertyDef = Services.Assets.WaterProp.Property(inFact.Target());
-            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
-            m_MapData.CreateLink(inFact.Id(), self, target, "consume", inFact);
-        }
-
-        void IFactVisitor.Visit(BFState inFact)
-        {
-            ushort self = m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-            var propertyDef = Services.Assets.WaterProp.Property(inFact.PropertyId());
-            ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
-            m_MapData.CreateLink(inFact.Id(), self, target, "range", inFact);
-        }
-
-        void IFactVisitor.Visit(BFDeath inFact)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
-        }
-
-        void IFactVisitor.Visit(BFModel inFact)
-        {
-            // m_MapData.CreateNode(inFact.Parent().Id(), "critter", inFact.Parent());
+                case BFTypeId.Produce:
+                    {
+                        BFProduce produce = (BFProduce) inFact;
+                        ushort self = m_MapData.CreateNode(produce.Parent.Id(), "critter", produce.Parent);
+                        var propertyDef = Services.Assets.WaterProp.Property(produce.Property);
+                        ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
+                        m_MapData.CreateLink(inFact.Id, self, target, "consume", inFact);
+                        break;
+                    }
+            }
         }
 
         #endregion // IFactVisitor

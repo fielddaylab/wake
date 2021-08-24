@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BeauUtil.Debugger;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Aqua
 {
@@ -49,50 +50,21 @@ namespace Aqua
         #region Inspector
 
         [Header("Behavior")]
-        [SerializeField] private bool m_Stressed = false;
-        [SerializeField] protected bool m_AutoGive = false;
-
-        [Header("Text")]
-        [SerializeField] private TextId m_VerbOverride = null;
-        [SerializeField] private TextId m_SentenceOverride = null;
-        [SerializeField] private TextId m_FragmentsOverride = null;
+        [FormerlySerializedAs("m_Stressed")] public bool OnlyWhenStressed = false;
+        [FormerlySerializedAs("m_AutoGive")] internal bool AutoGive = false;
 
         #endregion // Inspector
 
-        public bool OnlyWhenStressed() { return m_Stressed; }
-        public override BFMode Mode()
+        protected BFBehavior(BFTypeId inType) : base(inType) { }
+
+        static protected int CompareStressedPair(BFBase x, BFBase y)
         {
-            return m_AutoGive ? BFMode.Always : base.Mode();
-        }
-
-        #region Text
-
-        public TextId Verb() { return !m_VerbOverride.IsEmpty ? m_VerbOverride : DefaultVerb(); }
-
-        protected TextId SentenceOverride() { return m_SentenceOverride; }
-        protected TextId FragmentsOverride() { return m_FragmentsOverride; }
-
-        protected virtual TextId DefaultVerb() { return null; }
-
-        #endregion // Text
-
-        public abstract IEnumerable<BFFragment> GenerateFragments(BestiaryDesc inReference, BFDiscoveredFlags inFlags);
-
-        public override int CompareTo(BFBase other)
-        {
-            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
-            if (sort == 0)
-            {
-                BFBehavior behavior = other as BFBehavior;
-                // if (behavior != null && IsPair(behavior))
-                // {
-                //     if (m_Stressed)
-                //         return 1;
-                //     return -1;
-                // }
-                sort = Id().CompareTo(other.Id());
-            }
-            return sort;
+            BFBehavior bx = (BFBehavior) x, by = (BFBehavior) y;
+            if (bx.OnlyWhenStressed)
+                return 1;
+            if (by.OnlyWhenStressed)
+                return -1;
+            return 0;
         }
 
         #if UNITY_EDITOR
@@ -103,16 +75,17 @@ namespace Aqua
 
         protected T FindPairedFact<T>() where T : BFBehavior
         {
-            foreach(var behavior in Parent().FactsOfType<T>())
+            foreach(var behavior in Parent.OwnedFacts)
             {
                 if (behavior == this)
                     continue;
 
-                if (behavior.Parent() != Parent())
+                T asT = behavior as T;
+                if (asT == null)
                     continue;
 
-                if (IsPair(behavior))
-                    return behavior;
+                if (IsPair(asT))
+                    return asT;
             }
 
             return null;
@@ -120,7 +93,7 @@ namespace Aqua
 
         protected virtual bool IsPair(BFBehavior inOther)
         {
-            return inOther.GetType() == GetType();
+            return inOther.Type == Type;
         }
 
         #endif // UNITY_EDITOR

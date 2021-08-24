@@ -17,11 +17,11 @@ namespace Aqua
 
         public void Populate(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
+            m_Icon.sprite = inFact.Icon;
+            m_Icon.gameObject.SetActive(inFact.Icon);
             m_Sentence.Populate(inFact, inReference, inFlags);
 
-            m_StressedBadge.gameObject.SetActive(inFact.OnlyWhenStressed());
+            m_StressedBadge.gameObject.SetActive(inFact.OnlyWhenStressed);
         }
 
         void IPoolAllocHandler.OnAlloc()

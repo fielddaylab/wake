@@ -43,7 +43,7 @@ namespace Aqua
 
             Clear();
 
-            foreach(var fragment in inFact.GenerateFragments(inReference, inFlags))
+            foreach(var fragment in BFType.GenerateFragments(inFact, inReference, inFlags))
             {
                 TryAllocFragment(fragment);
             }

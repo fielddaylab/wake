@@ -130,7 +130,7 @@ namespace Aqua.Profile
             {
                 m_HasChanges = true;
                 var fact = Services.Assets.Bestiary.Fact(inFactId);
-                StringHash32 parentId = fact.Parent().Id();
+                StringHash32 parentId = fact.Parent.Id();
                 bool bVisible;
                 if (inbIncludeEntity)
                 {
@@ -157,10 +157,10 @@ namespace Aqua.Profile
 
             foreach(var fact in entry.Facts)
             {
-                switch(fact.Mode())
+                switch(fact.Mode)
                 {
                     case BFMode.Player:
-                        if (m_ObservedFacts.Contains(fact.Id()))
+                        if (m_ObservedFacts.Contains(fact.Id))
                             yield return fact;
                         break;
 
@@ -178,10 +178,10 @@ namespace Aqua.Profile
 
             foreach(var fact in entry.Facts)
             {
-                switch(fact.Mode())
+                switch(fact.Mode)
                 {
                     case BFMode.Player:
-                        if (m_ObservedFacts.Contains(fact.Id()))
+                        if (m_ObservedFacts.Contains(fact.Id))
                         {
                             outFacts.Add(fact);
                             count++;
@@ -218,7 +218,7 @@ namespace Aqua.Profile
             if (!HasFact(inFactId))
                 return BFDiscoveredFlags.None;
 
-            BFDiscoveredFlags flags = Services.Assets.Bestiary.Fact(inFactId).DefaultInformationFlags();
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Services.Assets.Bestiary.Fact(inFactId));
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx > 0)
                 flags |= m_FactMetas[metaIdx].Flags;
@@ -233,7 +233,7 @@ namespace Aqua.Profile
             RegisterFact(inFactId);
             BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
 
-            BFDiscoveredFlags existingFlags = fact.DefaultInformationFlags();
+            BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx > 0)
                 existingFlags |= m_FactMetas[metaIdx].Flags;
@@ -253,7 +253,7 @@ namespace Aqua.Profile
                 m_FactMetas.SortByKey<StringHash32, FactData>();
             }
 
-            bool bVisible = m_ObservedEntities.Contains(fact.Parent().Id());
+            bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
             if (bVisible)
             {
                 Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
@@ -314,9 +314,9 @@ namespace Aqua.Profile
 
                 foreach(var assumed in desc.AssumedFacts)
                 {
-                    if (!m_GraphedFacts.Contains(assumed.Id()))
+                    if (!m_GraphedFacts.Contains(assumed.Id))
                     {
-                        outFacts.Add(assumed.Id());
+                        outFacts.Add(assumed.Id);
                         count++;
                     }
                 }
@@ -326,7 +326,7 @@ namespace Aqua.Profile
             foreach(var factId in m_ObservedFacts)
             {
                 fact = db.Fact(factId);
-                if (!fact.Parent().HasCategory(BestiaryDescCategory.Critter))
+                if (!fact.Parent.HasCategory(BestiaryDescCategory.Critter))
                     continue;
                 
                 if (!m_GraphedFacts.Contains(factId))
@@ -430,7 +430,7 @@ namespace Aqua.Profile
             {
                 m_HasChanges = true;
                 var fact = Services.Assets.Bestiary.Fact(inFactId);
-                StringHash32 parentId = fact.Parent().Id();
+                StringHash32 parentId = fact.Parent.Id();
                 if (inbIncludeEntity)
                 {
                     m_ObservedEntities.Add(parentId);

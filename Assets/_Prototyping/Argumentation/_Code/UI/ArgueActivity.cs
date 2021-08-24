@@ -106,7 +106,8 @@ namespace ProtoAqua.Argumentation
             if (link == null)
             {
                 BFBase fact = Services.Assets.Bestiary.Fact(inId);
-                link = new Link(fact);
+                BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(inId);
+                link = new Link(fact, flags);
             }
 
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);

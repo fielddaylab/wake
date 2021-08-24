@@ -49,7 +49,7 @@ namespace ProtoAqua.Modeling
         {
             m_Animation.Stop();
 
-            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap();
+            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap;
             int displayIconCount = (int) Math.Ceiling(populationPercent * m_Icons.Length);
 
             for(int i = 0; i < displayIconCount; i++)
@@ -86,7 +86,7 @@ namespace ProtoAqua.Modeling
             m_CurrentPopulation = inPopulation;
             m_CurrentState = inState;
 
-            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap();
+            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap;
             int displayIconCount = (int) Math.Ceiling(populationPercent * m_Icons.Length);
 
             using(PooledList<IEnumerator> enumerators = PooledList<IEnumerator>.Create())

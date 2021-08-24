@@ -49,9 +49,9 @@ namespace ProtoAqua.Modeling
 
         public void AddFact(BFBase inFact)
         {
-            m_GraphedFacts.Add(inFact.Id());
-            inFact.CollectReferences(m_GraphedCritters);
-            m_UngraphedFacts.Remove(inFact.Id());
+            m_GraphedFacts.Add(inFact.Id);
+            BFType.CollectReferences(inFact, m_GraphedCritters);
+            m_UngraphedFacts.Remove(inFact.Id);
         }
     }
 }

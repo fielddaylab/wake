@@ -1,13 +1,8 @@
 using Aqua;
 using UnityEngine;
-using UnityEngine.UI;
-using BeauUtil;
-using BeauPools;
-using System;
-using System.Collections.Generic;
 using TMPro;
 
-namespace ProtoAqua.Modeling
+namespace Aqua
 {
     public class GraphAxis : MonoBehaviour
     {

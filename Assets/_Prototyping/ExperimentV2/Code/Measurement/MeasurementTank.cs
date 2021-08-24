@@ -391,12 +391,12 @@ namespace ProtoAqua.ExperimentV2
 
                 if (reproduce != null)
                 {
-                    ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id()));
+                    ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id));
                 }
 
                 if (grow != null)
                 {
-                    ioFacts.Add(ExperimentUtil.NewFact(grow.Id()));
+                    ioFacts.Add(ExperimentUtil.NewFact(grow.Id));
                 }
             }
         }
@@ -427,11 +427,11 @@ namespace ProtoAqua.ExperimentV2
                     BFProduce produce = BestiaryUtils.FindProduceRule(critter, propId, critterState);
                     if (consume != null)
                     {
-                        ioFacts.Add(ExperimentUtil.NewFact(consume.Id()));
+                        ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
                     }
                     if (produce != null)
                     {
-                        ioFacts.Add(ExperimentUtil.NewFact(produce.Id()));
+                        ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
                     }
                 }
             }
@@ -466,9 +466,9 @@ namespace ProtoAqua.ExperimentV2
 
                 if (leftEatsRight != null)
                 {
-                    if (bestiaryData.HasFact(leftEatsRight.Id()))
+                    if (bestiaryData.HasFact(leftEatsRight.Id))
                     {
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id(), BFDiscoveredFlags.Rate));
+                        ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
                     }
                     else
                     {
@@ -477,9 +477,9 @@ namespace ProtoAqua.ExperimentV2
                 }
                 if (rightEatsLeft != null)
                 {
-                    if (bestiaryData.HasFact(rightEatsLeft.Id()))
+                    if (bestiaryData.HasFact(rightEatsLeft.Id))
                     {
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id(), BFDiscoveredFlags.Rate));
+                        ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
                     }
                     else
                     {

@@ -75,6 +75,7 @@ namespace Aqua
         public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
+        public ListSlice<BFBase> PlayerFacts { get { return new ListSlice<BFBase>(m_AllFacts, 0, m_PlayerFactCount); } }
         public ListSlice<BFBase> AssumedFacts { get { return new ListSlice<BFBase>(m_AllFacts, m_PlayerFactCount, m_AlwaysFactCount); } }
         public ListSlice<BFBase> InternalFacts { get { return new ListSlice<BFBase>(m_AllFacts, m_InternalFactOffset, m_InternalFactCount); } }
 
@@ -187,7 +188,7 @@ namespace Aqua
         bool IOptimizableAsset.Optimize()
         {
             foreach(var fact in m_Facts)
-                fact.SetParent(this);
+                fact.BakeProperties(this);
 
             switch(m_Type)
             {
@@ -199,11 +200,10 @@ namespace Aqua
                             BFWaterProperty waterProp = fact as BFWaterProperty;
                             if (waterProp != null)
                             {
-                                m_EnvState[waterProp.PropertyId()] = waterProp.Value();
+                                m_EnvState[waterProp.Property] = waterProp.Value;
                             }
                         }
-
-                        return true;
+                        break;
                     }
 
                 case BestiaryDescCategory.Critter:
@@ -214,18 +214,14 @@ namespace Aqua
                             BFState state = fact as BFState;
                             if (state != null)
                             {
-                                m_StateTransitions[state.PropertyId()] = state.Range();
+                                m_StateTransitions[state.Property] = state.Range;
                             }
                         }
-
-                        return true;
-                    }
-
-                default:
-                    {
-                        return false;
+                        break;
                     }
             }
+
+            return true;
         }
 
         internal BFBase[] OwnedFacts { get { return m_Facts; } }
@@ -248,14 +244,14 @@ namespace Aqua
                 m_AllFacts = (BFBase[]) m_Facts.Clone();
             }
 
-            Array.Sort(m_AllFacts, (a, b) => a.Mode().CompareTo(b.Mode()));
+            Array.Sort(m_AllFacts, BFBase.SortByMode);
             m_PlayerFactCount = 0;
             m_InternalFactCount = 0;
             m_AlwaysFactCount = 0;
 
             for(int i = 0; i < m_AllFacts.Length; i++)
             {
-                switch(m_AllFacts[i].Mode())
+                switch(m_AllFacts[i].Mode)
                 {
                     case BFMode.Player:
                         m_PlayerFactCount++;

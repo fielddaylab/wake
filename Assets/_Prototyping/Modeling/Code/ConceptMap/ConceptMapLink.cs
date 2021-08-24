@@ -54,14 +54,14 @@ namespace ProtoAqua.Modeling
             m_LineTiler.texture = inLineTexture;
 
             BFBase fact = inData.Tag as BFBase;
-            m_Icon.sprite = fact?.GraphIcon();
+            // m_Icon.sprite = fact?.GraphIcon; // TODO: Replace
 
             BFBehavior behavior = fact as BFBehavior;
             if (behavior != null)
             {
                 if (m_Label)
                 {
-                    m_Label.SetText(behavior.Verb());
+                    // m_Label.SetText(behavior.Verb); // TODO: Replace
                 }
             }
             else

@@ -54,10 +54,15 @@ namespace Aqua
             WaterPropertyId.PH
         };
 
-        static public int SortingOrder(WaterPropertyId inId)
+        static private int SortingOrder(WaterPropertyId inId)
         {
             return Array.IndexOf(SortOrder, inId);
         }
+
+        static public Comparison<WaterPropertyId> SortByVisualOrder = (x, y) =>
+        {
+            return SortingOrder(x).CompareTo(SortingOrder(y));
+        };
 
         #region IOptimizedAsset
         

@@ -287,7 +287,7 @@ namespace ProtoAqua.Modeling
         /// </summary>
         public bool ContainsFact(BFBase inFact)
         {
-            if (Services.Assets.Bestiary.IsAutoFact(inFact.Id()))
+            if (Services.Assets.Bestiary.IsAutoFact(inFact.Id))
                 return true;
 
             return m_PlayerFacts.Contains(inFact);
