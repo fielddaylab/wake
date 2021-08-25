@@ -252,31 +252,11 @@ namespace Aqua
             {
                 inMenu.AddText("No bookmarks :(", () => string.Empty);
             }
-            else if (allBookmarks.Length <= 10)
+            else
             {
                 foreach(var bookmark in allBookmarks)
                 {
                     RegisterBookmark(inMenu, bookmark);
-                }
-            }
-            else
-            {
-                int pageNumber = 0;
-                int bookmarkCounter = 0;
-                DMInfo page = new DMInfo("Page 1", 10);
-                inMenu.AddSubmenu(page);
-                foreach(var bookmark in allBookmarks)
-                {
-                    if (bookmarkCounter >= 10)
-                    {
-                        pageNumber++;
-                        page = new DMInfo("Page " + pageNumber.ToString(), 10);
-                        inMenu.AddSubmenu(page);
-                    }
-
-                    RegisterBookmark(page, bookmark);
-
-                    bookmarkCounter++;
                 }
             }
         }

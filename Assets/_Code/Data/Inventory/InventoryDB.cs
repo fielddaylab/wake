@@ -1,3 +1,4 @@
+using System;
 using BeauUtil;
 using UnityEngine;
 
@@ -16,11 +17,19 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        static private readonly Comparison<InvItem> SortByCategory = (x, y) => {
+            int categoryCompare = x.Category().CompareTo(y.Category());
+            if (categoryCompare != 0)
+                return categoryCompare;
+
+            return x.Id().CompareTo(y.Id());
+        };
+
         int IOptimizableAsset.Order { get { return 0; } }
 
         bool IOptimizableAsset.Optimize()
         {
-            SortObjects((a, b) => a.Category().CompareTo(b.Category()));
+            SortObjects(SortByCategory);
 
             m_CurrencyCount = 0;
             m_UpgradeCount = 0;
