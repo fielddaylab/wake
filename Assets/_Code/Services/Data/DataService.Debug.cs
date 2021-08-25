@@ -337,7 +337,10 @@ namespace Aqua
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
+                    {
                         bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactNoEvent(fact.Id);
+                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactFlagsNoEvent(fact.Id, BFDiscoveredFlags.All);
+                    }
                 }
             }
             if (bChanged)

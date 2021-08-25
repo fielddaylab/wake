@@ -441,6 +441,38 @@ namespace Aqua.Profile
             return false;
         }
 
+        public bool DebugRegisterFactFlagsNoEvent(StringHash32 inFactId, BFDiscoveredFlags inFlags)
+        {
+            if (inFlags <= 0)
+                return false;
+            
+            RegisterFact(inFactId);
+            BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
+
+            BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
+            int metaIdx = m_FactMetas.BinarySearch(inFactId);
+            if (metaIdx > 0)
+                existingFlags |= m_FactMetas[metaIdx].Flags;
+            if ((existingFlags & inFlags) == inFlags)
+                return false;
+
+            if (metaIdx > 0)
+            {
+                m_FactMetas[metaIdx].Flags |= inFlags;
+            }
+            else
+            {
+                FactData data;
+                data.FactId = inFactId;
+                data.Flags = inFlags;
+                m_FactMetas.PushBack(data);
+                m_FactMetas.SortByKey<StringHash32, FactData>();
+            }
+
+            m_HasChanges = true;
+            return true;
+        }
+
         #endif // DEVELOPMENT
 
         #endregion // Debug

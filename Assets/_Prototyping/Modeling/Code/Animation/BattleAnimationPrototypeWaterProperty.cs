@@ -23,7 +23,6 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private WaterPropertyDesc m_WaterProp = null;
         [NonSerialized] private float m_CurrentValue;
-        private Routine m_Animation;
 
         public void Initialize(WaterPropertyDesc inWaterProp)
         {
@@ -37,15 +36,8 @@ namespace ProtoAqua.Modeling
             SetValue(inWaterProp.DefaultValue());
         }
 
-        private void OnDisable()
-        {
-            m_Animation.Stop();
-        }
-
         public void SetValue(float inValue)
         {
-            m_Animation.Stop();
-
             m_CurrentValue = inValue;
 
             float valuePercent = m_WaterProp.RemapValue(inValue);
@@ -54,29 +46,31 @@ namespace ProtoAqua.Modeling
             m_EffectPool.Reset();
         }
 
-        public void AnimateValue(float inValue)
+        public IEnumerator AnimateValue(float inValue)
         {
             if (m_CurrentValue == inValue)
-                return;
+                return null;
 
             m_CurrentValue = inValue;
             
             float valuePercent = m_WaterProp.RemapValue(inValue);
-            m_Animation.Replace(this, AnimateMeter(m_Meter, valuePercent));
+            return AnimateMeter(m_Meter, valuePercent);
         }
 
-        public void PlayIncoming(Transform inOriginator)
+        public IEnumerator PlayIncoming(Transform inOriginator)
         {
             VFX effect = m_EffectPool.Alloc();
             effect.Graphic.color = m_WaterProp.Color();
-            effect.Animation.Replace(effect, AnimateIncrease(effect, inOriginator.transform, transform)).TryManuallyUpdate(0);
+            effect.Transform.SetPosition(inOriginator.localPosition, Axis.XY, Space.Self);
+            return AnimateIncrease(effect, inOriginator, transform);
         }
 
-        public void PlayOutgoing(Transform inTarget)
+        public IEnumerator PlayOutgoing(Transform inTarget)
         {
             VFX effect = m_EffectPool.Alloc();
             effect.Graphic.color = m_WaterProp.Color();
-            effect.Animation.Replace(effect, AnimateIncrease(effect, transform, inTarget.transform)).TryManuallyUpdate(0);
+            effect.Transform.SetPosition(transform.localPosition, Axis.XY, Space.Self);
+            return AnimateIncrease(effect, transform, inTarget);
         }
 
         #region Animations
@@ -93,7 +87,6 @@ namespace ProtoAqua.Modeling
 
         static private IEnumerator AnimateIncrease(VFX inEffect, Transform inA, Transform inB)
         {
-            inEffect.Transform.SetPosition(inA.localPosition, Axis.XY, Space.Self);
             SimpleSpline simple = Spline.Simple(inA.localPosition, inB.localPosition, new Vector3(0, 100, 0));
             yield return inEffect.transform.MoveAlong(simple, 0.5f, Axis.XY, Space.Self).Ease(Curve.Smooth);
             inEffect.Free();
