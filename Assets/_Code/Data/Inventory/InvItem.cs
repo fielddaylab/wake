@@ -12,6 +12,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
+        [SerializeField, AutoEnum] private InvItemSubCategory m_SubCategory = InvItemSubCategory.None;
         [SerializeField, AutoEnum] private InvItemFlags m_Flags = InvItemFlags.None;
 
         [Header("Text")]
@@ -27,6 +28,7 @@ namespace Aqua
         #endregion
 
         public InvItemCategory Category() { return m_Category; }
+        public InvItemSubCategory SubCategory() { return m_SubCategory; }
         public InvItemFlags Flags() { return m_Flags; }
 
         public bool HasFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) != 0; }
@@ -47,12 +49,22 @@ namespace Aqua
         Artifact
     }
 
+    public enum InvItemSubCategory : byte
+    {
+        None,
+        Ship,
+        Submarine,
+        Experimentation,
+        Portable
+    }
+
     [Flags]
     public enum InvItemFlags : byte
     {
         [Hidden]
         None = 0x00,
 
-        Hidden = 0x01
+        Hidden = 0x01,
+        Sellable = 0x02,
     }
 }

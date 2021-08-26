@@ -7,14 +7,14 @@ using UnityEngine.UI;
 
 namespace Aqua
 {
-    public class ShowIfUpgrade : MonoBehaviour
+    public class ShowIfCondition : MonoBehaviour
     {
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_ItemName = null;
+        [SerializeField] private string m_Conditions = null;
         [SerializeField] private GameObject[] m_ToShow = null;
         [SerializeField] private GameObject[] m_ToHide = null;
-        [SerializeField, Tooltip("If set, this will be checked whenever the inventory is updated")] private bool m_ContinuousCheck = true;
+        [SerializeField, Tooltip("If set, this will be checked whenever game conditions are updated, or when a cutscene ends")] private bool m_ContinuousCheck = true;
         
         #endregion // Inspector
 
@@ -25,9 +25,11 @@ namespace Aqua
         {
             if (m_ContinuousCheck)
             {
-                Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this);
+                Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this)
+                    .Register(GameEvents.VariableSet, Refresh, this)
+                    .Register(GameEvents.CutsceneEnd, Refresh, this);
             }
-
+            
             if (Services.State.IsLoadingScene())
             {
                 Services.Events.Register(GameEvents.SceneLoaded, Refresh, this);
@@ -48,7 +50,7 @@ namespace Aqua
 
         private void Refresh()
         {
-            SetState(Services.Data.Profile.Inventory.HasUpgrade(m_ItemName));
+            SetState(Services.Data.CheckConditions(m_Conditions));
             if (!m_ContinuousCheck)
                 Destroy(this);
         }
