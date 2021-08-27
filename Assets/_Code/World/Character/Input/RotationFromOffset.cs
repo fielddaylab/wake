@@ -15,7 +15,7 @@ namespace Aqua.Character
             float desiredRotation = Mathf.Atan2(inNormalizedOffset.y, inNormalizedOffset.x) * Mathf.Rad2Deg;
             float currentRotation = inTransform.localEulerAngles.z;
             float delta = MathUtil.DegreeAngleDifference(currentRotation, desiredRotation);
-            if (delta > 1)
+            if (Mathf.Abs(delta) > 1)
             {
                 float newRotation = currentRotation + delta * TweenUtil.Lerp(Lerp, 1, inDeltaTime);
                 inTransform.SetRotation(newRotation, Axis.Z, Space.Self);

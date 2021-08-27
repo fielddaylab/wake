@@ -163,7 +163,7 @@ namespace Aqua
             
             Sprite icon = s_DefaultIconDelegates[(int) inFact.Type]?.Invoke(inFact);
             if (icon == null)
-                icon = ValidationUtils.FindAsset<BestiaryDB>().DefaultIcon(inFact.Type);
+                icon = ValidationUtils.FindAsset<BestiaryDB>().DefaultIcon(inFact);
             return icon;
         }
 

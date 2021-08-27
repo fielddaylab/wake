@@ -338,6 +338,26 @@ namespace Aqua
                 return Services.Data.Profile.Inventory.ItemCount(inItemId);
             }
 
+            [LeafMember("CanAfford")]
+            static private bool CanAfford(StringHash32 inItemId, int inCount)
+            {
+                return Services.Data.Profile.Inventory.ItemCount(inItemId) >= inCount;
+            }
+
+            [LeafMember("GiveItem")]
+            static public void GiveItem(StringHash32 inItemId, int inCount = 1)
+            {
+                Assert.True(inCount >= 0, "GiveItem must be passed a positive number");
+                Services.Data.Profile.Inventory.AdjustItem(inItemId, inCount);
+            }
+
+            [LeafMember("TakeItem")]
+            static public bool TakeItem(StringHash32 inItemId, int inCount = 1)
+            {
+                Assert.True(inCount >= 0, "TakeItem must be passed a positive number");
+                return Services.Data.Profile.Inventory.AdjustItem(inItemId, -inCount);
+            }
+
             [LeafMember("HasUpgrade")]
             static private Variant HasUpgrade(StringHash32 inUpgradeId)
             {
@@ -357,6 +377,10 @@ namespace Aqua
             }
 
             #endregion // Bestiary/Inventory
+
+            #region Shop
+
+            #endregion // Shop
 
             #region Jobs
 

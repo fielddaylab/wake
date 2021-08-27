@@ -17,7 +17,7 @@ namespace Aqua
 
         public void Populate(PlayerInv playerItem)
         {
-            Populate(playerItem.Item, playerItem.Value());
+            Populate(playerItem.ItemId, (int) playerItem.Count);
         }
 
         public void Populate(StringHash32 inItemId, int inValue)

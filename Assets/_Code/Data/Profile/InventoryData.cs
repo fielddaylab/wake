@@ -8,7 +8,7 @@ namespace Aqua.Profile
 {
     public class InventoryData : IProfileChunk, ISerializedVersion
     {
-        private List<PlayerInv> m_Items = new List<PlayerInv>();
+        private RingBuffer<PlayerInv> m_Items = new RingBuffer<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
         private uint m_WaterProperties = 0;
@@ -18,42 +18,72 @@ namespace Aqua.Profile
 
         #region Items
 
-        public IEnumerable<PlayerInv> Items()
+        public ListSlice<PlayerInv> Items()
         {
             CleanItemList();
             return m_Items;
         }
 
-        public void SetDefaults()
+        public IEnumerable<PlayerInv> GetItems(InvItemCategory inCategory)
         {
-            foreach(var item in Services.Assets.Inventory.Objects)
+            if (inCategory == InvItemCategory.Upgrade)
             {
-                if (item.DefaultValue() > 0)
+                foreach(var upgrade in m_UpgradeIds)
                 {
-                    var playerInv = GetInv(item.Id(), false);
-                    if (playerInv == null)
-                    {
-                        m_Items.Add(new PlayerInv(item));
-                        m_ItemListDirty = true;
-                        m_HasChanges = true;
-                    }
+                    yield return new PlayerInv(upgrade, 1);
                 }
             }
-
-            foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
+            else
             {
-                m_WaterProperties |= (1U << (int) property);
+                CleanItemList();
+                var db = Services.Assets.Inventory;
+                foreach(var item in m_Items)
+                {
+                    InvItem desc = db.Get(item.ItemId);
+                    if ((item.Count > 0 || db.IsAlwaysVisible(item.ItemId)) && desc.Category() == inCategory)
+                        yield return item;
+                }
+            }
+        }
+
+        public int GetItems(InvItemCategory inCategory, ICollection<PlayerInv> outItems)
+        {
+            if (inCategory == InvItemCategory.Upgrade)
+            {
+                foreach(var upgrade in m_UpgradeIds)
+                {
+                    outItems.Add(new PlayerInv(upgrade, 1));
+                }
+                return m_UpgradeIds.Count;
+            }
+            else
+            {
+                var db = Services.Assets.Inventory;
+                int count = 0;
+                foreach(var item in m_Items)
+                {
+                    InvItem desc = db.Get(item.ItemId);
+                    if ((item.Count > 0 || db.IsAlwaysVisible(item.ItemId)) && desc.Category() == inCategory)
+                    {
+                        outItems.Add(item);
+                        count++;
+                    }
+                }
+                return count;
             }
         }
 
         public bool HasItem(StringHash32 inId)
         {
-            return GetInv(inId, false)?.Value() > 0;
+            PlayerInv item;
+            return TryFindInv(inId, out item) && item.Count > 0;
         }
 
-        public int ItemCount(StringHash32 inId)
+        public uint ItemCount(StringHash32 inId)
         {
-            return GetInv(inId, false)?.Value() ?? 0;
+            PlayerInv item;
+            TryFindInv(inId, out item);
+            return item.Count;
         }
         
         public bool AdjustItem(StringHash32 inId, int inAmount)
@@ -61,8 +91,8 @@ namespace Aqua.Profile
             if (inAmount == 0)
                 return true;
 
-            var item = GetInv(inId, inAmount > 0);
-            if (item != null && item.TryAdjust(inAmount))
+            ref PlayerInv item = ref RequireInv(inId);
+            if (TryAdjust(ref item, inAmount))
             {
                 m_HasChanges = true;
                 return true;
@@ -73,8 +103,8 @@ namespace Aqua.Profile
 
         public bool SetItem(StringHash32 inId, int inAmount)
         {
-            var item = GetInv(inId, inAmount > 0);
-            if (item != null && item.Set(inAmount))
+            ref PlayerInv item = ref RequireInv(inId);
+            if (TrySet(ref item, inAmount))
             {
                 m_HasChanges = true;
                 return true;
@@ -85,24 +115,44 @@ namespace Aqua.Profile
 
         public PlayerInv GetItem(StringHash32 inId)
         {
-            return GetInv(inId, true);
+            PlayerInv inv;
+            TryFindInv(inId, out inv);
+            return inv;
         }
 
-        private PlayerInv GetInv(StringHash32 inId, bool inbCreate)
+        private bool TryFindInv(StringHash32 inId, out PlayerInv outItem)
         {
             CleanItemList();
 
             Assert.True(Services.Assets.Inventory.HasId(inId), "Could not find ItemDesc with id '{0}'", inId);
+            Assert.True(Services.Assets.Inventory.IsCountable(inId), "Item '{0}' is not countable", inId);
 
-            PlayerInv item;
-            if (!m_Items.TryBinarySearch(inId, out item) && inbCreate)
+            if (!m_Items.TryBinarySearch(inId, out outItem))
             {
-                item = new PlayerInv(inId);
-                m_Items.Add(item);
-                m_ItemListDirty = true;
+                outItem = new PlayerInv(inId);
+                return false;
             }
 
-            return item;
+            return true;
+        }
+
+        private ref PlayerInv RequireInv(StringHash32 inId)
+        {
+            CleanItemList();
+
+            Assert.True(Services.Assets.Inventory.HasId(inId), "Could not find ItemDesc with id '{0}'", inId);
+            Assert.True(Services.Assets.Inventory.IsCountable(inId), "Item '{0}' is not countable", inId);
+
+            int index = m_Items.BinarySearch(inId);
+            if (index < 0)
+            {
+                index = m_Items.Count;
+                m_Items.PushBack(new PlayerInv(inId));
+                m_ItemListDirty = true;
+                m_HasChanges = true;
+            }
+            
+            return ref m_Items[index];
         }
 
         private void CleanItemList()
@@ -112,6 +162,33 @@ namespace Aqua.Profile
 
             m_Items.SortByKey<StringHash32, PlayerInv, PlayerInv>();
             m_ItemListDirty = false;
+        }
+
+        private bool TryAdjust(ref PlayerInv ioItem, int inValue)
+        {
+            if (inValue == 0 || (ioItem.Count + inValue) < 0)
+                return false;
+
+            ioItem.Count = (uint) (ioItem.Count + inValue);
+            Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+            return true;
+        }
+
+        private bool TrySet(ref PlayerInv ioItem, int inValue)
+        {
+            if (inValue < 0)
+            {
+                inValue = 0;
+            }
+
+            if (ioItem.Count != inValue)
+            {
+                ioItem.Count = (uint) inValue;
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                return true;
+            }
+
+            return false;
         }
 
         #endregion // Inventory
@@ -214,6 +291,23 @@ namespace Aqua.Profile
         #endregion // Water Properties
 
         #region IProfileChunk
+
+        public void SetDefaults()
+        {
+            foreach(var item in Services.Assets.Inventory.Objects)
+            {
+                if (item.DefaultAmount() > 0)
+                {
+                    ref PlayerInv playerInv = ref RequireInv(item.Id());
+                    playerInv.Count = item.DefaultAmount();
+                }
+            }
+
+            foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
+            {
+                m_WaterProperties |= (1U << (int) property);
+            }
+        }
 
         ushort ISerializedVersion.Version { get { return 2; } }
 

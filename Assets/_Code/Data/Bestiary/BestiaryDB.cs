@@ -36,11 +36,13 @@ namespace Aqua
 
         #region Defaults
 
-        public Sprite DefaultIcon(BFTypeId inType)
+        public Sprite DefaultIcon(BFBase inFact)
         {
-            switch(inType)
+            switch(inFact.Type)
             {
                 case BFTypeId.Eat:
+                    if (m_DefaultHumanCatchSprite != null && inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+                        return m_DefaultHumanCatchSprite;
                     return m_DefaultEatSprite;
                 case BFTypeId.Produce:
                     return m_DefaultProduceSprite;
