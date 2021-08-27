@@ -19,6 +19,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private ColorGroup m_Background = null;
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField] private LocText m_Text = null;
+        [SerializeField] private CursorInteractionHint m_Cursor = null;
 
         #endregion // Inspector
 
@@ -41,6 +42,8 @@ namespace Aqua.Portable
             
             if (m_Text)
                 m_Text.SetText(inLabel);
+            if (m_Cursor)
+                m_Cursor.TooltipId = inLabel;
             
             m_Callback = inCallback;
         }
