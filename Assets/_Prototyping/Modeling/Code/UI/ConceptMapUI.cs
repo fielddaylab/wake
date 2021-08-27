@@ -53,9 +53,14 @@ namespace ProtoAqua.Modeling
 
         private void OnAddClicked()
         {
-            var bestiaryData = Services.Data.Profile.Bestiary;
-            BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !bestiaryData.IsFactGraphed(p.Id()))
-                .OnComplete(Add);
+            List<StringHash32> toAdd = new List<StringHash32>(m_ModelState.UngraphedFactCount());
+            m_ModelState.UngraphedFacts(toAdd);
+            foreach(var add in toAdd)
+                Add(add);
+            
+            // var bestiaryData = Services.Data.Profile.Bestiary;
+            // BestiaryApp.RequestFact(BestiaryDescCategory.Critter, (p) => !bestiaryData.IsFactGraphed(p.Id))
+            //     .OnComplete(Add);
         }
 
         private void Add(StringHash32 inFactId)
@@ -65,7 +70,7 @@ namespace ProtoAqua.Modeling
                 BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
                 m_Map.AddFact(fact);
                 m_ModelState.AddFact(fact);
-                OnGraphUpdated?.Invoke(fact.Id());
+                OnGraphUpdated?.Invoke(fact.Id);
                 UpdateUnadded();
             }
         }

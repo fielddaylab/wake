@@ -16,21 +16,22 @@ namespace ProtoAqua.Modeling
         [SerializeField] private Image[] m_Icons = null;
         [SerializeField] private RectTransform m_PopulationMeter = null;
         [SerializeField] private Image m_StressIcon = null;
+        [SerializeField] private Image m_ActionFillMeter = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private BestiaryDesc m_ActorType = null;
-        [NonSerialized] private BFBody m_ActorBody = null;
+        [NonSerialized] private uint m_PopulationMeterCap = 0;
+        [NonSerialized] private uint m_PopulationIconCap = 0;
 
         [NonSerialized] private uint m_CurrentPopulation;
         [NonSerialized] private int m_CurrentIconCount;
         [NonSerialized] private ActorStateId m_CurrentState;
-        private Routine m_Animation;
 
         public void Initialize(BestiaryDesc inActorType)
         {
-            m_ActorType = inActorType;
-            m_ActorBody = inActorType.FactOfType<BFBody>();
+            BFBody body = inActorType.FactOfType<BFBody>();
+            m_PopulationIconCap = body.PopulationHardCap;
+            m_PopulationMeterCap = body.PopulationSoftCap;
 
             foreach(var icon in m_Icons)
             {
@@ -40,17 +41,10 @@ namespace ProtoAqua.Modeling
             SetPopulation(0, ActorStateId.Alive);
         }
 
-        private void OnDisable()
-        {
-            m_Animation.Stop();
-        }
-
         public void SetPopulation(uint inPopulation, ActorStateId inState)
         {
-            m_Animation.Stop();
-
-            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap();
-            int displayIconCount = (int) Math.Ceiling(populationPercent * m_Icons.Length);
+            float meterPercent = Mathf.Clamp01((float) inPopulation / m_PopulationMeterCap);
+            int displayIconCount = (int) Math.Ceiling((float) inPopulation / m_PopulationIconCap * m_Icons.Length);
 
             for(int i = 0; i < displayIconCount; i++)
             {
@@ -67,31 +61,32 @@ namespace ProtoAqua.Modeling
             else
                 InstantOff(m_StressIcon);
 
-            InstantMeter(m_PopulationMeter, populationPercent);
+            InstantMeter(m_PopulationMeter, meterPercent);
             m_CurrentPopulation = inPopulation;
             m_CurrentIconCount = displayIconCount;
             m_CurrentState = inState;
+            m_ActionFillMeter.fillAmount = 0;
         }
 
-        public bool AnimatePopulation(uint inPopulation)
+        public IEnumerator AnimatePopulation(uint inPopulation, bool inbPlayFill)
         {
-            return AnimatePopulation(inPopulation, m_CurrentState);
+            return AnimatePopulation(inPopulation, m_CurrentState, inbPlayFill);
         }
 
-        public bool AnimatePopulation(uint inPopulation, ActorStateId inState)
+        public IEnumerator AnimatePopulation(uint inPopulation, ActorStateId inState, bool inbPlayFill)
         {
             if (m_CurrentPopulation == inPopulation && m_CurrentState == inState)
-                return false;
+                return null;
 
             m_CurrentPopulation = inPopulation;
             m_CurrentState = inState;
 
-            float populationPercent = (float) inPopulation / m_ActorBody.PopulationHardCap();
-            int displayIconCount = (int) Math.Ceiling(populationPercent * m_Icons.Length);
+            float meterPercent = Mathf.Clamp01((float) inPopulation / m_PopulationMeterCap);
+            int displayIconCount = (int) Math.Ceiling((float) inPopulation / m_PopulationIconCap * m_Icons.Length);
 
             using(PooledList<IEnumerator> enumerators = PooledList<IEnumerator>.Create())
             {
-                enumerators.Add(AnimateMeter(m_PopulationMeter, populationPercent));
+                enumerators.Add(AnimateMeter(m_PopulationMeter, meterPercent));
                 if (displayIconCount < m_CurrentIconCount)
                 {
                     for(int i = m_CurrentIconCount - 1; i >= displayIconCount; i--)
@@ -112,11 +107,12 @@ namespace ProtoAqua.Modeling
                 else
                     enumerators.Add(AnimateOff(m_StressIcon, 0));
 
-                m_CurrentIconCount = displayIconCount;
-                m_Animation.Replace(this, Routine.Combine(enumerators));
-            }
+                if (inbPlayFill)
+                    enumerators.Add(AnimateFill(m_ActionFillMeter));
 
-            return true;
+                m_CurrentIconCount = displayIconCount;
+                return Routine.Combine(enumerators);
+            }
         }
 
         #region Animations
@@ -130,6 +126,14 @@ namespace ProtoAqua.Modeling
         {
             Vector4 anchors = new Vector4(0, 0, inPercent, 1);
             yield return inTransform.AnchorTo(anchors, 0.2f, Axis.X).Ease(Curve.CubeOut).ForceOnCancel();
+        }
+
+        static private IEnumerator AnimateFill(Image inFill)
+        {
+            inFill.fillAmount = 0;
+            yield return inFill.FillTo(1, 0.3f);
+            yield return 0.3f;
+            inFill.fillAmount = 0;
         }
 
         static private void InstantOn(Image inImage)
@@ -157,7 +161,7 @@ namespace ProtoAqua.Modeling
                 transform.SetScale(0, Axis.XY);
             }
 
-            yield return transform.ScaleTo(1, 0.2f, Axis.XY).Ease(Curve.BackOut).ForceOnCancel();
+            yield return transform.ScaleTo(1, 0.3f, Axis.XY).Ease(Curve.BackOut).ForceOnCancel();
         }
 
         static private IEnumerator AnimateOff(Image inImage, float inDelay)
@@ -167,7 +171,7 @@ namespace ProtoAqua.Modeling
             Transform transform = inImage.transform;
             if (transform.gameObject.activeSelf)
             {
-                yield return transform.ScaleTo(0, 0.2f, Axis.XY).Ease(Curve.CubeIn).ForceOnCancel();
+                yield return transform.ScaleTo(0, 0.3f, Axis.XY).Ease(Curve.CubeIn).ForceOnCancel();
                 transform.gameObject.SetActive(false);
             }
         }

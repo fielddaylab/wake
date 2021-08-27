@@ -18,15 +18,10 @@ namespace ProtoAqua.Modeling
 
         static public readonly WaterPropertyId[] PreemptiveProperties = new WaterPropertyId[] { WaterPropertyId.Light };
         static public readonly WaterPropertyId[] SecondaryProperties = new WaterPropertyId[] { WaterPropertyId.Oxygen, WaterPropertyId.CarbonDioxide, WaterPropertyId.PH, WaterPropertyId.Temperature };
-        static private readonly WaterPropertyMask ConsumeMask;
+        static private readonly WaterPropertyMask ConsumeMask = new WaterPropertyMask(SecondaryProperties);
 
         private const int FixedShift = 12;
         private const ulong FixedOne = 1 << FixedShift;
-
-        static Simulator()
-        {
-            ConsumeMask = new WaterPropertyMask(SecondaryProperties);
-        }
 
         /// <summary>
         /// Generates a single result from the given profile and initial data.

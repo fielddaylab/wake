@@ -36,13 +36,28 @@ namespace Aqua
 
         #region Defaults
 
-        public Sprite DefaultEatIcon() { return m_DefaultEatSprite; }
-        public Sprite DefaultHumanCatchIcon() { return m_DefaultHumanCatchSprite; }
-        public Sprite DefaultProduceIcon() { return m_DefaultProduceSprite; }
-        public Sprite DefaultConsumeIcon() { return m_DefaultConsumeSprite; }
-        public Sprite DefaultReproduceIcon() { return m_DefaultReproduceSprite; }
-        public Sprite DefaultGrowIcon() { return m_DefaultGrowSprite; }
-        public Sprite DefaultDeathIcon() { return m_DefaultDeathSprite; }
+        public Sprite DefaultIcon(BFBase inFact)
+        {
+            switch(inFact.Type)
+            {
+                case BFTypeId.Eat:
+                    if (m_DefaultHumanCatchSprite != null && inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+                        return m_DefaultHumanCatchSprite;
+                    return m_DefaultEatSprite;
+                case BFTypeId.Produce:
+                    return m_DefaultProduceSprite;
+                case BFTypeId.Consume:
+                    return m_DefaultConsumeSprite;
+                case BFTypeId.Reproduce:
+                    return m_DefaultReproduceSprite;
+                case BFTypeId.Grow:
+                    return m_DefaultGrowSprite;
+                case BFTypeId.Death:
+                    return m_DefaultDeathSprite;
+                default:
+                    return null;
+            }
+        }
 
         public Sprite GraphTypeToImage(BFGraphType inGraphType)
         {
@@ -125,10 +140,10 @@ namespace Aqua
 
             foreach(var fact in m_AllFacts)
             {
-                StringHash32 factId = fact.Id();
+                StringHash32 factId = fact.Id;
                 Assert.False(m_FactMap.ContainsKey(factId), "Duplicate fact id '{0}'", factId);
                 m_FactMap.Add(factId, fact);
-                if (fact.Mode() != BFMode.Player)
+                if (fact.Mode != BFMode.Player)
                 {
                     m_AutoFacts.Add(factId);
                 }
@@ -178,7 +193,7 @@ namespace Aqua
                                 eat = fact as BFEat;
                                 if (eat != null)
                                 {
-                                    AddToListMap(critterReciprocalFactLists, eat.Target(), eat);
+                                    AddToListMap(critterReciprocalFactLists, eat.Critter, eat);
                                 }
                             }
                             break;
@@ -207,7 +222,8 @@ namespace Aqua
             return true;
         }
 
-        static private readonly Comparison<BestiaryDesc> SortByCategory = (a, b) => {
+        static private readonly Comparison<BestiaryDesc> SortByCategory = (a, b) => 
+        {
             int compare = a.Category().CompareTo(b.Category());
             if (compare == 0)
                 compare = a.name.CompareTo(b.name);

@@ -45,7 +45,7 @@ namespace Aqua
 
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
-        public Color Color() { return m_Palette.Content; }
+        public Color Color() { return m_Palette.Background; }
         public ColorPalette4 Palette() { return m_Palette; }
         
         public TextId EnvironmentFactFormat() { return m_EnvironmentFactFormat; }

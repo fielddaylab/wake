@@ -58,14 +58,14 @@ namespace ProtoAqua.Modeling
             m_Data.Id = inDesc.Id();
             m_Data.Population = inPopulation;
 
-            if (inMax <= 0)
-                inMax = (int) body.PopulationSoftCap();
+            if (inMax < 0)
+                inMax = (int) body.PopulationSoftCap;
 
             m_MinValue = inMin;
             m_MaxValue = inMax;
 
-            m_DisplayScale = body.MassDisplayScale();
-            m_Increment = body.PopulationSoftIncrement();
+            m_DisplayScale = body.MassDisplayScale;
+            m_Increment = body.PopulationSoftIncrement;
 
             m_Slider.wholeNumbers = true;
             m_Slider.minValue = (float) Math.Floor(m_MinValue / m_Increment);

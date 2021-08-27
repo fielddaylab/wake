@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
 {
-    [Serializable]
+    [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ActorStateTransitionRange : IEquatable<ActorStateTransitionRange>
     {
         public float AliveMin;
@@ -48,7 +49,7 @@ namespace Aqua
         static public ActorStateTransitionRange Default { get { return s_DefaultRange; } }
     }
 
-    [Serializable]
+    [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ActorStateTransitionSet
     {
         public ActorStateTransitionRange Oxygen;

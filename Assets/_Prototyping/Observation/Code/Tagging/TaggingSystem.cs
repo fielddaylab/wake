@@ -209,7 +209,7 @@ namespace ProtoAqua.Observation
                 {
                     BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, category.Id, m_SiteData.SiteVersion);
                     Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", category.Id, m_EnvironmentType.Id());
-                    m_BestiaryData.RegisterFact(population.Id());
+                    m_BestiaryData.RegisterFact(population.Id);
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
                     m_CritterTypes.FastRemoveAt(idx);
                     m_SiteData.OnChanged();

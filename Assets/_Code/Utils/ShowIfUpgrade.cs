@@ -7,12 +7,14 @@ using UnityEngine.UI;
 
 namespace Aqua
 {
-    public class ShowIfUpgrade : MonoBehaviour, ISceneLoadHandler
+    public class ShowIfUpgrade : MonoBehaviour
     {
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_ItemName = null;
-        [SerializeField] private GameObject[] m_Objects = null;
+        [SerializeField] private GameObject[] m_ToShow = null;
+        [SerializeField] private GameObject[] m_ToHide = null;
+        [SerializeField, Tooltip("If set, this will be checked whenever the inventory is updated")] private bool m_ContinuousCheck = true;
         
         #endregion // Inspector
 
@@ -21,7 +23,19 @@ namespace Aqua
 
         private void Awake()
         {
-            Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this);
+            if (m_ContinuousCheck)
+            {
+                Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this);
+            }
+
+            if (Services.State.IsLoadingScene())
+            {
+                Services.Events.Register(GameEvents.SceneLoaded, Refresh, this);
+            }
+            else
+            {
+                Refresh();
+            }
         }
 
         private void OnDestroy()
@@ -32,14 +46,11 @@ namespace Aqua
             Services.Events?.DeregisterAll(this);
         }
 
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
-        {
-            Refresh();
-        }
-
         private void Refresh()
         {
             SetState(Services.Data.Profile.Inventory.HasUpgrade(m_ItemName));
+            if (!m_ContinuousCheck)
+                Destroy(this);
         }
 
         private void SetState(bool inbState)
@@ -49,8 +60,10 @@ namespace Aqua
 
             m_Initialized = true;
             m_LastState = inbState;
-            foreach(var obj in m_Objects)
+            foreach(var obj in m_ToShow)
                 obj.SetActive(inbState);
+            foreach(var obj in m_ToHide)
+                obj.SetActive(!inbState);
         }
     }
 }

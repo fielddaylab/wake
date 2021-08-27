@@ -11,7 +11,7 @@ namespace ProtoAqua.Modeling
     /// <summary>
     /// Critter information and operations.
     /// </summary>
-    public sealed class CritterProfile : IFactVisitor, IKeyValuePair<StringHash32, CritterProfile>
+    public sealed class CritterProfile : IKeyValuePair<StringHash32, CritterProfile>
     {
         private const uint NotAssignedU32 = uint.MaxValue;
         private const float NotAssignedF32 = -1;
@@ -512,112 +512,104 @@ namespace ProtoAqua.Modeling
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact)
+        public void VisitFact(BFBase inFact)
         {
-            // Default
-        }
-
-        void IFactVisitor.Visit(BFBody inFact)
-        {
-            m_MassPerPopulation = inFact.MassPerPopulation();
-            m_ScarcityLevel = inFact.ScarcityLevel();
-            m_PopulationCap = inFact.PopulationHardCap();
-        }
-
-        void IFactVisitor.Visit(BFWaterProperty inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFPopulation inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFPopulationHistory inFact)
-        {
-            // Nothing
-        }
-
-        void IFactVisitor.Visit(BFEat inFact)
-        {
-            if (inFact.OnlyWhenStressed())
+            switch(inFact.Type)
             {
-                ref EatConfig config = ref FindEatConfig(inFact.Target().Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool discard);
-                long change = (long) inFact.Amount() - (long) config.MassScale;
-                m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + change);
-                config.MassScale = inFact.Amount();
+                case BFTypeId.Body:
+                    {
+                        BFBody body = (BFBody) inFact;
+                        m_MassPerPopulation = body.MassPerPopulation;
+                        m_ScarcityLevel = body.ScarcityLevel;
+                        m_PopulationCap = body.PopulationHardCap;
+                        break;
+                    }
+
+                case BFTypeId.Death:
+                    {
+                        BFDeath death = (BFDeath) inFact;
+                        if (death.OnlyWhenStressed)
+                            m_DeathPerTickStressed = death.Proportion;
+                        else
+                            m_DeathPerTick = death.Proportion;
+                        break;
+                    }
+
+                case BFTypeId.Grow:
+                    {
+                        BFGrow grow = (BFGrow) inFact;
+                        if (grow.OnlyWhenStressed)
+                            m_GrowthPerTickStressed = grow.Amount;
+                        else
+                            m_GrowthPerTick = grow.Amount;
+                        break;
+                    }
+
+                case BFTypeId.Reproduce:
+                    {
+                        BFReproduce repro = (BFReproduce) inFact;
+                        if (repro.OnlyWhenStressed)
+                            m_ReproducePerTickStressed = repro.Amount;
+                        else
+                            m_ReproducePerTick = repro.Amount;
+                        break;
+                    }
+
+                case BFTypeId.State:
+                    {
+                        BFState state = (BFState) inFact;
+                        m_Transitions[state.Property] = state.Range;
+                        break;
+                    }
+
+                case BFTypeId.Eat:
+                    {
+                        BFEat eat = (BFEat) inFact;
+                        if (eat.OnlyWhenStressed)
+                        {
+                            ref EatConfig config = ref FindEatConfig(eat.Critter.Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool discard);
+                            long change = (long) eat.Amount - (long) config.MassScale;
+                            m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + change);
+                            config.MassScale = eat.Amount;
+                        }
+                        else
+                        {
+                            ref EatConfig mainConfig = ref FindEatConfig(eat.Critter.Id(), m_EatTypes, ref m_EatTypeCount, out bool discard);
+                            long mainChange = (long) eat.Amount - (long) mainConfig.MassScale;
+                            m_EatAmountTotal = (uint) (m_EatAmountTotal + mainChange);
+                            mainConfig.MassScale = eat.Amount;
+
+                            ref EatConfig stressConfig = ref FindEatConfig(eat.Critter.Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool bNewStress);
+                            if (bNewStress)
+                            {
+                                long stressChange = (long) eat.Amount - (long) stressConfig.MassScale;
+                                m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + stressChange);
+                                stressConfig.MassScale = eat.Amount;
+                            }
+                        }
+                        break;
+                    }
+
+                case BFTypeId.Consume:
+                    {
+                        BFConsume consume = (BFConsume) inFact;
+                        if (consume.OnlyWhenStressed)
+                            m_ToConsumePerPopulationStressed[consume.Property] = consume.Amount;
+                        else
+                            m_ToConsumePerPopulation[consume.Property] = consume.Amount;
+                        break;
+                    }
+
+                case BFTypeId.Produce:
+                    {
+                        BFProduce produce = (BFProduce) inFact;
+                        if (produce.OnlyWhenStressed)
+                            m_ToProducePerPopulationStressed[produce.Property] = produce.Amount;
+                        else
+                            m_ToProducePerPopulation[produce.Property] = produce.Amount;
+                        break;
+                    }
             }
-            else
-            {
-                ref EatConfig mainConfig = ref FindEatConfig(inFact.Target().Id(), m_EatTypes, ref m_EatTypeCount, out bool discard);
-                long mainChange = (long) inFact.Amount() - (long) mainConfig.MassScale;
-                m_EatAmountTotal = (uint) (m_EatAmountTotal + mainChange);
-                mainConfig.MassScale = inFact.Amount();
-
-                ref EatConfig stressConfig = ref FindEatConfig(inFact.Target().Id(), m_EatTypesStressed, ref m_EatTypeStressedCount, out bool bNewStress);
-                if (bNewStress)
-                {
-                    long stressChange = (long) inFact.Amount() - (long) stressConfig.MassScale;
-                    m_EatAmountStressedTotal = (uint) (m_EatAmountStressedTotal + stressChange);
-                    stressConfig.MassScale = inFact.Amount();
-                }
-            }
-        }
-
-        void IFactVisitor.Visit(BFGrow inFact)
-        {
-            if (inFact.OnlyWhenStressed())
-                m_GrowthPerTickStressed = inFact.Amount();
-            else
-                m_GrowthPerTick = inFact.Amount();
-        }
-
-        void IFactVisitor.Visit(BFReproduce inFact)
-        {
-            if (inFact.OnlyWhenStressed())
-                m_ReproducePerTickStressed = inFact.Amount();
-            else
-                m_ReproducePerTick = inFact.Amount();
-        }
-
-        void IFactVisitor.Visit(BFProduce inFact)
-        {
-            if (inFact.OnlyWhenStressed())
-                m_ToProducePerPopulationStressed[inFact.Target()] = inFact.Amount();
-            else
-                m_ToProducePerPopulation[inFact.Target()] = inFact.Amount();
-        }
-
-        void IFactVisitor.Visit(BFConsume inFact)
-        {
-            if (inFact.OnlyWhenStressed())
-                m_ToConsumePerPopulationStressed[inFact.Target()] = inFact.Amount();
-            else
-                m_ToConsumePerPopulation[inFact.Target()] = inFact.Amount();
-        }
-
-        void IFactVisitor.Visit(BFState inFact)
-        {
-            m_Transitions[inFact.PropertyId()] = inFact.Range();
-        }
-
-        void IFactVisitor.Visit(BFDeath inFact)
-        {
-            if (inFact.OnlyWhenStressed())
-                m_DeathPerTickStressed = inFact.Proportion();
-            else
-                m_DeathPerTick = inFact.Proportion();
-        }
-
-        void IFactVisitor.Visit(BFModel inModel)
-        {
-            // nothing
         }
 
         #endregion // IFactVisitor

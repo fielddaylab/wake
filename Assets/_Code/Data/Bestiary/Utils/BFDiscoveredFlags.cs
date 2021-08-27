@@ -11,7 +11,7 @@ namespace Aqua
         Rate = 0x02,
 
         [Hidden]
-        All = Rate,
+        All = Base | Rate,
         [Hidden]
         None = 0
     }

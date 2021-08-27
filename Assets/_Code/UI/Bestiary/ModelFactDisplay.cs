@@ -16,9 +16,9 @@ namespace Aqua
 
         public void Populate(BFModel inFact)
         {
-            m_Icon.sprite = inFact.Icon();
-            m_Label.SetText(inFact.NameId());
-            m_Description.SetText(inFact.DescriptionId());
+            m_Icon.sprite = inFact.Icon;
+            m_Label.SetText(inFact.NameId);
+            m_Description.SetText(inFact.DescriptionId);
         }
     }
 }

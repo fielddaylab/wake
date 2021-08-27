@@ -191,9 +191,9 @@ namespace ProtoAqua.ExperimentV2
                 state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, id);
                 Assert.NotNull(state, "No BFState {0} fact found for critter {1}", id, m_SelectedCritter.Id());
 
-                experimentFacts.Add(ExperimentUtil.NewFact(state.Id()));
+                experimentFacts.Add(ExperimentUtil.NewFact(state.Id));
 
-                saveData.RegisterFact(state.Id());
+                saveData.RegisterFact(state.Id);
             }
 
             m_ExpResult = new ExperimentResult();
@@ -226,7 +226,7 @@ namespace ProtoAqua.ExperimentV2
 
                 currStateFact.gameObject.SetActive(true);
 
-                m_StateFactWaterProperties[i] = Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id).PropertyId();
+                m_StateFactWaterProperties[i] = Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id).Property;
 
                 bool isNewFact = false;
                 if (currExpResult.Type == ExperimentFactResultType.NewFact)
@@ -422,8 +422,8 @@ namespace ProtoAqua.ExperimentV2
                 state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, propId);
                 if (state != null)
                 {
-                    WaterPropertyDial.ConfigureStress(dial, state.Range());
-                    if (inSaveData.HasFact(state.Id()))
+                    WaterPropertyDial.ConfigureStress(dial, state.Range);
+                    if (inSaveData.HasFact(state.Id))
                     {
                         m_RevealedLeftMask[propId] = m_RevealedRightMask[propId] = true;
                         WaterPropertyDial.DisplayRanges(dial, true, true);

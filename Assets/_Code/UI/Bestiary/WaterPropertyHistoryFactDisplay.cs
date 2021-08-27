@@ -18,18 +18,18 @@ namespace Aqua
 
         public void Populate(BFWaterPropertyHistory inFact)
         {
-            var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
+            var propData = Services.Assets.WaterProp.Property(inFact.Property);
             ColorPalette4 palette = propData.Palette();
 
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
+            m_Icon.sprite = inFact.Icon;
+            m_Icon.gameObject.SetActive(inFact.Icon);
 
             m_Label.SetText(propData.LabelId());
 
-            m_Label.Graphic.color= palette.Content;
+            m_Label.Graphic.color = palette.Content;
             m_Background.color = palette.Shadow;
 
-            m_GraphIcon.sprite = Services.Assets.Bestiary.GraphTypeToImage(inFact.Graph());
+            m_GraphIcon.sprite = Services.Assets.Bestiary.GraphTypeToImage(inFact.Graph);
         }
     }
 }

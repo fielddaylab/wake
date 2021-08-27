@@ -18,14 +18,14 @@ namespace Aqua
 
         public void Populate(BFState inFact)
         {
-            var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
-            m_Icon.sprite = inFact.Icon();
+            var propData = Services.Assets.WaterProp.Property(inFact.Property);
+            m_Icon.sprite = inFact.Icon;
 
             m_Label.SetText(propData.ToleranceLabel());
 
-            ActorStateTransitionRange range = inFact.Range();
+            ActorStateTransitionRange range = inFact.Range;
 
-            if (inFact.HasDeath())
+            if (inFact.HasDeath)
             {
                 m_KillBackground.gameObject.SetActive(true);
                 m_StressRange.Display(range.StressedMin, range.StressedMax, propData.MinValue(), propData.MaxValue());

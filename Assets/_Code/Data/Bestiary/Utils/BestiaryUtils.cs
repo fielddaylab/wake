@@ -7,6 +7,8 @@ namespace Aqua
 {
     static public class BestiaryUtils
     {
+        #region Find Facts
+
         /// <summary>
         /// Returns the eating rule associated with this pair of creatures.
         /// </summary>
@@ -33,10 +35,10 @@ namespace Aqua
                 if (eat == null)
                     continue;
 
-                if (eat.Target().Id() != inTargetId)
+                if (eat.Critter.Id() != inTargetId)
                     continue;
 
-                if (eat.OnlyWhenStressed())
+                if (eat.OnlyWhenStressed)
                 {
                     if (inState == ActorStateId.Stressed)
                         return eat;
@@ -71,10 +73,10 @@ namespace Aqua
                 if (prod == null)
                     continue;
 
-                if (prod.Target() != inPropertyId)
+                if (prod.Property != inPropertyId)
                     continue;
 
-                if (prod.OnlyWhenStressed())
+                if (prod.OnlyWhenStressed)
                 {
                     if (inState == ActorStateId.Stressed)
                         return prod;
@@ -109,10 +111,10 @@ namespace Aqua
                 if (consume == null)
                     continue;
 
-                if (consume.Target() != inPropertyId)
+                if (consume.Property != inPropertyId)
                     continue;
 
-                if (consume.OnlyWhenStressed())
+                if (consume.OnlyWhenStressed)
                 {
                     if (inState == ActorStateId.Stressed)
                         return consume;
@@ -147,7 +149,7 @@ namespace Aqua
                 if (reproduce == null)
                     continue;
 
-                if (reproduce.OnlyWhenStressed())
+                if (reproduce.OnlyWhenStressed)
                 {
                     if (inState == ActorStateId.Stressed)
                         return reproduce;
@@ -182,7 +184,7 @@ namespace Aqua
                 if (grow == null)
                     continue;
 
-                if (grow.OnlyWhenStressed())
+                if (grow.OnlyWhenStressed)
                 {
                     if (inState == ActorStateId.Stressed)
                         return grow;
@@ -206,7 +208,7 @@ namespace Aqua
         {
             foreach (var fact in inParent.FactsOfType<BFState>())
             {
-                if (fact.PropertyId() == inPropertyId)
+                if (fact.Property == inPropertyId)
                     return fact;
             }
 
@@ -228,12 +230,16 @@ namespace Aqua
         {
             foreach(var fact in inEnvironment.FactsOfType<BFPopulation>())
             {
-                if (fact.SiteVersion() == inSiteVersion && fact.Critter() == inCritter)
+                if (fact.SiteVersion == inSiteVersion && fact.Critter == inCritter)
                     return fact;
             }
 
             return null;
         }
+
+        #endregion // Find Facts
+
+        #region Text
 
         static private readonly TextId[] GraphTypeToTextMap = new TextId[]
         {
@@ -247,6 +253,43 @@ namespace Aqua
         {
             return GraphTypeToTextMap[(int) inType];
         }
+
+        /// <summary>
+        /// Formats population for a given body.
+        /// </summary>
+        static public string FormatPopulation(BFBody inBody, uint inPopulation)
+        {
+            if (inBody.Parent.HasFlags(BestiaryDescFlags.TreatAsHerd))
+            {
+                float mass = inBody.MassDisplayScale * inBody.MassPerPopulation * inPopulation;
+                return Property(WaterPropertyId.Mass).FormatValue(mass);
+            }
+            else
+            {
+                return inPopulation.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Formats population for a given critter type.
+        /// </summary>
+        static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation)
+        {
+            if (inCritter.HasFlags(BestiaryDescFlags.TreatAsHerd))
+            {
+                BFBody body = inCritter.FactOfType<BFBody>();
+                float mass = body.MassDisplayScale * body.MassPerPopulation * inPopulation;
+                return Property(WaterPropertyId.Mass).FormatValue(mass);
+            }
+            else
+            {
+                return inPopulation.ToString();
+            }
+        }
+
+        #endregion // Facts
+
+        #region Water Properties
 
         /// <summary>
         /// Returns a set of values in which the given critter is healthy.
@@ -295,5 +338,19 @@ namespace Aqua
                 return (inRange.AliveMin + inRange.AliveMax) / 2;
             }
         }
+
+        /// <summary>
+        /// Returns the property description associated with the given property id.
+        /// </summary>
+        static public WaterPropertyDesc Property(WaterPropertyId inId)
+        {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return ValidationUtils.FindAsset<WaterPropertyDesc>(inId.ToString());
+            #endif // UNITY_EDITOR
+            return Services.Assets.WaterProp.Property(inId);
+        }
+
+        #endregion // Water Properties
     }
 }

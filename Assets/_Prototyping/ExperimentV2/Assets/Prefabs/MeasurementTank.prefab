@@ -4930,6 +4930,25 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &1573535057151019819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725311754210964872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: MeasurementTank
+    m_Hash: 283353415
+  m_ToShow:
+  - {fileID: 725311754210964872}
+  m_ToHide: []
+  m_ContinuousCheck: 1
 --- !u!114 &7704810211327578248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4963,6 +4982,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7639926191634854010}
   - component: {fileID: 2570093722938398337}
+  - component: {fileID: 5209628306827214540}
   m_Layer: 0
   m_Name: WaterStabalizer
   m_TagString: Untagged
@@ -5005,6 +5025,26 @@ MonoBehaviour:
   Pointer: {fileID: 8902252124884652496}
   Particles: {fileID: 6478017221336911265}
   Light: {fileID: 2804279013036051549}
+--- !u!114 &5209628306827214540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734690966186839256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: MeasurementTankStabilizerToggle
+    m_Hash: 3613355014
+  m_ToShow:
+  - {fileID: 4274962782884997685}
+  - {fileID: 5116313219357401067}
+  m_ToHide: []
+  m_ContinuousCheck: 1
 --- !u!1 &3387228326118349293
 GameObject:
   m_ObjectHideFlags: 0
@@ -5252,7 +5292,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.6
+      scalar: 0.8
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -7213,9 +7253,9 @@ ParticleSystem:
     enabled: 1
     x:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
-      minScalar: 0
+      minMaxState: 3
+      scalar: -0.2
+      minScalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -7266,9 +7306,9 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.25
-      minScalar: 0
+      minMaxState: 3
+      scalar: 0.4
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -7319,7 +7359,7 @@ ParticleSystem:
         m_RotationOrder: 4
     z:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -11791,12 +11831,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59c27c40f78a67748ae9ca1645906789, type: 3}
---- !u!4 &725311754210964873 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5658402726592250909, guid: 59c27c40f78a67748ae9ca1645906789,
-    type: 3}
-  m_PrefabInstance: {fileID: 4942274523699016084}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &725311754210964886 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5658402726592250882, guid: 59c27c40f78a67748ae9ca1645906789,
@@ -11812,6 +11846,12 @@ MonoBehaviour:
 --- !u!224 &8111719154464661033 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3748369183542603709, guid: 59c27c40f78a67748ae9ca1645906789,
+    type: 3}
+  m_PrefabInstance: {fileID: 4942274523699016084}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &725311754210964873 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5658402726592250909, guid: 59c27c40f78a67748ae9ca1645906789,
     type: 3}
   m_PrefabInstance: {fileID: 4942274523699016084}
   m_PrefabAsset: {fileID: 0}
@@ -12117,15 +12157,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312b4cf1d3947394b8a007e158d776e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &134191317966113789 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6031292898526546190, guid: 6e250300908277045b8ef54f70ce6bcc,
-    type: 3}
-  m_PrefabInstance: {fileID: 5940189244857058035}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3489359167943619019 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7062623916233405240, guid: 6e250300908277045b8ef54f70ce6bcc,
+    type: 3}
+  m_PrefabInstance: {fileID: 5940189244857058035}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &134191317966113789 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6031292898526546190, guid: 6e250300908277045b8ef54f70ce6bcc,
     type: 3}
   m_PrefabInstance: {fileID: 5940189244857058035}
   m_PrefabAsset: {fileID: 0}

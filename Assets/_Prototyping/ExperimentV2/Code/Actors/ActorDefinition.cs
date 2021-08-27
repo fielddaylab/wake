@@ -304,17 +304,17 @@ namespace ProtoAqua.ExperimentV2
 
             foreach(var eat in inBestiary.FactsOfType<BFEat>())
             {
-                if (eat.Target() == inBestiary)
+                if (eat.Critter == inBestiary)
                     continue;
 
-                if (eat.OnlyWhenStressed())
+                if (eat.OnlyWhenStressed)
                 {
-                    CreateOrOverwriteTarget(stressedEatTargets, eat.Target(), eat);
+                    CreateOrOverwriteTarget(stressedEatTargets, eat.Critter, eat);
                 }
                 else
                 {
-                    CreateOrOverwriteTarget(aliveEatTargets, eat.Target(), eat);
-                    CreateTargetOnly(stressedEatTargets, eat.Target(), eat);
+                    CreateOrOverwriteTarget(aliveEatTargets, eat.Critter, eat);
+                    CreateTargetOnly(stressedEatTargets, eat.Critter, eat);
                 }
             }
 

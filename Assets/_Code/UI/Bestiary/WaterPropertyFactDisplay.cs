@@ -18,20 +18,20 @@ namespace Aqua
 
         public void Populate(BFWaterProperty inFact)
         {
-            var propData = Services.Assets.WaterProp.Property(inFact.PropertyId());
+            var propData = Services.Assets.WaterProp.Property(inFact.Property);
             ColorPalette4 palette = propData.Palette();
 
-            m_Icon.sprite = inFact.Icon();
-            m_Icon.gameObject.SetActive(inFact.Icon());
+            m_Icon.sprite = inFact.Icon;
+            m_Icon.gameObject.SetActive(inFact.Icon);
 
             m_Label.SetText(propData.LabelId());
-            m_Value.SetText(propData.FormatValue(inFact.Value()));
+            m_Value.SetText(propData.FormatValue(inFact.Value));
 
             m_Label.Graphic.color = m_Value.Graphic.color = palette.Content;
             m_Background.color = palette.Shadow;
             m_Bar.color = palette.Background;
 
-            m_Bar.rectTransform.anchorMax = new Vector2(propData.RemapValue(inFact.Value()), 1f);
+            m_Bar.rectTransform.anchorMax = new Vector2(propData.RemapValue(inFact.Value), 1f);
         }
     }
 }

@@ -3,63 +3,100 @@ using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    public abstract class BFBase : DBObject, IComparable<BFBase>
+    public abstract class BFBase : ScriptableObject
     {
+        [Header("-- DEBUG DISPLAY --")]
+        [SerializeField, HideInInspector] public SerializedHash32 Id;
+        public readonly BFTypeId Type;
+        
+        [SerializeField, HideInInspector] public BestiaryDesc Parent;
+        [SerializeField, HideInInspector] public Sprite Icon;
+        [SerializeField, HideInInspector] public BFMode Mode;
+
         #region Inspector
 
-        [SerializeField] private Sprite m_Icon = null;
-        [SerializeField, HideInInspector] private BestiaryDesc m_Parent;
+        [SerializeField, FormerlySerializedAs("m_Icon")] private Sprite m_IconOverride = null;
 
         #endregion // Inspector
 
-        public BestiaryDesc Parent() { return m_Parent; }
-        public Sprite Icon() { return !m_Icon ? DefaultIcon() : m_Icon; }
-        public virtual BFMode Mode() { return BFMode.Player; }
-
-        public virtual Sprite GraphIcon() { return null; }
-        protected virtual Sprite DefaultIcon() { return GraphIcon(); }
-
-        public virtual void Accept(IFactVisitor inVisitor)
+        protected BFBase(BFTypeId inType)
         {
-            inVisitor.Visit(this);
-        }
-
-        public abstract string GenerateSentence();
-        
-        public virtual void CollectReferences(HashSet<StringHash32> outReferencedBestiary)
-        {
-            outReferencedBestiary.Add(m_Parent.Id());
-        }
-
-        public virtual BFDiscoveredFlags DefaultInformationFlags()
-        {
-            return BFDiscoveredFlags.All;
+            Type = inType;
         }
 
         #region Sorting
 
-        public virtual int CompareTo(BFBase other)
+        /// <summary>
+        /// Sorts facts by parent and type.
+        /// </summary>
+        static public readonly Comparison<BFBase> SortByParentAndType = (x, y) =>
         {
-            int sort = GetSortingOrder().CompareTo(other.GetSortingOrder());
-            if (sort == 0)
-                sort = Id().CompareTo(other.Id());
-            return sort;
-        }
+            int parentCompare = x.Parent.Id().CompareTo(y.Parent.Id());
+            if (parentCompare != 0)
+                return parentCompare;
 
-        internal virtual int GetSortingOrder() { return GetType().GetHashCode(); }
+            int typeCompare = x.Type.CompareTo(y.Type);
+            if (typeCompare != 0)
+                return typeCompare;
+
+            return x.Id.Hash().CompareTo(y.Id.Hash());
+        };
+
+        /// <summary>
+        /// Sorts facts by mode and id.
+        /// </summary>
+        static public readonly Comparison<BFBase> SortByMode = (x, y) =>
+        {
+            int modeCompare = x.Mode.CompareTo(y.Mode);
+            if (modeCompare != 0)
+                return modeCompare;
+
+            return x.Id.Hash().CompareTo(y.Id.Hash());
+        };
 
         #endregion // Sorting
+
+        #region Initialization
+
+        #if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        #endif // UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static private void ConfigureAll()
+        {
+            BFState.Configure();
+            BFModel.Configure();
+            BFWaterPropertyHistory.Configure();
+            BFWaterProperty.Configure();
+            BFPopulationHistory.Configure();
+            BFPopulation.Configure();
+            BFReproduce.Configure();
+            BFProduce.Configure();
+            BFGrow.Configure();
+            BFEat.Configure();
+            BFDeath.Configure();
+            BFConsume.Configure();
+            BFBody.Configure();
+        }
+
+        #endregion // Initialization
 
         #region Editor
 
         #if UNITY_EDITOR
 
-        internal void SetParent(BestiaryDesc inParent)
+        internal void BakeProperties(BestiaryDesc inParent)
         {
-            if (Ref.Replace(ref m_Parent, inParent))
+            bool bChanged = Ref.Replace(ref Id, name);
+            bChanged |= Ref.Replace(ref Parent, inParent);
+            bChanged |= Ref.Replace(ref Icon, BFType.ResolveIcon(this, m_IconOverride));
+            bChanged |= Ref.Replace(ref Mode, BFType.ResolveMode(this));
+
+            if (bChanged)
             {
                 UnityEditor.EditorUtility.SetDirty(this);
             }
@@ -70,15 +107,6 @@ namespace Aqua
         #endif // UNITY_EDITOR
 
         #endregion // Editor
-
-        #region Utils
-
-        static protected WaterPropertyDesc Property(WaterPropertyId inId)
-        {
-            return Services.Assets.WaterProp.Property(inId);
-        }
-
-        #endregion // Utils
     }
 
     public enum BFMode : byte

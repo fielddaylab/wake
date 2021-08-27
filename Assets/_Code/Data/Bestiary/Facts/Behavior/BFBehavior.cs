@@ -1,0 +1,101 @@
+using System.Collections.Generic;
+using BeauUtil.Debugger;
+using UnityEngine;
+using UnityEngine.Serialization;
+
+namespace Aqua
+{
+    public abstract class BFBehavior : BFBase, IOptimizableAsset
+    {
+        #region Consts
+
+        static private readonly TextId[] s_QualitativeWords = new TextId[]
+        {
+            null, "words.less", "words.fewer", "words.more", "words.slower", "words.faster"
+        };
+        static private readonly TextId[] s_QualitativeWordsLower = new TextId[]
+        {
+            null, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower"
+        };
+
+        public enum QualCompare : byte
+        {
+            Null,
+
+            Less,
+            Fewer,
+            More,
+
+            Slower,
+            Faster,
+        }
+
+        static protected QualCompare MapDescriptor(float inDifference, QualCompare inLess, QualCompare inMore)
+        {
+            return inDifference > 0 ? inMore : inLess;
+        }
+
+        static public TextId QualitativeId(QualCompare inDescriptor)
+        {
+            return s_QualitativeWords[(int) inDescriptor];
+        }
+
+        static public TextId QualitativeLowerId(QualCompare inDescriptor)
+        {
+            return s_QualitativeWordsLower[(int) inDescriptor];
+        }
+
+        #endregion // Consts
+
+        #region Inspector
+
+        [Header("Behavior")]
+        [FormerlySerializedAs("m_Stressed")] public bool OnlyWhenStressed = false;
+        [FormerlySerializedAs("m_AutoGive")] internal bool AutoGive = false;
+
+        #endregion // Inspector
+
+        protected BFBehavior(BFTypeId inType) : base(inType) { }
+
+        static protected int CompareStressedPair(BFBase x, BFBase y)
+        {
+            BFBehavior bx = (BFBehavior) x, by = (BFBehavior) y;
+            if (bx.OnlyWhenStressed)
+                return 1;
+            if (by.OnlyWhenStressed)
+                return -1;
+            return 0;
+        }
+
+        #if UNITY_EDITOR
+
+        int IOptimizableAsset.Order { get { return 15; } }
+
+        public abstract bool Optimize();
+
+        protected T FindPairedFact<T>() where T : BFBehavior
+        {
+            foreach(var behavior in Parent.OwnedFacts)
+            {
+                if (behavior == this)
+                    continue;
+
+                T asT = behavior as T;
+                if (asT == null)
+                    continue;
+
+                if (IsPair(asT))
+                    return asT;
+            }
+
+            return null;
+        }
+
+        protected virtual bool IsPair(BFBehavior inOther)
+        {
+            return inOther.Type == Type;
+        }
+
+        #endif // UNITY_EDITOR
+    }
+}

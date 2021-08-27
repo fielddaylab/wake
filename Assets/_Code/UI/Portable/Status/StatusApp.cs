@@ -82,6 +82,9 @@ namespace Aqua.Portable
         [Header("Tech")]
 
         [SerializeField, Required] private Transform m_TechTab = null;
+        [SerializeField, Required] private PortableUpgradeSection m_TechSubmarineSection = null;
+        [SerializeField, Required] private PortableUpgradeSection m_TechExperimentSection = null;
+        [SerializeField, Required] private PortableUpgradeSection m_TechTabletSection = null;
 
         #endregion
 
@@ -233,7 +236,54 @@ namespace Aqua.Portable
             m_ItemTab.gameObject.SetActive(false);
             m_TechTab.gameObject.SetActive(true);
             
-            // TODO: Display player's tech upgrades
+            using(PooledList<InvItem> upgrades = PooledList<InvItem>.Create())
+            {
+                foreach(var upgrade in Services.Data.Profile.Inventory.GetItems(InvItemCategory.Upgrade))
+                {
+                    upgrades.Add(Services.Assets.Inventory.Get(upgrade.ItemId));
+                }
+
+                upgrades.Sort(InvItem.SortByCategoryAndOrder);
+
+                m_TechSubmarineSection.Clear();
+                m_TechExperimentSection.Clear();
+                m_TechTabletSection.Clear();
+
+                InvItemSubCategory currentCategory = InvItemSubCategory.None;
+                int startIdx = 0;
+                InvItem currentItem;
+
+                for(int i = 0; i < upgrades.Count; i++)
+                {
+                    currentItem = upgrades[i];
+                    if (currentItem.SubCategory() != currentCategory)
+                    {
+                        PopulateTechPage(currentCategory, new ListSlice<InvItem>(upgrades, startIdx, i - startIdx));
+                        startIdx = i;
+                        currentCategory = currentItem.SubCategory();
+                    }
+                }
+
+                PopulateTechPage(currentCategory, new ListSlice<InvItem>(upgrades, startIdx, upgrades.Count - startIdx));
+            }
+        }
+
+        private void PopulateTechPage(InvItemSubCategory inCategory, ListSlice<InvItem> inItems)
+        {
+            switch(inCategory)
+            {
+                case InvItemSubCategory.Experimentation:
+                    m_TechExperimentSection.Load(inItems);
+                    break;
+
+                case InvItemSubCategory.Portable:
+                    m_TechTabletSection.Load(inItems);
+                    break;
+
+                case InvItemSubCategory.Submarine:
+                    m_TechSubmarineSection.Load(inItems);
+                    break;
+            }
         }
 
         #endregion // Page Display

@@ -11,7 +11,7 @@ using BeauUtil.Debugger;
 
 namespace Aqua.Portable
 {
-    public class BestiaryApp : PortableMenuApp, IFactVisitor
+    public class BestiaryApp : PortableMenuApp
     {
         #region Consts
 
@@ -261,7 +261,7 @@ namespace Aqua.Portable
         private void OnFactClicked(BFBase inFact)
         {
             Assert.NotNull(m_SelectFactRequest);
-            m_SelectFactRequest.Return.Complete(inFact.Id());
+            m_SelectFactRequest.Return.Complete(inFact.Id);
             m_ParentMenu.Hide();
         }
 
@@ -331,7 +331,7 @@ namespace Aqua.Portable
 
                 default:
                     {
-                        targetEntry = Services.Assets.Bestiary.Fact(inTarget.Id).Parent();
+                        targetEntry = Services.Assets.Bestiary.Fact(inTarget.Id).Parent;
                         break;
                     }
             }
@@ -560,10 +560,10 @@ namespace Aqua.Portable
                     if (m_CurrentPage.HasFacts)
                         m_CurrentPage.HasFacts.gameObject.SetActive(true);
 
-                    facts.Sort();
+                    facts.Sort(BFType.SortByVisualOrder);
                     foreach(var fact in facts)
                     {
-                        fact.Accept(this);
+                        VisitFact(fact);
                     }
                 }
                 else
@@ -611,7 +611,7 @@ namespace Aqua.Portable
 
         private void InstantiateFactButton(BFBase inFact) 
         {
-            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentEntry, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFact.Id()), m_CurrentPage.FactLayout.transform);
+            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentEntry, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFact.Id), m_CurrentPage.FactLayout.transform);
             BestiaryFactButton button = display.GetComponent<BestiaryFactButton>();
             if (m_SelectFactRequest != null)
             {
@@ -625,74 +625,17 @@ namespace Aqua.Portable
 
         #region IFactVisitor
 
-        void IFactVisitor.Visit(BFBase inFact)
+        private void VisitFact(BFBase inFact)
         {
-            // InstantiateFactButton(inFact);
-        }
+            switch(inFact.Type)
+            {
+                case BFTypeId.Body:
+                    break;
 
-        void IFactVisitor.Visit(BFBody inFact)
-        {
-            // InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFWaterProperty inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFWaterPropertyHistory inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFPopulation inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFPopulationHistory inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFModel inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFEat inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFGrow inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFReproduce inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFProduce inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFConsume inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFState inFact)
-        {
-            InstantiateFactButton(inFact);
-        }
-
-        void IFactVisitor.Visit(BFDeath inFact)
-        {
-            InstantiateFactButton(inFact);
+                default:
+                    InstantiateFactButton(inFact);
+                    break;
+            }
         }
     
         #endregion // IFactVisitor
