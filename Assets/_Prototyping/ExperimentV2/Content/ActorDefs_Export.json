@@ -4,11 +4,9 @@
       {
          "key": "ArcticCod",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.300000011920929,
+            "topBottomRadius": 0.150000005960464,
+            "moveDistance": 0.5
          }
       },
       {
@@ -48,11 +46,11 @@
       {
          "key": "BristleWorm",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.25,
+            "topBottomRadius": 0.0299999993294477,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "None"
          }
       },
       {
@@ -69,11 +67,11 @@
       {
          "key": "ChinookSalmon",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.75,
+            "topBottomRadius": 0.300000011920929,
+            "moveSpeed": 1.20000004768372,
+            "moveInterval": 0.5,
+            "moveIntervalRandom": 0.300000011920929
          }
       },
       {
@@ -87,7 +85,7 @@
          }
       },
       {
-         "key": "DeadBowheadWhale",
+         "key": "DecomposingBacteria",
          "value": {
             "sidesRadius": 0,
             "topBottomRadius": 0,
@@ -99,8 +97,7 @@
       {
          "key": "Detritus",
          "value": {
-            "sidesRadius": 0.5,
-            "topBottomRadius": 0.6,
+            "topBottomRadius": 0.600000023841858,
             "moveType": "Stationary",
             "eatType": "None"
          }
@@ -120,11 +117,13 @@
       {
          "key": "Hagfish",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.75,
+            "topBottomRadius": 0.5,
+            "moveType": "Swim",
+            "moveInterval": 1.5,
+            "moveIntervalRandom": 0.4,
+            "moveSpeed": 1,
+            "moveDistance": 1.2  
          }
       },
       {
@@ -144,16 +143,6 @@
             "topBottomRadius": 1,
             "moveSpeed": 0.200000002980232,
             "moveInterval": 3
-         }
-      },
-      {
-         "key": "Muck",
-         "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
          }
       },
       {
@@ -247,11 +236,11 @@
       {
          "key": "SnowCrab",
          "value": {
-            "sidesRadius": 0,
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.699999988079071,
             "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "None"
          }
       },
       {
@@ -300,11 +289,14 @@
       {
          "key": "ZombieWorm",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.1,
+            "topBottomRadius": 0.325,
+            "moveType": "Swim",
+            "spawnLocation": "Bottom",
+            "moveDistance": 0.5,
+            "moveInterval": 2,
+            "moveIntervalRandom": 3,
+            "eatSpeedMultiplier": 3
          }
       }
    ]
