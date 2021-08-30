@@ -13,6 +13,8 @@ namespace ProtoAqua.Modeling
 {
     public class BattleAnimationPrototype : MonoBehaviour
     {
+        public delegate void OnCritterToggledDelegate(StringHash32 inId, bool inbState);
+
         #region Inspector
 
         [SerializeField] private BattleAnimationPrototypeActor[] m_Actors = null;
@@ -28,6 +30,8 @@ namespace ProtoAqua.Modeling
 
         #endregion // Inspector
 
+        public OnCritterToggledDelegate OnCritterToggled;
+
         [NonSerialized] private Routine m_Animation;
         [NonSerialized] private SimulationProfile m_Profile;
         [NonSerialized] private readonly List<IEnumerator> m_TempAnimationList = new List<IEnumerator>(16);
@@ -42,6 +46,13 @@ namespace ProtoAqua.Modeling
             m_PlayToggle.onValueChanged.AddListener(OnPlayToggled);
             m_PauseToggle.onValueChanged.AddListener(OnPauseToggled);
             m_FFToggle.onValueChanged.AddListener(OnFFToggled);
+
+            OnCritterToggledDelegate onToggledPtr = (x, y) => OnCritterToggled?.Invoke(x, y);
+
+            for(int i = 0; i < m_Actors.Length; i++)
+            {
+                m_Actors[i].OnToggled = onToggledPtr;
+            }
         }
 
         private void OnDisable()
@@ -74,6 +85,15 @@ namespace ProtoAqua.Modeling
             m_Animation.Stop();
         }
 
+        public void ResetCritterToggles()
+        {
+            var actorTypes = m_Profile.Critters();
+            for(int i = 0; i < actorTypes.Count; i++)
+            {
+                m_Actors[i].ResetToggle(true);
+            }
+        }
+
         private void SetResult(SimulationResult inResult, SimulationResultDetails inDetails, int inTick)
         {
             var actorTypes = m_Profile.Critters();
@@ -88,6 +108,11 @@ namespace ProtoAqua.Modeling
             }
 
             m_Label.SetText(inTick.ToStringLookup());
+        }
+
+        private void OnActorToggled(StringHash32 inActorId, bool inbState)
+        {
+
         }
 
         #region Toggles

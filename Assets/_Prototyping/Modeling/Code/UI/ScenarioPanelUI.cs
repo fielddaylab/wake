@@ -23,6 +23,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private RectTransform m_AlreadyCompletePage = null;
         [SerializeField] private RectTransform m_CrittersPage = null;
         [SerializeField] private Image[] m_CritterIcons = null;
+        [SerializeField] private Image[] m_CritterHistoryIcons = null;
         [SerializeField] private Sprite m_MissingCritterIcon = null;
         [SerializeField] private Button m_SimulateButton = null;
 
@@ -141,16 +142,19 @@ namespace ProtoAqua.Modeling
             if (!m_Scenario)
                 return;
             
-            var critters = m_Scenario.Critters();
+            var critters = m_Scenario.Actors();
             for(int i = 0; i < critters.Length; ++i)
             {
-                m_CritterIcons[i].sprite = m_UniversalModel.IsCritterGraphed(critters[i].Id()) ? critters[i].Icon() : m_MissingCritterIcon;
+                bool bIsGraphed = m_UniversalModel.IsCritterGraphed(critters[i].Id);
+                m_CritterIcons[i].sprite = m_UniversalModel.IsCritterGraphed(critters[i].Id) ? Services.Assets.Bestiary[critters[i].Id].Icon() : m_MissingCritterIcon;
+                m_CritterHistoryIcons[i].gameObject.SetActive(bIsGraphed && ModelingUI.HasPopulationHistory(m_Scenario, i));
                 m_CritterIcons[i].gameObject.SetActive(true);
             }
 
             for(int i = critters.Length; i < m_CritterIcons.Length; ++i)
             {
                 m_CritterIcons[i].gameObject.SetActive(false);
+                m_CritterHistoryIcons[i].gameObject.SetActive(false);
             }
         }
 

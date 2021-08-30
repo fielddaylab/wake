@@ -33,7 +33,7 @@ namespace ProtoAqua.Modeling
 
         public Rect Range { get { return m_LastRect; } }
 
-        public Rect LoadTargets(ModelingScenarioData inScenario)
+        public Rect LoadTargets(ModelingScenarioData inScenario, Predicate<StringHash32> inCanGraphPredicate)
         {
             Assert.NotNull(inScenario);
 
@@ -54,7 +54,7 @@ namespace ProtoAqua.Modeling
                     ActorCountRange critterRange = critterTargets[critterIdx];
 
                     StringHash32 id = critterRange.Id;
-                    if (!inScenario.ShouldGraph(id))
+                    if (!inCanGraphPredicate(id))
                         continue;
 
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
@@ -93,7 +93,7 @@ namespace ProtoAqua.Modeling
             return (m_LastRect = varRange);
         }
 
-        public Rect LoadCritters(SimulationResult[] inResults, ModelingScenarioData inScenario)
+        public Rect LoadCritters(SimulationResult[] inResults, ModelingScenarioData inScenario, Predicate<StringHash32> inCanGraphPredicate)
         {
             Assert.NotNull(inResults);
             Assert.NotNull(inScenario);
@@ -112,7 +112,7 @@ namespace ProtoAqua.Modeling
                 for(int critterIdx = 0; critterIdx < critterCount; ++critterIdx)
                 {
                     StringHash32 id = inResults[0].Actors[critterIdx].Id;
-                    if (!inScenario.ShouldGraph(id))
+                    if (!inCanGraphPredicate(id))
                         continue;
 
                     int resultIdx = inResults[0].IndexOf(id); // this only works if this appears in the same place every time!
@@ -161,12 +161,19 @@ namespace ProtoAqua.Modeling
             return (m_LastRect = varRange);
         }
 
-        public Rect LoadProperty(SimulationResult[] inResults, WaterPropertyId inProperty, ModelingScenarioData inScenario)
+        public Rect LoadProperty(SimulationResult[] inResults, WaterPropertyId inProperty, ModelingScenarioData inScenario, Predicate<WaterPropertyId> inCanGraphPredicate)
         {
             Assert.NotNull(inResults);
             Assert.NotNull(inScenario);
 
             Rect varRange = new Rect(0, 0, inResults[inResults.Length - 1].Timestamp, 0);
+
+            if (!inCanGraphPredicate(inProperty))
+            {
+                m_LinePool.Reset();
+                m_LineMap.Clear();
+                return (m_LastRect = varRange);
+            }
 
             using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys))
             {

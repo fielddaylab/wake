@@ -313,8 +313,20 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_Hash: 2471897816
+      FactId:
+        m_Source: BowheadWhale.Eats.IceAlgae
+        m_Hash: 98285966
+    StressedEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_Hash: 2471897816
+      FactId:
+        m_Source: BowheadWhale.Eats.IceAlgae
+        m_Hash: 98285966
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -576,7 +588,7 @@ MonoBehaviour:
       width: 0.28153116
       height: 0.28153116
   - Id:
-      m_HashValue: 0
+      m_HashValue: 3751261742
     Type: {fileID: 11400000, guid: 6eb611c71aeae724dbfe51d6b47b0c60, type: 2}
     Prefab: {fileID: 0}
     SpawnAmountOverride: -1
@@ -601,36 +613,36 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 0
     StateEvaluator:
       Oxygen:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: 0
-        StressedMax: 0
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
       Temperature:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: 0
-        StressedMax: 0
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
       Light:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: 0
-        StressedMax: 0
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
       PH:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: 0
-        StressedMax: 0
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
       CarbonDioxide:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: 0
-        StressedMax: 0
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 0
+    SpawnCount: 10
     IsPlant: 0
-    TargetLimit: 0
-    FreeOnEaten: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
       x: 0
@@ -638,9 +650,10 @@ MonoBehaviour:
       width: 0
       height: 0
   - Id:
-      m_HashValue: 512788540
+      m_HashValue: 4251495377
     Type: {fileID: 11400000, guid: fd04b1fe77c5ea1469c3a4c9ae437b45, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: dd7733ba7bc42da4395f5be46cc356a4,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -695,10 +708,10 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: -0.17999999
+      y: -0.17999999
+      width: 0.35999998
+      height: 0.35999998
   - Id:
       m_HashValue: 3510470690
     Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}

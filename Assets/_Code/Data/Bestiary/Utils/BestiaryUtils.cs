@@ -237,6 +237,28 @@ namespace Aqua
             return null;
         }
 
+        /// <summary>
+        /// Locates the population history rule associated with the given environment and critter type.
+        /// </summary>
+        static public BFPopulationHistory FindPopulationHistoryRule(BestiaryDesc inEnvironment, StringHash32 inCritterId)
+        {
+            return FindPopulationHistoryRule(inEnvironment, Services.Assets.Bestiary[inCritterId]);
+        }
+
+        /// <summary>
+        /// Locates the population history rule associated with the given environment and critter type.
+        /// </summary>
+        static public BFPopulationHistory FindPopulationHistoryRule(BestiaryDesc inEnvironment, BestiaryDesc inCritter)
+        {
+            foreach(var fact in inEnvironment.FactsOfType<BFPopulationHistory>())
+            {
+                if (fact.Critter == inCritter)
+                    return fact;
+            }
+
+            return null;
+        }
+
         #endregion // Find Facts
 
         #region Text

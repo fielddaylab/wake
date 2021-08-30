@@ -16,14 +16,21 @@ namespace ProtoAqua.Modeling
 
         #endregion // Inspector
 
-        private int m_LastSync = -1;
+        private int? m_LastSync = -1;
 
-        public void Display(int inSync)
+        public void Display(int? inSync)
         {
             if (m_LastSync != inSync)
             {
-                m_Text.SetText(inSync.ToStringLookup() + "%");
                 m_LastSync = inSync;
+                if (inSync.HasValue)
+                {
+                    m_Text.SetText(inSync.Value.ToStringLookup() + "%");
+                }
+                else
+                {
+                    m_Text.SetText("???");
+                }
             }
         }
     }
