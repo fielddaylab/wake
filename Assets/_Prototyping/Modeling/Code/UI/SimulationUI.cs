@@ -115,6 +115,7 @@ namespace ProtoAqua.Modeling
 
         public void Complete()
         {
+            m_Battle.StopAnimation();
             m_Complete.Load(m_Buffer.Scenario());
         }
 

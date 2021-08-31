@@ -50,6 +50,8 @@ namespace ProtoAqua.ExperimentV2
             inFeature.Particles.Play();
             inFeature.Light.enabled = true;
             inFeature.OnStateChanged?.Invoke(true);
+            if (!inbForce)
+                inFeature.Particles.Emit(32);
         }
 
         static public void Disable(ToggleableTankFeature inFeature, bool inbForce = false)

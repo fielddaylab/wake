@@ -34,12 +34,14 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private Routine m_Animation;
         [NonSerialized] private SimulationProfile m_Profile;
+        [NonSerialized] private WaterPropertyMask m_UnlockedProperties;
         [NonSerialized] private readonly List<IEnumerator> m_TempAnimationList = new List<IEnumerator>(16);
         [NonSerialized] private bool m_Paused = false;
         [NonSerialized] private float m_PlaybackSpeed = 1;
 
         [NonSerialized] private SimulationResult[] m_LastResultsCached;
         [NonSerialized] private SimulationResultDetails[] m_LastDetailsCached;
+        [NonSerialized] private BattleAnimationPrototypeWaterProperty[] m_WaterPropMap = new BattleAnimationPrototypeWaterProperty[(int) WaterPropertyId.TRACKED_COUNT];
 
         private void Awake()
         {
@@ -63,10 +65,7 @@ namespace ProtoAqua.Modeling
 
         public void SetBuffer(SimulationBuffer inBuffer)
         {
-            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
-            {
-                m_WaterProps[(int) id].Initialize(Services.Assets.WaterProp.Property(id));
-            }
+            ResetWaterProperties();
 
             m_Profile = inBuffer.PlayerProfile;
 
@@ -94,6 +93,29 @@ namespace ProtoAqua.Modeling
             }
         }
 
+        public void ResetWaterProperties()
+        {
+            int used = 0;
+            Array.Clear(m_WaterPropMap, 0, m_WaterPropMap.Length);
+
+            m_UnlockedProperties = Services.Data.Profile.Inventory.GetPropertyUnlockedMask();
+            foreach(var propDesc in Services.Assets.WaterProp.Sorted())
+            {
+                if (m_UnlockedProperties[propDesc.Index()])
+                {
+                    BattleAnimationPrototypeWaterProperty propDisplay = m_WaterProps[used++];
+                    propDisplay.gameObject.SetActive(true);
+                    propDisplay.Initialize(propDesc);
+                    m_WaterPropMap[(int) propDesc.Index()] = propDisplay;
+                }
+            }
+            
+            for(; used < m_WaterProps.Length; used++)
+            {
+                m_WaterProps[used].gameObject.SetActive(false);
+            }
+        }
+
         private void SetResult(SimulationResult inResult, SimulationResultDetails inDetails, int inTick)
         {
             var actorTypes = m_Profile.Critters();
@@ -104,15 +126,10 @@ namespace ProtoAqua.Modeling
 
             for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_MAX; id++)
             {
-                m_WaterProps[(int) id].SetValue(inDetails.StartingEnvironment[id]);
+                m_WaterPropMap[(int) id]?.SetValue(inDetails.StartingEnvironment[id]);
             }
 
             m_Label.SetText(inTick.ToStringLookup());
-        }
-
-        private void OnActorToggled(StringHash32 inActorId, bool inbState)
-        {
-
         }
 
         #region Toggles
@@ -193,6 +210,7 @@ namespace ProtoAqua.Modeling
 
             m_EatEmojis.Stop();
             SetResult(inResults[0], inDetails[1], inResults[0].Timestamp);
+            ResetWaterProperties();
             m_Animation.Replace(this, Animation(inResults, inDetails));
 
             if (m_Paused)
@@ -200,6 +218,13 @@ namespace ProtoAqua.Modeling
             m_Animation.SetTimeScale(m_PlaybackSpeed);
 
             SetIsPlaying();
+        }
+
+        public void StopAnimation()
+        {
+            m_Animation.Stop();
+            m_EatEmojis.Stop();
+            m_EatEmojis.Clear();
         }
 
         private void ReplayAnimation()
@@ -226,18 +251,21 @@ namespace ProtoAqua.Modeling
 
             foreach(var prop in Simulator.PreemptiveProperties)
             {
+                if (!m_UnlockedProperties[prop])
+                    continue;
+
                 int critterIdx = 0;
                 foreach(var critter in inDetails.Consumed)
                 {
                     properties[prop] -= critter[prop];
                     if (critter[prop] > 0)
                     {
-                        BatchAnimation(m_WaterProps[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
+                        BatchAnimation(m_WaterPropMap[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
                     }
                     ++critterIdx;
                 }
 
-                BatchAnimation(m_WaterProps[(int) prop].AnimateValue(properties[prop]));
+                BatchAnimation(m_WaterPropMap[(int) prop].AnimateValue(properties[prop]));
             }
 
             yield return FlushBatch();
@@ -261,13 +289,16 @@ namespace ProtoAqua.Modeling
 
             foreach(var prop in Simulator.SecondaryProperties)
             {
+                if (!m_UnlockedProperties[prop])
+                    continue;
+
                 int critterIdx = 0;
                 foreach(var critter in inDetails.Consumed)
                 {
                     properties[prop] -= critter[prop];
                     if (critter[prop] > 0)
                     {
-                        BatchAnimation(m_WaterProps[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
+                        BatchAnimation(m_WaterPropMap[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
                     }
                     critterIdx++;
                 }
@@ -278,12 +309,12 @@ namespace ProtoAqua.Modeling
                     properties[prop] += critter[prop];
                     if (critter[prop] > 0)
                     {
-                        BatchAnimation(m_WaterProps[(int) prop].PlayIncoming(m_Actors[critterIdx].transform));
+                        BatchAnimation(m_WaterPropMap[(int) prop].PlayIncoming(m_Actors[critterIdx].transform));
                     }
                     critterIdx++;
                 }
 
-                BatchAnimation(m_WaterProps[(int) prop].AnimateValue(properties[prop]));
+                BatchAnimation(m_WaterPropMap[(int) prop].AnimateValue(properties[prop]));
             }
 
             yield return FlushBatch();

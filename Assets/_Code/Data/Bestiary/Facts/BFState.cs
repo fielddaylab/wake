@@ -17,13 +17,13 @@ namespace Aqua
         
         [Header("Alive State")]
         public bool HasStressed = true;
-        [ShowIfField("HasStressed")] private float m_MinSafe = 0;
-        [ShowIfField("HasStressed")] private float m_MaxSafe = 0;
+        [SerializeField, ShowIfField("HasStressed")] private float m_MinSafe = 0;
+        [SerializeField, ShowIfField("HasStressed")] private float m_MaxSafe = 0;
 
         [Header("Stressed State")]
         public bool HasDeath = false;
-        [ShowIfField("HasDeath")] private float m_MinStressed = float.MinValue;
-        [ShowIfField("HasDeath")] private float m_MaxStressed = float.MaxValue;
+        [SerializeField, ShowIfField("HasDeath")] private float m_MinStressed = float.MinValue;
+        [SerializeField, ShowIfField("HasDeath")] private float m_MaxStressed = float.MaxValue;
 
         #endregion // Inspector
 

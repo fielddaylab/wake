@@ -4930,48 +4930,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &1573535057151019819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725311754210964872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: MeasurementTank
-    m_Hash: 283353415
-  m_ToShow:
-  - {fileID: 725311754210964872}
-  m_ToHide: []
-  m_ContinuousCheck: 1
---- !u!114 &7704810211327578248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725311754210964872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0957334d9264d244ebadb9b574e429e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ParentTank: {fileID: 725311754210964886}
-  m_SetupPanelGroup: {fileID: 6394241475925480187}
-  m_AddCrittersPanel: {fileID: 5928002969909506519}
-  m_SelectEnvPanel: {fileID: 7512628003179380579}
-  m_EnvIcon: {fileID: 3631230141550613738}
-  m_StabilizerFeature: {fileID: 2570093722938398337}
-  m_FeederFeature: {fileID: 361495368513295558}
-  m_RunButton: {fileID: 4199441211118289808}
-  m_Allocator: {fileID: 0}
-  m_SummaryPanel: {fileID: 5016369260967812883}
-  m_Dials: []
 --- !u!1 &734690966186839256
 GameObject:
   m_ObjectHideFlags: 0
@@ -4982,7 +4940,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7639926191634854010}
   - component: {fileID: 2570093722938398337}
-  - component: {fileID: 5209628306827214540}
   m_Layer: 0
   m_Name: WaterStabalizer
   m_TagString: Untagged
@@ -5025,26 +4982,6 @@ MonoBehaviour:
   Pointer: {fileID: 8902252124884652496}
   Particles: {fileID: 6478017221336911265}
   Light: {fileID: 2804279013036051549}
---- !u!114 &5209628306827214540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734690966186839256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: MeasurementTankStabilizerToggle
-    m_Hash: 3613355014
-  m_ToShow:
-  - {fileID: 4274962782884997685}
-  - {fileID: 5116313219357401067}
-  m_ToHide: []
-  m_ContinuousCheck: 1
 --- !u!1 &3387228326118349293
 GameObject:
   m_ObjectHideFlags: 0
@@ -10094,6 +10031,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Layer: 0
   m_Order: 1
+--- !u!114 &1573535057151019819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725311754210964872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: MeasurementTank
+    m_Hash: 283353415
+  m_ToShow:
+  - {fileID: 725311754210964872}
+  m_ToHide: []
+  m_ContinuousCheck: 1
+--- !u!114 &7704810211327578248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725311754210964872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0957334d9264d244ebadb9b574e429e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParentTank: {fileID: 725311754210964886}
+  m_SetupPanelGroup: {fileID: 6394241475925480187}
+  m_AddCrittersPanel: {fileID: 5928002969909506519}
+  m_SelectEnvPanel: {fileID: 7512628003179380579}
+  m_EnvIcon: {fileID: 3631230141550613738}
+  m_StabilizerFeature: {fileID: 2570093722938398337}
+  m_FeederFeature: {fileID: 361495368513295558}
+  m_RunButton: {fileID: 4199441211118289808}
+  m_Allocator: {fileID: 0}
+  m_SummaryPanel: {fileID: 5016369260967812883}
+  m_Dials: []
 --- !u!1 &5116313219357401067
 GameObject:
   m_ObjectHideFlags: 0
