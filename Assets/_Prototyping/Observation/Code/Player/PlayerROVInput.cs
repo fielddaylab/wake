@@ -1,50 +1,42 @@
 using UnityEngine;
 using Aqua;
+using Aqua.StationMap;
+using Aqua.Character;
 
 namespace ProtoAqua.Observation
 {
     public class PlayerROVInput : WorldInput
     {
-        protected override void Awake()
+        public struct InputData
         {
-            base.Awake();
+            public MouseDistanceInputFilter.Output Mouse;
+
+            public bool UsePress;
+            public bool UseHold;
         }
 
-        private void OnDestroy() 
-        {
-            Services.Events?.DeregisterAll(this);
-        }
+        #region Inspector
+
+        [SerializeField] private MouseDistanceInputFilter m_MouseFilter = default;
+
+        #endregion // Inspector
 
         #region Input Generation
 
-        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, out PlayerROV.InputData outInputData)
+        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, out InputData outInputData)
         {
             if (!IsInputEnabled)
             {
-                outInputData = default(PlayerROV.InputData);
+                outInputData = default(InputData);
                 return;
             }
 
-            bool bAllowLeftClick = !Services.Input.IsPointerOverUI();
+            m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, out outInputData.Mouse);
 
-            if (inLockOn.HasValue)
-            {
-                outInputData.Target = Services.Camera.GameplayPlanePosition(inLockOn.Value);
-            }
-            else
-            {
-                outInputData.Target = GetMousePositionInWorld(inPlayerTransform);
-            }
-            
-            outInputData.Offset = outInputData.Target.Value - (Vector2) inPlayerTransform.position;
+            bool bAllowLeftClick = !Services.Input.IsPointerOverUI();
 
             outInputData.UseHold = bAllowLeftClick && Device.MouseDown(0);
             outInputData.UsePress = bAllowLeftClick && Device.MousePressed(0);
-        }
-
-        private Vector2 GetMousePositionInWorld(Transform inTransform)
-        {
-            return Services.Camera.ScreenToWorldOnPlane(Input.mousePosition, inTransform);
         }
 
         #endregion // Input Generation

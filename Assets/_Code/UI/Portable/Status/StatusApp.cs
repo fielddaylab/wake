@@ -226,8 +226,8 @@ namespace Aqua.Portable
             m_TechTab.gameObject.SetActive(false);
 
             InventoryData invData = Services.Data.Profile.Inventory;
-            m_CoinDisplay.Populate(invData.GetItem(GameConsts.CashId));
-            m_GearDisplay.Populate(invData.GetItem(GameConsts.GearsId));
+            m_CoinDisplay.Populate(invData.GetItem(ItemIds.Cash));
+            m_GearDisplay.Populate(invData.GetItem(ItemIds.Gear));
         }
 
         private void LoadTechPage()

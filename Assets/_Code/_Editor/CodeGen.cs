@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using BeauUtil.Debugger;
+using BeauUtil.Editor;
 
 namespace Aqua.Editor
 {
@@ -112,6 +113,28 @@ namespace Aqua.Editor
             builder.Append("\n}");
 
             string outputPath = Path.Combine(TargetFolder, "GameSortingLayers.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
+
+        [MenuItem("Aqualab/CodeGen/Regen Items")]
+        static private void GenerateItemConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("using BeauUtil;");
+            builder.Append("\n\nstatic public class ItemIds")
+                .Append("\n{");
+
+            foreach(var item in AssetDBUtils.FindAssets<InvItem>())
+            {
+                string safeName = ObjectNames.NicifyVariableName(item.name).Replace("-", "_").Replace(" ", "");
+
+                builder.Append("\n\tstatic public readonly StringHash32 ").Append(safeName).Append(" = new StringHash32(0x").Append(item.Id().HashValue.ToString("X8")).Append(");");
+            }
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "ItemIds.cs");
             File.WriteAllText(outputPath, builder.Flush());
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }

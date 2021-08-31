@@ -54,7 +54,7 @@ namespace ProtoAqua.Observation
             Services.UI?.FindPanel<TaggingUI>()?.Hide();
         }
 
-        public bool UpdateTool(in PlayerROV.InputData inInput)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput)
         {
             return false;
         }
