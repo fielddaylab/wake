@@ -85,11 +85,23 @@
          }
       },
       {
+         "key": "Cyanobacteria",
+         "value": {
+            "sidesRadius": 0.150000005960464,
+            "topBottomRadius": 0.100000001490116,
+            "moveDistance": 0.200000002980232,
+            "moveSpeed": 0.200000002980232,
+            "eatType": "None",
+            "ambientAnimationMultiplier": 0
+         }
+      },
+      {
          "key": "DecomposingBacteria",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
+            "sidesRadius": 0.150000005960464,
+            "topBottomRadius": 0.100000001490116,
+            "moveDistance": 0.200000002980232,
+            "moveSpeed": 0.200000002980232,
             "eatType": "None",
             "ambientAnimationMultiplier": 0
          }
@@ -118,12 +130,8 @@
          "key": "Hagfish",
          "value": {
             "sidesRadius": 0.75,
-            "topBottomRadius": 0.5,
-            "moveType": "Swim",
-            "moveInterval": 1.5,
-            "moveIntervalRandom": 0.4,
-            "moveSpeed": 1,
-            "moveDistance": 1.2  
+            "moveDistance": 1.20000004768372,
+            "moveIntervalRandom": 0.400000005960464
          }
       },
       {
@@ -132,6 +140,17 @@
             "sidesRadius": 0,
             "topBottomRadius": 0,
             "moveType": "Stationary",
+            "eatType": "None",
+            "ambientAnimationMultiplier": 0
+         }
+      },
+      {
+         "key": "Ick",
+         "value": {
+            "sidesRadius": 0.3,
+            "topBottomRadius": 0.3,
+            "moveDistance": 0.200000002980232,
+            "moveSpeed": 0.200000002980232,
             "eatType": "None",
             "ambientAnimationMultiplier": 0
          }
@@ -148,7 +167,8 @@
       {
          "key": "NorthAtlanticOctopus",
          "value": {
-            "sidesRadius": 0,
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.349999994039536,
             "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None",
@@ -256,6 +276,17 @@
          }
       },
       {
+         "key": "TurfAlgae",
+         "value": {
+            "spawnLocation": "Top",
+            "sidesRadius": 0.5,
+            "topBottomRadius": 0.2,
+            "moveType": "Stationary",
+            "eatType": "None",
+            "ambientAnimationMultiplier": 0
+         }
+      },
+      {
          "key": "TurtleGrass",
          "value": {
             "spawnAmountOverride": 3,
@@ -289,10 +320,9 @@
       {
          "key": "ZombieWorm",
          "value": {
-            "sidesRadius": 0.1,
-            "topBottomRadius": 0.325,
-            "moveType": "Swim",
             "spawnLocation": "Bottom",
+            "sidesRadius": 0.100000001490116,
+            "topBottomRadius": 0.324999988079071,
             "moveDistance": 0.5,
             "moveInterval": 2,
             "moveIntervalRandom": 3,
