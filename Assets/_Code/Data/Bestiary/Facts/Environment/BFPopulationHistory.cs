@@ -12,8 +12,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Population History")]
-        [FilterBestiary(BestiaryDescCategory.Critter), FormerlySerializedAs("m_Critter")] public BestiaryDesc Critter = null;
-        [AutoEnum, FormerlySerializedAs("m_Graph")] public BFGraphType Graph = BFGraphType.Flat;
+        [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
+        [AutoEnum] public BFGraphType Graph = BFGraphType.Flat;
 
         #endregion // Inspector
 

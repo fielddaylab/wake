@@ -8,7 +8,7 @@ using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
-    public class PlayerROV : MonoBehaviour
+    public class PlayerROV : MonoBehaviour, ISceneLoadHandler
     {
         static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch";
         static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched";
@@ -27,7 +27,9 @@ namespace ProtoAqua.Observation
         public enum ToolId
         {
             Scanner,
-            Tagger
+            Tagger,
+
+            NONE
         }
 
         public interface ITool
@@ -37,6 +39,18 @@ namespace ProtoAqua.Observation
             bool UpdateTool(in PlayerROV.InputData inInput);
             bool HasTarget();
             Vector3? GetTargetPosition();
+        }
+
+        private class NullTool : ITool
+        {
+            static public readonly NullTool Instance = new NullTool();
+
+            public void Disable() { }
+            public void Enable() { }
+
+            public Vector3? GetTargetPosition() { return null; }
+            public bool HasTarget() { return false; }
+            public bool UpdateTool(in InputData inInput) { return false; }
         }
 
         #endregion // Types
@@ -76,7 +90,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_MouseHint;
         [NonSerialized] private uint m_CameraDriftHint;
         [NonSerialized] private ITool m_CurrentTool;
-        [NonSerialized] private ToolId m_CurrentToolId = ToolId.Scanner;
+        [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
 
         private void Start()
         {
@@ -94,7 +108,19 @@ namespace ProtoAqua.Observation
             m_Input.OnInputDisabled.AddListener(OnInputDisabled);
             m_Input.OnInputEnabled.AddListener(OnInputEnabled);
 
-            SetTool(ToolId.Scanner, true);
+            m_CurrentTool = NullTool.Instance;
+        }
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
+        {
+            if (Services.Data.Profile.Inventory.HasUpgrade("ROVScanner"))
+            {
+                SetTool(ToolId.Scanner, true);
+            }
+            else
+            {
+                SetTool(ToolId.NONE, true);
+            }
 
             if (m_Input.IsInputEnabled)
                 OnInputEnabled();
@@ -301,6 +327,8 @@ namespace ProtoAqua.Observation
                     return m_Scanner;
                 case ToolId.Tagger:
                     return m_Tagger;
+                case ToolId.NONE:
+                    return NullTool.Instance;
                 default:
                     Assert.Fail("unknown toolid {0}", inToolId);
                     return null;

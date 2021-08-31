@@ -14,8 +14,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Consume")]
-        [AutoEnum, FormerlySerializedAs("m_Property")] public WaterPropertyId Property = WaterPropertyId.Oxygen;
-        [FormerlySerializedAs("m_Amount")] public uint Amount = 0;
+        [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Oxygen;
+        public uint Amount = 0;
         [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector

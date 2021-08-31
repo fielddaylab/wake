@@ -54,9 +54,13 @@ namespace Aqua
             ioIcon.gameObject.SetActive(true);
         }
 
+        #if UNITY_EDITOR
+
         void ISceneOptimizable.Optimize()
         {
             m_UpgradeIcons = GetComponentsInChildren<PortableUpgradeIcon>(true);
         }
+
+        #endif // UNITY_EDITOR
     }
 }

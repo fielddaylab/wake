@@ -12,14 +12,14 @@ namespace Aqua
         #region Inspector
 
         [Header("Body")]
-        [FormerlySerializedAs("m_StartingMass"), FormerlySerializedAs("m_MassPerPopulation")] public uint MassPerPopulation = 0;
-        [FormerlySerializedAs("m_ScarcityLevel")] public uint ScarcityLevel = 10000;
+        public uint MassPerPopulation = 0;
+        public uint ScarcityLevel = 10000;
         
         [Header("Display")]
-        [FormerlySerializedAs("m_MassDisplayScale")] public float MassDisplayScale = 1;
-        [FormerlySerializedAs("m_PopulationSoftCap")] public uint PopulationSoftCap = 1000;
-        [FormerlySerializedAs("m_PopulationSoftIncrement")] public uint PopulationSoftIncrement = 1;
-        [FormerlySerializedAs("m_PopulationHardCap")] public uint PopulationHardCap = 1000;
+        public float MassDisplayScale = 1;
+        public uint PopulationSoftCap = 1000;
+        public uint PopulationSoftIncrement = 1;
+        public uint PopulationHardCap = 1000;
 
         #endregion // Inspector
 

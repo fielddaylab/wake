@@ -12,12 +12,13 @@ namespace Aqua
         #region Inspector
 
         [Header("Data")]
-        [FilterBestiary(BestiaryDescCategory.Environment), FormerlySerializedAs("m_Environment")] public BestiaryDesc Environment = null;
+        [FilterBestiary(BestiaryDescCategory.Environment)] public BestiaryDesc Environment = null;
+        public Sprite Image;
 
         [Header("Text")]
-        [SerializeField, FormerlySerializedAs("m_NameId")] public TextId NameId = null;
-        [SerializeField, FormerlySerializedAs("m_DescriptionId")] public TextId DescriptionId = null;
-        [SerializeField, FormerlySerializedAs("m_SentenceId")] public TextId SentenceId = null;
+        public TextId NameId = null;
+        public TextId DescriptionId = null;
+        public TextId SentenceId = null;
 
         #endregion // Inspector
 

@@ -50,8 +50,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Behavior")]
-        [FormerlySerializedAs("m_Stressed")] public bool OnlyWhenStressed = false;
-        [FormerlySerializedAs("m_AutoGive")] internal bool AutoGive = false;
+        public bool OnlyWhenStressed = false;
+        internal bool AutoGive = false;
 
         #endregion // Inspector
 
