@@ -196,13 +196,21 @@ namespace Aqua
             DMInfo invMenu = new DMInfo("Inventory");
 
             DMInfo upgradesMenu = new DMInfo("Upgrades");
-
             foreach(var upgrade in Services.Assets.Inventory.Upgrades)
             {
                 RegisterUpgradeToggle(upgradesMenu, upgrade.Id());
             }
 
+            DMInfo waterPropertiesMenu = new DMInfo("Water Properties", 7);
+            for(WaterPropertyId waterProp = 0; waterProp < WaterPropertyId.TRACKED_COUNT; waterProp++)
+            {
+                RegisterWaterPropertyToggle(waterPropertiesMenu, waterProp);
+            }
+            waterPropertiesMenu.AddDivider();
+            waterPropertiesMenu.AddButton("Unlock All", () => UnlockAllProperties());
+
             invMenu.AddSubmenu(upgradesMenu);
+            invMenu.AddSubmenu(waterPropertiesMenu);
 
             yield return invMenu;
 
@@ -350,6 +358,25 @@ namespace Aqua
                     else
                         Services.Data.Profile.Inventory.RemoveUpgrade(inItem);
                 });
+        }
+
+        static private void RegisterWaterPropertyToggle(DMInfo inMenu, WaterPropertyId inItem)
+        {
+            inMenu.AddToggle(Services.Assets.WaterProp.Property(inItem).name,
+                () => { return Services.Data.Profile.Inventory.IsPropertyUnlocked(inItem); },
+                (b) =>
+                {
+                    if (b)
+                        Services.Data.Profile.Inventory.UnlockProperty(inItem);
+                    else
+                        Services.Data.Profile.Inventory.LockProperty(inItem);
+                });
+        }
+
+        static private void UnlockAllProperties()
+        {
+            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
+                Services.Data.Profile.Inventory.UnlockProperty(id);
         }
 
         static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)

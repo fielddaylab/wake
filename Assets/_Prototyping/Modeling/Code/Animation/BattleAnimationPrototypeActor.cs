@@ -17,21 +17,32 @@ namespace ProtoAqua.Modeling
         [SerializeField] private RectTransform m_PopulationMeter = null;
         [SerializeField] private Image m_StressIcon = null;
         [SerializeField] private Image m_ActionFillMeter = null;
+        [SerializeField] private Toggle m_GraphToggle = null;
 
         #endregion // Inspector
 
         [NonSerialized] private uint m_PopulationMeterCap = 0;
         [NonSerialized] private uint m_PopulationIconCap = 0;
 
+        [NonSerialized] private StringHash32 m_CritterId;
         [NonSerialized] private uint m_CurrentPopulation;
         [NonSerialized] private int m_CurrentIconCount;
         [NonSerialized] private ActorStateId m_CurrentState;
 
+        public BattleAnimationPrototype.OnCritterToggledDelegate OnToggled;
+
+        private void Awake()
+        {
+            m_GraphToggle.onValueChanged.AddListener((b) => OnToggled?.Invoke(m_CritterId, b));
+        }
+
         public void Initialize(BestiaryDesc inActorType)
         {
+            m_CritterId = inActorType.Id();
             BFBody body = inActorType.FactOfType<BFBody>();
             m_PopulationIconCap = body.PopulationHardCap;
             m_PopulationMeterCap = body.PopulationSoftCap;
+            m_GraphToggle.graphic.SetColor(inActorType.Color(), ColorUpdate.PreserveAlpha);
 
             foreach(var icon in m_Icons)
             {
@@ -39,6 +50,11 @@ namespace ProtoAqua.Modeling
             }
 
             SetPopulation(0, ActorStateId.Alive);
+        }
+
+        public void ResetToggle(bool inbOn)
+        {
+            m_GraphToggle.SetIsOnWithoutNotify(inbOn);
         }
 
         public void SetPopulation(uint inPopulation, ActorStateId inState)

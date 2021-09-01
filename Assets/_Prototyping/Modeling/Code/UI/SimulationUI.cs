@@ -47,6 +47,8 @@ namespace ProtoAqua.Modeling
             m_ModelSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
             m_PredictSyncButton.onClick.AddListener(OnAdvanceButtonClicked);
             m_BackButton.onClick.AddListener(OnBackButtonClicked);
+
+            m_Battle.OnCritterToggled = OnCritterToggled;
         }
         
         public void SetBuffer(SimulationBuffer inBuffer)
@@ -59,11 +61,10 @@ namespace ProtoAqua.Modeling
         public void Refresh(in ModelingState inState, SimulationBuffer.UpdateFlags inFlags)
         {
             m_Chart.Refresh(m_Buffer, inFlags);
-            m_Battle.SetBuffer(m_Buffer);
 
             if (inFlags != 0)
             {
-                m_ModelSync.Display(inState.ModelSync);
+                m_ModelSync.Display(inState.HasAllHistorical ? inState.ModelSync : (int?) null);
                 m_PredictSync.Display(inState.PredictSync);
 
                 if ((inFlags & SimulationBuffer.UpdateFlags.Model) != 0)
@@ -91,7 +92,11 @@ namespace ProtoAqua.Modeling
             m_InitialCritters.gameObject.SetActive(true);
             m_OutputPanel.SetAnchorPos(m_OriginalChartX, Axis.X);
 
+            m_Chart.Initialize(m_Buffer);
             m_Chart.HidePrediction();
+
+            m_Battle.SetBuffer(m_Buffer);
+            m_Battle.ResetCritterToggles();
         }
 
         public void SwitchToPredict()
@@ -110,6 +115,7 @@ namespace ProtoAqua.Modeling
 
         public void Complete()
         {
+            m_Battle.StopAnimation();
             m_Complete.Load(m_Buffer.Scenario());
         }
 
@@ -131,6 +137,14 @@ namespace ProtoAqua.Modeling
         private void OnBackButtonClicked()
         {
             OnBackClicked?.Invoke();
+        }
+
+        private void OnCritterToggled(StringHash32 inCritterId, bool inbState)
+        {
+            if (m_Chart.SetCritterGraphed(inCritterId, inbState))
+            {
+                m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.ALL);
+            }
         }
     }
 }

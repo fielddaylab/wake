@@ -75,11 +75,11 @@ namespace Aqua
                 int rewardCount = 0;
                 if (inJob.CashReward() > 0)
                 {
-                    PopulateReward(rewardCount++, GameConsts.CashId, inJob.CashReward());
+                    PopulateReward(rewardCount++, ItemIds.Cash, inJob.CashReward());
                 }
                 if (inJob.GearReward() > 0)
                 {
-                    PopulateReward(rewardCount++, GameConsts.GearsId, inJob.GearReward());
+                    PopulateReward(rewardCount++, ItemIds.Cash, inJob.GearReward());
                 }
 
                 for(int i = rewardCount; i < m_Rewards.Length; ++i)

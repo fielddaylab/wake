@@ -14,7 +14,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Reproduction")]
-        [FormerlySerializedAs("m_Amount"), Range(0, 5)] public float Amount = 0;
+        [Range(0, 5)] public float Amount = 0;
         [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector

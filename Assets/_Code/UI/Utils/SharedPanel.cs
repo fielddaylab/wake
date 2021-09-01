@@ -4,10 +4,11 @@ using BeauUtil;
 using System;
 using System.Collections;
 using BeauRoutine;
+using Aqua.Scripting;
 
 namespace Aqua
 {
-    public class SharedPanel : BasePanel
+    public class SharedPanel : BasePanel, IScriptComponent
     {
         [NonSerialized] private Canvas m_CachedCanvas;
         [NonSerialized] private int m_OriginalSortingLayer;
@@ -25,6 +26,21 @@ namespace Aqua
                 return m_CachedCanvas;
             }
         }
+
+        #region IScriptComponent
+
+        public ScriptObject Parent { get; private set; }
+
+        public virtual void OnRegister(ScriptObject inObject)
+        {
+            Parent = inObject;
+        }
+
+        public virtual void OnDeregister(ScriptObject inObject)
+        {
+        }
+
+        #endregion // IScriptComponent
 
         protected override void Awake()
         {

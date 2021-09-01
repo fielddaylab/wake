@@ -69,7 +69,7 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public bool UpdateTool(in PlayerROV.InputData inInput)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput)
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
@@ -88,9 +88,9 @@ namespace ProtoAqua.Observation
             }
             else
             {
-                if (inInput.UseHold && inInput.Target.HasValue)
+                if (inInput.UseHold && inInput.Mouse.Target.HasValue)
                 {
-                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(inInput.Target.Value, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
+                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(inInput.Mouse.Target.Value, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
                     Collider2D scannableCollider = overlappingColliders > 0 ? m_ColliderBuffer[0] : null;
                     Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
 
@@ -101,7 +101,7 @@ namespace ProtoAqua.Observation
                         if (scannable != null && scannable.isActiveAndEnabled && scannable.InRange)
                         {
                             bFound = true;
-                            StartScan(scannable, inInput.Target.Value);
+                            StartScan(scannable, inInput.Mouse.Target.Value);
                             return true;
                         }
                     }

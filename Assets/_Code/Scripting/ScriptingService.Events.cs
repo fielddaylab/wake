@@ -34,6 +34,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("loc", ReplaceLoc);
             m_TagEventParser.AddReplace("var", ReplaceVariable).WithAliases("var-i", "var-f", "var-b", "var-s");
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
+            m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
             m_TagEventParser.AddReplace('|', "{wait 0.25}");
 
             // Extra Replace Tags (with embedded events)
@@ -187,6 +188,18 @@ namespace Aqua
         static private string ReplaceIcon(TagData inTag, object inContext)
         {
             return string.Format("<sprite name=\"{0}\">", inTag.Data.ToString());
+        }
+
+        static private string ReplaceNameOf(TagData inTag, object inContext)
+        {
+            if (inTag.Data.StartsWith('@'))
+            {
+                StringHash32 characterId = inTag.Data.Substring(1);
+                return Loc.Find(Services.Assets.Characters[characterId].NameId());
+            }
+
+            Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
+            return "[ERROR]";
         }
 
         static private readonly char[] ChoiceSplitChars = new char[] { '|' };

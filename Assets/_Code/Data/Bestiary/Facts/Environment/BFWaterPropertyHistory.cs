@@ -12,8 +12,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Property")]
-        [AutoEnum, FormerlySerializedAs("m_PropertyId")] public WaterPropertyId Property = WaterPropertyId.Temperature;
-        [AutoEnum, FormerlySerializedAs("m_Graph")] public BFGraphType Graph = BFGraphType.Flat;
+        [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Temperature;
+        [AutoEnum] public BFGraphType Graph = BFGraphType.Flat;
 
         #endregion // Inspector
 

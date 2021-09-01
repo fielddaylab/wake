@@ -12,9 +12,9 @@ namespace Aqua
         #region Inspector
 
         [Header("Population")]
-        [FormerlySerializedAs("m_Critter"), FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
-        [FormerlySerializedAs("m_Value")] public uint Value = 0;
-        [FormerlySerializedAs("m_SiteVersion")] public byte SiteVersion = 0;
+        [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
+        public uint Value = 0;
+        public byte SiteVersion = 0;
 
         #endregion // Inspector
 

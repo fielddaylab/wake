@@ -13,7 +13,7 @@ namespace Aqua.StationMap
         #region Inspector
 
         [SerializeField] private PlayerInput m_Input = null;
-        [SerializeField] private PlayerAnimator m_Animator = null;
+        // [SerializeField] private PlayerAnimator m_Animator = null;
         [SerializeField] private ParticleSystem m_MovementParticles = null;
         
         [Header("Movement Params")]

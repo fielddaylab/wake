@@ -51,6 +51,7 @@ namespace ProtoAqua.Modeling
         private readonly HashSet<BestiaryDesc> m_PlayerCritters = new HashSet<BestiaryDesc>();
         private readonly RingBuffer<ActorCountU32> m_PlayerActors = new RingBuffer<ActorCountU32>(Simulator.MaxTrackedCritters);
         private readonly RingBuffer<ActorCountI32> m_PlayerActorPredictionAdjust = new RingBuffer<ActorCountI32>(Simulator.MaxTrackedCritters);
+        private readonly HashSet<StringHash32> m_KnownHistoricalPopulations = new HashSet<StringHash32>();
 
         public SimulatorFlags Flags;
         public Action OnUpdate;
@@ -356,6 +357,24 @@ namespace ProtoAqua.Modeling
             return m_PlayerCritters;
         }
 
+        /// <summary>
+        /// Returns if the player has all historical populations.
+        /// </summary>
+        public bool PlayerKnowsAllHistoricalPopulations()
+        {
+            RefreshModel();
+            return m_KnownHistoricalPopulations.Count == m_Scenario.Actors().Length;
+        }
+
+        /// <summary>
+        /// Returns if the player knows the historical population for the given critter.
+        /// </summary>
+        public bool PlayerKnowsHistoricalPopulation(StringHash32 inCritterId)
+        {
+            RefreshModel();
+            return m_KnownHistoricalPopulations.Contains(inCritterId);
+        }
+
         #endregion // Player
 
         #region Results
@@ -441,7 +460,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Refreshes historical data.
         /// </summary>
-        public bool RefreshHistorical()
+        private bool RefreshHistorical()
         {
             if (m_HistoricalSimDirty == 0)
                 return false;
@@ -480,7 +499,7 @@ namespace ProtoAqua.Modeling
         /// <summary>
         /// Refreshes player data.
         /// </summary>
-        public bool RefreshModel()
+        private bool RefreshModel()
         {
             if (m_PlayerSimDirty == 0)
                 return false;
@@ -536,6 +555,18 @@ namespace ProtoAqua.Modeling
                 using(Profiling.Time("Generating player prediction"))
                 {
                     Simulator.GenerateToBuffer(PlayerProfile, initialPredictResult, m_PredictionResultBuffer, m_PredictionDetailBuffer, Flags);
+                }
+            }
+
+            m_KnownHistoricalPopulations.Clear();
+            var bestiaryData = Services.Data.Profile.Bestiary;
+            var actors = m_Scenario.Actors();
+            var historical = m_Scenario.PopulationHistoryFacts();
+            for(int i = 0; i < actors.Length; i++)
+            {
+                if (bestiaryData.HasFact(historical[i]))
+                {
+                    m_KnownHistoricalPopulations.Add(actors[i].Id);
                 }
             }
 

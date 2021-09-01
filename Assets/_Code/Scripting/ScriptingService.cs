@@ -215,6 +215,8 @@ namespace Aqua
         /// </summary>
         public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), ScriptObject inContext = null, VariantTable inContextTable = null, string inThreadId = null)
         {
+            TryCallFunctions(inTriggerId, inTarget, inContext, inContextTable);
+
             ScriptThreadHandle handle = default(ScriptThreadHandle);
             IVariantResolver resolver = GetResolver(inContextTable);
             TriggerResponseSet responseSet;

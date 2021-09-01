@@ -376,6 +376,18 @@ namespace Aqua
                 return Services.Data.Profile.Inventory.WasScanned(inNodeId);
             }
 
+            [LeafMember("HasWaterProperty")]
+            static private bool HasProperty(WaterPropertyId inProperty)
+            {
+                return Services.Data.Profile.Inventory.IsPropertyUnlocked(inProperty);
+            }
+
+            [LeafMember("GiveWaterProperty")]
+            static private bool GiveWaterProperty(WaterPropertyId inProperty)
+            {
+                return Services.Data.Profile.Inventory.UnlockProperty(inProperty);
+            }
+
             #endregion // Bestiary/Inventory
 
             #region Shop

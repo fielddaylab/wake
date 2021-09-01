@@ -94,10 +94,14 @@ namespace ProtoAqua.Modeling
 
         private void UpdateSync()
         {
+            bool bHasAll = m_Buffer.PlayerKnowsAllHistoricalPopulations();
+
+            m_GraphState.HasAllHistorical = bHasAll;
+
             float error = m_Buffer.CalculateModelError();
             int sync = 100 - Mathf.CeilToInt(error * 100);
             
-            if (m_GraphState.Phase == ModelingPhase.Sync && m_GraphState.ModelSync != 100 && sync == 100)
+            if (bHasAll && m_GraphState.Phase == ModelingPhase.Sync && m_GraphState.ModelSync != 100 && sync == 100)
             {
                 Services.Audio.PostEvent("modelSync");
                 Services.Script.TriggerResponse(SimulationConsts.Trigger_SyncedImmediate);
@@ -169,9 +173,11 @@ namespace ProtoAqua.Modeling
             m_GraphState.Phase = ModelingPhase.Sync;
             SyncPhaseScriptVar();
 
+            m_Buffer.Refresh();
+
             m_SimulationUI.SetBuffer(m_Buffer);
-            m_SimulationUI.Refresh(m_GraphState, SimulationBuffer.UpdateFlags.ALL);
             m_SimulationUI.DisplayInitial();
+            m_SimulationUI.Refresh(m_GraphState, SimulationBuffer.UpdateFlags.ALL);
 
             Services.Events.Dispatch(SimulationConsts.Event_Simulation_Begin);
             Services.Script.TriggerResponse(SimulationConsts.Trigger_GraphStarted);
@@ -244,7 +250,7 @@ namespace ProtoAqua.Modeling
             {
                 case ModelingPhase.Sync:
                     {
-                        if (m_GraphState.ModelSync < 100)
+                        if (m_GraphState.ModelSync < 100 || !m_GraphState.HasAllHistorical)
                         {
                             Services.Audio.PostEvent("syncDenied");
                             Services.Script.TriggerResponse(SimulationConsts.Trigger_SyncError);

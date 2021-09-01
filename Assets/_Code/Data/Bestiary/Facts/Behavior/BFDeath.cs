@@ -14,7 +14,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Death Rate")]
-        [FormerlySerializedAs("m_Proportion"), Range(0, 1)] public float Proportion = 0;
+        [Range(0, 1)] public float Proportion = 0;
         [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector

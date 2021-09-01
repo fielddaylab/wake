@@ -1,5 +1,7 @@
 using System;
+using Aqua;
 using Aqua.Profile;
+using BeauUtil;
 using UnityEngine;
 
 namespace ProtoAqua.Modeling
@@ -50,9 +52,11 @@ namespace ProtoAqua.Modeling
             bool bIsReady = false;
             if (m_UniversalModel.UngraphedFactCount() == 0)
             {
-                foreach(var critter in m_Scenario.Actors())
+                var actors = m_Scenario.Actors();
+                for(int i = 0; i < actors.Length; i++)
                 {
-                    if (m_UniversalModel.IsCritterGraphed(critter.Id))
+                    var critter = actors[i];
+                    if (m_UniversalModel.IsCritterGraphed(critter.Id) && HasPopulationHistory(m_Scenario, i))
                     {
                         bIsReady = true;
                         break;
@@ -61,6 +65,12 @@ namespace ProtoAqua.Modeling
             }
 
             ScenarioPanel.SetSimulationReady(bIsReady);
+        }
+
+        static public bool HasPopulationHistory(ModelingScenarioData inScenario, int inCritterIndex)
+        {
+            StringHash32 factId = inScenario.PopulationHistoryFacts()[inCritterIndex];
+            return factId.IsEmpty || Services.Data.Profile.Bestiary.HasFact(factId);
         }
     }
 }

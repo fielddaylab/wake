@@ -14,6 +14,8 @@ namespace Aqua.Editor
 {
     static public class BuildSettings
     {
+        private const string EditorPrefsAutoOptimizeOnPlayKey = "_Aqualab_AutoOptimizeOnPlay";
+
         [InitializeOnLoadMethod]
         static private void Setup()
         {
@@ -53,13 +55,20 @@ namespace Aqua.Editor
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
         }
 
+        static private bool IsAutoOptimizeEnabled()
+        {
+            return EditorPrefs.GetBool(EditorPrefsAutoOptimizeOnPlayKey, true);
+        }
+
         static private void OnPlayStateChanged(PlayModeStateChange inChange)
         {
             if (inChange != PlayModeStateChange.ExitingEditMode)
                 return;
 
-            OptimizeAllAssets();
-            AssetDatabase.SaveAssets();
+            if (IsAutoOptimizeEnabled())
+            {
+                OptimizeAllAssets();
+            }
         }
 
         [MenuItem("Aqualab/Optimize Assets")]
@@ -94,12 +103,38 @@ namespace Aqua.Editor
                         }
                         current++;
                     }
+
+                    AssetDatabase.SaveAssets();
                 }
                 finally
                 {
                     EditorUtility.ClearProgressBar();
                 }
             }
+        }
+
+        [MenuItem("Aqualab/Enable Automatic Asset Optimization")]
+        static private void EnableAutoOptimization()
+        {
+            EditorPrefs.SetBool(EditorPrefsAutoOptimizeOnPlayKey, true);
+        }
+
+        [MenuItem("Aqualab/Disable Automatic Asset Optimization")]
+        static private void DisableAutoOptimization()
+        {
+            EditorPrefs.SetBool(EditorPrefsAutoOptimizeOnPlayKey, false);
+        }
+
+        [MenuItem("Aqualab/Enable Automatic Asset Optimization", true)]
+        static private bool EnableAutoOptimization_Enabled()
+        {
+            return !IsAutoOptimizeEnabled();
+        }
+
+        [MenuItem("Aqualab/Disable Automatic Asset Optimization", true)]
+        static private bool DisableAutoOptimization_Enabled()
+        {
+            return IsAutoOptimizeEnabled();
         }
 
         private class BuildPreprocess : IPreprocessBuildWithReport

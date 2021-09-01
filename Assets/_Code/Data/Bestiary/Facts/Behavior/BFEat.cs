@@ -14,8 +14,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Eating")]
-        [FormerlySerializedAs("m_TargetEntry"), FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
-        [FormerlySerializedAs("m_Amount")] public uint Amount = 0;
+        [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
+        public uint Amount = 0;
         [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector

@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Aqua
 {
@@ -23,6 +24,7 @@ namespace Aqua
         private PointerEventData m_TouchPointerData;
 
         private PointerInputMode m_InputMode;
+        private bool m_IsEditingText;
 
         public event Action<PointerInputMode> OnModeChanged;
 
@@ -53,6 +55,11 @@ namespace Aqua
             return false;
         }
 
+        public bool IsEditingText()
+        {
+            return m_IsEditingText;
+        }
+
         public override void Process()
         {
             base.Process();
@@ -64,6 +71,17 @@ namespace Aqua
             else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) // any mouse buttons signals mouse mode
             {
                 SetInputMode(PointerInputMode.Mouse);
+            }
+
+            m_IsEditingText = false;
+            GameObject currentFocus = eventSystem.currentSelectedGameObject;
+            if (currentFocus != null)
+            {
+                TMP_InputField inputField = currentFocus.GetComponent<TMP_InputField>();
+                if (inputField)
+                {
+                    m_IsEditingText = inputField.isFocused;
+                }
             }
         }
 

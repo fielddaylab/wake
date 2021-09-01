@@ -86,15 +86,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fb67e826003215478841d4c305e636f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Kinematic: {fileID: 7135260869252477137}
+  m_Kinematics: {fileID: 7135260869252477137}
   m_WorldUI: {fileID: 1556294208229602822}
   m_Input: {fileID: 1809099619024997122}
   m_Scanner: {fileID: 6264295734664298428}
   m_Tagger: {fileID: 7258612451503921016}
   m_Renderer: {fileID: 8820810592241032338}
-  m_TargetVectorMaxDistance: 4
-  m_TargetVectorMinDistance: 0.2
-  m_TargetVectorSpeed: 5
+  m_MovementParams:
+    MaxSpeed: 5
+    SpeedCurve: 0
+    Acceleration: 5
   m_DragEngineOn: 1
   m_DragEngineOff: 2.5
   m_CameraForwardLook: 2
@@ -150,7 +151,10 @@ MonoBehaviour:
   m_OnInputDisabled:
     m_PersistentCalls:
       m_Calls: []
-  m_TapThreshold: 0.5
+  m_MouseFilter:
+    MinDistance: 0.2
+    MaxDistance: 4
+    DistanceCurve: 0
 --- !u!50 &4239190790123161061
 Rigidbody2D:
   serializedVersion: 4
@@ -347,7 +351,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.026897252, y: -0.008965731}
+  m_Offset: {x: 0.008192003, y: -0.008965731}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -358,7 +362,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.057963, y: 1.2689738}
+  m_Size: {x: 2.0205526, y: 1.2689738}
   m_EdgeRadius: 0
 --- !u!1 &7997110973405282897
 GameObject:

@@ -32,7 +32,7 @@ namespace ProtoAqua.Modeling
 
         public Rect Range { get { return m_LastRect; } }
 
-        public Rect LoadTargets(ModelingScenarioData inScenario)
+        public Rect LoadTargets(ModelingScenarioData inScenario, Predicate<StringHash32> inCanGraphPredicate)
         {
             Assert.NotNull(inScenario);
 
@@ -49,7 +49,7 @@ namespace ProtoAqua.Modeling
                 for(int targetIdx = 0; targetIdx < targetCount; ++targetIdx)
                 {
                     StringHash32 id = targets[targetIdx].Id;
-                    if (!inScenario.ShouldGraph(id))
+                    if (!inCanGraphPredicate(id))
                         continue;
 
                     BestiaryDesc critterEntry = Services.Assets.Bestiary[id];

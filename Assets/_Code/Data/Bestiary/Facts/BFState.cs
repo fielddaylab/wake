@@ -13,15 +13,15 @@ namespace Aqua
         #region Inspector
 
         [Header("Property Range")]
-        [AutoEnum, FormerlySerializedAs("m_PropertyId")] public WaterPropertyId Property = WaterPropertyId.Temperature;
+        [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Temperature;
         
         [Header("Alive State")]
-        [SerializeField, FormerlySerializedAs("m_HasStressed")] public bool HasStressed = true;
+        public bool HasStressed = true;
         [SerializeField, ShowIfField("HasStressed")] private float m_MinSafe = 0;
         [SerializeField, ShowIfField("HasStressed")] private float m_MaxSafe = 0;
 
         [Header("Stressed State")]
-        [SerializeField, FormerlySerializedAs("m_HasDeath")] public bool HasDeath = false;
+        public bool HasDeath = false;
         [SerializeField, ShowIfField("HasDeath")] private float m_MinStressed = float.MinValue;
         [SerializeField, ShowIfField("HasDeath")] private float m_MaxStressed = float.MaxValue;
 

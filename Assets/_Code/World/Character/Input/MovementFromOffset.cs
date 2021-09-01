@@ -20,7 +20,16 @@ namespace Aqua.Character
 
             if (deltaVelocity.sqrMagnitude > 0)
             {
-                inKinematics.State.Velocity += deltaVelocity * inDeltaTime * Acceleration;
+                Vector2 vector = deltaVelocity * inDeltaTime * Acceleration;
+                vector = PhysicsService.SmoothVelocity(vector);
+
+                Vector2 collideNormal;
+                if (inKinematics.CheckSolid(vector, out collideNormal))
+                {
+                    vector = PhysicsService.SmoothDeflect(vector, collideNormal, 0);
+                }
+                
+                inKinematics.State.Velocity += vector;
                 return true;
             }
 

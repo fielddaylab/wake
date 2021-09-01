@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Portable;
 using BeauRoutine.Extensions;
@@ -37,10 +38,19 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private bool m_PredictMode;
         [NonSerialized] private WaterPropertyId m_WaterProp = WaterPropertyId.NONE;
+        private readonly HashSet<StringHash32> m_GraphedCritters = new HashSet<StringHash32>();
 
-        private bool HasWaterProperty()
+        private readonly Predicate<StringHash32> CanGraphCritterPredicate;
+        private readonly Predicate<StringHash32> CanGraphHistoricalCritterPredicate;
+        private readonly Predicate<WaterPropertyId> CanGraphWaterPropPredicate;
+
+        private Predicate<StringHash32> HasHistoricalPredicate;
+
+        private ChartUI()
         {
-            return m_WaterProp != WaterPropertyId.NONE;
+            CanGraphCritterPredicate = CanGraphCritter;
+            CanGraphHistoricalCritterPredicate = CanGraphHistoricalCritter;
+            CanGraphWaterPropPredicate = CanGraphWaterProp;
         }
 
         private void Awake()
@@ -70,6 +80,27 @@ namespace ProtoAqua.Modeling
             m_PredictMode = false;
         }
 
+        public void Initialize(SimulationBuffer inBuffer)
+        {
+            m_GraphedCritters.Clear();
+            foreach(var critter in inBuffer.PlayerCritters())
+                m_GraphedCritters.Add(critter.Id());
+
+            HasHistoricalPredicate = inBuffer.PlayerKnowsHistoricalPopulation;
+        }
+
+        public bool SetCritterGraphed(StringHash32 inCritterId, bool inbState)
+        {
+            if (inbState)
+            {
+                return m_GraphedCritters.Add(inCritterId);
+            }
+            else
+            {
+                return m_GraphedCritters.Remove(inCritterId);
+            }
+        }
+
         public void Refresh(SimulationBuffer inBuffer, SimulationBuffer.UpdateFlags inUpdate)
         {
             if (inUpdate == 0)
@@ -96,24 +127,24 @@ namespace ProtoAqua.Modeling
 
             if ((inUpdate & SimulationBuffer.UpdateFlags.Historical) != 0)
             {
-                m_Historical.LoadCritters(inBuffer.HistoricalData(), inBuffer.Scenario());
-                m_Targets.LoadTargets(inBuffer.Scenario());
+                m_Historical.LoadCritters(inBuffer.HistoricalData(), inBuffer.Scenario(), CanGraphHistoricalCritterPredicate);
+                m_Targets.LoadTargets(inBuffer.Scenario(), CanGraphCritterPredicate);
 
                 if (HasWaterProperty())
                 {
-                    m_HistoricalWater.LoadProperty(inBuffer.HistoricalData(), m_WaterProp, inBuffer.Scenario());
+                    m_HistoricalWater.LoadProperty(inBuffer.HistoricalData(), m_WaterProp, inBuffer.Scenario(), CanGraphWaterPropPredicate);
                 }
             }
 
             if ((inUpdate & SimulationBuffer.UpdateFlags.Model) != 0)
             {
-                m_Player.LoadCritters(inBuffer.PlayerData(), inBuffer.Scenario());
-                m_Predict.LoadCritters(inBuffer.PredictData(), inBuffer.Scenario());
+                m_Player.LoadCritters(inBuffer.PlayerData(), inBuffer.Scenario(), CanGraphCritterPredicate);
+                m_Predict.LoadCritters(inBuffer.PredictData(), inBuffer.Scenario(), CanGraphCritterPredicate);
 
                 if (HasWaterProperty())
                 {
-                    m_PlayerWater.LoadProperty(inBuffer.PlayerData(), m_WaterProp, inBuffer.Scenario());
-                    m_PredictWater.LoadProperty(inBuffer.PredictData(), m_WaterProp, inBuffer.Scenario());
+                    m_PlayerWater.LoadProperty(inBuffer.PlayerData(), m_WaterProp, inBuffer.Scenario(), CanGraphWaterPropPredicate);
+                    m_PredictWater.LoadProperty(inBuffer.PredictData(), m_WaterProp, inBuffer.Scenario(), CanGraphWaterPropPredicate);
                 }
             }
 
@@ -126,6 +157,27 @@ namespace ProtoAqua.Modeling
             {
                 RenderWaterProperty(totalTicks, tickScale);
             }
+        }
+
+        private bool HasWaterProperty()
+        {
+            return m_WaterProp != WaterPropertyId.NONE;
+        }
+
+        private bool CanGraphCritter(StringHash32 inId)
+        {
+            return m_GraphedCritters.Contains(inId);
+        }
+
+        private bool CanGraphHistoricalCritter(StringHash32 inId)
+        {
+            return m_GraphedCritters.Contains(inId) && HasHistoricalPredicate(inId);
+        }
+
+        private bool CanGraphWaterProp(WaterPropertyId inId)
+        {
+            // TODO: toggles?
+            return m_WaterProp == inId;
         }
 
         private Rect RenderCritters(uint inTotalTicks, int inTickScale)

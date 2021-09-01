@@ -580,6 +580,9 @@ namespace Aqua
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             var menu = new DMInfo("Load Scene", 16);
+
+            menu.AddButton("Reload Current Scene", DebugReloadScene);
+            menu.AddDivider();
             
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {
@@ -600,6 +603,14 @@ namespace Aqua
             Services.Script.KillAllThreads();
             Services.Audio.StopAll();
             Services.State.LoadScene(inBinding);
+        }
+
+        static private void DebugReloadScene()
+        {
+            Services.UI.HideAll();
+            Services.Script.KillAllThreads();
+            Services.Audio.StopAll();
+            Services.State.ReloadCurrentScene();
         }
 
         #endif // DEVELOPMENT

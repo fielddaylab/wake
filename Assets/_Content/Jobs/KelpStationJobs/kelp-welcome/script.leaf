@@ -37,7 +37,7 @@ $endif
 
 :: navigation
 @trigger    SceneStart
-@when       scene:name == "Station1"
+@when       scene:name == "KelpStation"
 @once
 @cutscene
 $set    player:seen.kevin = true
@@ -47,7 +47,7 @@ $set    player:seen.kevin = true
 //player does not have anything from site C yet, tell them to go there
 :: helpGoToSiteC 
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station1", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter) 
+@when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter) 
 @boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
 @cutscene
 {@player} 	Where should I be going again?
@@ -61,6 +61,7 @@ $set    player:seen.kevin = true
 @cutscene
 $set    jobs:kelp-welcome.seen.bottom = true
 {@kevin}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+$call GiveUpgrade(ROVScanner)
 
 :: helpAtSiteC
 @trigger    RequestPartnerHelp
@@ -88,7 +89,7 @@ $endif
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "Station1", jobs:kelp-welcome.seen.bottom
+@when       scene:name == "KelpStation", jobs:kelp-welcome.seen.bottom
 @once
 @cutscene
 {@player}   Alright, I think we got everything?
@@ -108,7 +109,7 @@ $endif
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station1" 
+@when 		scene:name == "KelpStation" 
 @boostScore 1
 @cutscene
 {@player} 	Where should we head next?
@@ -120,7 +121,7 @@ $endif
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "Station1", jobs:kelp-welcome.seen.bottom, Seen(job.kelp-welcome.navigation.return), !jobs:kelp-welcome.got.scans
+@when       scene:name == "KelpStation", jobs:kelp-welcome.seen.bottom, Seen(job.kelp-welcome.navigation.return), !jobs:kelp-welcome.got.scans
 @cutscene
 {@player}   How about now?
 {@kevin}   Ummmm...

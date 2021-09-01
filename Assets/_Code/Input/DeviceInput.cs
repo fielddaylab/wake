@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Services;
 using UnityEngine;
 
 namespace Aqua
 {
     public class DeviceInput
     {
+        [ServiceReference] static private InputService s_Service;
+
         static private bool s_Reset;
 
         static public void BlockAll()
@@ -40,7 +43,7 @@ namespace Aqua
 
         public bool IsActive()
         {
-            return !s_Reset && Enabled && (Layer == null || Layer.IsInputEnabled);
+            return !s_Reset && Enabled && (Layer == null || Layer.IsInputEnabled) && !s_Service.IsEditingText();
         }
 
         public void RegisterHandler(IInputHandler inHandler)

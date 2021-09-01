@@ -40,7 +40,7 @@ namespace Aqua
         }
 
         static private readonly double[] GoodNormalizedTicks = new double[] { 1, 1.5, 2, 2.5, 5, 10 };
-        static private readonly int GoodNormalizedTickCount = 7;
+        static private readonly int GoodNormalizedTickCount = 6;
 
         /// <summary>
         /// Calculates good range and ticks for displaying values within a given range.
