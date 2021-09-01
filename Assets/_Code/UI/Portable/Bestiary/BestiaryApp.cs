@@ -319,7 +319,7 @@ namespace Aqua.Portable
             {
                 case BestiaryUpdateParams.UpdateType.Entity:
                     {
-                        targetEntry = Services.Assets.Bestiary.Get(inTarget.Id);
+                        targetEntry = Assets.Bestiary(inTarget.Id);
                         break;
                     }
 
@@ -331,7 +331,7 @@ namespace Aqua.Portable
 
                 default:
                     {
-                        targetEntry = Services.Assets.Bestiary.Fact(inTarget.Id).Parent;
+                        targetEntry = Assets.Fact(inTarget.Id).Parent;
                         break;
                     }
             }

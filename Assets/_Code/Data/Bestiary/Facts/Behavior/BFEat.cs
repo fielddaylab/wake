@@ -58,6 +58,10 @@ namespace Aqua
                 {
                     yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
                 }
+                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
+                {
+                    yield return BFFragment.CreateAdjective(string.Format("({0})", BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount)));
+                }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
             }
             else
@@ -68,6 +72,10 @@ namespace Aqua
                 if (fact.OnlyWhenStressed)
                 {
                     yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                }
+                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
+                {
+                    yield return BFFragment.CreateAdjective(string.Format("({0})", BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount)));
                 }
             }
         }

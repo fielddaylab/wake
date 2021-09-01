@@ -18,7 +18,7 @@ namespace Aqua
 
         public void Populate(BFWaterPropertyHistory inFact)
         {
-            var propData = Services.Assets.WaterProp.Property(inFact.Property);
+            var propData = Assets.Property(inFact.Property);
             ColorPalette4 palette = propData.Palette();
 
             m_Icon.sprite = inFact.Icon;

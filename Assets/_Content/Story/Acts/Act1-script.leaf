@@ -9,7 +9,7 @@
 
 $yield
 $set    player:seen.drJules = true
-{@drJules}  Hi there folks! Welcome to the Kelpdom! $[jules-1]
+{@drJules}  Hi there folks! Welcome to the Kelpdom!
                     At least that's what I call the Great Channel Kelp Research Station.
                     You're... {player-name}, right? I'm Dr. Jules.
 {@player}   Hi Jules! We're here to help.
@@ -21,48 +21,11 @@ $set    player:seen.drJules = true
 {hide-dialog}{wait 0.5}
 $goto .tutorial
 
-// :: Experimentation.intro.1
-// @trigger    SceneStart
-// @when       scene:name == "ExperimentPrototype", player:seen.jules
-// @once
-// @cutscene
-// $set    kevin:jules.player.talk + 1
-// 
-// {@kevin}    Welcome to the Experimentation Room!
-// {@player}   Thanks! It looks... {wait 1} nice?
-// {@kevin}    I know, right? Nothing like wood makes it feel like home.
-// {@player}   Yeah, right.
-// $if jobs:job1-6.got.scans
-// {@kevin}    Anyways, try to press on the panel to start!
-// $else
-// {@kevin}    Looks like you haven't started a job yet. 
-//             Let's come back here once we get some things going.
-// $endif
-
 // tutorial
 
 :: tutorial
 @cutscene
 {fade-out black.60, 0.5, wait}
-{@kevin}    Hi there! Is this your first time here?
-$choice .tutorial.firstTime; Yeah!
-$choice .tutorial.skip; Nope!
-$choose branch
-
-{hide-dialog}{fade-in 0.5, wait}
-
-:: tutorial.firstTime
-@cutscene
-{@kevin #happy}
-    Great! Then let me give you the quick summary.
-
-{@kevin}
-    {#}You're {player-name}, a...{#confused}| scientist for hire. 
-    {#}And I'm Kevin, your friend and science partner!
-    And together we're exploring the ocean!
-    {#narrow}(Or something like that...)
-    {#}So let's take on some jobs and see what's out there!
-{hide-dialog}{wait 0.5}
 
 {@}
 {style center}
@@ -87,17 +50,13 @@ $call hotbar.convoHistory->ResetSorting()
 
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-    Lastly, everything you learn is stored in your {h}AQ-OS Portable Tablet{/h}.
+    Lastly, everything you learn is stored in your {item-name}AQ-OS Portable Tablet{/item-name}.
 $call hotbar.portable->ResetSorting()
 $call FocusHighlight->Clear()
 
 Have fun!
 
-:: tutorial.skip
-@cutscene
-{@kevin #happy}
-    Great! 
-    {#} if you need help, feel free to ask.
+{hide-dialog}{fade-in 0.5, wait}
 
 // :: portableIntro
 // @trigger	PortableOpened

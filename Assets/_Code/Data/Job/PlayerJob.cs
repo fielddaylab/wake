@@ -34,7 +34,7 @@ namespace Aqua
             {
                 if (m_CachedJob == null)
                 {
-                    m_CachedJob = Services.Assets.Jobs.Get(m_JobId);
+                    m_CachedJob = Assets.Job(m_JobId);
                 }
 
                 return m_CachedJob;

@@ -113,7 +113,7 @@ namespace ProtoAqua.Modeling
                     m_HistoricalWater.gameObject.SetActive(true);
                     m_PlayerWater.gameObject.SetActive(true);
                     m_WaterLabel.gameObject.SetActive(true);
-                    m_WaterLabel.SetText(Services.Assets.WaterProp.Property(m_WaterProp).LabelId());
+                    m_WaterLabel.SetText(Assets.Property(m_WaterProp).LabelId());
                     m_AxisWater.gameObject.SetActive(true);
                 }
                 else

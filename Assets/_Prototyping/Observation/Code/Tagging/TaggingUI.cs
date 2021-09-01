@@ -30,7 +30,7 @@ namespace ProtoAqua.Observation
                 
                 meter = m_AllMeters[used++];
                 meter.gameObject.SetActive(true);
-                meter.Icon.sprite = Services.Assets.Bestiary.Get(progress.Id).Icon();
+                meter.Icon.sprite = Assets.Bestiary(progress.Id).Icon();
                 meter.Meter.rectTransform.SetScale(progress.Tagged / (float) progress.TotalInScene, Axis.X);
             }
 

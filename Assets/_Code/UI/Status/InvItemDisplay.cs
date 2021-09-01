@@ -22,7 +22,7 @@ namespace Aqua
 
         public void Populate(StringHash32 inItemId, int inValue)
         {
-            Populate(Services.Assets.Inventory.Get(inItemId), inValue);
+            Populate(Assets.Item(inItemId), inValue);
         }
 
         public void Populate(InvItem inItem, int inValue)

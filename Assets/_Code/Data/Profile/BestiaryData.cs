@@ -64,14 +64,14 @@ namespace Aqua.Profile
         public IEnumerable<BestiaryDesc> GetEntities()
         {
             foreach(var entity in m_ObservedEntities)
-                yield return Services.Assets.Bestiary.Get(entity);
+                yield return Assets.Bestiary(entity);
         }
 
         public IEnumerable<BestiaryDesc> GetEntities(BestiaryDescCategory inCategory)
         {
             foreach(var entity in m_ObservedEntities)
             {
-                BestiaryDesc desc = Services.Assets.Bestiary.Get(entity);
+                BestiaryDesc desc = Assets.Bestiary(entity);
                 if (desc.HasCategory(inCategory))
                     yield return desc;
             }
@@ -79,11 +79,10 @@ namespace Aqua.Profile
 
         public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
         {
-            var db = Services.Assets.Bestiary;
             int count = 0;
             foreach(var entity in m_ObservedEntities)
             {
-                BestiaryDesc desc = db.Get(entity);
+                BestiaryDesc desc = Assets.Bestiary(entity);
                 if (desc.HasCategory(inCategory))
                 {
                     outFacts.Add(desc);
@@ -129,7 +128,7 @@ namespace Aqua.Profile
             if (m_ObservedFacts.Add(inFactId))
             {
                 m_HasChanges = true;
-                var fact = Services.Assets.Bestiary.Fact(inFactId);
+                var fact = Assets.Fact(inFactId);
                 StringHash32 parentId = fact.Parent.Id();
                 bool bVisible;
                 if (inbIncludeEntity)
@@ -153,7 +152,7 @@ namespace Aqua.Profile
 
         public IEnumerable<BFBase> GetFactsForEntity(StringHash32 inEntityId)
         {
-            BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
+            BestiaryDesc entry = Assets.Bestiary(inEntityId);
 
             foreach(var fact in entry.Facts)
             {
@@ -173,7 +172,7 @@ namespace Aqua.Profile
 
         public int GetFactsForEntity(StringHash32 inEntityId, ICollection<BFBase> outFacts)
         {
-            BestiaryDesc entry = Services.Assets.Bestiary.Get(inEntityId);
+            BestiaryDesc entry = Assets.Bestiary(inEntityId);
             int count = 0;
 
             foreach(var fact in entry.Facts)
@@ -218,27 +217,27 @@ namespace Aqua.Profile
             if (!HasFact(inFactId))
                 return BFDiscoveredFlags.None;
 
-            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Services.Assets.Bestiary.Fact(inFactId));
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Assets.Fact(inFactId));
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx > 0)
                 flags |= m_FactMetas[metaIdx].Flags;
             return flags;
         }
 
-        public BFDiscoveredFlags AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
+        public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
             if (inFlags <= 0)
-                return GetDiscoveredFlags(inFactId);
+                return false;
             
             RegisterFact(inFactId);
-            BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
+            BFBase fact = Assets.Fact(inFactId);
 
             BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx > 0)
                 existingFlags |= m_FactMetas[metaIdx].Flags;
             if ((existingFlags & inFlags) == inFlags)
-                return existingFlags;
+                return false;
 
             if (metaIdx > 0)
             {
@@ -260,7 +259,7 @@ namespace Aqua.Profile
             }
 
             m_HasChanges = true;
-            return existingFlags | inFlags;
+            return true;
         }
 
         public bool IsFactFullyUpgraded(StringHash32 inFactId)
@@ -302,13 +301,11 @@ namespace Aqua.Profile
         /// </summary>
         public int GetUngraphedFacts(ICollection<StringHash32> outFacts)
         {
-            BestiaryDB db = Services.Assets.Bestiary;
-            
             BestiaryDesc desc;
             int count = 0;
             foreach(var entityId in m_ObservedEntities)
             {
-                desc = db.Get(entityId);
+                desc = Assets.Bestiary(entityId);
                 if (!desc.HasCategory(BestiaryDescCategory.Critter))
                     continue;
 
@@ -325,7 +322,7 @@ namespace Aqua.Profile
             BFBase fact;
             foreach(var factId in m_ObservedFacts)
             {
-                fact = db.Fact(factId);
+                fact = Assets.Fact(factId);
                 if (!fact.Parent.HasCategory(BestiaryDescCategory.Critter))
                     continue;
                 
@@ -429,7 +426,7 @@ namespace Aqua.Profile
             if (m_ObservedFacts.Add(inFactId))
             {
                 m_HasChanges = true;
-                var fact = Services.Assets.Bestiary.Fact(inFactId);
+                var fact = Assets.Fact(inFactId);
                 StringHash32 parentId = fact.Parent.Id();
                 if (inbIncludeEntity)
                 {
@@ -447,7 +444,7 @@ namespace Aqua.Profile
                 return false;
             
             RegisterFact(inFactId);
-            BFBase fact = Services.Assets.Bestiary.Fact(inFactId);
+            BFBase fact = Assets.Fact(inFactId);
 
             BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);

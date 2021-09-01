@@ -74,7 +74,7 @@ namespace Aqua
                 return null;
             }
 
-            MapDesc map = Services.Assets.Map.Get(inMapId);
+            MapDesc map = Assets.Map(inMapId);
             if (!map)
             {
                 Log.Error("[StateMgr] No map found with id '{0}'", inMapId);

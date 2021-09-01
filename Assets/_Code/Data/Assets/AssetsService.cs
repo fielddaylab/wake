@@ -37,6 +37,8 @@ namespace Aqua
             m_Inventory.Initialize();
             m_WaterProperties.Initialize();
             m_ScriptCharacters.Initialize();
+
+            Assets.Assign(this);
         }
     }
 }

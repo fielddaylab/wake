@@ -73,8 +73,8 @@ namespace ProtoAqua.Argumentation
                     m_Claims.Add(link);
             }
 
-            m_CharacterDef = Services.Assets.Characters.Get(m_Graph.CharacterId);
-            m_PlayerDef = Services.Assets.Characters.Get(GameConsts.Target_Player);
+            m_CharacterDef = Assets.Character(m_Graph.CharacterId);
+            m_PlayerDef = Assets.Character(GameConsts.Target_Player);
 
             m_CharacterName.SetText(m_CharacterDef.NameId());
 
@@ -105,7 +105,7 @@ namespace ProtoAqua.Argumentation
             Link link = m_Graph.FindLink(inId);
             if (link == null)
             {
-                BFBase fact = Services.Assets.Bestiary.Fact(inId);
+                BFBase fact = Assets.Fact(inId);
                 BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(inId);
                 link = new Link(fact, flags);
             }

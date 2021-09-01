@@ -14,7 +14,7 @@ namespace Aqua
         public const int TypeCount = (int) BFTypeId._COUNT;
 
         static private readonly BFTypeId[] TypeSortingOrder = new BFTypeId[] {
-            BFTypeId.WaterProperty, BFTypeId.Population, BFTypeId.WaterPropertyHistory, BFTypeId.PopulationHistory,
+            BFTypeId.WaterProperty, BFTypeId.Population, BFTypeId.WaterPropertyHistory, BFTypeId.PopulationHistory, BFTypeId.Model,
             BFTypeId.State, BFTypeId.Parasites, BFTypeId.Eat, BFTypeId.Produce, BFTypeId.Consume, BFTypeId.Grow, BFTypeId.Reproduce, BFTypeId.Death 
         };
         static private readonly int[] TypeSortingOrderIndices = new int[TypeCount];

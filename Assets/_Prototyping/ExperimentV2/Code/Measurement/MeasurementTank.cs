@@ -257,7 +257,7 @@ namespace ProtoAqua.ExperimentV2
             MonoBehaviour newFact;
             foreach(var fact in inResult.Facts)
             {
-                newFact = m_SummaryPanel.Base.FactPools.Alloc(Services.Assets.Bestiary.Fact(fact.Id), null, 0, m_SummaryPanel.Base.FactListRoot);
+                newFact = m_SummaryPanel.Base.FactPools.Alloc(Assets.Fact(fact.Id), null, 0, m_SummaryPanel.Base.FactListRoot);
                 m_SummaryPanel.Base.FactListLayout.ForceRebuild();
                 yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, fact.Type == ExperimentFactResultType.Known ? 0.5f : 1);
                 yield return 0.1f;
@@ -382,8 +382,8 @@ namespace ProtoAqua.ExperimentV2
             }
             else
             {
-                WaterPropertyBlockF32 env = Services.Assets.Bestiary[inData.EnvironmentId].GetEnvironment();
-                BestiaryDesc critter = Services.Assets.Bestiary[inData.CritterIds[0]];
+                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
                 ActorStateId critterState = critter.EvaluateActorState(env, out var _);
 
                 BFReproduce reproduce = BestiaryUtils.FindReproduceRule(critter, critterState);
@@ -417,8 +417,8 @@ namespace ProtoAqua.ExperimentV2
             }
             else
             {
-                WaterPropertyBlockF32 env = Services.Assets.Bestiary[inData.EnvironmentId].GetEnvironment();
-                BestiaryDesc critter = Services.Assets.Bestiary[inData.CritterIds[0]];
+                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
                 ActorStateId critterState = critter.EvaluateActorState(env, out var _);
 
                 foreach(var propId in Services.Data.Profile.Inventory.GetPropertyUnlockedMask())
@@ -457,9 +457,9 @@ namespace ProtoAqua.ExperimentV2
             }
             else
             {
-                WaterPropertyBlockF32 env = Services.Assets.Bestiary[inData.EnvironmentId].GetEnvironment();
-                ActorStateId leftState = Services.Assets.Bestiary[inData.CritterIds[0]].EvaluateActorState(env, out var _);
-                ActorStateId rightState = Services.Assets.Bestiary[inData.CritterIds[1]].EvaluateActorState(env, out var _);
+                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+                ActorStateId leftState = Assets.Bestiary(inData.CritterIds[0]).EvaluateActorState(env, out var _);
+                ActorStateId rightState = Assets.Bestiary(inData.CritterIds[1]).EvaluateActorState(env, out var _);
                 BFEat leftEatsRight = BestiaryUtils.FindEatingRule(inData.CritterIds[0], inData.CritterIds[1], leftState);
                 BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(inData.CritterIds[1], inData.CritterIds[0], rightState);
                 BestiaryData bestiaryData = Services.Data.Profile.Bestiary;

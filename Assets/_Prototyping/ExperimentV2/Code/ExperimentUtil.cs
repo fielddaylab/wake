@@ -23,11 +23,10 @@ namespace ProtoAqua.ExperimentV2
         
         static public bool AnyDead(InProgressExperimentData inExperiment)
         {
-            BestiaryDB bestiaryDB = Services.Assets.Bestiary;
-            WaterPropertyBlockF32 envProperties = bestiaryDB[inExperiment.EnvironmentId].GetEnvironment();
+            WaterPropertyBlockF32 envProperties = Assets.Bestiary(inExperiment.EnvironmentId).GetEnvironment();
             foreach(var critterType in inExperiment.CritterIds)
             {
-                if (bestiaryDB[critterType].EvaluateActorState(envProperties, out var _) == ActorStateId.Dead)
+                if (Assets.Bestiary(critterType).EvaluateActorState(envProperties, out var _) == ActorStateId.Dead)
                     return true;
             }
 

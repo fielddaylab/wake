@@ -52,7 +52,7 @@ namespace ProtoAqua.Modeling
                     if (!inCanGraphPredicate(id))
                         continue;
 
-                    BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
+                    BestiaryDesc critterEntry = Assets.Bestiary(id);
                     BFBody body = critterEntry.FactOfType<BFBody>();
                     float populationScale = body.MassPerPopulation * body.MassDisplayScale;
 

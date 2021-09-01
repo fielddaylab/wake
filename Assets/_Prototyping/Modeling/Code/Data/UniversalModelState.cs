@@ -26,7 +26,7 @@ namespace ProtoAqua.Modeling
 
             foreach(var graphedFactId in inPlayerData.GraphedFacts())
             {
-                AddFact(Services.Assets.Bestiary.Fact(graphedFactId));
+                AddFact(Assets.Fact(graphedFactId));
             }
 
             inPlayerData.GetUngraphedFacts(m_UngraphedFacts);
@@ -66,7 +66,7 @@ namespace ProtoAqua.Modeling
             BFBase fact;
             foreach(var factId in m_UngraphedFacts)
             {
-                fact = Services.Assets.Bestiary.Fact(factId);
+                fact = Assets.Fact(factId);
                 m_GraphedFacts.Add(factId);
                 BFType.CollectReferences(fact, m_GraphedCritters);
                 yield return fact;

@@ -64,7 +64,7 @@ namespace Aqua.JobBoard
             UpdateButtonStatuses();
             OrderButtons();
 
-            MapDesc currentStation = Services.Assets.Map[Services.Data.Profile.Map.CurrentStationId()];
+            MapDesc currentStation = Assets.Map(Services.Data.Profile.Map.CurrentStationId());
             m_StationIcon.sprite = currentStation.Icon();
             m_StationName.SetText(currentStation.LabelId());
 

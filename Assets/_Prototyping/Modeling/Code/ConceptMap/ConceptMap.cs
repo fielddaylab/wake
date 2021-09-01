@@ -297,7 +297,7 @@ namespace ProtoAqua.Modeling
                     {
                         BFConsume consume = (BFConsume) inFact;
                         ushort self = m_MapData.CreateNode(consume.Parent.Id(), "critter", consume.Parent);
-                        var propertyDef = Services.Assets.WaterProp.Property(consume.Property);
+                        var propertyDef = Assets.Property(consume.Property);
                         ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
                         m_MapData.CreateLink(inFact.Id, target, self, "consume", inFact);
                         break;
@@ -307,7 +307,7 @@ namespace ProtoAqua.Modeling
                     {
                         BFProduce produce = (BFProduce) inFact;
                         ushort self = m_MapData.CreateNode(produce.Parent.Id(), "critter", produce.Parent);
-                        var propertyDef = Services.Assets.WaterProp.Property(produce.Property);
+                        var propertyDef = Assets.Property(produce.Property);
                         ushort target = m_MapData.CreateNode(propertyDef.Id(), "property", propertyDef);
                         m_MapData.CreateLink(inFact.Id, self, target, "consume", inFact);
                         break;

@@ -236,12 +236,12 @@ namespace ProtoAqua.ExperimentV2
         {
             if (Services.Data.Profile.Bestiary.RegisterFact(inFactId))
             {
-                var factDef = Services.Assets.Bestiary.Fact(inFactId);
+                var factDef = Assets.Fact(inFactId);
                 m_FactResults.Add(new ExperimentFactResult(inFactId, ExperimentFactResultType.NewFact, 0));
 
                 Services.Audio.PostEvent("capture_new");
 
-                Services.UI.Popup.Display("'experiment.observation.newBehavior.header", BFType.GenerateSentence(factDef))
+                Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, factDef, BFType.DefaultDiscoveredFlags(factDef))
                     .OnComplete((r) => {
                         using(var table = TempVarTable.Alloc())
                         {
@@ -427,7 +427,7 @@ namespace ProtoAqua.ExperimentV2
             MonoBehaviour newFact;
             foreach(var fact in inResult.Facts)
             {
-                newFact = m_SummaryPanel.FactPools.Alloc(Services.Assets.Bestiary.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
+                newFact = m_SummaryPanel.FactPools.Alloc(Assets.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
                 m_SummaryPanel.FactListLayout.ForceRebuild();
                 yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, 1);
                 yield return 0.1f;

@@ -57,7 +57,7 @@ namespace Aqua.Scripting
         // public void StoreId(StringHash32 critterId)
         // {
         //     probeCritterId = critterId;
-        //     selectedCritter = critterId != null ? Services.Assets.Bestiary.Get(critterId) : null;
+        //     selectedCritter = critterId != null ? Assets.Bestiary(critterId) : null;
         //     Services.Data.SetVariable("probeScan:critter", selectedCritter.CommonName().Hash());
         // }
     }

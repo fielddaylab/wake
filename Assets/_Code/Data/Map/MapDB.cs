@@ -56,7 +56,7 @@ namespace Aqua
 
         static public string LookupScene(StringHash32 inMapId)
         {
-            return Services.Assets.Map.Get(inMapId)?.SceneName();
+            return Assets.Map(inMapId)?.SceneName();
         }
 
         static public StringHash32 LookupMap(SceneBinding inScene)

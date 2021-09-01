@@ -45,18 +45,18 @@ $set jobs:kelp-urchin-barren.doneModeling = false
 @when		scene:name == "RS-1B"
 @once
 @cutscene
-{@drJules}	Once you've scanned the species around here, you'll want to use your {h}Critter Tracker{/h} to tag all the species down here.
+{@drJules}	Once you've scanned the species around here, you'll want to use your {item-name}Critter Tracker{/item-name} to tag all the species down here.
 $call GiveUpgrade(ROVTagger)
 
 :: giveUpgrade2
-@trigger	JobCompleted
+@trigger	JobTaskCompleted
 @when		taskId == "getTagged"
 @once
 @cutscene
 {@drJules}	Alright, that's the current population...
 			Maybe you can try getting the historical data from the probe?
 			There should be a probe around here.
-			Take this {h}Probe Decryptor{/h}, it should let you decode the data from the probes.
+			Take this {item-name}Probe Decryptor{/item-name}, it should let you decode the data from the probes.
 $call GiveUpgrade(ProbeHacker)
 
 :: helpAtSiteB
@@ -94,6 +94,7 @@ $endif
 
 :: ModelingSetup
 @trigger	UniversalModelStarted
+@when		JobTaskCompleted("getProbeData")
 @once
 @cutscene
 {@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. 
@@ -105,10 +106,14 @@ $endif
 $call UpgradeFact(Urchin.Eats.BullKelp)
 $call UpgradeFact(Urchin.Eats.GiantKelp)
 $call UpgradeFact(SeaOtter.Eats.Urchin)
+$call GiveFact(Urchin.Reproduce)
+$call GiveFact(GiantKelp.Reproduce)
+$call GiveFact(BullKelp.Reproduce)
+$call GiveFact(SeaOtter.Reproduce)
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskCompleted("getProbeData")
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The first step to making this model is to lay out all the information we know about how kelp, urchins, and otters interact.

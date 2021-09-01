@@ -378,7 +378,7 @@ namespace Aqua
             }
             else
             {
-                m_CurrentJobId = Services.Assets.Jobs.Get(jobId).name;
+                m_CurrentJobId = Assets.Job(jobId).name;
             }
 
             Dictionary<string, string> data = new Dictionary<string, string>()
@@ -406,7 +406,7 @@ namespace Aqua
             }
             else
             {
-                m_CurrentJobId = Services.Assets.Jobs.Get(jobId).name;
+                m_CurrentJobId = Assets.Job(jobId).name;
             }
 
             Dictionary<string, string> data = new Dictionary<string, string>()
@@ -425,7 +425,7 @@ namespace Aqua
         {
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
-                string parsedFactId = Services.Assets.Bestiary.Fact(inParams.Id).name;
+                string parsedFactId = Assets.Fact(inParams.Id).name;
                 
                 Dictionary<string, string> data = new Dictionary<string, string>()
                 {
@@ -442,7 +442,7 @@ namespace Aqua
 
         private void LogCompleteJob(StringHash32 jobId)
         {
-            string parsedJobId = Services.Assets.Jobs.Get(jobId).name;
+            string parsedJobId = Assets.Job(jobId).name;
 
             Dictionary<string, string> data = new Dictionary<string, string>()
             {

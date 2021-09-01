@@ -27,6 +27,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("property-name", "<#bb8fce>").CloseWith("</color>");
             m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
@@ -195,7 +196,7 @@ namespace Aqua
             if (inTag.Data.StartsWith('@'))
             {
                 StringHash32 characterId = inTag.Data.Substring(1);
-                return Loc.Find(Services.Assets.Characters[characterId].NameId());
+                return Loc.Find(Assets.Character(characterId).NameId());
             }
 
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);

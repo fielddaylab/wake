@@ -1,0 +1,9 @@
+#basePath   job.arctic-time-of-death
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@profWhalen}	I'd like to know when she died.
+				You can usually tell by the state of decomposition.
+				
+$call GiveFact(Model.WhaleFall.Stages)

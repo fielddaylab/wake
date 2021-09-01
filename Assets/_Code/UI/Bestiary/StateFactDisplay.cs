@@ -18,7 +18,7 @@ namespace Aqua
 
         public void Populate(BFState inFact)
         {
-            var propData = Services.Assets.WaterProp.Property(inFact.Property);
+            var propData = Assets.Property(inFact.Property);
             m_Icon.sprite = inFact.Icon;
 
             m_Label.SetText(propData.ToleranceLabel());

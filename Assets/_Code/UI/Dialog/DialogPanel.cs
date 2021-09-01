@@ -249,7 +249,7 @@ namespace Aqua
                 return false;
 
             m_CurrentState.TargetId = inTargetId;
-            ScriptCharacterDef actorDef = m_CurrentState.TargetDef = Services.Assets.Characters.Get(inTargetId);
+            ScriptCharacterDef actorDef = m_CurrentState.TargetDef = Assets.Character(inTargetId);
 
             m_CurrentState.TypeSFX = actorDef.DefaultTypeSfx();
 

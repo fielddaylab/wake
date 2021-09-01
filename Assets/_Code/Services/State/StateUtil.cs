@@ -61,7 +61,7 @@ namespace Aqua
             {
                 if (inEntrance.IsEmpty)
                     inEntrance = currentMapId;
-                sceneToLoad = Services.Assets.Map.Get(currentMapId).Parent()?.SceneName();
+                sceneToLoad = Assets.Map(currentMapId).Parent()?.SceneName();
             }
 
             BeforeLoad();

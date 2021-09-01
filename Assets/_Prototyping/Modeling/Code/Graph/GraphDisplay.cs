@@ -57,7 +57,7 @@ namespace ProtoAqua.Modeling
                     if (!inCanGraphPredicate(id))
                         continue;
 
-                    BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
+                    BestiaryDesc critterEntry = Assets.Bestiary(id);
                     BFBody body = critterEntry.FactOfType<BFBody>();
                     float populationScale = body.MassPerPopulation * body.MassDisplayScale;
 
@@ -116,7 +116,7 @@ namespace ProtoAqua.Modeling
                         continue;
 
                     int resultIdx = inResults[0].IndexOf(id); // this only works if this appears in the same place every time!
-                    BestiaryDesc critterEntry = Services.Assets.Bestiary[id];
+                    BestiaryDesc critterEntry = Assets.Bestiary(id);
                     BFBody body = critterEntry.FactOfType<BFBody>();
                     float populationScale = body.MassPerPopulation * body.MassDisplayScale;
 
@@ -181,7 +181,7 @@ namespace ProtoAqua.Modeling
 
                 int tickCount = inResults.Length;
 
-                WaterPropertyDesc propertyEntry = Services.Assets.WaterProp.Property(inProperty);
+                WaterPropertyDesc propertyEntry = Assets.Property(inProperty);
                 StringHash32 id = propertyEntry.Id();
 
                 unusedLines.Remove(id);

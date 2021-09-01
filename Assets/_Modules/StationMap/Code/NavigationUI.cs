@@ -55,7 +55,7 @@ namespace Aqua.StationMap
         public void DisplayDive(Transform inTransform, StringHash32 inMapId)
         {
             m_Mode = Mode.Dive;
-            m_TargetMap = Services.Assets.Map.Get(inMapId);
+            m_TargetMap = Assets.Map(inMapId);
             m_TargetInspect = null;
 
             m_InteractButtonIcon.sprite = m_DiveIcon;
@@ -70,7 +70,7 @@ namespace Aqua.StationMap
         public void DisplayMap(Transform inTransform, StringHash32 inMapId)
         {
             m_Mode = Mode.Map;
-            m_TargetMap = Services.Assets.Map.Get(inMapId);
+            m_TargetMap = Assets.Map(inMapId);
             m_TargetInspect = null;
 
             m_InteractButtonIcon.sprite = m_MapIcon;

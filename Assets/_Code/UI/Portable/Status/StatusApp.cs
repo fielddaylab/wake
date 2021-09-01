@@ -240,7 +240,7 @@ namespace Aqua.Portable
             {
                 foreach(var upgrade in Services.Data.Profile.Inventory.GetItems(InvItemCategory.Upgrade))
                 {
-                    upgrades.Add(Services.Assets.Inventory.Get(upgrade.ItemId));
+                    upgrades.Add(Assets.Item(upgrade.ItemId));
                 }
 
                 upgrades.Sort(InvItem.SortByCategoryAndOrder);

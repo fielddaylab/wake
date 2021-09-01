@@ -5,6 +5,7 @@ using Aqua.Scripting;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
+using System.Collections;
 
 namespace Aqua
 {
@@ -300,6 +301,12 @@ namespace Aqua
 
         static private class LeafIntegration
         {
+            private enum PopupMode
+            {
+                Silent,
+                Popup
+            }
+
             #region Bestiary/Inventory
 
             [LeafMember("HasEntity")]
@@ -309,9 +316,27 @@ namespace Aqua
             }
 
             [LeafMember("GiveEntity")]
-            static private bool GiveEntity(StringHash32 inEntityId)
+            static private IEnumerator GiveEntity([BindContext] ScriptThread inThread, StringHash32 inEntityId, PopupMode inMode = PopupMode.Popup)
             {
-                return Services.Data.Profile.Bestiary.RegisterEntity(inEntityId);
+                if (Services.Data.Profile.Bestiary.RegisterEntity(inEntityId) && inMode == PopupMode.Popup)
+                {
+                    inThread.Dialog = null;
+
+                    BestiaryDesc bestiary = Assets.Bestiary(inEntityId);
+                    Services.Audio.PostEvent("item.popup.new");
+                    if (bestiary.Category() == BestiaryDescCategory.Critter)
+                    {
+                        return Services.UI.Popup.Display(
+                            Loc.Format("ui.popup.newBestiary.critter.header", bestiary.CommonName()), null, bestiary.Icon()).Wait();
+                    }
+                    else
+                    {
+                        return Services.UI.Popup.Display(
+                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null, bestiary.Icon()).Wait();
+                    }
+                }
+
+                return null;
             }
 
             [LeafMember("HasFact")]
@@ -321,9 +346,31 @@ namespace Aqua
             }
 
             [LeafMember("GiveFact")]
-            static private bool GiveFact(StringHash32 inEntityId)
+            static private IEnumerator GiveFact([BindContext] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
             {
-                return Services.Data.Profile.Bestiary.RegisterFact(inEntityId);
+                BFBase fact = Assets.Fact(inFactId);
+                if (Services.Data.Profile.Bestiary.RegisterFact(inFactId, fact.Type == BFTypeId.Model) && inMode == PopupMode.Popup)
+                {
+                    inThread.Dialog = null;
+
+                    Services.Audio.PostEvent("item.popup.new");
+                    Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                }
+                return null;
+            }
+
+            [LeafMember("UpgradeFact")]
+            static private IEnumerator UpgradeFact([BindContext] ScriptThread inThread, StringHash32 inFactId, BFDiscoveredFlags inFlags = BFDiscoveredFlags.Rate, PopupMode inMode = PopupMode.Popup)
+            {
+                BFBase fact = Assets.Fact(inFactId);
+                if (Services.Data.Profile.Bestiary.AddDiscoveredFlags(inFactId, inFlags) && inMode == PopupMode.Popup)
+                {
+                    inThread.Dialog = null;
+
+                    Services.Audio.PostEvent("item.popup.new");
+                    Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                }
+                return null;
             }
 
             [LeafMember("HasItem")]
@@ -345,14 +392,14 @@ namespace Aqua
             }
 
             [LeafMember("GiveItem")]
-            static public void GiveItem(StringHash32 inItemId, int inCount = 1)
+            static private void GiveItem(StringHash32 inItemId, int inCount = 1)
             {
                 Assert.True(inCount >= 0, "GiveItem must be passed a positive number");
                 Services.Data.Profile.Inventory.AdjustItem(inItemId, inCount);
             }
 
             [LeafMember("TakeItem")]
-            static public bool TakeItem(StringHash32 inItemId, int inCount = 1)
+            static private bool TakeItem(StringHash32 inItemId, int inCount = 1)
             {
                 Assert.True(inCount >= 0, "TakeItem must be passed a positive number");
                 return Services.Data.Profile.Inventory.AdjustItem(inItemId, -inCount);
@@ -365,9 +412,22 @@ namespace Aqua
             }
 
             [LeafMember("GiveUpgrade")]
-            static private bool GiveUpgrade(StringHash32 inUpgradeId)
+            static private IEnumerator GiveUpgrade([BindContext] ScriptThread inThread, StringHash32 inUpgradeId, PopupMode inMode = PopupMode.Popup)
             {
-                return Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId);
+                if (Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId) && inMode == PopupMode.Popup)
+                {
+                    inThread.Dialog = null;
+                    
+                    InvItem item = Assets.Item(inUpgradeId);
+                    Services.Audio.PostEvent("item.popup.new");
+                    return Services.UI.Popup.Display(
+                        Loc.Format("ui.popup.newUpgrade.header", item.NameTextId()),
+                        Loc.Find(item.DescriptionTextId()),
+                        item.Icon()
+                    ).Wait();
+                }
+
+                return null;
             }
 
             [LeafMember("HasScanned")]

@@ -146,7 +146,7 @@ namespace ProtoAqua.Modeling
             for(int i = 0; i < critters.Length; ++i)
             {
                 bool bIsGraphed = m_UniversalModel.IsCritterGraphed(critters[i].Id);
-                m_CritterIcons[i].sprite = m_UniversalModel.IsCritterGraphed(critters[i].Id) ? Services.Assets.Bestiary[critters[i].Id].Icon() : m_MissingCritterIcon;
+                m_CritterIcons[i].sprite = m_UniversalModel.IsCritterGraphed(critters[i].Id) ? Assets.Bestiary(critters[i].Id).Icon() : m_MissingCritterIcon;
                 m_CritterHistoryIcons[i].gameObject.SetActive(bIsGraphed && ModelingUI.HasPopulationHistory(m_Scenario, i));
                 m_CritterIcons[i].gameObject.SetActive(true);
             }

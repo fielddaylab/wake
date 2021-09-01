@@ -94,7 +94,7 @@ namespace Aqua
 
         private void OnJobCompleted(StringHash32 inJobId)
         {
-            var job = Services.Assets.Jobs.Get(inJobId);
+            var job = Assets.Job(inJobId);
 
             // inventory adjustment
             Services.Data.Profile.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
@@ -172,7 +172,7 @@ namespace Aqua
             if (m_ActScript)
                 Services.Script.UnloadScript(m_ActScript);
             
-            m_ActScript = Services.Assets.Acts.Act(inAct)?.Scripting();
+            m_ActScript = Assets.Act(inAct)?.Scripting();
             
             if (m_ActScript)
                 Services.Script.LoadScript(m_ActScript);
@@ -188,7 +188,7 @@ namespace Aqua
             if (m_JobScript)
                 Services.Script.UnloadScript(m_JobScript);
 
-            JobDesc job = Services.Assets.Jobs.Get(inJob);
+            JobDesc job = Assets.Job(inJob);
 
             m_JobScript = job?.Scripting();
             

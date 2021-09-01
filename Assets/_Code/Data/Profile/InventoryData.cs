@@ -30,16 +30,16 @@ namespace Aqua.Profile
             {
                 foreach(var upgrade in m_UpgradeIds)
                 {
-                    yield return new PlayerInv(upgrade, 1, Services.Assets.Inventory[upgrade]);
+                    yield return new PlayerInv(upgrade, 1, Assets.Item(upgrade));
                 }
             }
             else
             {
-                CleanItemList();
                 var db = Services.Assets.Inventory;
+                CleanItemList();
                 foreach(var item in m_Items)
                 {
-                    InvItem desc = db.Get(item.ItemId);
+                    InvItem desc = Assets.Item(item.ItemId);
                     if ((item.Count > 0 || db.IsAlwaysVisible(item.ItemId)) && desc.Category() == inCategory)
                         yield return item;
                 }
@@ -52,7 +52,7 @@ namespace Aqua.Profile
             {
                 foreach(var upgrade in m_UpgradeIds)
                 {
-                    outItems.Add(new PlayerInv(upgrade, 1, Services.Assets.Inventory[upgrade]));
+                    outItems.Add(new PlayerInv(upgrade, 1, Assets.Item(upgrade)));
                 }
                 return m_UpgradeIds.Count;
             }
@@ -129,7 +129,7 @@ namespace Aqua.Profile
 
             if (!m_Items.TryBinarySearch(inId, out outItem))
             {
-                outItem = new PlayerInv(inId, 0, Services.Assets.Inventory[inId]);
+                outItem = new PlayerInv(inId, 0, Assets.Item(inId));
                 return false;
             }
 
@@ -147,7 +147,7 @@ namespace Aqua.Profile
             if (index < 0)
             {
                 index = m_Items.Count;
-                m_Items.PushBack(new PlayerInv(inId, 0, Services.Assets.Inventory[inId]));
+                m_Items.PushBack(new PlayerInv(inId, 0, Assets.Item(inId)));
                 m_ItemListDirty = true;
                 m_HasChanges = true;
             }
@@ -334,7 +334,7 @@ namespace Aqua.Profile
             for(int i = 0; i < m_Items.Count; i++)
             {
                 ref PlayerInv inv = ref m_Items[i];
-                inv.Descriptor = Services.Assets.Inventory[inv.ItemId];
+                inv.Descriptor = Assets.Item(inv.ItemId);
             }
         }
 

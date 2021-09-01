@@ -266,7 +266,7 @@ namespace ProtoAqua.ExperimentV2
         static private IEnumerator ActorEatAnimation(ActorInstance inActor, ActorWorld inWorld)
         {
             ActorInstance target = inActor.CurrentInteractionActor;
-            BFEat eatRule = Services.Assets.Bestiary.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
+            BFEat eatRule = Assets.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
             using(ObservationTank.CaptureCircle(eatRule.Id, inActor, inWorld))
             {
                 switch(inActor.Definition.Eating.EatType)

@@ -14,7 +14,7 @@ namespace Aqua
         /// </summary>
         static public BFEat FindEatingRule(StringHash32 inParentId, StringHash32 inTargetId, ActorStateId inState = ActorStateId.Alive)
         {
-            return FindEatingRule(Services.Assets.Bestiary[inParentId], inTargetId, inState);
+            return FindEatingRule(Assets.Bestiary(inParentId), inTargetId, inState);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Aqua
         /// </summary>
         static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, StringHash32 inCritterId, byte inSiteVersion = 0)
         {
-            return FindPopulationRule(inEnvironment, Services.Assets.Bestiary[inCritterId], inSiteVersion);
+            return FindPopulationRule(inEnvironment, Assets.Bestiary(inCritterId), inSiteVersion);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Aqua
         /// </summary>
         static public BFPopulationHistory FindPopulationHistoryRule(BestiaryDesc inEnvironment, StringHash32 inCritterId)
         {
-            return FindPopulationHistoryRule(inEnvironment, Services.Assets.Bestiary[inCritterId]);
+            return FindPopulationHistoryRule(inEnvironment, Assets.Bestiary(inCritterId));
         }
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace Aqua
             if (!Application.isPlaying)
                 return ValidationUtils.FindAsset<WaterPropertyDesc>(inId.ToString());
             #endif // UNITY_EDITOR
-            return Services.Assets.WaterProp.Property(inId);
+            return Assets.Property(inId);
         }
 
         #endregion // Water Properties

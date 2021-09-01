@@ -45,7 +45,7 @@ namespace ProtoAqua.Modeling
 
         public void Load(StringHash32 inActorId, int inPopulation, int inMin = 0, int inMax = -1, int inDesired = -1)
         {
-            Load(Services.Assets.Bestiary[inActorId], inPopulation, inMin, inMax, inDesired);
+            Load(Assets.Bestiary(inActorId), inPopulation, inMin, inMax, inDesired);
         }
 
         public void Load(BestiaryDesc inDesc, int inPopulation, int inMin = 0, int inMax = -1, int inDesired = -1)

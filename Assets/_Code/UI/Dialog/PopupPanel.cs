@@ -38,8 +38,12 @@ namespace Aqua
         [SerializeField] private InputRaycasterLayer m_RaycastBlocker = null;
 
         [Header("Contents")]
+        [SerializeField] private LayoutGroup m_Layout = null;
         [SerializeField] private LocText m_HeaderText = null;
+        [SerializeField] private Image m_ImageDisplay = null;
         [SerializeField] private LocText m_ContentsText = null;
+        [SerializeField] private FactPools m_FactPools = null;
+        [SerializeField] private Transform m_FactPoolTransform = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;
 
@@ -69,24 +73,31 @@ namespace Aqua
 
         #region Display
 
-        public Future<StringHash32> Display(string inHeader, string inText)
+        public Future<StringHash32> Display(string inHeader, string inText, Sprite inImage = null)
         {
-            return Present(inHeader, inText, DefaultOkay);
+            return Present(inHeader, inText, inImage, DefaultOkay);
         }
 
-        public Future<StringHash32> AskYesNo(string inHeader, string inText)
+        public Future<StringHash32> AskYesNo(string inHeader, string inText, Sprite inImage = null)
         {
-            return Present(inHeader, inText, DefaultYesNo);
+            return Present(inHeader, inText, inImage, DefaultYesNo);
         }
 
-        public Future<StringHash32> Present(string inHeader, string inText, params NamedOption[] inOptions)
+        public Future<StringHash32> Present(string inHeader, string inText, Sprite inImage, params NamedOption[] inOptions)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inOptions));
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inImage, inOptions));
             return future;
         }
 
-        private void Configure(string inHeader, string inText, bool inbInput, NamedOption[] inOptions)
+        public Future<StringHash32> PresentFact(string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags)
+        {
+            Future<StringHash32> future = new Future<StringHash32>();
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFact, inFlags, DefaultOkay));
+            return future;
+        }
+
+        private void Configure(string inHeader, string inText, Sprite inImage, NamedOption[] inOptions)
         {
             if (!string.IsNullOrEmpty(inHeader))
             {
@@ -110,6 +121,17 @@ namespace Aqua
                 m_ContentsText.SetText(string.Empty);
             }
 
+            if (inImage != null)
+            {
+                m_ImageDisplay.sprite = inImage;
+                m_ImageDisplay.gameObject.SetActive(true);
+            }
+            else
+            {
+                m_ImageDisplay.gameObject.SetActive(false);
+                m_ImageDisplay.sprite = null;
+            }
+
             m_OptionCount = inOptions.Length;
             for(int i = 0; i < m_Buttons.Length; ++i)
             {
@@ -130,11 +152,70 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, NamedOption[] inOptions)
+        private void ConfigureFact(BFBase inFact, BFDiscoveredFlags inFlags)
+        {
+            m_FactPools.FreeAll();
+            if (inFact == null)
+                return;
+
+            m_FactPools.Alloc(inFact, null, inFlags, m_FactPoolTransform);
+        }
+
+        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, Sprite inImage, NamedOption[] inOptions)
         {
             using(ioFuture)
             {
-                Configure(inHeader, inText, false, inOptions);
+                Configure(inHeader, inText, inImage, inOptions);
+                ConfigureFact(null, 0);
+
+                if (IsShowing())
+                {
+                    m_BoxAnim.Replace(this, BounceAnim());
+                }
+                else
+                {
+                    Show();
+                }
+
+                SetInputState(true);
+                Services.TTS.Text(inText);
+
+                m_SelectedOption = StringHash32.Null;
+                m_OptionWasSelected = false;
+                while(!m_OptionWasSelected)
+                {
+                    if (inOptions.Length <= 1 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Space))
+                    {
+                        m_OptionWasSelected = true;
+                        if (inOptions.Length == 1)
+                            m_SelectedOption = inOptions[0].Id;
+                        break;
+                    }
+                    
+                    yield return null;
+                }
+
+                Services.TTS.Cancel();
+                SetInputState(false);
+
+                ioFuture.Complete(m_SelectedOption);
+                m_SelectedOption = StringHash32.Null;
+
+                yield return null;
+
+                if (m_AutoCloseDelay > 0)
+                    yield return m_AutoCloseDelay;
+
+                Hide();
+            }
+        }
+
+        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags, NamedOption[] inOptions)
+        {
+            using(ioFuture)
+            {
+                Configure(inHeader, inText, null, inOptions);
+                ConfigureFact(inFact, inFlags);
 
                 if (IsShowing())
                 {
@@ -196,6 +277,8 @@ namespace Aqua
                 m_RootTransform.gameObject.SetActive(true);
             }
 
+            m_Layout.ForceRebuild();
+
             yield return Routine.Combine(
                 m_RootGroup.FadeTo(1, 0.2f),
                 m_RootTransform.ScaleTo(1f, 0.2f).Ease(Curve.BackOut)
@@ -250,6 +333,13 @@ namespace Aqua
             {
                 Services.Input?.PopPriority(m_RaycastBlocker);
             }
+        }
+
+        protected override void OnHideComplete(bool inbInstant)
+        {
+            m_FactPools.FreeAll();
+
+            base.OnHideComplete(inbInstant);
         }
 
         #endregion // BasePanel

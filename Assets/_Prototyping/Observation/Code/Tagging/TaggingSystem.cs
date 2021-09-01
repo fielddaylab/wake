@@ -76,7 +76,7 @@ namespace ProtoAqua.Observation
             Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", inScene.Name);
             
             m_SiteData = Services.Data.Profile.Science.GetSiteData(mapId);
-            m_EnvironmentType = Services.Assets.Map[mapId].Environment();
+            m_EnvironmentType = Assets.Map(mapId).Environment();
             m_BestiaryData = Services.Data.Profile.Bestiary;
             
             TaggableCritter critter;

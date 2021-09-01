@@ -126,7 +126,7 @@ namespace Aqua
 
         private void ConstructTaskGraph(StringHash32 inJobId)
         {
-            JobDesc job = Services.Assets.Jobs.Get(inJobId);
+            JobDesc job = Assets.Job(inJobId);
             ListSlice<JobTask> taskList = job.Tasks();
 
             // no tasks? no problem

@@ -65,11 +65,6 @@ namespace Aqua
             return obj;
         }
 
-        public T this[StringHash32 inId]
-        {
-            get { return Get(inId); }
-        }
-
         public IEnumerable<T> Filter(Predicate<T> inPredicate)
         {
             if (inPredicate == null)

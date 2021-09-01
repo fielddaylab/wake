@@ -6,6 +6,7 @@ using BeauPools;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -296,5 +297,15 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region Leaf
+
+        [LeafMember("ShowPopup")]
+        static private IEnumerator LeafShowPopup(string inHeader, string inDescription)
+        {
+            return Services.UI.Popup.Display(inHeader, inDescription, null).Wait();
+        }
+
+        #endregion // Leaf
     }
 }

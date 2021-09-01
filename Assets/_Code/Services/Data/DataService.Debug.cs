@@ -362,7 +362,7 @@ namespace Aqua
 
         static private void RegisterWaterPropertyToggle(DMInfo inMenu, WaterPropertyId inItem)
         {
-            inMenu.AddToggle(Services.Assets.WaterProp.Property(inItem).name,
+            inMenu.AddToggle(Assets.Property(inItem).name,
                 () => { return Services.Data.Profile.Inventory.IsPropertyUnlocked(inItem); },
                 (b) =>
                 {

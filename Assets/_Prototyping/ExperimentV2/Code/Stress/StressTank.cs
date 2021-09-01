@@ -160,7 +160,7 @@ namespace ProtoAqua.ExperimentV2
 
                 float value = m_SelectedEnvironment.GetEnvironment()[currFactType];
 
-                float ratio = Services.Assets.WaterProp.Property(currFactType).RemapValue(value);
+                float ratio = Assets.Property(currFactType).RemapValue(value);
                 Debug.Log("Value, Ratio:" + value + ", " + ratio);
 
                 currEnvIndicator.GetComponent<RectTransform>().anchoredPosition = new Vector2(ratio,0);
@@ -226,7 +226,7 @@ namespace ProtoAqua.ExperimentV2
 
                 currStateFact.gameObject.SetActive(true);
 
-                m_StateFactWaterProperties[i] = Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id).Property;
+                m_StateFactWaterProperties[i] = Assets.Fact<BFState>(currExpResult.Id).Property;
 
                 bool isNewFact = false;
                 if (currExpResult.Type == ExperimentFactResultType.NewFact)
@@ -235,7 +235,7 @@ namespace ProtoAqua.ExperimentV2
                 //Set new fact icon to active/not active
                 currStateFact.transform.GetChild(4).gameObject.SetActive(isNewFact);
 
-                currStateFact.Populate(Services.Assets.Bestiary.Fact<BFState>(currExpResult.Id));
+                currStateFact.Populate(Assets.Fact<BFState>(currExpResult.Id));
             }
         }
 
@@ -290,7 +290,7 @@ namespace ProtoAqua.ExperimentV2
         {
             m_World.Water[inId] = inValue;
             ActorStateTransitionRange range = m_CritterTransitions[inId];
-            WaterPropertyDesc property = Services.Assets.WaterProp.Property(inId);
+            WaterPropertyDesc property = Assets.Property(inId);
             
             bool bHasMin = !float.IsInfinity(range.AliveMin);
             bool bHasMax = !float.IsInfinity(range.AliveMax);
