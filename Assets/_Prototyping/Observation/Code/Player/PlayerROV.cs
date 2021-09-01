@@ -86,7 +86,8 @@ namespace ProtoAqua.Observation
         {
             this.CacheComponent(ref m_Transform);
 
-            Services.Events.Register<ToolId>(Event_RequestToolSwitch, (toolId) => SetTool(toolId, false));
+            Services.Events.Register<ToolId>(Event_RequestToolSwitch, (toolId) => SetTool(toolId, false), this)
+                .Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryUpdated, this);
 
             SetEngineState(false, true);
 
@@ -291,6 +292,17 @@ namespace ProtoAqua.Observation
                     Assert.Fail("unknown toolid {0}", inToolId);
                     return null;
             }
+        }
+
+        private void OnInventoryUpdated(StringHash32 inItemId)
+        {
+            if (m_CurrentToolId != ToolId.NONE)
+                return;
+
+            if (inItemId == ItemIds.ROVScanner)
+                SetTool(ToolId.Scanner, false);
+            else if (inItemId == ItemIds.ROVTagger)
+                SetTool(ToolId.Tagger, false);
         }
 
         #region Leaf

@@ -62,6 +62,7 @@ $set    player:seen.kevin = true
 $set    jobs:kelp-welcome.seen.bottom = true
 {@kevin}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
 $call GiveUpgrade(ROVScanner)
+$call Player->SetTool(Scanner)
 
 :: helpAtSiteC
 @trigger    RequestPartnerHelp
