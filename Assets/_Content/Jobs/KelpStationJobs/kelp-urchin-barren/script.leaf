@@ -34,11 +34,30 @@ $set jobs:kelp-urchin-barren.doneModeling = false
 
 :: helpGoToSiteB
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station1", !HasEntity(UrchinBarren)
+@when 		scene:name == "KelpStation", !HasEntity(UrchinBarren)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	Site B should be southwest of the ship.
 {@kevin}	Let's head over there and dive down.
+
+:: giveUpgrade1
+@trigger	SceneStart
+@when		scene:name == "RS-1B"
+@once
+@cutscene
+{@drJules}	Once you've scanned the species around here, you'll want to use your {h}Critter Tracker{/h} to tag all the species down here.
+$call GiveUpgrade(ROVTagger)
+
+:: giveUpgrade2
+@trigger	JobCompleted
+@when		taskId == "getTagged"
+@once
+@cutscene
+{@drJules}	Alright, that's the current population...
+			Maybe you can try getting the historical data from the probe?
+			There should be a probe around here.
+			Take this {h}Probe Decryptor{/h}, it should let you decode the data from the probes.
+$call GiveUpgrade(ProbeHacker)
 
 :: helpAtSiteB
 @trigger    RequestPartnerHelp
@@ -55,7 +74,7 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station1", HasEntity(UrchinBarren)
+@when 		scene:name == "KelpStation", HasEntity(UrchinBarren)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	We need to head back to the ship to make a model of what we've found. 
@@ -73,7 +92,6 @@ $else
 	{@kevin}	Now it's time to make a model! Head over to the Modeling Whiteboard.
 $endif
 
-
 :: ModelingSetup
 @trigger	UniversalModelStarted
 @once
@@ -83,6 +101,10 @@ $endif
 {@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
 {@kevin} You can do this by using the "Import Rule" button and selecting behaviors from your bestiary.
 {@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
+
+$call UpgradeFact(Urchin.Eats.BullKelp)
+$call UpgradeFact(Urchin.Eats.GiantKelp)
+$call UpgradeFact(SeaOtter.Eats.Urchin)
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp

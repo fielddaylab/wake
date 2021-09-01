@@ -6,6 +6,8 @@
 @header Dead Zone
 @bestiary   P_DeadZone
 @facts P_DeadZone.WaterChemHistory.Light, P_DeadZone.WaterChemHistory.Oxygen, P_DeadZone.WaterChemHistory.Temperature
+@requires HasUpgrade("ProbeHacker")
+@fallback tools.probeHacker.disabled
 AQ-EV Probe S271
 Downloaded ecosystem data.
 
@@ -17,6 +19,8 @@ Classification: Dead Zone
 @header Dead Zone
 @bestiary   P_DeadZone
 @facts   P_DeadZone.PopulationHistory.Muck
+@requires HasUpgrade("ProbeHacker")
+@fallback tools.probeHacker.disabled
 AQ-EV Probe O271
 Downloaded historical population data.
 

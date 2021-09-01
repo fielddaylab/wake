@@ -12,7 +12,12 @@ $set 	jobs:kelp-save-urchin-barren.doneModeling = false
 :: end
 @trigger    JobCompleted
 @cutscene
+
 $call UnlockStation(CoralStation)
+$call GiveWaterProperty(Oxygen)
+$call GiveWaterProperty(Temperature)
+$call GiveWaterProperty(Light)
+
 {@drJules}  Absolutely Fantastic Work!
 {@player}   Thanks. It was nice being able to use some science to help.
 {@drJules}  I'll upload the location of the Coral Station to your map.
