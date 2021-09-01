@@ -201,6 +201,11 @@ namespace Aqua
             return m_InputModule.IsPointerOverCanvas();
         }
 
+        public bool IsEditingText()
+        {
+            return m_InputModule.IsEditingText();
+        }
+
         public bool ExecuteClick(GameObject inRoot)
         {
             RectTransform rectTransform = inRoot.transform as RectTransform;

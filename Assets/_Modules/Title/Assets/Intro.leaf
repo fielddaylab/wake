@@ -6,8 +6,103 @@
 
 {wait 1}
 
-{@} (We're hoping to have a short intro here.)
-(Please excuse the lack of said intro for now)
+{@} Welcome to Aqualab!
+	Please excuse the|, uh, clutter. Everything's still in development.
+	Could I ask you a few questions?
+	
+$choice .1a; Sure!
+$choice .1b; What is this?
+$choice .1c; Who are you?
+$choose branch
 
-{hide-dialog}{wait 0.5}
+$branch .activity
+$branch .story
+
+{hide-dialog}{bgm-stop}{wait 0.5}
 $call LoadScene(Ship)
+
+// first questions
+
+:: 1a
+
+{@}	Great!
+
+:: 1b
+
+{@}	Oh, this? It's a game| about aquatic science.
+	And I think you're playing it. That seems to be what's happening here.
+	...
+
+:: 1c
+
+{@}	Oh, me? To be quite honest| I'm not 100% sure myself.
+	I think I'm a stand-in for the| development team.
+	Anyways...
+	
+// activity
+
+:: activity
+
+{@}	I have this form here. I'll need you to fill it out for me.
+	It's pretty standard, just something to help me know how you'd like your avatar to be addressed in the coming experience.
+
+{hide-dialog}{/letterbox}{bgm IntroMusic}
+$call CharacterCreator->RunActivity()
+{letterbox}
+
+{wait 1}
+{@} Hmm... okay... great!
+	So it looks like your name is "{player-name}", and you'd like to be addressed with {pg he/him|she/her|they/them} pronouns? Is that correct?
+
+$choice .activityDone; Yeah!
+$choice .activityRedo; Wait, no.
+
+:: activityDone
+
+$call CharacterCreator->CompleteActivity()
+
+{@}	Great! Welcome to the game, {player-name}!
+	Eeee, that's such {pg a cool|a cute|an exciting} name!
+{hide-dialog}{wait 0.5}
+
+:: activityRedo
+{@}	Okay, no worries! Just adjust your answers and let me know when you're done!
+
+{hide-dialog}{/letterbox}
+$call CharacterCreator->RunActivity()
+{letterbox}
+
+{wait 1}
+{@}	Alright, so your name is "{player-name}", and you'd like to be addressed with {pg he/him|she/her|they/them} pronouns? Is that correct?
+
+$choice .activityDone; Yeah!
+$choice .activityRedo; Wait, no.
+
+// actual intro
+
+:: story
+
+{wait 1}
+{@}	Oh dear...
+	There's supposed to be an intro here, some kind of actual| story| intro...
+	Hold on, let me sketch something real quick for you...
+{hide-dialog}{sfx IntroScribble, wait}{wait 0.2}
+$call KevinSlide->FadeTo(1, 0.2)
+{@}	Haha! I am an artist!
+	So this is Kevin.
+	They're your best friend.| Kind of.
+$call KevinSlide->FadeTo(0, 0.2)
+{wait 0.2}{sfx IntroScribble, wait}{wait 0.2}
+$call BoatSlide->FadeTo(1, 0.2)
+{@}	You| are a salvager.
+	This is your boat.
+	You're using it to explore the ocean.
+$call BoatSlide->FadeTo(0, 0.2)
+{wait 0.2}{sfx IntroScribble, wait}{wait 0.2}
+$call ScienceSlide->FadeTo(1, 0.2)
+{@} And unfortunately you also need to make a living.
+	So you've started taking on science jobs with Kevin.
+	That's helped you stay| afloat?
+	...Bah, I shouldn't have attempted comedy.
+{hide-dialog}
+$call ScienceSlide->FadeTo(0, 0.2)

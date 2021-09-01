@@ -150,6 +150,9 @@ namespace Aqua
 
         protected override void OnHideComplete(bool inbInstant)
         {
+            if (!Services.Valid)
+                return;
+            
             m_CurrentState.ResetFull();
 
             ResetSpeaker();

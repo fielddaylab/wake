@@ -1,14 +1,10 @@
-using System;
 using System.Collections;
 using Aqua.Animation;
 using AquaAudio;
-using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Aqua.Title
 {

@@ -50,6 +50,9 @@ namespace Aqua.Animation
 
         private void ResetTransform(AmbientTransform inTransform)
         {
+            if (!inTransform.Transform)
+                return;
+            
             if (inTransform.TransformSpace == Space.World)
             {
                 inTransform.Transform.SetPositionAndRotation(inTransform.PositionAnimation.Initial, Quaternion.Euler(inTransform.RotationAnimation.Initial));
