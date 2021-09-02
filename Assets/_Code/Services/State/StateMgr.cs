@@ -222,7 +222,7 @@ namespace Aqua
             #if UNITY_EDITOR
             yield return WaitForOptimize(active, null);
             #else
-            yield return LoadConditionalSubscenes(inNextScene, null);
+            yield return LoadConditionalSubscenes(active, null);
             #endif // UNITY_EDITOR
 
             yield return WaitForPreload(active, null);
