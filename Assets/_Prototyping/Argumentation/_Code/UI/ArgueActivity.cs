@@ -9,6 +9,8 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
+using Leaf.Runtime;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Argumentation
 {
@@ -19,6 +21,8 @@ namespace ProtoAqua.Argumentation
 
         [Serializable]
         public class ChatPool : SerializablePool<ArgueChatLine> { }
+
+        static private ArgueActivity s_Instance;
 
         #region Inspector
 
@@ -50,6 +54,7 @@ namespace ProtoAqua.Argumentation
         [NonSerialized] private ScriptCharacterDef m_CharacterDef;
         [NonSerialized] private ScriptCharacterDef m_PlayerDef;
         [NonSerialized] private List<Link> m_Claims = new List<Link>();
+        [NonSerialized] private HashSet<StringHash32> m_VisitedNodes = new HashSet<StringHash32>();
 
         private void Start()
         {
@@ -60,6 +65,8 @@ namespace ProtoAqua.Argumentation
 
             m_Graph.OnGraphLoaded += OnGraphLoaded;
             m_Graph.OnGraphNotAvailable += NotAvailable;
+
+            s_Instance = this;
         }
 
         private void OnGraphLoaded()
@@ -89,6 +96,7 @@ namespace ProtoAqua.Argumentation
 
         private void OnDestroy()
         {
+            s_Instance = null;
             Services.Events?.DeregisterAll(this);
         }
 
@@ -150,6 +158,7 @@ namespace ProtoAqua.Argumentation
             {
                 currentNode = toDisplay;
                 m_Graph.SetCurrentNode(currentNode);
+                m_VisitedNodes.Add(currentNode.Id);
 
                 ArgueChatLine chat = m_NodePool.Alloc();
                 chat.Populate(toDisplay.DisplayText, m_CharacterDef);
@@ -239,6 +248,13 @@ namespace ProtoAqua.Argumentation
                         StateUtil.LoadPreviousSceneWithWipe();
                     });
             }
+        }
+
+        [LeafMember("VisitedArgueNode")]
+        static private bool LeafVisitedNode(StringHash32 inId)
+        {
+            Assert.NotNull(s_Instance, "Argue Activity not started");
+            return s_Instance.m_VisitedNodes.Contains(inId);
         }
     }
 }

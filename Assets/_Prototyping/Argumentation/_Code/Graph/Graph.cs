@@ -175,7 +175,6 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<StringHash32, Node> kvp in inPackage.Nodes)
             {
                 Node node = kvp.Value;
-                node.InitializeNode();
                 nodeDictionary.Add(node.Id, node);
             }
 
@@ -224,9 +223,7 @@ namespace ProtoAqua.Argumentation
             foreach (KeyValuePair<StringHash32, Link> kvp in inPackage.Links)
             {
                 Link link = kvp.Value;
-                link.InitializeLink();
                 linkDictionary.Add(link.Id, link);
-
             }
 
         }

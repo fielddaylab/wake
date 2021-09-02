@@ -9,7 +9,7 @@ namespace ProtoAqua.Argumentation
 {
     public class Node : GraphData
     {
-        private Dictionary<StringHash32, StringHash32> linkToNodeIds = new Dictionary<StringHash32, StringHash32>();
+        private readonly Dictionary<StringHash32, StringHash32> m_LinkToNodeIds = new Dictionary<StringHash32, StringHash32>();
         private NodeFlags m_Flags;
 
         #region Serialized
@@ -20,11 +20,6 @@ namespace ProtoAqua.Argumentation
         [BlockMeta("defaultNodeId")] private StringHash32 m_DefaultNodeId = "node.default";
         [BlockMeta("invalidNodeId")] private StringHash32 m_InvalidNodeId = null;
         [BlockMeta("nextNodeId")] private StringHash32 m_NextNodeId = null;
-        [BlockMeta("linkToNode"), Preserve]
-        private void AddNextNodeIds(string line)
-        {
-            m_InLinkToNodeIds.Add(line);
-        }
 
         [BlockMeta("showClaims"), Preserve]
         private void SetClaimsActive()
@@ -80,13 +75,9 @@ namespace ProtoAqua.Argumentation
             }
         }
 
-        public void InitializeNode()
+        public StringHash32 GetNextNodeId(StringHash32 id)
         {
-            ParseLinkToNodeIds(m_InLinkToNodeIds);
-        }
-
-        public StringHash32 GetNextNodeId(StringHash32 id) {
-            if (linkToNodeIds.TryGetValue(id, out StringHash32 nextNodeId))
+            if (m_LinkToNodeIds.TryGetValue(id, out StringHash32 nextNodeId))
             {
                 return nextNodeId;
             }
@@ -97,17 +88,13 @@ namespace ProtoAqua.Argumentation
         // Checks if a given link id is a valid response to this node
         public bool CheckResponse(StringHash32 id)
         {
-            return linkToNodeIds.ContainsKey(id);
+            return m_LinkToNodeIds.ContainsKey(id);
         }
 
-        private void ParseLinkToNodeIds(List<string> inLinkToNodeIds) {
-            linkToNodeIds = new Dictionary<StringHash32, StringHash32>();
-            foreach (string ids in inLinkToNodeIds)
-            {
-                StringSlice[] parsedIds = StringSlice.Split(ids, CommaSplit, StringSplitOptions.None);
-                linkToNodeIds.Add(parsedIds[0], parsedIds[1].Trim());
-            }
-            
+        [BlockMeta("linkToNode"), Preserve]
+        private void AddLinkToNode(StringHash32 inLink, StringHash32 inNode)
+        {
+            m_LinkToNodeIds.Add(inLink, inNode);
         }
 
         static private readonly char[] CommaSplit = new char[] { ',' };

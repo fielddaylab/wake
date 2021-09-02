@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using BeauUtil;
 using BeauUtil.Services;
@@ -18,6 +19,7 @@ namespace Aqua
                 ioObject = inLoc.Localize((TextId) (StringHash32) ioObject, true);
         }
 
+        [MethodImpl(256)]
         static public string Find(TextId inText)
         {
             return Service.Localize(inText);

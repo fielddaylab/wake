@@ -5,5 +5,24 @@
 @cutscene
 {@profWhalen}	I'd like to know when she died.
 				You can usually tell by the state of decomposition.
-				
+				I'd like you to take a closer look around the whale fall.
 $call GiveFact(Model.WhaleFall.Stages)
+{@profWhalen}	This should give you an idea of when different species show up during the decomposition process.
+				Contact me when you've got some evidence.
+
+:: helpFindWhale
+@trigger    RequestPartnerHelp
+@when 		!JobTaskCompleted(getPopulations)
+@cutscene
+{@player} 	What should I be doing again?
+{@kevin}	Let's go investigate the critters around the whale fall.
+			Maybe there's some clue in how many species there are?
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		JobTaskCompleted(getPopulations)
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Well, let's think about what we saw down there.
+			How many different species were there? And how many of each species?
+			Does that line up with anything from the model we got from Professor Whalen earlier?

@@ -36,6 +36,9 @@ namespace ProtoAqua.Argumentation
             ArgueOptionButton button;
             foreach(var link in inLinks)
             {
+                if (!Services.Data.CheckConditions(link.Conditions))
+                    continue;
+                
                 button = m_Pool.Alloc();
                 button.Populate(link.ShortenedText ?? link.DisplayText, link.Id);
             }

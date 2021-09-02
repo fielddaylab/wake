@@ -143,6 +143,9 @@ namespace Aqua
 
         private void OnCutsceneEnd()
         {
+            if (!Services.Valid)
+                return;
+            
             TryStartProcessing();
         }
 

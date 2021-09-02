@@ -6,7 +6,7 @@
 {@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
 {@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
 {@profCempaka}	I need you to head over to Site R and see what you can find.
-{@profCempaka}	You can travel to the coral research station by interating with the map in your Ship's Helm. 
+{@profCempaka}	You can travel to the coral research station by interacting with the map in your Ship's Helm. 
 {@player} 	We'll be right over there!
 $call GiveUpgrade(StressTank)
 
@@ -125,7 +125,7 @@ $endif
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the experiement room and see what's strange with the coral.
+{@kevin}   	Let's head to the experiment room and see what's strange with the coral.
 {@player}   On it!
 
 :: helpBackAtShip
@@ -141,7 +141,7 @@ $endif
 @when       scene:name == "ExperimentPrototype", jobs:coral-invade.got.scans == true
 @once
 @cutscene
-{@player}   What kind of experiement should we be doing this time?
+{@player}   What kind of experiment should we be doing this time?
 {@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
 
 ::helpAtExperiment
@@ -153,7 +153,7 @@ $endif
 {@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
 
 
-:: experiementEnd
+:: experimentEnd
 @trigger    JobTaskUpdated
 @when 		HasFact(StaghornCoral.Light.Stressed)
 @once

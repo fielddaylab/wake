@@ -372,6 +372,9 @@ namespace Aqua
                 case JobStepType.AddFactToModel:
                     return inData.Bestiary.IsFactGraphed(inStep.Target);
 
+                case JobStepType.FinishArgumentation:
+                    return false;
+
                 default:
                     return true;
             }

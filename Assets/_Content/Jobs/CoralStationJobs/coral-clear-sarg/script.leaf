@@ -72,7 +72,7 @@ $set jobs:coral-clear-sarg.siteRScans = 1
 @once
 @cutscene
 $set jobs:coral-clear-sarg.siteRScans = 2
-{@kevin}   Now that we're back, let's go to the experiement room!
+{@kevin}   Now that we're back, let's go to the experiment room!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
@@ -87,7 +87,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 @when       scene:name == "ExperimentPrototype", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
 @once
 @cutscene
-{@player}   How should we set up the experiement this time?
+{@player}   How should we set up the experiment this time?
 {@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
 {@kevin} 	Maybe try observing a tank with Sargassum and another critter until you find something interesting?
 

@@ -354,7 +354,7 @@ namespace Aqua
                     inThread.Dialog = null;
 
                     Services.Audio.PostEvent("item.popup.new");
-                    Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                    return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
                 }
                 return null;
             }
@@ -368,7 +368,7 @@ namespace Aqua
                     inThread.Dialog = null;
 
                     Services.Audio.PostEvent("item.popup.new");
-                    Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                    return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
                 }
                 return null;
             }
