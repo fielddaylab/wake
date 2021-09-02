@@ -138,5 +138,27 @@ namespace Aqua.Editor
             File.WriteAllText(outputPath, builder.Flush());
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }
+
+        [MenuItem("Aqualab/CodeGen/Regen Map")]
+        static private void GenerateMapConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("using BeauUtil;");
+            builder.Append("\n\nstatic public class MapIds")
+                .Append("\n{");
+
+            foreach(var mapDesc in AssetDBUtils.FindAssets<MapDesc>())
+            {
+                string safeName = ObjectNames.NicifyVariableName(mapDesc.name).Replace("-", "_").Replace(" ", "");
+
+                builder.Append("\n\tstatic public readonly StringHash32 ").Append(safeName).Append(" = new StringHash32(0x").Append(mapDesc.Id().HashValue.ToString("X8")).Append(");");
+            }
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "MapIds.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
     }
 }

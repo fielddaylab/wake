@@ -1221,75 +1221,6 @@ MonoBehaviour:
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
   m_DisableRaycastLayer: 2
---- !u!1001 &224605239
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376003, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725047072042376013, guid: e43c5626c8a8c78499e7b26342967428,
-        type: 3}
-      propertyPath: m_Name
-      value: TimeShaderValues
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e43c5626c8a8c78499e7b26342967428, type: 3}
 --- !u!1 &335052851
 GameObject:
   m_ObjectHideFlags: 0
@@ -5073,8 +5004,8 @@ GameObject:
   - component: {fileID: 1590131761}
   - component: {fileID: 1590131760}
   - component: {fileID: 1590131759}
-  - component: {fileID: 1590131762}
   - component: {fileID: 1590131763}
+  - component: {fileID: 1590131762}
   m_Layer: 0
   m_Name: LevelAssets
   m_TagString: Untagged
@@ -5133,12 +5064,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1590131758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ebe9a610c1ca0743a3a95f706918ea3, type: 3}
+  m_Script: {fileID: 11500000, guid: a8523ff4df73448419e7a02ff6487587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EventId: music_ship_test
-  m_Crossfade: 0.5
-  m_StopOnDisable: 0
+  KelpStationPath: Ship_KelpLayer
+  CoralStationPath: Ship_CoralLayer
+  ArcticStationPath: Ship_ArcticLayer
+  BayouStationPath: Ship_BayouLayer
+  FinalStationPath: 
 --- !u!114 &1590131763
 MonoBehaviour:
   m_ObjectHideFlags: 0
