@@ -79,11 +79,16 @@ namespace Aqua
             List<DMInfo> debugMenus = new List<DMInfo>(8);
             foreach(var debugService in Services.AllDebuggable())
             {
-                debugMenus.AddRange(debugService.ConstructDebugMenus());
+                Log.Msg("[BootParams] Getting debug menus from {0}", debugService);
+                foreach(var menu in debugService.ConstructDebugMenus())
+                {
+                    Assert.NotNull(menu, "Provided menu is null");
+                    Log.Msg("[BootParams] ...menu {0}", menu.Header.Label);
+                    debugMenus.Add(menu);
+                }
             }
-            debugMenus.Sort((a, b) => a.Header.Label.CompareTo(b.Header.Label));
-
             Debug.LogFormat("[BootParams] Found '{0}' debug menus", debugMenus.Count);
+            debugMenus.Sort((a, b) => a.Header.Label.CompareTo(b.Header.Label));
             
             DMInfo rootMenu = DebugService.RootDebugMenu();
             foreach(var menu in debugMenus)

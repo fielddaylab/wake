@@ -26,6 +26,15 @@ namespace Aqua.Ship
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
         {
+            ParentToRoom[] allRoomRetargets = FindObjectsOfType<ParentToRoom>();
+
+            foreach(var roomReparent in allRoomRetargets)
+            {
+                roomReparent.transform.SetParent(GetRoom(roomReparent.RoomId).transform, true);
+                Destroy(roomReparent);
+                yield return null;
+            }
+
             foreach(var room in m_Rooms)
             {
                 room.Initialize();

@@ -44,6 +44,7 @@ namespace Aqua.Debugging
         [NonSerialized] private bool m_FirstMenuToggle;
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private float m_TimeScale = 1;
+        [NonSerialized] private bool m_VisibilityWhenOpened;
 
         private void LateUpdate()
         {
@@ -88,6 +89,7 @@ namespace Aqua.Debugging
                     {
                         m_DebugMenu.gameObject.SetActive(false);
                         Resume();
+                        SetMinimalLayer(m_VisibilityWhenOpened);
                     }
                     else
                     {
@@ -97,6 +99,7 @@ namespace Aqua.Debugging
                             m_FirstMenuToggle = true;
                         }
                         m_DebugMenu.gameObject.SetActive(true);
+                        m_VisibilityWhenOpened = m_MinimalOn;
                         SetMinimalLayer(true);
                         Pause();
                     }
@@ -305,7 +308,7 @@ namespace Aqua.Debugging
             RegisterLogToggle(loggingMenu, LogMask.Argumentation);
             RegisterLogToggle(loggingMenu, LogMask.Localization);
             RegisterLogToggle(loggingMenu, LogMask.Time);
-            yield break;
+            yield return loggingMenu;
         }
 
         static private void RegisterLogToggle(DMInfo inMenu, LogMask inMask, string inName = null)
@@ -368,10 +371,6 @@ namespace Aqua.Debugging
         #if DEVELOPMENT
 
         static public DMInfo RootDebugMenu() { return s_RootMenu ?? (s_RootMenu = new DMInfo("Debug", 16)); }
-        static public DMInfo NewDebugMenu(string inLabel, int inCapacity = 0)
-        {
-            return new DMInfo(inLabel, inCapacity);
-        }
 
         #endif // DEVELOPMENT
 
