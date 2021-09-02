@@ -39,11 +39,11 @@ MonoBehaviour:
     m_Hash: 2162458881
   m_Tasks:
   - Id:
-      m_Source: grouperScan
-      m_Hash: 3631948938
+      m_Source: getScans
+      m_Hash: 1025619015
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.grouperScan
-      m_Hash: 3134970016
+      m_Source: jobs.coral-fishy-bizz.task.getScans
+      m_Hash: 3516419945
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -62,34 +62,11 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: grouperModel
-      m_Hash: 2904668152
+      m_Source: getModel
+      m_Hash: 48080564
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.grouperModel
-      m_Hash: 2048412674
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Fishers.Eats.RedGrouper
-        m_Hash: 316344893
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: ReefEdge
-        m_Hash: 1116546582
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: boatNumbers
-      m_Hash: 3019330219
-    LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.boatNumbers
-      m_Hash: 3351430957
+      m_Source: jobs.coral-fishy-bizz.task.getModel
+      m_Hash: 1352391234
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -102,11 +79,11 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: boatReport
-      m_Hash: 2200770821
+      m_Source: reportBack
+      m_Hash: 2059105924
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.boatReport
-      m_Hash: 2183305711
+      m_Source: jobs.coral-fishy-bizz.task.reportBack
+      m_Hash: 818144618
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -120,12 +97,12 @@ MonoBehaviour:
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
-      m_Source: grouperScan
-      m_Hash: 3631948938
+      m_Source: getScans
+      m_Hash: 1025619015
     Index: 0
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.grouperScan
-      m_Hash: 3134970016
+      m_Source: jobs.coral-fishy-bizz.task.getScans
+      m_Hash: 3516419945
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -144,36 +121,12 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: grouperModel
-      m_Hash: 2904668152
+      m_Source: getModel
+      m_Hash: 48080564
     Index: 1
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.grouperModel
-      m_Hash: 2048412674
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Fishers.Eats.RedGrouper
-        m_Hash: 316344893
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: ReefEdge
-        m_Hash: 1116546582
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: boatNumbers
-      m_Hash: 3019330219
-    Index: 2
-    LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.boatNumbers
-      m_Hash: 3351430957
+      m_Source: jobs.coral-fishy-bizz.task.getModel
+      m_Hash: 1352391234
     DescriptionId:
       m_Source: 
       m_Hash: 0
@@ -186,12 +139,12 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: boatReport
-      m_Hash: 2200770821
-    Index: 3
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 2
     LabelId:
-      m_Source: jobs.coral-fishy-bizz.task.boatReport
-      m_Hash: 2183305711
+      m_Source: jobs.coral-fishy-bizz.task.reportBack
+      m_Hash: 818144618
     DescriptionId:
       m_Source: 
       m_Hash: 0
