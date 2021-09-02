@@ -271,7 +271,9 @@ namespace Aqua.Debugging
 
             transform.FlattenHierarchy();
 
+            #if DEVELOPMENT
             RootDebugMenu();
+            #endif // DEVELOPMENT
         }
 
         protected override void Shutdown()
