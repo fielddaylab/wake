@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: bayou-oxygen-tracking
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-oxygen-tracking.name
+    m_Hash: 1510934913
+  m_PosterId:
+    m_Source: jobs.bayou-oxygen-tracking.poster
+    m_Hash: 2608382427
+  m_DescId:
+    m_Source: jobs.bayou-oxygen-tracking.desc
+    m_Hash: 3246368443
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 2
+  m_ModelingDifficulty: 2
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 68221138cd24f1445a559f35cac0fb30, type: 2}
+  m_PrereqConditions: 
+  m_StationId:
+    m_Source: BayouStation
+    m_Hash: 2992071853
+  m_DiveSiteIds:
+  - m_Source: RS-3P
+    m_Hash: 3168968926
+  m_Tasks:
+  - Id:
+      m_Source: getScans
+      m_Hash: 1025619015
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.scanNewCritters
+      m_Hash: 629509848
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: DecomposingBacteria
+        m_Hash: 3751261742
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_Hash: 4251495377
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_Hash: 3623197764
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: measureOxygenUsage
+      m_Hash: 2992898558
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.measureOxygenUsage
+      m_Hash: 524111248
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Consume.Oxygen
+        m_Hash: 3719378680
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Cyanobacteria.Produce.Oxygen
+        m_Hash: 1501676772
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: getScans
+      m_Hash: 1025619015
+  - Id:
+      m_Source: createModel
+      m_Hash: 2425868018
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.createModel
+      m_Hash: 2630945480
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.DeadZoneOxygen
+        m_Hash: 2423384988
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: getScans
+      m_Hash: 1025619015
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.reportBack
+      m_Hash: 563622658
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: getScans
+      m_Hash: 1025619015
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: getScans
+      m_Hash: 1025619015
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.scanNewCritters
+      m_Hash: 629509848
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: DecomposingBacteria
+        m_Hash: 3751261742
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_Hash: 4251495377
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_Hash: 3623197764
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: measureOxygenUsage
+      m_Hash: 2992898558
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.measureOxygenUsage
+      m_Hash: 524111248
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Consume.Oxygen
+        m_Hash: 3719378680
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Cyanobacteria.Produce.Oxygen
+        m_Hash: 1501676772
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: createModel
+      m_Hash: 2425868018
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.createModel
+      m_Hash: 2630945480
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.DeadZoneOxygen
+        m_Hash: 2423384988
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 3
+    LabelId:
+      m_Source: jobs.bayou-oxygen-tracking.task.reportBack
+      m_Hash: 563622658
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  m_CashReward: 10
+  m_GearReward: 10
+  m_AdditionalRewards: []
+  m_Icon: {fileID: 0}
+  m_Scripting: {fileID: -1942890987711236906, guid: 6c7535da1a8d06b4abebfd3f1f81acaa,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: 2a729afb577bf8646ba807e3a62f7b61, type: 3}
+  - {fileID: 11400000, guid: cf1ce7758192294439faa185fad3ae4e, type: 2}
