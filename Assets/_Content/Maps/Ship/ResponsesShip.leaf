@@ -204,7 +204,7 @@ $else
 	{@kevin}	Okay, have a good nap.
 $endif
 
-$call AdvanceTime(2)
+$call AdvanceTime(2, NoSync)
 {trigger-response PlayerDream}
 
 :: bed.sleep.evening
@@ -219,7 +219,7 @@ $else
 	{@kevin}	Okay, have a good sleep!
 $endif
 
-$call SetTime(18)
+$call SetTime(18, NoSync)
 {trigger-response PlayerDream}
 
 :: bed.sleep.morning
@@ -234,7 +234,7 @@ $else
 	{@kevin}	Okay, sleep well.
 $endif
 
-$call SetTime(6)
+$call SetTime(6, NoSync)
 {trigger-response PlayerDream}
 
 :: bed.sleep.no

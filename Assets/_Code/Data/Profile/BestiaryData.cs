@@ -219,7 +219,7 @@ namespace Aqua.Profile
 
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Assets.Fact(inFactId));
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
-            if (metaIdx > 0)
+            if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
             return flags;
         }
@@ -234,7 +234,7 @@ namespace Aqua.Profile
 
             BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
-            if (metaIdx > 0)
+            if (metaIdx >= 0)
                 existingFlags |= m_FactMetas[metaIdx].Flags;
             if ((existingFlags & inFlags) == inFlags)
                 return false;
