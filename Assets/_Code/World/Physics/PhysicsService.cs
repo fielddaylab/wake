@@ -9,7 +9,7 @@ namespace Aqua
 {
     public class PhysicsService : ServiceBehaviour, IPauseable
     {
-        private const float DefaultContactOffset = (1f / 128f);
+        public const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
         private const int TickIterations = 2;
 

@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
+using System.Text;
 
 namespace Aqua.Scripting
 {
@@ -189,5 +190,14 @@ namespace Aqua.Scripting
         }
 
         #endregion // ICollection
+
+        internal void Dump(StringBuilder ioBuilder, StringHash32 inTriggerId)
+        {
+            ioBuilder.Append('\n').Append(inTriggerId.ToDebugString()).Append(" (").Append(m_TriggerNodes.Count).Append(")");
+            foreach(var node in m_TriggerNodes)
+            {
+                ioBuilder.Append("\n - ").Append(node.FullName());
+            }
+        }
     }
 }

@@ -764,6 +764,9 @@ namespace Aqua
             scriptingMenu.AddButton("Dump Scripting State", DumpScriptingState);
             scriptingMenu.AddButton("Clear Scripting State", ClearScriptingState);
 
+            scriptingMenu.AddDivider();
+            scriptingMenu.AddButton("Dump Loaded Trigger Responses", DumpTriggerResponses);
+
             yield return scriptingMenu;
         }
 
@@ -788,7 +791,7 @@ namespace Aqua
             var resolver = (CustomVariantResolver) Services.Data.VariableResolver;
             using (PooledStringBuilder psb = PooledStringBuilder.Create())
             {
-                psb.Builder.Append("[DebugService] Dumping Script State");
+                psb.Builder.Append("[ScriptingService] Dumping Script State");
                 foreach(var table in resolver.AllTables())
                 {
                     psb.Builder.Append('\n').Append(table.ToDebugString());
@@ -810,6 +813,21 @@ namespace Aqua
                 foreach(var node in Services.Data.Profile.Script.RecentNodeHistory)
                 {
                     psb.Builder.Append("\n  ").Append(node.ToDebugString());
+                }
+
+                Debug.Log(psb.Builder.Flush());
+            }
+        }
+
+        static private void DumpTriggerResponses()
+        {
+            var responses = Services.Script.m_LoadedResponses;
+            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append("[ScriptingService] Dumping loaded trigger responses");
+                foreach(var table in responses)
+                {
+                    table.Value.Dump(psb.Builder, table.Key);
                 }
 
                 Debug.Log(psb.Builder.Flush());

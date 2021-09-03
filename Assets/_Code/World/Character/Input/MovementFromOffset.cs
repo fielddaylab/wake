@@ -17,14 +17,22 @@ namespace Aqua.Character
             float desiredSpeed = SpeedCurve.Evaluate(inNormalizedOffset.magnitude) * MaxSpeed;
             Vector2 desiredVelocity = inNormalizedOffset * desiredSpeed;
             Vector2 deltaVelocity = desiredVelocity - inKinematics.State.Velocity;
-
+            
             if (deltaVelocity.sqrMagnitude > 0)
             {
                 Vector2 vector = deltaVelocity * inDeltaTime * Acceleration;
                 vector = PhysicsService.SmoothVelocity(vector);
 
+                if (vector.x == 0 && vector.y == 0)
+                    return false;
+
+                Vector2 solidCheck = vector;
+                solidCheck.Normalize();
+                solidCheck.x *= PhysicsService.DefaultContactOffset;
+                solidCheck.y *= PhysicsService.DefaultContactOffset;
+
                 Vector2 collideNormal;
-                if (inKinematics.CheckSolid(vector, out collideNormal))
+                if (inKinematics.CheckSolid(solidCheck, out collideNormal))
                 {
                     vector = PhysicsService.SmoothDeflect(vector, collideNormal, 0);
                 }
