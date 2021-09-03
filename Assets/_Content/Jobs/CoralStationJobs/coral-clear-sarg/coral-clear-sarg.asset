@@ -30,7 +30,7 @@ MonoBehaviour:
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs:
-  - {fileID: 11400000, guid: ffcb01ca3fde9498d999046d7660f28e, type: 2}
+  - {fileID: 11400000, guid: d4e11cc87d5d443678b5aaeeeabd633c, type: 2}
   m_PrereqConditions: 
   m_StationId:
     m_Source: CoralStation
@@ -40,19 +40,19 @@ MonoBehaviour:
     m_Hash: 2229569357
   m_Tasks:
   - Id:
-      m_Source: relationship
-      m_Hash: 374391099
+      m_Source: getScans
+      m_Hash: 1025619015
     LabelId:
-      m_Source: jobs.coral-clear-sarg.task.relationship
-      m_Hash: 2422490015
+      m_Source: jobs.coral-clear-sarg.task.getScans
+      m_Hash: 3661212435
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: BlueheadWrasse
-        m_Hash: 193540374
+        m_Source: RedGrouper
+        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -65,12 +65,6 @@ MonoBehaviour:
       Target:
         m_Source: TurtleGrass
         m_Hash: 793706139
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: RedGrouper
-        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -91,8 +85,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: relationship
-      m_Hash: 374391099
+    - m_Source: getScans
+      m_Hash: 1025619015
   - Id:
       m_Source: urchinSargArgue
       m_Hash: 1996554441
@@ -112,20 +106,20 @@ MonoBehaviour:
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
-      m_Source: relationship
-      m_Hash: 374391099
+      m_Source: getScans
+      m_Hash: 1025619015
     Index: 0
     LabelId:
-      m_Source: jobs.coral-clear-sarg.task.relationship
-      m_Hash: 2422490015
+      m_Source: jobs.coral-clear-sarg.task.getScans
+      m_Hash: 3661212435
     DescriptionId:
       m_Source: 
       m_Hash: 0
     Steps:
     - Type: 0
       Target:
-        m_Source: BlueheadWrasse
-        m_Hash: 193540374
+        m_Source: RedGrouper
+        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -138,12 +132,6 @@ MonoBehaviour:
       Target:
         m_Source: TurtleGrass
         m_Hash: 793706139
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: RedGrouper
-        m_Hash: 1605956068
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

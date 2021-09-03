@@ -1,8 +1,8 @@
 {
    "__serializerVersion": 2,
-   "__version": 2,
-   "id": "f21df493-991b-4f00-856b-e018b15c7fd8",
-   "lastUpdated": 1.326722705829E+17,
+   "__version": 3,
+   "id": "6e3dc54b-6c25-4492-ae7c-86bacc223439",
+   "lastUpdated": 1.32750979249373E+17,
    "character": {
       "displayName": null,
       "pronouns": "Neutral"
@@ -22,12 +22,14 @@
       ],
       "upgradeIds": [
       ],
-      "waterProps": 7
+      "waterProps": 0
    },
    "script": {
+      "__version": 2,
       "actIndex": 0,
       "visited": [
-         2576171142
+         1399218079,
+         1342534212
       ],
       "globals": {
          "name": 503252654,
@@ -57,17 +59,30 @@
       "partner": {
          "name": 1674645177,
          "values": [
+            {
+               "id": 2282623795,
+               "type": "Bool",
+               "value": true
+            }
          ]
-      }
+      },
+      "world": {
+         "name": 933488787,
+         "values": [
+         ]
+      },
+      "scheduled": [
+      ]
    },
    "bestiary": {
-      "__version": 2,
+      "__version": 3,
       "allEntities": [
-         1973276590
       ],
       "allFacts": [
       ],
       "graphedFacts": [
+      ],
+      "factMetas": [
       ]
    },
    "jobs": {
@@ -82,15 +97,24 @@
       ]
    },
    "map": {
+      "__version": 2,
       "stationId": 707943182,
       "unlockedStations": [
          2724389503,
-         707943182
+         1297447963,
+         2992071853,
+         707943182,
+         1250313653
       ],
-      "currentMapId": 746798495
+      "currentMapId": 746798495,
+      "mapLocationId": 0,
+      "time": 557,
+      "timeMode": "Normal"
    },
    "options": {
+      "__version": 2,
       "audio": {
+         "__version": 3,
          "master": {
             "volume": 1,
             "mute": false
@@ -102,12 +126,33 @@
          "music": {
             "volume": 0.800000011920929,
             "mute": false
-         }
+         },
+         "voice": {
+            "volume": 0.800000011920929,
+            "mute": false
+         },
+         "mono": false
       },
       "gameplay": {
          "movementMode": "Hold",
          "observationMode": "Hold",
          "observationAction": "Hold"
+      },
+      "performance": {
+         "framerate": "High"
+      },
+      "accessibility": {
+         "tts": "Off",
+         "flags": "0"
       }
+   },
+   "science": {
+      "__version": 2,
+      "ongoingExperiments": [
+      ],
+      "dirtyTanks": [
+      ],
+      "siteSurveys": [
+      ]
    }
 }

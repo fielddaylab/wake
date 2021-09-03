@@ -6,7 +6,6 @@
 {@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
 {@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
 {@profCempaka}	I need you to head over to Site R and see what you can find.
-{@profCempaka}	You can travel to the coral research station by interacting with the map in your Ship's Helm. 
 {@player} 	We'll be right over there!
 $call GiveUpgrade(StressTank)
 
@@ -167,7 +166,11 @@ $endif
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Now that we've finished the experiment, let's report back to the Office.
-$if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+	{@kevin} We need to get the historical light levels of Site R. Let's head back and scan the water chemistry probe. 
+$else
+	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
+	$if global:nav.shipRoom == "office"
+		{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+	$endif
 $endif
