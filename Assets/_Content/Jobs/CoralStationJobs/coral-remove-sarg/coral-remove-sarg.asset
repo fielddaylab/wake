@@ -40,6 +40,23 @@ MonoBehaviour:
     m_Hash: 2229569357
   m_Tasks:
   - Id:
+      m_Source: popProbe
+      m_Hash: 1454319354
+    LabelId:
+      m_Source: jobs.coral-remove-sarg.task.popProbe
+      m_Hash: 2219921519
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
+        m_Hash: 2762679420
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
       m_Source: sargLight
       m_Hash: 522930950
     LabelId:
@@ -92,9 +109,27 @@ MonoBehaviour:
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
+      m_Source: popProbe
+      m_Hash: 1454319354
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-remove-sarg.task.popProbe
+      m_Hash: 2219921519
+    DescriptionId:
+      m_Source: 
+      m_Hash: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
+        m_Hash: 2762679420
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
       m_Source: sargLight
       m_Hash: 522930950
-    Index: 0
+    Index: 1
     LabelId:
       m_Source: jobs.coral-remove-sarg.task.sargLight
       m_Hash: 56158945
@@ -112,7 +147,7 @@ MonoBehaviour:
   - Id:
       m_Source: sargModel
       m_Hash: 1151503519
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.coral-remove-sarg.task.sargModel
       m_Hash: 3443021348
@@ -130,7 +165,7 @@ MonoBehaviour:
   - Id:
       m_Source: sargArgue
       m_Hash: 2971658416
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.coral-remove-sarg.task.sargArgue
       m_Hash: 3782853615
