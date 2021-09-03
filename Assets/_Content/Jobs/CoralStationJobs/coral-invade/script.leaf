@@ -140,7 +140,7 @@ $endif
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", jobs:coral-invade.got.scans == true
+@when       scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
@@ -148,7 +148,7 @@ $endif
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentPrototype", jobs:coral-invade.got.scans == true
+@when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	This time, select the stressor tank instead of an observation one.

@@ -239,7 +239,7 @@ namespace Aqua.Profile
             if ((existingFlags & inFlags) == inFlags)
                 return false;
 
-            if (metaIdx > 0)
+            if (metaIdx >= 0)
             {
                 m_FactMetas[metaIdx].Flags |= inFlags;
             }

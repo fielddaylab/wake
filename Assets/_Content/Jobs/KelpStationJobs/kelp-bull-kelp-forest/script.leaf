@@ -37,7 +37,7 @@ $branch common.ringPhone
 
 ::helpGoToLab
 @trigger    RequestPartnerHelp
-@when 		HasEntity(BullKelp), scene:name != "ExperimentPrototype"
+@when 		HasEntity(BullKelp), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	Where should I go next?
 {@kevin}	Now that we've discovered Bull Kelp, let's head to the Experiment Lab.
@@ -51,7 +51,7 @@ $endif
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
-@when 		HasEntity(BullKelp), scene:name == "ExperimentPrototype"
+@when 		HasEntity(BullKelp), scene:name == "ExperimentV2"
 @cutscene
 {@player} 	Alright Kevin I made it to the Experiment Lab, what should I do next?
 {@kevin}	Similar to last time, construct an observation tank with water from Site A.

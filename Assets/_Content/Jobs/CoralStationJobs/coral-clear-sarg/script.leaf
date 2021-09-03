@@ -86,7 +86,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
+@when       scene:name == "ExperimentV2", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
 @once
 @cutscene
 {@player}   How should we set up the experiment this time?
@@ -95,7 +95,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentPrototype", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
+@when 		scene:name == "ExperimentV2", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	We want to figure out if there's anything that eats the Sargassum.

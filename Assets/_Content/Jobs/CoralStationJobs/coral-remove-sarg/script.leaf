@@ -15,14 +15,14 @@ $branch common.ringPhone
 
 :: helpGoToExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ExperimentPrototype", !HasFact(Sargassum.Consume.Light)
+@when 		scene:name != "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @cutscene
 {@player} 	What should we be doing now?
 {@kevin}	Let's head over to the experiment room and try to learn more about Sargassum.
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentPrototype", !HasFact(Sargassum.Consume.Light)
+@when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @cutscene
 {@player} 	How should this go again?
 {@kevin}	We want to determine if Sargassum is really to blame for the low light at Site R.
@@ -30,7 +30,7 @@ $branch common.ringPhone
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", !HasFact(Sargassum.Consume.Light)
+@when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @once
 @cutscene
 {@player}   Any tips of what we should to this time?

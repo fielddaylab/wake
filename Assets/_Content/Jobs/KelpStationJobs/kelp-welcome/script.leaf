@@ -26,9 +26,9 @@ $else
 	{@kevin}	The sub should be at the back of the ship, let's see what we can find out there!
 $endif
 
-:: helpGoOutsideToSubExperimentPrototype
+:: helpGoOutsideToSubExperimentV2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentPrototype", !jobs:kelp-welcome.got.scans
+@when 		scene:name == "ExperimentV2", !jobs:kelp-welcome.got.scans
 @cutscene
 $if global:nav.shipRoom != "exterior"
 	{@player}   Where should I go from here?
@@ -162,7 +162,7 @@ $endif
 
 :: firstExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentPrototype", jobs:kelp-welcome.got.scans
+@when       scene:name == "ExperimentV2", jobs:kelp-welcome.got.scans
 @once
 @cutscene
 {@player}   Alright, I'm in the experimentation room, What's next?
@@ -172,7 +172,7 @@ $endif
 
 :: helpFirstExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentPrototype", jobs:kelp-welcome.got.scans, !HasFact(Urchin.Eats.GiantKelp), !HasFact(SeaOtter.Eats.Urchin)
+@when 		scene:name == "ExperimentV2", jobs:kelp-welcome.got.scans, !HasFact(Urchin.Eats.GiantKelp), !HasFact(SeaOtter.Eats.Urchin)
 @boostScore -500
 @cutscene
 {@player} 	How should I do this again?
