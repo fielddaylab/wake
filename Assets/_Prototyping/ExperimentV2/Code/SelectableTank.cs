@@ -15,6 +15,7 @@ namespace ProtoAqua.ExperimentV2
         [Required] public CameraPose CameraPose = null;
         [Required] public BoxCollider BoundsCollider;
         [Required] public BoxCollider2D WaterCollider;
+        [Required] public ColorGroup WaterColor;
         [HideInInspector] public Bounds Bounds;
         
         [Header("In Use State")]
@@ -40,6 +41,7 @@ namespace ProtoAqua.ExperimentV2
         #endregion // Inspector
 
         [NonSerialized] private StringHash32 m_Id;
+        [NonSerialized] public Color DefaultWaterColor;
 
         public StringHash32 Id { get { return m_Id.IsEmpty ? (m_Id = name) : m_Id; } }
 

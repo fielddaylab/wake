@@ -29,6 +29,7 @@ namespace Aqua
 
         [Space]
         [SerializeField, ShowIfField("IsEnvironment")] private uint m_HistoricalRecordDuration = 2;
+        [SerializeField, ShowIfField("IsEnvironment")] private Color m_WaterColor = ColorBank.Blue;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
@@ -93,6 +94,12 @@ namespace Aqua
         {
             Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
             return m_HistoricalRecordDuration;
+        }
+
+        public Color WaterColor()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
+            return m_WaterColor;
         }
 
         public Sprite Sketch() { return m_Sketch; }

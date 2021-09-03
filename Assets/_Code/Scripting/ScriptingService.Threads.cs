@@ -13,7 +13,7 @@ namespace Aqua
     {
         #region ILeafPlugin
 
-        IMethodCache ILeafPlugin<ScriptNode>.MethodCache { get { return m_LeafCache; } }
+        IMethodCache ILeafPlugin.MethodCache { get { return m_LeafCache; } }
 
         IVariantResolver ILeafVariableAccess.Resolver { get { return Services.Data.VariableResolver; }}
 

@@ -141,6 +141,7 @@ namespace ProtoAqua.ExperimentV2
             ActorWorld.SetWaterState(m_World, inDesc.GetEnvironment());
             m_RunButton.interactable = m_World.Actors.Count > 0;
             EnvIconDisplay.Populate(m_EnvIcon, inDesc);
+            m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
             DisplayWaterProperties();
         }
 
@@ -151,6 +152,7 @@ namespace ProtoAqua.ExperimentV2
                 m_RunButton.interactable = false;
                 EnvIconDisplay.Populate(m_EnvIcon, null);
                 ActorWorld.SetWaterState(m_World, null);
+                m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
                 DisplayWaterProperties();
             }
         }
@@ -161,6 +163,7 @@ namespace ProtoAqua.ExperimentV2
             ActorWorld.SetWaterState(m_World, null);
             m_RunButton.interactable = false;
             EnvIconDisplay.Populate(m_EnvIcon, null);
+            m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             DisplayWaterProperties();
         }
 

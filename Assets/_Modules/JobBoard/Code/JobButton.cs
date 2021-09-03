@@ -80,12 +80,14 @@ namespace Aqua.JobBoard
                 {
                     case PlayerJobStatus.Completed:
                         {
+                            m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.CompletedIcon;
                             break;
                         }
                     
                     case PlayerJobStatus.Active:
                         {
+                            m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.ActiveIcon;
                             break;
                         }

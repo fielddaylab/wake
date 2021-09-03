@@ -3,6 +3,9 @@
 :: start
 @trigger    JobStarted
 @cutscene
+
+$branch common.ringPhone
+
 $set    player:seen.drJules = true
 $set 	jobs:kelp-save-urchin-barren.doneModeling = false
 {@drJules} Ok. Time to bring it all together. 
@@ -13,17 +16,28 @@ $set 	jobs:kelp-save-urchin-barren.doneModeling = false
 @trigger    JobCompleted
 @cutscene
 
-$call UnlockStation(CoralStation)
-$call UnlockStation(ArcticStation)
-$call UnlockStation(BayouStation)
+$branch common.ringPhone
+
+{@drJules}  Absolutely fantastic work!
+{@player}   Thanks. It was nice being able to use some science to help.
+{@drJules}  Here, take this. It might be helpful in the future.
+
 $call GiveWaterProperty(Oxygen)
 $call GiveWaterProperty(Temperature)
 $call GiveWaterProperty(Light)
+$call GiveUpgrade(WaterChemistry)
 
-{@drJules}  Absolutely fantastic Work!
-{@player}   Thanks. It was nice being able to use some science to help.
-{@drJules}  I'll upload the location of the Coral Station to your map.
-{@drJules} 	You can travel over there by using the map in the Ship's Helm, have fun out there!
+{@player}	Oh, thanks!
+{@drJules}	I have colleagues out there in other parts of the ocean too.
+			Maybe you can find work with them too?
+			I'll mark their stations on your map.
+
+$call UnlockStation(CoralStation)
+$call UnlockStation(ArcticStation)
+$call UnlockStation(BayouStation)
+$call ShowPopup("New Stations Unlocked!", "You can now visit new stations from your World Map!")
+
+{@player}	Thanks, Jules!
 
 ::helpGoToModeling
 @trigger    RequestPartnerHelp

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Scripting;
 using BeauData;
 using BeauPools;
 using BeauRoutine.Extensions;
@@ -301,8 +302,12 @@ namespace Aqua
         #region Leaf
 
         [LeafMember("ShowPopup")]
-        static private IEnumerator LeafShowPopup(string inHeader, string inDescription)
+        static private IEnumerator LeafShowPopup([BindContext] ScriptThread inThread, string inHeader, string inDescription)
         {
+            inThread.Dialog = null;
+            if (Services.UI.IsSkippingCutscene())
+                return null;
+            
             return Services.UI.Popup.Display(inHeader, inDescription, null).Wait();
         }
 

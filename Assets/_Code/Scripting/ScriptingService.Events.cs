@@ -6,6 +6,7 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
 using BeauUtil.Variants;
+using Leaf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Aqua
         {
             m_TagEventParser = new CustomTagParserConfig();
 
+            LeafUtils.ConfigureDefaultParsers(m_TagEventParser, this, (k, o) => Loc.Find(k, o));
+
             // Replace Tags
             m_TagEventParser.AddReplace("n", "\n").WithAliases("newline");
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").WithAliases("h").CloseWith("</color>");
@@ -32,11 +35,10 @@ namespace Aqua
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
-            m_TagEventParser.AddReplace("loc", ReplaceLoc);
-            m_TagEventParser.AddReplace("var", ReplaceVariable).WithAliases("var-i", "var-f", "var-b", "var-s");
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
             m_TagEventParser.AddReplace("fullnameof", ReplaceFullNameOf);
+            m_TagEventParser.AddReplace("item-count", ReplaceItemCount);
             m_TagEventParser.AddReplace('|', "{wait 0.25}");
 
             // Extra Replace Tags (with embedded events)
@@ -138,58 +140,33 @@ namespace Aqua
             }
         }
 
-        static private string ReplaceVariable(TagData inTag, object inContext)
-        {
-            TableKeyPair key = TableKeyPair.Parse(inTag.Data);
-
-            Variant variable = Variant.Null;
-            IVariantTable table;
-            IVariantResolver resolver;
-
-            table = (inContext as IVariantTable);
-            resolver = (inContext as ScriptThread)?.Resolver ?? (inContext as IVariantResolver) ?? Services.Data.VariableResolver;
-
-            bool bFound = false;
-            if (table != null && (key.TableId.IsEmpty || key.TableId == table.Name))
-            {
-                bFound = table.TryLookup(key.VariableId, out variable);
-            }
-
-            if (!bFound)
-            {
-                bFound = resolver.TryGetVariant(inContext, key, out variable);
-            }
-            
-            if (inTag.Id.EndsWith("-i"))
-            {
-                return variable.AsInt().ToString();
-            }
-            else if (inTag.Id.EndsWith("-f"))
-            {
-                return variable.AsFloat().ToString();
-            }
-            else if (inTag.Id.EndsWith("-b"))
-            {
-                return variable.AsBool().ToString();
-            }
-            else if (inTag.Id.EndsWith("-s"))
-            {
-                return Services.Loc.Localize(variable.AsStringHash(), variable.ToString(), inContext);
-            }
-            else
-            {
-                return variable.ToString();
-            }
-        }
-
-        static private string ReplaceLoc(TagData inTag, object inContext)
-        {
-            return Services.Loc.Localize(inTag.Data.Hash32(), null, inContext);
-        }
-
         static private string ReplaceIcon(TagData inTag, object inContext)
         {
             return string.Format("<sprite name=\"{0}\">", inTag.Data.ToString());
+        }
+
+        static private string ReplaceItemCount(TagData inTag, object inContext)
+        {
+            InvItem itemDesc = Assets.Item(inTag.Data);
+            StringHash32 itemId = itemDesc.Id();
+            uint itemCount = Services.Data.Profile.Inventory.ItemCount(itemId);
+            
+            if (itemId == ItemIds.Cash)
+            {
+                return string.Format("<#a6c8ff>{0}ø</color>", itemCount);
+            }
+            else if (itemId == ItemIds.Gear)
+            {
+                return string.Format("<#c9c86d>{0}‡</color>", itemCount);
+            }
+            else if (itemDesc.Category() == InvItemCategory.Upgrade)
+            {
+                return string.Format("<#f0ff00>{0}</color>", Loc.Find(itemDesc.NameTextId()));
+            }
+            else
+            {
+                return string.Format("<#f0ff00>{0} {1}</color>", itemCount, Loc.Find(itemCount == 1 ? itemDesc.NameTextId() : itemDesc.PluralNameTextId()));
+            }
         }
 
         static private string ReplaceNameOf(TagData inTag, object inContext)

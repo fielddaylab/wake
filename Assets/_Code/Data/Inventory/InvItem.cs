@@ -16,6 +16,7 @@ namespace Aqua
 
         [Header("Text")]
         [SerializeField] private TextId m_NameTextId = null;
+        [SerializeField] private TextId m_PluralNameTextId = null;
         [SerializeField] private TextId m_DescriptionTextId = null;
 
         [Header("Value")]
@@ -40,6 +41,7 @@ namespace Aqua
         public bool HasAllFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public TextId NameTextId() { return m_NameTextId; }
+        public TextId PluralNameTextId() { return m_PluralNameTextId.IsEmpty ? m_NameTextId : m_PluralNameTextId; }
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
         
         public Sprite Icon() { return m_Icon; }

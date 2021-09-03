@@ -11,4 +11,5 @@ static public class ItemIds
 	static public readonly StringHash32 ROVScanner = new StringHash32(0xBE07D45E);
 	static public readonly StringHash32 ROVTagger = new StringHash32(0xB7BD00DE);
 	static public readonly StringHash32 ProbeHacker = new StringHash32(0xD34A2A23);
+	static public readonly StringHash32 WaterChemistry = new StringHash32(0x1CAB7A86);
 }

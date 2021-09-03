@@ -153,6 +153,7 @@ namespace ProtoAqua.ExperimentV2
             m_RunButton.interactable = m_World.Actors.Count > 0;
             EnvIconDisplay.Populate(m_EnvIcon, inDesc);
             m_ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
+            m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc)
@@ -160,6 +161,7 @@ namespace ProtoAqua.ExperimentV2
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null))
             {
                 m_RunButton.interactable = false;
+                m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
                 EnvIconDisplay.Populate(m_EnvIcon, null);
                 m_ActorBehavior.ClearEnvState();
             }
@@ -169,6 +171,7 @@ namespace ProtoAqua.ExperimentV2
         {
             m_SelectedEnvironment = null;
             m_RunButton.interactable = false;
+            m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             EnvIconDisplay.Populate(m_EnvIcon, null);
             m_ActorBehavior.ClearEnvState();
         }

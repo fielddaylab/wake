@@ -322,6 +322,9 @@ namespace Aqua
                 {
                     inThread.Dialog = null;
 
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
+
                     BestiaryDesc bestiary = Assets.Bestiary(inEntityId);
                     Services.Audio.PostEvent("item.popup.new");
                     if (bestiary.Category() == BestiaryDescCategory.Critter)
@@ -353,6 +356,9 @@ namespace Aqua
                 {
                     inThread.Dialog = null;
 
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
+
                     Services.Audio.PostEvent("item.popup.new");
                     return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
                 }
@@ -366,6 +372,9 @@ namespace Aqua
                 if (Services.Data.Profile.Bestiary.AddDiscoveredFlags(inFactId, inFlags) && inMode == PopupMode.Popup)
                 {
                     inThread.Dialog = null;
+
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
 
                     Services.Audio.PostEvent("item.popup.new");
                     return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
@@ -394,15 +403,22 @@ namespace Aqua
             [LeafMember("GiveItem")]
             static private void GiveItem(StringHash32 inItemId, int inCount = 1)
             {
-                Assert.True(inCount >= 0, "GiveItem must be passed a positive number");
+                Assert.True(inCount >= 0, "GiveItem must be passed a non-negative number");
                 Services.Data.Profile.Inventory.AdjustItem(inItemId, inCount);
             }
 
             [LeafMember("TakeItem")]
             static private bool TakeItem(StringHash32 inItemId, int inCount = 1)
             {
-                Assert.True(inCount >= 0, "TakeItem must be passed a positive number");
+                Assert.True(inCount >= 0, "TakeItem must be passed a non-negative number");
                 return Services.Data.Profile.Inventory.AdjustItem(inItemId, -inCount);
+            }
+
+            [LeafMember("SetItem")]
+            static private void SetItem(StringHash32 inItemId, int inCount)
+            {
+                Assert.True(inCount >= 0, "SetItem must be passed a non-negative number");
+                Services.Data.Profile.Inventory.SetItem(inItemId, inCount);
             }
 
             [LeafMember("HasUpgrade")]
@@ -417,6 +433,9 @@ namespace Aqua
                 if (Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId) && inMode == PopupMode.Popup)
                 {
                     inThread.Dialog = null;
+
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
                     
                     InvItem item = Assets.Item(inUpgradeId);
                     Services.Audio.PostEvent("item.popup.new");

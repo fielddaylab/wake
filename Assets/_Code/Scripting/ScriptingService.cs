@@ -765,7 +765,7 @@ namespace Aqua
             scriptingMenu.AddButton("Clear Scripting State", ClearScriptingState);
 
             scriptingMenu.AddDivider();
-            scriptingMenu.AddButton("Dump Loaded Trigger Responses", DumpTriggerResponses);
+            scriptingMenu.AddButton("Dump Loaded Responses", DumpTriggerResponses);
 
             yield return scriptingMenu;
         }

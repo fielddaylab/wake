@@ -3,6 +3,9 @@
 :: start
 @trigger    JobStarted
 @cutscene
+
+$branch common.ringPhone
+
 $set jobs:kelp-urchin-barren.doneModeling = false
 {@drJules} This next Job is going to be a little different.
 {@player} How is that?
@@ -14,9 +17,12 @@ $set jobs:kelp-urchin-barren.doneModeling = false
 :: end
 @trigger    JobCompleted
 @cutscene
+
+$branch common.ringPhone
+
 {@drJules}  Well that's a bit depressing.
 {@player}   Yeah it is. Predicting the future is more fun when the future looks bright.
-{@drJules}  Don't loose hope yet. I have one last job for you.
+{@drJules}  Don't lose hope yet. I have one last job for you.
 
 
 // @trigger 	JobTaskCompleted
@@ -45,6 +51,9 @@ $set jobs:kelp-urchin-barren.doneModeling = false
 @when		scene:name == "RS-1B"
 @once
 @cutscene
+
+$branch common.ringPhone
+
 {@drJules}	Once you've scanned the species around here, you'll want to use your {item-name}Critter Tracker{/item-name} to tag all the species down here.
 $call GiveUpgrade(ROVTagger)
 
@@ -53,6 +62,9 @@ $call GiveUpgrade(ROVTagger)
 @when		taskId == "getTagged"
 @once
 @cutscene
+
+$branch common.ringPhone
+
 {@drJules}	Alright, that's the current population...
 			Maybe you can try getting the historical data from the probe?
 			There should be a probe around here.
@@ -100,7 +112,7 @@ $endif
 {@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. 
 {@kevin} It's what we call a model of the system.
 {@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
-{@kevin} You can do this by using the "Import Rule" button and selecting behaviors from your bestiary.
+{@kevin} You can do this by using the "Import Rule" button.
 {@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
 
 $call UpgradeFact(Urchin.Eats.BullKelp)

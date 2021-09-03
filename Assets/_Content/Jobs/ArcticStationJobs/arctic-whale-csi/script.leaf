@@ -3,21 +3,24 @@
 :: start
 @trigger    JobStarted
 @cutscene
+
+$branch common.ringPhone
+
 $set jobs:arctic-whale-csi.gotScans = 0
 $call GiveEntity(W_WhaleFall)
 $call GiveEntity(BowheadWhale)
 $call GiveFact(BowheadWhale.Reproduce)
 $call GiveFact(BowheadWhale.Eats.IceAlgae)
-$call GiveUpgrade(Microscope)
 {@profWhalen}	There are a lot of theories floating around about what happened to her. Here's some information on Bowhead whales.
 {@profWhalen}   You'll need a microscope to find their food source. Good luck!
+$call GiveUpgrade(Microscope)
 
 :: helpScanAndTag
 @trigger    RequestPartnerHelp
 @when 		jobs:arctic-whale-csi.gotScans == 0
 @cutscene
 {@player} 	What should I be doing again?
-{@kevin}	We need to scan and tag the curface critters at Site W.
+{@kevin}	We need to scan and tag the surface critters at Site W.
 {@kevin}	Looks like in total we'll need data about the salmon, sharks, and cod.
 
 :: finishedScans

@@ -3,7 +3,10 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profCempaka}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargussum.
+
+$branch common.ringPhone
+
+{@profCempaka}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargassum.
 {@player} 		Alright, so what do you want me to do?
 {@profCempaka}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
 {@player} 		Got it, I'll get started on it now.
@@ -23,7 +26,7 @@
 @cutscene
 {@player} 	How should this go again?
 {@kevin}	We want to determine if Sargassum is really to blame for the low light at Site R.
-{@kevin}	Try putting some Sargassum in a mesurement tank and see if the light levels change.
+{@kevin}	Try putting some Sargassum in a measurement tank and see if the light levels change.
 
 :: startExperiment
 @trigger    SceneStart
@@ -31,9 +34,9 @@
 @once
 @cutscene
 {@player}   Any tips of what we should to this time?
-{@kevin}  	We want to know if Sargussum really does lower light, so I think a mesurement tank is our best bet!
+{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
 
-:: experiementEnd
+:: experimentEnd
 @trigger    JobTaskUpdated
 @when 		HasFact(Sargassum.Consume.Light)
 @once
@@ -46,7 +49,7 @@
 @when 		HasFact(Sargassum.Consume.Light), scene:name != "ModelingPrototype", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
-{@kevin}	We should take this new knowlege about Sargassum and make a model to know for sure what's causing the low light. 
+{@kevin}	We should take this new knowledge about Sargassum and make a model to know for sure what's causing the low light. 
 
 
 :: InterventionModelingSetup
@@ -89,8 +92,8 @@
 @when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The graph now shows a predition of how the light levels change over time. 
-{@kevin}	Hit the "Save Predition" button to move on.
+{@kevin}	The graph now shows a prediction of how the light levels change over time. 
+{@kevin}	Hit the "Save Prediction" button to move on.
 
 
 :: InterventionModelingGraphComplete

@@ -7,14 +7,9 @@
 @boostScore 100
 @cutscene
 
-$yield
+$branch common.ringPhone
+
 $set    player:seen.drJules = true
-{@merchant} Hello friends.
-            It is I, Ezra, the Urchin Merchant.
-            {#smirk} Just a friendly reminder that your repair fee is due.
-            {#glare} A week ago.
-            {#deathSmile} No pressure!
-{hide-dialog}{wait 0.5}
 {@drJules}  Hi there folks! Welcome to the Kelpdom!
                     At least that's what I call the Great Channel Kelp Research Station.
                     You're... {player-name}, right? I'm Dr. Jules.
@@ -26,6 +21,64 @@ $set    player:seen.drJules = true
 
 {hide-dialog}{wait 0.5}
 $goto .tutorial
+
+:: returnToHelm-Merchant
+@trigger    RoomEnter
+@when       scene:name == "Ship", roomId == "helm", player:currentStation == "KelpStation", JobCompleted(kelp-welcome)
+@once
+@boostScore 100
+@cutscene
+
+$branch common.ringPhone
+
+$set    player:seen.ezra = true
+{@merchant} Hello, {player-name}. It's Ezra.
+            {#smirk} Just a friendly reminder that the repair fee for your ship| is due.
+            {#glare} {slow}A month ago.{/slow}
+            {#deathSmile} No pressure!
+{hide-dialog}{wait 0.5}
+{@kevin}    Ah, so when you told me you were light on cash...
+{@player}   ...Yeah.
+
+:: afterCompletingSaveUrchinBarren
+@trigger    RoomEnter
+@when       scene:name == "Ship", roomId == "helm", player:currentStation == "KelpStation", JobCompleted(kelp-save-urchin-barren)
+@once
+@cutscene
+
+$branch common.ringPhone
+
+{@merchant} Hi there, {player-name}.
+{@player}   Hello, Ezra.
+{@merchant} How's the ship holding up?
+{@player}   Pretty well!
+{@merchant} You know that you still owe me {cash}1000{/cash}.
+{@player}   Yeah. Listen, I'm-{wait 0.5}{auto}
+{@merchant #smirk} Who's the jelly with you?
+{@player}   This is-{wait 0.5}{auto}
+{@kevin}    No one. I'm no one.
+{@merchant} Wait, do I know you?
+{@kevin #happy} No no no, I've just got, you know, one of those faces
+{@merchant #glare} Thief!
+{@kevin #wideEyes}  Thief?
+{@merchant #glare}    You stole my book! "Jellyblob: A Historical Record"? Remember that?
+{@kevin #angry} I was| {h}borrowing{/h} it! You had the only copy I could find!
+{@merchant #smirk} Right.
+    {#} Okay {player-name}. All I want is to be paid for my work.
+    You find me {cash}1000{/cash}. Or I will come calling again.
+{hide-dialog}{wait 1}
+
+$if Seen(act1.chatter.ezra.doYouKnow)
+    {@kevin}    Huh.
+                I guess they did recognize me.
+$else
+    {@kevin}    Well.
+                That could have gone better.
+$endif
+
+{@player}   Gee. You think?
+{@kevin}    Sorry.
+{@player}   Well, at least Dr. Jules gave us leads on more jobs we can take...
 
 // tutorial
 
@@ -115,6 +168,7 @@ Have fun!
 
 :: chatter.jules.doYouKnow
 @trigger    PartnerTalk
+@when       player:seen.drJules
 @once
 @cutscene
 {@kevin #confused}
@@ -129,3 +183,19 @@ Have fun!
     This is the first I've seen of them in... a while.
 {@kevin}
     Ah, okay.
+
+:: chatter.ezra.doYouKnow
+@trigger    PartnerTalk
+@when       player:seen.ezra, !JobCompleted(kelp-save-urchin-barren)
+@once
+@cutscene
+{@kevin}    So, you owe Ezra some cash?
+{@player}   Yeah. My ship was busted and they fixed it up for me.
+            They're one of the best out there.
+            But|| they don't like not being paid.
+{@kevin}    Nope, they certainly do not.
+            {#narrow} Learned that from experience.
+{@player}   Oh, so you knew them before?
+{@kevin}    Yup. I may or may not have, uh, stolen something from them a few years back.
+{@player}   ...what?
+{@kevin #happy} But who knows, they might not even recognize me!

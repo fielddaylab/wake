@@ -54,6 +54,7 @@ namespace ProtoAqua.ExperimentV2
             inTank.Clickable.UserData = inTank;
             inTank.BackClickable.gameObject.SetActive(false);
             inTank.BackIndicators.SetAlpha(0);
+            inTank.DefaultWaterColor = inTank.WaterColor.Color;
 
             WorldUtils.ListenForLayerMask(inTank.WaterCollider, GameLayers.Critter_Mask, (c) => OnWaterEnter(inTank, c), null);
         }

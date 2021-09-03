@@ -81,6 +81,12 @@ namespace Aqua.Profile
 
         public uint ItemCount(StringHash32 inId)
         {
+            InvItem itemDesc = Assets.Item(inId);
+            if (itemDesc.Category() == InvItemCategory.Upgrade)
+            {
+                return m_UpgradeIds.Contains(inId) ? 1u : 0u;
+            }
+
             PlayerInv item;
             TryFindInv(inId, out item);
             return item.Count;

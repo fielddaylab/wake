@@ -25,6 +25,12 @@ namespace Aqua
             return Service.Localize(inText);
         }
 
+        [MethodImpl(256)]
+        static public string Find(TextId inText, object inContext)
+        {
+            return Service.Localize(inText, null, inContext);
+        }
+
         static public string Format(TextId inText, object inArg0)
         {
             var locService = Service;

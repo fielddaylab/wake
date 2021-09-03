@@ -280,10 +280,13 @@ namespace Aqua
 
             m_TaskDisplays.Reset();
             m_AllocatedTasks.Clear();
-            foreach(var taskId in m_CurrentActiveTasks)
+            if (m_CurrentJob != null)
             {
-                JobTask task = m_CurrentJob.Task(taskId);
-                AllocTaskDisplay(task, false);
+                foreach(var taskId in m_CurrentActiveTasks)
+                {
+                    JobTask task = m_CurrentJob.Task(taskId);
+                    AllocTaskDisplay(task, false);
+                }
             }
 
             InstantOrderTaskList();
