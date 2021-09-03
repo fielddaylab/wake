@@ -43,6 +43,24 @@ namespace Aqua
                     return default(Color32);
             }
         }
+
+        static public TimeColorPalette Darken(TimeColorPalette inPalette, float inRatio)
+        {
+            return new TimeColorPalette()
+            {
+                Morning = Darken(inPalette.Morning, inRatio),
+                Day = Darken(inPalette.Day, inRatio),
+                Evening = Darken(inPalette.Evening, inRatio),
+                Night = Darken(inPalette.Night, inRatio),
+            };
+        }
+
+        static private Color32 Darken(Color32 inColor, float inRatio)
+        {
+            Color newColor = (Color) inColor * inRatio;
+            newColor.a = inColor.a;
+            return newColor;
+        }
     }
 
     [Serializable]

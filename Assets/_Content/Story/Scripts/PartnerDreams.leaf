@@ -29,11 +29,9 @@
 {bgm-volume 0, 1} {fade-out black, 1} {wait 2} {voice silent}
 
 :: dreamEnd
-$call SyncTime()
 {hide-dialog} {wait 1} {/voice} {bgm-volume 1, 1} {fade-in 1} {wait 1.5}
 
 :: dreamEndQuick
-$call SyncTime()
 {hide-dialog} {/voice} {bgm-volume 1, 0.25} {fade-in 0.25} {wait 0.5}
 
 // defaults

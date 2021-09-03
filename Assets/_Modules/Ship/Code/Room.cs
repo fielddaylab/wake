@@ -22,6 +22,8 @@ namespace Aqua.Ship
 
         #endregion // Inspector
 
+        [NonSerialized] private ParticleSystem[] m_ParticleSystems;
+
         #region KeyValue
 
         StringHash32 IKeyValuePair<StringHash32, Room>.Key { get { return Id(); } }
@@ -33,6 +35,7 @@ namespace Aqua.Ship
 
         public void Initialize()
         {
+            m_ParticleSystems = GetComponentsInChildren<ParticleSystem>(false);
             Hide();
         }
 
@@ -60,6 +63,19 @@ namespace Aqua.Ship
             {
                 m_ScriptingGroup.gameObject.SetActive(true);
             }
+
+            foreach(var particleSystem in m_ParticleSystems)
+            {
+                if (particleSystem.main.prewarm)
+                {
+                    particleSystem.Simulate(particleSystem.main.duration, true, true, false);
+                    particleSystem.Play();
+                }
+                else
+                {
+                    particleSystem.Play();
+                }
+            }
         }
 
         private void Hide()
@@ -72,6 +88,12 @@ namespace Aqua.Ship
             if (m_ScriptingGroup)
             {
                 m_ScriptingGroup.gameObject.SetActive(false);
+            }
+
+            foreach(var particleSystem in m_ParticleSystems)
+            {
+                particleSystem.Clear();
+                particleSystem.Stop();
             }
         }
 

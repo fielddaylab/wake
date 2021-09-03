@@ -1,3 +1,4 @@
+using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +11,9 @@ namespace Aqua
         {
             int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
             SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
-            Services.State.LoadScene(nextScene, null, SceneLoadFlags.NoLoadingScreen);
+            Async.Invoke(() => {
+                Services.State.LoadScene(nextScene, null, null, SceneLoadFlags.NoLoadingScreen);
+            });
         }
     }
 }

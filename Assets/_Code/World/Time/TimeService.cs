@@ -366,16 +366,26 @@ namespace Aqua
 
         static private class LeafIntegration
         {
+            private enum SyncMode
+            {
+                NoSync,
+                Sync
+            }
+
             [LeafMember("AdvanceTime")]
-            static private void AdvanceTime(float inHours)
+            static private void AdvanceTime(float inHours, SyncMode inMode = SyncMode.Sync)
             {
                 Services.Time.AdvanceTimeBy(inHours);
+                if (inMode == SyncMode.Sync)
+                    EventApplyTime();
             }
 
             [LeafMember("SetTime")]
-            static private void EventSetTime(float inHours)
+            static private void EventSetTime(float inHours, SyncMode inMode = SyncMode.Sync)
             {
                 Services.Time.AdvanceTimeTo(inHours);
+                if (inMode == SyncMode.Sync)
+                    EventApplyTime();
             }
 
             [LeafMember("SyncTime")]

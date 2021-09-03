@@ -14,14 +14,16 @@ $set 	jobs:kelp-save-urchin-barren.doneModeling = false
 @cutscene
 
 $call UnlockStation(CoralStation)
+$call UnlockStation(ArcticStation)
+$call UnlockStation(BayouStation)
 $call GiveWaterProperty(Oxygen)
 $call GiveWaterProperty(Temperature)
 $call GiveWaterProperty(Light)
 
-{@drJules}  Absolutely Fantastic Work!
+{@drJules}  Absolutely fantastic Work!
 {@player}   Thanks. It was nice being able to use some science to help.
 {@drJules}  I'll upload the location of the Coral Station to your map.
-{@drJules} 	You can travel over there by using the map in the Ship's Help, have fun out there!
+{@drJules} 	You can travel over there by using the map in the Ship's Helm, have fun out there!
 
 ::helpGoToModeling
 @trigger    RequestPartnerHelp

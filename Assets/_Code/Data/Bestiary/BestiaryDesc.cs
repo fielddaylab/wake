@@ -188,7 +188,10 @@ namespace Aqua
         bool IOptimizableAsset.Optimize()
         {
             foreach(var fact in m_Facts)
+            {
+                Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
                 fact.BakeProperties(this);
+            }
 
             switch(m_Type)
             {

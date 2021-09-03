@@ -38,5 +38,17 @@ namespace Aqua
         {
             return TimeEvent.Transitioning;
         }
+
+        #if UNITY_EDITOR
+
+        [ContextMenu("Generate Sea and Sky alt colors")]
+        private void AutoGenerateSeaAndSkyAlts()
+        {
+            SeaColor1Palette = TimeColorPalette.Darken(SeaColor0Palette, 0.5f);
+            SkyColor1Palette = TimeColorPalette.Darken(SkyColor0Palette, 0.5f);
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

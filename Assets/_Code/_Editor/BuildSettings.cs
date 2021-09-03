@@ -9,6 +9,7 @@ using BeauUtil.Editor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
+using System;
 
 namespace Aqua.Editor
 {
@@ -145,7 +146,14 @@ namespace Aqua.Editor
             {
                 string branch = BuildUtils.GetSourceControlBranchName();
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
-                OptimizeAllAssets();
+                try
+                {
+                    OptimizeAllAssets();
+                }
+                catch(Exception e)
+                {
+                    throw new BuildFailedException(e);
+                }
             }
         }
     }

@@ -19,6 +19,8 @@ namespace Aqua.Profile
 
         public GTDate CurrentTime;
         public TimeMode TimeMode;
+
+        private int m_RandomSeedOffset;
         
         private bool m_HasChanges;
 
@@ -84,6 +86,7 @@ namespace Aqua.Profile
             m_UnlockedStationIds.Add(m_CurrentStationId);
 
             CurrentTime = Services.Time.StartingTime();
+            m_RandomSeedOffset = RNG.Instance.Next();
         }
 
         public void FullSync()
@@ -140,7 +143,7 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 2; } }
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -153,6 +156,15 @@ namespace Aqua.Profile
                 ioSerializer.UInt32Proxy("mapLocationId", ref m_CurrentMapEntranceId);
                 ioSerializer.Int64Proxy("time", ref CurrentTime);
                 ioSerializer.Enum("timeMode", ref TimeMode);
+            }
+
+            if (ioSerializer.ObjectVersion >= 3)
+            {
+                ioSerializer.Serialize("randomSeedOffset", ref m_RandomSeedOffset);
+            }
+            else
+            {
+                m_RandomSeedOffset = RNG.Instance.Next();
             }
         }
 

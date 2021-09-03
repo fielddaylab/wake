@@ -84,6 +84,7 @@ namespace Aqua
         [SerializeField] private TMP_Text m_SpeakerLabel = null;
         [SerializeField] private Graphic m_SpeakerLabelBackground = null;
         [SerializeField] private Image m_SpeakerPortrait = null;
+        [SerializeField] private float m_SpeakerSizeReference = 128;
 
         [Header("Text")]
 
@@ -113,6 +114,7 @@ namespace Aqua
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
         [NonSerialized] private TagStringEventHandler m_EventHandler;
+        [NonSerialized] private Vector2 m_DefaultSpeakerPortraitSize;
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Routine m_RebuildRoutine;
@@ -132,6 +134,9 @@ namespace Aqua
 
             if (m_SpeakerLabelBackground)
                 m_DefaultNamePalette.Background = m_SpeakerLabelBackground.color;
+
+            if (m_SpeakerPortrait)
+                m_DefaultSpeakerPortraitSize = m_SpeakerPortrait.rectTransform.sizeDelta;
 
             m_DefaultTextPalette.Content = m_TextDisplay.color;
 
@@ -287,6 +292,11 @@ namespace Aqua
                 if (m_SpeakerPortrait)
                 {
                     m_SpeakerPortrait.sprite = portraitSprite;
+                    float portraitScale = portraitSprite.rect.width / m_SpeakerSizeReference;
+                    Vector2 newSize;
+                    newSize.x = portraitSprite.rect.width / m_SpeakerSizeReference * m_DefaultSpeakerPortraitSize.x;
+                    newSize.y = portraitSprite.rect.height / m_SpeakerSizeReference * m_DefaultSpeakerPortraitSize.y;
+                    m_SpeakerPortrait.rectTransform.sizeDelta = newSize;
                     m_SpeakerPortrait.gameObject.SetActive(true);
                 }
             }
