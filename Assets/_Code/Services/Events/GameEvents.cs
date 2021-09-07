@@ -24,6 +24,7 @@ namespace Aqua
         static public readonly StringHash32 SceneLoaded = "scene:loaded"; // no args
 
         static public readonly StringHash32 RoomChanged = "room:changed"; // string roomName
+        static public readonly StringHash32 RoomLockChanged = "room:lockChanged"; // no args
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start"; // no args
         static public readonly StringHash32 CutsceneEnd = "cutscene:end"; // no args

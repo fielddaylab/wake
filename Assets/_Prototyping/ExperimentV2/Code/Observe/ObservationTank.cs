@@ -249,7 +249,7 @@ namespace ProtoAqua.ExperimentV2
                         using(var table = TempVarTable.Alloc())
                         {
                             table.Set("factId", inFactId);
-                            Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved);
+                            Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved, table);
                         }
                     });
             }
@@ -258,7 +258,7 @@ namespace ProtoAqua.ExperimentV2
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("factId", inFactId);
-                    Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved);
+                    Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved, table);
                 }
             }
         }
@@ -341,10 +341,19 @@ namespace ProtoAqua.ExperimentV2
             m_SelectEnvPanel.Hide();
             
             m_CameraBlinking.enabled = true;
-            Routine.Start(this, StartExperiment()).TryManuallyUpdate(0);
+
+            using (var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                var startThread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
+                Routine.Start(this, StartExperiment(startThread)).TryManuallyUpdate(0);
+            }
+
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
         }
 
-        private IEnumerator StartExperiment()
+        private IEnumerator StartExperiment(ScriptThreadHandle inThread)
         {
             m_BottomPanelGroup.blocksRaycasts = false;
             m_InProgressGroup.blocksRaycasts = false;
@@ -389,6 +398,15 @@ namespace ProtoAqua.ExperimentV2
             yield return PopulateSummaryScreen(inResult);
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();
+            
+            using (var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
+            }
+
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
         }
 
         private void ClearStateAfterExperiment()

@@ -585,6 +585,24 @@ namespace Aqua
                 return Services.Data.Profile.Map.LockStation(inStationId);
             }
 
+            [LeafMember("RoomUnlocked")]
+            static private bool RoomUnlocked(StringHash32 inRoomId)
+            {
+                return Services.Data.Profile.Map.IsRoomUnlocked(inRoomId);
+            }
+
+            [LeafMember("UnlockRoom")]
+            static private bool UnlockRoom(StringHash32 inRoomId)
+            {
+                return Services.Data.Profile.Map.UnlockRoom(inRoomId);
+            }
+
+            [LeafMember("LockRoom")]
+            static private bool LockRoom(StringHash32 inRoomId)
+            {
+                return Services.Data.Profile.Map.LockRoom(inRoomId);
+            }
+
             #endregion // World
 
             #region Scheduled Events

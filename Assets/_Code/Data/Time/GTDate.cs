@@ -237,7 +237,7 @@ namespace Aqua
             Assert.True(inHours >= 0 && inHours < 24, "Invalid hours {0}", inHours);
             Assert.True(inMinutes >= 0 && inMinutes < 60, "Invalid minutes {0}", inMinutes);
 
-            return (ushort) (inHours + (inMinutes / 60f) * TicksPerHour);
+            return (ushort) ((inHours + (inMinutes / 60f)) * TicksPerHour);
         }
 
         /// <summary>

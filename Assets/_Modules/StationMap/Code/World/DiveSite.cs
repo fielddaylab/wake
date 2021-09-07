@@ -52,7 +52,7 @@ namespace Aqua.StationMap
                 {
                     tempTable.Set("siteId", m_MapId);
                     tempTable.Set("siteHighlighted", m_Highlighted);
-                    Services.Script.TriggerResponse(Trigger_Found, null, null, tempTable);
+                    Services.Script.TriggerResponse(Trigger_Found, tempTable);
                 }
             }
         }

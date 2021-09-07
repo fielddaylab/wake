@@ -16,9 +16,10 @@ namespace Aqua.Profile
 
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UnlockedRoomIds = new HashSet<StringHash32>();
 
         public GTDate CurrentTime;
-        public TimeMode TimeMode;
+        public TimeMode TimeMode = TimeMode.FreezeAt12;
 
         private int m_RandomSeedOffset;
         
@@ -80,6 +81,39 @@ namespace Aqua.Profile
 
         #endregion // Unlocked Stations
 
+        #region Ship Rooms
+
+        public bool IsRoomUnlocked(StringHash32 inRoomId)
+        {
+            return m_UnlockedRoomIds.Contains(inRoomId);
+        }
+
+        public bool UnlockRoom(StringHash32 inRoomId)
+        {
+            if (m_UnlockedRoomIds.Add(inRoomId))
+            {
+                m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool LockRoom(StringHash32 inRoomId)
+        {
+            if (m_UnlockedRoomIds.Remove(inRoomId))
+            {
+                m_HasChanges = true;
+                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Ship Rooms
+
         public void SetDefaults()
         {
             m_CurrentStationId = Services.Assets.Map.DefaultStationId();
@@ -87,6 +121,11 @@ namespace Aqua.Profile
 
             CurrentTime = Services.Time.StartingTime();
             m_RandomSeedOffset = RNG.Instance.Next();
+
+            foreach(var room in Services.Assets.Map.DefaultUnlockedRooms())
+            {
+                m_UnlockedRoomIds.Add(room);
+            }
         }
 
         public void FullSync()
@@ -143,7 +182,7 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 3; } }
+        ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -165,6 +204,18 @@ namespace Aqua.Profile
             else
             {
                 m_RandomSeedOffset = RNG.Instance.Next();
+            }
+
+            if (ioSerializer.ObjectVersion >= 4)
+            {
+                ioSerializer.UInt32ProxySet("unlockedRooms", ref m_UnlockedRoomIds);
+            }
+            else
+            {
+                foreach(var room in Services.Assets.Map.DefaultUnlockedRooms())
+                {
+                    m_UnlockedRoomIds.Add(room);
+                }
             }
         }
 

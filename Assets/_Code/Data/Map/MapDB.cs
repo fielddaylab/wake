@@ -11,7 +11,12 @@ namespace Aqua
     {
         #region Inspector
 
+        [Header("Rooms")]
+        [SerializeField] private SerializedHash32[] m_RoomIds = null;
+
+        [Header("Defaults")]
         [SerializeField] private SerializedHash32 m_DefaultStationId = "Station1";
+        [SerializeField] private SerializedHash32[] m_DefaultUnlockedRooms = null;
 
         #endregion // Inspector
 
@@ -20,7 +25,9 @@ namespace Aqua
         private readonly HashSet<MapDesc> m_DiveSites = new HashSet<MapDesc>();
 
         public StringHash32 DefaultStationId() { return m_DefaultStationId; }
+        public ListSlice<SerializedHash32> DefaultUnlockedRooms() { return m_DefaultUnlockedRooms; }
 
+        public ListSlice<SerializedHash32> Rooms() { return m_RoomIds; }
         public IReadOnlyCollection<MapDesc> Stations() { return m_Stations; }
         public IReadOnlyCollection<MapDesc> DiveSites() { return m_DiveSites; }
 

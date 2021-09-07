@@ -6,7 +6,7 @@ using Aqua.Scripting;
 namespace Aqua.Ship
 {
     [RequireComponent(typeof(CursorInteractionHint))]
-    public class RoomLink : MonoBehaviour, IPointerClickHandler
+    public class RoomLink : MonoBehaviour, IPointerClickHandler, ISceneOptimizable
     {
         private enum LinkType
         {
@@ -20,6 +20,8 @@ namespace Aqua.Ship
         [SerializeField, ShowIfField("ShowScene")] private string m_Scene = null;
         [SerializeField, ShowIfField("ShowScene")] private bool m_StopMusic = true;
         [SerializeField, ShowIfField("ShowScene")] private bool m_SuppressAutosave = false;
+
+        [SerializeField, HideInInspector] public StringHash32 LinkId;
 
         private void Awake()
         {
@@ -61,6 +63,40 @@ namespace Aqua.Ship
         private bool ShowScene()
         {
             return m_LinkType == LinkType.Scene;
+        }
+
+        void ISceneOptimizable.Optimize()
+        {
+            switch(m_LinkType)
+            {
+                case LinkType.Room:
+                    LinkId = m_Room.Id();
+                    break;
+
+                case LinkType.Scene:
+                    {
+                        LinkId = StringHash32.Null;
+                        foreach(var map in ValidationUtils.FindAllAssets<MapDesc>())
+                        {
+                            if (map.SceneName() == m_Scene)
+                            {
+                                LinkId = map.Id();
+                                break;
+                            }
+                        }
+
+                        if (LinkId.IsEmpty)
+                            LinkId = m_Scene;
+
+                        break;
+                    }
+                
+                case LinkType.Nav:
+                    {
+                        LinkId = "nav";
+                        break;
+                    }
+            }
         }
 
         #endif // UNITY_EDITOR

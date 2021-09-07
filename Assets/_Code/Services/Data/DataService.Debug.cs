@@ -191,6 +191,17 @@ namespace Aqua
 
             yield return mapMenu;
 
+            // ship rooms
+
+            DMInfo shipMenu = new DMInfo("Ship Rooms");
+
+            foreach(var room in Services.Assets.Map.Rooms())
+            {
+                RegisterRoomToggle(shipMenu, room);
+            }
+
+            yield return shipMenu;
+
             // inventory menu
 
             DMInfo invMenu = new DMInfo("Inventory");
@@ -389,6 +400,20 @@ namespace Aqua
                         Services.Data.Profile.Map.UnlockStation(inStationId);
                     else
                         Services.Data.Profile.Map.LockStation(inStationId);
+                }
+            );
+        }
+
+        static private void RegisterRoomToggle(DMInfo inMenu, StringHash32 inRoomId)
+        {
+            inMenu.AddToggle(inRoomId.ToDebugString(),
+                () => { return Services.Data.Profile.Map.IsRoomUnlocked(inRoomId); },
+                (b) =>
+                {
+                    if (b)
+                        Services.Data.Profile.Map.UnlockRoom(inRoomId);
+                    else
+                        Services.Data.Profile.Map.LockRoom(inRoomId);
                 }
             );
         }

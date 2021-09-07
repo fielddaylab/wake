@@ -7,6 +7,7 @@ using BeauUtil.Debugger;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Aqua.Scripting;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -201,6 +202,14 @@ namespace ProtoAqua.ExperimentV2
 
             DisplaySummaryPopup();
 
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+            using (var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
+            }
+
             m_AddCrittersPanel.ClearSelection();
         }
 
@@ -261,6 +270,15 @@ namespace ProtoAqua.ExperimentV2
                 ResetWaterPropertiesForCritter(Services.Data.Profile.Bestiary);
 
                 m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
+
+                Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+
+                using (var table = TempVarTable.Alloc())
+                {
+                    table.Set("tankType", m_ParentTank.Type.ToString());
+                    table.Set("tankId", m_ParentTank.Id);
+                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
+                }
 
                 m_AddCrittersPanel.Hide();
             }

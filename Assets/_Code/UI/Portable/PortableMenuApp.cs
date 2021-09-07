@@ -47,7 +47,7 @@ namespace Aqua.Portable
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("appId", m_Id.Hash());
-                Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, table);
             }
         }
 

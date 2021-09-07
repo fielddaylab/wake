@@ -58,5 +58,6 @@ namespace Aqua
     public enum MapFlags
     {
         UnlockedByDefault = 0x01,
+        HasRooms = 0x02
     }
 }

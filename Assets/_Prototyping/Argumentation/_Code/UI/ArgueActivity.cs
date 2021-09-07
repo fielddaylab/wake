@@ -236,7 +236,7 @@ namespace ProtoAqua.Argumentation
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", Services.Data.CurrentJobId());
-                yield return Services.Script.TriggerResponse("ArgumentationComplete");
+                yield return Services.Script.TriggerResponse("ArgumentationComplete", table);
             }
 
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());

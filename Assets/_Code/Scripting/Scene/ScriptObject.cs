@@ -128,7 +128,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
-                return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, null, table);
+                return Services.Script.TriggerResponse(GameTriggers.InspectObject, table);
             }
         }
 

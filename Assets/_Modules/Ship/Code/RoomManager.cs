@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
@@ -16,6 +17,7 @@ namespace Aqua.Ship
 
         [SerializeField, Required] private Room m_DefaultRoom = null;
         [SerializeField, HideInInspector] private Room[] m_Rooms;
+        [SerializeField, HideInInspector] private RoomLink[] m_Links;
 
         #endregion // Inspector
 
@@ -23,6 +25,20 @@ namespace Aqua.Ship
         private Routine m_Transition;
 
         #region Scene Load
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            Services.Events.Register(GameEvents.RoomLockChanged, RefreshRoomLinks, this);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            Services.Events?.DeregisterAll(this);
+        }
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
         {
@@ -40,6 +56,9 @@ namespace Aqua.Ship
                 room.Initialize();
                 yield return null;
             }
+
+            Services.Data.Profile.Map.UnlockRoom(m_DefaultRoom.Id());
+            RefreshRoomLinks();
         }
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
@@ -78,7 +97,7 @@ namespace Aqua.Ship
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("roomId", inRoom.Id());
-                    Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
+                    Services.Script.TriggerResponse(Trigger_RoomEnter, table);
                 }
             }
             else
@@ -102,7 +121,7 @@ namespace Aqua.Ship
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("roomId", m_CurrentRoom.Id());
-                    Services.Script.TriggerResponse(Trigger_RoomEnter, null, null, table);
+                    Services.Script.TriggerResponse(Trigger_RoomEnter, table);
                 }
                 yield return fader.Object.Hide(false);
             }
@@ -112,6 +131,15 @@ namespace Aqua.Ship
         }
 
         #endregion // Room Transitions
+
+        private void RefreshRoomLinks()
+        {
+            MapData map = Services.Data.Profile.Map;
+            foreach(var roomLink in m_Links)
+            {
+                roomLink.gameObject.SetActive(map.IsRoomUnlocked(roomLink.LinkId));
+            }
+        }
 
         private Room GetRoom(StringHash32 inId)
         {
@@ -130,6 +158,7 @@ namespace Aqua.Ship
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);
             m_Rooms = rooms.ToArray();
+            m_Links = FindObjectsOfType<RoomLink>();
         }
 
         #endif // UNITY_EDITOR

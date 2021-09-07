@@ -250,6 +250,12 @@ namespace Aqua
             m_ProfileName = inUserCode;
             m_CurrentSaveData = inProfile;
 
+            uint oldVersion = inProfile.Version;
+            if (SavePatcher.TryPatch(inProfile))
+            {
+                Log.Msg("[DataService] Patched save data from version {0} to {1}", oldVersion, SavePatcher.CurrentVersion);
+            }
+
             if (!string.IsNullOrEmpty(inUserCode))
             {
                 m_LastKnownProfile = inUserCode;

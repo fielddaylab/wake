@@ -79,7 +79,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobStarted, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.JobStarted, table);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobSwitched, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.JobSwitched, table);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobCompleted, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.JobCompleted, table);
             }
         }
 
@@ -113,7 +113,7 @@ namespace Aqua
             {
                 table.Set("jobId", m_LoadedJobId);
                 table.Set("taskId", inTaskId);
-                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, table);
             }
         }
 
@@ -122,7 +122,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, table);
             }
         }
 
@@ -135,14 +135,14 @@ namespace Aqua
                     case BestiaryUpdateParams.UpdateType.Entity:
                         {
                             table.Set("entryId", inUpdateParams.Id);
-                            Services.Script.TriggerResponse(GameTriggers.BestiaryEntryAdded, null, null, table);
+                            Services.Script.TriggerResponse(GameTriggers.BestiaryEntryAdded, table);
                             break;
                         }
 
                     case BestiaryUpdateParams.UpdateType.Fact:
                         {
                             table.Set("factId", inUpdateParams.Id);
-                            Services.Script.TriggerResponse(GameTriggers.BestiaryFactAdded, null, null, table);
+                            Services.Script.TriggerResponse(GameTriggers.BestiaryFactAdded, table);
                             break;
                         }
                 }
@@ -154,7 +154,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("factId", inFactAdded);
-                Services.Script.TriggerResponse(GameTriggers.BestiaryFactAddedToModel, null, null, table);
+                Services.Script.TriggerResponse(GameTriggers.BestiaryFactAddedToModel, table);
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Profile;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -200,14 +201,24 @@ namespace ProtoAqua.ExperimentV2
             experimentData.Start = GTDate.Now;
             experimentData.Duration = GTTimeSpan.Zero;
 
-            Routine.Start(this, RunExperiment(experimentData)).TryManuallyUpdate(0);
+            using (var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                var thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
+                Routine.Start(this, RunExperiment(experimentData, thread)).TryManuallyUpdate(0);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+            }
         }
 
-        private IEnumerator RunExperiment(InProgressExperimentData inExperiment)
+        private IEnumerator RunExperiment(InProgressExperimentData inExperiment, ScriptThreadHandle inThread)
         {
             ExperimentResult result = Evaluate(inExperiment);
             Services.Input.PauseAll();
             Services.UI.ShowLetterbox();
+            if (inThread.IsRunning())
+                yield return inThread.Wait();
+            
             using(var fader = Services.UI.WorldFaders.AllocFader())
             {
                 yield return fader.Object.Show(Color.black, 0.5f);
@@ -239,6 +250,15 @@ namespace ProtoAqua.ExperimentV2
             yield return PopulateSummaryScreen(result);
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();
+
+            using (var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
+            }
+
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
         }
 
         private void ClearStateAfterExperiment()

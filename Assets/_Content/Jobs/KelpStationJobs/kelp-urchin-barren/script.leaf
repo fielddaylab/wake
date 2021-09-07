@@ -71,6 +71,16 @@ $branch common.ringPhone
 			Take this {item-name}Probe Decryptor{/item-name}, it should let you decode the data from the probes.
 $call GiveUpgrade(ProbeHacker)
 
+:: unlockModeling
+@trigger	JobTaskCompleted
+@who		kevin
+@when		taskId == "getProbeData" 
+@once
+@chatter
+$call	UnlockRoom(modelingRoom)
+$call	UnlockRoom(Modeling)
+{@kevin}	Hmmm, okay. Let's take this back to modeling.
+
 :: helpAtSiteB
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1B"

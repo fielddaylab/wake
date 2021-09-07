@@ -7,6 +7,7 @@ namespace Aqua.Profile
     {
         public string Id;
         public long LastUpdated;
+        public uint Version;
 
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
@@ -20,6 +21,7 @@ namespace Aqua.Profile
         public SaveData()
         {
             Options.SetDefaults(OptionsData.Authority.All);
+            Version = SavePatcher.CurrentVersion;
         }
         
         #region IProfileChunk
@@ -29,6 +31,15 @@ namespace Aqua.Profile
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
+            if (ioSerializer.ObjectVersion >= 4)
+            {
+                ioSerializer.Serialize("version", ref Version);
+            }
+            else
+            {
+                Version = 0;
+            }
+
             ioSerializer.Serialize("id", ref Id);
             ioSerializer.Serialize("lastUpdated", ref LastUpdated, 0L);
             

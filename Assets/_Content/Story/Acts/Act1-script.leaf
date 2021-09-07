@@ -78,7 +78,11 @@ $endif
 
 {@player}   Gee. You think?
 {@kevin}    Sorry.
-{@player}   Well, at least Dr. Jules gave us leads on more jobs we can take...
+{@player}   This might take a lot longer than I thought.
+            Well, at least Dr. Jules gave us leads on more jobs we can take...
+
+$call   UnlockRoom("quarters")
+$call   ShowPopup("New Ship Room Unlocked!", "You can now visit the Quarters below deck!")
 
 // tutorial
 

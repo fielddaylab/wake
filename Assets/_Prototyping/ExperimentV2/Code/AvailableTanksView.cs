@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua;
 using Aqua.Cameras;
+using Aqua.Scripting;
 using AquaAudio;
 using BeauRoutine;
 using BeauUtil;
@@ -149,7 +150,14 @@ namespace ProtoAqua.ExperimentV2
             m_SelectedTank = tank;
             DeactivateTankClickHandlers();
 
-            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, tank.Type);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
+
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", tank.Type.ToString());
+                table.Set("tankId", tank.Id);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankViewed, table);
+            }
 
             m_SelectedTank.ActivateMethod?.Invoke();
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));

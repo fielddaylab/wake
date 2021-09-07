@@ -213,7 +213,15 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget = default(StringHash32), ScriptObject inContext = null, VariantTable inContextTable = null, string inThreadId = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, VariantTable inContextTable = null)
+        {
+            return TriggerResponse(inTriggerId, null, null, inContextTable);
+        }
+
+        /// <summary>
+        /// Attempts to trigger a response.
+        /// </summary>
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget, ScriptObject inContext = null, VariantTable inContextTable = null, string inThreadId = null)
         {
             TryCallFunctions(inTriggerId, inTarget, inContext, inContextTable);
 
