@@ -38,68 +38,34 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 :: gotScans
 @trigger    JobTaskUpdated
-@when 		scene:name == "RS-2V", HasEntity(Fishers), HasEntity(RedGrouper), scene:name == "RS-2V"
+@when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), jobs:coral-fishy-bizz.gotScans == false
 @cutscene
-$if HasFact(Fishers.Eats.RedGrouper)
-	$if HasEntity(ReefEdge)
-		$set jobs:coral-fishy-bizz.gotScans = true
-		{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
-	$else
-		{@kevin} 	So that's the Fisher and Grouper scans done.
-		{@kevin} 	I think the rest of the data we need should be in the probe.
-	$endif
-$else
-	$if HasFact(RedGrouper.Reproduce)
-		{@kevin} 	So that's the Fisher and Grouper scans done.
-		{@kevin} 	Next all we need is the fishing rate. Maybe try scanning those nets?
-	$else
-		{@kevin} 	So that's the Fisher and Grouper scans done.
-		{@kevin} 	Now we just need the Grouper reproduction rate, and the fishing rate.
-		{@kevin} 	Try checking the probe and those nets!
-	$endif
-$endif
+$set jobs:coral-fishy-bizz.gotScans = true
+{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
 
-:: helpAtSiteV_1
+:: helpAtSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
 @cutscene
 {@player} 	What should I be looking for here?
 $if HasEntity(Fishers)
-	$if HasEntity(RedGrouper)
-		{@kevin} 	Congrats! You have found a bug! 
-		{@kevin} 	If this text is shown something has gone very, very wrong...
+	$if HasFact(RedGrouper.Reproduce)
+		$if HasFact(ReefEdge.PopulationHistory.Fishers)
+			{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
+		$else
+			{@kevin} 	Did you try scanning the population probe yet? Some of the data we need should be in there.
+		$endif
 	$else
-		{@kevin} 	Now all that's left is the Red Grouper.
+		{@kevin} 	Looks like we still need the Red Grouper.
 		{@kevin} 	Try seeing if you can find any swimming around. 
 	$endif
 $else
-	$if HasEntity(RedGrouper)
+	$if HasFact(RedGrouper.Reproduce)
 		{@kevin} 	Looks like we still need some info on the fishers. 
 		{@kevin} 	Try scanning some of those nets near the surface.
 	$else
 		{@kevin} 	First, we need to scan some Red Grouper and the Fisher nets.
 		{@kevin} 	Drive around and see if you can find them!
-	$endif
-$endif
-
-:: helpAtSiteV_2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-2V", HasEntity(Fishers), HasEntity(RedGrouper)
-@boostScore 2 //just in case because I don't trust myself
-@cutscene
-{@player} 	What should I do now?
-$if HasFact(Fishers.Eats.RedGrouper)
-	$if HasEntity(ReefEdge)
-		{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
-	$else
-		{@kevin} 	Did you try scanning the probe yet? Some of the data we need should be in there.
-	$endif
-$else
-	$if HasFact(RedGrouper.Reproduce)
-		{@kevin} 	Next all we need is the fishing rate. Maybe try scanning those nets?
-	$else
-		{@kevin} 	Looks like we still need the Grouper reproduction rate, and the fishing rate.
-		{@kevin} 	Make sure to get the probe, and try scanning those nets.
 	$endif
 $endif
 

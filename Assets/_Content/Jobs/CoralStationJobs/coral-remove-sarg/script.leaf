@@ -10,8 +10,20 @@ $branch common.ringPhone
 {@player} 		Alright, so what do you want me to do?
 {@profCempaka}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
 {@player} 		Got it, I'll get started on it now.
-{@kevin}		{player-name}, let's start by heading to the experiment lab!
+$if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+	{@kevin}		{player-name}, let's start by heading to the experiment lab!
+$else
+	{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
+$endif
 {@player} 		Good thinking, Kevin!
+
+:: helpScanProbe
+@trigger    RequestPartnerHelp
+@when 		!HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@boostScore 1
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin} 	First, let's head back to Site R and scan the population Probe.
 
 :: helpGoToExperiment
 @trigger    RequestPartnerHelp
@@ -33,8 +45,14 @@ $branch common.ringPhone
 @when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @once
 @cutscene
-{@player}   Any tips of what we should to this time?
-{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
+$if HasUpgrade(MeasurementTank)
+	{@player}   Any tips of what we should to this time?
+	{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
+$else
+	{@profCempaka} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
+	{@profCempaka} I don't have any spares. Maybe check with my colleagues at other stations.
+$endif
+
 
 :: experimentEnd
 @trigger    JobTaskUpdated
@@ -78,6 +96,7 @@ $branch common.ringPhone
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
+{@kevin}	If you can't get the historical data to match, you might need to spend more time in the Experiment Room first.
 
 
 :: InterventionModelSyncedImmediate
