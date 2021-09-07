@@ -45,8 +45,14 @@ $endif
 @when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @once
 @cutscene
-{@player}   Any tips of what we should to this time?
-{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
+$if HasUpgrade(MeasurementTank)
+	{@player}   Any tips of what we should to this time?
+	{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
+$else
+	{@profCempaka} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
+	{@profCempaka} I don't have any spares. Maybe check with my colleagues at other stations.
+$endif
+
 
 :: experimentEnd
 @trigger    JobTaskUpdated
