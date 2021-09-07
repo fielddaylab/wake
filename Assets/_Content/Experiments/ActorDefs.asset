@@ -316,18 +316,18 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: IceAlgae
-        m_Hash: 2471897816
+        m_Source: Diatoms
+        m_Hash: 1229737088
       FactId:
-        m_Source: BowheadWhale.Eats.IceAlgae
-        m_Hash: 98285966
+        m_Source: BowheadWhale.Eats.Diatoms
+        m_Hash: 2996010258
     StressedEatTargets:
     - TargetId:
-        m_Source: IceAlgae
-        m_Hash: 2471897816
+        m_Source: Diatoms
+        m_Hash: 1229737088
       FactId:
-        m_Source: BowheadWhale.Eats.IceAlgae
-        m_Hash: 98285966
+        m_Source: BowheadWhale.Eats.Diatoms
+        m_Hash: 2996010258
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -779,6 +779,69 @@ MonoBehaviour:
       y: -0.17999999
       width: 0.35999998
       height: 0.35999998
+  - Id:
+      m_HashValue: 1229737088
+    Type: {fileID: 11400000, guid: 3e61b9513747c54468c9941bc93a52d1, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 7d713684f571df649bd56d287f8c0f89,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 0.15
+      AvoidTankTopBottomRadius: 0.1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 0.2
+      MovementSpeed: 0.2
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 0
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 0
+    StateEvaluator:
+      Oxygen:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      CarbonDioxide:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.044999998
+      y: -0.044999998
+      width: 0.089999996
+      height: 0.089999996
   - Id:
       m_HashValue: 3510470690
     Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}
