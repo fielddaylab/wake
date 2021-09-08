@@ -1,1 +1,108 @@
 #basePath   job.bayou-oxygen-tracking
+
+:: start
+@trigger JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+$set jobs:bayou-oxygen-tracking.doneScanning = false
+$set jobs:bayou-oxygen-tracking.doneMeasuring = false
+$set jobs:bayou-oxygen-tracking.doneModeling = false
+{@profHarper} Hey, the shrimp situation in the deadzone is still looking pretty dire.
+{@profHarper} Do you think that any of your more recently discovered tools could help with that?
+{@player} Yeah, I think I might have an idea.  Let's head back to site P, Kevin.
+
+:: helpGoToSite
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneScanning = false, scene:name != "RS-3P"
+@cutscene
+
+{@player} Where are we headed again?
+{@kevin} Site P! The mystery of the dead zone has yet to be solved.
+{@kevin} We're looking to see if there's anything new to scan.
+
+:: helpScanWithMicroscope
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneScanning = false, scene:name == "RS-3P"
+@cutscene
+
+{@player} What exactly are we looking for here?
+{@kevin} Well, with that newfangled telescope of yours, there appear to be a few new critters to find!
+{@kevin} Make sure you got all of them though. This muck is packed!
+
+:: helpMeasureOxygen
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneScanning = true, jobs:bayou-oxygen-tracking.doneMeasuring = false
+@cutscene
+
+$if global:nav.shipRoom == "experiment"
+    {@player} How should I continue from here?
+    {@kevin} Try using the measurement tank to find how these new species use oxygen.
+$else
+    {@player} Alright, what's next on the docket?
+    {@kevin} These new microscopic creatures are super interesting, but we still don't know what exactly they do...
+    {@kevin} Finding the ways they interact with oxygen is important, so let's head to the experiment room!
+$endif
+
+:: helpGetToModel
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, global:nav.shipRoom != "modeling"
+@cutscene
+
+{@player} What's next?
+{@kevin} We should head to the modeling room so we can nail down what caused this lack of oxygen.
+
+:: helpModel1
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, modeling:phase == "universal"
+@cutscene
+
+{@player} Alright, how do I get this started again?
+{@kevin} Go ahead and plug in those new critters into the modeling software, using the "Import Rule" button.
+
+:: helpModel2
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, modeling:phase == "model"
+@cutscene
+
+{@player} So how do I get this bit going again?
+{@kevin} We're trying to get it to sync.  Line the sliders so that they match the population data we've gathered and it should work.
+{@kevin} If not, we're missing some info, but I think we should have everything.
+
+:: helpReportBack
+@trigger RequestPartnerHelp
+@when jobs:bayou-oxygen-tracking.doneModeling = true,
+@cutscene
+
+{@player} OK, what now?
+{@kevin} We just need to report back to professor Harper!
+
+:: end
+@trigger JobCompleted
+@cutscene
+
+{@kevin} Great work! I'm glad we finally figured out the cause of that bad shrimp-tuation! Congratula-shrimp to us!
+{@player} Yeah!! ... Wait, what?
+{@kevin} Yeah, that one might've been a bit of a stretch.
+
+:: taskUpdate1
+@trigger JobTaskUpdated
+@when jobs:bayou-oxygen-tracking.doneScanning == false
+@chatter
+
+$set jobs:bayou-oxygen-tracking.doneScanning = true
+
+:: taskUpdate2
+@trigger JobTaskUpdated
+@when jobs:bayou-oxygen-tracking.doneMeasuring == false, jobs:bayou-oxygen-tracking.doneScanning == true
+@chatter
+
+$set jobs:bayou-oxygen-tracking.doneMeasuring = true
+
+:: taskUpdate3
+@trigger JobTaskUpdated
+@when jobs:bayou-oxygen-tracking.doneModeling == false, jobs:bayou-oxygen-tracking.doneMeasuring == true, jobs:bayou-oxygen-tracking.doneScanning == true
+@chatter
+
+$set jobs:bayou-oxygen-tracking.doneModeling = true
