@@ -330,7 +330,8 @@ namespace Aqua
                     if (bestiary.Category() == BestiaryDescCategory.Critter)
                     {
                         return Services.UI.Popup.Display(
-                            Loc.Format("ui.popup.newBestiary.critter.header", bestiary.CommonName()), null, bestiary.Icon()).Wait();
+                            Loc.Format("ui.popup.newBestiary.critter.header",
+                                bestiary.CommonName()), null, bestiary.Icon()).Wait();
                     }
                     else
                     {

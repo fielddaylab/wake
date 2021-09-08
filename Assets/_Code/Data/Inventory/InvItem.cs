@@ -15,9 +15,9 @@ namespace Aqua
         [SerializeField, AutoEnum] private InvItemFlags m_Flags = InvItemFlags.None;
 
         [Header("Text")]
-        [SerializeField] private TextId m_NameTextId = null;
-        [SerializeField] private TextId m_PluralNameTextId = null;
-        [SerializeField] private TextId m_DescriptionTextId = null;
+        [SerializeField] private TextId m_NameTextId = default;
+        [SerializeField] private TextId m_PluralNameTextId = default;
+        [SerializeField] private TextId m_DescriptionTextId = default;
 
         [Header("Value")]
         [SerializeField, ShowIfField("IsCurrency")] private uint m_Default = 0;

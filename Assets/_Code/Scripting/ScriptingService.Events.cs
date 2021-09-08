@@ -37,6 +37,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
+            m_TagEventParser.AddReplace("pluralnameof", ReplacePluralNameOf);
             m_TagEventParser.AddReplace("fullnameof", ReplaceFullNameOf);
             m_TagEventParser.AddReplace("item-count", ReplaceItemCount);
             m_TagEventParser.AddReplace('|', "{wait 0.25}");
@@ -177,8 +178,77 @@ namespace Aqua
                 return Loc.Find(Assets.Character(characterId).ShortNameId());
             }
 
+            ScriptableObject obj = Assets.Find(inTag.Data);
+            
+            BestiaryDesc bestiary = obj as BestiaryDesc;
+            if (!bestiary.IsReferenceNull())
+            {
+                switch(bestiary.Category())
+                {
+                    case BestiaryDescCategory.Critter:
+                        return Loc.Format("<#e59866>{0}</color>", bestiary.CommonName());
+                    case BestiaryDescCategory.Environment:
+                        return Loc.Format("<#85c1e9>{0}</color>", bestiary.CommonName());
+                    default:
+                        return Loc.Find(bestiary.CommonName());
+                }
+            }
+
+            InvItem item = obj as InvItem;
+            if (!item.IsReferenceNull())
+            {
+                if (item.Id() == ItemIds.Cash)
+                    return Loc.Format("<#a6c8ff>{0}ø</color>", item.NameTextId());
+                else if (item.Id() == ItemIds.Gear)
+                    return Loc.Format("<#c9c86d>{0}‡</color>", item.NameTextId());
+                else if (item.Category() == InvItemCategory.Upgrade)
+                    return Loc.Format("<#f0ff00>{0}</color>", item.NameTextId());
+                else
+                    return Loc.Format("<#f0ff00>{0}</color>", item.NameTextId());
+            }
+
+            WaterPropertyDesc property = obj as WaterPropertyDesc;
+            if (!property.IsReferenceNull())
+            {
+                return Loc.Format("<#bb8fce>{0}</color", property.LabelId());
+            }
+
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
             return "[ERROR]";
+        }
+
+        static private string ReplacePluralNameOf(TagData inTag, object inContext)
+        {
+            ScriptableObject obj = Assets.Find(inTag.Data);
+            
+            BestiaryDesc bestiary = obj as BestiaryDesc;
+            if (!bestiary.IsReferenceNull())
+            {
+                switch(bestiary.Category())
+                {
+                    case BestiaryDescCategory.Critter:
+                        return Loc.Format("<#e59866>{0}</color>", bestiary.PluralCommonName());
+                    case BestiaryDescCategory.Environment:
+                        return Loc.Format("<#85c1e9>{0}</color>", bestiary.PluralCommonName());
+                    default:
+                        return Loc.Find(bestiary.PluralCommonName());
+                }
+            }
+
+            InvItem item = obj as InvItem;
+            if (!item.IsReferenceNull())
+            {
+                if (item.Id() == ItemIds.Cash)
+                    return Loc.Format("<#a6c8ff>{0}ø</color>", item.PluralNameTextId());
+                else if (item.Id() == ItemIds.Gear)
+                    return Loc.Format("<#c9c86d>{0}‡</color>", item.PluralNameTextId());
+                else if (item.Category() == InvItemCategory.Upgrade)
+                    return Loc.Format("<#f0ff00>{0}</color>", item.PluralNameTextId());
+                else
+                    return Loc.Format("<#f0ff00>{0}</color>", item.PluralNameTextId());
+            }
+
+            return ReplaceNameOf(inTag, inContext);
         }
 
         static private string ReplaceFullNameOf(TagData inTag, object inContext)

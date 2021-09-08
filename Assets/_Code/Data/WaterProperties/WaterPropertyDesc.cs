@@ -15,7 +15,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private WaterPropertyFlags m_Flags = 0;
         
         [Header("Display")]
-        [SerializeField] private TextId m_LabelId = null;
+        [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
 
@@ -24,12 +24,12 @@ namespace Aqua
         [SerializeField] private float m_DisplayScale = 1;
 
         [Header("Facts")]
-        [SerializeField] private TextId m_EnvironmentFactFormat = null;
-        [SerializeField] private TextId m_EnvironmentHistoryFormat = null;
-        [SerializeField] private TextId m_StateChangeFormat = null;
-        [SerializeField] private TextId m_StateChangeStressOnlyFormat = null;
-        [SerializeField] private TextId m_StateChangeUnaffectedFormat = null;
-        [SerializeField] private TextId m_ToleranceLabel = null;
+        [SerializeField] private TextId m_EnvironmentFactFormat = default;
+        [SerializeField] private TextId m_EnvironmentHistoryFormat = default;
+        [SerializeField] private TextId m_StateChangeFormat = default;
+        [SerializeField] private TextId m_StateChangeStressOnlyFormat = default;
+        [SerializeField] private TextId m_StateChangeUnaffectedFormat = default;
+        [SerializeField] private TextId m_ToleranceLabel = default;
 
         [Header("Ranges")]
         [SerializeField] private float m_MinValue = 0;

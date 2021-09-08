@@ -2,31 +2,6 @@
 
 // HELM
 
-:: inside.helm
-@trigger    PartnerTalk
-@who        kevin
-@when       global:nav.shipRoom == "helm"
-@once
-@cutscene
-{@kevin}    So, this is the helm?
-{@player}   Yup!
-{@kevin}    Looks like there's a map...| and the job board.
-{@player}   Yeah! Any time we need to take on a job we can just take it from that board.
-            Or if we want to move to another station  we can look at the map.
-{@kevin}    And if we wanted to look at the ocean... we could just step outside?
-{@player}   Yup!
-$set    kevin:seenShipHelm = true
-$set    kevin:knowsJobs = true
-
-:: inside.helm.hello1
-@trigger    PartnerTalk
-@who        kevin
-@when       global:nav.shipRoom == "helm", kevin:seenShipHelm
-@boostScore -5
-@repeat     1
-@chatter
-{@kevin #happy}    Hello from the ceiling!
-
 :: inside.helm.inspect.kevin.1
 @trigger    InspectObject
 @who        kevin
@@ -56,34 +31,6 @@ $set    kevin:knowsJobs = true
 {@player}   That's Kevin, chilling up in their bulb.
 {@kevin}    Yep, that's me!
 
-// SHIP
-
-:: inside.ship
-@trigger    PartnerTalk
-@who        kevin
-@when       global:nav.shipRoom == "exterior"
-@once
-@cutscene
-{@kevin}    Ah, the open ocean...
-            {#happy} So relaxing!
-$set    kevin:seenShipExterior = true
-
-// OFFICE
-
-:: inside.office
-@trigger    PartnerTalk
-@who        kevin
-@when       global:nav.shipRoom == "office"
-@once
-@cutscene
-{@player}   Welcome to the office!
-{@kevin}    Neat! This is rather... uh...
-            {#confused}...underwhelming?
-{@player}   |Thanks, Kevin.
-{@kevin}    So you've got a computer here.
-{@player}   Yep! That computer is for communicating with my clients.
-$set    kevin:seenShipOffice = true
-
 :: inside.office.argue
 @trigger    RequestPartnerHelp
 @who        kevin
@@ -91,17 +38,3 @@ $set    kevin:seenShipOffice = true
 @chatter
 {@kevin}    Let's use the computer when we're ready to talk to the client.
 $set    kevin:seenShipOffice = true
-
-// MODELING
-
-:: inside.modeling
-@trigger	PartnerTalk
-@who		kevin
-@when		global:nav.shipRoom == "modeling"
-@once
-@cutscene
-{@player}	Our modeling room!
-{@kevin}	But... it's just a big whiteboard.
-{@player}	A smart whiteboard!
-{@kevin}	Ah.
-			{#confused} I don't get it.

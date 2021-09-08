@@ -19,7 +19,6 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private Button m_Button = null;
-        [SerializeField] private bool m_IsHint = false;
 
         #endregion // Inspector
 
@@ -65,14 +64,7 @@ namespace Aqua
         private void OnButtonClicked()
         {
             Services.Data.AddVariable(RequestCounter, 1);
-            if (m_IsHint)
-            {
-                Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
-            }
-            else
-            {
-                Services.Script.TriggerResponse(GameTriggers.PartnerTalk, GameConsts.Target_Kevin);
-            }
+            Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
         }
 
         #endregion // Handlers

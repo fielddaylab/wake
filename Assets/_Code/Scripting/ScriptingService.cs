@@ -757,7 +757,6 @@ namespace Aqua
             DMInfo triggerMenu = new DMInfo("Trigger Response");
             RegisterTriggerResponse(triggerMenu, GameTriggers.SceneStart);
             RegisterTriggerResponse(triggerMenu, GameTriggers.RequestPartnerHelp);
-            RegisterTriggerResponse(triggerMenu, GameTriggers.PartnerTalk);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobSwitched);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobStarted);
             RegisterTriggerResponse(triggerMenu, GameTriggers.JobCompleted);

@@ -18,10 +18,10 @@ namespace Aqua
         [SerializeField, AutoEnum] private JobDescFlags m_Flags = 0;
 
         [Header("Text")]
-        [SerializeField] private TextId m_NameId = null;
-        [SerializeField] private TextId m_PosterId = null;
-        [SerializeField] private TextId m_DescId = null;
-        [SerializeField] private TextId m_DescCompletedId = null;
+        [SerializeField] private TextId m_NameId = default;
+        [SerializeField] private TextId m_PosterId = default;
+        [SerializeField] private TextId m_DescId = default;
+        [SerializeField] private TextId m_DescCompletedId = default;
 
         [Header("Info")]
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;

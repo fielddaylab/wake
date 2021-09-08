@@ -205,11 +205,7 @@ namespace Aqua
 
             string nodeId = inThread.RootNodeName();
 
-            if (inThread.TriggerId() == GameTriggers.PartnerTalk)
-            {
-                LogTalkWithGuide(nodeId);
-            }
-            else if (inThread.TriggerId() == GameTriggers.RequestPartnerHelp)
+            if (inThread.TriggerId() == GameTriggers.RequestPartnerHelp)
             {
                 LogAskForHelp(nodeId);
             }

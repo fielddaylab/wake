@@ -21,8 +21,8 @@ namespace Aqua
         [Header("Info")]
         [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_ParentEnvironment = null;
         [SerializeField, FormerlySerializedAs("m_ScientificNameId"), ShowIfField("IsCritter")] private string m_ScientificName = null;
-        [SerializeField] private TextId m_CommonNameId = null;
-        [SerializeField] private TextId m_PluralCommonNameId = null;
+        [SerializeField] private TextId m_CommonNameId = default;
+        [SerializeField] private TextId m_PluralCommonNameId = default;
         
         [Space]
         [SerializeField] private BFBase[] m_Facts = null;

@@ -74,7 +74,7 @@ namespace Aqua.StationMap
             m_TargetInspect = null;
 
             m_InteractButtonIcon.sprite = m_MapIcon;
-            m_HoverHint.TooltipId = null;
+            m_HoverHint.TooltipId = default;
             m_HoverHint.TooltipOverride = Loc.Format(MapTooltipKey, m_TargetMap.LabelId());
             m_InteractLabel.SetText(m_TargetMap.LabelId());
             m_PinGroup.Pin(inTransform);

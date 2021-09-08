@@ -15,13 +15,13 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public TextId(string inSource)
+        private TextId(string inSource)
         {
             m_Source = inSource;
             m_Hash = new StringHash32(inSource).HashValue;
         }
 
-        public TextId(StringHash32 inHash)
+        private TextId(StringHash32 inHash)
         {
             m_Source = null;
             m_Hash = inHash.HashValue;

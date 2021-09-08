@@ -107,7 +107,9 @@ namespace Aqua.Title
             if (exists.Get())
             {
                 Services.Input.ResumeAll();
-                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(Loc.Find("ui.title.fileOverwrite.header"), Loc.Format("ui.title.fileOverwrite.description", profileName));
+                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(
+                    Loc.Find("ui.title.fileOverwrite.header"),
+                    Loc.Format("ui.title.fileOverwrite.description", profileName));
                 yield return overwrite;
                 if (overwrite.Get() != PopupPanel.Option_Yes)
                     yield break;
@@ -118,7 +120,7 @@ namespace Aqua.Title
             yield return newProfile;
             // TODO: Handle failure
             Services.Input.ResumeAll();
-            Services.Data.StartPlaying("Intro");
+            Services.Data.StartPlaying("Ship");
         }
 
         private IEnumerator ContinueGame()
@@ -131,7 +133,9 @@ namespace Aqua.Title
             if (!exists.Get())
             {
                 Services.Input.ResumeAll();
-                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(Loc.Find("ui.title.fileMissing.header"), Loc.Format("ui.title.fileMissing.description", profileName));
+                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(
+                    Loc.Find("ui.title.fileMissing.header"),
+                    Loc.Format("ui.title.fileMissing.description", profileName));
                 yield return overwrite;
                 if (overwrite.Get() != PopupPanel.Option_Yes)
                     yield break;
@@ -141,7 +145,7 @@ namespace Aqua.Title
                 yield return newProfile;
                 // TODO: Handle failure
                 Services.Input.ResumeAll();
-                Services.Data.StartPlaying("Intro");
+                Services.Data.StartPlaying("Ship");
             }
             else
             {

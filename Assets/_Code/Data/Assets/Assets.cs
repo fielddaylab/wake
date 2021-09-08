@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BeauUtil;
+using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace Aqua
 {
@@ -13,6 +16,8 @@ namespace Aqua
         static private MapDB MapDB;
         static private WaterPropertyDB WaterPropertyDB;
 
+        static private Dictionary<StringHash32, ScriptableObject> s_GlobalLookup;
+
         static internal void Assign(AssetsService inService)
         {
             BestiaryDB = inService.Bestiary;
@@ -22,6 +27,46 @@ namespace Aqua
             ActDB = inService.Acts;
             MapDB = inService.Map;
             WaterPropertyDB = inService.WaterProp;
+
+            s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(512);
+
+            Import(BestiaryDB);
+            Import(CharacterDB);
+            Import(InventoryDB);
+            Import(JobDB);
+            Import(ActDB);
+            Import(MapDB);
+            Import(WaterPropertyDB);
+
+            foreach(var fact in BestiaryDB.AllFacts())
+                s_GlobalLookup.Add(fact.Id, fact);
+
+            Log.Msg("[Assets] Imported {0} assets", s_GlobalLookup.Count);
+        }
+
+        static private void Import<T>(DBObjectCollection<T> inCollection) where T : DBObject
+        {
+            foreach(var obj in inCollection.Objects)
+            {
+                s_GlobalLookup.Add(obj.Id(), obj);
+            }
+        }
+
+        static public ScriptableObject Find(StringHash32 inId)
+        {
+            if (inId.IsEmpty)
+                return null;
+
+            ScriptableObject obj;
+            Assert.True(s_GlobalLookup.ContainsKey(inId), "No asset with id '{0}'", inId);
+            s_GlobalLookup.TryGetValue(inId, out obj);
+            return obj;
+        }
+
+        [MethodImpl(256)]
+        static public T Find<T>(StringHash32 inId) where T : ScriptableObject
+        {
+            return (T) Find(inId);
         }
 
         [MethodImpl(256)]

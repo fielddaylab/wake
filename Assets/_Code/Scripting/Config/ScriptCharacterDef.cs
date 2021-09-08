@@ -26,8 +26,8 @@ namespace Aqua
 
         #region Inspector
 
-        [SerializeField] private TextId m_NameId = null;
-        [SerializeField] private TextId m_ShortNameId = null;
+        [SerializeField] private TextId m_NameId = default;
+        [SerializeField] private TextId m_ShortNameId = default;
         [SerializeField, AutoEnum] private ScriptActorTypeFlags m_Flags = 0;
 
         [Header("Colors")]

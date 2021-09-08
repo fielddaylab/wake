@@ -121,7 +121,7 @@ namespace Aqua.Scripting
             m_TriggerOrFunctionId = inTriggerId;
 
             // Mapping Shortcut - Partner requests are always towards kevin
-            if (inTriggerId == GameTriggers.RequestPartnerHelp || inTriggerId == GameTriggers.PartnerTalk)
+            if (inTriggerId == GameTriggers.RequestPartnerHelp)
             {
                 m_Target = GameConsts.Target_Kevin;;
             }

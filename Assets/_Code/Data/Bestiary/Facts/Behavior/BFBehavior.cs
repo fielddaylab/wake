@@ -11,11 +11,11 @@ namespace Aqua
 
         static private readonly TextId[] s_QualitativeWords = new TextId[]
         {
-            null, "words.less", "words.fewer", "words.more", "words.slower", "words.faster"
+            default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster"
         };
         static private readonly TextId[] s_QualitativeWordsLower = new TextId[]
         {
-            null, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower"
+            default, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower"
         };
 
         public enum QualCompare : byte

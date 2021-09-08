@@ -69,5 +69,40 @@ namespace Aqua
             }
             return string.Format(format, inArgs);
         }
+
+        static public string FormatFromString(string inFormat, object inArg0)
+        {
+            var locService = Service;
+            Process(locService, ref inArg0);
+            return string.Format(inFormat, inArg0);
+        }
+
+        static public string FormatFromString(string inFormat, object inArg0, object inArg1)
+        {
+            var locService = Service;
+            Process(locService, ref inArg0);
+            Process(locService, ref inArg1);
+            return string.Format(inFormat, inArg0, inArg1);
+        }
+
+        static public string FormatFromString(string inFormat, object inArg0, object inArg1, object inArg2)
+        {
+            var locService = Service;
+            Process(locService, ref inArg0);
+            Process(locService, ref inArg1);
+            Process(locService, ref inArg2);
+            return string.Format(inFormat, inArg0, inArg1, inArg2);
+        }
+
+        static public string FormatFromString(string inFormat, params object[] inArgs)
+        {
+            var locService = Service;
+            if (inArgs != null)
+            {
+                for(int i = 0; i < inArgs.Length; i++)
+                    Process(locService, ref inArgs[0]);
+            }
+            return string.Format(inFormat, inArgs);
+        }
     }
 }

@@ -16,9 +16,9 @@ namespace Aqua
         public Sprite Image;
 
         [Header("Text")]
-        public TextId NameId = null;
-        public TextId DescriptionId = null;
-        public TextId SentenceId = null;
+        public TextId NameId = default;
+        public TextId DescriptionId = default;
+        public TextId SentenceId = default;
 
         #endregion // Inspector
 
@@ -36,7 +36,10 @@ namespace Aqua
         static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFModel fact = (BFModel) inFact;
-            return Loc.Find(fact.SentenceId);
+            TextId sentenceId = fact.SentenceId;
+            if (sentenceId.IsEmpty)
+                sentenceId = fact.DescriptionId;
+            return Loc.Find(sentenceId);
         }
 
         #endregion // Behavior

@@ -40,10 +40,10 @@ namespace ProtoAqua.Modeling
         [SerializeField, ShowIfField("m_DisplayWaterProperties")] private DuplicatedWaterPropertyId m_PropertyToDisplay = DuplicatedWaterPropertyId.Light;
 
         [Header("Labels")]
-        [SerializeField] private TextId m_TitleId = null;
-        [SerializeField] private TextId m_DescId = null;
-        [SerializeField] private TextId m_CompleteId = null;
-        [SerializeField] private TextId m_TickLabelId = null;
+        [SerializeField] private TextId m_TitleId = default;
+        [SerializeField] private TextId m_DescId = default;
+        [SerializeField] private TextId m_CompleteId = default;
+        [SerializeField] private TextId m_TickLabelId = default;
 
         [Header("Results")]
         [SerializeField] private SerializedHash32 m_BestiaryModelId = null;

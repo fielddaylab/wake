@@ -35,14 +35,8 @@ $goto .tutorial
 $call hotbar.kevin->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.kevin)
     You can talk to Kevin by clicking the {h}Talk Button{/h} up here.
-    They might have some interesting things to say!
+    They might be able to help you.
 $call hotbar.kevin->ResetSorting()
-
-$call hotbar.help->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.help)
-    You can also ask them for help by clicking the {h}Help Button{/h} over here.
-    (Though they might not have all the answers...)
-$call hotbar.help->ResetSorting()
 
 $call hotbar.convoHistory->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.convoHistory)

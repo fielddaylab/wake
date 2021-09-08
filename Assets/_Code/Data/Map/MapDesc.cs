@@ -16,7 +16,7 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private string m_SceneName = null;
-        [SerializeField] private TextId m_LabelId = null;
+        [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private MapDesc m_Parent = null;
 

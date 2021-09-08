@@ -17,7 +17,7 @@ namespace Aqua.Scripting
             Now
         }
 
-        private const float AutosaveDelay = 10f;
+        private const float AutosaveDelay = 2f;
 
         private void Awake()
         {
