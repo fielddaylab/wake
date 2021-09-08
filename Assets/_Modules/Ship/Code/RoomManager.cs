@@ -137,7 +137,14 @@ namespace Aqua.Ship
             MapData map = Services.Data.Profile.Map;
             foreach(var roomLink in m_Links)
             {
-                roomLink.gameObject.SetActive(map.IsRoomUnlocked(roomLink.LinkId));
+                if (map.IsRoomUnlocked(roomLink.LinkId))
+                {
+                    roomLink.Show();
+                }
+                else
+                {
+                    roomLink.Hide();
+                }
             }
         }
 

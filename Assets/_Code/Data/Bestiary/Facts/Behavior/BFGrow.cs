@@ -23,7 +23,7 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId GrowVerb = "words.grow";
+        static public readonly TextId GrowVerb = "words.grow";
         static private readonly TextId GrowSentence = "factFormat.grow";
         static private readonly TextId GrowSentenceStressed = "factFormat.grow.stressed";
 

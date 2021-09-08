@@ -24,9 +24,9 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId EatVerb = "words.eat";
+        static public readonly TextId EatVerb = "words.eat";
         static private readonly TextId IsEatenByVerb = "words.isEatenBy";
-        static private readonly TextId CatchVerb = "words.catch";
+        static public readonly TextId CatchVerb = "words.catch";
         static private readonly TextId IsCaughtByVerb = "words.isCaughtBy";
         static private readonly TextId EatSentence = "factFormat.eat";
         static private readonly TextId CatchSentence = "factFormat.catch";

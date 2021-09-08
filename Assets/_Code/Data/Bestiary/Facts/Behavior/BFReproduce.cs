@@ -23,7 +23,7 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId ReproduceVerb = "words.reproduce";
+        static public readonly TextId ReproduceVerb = "words.reproduce";
         static private readonly TextId ReproduceSentence = "factFormat.reproduce";
         static private readonly TextId ReproduceSentenceStressed = "factFormat.reproduce.stressed";
 

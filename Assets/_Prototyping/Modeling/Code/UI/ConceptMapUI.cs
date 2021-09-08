@@ -82,10 +82,12 @@ namespace ProtoAqua.Modeling
             {
                 m_UnaddedGroup.gameObject.SetActive(true);
                 m_UnaddedLabel.SetText(count.ToStringLookup());
+                m_AddButton.interactable = true;
             }
             else
             {
                 m_UnaddedGroup.gameObject.SetActive(false);
+                m_AddButton.interactable = false;
             }
         }
 

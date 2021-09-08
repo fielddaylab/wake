@@ -180,27 +180,29 @@ namespace Aqua
 
             DMInfo mapMenu = new DMInfo("World Map");
 
+            mapMenu.AddButton("Unlock All Stations", () => UnlockAllStations());
+            mapMenu.AddDivider();
+
             foreach(var map in Services.Assets.Map.Stations())
             {
                 RegisterStationToggle(mapMenu, map.Id());
             }
 
-            mapMenu.AddDivider();
-
-            mapMenu.AddButton("Unlock All Stations", () => UnlockAllStations());
-
             yield return mapMenu;
 
             // ship rooms
 
-            DMInfo shipMenu = new DMInfo("Ship Rooms");
+            DMInfo roomMenu = new DMInfo("Rooms");
+
+            roomMenu.AddButton("Unlock All Rooms", () => UnlockAllRooms());
+            roomMenu.AddDivider();
 
             foreach(var room in Services.Assets.Map.Rooms())
             {
-                RegisterRoomToggle(shipMenu, room);
+                RegisterRoomToggle(roomMenu, room);
             }
 
-            yield return shipMenu;
+            yield return roomMenu;
 
             // inventory menu
 
@@ -416,6 +418,14 @@ namespace Aqua
                         Services.Data.Profile.Map.LockRoom(inRoomId);
                 }
             );
+        }
+
+        static private void UnlockAllRooms()
+        {
+            foreach(var roomId in Services.Assets.Map.Rooms())
+            {
+                Services.Data.Profile.Map.UnlockRoom(roomId);
+            }
         }
 
         static private void UnlockAllStations()

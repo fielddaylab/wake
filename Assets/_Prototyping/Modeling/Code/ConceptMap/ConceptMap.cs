@@ -256,7 +256,7 @@ namespace ProtoAqua.Modeling
                     }
 
                     visualLink.OnClick = m_CachedLinkClicked ?? (m_CachedLinkClicked = OnLinkClicked);
-                    visualLink.Load(start, end, linkData, lineTexture);
+                    visualLink.Load(start, end, linkData, lineTexture, RetrieveVerbForFact);
                 }
 
                 foreach(var name in unusedNames)
@@ -312,6 +312,21 @@ namespace ProtoAqua.Modeling
                         m_MapData.CreateLink(inFact.Id, self, target, "consume", inFact);
                         break;
                     }
+            }
+        }
+
+        static private TextId RetrieveVerbForFact(BFBehavior inBehavior)
+        {
+            switch(inBehavior.Type)
+            {
+                case BFTypeId.Consume:
+                    return ((BFConsume) inBehavior).Property == WaterPropertyId.Light ? BFConsume.ReduceVerb : BFConsume.ConsumeVerb;
+                case BFTypeId.Produce:
+                    return BFProduce.ProduceVerb;
+                case BFTypeId.Eat:
+                    return inBehavior.Parent.HasFlags(BestiaryDescFlags.Human) ? BFEat.CatchVerb : BFEat.EatVerb;
+                default:
+                    return default(TextId);
             }
         }
 

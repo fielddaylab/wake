@@ -24,7 +24,7 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId ProduceVerb = "words.produce";
+        static public readonly TextId ProduceVerb = "words.produce";
         static private readonly TextId ProduceSentence = "factFormat.produce";
         static private readonly TextId ProduceSentenceStressed = "factFormat.produce.stressed";
 

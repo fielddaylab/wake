@@ -24,11 +24,11 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId ConsumeVerb = "words.consume";
+        static public readonly TextId ConsumeVerb = "words.consume";
         static private readonly TextId ConsumeSentence = "factFormat.consume";
         static private readonly TextId ConsumeSentenceStressed = "factFormat.consume.stressed";
 
-        static private readonly TextId ReduceVerb = "words.reduce";
+        static public readonly TextId ReduceVerb = "words.reduce";
         static private readonly TextId ReduceSentence = "factFormat.reduce";
         static private readonly TextId ReduceSentenceStressed = "factFormat.reduce.stressed";
 

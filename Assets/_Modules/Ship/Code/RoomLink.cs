@@ -15,11 +15,17 @@ namespace Aqua.Ship
             Nav
         }
 
+        #region Inspector
+
         [SerializeField] private LinkType m_LinkType = LinkType.Room;
         [SerializeField, ShowIfField("ShowRoom")] private Room m_Room = null;
         [SerializeField, ShowIfField("ShowScene")] private string m_Scene = null;
         [SerializeField, ShowIfField("ShowScene")] private bool m_StopMusic = true;
         [SerializeField, ShowIfField("ShowScene")] private bool m_SuppressAutosave = false;
+        [Space]
+        [Inline(InlineAttribute.DisplayType.HeaderLabel), SerializeField] private EnableDisableGroup m_Objects = null;
+
+        #endregion // Inspector
 
         [SerializeField, HideInInspector] public StringHash32 LinkId;
 
@@ -50,6 +56,22 @@ namespace Aqua.Ship
                     if (m_SuppressAutosave)
                         AutoSave.Suppress();
                     break;
+            }
+        }
+
+        public void Show()
+        {
+            if (EnableDisableGroup.SetEnabled(m_Objects, true))
+            {
+                gameObject.SetActive(true);
+            }
+        }
+
+        public void Hide()
+        {
+            if (EnableDisableGroup.SetEnabled(m_Objects, false))
+            {
+                gameObject.SetActive(false);
             }
         }
     

@@ -12,6 +12,8 @@ namespace ProtoAqua.Modeling
 {
     public class ConceptMapLink : MonoBehaviour, IPooledObject<ConceptMapLink>
     {
+        public delegate TextId GetVerbDelegate(BFBehavior inBehavior);
+
         #region Inspector
 
         [SerializeField] private RectTransform m_LineTransform = null;
@@ -36,7 +38,7 @@ namespace ProtoAqua.Modeling
             OnClick?.Invoke(m_Tag);
         }
 
-        public void Load(ConceptMapNode inStart, ConceptMapNode inEnd, in ConceptMapLinkData inData, Texture2D inLineTexture)
+        public void Load(ConceptMapNode inStart, ConceptMapNode inEnd, in ConceptMapLinkData inData, Texture2D inLineTexture, GetVerbDelegate inVerbDelegate)
         {
             m_Tag = inData.Tag;
 
@@ -54,14 +56,23 @@ namespace ProtoAqua.Modeling
             m_LineTiler.texture = inLineTexture;
 
             BFBase fact = inData.Tag as BFBase;
-            // m_Icon.sprite = fact?.GraphIcon; // TODO: Replace
+            if (fact != null)
+            {
+                m_Icon.sprite = Services.Assets.Bestiary.DefaultIcon(fact);
+                m_Icon.enabled = true;
+            }
+            else
+            {
+                m_Icon.enabled = false;
+                m_Icon.sprite = null;
+            }
 
             BFBehavior behavior = fact as BFBehavior;
             if (behavior != null)
             {
                 if (m_Label)
                 {
-                    // m_Label.SetText(behavior.Verb); // TODO: Replace
+                    m_Label.SetText(inVerbDelegate(behavior));
                 }
             }
             else

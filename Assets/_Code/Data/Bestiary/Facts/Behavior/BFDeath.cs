@@ -23,7 +23,7 @@ namespace Aqua
 
         #region Behavior
 
-        static private readonly TextId DeathVerb = "words.death";
+        static public readonly TextId DeathVerb = "words.death";
         static private readonly TextId DeathSentence = "factFormat.death";
         static private readonly TextId DeathSentenceStressed = "factFormat.death.stressed";
 
