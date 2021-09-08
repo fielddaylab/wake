@@ -34,6 +34,8 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private Collider2D m_Range;
         [NonSerialized] private TriggerListener2D m_Listener;
+        private RingBuffer<StringHash32> m_FactDisplayQueue = new RingBuffer<StringHash32>(16, RingBufferMode.Expand);
+        private Routine m_QueueProcessor;
 
         #region Events
 
@@ -213,6 +215,10 @@ namespace ProtoAqua.Observation
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
                     m_CritterTypes.FastRemoveAt(idx);
                     m_SiteData.OnChanged();
+
+                    m_FactDisplayQueue.PushBack(population.Id);
+                    if (!m_QueueProcessor)
+                        m_QueueProcessor = Routine.Start(this, DisplayModelQueue());
                 }
 
                 Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
@@ -220,6 +226,16 @@ namespace ProtoAqua.Observation
             }
 
             return false;
+        }
+
+        private IEnumerator DisplayModelQueue()
+        {
+            StringHash32 factId;
+            while(m_FactDisplayQueue.Count > 0)
+            {
+                factId = m_FactDisplayQueue.PopFront();
+                yield return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newPopulationFact.header"), null, Assets.Fact(factId), Services.Data.Profile.Bestiary.GetDiscoveredFlags(factId)).Wait();
+            }
         }
 
         static private IEnumerator PlayEffect(VFX inEffect)

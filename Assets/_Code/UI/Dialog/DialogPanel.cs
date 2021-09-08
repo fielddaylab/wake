@@ -15,6 +15,9 @@ namespace Aqua
 {
     public class DialogPanel : BasePanel
     {
+        private const float SkipMultiplier = 1f / 1024;
+        private const float DefaultMultiplier = 0.5f;
+
         #region Types
 
         private enum LineEndBehavior
@@ -36,8 +39,7 @@ namespace Aqua
 
             public bool Silent;
             public bool AutoContinue;
-            public float SkipHoldTimer;
-            public bool SkipHeld;
+            public bool SkipPressed;
 
             public bool IsCutsceneSkip;
 
@@ -58,8 +60,7 @@ namespace Aqua
 
             public void ResetTemp()
             {
-                SkipHoldTimer = 0;
-                SkipHeld = false;
+                SkipPressed = false;
                 AutoContinue = false;
                 IsCutsceneSkip = false;
             }
@@ -74,7 +75,6 @@ namespace Aqua
         [Header("Behavior")]
 
         [SerializeField] private SerializedHash32 m_DefaultTypeSFX = "text_type";
-        [SerializeField] private float m_SpeedUpThreshold = 0.25f;
         [SerializeField] private LineEndBehavior m_EndBehavior = LineEndBehavior.WaitForInput;
         [SerializeField] private float m_NonAutoWaitTimer = 2;
 
@@ -193,7 +193,7 @@ namespace Aqua
                 });
                 m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.Argument0.AsStringHash(), e.Argument1.AsStringHash(), false));
                 m_EventHandler.Register(ScriptEvents.Dialog.Portrait, (e, o) => SetPortrait(e.Argument0.AsStringHash(), false));
-                m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Routine.WaitSeconds(e.Argument0.AsFloat() * GetSkipMultiplier()));
+                m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Wait(e.GetFloat()));
             }
 
             return m_EventHandler;
@@ -515,15 +515,9 @@ namespace Aqua
             if (m_EndBehavior != LineEndBehavior.WaitForInput)
                 return;
             
-            if (m_Input.Device.MouseDown(0))
+            if (m_Input.Device.MousePressed(0))
             {
-                m_CurrentState.SkipHoldTimer += Routine.DeltaTime;
-                m_CurrentState.SkipHeld = m_CurrentState.SkipHoldTimer >= m_SpeedUpThreshold;
-            }
-            else
-            {
-                m_CurrentState.SkipHoldTimer = 0;
-                m_CurrentState.SkipHeld = false;
+                m_CurrentState.SkipPressed = true;
             }
         }
 
@@ -600,7 +594,7 @@ namespace Aqua
 
         private float GetSkipMultiplier()
         {
-            return m_CurrentState.SkipHeld ? 0.25f : 1;
+            return m_CurrentState.SkipPressed ? SkipMultiplier : DefaultMultiplier;
         }
 
         private void PlayTypingSound()
@@ -638,6 +632,15 @@ namespace Aqua
                 Routine.WaitCondition(() => m_CurrentState.IsCutsceneSkip || m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
             );
             m_ButtonContainer.gameObject.SetActive(false);
+        }
+
+        private IEnumerator Wait(float inDuration)
+        {
+            while(inDuration > 0 && !m_CurrentState.SkipPressed)
+            {
+                inDuration -= Routine.DeltaTime;
+                yield return null;
+            }
         }
 
         #endregion // Coroutines
