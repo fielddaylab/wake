@@ -48,16 +48,8 @@ $set    kevin:urchinFacts + 1
 {@kevin #confused}  An urchin fact...
             Uh, I once worked on an urchin farm.
 {@player}   Ooh, an urchin farm...
-$if kevin:urchinBaron.player.talk > 0
-	$set	kevin:urchinBaron.player.knowsFarm = true
-                So that was... oh...
-    {@kevin #tired}    Yeah. With Urban.
-                I don't like talking about it.
-$else
-    {@player}   What's an urchin farm like?
-    {@kevin #tired}    Stressful. Dangerous.
-                Exploitive.
-$endif
+            What's an urchin farm like?
+{@kevin #tired}    Stressful. Dangerous.
 
 :: urchins.randomFact.2
 @trigger    PartnerTalk
