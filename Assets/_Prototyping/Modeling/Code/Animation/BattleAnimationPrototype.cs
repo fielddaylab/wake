@@ -19,7 +19,8 @@ namespace ProtoAqua.Modeling
 
         [SerializeField] private BattleAnimationPrototypeActor[] m_Actors = null;
         [SerializeField] private BattleAnimationPrototypeWaterProperty[] m_WaterProps = null;
-        [SerializeField] private TMP_Text m_Label = null;
+        [SerializeField] private TMP_Text m_TickLabel = null;
+        [SerializeField] private LocText m_StageLabel = null;
         [SerializeField] private ParticleSystem m_EatEmojis = null;
 
         [Header("Play Controls")]
@@ -80,7 +81,7 @@ namespace ProtoAqua.Modeling
                 m_Actors[i].gameObject.SetActive(false);
             }
 
-            m_Label.SetText(string.Empty);
+            m_TickLabel.SetText(string.Empty);
             m_Animation.Stop();
         }
 
@@ -129,7 +130,8 @@ namespace ProtoAqua.Modeling
                 m_WaterPropMap[(int) id]?.SetValue(inDetails.StartingEnvironment[id]);
             }
 
-            m_Label.SetText(inTick.ToStringLookup());
+            m_TickLabel.SetText(string.Format("Tick {0}", inTick.ToStringLookup()));
+            m_StageLabel.SetText(string.Empty);
         }
 
         #region Toggles
@@ -239,6 +241,7 @@ namespace ProtoAqua.Modeling
                 yield return AnimateStep(inResults[i - 1], inDetails[i], inResults[i].Timestamp);
             }
 
+            m_StageLabel.SetText("Finished");
             ResetPlayback();
         }
 
@@ -248,6 +251,8 @@ namespace ProtoAqua.Modeling
             ClearBatch();
 
             WaterPropertyBlockF32 properties = inDetails.StartingEnvironment;
+
+            m_StageLabel.SetText("Calculating Light");
 
             foreach(var prop in Simulator.PreemptiveProperties)
             {
@@ -271,6 +276,8 @@ namespace ProtoAqua.Modeling
             yield return FlushBatch();
             yield return 0.2f;
 
+            m_StageLabel.SetText("Calculating Stress");
+
             var actorTypes = m_Profile.Critters();
             bool bChanged = false;
             for(int i = 0; i < actorTypes.Count; i++)
@@ -286,6 +293,8 @@ namespace ProtoAqua.Modeling
                 yield return FlushBatch();
                 yield return 0.2f;
             }
+
+            m_StageLabel.SetText("Exchanging Resources");
 
             foreach(var prop in Simulator.SecondaryProperties)
             {
@@ -320,6 +329,8 @@ namespace ProtoAqua.Modeling
             yield return FlushBatch();
             yield return 0.2f;
 
+            m_StageLabel.SetText("Eating");
+
             foreach(var eat in inDetails.Eaten)
             {
                 BattleAnimationPrototypeActor eater = m_Actors[eat.Eater];
@@ -350,6 +361,8 @@ namespace ProtoAqua.Modeling
                 }
             }
 
+            m_StageLabel.SetText("Dying");
+
             for(int i = 0; i < inDetails.Deaths.Count; i++)
             {
                 uint pop = inResult.AdjustCritters(i, -(int) inDetails.Deaths[i]);
@@ -358,6 +371,8 @@ namespace ProtoAqua.Modeling
 
             yield return FlushBatch();
             yield return 0.2f;
+
+            m_StageLabel.SetText("Reproducing");
 
             for(int i = 0; i < inDetails.Growth.Count; i++)
             {
