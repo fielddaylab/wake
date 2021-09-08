@@ -186,9 +186,9 @@ namespace Aqua
                 switch(bestiary.Category())
                 {
                     case BestiaryDescCategory.Critter:
-                        return Loc.Format("<#e59866>{0}</color>", bestiary.CommonName());
+                        return Loc.FormatFromString("<#e59866>{0}</color>", bestiary.CommonName());
                     case BestiaryDescCategory.Environment:
-                        return Loc.Format("<#85c1e9>{0}</color>", bestiary.CommonName());
+                        return Loc.FormatFromString("<#85c1e9>{0}</color>", bestiary.CommonName());
                     default:
                         return Loc.Find(bestiary.CommonName());
                 }
@@ -198,19 +198,19 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.Format("<#a6c8ff>{0}ø</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#a6c8ff>{0}ø</color>", item.NameTextId());
                 else if (item.Id() == ItemIds.Gear)
-                    return Loc.Format("<#c9c86d>{0}‡</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#c9c86d>{0}‡</color>", item.NameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
-                    return Loc.Format("<#f0ff00>{0}</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
                 else
-                    return Loc.Format("<#f0ff00>{0}</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
             }
 
             WaterPropertyDesc property = obj as WaterPropertyDesc;
             if (!property.IsReferenceNull())
             {
-                return Loc.Format("<#bb8fce>{0}</color", property.LabelId());
+                return Loc.FormatFromString("<#bb8fce>{0}</color", property.LabelId());
             }
 
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
@@ -227,9 +227,9 @@ namespace Aqua
                 switch(bestiary.Category())
                 {
                     case BestiaryDescCategory.Critter:
-                        return Loc.Format("<#e59866>{0}</color>", bestiary.PluralCommonName());
+                        return Loc.FormatFromString("<#e59866>{0}</color>", bestiary.PluralCommonName());
                     case BestiaryDescCategory.Environment:
-                        return Loc.Format("<#85c1e9>{0}</color>", bestiary.PluralCommonName());
+                        return Loc.FormatFromString("<#85c1e9>{0}</color>", bestiary.PluralCommonName());
                     default:
                         return Loc.Find(bestiary.PluralCommonName());
                 }
@@ -239,13 +239,13 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.Format("<#a6c8ff>{0}ø</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#a6c8ff>{0}ø</color>", item.PluralNameTextId());
                 else if (item.Id() == ItemIds.Gear)
-                    return Loc.Format("<#c9c86d>{0}‡</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#c9c86d>{0}‡</color>", item.PluralNameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
-                    return Loc.Format("<#f0ff00>{0}</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
                 else
-                    return Loc.Format("<#f0ff00>{0}</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
             }
 
             return ReplaceNameOf(inTag, inContext);
