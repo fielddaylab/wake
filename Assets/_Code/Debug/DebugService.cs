@@ -18,6 +18,8 @@ namespace Aqua.Debugging
     [ServiceDependency(typeof(EventService))]
     public partial class DebugService : ServiceBehaviour, IDebuggable
     {
+        #if DEVELOPMENT
+
         #region Static
 
         [ServiceReference] static private DebugService s_Instance;
@@ -33,7 +35,9 @@ namespace Aqua.Debugging
         [SerializeField, Required] private CanvasGroup m_MinimalLayer = null;
         [SerializeField, Required] private GameObject m_KeyboardReference = null;
         [SerializeField, Required] private ConsoleTimeDisplay m_TimeDisplay = null;
+        [SerializeField, Required] private ConsoleCamera m_DebugCamera = null;
         [SerializeField, Required] private DMMenuUI m_DebugMenu = null;
+        [SerializeField, Required] private GameObject m_CameraReference = null;
         [Space]
         [SerializeField] private bool m_StartOn = true;
 
@@ -44,7 +48,8 @@ namespace Aqua.Debugging
         [NonSerialized] private bool m_FirstMenuToggle;
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private float m_TimeScale = 1;
-        [NonSerialized] private bool m_VisibilityWhenOpened;
+        [NonSerialized] private bool m_VisibilityWhenDebugMenuOpened;
+        [NonSerialized] private Vector2 m_CameraCursorPivot;
 
         private void LateUpdate()
         {
@@ -66,6 +71,7 @@ namespace Aqua.Debugging
 
             if (Services.State.IsLoadingScene())
             {
+                ClearDebugCamera();
                 if (m_DebugMenu.isActiveAndEnabled)
                 {
                     m_DebugMenu.gameObject.SetActive(false);
@@ -74,36 +80,8 @@ namespace Aqua.Debugging
             }
             else
             {
-                if (m_Input.MousePressed(1))
-                {
-                    if (m_DebugMenu.isActiveAndEnabled)
-                    {
-                        m_DebugMenu.TryPopMenu();
-                    }
-                }
-                if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
-                {
-                    DeviceInput.BlockAll();
-                    
-                    if (m_DebugMenu.isActiveAndEnabled)
-                    {
-                        m_DebugMenu.gameObject.SetActive(false);
-                        Resume();
-                        SetMinimalLayer(m_VisibilityWhenOpened);
-                    }
-                    else
-                    {
-                        if (!m_FirstMenuToggle)
-                        {
-                            m_DebugMenu.GotoMenu(s_RootMenu);
-                            m_FirstMenuToggle = true;
-                        }
-                        m_DebugMenu.gameObject.SetActive(true);
-                        m_VisibilityWhenOpened = m_MinimalOn;
-                        SetMinimalLayer(true);
-                        Pause();
-                    }
-                }
+                UpdateMenuControls();
+                UpdateCameraControls();
             }
 
             if (m_Input.KeyPressed(KeyCode.Backslash))
@@ -141,6 +119,137 @@ namespace Aqua.Debugging
             }
         }
 
+        private void UpdateMenuControls()
+        {
+            if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.W))
+            {
+                DeviceInput.BlockAll();
+                
+                if (m_DebugMenu.isActiveAndEnabled)
+                {
+                    m_DebugMenu.gameObject.SetActive(false);
+                    Resume();
+                    SetMinimalLayer(m_VisibilityWhenDebugMenuOpened);
+                }
+                else
+                {
+                    if (!m_FirstMenuToggle)
+                    {
+                        m_DebugMenu.GotoMenu(s_RootMenu);
+                        m_FirstMenuToggle = true;
+                    }
+                    m_DebugMenu.gameObject.SetActive(true);
+                    m_VisibilityWhenDebugMenuOpened = m_MinimalOn;
+                    SetMinimalLayer(true);
+                    Pause();
+                }
+            }
+
+            if (m_DebugMenu.isActiveAndEnabled)
+            {
+                if (m_Input.MousePressed(1))
+                    m_DebugMenu.TryPopMenu();
+                if (m_Input.KeyPressed(KeyCode.LeftArrow) || m_Input.KeyPressed(KeyCode.A))
+                    m_DebugMenu.TryPreviousPage();
+                if (m_Input.KeyPressed(KeyCode.RightArrow) || m_Input.KeyPressed(KeyCode.D))
+                    m_DebugMenu.TryNextPage();
+            }
+        }
+
+        private void UpdateCameraControls()
+        {
+            if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.C))
+            {
+                DeviceInput.BlockAll();
+
+                if (m_DebugCamera.Camera())
+                {
+                    ClearDebugCamera();
+                }
+                else
+                {
+                    SetMinimalLayer(true);
+                    m_CameraReference.SetActive(true);
+                    m_DebugCamera.SetCamera(Services.Camera.Current, Services.Camera.RootTransform);
+                }
+            }
+
+            if (m_DebugCamera.Camera())
+            {
+                Vector3 move = default;
+                bool bHadInput = false;
+
+                if (m_Input.KeyDown(KeyCode.LeftArrow) || m_Input.KeyDown(KeyCode.A))
+                {
+                    move.x -= 1;
+                    bHadInput = true;
+                }
+                if (m_Input.KeyDown(KeyCode.RightArrow) || m_Input.KeyDown(KeyCode.D))
+                {
+                    move.x += 1;
+                    bHadInput = true;
+                }
+                if (m_Input.KeyDown(KeyCode.UpArrow) || m_Input.KeyDown(KeyCode.W))
+                {
+                    move.z += 1;
+                    bHadInput = true;
+                }
+                if (m_Input.KeyDown(KeyCode.DownArrow) || m_Input.KeyDown(KeyCode.S))
+                {
+                    move.z -= 1;
+                    bHadInput = true;
+                }
+                if (m_Input.KeyDown(KeyCode.Q))
+                {
+                    move.y -= 1;
+                    bHadInput = true;
+                }
+                if (m_Input.KeyDown(KeyCode.E))
+                {
+                    move.y += 1;
+                    bHadInput = true;
+                }
+
+                if (m_Input.KeyDown(KeyCode.LeftShift))
+                    move *= 4;
+
+                m_DebugCamera.MoveRelative(move * Time.unscaledDeltaTime);
+
+                if (m_Input.MousePressed(1))
+                {
+                    m_CameraCursorPivot = m_Input.ScreenMousePosition();
+                    bHadInput = true;
+
+                    #if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.SetWantsMouseJumping(1);
+                    #endif // UNITY_EDITOR
+                }
+                else if (m_Input.MouseDown(1))
+                {
+                    Vector2 newPos = m_Input.ScreenMousePosition();
+                    Vector2 mouseShift = newPos - m_CameraCursorPivot;
+                    m_CameraCursorPivot = newPos;
+
+                    Vector3 eulerShift;
+                    eulerShift.x = -mouseShift.y;
+                    eulerShift.y = mouseShift.x;
+                    eulerShift.z = 0;
+
+                    m_DebugCamera.Rotate(eulerShift * Time.unscaledDeltaTime);
+                    bHadInput = true;
+                }
+                else
+                {
+                    #if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.SetWantsMouseJumping(0);
+                    #endif // UNITY_EDITOR
+                }
+
+                if (bHadInput)
+                    DeviceInput.BlockAll();
+            }
+        }
+
         private void SetTimescale(float inTimeScale)
         {
             m_TimeScale = inTimeScale;
@@ -169,21 +278,6 @@ namespace Aqua.Debugging
             }
         }
 
-        private void DumpConversationLog()
-        {
-            using (PooledStringBuilder psb = PooledStringBuilder.Create())
-            {
-                psb.Builder.Append("[DebugService] Dumping conversation history");
-
-                foreach(var record in Services.Data.DialogHistory)
-                {
-                    psb.Builder.Append('\n').Append(record.ToDebugString());
-                }
-
-                Debug.Log(psb.Builder.Flush());
-            }
-        }
-
         private void SetMinimalLayer(bool inbOn)
         {
             m_MinimalOn = inbOn;
@@ -198,6 +292,21 @@ namespace Aqua.Debugging
                     m_DebugMenu.gameObject.SetActive(false);
                     Resume();
                 }
+
+                ClearDebugCamera();
+            }
+        }
+
+        private void ClearDebugCamera()
+        {
+            if (m_DebugCamera.SetCamera(null))
+            {
+                Services.Camera.DebugResetToLastState();
+                m_CameraReference.SetActive(false);
+
+                #if UNITY_EDITOR
+                UnityEditor.EditorGUIUtility.SetWantsMouseJumping(0);
+                #endif // UNITY_EDITOR
             }
         }
 
@@ -289,8 +398,6 @@ namespace Aqua.Debugging
 
         #region IDebuggable
 
-        #if DEVELOPMENT
-
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             DMInfo loggingMenu = new DMInfo("Logging");
@@ -322,9 +429,9 @@ namespace Aqua.Debugging
             });
         }
 
-        #endif // DEVELOPMENT
-
         #endregion // IDebuggable
+
+        #endif // DEVELOPMENT
     
         #region Logging Stuff
 

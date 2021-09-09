@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
 using UnityEditor.SceneManagement;
+using Aqua.Debugging;
 
 namespace Aqua.Editor
 {
@@ -24,6 +25,7 @@ namespace Aqua.Editor
             
             LoadSubscenes(scene);
             RemoveBootstrap(scene);
+            RemoveDebug(scene);
             Flatten(scene);
             Optimize(scene);
         }
@@ -41,6 +43,19 @@ namespace Aqua.Editor
                         GameObject.DestroyImmediate(bootstrap.gameObject);
                     }
                 }
+            }
+        }
+
+        static private void RemoveDebug(Scene scene)
+        {
+            if (EditorUserBuildSettings.development)
+                return;
+            
+            DebugService debug = GameObject.FindObjectOfType<DebugService>();
+            if (debug)
+            {
+                Debug.LogFormat("[SceneProcessor] Removing debug service from scene '{0}'...", scene.name);
+                GameObject.DestroyImmediate(debug.gameObject);
             }
         }
 

@@ -638,17 +638,23 @@ namespace Aqua
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
-            var menu = new DMInfo("Load Scene", 16);
+            var loadSceneMenu = new DMInfo("Load Scene", 16);
 
-            menu.AddButton("Reload Current Scene", DebugReloadScene);
-            menu.AddDivider();
+            loadSceneMenu.AddButton("Reload Current Scene", DebugReloadScene);
+            loadSceneMenu.AddDivider();
             
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {
-                RegisterLoadButton(menu, scene);
+                RegisterLoadButton(loadSceneMenu, scene);
             }
 
-            yield return menu;
+            yield return loadSceneMenu;
+
+            var currentSceneMenu = new DMInfo("Current Scene");
+
+            currentSceneMenu.AddButton("Dump Scene Hierarchy", DebugDumpSceneHierarchy);
+            
+            yield return currentSceneMenu;
         }
 
         static private void RegisterLoadButton(DMInfo inMenu, SceneBinding inBinding)
@@ -670,6 +676,64 @@ namespace Aqua
             Services.Script.KillAllThreads();
             Services.Audio.StopAll();
             Services.State.ReloadCurrentScene();
+        }
+
+        private struct DumpSceneHierarchyRecord
+        {
+            public Transform Transform;
+            public int Depth;
+
+            public DumpSceneHierarchyRecord(Transform inTransform, int inDepth)
+            {
+                Transform = inTransform;
+                Depth = inDepth;
+            }
+        }
+
+        static private void DebugDumpSceneHierarchy()
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+            Scene scene = SceneHelper.ActiveScene();
+            RingBuffer<DumpSceneHierarchyRecord> transformStack = new RingBuffer<DumpSceneHierarchyRecord>(32, RingBufferMode.Expand);
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+
+            sb.AppendFormat("[StateMgr] Dumping scene transform hierarchy for scene '{0}'", scene.name);
+
+            foreach(var obj in rootObjects)
+            {
+                transformStack.PushBack(new DumpSceneHierarchyRecord(obj.transform, 0));
+            }
+
+            transformStack.Reverse();
+
+            DumpSceneHierarchyRecord record;
+            while(transformStack.Count > 0)
+            {
+                record = transformStack.PopBack();
+                sb.Append('\n');
+                sb.Append('-', record.Depth * 3);
+                sb.Append(" [");
+
+                if (record.Transform.gameObject.activeInHierarchy)
+                    sb.Append('A');
+                else
+                    sb.Append('-');
+
+                if (record.Transform.gameObject.activeSelf)
+                    sb.Append('a');
+                else
+                    sb.Append('-');
+
+                sb.Append("] ").Append(record.Transform.gameObject.name);
+
+                int childCount = record.Transform.childCount;
+                for(int i = childCount - 1; i >= 0; i--)
+                {
+                    transformStack.PushBack(new DumpSceneHierarchyRecord(record.Transform.GetChild(i), record.Depth + 1));
+                }
+            }
+
+            Log.Msg(sb.Flush());
         }
 
         #endif // DEVELOPMENT

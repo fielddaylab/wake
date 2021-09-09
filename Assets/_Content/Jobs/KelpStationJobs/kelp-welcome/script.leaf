@@ -65,7 +65,7 @@ $set    player:seen.kevin = true
 @once
 @cutscene
 $set    jobs:kelp-welcome.seen.bottom = true
-{@kevin}   Now that you're here, you're going to use your scanner to document all the species. Also, make sure to collect data about the water from that research probe over there.
+{@kevin}   Now that you're here, you're going to use your scanner to document all the species.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 
@@ -78,11 +78,7 @@ $if 		HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEnt
 	{@kevin}	It looks like that's everything we need from here. Let's head back up and return to the ship.
 $else
 	{@kevin}	I think there more things for us to find here. 
-	$if !HasEntity(WarmKelpForest)
-        {@kevin}   Have you tried scanning the research probe yet?
-    $else
-        {@kevin}   Lets's look around for some new creatures. 
-    $endif
+	{@kevin}   Lets's look around for some new creatures. 
 $endif
 
 :: navigation.goBackUp
@@ -107,11 +103,7 @@ $if HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntit
     $call UnlockRoom("Experimentation")
 $else
     {@kevin}   I think you missed something.
-    $if !HasEntity(WarmKelpForest)
-        {@kevin}   You should make sure to scan the probe for the water data too.
-    $else
-        {@kevin}   Are you sure you didn't miss any creatures down there?
-    $endif
+    {@kevin}   Are you sure you didn't miss any creatures down there?
 $endif
 
 :: helpReturnToShip
@@ -139,12 +131,7 @@ $if HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntit
     $call UnlockRoom("Experimentation")
 $else
     {@kevin}   No, looks like you're still missing something.
-    $if !HasEntity(WarmKelpForest)
-        {@kevin}   The probe is the thing that looks like an archaic, yet alien computer. Scan it just like a normal critter.
-    $else
-        {@kevin}   Are you sure you didn't miss any creatures down there? Plants, Animals, Other? 
-	Not sure what would even count as other, but it sounded right.
-    $endif
+    {@kevin}   Are you sure you didn't miss any creatures down there? Plants, Animals?
 $endif
 
 :: atShip
@@ -170,7 +157,7 @@ $endif
 @once
 @cutscene
 {@player}   Alright, I'm in the experimentation room, What's next?
-{@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviours.
+{@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviors.
 {@player}   Then what?
 {@kevin}   Then we can know for sure how they relate!
 

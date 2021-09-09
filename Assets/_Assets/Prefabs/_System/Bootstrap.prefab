@@ -180,7 +180,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoredSceneNames:
   - Boot
-  m_Debug: {fileID: 1545523830023592885}
   m_DebugUrl: 
 --- !u!114 &4540496805459673731
 MonoBehaviour:
@@ -643,6 +642,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6387860139701230747}
   - component: {fileID: 1545523830023592885}
+  - component: {fileID: 6007978010562924351}
   m_Layer: 0
   m_Name: DebugService
   m_TagString: Untagged
@@ -682,8 +682,25 @@ MonoBehaviour:
   m_MinimalLayer: {fileID: 2022683429832478035}
   m_KeyboardReference: {fileID: 7410801612348799134}
   m_TimeDisplay: {fileID: 2949160205189410798}
+  m_DebugCamera: {fileID: 6007978010562924351}
   m_DebugMenu: {fileID: 4185533094527826595}
+  m_CameraReference: {fileID: 2161507982716397060}
   m_StartOn: 1
+--- !u!114 &6007978010562924351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7973957286559674082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665b47c00f5562942aa91af84badcbd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MoveSpeed: 12
+  m_RotateSpeed: 8
+  m_ResetCameraPositionEveryFrame: 0
 --- !u!1001 &4689325343227304468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -924,7 +941,7 @@ PrefabInstance:
     - target: {fileID: 2007697798287581676, guid: 57256186000d4f14fa26975f6742ae99,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -64.00006
+      value: -64.00003
       objectReference: {fileID: 0}
     - target: {fileID: 2096374636664069229, guid: 57256186000d4f14fa26975f6742ae99,
         type: 3}
@@ -2078,6 +2095,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af61e98a5efdcfd4cbeca294c0612e5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7410801612348799134 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1660318323569540782, guid: 14e7ebc753b45694e903ae3a4f36ff86,
+    type: 3}
+  m_PrefabInstance: {fileID: 8201853693396387376}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4185533094527826595 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5459724317302914195, guid: 14e7ebc753b45694e903ae3a4f36ff86,
@@ -2090,9 +2113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e4303b9a6760c478212de2de9a89a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7410801612348799134 stripped
+--- !u!1 &2161507982716397060 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 1660318323569540782, guid: 14e7ebc753b45694e903ae3a4f36ff86,
+  m_CorrespondingSourceObject: {fileID: 7795148714018168884, guid: 14e7ebc753b45694e903ae3a4f36ff86,
     type: 3}
   m_PrefabInstance: {fileID: 8201853693396387376}
   m_PrefabAsset: {fileID: 0}

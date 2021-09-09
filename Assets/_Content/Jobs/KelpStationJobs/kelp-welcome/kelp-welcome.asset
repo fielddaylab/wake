@@ -113,25 +113,6 @@ MonoBehaviour:
     - m_Source: gotoSiteC
       m_Hash: 1682475842
   - Id:
-      m_Source: collectWarmKelpForrest
-      m_Hash: 347392237
-    LabelId:
-      m_Source: jobs.kelp-welcome.task.collectWarmKelpForrest
-      m_Hash: 4189226219
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: WarmKelpForest
-        m_Hash: 2991222945
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: gotoSiteC
-      m_Hash: 1682475842
-  - Id:
       m_Source: returnToShip
       m_Hash: 3093150432
     LabelId:
@@ -154,8 +135,6 @@ MonoBehaviour:
       m_Hash: 3702806939
     - m_Source: scanGiantKelp
       m_Hash: 1818207473
-    - m_Source: collectWarmKelpForrest
-      m_Hash: 347392237
   - Id:
       m_Source: runExperiment
       m_Hash: 30875405
@@ -274,27 +253,9 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: collectWarmKelpForrest
-      m_Hash: 347392237
-    Index: 4
-    LabelId:
-      m_Source: jobs.kelp-welcome.task.collectWarmKelpForrest
-      m_Hash: 4189226219
-    DescriptionId:
-      m_Source: 
-      m_Hash: 0
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: WarmKelpForest
-        m_Hash: 2991222945
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
       m_Source: returnToShip
       m_Hash: 3093150432
-    Index: 5
+    Index: 4
     LabelId:
       m_Source: jobs.kelp-welcome.task.returnToShip
       m_Hash: 728793182
@@ -308,11 +269,11 @@ MonoBehaviour:
         m_Hash: 746798495
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300020001000400
+    PrerequisiteTaskIndices: 030002000100
   - Id:
       m_Source: runExperiment
       m_Hash: 30875405
-    Index: 6
+    Index: 5
     LabelId:
       m_Source: jobs.kelp-welcome.task.runExperiment
       m_Hash: 1674617243
@@ -332,11 +293,11 @@ MonoBehaviour:
         m_Hash: 1212586560
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: 0400
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
-    Index: 7
+    Index: 6
     LabelId:
       m_Source: jobs.kelp-welcome.task.reportBack
       m_Hash: 2154038550
@@ -350,7 +311,7 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0600
+    PrerequisiteTaskIndices: 0500
   m_CashReward: 100
   m_GearReward: 5
   m_AdditionalRewards: []

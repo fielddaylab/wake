@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +17,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
-    public class UIMgr : ServiceBehaviour
+    public class UIMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
 
@@ -312,5 +316,40 @@ namespace Aqua
         }
 
         #endregion // Leaf
+
+        #if DEVELOPMENT
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        {
+            DMInfo uiMenu = new DMInfo("UI");
+
+            RegisterDebugCutsceneToggle(uiMenu);
+
+            uiMenu.AddButton("Clear All Faders", () => {
+                m_WorldFaders.StopAll();
+                m_ScreenFaders.StopAll();
+            });
+
+            yield return uiMenu;
+        }
+
+        static private void RegisterDebugCutsceneToggle(DMInfo inMenu)
+        {
+            bool bDebugSet = false;
+            inMenu.AddToggle("Cutscene Mode", () => bDebugSet, 
+            (b) => {
+                bDebugSet = b;
+                if (b)
+                {
+                    Services.UI.ShowLetterbox();
+                }
+                else
+                {
+                    Services.UI.HideLetterbox();
+                }
+            });
+        }
+
+        #endif // DEVELOPMENT
     }
 }

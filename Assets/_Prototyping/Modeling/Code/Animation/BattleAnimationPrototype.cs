@@ -294,40 +294,43 @@ namespace ProtoAqua.Modeling
                 yield return 0.2f;
             }
 
-            m_StageLabel.SetText("Exchanging Resources");
-
-            foreach(var prop in Simulator.SecondaryProperties)
+            if (m_UnlockedProperties.Mask != 0)
             {
-                if (!m_UnlockedProperties[prop])
-                    continue;
+                m_StageLabel.SetText("Exchanging Resources");
 
-                int critterIdx = 0;
-                foreach(var critter in inDetails.Consumed)
+                foreach(var prop in Simulator.SecondaryProperties)
                 {
-                    properties[prop] -= critter[prop];
-                    if (critter[prop] > 0)
+                    if (!m_UnlockedProperties[prop])
+                        continue;
+
+                    int critterIdx = 0;
+                    foreach(var critter in inDetails.Consumed)
                     {
-                        BatchAnimation(m_WaterPropMap[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
+                        properties[prop] -= critter[prop];
+                        if (critter[prop] > 0)
+                        {
+                            BatchAnimation(m_WaterPropMap[(int) prop].PlayOutgoing(m_Actors[critterIdx].transform));
+                        }
+                        critterIdx++;
                     }
-                    critterIdx++;
+
+                    critterIdx = 0;
+                    foreach(var critter in inDetails.Produced)
+                    {
+                        properties[prop] += critter[prop];
+                        if (critter[prop] > 0)
+                        {
+                            BatchAnimation(m_WaterPropMap[(int) prop].PlayIncoming(m_Actors[critterIdx].transform));
+                        }
+                        critterIdx++;
+                    }
+
+                    BatchAnimation(m_WaterPropMap[(int) prop].AnimateValue(properties[prop]));
                 }
 
-                critterIdx = 0;
-                foreach(var critter in inDetails.Produced)
-                {
-                    properties[prop] += critter[prop];
-                    if (critter[prop] > 0)
-                    {
-                        BatchAnimation(m_WaterPropMap[(int) prop].PlayIncoming(m_Actors[critterIdx].transform));
-                    }
-                    critterIdx++;
-                }
-
-                BatchAnimation(m_WaterPropMap[(int) prop].AnimateValue(properties[prop]));
+                yield return FlushBatch();
+                yield return 0.2f;
             }
-
-            yield return FlushBatch();
-            yield return 0.2f;
 
             m_StageLabel.SetText("Eating");
 

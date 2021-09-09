@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System;
 using System.Collections;
 using Aqua.Debugging;
@@ -60,6 +64,10 @@ namespace Aqua.Cameras
         [NonSerialized] private CameraMode m_Mode = CameraMode.Scripted;
         [NonSerialized] private bool m_Paused;
 
+        #if DEVELOPMENT
+        [NonSerialized] private CameraState m_LastAssignedState;
+        #endif // DEVELOPMENT
+
         private RingBuffer<CameraTargetData> m_TargetStack = new RingBuffer<CameraTargetData>();
         private RingBuffer<CameraPointData> m_Hints = new RingBuffer<CameraPointData>();
         private RingBuffer<CameraBoundsData> m_Bounds = new RingBuffer<CameraBoundsData>();
@@ -69,6 +77,7 @@ namespace Aqua.Cameras
 
         public Camera Current { get { return m_Camera; } }
         public CameraRig Rig { get { return m_Rig; } }
+        public Transform RootTransform { get { return m_PositionRoot; } }
 
         public Vector2 Position { get { return m_PositionRoot.localPosition; } }
         public float Zoom { get { return m_FOVPlane.Zoom; } }
@@ -105,13 +114,6 @@ namespace Aqua.Cameras
             float deltaTime = Time.deltaTime;
             m_Time += deltaTime;
 
-            Transform root = m_Camera.transform;
-
-            if (!m_Rig.IsReferenceNull())
-            {
-                root = m_Rig.RootTransform;
-            }
-
             if (!m_FOVPlane.IsReferenceNull())
             {
                 CameraFOVPlane.CameraSettings settings;
@@ -125,11 +127,11 @@ namespace Aqua.Cameras
             {
                 case CameraMode.Hinted:
                 {
-                    CameraState state = GetCameraState(root, m_Camera, m_FOVPlane);
+                    CameraState state = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
                     
                     flags = UpdateHintedCamera(ref state, deltaTime, CameraModifierFlags.All);
 
-                    ApplyCameraState(state, root, m_Camera, m_FOVPlane, CameraPoseProperties.All);
+                    ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All);
                     break;
                 }
             }
@@ -883,6 +885,7 @@ namespace Aqua.Cameras
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPosition, currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom));
+            RecordLatestState(newState);
             ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.PosAndZoom);
             m_ScriptedAnimation.Stop();
         }
@@ -908,6 +911,8 @@ namespace Aqua.Cameras
             CameraState newState = new CameraState(inPose.transform.position, inPose.Height, inPose.Zoom);
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
                 m_FOVPlane.Target = inPose.Target;
+
+            RecordLatestState(newState);
             
             ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties);
             m_ScriptedAnimation.Stop();
@@ -926,6 +931,9 @@ namespace Aqua.Cameras
             
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPosition, currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom));
+
+            RecordLatestState(newState);
+
             if (inDuration <= 0)
             {
                 ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, properties);
@@ -951,6 +959,8 @@ namespace Aqua.Cameras
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPose.transform.position, inPose.Height, inPose.Zoom);
+
+            RecordLatestState(newState);
 
             if (inDuration <= 0)
             {
@@ -1109,5 +1119,35 @@ namespace Aqua.Cameras
         }
 
         #endregion // Utils
+    
+        #region Debug
+
+        [System.Diagnostics.Conditional("DEVELOPMENT")]
+        private void RecordLatestState(CameraState inState)
+        {
+            #if DEVELOPMENT
+            m_LastAssignedState = inState;
+            #endif // DEVELOPMENT
+        }
+
+        #if DEVELOPMENT
+
+        internal void DebugResetToLastState()
+        {
+            switch(m_Mode)
+            {
+                case CameraMode.Scripted:
+                    ApplyCameraState(m_LastAssignedState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All);
+                    break;
+
+                case CameraMode.Hinted:
+                    SnapToTarget();
+                    break;
+            }
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // Debug
     }
 }

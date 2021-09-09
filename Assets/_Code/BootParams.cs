@@ -25,7 +25,6 @@ namespace Aqua
         #pragma warning disable CS0414
 
         [Header("-- DEBUG --")]
-        [SerializeField, Required] private DebugService m_Debug = null;
         [SerializeField] private string m_DebugUrl = string.Empty;
 
         #pragma warning restore CS0414
@@ -53,9 +52,14 @@ namespace Aqua
 
             #if !DEVELOPMENT
             Debug.Log("[BootParams] Debug mode disabled");
-            DestroyImmediate(m_Debug.gameObject);
+            #if UNITY_EDITOR
+            DebugService debug = GetComponentInChildren<DebugService>();
+            if (debug)
+                DestroyImmediate(m_Debug.gameObject);
+            #endif // UNITY_EDITOR
             #else
-            Assert.NotNull(m_Debug); // should initialize assert error catching
+            DebugService debug = GetComponentInChildren<DebugService>();
+            Assert.NotNull(debug); // should initialize assert error catching
             Debug.Log("[BootParams] Debug mode enabled");
             #endif // !DEVELOPMENT
 
