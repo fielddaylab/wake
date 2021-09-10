@@ -146,7 +146,15 @@ $endif
 {@player}   What kind of experiment should we be doing this time?
 {@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
 
-::helpAtExperiment
+:: openStressTank
+@trigger	ExperimentTankViewed
+@when		tankType == "Stress", jobs:coral-invade.got.scans == true
+@once
+@cutscene
+{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our critters.
+{@profCempaka}	Think of it like a treadmill!
+
+:: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
 @cutscene
