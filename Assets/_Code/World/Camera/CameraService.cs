@@ -45,6 +45,21 @@ namespace Aqua.Cameras
             }
         }
 
+        public struct PlanePositionHelper
+        {
+            public Camera Camera;
+            public Plane GameplayPlane;
+
+            public Vector3 CastToPlane(Transform inTransform)
+            {
+                Vector3 viewport = Camera.WorldToViewportPoint(inTransform.position, Camera.MonoOrStereoscopicEye.Mono);
+                Ray ray = Camera.ViewportPointToRay(viewport);
+                float dist;
+                GameplayPlane.Raycast(ray, out dist);
+                return ray.GetPoint(dist);
+            }
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -63,6 +78,7 @@ namespace Aqua.Cameras
         [NonSerialized] private uint m_NextId;
         [NonSerialized] private CameraMode m_Mode = CameraMode.Scripted;
         [NonSerialized] private bool m_Paused;
+        [NonSerialized] private Plane m_LastGameplayPlane;
 
         #if DEVELOPMENT
         [NonSerialized] private CameraState m_LastAssignedState;
@@ -142,6 +158,8 @@ namespace Aqua.Cameras
                 ApplyDrift(ref offset, m_Drifts, m_Time);
                 m_Rig.EffectsTransform.SetPosition(offset, Axis.XY, Space.Self);
             }
+
+            UpdateCachedPlanes();
         }
 
         private CameraModifierFlags UpdateHintedCamera(ref CameraState ioState, float inDeltaTime, CameraModifierFlags inMask)
@@ -246,6 +264,18 @@ namespace Aqua.Cameras
             ApplySoftConstraints(ref current.Position, size, m_Bounds);
             ApplyHardConstraints(ref current.Position, size, m_Bounds);
             ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.Position);
+        }
+
+        private void UpdateCachedPlanes()
+        {
+            if (m_FOVPlane)
+            {
+                m_LastGameplayPlane = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position);
+            }
+            else
+            {
+                m_LastGameplayPlane = default(Plane);
+            }
         }
 
         #endregion // Update
@@ -1054,6 +1084,15 @@ namespace Aqua.Cameras
             p.Raycast(r, out dist);
 
             return dist / m_LastCameraDistance;
+        }
+
+        public PlanePositionHelper GetPositionHelper()
+        {
+            return new PlanePositionHelper()
+            {
+                Camera = m_Camera,
+                GameplayPlane = m_LastGameplayPlane
+            };
         }
 
         #endregion // Positions
