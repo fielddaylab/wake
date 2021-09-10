@@ -1,3 +1,4 @@
+using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 
@@ -51,6 +52,8 @@ namespace Aqua.Cameras
         void ISceneOptimizable.Optimize()
         {
             InitialTarget = null;
+
+            EffectsTransform.SetPosition(default(Vector3), Axis.XY, Space.Self);
             
             var potentialTargets = FindObjectsOfType<CameraTarget>();
             foreach(var target in potentialTargets)
