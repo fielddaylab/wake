@@ -72,6 +72,8 @@ namespace ProtoAqua.Observation
         [NonSerialized] private bool m_Loaded = false;
         [NonSerialized] private Collider2D m_Range;
         [NonSerialized] private TriggerListener2D m_Listener;
+        [NonSerialized] private float m_DeactivateRangeSq;
+        [NonSerialized] private bool m_ActiveState = false;
 
         #region Events
 
@@ -110,16 +112,31 @@ namespace ProtoAqua.Observation
                 return;
 
             if (m_Listener == null || !m_Listener.isActiveAndEnabled)
+            {
+                if (m_ActiveState)
+                {
+                    m_ActiveState = false;
+                    DeactivateAllColliders();
+                }
                 return;
+            }
             
+            m_ActiveState = true;
             m_Listener.ProcessOccupants();
 
-            CameraService cameraService = Services.Camera;
+            CameraService.PlanePositionHelper positionHelper = Services.Camera.GetPositionHelper();
             ScannableRegion region;
+            Vector3 gameplayPlanePos;
+            Vector3 gameplayPlaneDist;
+            Vector2 listenerPos = m_Range.transform.position;
             for(int i = m_AllRegions.Count - 1; i >= 0; i--)
             {
                 region = m_AllRegions[i];
-                region.Collider.transform.position = cameraService.GameplayPlanePosition(region.transform);
+                gameplayPlanePos = positionHelper.CastToPlane(region.transform);
+                region.Collider.transform.position = gameplayPlanePos;
+
+                gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
+                region.Collider.enabled = gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq;
             }
 
             for(int i = m_RegionsInRange.Count - 1; i >= 0; i--)
@@ -279,6 +296,10 @@ namespace ProtoAqua.Observation
                 if (inRegion.InsideToolView)
                     EnterRange(inRegion);
             }
+            else
+            {
+                inRegion.Collider.enabled = false;
+            }
         }
 
         public void Deregister(ScannableRegion inRegion)
@@ -295,6 +316,16 @@ namespace ProtoAqua.Observation
                 RefreshIcon(inRegion);
             }
             return inRegion.ScanData;
+        }
+
+        private void DeactivateAllColliders()
+        {
+            ScannableRegion region;
+            for(int i = 0, len = m_AllRegions.Count; i < len; i++)
+            {
+                region = m_AllRegions[i];
+                region.Collider.enabled = false;
+            }
         }
 
         #endregion // Scannable Regions
@@ -322,6 +353,9 @@ namespace ProtoAqua.Observation
 
                 m_Listener.onTriggerEnter.AddListener(OnScannableEnterRegion);
                 m_Listener.onTriggerExit.AddListener(OnScannableExitRegion);
+
+                m_DeactivateRangeSq = PhysicsUtils.GetRadius(inCollider) + 1;
+                m_DeactivateRangeSq *= m_DeactivateRangeSq;
             }
             else
             {

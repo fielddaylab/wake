@@ -34,6 +34,8 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private Collider2D m_Range;
         [NonSerialized] private TriggerListener2D m_Listener;
+        [NonSerialized] private float m_DeactivateRangeSq;
+        [NonSerialized] private bool m_ActiveState = false;
         private RingBuffer<StringHash32> m_FactDisplayQueue = new RingBuffer<StringHash32>(16, RingBufferMode.Expand);
         private Routine m_QueueProcessor;
 
@@ -59,16 +61,31 @@ namespace ProtoAqua.Observation
                 return;
 
             if (m_Listener == null || !m_Listener.isActiveAndEnabled)
+            {
+                if (m_ActiveState)
+                {
+                    m_ActiveState = false;
+                    DeactivateAllColliders();
+                }
                 return;
+            }
             
+            m_ActiveState = true;
             m_Listener.ProcessOccupants();
 
-            CameraService cameraService = Services.Camera;
+            CameraService.PlanePositionHelper positionHelper = Services.Camera.GetPositionHelper();
             TaggableCritter critter;
+            Vector3 gameplayPlanePos;
+            Vector3 gameplayPlaneDist;
+            Vector2 listenerPos = m_Range.transform.position;
             for(int i = m_RemainingCritters.Count - 1; i >= 0; i--)
             {
                 critter = m_RemainingCritters[i];
-                critter.Collider.transform.position = cameraService.GameplayPlanePosition(critter.transform);
+                gameplayPlanePos = positionHelper.CastToPlane(critter.transform);
+                critter.Collider.transform.position = gameplayPlanePos;
+
+                gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
+                critter.Collider.enabled = gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq;
             }
         }
 
@@ -113,6 +130,7 @@ namespace ProtoAqua.Observation
             else
             {
                 m_RemainingCritters.PushBack(inCritter);
+                inCritter.Collider.enabled = false;
             }
         }
 
@@ -247,6 +265,16 @@ namespace ProtoAqua.Observation
             inEffect.Free();
         }
 
+        private void DeactivateAllColliders()
+        {
+            TaggableCritter critter;
+            for(int i = 0, len = m_RemainingCritters.Count; i < len; i++)
+            {
+                critter = m_RemainingCritters[i];
+                critter.Collider.enabled = false;
+            }
+        }
+
         #endregion // Taggable Critters
     
         #region Scan Range
@@ -267,11 +295,14 @@ namespace ProtoAqua.Observation
             if (m_Range != null)
             {
                 m_Listener = inCollider.EnsureComponent<TriggerListener2D>();
-                m_Listener.LayerFilter = GameLayers.Critter_Mask;
+                m_Listener.LayerFilter = GameLayers.CritterTag_Mask;
                 m_Listener.SetOccupantTracking(true);
 
                 m_Listener.onTriggerEnter.AddListener(OnTaggableEnterRegion);
                 m_Listener.onTriggerExit.AddListener(OnTaggableExitRegion);
+
+                m_DeactivateRangeSq = PhysicsUtils.GetRadius(inCollider) + 1;
+                m_DeactivateRangeSq *= m_DeactivateRangeSq;
             }
             else
             {

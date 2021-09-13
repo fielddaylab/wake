@@ -32,13 +32,17 @@ static public class GameLayers
 	public const int Scannable_Index = 10;
 	public const int Scannable_Mask = 1024;
 
-	// Layer 11: CreatureSense
-	public const int CreatureSense_Index = 11;
-	public const int CreatureSense_Mask = 2048;
+	// Layer 11: PlayerSense
+	public const int PlayerSense_Index = 11;
+	public const int PlayerSense_Mask = 2048;
 
 	// Layer 12: Critter
 	public const int Critter_Index = 12;
 	public const int Critter_Mask = 4096;
+
+	// Layer 13: CritterTag
+	public const int CritterTag_Index = 13;
+	public const int CritterTag_Mask = 8192;
 
 	// Layer 29: Solid
 	public const int Solid_Index = 29;

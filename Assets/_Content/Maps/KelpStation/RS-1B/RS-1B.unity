@@ -191,7 +191,7 @@ PrefabInstance:
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_Size.x
-      value: 144
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
@@ -1188,6 +1188,52 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6ec5c0ff01ba40068076db503ab2918, type: 3}
+--- !u!1 &296674721
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 296674723}
+  - component: {fileID: 296674722}
+  m_Layer: 0
+  m_Name: SubScene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &296674722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296674721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce2c2b6c8f059c249be11e73bc3584b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Scene:
+    m_ScenePath: Assets/_Content/Maps/KelpStation/RS-1B/RS-1B-Visuals.unity
+    m_GUID: 63f3064f5714f420fb04c8477e3a2b0e
+--- !u!4 &296674723
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296674721}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &311261080
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2190,7 +2236,7 @@ GameObject:
   - component: {fileID: 1211455362}
   - component: {fileID: 1211455361}
   - component: {fileID: 1211455360}
-  m_Layer: 0
+  m_Layer: 29
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2205,7 +2251,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1211455358}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: -5.7, z: 0}
+  m_LocalPosition: {x: 0.39, y: -5.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 711474610}
@@ -2235,7 +2281,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 123, y: 1}
+  m_Size: {x: 138, y: 1}
   m_EdgeRadius: 0
 --- !u!61 &1211455361
 BoxCollider2D:
@@ -2261,7 +2307,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 123, y: 1}
+  m_Size: {x: 138, y: 1}
   m_EdgeRadius: 0
 --- !u!61 &1211455362
 BoxCollider2D:
@@ -2276,7 +2322,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 61.5, y: 0}
+  m_Offset: {x: 69, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2302,7 +2348,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -61.5, y: 0}
+  m_Offset: {x: -69, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2334,7 +2380,7 @@ MonoBehaviour:
   - {fileID: 1211455360}
   m_EdgeThickness: 1
   m_IsTrigger: 0
-  m_Size: {x: 122, y: 22}
+  m_Size: {x: 137, y: 22}
   m_Edges: 15
 --- !u!1 &1251812129
 GameObject:
