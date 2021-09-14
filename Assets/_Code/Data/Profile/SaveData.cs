@@ -27,7 +27,7 @@ namespace Aqua.Profile
         #region IProfileChunk
 
         // v2: added options
-        ushort ISerializedVersion.Version { get { return 3; } }
+        ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
