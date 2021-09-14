@@ -74,7 +74,7 @@ namespace ProtoAqua.ExperimentV2
             m_SelectEnvPanel.OnRemoved = OnEnvironmentRemoved;
             m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
 
-            Services.Events.Register(GameEvents.WaterPropertiesUpdated, RebuildPropertyDials);
+            Services.Events.Register(GameEvents.WaterPropertiesUpdated, RebuildPropertyDials, this);
 
             //Populate StateFact Array
             m_StateFactArray = new StateFactDisplay[m_StateFactParent.childCount];
