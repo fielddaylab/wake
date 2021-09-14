@@ -24,7 +24,11 @@ namespace Aqua
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
 
+        private const string GameId = "AQUALAB";
+
         #region Inspector
+
+        [SerializeField] private string m_ServerAddress = null;
 
         [Header("Conversation History")]
         [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
@@ -471,6 +475,8 @@ namespace Aqua
             LoadOptionsSettings();
 
             m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
+
+            OGD.Core.Configure(m_ServerAddress, GameId);
         }
 
         protected override void Shutdown()

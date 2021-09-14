@@ -74,7 +74,7 @@ namespace Aqua.Profile
             return Character.HasChanges() || Inventory.HasChanges()
                 || Script.HasChanges() || Bestiary.HasChanges()
                 || Map.HasChanges() || Jobs.HasChanges()
-                || Science.HasChanges();;
+                || Science.HasChanges();
         }
 
         #endregion // IProfileChunk
