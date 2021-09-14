@@ -14,6 +14,7 @@ namespace ProtoAqua.Modeling
     public class BattleAnimationPrototype : MonoBehaviour
     {
         public delegate void OnCritterToggledDelegate(StringHash32 inId, bool inbState);
+        public delegate void OnTickDelegate(int inTickId, int inTickIndex);
 
         #region Inspector
 
@@ -32,6 +33,8 @@ namespace ProtoAqua.Modeling
         #endregion // Inspector
 
         public OnCritterToggledDelegate OnCritterToggled;
+        public OnTickDelegate OnTickStart;
+        public OnTickDelegate OnTickEnd;
 
         [NonSerialized] private Routine m_Animation;
         [NonSerialized] private SimulationProfile m_Profile;
@@ -238,7 +241,9 @@ namespace ProtoAqua.Modeling
         {
             for(int i = 1; i < inDetails.Length; i++)
             {
+                OnTickStart?.Invoke(inResults[i].Timestamp, i);
                 yield return AnimateStep(inResults[i - 1], inDetails[i], inResults[i].Timestamp);
+                OnTickEnd?.Invoke(inResults[i].Timestamp, i);
             }
 
             m_StageLabel.SetText("Finished");

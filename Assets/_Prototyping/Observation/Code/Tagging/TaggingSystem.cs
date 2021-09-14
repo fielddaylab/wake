@@ -223,7 +223,7 @@ namespace ProtoAqua.Observation
                 ref var category = ref m_CritterTypes[idx];
                 category.Tagged++;
                 
-                Log.Msg("[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
+                DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
 
                 if (category.Tagged >= category.TotalInScene)
                 {

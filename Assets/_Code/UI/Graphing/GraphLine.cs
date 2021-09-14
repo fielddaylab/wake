@@ -35,9 +35,12 @@ namespace Aqua
             m_RawPoints.PushBack(new Vector2(inX, inY));
         }
 
-        public void Render(Rect inBounds)
+        public void Render(Rect inBounds, int inPointCount = -1)
         {
-            Array.Resize(ref m_RelativePoints, m_RawPoints.Count);
+            if (inPointCount < 0 || inPointCount > m_RawPoints.Count)
+                inPointCount = m_RawPoints.Count;
+            
+            Array.Resize(ref m_RelativePoints, inPointCount);
 
             float xMin = inBounds.xMin, xMax = inBounds.xMax, yMin = inBounds.yMin, yMax = inBounds.yMax;
 
@@ -55,7 +58,7 @@ namespace Aqua
 
             if (m_InitialPointRenderer)
             {
-                if (m_RawPoints.Count > 0)
+                if (inPointCount > 0)
                 {
                     m_InitialPointRenderer.gameObject.SetActive(true);
                     m_InitialPointRenderer.SetPoint(m_RawPoints[0]);

@@ -38,6 +38,7 @@ namespace ProtoAqua.Modeling
 
         [NonSerialized] private bool m_PredictMode;
         [NonSerialized] private WaterPropertyId m_WaterProp = WaterPropertyId.NONE;
+        [NonSerialized] private int m_GraphTickAnimationCounter = 0;
         private readonly HashSet<StringHash32> m_GraphedCritters = new HashSet<StringHash32>();
 
         private readonly Predicate<StringHash32> CanGraphCritterPredicate;
@@ -150,12 +151,30 @@ namespace ProtoAqua.Modeling
 
             uint totalTicks = inBuffer.Scenario().TotalTicks();
             int tickScale = inBuffer.Scenario().TickScale();
-            Rect critterRegion = RenderCritters(totalTicks, tickScale);
+            Rect critterRegion = RenderCritters(totalTicks, tickScale, m_GraphTickAnimationCounter);
             RenderRegion(critterRegion, inBuffer);
 
             if (HasWaterProperty())
             {
-                RenderWaterProperty(totalTicks, tickScale);
+                RenderWaterProperty(totalTicks, tickScale, m_GraphTickAnimationCounter);
+            }
+        }
+
+        public void UpdateAnimation(SimulationBuffer inBuffer, int inTickCount)
+        {
+            if (m_GraphTickAnimationCounter != inTickCount)
+            {
+                m_GraphTickAnimationCounter = inTickCount;
+                
+                uint totalTicks = inBuffer.Scenario().TotalTicks();
+                int tickScale = inBuffer.Scenario().TickScale();
+                Rect critterRegion = RenderCritters(totalTicks, tickScale, m_GraphTickAnimationCounter);
+                RenderRegion(critterRegion, inBuffer);
+
+                if (HasWaterProperty())
+                {
+                    RenderWaterProperty(totalTicks, tickScale, m_GraphTickAnimationCounter);
+                }
             }
         }
 
@@ -180,7 +199,7 @@ namespace ProtoAqua.Modeling
             return m_WaterProp == inId;
         }
 
-        private Rect RenderCritters(uint inTotalTicks, int inTickScale)
+        private Rect RenderCritters(uint inTotalTicks, int inTickScale, int inTicksCompleted)
         {
             GraphingUtils.AxisRangePair axisPair;
             if (m_PredictMode)
@@ -192,10 +211,25 @@ namespace ProtoAqua.Modeling
                 axisPair = CalculateGraphRect(m_Historical.Range, default(Rect), default(Rect), default(Rect), inTotalTicks, inTickScale, 8);
             }
 
+            int historicalTicksRevealed, predictTicksRevealed;
+            if (m_PredictMode)
+            {
+                historicalTicksRevealed = -1;
+                predictTicksRevealed = 1 + inTicksCompleted;
+            }
+            else
+            {
+                historicalTicksRevealed = 1 + inTicksCompleted;
+                predictTicksRevealed = 0;
+            }
+
             Rect fullRect = axisPair.ToRect();
+            
             m_Historical.RenderLines(fullRect);
-            m_Player.RenderLines(fullRect);
-            m_Predict.RenderLines(fullRect);
+            m_Player.RenderLines(fullRect, historicalTicksRevealed);
+            
+            m_Predict.RenderLines(fullRect, predictTicksRevealed);
+
             m_Targets.RenderLines(fullRect);
 
             m_Axis.Load(axisPair);
@@ -203,7 +237,7 @@ namespace ProtoAqua.Modeling
             return fullRect;
         }
 
-        private Rect RenderWaterProperty(uint inTotalTicks, int inTickScale)
+        private Rect RenderWaterProperty(uint inTotalTicks, int inTickScale, int inTicksCompleted)
         {
             GraphingUtils.AxisRangePair axisPair;
             if (m_PredictMode)
@@ -215,10 +249,22 @@ namespace ProtoAqua.Modeling
                 axisPair = CalculateGraphRect(m_HistoricalWater.Range, default(Rect), default(Rect), default(Rect), inTotalTicks, inTickScale, 8);
             }
 
+            int historicalTicksRevealed, predictTicksRevealed;
+            if (m_PredictMode)
+            {
+                historicalTicksRevealed = -1;
+                predictTicksRevealed = 1 + inTicksCompleted;
+            }
+            else
+            {
+                historicalTicksRevealed = 1 + inTicksCompleted;
+                predictTicksRevealed = 0;
+            }
+
             Rect fullRect = axisPair.ToRect();
             m_HistoricalWater.RenderLines(fullRect);
-            m_PlayerWater.RenderLines(fullRect);
-            m_PredictWater.RenderLines(fullRect);
+            m_PlayerWater.RenderLines(fullRect, historicalTicksRevealed);
+            m_PredictWater.RenderLines(fullRect, predictTicksRevealed);
 
             m_AxisWater.Load(axisPair);
 

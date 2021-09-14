@@ -216,11 +216,11 @@ namespace ProtoAqua.Modeling
             return (m_LastRect = varRange);
         }
 
-        public void RenderLines(Rect inRange)
+        public void RenderLines(Rect inRange, int inPointCount = -1)
         {
             foreach(var line in m_LinePool.ActiveObjects)
             {
-                line.Render(inRange);
+                line.Render(inRange, inPointCount);
             }
         }
 

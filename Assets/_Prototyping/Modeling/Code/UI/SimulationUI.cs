@@ -49,6 +49,7 @@ namespace ProtoAqua.Modeling
             m_BackButton.onClick.AddListener(OnBackButtonClicked);
 
             m_Battle.OnCritterToggled = OnCritterToggled;
+            m_Battle.OnTickEnd = OnTickEnded;
         }
         
         public void SetBuffer(SimulationBuffer inBuffer)
@@ -69,6 +70,8 @@ namespace ProtoAqua.Modeling
 
                 if ((inFlags & SimulationBuffer.UpdateFlags.Model) != 0)
                 {
+                    m_Chart.UpdateAnimation(m_Buffer, 0);
+
                     switch(inState.Phase)
                     {
                         case ModelingPhase.Sync:
@@ -145,6 +148,11 @@ namespace ProtoAqua.Modeling
             {
                 m_Chart.Refresh(m_Buffer, SimulationBuffer.UpdateFlags.ALL);
             }
+        }
+
+        private void OnTickEnded(int inTickId, int inTickIndex)
+        {
+            m_Chart.UpdateAnimation(m_Buffer, inTickIndex);
         }
     }
 }
