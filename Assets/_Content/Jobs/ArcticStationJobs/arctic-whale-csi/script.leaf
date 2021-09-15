@@ -13,9 +13,13 @@ $call GiveEntity(W_WhaleFall)
 $call GiveEntity(BowheadWhale)
 $call GiveFact(BowheadWhale.Reproduce)
 $call GiveFact(BowheadWhale.Eats.Diatoms)
-{@profWhalen}   Here, you'll also need this microscope. 
-$call GiveUpgrade(Microscope)
-{@profWhalen}   Try to use it to find their food source. Good luck!
+$if !HasUpgrade(Microscope)
+    {@profWhalen}   Here, you'll also need this microscope. 
+    $call GiveUpgrade(Microscope)
+    {@profWhalen}   Try to use it to find their food source. Good luck!
+$else
+    {@profWhalen}   Try to use your microscope to find their food source. Good luck!
+$endif
 
 :: helpScanAndTag
 @trigger    RequestPartnerHelp

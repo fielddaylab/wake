@@ -364,7 +364,9 @@ namespace Aqua
 
             DebugService.Log(LogMask.DataService, "[DataService] Saving to '{0}'...", key);
 
-            Serializer.WritePrefs(m_CurrentSaveData, key, OutputOptions.None, Serializer.Format.Binary);
+            string saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
+
+            PlayerPrefs.SetString(key, saveData);
             yield return null;
             
             PlayerPrefs.Save();

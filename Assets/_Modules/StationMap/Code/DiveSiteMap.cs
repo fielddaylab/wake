@@ -16,10 +16,11 @@ namespace Aqua.StationMap
             StringHash32 entrance = Services.State.LastEntranceId;
 
             var job = Services.Data.Profile.Jobs.CurrentJob?.Job;
+            var mapData = Services.Data.Profile.Map;
 
             foreach(var site in m_DiveSites)
             {
-                site.CheckAllowed(job);
+                site.Initialize(mapData, job);
             }
 
             if (entrance.IsEmpty)

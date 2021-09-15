@@ -2,6 +2,7 @@
 using BeauUtil;
 using System;
 using Aqua.Scripting;
+using Aqua.Profile;
 
 namespace Aqua.StationMap
 {
@@ -12,6 +13,7 @@ namespace Aqua.StationMap
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_MapId = null;
+        [SerializeField] private bool m_HideIfLocked = false;
 
         [Header("Components")]
         [SerializeField, Required] private ColorGroup m_RenderGroup = null;
@@ -23,13 +25,24 @@ namespace Aqua.StationMap
 
         public StringHash32 MapId { get { return m_MapId; } }
 
-        private void Awake()
+        public void Initialize(MapData inMapData, JobDesc inCurrentJob)
         {
-            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
-        }
+            if (!inMapData.IsSiteUnlocked(m_MapId))
+            {
+                if (m_HideIfLocked)
+                {
+                    gameObject.SetActive(false);
+                }
+                else
+                {
+                    m_Collider.enabled = false;
+                    m_Highlighted = false;
+                    m_RenderGroup.Visible = false;
+                }
 
-        public void CheckAllowed(JobDesc inCurrentJob)
-        {
+                return;
+            }
+
             if (inCurrentJob != null && inCurrentJob.UsesDiveSite(m_MapId))
             {
                 m_Highlighted = true;
@@ -40,6 +53,8 @@ namespace Aqua.StationMap
                 m_Highlighted = false;
                 m_RenderGroup.SetAlpha(0.25f);
             }
+
+            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
         }
 
         private void OnPlayerEnter(Collider2D other)

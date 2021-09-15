@@ -1,8 +1,8 @@
 using System;
 
 namespace OGD {
-    static public class GameState
-    {
+    static public class GameState {
+        
         private struct RequestGameStateResponse {
             public string message;
             public string[] states;

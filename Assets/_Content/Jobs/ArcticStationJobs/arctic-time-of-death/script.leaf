@@ -11,7 +11,11 @@ $branch common.ringPhone
 				I'd like you to take a closer look around the whale fall.
 $call GiveFact(Model.WhaleFall.Stages)
 {@profWhalen}	This should give you an idea of when different species show up during the decomposition process.
-				Contact me when you've got some evidence.
+$if !HasUpgrade(Microscope)
+    {@profWhalen}   Oh, you might need this. 
+    $call GiveUpgrade(Microscope)
+$endif
+{@profWhalen}	Contact me when you've got some evidence.
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp

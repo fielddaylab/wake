@@ -81,6 +81,40 @@ namespace Aqua.Profile
 
         #endregion // Unlocked Stations
 
+        #region Unlocked Dive Sites
+
+         public bool IsSiteUnlocked(StringHash32 inSiteId)
+        {
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            return m_UnlockedSiteIds.Contains(inSiteId);
+        }
+
+        public bool UnlockSite(StringHash32 inSiteId)
+        {
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            if (m_UnlockedSiteIds.Add(inSiteId))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool LockSite(StringHash32 inSiteId)
+        {
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            if (m_UnlockedSiteIds.Remove(inSiteId))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Unlocked Dive Sites
+
         #region Ship Rooms
 
         public bool IsRoomUnlocked(StringHash32 inRoomId)
@@ -125,6 +159,12 @@ namespace Aqua.Profile
             foreach(var room in Services.Assets.Map.DefaultUnlockedRooms())
             {
                 m_UnlockedRoomIds.Add(room);
+            }
+
+            foreach(var diveSite in Services.Assets.Map.DiveSites())
+            {
+                if (diveSite.HasFlags(MapFlags.UnlockedByDefault))
+                    m_UnlockedSiteIds.Add(diveSite.Id());
             }
         }
 
@@ -182,13 +222,26 @@ namespace Aqua.Profile
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 4; } }
+        ushort ISerializedVersion.Version { get { return 5; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32Proxy("stationId", ref m_CurrentStationId);
             ioSerializer.UInt32ProxySet("unlockedStations", ref m_UnlockedStationIds);
             ioSerializer.UInt32Proxy("currentMapId", ref m_CurrentMapId);
+
+            if (ioSerializer.ObjectVersion >= 5)
+            {
+                ioSerializer.UInt32ProxySet("unlockedSites", ref m_UnlockedSiteIds);
+            }
+            else
+            {
+                foreach(var diveSite in Services.Assets.Map.DiveSites())
+                {
+                    if (diveSite.HasFlags(MapFlags.UnlockedByDefault))
+                        m_UnlockedSiteIds.Add(diveSite.Id());
+                }
+            }
 
             if (ioSerializer.ObjectVersion >= 2)
             {

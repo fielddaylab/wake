@@ -7,12 +7,13 @@
 $branch common.ringPhone
 
 $set    player:seen.drJules = true
-{@drJules} I'm glad to see you taking on a Job here!
-{@drJules}  The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
-{@player} How do I do that?
-{@drJules} Just exit the helm, then use the submarine to travel out to research sites. 
-{@drJules}  When you are done, come back to the office and tell me what you've learned.
-{@player} Taking out a sub?!? I'm on it!
+{@drJules}	I'm glad to see you taking on a Job here!
+{@drJules}	The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
+{@player}	How do I do that?
+{@drJules}	Just exit the helm, then use the submarine to travel out to research sites. 
+{@drJules}	When you are done, come back to the office and tell me what you've learned.
+{@player}	Taking out a sub?!? I'm on it!
+
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
 
@@ -25,19 +26,8 @@ $if global:nav.shipRoom != "exterior"
 	{@kevin}	Let's exit the ship and head to the sub.
 $else
 	{@player}   I made it outside, where is the sub?
-	{@kevin}	The sub should be at the back of the ship, let's see what we can find out there!
-$endif
-
-:: helpGoOutsideToSubExperimentV2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", !jobs:kelp-welcome.got.scans
-@cutscene
-$if global:nav.shipRoom != "exterior"
-	{@player}   Where should I go from here?
-	{@kevin}	Let's exit the ship and head to the sub.
-$else
-	{@player}   I made it outside, where is the sub?
-	{@kevin}	The sub should be at the back of the ship, let's see what we can find out there!
+	{@kevin}	The sub should be at the back of the ship.
+				Let's see what we can find out there!
 $endif
 
 :: navigation
@@ -45,9 +35,11 @@ $endif
 @when       scene:name == "KelpStation"
 @once
 @cutscene
+
 $set    player:seen.kevin = true
-{@kevin} You're gonna want to take your sub over to Dive Site C.
-                    It's marked for you to the east. When you're there, dive.
+
+{@profWhalen}	You're gonna want to take your sub over to Dive Site C.
+				It's marked for you to the east. When you're there, dive.
 
 //player does not have anything from site C yet, tell them to go there
 :: helpGoToSiteC 
