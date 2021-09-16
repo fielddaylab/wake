@@ -11,12 +11,16 @@ using Aqua.Debugging;
 using Aqua.Cameras;
 using Leaf.Runtime;
 using BeauUtil.Debugger;
+using Aqua.Scripting;
 
 namespace ProtoAqua.Observation
 {
     [DefaultExecutionOrder(-100)]
     public class ScanSystem : SharedManager
     {
+        static public readonly StringHash32 Trigger_NewScan = "ScannedNewObject";
+        static public readonly StringHash32 Trigger_Scan = "ScannedObject";
+
         #region Types
 
         [Serializable] private class ScanIconPool : SerializablePool<ScanIcon> { }
@@ -225,39 +229,52 @@ namespace ProtoAqua.Observation
 
         public ScanResult RegisterScanned(ScanData inData)
         {
-            if (Services.Data.Profile.Inventory.RegisterScanned(inData.Id()))
+            ScriptThreadHandle responseHandle = default;
+            ScanResult result = ScanResult.NoChange;
+
+            using(var table = TempVarTable.Alloc())
             {
-                ScanResult result = ScanResult.NewScan;
+                table.Set("scanId", inData.Id());
 
-                StringHash32 bestiaryId = inData.BestiaryId();
-                if (!bestiaryId.IsEmpty && Services.Data.Profile.Bestiary.RegisterEntity(bestiaryId))
+                if (Services.Data.Profile.Inventory.RegisterScanned(inData.Id()))
                 {
-                    result |= ScanResult.NewBestiary;
-                }
+                    result |= ScanResult.NewScan;
 
-                // TODO: Logbook
-
-                foreach(var factId in inData.FactIds())
-                {
-                    if (Services.Data.Profile.Bestiary.RegisterFact(factId, false))
+                    StringHash32 bestiaryId = inData.BestiaryId();
+                    if (!bestiaryId.IsEmpty && Services.Data.Profile.Bestiary.RegisterEntity(bestiaryId))
                     {
                         result |= ScanResult.NewBestiary;
                     }
+
+                    // TODO: Logbook
+
+                    foreach(var factId in inData.FactIds())
+                    {
+                        if (Services.Data.Profile.Bestiary.RegisterFact(factId, false))
+                        {
+                            result |= ScanResult.NewBestiary;
+                        }
+                    }
+
+                    var config = GetConfig(inData.Flags());
+                    foreach(var scannable in m_RegionsInRange)
+                    {
+                        if (scannable.ScanId == inData.Id())
+                        {
+                            scannable.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
+                        }
+                    }
+
+                    responseHandle = Services.Script.TriggerResponse(Trigger_NewScan, table);
                 }
 
-                var config = GetConfig(inData.Flags());
-                foreach(var scannable in m_RegionsInRange)
+                if (!responseHandle.IsRunning())
                 {
-                    if (scannable.ScanId == inData.Id())
-                    {
-                        scannable.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
-                    }
+                    responseHandle = Services.Script.TriggerResponse(Trigger_Scan, table);
                 }
-                
-                return result;
             }
 
-            return ScanResult.NoChange;
+            return result;
         }
 
         public ScanTypeConfig GetConfig(ScanDataFlags inFlags)

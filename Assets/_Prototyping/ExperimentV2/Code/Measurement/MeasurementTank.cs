@@ -49,6 +49,8 @@ namespace ProtoAqua.ExperimentV2
         {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
+            m_ParentTank.HasCritter = (s) => m_AddCrittersPanel.IsSelected(Assets.Bestiary(s));
+            m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
 
             m_AddCrittersPanel.OnAdded = OnCritterAdded;
             m_AddCrittersPanel.OnRemoved = OnCritterRemoved;

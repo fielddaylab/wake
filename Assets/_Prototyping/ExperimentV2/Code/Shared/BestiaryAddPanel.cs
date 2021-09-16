@@ -87,6 +87,11 @@ namespace ProtoAqua.ExperimentV2
             get { return m_SelectedSet; }
         }
 
+        public bool IsSelected(BestiaryDesc inEntry)
+        {
+            return m_SelectedSet.Contains(inEntry);
+        }
+
         public void ClearSelection()
         {
             if (ClearSelectedSet())

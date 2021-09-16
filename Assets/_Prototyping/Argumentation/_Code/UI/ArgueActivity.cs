@@ -190,6 +190,7 @@ namespace ProtoAqua.Argumentation
 
             if (currentNode.Id == m_Graph.EndNodeId)
             {
+                yield return 3;
                 EndConversationPopup();
             }
             else

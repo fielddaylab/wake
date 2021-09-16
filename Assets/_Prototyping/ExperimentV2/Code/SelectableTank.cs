@@ -42,12 +42,15 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] public Color DefaultWaterColor;
+        [NonSerialized] public bool IsRunning;
 
         public StringHash32 Id { get { return m_Id.IsEmpty ? (m_Id = name) : m_Id; } }
 
         public Action ActivateMethod;
         public Func<bool> CanDeactivate;
         public Action DeactivateMethod;
+        public Func<StringHash32, bool> HasCritter;
+        public Func<StringHash32, bool> HasEnvironment;
 
         [NonSerialized] public TankAvailability CurrentAvailability = TankAvailability.Available;
     }

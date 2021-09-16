@@ -27,11 +27,16 @@ namespace ProtoAqua.ExperimentV2
 
             public void Dispose()
             {
-                if (m_Circle != null && m_Circle.Active && m_Circle.UseCount == m_UseCount)
+                if (IsValid())
                 {
                     m_Circle.OnDispose?.Invoke(m_Circle);
                     m_Circle = null;
                 }
+            }
+
+            public bool IsValid()
+            {
+                return m_Circle != null && m_Circle.Active && m_Circle.UseCount == m_UseCount;
             }
         }
 

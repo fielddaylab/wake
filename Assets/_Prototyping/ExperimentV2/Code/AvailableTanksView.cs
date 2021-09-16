@@ -8,6 +8,7 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using BeauUtil.UI;
+using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,6 +17,8 @@ namespace ProtoAqua.ExperimentV2
     public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable, ISceneUnloadHandler
     {
         private const float DistantWaterVolume = 0.6f;
+
+        static private AvailableTanksView s_Instance;
 
         #region Inspector
 
@@ -188,6 +191,7 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            s_Instance = this;
             foreach(var tank in m_Tanks)
             {
                 InitializeTank(tank);
@@ -201,6 +205,7 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)
         {
+            s_Instance = null;
             m_WaterSFX.Stop(0.2f);
         }
 
@@ -218,5 +223,53 @@ namespace ProtoAqua.ExperimentV2
         #endif // UNITY_EDITOR
 
         #endregion // Interfaces
+
+        #region Leaf
+
+        [LeafMember("ExperimentHasCritter")]
+        static private bool LeafTankHasCritter(StringHash32 inCritterId)
+        {
+            Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
+            SelectableTank tank = s_Instance.m_SelectedTank;
+            if (tank != null && tank.HasCritter != null)
+            {
+                return tank.HasCritter(inCritterId);
+            }
+            return false;
+        }
+
+        [LeafMember("ExperimentHasEnv")]
+        static private bool LeafTankHasEnvironment(StringHash32 inEnvId)
+        {
+            Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
+            SelectableTank tank = s_Instance.m_SelectedTank;
+            if (tank != null && tank.HasEnvironment != null)
+            {
+                return tank.HasEnvironment(inEnvId);
+            }
+            return false;
+        }
+
+        [LeafMember("ExperimentType")]
+        static private StringHash32 LeafTankType()
+        {
+            Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
+            SelectableTank tank = s_Instance.m_SelectedTank;
+            if (tank != null)
+                return tank.Type.ToString();
+            return null;
+        }
+
+        [LeafMember("ExperimentIsRunning")]
+        static private bool LeafTankIsRunning()
+        {
+            Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
+            SelectableTank tank = s_Instance.m_SelectedTank;
+            if (tank != null)
+                return tank.IsRunning;
+            return false;
+        }
+
+        #endregion // Leaf
     }
 }

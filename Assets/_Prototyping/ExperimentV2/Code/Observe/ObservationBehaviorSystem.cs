@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Scripting;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -267,7 +268,16 @@ namespace ProtoAqua.ExperimentV2
         {
             ActorInstance target = inActor.CurrentInteractionActor;
             BFEat eatRule = Assets.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
-            using(ObservationTank.CaptureCircle(eatRule.Id, inActor, inWorld))
+
+            bool bHas = Services.Data.Profile.Bestiary.HasFact(eatRule.Id);
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("factId", eatRule.Id);
+                table.Set("newFact", !bHas);
+                Services.Script.TriggerResponse(ExperimentTriggers.CaptureCircleVisible, table);
+            }
+            
+            using(var capture = ObservationTank.CaptureCircle(eatRule.Id, inActor, inWorld))
             {
                 switch(inActor.Definition.Eating.EatType)
                 {
@@ -288,15 +298,27 @@ namespace ProtoAqua.ExperimentV2
                     default:
                         {
                             yield return EatPulse(inActor, 0.3f);
-                            ObservationTank.EmitEmoji(eatRule, inActor, inWorld); 
+                            ObservationTank.EmitEmoji(eatRule, inActor, inWorld);
+                            yield return 2;
                             break;
                         }
                 }
-                
+
                 if (target.Definition.FreeOnEaten)
                     ActorWorld.Free(inWorld, target);
                 
                 yield return 1;
+
+                if (capture.IsValid())
+                {
+                    bHas = Services.Data.Profile.Bestiary.HasFact(eatRule.Id);
+                    using(var table = TempVarTable.Alloc())
+                    {
+                        table.Set("factId", eatRule.Id);
+                        table.Set("newFact", !bHas);
+                        Services.Script.TriggerResponse(ExperimentTriggers.CaptureCircleExpired, table);
+                    }
+                }
             }
 
             ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);

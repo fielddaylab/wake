@@ -45,7 +45,7 @@ $endif
 
 
 :: gotScans
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when 		HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(TurtleGrass), HasEntity(RedGrouper), jobs:coral-clear-sarg.siteRScans == 0
 @once
 @cutscene
@@ -104,7 +104,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 
 
 :: experiementEnd
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when 		HasFact(Urchin.Eats.Sargassum)
 @once
 @cutscene

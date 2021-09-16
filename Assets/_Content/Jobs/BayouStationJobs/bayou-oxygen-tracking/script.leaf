@@ -87,21 +87,21 @@ $endif
 {@kevin} Yeah, that one might've been a bit of a stretch.
 
 :: taskUpdate1
-@trigger JobTaskUpdated
+@trigger JobTasksUpdated
 @when jobs:bayou-oxygen-tracking.doneScanning == false
 @chatter
 
 $set jobs:bayou-oxygen-tracking.doneScanning = true
 
 :: taskUpdate2
-@trigger JobTaskUpdated
+@trigger JobTasksUpdated
 @when jobs:bayou-oxygen-tracking.doneMeasuring == false, jobs:bayou-oxygen-tracking.doneScanning == true
 @chatter
 
 $set jobs:bayou-oxygen-tracking.doneMeasuring = true
 
 :: taskUpdate3
-@trigger JobTaskUpdated
+@trigger JobTasksUpdated
 @when jobs:bayou-oxygen-tracking.doneModeling == false, jobs:bayou-oxygen-tracking.doneMeasuring == true, jobs:bayou-oxygen-tracking.doneScanning == true
 @chatter
 

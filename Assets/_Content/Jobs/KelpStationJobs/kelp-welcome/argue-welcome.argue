@@ -6,27 +6,47 @@
 
 :: node.intro
 @invalidNodeId  node.invalid.first
-@linkToNode Urchin.Eats.GiantKelp, node.uchinsEatKelp
+@linkToNode Urchin.Eats.GiantKelp, node.urchinsEatKelp
 @linkToNode SeaOtter.Eats.Urchin, node.ottersEatUrchins
 Great work exploring the Great Kelp Forest! What did you learn about how the species relate?
 
 :: node.invalid.first
-@nextNodeId node.intro
+@nextNodeId node.retry
 Hmmm. That's not what I'm looking for. Let's start over.
 
-:: node.uchinsEatKelp
+:: node.intro.retry
+@invalidNodeId  node.invalid.first
+@linkToNode Urchin.Eats.GiantKelp, node.urchinsEatKelp
+@linkToNode SeaOtter.Eats.Urchin, node.ottersEatUrchins
+What did you learn about how the species relate?
+
+:: node.urchinsEatKelp
 @invalidNodeId  node.invalid.urchinsEatKelp
 @linkToNode SeaOtter.Eats.Urchin, node.end
-So Urchins live on the kelp. Interesting! Did you learn anything about the Otters?
+So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
 
 :: node.invalid.urchinsEatKelp
-@nextNodeId node.uchinsEatKelp
-Did you learn anything else?
+@nextNodeId node.urchinsEatKelp.retry
+Hmm, no, that isn't relevant.
+
+:: node.urchinsEatKelp.retry
+@invalidNodeId  node.invalid.urchinsEatKelp
+@linkToNode SeaOtter.Eats.Urchin, node.end
+Did you learn anything about the {pluralnameof SeaOtter}?
 
 :: node.ottersEatUrchins
-@invalidNodeId  node.invalid.urchinsEatKelp
+@invalidNodeId  node.invalid.ottersEatUrchins
 @linkToNode Urchin.Eats.GiantKelp, node.end
-Got it. The Otters eat Urchins. Did you learn anything about what the Urchins Eat?
+Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+
+:: node.invalid.ottersEatUrchins
+@nextNodeId node.ottersEatUrchins.retry
+Hmm, no, that isn't relevant.
+
+:: node.ottersEatUrchins.retry
+@invalidNodeId  node.invalid.ottersEatUrchins
+@linkToNode Urchin.Eats.GiantKelp, node.end
+Did you learn anything about what the {pluralnameof Urchin} eat?
 
 :: node.end
-Really nice work! You just explained the basis of the kelp forest food web. If you return to the Helm, I have some more jobs for you.
+Really nice work! You just explained the basis of the kelp forest food web.

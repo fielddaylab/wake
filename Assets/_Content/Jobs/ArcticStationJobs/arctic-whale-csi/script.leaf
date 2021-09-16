@@ -13,13 +13,9 @@ $call GiveEntity(W_WhaleFall)
 $call GiveEntity(BowheadWhale)
 $call GiveFact(BowheadWhale.Reproduce)
 $call GiveFact(BowheadWhale.Eats.Diatoms)
-$if !HasUpgrade(Microscope)
-    {@profWhalen}   Here, you'll also need this microscope. 
-    $call GiveUpgrade(Microscope)
-    {@profWhalen}   Try to use it to find their food source. Good luck!
-$else
-    {@profWhalen}   Try to use your microscope to find their food source. Good luck!
-$endif
+{@profWhalen}   Here, you'll also need this microscope. 
+$call GiveUpgrade(Microscope)
+{@profWhalen}   Try to use it to find their food source. Good luck!
 
 :: helpScanAndTag
 @trigger    RequestPartnerHelp
@@ -30,7 +26,7 @@ $endif
 {@kevin}	Looks like in total we'll need data about the salmon, sharks, and cod.
 
 :: finishedScans
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when 		jobs:arctic-whale-csi.gotScans == 0, !HasScanned(RS-4W.iceAlgae)
 @once
 @cutscene
@@ -48,7 +44,7 @@ $set jobs:arctic-whale-csi.gotScans = 1
 {@kevin}	Try looking around that iceberg to see if there's anything you can scan.
 
 // :: finishedScanAlgae
-// @trigger    JobTaskUpdated
+// @trigger    JobTasksUpdated
 // @when 		jobs:arctic-whale-csi.gotScans == 1
 // @once
 // @cutscene

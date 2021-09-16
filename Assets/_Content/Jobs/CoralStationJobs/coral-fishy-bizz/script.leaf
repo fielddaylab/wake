@@ -37,7 +37,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 
 :: gotScans
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), jobs:coral-fishy-bizz.gotScans == false
 @cutscene
 $set jobs:coral-fishy-bizz.gotScans = true

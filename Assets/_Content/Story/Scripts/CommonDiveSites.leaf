@@ -1,0 +1,15 @@
+#basePath   commonDiveSite
+
+:: partner.onScan.probeHackerNotAcquired.1
+@trigger    ScannedObject
+@when       scanId == "tools.probeHacker.disabled"
+@chatter
+@repeat     1
+{@kevin}    I don't think we have the necessary equipment for this yet.
+
+:: partner.onScan.probeHackerNotAcquired.2
+@trigger    ScannedObject
+@when       scanId == "tools.probeHacker.disabled"
+@chatter
+@repeat     1
+{@kevin}    Looks like we'll need some new equipment if we're going to scan these probes.

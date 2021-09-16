@@ -1,5 +1,7 @@
 #basePath   job.kelp-welcome
 
+// INTRO
+
 :: start
 @trigger    JobStarted
 @cutscene
@@ -7,15 +9,18 @@
 $branch common.ringPhone
 
 $set    player:seen.drJules = true
-{@drJules}	I'm glad to see you taking on a Job here!
-{@drJules}	The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on the research ship.
-{@player}	How do I do that?
+{@drJules}	I'm glad to see you taking on a job here!
+            The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on our research ship.
+{@player}	How do we do that?
 {@drJules}	Just exit the helm, then use the submarine to travel out to research sites. 
-{@drJules}	When you are done, come back to the office and tell me what you've learned.
-{@player}	Taking out a sub?!? I'm on it!
+            When you are done, come back to the office and tell me what you've learned.
+{@kevin}	Ooh, we get to take out the sub?
+            Let's do it!
 
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
+$call LockSite("RS-1A")
+$call LockSite("RS-1B")
 
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
@@ -23,161 +28,237 @@ $call UnlockRoom("exterior")
 @cutscene
 $if global:nav.shipRoom != "exterior"
 	{@player}   Where should I go from here?
-	{@kevin}	Let's exit the ship and head to the sub.
+	{@kevin}	Let's exit the helm and head to the sub.
 $else
-	{@player}   I made it outside, where is the sub?
+	{@player}   Wait, where's the sub again?
 	{@kevin}	The sub should be at the back of the ship.
 				Let's see what we can find out there!
 $endif
+
+// AT STATION
 
 :: navigation
 @trigger    SceneStart
 @when       scene:name == "KelpStation"
 @once
 @cutscene
+$branch common.ringPhone
 
-$set    player:seen.kevin = true
+{@drJules}	Alright, you're gonna take your sub over to Dive Site C.
+			It's marked for you to the east. When you're there, dive.
 
-{@profWhalen}	You're gonna want to take your sub over to Dive Site C.
-				It's marked for you to the east. When you're there, dive.
+// player does not have anything from site C yet, tell them to go there
 
-//player does not have anything from site C yet, tell them to go there
 :: helpGoToSiteC 
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter) 
+@when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter)
 @boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	Site C should be to the east of the ship.
-{@kevin}	Let's head over there and dive down. 
+            Let's head over there and dive down.
+
+// IN DIVE SITE
 
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
 @once
 @cutscene
-$set    jobs:kelp-welcome.seen.bottom = true
-{@kevin}   Now that you're here, you're going to use your scanner to document all the species.
+$branch common.ringPhone
+
+{@drJules}  Now that you're here, I want you to use your {nameof ROVScanner} to document all the species down here.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
+{@drJules}  Go explore around and scan what you can find.
 
 :: helpAtSiteC
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1C"
+@when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
 @cutscene
-{@player} 	What should I do now?
-$if 		HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntity(SeaOtter) 
-	{@kevin}	It looks like that's everything we need from here. Let's head back up and return to the ship.
-$else
-	{@kevin}	I think there more things for us to find here. 
-	{@kevin}   Lets's look around for some new creatures. 
-$endif
+{@player}   What should I do now?
+{@kevin}    Hmm... They said to document all the species down here.
+            But I think we might be missing some. Let's keep looking.
 
 :: navigation.goBackUp
-@trigger    JobTaskUpdated
-@when       HasEntity(SeaOtter), HasEntity(Urchin), HasEntity(GiantKelp), HasScanned(RS-1C.probe)
+@trigger    JobTasksUpdated
+@when       JobTaskActive(returnToShip), HasEntity(SeaOtter), HasEntity(Urchin), HasEntity(GiantKelp)
 @once
 @cutscene
-{@kevin}    Looking good! If you are ready to return, drive your sub back up toward the surface of the water. 
+$set    jobs:kelp-welcome.got.scans = true
+$branch common.ringPhone
 
+{@drJules}  Hey, nice work! Looks like you got everything.
+            If you're ready to return, drive your sub back up toward the surface of the water.
+
+:: helpAtSiteCCompleted
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1C", jobs:kelp-welcome.got.scans
+@cutscene
+{@player} 	What should I do now?
+{@kevin}    I think we've scanned everything we can down here.
+            Let's head back to the surface.
+
+// BACK AT STATION
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "KelpStation", jobs:kelp-welcome.seen.bottom
+@when       scene:name == "KelpStation", jobs:kelp-welcome.got.scans
 @once
 @cutscene
-{@player}   Alright, I think we got everything?
-{@kevin}   Let me check...
+$branch common.ringPhone
 
-$if HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntity(SeaOtter) // all scans?
-    $set    jobs:kelp-welcome.got.scans = true
-    {@kevin}   Nice work down there. You found everything. Let's go back to the ship. 
-    $call UnlockRoom("Experimentation")
-$else
-    {@kevin}   I think you missed something.
-    {@kevin}   Are you sure you didn't miss any creatures down there?
-$endif
+{@drJules}  Alright, now take your sub back to your ship and we'll continue from there.
+
+:: navigation.return.incomplete
+@trigger    SceneStart
+@when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
+@cutscene
+$branch common.ringPhone
+
+{@player}   Did we get everything, {nameof @drJules}?
+{@drJules}  Hmm... I don't think you have everything.
+            You should head back down there and check again.
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation" 
-@boostScore 1
+@when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
 @cutscene
 {@player} 	Where should we head next?
-$if 		HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntity(SeaOtter) 
-	{@kevin}	Let's head west and return to the ship.
-$else
-	{@kevin}	I think there are more things for us to find at Site C. Let's head back there 
-$endif
+{@kevin}	Let's head west and return to the ship.
 
-:: navigation.return.again
-@trigger    SceneStart
-@when       scene:name == "KelpStation", jobs:kelp-welcome.seen.bottom, Seen(job.kelp-welcome.navigation.return), !jobs:kelp-welcome.got.scans
-@cutscene
-{@player}   How about now?
-{@kevin}   Ummmm...
-$if HasEntity(WarmKelpForest), HasEntity(Urchin), HasEntity(GiantKelp), HasEntity(SeaOtter) // all scans?
-    $set    jobs:kelp-welcome.got.scans = true
-    {@kevin}   Yep, looks like you scanned everything I was expecting.
-                        Head back to your ship when you're ready.
-    $call UnlockRoom("Experimentation")
-$else
-    {@kevin}   No, looks like you're still missing something.
-    {@kevin}   Are you sure you didn't miss any creatures down there? Plants, Animals?
-$endif
+// BACK AT SHIP
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:kelp-welcome.got.scans
+@when       scene:name == "Ship", JobTaskActive(runExperiment)
 @once
 @cutscene
+$branch common.ringPhone
+
 {@player}   We're back. Now what?
-{@kevin}   Now that you know some of the most important species in the kelp forest, it's time to learn how they interact.
-{@player}   Ok, how?
-{@kevin}   Let's go into the experiment room.
+{@drJules}  Well, now that you know some of the important species in that kelp forest, I'd recommend you learn how they interact.
+{@kevin}    Wait, how will we do that?
+{@drJules}  Your ship should have an experimentation room.
+{hide-dialog}
+
+$call UnlockRoom("Experimentation")
+$call FocusHighlight->Focus("exterior.experimentation")
+{wait 1}
+
+{@drJules}  Head in there, and I'll walk you through it.
+$call FocusHighlight->Clear()
 
 :: helpGoToExperimentRoom
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:kelp-welcome.got.scans, !HasFact(Urchin.Eats.GiantKelp), !HasFact(SeaOtter.Eats.Urchin)
+@when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	What should I do now?
-{@kevin}	We scanned everything we needed, so let's head to the Experiment Room.
+{@kevin}	Let's head to the experiment room.
 
 :: firstExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:kelp-welcome.got.scans
+@when       scene:name == "ExperimentV2", JobTaskActive(runExperiment)
 @once
 @cutscene
+$branch common.ringPhone
+
 {@player}   Alright, I'm in the experimentation room, What's next?
-{@kevin}  It's easy. Setup a new tank full of the same kind of water at Site C, add 2 or more species, and observe their behaviors.
-{@player}   Then what?
-{@kevin}   Then we can know for sure how they relate!
+{@drJules}  Okay, see that tank in front of you? Take a closer look at it for me.
+
+:: firstExperiment.2
+@trigger    ExperimentTankViewed
+@when       tankType == "Observation"
+@cutscene
+
+{@drJules}  This is the {h}Observation Tank{/h}. It will allow you to {h}observe{/h} the behaviors of whatever you add to it.
+            Those buttons on the bottom will let you select what critters to add, and what environment to put them in.
+            When you've got your critters added and your environment set, use the {h}Run{/h} button to start the experiment.
+            
+:: firstCaptureCircle
+@trigger    BehaviorCaptureChance
+@chatter
+@once
+$if local:factId == "Urchin.Eats.GiantKelp"
+    {@kevin}    Whoa! That urchin's eating kelp!
+$else
+    {@kevin}    Whoa! That sea otter's eating some urchin!
+$endif
+
+:: firstCaptureSuccess
+@trigger    NewBehaviorObserved
+@chatter
+@once
+@boostScore 1000
+$if local:factId == "Urchin.Eats.GiantKelp"
+    {@kevin}    Nice one! {pluralnameof Urchin} eat {pluralnameof GiantKelp}, huh?
+$else
+    {$kevin}    Nice one! {pluralnameof SeaOtter} eat {pluralnameof Urchin}, huh?
+$endif
+{@kevin}    That should be recorded in our {item-name}Bestiary{/item-name} now.
+
+:: firstCaptureCircleExpire
+@trigger    BehaviorCaptureChanceExpired
+@when       newFact == true
+@chatter
+@once
+{@kevin}    Ah, darn it, we missed it.
+            Let's try to record that behavior when it happens again.
 
 :: helpFirstExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:kelp-welcome.got.scans, !HasFact(Urchin.Eats.GiantKelp), !HasFact(SeaOtter.Eats.Urchin)
+@when 		scene:name == "ExperimentV2", !JobTaskCompleted(runExperiment)
 @boostScore -500
 @cutscene
-{@player} 	How should I do this again?
-{@kevin}	First select an observation tank, and fill it with the water from Site C.
-{@kevin}	Then add 2 or more species, and see what behaviors you can observe!
+{@player}   How should I do this again?
+$if ExperimentIsRunning()
+    {@kevin}	Let's watch this play out.
+                We might see some critters interact with each other.
+$else
+    {@kevin}    Let's set up our observation experiment.
+                We'll probably need to add some {nameof SeaOtter}, some {nameof Urchin}, and some {nameof GiantKelp}.
+                And it'll need to be in a {nameof WarmKelpForest} environment.
+$endif
 
 :: experimentFinished
 @trigger    ExperimentFinished
-@when       scene:name == "ExperimentV2", HasFact(Urchin.Eats.GiantKelp), HasFact(SeaOtter.Eats.Urchin)
+@when       scene:name == "ExperimentV2", JobTaskCompleted(runExperiment)
 @cutscene
-{@player}   
+$branch common.ringPhone
+{@drJules}  Nice work, you two! Now, come chat with me in your office.
+
 $call   UnlockRoom("office")
 $call   UnlockRoom("Argumentation")
 
+// REPORT BACK
+
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(Urchin.Eats.GiantKelp), HasFact(SeaOtter.Eats.Urchin)
+@when 		JobTaskActive(reportBack)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Now that we've finished the experiment, let's report back to Dr. Jules.
+{@kevin}	Now that we've finished the experiment, let's report back to {nameof @drJules}.
 $if global:nav.shipRoom != "office"
 	{@kevin}	We should first head to the office.
 $else
-	{@kevin}	You can report your findings using the comms in front of you.
+	{@kevin}	You can report your findings using the computer in front of you.
 $endif
+
+:: helpReportBackInArgumentation
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack), scene:name == "Argumentation"
+@cutscene
+{@player} 	What should I do now?
+{@kevin}	Let's tell {nameof @drJules} what we found out.
+
+// DONE
+
+:: end
+@trigger    JobCompleted
+@cutscene
+{@drJules}	Nice job, {player-name}! And you too, {nameof @kevin}!
+{@player}   Thanks!
+{@drJules}  I do have more sites for you to check out.
+            Take a look at the job board again when you have the chance.
+$call UnlockSite("RS-1A")
+$call UnlockSite("RS-1B")

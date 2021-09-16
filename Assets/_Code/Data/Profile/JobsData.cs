@@ -212,6 +212,7 @@ namespace Aqua.Profile
                 m_HasChanges = true;
                 m_CompletedJobs.Add(inJob.JobId);
                 m_JobStatuses.FastRemove(inJob);
+                m_CompletedTasks.RemoveWhere((t) => t.JobId == inJob.JobId);
 
                 Services.Events.Dispatch(GameEvents.JobCompleted, inJob.JobId);
 

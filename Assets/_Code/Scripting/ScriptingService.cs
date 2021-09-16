@@ -729,6 +729,7 @@ namespace Aqua
 
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
             m_TablePool.Config.RegisterOnFree((p, obj) => { obj.Reset(); });
+            m_TablePool.Prewarm();
 
             m_ThreadPool = new DynamicPool<ScriptThread>(16, (p) => new ScriptThread(this));
         }

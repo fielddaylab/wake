@@ -61,7 +61,7 @@ $else
 $endif
 
 :: navigation.goBackUp
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
 @once
 @cutscene
@@ -164,7 +164,7 @@ $endif
 
 
 :: experimentEnd
-@trigger    JobTaskUpdated
+@trigger    JobTasksUpdated
 @when 		HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene

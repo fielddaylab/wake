@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1713,6 +1713,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1991100949}
   - component: {fileID: 1991100951}
+  - component: {fileID: 1991100952}
+  - component: {fileID: 1991100950}
   m_Layer: 0
   m_Name: TankUpdater
   m_TagString: Untagged
@@ -1734,6 +1736,21 @@ Transform:
   m_Father: {fileID: 814528061}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1991100950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991100948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e72b2919d9411943baf281668b7b816, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BlackboardName:
+    m_Source: experiment
+    m_Hash: 2774685010
 --- !u!114 &1991100951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1747,6 +1764,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Tanks: []
+--- !u!114 &1991100952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991100948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: 
+    m_Hash: 0
 --- !u!1001 &3816106542348434365
 PrefabInstance:
   m_ObjectHideFlags: 0

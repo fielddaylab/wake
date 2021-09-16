@@ -586,6 +586,24 @@ namespace Aqua
                 return Services.Data.Profile.Map.LockStation(inStationId);
             }
 
+            [LeafMember("SiteUnlocked")]
+            static private Variant SiteUnlocked(StringHash32 inSiteId)
+            {
+                return Services.Data.Profile.Map.IsSiteUnlocked(inSiteId);
+            }
+
+            [LeafMember("UnlockSite")]
+            static private bool UnlockSite(StringHash32 inSiteId)
+            {
+                return Services.Data.Profile.Map.UnlockSite(inSiteId);
+            }
+
+            [LeafMember("LockSite")]
+            static private bool LockSite(StringHash32 inSiteId)
+            {
+                return Services.Data.Profile.Map.LockSite(inSiteId);
+            }
+
             [LeafMember("RoomUnlocked")]
             static private bool RoomUnlocked(StringHash32 inRoomId)
             {

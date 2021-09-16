@@ -54,7 +54,7 @@ namespace Aqua
             m_Activated = true;
         }
 
-        [LeafMember]
+        [LeafMember("Focus")]
         public void Focus(StringSlice inObjectId, float inWidth = 0, float inHeight = 0, float inAlpha = 0.6f)
         {
             if (Services.UI.IsSkippingCutscene())

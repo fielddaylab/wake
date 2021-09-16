@@ -44,14 +44,15 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] private ActorWorld m_World;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
-        [NonSerialized] private bool m_IsRunning;
         [NonSerialized] private readonly List<ExperimentFactResult> m_FactResults = new List<ExperimentFactResult>();
 
         private void Awake()
         {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
-            m_ParentTank.CanDeactivate = () => !m_IsRunning;
+            m_ParentTank.CanDeactivate = () => !m_ParentTank.IsRunning;
+            m_ParentTank.HasCritter = (s) => m_AddCrittersPanel.IsSelected(Assets.Bestiary(s));
+            m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
 
             m_AddCrittersPanel.OnAdded = OnCritterAdded;
             m_AddCrittersPanel.OnRemoved = OnCritterRemoved;
@@ -76,7 +77,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void LateUpdate()
         {
-            if (!m_IsRunning || Services.Pause.IsPaused())
+            if (!m_ParentTank.IsRunning || Services.Pause.IsPaused())
                 return;
 
             m_ActorBehavior.TickBehaviors(Time.deltaTime);
@@ -117,7 +118,7 @@ namespace ProtoAqua.ExperimentV2
                 m_SummaryPanel.gameObject.SetActive(false);
                 m_SummaryPanel.FactPools.FreeAll();
             }
-            m_IsRunning = false;
+            m_ParentTank.IsRunning = false;
             m_CameraBlinking.enabled = false;
         }
         
@@ -335,7 +336,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void OnRunClick()
         {
-            m_IsRunning = true;
+            m_ParentTank.IsRunning = true;
 
             m_AddCrittersPanel.Hide();
             m_SelectEnvPanel.Hide();
@@ -367,7 +368,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void OnFinishClick()
         {
-            m_IsRunning = false;
+            m_ParentTank.IsRunning = false;
 
             foreach(var instance in m_World.Actors)
             {
@@ -418,7 +419,7 @@ namespace ProtoAqua.ExperimentV2
             m_ActorBehavior.ClearActors();
             
             m_BehaviorCircles.Reset();
-            m_IsRunning = false;
+            m_ParentTank.IsRunning = false;
             m_CameraBlinking.enabled = false;
 
             m_ParentTank.BackClickable.gameObject.SetActive(true);

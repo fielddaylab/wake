@@ -1,20 +1,5 @@
 #basePath   partner.talk.experiment
 
-// Room Stuff
-
-:: room.wood
-@trigger    RequestPartnerHelp
-@when       !experiment:setup.on
-@once
-@cutscene
-{@kevin}    Why's this room made out of wood?
-{@player}   What do you mean?
-{@kevin}    Well, your ship is {slow}metal{/slow} on the outside.
-            But this room doesn't match.
-{@player}   That's...
-            Hmm|, you know, I haven't really thought about it.
-{@kevin}    Maybe your {slow}friend{/slow} thought the contrast was "stylish" or something.
-
 // Behavior Already Observed
 
 :: behavior.alreadyObserved.1

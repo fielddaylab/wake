@@ -22,7 +22,6 @@ namespace ProtoAqua.ExperimentV2
 
         [SerializeField] private ActorAllocator m_Allocator = null;
 
-
         [Header("Summary Popup")]
         [SerializeField] private GameObject m_SummaryParent = null;
         [SerializeField] private LocText m_CritterNameText = null;
@@ -65,6 +64,8 @@ namespace ProtoAqua.ExperimentV2
         {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
+            m_ParentTank.HasCritter = (s) => m_AddCrittersPanel.IsSelected(Assets.Bestiary(s));
+            m_ParentTank.HasEnvironment = (s) => false;
 
             m_AddCrittersPanel.OnAdded = OnCritterAdded;
             m_AddCrittersPanel.OnRemoved = OnCritterRemoved;
