@@ -204,6 +204,20 @@ namespace Aqua
 
             yield return roomMenu;
 
+            // dive sites
+
+            DMInfo diveSiteMenu  = new DMInfo("Dive Sites");
+
+            diveSiteMenu.AddButton("Unlock All Dive Sites", () => UnlockAllSites());
+            diveSiteMenu.AddDivider();
+
+            foreach(var diveSite in Services.Assets.Map.DiveSites())
+            {
+                RegisterSiteToggle(diveSiteMenu, diveSite.Id());
+            }
+
+            yield return diveSiteMenu;
+
             // inventory menu
 
             DMInfo invMenu = new DMInfo("Inventory");
@@ -406,6 +420,20 @@ namespace Aqua
             );
         }
 
+        static private void RegisterSiteToggle(DMInfo inMenu, StringHash32 inSiteId)
+        {
+            inMenu.AddToggle(inSiteId.ToDebugString(),
+                () => { return Services.Data.Profile.Map.IsSiteUnlocked(inSiteId); },
+                (b) =>
+                {
+                    if (b)
+                        Services.Data.Profile.Map.UnlockSite(inSiteId);
+                    else
+                        Services.Data.Profile.Map.LockSite(inSiteId);
+                }
+            );
+        }
+
         static private void RegisterRoomToggle(DMInfo inMenu, StringHash32 inRoomId)
         {
             inMenu.AddToggle(inRoomId.ToDebugString(),
@@ -433,6 +461,14 @@ namespace Aqua
             foreach(var map in Services.Assets.Map.Stations())
             {
                 Services.Data.Profile.Map.UnlockStation(map.Id());
+            }
+        }
+
+        static private void UnlockAllSites()
+        {
+            foreach(var map in Services.Assets.Map.DiveSites())
+            {
+                Services.Data.Profile.Map.UnlockSite(map.Id());
             }
         }
 
