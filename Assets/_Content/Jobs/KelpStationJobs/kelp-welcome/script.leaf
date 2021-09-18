@@ -10,17 +10,17 @@ $branch common.ringPhone
 
 $set    player:seen.drJules = true
 {@drJules}	I'm glad to see you taking on a job here!
-            The first thing you need to do is go observe a few kinds of Kelp Forests and learn how to use some basic tools on our research ship.
-{@player}	How do we do that?
-{@drJules}	Just exit the helm, then use the submarine to travel out to research sites. 
-            When you are done, come back to the office and tell me what you've learned.
+            The first thing you need to do is go observe one of our kelp forests at Site C.
+            That should teach you about some of the tools on your research ship.
+{@player}	Cool! How do we get there?
+{@drJules}	Just exit your helm, then use the submarine to travel out to Site C.
+            When you're done, come back to the {map-name}Office{/map-name} and tell me what you've learned.
 {@kevin}	Ooh, we get to take out the sub?
             Let's do it!
 
+$call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
-$call LockSite("RS-1A")
-$call LockSite("RS-1B")
 
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
@@ -44,7 +44,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drJules}	Alright, you're gonna take your sub over to Dive Site C.
+{@drJules}	Alright, you're gonna take your sub over to Site C.
 			It's marked for you to the east. When you're there, dive.
 
 // player does not have anything from site C yet, tell them to go there
@@ -82,7 +82,7 @@ $call Player->SetTool(Scanner)
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       JobTaskActive(returnToShip), HasEntity(SeaOtter), HasEntity(Urchin), HasEntity(GiantKelp)
+@when       JobTaskActive(returnToShip)
 @once
 @cutscene
 $set    jobs:kelp-welcome.got.scans = true
@@ -139,11 +139,11 @@ $branch common.ringPhone
 {@player}   We're back. Now what?
 {@drJules}  Well, now that you know some of the important species in that kelp forest, I'd recommend you learn how they interact.
 {@kevin}    Wait, how will we do that?
-{@drJules}  Your ship should have an experimentation room.
+{@drJules}  Your ship should have an {nameof Experimentation}.
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
-$call FocusHighlight->Focus("exterior.experimentation")
+$call FocusHighlight->Focus("exterior.experimentation", 200, 200)
 {wait 1}
 
 {@drJules}  Head in there, and I'll walk you through it.
@@ -154,7 +154,7 @@ $call FocusHighlight->Clear()
 @when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	What should I do now?
-{@kevin}	Let's head to the experiment room.
+{@kevin}	Let's head to the {nameof Experimentation}.
 
 :: firstExperiment
 @trigger    SceneStart
@@ -163,7 +163,7 @@ $call FocusHighlight->Clear()
 @cutscene
 $branch common.ringPhone
 
-{@player}   Alright, I'm in the experimentation room, What's next?
+{@player}   Alright, I'm in the {nameof Experimentation}. What's next?
 {@drJules}  Okay, see that tank in front of you? Take a closer look at it for me.
 
 :: firstExperiment.2
@@ -180,9 +180,9 @@ $branch common.ringPhone
 @chatter
 @once
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@kevin}    Whoa! That urchin's eating kelp!
+    {@kevin}    Whoa!| That urchin's eating something!
 $else
-    {@kevin}    Whoa! That sea otter's eating some urchin!
+    {@kevin}    Whoa!| That sea otter's eating something!
 $endif
 
 :: firstCaptureSuccess
@@ -225,7 +225,8 @@ $endif
 @when       scene:name == "ExperimentV2", JobTaskCompleted(runExperiment)
 @cutscene
 $branch common.ringPhone
-{@drJules}  Nice work, you two! Now, come chat with me in your office.
+{@drJules}  Nice work, you two! Now, come chat with me in your {map-name}Office{/map-name}.
+            You can submit your findings there through your {h}Computer{/h}
 
 $call   UnlockRoom("office")
 $call   UnlockRoom("Argumentation")
@@ -239,9 +240,9 @@ $call   UnlockRoom("Argumentation")
 {@player} 	What should we be doing now?
 {@kevin}	Now that we've finished the experiment, let's report back to {nameof @drJules}.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should first head to the office.
+	{@kevin}	We should first head to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	You can report your findings using the computer in front of you.
+	{@kevin}	You can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 :: helpReportBackInArgumentation
@@ -259,6 +260,4 @@ $endif
 {@drJules}	Nice job, {player-name}! And you too, {nameof @kevin}!
 {@player}   Thanks!
 {@drJules}  I do have more sites for you to check out.
-            Take a look at the job board again when you have the chance.
-$call UnlockSite("RS-1A")
-$call UnlockSite("RS-1B")
+            Take a look at the {map-name}Job Board{/map-name} again when you have the chance.

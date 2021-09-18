@@ -3,8 +3,18 @@
 :: ringPhone
 @entrypoint
 @cutscene
+{hide-dialog}
 {sfx PhoneRing}
 {screen-flash white.30, 0.4}
 {wait 0.5}
 {screen-flash white.30, 0.4}
 {wait 1}
+
+:: download
+@entrypoint
+@cutscene
+{hide-dialog}
+{sfx DataDownload}
+{fade-out blue.50, 2, wait}
+{screen-flash white.50, 0.8}
+{fade-in 1.5, wait}

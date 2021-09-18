@@ -9,8 +9,10 @@ namespace ProtoAqua.Modeling
         static public readonly TableKeyPair Var_ModelSync = TableKeyPair.Parse("modeling:modelSync");
         static public readonly TableKeyPair Var_PredictSync = TableKeyPair.Parse("modeling:predictSync");
         static public readonly TableKeyPair Var_ModelPhase = TableKeyPair.Parse("modeling:phase");
+        static public readonly TableKeyPair Var_ModelUnimportedCount = TableKeyPair.Parse("modeling:unimportedCount");
 
         static public readonly StringHash32 Trigger_ConceptStarted = "UniversalModelStarted";
+        static public readonly StringHash32 Trigger_ConceptUpdated = "UniversalModelUpdated";
         static public readonly StringHash32 Trigger_GraphStarted = "ModelGraphStarted";
         static public readonly StringHash32 Trigger_SyncedImmediate = "ModelSyncedImmediate";
         static public readonly StringHash32 Trigger_SyncError = "ModelSyncError";

@@ -286,6 +286,8 @@ namespace Aqua
 
         private void PerformPostLoad()
         {
+            LeafIntegration.ClearBatches();
+
             if (!m_PostLoadQueued)
                 return;
 

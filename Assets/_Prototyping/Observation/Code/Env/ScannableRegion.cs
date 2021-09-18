@@ -12,9 +12,11 @@ namespace ProtoAqua.Observation
 
         public SerializedHash32 ScanId;
         [Required] public Collider2D Collider;
+        public Transform TrackTransform;
         [Space]
         public ToolView ToolView;
         [SerializeField, HideInInspector] public bool InsideToolView;
+        [Space]
 
         #endregion // Inspector
 
@@ -34,8 +36,16 @@ namespace ProtoAqua.Observation
 
         #if UNITY_EDITOR
 
+        private void Reset()
+        {
+            TrackTransform = transform;
+        }
+
         void ISceneOptimizable.Optimize()
         {
+            if (!TrackTransform)
+                TrackTransform = transform;
+
             InsideToolView = this.GetComponentInParent<ToolView>(true);
         }
 

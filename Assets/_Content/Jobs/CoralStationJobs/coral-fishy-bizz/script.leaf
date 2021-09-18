@@ -83,14 +83,14 @@ $endif
 @when       scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == true
 @once
 @cutscene
-{@kevin}   	Let's head to the modeling room and see if we can understand how the Grouper's population and Fisher population interacts.
+{@kevin}   	Let's head to the {nameof Modeling} and see if we can understand how the Grouper's population and Fisher population interacts.
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ModelingPrototype", jobs:coral-fishy-bizz.gotScans == true, !HasFact(Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should we be doing next?
-{@kevin}	Let's head to the modeling room and figure out how many Fishers we have have at Site V.
+{@kevin}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
 
 
 ::ModelHelp1
@@ -146,5 +146,5 @@ $endif
 {@player} 	What should we be doing now?
 {@kevin}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif

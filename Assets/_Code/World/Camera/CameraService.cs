@@ -8,6 +8,7 @@ using Aqua.Debugging;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 using UnityEngine;
 
 namespace Aqua.Cameras
@@ -694,6 +695,22 @@ namespace Aqua.Cameras
             return false;
         }
 
+        /// <summary>
+        /// Removes the last target from the target stack.
+        /// </summary>
+        public bool PopTarget()
+        {
+            int idx = m_TargetStack.Count - 1;
+            if (idx >= 0)
+            {
+                ref CameraTargetData target = ref m_TargetStack[idx];
+                m_TargetStack.PopBack();
+                DebugService.Log(LogMask.Camera, "[CameraService] Removed camera target '{0}'", target.Id);
+                return true;
+            }
+            return false;
+        }
+
         #endregion // Targets
 
         #region Bounds
@@ -971,7 +988,7 @@ namespace Aqua.Cameras
         /// <summary>
         /// Moves the camera to a specific position.
         /// </summary>
-        public IEnumerator MoveToPosition(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth)
+        public IEnumerator MoveToPosition(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth, Action inOnComplete = null)
         {
             SetAsScripted();
 
@@ -991,14 +1008,14 @@ namespace Aqua.Cameras
                 return null;
             }
 
-            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, properties, inDuration, inCurve));
+            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, properties, inDuration, inCurve, inOnComplete));
             return m_ScriptedAnimation.Wait();
         }
 
         /// <summary>
         /// Moves the camera to a specific pose.
         /// </summary>
-        public IEnumerator MoveToPose(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        public IEnumerator MoveToPose(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth, Action inOnComplete = null)
         {
             Assert.NotNull(inPose);
 
@@ -1019,17 +1036,17 @@ namespace Aqua.Cameras
                 return null;
             }
 
-            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, inPose.Properties, inDuration, inCurve));
+            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, inPose.Properties, inDuration, inCurve, inOnComplete));
             return m_ScriptedAnimation.Wait();
         }
 
-        private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve)
+        private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Action inOnComplete = null)
         {
             return Tween.ZeroToOne((f) => {
                 CameraState newState = default;
                 CameraState.Lerp(inInitialState, inTarget, ref newState, f);
                 ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties);
-            }, inDuration).Ease(inCurve);
+            }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
         }
 
         #endregion // Scripted
@@ -1179,6 +1196,88 @@ namespace Aqua.Cameras
         }
 
         #endregion // Utils
+
+        #region Leaf
+
+        [LeafMember("CameraSnapToTarget")]
+        static private void LeafSnapToTarget()
+        {
+            Services.Camera.SnapToTarget();
+        }
+
+        [LeafMember("CameraRecenterOnTarget")]
+        static private IEnumerator LeafRecenterOnTarget(float inDuration, Curve inCurve = Curve.Smooth)
+        {
+            return Services.Camera.RecenterOnTarget(inDuration, inCurve);
+        }
+
+        [LeafMember("CameraSetMode")]
+        static private void LeafSetMode(CameraMode inMode)
+        {
+            switch(inMode)
+            {
+                case CameraMode.Hinted:
+                    Services.Camera.SetAsHinted();
+                    break;
+
+                case CameraMode.Scripted:
+                    Services.Camera.SetAsScripted();
+                    break;
+            }
+        }
+
+        [LeafMember("CameraPushTarget")]
+        static private void LeafPushTarget(ScriptObject inObject, float inLerp = 3, float inZoom = 1)
+        {
+            Assert.NotNull(inObject, "Cannot pass null target");
+            CameraTarget target = inObject.GetComponent<CameraTarget>();
+            if (target != null)
+            {
+                Services.Camera.PushTarget(target);
+            }
+            else
+            {
+                Services.Camera.PushTarget(target.transform, inLerp, inZoom);
+            }
+        }
+
+        [LeafMember("CameraPopTarget")]
+        static private void LeafPopTarget()
+        {
+            Services.Camera.PopTarget();
+        }
+
+        [LeafMember("CameraMoveToPose")]
+        static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        {
+            Assert.NotNull(inPose, "Cannot pass null pose");
+            CameraPose pose = inPose.GetComponent<CameraPose>();
+            if (pose != null)
+            {
+                return Services.Camera.MoveToPose(pose, inDuration, inCurve);
+            }
+            else
+            {
+                return Services.Camera.MoveToPosition(pose.transform.position, null, inDuration, inCurve);
+            }
+        }
+
+        [LeafMember("CameraSnapToPose")]
+        static private void LeafSnapToPose(ScriptObject inPose)
+        {
+            Assert.NotNull(inPose, "Cannot pass null pose");
+            CameraPose pose = inPose.GetComponent<CameraPose>();
+            if (pose != null)
+            {
+                Services.Camera.SnapToPose(pose);
+            }
+            else
+            {
+                Services.Camera.SnapToPosition(pose.transform.position);
+            }
+        }
+
+        #endregion // Leaf
     
         #region Debug
 

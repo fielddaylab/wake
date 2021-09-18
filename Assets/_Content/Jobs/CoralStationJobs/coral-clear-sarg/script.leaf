@@ -11,7 +11,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 {@profCempaka}	Make sure you've scanned everything at Site R, and then experiment until you've figured out a solution. 
 $if HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(TurtleGrass), HasEntity(RedGrouper)
 	$set jobs:coral-clear-sarg.siteRScans = 2 //Set to 2 instead of 1 so dialouge about returning to the ship is not seen
-	{@kevin}		I think we've already scanned all the critters at site R, so let's head right to the experiment lab!
+	{@kevin}		I think we've already scanned all the critters at site R, so let's head right to the {nameof Experimentation}!
 $else
 	{@kevin}		Back to Site R we go!
 $endif
@@ -74,14 +74,14 @@ $set jobs:coral-clear-sarg.siteRScans = 1
 @once
 @cutscene
 $set jobs:coral-clear-sarg.siteRScans = 2
-{@kevin}   Now that we're back, let's go to the experiment room!
+{@kevin}   Now that we're back, let's go to the {nameof Experimentation}!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Ship", jobs:coral-clear-sarg.siteRScans > 0, !HasFact(Urchin.Eats.Sargassum)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	Let's head over to the experiment room and try to find something that can deal with the Sargassum. 
+{@kevin}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
 
 
 :: startExperiment
@@ -115,7 +115,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 @when 		HasFact(Urchin.Eats.Sargassum)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Now that we've finished the experiment, let's report back to the Office.
+{@kevin}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif

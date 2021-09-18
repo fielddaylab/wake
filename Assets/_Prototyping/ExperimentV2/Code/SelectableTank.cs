@@ -63,10 +63,12 @@ namespace ProtoAqua.ExperimentV2
         Dirty
     }
 
-    public enum TankType
+    public enum TankType : byte
     {
         Observation = InProgressExperimentData.Type.Observation,
         Stress = InProgressExperimentData.Type.Stress,
-        Measurement = InProgressExperimentData.Type.Measurement
+        Measurement = InProgressExperimentData.Type.Measurement,
+
+        Unknown = 255
     }
 }

@@ -127,7 +127,7 @@ $endif
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the experiment room and see what's strange with the coral.
+{@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
 {@player}   On it!
 
 :: helpBackAtShip
@@ -135,7 +135,7 @@ $endif
 @when 		scene:name == "Ship", jobs:coral-invade.got.scans == true
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head over to the experiment room and try to learn more about the coral's condition. 
+{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
 
 
 :: startExperiment
@@ -182,6 +182,6 @@ $if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
 $else
 	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
 	$if global:nav.shipRoom == "office"
-		{@kevin}	Just like the previous jobs, you can report your findings using the comms in front of you.
+		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 	$endif
 $endif

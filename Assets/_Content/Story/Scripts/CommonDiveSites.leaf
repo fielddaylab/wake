@@ -5,6 +5,7 @@
 @when       scanId == "tools.probeHacker.disabled"
 @chatter
 @repeat     1
+$set    player:noProbeHacker.triedToScan = true
 {@kevin}    I don't think we have the necessary equipment for this yet.
 
 :: partner.onScan.probeHackerNotAcquired.2
@@ -12,4 +13,5 @@
 @when       scanId == "tools.probeHacker.disabled"
 @chatter
 @repeat     1
+$set    player:noProbeHacker.triedToScan = true
 {@kevin}    Looks like we'll need some new equipment if we're going to scan these probes.

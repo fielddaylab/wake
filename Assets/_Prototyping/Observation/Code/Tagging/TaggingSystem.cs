@@ -11,12 +11,15 @@ using Aqua.Debugging;
 using Aqua.Cameras;
 using Aqua.Profile;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace ProtoAqua.Observation
 {
     [DefaultExecutionOrder(-100)]
     public class TaggingSystem : SharedManager, IScenePreloader
     {
+        static private TaggingSystem s_Instance;
+
         #region Inspector
 
         [SerializeField] private VFX.Pool m_EffectPool = null;
@@ -44,12 +47,15 @@ namespace ProtoAqua.Observation
         protected override void Awake()
         {
             base.Awake();
+            Assert.True(s_Instance == null);
+            s_Instance = this;
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated);
         }
 
         protected override void OnDestroy()
         {
+            s_Instance = null;
             Services.Events?.DeregisterAll(this);
 
             base.OnDestroy();
@@ -81,7 +87,7 @@ namespace ProtoAqua.Observation
             for(int i = m_RemainingCritters.Count - 1; i >= 0; i--)
             {
                 critter = m_RemainingCritters[i];
-                gameplayPlanePos = positionHelper.CastToPlane(critter.transform);
+                gameplayPlanePos = positionHelper.CastToPlane(critter.TrackTransform);
                 critter.Collider.transform.position = gameplayPlanePos;
 
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
@@ -198,6 +204,18 @@ namespace ProtoAqua.Observation
         private bool IsUnfinished(StringHash32 inId)
         {
             return !m_SiteData.TaggedCritters.Contains(inId);
+        }
+
+        private bool IsStarted(StringHash32 inId)
+        {
+            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
+            {
+                ref TaggingProgress category = ref m_CritterTypes[i];
+                if (category.Id == inId)
+                    return category.Tagged > 0;
+            }
+
+            return false;
         }
 
         private bool WasTagged(TaggableCritter inCritter)
@@ -353,5 +371,23 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Callbacks
+
+        #region Leaf
+
+        [LeafMember("TaggingHasStarted")]
+        static private bool LeafHasStartedTagging(StringHash32 inCritterId)
+        {
+            Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");
+            return s_Instance.IsStarted(inCritterId);
+        }
+
+        [LeafMember("TaggingHasFinished")]
+        static private bool LeafHasFinishedTagging(StringHash32 inCritterId)
+        {
+            Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");
+            return !s_Instance.IsUnfinished(inCritterId);
+        }
+
+        #endregion // Leaf
     }
 }

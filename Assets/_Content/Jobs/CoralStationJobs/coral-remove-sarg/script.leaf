@@ -11,7 +11,7 @@ $branch common.ringPhone
 {@profCempaka}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
 {@player} 		Got it, I'll get started on it now.
 $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@kevin}		{player-name}, let's start by heading to the experiment lab!
+	{@kevin}		{player-name}, let's start by heading to the {nameof Experimentation}!
 $else
 	{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
 $endif
@@ -30,7 +30,7 @@ $endif
 @when 		scene:name != "ExperimentV2", !HasFact(Sargassum.Consume.Light)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Let's head over to the experiment room and try to learn more about Sargassum.
+{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about Sargassum.
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
@@ -96,7 +96,7 @@ $endif
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
-{@kevin}	If you can't get the historical data to match, you might need to spend more time in the Experiment Room first.
+{@kevin}	If you can't get the historical data to match, you might need to spend more time in the {nameof Experimentation} first.
 
 
 :: InterventionModelSyncedImmediate
@@ -126,4 +126,4 @@ $endif
 @when 		HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
-{@kevin}	Let's report back to the office with our findings!
+{@kevin}	Let's report back to the {map-name}Office{/map-name} with our findings!

@@ -136,7 +136,7 @@ namespace ProtoAqua.Observation
             for(int i = m_AllRegions.Count - 1; i >= 0; i--)
             {
                 region = m_AllRegions[i];
-                gameplayPlanePos = positionHelper.CastToPlane(region.transform);
+                gameplayPlanePos = positionHelper.CastToPlane(region.TrackTransform);
                 region.Collider.transform.position = gameplayPlanePos;
 
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
@@ -146,7 +146,7 @@ namespace ProtoAqua.Observation
             for(int i = m_RegionsInRange.Count - 1; i >= 0; i--)
             {
                 region = m_RegionsInRange[i];
-                region.CurrentIcon.transform.position = region.transform.position;
+                region.CurrentIcon.transform.position = region.TrackTransform.position;
             }
         }
 

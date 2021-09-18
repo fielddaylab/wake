@@ -1,50 +1,42 @@
 #basePath   job.kelp-urchin-barren
 
+// Beginning
+
 :: start
 @trigger    JobStarted
 @cutscene
 
 $branch common.ringPhone
 
-$set jobs:kelp-urchin-barren.doneModeling = false
-{@drJules} This next Job is going to be a little different.
-{@player} How is that?
-{@drJules} First, you are going to help us study Site B, which is not doing very well.
-{@drJules} Second, with this job you are going to learn how to build a model and perform simulations of what is likely going to happen in the future.
-{@player} Predict the future?!? Sounds cool.
-{@drJules} Agreed. Models and simulations are very powerful tools!
+{@drJules}  Okay, this next job is going to be a little different.
+{@player}   How so?
+{@drJules}  First, you are going to help us study Site B. It's... not doing well.
+            Second, you're going to learn how to build a model and perform simulations of what is likely going to happen in the future.
+{@player}   Ooh, you mean we get to predict the future? Sounds cool.
+{@drJules}  Agreed. Models and simulations are very powerful tools!
+            Now head on over to Site B to get started.
+{@kevin}    Where is Site B exactly?
+{@drJules}  It should be southwest of your ship.
 
-:: end
-@trigger    JobCompleted
-@cutscene
-
-$branch common.ringPhone
-
-{@drJules}  Well that's a bit depressing.
-{@player}   Yeah it is. Predicting the future is more fun when the future looks bright.
-{@drJules}  Don't lose hope yet. I have one last job for you.
-
-
-// @trigger 	JobTaskCompleted
-// @where		taskId = "getProbeData"
-// @once
-// @cutscene
-// {@kevin} Ohh wow. The kelp are almost all gone. They call this an "Urchin Barren" because the urchins have eaten everything.
+$call UnlockSite(RS-1B)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !HasEntity(UrchinBarren)
+@when 		scene:name == "Ship", JobTaskTop(gotoSiteB)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	First let's exit the ship and head over to Site B.
-
+{@kevin}	I think we need to head over to Site B.
+            Let's exit the ship.
+            
 :: helpGoToSiteB
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", !HasEntity(UrchinBarren)
+@when 		scene:name == "KelpStation", JobTaskTop(gotoSiteB)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	Site B should be southwest of the ship.
-{@kevin}	Let's head over there and dive down.
+            Let's head over there and dive down.
+
+// In Site B
 
 :: giveUpgrade1
 @trigger	SceneStart
@@ -54,10 +46,27 @@ $branch common.ringPhone
 
 $branch common.ringPhone
 
-{@drJules}	Once you've scanned the species around here, you'll want to use your {item-name}Critter Tracker{/item-name} to tag all the species down here.
+{@drJules}  This time, I'll also need you to gather some information on the population counts here.
+            And for that, you'll need this {nameof ROVTagger}.
 $call GiveUpgrade(ROVTagger)
-{@drJules}  Once you've scanned a critter, switch to the {item-name}Tracker{/item-name} and move close to it.
-            Tag enough critters that way and your {item-name}Tracker{/item-name} will do some math and give you a population estimate.
+{@drJules}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}tag{/h} it.
+            Tag enough of them and your {item-name}Tracker{/item-name} will do the rest and give you a population estimate.
+
+:: helpAtSiteB.A
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1B", JobTaskTop(getTagged)
+@cutscene
+{@player} 	I made it to Site B, what should I do now?
+{@kevin}	Let's explore and tag all these critters.
+$if !TaggingHasStarted(Urchin)
+    {@kevin}    Are there any {pluralnameof Urchin} here?
+$elseif !TaggingHasFinished(Urchin)
+    {@kevin}    We haven't found all the {pluralnameof Urchin} yet.
+$elseif !TaggingHasStarted(GiantKelp)
+    {@kevin}    I can see a lot of {pluralnameof GiantKelp}...
+$else
+    {@kevin}    Let's try to find the rest of the {pluralnameof GiantKelp}.
+$endif
 
 :: giveUpgrade2
 @trigger	JobTaskCompleted
@@ -67,11 +76,21 @@ $call GiveUpgrade(ROVTagger)
 
 $branch common.ringPhone
 
-{@drJules}	Alright, that's the current population...
-			Maybe you can try getting the historical data from the probe?
-			There should be a probe around here.
-			Take this {item-name}Probe Decryptor{/item-name}, it should let you decode the data from the probes.
+{@drJules}	Alright, that's the current population... the urchins are really getting out of hand...
+			Maybe you can try getting some historical population data from the {h}Probe{/h}?
+			There should be a probe around here somewhere.
+			Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
 $call GiveUpgrade(ProbeHacker)
+{@drJules}  Once you've done that, head back to the ship.
+
+:: helpAtSiteB.B
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-1B", JobTaskTop(getProbeData)
+@cutscene
+
+{@player}   What should I do next?
+{@kevin}    We just got the {nameof ProbeHacker} from {nameof @drJules}.
+            Maybe we should look for the {h}Probe{/h}.
 
 :: unlockModeling
 @trigger	JobTaskCompleted
@@ -79,82 +98,143 @@ $call GiveUpgrade(ProbeHacker)
 @when		taskId == "getProbeData" 
 @once
 @chatter
-$call	UnlockRoom(modelingRoom)
-$call	UnlockRoom(Modeling)
-{@kevin}	Hmmm, okay. Let's take this back to modeling.
 
-:: helpAtSiteB
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1B"
-@cutscene
-$if !HasEntity(UrchinBarren)
-	{@player} 	I made it to Site B, what should I do now?
-	{@kevin}	Let's start by scanning the data from the research probe. 
-$else
-	{@player} 	Probe scan complete, what's next?
-	{@kevin}	We've seen what it's like here at Site B, so now we need to head back to the ship and make a model.
-	{@kevin}	Head back up to the surface when you're done looking around.
-$endif
+{@kevin}	Alright, we got the historical data.
+            {nameof @drJules} said we should head back to the ship now.
+
+// TO MODELING
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", HasEntity(UrchinBarren)
+@when 		scene:name == "KelpStation", JobTaskTop(predictSiteB)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We need to head back to the ship to make a model of what we've found. 
-{@kevin}	The ship should be to the northeast of Site B.
+{@kevin}	We need to head back to the ship.
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Ship", JobTaskTop(predictSiteB)
+@once
+@cutscene
+$branch common.ringPhone
+
+{@drJules}  Okay, it's time for you to learn how to put your facts together into a model.
+{@kevin}    Ah, is this another room on the ship?
+{@drJules}  Yep! Your ship also has a {nameof Modeling}.
+{hide-dialog}
+
+$call	UnlockRoom(modelingRoom)
+$call	UnlockRoom(Modeling)
+
+$call FocusHighlight->Focus("exterior.modeling", 200, 200)
+{wait 1}
+
+{@drJules}  Head in there and open up the big whiteboard on the wall.
+$call FocusHighlight->Clear()
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", HasEntity(UrchinBarren), jobs:kelp-urchin-barren.doneModeling == false
+@when 		scene:name == "Ship", JobTaskTop(predictSiteB)
 @cutscene
 $if global:nav.shipRoom != "modeling"
 	{@player} 	I'm back on the ship, what should I do next?
-	{@kevin}	Let's first head to the Modeling Room.
+	{@kevin}	Let's first head to the {nameof Modeling}.
 $else
-	{@player} 	Made it to the modeling room, what do we do from here?
-	{@kevin}	Now it's time to make a model! Head over to the Modeling Whiteboard.
+	{@player} 	Made it to the {nameof Modeling}, what do we do from here?
+	{@kevin}	I think {nameof @drJules} is going to teach us how to make a model.
+                Head over to the {map-name}Modeling Whiteboard{/map-name}.
 $endif
+
+// IN MODELING
 
 :: ModelingSetup
 @trigger	UniversalModelStarted
-@when		JobTaskCompleted("getProbeData")
 @once
 @cutscene
-{@kevin} This tool allows us to take everything we've learned and visualize it, so we can see the whole system at one. 
-{@kevin} It's what we call a model of the system.
-{@kevin} Start by adding everything you've learned about the kelp, urchins and otters.
-{@kevin} You can do this by using the "Import Rule" button.
-{@kevin} When you've added everything you know, hit the submit simulate button to turn our model into a simulator.
+$branch common.ringPhone
 
-$call UpgradeFact(Urchin.Eats.BullKelp)
-$call UpgradeFact(Urchin.Eats.GiantKelp)
-$call UpgradeFact(SeaOtter.Eats.Urchin)
-$call GiveFact(Urchin.Reproduce)
-$call GiveFact(GiantKelp.Reproduce)
-$call GiveFact(BullKelp.Reproduce)
+{@drJules}  Okay, this is the {h}Modeling Whiteboard{/h}.
+            So you observed that {pluralnameof Urchin} eat {critter-name}Kelp{/critter-name}.
+            And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
+            We can take those facts and add them to our {h}Universal Model{/h}.
+            That can help us see how they fit together.
+            Just use the {h}Import Rules{/h} button to add all the facts you have in your {item-name}Bestiary{/item-name}.
+            
+:: ModelingSetupPhase2
+@trigger    UniversalModelUpdated
+@when       !jobs:kelp-urchin-barren.upgradedFacts
+@once
+@cutscene
+
+{@drJules}  Nice work! So now you can see how there's a sort of {h}web{/h} that emerges from these facts.
+            What you're seeing now is what's known as a {h}Food Web{/h}.
+            Now, the tool you're using can do much| much more than just create food webs.
+            It can also {h}simulate ecosystems{/h}.
+            Oh! But it'll require a bit more data than you have right now.
+            You see how some of the connections on your web aren't solid? That means your fact isn't able to be simulated yet.
+            Let me just send you the missing pieces...
+
+$branch common.download
+$call UpgradeFact(Urchin.Eats.BullKelp, Rate, Batch)
+$call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
+$call UpgradeFact(SeaOtter.Eats.Urchin, Rate, Batch)
+$call GiveFact(Urchin.Reproduce, Batch)
+$call GiveFact(GiantKelp.Reproduce, Batch)
+$call GiveFact(BullKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
 
-::ModelHelp1
+{@drJules}  The simulator doesn't really work well unless you have numbers to go along with your facts.
+            But once you add these, then we should be good to go.
+            
+$set jobs:kelp-urchin-barren.upgradedFacts = true
+
+:: ModelingSetupPhase3
+@trigger    UniversalModelUpdated
+@when       jobs:kelp-urchin-barren.upgradedFacts
+@once
+@cutscene
+
+{@drJules}  Alright, the simulator should be ready for you now.
+            Just hit the {h}Simulate{/h} button on the bottom right to start the simulator up.
+
+::ModelHelp1.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskCompleted("getProbeData")
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The first step to making this model is to lay out all the information we know about how kelp, urchins, and otters interact.
-{@kevin}	Use the "Import Rule" button to add the behaviors we've noticed so far. 
-{@kevin}	Once you've added everything, press the "Simulate" button
+{@kevin}	We have to add our facts to the {h}Universal Model{/h}.
+            Just use the {h}Import Rules{/h} button to add the behaviors we've noticed so far. 
+            
+::ModelHelp1.B
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	They just gave us some new facts to add.
+            Let's get those imported!
 
+::ModelHelp1.C
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
+@cutscene
+{@player} 	What should I do next?
+{@kevin}	We have everything imported. I think we should start up the simulator.
 
 :: GetSync
 @trigger	ModelGraphStarted
 @once
 @cutscene
-{@kevin} Now we are using those rules to simulate how a bunch of virtual Urchins and Kelp would interact.
-{@kevin} The faded lines show the historical population data we downloaded from the probe at Site B.
-{@kevin} The regular lines show what your model is predicting.
-{@kevin} Set the starting populations by dragging the sliders for each species to match the probe's recording from a few years back.
-{@kevin} If the model syncs with how the populations changed until now, it's likely it can help us figure out what's going to happen next! 
-{@kevin} If you can't get it to sync, you must be missing some detail in the model.
+
+{@drJules}  Welcome to the {h}Simulator{/h}! This is where all your facts get turned into a big simulation.
+            What that practically means is that we have a bunch of virtual {pluralnameof Urchin} and {pluralnameof GiantKelp} interacting with each other.
+            And their interactions are driven by the facts you have.
+            So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
+            More than that, though, you've also got the population histories you downloaded from the {h}Probe{/h} back in Site B.
+            Those histories are represented on the graph by those thick faded lines.
+            As your virtual critters eat, and die, and reproduce, their populations will show up on the graph too.
+            Your goal is to get those to line up with the historical populations!
+            Start by setting the starting populations for your virtual critters. You should just be able to drag those sliders on the left to match the historical population.
+            If you can get the resulting graph to line up with the historical graph, then we know enough to be able to make a model!
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
@@ -162,42 +242,58 @@ $call GiveFact(SeaOtter.Reproduce)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left so your model matches the data from Site B.
-{@kevin}	Once everything lines up, press the "Sync" button to continue.
-
+            Once everything lines up, hit the {h}Sync{/h} button to continue.
 
 :: ModelSynced
 @trigger	ModelSyncedImmediate
 @once
 @cutscene
-{@kevin} Perfect! Since the model's output lines up with the actual past population data, we know we have created a useful model. 
-{@kevin} Now let's see what it predicts will happen next. Hit the Sync button.
+{@drJules}  Perfect! The model's output lines up with actual past population data, so we know we've created a useful model.
+            Now let's see what it predicts will happen next. Hit the {h}Sync{/h} button.
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The graph now shows a prediction of what the populations should be in the future.
-{@kevin}	Hit the "Save Prediction" button to move on.
-
+{@kevin}	The graph seems to be showing a prediction of what the populations will be in the future.
+            There's a big {h}Save Prediction{/h} button on the right. Maybe we should hit it?
 
 :: ModelingGraphComplete
 @trigger	ModelCompleted
 @once
 @cutscene
-$set jobs:kelp-urchin-barren.doneModeling = true
-{@kevin} Ok. We have our answer. It's not looking good. Let's go to the office and report back to Dr. Jules
+{@drJules}  Nice work! You've just made a {h}model{/h}!
+            Now bring that back to the {map-name}Office{/map-name}.
+{hide-dialog}
+{wait 1}
+{@kevin}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
+            That doesn't sound great...
 
+// ARGUMENTATION
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		jobs:kelp-urchin-barren.doneModeling == true
+@when 		JobTaskTop(reportBack)
 @cutscene
-$if global:nav.shipRoom != "office"
-	{@player} 	What should we do now?
-	{@kevin}	We've completed the modeling, so let's report back to Dr. Jules.
-	{@kevin}	We should first head back to the office.
+$if scene:name == "Argumentation"
+    {@player}   What should I be doing again?
+    {@kevin}    Report your findings to {nameof @drJules}.
+$elseif global:nav.shipRoom == "office"
+    {@player}   What should we do now?
+    {@kevin}    Let's report our findings to {nameof @drJules} using the {h}Computer{/h}.
 $else
-	{@player} 	I made it back to the office, what should we do from here?
-	{@kevin}	Just like last time, you can report your findings to Dr. Jules using the comms.
+    {@player} 	What should we do now?
+	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drJules}.
+                We should first head back to the {map-name}Office{/map-name}.$endif
 $endif
+
+:: end
+@trigger    JobCompleted
+@cutscene
+
+$branch common.ringPhone
+
+{@drJules}  Well then. That's a bit depressing.
+{@player}   Yeah...
+{@drJules}  But| don't lose hope yet. I have one last job for you.

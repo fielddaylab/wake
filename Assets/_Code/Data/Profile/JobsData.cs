@@ -270,6 +270,26 @@ namespace Aqua.Profile
         }
 
         /// <summary>
+        /// Returns if a given task is at the top of the priority list.
+        /// If no job is selected, then this will just return false.
+        /// </summary>
+        public bool IsTaskTop(StringHash32 inTaskId)
+        {
+            if (m_CurrentJobId.IsEmpty)
+                return false;
+            
+            Assert.False(inTaskId.IsEmpty, "Cannot check null task");
+            var taskList = m_CurrentJob.Job.Tasks();
+            for(int i = 0; i < taskList.Length; i++)
+            {
+                StringHash32 taskId = taskList[i].Id;
+                if (m_CurrentJobTaskIds.Contains(taskId))
+                    return taskId == inTaskId;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Sets the given task as complete for the current job.
         /// </summary>
         public bool SetTaskComplete(StringHash32 inTaskId)

@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using BeauPools;
 using BeauRoutine;
@@ -26,6 +30,9 @@ namespace Aqua.Scripting
         private ScreenWipe m_CurrentWipe;
         private DialogPanel m_CurrentDialog;
         private Routine m_SkipRoutine;
+        #if DEVELOPMENT
+        private float m_SkipTimeScaleRestore;
+        #endif // DEVELOPMENT
 
         // record state
         private bool m_RecordedDialog;
@@ -238,7 +245,11 @@ namespace Aqua.Scripting
                 if (IsCutscene())
                 {
                     m_SkipRoutine.Stop();
+                    #if DEVELOPMENT
+                    Time.timeScale = m_SkipTimeScaleRestore;
+                    #else
                     Time.timeScale = 1;
+                    #endif // DEVELOPMENT
                     Services.Input.ResumeAll();
                     Services.UI.StopSkipCutscene();
                     m_Routine.SetTimeScale(1);
@@ -268,6 +279,10 @@ namespace Aqua.Scripting
         private void InternalSkip()
         {
             m_Flags |= ScriptFlags.Skip;
+
+            #if DEVELOPMENT
+            m_SkipTimeScaleRestore = Time.timeScale;
+            #endif // DEVELOPMENT
             Time.timeScale = 100;
             m_Routine.SetTimeScale(1000);
             if (IsCutscene())
@@ -319,7 +334,11 @@ namespace Aqua.Scripting
 
             if (IsCutscene() && (m_Flags & ScriptFlags.Skip) != 0)
             {
+                #if DEVELOPMENT
+                Time.timeScale = m_SkipTimeScaleRestore;
+                #else
                 Time.timeScale = 1;
+                #endif // DEVELOPMENT
                 Services.Input.ResumeAll();
                 Services.UI.StopSkipCutscene();
             }

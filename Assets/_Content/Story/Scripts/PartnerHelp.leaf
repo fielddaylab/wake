@@ -11,14 +11,14 @@
 {@player}   So, what should we be doing right now?
 {@kevin}    Well, I'd think we need to find some work!
 $if kevin:seenShipHelm
-            Maybe we should check out the job board?
+            Maybe we should check out the {map-name}Job Board{/map-name}?
 $else
             Is there anywhere on this ship where we can see available jobs?
     $if scene:name == "Ship", global:nav.shipRoom == "helm"
-            {@player}   Oh, yeah, right in front of us there's the job board.
+            {@player}   Oh, yeah, right in front of us there's the {map-name}Job Board{/map-name}.
                         Should be synced up with the current station.
     $else
-            {@player}   Oh yeah, we have a job board in the helm.
+            {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm.
                         Should be synced up with the current station.
     $endif // scene:name == "Ship", global:nav.shipRoom == "helm"
     {@kevin}   Great! Then we should check there.
@@ -39,7 +39,7 @@ $set    kevin:knowsJobs = true
 @repeat     1
 @cutscene
 {@player}   Any thoughts on what we should do next?
-{@kevin}    Maybe we should check out the job board...
+{@kevin}    Maybe we should check out the {map-name}Job Board{/map-name}...
 
 :: noJob.atJobBoard.someAvailable
 @trigger    RequestPartnerHelp
@@ -82,6 +82,6 @@ $set    kevin:knowsJobs = true
 {@kevin #confused}
         Oh, well, uh... I don't have anything specific.
         {#} But I'd look back at what the job-giver had to tell us.
-        And maybe check your bestiary too?
+        And maybe check your {item-name}Bestiary{/item-name} too?
 {@}     (The help system is not yet finished.)
 

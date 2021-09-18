@@ -8,12 +8,16 @@ $branch common.ringPhone
 
 $set jobs:arctic-whale-csi.gotScans = 0
 {@profWhalen}	There are a lot of theories floating around about what happened to her, but we need to find out for sure. 
-{@profWhalen}	To get you started, here's some information on Bowhead whales.
+{@profWhalen}	To get you started, here's some information on Bowhead Whales.
+
+$branch common.download
 $call GiveEntity(W_WhaleFall)
 $call GiveEntity(BowheadWhale)
-$call GiveFact(BowheadWhale.Reproduce)
+$call GiveFact(BowheadWhale.Reproduce, Batch)
 $call GiveFact(BowheadWhale.Eats.Diatoms)
-{@profWhalen}   Here, you'll also need this microscope. 
+
+{@profWhalen}   Oh, and you'll also need this microscope. 
+
 $call GiveUpgrade(Microscope)
 {@profWhalen}   Try to use it to find their food source. Good luck!
 

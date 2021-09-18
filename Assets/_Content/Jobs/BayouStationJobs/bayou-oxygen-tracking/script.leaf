@@ -42,7 +42,7 @@ $if global:nav.shipRoom == "experiment"
 $else
     {@player} Alright, what's next on the docket?
     {@kevin} These new microscopic creatures are super interesting, but we still don't know what exactly they do...
-    {@kevin} Finding the ways they interact with oxygen is important, so let's head to the experiment room!
+    {@kevin} Finding the ways they interact with oxygen is important, so let's head to the {nameof Experimentation}!
 $endif
 
 :: helpGetToModel
@@ -51,7 +51,7 @@ $endif
 @cutscene
 
 {@player} What's next?
-{@kevin} We should head to the modeling room so we can nail down what caused this lack of oxygen.
+{@kevin} We should head to the {nameof Modeling} so we can nail down what caused this lack of oxygen.
 
 :: helpModel1
 @trigger RequestPartnerHelp

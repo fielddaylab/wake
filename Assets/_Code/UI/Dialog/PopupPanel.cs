@@ -7,6 +7,7 @@ using System.Collections;
 using System;
 using BeauUtil.Tags;
 using BeauUtil;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -93,7 +94,14 @@ namespace Aqua
         public Future<StringHash32> PresentFact(string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFact, inFlags, DefaultOkay));
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultOkay)).TryManuallyUpdate(0);
+            return future;
+        }
+
+        public Future<StringHash32> PresentFacts(string inHeader, string inText, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags)
+        {
+            Future<StringHash32> future = new Future<StringHash32>();
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFacts, inFlags, DefaultOkay)).TryManuallyUpdate(0);
             return future;
         }
 
@@ -152,13 +160,19 @@ namespace Aqua
             }
         }
 
-        private void ConfigureFact(BFBase inFact, BFDiscoveredFlags inFlags)
+        private void ConfigureFacts(ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags)
         {
             m_FactPools.FreeAll();
-            if (inFact == null)
+
+            if (inFacts.IsEmpty)
                 return;
 
-            m_FactPools.Alloc(inFact, null, inFlags, m_FactPoolTransform);
+            Assert.True(inFacts.Length == inFlags.Length);
+
+            for(int i = 0; i < inFacts.Length; i++)
+            {
+                m_FactPools.Alloc(inFacts[i], null, inFlags[i], m_FactPoolTransform);
+            }
         }
 
         private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, Sprite inImage, NamedOption[] inOptions)
@@ -166,7 +180,7 @@ namespace Aqua
             using(ioFuture)
             {
                 Configure(inHeader, inText, inImage, inOptions);
-                ConfigureFact(null, 0);
+                ConfigureFacts(default, default);
 
                 if (IsShowing())
                 {
@@ -210,12 +224,12 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags, NamedOption[] inOptions)
+        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, ListSlice<BFBase> inFact, ListSlice<BFDiscoveredFlags> inFlags, NamedOption[] inOptions)
         {
             using(ioFuture)
             {
                 Configure(inHeader, inText, null, inOptions);
-                ConfigureFact(inFact, inFlags);
+                ConfigureFacts(inFact, inFlags);
 
                 if (IsShowing())
                 {

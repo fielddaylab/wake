@@ -1,73 +1,126 @@
 #basePath   job.kelp-bull-kelp-forest
 
+// beginning
+
 :: start
 @trigger    JobStarted
 @cutscene
 
 $branch common.ringPhone
 
-{@drJules}	You are off to a great start. 
-{@drJules}	Let's see if you can do it again.
-{@drJules} I need you to head out to Site A and see if there is anything different there.
-{@drJules}  When you are done, report back to me at the office.
-{@player} I'm on it!
+{@drJules}	Welcome back! You're off to a great start so far.
+            Let's see if you can do it again.
+            I need you to head over to Site A and see if there's anything different there.
+            When you are done, report back to me at your {map-name}Office{/map-name}.
+{@kevin}    Where is Site A?
+{@drJules}  It should be pretty close, a bit west of your ship.
+{@player}   Alright, I'm on it!
 
-:: end
+$call UnlockSite(RS-1A)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !HasEntity(BullKelp)
+@when 		scene:name == "Ship", JobTaskTop(siteA)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	First let's exit the ship and head over to Site A.
+{@kevin}	Let's exit the ship and head over to Site A.
+
+:: helpWrongSite
+@trigger    RequestPartnerHelp
+@when       scene:name == "RS-1C", JobTaskTop(siteA)
+{player}    Is this where we should be?
+{@kevin}    No, I don't think so...
+            Let's surface and head over to Site A instead.
 
 :: helpGoToSiteA
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", !HasEntity(BullKelp)
+@when 		scene:name == "KelpStation", JobTaskTop(siteA)
 @cutscene
-{@player} 	Where should I be going again?
+{@player} 	Where should we be going again?
 {@kevin}	Site A should be just west of the ship.
-{@kevin}	Let's head over there and see what we can find! 
+            Let's head over there and see what we can find!
+
+// at the site
 
 :: helpAtSiteA
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1A", !HasEntity(BullKelp)
+@when 		scene:name == "RS-1A", JobTaskTop(siteA)
 @cutscene
 {@player} 	What should I be doing now?
-{@kevin}	Let's look around and see if there are any new species to find. 
+{@kevin}	Let's look around and see if there are any new species to find.
+
+// to experimentation
 
 ::helpGoToLab
 @trigger    RequestPartnerHelp
-@when 		HasEntity(BullKelp), scene:name != "ExperimentV2"
+@when 		JobTaskTop(foodweb), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	Where should I go next?
-{@kevin}	Now that we've discovered Bull Kelp, let's head to the Experiment Lab.
+{@kevin}	Now that we've discovered {nameof BullKelp}, let's head back to the {nameof Experimentation}.
+
 $if scene:name == "RS-1A"
 	{@kevin}	Drive the sub up to the surface and let's make our way back to the ship.
-$else
-	$if scene:name != "Ship"
-		{@kevin}	First, let's head back to the ship.
-	$endif
+$elseif scene:name != "Ship"
+	{@kevin}	First, let's head back to the ship.
 $endif
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
-@when 		HasEntity(BullKelp), scene:name == "ExperimentV2"
+@when 		JobTaskTop(foodweb), scene:name == "ExperimentV2"
 @cutscene
-{@player} 	Alright Kevin I made it to the Experiment Lab, what should I do next?
-{@kevin}	Similar to last time, construct an observation tank with water from Site A.
-{@kevin}	Then select some critters to add and see what behaviors you can observe!
-{@kevin}	(If you want to find new behaviors, try only adding critters that you haven't seen together before)
+{@player} 	Alright Kevin, I made it to the {nameof Experimentation}. What should I do next?
+$if ExperimentIsRunning(Observation)
+    $branch .helpDoExperiment.InExperiment
+$elseif ExperimentViewed(Observation)
+    $branch .helpDoExperiment.TankView
+$else
+    $branch .helpDoExperiment.None
+$endif
+
+:: helpDoExperiment.InExperiment
+$if ExperimentHasCritter(BullKelp)
+    {@kevin}    Is anything interacting with the {pluralnameof BullKelp}?
+$else
+    {@kevin}    Hmm... is it possible for us to get any new information from this experiment?
+                I don't see any {pluralname BullKelp} in this tank...
+$endif
+
+:: helpDoExperiment.TankView
+{@kevin}    We have a new species - let's see if anything we already have interacts with it.
+$if ExperimentHasCritter(BullKelp)
+    We've added some {pluralnameof BullKelp} - what might it interact with?
+$else
+    Maybe we should add some {pluralnameof BullKelp}?
+$endif
+
+:: helpDoExperiment.None
+{@kevin}    We have a new species - let's see if anything we already have interacts with it.
+            We should be able to run an {h}Observation Tank{/h} experiment like last time.
+
+// report back
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(Urchin.Eats.BullKelp)
+@when 		JobTaskCompleted(foodweb)
 @boostScore 2
 @cutscene
 {@player} 	What should we do now?
-{@kevin}	We've found a new relationship, so let's report back to Dr. Jules.
+{@kevin}	We've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}. So let's report back to Dr. Jules.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should first head back to the office.
+	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	Just like last time, you can report your findings using the comms.
+	{@kevin}	Just like last time, you can report your findings using the {h}Computer{/h}.
 $endif
+
+// END
+
+:: end
+@trigger    JobCompleted
+@cutscene
+
+{@drJules}  Well done, you two!
+            You've learned that {pluralnameof BullKelp} sort of power the whole forest at Site A.
+{@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
+{@drJules}  Indeed! Finding those parallels can be quite rewarding.
+            For now, though, you should head back to the {map-name}Job Board{/map-name}.
+            I have another job for you.

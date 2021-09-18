@@ -478,11 +478,17 @@ namespace Aqua
         {
             string path = inSubScene.Scene.Path;
             Destroy(inSubScene.gameObject);
+
             #if UNITY_EDITOR
-            yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            var editorScene = UnityEditor.SceneManagement.EditorSceneManager.GetSceneByPath(path);
+            if (!editorScene.isLoaded)
+            {
+                yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            }
             #else
             yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
             #endif // UNITY_EDITOR
+            
             SceneBinding unityScene = SceneHelper.FindSceneByPath(path, SceneCategories.Loaded);
             GameObject[] roots = unityScene.Scene.GetRootGameObjects();
             foreach(var root in roots)
@@ -496,12 +502,18 @@ namespace Aqua
 
         static private IEnumerator LoadSubSceneFromName(string inSceneName, SceneBinding inActiveScene)
         {
-            string path = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build).Path;
             #if UNITY_EDITOR
-            yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            var editorScene = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build);
+            string path = editorScene.Path;
+            if (!editorScene.IsLoaded())
+            {
+                yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            }
             #else
+            string path = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build).Path;
             yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
             #endif // UNITY_EDITOR
+
             SceneBinding unityScene = SceneHelper.FindSceneByPath(path, SceneCategories.Loaded);
             GameObject[] roots = unityScene.Scene.GetRootGameObjects();
             foreach(var root in roots)

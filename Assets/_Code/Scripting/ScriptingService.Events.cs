@@ -31,6 +31,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
             m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
             m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
@@ -211,6 +212,12 @@ namespace Aqua
             if (!property.IsReferenceNull())
             {
                 return Loc.FormatFromString("<#bb8fce>{0}</color", property.LabelId());
+            }
+
+            MapDesc map = obj as MapDesc;
+            if (!map.IsReferenceNull())
+            {
+                return Loc.FormatFromString("<#FFCCF9>{0}</color>", map.LabelId());
             }
 
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);

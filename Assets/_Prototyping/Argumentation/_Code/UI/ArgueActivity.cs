@@ -181,7 +181,7 @@ namespace ProtoAqua.Argumentation
                 
                 m_ChatLayout.ForceRebuild();
                 yield return ScrollDown();
-                yield return 0.5f;
+                yield return 1.2f;
 
                 toDisplay = m_Graph.FindNode(toDisplay.NextNodeId);
             }
@@ -237,18 +237,21 @@ namespace ProtoAqua.Argumentation
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", Services.Data.CurrentJobId());
-                yield return Services.Script.TriggerResponse("ArgumentationComplete", table);
+                yield return Services.Script.TriggerResponse("ArgumentationComplete", table).Wait();
             }
 
             Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob());
 
-            if (!Services.Script.IsCutscene())
+            if (Services.Script.IsCutscene())
             {
-                Services.UI.Popup.Display("Congratulations!", "Job complete!")
-                    .OnComplete((s) => {
-                        StateUtil.LoadPreviousSceneWithWipe();
-                    });
+                yield return Services.Script.GetCutscene().Wait();
             }
+            else
+            {
+                yield return Services.UI.Popup.Display("Congratulations!", "Job complete!");
+            }
+
+            StateUtil.LoadPreviousSceneWithWipe();
         }
 
         [LeafMember("VisitedArgueNode")]

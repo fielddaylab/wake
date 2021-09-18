@@ -260,13 +260,28 @@ namespace ProtoAqua.ExperimentV2
             return null;
         }
 
-        [LeafMember("ExperimentIsRunning")]
-        static private bool LeafTankIsRunning()
+        [LeafMember("ExperimentViewed")]
+        static private bool LeafTankViewed(TankType inType)
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
             SelectableTank tank = s_Instance.m_SelectedTank;
             if (tank != null)
+                return tank.Type == inType;
+            return false;
+        }
+
+        [LeafMember("ExperimentIsRunning")]
+        static private bool LeafTankIsRunning(TankType inTankType = TankType.Unknown)
+        {
+            Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
+            SelectableTank tank = s_Instance.m_SelectedTank;
+            if (tank != null)
+            {
+                if (inTankType != TankType.Unknown && tank.Type != inTankType)
+                    return false;
+                
                 return tank.IsRunning;
+            }
             return false;
         }
 

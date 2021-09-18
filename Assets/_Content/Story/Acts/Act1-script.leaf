@@ -2,7 +2,7 @@
 
 :: atKelpStation
 @trigger    RoomEnter
-@when       scene:name == "Ship", roomId == "helm", player:currentStation == "KelpStation"
+@when       roomId == "helm", player:currentStation == "KelpStation"
 @once
 @boostScore 100
 @cutscene
@@ -11,13 +11,12 @@ $branch common.ringPhone
 
 $set    player:seen.drJules = true
 {@drJules}  Hi there folks! Welcome to the Kelpdom!
-                    At least that's what I call the Great Channel Kelp Research Station.
-                    You're... {player-name}, right? I'm Dr. Jules.
-{@player}   Hi Jules! We're here to help.
-            Where should we report for our first task? 
+            At least that's what I call the Great Channel Kelp Research Station.
+            You're... {player-name}, right? I'm Dr. Jules.
+{@player}   Hi Jules! We hear you have some jobs available? 
 {@drJules}  Oh, super! We can always use the help!
-                    Check the {h}Job Board{/h} on your dash.
-                    You'll find everything you need to get started there.
+            Check the {map-name}Job Board{/map-name} on your dash.
+            You'll find everything you need to get started there.
 
 {hide-dialog}{wait 0.5}
 $goto .tutorial
@@ -36,6 +35,7 @@ $call hotbar.kevin->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.kevin)
     You can talk to Kevin by clicking the {h}Talk Button{/h} up here.
     They might be able to help you.
+    Though they probably won't have all the answers...
 $call hotbar.kevin->ResetSorting()
 
 $call hotbar.convoHistory->ForceOnTop()

@@ -301,10 +301,20 @@ namespace Aqua
 
         static private class LeafIntegration
         {
+            static private readonly RingBuffer<BFBase> s_BatchedFacts = new RingBuffer<BFBase>(8, RingBufferMode.Expand);
+            static private readonly RingBuffer<BFDiscoveredFlags> s_BatchedFactFlags = new RingBuffer<BFDiscoveredFlags>(8, RingBufferMode.Expand);
+
+            static public void ClearBatches()
+            {
+                s_BatchedFacts.Clear();
+                s_BatchedFacts.Clear();
+            }
+
             private enum PopupMode
             {
                 Silent,
-                Popup
+                Popup,
+                Batch
             }
 
             #region Bestiary/Inventory
@@ -349,19 +359,59 @@ namespace Aqua
                 return Services.Data.Profile.Bestiary.HasFact(inFactId);
             }
 
+            [LeafMember("IsFactGraphed")]
+            static private Variant IsFactGraphed(StringHash32 inFactId)
+            {
+                return Services.Data.Profile.Bestiary.IsFactGraphed(inFactId);
+            }
+
             [LeafMember("GiveFact")]
             static private IEnumerator GiveFact([BindContext] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
-                if (Services.Data.Profile.Bestiary.RegisterFact(inFactId, fact.Type == BFTypeId.Model) && inMode == PopupMode.Popup)
+                if (Services.Data.Profile.Bestiary.RegisterFact(inFactId, fact.Type == BFTypeId.Model) && inMode != PopupMode.Silent)
                 {
-                    inThread.Dialog = null;
+                    BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId);
 
-                    if (Services.UI.IsSkippingCutscene())
-                        return null;
+                    if (inMode == PopupMode.Batch)
+                    {
+                        if (Services.UI.IsSkippingCutscene())
+                            return null;
 
-                    Services.Audio.PostEvent("item.popup.new");
-                    return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                        s_BatchedFacts.PushBack(fact);
+                        s_BatchedFactFlags.PushBack(flags);
+                    }
+                    else
+                    {
+                        inThread.Dialog = null;
+
+                        if (Services.UI.IsSkippingCutscene())
+                        {
+                            s_BatchedFactFlags.Clear();
+                            s_BatchedFacts.Clear();
+                            return null;
+                        }
+
+                        Services.Audio.PostEvent("item.popup.new");
+
+                        IEnumerator popup;
+
+                        if (s_BatchedFacts.Count > 0)
+                        {
+                            s_BatchedFacts.PushBack(fact);
+                            s_BatchedFactFlags.PushBack(flags);
+
+                            popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                            s_BatchedFactFlags.Clear();
+                            s_BatchedFacts.Clear();
+                        }
+                        else
+                        {
+                            popup = Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                        }
+
+                        return popup;
+                    }
                 }
                 return null;
             }
@@ -370,17 +420,76 @@ namespace Aqua
             static private IEnumerator UpgradeFact([BindContext] ScriptThread inThread, StringHash32 inFactId, BFDiscoveredFlags inFlags = BFDiscoveredFlags.Rate, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
-                if (Services.Data.Profile.Bestiary.AddDiscoveredFlags(inFactId, inFlags) && inMode == PopupMode.Popup)
+                if (Services.Data.Profile.Bestiary.AddDiscoveredFlags(inFactId, inFlags) && inMode != PopupMode.Silent)
                 {
-                    inThread.Dialog = null;
+                    BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId);
 
-                    if (Services.UI.IsSkippingCutscene())
-                        return null;
+                    if (inMode == PopupMode.Batch)
+                    {
+                        if (Services.UI.IsSkippingCutscene())
+                            return null;
 
-                    Services.Audio.PostEvent("item.popup.new");
-                    return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                        s_BatchedFacts.PushBack(fact);
+                        s_BatchedFactFlags.PushBack(flags);
+                    }
+                    else
+                    {
+                        inThread.Dialog = null;
+
+                        if (Services.UI.IsSkippingCutscene())
+                        {
+                            s_BatchedFactFlags.Clear();
+                            s_BatchedFacts.Clear();
+                            return null;
+                        }
+
+                        Services.Audio.PostEvent("item.popup.new");
+
+                        IEnumerator popup;
+
+                        if (s_BatchedFacts.Count > 0)
+                        {
+                            s_BatchedFacts.PushBack(fact);
+                            s_BatchedFactFlags.PushBack(flags);
+
+                            popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                            s_BatchedFactFlags.Clear();
+                            s_BatchedFacts.Clear();
+                        }
+                        else
+                        {
+                            popup = Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                        }
+
+                        return popup;
+                    }
                 }
                 return null;
+            }
+
+            [LeafMember("FinishFactBatch")]
+            static private IEnumerator CompleteFactBatch([BindContext] ScriptThread inThread)
+            {
+                if (s_BatchedFacts.Count <= 0)
+                    return null;
+                
+                if (Services.UI.IsSkippingCutscene())
+                {
+                    s_BatchedFactFlags.Clear();
+                    s_BatchedFacts.Clear();
+                    return null;
+                }
+
+                inThread.Dialog = null;
+                Services.Audio.PostEvent("item.popup.new");
+
+                IEnumerator popup;
+
+                popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                s_BatchedFactFlags.Clear();
+                s_BatchedFacts.Clear();
+
+                return popup;
             }
 
             [LeafMember("HasItem")]
@@ -510,6 +619,12 @@ namespace Aqua
             static private Variant JobTaskCompleted(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsTaskComplete(inId);
+            }
+
+            [LeafMember("JobTaskTop")]
+            static public Variant JobTaskTop(StringHash32 inId)
+            {
+                return Services.Data.Profile.Jobs.IsTaskTop(inId);
             }
 
             [LeafMember("AnyJobsAvailable")]

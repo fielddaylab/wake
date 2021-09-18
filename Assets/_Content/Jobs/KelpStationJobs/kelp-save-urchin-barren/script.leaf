@@ -6,11 +6,114 @@
 
 $branch common.ringPhone
 
-$set    player:seen.drJules = true
-$set 	jobs:kelp-save-urchin-barren.doneModeling = false
-{@drJules} Ok. Time to bring it all together. 
-{@drJules} See if you can come up with a way to repair Site B, the Urchin Barren.
-{@drJules} Use all the tools on your ship and meet me in the office when you have a plan. 
+{@drJules}  Ok. So the {nameof UrchinBarren} isn't looking great.
+            But I think there should be a way of fixing it.
+            There's one more part of the {h}Simulator{/h} that I haven't shown you yet.
+            Meet me back at the {h}Modeling Whiteboard{/h}.
+
+::helpGoToModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", JobTaskTop(makeAPlan)
+@cutscene
+{@player} 	How should we start making a plan to repair Site B?
+{@kevin}	Maybe we could make another model.
+$if global:nav.shipRoom == "modeling"
+    {@kevin}    Let's head into the {h}Modeling Whiteboard{/h}.
+$else
+    {@kevin}    Let's head over to the {nameof Modeling}.
+$endif
+
+// in modeling
+
+:: InterventionModelingSetup
+@trigger	UniversalModelStarted
+@once
+@cutscene
+$branch common.ringPhone
+
+{@drJules}  This time, we're going to use the modeling tool to {h}predict{/h} what could happen if we intervened with the ecosystem in some way.
+            You should have all the rules from your {item-name}Bestiary{/item-name} added already, so hit that {h}Simulate{/h} button!
+
+::ModelHelp1
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
+@cutscene
+{@player} 	What should I do again?
+{@kevin}	Let's start up the {h}Simulator{/h}.
+
+:: InterventionGetSync
+@trigger	ModelGraphStarted
+@once
+@cutscene
+{@drJules}  Just like before, you should set up your populations so they match up with the historical populations you got from the {h}Probe{/h}.
+            If they line up, our model is good, and then we can use it to {h}predict{/h}.
+
+::ModelHelp2
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@cutscene
+{@player} 	How do I do this again?
+{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
+            Once everything lines up, press the "Sync" button to continue.
+
+:: InterventionModelSyncedImmediate
+@trigger	ModelSyncedImmediate
+@who        kevin
+@once
+@chatter
+{@kevin}    Yes! Nailed it!
+
+:: InterventionModelSynced
+@trigger	ModelSynced
+@once
+@cutscene
+{@drJules}  Nice work! So now, I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
+            What would happen if we added {critter-name}Kelp{/critter-name}, or removed {pluralnameof Urchin}, or even...
+            Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
+{hide-dialog}
+{wait 1}
+{@kevin}    Looks like we're on our own. Let's see what we can do.
+
+::ModelHelp3
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@cutscene
+{@player} 	I'm a bit stuck here - got any tips for me, Kevin?
+{@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
+            It seems like the main problem now is that it keeps getting eaten by {pluralnameof Urchin}.
+            I wonder if there's something we could add that would keep the {nameof Urchin} population under control...
+
+
+:: InterventionModelPredictImmediate
+@trigger	ModelPredictImmediate
+@who        kevin
+@once
+@chatter
+{@kevin}    That looks promising! Let's save the result.
+
+:: InterventionModelingGraphComplete
+@trigger	ModelCompleted
+@once
+@cutscene
+{@kevin}    Ok. It looks like we have a plan!
+            I have no idea what adding {pluralnameof SeaOtter} practically means, but let's report back to {nameof @drJules} at the {map-name}Office{/map-name}.
+
+// to argumentation
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskCompleted(makeAPlan)
+@cutscene
+$if global:nav.shipRoom != "office"
+	{@player} 	What should we do now?
+	{@kevin}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Jules.
+	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
+$else
+	{@player} 	I made it back to the {map-name}Office{/map-name}, what should we do from here?
+	{@kevin}	Just like last time, we can report our findings to Dr. Jules using the {h}Computer{/h}.
+$endif
+
+// END
 
 :: end
 @trigger    JobCompleted
@@ -18,9 +121,11 @@ $set 	jobs:kelp-save-urchin-barren.doneModeling = false
 
 $branch common.ringPhone
 
-{@drJules}  Absolutely fantastic work!
+{@drJules}  Absolutely fantastic work, you two.
 {@player}   Thanks. It was nice being able to use some science to help.
 {@drJules}  Here, take this. It might be helpful in the future.
+
+$branch common.download
 
 $call GiveWaterProperty(Oxygen)
 $call GiveWaterProperty(Temperature)
@@ -32,6 +137,8 @@ $call GiveUpgrade(WaterChemistry)
 			Maybe you can find work with them too?
 			I'll mark their stations on your map.
 
+$branch common.download
+
 $call UnlockStation(CoralStation)
 $call UnlockStation(ArcticStation)
 $call UnlockStation(BayouStation)
@@ -40,97 +147,4 @@ $call ShowPopup("New Ship Room Unlocked!", "You can now visit the World Map from
 $call ShowPopup("New Stations Unlocked!", "You can now visit new stations from your World Map!")
 
 {@player}	Thanks, Jules!
-
-::helpGoToModeling
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:kelp-save-urchin-barren.doneModeling == false
-@cutscene
-$if global:nav.shipRoom != "modeling"
-	{@player} 	How should we start making a plan to repair Site B?
-	{@kevin}	Maybe we could make another model to predict the future of the ecosystem.
-$else
-	{@player} 	Ok, made it to the modeling room, what next?
-	{@kevin}	Let's see if there's a new way for us to use the modeling system. 
-$endif
-
-:: InterventionModelingSetup
-@trigger	UniversalModelStarted
-@once
-@cutscene
-{@kevin} This time we will use the modeling tool to predict what would happen if we intervened with the ecosystem in some way.
-{@kevin} You should have all the rules from your bestiary added already, so hit that Simulate button.
-
-::ModelHelp1
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
-@cutscene
-{@player} 	What should I do again?
-{@kevin}	Just like last time, use the "Import Rule" button to add anything we might be missing. 
-{@kevin}	Once you've added everything, press the "Simulate" button
-
-
-:: InterventionGetSync
-@trigger	ModelGraphStarted
-@once
-@cutscene
-{@kevin} Just like before, setup the historic populations to match the probe's recordings.
-{@kevin} If the model is correct, it will sync, and we can use it to predict.
-
-::ModelHelp2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
-@cutscene
-{@player} 	How do I do this again?
-{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
-{@kevin}	Once everything lines up, press the "Sync" button to continue.
-
-
-:: InterventionModelSyncedImmediate
-@trigger	ModelSyncedImmediate
-@who        kevin
-@once
-@chatter
-{@kevin} Nailed it!
-
-:: InterventionModelSynced
-@trigger	ModelSynced
-@once
-@cutscene
-{@kevin} Now what would happened if we added kelp, or removed Urchins, or even ...
-
-::ModelHelp3
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
-@cutscene
-{@player} 	I'm a bit stuck here, got any tips for me Kevin?
-{@kevin}	We want to change something so the kelp population increases to the target on the right.
-{@kevin}	It seems like the main problem now is that it keeps getting eaten by urchin.
-{@kevin}	I wonder if there's something we could add that would keep the urchin population under control...
-
-
-:: InterventionModelPredictImmediate
-@trigger	ModelPredictImmediate
-@who        kevin
-@once
-@chatter
-{@kevin} That looks promising! Let's save the result.
-
-:: InterventionModelingGraphComplete
-@trigger	ModelCompleted
-@once
-@cutscene
-$set 	jobs:kelp-save-urchin-barren.doneModeling = false
-{@kevin} Ok. It looks like we have a plan! I have no idea what adding Otters practically means, but let's report back to Dr. Jules at the office.
-
-:: helpReportBack
-@trigger    RequestPartnerHelp
-@when 		jobs:kelp-urchin-barren.doneModeling == true
-@cutscene
-$if global:nav.shipRoom != "office"
-	{@player} 	What should we do now?
-	{@kevin}	We've got a plan to help restore Site B, so let's report back to Dr. Jules.
-	{@kevin}	We should first head back to the office.
-$else
-	{@player} 	I made it back to the office, what should we do from here?
-	{@kevin}	Just like last time, you can report your findings to Dr. Jules using the comms.
-$endif
+{@drJules}  No problem! Good luck out there!
