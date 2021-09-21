@@ -1,14 +1,17 @@
 fileFormatVersion: 2
 guid: de4bceacb8b134849853b1c009832098
 ModelImporter:
-  serializedVersion: 19300
+  serializedVersion: 19301
   internalIDToNameTable:
   - first:
       74: 4781951162920444690
-    second: Swim
+    second: SwimTo
   - first:
       74: -6788291789069941537
-    second: Armature|SphereAction
+    second: Idle
+  - first:
+      74: -6702212068913959877
+    second: SwimFrom
   externalObjects: {}
   materials:
     materialImportMode: 0
@@ -20,7 +23,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    motionNodeName: 
+    motionNodeName: Armature/spine00_root
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
@@ -38,11 +41,40 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Swim
+      name: SwimTo
       takeName: Armature|ArmatureAction
       internalID: 0
       firstFrame: 0
-      lastFrame: 499
+      lastFrame: 270
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Idle
+      takeName: Armature|SphereAction
+      internalID: 0
+      firstFrame: 270
+      lastFrame: 350
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -67,11 +99,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|SphereAction
-      takeName: Armature|SphereAction
+      name: SwimFrom
+      takeName: Armature|ArmatureAction
       internalID: 0
-      firstFrame: 0
-      lastFrame: 60
+      firstFrame: 350
+      lastFrame: 574
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -107,6 +139,7 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
