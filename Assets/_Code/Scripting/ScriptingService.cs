@@ -28,7 +28,6 @@ namespace Aqua
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
 
         // thread management
-        private Dictionary<string, ScriptThread> m_ThreadMap = new Dictionary<string, ScriptThread>(64, StringComparer.Ordinal);
         private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
         private List<ScriptThread> m_ThreadList = new List<ScriptThread>(64);
         private ScriptThread m_CutsceneThread = null;
@@ -108,106 +107,6 @@ namespace Aqua
 
         #region Operations
 
-        #region Starting Threads with IEnumerator
-
-        /// <summary>
-        /// Returns a new scripting thread running the given IEnumerator.
-        /// </summary>
-        public ScriptThreadHandle StartThread(IEnumerator inEnumerator)
-        {
-            return StartThreadInternal(null, null, inEnumerator);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread with the given id running the given IEnumerator.
-        /// </summary>
-        public ScriptThreadHandle StartThread(IEnumerator inEnumerator, string inThreadId)
-        {
-            return StartThreadInternal(inThreadId, null, inEnumerator);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartThread(ScriptObject inContext, IEnumerator inEnumerator)
-        {
-            return StartThreadInternal(null, inContext, inEnumerator);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given IEnumerator and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartThread(ScriptObject inContext, IEnumerator inEnumerator, string inThreadId)
-        {
-            return StartThreadInternal(inThreadId, inContext, inEnumerator);
-        }
-
-        #endregion // Starting Threads with IEnumerator
-
-        #region Starting Threads with Entrypoint
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode entrypoint.
-        /// </summary>
-        public ScriptThreadHandle StartNode(StringHash32 inEntrypointId)
-        {
-            ScriptNode node;
-            if (!TryGetEntrypoint(inEntrypointId, out node))
-            {
-                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
-                return default(ScriptThreadHandle);
-            }
-
-            return StartThreadInternalNode(null, null, node, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread with the given id running the given ScriptNode entrypoint.
-        /// </summary>
-        public ScriptThreadHandle StartNode(StringHash32 inEntrypointId, string inThreadId)
-        {
-            ScriptNode node;
-            if (!TryGetEntrypoint(inEntrypointId, out node))
-            {
-                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
-                return default(ScriptThreadHandle);
-            }
-
-            return StartThreadInternalNode(inThreadId, null, node, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartNode(ScriptObject inContext, StringHash32 inEntrypointId)
-        {
-            ScriptNode node;
-            if (!TryGetEntrypoint(inEntrypointId, out node))
-            {
-                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
-                return default(ScriptThreadHandle);
-            }
-
-            return StartThreadInternalNode(null, inContext, node, null);
-        }
-
-        /// <summary>
-        /// Returns a new scripting thread running the given ScriptNode entrypoint and attached to the given context.
-        /// </summary>
-        public ScriptThreadHandle StartNode(ScriptObject inContext, StringHash32 inEntrypointId, string inThreadId)
-        {
-            ScriptNode node;
-            if (!TryGetEntrypoint(inEntrypointId, out node))
-            {
-                Log.Warn("[ScriptingService] No entrypoint '{0}' is currently loaded", inEntrypointId);
-                return default(ScriptThreadHandle);
-            }
-
-            return StartThreadInternalNode(inThreadId, inContext, node, null);
-        }
-
-        #endregion // Starting Threads with Entrypoint
-
         #region Triggering Responses
 
         /// <summary>
@@ -221,7 +120,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget, ScriptObject inContext = null, VariantTable inContextTable = null, string inThreadId = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget, ScriptObject inContext = null, VariantTable inContextTable = null)
         {
             TryCallFunctions(inTriggerId, inTarget, inContext, inContextTable);
 
@@ -240,7 +139,7 @@ namespace Aqua
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
                         DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId, node.Id());
-                        handle = StartThreadInternalNode(inThreadId, inContext, node, inContextTable);
+                        handle = StartThreadInternalNode(inContext, node, inContextTable);
                     }
                 }
             }
@@ -296,7 +195,7 @@ namespace Aqua
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
                             DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id(), inFunctionId);
-                            StartThreadInternalNode(null, inContext, nodes[i], inContextTable);
+                            StartThreadInternalNode(inContext, nodes[i], inContextTable);
                         }
                     }
                     else
@@ -315,42 +214,6 @@ namespace Aqua
         #endregion // Functions
 
         #region Killing Threads
-
-        /// <summary>
-        /// Kills a currently running scripting thread.
-        /// </summary>
-        public bool KillThread(string inThreadId)
-        {
-            ScriptThread thread;
-            
-            // wildcard id match
-            if (inThreadId.IndexOf('*') >= 0)
-            {
-                bool bKilled = false;
-                for(int i = m_ThreadList.Count - 1; i >= 0; --i)
-                {
-                    thread = m_ThreadList[i];
-                    string id = thread.Name;
-                    if (StringUtils.WildcardMatch(id, inThreadId))
-                    {
-                        thread.Kill();
-                        bKilled = true;
-                    }
-                }
-
-                return bKilled;
-            }
-            else
-            {
-                if (m_ThreadMap.TryGetValue(inThreadId, out thread))
-                {
-                    thread.Kill();
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Kills all currently running scripting threads for the given context.
@@ -385,7 +248,6 @@ namespace Aqua
             }
 
             m_ThreadList.Clear();
-            m_ThreadMap.Clear();
             m_ThreadTargetMap.Clear();
             m_CutsceneThread = null;
         }
@@ -519,10 +381,6 @@ namespace Aqua
         {
             m_ThreadList.FastRemove(inThread);
 
-            string name = inThread.Name;
-            if (!string.IsNullOrEmpty(name))
-                m_ThreadMap.Remove(name);
-
             StringHash32 who = inThread.Target();
             if (!who.IsEmpty)
             {
@@ -534,27 +392,9 @@ namespace Aqua
                 m_CutsceneThread = null;
         }
 
-        // Starts a scripting thread
-        private ScriptThreadHandle StartThreadInternal(string inThreadName, ScriptObject inContext, IEnumerator inEnumerator)
+        private ScriptThreadHandle StartThreadInternalNode(ScriptObject inContext, ScriptNode inNode, VariantTable inVars)
         {
-            if (inEnumerator == null || !FreeName(inThreadName))
-            {
-                return default(ScriptThreadHandle);
-            }
-
-            ScriptThread thread = m_ThreadPool.Alloc();
-            ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, null);
-            thread.AttachRoutine(Routine.Start(this, inEnumerator).SetPhase(RoutinePhase.Manual));
-
-            m_ThreadList.Add(thread);
-            if (!string.IsNullOrEmpty(inThreadName))
-                m_ThreadMap.Add(inThreadName, thread);
-            return handle;
-        }
-
-        private ScriptThreadHandle StartThreadInternalNode(string inThreadName, ScriptObject inContext, ScriptNode inNode, VariantTable inVars)
-        {
-            if (inNode == null || !FreeName(inThreadName) || !CheckPriority(inNode))
+            if (inNode == null || !CheckPriority(inNode))
             {
                 return default(ScriptThreadHandle);
             }
@@ -573,13 +413,11 @@ namespace Aqua
             }
 
             ScriptThread thread = m_ThreadPool.Alloc();
-            ScriptThreadHandle handle = thread.Prep(inThreadName, inContext, tempVars);
+            ScriptThreadHandle handle = thread.Prep(inContext, tempVars);
             thread.SyncPriority(inNode);
             thread.AttachRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual));
 
             m_ThreadList.Add(thread);
-            if (!string.IsNullOrEmpty(inThreadName))
-                m_ThreadMap.Add(inThreadName, thread);
 
             if (inNode.IsCutscene())
             {
@@ -597,27 +435,6 @@ namespace Aqua
                 thread.ForceTick();
             
             return handle;
-        }
-
-        private bool FreeName(string inThreadName)
-        {
-            bool bHasId = !string.IsNullOrEmpty(inThreadName);
-            if (bHasId)
-            {
-                if (inThreadName.IndexOf('*') >= 0)
-                {
-                    Log.Error("[ScriptingService] Thread id of '{0}' is invalid - contains wildchar", inThreadName);
-                    return false;
-                }
-
-                ScriptThread current;
-                if (m_ThreadMap.TryGetValue(inThreadName, out current))
-                {
-                    current.Kill();
-                }
-            }
-
-            return true;
         }
 
         private bool CheckPriority(ScriptNode inNode)
@@ -856,6 +673,25 @@ namespace Aqua
         #endif // DEVELOPMENT
 
         #endregion // IDebuggable
+
+        #region Leaf Methods
+
+        /// <summary>
+        /// Stops skipping the current cutscene.
+        /// </summary>
+        [LeafMember("StopSkippingCutscene")]
+        static public void LeafThreadStopSkippingCutscene()
+        {
+            Services.Script.GetCutscene().GetThread().StopSkipping();
+        }
+
+        [LeafMember("StopSkipping")]
+        static private void LeafThreadStopSkipping([BindContext] ScriptThread inThread)
+        {
+            inThread.StopSkipping();
+        }
+
+        #endregion // Leaf Methods
 
         #region Text Utils
 

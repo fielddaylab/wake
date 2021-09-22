@@ -540,7 +540,7 @@ namespace Aqua
             [LeafMember("GiveUpgrade")]
             static private IEnumerator GiveUpgrade([BindContext] ScriptThread inThread, StringHash32 inUpgradeId, PopupMode inMode = PopupMode.Popup)
             {
-                if (Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId) && inMode == PopupMode.Popup)
+                if (Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId) && inMode != PopupMode.Silent)
                 {
                     inThread.Dialog = null;
 

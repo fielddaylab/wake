@@ -2,58 +2,66 @@ using System;
 
 namespace OGD {
     static public class GameState {
+
+        [UnityEditor.InitializeOnLoadMethod]
+        static private void Test()
+        {
+        }
         
         private struct RequestGameStateResponse {
-            public string message;
-            public string[] states;
-        }
-
-        private struct PostGameStateResponse {
-            public string message;
+            public string msg;
+            public string status;
+            public string[] val;
         }
 
         static private Core.Request<RequestGameStateResponse> s_CurrentRequestGameState;
-        static private Core.Request<PostGameStateResponse> s_CurrentPostGameState;
+        static private Core.Request<Core.DefaultResponse> s_CurrentPostGameState;
 
         /// <summary>
         /// Requests the latest state for the given player id.
         /// </summary>
-        static public void RequestLatestState(string playerId, Action<string> onSuccess, Action<string> onError) {
+        static public IDisposable RequestLatestState(string playerId, Action<string> onSuccess, Core.DefaultErrorHandlerDelegate onError) {
             Core.CancelRequest(ref s_CurrentRequestGameState);
 
             Core.Query query = Core.NewQuery("/player/{0}/game/{1}/state", playerId, Core.GameId());
-            s_CurrentRequestGameState = Core.Get<RequestGameStateResponse>(query, (response, data) => {
+            return s_CurrentRequestGameState = Core.Get<RequestGameStateResponse>(query, (response, data) => {
                 s_CurrentRequestGameState = null;
-                if (response.states != null && response.states.Length > 0) {
-                    onSuccess?.Invoke(response.states[0]);
+
+                var status = Core.ParseStatus(response.status);
+                if (status == Core.ReturnStatus.Success && response.val != null && response.val.Length > 0) {
+                    onSuccess?.Invoke(response.val[0]);
                 } else {
-                    onError?.Invoke(response.message);
+                    onError?.Invoke(status, response.msg);
                 }
             }, (error, data) => {
                 s_CurrentRequestGameState = null;
-                onError?.Invoke(error);
+
+                onError?.Invoke(Core.ReturnStatus.Unknown, error);
             }, null);
         }
 
         /// <summary>
         /// Pushes the state for the given player id.
         /// </summary>
-        static public void PushState(string playerId, string state, Action onSuccess, Action<string> onError) {
+        static public IDisposable PushState(string playerId, string state, Action onSuccess, Core.DefaultErrorHandlerDelegate onError) {
             Core.CancelRequest(ref s_CurrentPostGameState);
 
             Core.Query query = Core.NewQuery("/player/{0}/game/{1}/state", playerId, Core.GameId());
             Core.QueryArg(ref query, "state", state);
 
-            s_CurrentPostGameState = Core.Get<PostGameStateResponse>(query, (response, data) => {
+            return s_CurrentPostGameState = Core.Post<Core.DefaultResponse>(query, (response, data) => {
                 s_CurrentPostGameState = null;
-                if (response.message != null && response.message.StartsWith("SUCCESS")) {
+
+                var status = Core.ParseStatus(response.status);
+                if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
                 } else {
-                    onError?.Invoke(response.message);
+                    onError?.Invoke(status, response.msg);
                 }
             }, (error, data) => {
                 s_CurrentPostGameState = null;
-                onError?.Invoke(error);
+
+                onError?.Invoke(Core.ReturnStatus.Unknown, error);
             }, null);
         }
     }

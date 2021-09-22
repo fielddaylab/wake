@@ -170,6 +170,7 @@ $branch common.ringPhone
 @trigger    ExperimentTankViewed
 @when       tankType == "Observation"
 @cutscene
+@once
 
 {@drJules}  This is the {h}Observation Tank{/h}. It will allow you to {h}observe{/h} the behaviors of whatever you add to it.
             Those buttons on the bottom will let you select what critters to add, and what environment to put them in.
@@ -179,6 +180,7 @@ $branch common.ringPhone
 @trigger    BehaviorCaptureChance
 @chatter
 @once
+
 $if local:factId == "Urchin.Eats.GiantKelp"
     {@kevin}    Whoa!| That urchin's eating something!
 $else
@@ -190,6 +192,7 @@ $endif
 @chatter
 @once
 @boostScore 1000
+
 $if local:factId == "Urchin.Eats.GiantKelp"
     {@kevin}    Nice one! {pluralnameof Urchin} eat {pluralnameof GiantKelp}, huh?
 $else
@@ -202,6 +205,7 @@ $endif
 @when       newFact == true
 @chatter
 @once
+
 {@kevin}    Ah, darn it, we missed it.
             Let's try to record that behavior when it happens again.
 
@@ -224,6 +228,8 @@ $endif
 @trigger    ExperimentFinished
 @when       scene:name == "ExperimentV2", JobTaskCompleted(runExperiment)
 @cutscene
+@once
+
 $branch common.ringPhone
 {@drJules}  Nice work, you two! Now, come chat with me in your {map-name}Office{/map-name}.
             You can submit your findings there through your {h}Computer{/h}

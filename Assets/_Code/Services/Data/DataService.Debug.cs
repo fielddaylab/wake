@@ -30,9 +30,9 @@ namespace Aqua
         {
             ClearOldProfile();
 
-            SaveData saveData = CreateNewProfile();
+            SaveData saveData = CreateNewProfile(DebugSaveId);
             DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
-            DeclareProfile(saveData, string.Empty, false);
+            DeclareProfile(saveData, false);
         }
 
         private void LoadBookmark(string inBookmarkName)
@@ -48,22 +48,30 @@ namespace Aqua
 
                 DebugService.Log(LogMask.DataService, "[DataService] Loaded profile from bookmark '{0}'", inBookmarkName);
 
-                DeclareProfile(bookmark, null, false);
+                DeclareProfile(bookmark, false);
+                m_LastBookmarkName = inBookmarkName;
                 StartPlaying(null, true);
             }
         }
 
         private void ForceReloadSave()
         {
-            LoadProfile(m_ProfileName).OnComplete((success) => {
-                if (success)
-                    StartPlaying(null, true);
-            });
+            if (m_LastBookmarkName != null)
+            {
+                LoadBookmark(m_LastBookmarkName);
+            }
+            else
+            {
+                LoadProfile(m_ProfileName).OnComplete((success) => {
+                    if (success)
+                        StartPlaying(null, true);
+                });
+            }
         }
 
         private void ForceRestart()
         {
-            DeleteSave(m_ProfileName);
+            DeleteLocalSave(m_ProfileName);
             NewProfile(m_ProfileName).OnComplete((success) => {
                 if (success)
                     StartPlaying(null, true);
