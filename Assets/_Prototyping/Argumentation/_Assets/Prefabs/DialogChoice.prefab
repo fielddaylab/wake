@@ -122,6 +122,10 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.5019608, g: 0.25882354, b: 0.13725491, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5523036575364192776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +202,7 @@ MonoBehaviour:
   TooltipId:
     m_Source: 
     m_Hash: 0
+  TooltipOverride: 
 --- !u!1 &3846809703950902280
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,8 +297,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

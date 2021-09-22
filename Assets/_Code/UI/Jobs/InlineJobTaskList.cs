@@ -39,10 +39,6 @@ namespace Aqua
 
         #region Inspector
 
-        [Header("Title")]
-        [SerializeField] private LocText m_JobTitle = null;
-        [SerializeField] private Button m_OpenTaskButton = null;
-
         [Header("Task List")]
 
         [SerializeField] private JobTaskDisplay.Pool m_TaskDisplays = null;
@@ -74,8 +70,6 @@ namespace Aqua
         protected override void Awake()
         {
             base.Awake();
-
-            m_OpenTaskButton.onClick.AddListener(OnTaskButtonClicked);
 
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
                 .Register(GameEvents.JobSwitched, OnJobSwitched, this)
@@ -247,8 +241,6 @@ namespace Aqua
             }
 
             InstantHide();
-
-            m_JobTitle.SetText(currentJob.NameId());
 
             SyncActiveTasks();
 
