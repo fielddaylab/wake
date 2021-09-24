@@ -24,6 +24,10 @@ namespace Aqua
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
 
+        #if DEVELOPMENT
+        private const string DebugSaveId = "__DEBUG";
+        #endif // DEVELOPMENT
+
         private const string GameId = "AQUALAB";
 
         #region Inspector
@@ -57,6 +61,11 @@ namespace Aqua
         [NonSerialized] private Future<bool> m_SaveResult;
         [NonSerialized] private bool m_AutoSaveEnabled;
         [NonSerialized] private string m_LastKnownProfile;
+        
+        #if DEVELOPMENT
+        [NonSerialized] private bool m_IsDebugProfile;
+        [NonSerialized] private string m_LastBookmarkName;
+        #endif // DEVELOPMENT
 
         #region Save Data
 
@@ -96,6 +105,12 @@ namespace Aqua
             return m_CurrentSaveData?.Script?.ActIndex ?? 0;
         }
 
+        #if DEVELOPMENT
+        private bool IsDebugProfile() { return m_IsDebugProfile; }
+        #else
+        private bool IsDebugProfile() { return false; }
+        #endif // DEVELOPMENT
+
         #endregion // Save Data
 
         #region Loading
@@ -115,18 +130,6 @@ namespace Aqua
             }
         }
 
-        public Future<bool> HasProfile(string inUserCode)
-        {
-            if (string.IsNullOrEmpty(inUserCode))
-            {
-                Log.Warn("[DataService] Empty user code provided'");
-                return Future.Failed<bool>();
-            }
-
-            string key = GetPrefsKeyForCode(inUserCode);
-            return Future.Completed(PlayerPrefs.HasKey(key));
-        }
-
         public Future<bool> NewProfile(string inUserCode)
         {
             if (string.IsNullOrEmpty(inUserCode))
@@ -136,10 +139,17 @@ namespace Aqua
             }
 
             ClearOldProfile();
-            DeleteSave(inUserCode);
+            DeleteLocalSave(inUserCode);
 
-            DeclareProfile(CreateNewProfile(), inUserCode, true);
-            return Future.Completed(true);
+            DeclareProfile(CreateNewProfile(inUserCode), true);
+            if (!IsDebugProfile())
+            {
+                return Future.CreateLinked<bool>(DeclareProfileToServer, this);
+            }
+            else
+            {
+                return Future.Completed(true);
+            }
         }
 
         public Future<bool> LoadProfile(string inUserCode)
@@ -150,21 +160,66 @@ namespace Aqua
                 return Future.Failed<bool>();
             }
 
-            SaveData saveData;
-            if (TryLoadProfileFromPrefs(inUserCode, out saveData))
+            if (IdentifyDebugProfile(ref inUserCode))
             {
-                ClearOldProfile();
+                SaveData debugSave;
+                if (TryLoadProfileFromPrefs(inUserCode, out debugSave))
+                {
+                    ClearOldProfile();
 
-                DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
+                    DebugService.Log(LogMask.DataService, "[DataService] Loaded debug profile with user id '{0}'", inUserCode);
 
-                DeclareProfile(saveData, inUserCode, true);
-                return Future.Completed(true);
+                    DeclareProfile(debugSave, true);
+                    return Future.Completed(true);
+                }
+                else
+                {
+                    DebugService.Log(LogMask.DataService, "[DataService] No debug profile with id {0}'", inUserCode);
+                    return Future.Failed<bool>();
+                }
             }
-            else
+            
+            return Future.CreateLinked<bool, string>(LoadProfileRoutine, inUserCode, this);
+        }
+
+        private IEnumerator LoadProfileRoutine(Future<bool> ioFuture, string inUserCode)
+        {
+            Future<SaveData> serverCheck = TryLoadProfileFromServer(inUserCode);
+            yield return serverCheck;
+
+            if (!serverCheck.IsComplete())
             {
-                DebugService.Log(LogMask.DataService, "[DataService] No profile with id {0}'", inUserCode);
-                return Future.Completed(false);
+                DebugService.Log(LogMask.DataService, "[DataService] No profile with id {0} available from server: {1}", inUserCode, serverCheck.GetFailure().Object);
+                ioFuture.Fail(serverCheck.GetFailure());
+                yield break;
             }
+
+            SaveData serverSave = serverCheck.Get();
+            SaveData authoritativeSave = serverSave;
+            SaveData localSave;
+            if (TryLoadProfileFromPrefs(inUserCode, out localSave))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Local backup for save {0} found...", inUserCode);
+                if (serverSave == null || localSave.LastUpdated > serverSave.LastUpdated)
+                {
+                    DebugService.Log(LogMask.DataService, "[DataService] Local backup is more recent!");
+                    authoritativeSave = localSave;
+                }
+            }
+
+            if (authoritativeSave == null)
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] No save located for user id {0}", inUserCode);
+                ioFuture.Fail();
+                yield break;
+            }
+
+            ClearOldProfile();
+
+            DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
+
+            DeclareProfile(authoritativeSave, true);
+            ioFuture.Complete(true);
         }
 
         public void StartPlaying()
@@ -220,10 +275,10 @@ namespace Aqua
             return false;
         }
 
-        private SaveData CreateNewProfile()
+        private SaveData CreateNewProfile(string inId)
         {
             SaveData data = new SaveData();
-            data.Id = Guid.NewGuid().ToString();
+            data.Id = inId;
             data.Map.SetDefaults();
             data.Inventory.SetDefaults();
             OptionsData.SyncFrom(m_CurrentOptions, data.Options, OptionsData.Authority.All);
@@ -243,16 +298,56 @@ namespace Aqua
             return false;
         }
 
+        private Future<SaveData> TryLoadProfileFromServer(string inUserCode)
+        {
+            return Future.CreateLinked<SaveData, string>(TryLoadProfileFromServerRoutine, inUserCode, this);
+        }
+
+        private IEnumerator TryLoadProfileFromServerRoutine(Future<SaveData> ioFuture, string inUserCode)
+        {
+            using(var future = Future.Create<string>())
+            using(var request = OGD.GameState.RequestLatestState(inUserCode, future.Complete, (r, s) => future.Fail(r)))
+            {
+                yield return future;
+
+                if (future.IsComplete())
+                {
+                    DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", m_ProfileName);
+                    SaveData serverData = null;
+                    if (!Serializer.Read(ref serverData, future.Get()))
+                    {
+                        Log.Error("[DataService] Server profile could not be read...");
+                        ioFuture.Complete(null);
+                    }
+                    else
+                    {
+                        ioFuture.Complete(serverData);
+                    }
+                }
+                else
+                {
+                    Log.Error("[DataService] Failed to find profile on server: {0}", future.GetFailure().Object);
+                    ioFuture.Fail(future.GetFailure());
+                }
+            }
+        }
+
         private bool TryLoadProfileFromBytes(byte[] inBytes, out SaveData outProfile)
         {
             outProfile = null;
             return Serializer.Read(ref outProfile, inBytes);
         }
 
-        private void DeclareProfile(SaveData inProfile, string inUserCode, bool inbAutoSave)
+        private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
         {
-            m_ProfileName = inUserCode;
             m_CurrentSaveData = inProfile;
+            
+            #if DEVELOPMENT
+            m_IsDebugProfile = IdentifyDebugProfile(ref inProfile.Id);
+            m_LastBookmarkName = null;
+            #endif // DEVELOPMENT
+
+            m_ProfileName = inProfile.Id;
 
             uint oldVersion = inProfile.Version;
             if (SavePatcher.TryPatch(inProfile))
@@ -260,9 +355,9 @@ namespace Aqua
                 Log.Msg("[DataService] Patched save data from version {0} to {1}", oldVersion, SavePatcher.CurrentVersion);
             }
 
-            if (!string.IsNullOrEmpty(inUserCode))
+            if (!IsDebugProfile())
             {
-                m_LastKnownProfile = inUserCode;
+                m_LastKnownProfile = inProfile.Id;
                 PlayerPrefs.SetString(LastUserNameKey, m_LastKnownProfile ?? string.Empty);
                 PlayerPrefs.Save();
             }
@@ -296,6 +391,70 @@ namespace Aqua
             
             Services.Events.Dispatch(GameEvents.ProfileStarted);
         }
+
+        private IEnumerator DeclareProfileToServer(Future<bool> ioFuture)
+        {
+            var profileName = m_ProfileName;
+
+            using(var future = Future.Create())
+            using(var request = OGD.Player.ClaimId(m_ProfileName, null, future.Complete, (r, s) => future.Fail(r)))
+            {
+                yield return future;
+
+                if (future.IsComplete())
+                {
+                    DebugService.Log(LogMask.DataService, "[DataService] Profile name {0} declared to server!", m_ProfileName);
+                }
+                else
+                {
+                    Log.Error("[DataService] Failed to declare name to server: {0}", future.GetFailure().Object);
+                    ioFuture.Fail(future.GetFailure());
+                }
+            }
+
+            // push an empty save up to the server
+
+            string saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
+
+            using(var future = Future.Create())
+            using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r, s) => future.Fail(r)))
+            {
+                yield return future;
+
+                if (future.IsComplete())
+                {
+                    DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
+                    ioFuture.Complete(true);
+                }
+                else
+                {
+                    Log.Error("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                    ioFuture.Fail(future.GetFailure());
+                }
+            }
+        }
+
+        #if DEVELOPMENT
+
+        static private bool IdentifyDebugProfile(ref string ioId)
+        {
+            if (ioId == DebugSaveId)
+                return true;
+                
+            if (Guid.TryParse(ioId, out _))
+            {
+                ioId = DebugSaveId;
+                return true;
+            }
+
+            return false;
+        }
+
+        #else
+
+        static private bool IdentifyDebugProfile(ref string ioId) { }
+
+        #endif // DEVELOPMENT
 
         #endregion // Loading
 
@@ -359,30 +518,51 @@ namespace Aqua
         {
             SyncProfile();
             m_CurrentSaveData.Map.SetEntranceId(inLocationId);
-            yield return null;
+
+            DebugService.Log(LogMask.DataService, "[DataService] Saving profile '{0}'...", m_ProfileName);
 
             string key = GetPrefsKeyForCode(m_ProfileName);
             Services.Events.Dispatch(GameEvents.ProfileSaveBegin);
 
-            DebugService.Log(LogMask.DataService, "[DataService] Saving to '{0}'...", key);
+            DebugService.Log(LogMask.DataService, "[DataService] Local backup at  '{0}'...", key);
 
             string saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
+            m_CurrentSaveData.MarkChangesPersisted();
+
+            yield return null;
 
             PlayerPrefs.SetString(key, saveData);
             yield return null;
             
             PlayerPrefs.Save();
             yield return null;
+
+            if (!IsDebugProfile())
+            {
+                using(var future = Future.Create())
+                using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r, s) => future.Fail(r)))
+                {
+                    yield return future;
+
+                    if (future.IsComplete())
+                    {
+                        DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
+                    }
+                    else
+                    {
+                        Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                    }
+                }
+            }
             
-            DebugService.Log(LogMask.DataService, "[DataService] ...finished saving to '{0}'", key);
-            m_CurrentSaveData.MarkChangesPersisted();
+            DebugService.Log(LogMask.DataService, "[DataService] ...finished saving!");
             Services.Events.Dispatch(GameEvents.ProfileSaveCompleted);
 
             ioFuture.Complete(true);
             m_SaveResult = null;
         }
 
-        private void DeleteSave(string inUserCode)
+        private void DeleteLocalSave(string inUserCode)
         {
             PlayerPrefs.DeleteKey(GetPrefsKeyForCode(inUserCode));
             PlayerPrefs.Save();

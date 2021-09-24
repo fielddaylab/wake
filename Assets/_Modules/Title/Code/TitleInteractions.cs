@@ -100,59 +100,38 @@ namespace Aqua.Title
         private IEnumerator NewGame()
         {
             string profileName = m_ProfileName.text;
-
-            Future<bool> exists = Services.Data.HasProfile(profileName);
-            yield return exists;
-
-            if (exists.Get())
-            {
-                Services.Input.ResumeAll();
-                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(
-                    Loc.Find("ui.title.fileOverwrite.header"),
-                    Loc.Format("ui.title.fileOverwrite.description", profileName));
-                yield return overwrite;
-                if (overwrite.Get() != PopupPanel.Option_Yes)
-                    yield break;
-                Services.Input.PauseAll();
-            }
-
             Future<bool> newProfile = Services.Data.NewProfile(profileName);
             yield return newProfile;
-            // TODO: Handle failure
-            Services.Input.ResumeAll();
-            Services.Data.StartPlaying("Ship");
+            if (!newProfile.IsComplete())
+            {
+                Services.Input.ResumeAll();
+                Services.UI.Popup.Display(
+                    Loc.Find("ui.title.saveError.header"),
+                    Loc.Format("ui.title.saveError.description"));
+            }
+            else
+            {
+                Services.Input.ResumeAll();
+                Services.Data.StartPlaying("Ship");
+            }
         }
 
         private IEnumerator ContinueGame()
         {
             string profileName = m_ProfileName.text;
 
-            Future<bool> exists = Services.Data.HasProfile(profileName);
-            yield return exists;
+            Future<bool> load = Services.Data.LoadProfile(profileName);
+            yield return load;
 
-            if (!exists.Get())
+            if (!load.IsComplete())
             {
                 Services.Input.ResumeAll();
-                Future<StringHash32> overwrite = Services.UI.Popup.AskYesNo(
+                Services.UI.Popup.Display(
                     Loc.Find("ui.title.fileMissing.header"),
                     Loc.Format("ui.title.fileMissing.description", profileName));
-                yield return overwrite;
-                if (overwrite.Get() != PopupPanel.Option_Yes)
-                    yield break;
-
-                Services.Input.PauseAll();
-                Future<bool> newProfile = Services.Data.NewProfile(profileName);
-                yield return newProfile;
-                // TODO: Handle failure
-                Services.Input.ResumeAll();
-                Services.Data.StartPlaying("Ship");
             }
             else
             {
-                Future<bool> load = Services.Data.LoadProfile(profileName);
-                yield return load;
-                // TODO: Handle failure
-
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
             }
@@ -174,21 +153,45 @@ namespace Aqua.Title
                 case Page.New:
                     {
                         m_ProfileHeader.SetText(NewHeader);
+                        m_ProfileName.interactable = false;
+                        m_ProfileName.SetTextWithoutNotify("---");
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));
+                        m_ProfileGroup.interactable = false;
                         UpdateInteractable();
+                        Services.Input.PauseAll();
+                        OGD.Player.NewId(OnNewNameSuccess, OnNewNameFail);
                         break;
                     }
 
                 case Page.Continue:
                     {
                         m_ProfileHeader.SetText(ContinueHeader);
+                        m_ProfileName.interactable = true;
+                        m_ProfileName.SetTextWithoutNotify(Services.Data.LastProfileName());
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));
                         UpdateInteractable();
                         break;
                     }
             }
+        }
+
+        private void OnNewNameSuccess(string inName)
+        {
+            m_ProfileName.text = inName;
+            m_ProfileGroup.interactable = true;
+            Services.Input.ResumeAll();
+        }
+
+        private void OnNewNameFail(OGD.Core.ReturnStatus status, string msg)
+        {
+            Log.Error("[TitleInteractions] Generating new player id failed: {0}", msg);
+            Services.Input.ResumeAll();
+            Services.UI.Popup.Display(
+                Loc.Find("ui.title.idGenerationError.header"),
+                Loc.Format("ui.title.idGenerationError.description"))
+                .OnComplete((e) => LoadPage(Page.Title));
         }
 
         private void UpdateInteractable()

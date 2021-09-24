@@ -58,7 +58,7 @@ namespace Aqua.JobBoard
             if (m_PosterLabel)
                 m_PosterLabel.SetText(inJob.PosterId());
 
-            var jobIcon = inJob.Icon();
+            Sprite jobIcon = null; // TODO: REIMPLEMENT
             if (jobIcon != null)
             {
                 m_Icon.sprite = jobIcon;
@@ -94,7 +94,7 @@ namespace Aqua.JobBoard
 
                     default:
                         {
-                            var icon = m_Job.Icon();
+                            Sprite icon = null; // TODO: REIMPLEMENT
                             m_Icon.sprite = icon;
                             m_Icon.gameObject.SetActive(icon);
                             break;

@@ -10,9 +10,51 @@ namespace OGD {
     /// Core features of OGD client.
     /// </summary>
     static public class Core {
+
+        #region Return Status
+
+        public enum ReturnStatus {
+            Success,
+            Error_DB,
+            Error_Request,
+            Error_Server,
+
+            Unknown
+        }
+
+        static internal ReturnStatus ParseStatus(string status) {
+            switch(status) {
+                case StatusCodeSuccess:
+                    return ReturnStatus.Success;
+                case StatusCodeDBError:
+                    return ReturnStatus.Error_DB;
+                case StatusCodeRequestError:
+                    return ReturnStatus.Error_Request;
+                case StatusCodeServerError:
+                    return ReturnStatus.Error_Server;
+                default:
+                    Debug.LogWarningFormat("[OGD.Core] Unknown status code '{0}'", status);
+                    return ReturnStatus.Unknown;
+            }
+        }
+
+        private const string StatusCodeSuccess = "SUCCESS";
+        private const string StatusCodeDBError = "ERR_DB";
+        private const string StatusCodeRequestError = "ERR_REQ";
+        private const string StatusCodeServerError = "ERR_SRV";
+
+        #endregion // Return Status
+
+        internal struct DefaultResponse {
+            public string[] val;
+            public string msg;
+            public string status;
+        }
+
+        public delegate void DefaultErrorHandlerDelegate(ReturnStatus status, string msg);
         
-        internal delegate void ResponseHandlerDelegate<TResponse>(TResponse response, object userData);
-        internal delegate void ErrorHandlerDelegate(string error, object userData);
+        internal delegate void ResponseProcessorDelegate<TResponse>(TResponse response, object userData);
+        internal delegate void RequestErrorHandlerDelegate(string error, object userData);
 
         static private string s_ServerAddress = string.Empty;
         static private string s_GameId = string.Empty;
@@ -96,44 +138,49 @@ namespace OGD {
 
         #region Sending Request
 
-        internal class Request<TResponse> {
+        internal class Request<TResponse> : IDisposable {
             public UnityWebRequest WebRequest;
-            public ResponseHandlerDelegate<TResponse> Handler;
-            public ErrorHandlerDelegate ErrorHandler;
+            public ResponseProcessorDelegate<TResponse> Handler;
+            public RequestErrorHandlerDelegate ErrorHandler;
             public object UserData;
+
+            public void Dispose() {
+                var request = this;
+                Core.CancelRequest(ref request);
+            }
         }
 
         /// <summary>
         /// Submits a query as a GET request.
         /// </summary>
-        static internal Request<T> Get<T>(Query query, ResponseHandlerDelegate<T> handler, ErrorHandlerDelegate errorHandler, object userData) {
+        static internal Request<T> Get<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
             return SendRequest<T>(query, UnityWebRequest.kHttpVerbGET, handler, errorHandler, userData);
         }
 
         /// <summary>
         /// Submits a query as a PUT request.
         /// </summary>
-        static internal Request<T> Put<T>(Query query, ResponseHandlerDelegate<T> handler, ErrorHandlerDelegate errorHandler, object userData) {
+        static internal Request<T> Put<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
             return SendRequest<T>(query, UnityWebRequest.kHttpVerbPUT, handler, errorHandler, userData);
         }
 
         /// <summary>
         /// Submits a query as a POST request.
         /// </summary>
-        static internal Request<T> Post<T>(Query query, ResponseHandlerDelegate<T> handler, ErrorHandlerDelegate errorHandler, object userData) {
+        static internal Request<T> Post<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
             return SendRequest<T>(query, UnityWebRequest.kHttpVerbPOST, handler, errorHandler, userData);
         }
 
-        static private Request<T> SendRequest<T>(Query query, string method, ResponseHandlerDelegate<T> handler, ErrorHandlerDelegate errorHandler, object userData) {
-            string fullPath = Path.Combine(s_ServerAddress, query.API);
-            if (query.ArgsBuilder != null && query.ArgsBuilder.Length > 0)
-            {
+        static private Request<T> SendRequest<T>(Query query, string method, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
+            string fullPath = s_ServerAddress + query.API;
+            if (query.ArgsBuilder != null && query.ArgsBuilder.Length > 0) {
                 fullPath += query.ArgsBuilder.ToString();
                 query.ArgsBuilder.Length = 0;
             }
 
             Request<T> request = new Request<T>();
             UnityWebRequest uwr = new UnityWebRequest(fullPath, method);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
             
             request.WebRequest = uwr;
             request.Handler = handler;
@@ -150,10 +197,8 @@ namespace OGD {
         /// Cancels a request.
         /// </summary>
         static internal void CancelRequest<TResponse>(ref Request<TResponse> request) {
-            if (request != null)
-            {
-                if (request.WebRequest != null)
-                {
+            if (request != null) {
+                if (request.WebRequest != null) {
                     request.WebRequest.Dispose();
                     request.WebRequest = null;
                 }
@@ -171,8 +216,8 @@ namespace OGD {
                 return;
 
             object userData = request.UserData;
-            ResponseHandlerDelegate<T> handler = request.Handler;
-            ErrorHandlerDelegate errorHandler = request.ErrorHandler;
+            ResponseProcessorDelegate<T> handler = request.Handler;
+            RequestErrorHandlerDelegate errorHandler = request.ErrorHandler;
 
             request.WebRequest = null;
             request.UserData = null;

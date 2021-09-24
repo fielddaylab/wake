@@ -105,7 +105,8 @@ namespace Aqua
         
         private void OnTaskButtonClicked()
         {
-            StatusApp.OpenToPage(StatusApp.PageId.Job);
+            // TODO: Implement
+            // JobApp.OpenToPage(JobApp.PageId.Job);
             
             SyncActiveTasks();
             m_ProcessOperationsJob.Stop();

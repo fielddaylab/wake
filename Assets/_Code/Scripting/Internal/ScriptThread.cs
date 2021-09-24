@@ -53,9 +53,9 @@ namespace Aqua.Scripting
 
         #region Lifecycle
 
-        public ScriptThreadHandle Prep(string inName, ScriptObject inContext, TempAlloc<VariantTable> inTempTable)
+        public ScriptThreadHandle Prep(ScriptObject inContext, TempAlloc<VariantTable> inTempTable)
         {
-            Setup(inName, inContext, inTempTable);
+            Setup(null, inContext, inTempTable);
             m_Actor = inContext;
 
             m_CutsceneCount = 0;

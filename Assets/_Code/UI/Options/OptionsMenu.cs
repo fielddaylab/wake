@@ -6,6 +6,7 @@ using System;
 using AquaAudio;
 using Aqua.Scripting;
 using BeauUtil;
+using TMPro;
 
 namespace Aqua.Option 
 {
@@ -29,6 +30,7 @@ namespace Aqua.Option
         #region Inspector
 
         [SerializeField] private Button m_CloseButton = null;
+        [SerializeField] private TMP_Text m_UserNameLabel = null;
 
         [Header("Tabs")]
         [SerializeField] private ToggleGroup m_TabList = null;
@@ -73,6 +75,11 @@ namespace Aqua.Option
         protected override void OnShow(bool inbInstant)
         {
             base.OnShow(inbInstant);
+
+            if (m_UserNameLabel)
+            {
+                m_UserNameLabel.SetText(Services.Data.Profile.Id);
+            }
 
             if (m_InputLayer.PushPriority())
             {

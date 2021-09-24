@@ -3,58 +3,55 @@ using System;
 namespace OGD {
     static public class Player {
 
-        private struct NewIdResponse {
-            public string id;
-            public string message;
-        }
-
-        private struct ClaimIdResponse {
-            public string message;
-        }
-
-        static private Core.Request<NewIdResponse> s_CurrentNewIdRequest;
-        static private Core.Request<ClaimIdResponse> s_CurrentClaimIdRequest;
+        static private Core.Request<Core.DefaultResponse> s_CurrentNewIdRequest;
+        static private Core.Request<Core.DefaultResponse> s_CurrentClaimIdRequest;
 
         /// <summary>
         /// Generates a new id.
         /// </summary>
-        static public void NewId(Action<string> onNewId, Action<string> onError) {
+        static public IDisposable NewId(Action<string> onNewId, Core.DefaultErrorHandlerDelegate onError) {
             Core.CancelRequest(ref s_CurrentNewIdRequest);
 
             var query = Core.NewQuery("/player/");
-            s_CurrentNewIdRequest = Core.Get<NewIdResponse>(query, (response, data) => {
+            return s_CurrentNewIdRequest = Core.Get<Core.DefaultResponse>(query, (response, data) => {
                 s_CurrentNewIdRequest = null;
 
-                if (!string.IsNullOrEmpty(response.id)) {
-                    onNewId?.Invoke(response.id);
+                var status = Core.ParseStatus(response.status);
+                if (status == Core.ReturnStatus.Success) {
+                    onNewId?.Invoke(response.val[0]);
                 } else {
-                    onError?.Invoke(response.message);
+                    onError?.Invoke(status, response.msg);
                 }
             }, (error, data) => {
-                onError?.Invoke(error);
+                s_CurrentNewIdRequest = null;
+
+                onError?.Invoke(Core.ReturnStatus.Unknown, error);
             }, null);
         }
 
         /// <summary>
         /// Claims the given id.
         /// </summary>
-        static public void ClaimId(string id, string name, Action onSuccess, Action<string> onError) {
+        static public IDisposable ClaimId(string id, string name, Action onSuccess, Core.DefaultErrorHandlerDelegate onError) {
             Core.CancelRequest(ref s_CurrentClaimIdRequest);
 
             var query = Core.NewQuery("/player/");
             Core.QueryArg(ref query, "player_id", id);
             Core.QueryArg(ref query, "name", name);
 
-            s_CurrentClaimIdRequest = Core.Put<ClaimIdResponse>(query, (response, data) => {
+            return s_CurrentClaimIdRequest = Core.Put<Core.DefaultResponse>(query, (response, data) => {
                 s_CurrentClaimIdRequest = null;
 
-                if (response.message != null && response.message.StartsWith("SUCCESS")) {
+                var status = Core.ParseStatus(response.status);
+                if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
                 } else {
-                    onError?.Invoke(response.message);
+                    onError?.Invoke(status, response.msg);
                 }
             }, (error, data) => {
-                onError?.Invoke(error);
+                s_CurrentClaimIdRequest = null;
+
+                onError?.Invoke(Core.ReturnStatus.Unknown, error);
             }, null);
         }
     }

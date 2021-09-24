@@ -134,9 +134,8 @@ namespace Aqua
 
         private string m_CurrentJobId = string.Empty;
         private string m_PreviousJobId = string.Empty;
-        private string m_CurrentPortableAppId = string.Empty;
+        private PortableMenu.AppId m_CurrentPortableAppId = PortableMenu.AppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
-        private StatusApp.PageId? m_CurrentPortableStatusTabId = null;
 
         #endregion // Logging Variables
 
@@ -158,10 +157,9 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
-                .Register<string>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
-                .Register<string>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
-                .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
-                .Register<StatusApp.PageId>(GameEvents.PortableStatusTabSelected, PortableStatusTabSelectedHandler, this)
+                .Register<PortableMenu.AppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
+                .Register<PortableMenu.AppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
+                // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
                 .Register(GameEvents.PortableClosed, PortableClosed, this);
@@ -180,9 +178,8 @@ namespace Aqua
 
         private void ClearSceneState()
         {
-            m_CurrentPortableAppId = string.Empty;
+            m_CurrentPortableAppId = PortableMenu.AppId.NULL;
             m_CurrentPortableBestiaryTabId = null;
-            m_CurrentPortableStatusTabId = null;
         }
 
         #region Log Events
@@ -246,44 +243,66 @@ namespace Aqua
         }
 
         #region bestiary handlers
-        private void PortableAppOpenedHandler(string appId)
+        private void PortableAppOpenedHandler(PortableMenu.AppId inId)
         {
 
-            if (m_CurrentPortableAppId != string.Empty)
+            if (m_CurrentPortableAppId != inId)
                 PortableAppClosedHandler(m_CurrentPortableAppId);
 
-            m_CurrentPortableAppId = appId;
-            if (appId == "Bestiary")
+            m_CurrentPortableAppId = inId;
+            switch(inId)
             {
-                LogOpenBestiary();
-            }
-            else if (appId == "Status")
-            {
-                LogOpenStatus();
+                case PortableMenu.AppId.Environments:
+                case PortableMenu.AppId.Organisms:
+                    {
+                        LogOpenBestiary();
+                        break;
+                    }
+
+                case PortableMenu.AppId.Job:
+                    {
+                        LogOpenStatus();
+                        LogStatusOpenJobTab();
+                        break;
+                    }
+
+                case PortableMenu.AppId.Tech:
+                    {
+                        LogOpenStatus();
+                        LogStatusOpenTechTab();
+                        break;
+                    }
             }
         }
 
-        private void PortableAppClosedHandler(string appId)
+        private void PortableAppClosedHandler(PortableMenu.AppId appId)
         {
             if (m_CurrentPortableAppId != appId)
                 return;
 
-            m_CurrentPortableAppId = string.Empty;
-            if (appId == "Bestiary")
+            m_CurrentPortableAppId = PortableMenu.AppId.NULL;
+            switch(appId)
             {
-                m_CurrentPortableBestiaryTabId = null;
-                LogCloseBestiary();
-            }
-            else if (appId == "Status")
-            {
-                m_CurrentPortableStatusTabId = null;
-                LogCloseStatus();
+                case PortableMenu.AppId.Environments:
+                case PortableMenu.AppId.Organisms:
+                    {
+                        m_CurrentPortableBestiaryTabId = null;
+                        LogCloseBestiary();
+                        break;
+                    }
+
+                case PortableMenu.AppId.Job:
+                case PortableMenu.AppId.Tech:
+                    {
+                        LogCloseStatus();
+                        break;
+                    }
             }
         }
 
         private void PortableClosed()
         {
-            if (m_CurrentPortableAppId != string.Empty)
+            if (m_CurrentPortableAppId != PortableMenu.AppId.NULL)
                 PortableAppClosedHandler(m_CurrentPortableAppId);
         }
 
@@ -309,33 +328,6 @@ namespace Aqua
                 case (BestiaryDescCategory.Model): //Models Tab
                     {
                         LogBestiaryOpenModelsTab();
-                        break;
-                    }
-            }
-        }
-
-        private void PortableStatusTabSelectedHandler(StatusApp.PageId tabName)
-        {
-            if (tabName == m_CurrentPortableStatusTabId) //Tab already open, don't send another log
-                return;
-            else
-                m_CurrentPortableStatusTabId = tabName;
-
-            switch (tabName)
-            {
-                case (StatusApp.PageId.Job): //Tasks Tab
-                    {
-                        LogStatusOpenJobTab();
-                        break;
-                    }
-                case (StatusApp.PageId.Item): //Items Tab
-                    {
-                        LogStatusOpenItemTab();
-                        break;
-                    }
-                case (StatusApp.PageId.Tech): //Tech Tab
-                    {
-                        LogStatusOpenTechTab();
                         break;
                     }
             }
@@ -700,8 +692,6 @@ namespace Aqua
         #region Status App Logging
         private void LogOpenStatus()
         {
-            m_CurrentPortableStatusTabId = StatusApp.PageId.Job;
-
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
                 { "job_id", m_CurrentJobId }

@@ -11,7 +11,6 @@ namespace Aqua
         public ushort Index;
         
         public TextId LabelId;
-        public TextId DescriptionId;
         
         public JobStep[] Steps;
         public ushort[] PrerequisiteTaskIndices;

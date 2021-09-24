@@ -11,9 +11,11 @@ namespace Aqua
 
         [SerializeField, Required] private LocText m_NameLabel = null;
         [SerializeField] private LocText m_PosterLabel = null;
+        [SerializeField] private LocText m_LocationLabel = null;
         [SerializeField] private LocText m_DescriptionLabel = null;
-        [SerializeField] private Image m_Icon = null;
+        [SerializeField] private LocText m_ShortDescriptionLabel = null;
         
+        [Header("Extra Details")]
         [SerializeField, Required] private InvItemDisplay[] m_Rewards = null;
         [SerializeField] private RectTransform m_NoRewardsDisplay = null;
         [SerializeField, Required] private TickDisplay[] m_Difficulties = null;
@@ -29,12 +31,15 @@ namespace Aqua
 
                 if (m_PosterLabel)
                     m_PosterLabel.SetText(null);
+
+                if (m_LocationLabel)
+                    m_LocationLabel.SetText(null);
                 
                 if (m_DescriptionLabel)
                     m_DescriptionLabel.SetText(null);
 
-                if (m_Icon)
-                    m_Icon.gameObject.SetActive(false);
+                if (m_ShortDescriptionLabel)
+                    m_ShortDescriptionLabel.SetText(null);
                 
                 for(int i = 0; i < m_Rewards.Length; ++i)
                     m_Rewards[i].gameObject.SetActive(false);
@@ -55,19 +60,10 @@ namespace Aqua
             if (m_PosterLabel)
                 m_PosterLabel.SetText(inJob.PosterId());
 
-            if (m_Icon)
+            if (m_LocationLabel)
             {
-                var jobIcon = inJob.Icon();
-                if (jobIcon != null)
-                {
-                    m_Icon.sprite = jobIcon;
-                    m_Icon.gameObject.SetActive(true);
-                }
-                else
-                {
-                    m_Icon.gameObject.SetActive(false);
-                    m_Icon.sprite = null;
-                }
+                var map = Assets.Map(inJob.StationId());
+                m_LocationLabel.SetText(map.LabelId());
             }
             
             if (m_Rewards.Length > 0)
@@ -114,11 +110,12 @@ namespace Aqua
         {
             if (m_DescriptionLabel)
             {
-                StringHash32 desc = inJob.DescCompletedId();
-                if (desc.IsEmpty || inStatus != PlayerJobStatus.Completed)
-                    desc = inJob.DescId();
+                StringHash32 desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
                 m_DescriptionLabel.SetText(desc);
             }
+
+            if (m_ShortDescriptionLabel)
+                m_ShortDescriptionLabel.SetText(inJob.DescShortId());
 
             if (m_CompletedDisplay)
                 m_CompletedDisplay.gameObject.SetActive(inStatus == PlayerJobStatus.Completed);

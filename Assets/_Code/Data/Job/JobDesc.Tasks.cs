@@ -19,7 +19,6 @@ namespace Aqua
 
             [Header("Labels")]
             public TextId LabelId;
-            public TextId DescriptionId;
 
             [Header("Steps")]
             public JobStep[] Steps = null;
@@ -87,7 +86,6 @@ namespace Aqua
                 task.Id = editorTask.Id;
                 task.Index = (ushort) taskIndex;
                 task.LabelId = editorTask.LabelId;
-                task.DescriptionId = editorTask.DescriptionId;
                 task.Steps = (JobStep[]) editorTask.Steps.Clone();
 
                 task.PrerequisiteTaskIndices = new ushort[editorTask.PrerequisiteTaskIds.Length];

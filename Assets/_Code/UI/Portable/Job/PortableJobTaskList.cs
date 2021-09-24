@@ -75,9 +75,9 @@ namespace Aqua
             JobTaskDisplay taskDisplay = m_TaskDisplays.Alloc();
             taskDisplay.Populate(inTask, inbComplete);
 
-            ColorPalette4 palette = inbComplete ? Services.Assets.Jobs.CompletedPortablePalette() : Services.Assets.Jobs.ActivePortablePalette();
-            taskDisplay.Label.Graphic.color = palette.Content;
-            taskDisplay.Background.color = palette.Background;
+            // ColorPalette4 palette = inbComplete ? Services.Assets.Jobs.CompletedPortablePalette() : Services.Assets.Jobs.ActivePortablePalette();
+            // taskDisplay.Label.Graphic.color = palette.Content;
+            // taskDisplay.Background.color = palette.Background;
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(taskDisplay.Root);
 

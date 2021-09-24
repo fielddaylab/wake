@@ -39,9 +39,9 @@ namespace Aqua.Portable
                 Target = inTarget;
             }
 
-            public StringHash32 AppId()
+            public PortableMenu.AppId AppId()
             {
-                return "bestiary";
+                return PortableMenu.AppId.NULL; 
             }
 
             public bool CanClose()
@@ -78,9 +78,9 @@ namespace Aqua.Portable
                 Return = Future.Create<StringHash32>();
             }
 
-            public StringHash32 AppId()
+            public PortableMenu.AppId AppId()
             {
-                return "bestiary";
+                return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
             }
 
             public bool CanClose()
@@ -120,9 +120,9 @@ namespace Aqua.Portable
                 Return = Future.Create<StringHash32>();
             }
 
-            public StringHash32 AppId()
+            public PortableMenu.AppId AppId()
             {
-                return "bestiary";
+                return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
             }
 
             public bool CanClose()
@@ -498,7 +498,7 @@ namespace Aqua.Portable
             m_EntryLayoutGroup.ForceRebuild();
             LoadEntry(inTarget);
 
-            Services.Events.Dispatch(GameEvents.PortableBestiaryTabSelected, inType);
+            // Services.Events.Dispatch(GameEvents.PortableBestiaryTabSelected, inType);
         }
 
         private void LoadEntry(BestiaryDesc inEntry)
