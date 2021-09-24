@@ -3,11 +3,6 @@ using System;
 namespace OGD {
     static public class GameState {
 
-        [UnityEditor.InitializeOnLoadMethod]
-        static private void Test()
-        {
-        }
-        
         private struct RequestGameStateResponse {
             public string msg;
             public string status;
