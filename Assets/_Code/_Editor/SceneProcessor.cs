@@ -87,7 +87,7 @@ namespace Aqua.Editor
         static private void Flatten(Scene scene)
         {
             List<FlattenHierarchy> allFlatten = new List<FlattenHierarchy>(64);
-            scene.GetAllComponents<FlattenHierarchy>(false, allFlatten);
+            scene.GetAllComponents<FlattenHierarchy>(true, allFlatten);
             if (allFlatten.Count > 0)
             {
                 Debug.LogFormat("[SceneProcessor] Flattening {0} transform hierarchies in scene '{1}'...", allFlatten.Count, scene.name);

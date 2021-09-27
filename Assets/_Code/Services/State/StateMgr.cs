@@ -446,7 +446,7 @@ namespace Aqua
 
             using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
             {
-                inBinding.Scene.GetAllComponents<FlattenHierarchy>(false, allFlatten);
+                inBinding.Scene.GetAllComponents<FlattenHierarchy>(true, allFlatten);
                 if (allFlatten.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);

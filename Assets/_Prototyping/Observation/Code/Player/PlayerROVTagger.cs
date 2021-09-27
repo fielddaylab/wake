@@ -16,18 +16,23 @@ namespace ProtoAqua.Observation
         [SerializeField] private ParticleSystem[] m_RangeParticleSystems = null;
         [SerializeField] private float m_MaxRange = 8;
 
+        [Header("Hinting")]
+        [SerializeField] private ParticleSystem m_HintParticleSystem = null;
+
         #endregion // Inspector
 
         [NonSerialized] private bool m_On = false;
         [NonSerialized] private float m_CurrentRange;
         [NonSerialized] private Routine m_EnableRoutine;
+        [NonSerialized] private TaggingSystem m_System;
 
         #region Unity Events
 
         private void Start()
         {
             SetRange(0);
-            TaggingSystem.Find<TaggingSystem>().SetDetector(m_RangeCollider);
+            m_System = TaggingSystem.Find<TaggingSystem>();
+            m_System.SetDetector(m_RangeCollider);
         }
 
         #endregion // Unity Events
@@ -56,6 +61,32 @@ namespace ProtoAqua.Observation
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput)
         {
+            Vector2 myPos = m_RangeCollider.transform.position;
+            Vector2 closestPos;
+            if (m_System.TryGetClosestCritterGameplayPlane(out closestPos))
+            {
+                Vector2 delta = closestPos - myPos;
+                float distFromSurface = Math.Max(0, delta.magnitude - m_MaxRange);
+                float directionDeg = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
+
+                float arc = Mathf.Lerp(8, 30, distFromSurface / 15);
+                
+                var shape = m_HintParticleSystem.shape;
+                Vector3 shapeRotation = shape.rotation;
+                shapeRotation.z = directionDeg - arc / 2;
+                shape.rotation = shapeRotation;
+                shape.arc = arc;
+
+                if (!m_HintParticleSystem.isEmitting)
+                {
+                    m_HintParticleSystem.Play();
+                }
+            }
+            else
+            {
+                m_HintParticleSystem.Stop();
+            }
+
             return false;
         }
 
@@ -109,6 +140,9 @@ namespace ProtoAqua.Observation
                         ps.Stop();
                     }
                 }
+
+                var hintShape = m_HintParticleSystem.shape;
+                hintShape.radius = inRange;
             }
             else
             {
@@ -118,6 +152,8 @@ namespace ProtoAqua.Observation
                 {
                     ps.Stop();
                 }
+
+                m_HintParticleSystem.Stop();
             }
         }
 

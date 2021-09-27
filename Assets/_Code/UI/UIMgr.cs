@@ -41,6 +41,9 @@ namespace Aqua
         [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
         [SerializeField] private float m_TooltipHoverTime = 0.6f;
 
+        [Header("Flattening")]
+        [SerializeField] private Transform[] m_HierarchiesToFlatten = null;
+
         #endregion // Inspector
 
         [NonSerialized] private int m_LetterboxCounter = 0;
@@ -299,6 +302,9 @@ namespace Aqua
 
             BindCamera(Camera.main);
             transform.FlattenHierarchy();
+
+            foreach(var additionalTransform in m_HierarchiesToFlatten)
+                additionalTransform.FlattenHierarchy();
         }
 
         #endregion // IService

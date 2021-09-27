@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -15609,6 +15609,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 599548569}
+  - component: {fileID: 599548570}
   m_Layer: 0
   m_Name: foreground
   m_TagString: Untagged
@@ -15631,6 +15632,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &599548570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599548568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1001 &604218292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16980,6 +16995,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 701908853}
+  - component: {fileID: 701908854}
   m_Layer: 0
   m_Name: Kelp
   m_TagString: Untagged
@@ -17006,6 +17022,20 @@ Transform:
   m_Father: {fileID: 1381467552}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &701908854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701908852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &702071549
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18498,6 +18528,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 762288667}
+  - component: {fileID: 762288668}
   m_Layer: 0
   m_Name: midground
   m_TagString: Untagged
@@ -18818,6 +18849,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &762288668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762288666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &762699202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32972,6 +33017,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1381467552}
+  - component: {fileID: 1381467553}
   m_Layer: 0
   m_Name: background
   m_TagString: Untagged
@@ -33003,6 +33049,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1381467553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381467551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &1385387904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60877,6 +60937,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2142917294}
+  - component: {fileID: 2142917295}
   m_Layer: 0
   m_Name: urchins
   m_TagString: Untagged
@@ -61013,6 +61074,20 @@ Transform:
   m_Father: {fileID: 1381467552}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2142917295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142917293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &2143458182
 PrefabInstance:
   m_ObjectHideFlags: 0
