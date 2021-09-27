@@ -15,14 +15,14 @@ namespace Aqua.Character
 
         private void Reset()
         {
-            m_Parent = GetComponentInParent<ScriptObject>();
+            m_Parent = this.GetComponentInParent<ScriptObject>(true);
             if (m_Parent != null)
                 m_Id = m_Parent.Id();
         }
 
         void ISceneOptimizable.Optimize()
         {
-            m_Parent = GetComponentInParent<ScriptObject>();
+            m_Parent = this.GetComponentInParent<ScriptObject>(true);
             if (m_Parent != null)
                 m_Id = m_Parent.Id();
         }

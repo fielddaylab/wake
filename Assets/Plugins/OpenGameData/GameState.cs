@@ -2,7 +2,7 @@ using System;
 
 namespace OGD {
     static public class GameState {
-        
+
         private struct RequestGameStateResponse {
             public string msg;
             public string status;

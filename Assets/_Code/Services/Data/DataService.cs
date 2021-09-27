@@ -452,7 +452,7 @@ namespace Aqua
 
         #else
 
-        static private bool IdentifyDebugProfile(ref string ioId) { }
+        static private bool IdentifyDebugProfile(ref string ioId) { return false; }
 
         #endif // DEVELOPMENT
 

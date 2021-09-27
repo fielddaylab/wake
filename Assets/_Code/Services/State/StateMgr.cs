@@ -282,7 +282,7 @@ namespace Aqua
             AsyncOperation loadOp = SceneManager.LoadSceneAsync(inNextScene.Path, LoadSceneMode.Single);
             loadOp.allowSceneActivation = false;
 
-            DebugService.Log(LogMask.Loading, "[StateMgr] Loading scene '{0}'", inNextScene.Path);
+            DebugService.Log(LogMask.Loading, "[StateMgr] Loading scene '{0}' with entrance '{1}'", inNextScene.Path, m_EntranceId);
 
             while(loadOp.progress < 0.9f)
                 yield return null;
