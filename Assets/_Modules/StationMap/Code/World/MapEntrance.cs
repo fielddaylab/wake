@@ -5,12 +5,13 @@ using Aqua.Scripting;
 
 namespace Aqua.StationMap
 {
-    public class ShipDock : ScriptComponent
+    public class MapEntrance : ScriptComponent
     {
         #region Inspector
 
         [Header("Components")]
         [SerializeField, Required] private Collider2D m_Collider = null;
+        [SerializeField] private SerializedHash32 m_MapId = null;
 
         #endregion // Inspector
 
@@ -23,7 +24,7 @@ namespace Aqua.StationMap
         {
             if (Services.Data.CompareExchange(GameVars.InteractObject, null, Parent.Id()))
             {
-                Services.UI.FindPanel<NavigationUI>().DisplayDock(m_Collider.transform);
+                Services.UI.FindPanel<NavigationUI>().DisplayMap(m_Collider.transform, m_MapId);
             }
         }
 
