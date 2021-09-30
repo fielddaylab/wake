@@ -8,20 +8,17 @@
 @boostScore 10000
 @once
 @cutscene
-{@player}   So, what should we be doing right now?
-{@kevin}    Well, I'd think we need to find some work!
+{@player}   So... what are we supposed to be doing? 
+{@kevin}    In case you forgot, we need to make some money. 
 $if kevin:seenShipHelm
-            Maybe we should check out the {map-name}Job Board{/map-name}?
+            You should check the {map-name}Job Board{/map-name}.
 $else
-            Is there anywhere on this ship where we can see available jobs?
+            Is there anywhere we can see available jobs?
     $if scene:name == "Ship", global:nav.shipRoom == "helm"
-            {@player}   Oh, yeah, right in front of us there's the {map-name}Job Board{/map-name}.
-                        Should be synced up with the current station.
+            {@player}   Oh, yeah, the {map-name}Job Board{/map-name} is right in front of us!
     $else
-            {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm.
-                        Should be synced up with the current station.
+            {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm!
     $endif // scene:name == "Ship", global:nav.shipRoom == "helm"
-    {@kevin}   Great! Then we should check there.
 $endif // kevin:seenShipHelm
 $set    kevin:knowsJobs = true
 
@@ -30,24 +27,24 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob, scene:name != "JobBoard", global:nav.shipRoom != "helm"
 @repeat     1
 @cutscene
-{@player}   Any idea what we should be doing right now?
-{@kevin}    Maybe we should head back to the helm and take a job?
+{@player}   So.... What should we do now?
+{@kevin}    We need to get back to the helm and take a job!
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp
 @when       !player:currentJob, scene:name == "Ship", global:nav.shipRoom == "helm"
 @repeat     1
 @cutscene
-{@player}   Any thoughts on what we should do next?
-{@kevin}    Maybe we should check out the {map-name}Job Board{/map-name}...
+{@player}   Hey Kevin... any thoughts on what we should do next? 
+{@kevin}    We should check out the {map-name}Job Board{/map-name}.
 
 :: noJob.atJobBoard.someAvailable
 @trigger    RequestPartnerHelp
 @when       !player:currentJob, scene:name == "JobBoard", AnyJobsAvailable()
 @repeat     1
 @cutscene
-{@player}   I'm stuck, anything I should look for?
-{@kevin}    Are you seeing any available jobs on the left?
+{@player}   Um.... what was I supposed to do?  
+{@kevin}    Select the job on the left, then accept it on the right!
 
 :: noJob.atJobBoard.someInProgress
 @trigger    RequestPartnerHelp
@@ -56,7 +53,7 @@ $set    kevin:knowsJobs = true
 @cutscene
 {@player}   I'm stuck. Anything I'm missing?
 {@kevin}    It looks like there are some jobs you already started.
-            Why not pick those back up?
+            Let's pick one of those back up!
 
 :: noJob.default.1
 @trigger    RequestPartnerHelp
@@ -64,7 +61,7 @@ $set    kevin:knowsJobs = true
 @repeat     1
 @cutscene
 {@player}   Kevin, any help?
-{@kevin}    I'd recommend we see if there are any jobs available for us.
+{@kevin}    I'd recommend we see if there are any jobs available.
 
 :: noJob.default.2
 @trigger    RequestPartnerHelp

@@ -7,8 +7,8 @@
 $branch common.ringPhone
 
 {@drJules}  Ok. So the {nameof UrchinBarren} isn't looking great.
-            But I think there should be a way of fixing it.
-            There's one more part of the {h}Simulator{/h} that I haven't shown you yet.
+            But I think we can fix it. 
+            There's one more part of the {h}Simulator{/h} I haven't shown you yet.
             Meet me back at the {h}Modeling Whiteboard{/h}.
 
 ::helpGoToModeling
@@ -67,7 +67,7 @@ $branch common.ringPhone
 @trigger	ModelSynced
 @once
 @cutscene
-{@drJules}  Nice work! So now, I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
+{@drJules}  Nice work! Now I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
             What would happen if we added {critter-name}Kelp{/critter-name}, or removed {pluralnameof Urchin}, or even...
             Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
 {hide-dialog}
@@ -106,11 +106,11 @@ $branch common.ringPhone
 @cutscene
 $if global:nav.shipRoom != "office"
 	{@player} 	What should we do now?
-	{@kevin}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Jules.
+	{@kevin}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Kelpurnia.
 	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
 $else
-	{@player} 	I made it back to the {map-name}Office{/map-name}, what should we do from here?
-	{@kevin}	Just like last time, we can report our findings to Dr. Jules using the {h}Computer{/h}.
+	{@player} 	So... now what?
+	{@kevin}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
 $endif
 
 // END
