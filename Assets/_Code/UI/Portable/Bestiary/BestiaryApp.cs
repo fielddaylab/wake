@@ -41,7 +41,7 @@ namespace Aqua.Portable
 
             public PortableMenu.AppId AppId()
             {
-                return PortableMenu.AppId.NULL; 
+                return PortableMenu.AppId.Organisms; 
             }
 
             public bool CanClose()
@@ -80,7 +80,7 @@ namespace Aqua.Portable
 
             public PortableMenu.AppId AppId()
             {
-                return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
+                return PortableMenu.AppId.Organisms;
             }
 
             public bool CanClose()
