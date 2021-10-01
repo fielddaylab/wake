@@ -9,7 +9,7 @@ namespace Aqua
     public class InputCursor : MonoBehaviour
     {
         [SerializeField] private Image m_Image = null;
-        [SerializeField] private Sprite m_InteractSprite = null;
+        [SerializeField] private Sprite[] m_InteractSprites = null;
         
         [NonSerialized] private RectTransform m_Transform;
         [NonSerialized] private Sprite m_OriginalSprite;
@@ -19,7 +19,7 @@ namespace Aqua
         [NonSerialized] private StringHash32 m_RotationLock;
         [NonSerialized] private Sprite m_SpriteLockSprite;
 
-        [NonSerialized] private bool m_HasInteraction;
+        [NonSerialized] private CursorImageType m_InteractionImage;
 
         static private readonly Vector3 MouseDownScale = new Vector3(0.75f, 0.75f, 1);
         static private readonly Vector3 MouseUpScale = new Vector3(1, 1, 1);
@@ -34,8 +34,8 @@ namespace Aqua
 
         private void OnEnable()
         {
-            Cursor.visible = false;
             this.CacheComponent(ref m_Transform);
+            Cursor.visible = false;
         }
 
         private void OnDisable()
@@ -61,9 +61,9 @@ namespace Aqua
                 position = m_Transform.position;
             }
 
-            if (m_HasInteraction)
+            if (m_InteractionImage > 0)
             {
-                m_Image.sprite = m_InteractSprite;
+                m_Image.sprite = m_InteractSprites[(int) m_InteractionImage - 1];
             }
             else if (!m_SpriteLockSprite.IsReferenceNull())
             {
@@ -145,11 +145,23 @@ namespace Aqua
 
         #region Interaction
 
-        public void SetInteractionHint(bool inbHint)
+        public void SetInteractionHint(CursorImageType inImageType)
         {
-            m_HasInteraction = inbHint;
+            m_InteractionImage = inImageType;
         }
 
         #endregion // Interaction
+    }
+
+    [LabeledEnum]
+    public enum CursorImageType : byte
+    {
+        [Hidden]
+        None = 0,
+        
+        Select,
+        Question,
+        Tooltip,
+        Camera
     }
 }

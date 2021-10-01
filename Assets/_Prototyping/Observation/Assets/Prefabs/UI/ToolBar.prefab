@@ -32,11 +32,11 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 544, y: 48}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &3865480522503413065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,6 +69,7 @@ GameObject:
   - component: {fileID: 380384717205131089}
   - component: {fileID: 4034798580124852327}
   - component: {fileID: 1459361962229880867}
+  - component: {fileID: 8818474992220319315}
   m_Layer: 5
   m_Name: Group
   m_TagString: Untagged
@@ -155,6 +156,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4154093012515216298}
   m_CullTransparentMesh: 0
+--- !u!114 &8818474992220319315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4154093012515216298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447730ca511070e43bf4250cd9af8e3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Group: {fileID: 2884549780418316112}
 --- !u!1001 &8581349670427542613
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -291,6 +305,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_UVRect.height
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674985848998479842, guid: b035a248de28f1b4d8bb758d96037cde,
+        type: 3}
+      propertyPath: m_text
+      value: Scanner
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b035a248de28f1b4d8bb758d96037cde, type: 3}
@@ -454,6 +473,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_UVRect.height
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674985848998479842, guid: b035a248de28f1b4d8bb758d96037cde,
+        type: 3}
+      propertyPath: m_text
+      value: Tagger
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b035a248de28f1b4d8bb758d96037cde, type: 3}

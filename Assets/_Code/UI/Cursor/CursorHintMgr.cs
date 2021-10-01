@@ -29,7 +29,7 @@ namespace Aqua
             if (m_CurrentHint != inHint)
             {
                 m_CurrentHint = inHint;
-                m_Cursor.SetInteractionHint(m_CurrentHint.IsInteractable());
+                m_Cursor.SetInteractionHint(m_CurrentHint.IsInteractable() ? inHint.Cursor : CursorImageType.None);
             }
         }
 
@@ -38,7 +38,7 @@ namespace Aqua
             if (!m_CurrentHint.IsReferenceNull())
             {
                 bool bInteractable = m_CurrentHint.IsInteractable();
-                m_Cursor.SetInteractionHint(bInteractable);
+                m_Cursor.SetInteractionHint(bInteractable ? m_CurrentHint.Cursor : CursorImageType.None);
                 if (bInteractable)
                 {
                     float prevTimer = m_TooltipTimer;
@@ -78,7 +78,7 @@ namespace Aqua
             if (m_CurrentHint == inHint)
             {
                 m_CurrentHint = null;
-                m_Cursor.SetInteractionHint(false);
+                m_Cursor.SetInteractionHint(CursorImageType.None);
                 m_TooltipTimer = 0;
                 m_Tooltip.Clear();
             }

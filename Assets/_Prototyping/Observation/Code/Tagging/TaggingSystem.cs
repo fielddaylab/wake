@@ -96,7 +96,7 @@ namespace ProtoAqua.Observation
 
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
                 distSq = gameplayPlaneDist.sqrMagnitude;
-                critter.Collider.enabled = distSq < m_DeactivateRangeSq;
+                critter.Collider.enabled = distSq - critter.ColliderRadius < m_DeactivateRangeSq;
 
                 if (distSq < closestDistSq)
                 {

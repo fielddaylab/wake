@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using BeauUtil;
 using TMPro;
 using BeauPools;
+using BeauUtil.UI;
 
 namespace Aqua
 {
@@ -20,6 +21,7 @@ namespace Aqua
         [Required] public LocText Label;
         public Graphic Background;
         public Graphic Checkmark;
+        public PointerListener Click;
 
         [Header("Animation")]
         public Graphic Flash;

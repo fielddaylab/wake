@@ -46,14 +46,14 @@ namespace Aqua
                         activeTasks.Add(task);
                 }
 
-                foreach(var completedTask in completedTasks)
-                {
-                    AllocTaskDisplay(completedTask, true);
-                }
-
                 foreach(var activeTask in activeTasks)
                 {
                     AllocTaskDisplay(activeTask, false);
+                }
+
+                foreach(var completedTask in completedTasks)
+                {
+                    AllocTaskDisplay(completedTask, true);
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Aqua
             yield return null;
 
             m_ScrollView.ForceRebuild();
-            m_ScrollView.verticalNormalizedPosition = 0;
+            m_ScrollView.verticalNormalizedPosition = 1;
             m_Group.alpha = 1;
         }
 

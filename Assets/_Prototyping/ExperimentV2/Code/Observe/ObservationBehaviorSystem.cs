@@ -277,7 +277,7 @@ namespace ProtoAqua.ExperimentV2
                 Services.Script.TriggerResponse(ExperimentTriggers.CaptureCircleVisible, table);
             }
             
-            using(var capture = ObservationTank.CaptureCircle(eatRule.Id, inActor, inWorld))
+            using(var capture = ObservationTank.CaptureCircle(eatRule.Id, inActor, inWorld, bHas))
             {
                 switch(inActor.Definition.Eating.EatType)
                 {

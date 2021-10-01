@@ -58,7 +58,7 @@ namespace Aqua
 
         void ISceneOptimizable.Optimize()
         {
-            m_UpgradeIcons = GetComponentsInChildren<PortableUpgradeIcon>(true);
+            m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeIcon>(true);
         }
 
         #endif // UNITY_EDITOR

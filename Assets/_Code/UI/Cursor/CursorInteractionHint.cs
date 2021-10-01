@@ -20,6 +20,11 @@ namespace Aqua
         /// </summary>
         public string TooltipOverride;
 
+        /// <summary>
+        /// Cursor image type.
+        /// </summary>
+        [AutoEnum] public CursorImageType Cursor = CursorImageType.Select;
+
         [NonSerialized] private Selectable m_Selectable = null;
         [NonSerialized] private int m_EnterMask = 0;
         [NonSerialized] private bool m_Initialized = false;

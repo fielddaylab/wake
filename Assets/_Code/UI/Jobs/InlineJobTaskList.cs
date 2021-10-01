@@ -8,6 +8,7 @@ using BeauRoutine;
 using System.Collections.Generic;
 using Aqua.Profile;
 using Aqua.Portable;
+using UnityEngine.EventSystems;
 
 namespace Aqua
 {
@@ -78,6 +79,11 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskRemoved, OnTaskDeactivate, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
+
+            m_TaskDisplays.Initialize(null, null, 0);
+            m_TaskDisplays.Config.RegisterOnConstruct((p, o) => {
+                o.Click.onClick.AddListener(OnTaskButtonClicked);
+            });
         }
 
         protected override void OnDestroy()
@@ -103,10 +109,9 @@ namespace Aqua
             ReloadTasks(true, true);
         }
         
-        private void OnTaskButtonClicked()
+        private void OnTaskButtonClicked(PointerEventData _)
         {
-            // TODO: Implement
-            // JobApp.OpenToPage(JobApp.PageId.Job);
+            PortableMenu.OpenApp(PortableMenu.AppId.Job);
             
             SyncActiveTasks();
             m_ProcessOperationsJob.Stop();

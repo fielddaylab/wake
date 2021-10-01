@@ -122,7 +122,8 @@ namespace Aqua.Portable
 
             public PortableMenu.AppId AppId()
             {
-                return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
+                return PortableMenu.AppId.Organisms;
+                // return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
             }
 
             public bool CanClose()
@@ -482,8 +483,6 @@ namespace Aqua.Portable
                     break;
             }
 
-            Color buttonColor = m_Tweaks.BestiaryListColor(inType);
-
             using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create())
             {
                 Services.Data.Profile.Bestiary.GetEntities(inType, entities);
@@ -491,7 +490,7 @@ namespace Aqua.Portable
                 foreach(var entry in entities)
                 {
                     PortableListElement button = m_EntryPool.Alloc();
-                    button.Initialize(entry.Icon(), buttonColor, m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                    button.Initialize(entry.Icon(), m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
                 }
             }
             
@@ -576,6 +575,9 @@ namespace Aqua.Portable
             }
 
             m_CurrentPage.FactLayout.ForceRebuild();
+
+            foreach(var layoutfix in m_CurrentPage.LayoutFixes)
+                layoutfix.Rebuild();
         }
 
         #endregion // Loading

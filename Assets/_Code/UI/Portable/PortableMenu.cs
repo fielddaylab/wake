@@ -25,7 +25,41 @@ namespace Aqua.Portable
 
             [Hidden]
             NULL = 255
-        } 
+        }
+
+        public class OpenAppRequest : IPortableRequest
+        {
+            public AppId Id;
+
+            public OpenAppRequest(AppId inId)
+            {
+                Id = inId;
+            }
+
+            public AppId AppId()
+            {
+                return Id;
+            }
+
+            public bool CanClose()
+            {
+                return true;
+            }
+
+            public bool CanNavigateApps()
+            {
+                return true;
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public bool ForceInputEnabled()
+            {
+                return false;
+            }
+        }
 
         #endregion // Types
 
@@ -92,10 +126,10 @@ namespace Aqua.Portable
             m_Request = inRequest;
             
             Show();
-            OnRequest();
+            HandleRequest();
         }
 
-        private void OnRequest()
+        private void HandleRequest()
         {
             if (m_Request != null)
             {
@@ -218,5 +252,10 @@ namespace Aqua.Portable
         }
     
         #endregion // BasePanel
+
+        static public void OpenApp(AppId inId)
+        {
+            Services.UI.FindPanel<PortableMenu>().Open(new OpenAppRequest(inId));
+        }
     }
 }

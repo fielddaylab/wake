@@ -43,6 +43,7 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public bool IsRunning;
+        [NonSerialized] public bool IsSelected;
 
         public StringHash32 Id { get { return m_Id.IsEmpty ? (m_Id = name) : m_Id; } }
 

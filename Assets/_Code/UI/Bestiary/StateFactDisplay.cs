@@ -21,7 +21,7 @@ namespace Aqua
             var propData = Assets.Property(inFact.Property);
             m_Icon.sprite = inFact.Icon;
 
-            m_Label.SetText(propData.ToleranceLabel());
+            m_Label.SetText(propData.LabelId());
 
             ActorStateTransitionRange range = inFact.Range;
 

@@ -29,7 +29,6 @@ namespace Aqua
         [SerializeField] private TextId m_StateChangeFormat = default;
         [SerializeField] private TextId m_StateChangeStressOnlyFormat = default;
         [SerializeField] private TextId m_StateChangeUnaffectedFormat = default;
-        [SerializeField] private TextId m_ToleranceLabel = default;
 
         [Header("Ranges")]
         [SerializeField] private float m_MinValue = 0;
@@ -53,7 +52,6 @@ namespace Aqua
         public TextId StateChangeFormat() { return m_StateChangeFormat; }
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         public TextId StateChangeUnaffectedFormat() { return m_StateChangeUnaffectedFormat; }
-        public TextId ToleranceLabel() { return m_ToleranceLabel; }
         
         public string FormatValue(float inValue)
         {
