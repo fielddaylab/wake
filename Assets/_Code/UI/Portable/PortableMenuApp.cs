@@ -38,6 +38,7 @@ namespace Aqua.Portable
             base.OnShow(inbInstant);
 
             Services.Data.SetVariable("portable:app", m_Id.ToString());
+            Services.Data.SetVariable(PortableMenu.Var_LastOpenTab, (int) m_Id);
             Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id);
         }
 

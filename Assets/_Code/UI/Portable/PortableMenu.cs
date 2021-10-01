@@ -13,6 +13,12 @@ namespace Aqua.Portable
 {
     public class PortableMenu : SharedPanel
     {
+        #region Persistence
+
+        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("global:portable.lastOpenTab");
+
+        #endregion // Persistence
+
         #region Types
 
         [LabeledEnum]
@@ -27,7 +33,7 @@ namespace Aqua.Portable
             NULL = 255
         }
 
-        public class OpenAppRequest : IPortableRequest
+        private class OpenAppRequest : IPortableRequest
         {
             public AppId Id;
 
@@ -131,6 +137,8 @@ namespace Aqua.Portable
 
         private void HandleRequest()
         {
+            bool bHandled = false;
+
             if (m_Request != null)
             {
                 m_AppNavigationGroup.interactable = m_Request.CanNavigateApps();
@@ -140,6 +148,7 @@ namespace Aqua.Portable
                     var button = m_AppButtons[i];
                     if (button.Id() == m_Request.AppId())
                     {
+                        bHandled = true;
                         button.Toggle.isOn = true;
                         button.App.TryHandle(m_Request);
                     }
@@ -153,10 +162,29 @@ namespace Aqua.Portable
             {
                 m_AppNavigationGroup.interactable = true;
                 m_CloseButton.interactable = true;
-                m_AppButtons[0].Toggle.group.SetAllTogglesOff(true);
+                m_AppButtonToggleGroup.SetAllTogglesOff(true);
+            }
+
+            if (!bHandled)
+            {
+                AppId appToOpen = (AppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
+                GetAppButton(appToOpen).Toggle.isOn = true;
             }
 
             Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
+        }
+
+        private PortableAppButton GetAppButton(AppId inId)
+        {
+            for(int i = 0; i < m_AppButtons.Length; ++i)
+            {
+                var button = m_AppButtons[i];
+                if (button.Id() == inId)
+                {
+                    return button;
+                }
+            }
+            return null;
         }
 
         #endregion // Requests
