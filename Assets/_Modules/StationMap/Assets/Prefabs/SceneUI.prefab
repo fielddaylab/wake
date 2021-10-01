@@ -111,7 +111,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 32.01}
+  m_SizeDelta: {x: 0, y: 24}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &4721228029373251799
 CanvasRenderer:
@@ -168,8 +168,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -265,7 +265,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 4}
-  m_SizeDelta: {x: 0, y: 40}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &5280385955755259537
 CanvasRenderer:
@@ -404,8 +404,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.6666667
-    height: 0.6666667
+    width: 0.5
+    height: 0.5
   m_UnitsPerTile: {x: 96, y: 96}
   m_Offset: {x: 0, y: 0}
 --- !u!114 &2202593577648753214
@@ -495,7 +495,7 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 0
-    height: 0.41666666
+    height: 0.33333334
   m_UnitsPerTile: {x: 96, y: 96}
   m_Offset: {x: 0, y: 0}
 --- !u!114 &8659931161174451925
@@ -519,6 +519,26 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1099743694545987578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 1
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!114 &1545221762464787508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6363813934541376511}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
@@ -673,6 +693,7 @@ MonoBehaviour:
   TooltipId:
     m_Source: ui.nav.dive.tooltip
     m_Hash: 1201587017
+  TooltipOverride: 
 --- !u!1 &4757075348916076130
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,6 +761,7 @@ MonoBehaviour:
   m_DockIcon: {fileID: -8398875931244565925, guid: 91f66eb2b28e09c45a79683bc7a1a092,
     type: 3}
   m_InspectIcon: {fileID: 0}
+  m_MapIcon: {fileID: 0}
 --- !u!225 &3804935490556403108
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -939,7 +961,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 64, y: 64}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &3767892364924616286
 CanvasGroup:
@@ -1022,6 +1044,17 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: KeyboardIcon
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482768769347690384, guid: e5e8ec38bb03459459e1a52edd1b6fb6,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6173381364994361902, guid: 738480fe9d6c7cd4897ce9a54eb7f9ff,
+        type: 3}
+    - target: {fileID: 7596142794166380468, guid: e5e8ec38bb03459459e1a52edd1b6fb6,
+        type: 3}
+      propertyPath: m_text
+      value: E
       objectReference: {fileID: 0}
     - target: {fileID: 8572082918100163740, guid: e5e8ec38bb03459459e1a52edd1b6fb6,
         type: 3}
@@ -1130,6 +1163,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e5e8ec38bb03459459e1a52edd1b6fb6, type: 3}
+--- !u!1 &6363813934541376511 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5485888528894926739, guid: e5e8ec38bb03459459e1a52edd1b6fb6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1472964614586700908}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7099681253773068528 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8572082918100163740, guid: e5e8ec38bb03459459e1a52edd1b6fb6,
@@ -1142,7 +1181,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1472964614586700908}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 6363813934541376511}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03cd758204c68bb46a1d1fc3d1925fe9, type: 3}

@@ -27,8 +27,8 @@ namespace ProtoAqua.Observation
         #endregion // Inspector
 
         private readonly RingBuffer<TaggingProgress> m_CritterTypes = new RingBuffer<TaggingProgress>();
-        private readonly RingBuffer<TaggableCritter> m_RemainingCritters = new RingBuffer<TaggableCritter>(64, RingBufferMode.Expand);
-        private readonly RingBuffer<TaggableCritter> m_UntaggedCrittersInRange = new RingBuffer<TaggableCritter>(16, RingBufferMode.Expand);
+        private readonly RingBuffer<TaggableCritter> m_RemainingCrittersReady = new RingBuffer<TaggableCritter>(64, RingBufferMode.Expand);
+        private readonly RingBuffer<TaggableCritter> m_RemainingCrittersNotReady = new RingBuffer<TaggableCritter>(16, RingBufferMode.Expand);
         private readonly HashSet<TaggableCritter> m_TaggedCritterObjects = new HashSet<TaggableCritter>();
 
         private SiteSurveyData m_SiteData;
@@ -39,6 +39,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private TriggerListener2D m_Listener;
         [NonSerialized] private float m_DeactivateRangeSq;
         [NonSerialized] private bool m_ActiveState = false;
+        [NonSerialized] private Vector3 m_ClosestInRange;
         private RingBuffer<StringHash32> m_FactDisplayQueue = new RingBuffer<StringHash32>(16, RingBufferMode.Expand);
         private Routine m_QueueProcessor;
 
@@ -84,15 +85,27 @@ namespace ProtoAqua.Observation
             Vector3 gameplayPlanePos;
             Vector3 gameplayPlaneDist;
             Vector2 listenerPos = m_Range.transform.position;
-            for(int i = m_RemainingCritters.Count - 1; i >= 0; i--)
+            float distSq;
+            float closestDistSq = float.MaxValue;
+            Vector3 closestGameplayPlanePos = default;
+            for(int i = m_RemainingCrittersReady.Count - 1; i >= 0; i--)
             {
-                critter = m_RemainingCritters[i];
+                critter = m_RemainingCrittersReady[i];
                 gameplayPlanePos = positionHelper.CastToPlane(critter.TrackTransform);
                 critter.Collider.transform.position = gameplayPlanePos;
 
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
-                critter.Collider.enabled = gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq;
+                distSq = gameplayPlaneDist.sqrMagnitude;
+                critter.Collider.enabled = distSq - critter.ColliderRadius < m_DeactivateRangeSq;
+
+                if (distSq < closestDistSq)
+                {
+                    closestGameplayPlanePos = gameplayPlanePos;
+                    closestDistSq = distSq;
+                }
             }
+
+            m_ClosestInRange = closestGameplayPlanePos;
         }
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
@@ -105,13 +118,18 @@ namespace ProtoAqua.Observation
             m_BestiaryData = Services.Data.Profile.Bestiary;
             
             TaggableCritter critter;
-            for(int i = m_RemainingCritters.Count - 1; i >= 0; i--)
+            for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--)
             {
-                critter = m_RemainingCritters[i];
+                critter = m_RemainingCrittersNotReady[i];
                 if (!TrackCritterType(critter.CritterId))
                 {
                     critter.Collider.enabled = false;
-                    m_RemainingCritters.FastRemoveAt(i);
+                    m_RemainingCrittersNotReady.FastRemoveAt(i);
+                }
+                else if (m_BestiaryData.HasEntity(critter.CritterId))
+                {
+                    m_RemainingCrittersNotReady.FastRemoveAt(i);
+                    m_RemainingCrittersReady.PushBack(critter);
                 }
             }
 
@@ -125,25 +143,35 @@ namespace ProtoAqua.Observation
 
         public void Register(TaggableCritter inCritter)
         {
+            inCritter.Collider.enabled = false;
+
             if (m_SiteData != null)
             {
                 if (TrackCritterType(inCritter.CritterId))
                 {
                     if (!WasTagged(inCritter))
-                        m_RemainingCritters.PushBack(inCritter);
+                    {
+                        if (m_BestiaryData.HasEntity(inCritter.CritterId))
+                        {
+                            m_RemainingCrittersReady.PushBack(inCritter);
+                        }
+                        else
+                        {
+                            m_RemainingCrittersNotReady.PushBack(inCritter);
+                        }
+                    }
                 }
             }
             else
             {
-                m_RemainingCritters.PushBack(inCritter);
-                inCritter.Collider.enabled = false;
+                m_RemainingCrittersNotReady.PushBack(inCritter);
             }
         }
 
         public void Deregister(TaggableCritter inCritter)
         {
-            m_RemainingCritters.FastRemove(inCritter);
-            m_UntaggedCrittersInRange.FastRemove(inCritter);
+            m_RemainingCrittersReady.FastRemove(inCritter);
+            m_RemainingCrittersNotReady.FastRemove(inCritter);
 
             if (m_SiteData != null)
             {
@@ -223,12 +251,12 @@ namespace ProtoAqua.Observation
             return m_TaggedCritterObjects.Contains(inCritter) || !IsUnfinished(inCritter.CritterId);
         }
 
-        public bool AttemptTag(TaggableCritter inCritter)
+        private bool AttemptTag(TaggableCritter inCritter)
         {
-            if (IsUnfinished(inCritter.CritterId) && m_BestiaryData.HasEntity(inCritter.CritterId) && m_TaggedCritterObjects.Add(inCritter))
+            if (IsUnfinished(inCritter.CritterId) && m_TaggedCritterObjects.Add(inCritter))
             {
                 inCritter.Collider.enabled = false;
-                m_RemainingCritters.FastRemove(inCritter);
+                m_RemainingCrittersReady.FastRemove(inCritter);
 
                 VFX effect = m_EffectPool.Alloc(inCritter.transform.position, Quaternion.identity, false);
                 effect.Sprite.SetAlpha(1);
@@ -270,7 +298,12 @@ namespace ProtoAqua.Observation
             while(m_FactDisplayQueue.Count > 0)
             {
                 factId = m_FactDisplayQueue.PopFront();
-                yield return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newPopulationFact.header"), null, Assets.Fact(factId), Services.Data.Profile.Bestiary.GetDiscoveredFlags(factId)).Wait();
+                yield return Services.UI.Popup.PresentFact(
+                    Loc.Find("ui.popup.newPopulationFact.header"),
+                    null,
+                    Assets.Fact(factId),
+                    Services.Data.Profile.Bestiary.GetDiscoveredFlags(factId)
+                ).Wait();
             }
         }
 
@@ -286,11 +319,23 @@ namespace ProtoAqua.Observation
         private void DeactivateAllColliders()
         {
             TaggableCritter critter;
-            for(int i = 0, len = m_RemainingCritters.Count; i < len; i++)
+            for(int i = 0, len = m_RemainingCrittersReady.Count; i < len; i++)
             {
-                critter = m_RemainingCritters[i];
+                critter = m_RemainingCrittersReady[i];
                 critter.Collider.enabled = false;
             }
+        }
+
+        public bool TryGetClosestCritterGameplayPlane(out Vector2 outPosition)
+        {
+            if (!m_ActiveState || m_RemainingCrittersReady.Count <= 0)
+            {
+                outPosition = default;
+                return false;
+            }
+
+            outPosition = m_ClosestInRange;
+            return true;
         }
 
         #endregion // Taggable Critters
@@ -305,7 +350,6 @@ namespace ProtoAqua.Observation
             if (m_Listener != null)
             {
                 m_Listener.onTriggerEnter.RemoveListener(OnTaggableEnterRegion);
-                m_Listener.onTriggerExit.RemoveListener(OnTaggableExitRegion);
             }
 
             m_Range = inCollider;
@@ -317,7 +361,6 @@ namespace ProtoAqua.Observation
                 m_Listener.SetOccupantTracking(true);
 
                 m_Listener.onTriggerEnter.AddListener(OnTaggableEnterRegion);
-                m_Listener.onTriggerExit.AddListener(OnTaggableExitRegion);
 
                 m_DeactivateRangeSq = PhysicsUtils.GetRadius(inCollider) + 1;
                 m_DeactivateRangeSq *= m_DeactivateRangeSq;
@@ -337,11 +380,14 @@ namespace ProtoAqua.Observation
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
             {
                 TaggableCritter critter;
-                for(int i = m_UntaggedCrittersInRange.Count - 1; i >= 0; i--)
+                for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--)
                 {
-                    critter = m_UntaggedCrittersInRange[i];
+                    critter = m_RemainingCrittersNotReady[i];
                     if (critter.CritterId == inParams.Id)
-                        AttemptTag(critter);
+                    {
+                        m_RemainingCrittersNotReady.RemoveAt(i);
+                        m_RemainingCrittersReady.PushBack(critter);
+                    }
                 }
             }
         }
@@ -351,22 +397,7 @@ namespace ProtoAqua.Observation
             TaggableCritter critter = inCollider.GetComponentInParent<TaggableCritter>();
             if (critter != null && !WasTagged(critter))
             {
-                if (!AttemptTag(critter))
-                {
-                    m_UntaggedCrittersInRange.PushBack(critter);
-                }
-            }
-        }
-
-        private void OnTaggableExitRegion(Collider2D inCollider)
-        {
-            if (!inCollider)
-                return;
-
-            TaggableCritter critter = inCollider.GetComponentInParent<TaggableCritter>();
-            if (critter != null)
-            {
-                m_UntaggedCrittersInRange.FastRemove(critter);
+                AttemptTag(critter);
             }
         }
 

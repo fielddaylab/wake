@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using BeauPools;
-using BeauUtil;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Aqua
 {
@@ -16,7 +12,6 @@ namespace Aqua
         public Sprite Image;
 
         [Header("Text")]
-        public TextId NameId = default;
         public TextId DescriptionId = default;
         public TextId SentenceId = default;
 

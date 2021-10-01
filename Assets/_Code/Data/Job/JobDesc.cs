@@ -21,6 +21,7 @@ namespace Aqua
         [SerializeField] private TextId m_NameId = default;
         [SerializeField] private TextId m_PosterId = default;
         [SerializeField] private TextId m_DescId = default;
+        [SerializeField] private TextId m_DescShortId = default;
         [SerializeField] private TextId m_DescCompletedId = default;
 
         [Header("Info")]
@@ -46,7 +47,6 @@ namespace Aqua
         [SerializeField] private SerializedHash32[] m_AdditionalRewards = null;
 
         [Header("Assets")]
-        [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private LeafAsset m_Scripting = null;
         [SerializeField] private ScriptableObject[] m_ExtraAssets = null;
 
@@ -61,7 +61,8 @@ namespace Aqua
         public TextId NameId() { return m_NameId; }
         public TextId PosterId() { return m_PosterId; }
         public TextId DescId() { return m_DescId; }
-        public TextId DescCompletedId() { return m_DescCompletedId; }
+        public TextId DescShortId() { return m_DescShortId.IsEmpty ? m_DescId : m_DescShortId; }
+        public TextId DescCompletedId() { return m_DescCompletedId.IsEmpty ? m_DescId : m_DescCompletedId; }
 
         public int Difficulty(ScienceActivityType inType)
         {
@@ -94,6 +95,8 @@ namespace Aqua
 
             return true;
         }
+
+        public StringHash32 StationId() { return m_StationId; }
 
         public bool IsAtStation(MapData inMap)
         {
@@ -133,7 +136,6 @@ namespace Aqua
                 yield return reward;
         }
 
-        public Sprite Icon() { return m_Icon; }
         public LeafAsset Scripting() { return m_Scripting; }
 
         public IEnumerable<T> FindAssets<T>() where T : ScriptableObject

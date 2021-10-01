@@ -208,10 +208,17 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // Pool Events
 
-        static public BehaviorCaptureCircle.TempAlloc CaptureCircle(StringHash32 inFactId, ActorInstance inLocation, ActorWorld inWorld)
+        static public BehaviorCaptureCircle.TempAlloc CaptureCircle(StringHash32 inFactId, ActorInstance inLocation, ActorWorld inWorld, bool inbAlreadyHas)
         {
             ObservationTank tank = (ObservationTank) inWorld.Tag;
-            return tank.AllocCircle(inFactId, inLocation.CachedCollider.bounds.center);
+            if (inbAlreadyHas)
+            {
+                return default(BehaviorCaptureCircle.TempAlloc);
+            }
+            else
+            {
+                return tank.AllocCircle(inFactId, inLocation.CachedCollider.bounds.center);
+            }
         }
 
         private BehaviorCaptureCircle.TempAlloc AllocCircle(StringHash32 inFactId, Vector3 inLocation)
@@ -240,6 +247,14 @@ namespace ProtoAqua.ExperimentV2
         {
             if (Services.Data.Profile.Bestiary.RegisterFact(inFactId))
             {
+                foreach(var circle in m_BehaviorCircles.ActiveObjects)
+                {
+                    if (circle.Active && circle.FactId == inFactId)
+                    {
+                        circle.OnDispose?.Invoke(circle);
+                    }
+                }
+
                 var factDef = Assets.Fact(inFactId);
                 m_FactResults.Add(new ExperimentFactResult(inFactId, ExperimentFactResultType.NewFact, 0));
 

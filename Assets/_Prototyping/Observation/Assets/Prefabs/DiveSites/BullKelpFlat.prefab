@@ -1,5 +1,31 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!61 &1381102199889307777
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5534649788465200622}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.72}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 12}
+  m_EdgeRadius: 0
 --- !u!1 &8249301279321123339
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,6 +235,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
+      propertyPath: Collider
+      value: 
+      objectReference: {fileID: 1381102199889307777}
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
       propertyPath: CritterId.m_Hash
       value: 3363669640
       objectReference: {fileID: 0}
@@ -287,11 +318,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Taggable(0)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2093335033074129574, guid: d43f84959769055489a36095d9d2631d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
 --- !u!4 &6005932014170166573 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7450128649576179851}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5534649788465200622 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3146655083410380133, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
   m_PrefabInstance: {fileID: 7450128649576179851}
   m_PrefabAsset: {fileID: 0}

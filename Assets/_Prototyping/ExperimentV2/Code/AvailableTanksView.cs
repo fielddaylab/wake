@@ -65,6 +65,7 @@ namespace ProtoAqua.ExperimentV2
 
         static private IEnumerator SelectTankTransition(SelectableTank inTank)
         {
+            inTank.IsSelected = true;
             inTank.Interface.enabled = true;
             inTank.InterfaceFader.alpha = 0;
             inTank.InterfaceRaycaster.Override = null;
@@ -97,6 +98,7 @@ namespace ProtoAqua.ExperimentV2
 
         static private IEnumerator DeselectTankTransition(SelectableTank inTank, CameraPose inReturningPose)
         {
+            inTank.IsSelected = false;
             inTank.InterfaceRaycaster.Override = false;
             inTank.BackClickable.gameObject.SetActive(false);
 

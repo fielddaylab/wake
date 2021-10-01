@@ -8,6 +8,7 @@ using BeauRoutine;
 using System.Collections.Generic;
 using Aqua.Profile;
 using Aqua.Portable;
+using UnityEngine.EventSystems;
 
 namespace Aqua
 {
@@ -38,10 +39,6 @@ namespace Aqua
         #endregion // Types
 
         #region Inspector
-
-        [Header("Title")]
-        [SerializeField] private LocText m_JobTitle = null;
-        [SerializeField] private Button m_OpenTaskButton = null;
 
         [Header("Task List")]
 
@@ -75,8 +72,6 @@ namespace Aqua
         {
             base.Awake();
 
-            m_OpenTaskButton.onClick.AddListener(OnTaskButtonClicked);
-
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
                 .Register(GameEvents.JobSwitched, OnJobSwitched, this)
                 .Register<StringHash32>(GameEvents.JobTaskAdded, OnTaskActivate, this)
@@ -84,6 +79,11 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskRemoved, OnTaskDeactivate, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
+
+            m_TaskDisplays.Initialize(null, null, 0);
+            m_TaskDisplays.Config.RegisterOnConstruct((p, o) => {
+                o.Click.onClick.AddListener(OnTaskButtonClicked);
+            });
         }
 
         protected override void OnDestroy()
@@ -109,9 +109,9 @@ namespace Aqua
             ReloadTasks(true, true);
         }
         
-        private void OnTaskButtonClicked()
+        private void OnTaskButtonClicked(PointerEventData _)
         {
-            StatusApp.OpenToPage(StatusApp.PageId.Job);
+            PortableMenu.OpenApp(PortableMenu.AppId.Job);
             
             SyncActiveTasks();
             m_ProcessOperationsJob.Stop();
@@ -247,8 +247,6 @@ namespace Aqua
             }
 
             InstantHide();
-
-            m_JobTitle.SetText(currentJob.NameId());
 
             SyncActiveTasks();
 

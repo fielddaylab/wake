@@ -80,6 +80,7 @@ namespace Aqua
             // Tick forward
 
             BeginTick();
+            Physics.Simulate(deltaTime);
             contactCount += Tick(deltaTime, TickIterations, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
             EndTick();
 
@@ -112,6 +113,8 @@ namespace Aqua
 
             Time.fixedDeltaTime = Time.fixedDeltaTime = 1f / 60;
             Physics2D.autoSimulation = false;
+            Physics.autoSimulation = false;
+            Physics.autoSyncTransforms = false;
         }
 
         #endregion // Service
@@ -141,6 +144,9 @@ namespace Aqua
         {
             Physics2D.autoSyncTransforms = false;
             Physics2D.SyncTransforms();
+
+            Physics.autoSyncTransforms = false;
+            Physics.SyncTransforms();
         }
 
         static private void EndTick()

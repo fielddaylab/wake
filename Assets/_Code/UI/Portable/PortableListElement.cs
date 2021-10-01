@@ -16,7 +16,6 @@ namespace Aqua.Portable
         #region Inspector
 
         [SerializeField, Required] private Toggle m_Toggle = null;
-        [SerializeField, Required] private ColorGroup m_Background = null;
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField] private LocText m_Text = null;
         [SerializeField] private CursorInteractionHint m_Cursor = null;
@@ -32,11 +31,10 @@ namespace Aqua.Portable
             m_Toggle.onValueChanged.AddListener(OnToggleValueChanged);
         }
 
-        public void Initialize(Sprite inIcon, Color inBackgroundColor, ToggleGroup inToggleGroup, StringHash32 inLabel, object inData, Action<PortableListElement, bool> inCallback)
+        public void Initialize(Sprite inIcon, ToggleGroup inToggleGroup, StringHash32 inLabel, object inData, Action<PortableListElement, bool> inCallback)
         {
             m_Toggle.SetIsOnWithoutNotify(false);
             m_Toggle.group = inToggleGroup;
-            m_Background.Color = inBackgroundColor;
             m_Icon.sprite = inIcon;
             Data = inData;
             

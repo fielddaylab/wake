@@ -17,6 +17,8 @@ namespace Aqua.Portable
         [SerializeField] public RectTransform HasFacts = null;
         [SerializeField, Required] public LayoutGroup FactLayout = null;
 
+        [SerializeField, Required] public LayoutGroupFix[] LayoutFixes = null;
+
         #endregion // Inspector
     }
 }

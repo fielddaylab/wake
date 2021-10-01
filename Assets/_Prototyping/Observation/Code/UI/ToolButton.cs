@@ -10,6 +10,7 @@ namespace ProtoAqua.Observation
 
         public Image Icon;
         public Toggle Toggle;
+        public LocText Label;
         public CursorInteractionHint CursorHint;
         public KeyboardShortcut KeyboardShortcut;
 

@@ -15,12 +15,12 @@ namespace Aqua.Portable
         #region Inspector
 
         [SerializeField, Required] private Toggle m_Toggle = null;
-        [SerializeField] private SerializedHash32 m_Id = null;
+        [SerializeField] private PortableMenu.AppId m_Id = default;
         [SerializeField, Required] private PortableMenuApp m_App = null;
 
         #endregion // Inspector
 
-        public StringHash32 Id() { return m_Id; }
+        public PortableMenu.AppId Id() { return m_Id; }
 
         public Toggle Toggle { get { return m_Toggle; } }
         public PortableMenuApp App { get { return m_App; } }
@@ -31,6 +31,7 @@ namespace Aqua.Portable
 
             if (m_App != null)
             {
+                m_App.OnShowEvent.AddListener(OnOpened);
                 m_App.OnHideEvent.AddListener(OnClosed);
             }
         }
@@ -47,16 +48,17 @@ namespace Aqua.Portable
 
             if (inbValue)
             {
-                //User clicked app button
-                //Debug.Log("App button with ID " + m_Id.ToString() + " clicked");
-                Services.Events.Dispatch(GameEvents.PortableAppOpened, gameObject.name);
                 m_App.Show();
             }
             else
             {
-                Services.Events.Dispatch(GameEvents.PortableAppClosed, gameObject.name);
                 m_App.Hide();
             }
+        }
+
+        private void OnOpened(BasePanel.TransitionType inTransition)
+        {
+            m_Toggle.SetIsOnWithoutNotify(true);
         }
 
         private void OnClosed(BasePanel.TransitionType inTransition)

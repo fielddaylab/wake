@@ -9,7 +9,7 @@ namespace ProtoAqua.Observation
         #region Inspector
 
         public Image Icon;
-        public Graphic Meter;
+        public Image Meter;
 
         #endregion // Inspector
     }

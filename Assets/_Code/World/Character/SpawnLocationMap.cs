@@ -7,7 +7,7 @@ namespace Aqua.Character
 {
     public class SpawnLocationMap : MonoBehaviour, ISceneOptimizable
     {
-        [SerializeField, HideInInspector] private SpawnLocation[] m_Locations;
+        [SerializeField] private SpawnLocation[] m_Locations;
 
         public SpawnLocation FindLocation(StringHash32 inId)
         {

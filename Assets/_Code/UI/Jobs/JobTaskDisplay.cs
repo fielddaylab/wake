@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using BeauUtil;
 using TMPro;
 using BeauPools;
+using BeauUtil.UI;
 
 namespace Aqua
 {
@@ -19,8 +20,8 @@ namespace Aqua
         [Header("Display")]
         [Required] public LocText Label;
         public Graphic Background;
-        public LocText Description;
         public Graphic Checkmark;
+        public PointerListener Click;
 
         [Header("Animation")]
         public Graphic Flash;
@@ -34,26 +35,13 @@ namespace Aqua
         public void Populate(JobTask inTask, bool inbCompleted)
         {
             Task = inTask;
-            Populate(inTask.LabelId, inTask.DescriptionId, inbCompleted);
+            Populate(inTask.LabelId, inbCompleted);
         }
 
-        public void Populate(TextId inLabelId, TextId inDescId, bool inbCompleted)
+        public void Populate(TextId inLabelId,  bool inbCompleted)
         {
             Label.SetText(inLabelId);
 
-            if (Description)
-            {
-                if (inbCompleted)
-                {
-                    Description.SetText(null);
-                    Description.gameObject.SetActive(false);
-                }
-                else
-                {
-                    Description.SetText(inDescId);
-                    Description.gameObject.SetActive(true);
-                }
-            }
             if (Checkmark)
                 Checkmark.enabled = inbCompleted;
 

@@ -13,13 +13,13 @@ namespace Aqua.Portable
         #region Inspector
 
         [Header("Portable App")]
-        [SerializeField] private SerializedHash32 m_Id = null;
+        [SerializeField] private PortableMenu.AppId m_Id = default;
 
         #endregion // Inspector
 
         [NonSerialized] protected PortableMenu m_ParentMenu;
 
-        public StringHash32 Id() { return m_Id; }
+        public PortableMenu.AppId Id() { return m_Id; }
 
         public virtual bool TryHandle(IPortableRequest inRequest)
         {
@@ -37,7 +37,8 @@ namespace Aqua.Portable
         {
             base.OnShow(inbInstant);
 
-            Services.Data.SetVariable("portable:app", m_Id.Hash());
+            Services.Data.SetVariable("portable:app", m_Id.ToString());
+            Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id);
         }
 
         protected override void OnShowComplete(bool inbInstant)
@@ -46,17 +47,15 @@ namespace Aqua.Portable
 
             using(var table = TempVarTable.Alloc())
             {
-                table.Set("appId", m_Id.Hash());
+                table.Set("appId", m_Id.ToString());
                 Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, table);
             }
         }
 
         protected override void OnHide(bool inbInstant)
         {
-            if (Services.Data)
-            {
-                Services.Data.CompareExchange("portable:app", m_Id.Hash(), null);
-            }
+            Services.Data?.CompareExchange("portable:app", m_Id.ToString(), null);
+            Services.Events?.Dispatch(GameEvents.PortableAppClosed, m_Id);
 
             base.OnHide(inbInstant);
         }

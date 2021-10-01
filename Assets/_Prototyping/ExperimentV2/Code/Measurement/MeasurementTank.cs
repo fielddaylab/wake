@@ -318,7 +318,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void RebuildPropertyDials()
         {
-            if (!isActiveAndEnabled)
+            if (!m_ParentTank.IsSelected)
             {
                 m_DialsDirty = true;
                 return;

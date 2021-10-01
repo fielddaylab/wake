@@ -58,8 +58,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.15686275}
   m_RaycastTarget: 0
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
   m_BottomLeftColor: {r: 0, g: 0, b: 0, a: 1}
   m_BottomRightColor: {r: 0, g: 0, b: 0, a: 0}
   m_TopLeftColor: {r: 0, g: 0, b: 0, a: 1}
@@ -123,8 +127,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.15686275}
   m_RaycastTarget: 0
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
   m_BottomLeftColor: {r: 0, g: 0, b: 0, a: 0}
   m_BottomRightColor: {r: 0, g: 0, b: 0, a: 1}
   m_TopLeftColor: {r: 0, g: 0, b: 0, a: 0}
@@ -139,8 +147,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200333941470692260}
+  - component: {fileID: 907350289215929303}
   m_Layer: 5
-  m_Name: Vignette
+  m_Name: VignetteHorizontal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -167,3 +176,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &907350289215929303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6200333941470692259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1

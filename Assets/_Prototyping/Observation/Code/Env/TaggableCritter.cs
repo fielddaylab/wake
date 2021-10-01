@@ -14,6 +14,8 @@ namespace ProtoAqua.Observation
         [Required] public Collider2D Collider;
         public Transform TrackTransform;
 
+        public float ColliderRadius;
+
         #endregion // Inspector
 
         private void OnEnable()
@@ -37,6 +39,8 @@ namespace ProtoAqua.Observation
         {
             if (!TrackTransform)
                 TrackTransform = transform;
+
+            ColliderRadius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
         }
 
         #endif // UNITY_EDITOR

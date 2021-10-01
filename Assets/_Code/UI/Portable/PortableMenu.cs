@@ -13,6 +13,56 @@ namespace Aqua.Portable
 {
     public class PortableMenu : SharedPanel
     {
+        #region Types
+
+        [LabeledEnum]
+        public enum AppId : byte
+        {
+            Organisms,
+            Environments,
+            Job,
+            Tech,
+
+            [Hidden]
+            NULL = 255
+        }
+
+        public class OpenAppRequest : IPortableRequest
+        {
+            public AppId Id;
+
+            public OpenAppRequest(AppId inId)
+            {
+                Id = inId;
+            }
+
+            public AppId AppId()
+            {
+                return Id;
+            }
+
+            public bool CanClose()
+            {
+                return true;
+            }
+
+            public bool CanNavigateApps()
+            {
+                return true;
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public bool ForceInputEnabled()
+            {
+                return false;
+            }
+        }
+
+        #endregion // Types
+
         #region Inspector
 
         [SerializeField, Required] private Canvas m_Canvas = null;
@@ -28,6 +78,7 @@ namespace Aqua.Portable
         [SerializeField, Required] private Button m_CloseButton = null;
         [Space]
         [SerializeField, Required] private CanvasGroup m_AppNavigationGroup = null;
+        [SerializeField, Required] private ToggleGroup m_AppButtonToggleGroup = null;
         [SerializeField, Required] private PortableAppButton[] m_AppButtons = null;
 
         #endregion // Inspector
@@ -75,10 +126,10 @@ namespace Aqua.Portable
             m_Request = inRequest;
             
             Show();
-            OnRequest();
+            HandleRequest();
         }
 
-        private void OnRequest()
+        private void HandleRequest()
         {
             if (m_Request != null)
             {
@@ -127,6 +178,7 @@ namespace Aqua.Portable
             }
 
             m_Canvas.enabled = true;
+            m_AppButtonToggleGroup.allowSwitchOff = false;
             m_Input.PushPriority();
 
             base.OnShow(inbInstant);
@@ -200,5 +252,10 @@ namespace Aqua.Portable
         }
     
         #endregion // BasePanel
+
+        static public void OpenApp(AppId inId)
+        {
+            Services.UI.FindPanel<PortableMenu>().Open(new OpenAppRequest(inId));
+        }
     }
 }
