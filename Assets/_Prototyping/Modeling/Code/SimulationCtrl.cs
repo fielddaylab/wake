@@ -14,6 +14,7 @@ namespace ProtoAqua.Modeling
         [SerializeField, Required] private ModelingUI m_ModelingUI = null;
         [SerializeField, Required] private SimulationUI m_SimulationUI = null;
         [SerializeField, Required] private BaseInputLayer m_Input = null;
+        [SerializeField, Required] private GameObject[] m_PhaseObjects = null;
 
         #pragma warning disable CS0414
 
@@ -59,7 +60,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.gameObject.SetActive(false);
 
             Services.Data.SetVariable(SimulationConsts.Var_HasScenario, m_Buffer.Scenario() != null);
-            SyncPhaseScriptVar();
+            DisplayPhase();
 
             m_Buffer.OnUpdate = () => m_BufferDirty = true;
             OnBufferUpdated();
@@ -124,7 +125,7 @@ namespace ProtoAqua.Modeling
             Services.Data.SetVariable(SimulationConsts.Var_PredictSync, m_GraphState.PredictSync);
         }
 
-        private void SyncPhaseScriptVar()
+        private void DisplayPhase()
         {
             switch(m_GraphState.Phase)
             {
@@ -143,6 +144,11 @@ namespace ProtoAqua.Modeling
                 case ModelingPhase.Completed:
                     Services.Data.SetVariable(SimulationConsts.Var_ModelPhase, SimulationConsts.ModelPhase_Completed);
                     break;
+            }
+
+            for(int i = 0; i < m_PhaseObjects.Length; i++)
+            {
+                m_PhaseObjects[i].SetActive(i <= (int) m_GraphState.Phase);
             }
         }
 
@@ -171,7 +177,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.gameObject.SetActive(true);
 
             m_GraphState.Phase = ModelingPhase.Sync;
-            SyncPhaseScriptVar();
+            DisplayPhase();
 
             m_Buffer.Refresh();
 
@@ -193,7 +199,7 @@ namespace ProtoAqua.Modeling
             }
 
             m_GraphState.Phase = ModelingPhase.Predict;
-            SyncPhaseScriptVar();
+            DisplayPhase();
             m_SimulationUI.SwitchToPredict();
 
             m_SimulationUI.Refresh(m_GraphState, SimulationBuffer.UpdateFlags.Model);
@@ -205,7 +211,7 @@ namespace ProtoAqua.Modeling
         private void CompleteActivity()
         {
             m_GraphState.Phase = ModelingPhase.Completed;
-            SyncPhaseScriptVar();
+            DisplayPhase();
 
             StringHash32 fact = m_Buffer.Scenario().BestiaryModelId();
             if (!fact.IsEmpty)
@@ -225,7 +231,7 @@ namespace ProtoAqua.Modeling
             m_SimulationUI.gameObject.SetActive(false);
 
             m_GraphState.Phase = ModelingPhase.Universal;
-            SyncPhaseScriptVar();
+            DisplayPhase();
 
             m_Buffer.ClearFacts();
             m_Buffer.ClearSelectedCritters();
