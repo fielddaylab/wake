@@ -94,7 +94,10 @@ namespace Aqua.Editor
                 using(Profiling.Time("flatten scene hierarchy"))
                 {
                     foreach(var flatten in allFlatten)
+                    {
+                        Debug.LogFormat("[SceneProcessor] ...flattening '{0}'", flatten.ToString());
                         flatten.Flatten();
+                    }
                 }
             }
         }

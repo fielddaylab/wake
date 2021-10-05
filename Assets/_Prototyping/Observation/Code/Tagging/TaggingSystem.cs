@@ -273,17 +273,20 @@ namespace ProtoAqua.Observation
 
                 if (category.Tagged >= category.TotalInScene)
                 {
+                    var cachedCategory = category;
+
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
                     m_CritterTypes.FastRemoveAt(idx);
                     m_SiteData.OnChanged();
 
-                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, category.Id, m_SiteData.SiteVersion);
+                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id, m_SiteData.SiteVersion);
+
                     #if UNITY_EDITOR
-                    Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", category.Id, m_EnvironmentType.Id());
+                    Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
                     #elif DEVELOPMENT
                     if (!population)
                     {
-                        Log.Error("[TaggingSystem] No population fact for '{0}' found for environment '{1}'", category.Id, m_EnvironmentType.Id());
+                        Log.Error("[TaggingSystem] No population fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
                         Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
                         return true;
                     }
