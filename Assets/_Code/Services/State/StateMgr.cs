@@ -356,11 +356,13 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
-                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
+                    yield return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
                 }
             }
 
-            return null;
+            while(Streaming.IsLoading()) {
+                yield return null;
+            }
         }
 
         private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
@@ -386,6 +388,7 @@ namespace Aqua
             }
             using(Profiling.Time("unload unused assets"))
             {
+                Streaming.UnloadUnused();
                 yield return Resources.UnloadUnusedAssets();
             }
         }

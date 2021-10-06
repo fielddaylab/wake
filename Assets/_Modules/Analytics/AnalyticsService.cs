@@ -1,3 +1,7 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
+#define FIREBASE
+#endif // UNITY_WEBGL && !UNITY_EDITOR
+
 using Aqua.Portable;
 using Aqua.Scripting;
 using BeauUtil;
@@ -187,7 +191,7 @@ namespace Aqua
         {
             if (!string.IsNullOrEmpty(inUserCode))
             {
-                #if !UNITY_EDITOR
+                #if FIREBASE
                 FBStartGameWithUserCode(inUserCode);
                 #endif
             }
@@ -223,7 +227,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.scene_changed));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBSceneChanged(sceneName);
             #endif
         }
@@ -237,7 +241,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.room_changed));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBRoomChanged(roomName);
             #endif
         }
@@ -376,7 +380,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.accept_job));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBAcceptJob(m_CurrentJobId);
             #endif
         }
@@ -404,7 +408,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.switch_job));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBSwitchJob(m_CurrentJobId);
             #endif
         }
@@ -422,7 +426,7 @@ namespace Aqua
 
                 m_Logger.Log(new LogEvent(data, m_EventCategories.receive_fact));
 
-                #if !UNITY_EDITOR
+                #if FIREBASE
                 FBReceiveFact(parsedFactId);
                 #endif
             }
@@ -439,7 +443,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.complete_job));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBCompleteJob(parsedJobId);
             #endif
 
@@ -459,7 +463,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.complete_task));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBCompleteTask(m_CurrentJobId, taskId);
             #endif
         }
@@ -476,7 +480,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.begin_experiment));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBeginExperiment(m_CurrentJobId, tankType);
             #endif
         }
@@ -491,7 +495,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.begin_dive));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBeginDive(m_CurrentJobId, inTargetScene);
             #endif
         }
@@ -505,7 +509,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.begin_argument));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBeginArgument(m_CurrentJobId);
             #endif
         }
@@ -519,7 +523,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.begin_model));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBeginModel(m_CurrentJobId);
             #endif
         }
@@ -533,7 +537,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.begin_simulation));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBeginSimulation(m_CurrentJobId);
             #endif
         }
@@ -547,7 +551,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.ask_for_help));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBAskForHelp(nodeId);
             #endif
         }
@@ -561,7 +565,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.talk_with_guide));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBTalkWithGuide(nodeId);
             #endif
         }
@@ -578,7 +582,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.open_bestiary));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBOpenBestiary(m_CurrentJobId);
             #endif
 
@@ -595,7 +599,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_species_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiaryOpenSpeciesTab(m_CurrentJobId);
             #endif
         }
@@ -609,7 +613,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_environments_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiaryOpenEnvironmentsTab(m_CurrentJobId);
             #endif
         }
@@ -623,7 +627,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_models_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiaryOpenModelsTab(m_CurrentJobId);
             #endif
         }
@@ -639,7 +643,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_species));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiarySelectSpecies(m_CurrentJobId, speciesId);
             #endif
         }
@@ -654,7 +658,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_environment));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiarySelectEnvironment(m_CurrentJobId,environmentId);
             #endif
         }
@@ -669,7 +673,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_model));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBBestiarySelectModel(m_CurrentJobId,modelId);
             #endif
         }
@@ -683,7 +687,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.close_bestiary));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBCloseBestiary(m_CurrentJobId);
             #endif
         }
@@ -699,7 +703,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.open_status));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBOpenStatus(m_CurrentJobId);
             #endif
 
@@ -715,7 +719,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_job_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBStatusOpenJobTab(m_CurrentJobId);
             #endif
         }
@@ -729,7 +733,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_item_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBStatusOpenItemTab(m_CurrentJobId);
             #endif
         }
@@ -743,7 +747,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_tech_tab));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBStatusOpenTechTab(m_CurrentJobId);
             #endif
         }
@@ -757,7 +761,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.close_status));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBCloseStatus(m_CurrentJobId);
             #endif
         }
@@ -772,7 +776,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.simulation_sync_achieved));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBSimulationSyncAchieved(m_CurrentJobId);
             #endif
         }
@@ -786,7 +790,7 @@ namespace Aqua
 
             m_Logger.Log(new LogEvent(data, m_EventCategories.guide_script_triggered));
 
-            #if !UNITY_EDITOR
+            #if FIREBASE
             FBGuideScriptTriggered(nodeId);
             #endif
         }

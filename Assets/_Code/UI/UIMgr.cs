@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Aqua.Scripting;
 using BeauData;
 using BeauPools;
+using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -303,6 +304,11 @@ namespace Aqua
             BindCamera(Camera.main);
             transform.FlattenHierarchy();
 
+            Async.InvokeAsync(FlattenHierarchyDynamic);
+        }
+
+        private void FlattenHierarchyDynamic()
+        {
             foreach(var additionalTransform in m_HierarchiesToFlatten)
                 additionalTransform.FlattenHierarchy();
         }

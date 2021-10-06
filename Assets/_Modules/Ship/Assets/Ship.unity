@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 54603455}
   - component: {fileID: 54603454}
   - component: {fileID: 54603453}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SubHook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -566,9 +566,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 61755829}
-  - component: {fileID: 61755830}
   - component: {fileID: 61755831}
   - component: {fileID: 61755832}
+  - component: {fileID: 61755834}
+  - component: {fileID: 61755833}
+  - component: {fileID: 61755830}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -596,57 +598,29 @@ Transform:
   m_Father: {fileID: 1916403497}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &61755830
-SpriteRenderer:
+--- !u!114 &61755830
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61755828}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 61755834}
+  m_MeshRenderer: {fileID: 61755833}
+  m_Url: Textures/Ship/Ship_Body.png
+  m_Material: {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  m_Size: {x: 12.377708, y: 10.25}
+  m_Pivot: {x: 0.5, y: 0.44}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 9198504000052830509, guid: a678cafc16a11e7499a5cd2e6fd484b1,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.14, y: 12.3}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &61755831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -659,7 +633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 61755830}
+  m_Renderer: {fileID: 61755833}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -668,7 +642,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -676,10 +650,10 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
 --- !u!114 &61755832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -821,6 +795,53 @@ MonoBehaviour:
       DurationRandom:
         m_Value: 0
     DistanceZ: 0.75
+--- !u!23 &61755833
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61755828}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &61755834
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61755828}
+  m_Mesh: {fileID: 0}
 --- !u!1 &84146505
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,8 +851,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 84146506}
-  - component: {fileID: 84146507}
   - component: {fileID: 84146508}
+  - component: {fileID: 84146510}
+  - component: {fileID: 84146509}
+  - component: {fileID: 84146507}
   m_Layer: 0
   m_Name: Background_Window
   m_TagString: Untagged
@@ -847,62 +870,35 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 84146505}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 7.275, y: 3.672, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1185304059}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &84146507
-SpriteRenderer:
+--- !u!114 &84146507
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 84146505}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 84146510}
+  m_MeshRenderer: {fileID: 84146509}
+  m_Url: Textures/Ship/Modeling_Window[pt].png
+  m_Material: {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  m_Size: {x: 2.16, y: 2.12}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
   m_SortingOrder: 1
-  m_Sprite: {fileID: 876617920655186510, guid: 8cab71fc1021f5a4d9b55efea253b5fc, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &84146508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,7 +911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 84146507}
+  m_Renderer: {fileID: 84146509}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -924,7 +920,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -935,7 +931,54 @@ MonoBehaviour:
       Enabled: 0
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
+--- !u!23 &84146509
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84146505}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1170053551
+  m_SortingLayer: -1
+  m_SortingOrder: 1
+--- !u!33 &84146510
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84146505}
+  m_Mesh: {fileID: 0}
 --- !u!1 &101885753
 GameObject:
   m_ObjectHideFlags: 0
@@ -945,8 +988,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 101885754}
-  - component: {fileID: 101885756}
   - component: {fileID: 101885755}
+  - component: {fileID: 101885758}
+  - component: {fileID: 101885757}
+  - component: {fileID: 101885756}
   m_Layer: 0
   m_Name: Clone
   m_TagString: Untagged
@@ -980,7 +1025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 101885756}
+  m_Renderer: {fileID: 101885757}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -989,7 +1034,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -997,29 +1042,52 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &101885756
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &101885756
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101885753}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 101885758}
+  m_MeshRenderer: {fileID: 101885757}
+  m_Url: Textures/Ship/Ship_Ocean.png
+  m_Material: {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
+  m_Size: {x: 19, y: 4.8189735}
+  m_Pivot: {x: 0.5, y: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
+  m_SortingOrder: -10
+--- !u!23 &101885757
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101885753}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1032,7 +1100,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1040,18 +1108,14 @@ SpriteRenderer:
   m_SortingLayerID: 1170053551
   m_SortingLayer: -1
   m_SortingOrder: -10
-  m_Sprite: {fileID: -5087072899249040347, guid: a678cafc16a11e7499a5cd2e6fd484b1,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.14, y: 12.3}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &101885758
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101885753}
+  m_Mesh: {fileID: 0}
 --- !u!1 &149888238
 GameObject:
   m_ObjectHideFlags: 0
@@ -1357,7 +1421,7 @@ GameObject:
   - component: {fileID: 212475298}
   - component: {fileID: 212475297}
   - component: {fileID: 212475299}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1613,8 +1677,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 335052852}
-  - component: {fileID: 335052854}
   - component: {fileID: 335052853}
+  - component: {fileID: 335052856}
+  - component: {fileID: 335052855}
+  - component: {fileID: 335052854}
   m_Layer: 0
   m_Name: HelmView_Sea
   m_TagString: Untagged
@@ -1630,7 +1696,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 335052851}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.07, y: -0.855, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1602471464}
@@ -1648,7 +1714,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 335052854}
+  m_Renderer: {fileID: 335052855}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -1657,7 +1723,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -1665,29 +1731,52 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &335052854
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &335052854
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 335052851}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 335052856}
+  m_MeshRenderer: {fileID: 335052855}
+  m_Url: Textures/Ship/Helm_Sea.png
+  m_Material: {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
+  m_Size: {x: 16, y: 2.392694}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
+  m_SortingOrder: -9
+--- !u!23 &335052855
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335052851}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1700,7 +1789,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1708,18 +1797,14 @@ SpriteRenderer:
   m_SortingLayerID: 1170053551
   m_SortingLayer: -1
   m_SortingOrder: -9
-  m_Sprite: {fileID: 5936954217276373204, guid: b7bb682bf4434604cbb3d5d15826066d,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.12, y: 12.42}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &335052856
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335052851}
+  m_Mesh: {fileID: 0}
 --- !u!1 &345794489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1729,9 +1814,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 345794490}
-  - component: {fileID: 345794493}
   - component: {fileID: 345794492}
   - component: {fileID: 345794491}
+  - component: {fileID: 345794495}
+  - component: {fileID: 345794494}
+  - component: {fileID: 345794493}
   m_Layer: 0
   m_Name: Stars
   m_TagString: Untagged
@@ -1747,7 +1834,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345794489}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1916403497}
@@ -1791,7 +1878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 345794493}
+  m_Renderer: {fileID: 345794494}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -1800,7 +1887,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -1808,29 +1895,52 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &345794493
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &345794493
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345794489}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 345794495}
+  m_MeshRenderer: {fileID: 345794494}
+  m_Url: Textures/Ship/Ship_Stars.png
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Size: {x: 17, y: 6.721796}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: -1434789061
+  m_SortingOrder: 1
+--- !u!23 &345794494
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345794489}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1843,7 +1953,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1851,17 +1961,14 @@ SpriteRenderer:
   m_SortingLayerID: -1434789061
   m_SortingLayer: -2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 526976603672428954, guid: a678cafc16a11e7499a5cd2e6fd484b1, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &345794495
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345794489}
+  m_Mesh: {fileID: 0}
 --- !u!1001 &351222280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2409,8 +2516,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 584974915}
-  - component: {fileID: 584974916}
   - component: {fileID: 584974917}
+  - component: {fileID: 584974919}
+  - component: {fileID: 584974918}
+  - component: {fileID: 584974916}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -2432,57 +2541,29 @@ Transform:
   m_Father: {fileID: 1465718606}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &584974916
-SpriteRenderer:
+--- !u!114 &584974916
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 584974914}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 584974919}
+  m_MeshRenderer: {fileID: 584974918}
+  m_Url: Textures/Ship/Office_Base.png
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Size: {x: 20.48, y: 13.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1740627916101222785, guid: 81c8104bd59060348af4732373c4e278,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &584974917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2495,7 +2576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 584974916}
+  m_Renderer: {fileID: 584974918}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -2504,7 +2585,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -2512,10 +2593,57 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
+--- !u!23 &584974918
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584974914}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1170053551
+  m_SortingLayer: -1
+  m_SortingOrder: 0
+--- !u!33 &584974919
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584974914}
+  m_Mesh: {fileID: 0}
 --- !u!1001 &627530514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2676,10 +2804,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 742484040}
-  - component: {fileID: 742484042}
   - component: {fileID: 742484041}
+  - component: {fileID: 742484044}
+  - component: {fileID: 742484043}
+  - component: {fileID: 742484042}
   m_Layer: 0
-  m_Name: HelmView_Decor
+  m_Name: HelmView_Land
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2693,7 +2823,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 742484039}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.18, y: 0.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1602471464}
@@ -2711,7 +2841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 742484042}
+  m_Renderer: {fileID: 742484043}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -2720,7 +2850,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -2731,26 +2861,49 @@ MonoBehaviour:
       Enabled: 0
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &742484042
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &742484042
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 742484039}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 742484044}
+  m_MeshRenderer: {fileID: 742484043}
+  m_Url: Textures/Ship/Helm_Land.png
+  m_Material: {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  m_Size: {x: 16, y: 4.018957}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
+  m_SortingOrder: -8
+--- !u!23 &742484043
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742484039}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2763,7 +2916,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -2771,18 +2924,14 @@ SpriteRenderer:
   m_SortingLayerID: 1170053551
   m_SortingLayer: -1
   m_SortingOrder: -8
-  m_Sprite: {fileID: -3946525522471131922, guid: b7bb682bf4434604cbb3d5d15826066d,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.12, y: 12.42}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &742484044
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742484039}
+  m_Mesh: {fileID: 0}
 --- !u!1 &904346757
 GameObject:
   m_ObjectHideFlags: 0
@@ -3952,7 +4101,7 @@ GameObject:
   - component: {fileID: 1077151136}
   - component: {fileID: 1077151137}
   - component: {fileID: 1077151138}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4021,7 +4170,7 @@ SpriteRenderer:
   m_Size: {x: 19.14, y: 12.3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1077151138
@@ -4526,9 +4675,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1284365370}
-  - component: {fileID: 1284365371}
   - component: {fileID: 1284365372}
   - component: {fileID: 1284365373}
+  - component: {fileID: 1284365376}
+  - component: {fileID: 1284365375}
+  - component: {fileID: 1284365374}
+  - component: {fileID: 1284365371}
   m_Layer: 0
   m_Name: Sky
   m_TagString: Untagged
@@ -4544,64 +4696,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284365369}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -9.5, y: 6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1484916754}
   m_Father: {fileID: 1916403497}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1284365371
-SpriteRenderer:
+--- !u!114 &1284365371
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284365369}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 2538608131534885324, guid: a678cafc16a11e7499a5cd2e6fd484b1,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da53921b37e75734fad5b6f2f4c4b661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Layer: -1434789061
+  m_Order: 0
 --- !u!114 &1284365372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4614,7 +4729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1284365371}
+  m_Renderer: {fileID: 1284365375}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -4623,7 +4738,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -4634,7 +4749,7 @@ MonoBehaviour:
       Enabled: 0
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
 --- !u!114 &1284365373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4671,7 +4786,7 @@ MonoBehaviour:
       Duration: 32
       DurationRandom:
         m_Value: 0
-    DistanceX: -19
+    DistanceX: -18
     WaveY:
       Frequency: 0
       Method: 0
@@ -4776,6 +4891,76 @@ MonoBehaviour:
       DurationRandom:
         m_Value: 0
     DistanceZ: 0
+--- !u!114 &1284365374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284365369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1284365376}
+  m_MeshRenderer: {fileID: 1284365375}
+  m_Url: Textures/Ship/Ship_Sky.png
+  m_Material: {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  m_Size: {x: 19, y: 9.086157}
+  m_Pivot: {x: 0, y: 1}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: -1434789061
+  m_SortingOrder: 0
+--- !u!23 &1284365375
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284365369}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: -1434789061
+  m_SortingLayer: -2
+  m_SortingOrder: 0
+--- !u!33 &1284365376
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284365369}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1292465723
 GameObject:
   m_ObjectHideFlags: 0
@@ -5190,9 +5375,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1463095475}
-  - component: {fileID: 1463095477}
   - component: {fileID: 1463095476}
   - component: {fileID: 1463095478}
+  - component: {fileID: 1463095480}
+  - component: {fileID: 1463095479}
+  - component: {fileID: 1463095477}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -5208,7 +5395,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463095474}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -6.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 101885754}
@@ -5227,7 +5414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1463095477}
+  m_Renderer: {fileID: 1463095479}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -5236,7 +5423,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -5244,61 +5431,33 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &1463095477
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &1463095477
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463095474}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1463095480}
+  m_MeshRenderer: {fileID: 1463095479}
+  m_Url: Textures/Ship/Ship_Ocean.png
+  m_Material: {fileID: 2100000, guid: 1ef8a65d1a553ca4dbfc0cebc9288d27, type: 2}
+  m_Size: {x: 19, y: 4.8189735}
+  m_Pivot: {x: 0.5, y: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
   m_SortingOrder: -10
-  m_Sprite: {fileID: -5087072899249040347, guid: a678cafc16a11e7499a5cd2e6fd484b1,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.14, y: 12.3}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &1463095478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5440,6 +5599,53 @@ MonoBehaviour:
       DurationRandom:
         m_Value: 0
     DistanceZ: 0
+--- !u!23 &1463095479
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463095474}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1170053551
+  m_SortingLayer: -1
+  m_SortingOrder: -10
+--- !u!33 &1463095480
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463095474}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1465718605
 GameObject:
   m_ObjectHideFlags: 0
@@ -5553,8 +5759,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1484916754}
-  - component: {fileID: 1484916756}
   - component: {fileID: 1484916755}
+  - component: {fileID: 1484916758}
+  - component: {fileID: 1484916757}
+  - component: {fileID: 1484916756}
   m_Layer: 0
   m_Name: Clone
   m_TagString: Untagged
@@ -5588,7 +5796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1484916756}
+  m_Renderer: {fileID: 1484916757}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -5597,7 +5805,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -5608,26 +5816,49 @@ MonoBehaviour:
       Enabled: 0
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &1484916756
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &1484916756
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1484916753}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1484916758}
+  m_MeshRenderer: {fileID: 1484916757}
+  m_Url: Textures/Ship/Ship_Sky.png
+  m_Material: {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  m_Size: {x: 19, y: 9.086157}
+  m_Pivot: {x: 0, y: 1}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: -1434789061
+  m_SortingOrder: 0
+--- !u!23 &1484916757
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484916753}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5640,7 +5871,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -5648,18 +5879,14 @@ SpriteRenderer:
   m_SortingLayerID: -1434789061
   m_SortingLayer: -2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2538608131534885324, guid: a678cafc16a11e7499a5cd2e6fd484b1,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &1484916758
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484916753}
+  m_Mesh: {fileID: 0}
 --- !u!1001 &1576079098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6170,8 +6397,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1638058218}
-  - component: {fileID: 1638058220}
   - component: {fileID: 1638058219}
+  - component: {fileID: 1638058222}
+  - component: {fileID: 1638058221}
+  - component: {fileID: 1638058220}
   m_Layer: 0
   m_Name: HelmView_Sky
   m_TagString: Untagged
@@ -6187,7 +6416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638058217}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.3, y: 2.84, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1602471464}
@@ -6205,7 +6434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1638058220}
+  m_Renderer: {fileID: 1638058221}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -6214,7 +6443,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -6222,29 +6451,52 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!212 &1638058220
-SpriteRenderer:
+  m_DisableRaycastLayer: 0
+--- !u!114 &1638058220
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638058217}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1638058222}
+  m_MeshRenderer: {fileID: 1638058221}
+  m_Url: Textures/Ship/Helm_Sky.png
+  m_Material: {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  m_Size: {x: 16, y: 5}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
+  m_SortingOrder: -10
+--- !u!23 &1638058221
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638058217}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6257,7 +6509,7 @@ SpriteRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -6265,18 +6517,14 @@ SpriteRenderer:
   m_SortingLayerID: 1170053551
   m_SortingLayer: -1
   m_SortingOrder: -10
-  m_Sprite: {fileID: -2775631219435907167, guid: b7bb682bf4434604cbb3d5d15826066d,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.12, y: 12.42}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+--- !u!33 &1638058222
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638058217}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1701702615
 GameObject:
   m_ObjectHideFlags: 0
@@ -6286,8 +6534,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1701702616}
-  - component: {fileID: 1701702617}
   - component: {fileID: 1701702618}
+  - component: {fileID: 1701702620}
+  - component: {fileID: 1701702619}
+  - component: {fileID: 1701702617}
   m_Layer: 0
   m_Name: HelmView
   m_TagString: Untagged
@@ -6309,57 +6559,29 @@ Transform:
   m_Father: {fileID: 1602471464}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1701702617
-SpriteRenderer:
+--- !u!114 &1701702617
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701702615}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1701702620}
+  m_MeshRenderer: {fileID: 1701702619}
+  m_Url: Textures/Ship/Helm_Interior.png
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Size: {x: 18.945671, y: 12.3}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1390120720958911197, guid: b7bb682bf4434604cbb3d5d15826066d,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.12, y: 12.42}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &1701702618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6372,7 +6594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1701702617}
+  m_Renderer: {fileID: 1701702619}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -6381,7 +6603,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -6389,10 +6611,57 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
+--- !u!23 &1701702619
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701702615}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1170053551
+  m_SortingLayer: -1
+  m_SortingOrder: 0
+--- !u!33 &1701702620
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1701702615}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1758551794
 GameObject:
   m_ObjectHideFlags: 0
@@ -6402,8 +6671,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1758551795}
-  - component: {fileID: 1758551796}
   - component: {fileID: 1758551797}
+  - component: {fileID: 1758551799}
+  - component: {fileID: 1758551798}
+  - component: {fileID: 1758551796}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -6425,57 +6696,29 @@ Transform:
   m_Father: {fileID: 1185304059}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1758551796
-SpriteRenderer:
+--- !u!114 &1758551796
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1758551794}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1170053551
-  m_SortingLayer: -1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7e1e9c684c31b439312f923bf54abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MeshFilter: {fileID: 1758551799}
+  m_MeshRenderer: {fileID: 1758551798}
+  m_Url: Textures/Ship/Modeling_Base.png
+  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Size: {x: 20.48, y: 13.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_SortingLayer: 1170053551
   m_SortingOrder: 0
-  m_Sprite: {fileID: -3512054022566780504, guid: 8cab71fc1021f5a4d9b55efea253b5fc,
-    type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &1758551797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6488,7 +6731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1758551796}
+  m_Renderer: {fileID: 1758551798}
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
@@ -6497,7 +6740,7 @@ MonoBehaviour:
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
     CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
   m_UseMainAlphaForVisibility: 1
   m_MaterialConfig:
@@ -6505,10 +6748,57 @@ MonoBehaviour:
       Name: _Color
       Source: 0
       Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
+      Enabled: 1
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
+  m_DisableRaycastLayer: 0
+--- !u!23 &1758551798
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758551794}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1170053551
+  m_SortingLayer: -1
+  m_SortingOrder: 0
+--- !u!33 &1758551799
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758551794}
+  m_Mesh: {fileID: 0}
 --- !u!4 &1875408140 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6833289159149224850, guid: 51a645c508f5fdb43b22e9f722bc1ccb,
@@ -6560,7 +6850,7 @@ PrefabInstance:
     - target: {fileID: 657878485880510991, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 105.415
+      value: 111.175
       objectReference: {fileID: 0}
     - target: {fileID: 657878485880510991, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
@@ -6775,7 +7065,7 @@ PrefabInstance:
     - target: {fileID: 5079766357527125962, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 219.425
+      value: 233.465
       objectReference: {fileID: 0}
     - target: {fileID: 5079766357527125962, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
@@ -6850,7 +7140,7 @@ PrefabInstance:
     - target: {fileID: 7210412204261021805, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 137.815
+      value: 146.815
       objectReference: {fileID: 0}
     - target: {fileID: 7210412204261021805, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
@@ -6875,7 +7165,7 @@ PrefabInstance:
     - target: {fileID: 7318473884526640297, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 45.405
+      value: 48.285004
       objectReference: {fileID: 0}
     - target: {fileID: 7318473884526640297, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
@@ -6930,7 +7220,7 @@ PrefabInstance:
     - target: {fileID: 7699720009243960192, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 154.625
+      value: 162.185
       objectReference: {fileID: 0}
     - target: {fileID: 7699720009243960192, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
@@ -6990,7 +7280,7 @@ PrefabInstance:
     - target: {fileID: 8608181864556943687, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 41.805
+      value: 44.325
       objectReference: {fileID: 0}
     - target: {fileID: 8608181864556943687, guid: 5a86c0ff3c825a14897345586040d890,
         type: 3}
