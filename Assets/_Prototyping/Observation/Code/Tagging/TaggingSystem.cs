@@ -85,23 +85,27 @@ namespace ProtoAqua.Observation
             Vector3 gameplayPlanePos;
             Vector3 gameplayPlaneDist;
             Vector2 listenerPos = m_Range.transform.position;
-            float distSq;
-            float closestDistSq = float.MaxValue;
+            float dist;
+            float closestDist = float.MaxValue;
             Vector3 closestGameplayPlanePos = default;
             for(int i = m_RemainingCrittersReady.Count - 1; i >= 0; i--)
             {
                 critter = m_RemainingCrittersReady[i];
                 gameplayPlanePos = positionHelper.CastToPlane(critter.TrackTransform);
-                critter.Collider.transform.position = gameplayPlanePos;
 
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
-                distSq = gameplayPlaneDist.sqrMagnitude;
-                critter.Collider.enabled = distSq - critter.ColliderRadius < m_DeactivateRangeSq;
+                dist = gameplayPlaneDist.magnitude;
+                if (dist - critter.ColliderRadius < m_DeactivateRangeSq) {
+                    critter.Collider.enabled = true;
+                    critter.Collider.transform.position = gameplayPlanePos;
+                } else {
+                    critter.Collider.enabled = false;
+                }
 
-                if (distSq < closestDistSq)
+                if (dist < closestDist)
                 {
                     closestGameplayPlanePos = gameplayPlanePos;
-                    closestDistSq = distSq;
+                    closestDist = dist;
                 }
             }
 
@@ -114,7 +118,7 @@ namespace ProtoAqua.Observation
             Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", inScene.Name);
             
             m_SiteData = Services.Data.Profile.Science.GetSiteData(mapId);
-            m_EnvironmentType = Assets.Map(mapId).Environment();
+            m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
             m_BestiaryData = Services.Data.Profile.Bestiary;
             
             TaggableCritter critter;

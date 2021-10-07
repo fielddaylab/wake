@@ -25,6 +25,7 @@ namespace Aqua.Portable
         static private readonly StringHash32 SelectCritterFact_Label = "ui.portable.app.bestiary.selectCritterFact.label";
         static private readonly StringHash32 SelectEcosystemFact_Label = "ui.portable.app.bestiary.selectEcosystemFact.label";
         static private readonly StringHash32 SelectModel_Label = "ui.portable.app.bestiary.selectModel.label";
+        static private readonly StringHash32 SelectAnyFact_Label = "ui.portable.app.bestiary.selectAnyFact.label";
 
         #endregion // Consts
 
@@ -162,6 +163,7 @@ namespace Aqua.Portable
         [Header("Entries")]
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
         [SerializeField, Required] private ToggleGroup m_EntryToggleGroup = null;
+        [SerializeField] private PortableListHeader.Pool m_HeaderPool = null;
         [SerializeField] private PortableListElement.Pool m_EntryPool = null;
         [SerializeField] private LocText m_CategoryLabel = null;
 
@@ -292,6 +294,7 @@ namespace Aqua.Portable
             m_NoSelectionGroup.gameObject.SetActive(true);
 
             m_EntryPool.Reset();
+            m_HeaderPool.Reset();
             m_EntryToggleGroup.SetAllTogglesOff(false);
             
             if (m_CurrentPage)
@@ -432,7 +435,7 @@ namespace Aqua.Portable
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
                         m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("-- Unsupported Mode --");
+                        m_PromptText.SetText(SelectAnyFact_Label);
 
                         category = BestiaryDescCategory.Critter;
                         break;
@@ -449,6 +452,7 @@ namespace Aqua.Portable
 
             m_CurrentEntryGroup = inType;
             m_EntryPool.Reset();
+            m_HeaderPool.Reset();
 
             if (m_CurrentPage)
                 m_CurrentPage.gameObject.SetActive(false);
@@ -487,8 +491,19 @@ namespace Aqua.Portable
             {
                 Services.Data.Profile.Bestiary.GetEntities(inType, entities);
                 entities.Sort(BestiaryDesc.SortByEnvironment);
+                StringHash32 mapId = default;
                 foreach(var entry in entities)
                 {
+                    if (inType != BestiaryDescCategory.Model) {
+                        if (mapId != entry.StationId()) {
+                            mapId = entry.StationId();
+                            PortableListHeader header = m_HeaderPool.Alloc();
+                            MapDesc map = Assets.Map(mapId);
+                            header.Header.SetText(map.StationHeaderId());
+                            header.SubHeader.SetText(map.ShortLabelId());
+                        }
+                    }
+
                     PortableListElement button = m_EntryPool.Alloc();
                     button.Initialize(entry.Icon(), m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
                 }

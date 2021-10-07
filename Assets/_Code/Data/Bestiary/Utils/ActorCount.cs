@@ -8,7 +8,7 @@ namespace Aqua
     [Serializable]
     public struct ActorCountU32 : IKeyValuePair<StringHash32, uint>
     {
-        public SerializedHash32 Id;
+        [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 Id;
         public uint Population;
 
         public ActorCountU32(StringHash32 inId, uint inPopulation)
@@ -24,7 +24,7 @@ namespace Aqua
     [Serializable]
     public struct ActorCountRange : IKeyValuePair<StringHash32, ActorCountRange>
     {
-        public SerializedHash32 Id;
+        [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 Id;
         public uint Population;
         public uint Range;
 
@@ -42,7 +42,7 @@ namespace Aqua
     [Serializable]
     public struct ActorCountI32 : IKeyValuePair<StringHash32, int>
     {
-        public SerializedHash32 Id;
+        [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 Id;
         public int Population;
 
         public ActorCountI32(StringHash32 inId, int inPopulation)

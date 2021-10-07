@@ -61,7 +61,7 @@ namespace ProtoAqua.Argumentation
             m_NodePool.Initialize();
 
             Services.Events.Register<StringHash32>(Event_SelectClaim, OnOptionSelected, this);
-            Services.Events.Register<BestiaryDescCategory>(Event_OpenFactSelect, OnOpenBestiary, this);
+            Services.Events.Register(Event_OpenFactSelect, OnOpenBestiary, this);
 
             m_Graph.OnGraphLoaded += OnGraphLoaded;
             m_Graph.OnGraphNotAvailable += NotAvailable;
@@ -121,9 +121,9 @@ namespace ProtoAqua.Argumentation
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
         }
 
-        private void OnOpenBestiary(BestiaryDescCategory inCategory)
+        private void OnOpenBestiary()
         {
-            var future = BestiaryApp.RequestFact(inCategory);
+            var future = BestiaryApp.RequestFact(BestiaryDescCategory.ALL);
             future.OnComplete(OnFactSelected);
         }
 

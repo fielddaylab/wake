@@ -17,12 +17,6 @@ namespace ProtoAqua.ExperimentV2
         [Required] public BoxCollider2D WaterCollider;
         [Required] public ColorGroup WaterColor;
         [HideInInspector] public Bounds Bounds;
-        
-        [Header("In Use State")]
-        [Required] public GameObject InUseRoot = null;
-        [Required] public GameObject InProgressRoot = null;
-        [Required] public Transform InProgressTimerScaler = null;
-        [Required] public GameObject ReadyRoot = null;
         [Required] public ColorGroup BackIndicators = null;
         
         [Header("Click")]
@@ -34,9 +28,6 @@ namespace ProtoAqua.ExperimentV2
         [Required] public Canvas Interface = null;
         [Required] public InputRaycasterLayer InterfaceRaycaster = null;
         [Required] public CanvasGroup InterfaceFader = null;
-
-        [Header("Dirty")]
-        [Required] public GameObject DirtyRoot = null;
 
         #endregion // Inspector
 

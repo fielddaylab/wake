@@ -16,7 +16,6 @@ namespace ProtoAqua.Argumentation
         #region Inspector
 
         [SerializeField] private Button m_Button = null;
-        [SerializeField] private BestiaryDescCategory m_Category = BestiaryDescCategory.Critter;
 
         #endregion // Inspector
 
@@ -27,7 +26,7 @@ namespace ProtoAqua.Argumentation
 
         private void OnClick()
         {
-            Services.Events.Dispatch(ArgueActivity.Event_OpenFactSelect, m_Category);
+            Services.Events.Dispatch(ArgueActivity.Event_OpenFactSelect);
         }
     }
 }

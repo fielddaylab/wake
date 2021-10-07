@@ -78,7 +78,8 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnTaskCompleted, this)
                 .Register<StringHash32>(GameEvents.JobTaskRemoved, OnTaskDeactivate, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
-                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this);
+                .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
+                .Register(GameEvents.PortableOpened, OnPortableOpened, this);
 
             m_TaskDisplays.Initialize(null, null, 0);
             m_TaskDisplays.Config.RegisterOnConstruct((p, o) => {
@@ -147,6 +148,15 @@ namespace Aqua
                 return;
             
             TryStartProcessing();
+        }
+
+        private void OnPortableOpened()
+        {
+            SyncActiveTasks();
+            m_ProcessOperationsJob.Stop();
+            m_OperationQueue.Clear();
+
+            Hide();
         }
 
         private void TryStartProcessing()

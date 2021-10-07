@@ -49,15 +49,15 @@ $branch common.ringPhone
 {@drJules}  This time, I'll also need you to gather some information on the population counts here.
             And for that, you'll need this {nameof ROVTagger}.
 $call GiveUpgrade(ROVTagger)
-{@drJules}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}tag{/h} it.
-            Tag enough of them and your {item-name}Tracker{/item-name} will do the rest and give you a population estimate.
+{@drJules}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+            Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1B", JobTaskTop(getTagged)
 @cutscene
 {@player} 	I made it to Site B, what should I do now?
-{@kevin}	Let's explore and tag all these critters.
+{@kevin}	Let's explore and tag all these organisms.
 $if !TaggingHasStarted(Urchin)
     {@kevin}    Are there any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
@@ -231,9 +231,9 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
             More than that, though, you've also got the population histories you downloaded from the {h}Probe{/h} back in Site B.
             Those histories are represented on the graph by those thick faded lines.
-            As your virtual critters eat, and die, and reproduce, their populations will show up on the graph too.
+            As your virtual organisms eat, and die, and reproduce, their populations will show up on the graph too.
             Your goal is to get those to line up with the historical populations!
-            Start by setting the starting populations for your virtual critters. You should just be able to drag those sliders on the left to match the historical population.
+            Start by setting the starting populations for your virtual organisms. You should just be able to drag those sliders on the left to match the historical population.
             If you can get the resulting graph to line up with the historical graph, then we know enough to be able to make a model!
 
 ::ModelHelp2

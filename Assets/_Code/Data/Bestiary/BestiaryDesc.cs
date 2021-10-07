@@ -6,6 +6,9 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 using UnityEngine.Serialization;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -18,36 +21,32 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescFlags m_Flags = 0;
         [SerializeField, AutoEnum] private BestiaryDescSize m_Size = 0;
 
-        [Header("Info")]
-        [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_ParentEnvironment = null;
-        [SerializeField, FormerlySerializedAs("m_ScientificNameId"), ShowIfField("IsCritter")] private string m_ScientificName = null;
+        [SerializeField, MapId(MapCategory.Station)] private StringHash32 m_StationId = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32 m_DiveSiteId = null;
+        [SerializeField] private string m_ScientificName = null;
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
         
-        [Space]
         [SerializeField] private BFBase[] m_Facts = null;
 
-        [Space]
-        [SerializeField, ShowIfField("IsEnvironment")] private uint m_HistoricalRecordDuration = 2;
-        [SerializeField, ShowIfField("IsEnvironment")] private Color m_WaterColor = ColorBank.Blue;
+        [SerializeField] private uint m_HistoricalRecordDuration = 2;
+        [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
-        [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField, ShowIfField("ShowSketch")] private Sprite m_Sketch = null;
+        [SerializeField] private Sprite m_Sketch = null;
         [SerializeField] private Color m_Color = ColorBank.White;
-        [SerializeField, ShowIfField("IsCritter")] private SerializedHash32 m_ListenAudioEvent = null;
+        [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
-        [Header("Sorting")]
         [SerializeField] private ushort m_SortingOrder = 0;
 
         // HIDDEN
 
         [SerializeField, HideInInspector] private BFBase[] m_AllFacts;
-        [SerializeField, HideInInspector] private BestiaryDesc[] m_ChildCritters;
         [SerializeField, HideInInspector] private ushort m_PlayerFactCount;
         [SerializeField, HideInInspector] private ushort m_AlwaysFactCount;
         [SerializeField, HideInInspector] private ushort m_InternalFactOffset;
         [SerializeField, HideInInspector] private ushort m_InternalFactCount;
+        [SerializeField] private int m_StationSortingOrder;
         [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_EnvState;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
 
@@ -57,19 +56,7 @@ namespace Aqua
         public BestiaryDescFlags Flags() { return m_Flags; }
         public BestiaryDescSize Size() { return m_Size; }
 
-        public BestiaryDesc ParentEnvironment()
-        {
-            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter!", Id());
-            return m_ParentEnvironment;
-        }
-        public IReadOnlyList<BestiaryDesc> ChildCritters
-        {
-            get
-            {
-                Assert.True(m_Type == BestiaryDescCategory.Environment, "BestiaryDesc '{0}' is not an environment!", Id());
-                return m_ChildCritters;
-            }
-        }
+        public StringHash32 StationId() { return m_StationId; }
 
         public string ScientificName() { return m_ScientificName; }
         public TextId CommonName() { return m_CommonNameId; }
@@ -163,24 +150,16 @@ namespace Aqua
 
         static private int EnvironmentSortingFirst(BestiaryDesc x, BestiaryDesc y, Comparison<BestiaryDesc> inComparison)
         {
-            BestiaryDesc envX = x.m_ParentEnvironment,
-                        envY = y.m_ParentEnvironment;
+            int envX = x.m_StationSortingOrder,
+                envY = y.m_StationSortingOrder;
 
             if (envX == envY)
             {
                 return inComparison(x, y);
             }
-            else if (envX == null)
-            {
-                return -1;
-            }
-            else if (envY == null)
-            {
-                return 1;
-            }
             else
             {
-                return envX.m_SortingOrder.CompareTo(envY.m_SortingOrder);
+                return envX.CompareTo(envY);
             }
         }
 
@@ -199,6 +178,8 @@ namespace Aqua
                 Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
                 fact.BakeProperties(this);
             }
+
+            m_StationSortingOrder = m_StationId.IsEmpty ? -1 : ValidationUtils.FindAsset<MapDesc>(m_StationId.ToDebugString()).SortingOrder();
 
             switch(m_Type)
             {
@@ -235,11 +216,6 @@ namespace Aqua
         }
 
         internal BFBase[] OwnedFacts { get { return m_Facts; } }
-
-        internal void SetChildCritters(List<BestiaryDesc> inChildren)
-        {
-            m_ChildCritters = inChildren == null || inChildren.Count == 0 ? Array.Empty<BestiaryDesc>() : inChildren.ToArray();
-        }
 
         internal void OptimizeSecondPass(List<BFBase> inReciprocalFacts)
         {
@@ -302,26 +278,6 @@ namespace Aqua
             }
         }
 
-        private bool IsCritter()
-        {
-            return m_Type == BestiaryDescCategory.Critter;
-        }
-
-        private bool IsEnvironment()
-        {
-            return m_Type == BestiaryDescCategory.Environment;
-        }
-
-        private bool IsModels()
-        {
-            return m_Type == BestiaryDescCategory.Critter;
-        }
-
-        private bool ShowSketch()
-        {
-            return m_Type != BestiaryDescCategory.Model;
-        }
-
         [ContextMenu("Load All In Directory")]
         private void FindAllFacts()
         {
@@ -332,21 +288,120 @@ namespace Aqua
         }
 
         [UnityEditor.CustomEditor(typeof(BestiaryDesc)), UnityEditor.CanEditMultipleObjects]
-        private class Inspector : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                base.OnInspectorGUI();
+        private class Inspector : UnityEditor.Editor {
+            private SerializedProperty m_TypeProperty;
+            private SerializedProperty m_FlagsProperty;
+            private SerializedProperty m_SizeProperty;
+            private SerializedProperty m_StationIdProperty;
+            private SerializedProperty m_DiveSiteIdProperty;
+            private SerializedProperty m_ScientificNameProperty;
+            private SerializedProperty m_CommonNameIdProperty;
+            private SerializedProperty m_PluralCommonNameIdProperty;
+            private SerializedProperty m_FactsProperty;
+            private SerializedProperty m_HistoricalRecordDurationProperty;
+            private SerializedProperty m_WaterColorProperty;
+            private SerializedProperty m_IconProperty;
+            private SerializedProperty m_SketchProperty;
+            private SerializedProperty m_ColorProperty;
+            private SerializedProperty m_ListenAudioEventProperty;
+            private SerializedProperty m_SortingOrderProperty;
 
-                UnityEditor.EditorGUILayout.Space();
+            private void OnEnable() {
+                m_TypeProperty = serializedObject.FindProperty("m_Type");
+                m_FlagsProperty = serializedObject.FindProperty("m_Flags");
+                m_SizeProperty = serializedObject.FindProperty("m_Size");
+                m_StationIdProperty = serializedObject.FindProperty("m_StationId");
+                m_DiveSiteIdProperty = serializedObject.FindProperty("m_DiveSiteId");
+                m_ScientificNameProperty = serializedObject.FindProperty("m_ScientificName");
+                m_CommonNameIdProperty = serializedObject.FindProperty("m_CommonNameId");
+                m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
+                m_FactsProperty = serializedObject.FindProperty("m_Facts");
+                m_HistoricalRecordDurationProperty = serializedObject.FindProperty("m_HistoricalRecordDuration");
+                m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
+                m_IconProperty = serializedObject.FindProperty("m_Icon");
+                m_SketchProperty = serializedObject.FindProperty("m_Sketch");
+                m_ColorProperty = serializedObject.FindProperty("m_Color");
+                m_ListenAudioEventProperty = serializedObject.FindProperty("m_ListenAudioEvent");
+                m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
+            }
 
-                if (GUILayout.Button("Load All In Directory"))
-                {
-                    foreach(BestiaryDesc bestiary in targets)
-                    {
+            public override void OnInspectorGUI() {
+                serializedObject.UpdateIfRequiredOrScript();
+
+                BestiaryDescCategory category = m_TypeProperty.hasMultipleDifferentValues ? BestiaryDescCategory.ALL : (BestiaryDescCategory) m_TypeProperty.intValue;
+
+                EditorGUILayout.PropertyField(m_TypeProperty);
+                EditorGUILayout.PropertyField(m_FlagsProperty);
+                EditorGUILayout.PropertyField(m_StationIdProperty);
+
+                switch(category) {
+                    case BestiaryDescCategory.Critter: {
+                        Header("Organism");
+                        EditorGUILayout.PropertyField(m_SizeProperty);
+                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
+
+                        Header("Text");
+                        EditorGUILayout.PropertyField(m_ScientificNameProperty);
+                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
+                        EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
+
+                        Header("Assets");
+                        EditorGUILayout.PropertyField(m_IconProperty);
+                        EditorGUILayout.PropertyField(m_SketchProperty);
+                        EditorGUILayout.PropertyField(m_ColorProperty);
+                        EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
+
+                        Header("Sorting");
+                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
+                        break;
+                    }
+
+                    case BestiaryDescCategory.Environment: {
+                        
+                        Header("Environment");
+                        EditorGUILayout.PropertyField(m_DiveSiteIdProperty);
+                        EditorGUILayout.PropertyField(m_HistoricalRecordDurationProperty);
+                        EditorGUILayout.PropertyField(m_WaterColorProperty);
+
+                        Header("Text");
+                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
+
+                        Header("Assets");
+                        EditorGUILayout.PropertyField(m_IconProperty);
+                        EditorGUILayout.PropertyField(m_SketchProperty);
+                        EditorGUILayout.PropertyField(m_ColorProperty);
+
+                        Header("Sorting");
+                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
+                        break;
+                    }
+                    
+                    case BestiaryDescCategory.Model: {
+                        
+                        Header("Model");
+                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
+                        EditorGUILayout.PropertyField(m_IconProperty);
+                        EditorGUILayout.PropertyField(m_ColorProperty);
+                        break;
+                    }
+                }
+
+                Header("Facts");
+                m_FactsProperty.isExpanded = true;
+                EditorGUILayout.PropertyField(m_FactsProperty);
+
+                if (GUILayout.Button("Load All In Directory")) {
+                    foreach(BestiaryDesc bestiary in targets) {
                         bestiary.FindAllFacts();
                     }
                 }
+
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            static private void Header(string inHeader) {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField(inHeader, EditorStyles.boldLabel);
             }
         }
 
@@ -389,5 +444,18 @@ namespace Aqua
         Large,
 
         Ecosystem = 8
+    }
+
+    public class FilterBestiaryIdAttribute : DBObjectIdAttribute {
+
+        public BestiaryDescCategory Category;
+
+        public FilterBestiaryIdAttribute(BestiaryDescCategory inCategory = BestiaryDescCategory.ALL) : base(typeof(BestiaryDesc)) {
+            Category = inCategory;
+        }
+
+        public override bool Filter(DBObject inObject) {
+            return ((BestiaryDesc) inObject).HasCategory(Category);
+        }
     }
 }

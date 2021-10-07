@@ -21,7 +21,7 @@ namespace ProtoAqua.Modeling
 
         #region Inspector
 
-        [SerializeField] private BestiaryDesc m_Environment = null;
+        [SerializeField, FilterBestiary(BestiaryDescCategory.Environment)] private BestiaryDesc m_Environment = null;
         [SerializeField] private uint m_Seed = 54321;
         
         [Header("Historical Data")]

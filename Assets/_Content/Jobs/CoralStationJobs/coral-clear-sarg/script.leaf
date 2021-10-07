@@ -11,7 +11,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 {@profCempaka}	Make sure you've scanned everything at Site R, and then experiment until you've figured out a solution. 
 $if HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(TurtleGrass), HasEntity(RedGrouper)
 	$set jobs:coral-clear-sarg.siteRScans = 2 //Set to 2 instead of 1 so dialouge about returning to the ship is not seen
-	{@kevin}		I think we've already scanned all the critters at site R, so let's head right to the {nameof Experimentation}!
+	{@kevin}		I think we've already scanned all the organisms at site R, so let's head right to the {nameof Experimentation}!
 $else
 	{@kevin}		Back to Site R we go!
 $endif
@@ -91,7 +91,7 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 @cutscene
 {@player}   How should we set up the experiment this time?
 {@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
-{@kevin} 	Maybe try observing a tank with Sargassum and another critter until you find something interesting?
+{@kevin} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
@@ -99,8 +99,8 @@ $set jobs:coral-clear-sarg.siteRScans = 2
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	We want to figure out if there's anything that eats the Sargassum.
-{@kevin}	Try putting different critters in a tank with Sargassum and see if there's anything that eats it!
-{@kevin}	Maybe start with critters that weren't at Site R?
+{@kevin}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
+{@kevin}	Maybe start with organisms that weren't at Site R?
 
 
 :: experiementEnd

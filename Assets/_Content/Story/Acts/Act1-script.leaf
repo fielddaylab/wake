@@ -24,7 +24,7 @@ $set    player:seen.drJules = true
             Kevin heard you might have some jobs up for grabs. 
 {@drJules}  Oh, great! I could use an extra set of hands. 
             Or, you know, tentacles.
-            Open your job board on the dash to get started!
+            Open your {map-name}Job Board{/map-name} on the dash to get started!
 
 
 {hide-dialog}{wait 0.5}
@@ -41,7 +41,7 @@ $goto .tutorial
 
 $call hotbar.kevin->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.kevin)
-    Talk to Kevin by clicking the jellyfish-shaped {h}Talk Button{/h} up here.
+    Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
     They can help if you get stuck!
 $call hotbar.kevin->ResetSorting()
 $call FocusHighlight->Clear()

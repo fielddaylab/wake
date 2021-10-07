@@ -26,7 +26,7 @@ $call GiveUpgrade(Microscope)
 @when 		jobs:arctic-whale-csi.gotScans == 0
 @cutscene
 {@player} 	What should I be doing again?
-{@kevin}	We need to scan and tag the surface critters at Site W.
+{@kevin}	We need to scan and tag the surface organisms at Site W.
 {@kevin}	Looks like in total we'll need data about the salmon, sharks, and cod.
 
 :: finishedScans
@@ -35,9 +35,9 @@ $call GiveUpgrade(Microscope)
 @once
 @cutscene
 $set jobs:arctic-whale-csi.gotScans = 1
-{@kevin} Great! That should be all we need for the surface critters.
+{@kevin} Great! That should be all we need for the surface organisms.
 {@kevin} Now all that's next is to scan the ice to see if there's any microscopic organisms inside.
-{@kevin} It's just like how you'd scan a critter, except you should see the microscope view popup instead.
+{@kevin} It's just like how you'd scan an organism, except you should see the microscope view popup instead.
 
 :: helpScanIceAlgae
 @trigger    RequestPartnerHelp

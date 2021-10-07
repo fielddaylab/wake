@@ -8,6 +8,7 @@ using System.IO;
 using System;
 using BeauUtil.IO;
 using Aqua.Debugging;
+using System.Collections;
 
 namespace Aqua {
     #if UNITY_EDITOR
@@ -38,7 +39,11 @@ namespace Aqua {
         }
 
         static private void OnSceneLoaded(UnityEngine.SceneManagement.Scene _, UnityEngine.SceneManagement.LoadSceneMode __) {
-            UnloadUnused();
+            if (UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            
+            UnloadUnusedSync();
         }
 
         #endif // UNITY_EDITOR
@@ -139,6 +144,7 @@ namespace Aqua {
                 texture.name = url;
                 texture.hideFlags = HideFlags.DontSave;
                 texture.filterMode = GetTextureFilterMode(url);
+                texture.wrapMode = GetTextureWrapMode(url);
                 texture.LoadImage(bytes, false);
                 DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (sync) '{0}'", id);
                 proxy = new HotReloadableFileProxy(correctedPath, (p, s) => {
@@ -170,20 +176,18 @@ namespace Aqua {
             Texture2D texture = CreatePlaceholderTexture(url, false);
 
             string correctedUrl = PathUtility.PathToURL(PathUtility.StreamingAssetsPath(url));
-            loader = Future.Download.Texture(correctedUrl, true)
-                .OnComplete((t) => OnTextureDownloadCompleted(id, t, url))
+            loader = Future.Download.Bytes(correctedUrl)
+                .OnComplete((bytes) => OnTextureDownloadCompleted(id, bytes, url))
                 .OnFail(() => OnTextureDownloadFail(id, correctedUrl));
             s_LoadCount++;
             return texture;
         }
 
-        static private void OnTextureDownloadCompleted(StringHash32 id, Texture2D source, string url) {
+        static private void OnTextureDownloadCompleted(StringHash32 id, byte[] source, string url) {
             Texture2D dest = s_Textures[id];
-            dest.Resize(source.width, source.height, source.format, false);
-            dest.Apply();
+            dest.LoadImage(source, true);
             dest.filterMode = GetTextureFilterMode(url);
-            Graphics.CopyTexture(source, dest);
-            Texture2D.DestroyImmediate(source, true);
+            dest.wrapMode = GetTextureWrapMode(url);
             s_LoadCount --;
             DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (async) '{0}'", id);
         }
@@ -201,12 +205,21 @@ namespace Aqua {
             }
         }
 
+        static private TextureWrapMode GetTextureWrapMode(string url) {
+            if (url.Contains("[wrap]")) {
+                return TextureWrapMode.Repeat;
+            } else {
+                return TextureWrapMode.Clamp;
+            }
+        }
+
         static private Texture2D CreatePlaceholderTexture(string name, bool final) {
             Texture2D texture;
             texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             texture.name = name;
             texture.SetPixels32(TextureLoadingBytes);
             texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
             texture.Apply(false, final);
             texture.hideFlags = HideFlags.DontSave;
             return texture;
@@ -254,7 +267,9 @@ namespace Aqua {
 
         #endif // UNITY_EDITOR
 
-        static internal void UnloadUnused() {
+        #if UNITY_EDITOR
+
+        static internal void UnloadUnusedSync() {
             StringHash32 id;
             AssetMeta meta;
             UnityEngine.Object resource = null;
@@ -301,6 +316,63 @@ namespace Aqua {
                 DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
 
                 resource = null;
+            }
+        }
+
+        #endif // UNITY_EDITOR
+
+        static internal AsyncHandle UnloadUnusedAsync() {
+            return Async.Schedule(UnloadUnusedAsyncJob());
+        }
+
+        static private IEnumerator UnloadUnusedAsyncJob() {
+            StringHash32 id;
+            AssetMeta meta;
+            UnityEngine.Object resource = null;
+            while(s_UnloadQueue.TryPopFront(out id)) {
+                meta = s_Metas[id];
+                if (meta.RefCount > 0) {
+                    break;
+                }
+
+                s_Metas.Remove(id);
+                if (meta.Loader != null) {
+                    if (!meta.Loader.IsDone()) {
+                        s_LoadCount--;
+                    }
+
+                    meta.Loader.Dispose();
+                    meta.Loader = null;
+                }
+
+                #if UNITY_EDITOR
+                if (meta.Proxy != null) {
+                    s_Batcher.Remove(meta.Proxy);
+                    meta.Proxy.Dispose();
+                }
+                #endif // UNITY_EDITOR
+
+                switch(meta.Type) {
+                    case AssetType.Texture: {
+                            resource = s_Textures[id];
+                            s_Textures.Remove(id);
+                            break;
+                        }
+
+                    case AssetType.Audio: {
+                            resource = s_AudioClips[id];
+                            
+                            s_AudioClips.Remove(id);
+                            break;
+                        }
+                }
+
+                s_ReverseLookup.Remove(resource.GetInstanceID());
+                UnityEngine.Object.DestroyImmediate(resource, true);
+                DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
+
+                resource = null;
+                yield return null;
             }
         }
 

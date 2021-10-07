@@ -70,12 +70,12 @@ namespace Aqua
 
         public ListSlice<BestiaryDesc> Critters
         {
-            get { return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount); }
+            get { return new ListSlice<BestiaryDesc>(m_Objects, m_EnvironmentCount, m_CritterCount); }
         }
 
         public ListSlice<BestiaryDesc> Environments
         {
-            get { return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount); }
+            get { return new ListSlice<BestiaryDesc>(m_Objects, 0, m_EnvironmentCount); }
         }
 
         public ListSlice<BestiaryDesc> AllEntriesForCategory(BestiaryDescCategory inCategory)
@@ -161,14 +161,13 @@ namespace Aqua
             SortObjects(SortByCategory);
 
             List<BFBase> allFacts = new List<BFBase>(512);
-            Dictionary<BestiaryDesc, List<BestiaryDesc>> environmentChildLists = new Dictionary<BestiaryDesc, List<BestiaryDesc>>();
             Dictionary<BestiaryDesc, List<BFBase>> critterReciprocalFactLists = new Dictionary<BestiaryDesc, List<BFBase>>();
 
             m_CritterCount = 0;
             m_EnvironmentCount = 0;
 
             BestiaryDesc entry;
-            BestiaryDesc env;
+            StringHash32 envId;
             BFEat eat;
             for(int i = 0; i < m_Objects.Length; i++)
             {
@@ -184,9 +183,7 @@ namespace Aqua
                     case BestiaryDescCategory.Critter:
                         {
                             m_CritterCount++;
-                            env = entry.ParentEnvironment();
-                            if (env != null)
-                                AddToListMap(environmentChildLists, env, entry);
+                            envId = entry.StationId();
 
                             foreach(var fact in entry.OwnedFacts)
                             {
@@ -206,12 +203,6 @@ namespace Aqua
                         }
                 }
             }
-
-            foreach(var environment in Environments)
-            {
-                environment.SetChildCritters(GetList(environmentChildLists, environment));
-            }
-
             foreach(var obj in m_Objects)
             {
                 obj.OptimizeSecondPass(GetList(critterReciprocalFactLists, obj));
@@ -222,9 +213,11 @@ namespace Aqua
             return true;
         }
 
+        static private readonly int[] CategorySortOrder = new int[] { 1, 0, 2 };
+
         static private readonly Comparison<BestiaryDesc> SortByCategory = (a, b) => 
         {
-            int compare = a.Category().CompareTo(b.Category());
+            int compare = CategorySortOrder[(int) a.Category()].CompareTo(CategorySortOrder[(int) b.Category()]);
             if (compare == 0)
                 compare = a.name.CompareTo(b.name);
             return compare;

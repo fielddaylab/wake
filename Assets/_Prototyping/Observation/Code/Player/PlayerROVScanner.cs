@@ -29,7 +29,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
 
-        [NonSerialized] private Collider2D[] m_ColliderBuffer = new Collider2D[1];
+        [NonSerialized] private Collider2D[] m_ColliderBuffer = new Collider2D[8];
 
         #region Unity Events
 
@@ -90,14 +90,15 @@ namespace ProtoAqua.Observation
             {
                 if (inInput.UseHold && inInput.Mouse.Target.HasValue)
                 {
-                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(inInput.Mouse.Target.Value, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
-                    Collider2D scannableCollider = overlappingColliders > 0 ? m_ColliderBuffer[0] : null;
+                    Vector2 mousePos = inInput.Mouse.Target.Value;
+                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
+                    Collider2D closest = ScoringUtils.GetMinElement(m_ColliderBuffer, 0, overlappingColliders, (c) => Vector2.SqrMagnitude((Vector2) c.transform.position - mousePos) + c.transform.localPosition.z);
                     Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
 
                     bool bFound = false;
-                    if (scannableCollider != null)
+                    if (closest != null)
                     {
-                        ScannableRegion scannable = scannableCollider.GetComponentInParent<ScannableRegion>();
+                        ScannableRegion scannable = closest.GetComponentInParent<ScannableRegion>();
                         if (scannable != null && scannable.isActiveAndEnabled && scannable.InRange)
                         {
                             bFound = true;

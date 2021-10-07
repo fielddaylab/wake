@@ -19,9 +19,9 @@ namespace Aqua
         static public readonly StringHash32 Option_No = "";
         static public readonly StringHash32 Option_Cancel = "";
 
-        static private readonly NamedOption[] DefaultOkay = new NamedOption[] { new NamedOption(Option_Okay, "Okay") };
-        static private readonly NamedOption[] DefaultYesNo = new NamedOption[] { new NamedOption(Option_Yes, "Yes"), new NamedOption(Option_No, "No") };
-        static private readonly NamedOption[] DefaultSubmitCancel = new NamedOption[] { new NamedOption(Option_Submit, "Submit"), new NamedOption(Option_Cancel, "Cancel") };
+        static private readonly NamedOption[] DefaultOkay = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.okay") };
+        static private readonly NamedOption[] DefaultYesNo = new NamedOption[] { new NamedOption(Option_Yes, "ui.popup.yes"), new NamedOption(Option_No, "ui.popup.no") };
+        static private readonly NamedOption[] DefaultAddToBestiary = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.addToBestiaryButton") };
 
         [Serializable]
         private struct ButtonConfig
@@ -94,14 +94,14 @@ namespace Aqua
         public Future<StringHash32> PresentFact(string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultOkay)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary)).TryManuallyUpdate(0);
             return future;
         }
 
         public Future<StringHash32> PresentFacts(string inHeader, string inText, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFacts, inFlags, DefaultOkay)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFacts, inFlags, DefaultAddToBestiary)).TryManuallyUpdate(0);
             return future;
         }
 
@@ -148,7 +148,7 @@ namespace Aqua
                 if (i < m_OptionCount)
                 {
                     NamedOption option = inOptions[i];
-                    config.Text.SetText(option.Text);
+                    config.Text.SetText(Loc.Find(option.TextId));
                     config.OptionId = option.Id;
                     config.Root.gameObject.SetActive(true);
                 }

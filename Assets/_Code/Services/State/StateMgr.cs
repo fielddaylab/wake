@@ -388,7 +388,7 @@ namespace Aqua
             }
             using(Profiling.Time("unload unused assets"))
             {
-                Streaming.UnloadUnused();
+                yield return Streaming.UnloadUnusedAsync();
                 yield return Resources.UnloadUnusedAssets();
             }
         }

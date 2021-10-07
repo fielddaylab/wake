@@ -40,5 +40,12 @@ namespace Aqua
 
             Assets.Assign(this);
         }
+
+        protected override void Shutdown()
+        {
+            Streaming.UnloadAll();
+
+            base.Shutdown();
+        }
     }
 }

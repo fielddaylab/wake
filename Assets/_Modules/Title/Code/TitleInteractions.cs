@@ -36,6 +36,7 @@ namespace Aqua.Title
         [SerializeField] private CanvasGroup m_ProfileGroup = null;
         [SerializeField] private LocText m_ProfileHeader = null;
         [SerializeField] private TMP_InputField m_ProfileName = null;
+        [SerializeField] private GameObject m_ProfileNameLocked = null;
         [SerializeField] private Button m_StartButton = null;
         [SerializeField] private Button m_BackButton = null;
         [SerializeField] private GameObject m_NameLoadingSpinner = null;
@@ -169,6 +170,7 @@ namespace Aqua.Title
                     {
                         m_ProfileHeader.SetText(NewHeader);
                         m_ProfileName.interactable = false;
+                        m_ProfileNameLocked.SetActive(true);
                         m_ProfileName.SetTextWithoutNotify("---");
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));
@@ -184,6 +186,7 @@ namespace Aqua.Title
                     {
                         m_ProfileHeader.SetText(ContinueHeader);
                         m_ProfileName.interactable = true;
+                        m_ProfileNameLocked.SetActive(false);
                         m_ProfileName.SetTextWithoutNotify(Services.Data.LastProfileName());
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));

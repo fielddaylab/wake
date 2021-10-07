@@ -132,6 +132,9 @@ namespace Aqua {
         }
 
         private void OnValidate() {
+            if (EditorApplication.isPlaying || PrefabUtility.IsPartOfPrefabAsset(this))
+                return;
+
             m_MeshFilter = GetComponent<MeshFilter>();
             m_MeshRenderer = GetComponent<MeshRenderer>();
 
@@ -224,18 +227,17 @@ namespace Aqua {
                     && !Application.isPlaying;
                 
                 EditorGUILayout.BeginVertical(); {
-                    if (GUILayout.Button("Resize Y for Aspect Ratio")) {
-                        serializedObject.ApplyModifiedProperties();
-                        foreach(StreamedTextureRenderer renderer in targets) {
-                            renderer.FixAspectRatioY();
-                        }
-                        bMeshUpdated = true;
-                    }
-
                     if (GUILayout.Button("Resize X for Aspect Ratio")) {
                         serializedObject.ApplyModifiedProperties();
                         foreach(StreamedTextureRenderer renderer in targets) {
                             renderer.FixAspectRatioX();
+                        }
+                        bMeshUpdated = true;
+                    }
+                    if (GUILayout.Button("Resize Y for Aspect Ratio")) {
+                        serializedObject.ApplyModifiedProperties();
+                        foreach(StreamedTextureRenderer renderer in targets) {
+                            renderer.FixAspectRatioY();
                         }
                         bMeshUpdated = true;
                     }

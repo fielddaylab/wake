@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eab9eda0234a4ef68bddede8c3ee145, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeaderTransform: {fileID: 4481569640150023538}
   m_Label: {fileID: 3349369884486458650}
 --- !u!1 &2203850759233204439
 GameObject:
@@ -238,7 +237,7 @@ GameObject:
   - component: {fileID: 7871753404704497070}
   - component: {fileID: 3349369884486458650}
   m_Layer: 5
-  m_Name: listText
+  m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -258,11 +257,11 @@ RectTransform:
   m_Father: {fileID: 4481569640150023538}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 277, y: 60}
-  m_Pivot: {x: 0, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5032991717045376863
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -318,13 +317,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 33
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -373,4 +372,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Text: {fileID: 7871753404704497070}
-  m_DefaultText: 
+  m_DefaultText:
+    m_Source: 
+    m_Hash: 0

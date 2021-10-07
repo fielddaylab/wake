@@ -137,10 +137,13 @@ namespace ProtoAqua.Observation
             {
                 region = m_AllRegions[i];
                 gameplayPlanePos = positionHelper.CastToPlane(region.TrackTransform);
-                region.Collider.transform.position = gameplayPlanePos;
-
                 gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
-                region.Collider.enabled = gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq;
+                if (gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq) {
+                    region.Collider.enabled = true;
+                    region.Collider.transform.position = gameplayPlanePos;
+                } else {
+                    region.Collider.enabled = false;
+                }
             }
 
             for(int i = m_RegionsInRange.Count - 1; i >= 0; i--)

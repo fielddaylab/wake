@@ -5,16 +5,16 @@ namespace Aqua
     public struct NamedOption
     {
         public readonly StringHash32 Id;
-        public readonly string Text;
+        public readonly StringHash32 TextId;
 
-        public NamedOption(string inText)
-            : this(inText, inText)
+        public NamedOption(StringHash32 inId)
+            : this(inId, inId)
         { }
 
-        public NamedOption(StringHash32 inId, string inText)
+        public NamedOption(StringHash32 inId, StringHash32 inTextId)
         {
             Id = inId;
-            Text = inText;
+            TextId = inTextId;
         }
     }
 }
