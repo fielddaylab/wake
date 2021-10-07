@@ -312,7 +312,7 @@ namespace Aqua {
                 }
 
                 s_ReverseLookup.Remove(resource.GetInstanceID());
-                UnityEngine.Object.DestroyImmediate(resource, true);
+                UnityEngine.Object.DestroyImmediate(resource);
                 DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
 
                 resource = null;
@@ -368,7 +368,7 @@ namespace Aqua {
                 }
 
                 s_ReverseLookup.Remove(resource.GetInstanceID());
-                UnityEngine.Object.DestroyImmediate(resource, true);
+                UnityEngine.Object.Destroy(resource);
                 DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
 
                 resource = null;
@@ -377,12 +377,29 @@ namespace Aqua {
         }
 
         static internal void UnloadAll() {
+            #if UNITY_EDITOR
             foreach(var texture in s_Textures.Values) {
-                Texture2D.DestroyImmediate(texture, true);
+                if (Application.isPlaying) {
+                    Texture2D.Destroy(texture);
+                } else {
+                    Texture2D.DestroyImmediate(texture);
+                }
             }
             foreach(var audio in s_AudioClips.Values) {
-                AudioClip.DestroyImmediate(audio, true);
+                if (Application.isPlaying) {
+                    AudioClip.Destroy(audio);
+                } else {
+                    AudioClip.DestroyImmediate(audio);
+                }
             }
+            #else
+            foreach(var texture in s_Textures.Values) {
+                Texture2D.Destroy(texture);
+            }
+            foreach(var audio in s_AudioClips.Values) {
+                AudioClip.Destroy(audio);
+            }
+            #endif // UNITY_EDITOR
 
             s_ReverseLookup.Clear();
             s_Textures.Clear();

@@ -89,7 +89,7 @@ namespace Aqua {
                     Material.Destroy(m_MaterialInstance);
                 }
                 #else
-                Material.Destroy(m_Material);
+                Material.Destroy(m_MaterialInstance);
                 #endif // UNITY_EDITOR
 
                 m_MaterialInstance = null;
