@@ -10,8 +10,8 @@ namespace Aqua
         [AutoEnum] public JobStepType Type;
         public SerializedHash32 Target;
 
-        [ShowIfField("ShowCondition")] public string ConditionString;
-        [ShowIfField("ShowAmount")] public int Amount;
+        public string ConditionString;
+        public int Amount;
 
         #if UNITY_EDITOR
 

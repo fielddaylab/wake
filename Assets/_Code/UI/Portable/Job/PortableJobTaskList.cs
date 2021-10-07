@@ -38,8 +38,9 @@ namespace Aqua
             using(PooledList<JobTask> completedTasks = PooledList<JobTask>.Create())
             using(PooledList<JobTask> activeTasks = PooledList<JobTask>.Create())
             {
-                foreach(var task in inJob.Tasks())
-                {
+                var taskList = inJob.Tasks();
+                for(int i = taskList.Length - 1; i >= 0; i--) {
+                    JobTask task = taskList[i];
                     if (inData.IsTaskComplete(task.Id))
                         completedTasks.Add(task);
                     else if (inData.IsTaskActive(task.Id))

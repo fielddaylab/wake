@@ -179,7 +179,13 @@ namespace Aqua
                 fact.BakeProperties(this);
             }
 
-            m_StationSortingOrder = m_StationId.IsEmpty ? -1 : ValidationUtils.FindAsset<MapDesc>(m_StationId.ToDebugString()).SortingOrder();
+            if (m_StationId.IsEmpty) {
+                m_StationSortingOrder = -1;
+            } else {
+                MapDesc map = ValidationUtils.FindAsset<MapDesc>(m_StationId.ToDebugString());
+                Assert.NotNull(map, "Map with id '{0}' was unable to be found on BestiaryDesc '{1}'", m_StationId, name);
+                m_StationSortingOrder = map.SortingOrder();
+            }
 
             switch(m_Type)
             {

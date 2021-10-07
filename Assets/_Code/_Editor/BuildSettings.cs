@@ -85,6 +85,18 @@ namespace Aqua.Editor
                     {
                         allOptimizable.Add(optimizable);
                     }
+
+                    // ensure ids are reversible from hash
+                    DBObject dbObj;
+                    BFBase fact;
+                    if ((dbObj = asset as DBObject) != null)
+                    {
+                        dbObj.Id();
+                    }
+                    if ((fact = asset as BFBase) != null)
+                    {
+                        fact.Id.Hash();
+                    }
                 }
 
                 allOptimizable.Sort((a, b) => a.Order.CompareTo(b.Order));
