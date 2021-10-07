@@ -115,4 +115,14 @@ namespace Aqua
         Always,
         Internal
     }
+
+    public class FactIdAttribute : PropertyAttribute
+    {
+        public Type FactType;
+
+        public FactIdAttribute(Type inFactType = null)
+        {
+            FactType = inFactType ?? typeof(BFBase);
+        }
+    }
 }

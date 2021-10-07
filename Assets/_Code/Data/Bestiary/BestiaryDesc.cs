@@ -312,6 +312,8 @@ namespace Aqua
             private SerializedProperty m_ListenAudioEventProperty;
             private SerializedProperty m_SortingOrderProperty;
 
+            [SerializeField] private string m_NewFactId;
+
             private void OnEnable() {
                 m_TypeProperty = serializedObject.FindProperty("m_Type");
                 m_FlagsProperty = serializedObject.FindProperty("m_Flags");
@@ -402,7 +404,118 @@ namespace Aqua
                     }
                 }
 
+                if (targets.Length == 1) {
+                    Header("Add Facts");
+                    m_NewFactId = EditorGUILayout.TextField("Create New Fact", m_NewFactId);
+
+                    GUI.enabled = !string.IsNullOrEmpty(m_NewFactId);
+
+                    BestiaryDesc desc = (BestiaryDesc) target;
+                    switch(category) {
+                        case BestiaryDescCategory.Model: {
+                            if (GUILayout.Button("Model")) {
+                                CreateFactType<BFModel>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+                            break;
+                        }
+
+                        case BestiaryDescCategory.Environment: {
+                            if (GUILayout.Button("Population")) {
+                                CreateFactType<BFPopulation>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Population History")) {
+                                CreateFactType<BFPopulationHistory>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Water Property")) {
+                                CreateFactType<BFWaterProperty>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Water Property History")) {
+                                CreateFactType<BFWaterPropertyHistory>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+                            break;
+                        }
+
+                        case BestiaryDescCategory.Critter: {
+                            GUI.enabled = !HasFactType<BFBody>(desc);
+                            if (GUILayout.Button("Body")) {
+                                CreateFactType<BFBody>(desc, "Body");
+                                m_NewFactId = string.Empty;
+                            }
+                            GUI.enabled = !string.IsNullOrEmpty(m_NewFactId);
+
+                            if (GUILayout.Button("Consume")) {
+                                CreateFactType<BFConsume>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Produce")) {
+                                CreateFactType<BFProduce>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Grow")) {
+                                CreateFactType<BFGrow>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Reproduce")) {
+                                CreateFactType<BFReproduce>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Eat")) {
+                                CreateFactType<BFEat>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+
+                            if (GUILayout.Button("Death")) {
+                                CreateFactType<BFDeath>(desc, m_NewFactId);
+                                m_NewFactId = string.Empty;
+                            }
+                            break;
+                        }
+                    }
+
+                    GUI.enabled = true;
+                }
+
                 serializedObject.ApplyModifiedProperties();
+            }
+
+            static private T CreateFactType<T>(BestiaryDesc inParent, string inNewName) where T : BFBase {
+                T fact = ScriptableObject.CreateInstance<T>();
+                fact.name = inParent.name + "." + inNewName;
+
+                string directory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(inParent));
+                string assetPath = Path.Combine(directory, fact.name + ".asset");
+                AssetDatabase.CreateAsset(fact, assetPath);
+                AssetDatabase.ImportAsset(assetPath);
+
+                Selection.activeObject = fact;
+
+                // Editor factEditor = CreateEditor(fact);
+
+                ArrayUtility.Add(ref inParent.m_Facts, fact);
+                EditorUtility.SetDirty(inParent);
+                return fact;
+            }
+
+            static private bool HasFactType<T>(BestiaryDesc inParent) {
+                foreach(var fact in inParent.m_Facts) {
+                    if (fact is T) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             static private void Header(string inHeader) {

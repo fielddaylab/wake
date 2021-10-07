@@ -8,8 +8,8 @@ namespace ProtoAqua.Observation
 {
     public class AutoFactGiver : MonoBehaviour, ISceneLoadHandler
     {
-        public SerializedHash32[] EntityIds;
-        public SerializedHash32[] FactIds;
+        [FilterBestiaryId] public SerializedHash32[] EntityIds;
+        [FactId] public SerializedHash32[] FactIds;
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {

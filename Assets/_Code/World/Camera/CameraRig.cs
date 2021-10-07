@@ -69,6 +69,15 @@ namespace Aqua.Cameras
         [UnityEditor.CustomEditor(typeof(CameraRig))]
         private class Inspector : UnityEditor.Editor
         {
+            private UnityEditor.Editor m_FOVPlaneEditor;
+
+            private void OnDisable()
+            {
+                if (m_FOVPlaneEditor) {
+                    DestroyImmediate(m_FOVPlaneEditor);
+                }
+            }
+
             public override void OnInspectorGUI()
             {
                 base.OnInspectorGUI();
@@ -78,8 +87,8 @@ namespace Aqua.Cameras
                 {
                     UnityEditor.EditorGUILayout.Space();
                     UnityEditor.EditorGUILayout.LabelField("Plane", UnityEditor.EditorStyles.boldLabel);
-                    UnityEditor.Editor fovPlaneEditor = CreateEditor(rig.FOVPlane);
-                    fovPlaneEditor.OnInspectorGUI();
+                    CreateCachedEditor(rig.FOVPlane, null, ref m_FOVPlaneEditor);
+                    m_FOVPlaneEditor.OnInspectorGUI();
                 }
             }
         }
