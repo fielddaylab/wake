@@ -55,7 +55,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        [CustomEditor(typeof(MapDesc))]
+        [CustomEditor(typeof(MapDesc)), CanEditMultipleObjects]
         private class Inspector : Editor {
             private SerializedProperty m_CategoryProperty;
             private SerializedProperty m_FlagsProperty;

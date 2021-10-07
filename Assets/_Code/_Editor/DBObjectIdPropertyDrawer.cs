@@ -16,6 +16,10 @@ namespace Aqua.Editor
         {
             DBObjectIdAttribute attr = (DBObjectIdAttribute) attribute;
             Type fieldType = fieldInfo.FieldType;
+            Type enumerableType = Reflect.GetEnumerableType(fieldType);
+            if (enumerableType != null) {
+                fieldType = enumerableType;
+            }
 
             SerializedProperty hashProperty, stringProperty;
 

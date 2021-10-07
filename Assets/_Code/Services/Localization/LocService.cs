@@ -28,17 +28,20 @@ namespace Aqua
         private Routine m_LoadRoutine;
         private IPool<TagString> m_TagStringPool;
 
+        private bool m_Loading;
         private List<LocText> m_ActiveTexts = new List<LocText>(64);
         
         #region Loading
 
         private IEnumerator InitialLoad()
         {
+            m_Loading = true;
             yield return Routine.Combine(
                 LoadIndependent(true),
                 LoadLanguage(true)
             );
 
+            m_Loading = false;
             DispatchTextRefresh();
         }
 
@@ -122,7 +125,7 @@ namespace Aqua
         /// </summary>
         public string Localize(TextId inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
         {
-            if (m_LoadRoutine)
+            if (m_Loading)
             {
                 Log.Error("[LocService] Localization is still loading");
                 return inDefault.ToString();
@@ -168,7 +171,7 @@ namespace Aqua
             else
                 ioTagString.Clear();
 
-            if (m_LoadRoutine)
+            if (m_Loading)
             {
                 Log.Error("[LocService] Localization is still loading");
                 return false;

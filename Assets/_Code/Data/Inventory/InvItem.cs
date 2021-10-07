@@ -112,4 +112,25 @@ namespace Aqua
         Sellable = 0x02,
         AlwaysDisplay = 0x4,
     }
+
+    public class ItemIdAttribute : DBObjectIdAttribute {
+        public InvItemCategory? Category;
+
+        public ItemIdAttribute() : base(typeof(InvItem)) {
+            Category = null;
+        }
+
+        public ItemIdAttribute(InvItemCategory inCategory) : base(typeof(InvItem)) {
+            Category = inCategory;
+        }
+
+        public override bool Filter(DBObject inObject) {
+            if (Category.HasValue) {
+                InvItem item = (InvItem) inObject;
+                return item.Category() == Category.Value;
+            } else {
+                return true;
+            }
+        }
+    }
 }

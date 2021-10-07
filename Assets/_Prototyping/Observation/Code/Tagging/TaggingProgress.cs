@@ -18,5 +18,6 @@ namespace ProtoAqua.Observation
         public StringHash32 Id;
         public ushort TotalInScene;
         public ushort Tagged;
+        public Fraction16 Proportion;
     }
 }

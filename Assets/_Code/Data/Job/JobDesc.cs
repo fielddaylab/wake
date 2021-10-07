@@ -4,7 +4,6 @@ using Aqua.Profile;
 using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Aqua
@@ -34,8 +33,8 @@ namespace Aqua
         [SerializeField] private string m_PrereqConditions = null;
 
         [Header("Locations")]
-        [SerializeField] private SerializedHash32 m_StationId = null;
-        [SerializeField] private SerializedHash32[] m_DiveSiteIds = null;
+        [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = null;
 
         [Header("Steps")]
         [SerializeField] private EditorJobTask[] m_Tasks = null;
@@ -44,7 +43,7 @@ namespace Aqua
         [Header("Rewards")]
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_GearReward = 0;
-        [SerializeField] private SerializedHash32[] m_AdditionalRewards = null;
+        [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = null;
 
         [Header("Assets")]
         [SerializeField] private LeafAsset m_Scripting = null;
@@ -154,6 +153,18 @@ namespace Aqua
             foreach(var asset in m_ExtraAssets)
             {
                 if ((casted = asset as T) != null)
+                    return casted;
+            }
+
+            return null;
+        }
+
+        public T FindAsset<T>(StringHash32 inId) where T : ScriptableObject
+        {
+            T casted;
+            foreach(var asset in m_ExtraAssets)
+            {
+                if ((casted = asset as T) != null && inId == casted.name)
                     return casted;
             }
 

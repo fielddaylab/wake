@@ -20,9 +20,18 @@ namespace ProtoAqua.Observation
     {
         static private TaggingSystem s_Instance;
 
+        [Serializable]
+        private struct CritterProportion {
+            [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 CritterId;
+            public Fraction16 Proportion;
+        }
+
         #region Inspector
 
-        [SerializeField] private VFX.Pool m_EffectPool = null;
+        [SerializeField, PrefabModeOnly] private VFX.Pool m_EffectPool = null;
+        [Space]
+        [SerializeField] private Fraction16 m_DefaultTagProportion = new Fraction16(0.8f);
+        [SerializeField] private CritterProportion[] m_CritterProportionOverrides = null;
 
         #endregion // Inspector
 
@@ -174,12 +183,39 @@ namespace ProtoAqua.Observation
 
         public void Deregister(TaggableCritter inCritter)
         {
+            inCritter.Collider.enabled = false;
+
             m_RemainingCrittersReady.FastRemove(inCritter);
             m_RemainingCrittersNotReady.FastRemove(inCritter);
 
             if (m_SiteData != null)
             {
                 UntrackCritterType(inCritter.CritterId);
+            }
+        }
+
+        private void DeregisterAll(StringHash32 inCritterId, bool inbUntrack) {
+            TaggableCritter critter;
+            for(int i = m_RemainingCrittersReady.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCrittersReady[i];
+                if (critter.CritterId == inCritterId) {
+                    critter.Collider.enabled = false;
+                    m_RemainingCrittersReady.FastRemoveAt(i);
+                    if (inbUntrack) {
+                        UntrackCritterType(inCritterId);
+                    }
+                }
+            }
+
+            for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCrittersNotReady[i];
+                if (critter.CritterId == inCritterId) {
+                    critter.Collider.enabled = false;
+                    m_RemainingCrittersNotReady.FastRemoveAt(i);
+                    if (inbUntrack) {
+                        UntrackCritterType(inCritterId);
+                    }
+                }
             }
         }
 
@@ -229,6 +265,15 @@ namespace ProtoAqua.Observation
             newCategory.Id = inId;
             newCategory.Tagged = 0;
             newCategory.TotalInScene = 0;
+            newCategory.Proportion = m_DefaultTagProportion;
+            if (m_CritterProportionOverrides != null) {
+                for(int i = 0; i < m_CritterProportionOverrides.Length; i++) {
+                    if (m_CritterProportionOverrides[i].CritterId == inId) {
+                        newCategory.Proportion = m_CritterProportionOverrides[i].Proportion;
+                        break;
+                    }
+                }
+            }
             m_CritterTypes.PushBack(newCategory);
             return ref m_CritterTypes[m_CritterTypes.Count - 1];
         }
@@ -275,13 +320,16 @@ namespace ProtoAqua.Observation
                 
                 DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
 
-                if (category.Tagged >= category.TotalInScene)
+                ushort required = (ushort) (category.TotalInScene * category.Proportion);
+                if (category.Tagged >= required)
                 {
                     var cachedCategory = category;
 
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
                     m_CritterTypes.FastRemoveAt(idx);
                     m_SiteData.OnChanged();
+
+                    DeregisterAll(inCritter.CritterId, true);
 
                     BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id, m_SiteData.SiteVersion);
 
