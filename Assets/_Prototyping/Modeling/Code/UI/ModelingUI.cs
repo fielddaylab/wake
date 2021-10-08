@@ -56,7 +56,7 @@ namespace ProtoAqua.Modeling
                 for(int i = 0; i < actors.Length; i++)
                 {
                     var critter = actors[i];
-                    if (m_UniversalModel.IsCritterGraphed(critter.Id) && HasPopulationHistory(m_Scenario, i))
+                    if (m_UniversalModel.IsCritterGraphed(critter.Id))
                     {
                         bIsReady = true;
                         break;

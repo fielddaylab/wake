@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -195,7 +195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4919866276359592950}
   - component: {fileID: 8131762165095103285}
-  - component: {fileID: 6328361661063776055}
+  - component: {fileID: 5694170277142079961}
   m_Layer: 5
   m_Name: Region
   m_TagString: Untagged
@@ -221,8 +221,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -150, y: 20}
-  m_SizeDelta: {x: -300, y: -40}
+  m_AnchoredPosition: {x: -150, y: 16}
+  m_SizeDelta: {x: -300, y: -32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8131762165095103285
 CanvasRenderer:
@@ -232,7 +232,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1629739986286202749}
   m_CullTransparentMesh: 0
---- !u!114 &6328361661063776055
+--- !u!114 &5694170277142079961
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -241,26 +241,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1629739986286202749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a3ee03a5fada3942b82c53c377b7113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.28513333, g: 0.376, b: 0.3384, a: 0.5019608}
+  m_Color: {r: 0.3771805, g: 0.49056602, b: 0.40552685, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 510a9ede8615ea84b99bd898b716ef68, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1762994767704574093
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +287,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 268, y: 20}
-  m_SizeDelta: {x: 48, y: 32}
+  m_SizeDelta: {x: 40, y: 32}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1188111020713936143
 CanvasRenderer:
@@ -585,7 +575,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Import Facts from the Bestiary
+  m_text: 'Import <color=yellow>Facts</color> from AqOS
 
     to document behavior'
   m_isRightToLeft: 0
@@ -711,11 +701,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3926830851321721781, guid: 5f048d4a3c533334fa38c129c1115b8d,
         type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 3926830851321721781, guid: 5f048d4a3c533334fa38c129c1115b8d,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -777,7 +762,7 @@ PrefabInstance:
     - target: {fileID: 3926830851360415296, guid: 5f048d4a3c533334fa38c129c1115b8d,
         type: 3}
       propertyPath: m_text
-      value: Import Rules
+      value: Import Facts
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f048d4a3c533334fa38c129c1115b8d, type: 3}
