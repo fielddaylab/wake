@@ -43,7 +43,7 @@ namespace Aqua.Editor
                 {
                     DBObject dbObj = (DBObject) obj;
                     if (char.IsLetterOrDigit(obj.name[0]) && attr.Filter(dbObj))
-                        m_List.Add(dbObj.Id(), obj.name);
+                        m_List.Add(dbObj.Id(), attr.Name(dbObj));
                 }
                 m_LastUpdated = EditorApplication.timeSinceStartup;
             }

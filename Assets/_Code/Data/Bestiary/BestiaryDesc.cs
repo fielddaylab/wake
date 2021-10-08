@@ -576,5 +576,15 @@ namespace Aqua
         public override bool Filter(DBObject inObject) {
             return ((BestiaryDesc) inObject).HasCategory(Category);
         }
+
+        public override string Name(DBObject inObject) {
+            BestiaryDesc desc = (BestiaryDesc) inObject;
+            StringHash32 stationId = desc.StationId();
+            if (stationId.IsEmpty) {
+                return string.Format("Shared/{0}", desc.name);
+            } else {
+                return string.Format("{0}/{1}", stationId.ToDebugString(), desc.name);
+            }
+        }
     }
 }

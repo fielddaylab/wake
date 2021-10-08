@@ -42,14 +42,28 @@ namespace Aqua.Editor
                 foreach(var obj in AssetDBUtils.FindAssets(attr.FactType))
                 {
                     BFBase fact = (BFBase) obj;
-                    string name = fact.name;
-                    string path = name;
-                    int dot = path.IndexOf('.');
-                    if (dot > 0) {
-                        string critter = path.Substring(0, dot);
-                        path = critter + "/" + path.Substring(dot + 1).Replace(".", "/");
+                    if (!fact.Parent) {
+                        continue;
                     }
-                    m_List.Add(name, path);
+
+                    string rootPath;
+                    StringHash32 stationId = fact.Parent.StationId();
+                    if (stationId.IsEmpty) {
+                        rootPath = string.Format("Shared/{0}/", fact.Parent.name);
+                    } else {
+                        rootPath = string.Format("{0}/{1}/", stationId.ToDebugString(), fact.Parent.name);
+                    }
+
+                    string name = fact.name;
+
+                    string factPath = name;
+                    int dot = factPath.IndexOf('.');
+                    if (dot > 0) {
+                        factPath = factPath.Substring(dot + 1);
+                    }
+
+                    string fullPath = rootPath + factPath;
+                    m_List.Add(name, fullPath);
                 }
                 m_LastUpdated = EditorApplication.timeSinceStartup;
             }

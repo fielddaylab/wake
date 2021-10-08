@@ -162,5 +162,14 @@ namespace Aqua
                 return true;
             }
         }
+
+        public override string Name(DBObject inObject) {
+            if (Category.HasValue) {
+                return inObject.name;
+            }
+
+            MapDesc desc = (MapDesc) inObject;
+            return string.Format("{0}/{1}", desc.Category().ToString(), desc.name);
+        }
     }
 }
