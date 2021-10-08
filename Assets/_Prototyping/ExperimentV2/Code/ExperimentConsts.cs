@@ -21,7 +21,6 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 CaptureCircleVisible = "BehaviorCaptureChance";
         static public readonly StringHash32 CaptureCircleExpired = "BehaviorCaptureChanceExpired";
         static public readonly StringHash32 NewBehaviorObserved = "NewBehaviorObserved";
-        static public readonly StringHash32 BehaviorAlreadyObserved = "BehaviorAlreadyObserved";
         static public readonly StringHash32 ExperimentIdle = "ExperimentIdle";
     }
 }

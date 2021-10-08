@@ -1,33 +1,5 @@
 #basePath   partner.talk.experiment
 
-// Behavior Already Observed
-
-:: behavior.alreadyObserved.1
-@trigger    BehaviorAlreadyObserved
-@who        kevin
-@repeat 1
-@chatter
-$set temp:newObservationTimer + 1
-{@kevin}    I think we already got this one.
-
-:: behavior.alreadyObserved.2
-@trigger    BehaviorAlreadyObserved
-@who        kevin
-@repeat 1
-@chatter
-$set temp:newObservationTimer + 1
-{@kevin}    We already know this.
-
-:: behavior.alreadyObserved.exitHint
-@trigger    BehaviorAlreadyObserved
-@who        kevin
-@when       temp:newObservationTimer > 2
-@triggerPriority    High
-@repeat     1
-@chatter
-$set temp:newObservationTimer = 0
-{@kevin}    I think we've got everything we need!
-
 :: behavior.newObservation.1
 @trigger    NewBehaviorObserved
 @who        kevin
@@ -43,3 +15,67 @@ $set temp:newObservationTimer = 0
 @chatter
 $set temp:newObservationTimer = 0
 {@kevin}    Good catch.
+
+:: behavior.idle.nothingLeft.1
+@trigger    ExperimentIdle
+@when       newFactsLeft == 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    I think we might be done here?
+
+:: behavior.idle.nothingLeft.2
+@trigger    ExperimentIdle
+@when       newFactsLeft == 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    I don't think there's anything left for us to observe.
+
+:: behavior.idle.nothingLeft.missedSome.1
+@trigger    ExperimentIdle
+@when       newFactsLeft == 0, missedFacts > 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    Well, we might have missed something... we should finish up and restart this experiment.
+
+:: behavior.idle.nothingLeft.missedSome.2
+@trigger    ExperimentIdle
+@when       newFactsLeft == 0, missedFacts > 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    I feel like we missed something... we should finish this up and restart the experiment.
+
+:: behavior.idle.somethingLeft.noCircles.1
+@trigger    ExperimentIdle
+@when       newFactsLeft > 0, temp:behaviorCirclesSeen == 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    Let's be patient, I think there might be something here to observe.
+
+:: behavior.idle.somethingLeft.noCircles.2
+@trigger    ExperimentIdle
+@when       newFactsLeft > 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    I'm pretty sure there's something new here to observe...
+
+:: behavior.idle.somethingLeft.1
+@trigger    ExperimentIdle
+@when       newFactsLeft > 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    Let's wait for another opportunity to observe a behavior.
+
+:: behavior.idle.somethingLeft.2
+@trigger    ExperimentIdle
+@when       newFactsLeft > 0
+@who        kevin
+@repeat 1
+@chatter
+{@kevin}    We've already seen something - maybe there's something else to observe?

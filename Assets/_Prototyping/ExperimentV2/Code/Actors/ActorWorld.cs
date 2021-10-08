@@ -16,6 +16,7 @@ namespace ProtoAqua.ExperimentV2
         public WaterPropertyBlockF32 Water;
         public bool HasEnvironment;
         public object Tag;
+        public float Lifetime;
 
         public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, object inTag = null)
         {

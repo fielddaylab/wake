@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Profile;
 using Aqua.Scripting;
 using BeauPools;
 using BeauRoutine;
@@ -14,6 +15,10 @@ namespace ProtoAqua.ExperimentV2
 {
     public class ObservationBehaviorSystem : MonoBehaviour, ISceneOptimizable
     {
+        private const float SpeedUpLifetimeThreshold = 60;
+
+        public delegate bool HasFactDelegate(StringHash32 inFactId);
+
         private enum Phase
         {
             Spawning,
@@ -83,7 +88,9 @@ namespace ProtoAqua.ExperimentV2
 
         public void TickBehaviors(float inDeltaTime)
         {
-            IsSpawningComplete();
+            if (IsSpawningComplete()) {
+                World.Lifetime += inDeltaTime;
+            }
         }
 
         private bool IsSpawningComplete()
@@ -106,8 +113,14 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
+        public bool IsSpawningCompleted() {
+            return m_Phase == Phase.Executing;
+        }
+
         private void FinalizeCritterInitialization()
         {
+            World.Lifetime = 0;
+            
             ActorInstance critter;
             for(int i = World.Actors.Count - 1; i >= 0; i--)
             {
@@ -123,6 +136,48 @@ namespace ProtoAqua.ExperimentV2
             }
 
             ActorWorld.RegenerateActorCounts(World);
+        }
+
+        public int GetPotentialNewObservations(HasFactDelegate inDelegate, ICollection<BFBase> outFactIds)
+        {
+            Assert.NotNull(inDelegate);
+            
+            int factCount = 0;
+            ActorDefinition def;
+            ActorStateId state;
+            ActorDefinition.ValidEatTarget[] possibleEats;
+            foreach(var critterCount in World.ActorCounts)
+            {
+                if (critterCount.Population == 0)
+                    continue;
+
+                def = World.Allocator.Define(critterCount.Id);
+                state = def.StateEvaluator.Evaluate(World.Water);
+                possibleEats = ActorDefinition.GetEatTargets(def, state);
+                
+                foreach(var eat in possibleEats) {
+                    if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(World, eat.TargetId) == 0)
+                        continue;
+
+                    factCount++;
+                    if (outFactIds != null) {
+                        outFactIds.Add(Assets.Fact(eat.FactId));
+                    }
+                }
+            }
+
+            return factCount;
+        }
+
+        public bool IsFactObservable(BFBase inFact) {
+            switch(inFact.Type) {
+                case BFTypeId.Eat: {
+                    BFEat eat = (BFEat) inFact;
+                    return ActorWorld.GetPopulation(World, eat.Parent.Id()) > 0 && ActorWorld.GetPopulation(World, eat.Critter.Id()) > 0;
+                }
+            }
+
+            return false;
         }
 
         #endregion // Tick
@@ -163,7 +218,16 @@ namespace ProtoAqua.ExperimentV2
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
-            int moveCount = !bLimitMovement ? 0 : RNG.Instance.Next(3, 6);
+            int moveCount;
+            if (!bLimitMovement) {
+                moveCount = 0;
+            } else {
+                if (inWorld.Lifetime >= SpeedUpLifetimeThreshold) {
+                    moveCount = RNG.Instance.Next(1, 4);
+                } else  {
+                    moveCount = RNG.Instance.Next(2, 5);
+                }
+            }
             Vector3 current;
             Vector3 target;
             float duration;
@@ -179,6 +243,10 @@ namespace ProtoAqua.ExperimentV2
 
                 yield return inActor.CachedTransform.MoveTo(target, duration, Axis.XY, Space.Self).Ease(def.Movement.MovementCurve);
                 yield return interval;
+
+                if (inWorld.Lifetime >= SpeedUpLifetimeThreshold && moveCount > 2) {
+                    moveCount = 2;
+                }
             }
 
             ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
@@ -465,6 +533,7 @@ namespace ProtoAqua.ExperimentV2
                 ActorWorld.SetWaterState(World, null);
             }
             m_Phase = Phase.Spawning;
+            World.Lifetime = 0;
         }
 
         public void ClearActors()

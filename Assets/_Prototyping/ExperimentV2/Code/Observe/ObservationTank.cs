@@ -9,6 +9,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,10 @@ namespace ProtoAqua.ExperimentV2
 {
     public class ObservationTank : MonoBehaviour, IScriptComponent
     {
+        private const float StartingIdleDuration = 30;
+        private const float ResetIdleDuration = 20;
+        private const float NoFactsLeftIdleDuration = 10;
+
         [Serializable] private class BehaviorCirclePool : SerializablePool<BehaviorCaptureCircle> { }
         
         #region Inspector
@@ -32,10 +37,11 @@ namespace ProtoAqua.ExperimentV2
         [Header("Running")]
         [SerializeField, Required] private CanvasGroup m_InProgressGroup = null;
         [SerializeField, Required] private ObservationBehaviorSystem m_ActorBehavior = null;
-        [SerializeField, Required] private AmbientRenderer m_CameraBlinking = null;
         [SerializeField] private BehaviorCirclePool m_BehaviorCircles = null;
         [SerializeField, Required] private ParticleSystem m_EatEmojis = null;
         [SerializeField, Required] private Button m_FinishButton = null;
+        [SerializeField, Required] private AmbientRenderer m_FinishButtonHighlight = null;
+        [SerializeField, Required] private TMP_Text m_UnobservedStateLabel = null;
 
         [Header("Summary")]
         [SerializeField, Required] private SummaryPanel m_SummaryPanel = null;
@@ -44,7 +50,11 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] private ActorWorld m_World;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
+        [NonSerialized] private HashSet<BFBase> m_PotentialNewFacts = new HashSet<BFBase>();
+        [NonSerialized] private int m_MissedFactCount = 0;
         [NonSerialized] private readonly List<ExperimentFactResult> m_FactResults = new List<ExperimentFactResult>();
+        [NonSerialized] private Routine m_IdleRoutine;
+        [NonSerialized] private float m_IdleUpdateCounter;
 
         private void Awake()
         {
@@ -63,7 +73,6 @@ namespace ProtoAqua.ExperimentV2
             m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
 
             m_RunButton.interactable = false;
-            m_CameraBlinking.enabled = false;
 
             m_BehaviorCircles.Initialize(null, null, 0);
             m_BehaviorCircles.Config.RegisterOnConstruct(OnCaptureConstructed);
@@ -73,6 +82,8 @@ namespace ProtoAqua.ExperimentV2
             m_RunButton.onClick.AddListener(OnRunClick);
             m_FinishButton.onClick.AddListener(OnFinishClick);
             m_SummaryPanel.ContinueButton.onClick.AddListener(OnSummaryCloseClick);
+
+            m_UnobservedStateLabel.gameObject.SetActive(false);
         }
 
         private void LateUpdate()
@@ -100,12 +111,15 @@ namespace ProtoAqua.ExperimentV2
             m_InProgressGroup.alpha = 0;
             m_InProgressGroup.blocksRaycasts = false;
             m_InProgressGroup.gameObject.SetActive(false);
+            m_UnobservedStateLabel.gameObject.SetActive(false);
 
             m_FactResults.Clear();
         }
 
         private void Deactivate()
         {
+            m_FinishButtonHighlight.gameObject.SetActive(false);
+            m_IdleRoutine.Stop();
             m_ActorBehavior.ClearAll();
             m_SelectEnvPanel.Hide();
             m_SelectEnvPanel.ClearSelection();
@@ -113,13 +127,13 @@ namespace ProtoAqua.ExperimentV2
             m_AddCrittersPanel.ClearSelection();
             m_BehaviorCircles.Reset();
             m_FactResults.Clear();
+            m_PotentialNewFacts.Clear();
             if (m_SummaryPanel.gameObject.activeSelf)
             {
                 m_SummaryPanel.gameObject.SetActive(false);
                 m_SummaryPanel.FactPools.FreeAll();
             }
             m_ParentTank.IsRunning = false;
-            m_CameraBlinking.enabled = false;
         }
         
         #endregion // Tank
@@ -217,6 +231,7 @@ namespace ProtoAqua.ExperimentV2
             }
             else
             {
+                Services.Data.AddVariable("temp:behaviorCirclesSeen", 1);
                 return tank.AllocCircle(inFactId, inLocation.CachedCollider.bounds.center);
             }
         }
@@ -236,6 +251,7 @@ namespace ProtoAqua.ExperimentV2
             Services.Audio.PostEvent("capture_flash");
             inCircle.OnDispose?.Invoke(inCircle);
             AttemptCaptureBehavior(inCircle.FactId);
+            Services.Data.AddVariable("temp:behaviorCirclesClicked", 1);
         }
 
         private void OnCaptureDisposed(BehaviorCaptureCircle inCircle)
@@ -256,26 +272,22 @@ namespace ProtoAqua.ExperimentV2
                 }
 
                 var factDef = Assets.Fact(inFactId);
+                m_PotentialNewFacts.Remove(factDef);
+                m_IdleUpdateCounter = m_PotentialNewFacts.Count > 0 ? ResetIdleDuration : NoFactsLeftIdleDuration;
+
                 m_FactResults.Add(new ExperimentFactResult(inFactId, ExperimentFactResultType.NewFact, 0));
 
                 Services.Audio.PostEvent("capture_new");
 
                 Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, factDef, BFType.DefaultDiscoveredFlags(factDef))
                     .OnComplete((r) => {
+                        m_FinishButton.interactable = true;
                         using(var table = TempVarTable.Alloc())
                         {
                             table.Set("factId", inFactId);
                             Services.Script.TriggerResponse(ExperimentTriggers.NewBehaviorObserved, table);
                         }
                     });
-            }
-            else
-            {
-                using(var table = TempVarTable.Alloc())
-                {
-                    table.Set("factId", inFactId);
-                    Services.Script.TriggerResponse(ExperimentTriggers.BehaviorAlreadyObserved, table);
-                }
             }
         }
 
@@ -307,33 +319,6 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // Animations
 
-        static private bool HasUnobservedFacts(ActorWorld inWorld)
-        {
-            BestiaryData saveData = Services.Data.Profile.Bestiary;
-            foreach(var pop in inWorld.ActorCounts)
-            {
-                if (pop.Population == 0)
-                    continue;
-
-                // any eating facts
-                ActorDefinition def = inWorld.Allocator.Define(pop.Id);
-                ActorStateId state = def.StateEvaluator.Evaluate(inWorld.Water);
-                var eatTargets = ActorDefinition.GetEatTargets(def, state);
-                foreach(var target in eatTargets)
-                {
-                    if (ActorWorld.GetPopulation(inWorld, target.TargetId) > 0)
-                    {
-                        if (!saveData.HasFact(target.FactId))
-                            return true;
-                    }
-                }
-
-                // todo: parasitism??
-            }
-
-            return false;
-        }
-
         #endregion // Behavior Capture
 
         static public void EmitEmoji(BFBase inFact, ActorInstance inActor, ActorWorld inWorld)
@@ -355,34 +340,110 @@ namespace ProtoAqua.ExperimentV2
 
             m_AddCrittersPanel.Hide();
             m_SelectEnvPanel.Hide();
-            
-            m_CameraBlinking.enabled = true;
+
+            Routine.Start(this, StartExperiment()).TryManuallyUpdate(0);
+        }
+
+        private IEnumerator StartExperiment()
+        {
+            m_BottomPanelGroup.blocksRaycasts = false;
+            m_InProgressGroup.blocksRaycasts = false;
+            m_ParentTank.BackClickable.gameObject.SetActive(false);
+            m_FinishButton.interactable = false;
+
+            while(!m_ActorBehavior.IsSpawningCompleted()) {
+                yield return null;
+            }
+
+            m_PotentialNewFacts.Clear();
+            int potentialNewObservationsCount;
+            using(Profiling.Time("getting potential observations")) {
+                potentialNewObservationsCount = m_ActorBehavior.GetPotentialNewObservations(Services.Data.Profile.Bestiary.HasFact, m_PotentialNewFacts);
+                Log.Msg("[ObservationTank] {0} potentially observable facts", potentialNewObservationsCount);
+            }
+            m_MissedFactCount = 0;
 
             using (var table = TempVarTable.Alloc())
             {
                 table.Set("tankType", m_ParentTank.Type.ToString());
                 table.Set("tankId", m_ParentTank.Id);
-                var startThread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
-                Routine.Start(this, StartExperiment(startThread)).TryManuallyUpdate(0);
+                table.Set("newFactsLeft", potentialNewObservationsCount);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
             }
 
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
-        }
 
-        private IEnumerator StartExperiment(ScriptThreadHandle inThread)
-        {
-            m_BottomPanelGroup.blocksRaycasts = false;
-            m_InProgressGroup.blocksRaycasts = false;
-            m_ParentTank.BackClickable.gameObject.SetActive(false);
+            m_UnobservedStateLabel.alpha = 0;
+            m_UnobservedStateLabel.gameObject.SetActive(true);
+
+            if (potentialNewObservationsCount > 0) {
+                m_UnobservedStateLabel.SetText("?");
+                m_UnobservedStateLabel.SetColor(ColorBank.Yellow);
+            } else {
+                m_UnobservedStateLabel.SetText("-");
+                m_UnobservedStateLabel.SetColor(ColorBank.DarkGray);
+            }
+
             yield return Routine.Combine(
                 m_BottomPanelGroup.Hide(0.1f, false),
                 m_InProgressGroup.Show(0.1f, true),
+                m_UnobservedStateLabel.FadeTo(1, 0.1f),
                 Tween.OneToZero(m_ParentTank.BackIndicators.SetAlpha, 0.1f)
             );
+
+            m_IdleRoutine.Replace(this, IdleUpdate());
+
+            if (potentialNewObservationsCount > 0) {
+                Services.Audio.PostEvent("Experiment.HasNewBehaviors");
+                yield return m_UnobservedStateLabel.transform.ScaleTo(1.02f, 0.2f, Axis.XY).Ease(Curve.CubeOut).Yoyo(true).RevertOnCancel();
+                yield return 15;
+            }
+
+            m_FinishButton.interactable = true;
+        }
+
+        private IEnumerator IdleUpdate() {
+            m_IdleUpdateCounter = StartingIdleDuration;
+            bool bHadFacts = m_PotentialNewFacts.Count > 0;
+            while(true) {
+                while(m_IdleUpdateCounter > 0) {
+                    if (!Services.UI.IsLetterboxed() && !Services.UI.Popup.IsShowing()) {
+                        m_IdleUpdateCounter -= Routine.DeltaTime;
+                    }
+                    yield return null;
+                }
+
+                CullPotentialFactSet();
+                Log.Msg("[ObservationTank] {0} new facts remaining", m_PotentialNewFacts.Count);
+                m_IdleUpdateCounter = ResetIdleDuration;
+
+                using (var table = TempVarTable.Alloc())
+                {
+                    table.Set("tankType", m_ParentTank.Type.ToString());
+                    table.Set("tankId", m_ParentTank.Id);
+                    table.Set("newFactsLeft", m_PotentialNewFacts.Count);
+                    table.Set("missedFacts", m_MissedFactCount);
+                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentIdle, table);
+                }
+
+                if (m_PotentialNewFacts.Count == 0 && bHadFacts) {
+                    m_UnobservedStateLabel.SetText("-");
+                    m_UnobservedStateLabel.SetColor(ColorBank.DarkGray);
+                    m_FinishButtonHighlight.gameObject.SetActive(true);
+                    bHadFacts = false;
+                    Services.Audio.PostEvent("Experiment.FinishPrompt");
+                }
+            }
+        }
+
+        private void CullPotentialFactSet() {
+            m_MissedFactCount += m_PotentialNewFacts.RemoveWhere((f) => !m_ActorBehavior.IsFactObservable(f));
         }
 
         private void OnFinishClick()
         {
+            m_FinishButtonHighlight.gameObject.SetActive(false);
+            m_IdleRoutine.Stop();
             m_ParentTank.IsRunning = false;
 
             foreach(var instance in m_World.Actors)
@@ -435,13 +496,16 @@ namespace ProtoAqua.ExperimentV2
             
             m_BehaviorCircles.Reset();
             m_ParentTank.IsRunning = false;
-            m_CameraBlinking.enabled = false;
 
             m_ParentTank.BackClickable.gameObject.SetActive(true);
             m_ParentTank.BackIndicators.SetAlpha(1);
 
             m_InProgressGroup.alpha = 0;
             m_InProgressGroup.gameObject.SetActive(false);
+
+            m_UnobservedStateLabel.gameObject.SetActive(false);
+            m_PotentialNewFacts.Clear();
+            m_MissedFactCount = 0;
         }
 
         private void InitializeSummaryScreen(ExperimentResult inResult)
