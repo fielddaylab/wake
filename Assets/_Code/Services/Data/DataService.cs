@@ -39,7 +39,7 @@ namespace Aqua
 
         [Header("Defaults")]
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
-        [SerializeField] private SerializedHash32 m_DefaultMapId = "Ship";
+        [SerializeField, MapId] private SerializedHash32 m_DefaultMapId = "Ship";
 
         [Header("Random Chances")]
 

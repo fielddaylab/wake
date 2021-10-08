@@ -10,7 +10,7 @@ namespace ProtoAqua.Observation
     {
         #region Inspector
 
-        public SerializedHash32 CritterId;
+        [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 CritterId;
         [Required] public Collider2D Collider;
         public Transform TrackTransform;
 

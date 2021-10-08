@@ -13,7 +13,7 @@ namespace Aqua.Character
 
         [SerializeField, Required] private Collider2D m_Collider = null;
         [Space]
-        [SerializeField] private SerializedHash32 m_TargetMap = null;
+        [SerializeField, MapId] private SerializedHash32 m_TargetMap = null;
         [SerializeField] private SerializedHash32 m_TargetEntrance = null;
 
         #endregion // Inspector

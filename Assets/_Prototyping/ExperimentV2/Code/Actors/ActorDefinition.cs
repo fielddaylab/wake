@@ -80,8 +80,8 @@ namespace ProtoAqua.ExperimentV2
         [Serializable]
         public struct ValidEatTarget
         {
-            public SerializedHash32 TargetId;
-            public SerializedHash32 FactId;
+            [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 TargetId;
+            [FactId(typeof(BFEat))] public SerializedHash32 FactId;
         }
 
         #endregion // Types

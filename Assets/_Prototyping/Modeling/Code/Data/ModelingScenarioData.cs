@@ -46,7 +46,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private TextId m_TickLabelId = default;
 
         [Header("Results")]
-        [SerializeField] private SerializedHash32 m_BestiaryModelId = null;
+        [SerializeField, FactId(typeof(BFModel))] private SerializedHash32 m_BestiaryModelId = null;
 
         #endregion // Inspector
 

@@ -11,7 +11,7 @@ namespace Aqua.StationMap
 
         [Header("Components")]
         [SerializeField, Required] private Collider2D m_Collider = null;
-        [SerializeField] private SerializedHash32 m_MapId = null;
+        [SerializeField, MapId] private SerializedHash32 m_MapId = null;
 
         #endregion // Inspector
 

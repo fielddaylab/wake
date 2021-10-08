@@ -15,7 +15,7 @@ namespace Aqua
         [SerializeField] private SerializedHash32[] m_RoomIds = null;
 
         [Header("Defaults")]
-        [SerializeField] private SerializedHash32 m_DefaultStationId = "Station1";
+        [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_DefaultStationId = "Station1";
         [SerializeField] private SerializedHash32[] m_DefaultUnlockedRooms = null;
 
         #endregion // Inspector

@@ -12,7 +12,7 @@ namespace Aqua.StationMap
 
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_MapId = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32 m_MapId = null;
         [SerializeField] private bool m_HideIfLocked = false;
 
         [Header("Components")]

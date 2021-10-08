@@ -11,7 +11,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField] private SerializedHash32 m_ItemName = null;
+        [SerializeField, ItemId(InvItemCategory.Upgrade)] private SerializedHash32 m_ItemName = null;
         [SerializeField] private GameObject[] m_ToShow = null;
         [SerializeField] private GameObject[] m_ToHide = null;
         [SerializeField, Tooltip("If set, this will be checked whenever the inventory is updated")] private bool m_ContinuousCheck = true;

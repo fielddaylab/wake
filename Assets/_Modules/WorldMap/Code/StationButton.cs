@@ -15,7 +15,7 @@ namespace Aqua.WorldMap
         [SerializeField] private Sprite m_CurrentSprite = null;
         [SerializeField] private Sprite m_OpenSprite = null;
         [Space]
-        [SerializeField] private SerializedHash32 m_StationId = null;
+        [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
         [SerializeField] private StationLabel m_Label = null;
 
         #endregion // Inspector
