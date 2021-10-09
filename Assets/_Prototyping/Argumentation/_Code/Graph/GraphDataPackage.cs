@@ -10,30 +10,24 @@ namespace ProtoAqua.Argumentation
     public class GraphDataPackage : ScriptableDataBlockPackage<GraphData>
     {
         [NonSerialized] private readonly Dictionary<StringHash32, GraphData> m_Data = new Dictionary<StringHash32, GraphData>(32);
-        [NonSerialized] private readonly Dictionary<StringHash32, Node> m_Nodes = new Dictionary<StringHash32, Node>(32);
-        [NonSerialized] private readonly Dictionary<StringHash32, Link> m_Links = new Dictionary<StringHash32, Link>(32);
+        [NonSerialized] private readonly Dictionary<StringHash32, ArgueNode> m_Nodes = new Dictionary<StringHash32, ArgueNode>(32);
+        [NonSerialized] private readonly Dictionary<StringHash32, ArgueLink> m_Links = new Dictionary<StringHash32, ArgueLink>(32);
 
         // Package Ids
         [BlockMeta("rootNodeId")] private StringHash32 m_RootNodeId = null;
         [BlockMeta("endNodeId")] private StringHash32 m_EndNodeId = null;
         [BlockMeta("defaultInvalidNodeId")] private StringHash32 m_DefaultInvalidNodeId = null;
-        [BlockMeta("linksFile")] private string m_LinksFile = null;
         [BlockMeta("characterId")] private StringHash32 m_CharacterId = null;
 
         #region Accessors
 
-        public Dictionary<StringHash32, Node> Nodes { get { return m_Nodes; } }
-        public Dictionary<StringHash32, Link> Links { get { return m_Links; } }
+        public Dictionary<StringHash32, ArgueNode> Nodes { get { return m_Nodes; } }
+        public Dictionary<StringHash32, ArgueLink> Links { get { return m_Links; } }
 
         public StringHash32 RootNodeId { get { return m_RootNodeId; } }
         public StringHash32 EndNodeId {  get { return m_EndNodeId; } }
         public StringHash32 DefaultInvalidNodeId { get { return m_DefaultInvalidNodeId; } }
         public StringHash32 CharacterId { get { return m_CharacterId; } }
-        
-        public string LinksFile
-        {
-            get { return m_LinksFile; }
-        }
 
         #endregion // Accessors
 
@@ -76,16 +70,16 @@ namespace ProtoAqua.Argumentation
 
                 if (id.StartsWith("node"))
                 {
-                    outBlock = new Node(id);
+                    outBlock = new ArgueNode(id);
                     inPackage.m_Data.Add(id, outBlock);
-                    inPackage.m_Nodes.Add(id, (Node)outBlock);
+                    inPackage.m_Nodes.Add(id, (ArgueNode)outBlock);
                     return true;
                 } 
                 else //@TODO FIX
                 {
-                    outBlock = new Link(id);
+                    outBlock = new ArgueLink(id);
                     inPackage.m_Data.Add(id, outBlock);
-                    inPackage.m_Links.Add(id, (Link)outBlock);
+                    inPackage.m_Links.Add(id, (ArgueLink)outBlock);
                     return true;
                 } 
                 // else

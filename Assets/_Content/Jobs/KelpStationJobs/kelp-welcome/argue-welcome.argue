@@ -2,7 +2,9 @@
 # endNodeId node.end
 # defaultInvalidNodeId node.invalid.first
 # characterId drJules
-# linksFile Links
+
+
+// INTRO
 
 :: node.intro
 @invalidNodeId  node.invalid.first
@@ -11,7 +13,7 @@
 Thanks for your help out there, {player-name}! What did you find out?
 
 :: node.invalid.first
-@nextNodeId node.retry
+@nextNodeId node.intro.retry
 Hmmm. That's not what I'm looking for. Let's start over.
 
 :: node.intro.retry
@@ -19,6 +21,8 @@ Hmmm. That's not what I'm looking for. Let's start over.
 @linkToNode Urchin.Eats.GiantKelp, node.urchinsEatKelp
 @linkToNode SeaOtter.Eats.Urchin, node.ottersEatUrchins
 What did you learn about how the species relate?
+
+// URCHIN EATS KELP
 
 :: node.urchinsEatKelp
 @invalidNodeId  node.invalid.urchinsEatKelp
@@ -34,6 +38,8 @@ Hmm, no, that isn't relevant.
 @linkToNode SeaOtter.Eats.Urchin, node.end
 Did you learn anything about the {pluralnameof SeaOtter}?
 
+// OTTER EATS URCHIN
+
 :: node.ottersEatUrchins
 @invalidNodeId  node.invalid.ottersEatUrchins
 @linkToNode Urchin.Eats.GiantKelp, node.end
@@ -47,6 +53,8 @@ Hmm, no, that isn't relevant.
 @invalidNodeId  node.invalid.ottersEatUrchins
 @linkToNode Urchin.Eats.GiantKelp, node.end
 Did you learn anything about what the {pluralnameof Urchin} eat?
+
+// ENDING
 
 :: node.end
 Really nice work! You just explained the basis of the kelp forest food web.

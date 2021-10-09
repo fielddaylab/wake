@@ -4,10 +4,9 @@ using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine.Scripting;
 
-
 namespace ProtoAqua.Argumentation
 {
-    public class Link : GraphData
+    public class ArgueLink : GraphData
     {
         private Dictionary<StringHash32, StringHash32> nextNodeIds = new Dictionary<StringHash32, StringHash32>();
         private List<StringHash32> requiredVisited = new List<StringHash32>();
@@ -17,7 +16,7 @@ namespace ProtoAqua.Argumentation
 
         // Properties
         [BlockMeta("tag")] private StringHash32 m_Tag = null;
-        [BlockMeta("conditions")] private string m_Conditions = null;
+        [BlockMeta("showIf")] private string m_Conditions = null;
         [BlockMeta("shortenedText")] private string m_ShortenedText = null;
 
         // Text
@@ -34,9 +33,9 @@ namespace ProtoAqua.Argumentation
 
         #endregion // Accessors
 
-        public Link(string inId) : base(inId) { }
+        public ArgueLink(string inId) : base(inId) { }
 
-        public Link(BFBase inPlayerFact, BFDiscoveredFlags inFlags)
+        public ArgueLink(BFBase inPlayerFact, BFDiscoveredFlags inFlags)
             : base(inPlayerFact.name)
         {
             m_DisplayText = BFType.GenerateSentence(inPlayerFact, inFlags);

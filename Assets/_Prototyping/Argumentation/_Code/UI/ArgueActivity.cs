@@ -34,6 +34,7 @@ namespace ProtoAqua.Argumentation
         [SerializeField] private ScrollRect m_ScrollRect = null;
         [SerializeField] private LayoutGroup m_ChatLayout = null;
         [SerializeField] private ChatPool m_NodePool = null;
+        [SerializeField] private Transform m_ConvoFinished = null;
 
         [Header("Input")]
         [SerializeField] private LinkManager m_LinkManager = null;
@@ -53,8 +54,10 @@ namespace ProtoAqua.Argumentation
         private Routine m_ChatRoutine;
         [NonSerialized] private ScriptCharacterDef m_CharacterDef;
         [NonSerialized] private ScriptCharacterDef m_PlayerDef;
-        [NonSerialized] private List<Link> m_Claims = new List<Link>();
+        [NonSerialized] private List<ArgueLink> m_Claims = new List<ArgueLink>();
         [NonSerialized] private HashSet<StringHash32> m_VisitedNodes = new HashSet<StringHash32>();
+        [NonSerialized] private HashSet<StringHash32> m_SetFlags = new HashSet<StringHash32>();
+        [NonSerialized] private ArgueNode m_CurrentNode;
 
         private void Start()
         {
@@ -66,6 +69,8 @@ namespace ProtoAqua.Argumentation
             m_Graph.OnGraphLoaded += OnGraphLoaded;
             m_Graph.OnGraphNotAvailable += NotAvailable;
 
+            m_ConvoFinished.gameObject.SetActive(false);
+
             s_Instance = this;
         }
 
@@ -74,7 +79,7 @@ namespace ProtoAqua.Argumentation
             m_Group.gameObject.SetActive(true);
             m_NotAvailableGroup.gameObject.SetActive(false);
 
-            foreach(var link in m_Graph.LinkDictionary.Values)
+            foreach(var link in m_Graph.Links)
             {
                 if (link.Tag == "claim")
                     m_Claims.Add(link);
@@ -104,18 +109,18 @@ namespace ProtoAqua.Argumentation
 
         private void OnOptionSelected(StringHash32 inOptionId)
         {
-            Link link = m_Graph.FindLink(inOptionId);
+            ArgueLink link = m_Graph.FindLink(inOptionId);
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
         }
 
         private void OnFactSelected(StringHash32 inId)
         {
-            Link link = m_Graph.FindLink(inId);
+            ArgueLink link = m_Graph.FindLink(inId);
             if (link == null)
             {
                 BFBase fact = Assets.Fact(inId);
                 BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(inId);
-                link = new Link(fact, flags);
+                link = new ArgueLink(fact, flags);
             }
 
             m_ChatRoutine.Replace(this, DisplayLink(link)).TryManuallyUpdate(0);
@@ -131,7 +136,7 @@ namespace ProtoAqua.Argumentation
 
         #region Display
 
-        private IEnumerator DisplayLink(Link inLink)
+        private IEnumerator DisplayLink(ArgueLink inLink)
         {
             m_InputRaycasterLayer.Override = false;
             m_LinkManager.Hide();
@@ -142,66 +147,83 @@ namespace ProtoAqua.Argumentation
             Services.Audio.PostEvent("argue.chat.player");
             
             yield return ScrollDown();
-            yield return 0.5f;
+            yield return 1;
 
-            Node node = m_Graph.NextNode(inLink.Id);
+            ArgueNode node = m_Graph.NextNode(m_CurrentNode, inLink.Id);
             yield return DisplayNode(node);
         }
 
-        private IEnumerator DisplayNode(Node inNode)
+        private IEnumerator DisplayNode(ArgueNode inNode)
         {
             m_InputRaycasterLayer.Override = false;
 
-            Node toDisplay = inNode;
-            Node currentNode = inNode;
-            while(toDisplay != null)
-            {
+            ArgueNode toDisplay = inNode;
+            ArgueNode currentNode = inNode;
+            while(toDisplay != null) {
                 currentNode = toDisplay;
-                m_Graph.SetCurrentNode(currentNode);
+                m_CurrentNode = toDisplay;
                 m_VisitedNodes.Add(currentNode.Id);
 
-                ArgueChatLine chat = m_NodePool.Alloc();
-                chat.Populate(toDisplay.DisplayText, m_CharacterDef);
-                
-                if (toDisplay.IsInvalid)
-                {
-                    chat.OverrideColors(null, m_InvalidColor);
-                    Routine.Start(this, ShakeNode(chat));
-                    Services.Audio.PostEvent("argue.chat.incorrect");
+                foreach(var flag in m_CurrentNode.FlagsToUnset) {
+                    m_SetFlags.Remove(flag);
                 }
-                else if (toDisplay.Id == m_Graph.EndNodeId)
-                {
-                    chat.OverrideColors(null, m_EndColor);
-                    Services.Audio.PostEvent("argue.chat.end");
+                foreach(var flag in m_CurrentNode.FlagsToSet) {
+                    m_SetFlags.Add(flag);
                 }
-                else
-                {
-                    Services.Audio.PostEvent("argue.chat.new");
-                }
-                
-                m_ChatLayout.ForceRebuild();
-                yield return ScrollDown();
-                yield return 1.2f;
 
-                toDisplay = m_Graph.FindNode(toDisplay.NextNodeId);
+                var lines = toDisplay.DisplayTexts;
+                for(int i = 0; i < lines.Length; i++) {
+                    ArgueChatLine chat = m_NodePool.Alloc();
+                    chat.Populate(lines[i], m_CharacterDef);
+
+                    if (toDisplay.IsInvalid) {
+                        chat.OverrideColors(null, m_InvalidColor);
+                        if (i == 0) {
+                            Routine.Start(this, ShakeNode(chat));
+                            Services.Audio.PostEvent("argue.chat.incorrect");
+                        } else {
+                            Services.Audio.PostEvent("argue.chat.new");
+                        }
+                    } else if (toDisplay.Id == m_Graph.EndNodeId) {
+                        chat.OverrideColors(null, m_EndColor);
+                        if (i == 0) {
+                            Services.Audio.PostEvent("argue.chat.end");
+                        } else {
+                            Services.Audio.PostEvent("argue.chat.new");
+                        }
+                    } else {
+                        Services.Audio.PostEvent("argue.chat.new");
+                    }
+
+                    m_ChatLayout.ForceRebuild();
+                    yield return ScrollDown();
+                    yield return 1.2f;
+                }
+                
+                toDisplay = m_Graph.NextNode(toDisplay);
             }
 
             yield return 0.5f;
 
-            if (currentNode.Id == m_Graph.EndNodeId)
-            {
+            if (currentNode.CancelFlow) {
+                m_ConvoFinished.gameObject.SetActive(true);
+                m_ConvoFinished.SetAsLastSibling();
+                m_ChatLayout.ForceRebuild();
+                yield return ScrollDown();
+                yield return 3;
+                StateUtil.LoadPreviousSceneWithWipe();
+            } else if (currentNode.Id == m_Graph.EndNodeId) {
+                m_ConvoFinished.gameObject.SetActive(true);
+                m_ConvoFinished.SetAsLastSibling();
+                m_ChatLayout.ForceRebuild();
+                yield return ScrollDown();
                 yield return 3;
                 EndConversationPopup();
-            }
-            else
-            {
+            } else {
                 m_InputRaycasterLayer.Override = null;
-                if (currentNode.ShowClaims)
-                {
+                if (currentNode.ShowClaims) {
                     m_LinkManager.DisplayClaims(m_Claims);
-                }
-                else
-                {
+                } else {
                     m_LinkManager.DisplayBestiary();
                 }
             }
@@ -222,7 +244,8 @@ namespace ProtoAqua.Argumentation
         private IEnumerator OnStartChat()
         {
             yield return 1;
-            yield return Routine.Inline(DisplayNode(m_Graph.RootNode));
+            ArgueNode rootNode = m_Graph.FindNode(m_Graph.RootNodeId);
+            yield return Routine.Inline(DisplayNode(rootNode));
         }
 
         private void EndConversationPopup()
@@ -259,6 +282,13 @@ namespace ProtoAqua.Argumentation
         {
             Assert.NotNull(s_Instance, "Argue Activity not started");
             return s_Instance.m_VisitedNodes.Contains(inId);
+        }
+
+        [LeafMember("ArgueFlag")]
+        static private bool LeafArgueFlag(StringHash32 inId)
+        {
+            Assert.NotNull(s_Instance, "Argue Activity not started");
+            return s_Instance.m_SetFlags.Contains(inId);
         }
     }
 }

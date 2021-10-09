@@ -1,16 +1,18 @@
-﻿using System;
+﻿#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
+using System;
 using System.Collections.Generic;
 using Aqua;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace ProtoAqua.Argumentation
 {
-    public class Graph : MonoBehaviour, ISceneLoadHandler, ISceneUnloadHandler
+    public class Graph : MonoBehaviour, ISceneLoadHandler
     {
-        [Header("Graph Dependencies")]
-        [SerializeField] private GraphDataManager m_GraphDataManager = null;
-
         #pragma warning disable CS0414
 
         [Header("-- DEBUG --")]
@@ -18,12 +20,9 @@ namespace ProtoAqua.Argumentation
 
         #pragma warning restore CS0414
 
-        private Dictionary<StringHash32, Node> nodeDictionary = new Dictionary<StringHash32, Node>();
-        private Dictionary<StringHash32, Link> linkDictionary = new Dictionary<StringHash32, Link>();
-
-        private ConditionsData m_Conditions;
-        private Node m_RootNode;
-        private Node m_CurrentNode;
+        private Dictionary<StringHash32, ArgueNode> m_NodeMap;
+        private Dictionary<StringHash32, ArgueLink> m_LinkMap;
+        [NonSerialized] private StringHash32 m_RootNodeId;
         [NonSerialized] private StringHash32 m_EndNodeId;
         [NonSerialized] private StringHash32 m_DefaultInvalidNodeId;
         [NonSerialized] private StringHash32 m_CharacterId;
@@ -33,39 +32,23 @@ namespace ProtoAqua.Argumentation
 
         #region Accessors
 
-        public Dictionary<StringHash32, Link> LinkDictionary
-        {
-            get { return linkDictionary; }
+        public StringHash32 RootNodeId {
+            get { return m_RootNodeId; }
         }
-
-        public Node RootNode
-        {
-            get { return m_RootNode; }
-        }
-
-        public StringHash32 EndNodeId
-        {
+        public StringHash32 EndNodeId {
             get { return m_EndNodeId; }
         }
-
-        public ConditionsData Conditions
-        {
-            get { return m_Conditions; }
+        public StringHash32 CharacterId {
+            get { return m_CharacterId; }
         }
-
-        public StringHash32 CharacterId { get { return m_CharacterId; } }
+        public IEnumerable<ArgueLink> Links {
+            get { return m_LinkMap.Values; }
+        }
 
         #endregion // Accessors
 
-        void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)
-        {
-            Services.Tweaks?.Unload(m_GraphDataManager);
-        }
-
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            Services.Tweaks.Load(m_GraphDataManager);
-
             JobDesc currentJob = Services.Data.CurrentJob()?.Job;
             GraphDataPackage script = currentJob?.FindAsset<GraphDataPackage>();
             
@@ -91,141 +74,122 @@ namespace ProtoAqua.Argumentation
         // Given a link id, check if that link is a valid response for the current node.
         // If valid, find that link and the id of the next node based on the current node.
         // Then check if conditions for traversing to that next node are met.
-        public Node NextNode(StringHash32 id)
-        {
-            if (m_CurrentNode.CheckResponse(id))
+        public ArgueNode NextNode(ArgueNode current, StringHash32 linkId) {
+            StringHash32 nextNodeId = EvaluateNextNodeId(current, linkId);
+            if (!nextNodeId.IsEmpty)
             {
-                StringHash32 nextNodeId = m_CurrentNode.GetNextNodeId(id);
-                Node nextNode = FindNode(nextNodeId);
-
-                if (nextNode != null)
-                {
-                    if (m_Conditions.CheckConditions(nextNode, id))
-                    {
-                        m_CurrentNode = nextNode;
-                        return m_CurrentNode;
-                    }
-                    else
-                    {
-                        return m_CurrentNode = FindNode(m_CurrentNode.InvalidNodeId);
-                    }
-                }
-                else
-                {
-                    // If no nextNodeId, go to default node
-                    // TODO: Find better implementation for default node
-                    return FindNode(m_CurrentNode.DefaultNodeId);
+                ArgueNode nextNode = FindNode(nextNodeId);
+                if (nextNode != null) {
+                    return nextNode;
                 }
             }
-            else
-            {
-                // If id isn't valid, display invalid fact node
-                if (m_CurrentNode.InvalidNodeId != null)
-                {
-                    return FindNode(m_CurrentNode.InvalidNodeId);
-                }
-
-                return FindNode(m_DefaultInvalidNodeId);
+            if (current.InvalidNodeId != null) {
+                return FindNode(current.InvalidNodeId);
             }
+
+            return FindNode(m_DefaultInvalidNodeId);
         }
 
-        public void SetCurrentNode(Node node) {
-            m_CurrentNode = node;
+        public ArgueNode NextNode(ArgueNode current) {
+            var potentialNexts = current.PotentialNexts;
+            for(int i = 0; i < potentialNexts.Length; i++) {
+                ArgueNode.PotentialNext entry = potentialNexts[i];
+                if (!string.IsNullOrEmpty(entry.Conditions) && !Services.Data.CheckConditions(entry.Conditions)) {
+                    continue;
+                }
+                return FindNode(entry.NodeId);
+            }
+
+            return null;
+        }
+
+        private StringHash32 EvaluateNextNodeId(ArgueNode inCurrent, StringHash32 inLinkId) {
+            var potentialLinks = inCurrent.PotentialLinks;
+            for(int i = 0; i < potentialLinks.Length; i++) {
+                ArgueNode.PotentialLink entry = potentialLinks[i];
+                if (entry.LinkId != inLinkId) {
+                    continue;
+                }
+                if (!string.IsNullOrEmpty(entry.Conditions) && !Services.Data.CheckConditions(entry.Conditions)) {
+                    continue;
+                }
+                return entry.NodeId;
+            }
+            
+            return null;
         }
 
         // Helper method for finding a node given its id
-        public Node FindNode(StringHash32 id)
-        {
-            if (nodeDictionary.TryGetValue(id, out Node node))
-            {
-                return node;
-            }
-
-            return null;
+        public ArgueNode FindNode(StringHash32 id) {
+            m_NodeMap.TryGetValue(id, out ArgueNode node);
+            return node;
         }
 
         // Helper method for finding a link given its id
-        public Link FindLink(StringHash32 id)
-        {
-            if (linkDictionary.TryGetValue(id, out Link link))
-            {
-                return link;
-            }
-
-            return null;
+        public ArgueLink FindLink(StringHash32 id) {
+            m_LinkMap.TryGetValue(id, out ArgueLink link);
+            return link;
         }
 
-        private void ResetGraph()
-        {
-            nodeDictionary = new Dictionary<StringHash32, Node>();
-            linkDictionary = new Dictionary<StringHash32, Link>();
-            m_RootNode = null;
-            m_CurrentNode = null;
+        private void ResetGraph() {
+            m_NodeMap = null;
+            m_LinkMap = null;
+            m_RootNodeId = null;
             m_EndNodeId = null;
-            m_Conditions = null;
             m_CharacterId = null;
         }
 
-        private void LoadGraph(GraphDataPackage inPackage)
-        {
+        private void LoadGraph(GraphDataPackage inPackage) {
             ResetGraph();
 
             inPackage.Parse(new GraphDataPackage.Generator());
 
-            foreach (KeyValuePair<StringHash32, Node> kvp in inPackage.Nodes)
-            {
-                Node node = kvp.Value;
-                nodeDictionary.Add(node.Id, node);
-            }
-
-            m_RootNode = FindNode(inPackage.RootNodeId);
+            m_NodeMap = inPackage.Nodes;
+            m_LinkMap = inPackage.Links;
             m_CharacterId = inPackage.CharacterId;
-
-            // Checks if no root node was specified
-            if (m_RootNode == null)
-            {
-                throw new System.ArgumentNullException("No root node specified");
-            }
-
-            m_CurrentNode = m_RootNode;
-            m_Conditions = new ConditionsData(m_CurrentNode.Id);
-
+            m_RootNodeId = inPackage.RootNodeId;
             m_EndNodeId = inPackage.EndNodeId;
-
-            if (m_EndNodeId == null)
-            {
-                throw new System.ArgumentNullException("No end node specified");
-            }
-
-
             m_DefaultInvalidNodeId = inPackage.DefaultInvalidNodeId;
 
-            if (m_DefaultInvalidNodeId == null)
-            {
-                throw new System.ArgumentNullException("No default invalid node specified");
+            #if DEVELOPMENT
+            using(Profiling.Time("validating argumentation graph")) {
+                ValidateGraph();
             }
-
-            if (!string.IsNullOrEmpty(inPackage.LinksFile))
-            {
-                LoadLinks(m_GraphDataManager.GetPackage(inPackage.LinksFile));
-            }
-
-            LoadLinks(inPackage);
+            #endif // DEVELOPMENT
 
             if (OnGraphLoaded != null)
                 OnGraphLoaded();
         }
 
-        private void LoadLinks(GraphDataPackage inPackage)
-        {
-            DataService dataService = Services.Data;
+        #if DEVELOPMENT
+        private void ValidateGraph() {
+            Assert.False(m_RootNodeId.IsEmpty, "No root node specified for graph");
+            Assert.False(m_EndNodeId.IsEmpty, "No end node specified for graph");
+            Assert.False(m_DefaultInvalidNodeId.IsEmpty, "No default invalid node specified for graph");
 
-            foreach (KeyValuePair<StringHash32, Link> kvp in inPackage.Links)
-            {
-                Link link = kvp.Value;
-                linkDictionary.Add(link.Id, link);
+            Assert.True(m_NodeMap.ContainsKey(m_RootNodeId), "Root node '{0}' is missing", m_RootNodeId);
+            Assert.True(m_NodeMap.ContainsKey(m_EndNodeId), "End node '{0}' is missing", m_EndNodeId);
+            Assert.True(m_NodeMap.ContainsKey(m_DefaultInvalidNodeId), "Default invalid node '{0}' is missing", m_DefaultInvalidNodeId);
+
+            foreach(var node in m_NodeMap.Values) {
+                StringHash32 invalid = node.InvalidNodeId;
+                if (!invalid.IsEmpty) {
+                    Assert.True(m_NodeMap.ContainsKey(invalid), "Node '{0}' links to missing invalid node '{1}'", node.Id, invalid);
+                }
+
+                foreach(var link in node.PotentialLinks) {
+                    Assert.True(m_NodeMap.ContainsKey(link.NodeId), "Node '{0}' links to missing response node '{1}'", node.Id, link.NodeId);
+                }
+
+                foreach(var next in node.PotentialNexts) {
+                    Assert.True(m_NodeMap.ContainsKey(next.NodeId), "Node '{0}' links to missing next node '{1}'", node.Id, next.NodeId);
+                }
+
+                if (node.Id != m_EndNodeId && !node.CancelFlow && node.PotentialLinks.IsEmpty && node.PotentialNexts.IsEmpty) {
+                    Log.Warn("[Graph] Node '{0}' has no links and no next nodes", node.Id);
+                }
             }
-
         }
+        #endif // DEVELOPMENT
     }
 }

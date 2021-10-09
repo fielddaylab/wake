@@ -26,7 +26,7 @@ namespace ProtoAqua.Argumentation
             m_ClaimGroup.gameObject.SetActive(false);
         }
 
-        public void DisplayClaims(IEnumerable<Link> inLinks)
+        public void DisplayClaims(IEnumerable<ArgueLink> inLinks)
         {
             m_ClaimGroup.gameObject.SetActive(true);
             m_BestiaryGroup.gameObject.SetActive(false);

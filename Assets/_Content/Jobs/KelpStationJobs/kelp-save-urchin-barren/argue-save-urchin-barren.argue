@@ -1,83 +1,217 @@
 # rootNodeId node.intro
 # endNodeId node.SiteBFix.end
 # defaultInvalidNodeId node.invalid.default
-# linksFile Links
+# characterId drJules
 
-// General
+// INTRO
 
 :: node.intro
 @showClaims
+@linkToNode link.SiteBHopeless, node.SiteBHopeless.hasModel; HasFact(Model.UrchinBarrenIntroduceOtters)
 @linkToNode link.SiteBHopeless, node.SiteBHopeless
+@linkToNode link.DontKnow, node.dontKnow
 @linkToNode link.SiteBFix, node.SiteBFix
 I figured it was hopeless... There's no way we can fix Site B, right?
 
-:: node.SiteBHopeless.Continue
-@showClaims
-@linkToNode link.SiteBHopeless, node.SiteBHopeless
-@linkToNode link.SiteBFix, node.SiteBFix
-Is there anything we can do for site B?
-
-:: node.SiteBFix.Continue
-@showClaims
-@linkToNode link.SiteBHopeless, node.SiteBHopeless
-@linkToNode link.SiteBFix, node.SiteBFix
-Is there anything we can do for site B?
-
-// Claims
-
 :: link.SiteBHopeless
 @tag claim
-
-You are right. Site B is hopeless.
+You're right, Site B is hopeless.
 
 :: link.SiteBFix
 @tag claim
+@showIf HasFact(Model.UrchinBarrenIntroduceOtters)
+Site B can be fixed by adding {pluralnameof SeaOtter}!
 
-Site B can be fixed with otters!
+:: link.DontKnow
+@tag claim
+@showIf !HasFact(Model.UrchinBarrenIntroduceOtters)
+I don't know yet.
 
+:: node.RevisitClaim
+@showClaims
+@linkToNode link.SiteBHopeless, node.SiteBHopeless.hasModel; HasFact(Model.UrchinBarrenIntroduceOtters)
+@linkToNode link.SiteBHopeless, node.SiteBHopeless
+@linkToNode link.SiteBFix, node.SiteBFix
+So, is there anything we can do for Site B?
 
-// Nodes
+// DONT KNOW
+
+:: node.dontKnow
+@cancel
+That's okay! Just let me know when you've got a plan.
+Maybe stop by your {nameof Modeling} again.
+
+// HOPELESS
 
 :: node.SiteBHopeless
 @invalidNodeId  node.invalid.SiteBHopeless
 @linkToNode     Model.UrchinBarrenIntroduceOtters, node.invalid.SiteBHopeless.model
+I thought so... Do you have any evidence to back that up?
+
+:: node.invalid.SiteBHopeless
+@nextNodeId node.RevisitClaim
+No, that's not relevant.
+Maybe we should revisit your claim.
+
+// HOPELESS WITH MODEL
+
+:: node.SiteBHopeless.hasModel
+@invalidNodeId  node.invalid.SiteBHopeless.hasModel
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.invalid.SiteBHopeless.model
+@linkToNode     Model.UrchinBarrenPrediction, node.invalid.SiteBHopeless.model.wrongModel
 I thought so... Maybe I could take a look at your model to see for sure?
+
+:: node.invalid.SiteBHopeless.hasModel
+@invalidNodeId  node.invalid.SiteBHopeless.hasModel
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.invalid.SiteBHopeless.model
+@linkToNode     Model.UrchinBarrenPrediction, node.invalid.SiteBHopeless.model.wrongModel
+No, that's not relevant. Show me the model you made of changing the Urchin Barren.
+
+:: node.invalid.SiteBHopeless.model
+@nextNodeId node.RevisitClaim
+@setFlag    earlyModel
+Huh, I'm seeing something different in your model...
+I think we should revisit your claim.
+
+:: node.invalid.SiteBHopeless.model.wrongModel
+@invalidNodeId  node.invalid.SiteBHopeless.hasModel
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.invalid.SiteBHopeless.model
+@linkToNode     Model.UrchinBarrenPrediction, node.invalid.SiteBHopeless.model.wrongModel
+No, I mean the other model. I think you made a model about changing the Urchin Barren somehow?
+
+// CAN FIX
 
 :: node.SiteBFix
 @invalidNodeId  node.invalid.SiteBFix
-@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters
-@linkToNode     Urchin.Eats.BullKelp, node.end
-@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFixModelTooSoon
-Otters? What do Otters do that would help?
-
-:: node.SiteBFixModelTooSoon
-@invalidNodeId  node.invalid.SiteBFix
-@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters
-@linkToNode     Urchin.Eats.BullKelp, node.end
-That's really interesting, but what do Otters do?
-
-:: node.SiteBFix.otters
-@invalidNodeId  node.invalid.SiteBFix
-@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.end
-Huh, you think otters can help... Do you have any other evidence for that?
-
-:: node.SiteBFix.end
-Right on! Now... Where to find some otters... I'll work on that. You go help someone else with a new job!
-
-
-// Invalid
-
-:: node.invalid.default
-Hmmm, I'm not so sure that's right.
-
-:: node.invalid.SiteBHopeless
-Oh... No good. I don't think we can say definitively without modelling the future of Site B. Let's come back later after we've done more work.
-
-:: node.invalid.SiteBHopeless.model
-@nextNodeId node.SiteBHopeless.Continue
-Huh... I'm seeing something different here. I think we should revisit your claim...
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.new
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.new.fromOtter
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.invalid.early; ArgueFlag(earlyModel)
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.early
+{pluralnameof SeaOtter}? What do {pluralnameof SeaOtter} do that would help here?
 
 :: node.invalid.SiteBFix
-@nextNodeId node.SiteBFix.Continue
-Huh, that doesn't seem to line up to your claim.
+@nextNodeId node.SiteBFix.Hub
+No no, that doesn't seem relevant here.
 
+:: node.SiteBFix.Hub
+@nextNodeId node.SiteBFix.end; ArgueFlag(otters), ArgueFlag(urchins), ArgueFlag(model)
+@nextNodeId node.SiteBFix.NeedSeaOtter.seenUrchin; !ArgueFlag(otters), ArgueFlag(urchins)
+@nextNodeId node.SiteBFix.NeedSeaOtter; !ArgueFlag(otters)
+@nextNodeId node.SiteBFix.NeedUrchin; !ArgueFlag(urchins)
+@nextNodeId node.SiteBFix.NeedModel.fromEarly; ArgueFlag(otters), ArgueFlag(urchins), ArgueFlag(earlyModel)
+@nextNodeId node.SiteBFix.NeedModel; ArgueFlag(otters), ArgueFlag(urchins)
+@nextNodeId node.invalid.default
+
+// SEA OTTER PROMPTS
+
+:: node.SiteBFix.NeedSeaOtter
+@invalidNodeId  node.invalid.SiteBFix
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.new
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.new.fromOtter
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.invalid.early; ArgueFlag(earlyModel)
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.early
+What do {pluralnameof SeaOtter} do that would help restore the {nameof GiantKelp} population?
+
+:: node.SiteBFix.NeedSeaOtter.seenUrchin
+@invalidNodeId  node.invalid.SiteBFix
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.new
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.invalid
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.invalid.early; ArgueFlag(earlyModel)
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.early
+So what's the connection between {pluralnameof SeaOtter} and {pluralnameof Urchin}?
+
+// URCHIN PROMPTS
+
+:: node.SiteBFix.NeedUrchin
+@invalidNodeId  node.invalid.SiteBFix
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.invalid
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.new
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.invalid.early; ArgueFlag(earlyModel)
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.early
+So what's the connection between {pluralnameof Urchin} and {pluralnameof GiantKelp}?
+
+// MODEL PROMPTS
+
+:: node.SiteBFix.NeedModel
+@invalidNodeId  node.invalid.SiteBFix
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.invalid
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.invalid
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.new
+Okay, do you have a model that demonstrates that adding {critter-name}Otters{/critter-name} will help restore the {critter-name}Kelp{/critter-name} population?
+
+:: node.SiteBFix.NeedModel.fromEarly
+@invalidNodeId  node.invalid.SiteBFix
+@linkToNode     SeaOtter.Eats.Urchin, node.SiteBFix.otters.invalid
+@linkToNode     Urchin.Eats.GiantKelp, node.SiteBFix.urchins.invalid
+@linkToNode     Model.UrchinBarrenIntroduceOtters, node.SiteBFix.model.newFromEarly
+So I think you've already shown me the model you made that shows the connection here...  Mind sending it to me again?
+
+// OTTERS
+
+:: node.SiteBFix.otters.new
+@nextNodeId node.SiteBFix.Hub
+@setFlag    otters
+Right, we had established that {pluralnameof SeaOtter} eat {pluralnameof Urchin} during your previous job...
+
+:: node.SiteBFix.otters.new.fromUrchin
+@nextNodeId node.SiteBFix.Hub
+@setFlag    otters
+Right, so {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
+
+:: node.SiteBFix.otters.invalid
+@nextNodeId node.SiteBFix.Hub
+Yeah, but we already know that.
+
+// URCHINS
+
+:: node.SiteBFix.urchins.new
+@nextNodeId node.SiteBFix.Hub
+@setFlag    urchins
+Of course, {pluralnameof Urchin} eat {nameof GiantKelp}!
+
+:: node.SiteBFix.urchins.new.fromOtter
+@nextNodeId node.SiteBFix.Hub
+@setFlag    urchins
+Okay, {pluralnameof Urchin} eat {nameof GiantKelp}...
+
+:: node.SiteBFix.urchins.invalid
+@nextNodeId node.SiteBFix.Hub
+Right, but we've already covered that.
+
+// MODEL EARLY
+
+:: node.SiteBFix.model.early
+@nextNodeId node.SiteBFix.Hub
+@setFlag    earlyModel
+Okay, this shows an increase in {nameof GiantKelp}, but why?
+
+:: node.SiteBFix.model.invalid.early
+@nextNodeId node.SiteBFix.Hub; 
+You've already shown me this, but I don't know why the {nameof GiantKelp} population increases.
+
+// MODEL
+
+:: node.SiteBFix.model.new
+@nextNodeId node.SiteBFix.Hub
+@setFlag    model
+Interesting! Acording to your model, as we add {critter-name}Otters{/critter-name}, the {critter-name}Kelp{/critter-name} population increases!
+
+:: node.SiteBFix.model.newFromEarly
+@nextNodeId node.SiteBFix.Hub
+@setFlag    model
+Aha! So according to your model, the increase in {critter-name}Kelp{/critter-name} is linked to adding {critter-name}Otters{/critter-name}!
+
+// ENDING
+
+:: node.SiteBFix.end
+Okay, so because {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
+Adding some {pluralnameof SeaOtter} will ultimately let the {critter-name}Kelp{/critter-name} repopulate!
+Now... where to find some otters..
+You know what, I'll work on that.
+
+// DEFAULT
+
+:: node.invalid.default
+@cancel
+[This should never be shown.]
+[If you're seeing this, something went wrong, and you should report it to your teacher.]
