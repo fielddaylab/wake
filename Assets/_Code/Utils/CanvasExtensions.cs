@@ -30,21 +30,29 @@ namespace Aqua
             inRect.anchorMax = max;
         }
 
-        static public IEnumerator Show(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = null)
+        static public IEnumerator Show(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = true)
         {
             if (!inGroup.gameObject.activeSelf)
             {
                 inGroup.alpha = 0;
                 inGroup.gameObject.SetActive(true);
-                if (inbRaycasts.HasValue)
-                    inGroup.blocksRaycasts = false;
             }
+            if (inbRaycasts.HasValue)
+                inGroup.blocksRaycasts = false;
             yield return inGroup.FadeTo(1, inDuration);
             if (inbRaycasts.HasValue)
                 inGroup.blocksRaycasts = inbRaycasts.Value;
         }
 
-        static public IEnumerator Hide(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = null)
+        static public void Show(this CanvasGroup inGroup, bool? inbRaycasts = true) {
+            inGroup.alpha = 1;
+            if (inbRaycasts.HasValue) {
+                inGroup.blocksRaycasts = inbRaycasts.Value;
+            }
+            inGroup.gameObject.SetActive(true);
+        }
+
+        static public IEnumerator Hide(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = false)
         {
             if (inGroup.gameObject.activeSelf)
             {
@@ -52,6 +60,14 @@ namespace Aqua
                     inGroup.blocksRaycasts = inbRaycasts.Value;
                 yield return inGroup.FadeTo(0, inDuration);
                 inGroup.gameObject.SetActive(false);
+            }
+        }
+
+        static public void Hide(this CanvasGroup inGroup, bool? inbRaycasts = false) {
+            inGroup.gameObject.SetActive(false);
+            inGroup.alpha = 0;
+            if (inbRaycasts.HasValue) {
+                inGroup.blocksRaycasts = inbRaycasts.Value;
             }
         }
     }

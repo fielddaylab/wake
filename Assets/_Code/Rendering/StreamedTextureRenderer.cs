@@ -31,18 +31,6 @@ namespace Aqua {
         [NonSerialized] private Texture2D m_LoadedTexture;
         [NonSerialized] private Material m_MaterialInstance;
 
-        #if UNITY_EDITOR
-
-        private void OnEnable() {
-            m_MeshFilter = GetComponent<MeshFilter>();
-            m_MeshRenderer = GetComponent<MeshRenderer>();
-
-            RebuildMesh();
-            RebuildMaterial();
-        }
-
-        #endif // UNITY_EDITOR
-
         private void OnDestroy() {
             UnloadResources();
         }
@@ -126,9 +114,21 @@ namespace Aqua {
 
         #if UNITY_EDITOR
 
+        private void OnEnable() {
+            if (Application.IsPlaying(this))
+                return;
+            
+            m_MeshFilter = GetComponent<MeshFilter>();
+            m_MeshRenderer = GetComponent<MeshRenderer>();
+
+            RebuildMesh();
+            RebuildMaterial();
+        }
+
         private void Reset() {
             m_MeshFilter = GetComponent<MeshFilter>();
             m_MeshRenderer = GetComponent<MeshRenderer>();
+            m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
         }
 
         private void OnValidate() {

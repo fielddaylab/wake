@@ -10,6 +10,8 @@ namespace Aqua {
     /// </summary>
     static public class RenderUtils {
 
+        #region Quad
+
         static private readonly Vector3[] s_QuadGeneratorVertices = new Vector3[4];
         static private readonly Color32[] s_QuadGeneratorColors = new Color32[4];
 
@@ -20,8 +22,7 @@ namespace Aqua {
         /// <summary>
         /// Generates a quad mesh.
         /// </summary>
-        static public Mesh CreateQuad(Vector2 inSize, Vector2 inPivot, Color32 inColor, Mesh ioOverwrite = null)
-        {
+        static public Mesh CreateQuad(Vector2 inSize, Vector2 inPivot, Color32 inColor, Mesh ioOverwrite = null) {
             Mesh mesh = ioOverwrite;
             if (mesh == null) {
                 mesh = new Mesh();
@@ -55,5 +56,7 @@ namespace Aqua {
 
             return mesh;
         }
+
+        #endregion // Quad
     }
 }

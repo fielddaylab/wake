@@ -113,6 +113,7 @@ namespace ProtoAqua.ExperimentV2
         public int TargetLimit;
         public bool FreeOnEaten;
         public Rect EatOffsetRange;
+        public Rect LocalBoundsRect;
 
         #region Utility
 
@@ -339,8 +340,10 @@ namespace ProtoAqua.ExperimentV2
 
             Vector3 offsetPos = inPrefab.CachedTransform.position;
             Bounds bounds = PhysicsUtils.GetLocalBounds(inPrefab.CachedCollider);
-            bounds.extents *= 0.9f;
+            bounds.center += offsetPos;
+            inDef.LocalBoundsRect = Geom.BoundsToRect(bounds);
 
+            bounds.extents *= 0.9f;
             inDef.EatOffsetRange = Geom.BoundsToRect(bounds);
         }
 

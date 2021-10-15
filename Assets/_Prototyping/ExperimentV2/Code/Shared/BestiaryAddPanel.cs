@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Cameras;
@@ -26,8 +27,7 @@ namespace ProtoAqua.ExperimentV2
 
         [Header("Capacity")]
         [SerializeField, Range(1, 8)] private int m_MaxAllowed = 1;
-        [SerializeField] private TMP_Text m_CurrentText = null;
-        [SerializeField] private TMP_Text m_MaxText = null;
+        [SerializeField] private TickDisplay m_CurrentDisplay = null;
 
         [Header("List")]
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Category = BestiaryDescCategory.Critter;
@@ -57,6 +57,8 @@ namespace ProtoAqua.ExperimentV2
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, InvalidateListFromBestiaryUpdate, this)
                 .Register(GameEvents.ProfileRefresh, InvalidateListAndClearSet, this);
+
+            CanvasGroup.alpha = 0;
         }
 
         private void OnDestroy()
@@ -76,6 +78,26 @@ namespace ProtoAqua.ExperimentV2
                 PopulateCritters();
                 m_NeedsRebuild = false;
             }
+        }
+
+        protected override void InstantTransitionToShow()
+        {
+            CanvasGroup.Show(null);
+        }
+
+        protected override void InstantTransitionToHide()
+        {
+            CanvasGroup.Hide(null);
+        }
+
+        protected override IEnumerator TransitionToShow()
+        {
+            return CanvasGroup.Show(0.2f, null);
+        }
+
+        protected override IEnumerator TransitionToHide()
+        {
+            return CanvasGroup.Hide(0.2f, null);
         }
 
         #endregion // BasePanel
@@ -144,7 +166,9 @@ namespace ProtoAqua.ExperimentV2
             {
                 m_SelectedCount = 0;
                 m_SelectedSet.Clear();
-                m_CurrentText.SetText("0");
+                if (m_CurrentDisplay) {
+                    m_CurrentDisplay.Display(0);
+                }
                 OnCleared?.Invoke();
                 return true;
             }
@@ -230,7 +254,9 @@ namespace ProtoAqua.ExperimentV2
             if (inbOn && m_SelectedSet.Add(inCritter))
             {
                 m_SelectedCount++;
-                m_CurrentText.SetText(m_SelectedCount.ToStringLookup());
+                if (m_CurrentDisplay) {
+                    m_CurrentDisplay.Display(m_SelectedCount);
+                }
 
                 if (m_MaxAllowed > 1 && m_SelectedCount == m_MaxAllowed)
                 {
@@ -247,7 +273,9 @@ namespace ProtoAqua.ExperimentV2
                 }
 
                 m_SelectedCount--;
-                m_CurrentText.SetText(m_SelectedCount.ToStringLookup());
+                if (m_CurrentDisplay) {
+                    m_CurrentDisplay.Display(m_SelectedCount);
+                }
 
                 OnRemoved?.Invoke(inCritter);
             }
@@ -269,9 +297,10 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneOptimizable.Optimize()
         {
-            m_CurrentText.SetText("0");
-            m_MaxText.SetText(m_MaxAllowed.ToStringLookup());
-
+            if (m_CurrentDisplay) {
+                m_CurrentDisplay.Display(0);
+            }
+            
             if (m_MaxAllowed > 1)
                 m_ToggleGroup = null;
         }
