@@ -16,36 +16,29 @@ namespace Aqua
         [SerializeField, AutoEnum] private JobCategory m_Category = JobCategory.MainStory;
         [SerializeField, AutoEnum] private JobDescFlags m_Flags = 0;
 
-        [Header("Text")]
         [SerializeField] private TextId m_NameId = default;
         [SerializeField] private TextId m_PosterId = default;
         [SerializeField] private TextId m_DescId = default;
         [SerializeField] private TextId m_DescShortId = default;
         [SerializeField] private TextId m_DescCompletedId = default;
 
-        [Header("Info")]
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ArgumentationDifficulty = 0;
 
-        [Header("Conditions")]
         [SerializeField] private JobDesc[] m_PrerequisiteJobs = null;
         [SerializeField] private string m_PrereqConditions = null;
 
-        [Header("Locations")]
         [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
         [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = null;
 
-        [Header("Steps")]
         [SerializeField] private EditorJobTask[] m_Tasks = null;
         [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = null;
 
-        [Header("Rewards")]
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_GearReward = 0;
         [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = null;
 
-        [Header("Assets")]
         [SerializeField] private LeafAsset m_Scripting = null;
         [SerializeField] private ScriptableObject[] m_ExtraAssets = null;
 

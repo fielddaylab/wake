@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -988,6 +988,52 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 189397716}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1425083111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1425083113}
+  - component: {fileID: 1425083112}
+  m_Layer: 0
+  m_Name: Visuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1425083112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425083111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce2c2b6c8f059c249be11e73bc3584b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Scene:
+    m_ScenePath: Assets/_Content/Maps/CoralStation/RS-2V/RS-2V-Visuals.unity
+    m_GUID: 3ba94033789f946c1802bd2f82e30cad
+--- !u!4 &1425083113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425083111}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1431890782
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1237,7 +1283,7 @@ PrefabInstance:
     - target: {fileID: 717193858308737037, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 111.175
+      value: 139.215
       objectReference: {fileID: 0}
     - target: {fileID: 717193858308737037, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1442,7 +1488,7 @@ PrefabInstance:
     - target: {fileID: 5092524900190539208, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 233.465
+      value: 300.245
       objectReference: {fileID: 0}
     - target: {fileID: 5092524900190539208, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1542,7 +1588,7 @@ PrefabInstance:
     - target: {fileID: 7260430757360601711, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 146.815
+      value: 187.43
       objectReference: {fileID: 0}
     - target: {fileID: 7260430757360601711, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1567,7 +1613,7 @@ PrefabInstance:
     - target: {fileID: 7296620596295429803, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 48.285004
+      value: 60.20999
       objectReference: {fileID: 0}
     - target: {fileID: 7296620596295429803, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1602,7 +1648,7 @@ PrefabInstance:
     - target: {fileID: 7640456210338427266, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 162.185
+      value: 208.825
       objectReference: {fileID: 0}
     - target: {fileID: 7640456210338427266, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1667,7 +1713,7 @@ PrefabInstance:
     - target: {fileID: 8621256589140183877, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 44.325
+      value: 50.405
       objectReference: {fileID: 0}
     - target: {fileID: 8621256589140183877, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}

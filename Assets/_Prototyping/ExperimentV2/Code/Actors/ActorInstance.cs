@@ -13,7 +13,7 @@ namespace ProtoAqua.ExperimentV2
 {
     public sealed class ActorInstance : MonoBehaviour, IPooledObject<ActorInstance>
     {
-        public const float DropSpawnAnimationDistance = 8;
+        public const float DropSpawnAnimationDistance = 4;
         public delegate void GeneralDelegate(ActorInstance inActor, ActorWorld inWorld);
         public delegate void StateEnterExitDelegate(ActorInstance inActor, ActorWorld inWorld);
         public delegate void ActionEnterDelegate(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev);
@@ -368,7 +368,8 @@ namespace ProtoAqua.ExperimentV2
             else
             {
                 Vector3 offsetPos = targetPos;
-                offsetPos.y += DropSpawnAnimationDistance;
+                float surfaceDistY = inWorld.WorldBounds.max.y - targetPos.y;
+                offsetPos.y += DropSpawnAnimationDistance + surfaceDistY + def.Spawning.AvoidTankTopBottomRadius;
                 inInstance.CachedTransform.SetPosition(offsetPos, Axis.XYZ, Space.Self);
                 inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).TryManuallyUpdate(0);
             }
@@ -377,17 +378,23 @@ namespace ProtoAqua.ExperimentV2
         static private IEnumerator SproutFromBottom(ActorInstance inInstance, ActorWorld inWorld)
         {
             inInstance.CachedCollider.enabled = false;
-            yield return RNG.Instance.NextFloat(0, 0.2f);
+            yield return RNG.Instance.NextFloat(0, 0.3f);
             inInstance.CachedCollider.enabled = true;
 
-            yield return inInstance.CachedTransform.ScaleTo(1, 0.2f).Ease(Curve.CubeOut);
+            yield return inInstance.CachedTransform.ScaleTo(1, 0.3f).Ease(Curve.CubeOut);
+            if (inInstance.IdleAnimation) {
+                yield return Tween.ZeroToOne((f) => inInstance.IdleAnimation.AnimationScale = f, 0.2f);
+            }
             SetActorAction(inInstance, ActorActionId.Waiting, inWorld);
         }
 
         static private IEnumerator FallToPosition(ActorInstance inInstance, Vector3 inTargetPosition, ActorWorld inWorld)
         {
-            yield return RNG.Instance.NextFloat(0, 0.2f);
-            yield return inInstance.CachedTransform.MoveTo(inTargetPosition, 0.2f, Axis.XYZ, Space.Self).Ease(Curve.CubeOut);
+            yield return RNG.Instance.NextFloat(0, 0.3f);
+            yield return inInstance.CachedTransform.MoveTo(inTargetPosition, 0.3f, Axis.XYZ, Space.Self).Ease(Curve.CubeOut);
+            if (inInstance.IdleAnimation) {
+                yield return Tween.ZeroToOne((f) => inInstance.IdleAnimation.AnimationScale = f, 0.2f);
+            }
             SetActorAction(inInstance, ActorActionId.Waiting, inWorld);
         }
 

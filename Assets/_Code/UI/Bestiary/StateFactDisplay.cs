@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
+using BeauPools;
 
 namespace Aqua
 {
-    public class StateFactDisplay : MonoBehaviour
+    public class StateFactDisplay : MonoBehaviour, IPoolAllocHandler
     {
         #region Inspector
 
@@ -13,11 +14,16 @@ namespace Aqua
         [SerializeField, Required] private Graphic m_KillBackground = null;
         [SerializeField, Required] private RangeDisplay m_StressRange = null;
         [SerializeField, Required] private RangeDisplay m_AliveRange = null;
+        [SerializeField] private RectTransform m_EnvironmentValueMarker = null;
 
         #endregion // Inspector
 
-        public void Populate(BFState inFact)
+        private WaterPropertyId m_CachedPropertyId;
+
+        public void Populate(BFState inFact, BestiaryDesc inEnvironment = null)
         {
+            m_CachedPropertyId = inFact.Property;
+
             var propData = Assets.Property(inFact.Property);
             m_Icon.sprite = inFact.Icon;
 
@@ -37,6 +43,41 @@ namespace Aqua
             }
 
             m_AliveRange.Display(range.AliveMin, range.AliveMax, propData.MinValue(), propData.MaxValue());
+
+            SetEnvironment(inEnvironment);
+        }
+
+        public void SetEnvironment(BestiaryDesc inEnvironment = null) {
+            if (!m_EnvironmentValueMarker || m_CachedPropertyId == WaterPropertyId.MAX) {
+                return;
+            }
+
+            if (!inEnvironment) {
+                m_EnvironmentValueMarker.gameObject.SetActive(false);
+            } else {
+                var propData = Assets.Property(m_CachedPropertyId);
+                float value = inEnvironment.GetEnvironment()[m_CachedPropertyId];
+                float anchorX = propData.RemapValue(value);
+
+                Vector2 anchorMin = m_EnvironmentValueMarker.anchorMin,
+                    anchorMax = m_EnvironmentValueMarker.anchorMax;
+
+                anchorMin.x = anchorMax.x = anchorX;
+
+                m_EnvironmentValueMarker.anchorMin = anchorMin;
+                m_EnvironmentValueMarker.anchorMax = anchorMax;
+
+                m_EnvironmentValueMarker.gameObject.SetActive(true);
+            }
+        }
+
+        void IPoolAllocHandler.OnAlloc() { }
+
+        void IPoolAllocHandler.OnFree() {
+            m_CachedPropertyId = WaterPropertyId.MAX;
+            if (m_EnvironmentValueMarker) {
+                m_EnvironmentValueMarker.gameObject.SetActive(false);
+            }
         }
     }
 }

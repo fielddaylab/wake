@@ -26,7 +26,7 @@ namespace Aqua {
         [UnityEditor.InitializeOnLoadMethod]
         static private void EditorInitialize() {
             UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChange;
-            UnityEditor.SceneManagement.EditorSceneManager.sceneLoaded += OnSceneLoaded;
+            UnityEditor.SceneManagement.EditorSceneManager.sceneOpened += OnSceneOpened;
             AppDomain.CurrentDomain.DomainUnload += (e, o) => UnloadAll();
         }
 
@@ -38,7 +38,7 @@ namespace Aqua {
             UnloadAll();
         }
 
-        static private void OnSceneLoaded(UnityEngine.SceneManagement.Scene _, UnityEngine.SceneManagement.LoadSceneMode __) {
+        static private void OnSceneOpened(UnityEngine.SceneManagement.Scene _, UnityEditor.SceneManagement.OpenSceneMode __) {
             if (UnityEditor.EditorApplication.isPlaying) {
                 return;
             }

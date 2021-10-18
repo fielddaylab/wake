@@ -22,15 +22,6 @@ namespace Aqua {
 
         [NonSerialized] private Texture2D m_LoadedTexture;
 
-        #if UNITY_EDITOR
-
-        private void OnEnable() {
-            m_RawImage = GetComponent<RawImage>();
-            RefreshTexture();
-        }
-
-        #endif // UNITY_EDITOR
-
         private void OnDestroy() {
             UnloadResources();
         }
@@ -62,6 +53,14 @@ namespace Aqua {
         #endregion // Scene Loading
 
         #if UNITY_EDITOR
+
+        private void OnEnable() {
+            if (Application.IsPlaying(this))
+                return;
+
+            m_RawImage = GetComponent<RawImage>();
+            RefreshTexture();
+        }
 
         private void Reset() {
             m_RawImage = GetComponent<RawImage>();
