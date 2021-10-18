@@ -121,6 +121,7 @@ namespace ProtoAqua.ExperimentV2
             m_UnobservedStateLabel.gameObject.SetActive(false);
 
             m_BeginButton.gameObject.SetActive(true);
+            m_DrainRoutine.Stop();
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
             m_SetupPhase = SetupPhase.Begin;

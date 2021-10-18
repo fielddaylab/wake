@@ -57,8 +57,6 @@ namespace ProtoAqua.ExperimentV2
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, InvalidateListFromBestiaryUpdate, this)
                 .Register(GameEvents.ProfileRefresh, InvalidateListAndClearSet, this);
-
-            CanvasGroup.alpha = 0;
         }
 
         private void OnDestroy()

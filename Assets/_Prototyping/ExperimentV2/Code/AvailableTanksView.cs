@@ -63,7 +63,6 @@ namespace ProtoAqua.ExperimentV2
 
         static private IEnumerator SelectTankTransition(SelectableTank inTank)
         {
-            inTank.CurrentState |= TankState.Selected;
             inTank.Interface.enabled = true;
             inTank.InterfaceFader.alpha = 0;
             inTank.InterfaceRaycaster.Override = null;
@@ -78,7 +77,6 @@ namespace ProtoAqua.ExperimentV2
 
         static private IEnumerator DeselectTankTransition(SelectableTank inTank, CameraPose inReturningPose)
         {
-            inTank.CurrentState &= ~TankState.Selected;
             inTank.InterfaceRaycaster.Override = false;
 
             inTank.WaterAudioLoop.Stop();
@@ -114,6 +112,7 @@ namespace ProtoAqua.ExperimentV2
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankViewed, table);
             }
 
+            m_SelectedTank.CurrentState |= TankState.Selected;
             m_SelectedTank.ActivateMethod?.Invoke();
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Show(0.2f, true));
@@ -127,6 +126,7 @@ namespace ProtoAqua.ExperimentV2
                 return;
             
             m_SelectedTank.DeactivateMethod?.Invoke();
+            m_SelectedTank.CurrentState &= ~TankState.Selected;
             m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).TryManuallyUpdate(0);
             m_SelectedTank = null;
 

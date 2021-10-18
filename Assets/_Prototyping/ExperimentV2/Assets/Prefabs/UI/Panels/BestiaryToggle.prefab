@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7203998758131955442}
   - component: {fileID: 2137119204275427899}
   - component: {fileID: 5450107744123956094}
-  - component: {fileID: 7206926474843934616}
+  - component: {fileID: 5693635785280015853}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 8}
-  m_SizeDelta: {x: -16, y: 0}
+  m_SizeDelta: {x: -16, y: 32}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7203998758131955442
 CanvasRenderer:
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_Hash: 0
---- !u!114 &7206926474843934616
+--- !u!114 &5693635785280015853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,11 +165,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 679074729877153155}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
+  m_Renderer: {fileID: 0}
+  m_Graphic: {fileID: 2137119204275427899}
+  m_Visible: 1
+  m_Colors:
+    Main: {r: 1, g: 1, b: 1, a: 1}
+    Emissive: {r: 1, g: 1, b: 1, a: 1}
+    CustomA: {r: 1, g: 1, b: 1, a: 1}
+    CustomB: {r: 1, g: 1, b: 1, a: 1}
+    CustomC: {r: 1, g: 1, b: 1, a: 1}
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+  m_UseMainAlphaForVisibility: 1
+  m_MaterialConfig:
+    MainProperty:
+      Name: _Color
+      Source: 0
+      Multiplier: {r: 1, g: 1, b: 1, a: 1}
+      Enabled: 1
+    AdditionalProperties: []
+  m_EnableRaycastLayer: 0
+  m_DisableRaycastLayer: 2
 --- !u!1 &3944032297157232475
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +203,8 @@ GameObject:
   - component: {fileID: 41537090168980609}
   - component: {fileID: 1764924171436781470}
   - component: {fileID: 5376175804265056234}
-  - component: {fileID: 8064546253237378383}
+  - component: {fileID: 8550010033444234534}
+  - component: {fileID: 3014192814170725600}
   m_Layer: 0
   m_Name: BestiaryToggle
   m_TagString: Untagged
@@ -270,7 +290,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 8064546253237378383}
+  m_TargetGraphic: {fileID: 3014192814170725600}
   toggleTransition: 0
   graphic: {fileID: 3552138538212604334}
   m_Group: {fileID: 0}
@@ -321,7 +341,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3944032297157232475}
   m_CullTransparentMesh: 0
---- !u!114 &8064546253237378383
+--- !u!114 &8550010033444234534
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -330,12 +350,46 @@ MonoBehaviour:
   m_GameObject: {fileID: 3944032297157232475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30a1eab2b1f3865409a77930639df3e4, type: 3}
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Renderer: {fileID: 0}
+  m_Graphic: {fileID: 3014192814170725600}
+  m_Visible: 1
+  m_Colors:
+    Main: {r: 1, g: 1, b: 1, a: 1}
+    Emissive: {r: 1, g: 1, b: 1, a: 1}
+    CustomA: {r: 1, g: 1, b: 1, a: 1}
+    CustomB: {r: 1, g: 1, b: 1, a: 1}
+    CustomC: {r: 1, g: 1, b: 1, a: 1}
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+  m_UseMainAlphaForVisibility: 1
+  m_MaterialConfig:
+    MainProperty:
+      Name: _Color
+      Source: 0
+      Multiplier: {r: 1, g: 1, b: 1, a: 1}
+      Enabled: 1
+    AdditionalProperties: []
+  m_EnableRaycastLayer: 0
+  m_DisableRaycastLayer: 2
+--- !u!114 &3014192814170725600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944032297157232475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2fbe93b62a4ea4480404eef6d5ae33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_ColorGroup: {fileID: 8550010033444234534}
 --- !u!1 &4328163344910562708
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,6 +497,7 @@ GameObject:
   - component: {fileID: 7711451163209965514}
   - component: {fileID: 2226177885900914984}
   - component: {fileID: 1406790301367361128}
+  - component: {fileID: 6285759284773199775}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -466,8 +521,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 8}
-  m_SizeDelta: {x: -16, y: -32}
+  m_AnchoredPosition: {x: 0, y: 16}
+  m_SizeDelta: {x: -16, y: -48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7711451163209965514
 CanvasRenderer:
@@ -527,6 +582,39 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
+--- !u!114 &6285759284773199775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7043295768520912141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Renderer: {fileID: 0}
+  m_Graphic: {fileID: 2226177885900914984}
+  m_Visible: 1
+  m_Colors:
+    Main: {r: 1, g: 1, b: 1, a: 1}
+    Emissive: {r: 1, g: 1, b: 1, a: 1}
+    CustomA: {r: 1, g: 1, b: 1, a: 1}
+    CustomB: {r: 1, g: 1, b: 1, a: 1}
+    CustomC: {r: 1, g: 1, b: 1, a: 1}
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+  m_UseMainAlphaForVisibility: 1
+  m_MaterialConfig:
+    MainProperty:
+      Name: _Color
+      Source: 0
+      Multiplier: {r: 1, g: 1, b: 1, a: 1}
+      Enabled: 1
+    AdditionalProperties: []
+  m_EnableRaycastLayer: 0
+  m_DisableRaycastLayer: 2
 --- !u!1 &7652942696564940784
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +627,7 @@ GameObject:
   - component: {fileID: 2719113881269969715}
   - component: {fileID: 6895564769855931917}
   - component: {fileID: 947565074549489638}
+  - component: {fileID: 5666717669322220629}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -612,3 +701,36 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &5666717669322220629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7652942696564940784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Renderer: {fileID: 0}
+  m_Graphic: {fileID: 6895564769855931917}
+  m_Visible: 1
+  m_Colors:
+    Main: {r: 0, g: 0, b: 0, a: 0.5019608}
+    Emissive: {r: 1, g: 1, b: 1, a: 1}
+    CustomA: {r: 1, g: 1, b: 1, a: 1}
+    CustomB: {r: 1, g: 1, b: 1, a: 1}
+    CustomC: {r: 1, g: 1, b: 1, a: 1}
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+  m_UseMainAlphaForVisibility: 1
+  m_MaterialConfig:
+    MainProperty:
+      Name: _Color
+      Source: 0
+      Multiplier: {r: 1, g: 1, b: 1, a: 1}
+      Enabled: 1
+    AdditionalProperties: []
+  m_EnableRaycastLayer: 0
+  m_DisableRaycastLayer: 2

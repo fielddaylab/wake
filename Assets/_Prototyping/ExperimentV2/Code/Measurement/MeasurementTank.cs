@@ -45,6 +45,8 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private int m_DialsUsed = 0;
         [NonSerialized] private bool m_DialsDirty = true;
 
+        [NonSerialized] private Routine m_DrainRoutine;
+
         private void Awake()
         {
             m_ParentTank.ActivateMethod = Activate;
