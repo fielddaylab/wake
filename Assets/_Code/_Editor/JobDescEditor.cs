@@ -5,11 +5,16 @@ using UnityEditorInternal;
 using BeauUtil;
 using System;
 using System.Reflection;
+using Leaf;
+using System.IO;
 
 namespace Aqua.Editor
 {
     [CustomEditor(typeof(JobDesc)), CanEditMultipleObjects]
     public class JobDescEditor : UnityEditor.Editor {
+        private const string ScriptTemplateAssetPath = "Assets/Editor/JobScriptTemplate.template.leaf";
+        private const string ScriptTemplateJobNameReplaceKey = "[[JOB-NAME]]";
+
         private SerializedProperty m_CategoryProperty;
         private SerializedProperty m_FlagsProperty;
         
@@ -165,6 +170,7 @@ namespace Aqua.Editor
                     if (GUILayout.Button("Create Task")) {
                         m_TasksProperty.arraySize++;
                         m_SelectedTaskIdx = m_TasksProperty.arraySize - 1;
+                        serializedObject.ApplyModifiedProperties();
                     }
                     using(new EditorGUI.DisabledScope(m_SelectedTaskIdx >= 0 && m_TasksProperty.arraySize <= 1)) {
                         if (GUILayout.Button("Delete Task")) {
@@ -172,6 +178,7 @@ namespace Aqua.Editor
                             if (m_SelectedTaskIdx >= m_TasksProperty.arraySize - 1) {
                                 m_SelectedTaskIdx = m_TasksProperty.arraySize - 1;
                             }
+                            serializedObject.ApplyModifiedProperties();
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -194,6 +201,18 @@ namespace Aqua.Editor
             if (Section("Assets", ref m_AssetsExpanded)) {
                 EditorGUILayout.PropertyField(m_ScriptingProperty);
                 m_ExtraAssetsList.DoLayoutList();
+
+                EditorGUILayout.Space();
+
+                using(new EditorGUI.DisabledScope(m_ScriptingProperty.hasMultipleDifferentValues || m_ScriptingProperty.objectReferenceValue != null)) {
+                    if (GUILayout.Button("Create Script From Template")) {
+                        foreach(JobDesc job in targets) {
+                            Undo.RecordObject(job, "Creating Script");
+                            EditorUtility.SetDirty(job);
+                            job.m_Scripting = GenerateBaseScript(job);
+                        }
+                    }
+                }
             }
 
             if (Section("Difficulty Ratings", ref m_DifficultyExpanded)) {
@@ -414,6 +433,22 @@ namespace Aqua.Editor
                 SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
                 return EditorGUI.GetPropertyHeight(element, null, true);
             };
+        }
+    
+        static private LeafAsset GenerateBaseScript(JobDesc inJob) {
+            string directory = AssetDatabase.GetAssetPath(inJob);
+            string newPath = Path.Combine(Path.GetDirectoryName(directory), "script.leaf");
+            if (File.Exists(newPath)) {
+                return AssetDatabase.LoadAssetAtPath<LeafAsset>(newPath);
+            }
+
+            string file = File.ReadAllText(ScriptTemplateAssetPath);
+            file = file.Replace(ScriptTemplateJobNameReplaceKey, inJob.name);
+            File.WriteAllText(newPath, file);
+
+            AssetDatabase.ImportAsset(newPath);
+
+            return AssetDatabase.LoadAssetAtPath<LeafAsset>(newPath);
         }
     }
 }

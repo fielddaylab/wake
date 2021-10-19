@@ -128,7 +128,7 @@ namespace ProtoAqua.Modeling
                 m_Actors[i].SetPopulation(inResult.GetCritters(actorTypes[i].Id()).Population, inDetails.StartingStates[i]);
             }
 
-            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_MAX; id++)
+            for(WaterPropertyId id = 0; id < WaterProperties.TrackedMax; id++)
             {
                 m_WaterPropMap[(int) id]?.SetValue(inDetails.StartingEnvironment[id]);
             }

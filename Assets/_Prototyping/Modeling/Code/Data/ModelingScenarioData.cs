@@ -25,7 +25,7 @@ namespace ProtoAqua.Modeling
         [SerializeField] private uint m_Seed = 54321;
         
         [Header("Historical Data")]
-        [SerializeField] private ActorCountU32[] m_InitialActors = null;
+        [SerializeField, KeyValuePair("Id", "Population")] private ActorCountU32[] m_InitialActors = null;
         [SerializeField] private uint m_TickCount = 1000;
         [SerializeField] private int m_TickScale = 10;
         [SerializeField, HideInInspector] private StringHash32[] m_HistoricalPopulationFactIds;
@@ -33,7 +33,7 @@ namespace ProtoAqua.Modeling
         [Header("Prediction")]
         [SerializeField] private uint m_PredictionTicks = 0;
         [SerializeField] private ActorCountRange[] m_TargetActors = null;
-        [SerializeField] private ActorCountI32[] m_AdjustableActors = null;
+        [SerializeField, KeyValuePair("Id", "Population")] private ActorCountI32[] m_AdjustableActors = null;
 
         [Header("Water Properties")]
         [SerializeField] private bool m_DisplayWaterProperties = false;

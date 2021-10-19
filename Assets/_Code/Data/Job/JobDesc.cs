@@ -39,8 +39,8 @@ namespace Aqua
         [SerializeField] private int m_GearReward = 0;
         [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = null;
 
-        [SerializeField] private LeafAsset m_Scripting = null;
-        [SerializeField] private ScriptableObject[] m_ExtraAssets = null;
+        [SerializeField] internal LeafAsset m_Scripting = null;
+        [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
 
         #endregion // Inspector
 

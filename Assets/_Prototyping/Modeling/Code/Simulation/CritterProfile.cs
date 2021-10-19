@@ -81,7 +81,7 @@ namespace ProtoAqua.Modeling
             m_IsHerd = inDesc.HasFlags(BestiaryDescFlags.TreatAsHerd);
             m_IgnoreStarvation = inDesc.HasFlags(BestiaryDescFlags.IgnoreStarvation);
 
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
+            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; ++i)
             {
                 m_Transitions[i] = ActorStateTransitionRange.Default;
             }
@@ -125,7 +125,7 @@ namespace ProtoAqua.Modeling
             m_EatAmountTotal = 0;
             m_EatAmountStressedTotal = 0;
 
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; i++)
+            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; i++)
             {
                 m_Transitions[i] = ActorStateTransitionRange.Default;
                 m_ToProducePerPopulation[i] = m_ToProducePerPopulationStressed[i] = NotAssignedF32;
@@ -146,7 +146,7 @@ namespace ProtoAqua.Modeling
 
         public void PostProcess(SimulationProfile inProfile)
         {
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; i++)
+            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; i++)
             {
                 float produceA = m_ToProducePerPopulation[i];
                 float produceS = m_ToProducePerPopulationStressed[i];
@@ -246,7 +246,7 @@ namespace ProtoAqua.Modeling
 
             ActorStateId state = ActorStateId.Alive;
             ActorStateId checkedState;
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX && state != ActorStateId.Dead; ++i)
+            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax && state != ActorStateId.Dead; ++i)
             {
                 checkedState = m_Transitions[i].Evaluate(inEnvironment[i]);
                 if (checkedState > state)
@@ -307,7 +307,7 @@ namespace ProtoAqua.Modeling
                 toKillAbsolute = ioData.Hunger / Simulator.HungerPerCritter;
             }
             
-            for(WaterPropertyId i = 0; i <= WaterPropertyId.TRACKED_MAX; ++i)
+            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; ++i)
             {
                 float remainder = ioData.ToConsume[i];
                 if (remainder > 0)

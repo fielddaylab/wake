@@ -1,0 +1,19 @@
+:: basePath job.[[JOB-NAME]]
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@kevin}    This is the intro to the [[JOB-NAME]] job!
+
+// END
+
+:: end
+@trigger    JobCompleted
+@cutscene
+
+// write a conclusion to your job
+{@kevin}    This is the conclusion to the [[JOB-NAME]] job!

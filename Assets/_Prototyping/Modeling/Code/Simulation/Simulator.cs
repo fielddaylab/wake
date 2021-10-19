@@ -161,7 +161,7 @@ namespace ProtoAqua.Modeling
                     consumed = outDetails.Consumed[i];
                 }
 
-                for(WaterPropertyId prop = 0; prop <= WaterPropertyId.TRACKED_MAX; ++prop)
+                for(WaterPropertyId prop = 0; prop <= WaterProperties.TrackedMax; ++prop)
                 {
                     float desired = data.ToConsume[prop];
                     if (desired > 0)
