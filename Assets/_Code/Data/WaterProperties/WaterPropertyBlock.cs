@@ -24,7 +24,7 @@ namespace Aqua
         {
             get
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(float* start = &this.Oxygen)
@@ -34,7 +34,7 @@ namespace Aqua
             }
             set
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(float* start = &this.Oxygen)
@@ -99,7 +99,7 @@ namespace Aqua
             float* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterProperties.TrackedMax)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;
@@ -128,7 +128,7 @@ namespace Aqua
         {
             get
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(ushort* start = &this.Oxygen)
@@ -138,7 +138,7 @@ namespace Aqua
             }
             set
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(ushort* start = &this.Oxygen)
@@ -203,7 +203,7 @@ namespace Aqua
             ushort* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterProperties.TrackedMax)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;
@@ -232,7 +232,7 @@ namespace Aqua
         {
             get
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(uint* start = &this.Oxygen)
@@ -242,7 +242,7 @@ namespace Aqua
             }
             set
             {
-                if (inId < 0 || inId > WaterPropertyId.TRACKED_MAX)
+                if (inId < 0 || inId > WaterProperties.TrackedMax)
                     throw new ArgumentOutOfRangeException("inId");
 
                 fixed(uint* start = &this.Oxygen)
@@ -307,7 +307,7 @@ namespace Aqua
             uint* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterProperties.TrackedMax)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;
@@ -376,7 +376,7 @@ namespace Aqua
             byte* ptr = &result.Oxygen;
             int idx = 0;
             int mask = 1;
-            while(idx <= (int) WaterPropertyId.TRACKED_MAX)
+            while(idx <= (int) WaterProperties.TrackedMax)
             {
                 if ((inB & mask) == 0)
                     *ptr = 0;

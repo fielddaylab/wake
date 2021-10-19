@@ -21,10 +21,13 @@ namespace Aqua
         MAX,
 
         [Hidden]
-        TRACKED_MAX = CarbonDioxide,
-        [Hidden]
-        TRACKED_COUNT = TRACKED_MAX + 1,
+        TRACKED_COUNT = CarbonDioxide + 1,
         [Hidden]
         NONE = MAX,
+    }
+
+    static public class WaterProperties
+    {
+        public const WaterPropertyId TrackedMax = WaterPropertyId.CarbonDioxide;
     }
 }

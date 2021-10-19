@@ -32,7 +32,7 @@ namespace Aqua
         [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
         [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = null;
 
-        [SerializeField] private EditorJobTask[] m_Tasks = null;
+        [SerializeField] internal EditorJobTask[] m_Tasks = null;
         [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = null;
 
         [SerializeField] private int m_CashReward = 0;

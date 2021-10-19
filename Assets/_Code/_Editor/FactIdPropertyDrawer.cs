@@ -3,6 +3,7 @@ using UnityEditor;
 using BeauUtil.Editor;
 using BeauUtil;
 using System;
+using System.Reflection;
 
 namespace Aqua.Editor
 {
@@ -14,7 +15,10 @@ namespace Aqua.Editor
 
         public override void OnGUI(Rect position, UnityEditor.SerializedProperty property, GUIContent label)
         {
-            FactIdAttribute attr = (FactIdAttribute) attribute;
+            Render(position, property, label, fieldInfo, (FactIdAttribute) attribute, ref m_LastUpdated, m_List);
+        }
+    
+        static public void Render(Rect position, UnityEditor.SerializedProperty property, GUIContent label, FieldInfo fieldInfo, FactIdAttribute attr, ref double lastUpdated, NamedItemList<StringHash32> list) {
             Type fieldType = fieldInfo.FieldType;
             Type enumerableType = Reflect.GetEnumerableType(fieldType);
             if (enumerableType != null) {
@@ -36,9 +40,9 @@ namespace Aqua.Editor
                 return;
             }
 
-            if (Event.current.type == EventType.Layout && EditorApplication.timeSinceStartup - m_LastUpdated > 1) {
-                m_List.Clear();
-                m_List.Add(null, "[Null]", -1);
+            if (Event.current.type == EventType.Layout && EditorApplication.timeSinceStartup - lastUpdated > 1) {
+                list.Clear();
+                list.Add(null, "[Null]", -1);
                 foreach(var obj in AssetDBUtils.FindAssets(attr.FactType))
                 {
                     BFBase fact = (BFBase) obj;
@@ -63,15 +67,15 @@ namespace Aqua.Editor
                     }
 
                     string fullPath = rootPath + factPath;
-                    m_List.Add(name, fullPath);
+                    list.Add(name, fullPath);
                 }
-                m_LastUpdated = EditorApplication.timeSinceStartup;
+                lastUpdated = EditorApplication.timeSinceStartup;
             }
 
             label = EditorGUI.BeginProperty(position, label, property);
             EditorGUI.showMixedValue = hashProperty.hasMultipleDifferentValues;
             EditorGUI.BeginChangeCheck();
-            StringHash32 newValue = ListGUI.Popup(position, label, new StringHash32((uint) hashProperty.longValue), m_List);
+            StringHash32 newValue = ListGUI.Popup(position, label, new StringHash32((uint) hashProperty.longValue), list);
             if (EditorGUI.EndChangeCheck()) {
                 hashProperty.longValue = newValue.HashValue;
                 if (stringProperty != null) {

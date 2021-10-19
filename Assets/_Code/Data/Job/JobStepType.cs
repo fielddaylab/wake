@@ -13,8 +13,8 @@ namespace Aqua
         [Label("Bestiary/Get Bestiary Fact")]
         AcquireFact,
 
-        [Hidden]
-        _Unused0,
+        [Label("Bestiary/Upgrade Fact")]
+        UpgradeFact,
 
         // Goto a specific scene
         [Label("Map/Go to Scene")]

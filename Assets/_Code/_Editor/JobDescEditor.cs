@@ -2,10 +2,13 @@ using UnityEngine;
 using UnityEditor;
 using BeauUtil.Editor;
 using UnityEditorInternal;
+using BeauUtil;
+using System;
+using System.Reflection;
 
 namespace Aqua.Editor
 {
-    // [CustomEditor(typeof(JobDesc))]
+    [CustomEditor(typeof(JobDesc)), CanEditMultipleObjects]
     public class JobDescEditor : UnityEditor.Editor {
         private SerializedProperty m_CategoryProperty;
         private SerializedProperty m_FlagsProperty;
@@ -40,6 +43,14 @@ namespace Aqua.Editor
         private ReorderableList m_TasksList;
         private ReorderableList m_AdditionalRewardsList;
         private ReorderableList m_ExtraAssetsList;
+        private ReorderableList m_TaskPrerequisiteList;
+        private ReorderableList m_TaskStepList;
+
+        private NamedItemList<SerializedHash32> m_TaskSelectorList;
+        private NamedItemList<StringHash32> m_TaskStepFactSelectorList = new NamedItemList<StringHash32>();
+        private NamedItemList<StringHash32> m_TaskStepBestiarySelectorList = new NamedItemList<StringHash32>();
+        private NamedItemList<StringHash32> m_TaskStepStationSelectorList = new NamedItemList<StringHash32>();
+        private NamedItemList<StringHash32> m_TaskStepItemSelectorList = new NamedItemList<StringHash32>();
 
         [SerializeField] private bool m_TextExpanded = true;
         [SerializeField] private bool m_PrerequisitesExpanded = true;
@@ -48,6 +59,23 @@ namespace Aqua.Editor
         [SerializeField] private bool m_AssetsExpanded = true;
         [SerializeField] private bool m_DifficultyExpanded = false;
         [SerializeField] private bool m_TasksExpanded = true;
+
+        [SerializeField] private Vector2 m_TaskListScroll;
+        [SerializeField] private Vector2 m_TaskSettingsScroll;
+        [SerializeField] private int m_SelectedTaskIdx = -1;
+
+        [NonSerialized] static private GUIContent s_TempContent;
+
+        [NonSerialized] private double m_JobStepFactSelectorLastUpdate;
+        [NonSerialized] private double m_JobStepBestiarySelectorLastUpdate;
+        [NonSerialized] private double m_JobStepStationSelectorLastUpdate;
+        [NonSerialized] private double m_JobStepItemSelectorLastUpdate;
+
+        static private readonly FieldInfo JobStepTargetFieldInfo = typeof(JobStep).GetField("Target");
+        static private readonly FactIdAttribute JobStepFactSelector = new FactIdAttribute();
+        static private readonly FilterBestiaryIdAttribute JobStepBestiarySelector = new FilterBestiaryIdAttribute();
+        static private readonly MapIdAttribute JobStepStationSelector = new MapIdAttribute(MapCategory.Station);
+        static private readonly ItemIdAttribute JobStepItemSelector = new ItemIdAttribute();
 
         private void OnEnable() {
             m_CategoryProperty = serializedObject.FindProperty("m_Category");
@@ -80,9 +108,12 @@ namespace Aqua.Editor
             m_DiveSiteIdsList.drawElementCallback = DefaultElementDelegate(m_DiveSiteIdsList);
 
             m_TasksList = new ReorderableList(serializedObject, m_TasksProperty);
-            m_TasksList.drawHeaderCallback = (r) => { };
             m_TasksList.headerHeight = 0;
-            m_TasksList.drawElementCallback = DrawTaskCallback;
+            m_TasksList.drawHeaderCallback = (r) => { };
+            m_TasksList.showDefaultBackground = false;
+            m_TasksList.drawElementCallback = RenderTaskListElement;
+            m_TasksList.footerHeight = 0;
+            m_TasksList.drawFooterCallback = (r) => { };
 
             m_AdditionalRewardsList = new ReorderableList(serializedObject, m_AdditionalRewardsProperty);
             m_AdditionalRewardsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Additional Rewards");
@@ -91,6 +122,8 @@ namespace Aqua.Editor
             m_ExtraAssetsList = new ReorderableList(serializedObject, m_ExtraAssetsProperty);
             m_ExtraAssetsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Extra Assets");
             m_ExtraAssetsList.drawElementCallback = DefaultElementDelegate(m_ExtraAssetsList);
+
+            m_TaskSelectorList = new NamedItemList<SerializedHash32>();
         }
 
         public override void OnInspectorGUI() {
@@ -118,7 +151,38 @@ namespace Aqua.Editor
             }
 
             if (Section("Tasks", ref m_TasksExpanded)) {
-                m_TasksList.DoLayoutList();
+                if (targets.Length > 1) {
+                    EditorGUILayout.HelpBox("Task lists cannot be edited while multiple jobs are selected", MessageType.Warning);
+                } else {
+                    JobDesc desc = (JobDesc) targets[0];
+                    EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(300));
+                    
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(200));
+                    m_TaskListScroll = EditorGUILayout.BeginScrollView(m_TaskListScroll, GUILayout.ExpandHeight(true));
+                    m_SelectedTaskIdx = RenderTaskList(desc, m_SelectedTaskIdx);
+                    EditorGUILayout.EndScrollView();
+                    EditorGUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Create Task")) {
+                        m_TasksProperty.arraySize++;
+                        m_SelectedTaskIdx = m_TasksProperty.arraySize - 1;
+                    }
+                    using(new EditorGUI.DisabledScope(m_SelectedTaskIdx >= 0 && m_TasksProperty.arraySize <= 1)) {
+                        if (GUILayout.Button("Delete Task")) {
+                            m_TasksProperty.DeleteArrayElementAtIndex(m_SelectedTaskIdx);
+                            if (m_SelectedTaskIdx >= m_TasksProperty.arraySize - 1) {
+                                m_SelectedTaskIdx = m_TasksProperty.arraySize - 1;
+                            }
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
+
+                    m_TaskSettingsScroll = EditorGUILayout.BeginScrollView(m_TaskSettingsScroll, EditorStyles.helpBox);
+                    RenderTaskSettings(desc, m_SelectedTaskIdx);
+                    EditorGUILayout.EndScrollView();
+                    
+                    EditorGUILayout.EndHorizontal();
+                }
             }
 
             if (Section("Rewards", ref m_RewardsExpanded)) {
@@ -141,12 +205,184 @@ namespace Aqua.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawTaskCallback(Rect rect, int index, bool isActive, bool isFocused) {
-
+        private int RenderTaskList(JobDesc inJob, int inIndex) {
+            m_TasksList.index = inIndex;
+            m_TasksList.DoLayoutList();
+            return m_TasksList.index;
         }
 
-        private void TaskHeightCallback(int index) {
+        private void RenderTaskListElement(Rect rect, int index, bool isActive, bool isFocused) {
+            JobDesc job = (JobDesc) target;
+            JobDesc.EditorJobTask jobTask = job.m_Tasks[index];
+            EditorGUI.LabelField(rect, jobTask.Id.ToDebugString());
+        }
 
+        private void RenderTaskSettings(JobDesc inJob, int inIndex) {
+            if (inIndex < 0 || inIndex >= inJob.m_Tasks.Length) {
+                EditorGUILayout.LabelField("No task selected", EditorStyles.boldLabel);
+            } else {
+                using(new GUIScopes.LabelWidthScope(100)) {
+                    SerializedProperty taskAsProperty = m_TasksProperty.GetArrayElementAtIndex(inIndex);
+                    JobDesc.EditorJobTask taskObject = inJob.m_Tasks[inIndex];
+
+                    SerializedProperty idProperty = taskAsProperty.FindPropertyRelative("Id");
+                    SerializedProperty labelProperty = taskAsProperty.FindPropertyRelative("LabelId");
+                    EditorGUILayout.PropertyField(idProperty);
+                    EditorGUILayout.PropertyField(labelProperty);
+
+                    EditorGUILayout.Space();
+
+                    SerializedProperty prereqProperty = taskAsProperty.FindPropertyRelative("PrerequisiteTaskIds");
+                    if (m_TaskPrerequisiteList == null) {
+                        m_TaskPrerequisiteList = new ReorderableList(serializedObject, prereqProperty);
+                        m_TaskPrerequisiteList.drawHeaderCallback = (r) => GUI.Label(r, "Prerequisite Tasks");
+                        m_TaskPrerequisiteList.drawElementCallback = RenderTaskPrerequisiteSelector(m_TaskPrerequisiteList);
+                    }
+
+                    GenerateTaskList(inJob, taskObject.Id);
+                    m_TaskPrerequisiteList.serializedProperty = prereqProperty;
+
+                    m_TaskPrerequisiteList.DoLayoutList();
+
+                    EditorGUILayout.Space();
+
+                    SerializedProperty stepsProperty = taskAsProperty.FindPropertyRelative("Steps");
+                    if (m_TaskStepList == null) {
+                        m_TaskStepList = new ReorderableList(serializedObject, stepsProperty);
+                        m_TaskStepList.drawHeaderCallback = (r) => GUI.Label(r, "Steps");
+                        m_TaskStepList.drawElementCallback = RenderTaskStep(m_TaskStepList);
+                        m_TaskStepList.elementHeightCallback = TaskStepHeight(m_TaskStepList);
+                    }
+
+                    m_TaskStepList.serializedProperty = stepsProperty;
+                    m_TaskStepList.DoLayoutList();
+                }
+            }
+        }
+
+        private ReorderableList.ElementCallbackDelegate RenderTaskPrerequisiteSelector(ReorderableList list) {
+            return (Rect rect, int index, bool isActive, bool isFocused) => {
+                JobDesc.EditorJobTask task = ((JobDesc) target).m_Tasks[m_SelectedTaskIdx];
+                SerializedHash32 obj = task.PrerequisiteTaskIds[index];
+                SerializedHash32 next = ListGUI.Popup(rect, obj, m_TaskSelectorList);
+                if (next.Hash() != obj.Hash()) {
+                    Undo.RecordObject(target, "Changing prerequisite");
+                    task.PrerequisiteTaskIds[index] = next;
+                }
+            };
+        }
+
+        private NamedItemList<SerializedHash32> GenerateTaskList(JobDesc inJob, StringHash32 inExclude = default) {
+            var list = m_TaskSelectorList;
+            list.Clear();
+
+            int taskIdx = 0;
+            foreach(var task in inJob.m_Tasks) {
+                if (task.Id == inExclude) {
+                    continue;
+                }
+
+                list.Add(task.Id, task.Id.ToDebugString(), taskIdx++);
+            }
+
+            return list;
+        }
+
+        private ReorderableList.ElementCallbackDelegate RenderTaskStep(ReorderableList list) {
+            return (Rect rect, int index, bool isActive, bool isFocused) => {
+                Rect line = rect;
+                line.height = EditorGUIUtility.singleLineHeight;
+                line.y += 4;
+
+                SerializedProperty stepProp = list.serializedProperty.GetArrayElementAtIndex(index);
+                stepProp.Next(true);
+
+                // type
+
+                EditorGUI.PropertyField(line, stepProp);
+
+                JobStepType stepType = (JobStepType) stepProp.intValue;
+                
+                line.y += EditorGUIUtility.singleLineHeight + 2;
+
+                switch(stepType) {
+                    case JobStepType.ScanObject:
+                    case JobStepType.SeeScriptNode: {
+                        stepProp.Next(false);
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Scan Id"));
+                        break;
+                    }
+
+                    case JobStepType.AddFactToModel:
+                    case JobStepType.AcquireFact:
+                    case JobStepType.UpgradeFact: {
+                        stepProp.Next(false);
+                        FactIdPropertyDrawer.Render(line, stepProp, TempContent("Fact Id"), JobStepTargetFieldInfo, JobStepFactSelector, ref m_JobStepFactSelectorLastUpdate, m_TaskStepFactSelectorList);
+                        break;
+                    }
+
+                    case JobStepType.AcquireBestiaryEntry: {
+                        stepProp.Next(false);
+                        DBObjectIdPropertyDrawer.Render(line, stepProp, TempContent("Bestiary Id"), JobStepTargetFieldInfo, JobStepBestiarySelector, ref m_JobStepBestiarySelectorLastUpdate, m_TaskStepBestiarySelectorList);
+                        break;
+                    }
+
+                    case JobStepType.GotoStation: {
+                        stepProp.Next(false);
+                        DBObjectIdPropertyDrawer.Render(line, stepProp, TempContent("Station Id"), JobStepTargetFieldInfo, JobStepStationSelector, ref m_JobStepStationSelectorLastUpdate, m_TaskStepStationSelectorList);
+                        break;
+                    }
+
+                    case JobStepType.GotoScene: {
+                        stepProp.Next(false);
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Scene Name"));
+                        break;
+                    }
+
+                    case JobStepType.EvaluateCondition: {
+                        stepProp.Next(false);
+                        stepProp.Next(false);
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Conditions"));
+                        break;
+                    }
+
+                    case JobStepType.GetItem: {
+                        stepProp.Next(false);
+                        DBObjectIdPropertyDrawer.Render(line, stepProp, TempContent("Item Id"), JobStepTargetFieldInfo, JobStepItemSelector, ref m_JobStepItemSelectorLastUpdate, m_TaskStepItemSelectorList);
+                        stepProp.Next(false);
+                        stepProp.Next(false);
+                        line.y += EditorGUIUtility.singleLineHeight + 2;
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Amount"));
+                        break;
+                    }
+                }
+            };
+        }
+
+        private ReorderableList.ElementHeightCallbackDelegate TaskStepHeight(ReorderableList list) {
+            return (int index) => {
+                SerializedProperty stepProp = list.serializedProperty.GetArrayElementAtIndex(index);
+                stepProp.Next(true);
+
+                JobStepType stepType = (JobStepType) stepProp.intValue;
+
+                int numLines = 1;
+
+                switch(stepType) {
+                    case JobStepType.GetItem:
+                        numLines += 2;
+                        break;
+
+                    case JobStepType.FinishArgumentation:
+                        break;
+
+                    default:
+                        numLines++;
+                        break;
+                }
+
+                return (EditorGUIUtility.singleLineHeight + 2) * numLines + 8;
+            };
         }
 
         static private void Header(string inHeader) {
@@ -158,6 +394,12 @@ namespace Aqua.Editor
             EditorGUILayout.Space();
             ioState = EditorGUILayout.Foldout(ioState, inHeader, EditorStyles.foldoutHeader);
             return ioState;
+        }
+
+        static private GUIContent TempContent(string inText) {
+            GUIContent c = s_TempContent ?? (s_TempContent = new GUIContent());
+            c.text = inText;
+            return c;
         }
 
         static private ReorderableList.ElementCallbackDelegate DefaultElementDelegate(ReorderableList list) {

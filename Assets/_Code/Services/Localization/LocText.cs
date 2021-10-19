@@ -5,6 +5,9 @@ using BeauUtil;
 using BeauUtil.Tags;
 using TMPro;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -16,7 +19,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, HideInEditor] private TMP_Text m_Text = null;
-        [SerializeField] private TextId m_DefaultText = default(TextId);
+        [SerializeField] internal TextId m_DefaultText = default(TextId);
 
         #endregion // Inspector
 

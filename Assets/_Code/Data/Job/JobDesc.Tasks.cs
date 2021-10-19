@@ -12,14 +12,11 @@ namespace Aqua
         private const int MaxTasks = ushort.MaxValue;
 
         [Serializable]
-        private class EditorJobTask
+        internal class EditorJobTask
         {
             public SerializedHash32 Id;
-
-            [Header("Labels")]
             public TextId LabelId;
-
-            [Header("Steps")]
+            
             public JobStep[] Steps = null;
 
             [Header("Flow Control")]

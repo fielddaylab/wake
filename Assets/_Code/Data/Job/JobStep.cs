@@ -11,19 +11,5 @@ namespace Aqua
 
         public string ConditionString;
         public int Amount;
-
-        #if UNITY_EDITOR
-
-        private bool ShowCondition()
-        {
-            return Type == JobStepType.EvaluateCondition;
-        }
-
-        private bool ShowAmount()
-        {
-            return Type == JobStepType.GetItem;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

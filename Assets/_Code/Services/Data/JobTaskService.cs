@@ -354,6 +354,9 @@ namespace Aqua
                 case JobStepType.AcquireFact:
                     return inData.Bestiary.HasFact(inStep.Target);
 
+                case JobStepType.UpgradeFact:
+                    return inData.Bestiary.IsFactFullyUpgraded(inStep.Target);
+
                 case JobStepType.EvaluateCondition:
                     return Services.Data.CheckConditions(inStep.ConditionString);
 

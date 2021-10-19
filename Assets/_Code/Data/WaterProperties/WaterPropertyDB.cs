@@ -79,7 +79,7 @@ namespace Aqua
             foreach(var property in m_Objects)
             {
                 WaterPropertyId propIndex = property.Index();
-                if (propIndex <= WaterPropertyId.TRACKED_MAX)
+                if (propIndex <= WaterProperties.TrackedMax)
                     m_DefaultValues[propIndex] = property.DefaultValue();
 
                 m_IndexMap[(int) propIndex] = property;

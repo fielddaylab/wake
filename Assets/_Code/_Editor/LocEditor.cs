@@ -44,15 +44,31 @@ namespace Aqua.Editor
         #region Types
 
         [Serializable]
+        private struct BasePathHeader
+        {
+            public string Path;
+            public int Start;
+
+            public BasePathHeader(string path, int start) {
+                Path = path;
+                Start = start;
+            }
+        }
+
+        [Serializable]
         private class PackageRecord : IDataBlockPackage<TextRecord>
         {
             public string Name;
+            [HideInInspector] public string FilePath;
 
             public LocPackage Asset;
             [HideInInspector] public uint LastLine;
 
             public List<TextRecord> Records = new List<TextRecord>();
-            [HideInInspector] [BlockMeta("basePath")] public string BasePath = string.Empty;
+            [HideInInspector] public string BasePath = string.Empty;
+            public List<BasePathHeader> AllBasePaths = new List<BasePathHeader>();
+
+            [HideInInspector] public bool NeedsExport;
 
             public PackageRecord(string inName)
             {
@@ -69,6 +85,12 @@ namespace Aqua.Editor
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
+            }
+
+            [BlockMeta("basePath")]
+            private void SetBasePath(string path) {
+                BasePath = path;
+                AllBasePaths.Add(new BasePathHeader(path, Records.Count));
             }
         }
 
@@ -126,7 +148,6 @@ namespace Aqua.Editor
         [SerializeField] private List<PackageRecord> m_PackageRecords = new List<PackageRecord>();
 
         private Dictionary<StringHash32, TextRecord> m_TextMap = new Dictionary<StringHash32, TextRecord>();
-        [NonSerialized] private NamedItemList<string> m_TextSelectableList = new NamedItemList<string>();
         [NonSerialized] private GenericMenu m_OpenPackageFileMenu;
         [NonSerialized] private bool m_FullyInitialized = false;
 
@@ -155,6 +176,17 @@ namespace Aqua.Editor
             }
         }
 
+        [MenuItem("Aqualab/Write Loc Changes")]
+        static private void WriteAnyChanges() {
+            bool bChanges = false;
+            foreach(var record in GetInstance().m_PackageRecords) {
+                bChanges |= ReexportPackage(record, false);
+            }
+            if (!bChanges) {
+                Log.Msg("[LocEditor] No changes to export");
+            }
+        }
+
         [ContextMenu("Force Reload")]
         private void ReloadPackages()
         {
@@ -178,6 +210,7 @@ namespace Aqua.Editor
                     Debug.LogFormat("[LocEditor] Importing {0}...", assetPath);
                     EditorUtility.DisplayProgressBar("Updating Loc Database", string.Format("Importing {0}/{1}: {2}", i + 1, packageCount, assetPath), (float) i + 1 / packageCount);
                     PackageRecord record = BlockParser.Parse(package.name, fileContents, Parsing.Block, PackageGenerator.Instance);
+                    record.FilePath = assetPath;
                     record.Asset = package;
                     m_PackageRecords.Add(record);
                 }
@@ -201,8 +234,6 @@ namespace Aqua.Editor
                 return;
 
             m_TextMap.Clear();
-            m_TextSelectableList.Clear();
-            m_TextSelectableList.Add("[empty]", string.Empty, -1);
             m_OpenPackageFileMenu = new GenericMenu();
 
             m_OpenPackageFileMenu.AddDisabledItem(new GUIContent("Open File"));
@@ -222,7 +253,6 @@ namespace Aqua.Editor
                         text.Parent = package;
 
                         string listKey = text.Id.Replace(".", "/");
-                        m_TextSelectableList.Add(listKey, text.Id);
                     }
                 }
 
@@ -240,6 +270,53 @@ namespace Aqua.Editor
         static private void OpenPackage(PackageRecord inRecord)
         {
             AssetDatabase.OpenAsset(inRecord.Asset, (int) inRecord.LastLine);
+        }
+
+        static private bool ReexportPackage(PackageRecord inPackage, bool inbForce) {
+            if (!inbForce && !inPackage.NeedsExport) {
+                return false;
+            }
+
+            using(var writer = new StreamWriter(File.Open(inPackage.FilePath, FileMode.Create))) {
+                int recordIdx = 0, pathIdx = 0;
+                int totalRecordCount = inPackage.Records.Count;
+                int totalPathCount = inPackage.AllBasePaths.Count;
+                BasePathHeader nextBasePath = totalPathCount > 0 ? inPackage.AllBasePaths[0] : default;
+                TextRecord currentRecord;
+                string currentBasePath = string.Empty;
+
+                while(recordIdx < totalRecordCount) {
+                    if (pathIdx < totalPathCount && recordIdx >= nextBasePath.Start) {
+                        writer.Write("# basePath ");
+                        writer.Write(nextBasePath.Path);
+                        writer.Write("\n\n");
+                        currentBasePath = nextBasePath.Path;
+                        pathIdx++;
+                        nextBasePath = pathIdx < totalPathCount ? inPackage.AllBasePaths[pathIdx] : default;
+                    }
+
+                    currentRecord = inPackage.Records[recordIdx];
+                    writer.Write(":: ");
+
+                    string recordId = currentRecord.Id;
+                    if (!string.IsNullOrEmpty(currentBasePath)) {
+                        recordId = recordId.Substring(currentBasePath.Length + 1);
+                    }
+
+                    writer.Write(recordId);
+                    writer.Write('\n');
+                    writer.Write(currentRecord.Content);
+                    writer.Write("\n\n");
+                    recordIdx++;
+                }
+            }
+
+            inPackage.NeedsExport = false;
+            LockImport = true;
+            AssetDatabase.ImportAsset(inPackage.FilePath, ImportAssetOptions.ForceUpdate);
+            LockImport = false;
+            Log.Msg("[LocEditor] Re-exported '{0}' to '{1}' with new changes", inPackage.Name, inPackage.FilePath);
+            return true;
         }
 
         #endregion // Map
@@ -317,15 +394,104 @@ namespace Aqua.Editor
             }
         }
 
+        static public void TrySet(string inKey, string inText) {
+            var instance = GetInstance();
+            instance.EnsureFullInitialize();
+
+            TextRecord existingRecord;
+            if (instance.m_TextMap.TryGetValue(inKey, out existingRecord)) {
+                if (existingRecord.Content != inText) {
+                    existingRecord.Content = inText;
+                    existingRecord.Parent.NeedsExport = true;
+                    EditorUtility.SetDirty(instance);
+                }
+            } else {
+                PackageRecord blankPackage = null;
+                TextRecord newRecord = null;
+                bool bInserted = false;
+                foreach(var package in instance.m_PackageRecords) {
+                    if (package.AllBasePaths.Count == 0) {
+                        blankPackage = package;
+                        break;
+                    } else {
+                        BasePathHeader basePath;
+                        for(int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
+                            basePath = package.AllBasePaths[i];
+                            if (inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
+                                newRecord = InsertTextRecord(inKey, inText, package, i);
+                                EditorUtility.SetDirty(instance);
+                                bInserted = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!bInserted && blankPackage != null) {
+                    newRecord = InsertTextRecord(inKey, inText, blankPackage, 0);
+                    EditorUtility.SetDirty(instance);
+                    bInserted = true;
+                }
+
+                if (!bInserted) {
+                    Log.Error("[LocEditor] No valid package located to insert text with id '{0}'", inKey);
+                } else {
+                    Log.Msg("[LocEditor] Successfully added text with key '{0}' to package '{1}'", inKey, newRecord.Parent.Name);
+                    instance.m_TextMap[inKey] = newRecord;
+                }
+            }
+        }
+
+        static private TextRecord InsertTextRecord(string inKey, string inText, PackageRecord inPackage, int inSectionIdx) {
+            TextRecord textRecord = new TextRecord(inKey);
+            textRecord.Content = inText;
+            textRecord.Parent = inPackage;
+
+            if (inSectionIdx >= inPackage.AllBasePaths.Count - 1) {
+                inPackage.Records.Add(textRecord);
+            } else {
+                BasePathHeader nextRecord = inPackage.AllBasePaths[inSectionIdx + 1];
+                int insertIdx = nextRecord.Start - 1;
+
+                inPackage.Records.Insert(insertIdx, textRecord);
+
+                for(int i = inSectionIdx + 1; i < inPackage.AllBasePaths.Count; i++) {
+                    BasePathHeader revisedHeader = inPackage.AllBasePaths[i];
+                    revisedHeader.Start++;
+                    inPackage.AllBasePaths[i] = revisedHeader;
+                }
+            }
+
+            inPackage.NeedsExport = true;
+            return textRecord;
+        }
+
         #endregion // Statics
 
         #region Asset Postprocessor
+
+        static private bool LockImport = false;
+
+        private class AssetSaveHook : UnityEditor.AssetModificationProcessor
+        {
+            static private string[] OnWillSaveAssets(string[] paths) {
+                if (!LockImport) {
+                    foreach(var path in paths) {
+                        if (path == EditorDatabasePath) {
+                            WriteAnyChanges();
+                            break;
+                        }
+                    }
+                }
+                return paths;
+            }
+        }
 
         private class AssetImportHook : AssetPostprocessor
         {
             static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
             {
-                if (Application.isPlaying || InternalEditorUtility.inBatchMode || !InternalEditorUtility.isHumanControllingUs)
+                if (LockImport || Application.isPlaying || InternalEditorUtility.inBatchMode || !InternalEditorUtility.isHumanControllingUs)
                     return;
 
                 if (AnyAreLocPackage(importedAssets) || AnyAreLocPackage(deletedAssets) || AnyAreLocPackage(movedAssets) || AnyAreLocPackage(movedFromAssetPaths))
