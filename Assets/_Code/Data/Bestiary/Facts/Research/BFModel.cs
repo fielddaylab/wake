@@ -7,11 +7,8 @@ namespace Aqua
     {
         #region Inspector
 
-        [Header("Data")]
-        [FilterBestiary(BestiaryDescCategory.Environment)] public BestiaryDesc Environment = null;
-        public Sprite Image;
-
-        [Header("Text")]
+        [Header("Model")]
+        public Sprite Image = null;
         public TextId DescriptionId = default;
         public TextId SentenceId = default;
 

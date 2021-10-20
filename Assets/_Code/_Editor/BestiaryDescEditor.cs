@@ -255,7 +255,7 @@ namespace Aqua.Editor
                     }
                 } else {
                     BestiaryDesc desc = (BestiaryDesc) targets[0];
-                    EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(300));
+                    EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(320));
                     
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(250));
                     m_FactListScroll = EditorGUILayout.BeginScrollView(m_FactListScroll, GUILayout.ExpandHeight(true));

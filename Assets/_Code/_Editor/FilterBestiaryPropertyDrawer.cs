@@ -31,7 +31,12 @@ namespace Aqua.Editor
 
             Rect line = position;
             line.width -= 16;
-            property.objectReferenceValue = ListGUI.Popup(line, label, (BestiaryDesc) property.objectReferenceValue, m_List);
+            EditorGUI.showMixedValue = property.hasMultipleDifferentValues;
+            EditorGUI.BeginChangeCheck();
+            BestiaryDesc nextDesc = ListGUI.Popup(line, label, (BestiaryDesc) property.objectReferenceValue, m_List);
+            if (EditorGUI.EndChangeCheck()) {
+                property.objectReferenceValue = nextDesc;
+            };
             EditorGUI.EndProperty();
 
             Rect pingPosition = position;
