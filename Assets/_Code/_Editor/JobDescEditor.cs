@@ -173,7 +173,7 @@ namespace Aqua.Editor
                         m_SelectedTaskIdx = m_TasksProperty.arraySize - 1;
                         serializedObject.ApplyModifiedProperties();
                     }
-                    using(new EditorGUI.DisabledScope(m_SelectedTaskIdx >= 0 && m_TasksProperty.arraySize <= 1)) {
+                    using(new EditorGUI.DisabledScope(m_SelectedTaskIdx < 0 || m_TasksProperty.arraySize <= 1)) {
                         if (GUILayout.Button("Delete Task")) {
                             m_TasksProperty.DeleteArrayElementAtIndex(m_SelectedTaskIdx);
                             if (m_SelectedTaskIdx >= m_TasksProperty.arraySize - 1) {

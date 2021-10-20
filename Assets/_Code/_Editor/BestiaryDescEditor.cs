@@ -135,7 +135,7 @@ namespace Aqua.Editor
             RenderFacts(BestiaryDescCategory.Critter);
 
             if (targets.Length == 1) {
-                if (Section("Helpers", ref m_ShortcutsExpanded)) {
+                if (Section("Quick Entry", ref m_ShortcutsExpanded)) {
                     BestiaryDesc desc = (BestiaryDesc) target;
 
                     Header("Stress Thresholds");
@@ -194,7 +194,7 @@ namespace Aqua.Editor
             RenderFacts(BestiaryDescCategory.Environment);
 
             if (targets.Length == 1) {
-                if (Section("Helpers", ref m_ShortcutsExpanded)) {
+                if (Section("Quick Entry", ref m_ShortcutsExpanded)) {
                     BestiaryDesc desc = (BestiaryDesc) target;
 
                     Header("Water Properties");
@@ -265,7 +265,7 @@ namespace Aqua.Editor
                     if (GUILayout.Button("Create")) {
                         OpenCreateFactContextMenu(desc, inCategory);
                     }
-                    using(new EditorGUI.DisabledScope(m_SelectedFactIdx >= 0 && m_FactsProperty.arraySize == 0)) {
+                    using(new EditorGUI.DisabledScope(m_SelectedFactIdx < 0 || m_FactsProperty.arraySize == 0)) {
                         if (GUILayout.Button("Delete")) {
                             SerializedProperty toDeleteProp = m_FactsProperty.GetArrayElementAtIndex(m_SelectedFactIdx);
                             BFBase fact = (BFBase) toDeleteProp.objectReferenceValue;

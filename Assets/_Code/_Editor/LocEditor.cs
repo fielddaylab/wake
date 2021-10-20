@@ -470,6 +470,21 @@ namespace Aqua.Editor
 
         static private bool LockImport = false;
 
+        [UnityEditor.InitializeOnLoadMethod]
+        static private void EditorInitialize() {
+            UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChange;
+        }
+
+        static private void PlayModeStateChange(UnityEditor.PlayModeStateChange stateChange) {
+            if (stateChange != UnityEditor.PlayModeStateChange.ExitingEditMode) {
+                return;
+            }
+
+            if (EditorUtility.IsDirty(GetInstance())) {
+                WriteAnyChanges();
+            }
+        }
+
         private class AssetSaveHook : UnityEditor.AssetModificationProcessor
         {
             static private string[] OnWillSaveAssets(string[] paths) {
