@@ -12,8 +12,8 @@ using UnityEditor;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Entry", fileName = "NewBestiaryEntry")]
-    public class BestiaryDesc : DBObject, IOptimizableAsset
+    [CreateAssetMenu(menuName = "Aqualab Content/Bestiary Entry", fileName = "NewBestiaryEntry")]
+    public partial class BestiaryDesc : DBObject
     {
         #region Inspector
 
@@ -27,7 +27,7 @@ namespace Aqua
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
         
-        [SerializeField] private BFBase[] m_Facts = null;
+        [SerializeField] internal BFBase[] m_Facts = null;
 
         [SerializeField] private uint m_HistoricalRecordDuration = 2;
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
@@ -46,7 +46,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private ushort m_AlwaysFactCount;
         [SerializeField, HideInInspector] private ushort m_InternalFactOffset;
         [SerializeField, HideInInspector] private ushort m_InternalFactCount;
-        [SerializeField] private int m_StationSortingOrder;
+        [SerializeField, HideInInspector] private int m_StationSortingOrder;
         [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_EnvState;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
 
@@ -164,369 +164,6 @@ namespace Aqua
         }
 
         #endregion // Sorting
-
-        #region Editor
-
-        #if UNITY_EDITOR
-
-        int IOptimizableAsset.Order { get { return (int) m_Type; } }
-
-        bool IOptimizableAsset.Optimize()
-        {
-            foreach(var fact in m_Facts)
-            {
-                Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
-                fact.BakeProperties(this);
-            }
-
-            if (m_StationId.IsEmpty) {
-                m_StationSortingOrder = -1;
-            } else {
-                MapDesc map = ValidationUtils.FindAsset<MapDesc>(m_StationId.ToDebugString());
-                Assert.NotNull(map, "Map with id '{0}' was unable to be found on BestiaryDesc '{1}'", m_StationId, name);
-                m_StationSortingOrder = map.SortingOrder();
-            }
-
-            switch(m_Type)
-            {
-                case BestiaryDescCategory.Environment:
-                    {
-                        m_EnvState = ValidationUtils.FindAsset<WaterPropertyDB>().DefaultValues();
-                        foreach(var fact in m_Facts)
-                        {
-                            BFWaterProperty waterProp = fact as BFWaterProperty;
-                            if (waterProp != null)
-                            {
-                                m_EnvState[waterProp.Property] = waterProp.Value;
-                            }
-                        }
-                        break;
-                    }
-
-                case BestiaryDescCategory.Critter:
-                    {
-                        m_StateTransitions.Reset();
-                        foreach(var fact in m_Facts)
-                        {
-                            BFState state = fact as BFState;
-                            if (state != null)
-                            {
-                                m_StateTransitions[state.Property] = state.Range;
-                            }
-                        }
-                        break;
-                    }
-            }
-
-            return true;
-        }
-
-        internal BFBase[] OwnedFacts { get { return m_Facts; } }
-
-        internal void OptimizeSecondPass(List<BFBase> inReciprocalFacts)
-        {
-            if (inReciprocalFacts != null && inReciprocalFacts.Count > 0)
-            {
-                m_AllFacts = new BFBase[m_Facts.Length + inReciprocalFacts.Count];
-                Array.Copy(m_Facts, 0, m_AllFacts, 0, m_Facts.Length);
-                inReciprocalFacts.CopyTo(0, m_AllFacts, m_Facts.Length, inReciprocalFacts.Count);
-            }
-            else
-            {
-                m_AllFacts = (BFBase[]) m_Facts.Clone();
-            }
-
-            Array.Sort(m_AllFacts, BFBase.SortByMode);
-            m_PlayerFactCount = 0;
-            m_InternalFactCount = 0;
-            m_AlwaysFactCount = 0;
-
-            for(int i = 0; i < m_AllFacts.Length; i++)
-            {
-                switch(m_AllFacts[i].Mode)
-                {
-                    case BFMode.Player:
-                        m_PlayerFactCount++;
-                        break;
-
-                    case BFMode.Internal:
-                        m_InternalFactCount++;
-                        break;
-
-                    case BFMode.Always:
-                        m_AlwaysFactCount++;
-                        break;
-                }
-            }
-
-            m_InternalFactOffset = (ushort) (m_AlwaysFactCount + m_PlayerFactCount);
-
-            UnityEditor.EditorUtility.SetDirty(this);
-        }
-
-        private void OnValidate()
-        {
-            switch(m_Type)
-            {
-                case BestiaryDescCategory.Critter:
-                    {
-                        if (m_Size == BestiaryDescSize.Ecosystem)
-                            m_Size = BestiaryDescSize.Large;
-                        break;
-                    }
-
-                case BestiaryDescCategory.Environment:
-                    {
-                        if (m_Size != BestiaryDescSize.Ecosystem)
-                            m_Size = BestiaryDescSize.Ecosystem;
-                        break;
-                    }
-            }
-        }
-
-        [ContextMenu("Load All In Directory")]
-        private void FindAllFacts()
-        {
-            string myPath = UnityEditor.AssetDatabase.GetAssetPath(this);
-            string myDirectory = Path.GetDirectoryName(myPath);
-            m_Facts = ValidationUtils.FindAllAssets<BFBase>(myDirectory);
-            UnityEditor.EditorUtility.SetDirty(this);
-        }
-
-        [UnityEditor.CustomEditor(typeof(BestiaryDesc)), UnityEditor.CanEditMultipleObjects]
-        private class Inspector : UnityEditor.Editor {
-            private SerializedProperty m_TypeProperty;
-            private SerializedProperty m_FlagsProperty;
-            private SerializedProperty m_SizeProperty;
-            private SerializedProperty m_StationIdProperty;
-            private SerializedProperty m_DiveSiteIdProperty;
-            private SerializedProperty m_ScientificNameProperty;
-            private SerializedProperty m_CommonNameIdProperty;
-            private SerializedProperty m_PluralCommonNameIdProperty;
-            private SerializedProperty m_FactsProperty;
-            private SerializedProperty m_HistoricalRecordDurationProperty;
-            private SerializedProperty m_WaterColorProperty;
-            private SerializedProperty m_IconProperty;
-            private SerializedProperty m_SketchProperty;
-            private SerializedProperty m_ColorProperty;
-            private SerializedProperty m_ListenAudioEventProperty;
-            private SerializedProperty m_SortingOrderProperty;
-
-            [SerializeField] private string m_NewFactId;
-
-            private void OnEnable() {
-                m_TypeProperty = serializedObject.FindProperty("m_Type");
-                m_FlagsProperty = serializedObject.FindProperty("m_Flags");
-                m_SizeProperty = serializedObject.FindProperty("m_Size");
-                m_StationIdProperty = serializedObject.FindProperty("m_StationId");
-                m_DiveSiteIdProperty = serializedObject.FindProperty("m_DiveSiteId");
-                m_ScientificNameProperty = serializedObject.FindProperty("m_ScientificName");
-                m_CommonNameIdProperty = serializedObject.FindProperty("m_CommonNameId");
-                m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
-                m_FactsProperty = serializedObject.FindProperty("m_Facts");
-                m_HistoricalRecordDurationProperty = serializedObject.FindProperty("m_HistoricalRecordDuration");
-                m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
-                m_IconProperty = serializedObject.FindProperty("m_Icon");
-                m_SketchProperty = serializedObject.FindProperty("m_Sketch");
-                m_ColorProperty = serializedObject.FindProperty("m_Color");
-                m_ListenAudioEventProperty = serializedObject.FindProperty("m_ListenAudioEvent");
-                m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
-            }
-
-            public override void OnInspectorGUI() {
-                serializedObject.UpdateIfRequiredOrScript();
-
-                BestiaryDescCategory category = m_TypeProperty.hasMultipleDifferentValues ? BestiaryDescCategory.ALL : (BestiaryDescCategory) m_TypeProperty.intValue;
-
-                EditorGUILayout.PropertyField(m_TypeProperty);
-                EditorGUILayout.PropertyField(m_FlagsProperty);
-                EditorGUILayout.PropertyField(m_StationIdProperty);
-
-                switch(category) {
-                    case BestiaryDescCategory.Critter: {
-                        Header("Organism");
-                        EditorGUILayout.PropertyField(m_SizeProperty);
-                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
-
-                        Header("Text");
-                        EditorGUILayout.PropertyField(m_ScientificNameProperty);
-                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
-                        EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
-
-                        Header("Assets");
-                        EditorGUILayout.PropertyField(m_IconProperty);
-                        EditorGUILayout.PropertyField(m_SketchProperty);
-                        EditorGUILayout.PropertyField(m_ColorProperty);
-                        EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
-
-                        Header("Sorting");
-                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
-                        break;
-                    }
-
-                    case BestiaryDescCategory.Environment: {
-                        
-                        Header("Environment");
-                        EditorGUILayout.PropertyField(m_DiveSiteIdProperty);
-                        EditorGUILayout.PropertyField(m_HistoricalRecordDurationProperty);
-                        EditorGUILayout.PropertyField(m_WaterColorProperty);
-
-                        Header("Text");
-                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
-
-                        Header("Assets");
-                        EditorGUILayout.PropertyField(m_IconProperty);
-                        EditorGUILayout.PropertyField(m_SketchProperty);
-                        EditorGUILayout.PropertyField(m_ColorProperty);
-
-                        Header("Sorting");
-                        EditorGUILayout.PropertyField(m_SortingOrderProperty);
-                        break;
-                    }
-                    
-                    case BestiaryDescCategory.Model: {
-                        
-                        Header("Model");
-                        EditorGUILayout.PropertyField(m_CommonNameIdProperty);
-                        EditorGUILayout.PropertyField(m_IconProperty);
-                        EditorGUILayout.PropertyField(m_ColorProperty);
-                        break;
-                    }
-                }
-
-                Header("Facts");
-                m_FactsProperty.isExpanded = true;
-                EditorGUILayout.PropertyField(m_FactsProperty);
-
-                if (GUILayout.Button("Load All In Directory")) {
-                    foreach(BestiaryDesc bestiary in targets) {
-                        bestiary.FindAllFacts();
-                    }
-                }
-
-                if (targets.Length == 1) {
-                    Header("Add Facts");
-                    m_NewFactId = EditorGUILayout.TextField("Create New Fact", m_NewFactId);
-
-                    GUI.enabled = !string.IsNullOrEmpty(m_NewFactId);
-
-                    BestiaryDesc desc = (BestiaryDesc) target;
-                    switch(category) {
-                        case BestiaryDescCategory.Model: {
-                            if (GUILayout.Button("Model")) {
-                                CreateFactType<BFModel>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-                            break;
-                        }
-
-                        case BestiaryDescCategory.Environment: {
-                            if (GUILayout.Button("Population")) {
-                                CreateFactType<BFPopulation>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Population History")) {
-                                CreateFactType<BFPopulationHistory>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Water Property")) {
-                                CreateFactType<BFWaterProperty>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Water Property History")) {
-                                CreateFactType<BFWaterPropertyHistory>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-                            break;
-                        }
-
-                        case BestiaryDescCategory.Critter: {
-                            GUI.enabled = !HasFactType<BFBody>(desc);
-                            if (GUILayout.Button("Body")) {
-                                CreateFactType<BFBody>(desc, "Body");
-                                m_NewFactId = string.Empty;
-                            }
-                            GUI.enabled = !string.IsNullOrEmpty(m_NewFactId);
-
-                            if (GUILayout.Button("Consume")) {
-                                CreateFactType<BFConsume>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Produce")) {
-                                CreateFactType<BFProduce>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Grow")) {
-                                CreateFactType<BFGrow>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Reproduce")) {
-                                CreateFactType<BFReproduce>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Eat")) {
-                                CreateFactType<BFEat>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-
-                            if (GUILayout.Button("Death")) {
-                                CreateFactType<BFDeath>(desc, m_NewFactId);
-                                m_NewFactId = string.Empty;
-                            }
-                            break;
-                        }
-                    }
-
-                    GUI.enabled = true;
-                }
-
-                serializedObject.ApplyModifiedProperties();
-            }
-
-            static private T CreateFactType<T>(BestiaryDesc inParent, string inNewName) where T : BFBase {
-                T fact = ScriptableObject.CreateInstance<T>();
-                fact.name = inParent.name + "." + inNewName;
-
-                string directory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(inParent));
-                string assetPath = Path.Combine(directory, fact.name + ".asset");
-                AssetDatabase.CreateAsset(fact, assetPath);
-                AssetDatabase.ImportAsset(assetPath);
-
-                Selection.activeObject = fact;
-
-                // Editor factEditor = CreateEditor(fact);
-
-                ArrayUtility.Add(ref inParent.m_Facts, fact);
-                EditorUtility.SetDirty(inParent);
-                return fact;
-            }
-
-            static private bool HasFactType<T>(BestiaryDesc inParent) {
-                foreach(var fact in inParent.m_Facts) {
-                    if (fact is T) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            static private void Header(string inHeader) {
-                EditorGUILayout.Space();
-                EditorGUILayout.LabelField(inHeader, EditorStyles.boldLabel);
-            }
-        }
-
-        #endif // UNITY_EDITOR
-
-        #endregion // Editor
     }
 
     [LabeledEnum]
@@ -534,7 +171,9 @@ namespace Aqua
     {
         Critter,
         Environment,
-        Model,
+
+        [Hidden]
+        _Unused,
 
         [Hidden]
         ALL

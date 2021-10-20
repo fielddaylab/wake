@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Story/Act Database", fileName = "ActDB")]
+    [CreateAssetMenu(menuName = "Aqualab System/Act Database", fileName = "ActDB")]
     public class ActDB : DBObjectCollection<ActDesc>
     {
         public ActDesc Act(uint inActIndex)

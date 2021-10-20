@@ -13,7 +13,7 @@ using UnityEditor;
 
 namespace ProtoAqua.ExperimentV2
 {
-    [CreateAssetMenu(menuName = "Aqualab/ExperimentV2/Actor Definitions")]
+    [CreateAssetMenu(menuName = "Aqualab System/Experiment Actor Definitions")]
     public class ActorDefinitions : ScriptableObject, IOptimizableAsset
     {
         public ActorDefinition[] CritterDefinitions;

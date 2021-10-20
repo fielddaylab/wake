@@ -16,16 +16,17 @@ namespace Aqua.Editor
 
         [SerializeField] private string m_CurrentText;
 
-        [NonSerialized] private GUIStyle m_NullIconStyle;
-        [NonSerialized] private GUIStyle m_FoundIconStyle;
-        [NonSerialized] private GUIStyle m_OverwriteIconStyle;
-        [NonSerialized] private GUIStyle m_MissingIconStyle;
+        [NonSerialized] static private GUIStyle s_NullIconStyle;
+        [NonSerialized] static private GUIStyle s_FoundIconStyle;
+        [NonSerialized] static private GUIStyle s_OverwriteIconStyle;
+        [NonSerialized] static private GUIStyle s_MissingIconStyle;
 
-        [NonSerialized] private GUIContent m_MissingContent;
-        [NonSerialized] private GUIContent m_ValidContent;
-        [NonSerialized] private GUIContent m_OverwriteContent;
+        [NonSerialized] static private GUIContent s_MissingContent;
+        [NonSerialized] static private GUIContent s_ValidContent;
+        [NonSerialized] static private GUIContent s_OverwriteContent;
 
-        [NonSerialized] private GUIStyle m_SearchBoxStyle;
+        [NonSerialized] static private GUIStyle s_SearchBoxStyle;
+        [NonSerialized] static private GUIStyle s_TextAreaStyle;
 
         [NonSerialized] private List<string> m_SearchResults = new List<string>();
         [NonSerialized] private int m_SearchScroll = 0;
@@ -34,40 +35,46 @@ namespace Aqua.Editor
 
         private bool m_Overwrite = true;
 
-        private void InitializeStyles()
+        static private  void InitializeStyles()
         {
-            if (m_NullIconStyle == null)
+            if (s_NullIconStyle == null)
             {
-                m_NullIconStyle = new GUIStyle(EditorStyles.label);
-                m_NullIconStyle.normal.textColor = Color.gray;
-                m_NullIconStyle.alignment = TextAnchor.MiddleCenter;
+                s_NullIconStyle = new GUIStyle(EditorStyles.label);
+                s_NullIconStyle.normal.textColor = Color.gray;
+                s_NullIconStyle.alignment = TextAnchor.MiddleCenter;
             }
 
-            if (m_FoundIconStyle == null)
+            if (s_FoundIconStyle == null)
             {
-                m_FoundIconStyle = new GUIStyle(EditorStyles.label);
-                m_FoundIconStyle.normal.textColor = Color.green;
-                m_FoundIconStyle.alignment = TextAnchor.MiddleCenter;
+                s_FoundIconStyle = new GUIStyle(EditorStyles.label);
+                s_FoundIconStyle.normal.textColor = Color.green;
+                s_FoundIconStyle.alignment = TextAnchor.MiddleCenter;
             }
 
-            if (m_OverwriteIconStyle == null)
+            if (s_OverwriteIconStyle == null)
             {
-                m_OverwriteIconStyle = new GUIStyle(EditorStyles.miniButton);
-                m_OverwriteIconStyle.normal.textColor = Color.green;
-                m_OverwriteIconStyle.alignment = TextAnchor.MiddleCenter;
+                s_OverwriteIconStyle = new GUIStyle(EditorStyles.miniButton);
+                s_OverwriteIconStyle.normal.textColor = Color.green;
+                s_OverwriteIconStyle.alignment = TextAnchor.MiddleCenter;
             }
 
-            if (m_MissingIconStyle == null)
+            if (s_MissingIconStyle == null)
             {
-                m_MissingIconStyle = new GUIStyle(EditorStyles.miniButton);
-                m_MissingIconStyle.normal.textColor = Color.yellow;
-                m_MissingIconStyle.alignment = TextAnchor.MiddleCenter;
+                s_MissingIconStyle = new GUIStyle(EditorStyles.miniButton);
+                s_MissingIconStyle.normal.textColor = Color.yellow;
+                s_MissingIconStyle.alignment = TextAnchor.MiddleCenter;
             }
 
-            if (m_SearchBoxStyle == null)
+            if (s_SearchBoxStyle == null)
             {
-                m_SearchBoxStyle = new GUIStyle(EditorStyles.helpBox);
-                m_SearchBoxStyle.normal.background = Texture2D.whiteTexture;
+                s_SearchBoxStyle = new GUIStyle(EditorStyles.helpBox);
+                s_SearchBoxStyle.normal.background = Texture2D.whiteTexture;
+            }
+
+            if (s_TextAreaStyle == null)
+            {
+                s_TextAreaStyle = new GUIStyle(EditorStyles.textArea);
+                s_TextAreaStyle.wordWrap = true;
             }
         }
 
@@ -78,7 +85,7 @@ namespace Aqua.Editor
             Rect firstLine = position;
             firstLine.height = EditorGUIUtility.singleLineHeight;
 
-            label = EditorGUI.BeginProperty(firstLine, label, property);
+            label = EditorGUI.BeginProperty(position, label, property);
             Rect propRect = firstLine;
             propRect.width -= TextIconDisplayWidth + 4;
 
@@ -112,7 +119,7 @@ namespace Aqua.Editor
             searchResultsBox.width -= TextIconDisplayWidth + 4;
 
             Rect textBox = EditorGUI.IndentedRect(position);
-            textBox.height -= 20;
+            textBox.height -= 22;
             textBox.y += 20;
 
             float textBoxWidthToReduce = 24;
@@ -130,7 +137,7 @@ namespace Aqua.Editor
 
             using(GUIScopes.IndentLevelScope.SetIndent(0)) {
                 if (!string.IsNullOrEmpty(key)) {
-                    m_CurrentText = EditorGUI.TextArea(textBox, m_CurrentText);
+                    m_CurrentText = EditorGUI.TextArea(textBox, m_CurrentText, s_TextAreaStyle);
                 }
                 RenderSearchAndStatus(stringProp, hashProp, statusRect, searchResultsBox, key, foundContent, m_CurrentText, bFound, bSelected, oldCurrent);
             }
@@ -140,22 +147,22 @@ namespace Aqua.Editor
 
         private void RenderSearchAndStatus(SerializedProperty stringProp, SerializedProperty hashProp, Rect statusPosition, Rect searchPosition, string key, string originalText, string newText, bool found, bool selected, Event evt) {
             if (stringProp.hasMultipleDifferentValues) {
-                EditorGUI.LabelField(statusPosition, "---", m_NullIconStyle);
+                EditorGUI.LabelField(statusPosition, "---", s_NullIconStyle);
                 return;
             }    
             if (string.IsNullOrEmpty(key)) {
-                EditorGUI.LabelField(statusPosition, "Null", m_NullIconStyle);
+                EditorGUI.LabelField(statusPosition, "Null", s_NullIconStyle);
                 return;
             }
 
 
             if (found) {
                 if (originalText == newText) {
-                    var validContent = m_ValidContent ?? (m_ValidContent = new GUIContent("Good"));
-                    EditorGUI.LabelField(statusPosition, validContent, m_FoundIconStyle);
+                    var validContent = s_ValidContent ?? (s_ValidContent = new GUIContent("Good"));
+                    EditorGUI.LabelField(statusPosition, validContent, s_FoundIconStyle);
                 } else {
-                    var updateContent = m_OverwriteContent ?? (m_OverwriteContent = new GUIContent("Update?"));
-                    if (GUI.Button(statusPosition, updateContent, m_OverwriteIconStyle)) {
+                    var updateContent = s_OverwriteContent ?? (s_OverwriteContent = new GUIContent("Update?"));
+                    if (GUI.Button(statusPosition, updateContent, s_OverwriteIconStyle)) {
                         LocEditor.TrySet(key, newText);
                     }
                 }
@@ -163,8 +170,8 @@ namespace Aqua.Editor
                 return;
             }
             
-            var guiContent = m_MissingContent ?? (m_MissingContent = new GUIContent("Create?"));
-            if (GUI.Button(statusPosition, guiContent, m_MissingIconStyle)) {
+            var guiContent = s_MissingContent ?? (s_MissingContent = new GUIContent("Create?"));
+            if (GUI.Button(statusPosition, guiContent, s_MissingIconStyle)) {
                 LocEditor.TrySet(key, newText);
                 EditorUtility.SetDirty(stringProp.serializedObject.targetObject);
             }
@@ -214,7 +221,7 @@ namespace Aqua.Editor
 
             using(new GUIScopes.ColorScope(Color.black.WithAlpha(0.8f)))
             {
-                GUI.Box(searchBackgroundBox, " ", m_SearchBoxStyle);
+                GUI.Box(searchBackgroundBox, " ", s_SearchBoxStyle);
             }
 
             float lineInterval = EditorGUIUtility.singleLineHeight + 2;
@@ -223,14 +230,14 @@ namespace Aqua.Editor
             textRect.height = EditorGUIUtility.singleLineHeight;
             if (resultsToDisplay == 0)
             {
-                GUI.Label(textRect, "No similar entries", m_NullIconStyle);
+                GUI.Label(textRect, "No similar entries", s_NullIconStyle);
             }
             else
             {
                 if (resultCount > MaxSearchLines)
-                    GUI.Label(textRect, string.Format("{0} similar entries\t[PgUp/PgDn to scroll]", resultCount), m_NullIconStyle);
+                    GUI.Label(textRect, string.Format("{0} similar entries\t[PgUp/PgDn to scroll]", resultCount), s_NullIconStyle);
                 else
-                    GUI.Label(textRect, string.Format("{0} similar entries", resultCount), m_NullIconStyle);
+                    GUI.Label(textRect, string.Format("{0} similar entries", resultCount), s_NullIconStyle);
                 textRect.y += lineInterval;
 
                 textRect.x += 4;
@@ -250,7 +257,7 @@ namespace Aqua.Editor
             if (hashProp.longValue == 0) {
                 return EditorGUIUtility.singleLineHeight;
             }
-            return EditorGUIUtility.singleLineHeight + 2 + 18f + 13 + 13;
+            return EditorGUIUtility.singleLineHeight + 4 + 18f + 13 + 13;
         }
     }
 }

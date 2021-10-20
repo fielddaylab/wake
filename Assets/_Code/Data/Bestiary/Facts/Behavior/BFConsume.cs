@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Behavior/Consume")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Consume")]
     public class BFConsume : BFBehavior
     {
         #region Inspector

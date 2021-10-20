@@ -129,6 +129,15 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        static private readonly Type[] TypeToSystemTypeMapping = new Type[] {
+            typeof(BFBody), typeof(BFState),
+            typeof(BFEat), typeof(BFConsume), typeof(BFProduce), null,
+            typeof(BFDeath), typeof(BFGrow), typeof(BFReproduce),
+            typeof(BFPopulation), typeof(BFPopulationHistory),
+            typeof(BFWaterProperty), typeof(BFWaterPropertyHistory),
+            typeof(BFModel)
+        };
+
         static private readonly DefaultIconDelegate[] s_DefaultIconDelegates = new DefaultIconDelegate[TypeCount];
         static private readonly ModeDelegate[] s_ModeDelegates = new ModeDelegate[TypeCount];
 
@@ -173,6 +182,106 @@ namespace Aqua
             if (behavior != null && behavior.AutoGive)
                 return BFMode.Always;
             return s_ModeDelegates[(int) inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+        }
+
+        static internal Type ResolveSystemType(BFTypeId inType) {
+            return TypeToSystemTypeMapping[(int) inType];
+        }
+
+        static internal BFTypeId ResolveFactType(Type inType) {
+            return (BFTypeId) Array.IndexOf(TypeToSystemTypeMapping, inType);
+        }
+
+        static internal string AutoNameFact(BFBase inFact) {
+            string parentName = inFact.Parent.name;
+            switch(inFact.Type) {
+                case BFTypeId.Body: {
+                    return string.Format("{0}.Body", parentName);
+                }
+
+                case BFTypeId.Consume: {
+                    BFConsume consume = (BFConsume) inFact;
+                    if (consume.OnlyWhenStressed) {
+                        return string.Format("{0}.Consume.{1}.Stressed", parentName, consume.Property.ToString());
+                    } else {
+                        return string.Format("{0}.Consume.{1}", parentName, consume.Property.ToString());
+                    }
+                }
+
+                case BFTypeId.Death: {
+                    BFDeath death = (BFDeath) inFact;
+                    if (death.OnlyWhenStressed) {
+                        return string.Format("{0}.Death.Stressed", parentName);
+                    } else {
+                        return string.Format("{0}.Death", parentName);
+                    }
+                }
+
+                case BFTypeId.Eat: {
+                    BFEat eat = (BFEat) inFact;
+                    if (eat.OnlyWhenStressed) {
+                        return string.Format("{0}.Eats.{1}.Stressed", parentName, !eat.Critter ? "Unknown" : eat.Critter.name);
+                    } else {
+                        return string.Format("{0}.Eats.{1}", parentName, !eat.Critter ? "Unknown" : eat.Critter.name);
+                    }
+                }
+
+                case BFTypeId.Grow: {
+                    BFGrow grow = (BFGrow) inFact;
+                    if (grow.OnlyWhenStressed) {
+                        return string.Format("{0}.Grows.Stressed", parentName);
+                    } else {
+                        return string.Format("{0}.Grows", parentName);
+                    }
+                }
+
+                case BFTypeId.Population: {
+                    BFPopulation population = (BFPopulation) inFact;
+                    return string.Format("{0}.Population.{1}", parentName, !population.Critter ? "Unknown" : population.Critter.name);
+                }
+
+                case BFTypeId.PopulationHistory: {
+                    BFPopulationHistory population = (BFPopulationHistory) inFact;
+                    return string.Format("{0}.PopulationHistory.{1}", parentName, !population.Critter ? "Unknown" : population.Critter.name);
+                }
+
+                case BFTypeId.Produce: {
+                    BFProduce produce = (BFProduce) inFact;
+                    if (produce.OnlyWhenStressed) {
+                        return string.Format("{0}.Produce.{1}.Stressed", parentName, produce.Property.ToString());
+                    } else {
+                        return string.Format("{0}.Produce.{1}", parentName, produce.Property.ToString());
+                    }
+                }
+
+                case BFTypeId.Reproduce: {
+                    BFReproduce reproduce = (BFReproduce) inFact;
+                    if (reproduce.OnlyWhenStressed) {
+                        return string.Format("{0}.Reproduce.Stressed", parentName);
+                    } else {
+                        return string.Format("{0}.Reproduce", parentName);
+                    }
+                }
+
+                case BFTypeId.State: {
+                    BFState state = (BFState) inFact;
+                    return string.Format("{0}.{1}.Stressed", parentName, state.Property.ToString());
+                }
+
+                case BFTypeId.WaterProperty: {
+                    BFWaterProperty water = (BFWaterProperty) inFact;
+                    return string.Format("{0}.{1}", parentName, water.Property.ToString());
+                }
+
+                case BFTypeId.WaterPropertyHistory: {
+                    BFWaterPropertyHistory water = (BFWaterPropertyHistory) inFact;
+                    return string.Format("{0}.{1}.History", parentName, water.Property.ToString());
+                }
+
+                default: {
+                    return null;
+                }
+            }
         }
 
         #else

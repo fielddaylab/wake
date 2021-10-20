@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace AquaAudio
 {
-    [CreateAssetMenu(menuName = "Aqualab/Audio/Audio Package")]
+    [CreateAssetMenu(menuName = "Aqualab/Audio Package")]
     public class AudioPackage : ScriptableObject
     {
         #region Inspector

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Jobs/Job Database", fileName = "JobDB")]
+    [CreateAssetMenu(menuName = "Aqualab System/Job Database", fileName = "JobDB")]
     public class JobDB : DBObjectCollection<JobDesc>
     {
         #region Inspector

@@ -9,7 +9,7 @@ using BeauUtil.Debugger;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/UI/Fact Sentence Tweaks")]
+    [CreateAssetMenu(menuName = "Aqualab System/Fact Sentence Tweaks")]
     public class FactSentenceTweaks : TweakAsset
     {
         #region Types

@@ -104,6 +104,8 @@ namespace Aqua
 
         protected virtual void OnValidate() { }
 
+        protected virtual void Reset() { }
+
         #endif // UNITY_EDITOR
 
         #endregion // Editor

@@ -6,20 +6,20 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Body")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Body")]
     public class BFBody : BFBase
     {
         #region Inspector
 
         [Header("Body")]
         public uint MassPerPopulation = 0;
-        public uint ScarcityLevel = 10000;
+        [Tooltip("When total mass sinks below this threshold, critters will die and be eaten more slowly")] public uint ScarcityLevel = 10000;
         
         [Header("Display")]
         public float MassDisplayScale = 1;
-        public uint PopulationSoftCap = 1000;
-        public uint PopulationSoftIncrement = 1;
-        public uint PopulationHardCap = 1000;
+        [Tooltip("Population cap for player adjustments in modeling")] public uint PopulationSoftCap = 1000;
+        [Tooltip("Population increment for player adjustments in modeling")] public uint PopulationSoftIncrement = 1;
+        [Tooltip("Absolute maximum population")] public uint PopulationHardCap = 1000;
 
         #endregion // Inspector
 

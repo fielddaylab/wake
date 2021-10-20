@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Map/Map Description", fileName = "NewMapDesc")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Map Description", fileName = "NewMapDesc")]
     public class MapDesc : DBObject
     {
         #region Inspector

@@ -69,7 +69,7 @@ namespace Aqua.Editor
         [SerializeField] private Vector2 m_TaskSettingsScroll;
         [SerializeField] private int m_SelectedTaskIdx = -1;
 
-        [NonSerialized] static private GUIContent s_TempContent;
+        static private GUIContent s_TempContent;
 
         [NonSerialized] private double m_JobStepFactSelectorLastUpdate;
         [NonSerialized] private double m_JobStepBestiarySelectorLastUpdate;
@@ -109,7 +109,8 @@ namespace Aqua.Editor
             m_PrerequisiteJobsList.drawElementCallback = DefaultElementDelegate(m_PrerequisiteJobsList);
 
             m_DiveSiteIdsList = new ReorderableList(serializedObject, m_DiveSiteIdsProperty);
-            m_DiveSiteIdsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Dive Sites");
+            m_DiveSiteIdsList.drawHeaderCallback = (r) => { };
+            m_DiveSiteIdsList.headerHeight = 0;
             m_DiveSiteIdsList.drawElementCallback = DefaultElementDelegate(m_DiveSiteIdsList);
 
             m_TasksList = new ReorderableList(serializedObject, m_TasksProperty);
@@ -136,6 +137,7 @@ namespace Aqua.Editor
 
             EditorGUILayout.PropertyField(m_CategoryProperty);
             EditorGUILayout.PropertyField(m_FlagsProperty);
+            EditorGUILayout.PropertyField(m_StationIdProperty);
 
             if (Section("Text", ref m_TextExpanded)) {
                 EditorGUILayout.PropertyField(m_NameIdProperty);
@@ -151,7 +153,6 @@ namespace Aqua.Editor
             }
 
             if (Section("Locations", ref m_LocationsExpanded)) {
-                EditorGUILayout.PropertyField(m_StationIdProperty);
                 m_DiveSiteIdsList.DoLayoutList();
             }
 
@@ -162,7 +163,7 @@ namespace Aqua.Editor
                     JobDesc desc = (JobDesc) targets[0];
                     EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(300));
                     
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(200));
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(250));
                     m_TaskListScroll = EditorGUILayout.BeginScrollView(m_TaskListScroll, GUILayout.ExpandHeight(true));
                     m_SelectedTaskIdx = RenderTaskList(desc, m_SelectedTaskIdx);
                     EditorGUILayout.EndScrollView();
@@ -199,20 +200,20 @@ namespace Aqua.Editor
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
-                EditorGUILayout.PropertyField(m_ScriptingProperty);
-                m_ExtraAssetsList.DoLayoutList();
-
-                EditorGUILayout.Space();
-
-                using(new EditorGUI.DisabledScope(m_ScriptingProperty.hasMultipleDifferentValues || m_ScriptingProperty.objectReferenceValue != null)) {
-                    if (GUILayout.Button("Create Script From Template")) {
-                        foreach(JobDesc job in targets) {
-                            Undo.RecordObject(job, "Creating Script");
-                            EditorUtility.SetDirty(job);
-                            job.m_Scripting = GenerateBaseScript(job);
+                using(new EditorGUILayout.HorizontalScope()) {
+                    EditorGUILayout.PropertyField(m_ScriptingProperty);
+                    using(new EditorGUI.DisabledScope(m_ScriptingProperty.hasMultipleDifferentValues || m_ScriptingProperty.objectReferenceValue != null)) {
+                        if (GUILayout.Button("Create (Template)", GUILayout.Width(120))) {
+                            foreach(JobDesc job in targets) {
+                                Undo.RecordObject(job, "Creating Script");
+                                EditorUtility.SetDirty(job);
+                                job.m_Scripting = GenerateBaseScript(job);
+                            }
                         }
                     }
                 }
+
+                m_ExtraAssetsList.DoLayoutList();
             }
 
             if (Section("Difficulty Ratings", ref m_DifficultyExpanded)) {
@@ -354,7 +355,22 @@ namespace Aqua.Editor
 
                     case JobStepType.GotoScene: {
                         stepProp.Next(false);
-                        EditorGUI.PropertyField(line, stepProp, TempContent("Scene Name"));
+                        stepProp.Next(true);
+                        string sceneName = stepProp.stringValue;
+                        SceneAsset scene = FindScene(sceneName);
+                        EditorGUI.BeginChangeCheck();
+                        SceneAsset nextScene = (SceneAsset) EditorGUI.ObjectField(line, TempContent("Scene"), scene, typeof(SceneAsset), false);
+                        if (EditorGUI.EndChangeCheck() && nextScene != scene) {
+                            if (nextScene == null) {
+                                stepProp.stringValue = string.Empty;
+                                stepProp.Next(false);
+                                stepProp.longValue = 0;
+                            } else {
+                                stepProp.stringValue = nextScene.name;
+                                stepProp.Next(false);
+                                stepProp.longValue = new StringHash32(nextScene.name).HashValue;
+                            }
+                        }
                         break;
                     }
 
@@ -368,14 +384,43 @@ namespace Aqua.Editor
                     case JobStepType.GetItem: {
                         stepProp.Next(false);
                         DBObjectIdPropertyDrawer.Render(line, stepProp, TempContent("Item Id"), JobStepTargetFieldInfo, JobStepItemSelector, ref m_JobStepItemSelectorLastUpdate, m_TaskStepItemSelectorList);
+                        stepProp.Next(true);
+                        string itemName = stepProp.stringValue;
+                        stepProp.Next(false);
                         stepProp.Next(false);
                         stepProp.Next(false);
                         line.y += EditorGUIUtility.singleLineHeight + 2;
-                        EditorGUI.PropertyField(line, stepProp, TempContent("Amount"));
+                        bool bIsUpgrade = false;
+                        if (!string.IsNullOrEmpty(itemName)) {
+                            InvItem item = AssetDBUtils.FindAsset<InvItem>(itemName);
+                            if (item != null && item.Category() == InvItemCategory.Upgrade) {
+                                bIsUpgrade = true;
+                                stepProp.intValue = 1;
+                            }
+                        }
+                        using(new EditorGUI.DisabledScope(bIsUpgrade)) {
+                            EditorGUI.PropertyField(line, stepProp, TempContent("Amount"));
+                        }
                         break;
                     }
                 }
             };
+        }
+
+        static private SceneAsset FindScene(string inName) {
+            if (string.IsNullOrEmpty(inName)) {
+                return null;
+            }
+
+            string[] sceneGUIDs = AssetDatabase.FindAssets("t:SceneAsset " + inName);
+            foreach(var guid in sceneGUIDs) {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SceneAsset asset= AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
+                if (asset.name == inName) {
+                    return asset;
+                }
+            }
+            return null;
         }
 
         private ReorderableList.ElementHeightCallbackDelegate TaskStepHeight(ReorderableList list) {
@@ -412,6 +457,9 @@ namespace Aqua.Editor
         static private bool Section(string inHeader, ref bool ioState) {
             EditorGUILayout.Space();
             ioState = EditorGUILayout.Foldout(ioState, inHeader, EditorStyles.foldoutHeader);
+            if (ioState) {
+                EditorGUILayout.Space();
+            }
             return ioState;
         }
 

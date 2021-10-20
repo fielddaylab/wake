@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Keycode Display Map")]
+    [CreateAssetMenu(menuName = "Aqualab System/Keycode Display Map")]
     public class KeycodeDisplayMap : ScriptableObject
     {
         public struct Mapping

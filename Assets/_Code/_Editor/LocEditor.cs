@@ -251,8 +251,6 @@ namespace Aqua.Editor
                     {
                         m_TextMap.Add(text.Id, text);
                         text.Parent = package;
-
-                        string listKey = text.Id.Replace(".", "/");
                     }
                 }
 

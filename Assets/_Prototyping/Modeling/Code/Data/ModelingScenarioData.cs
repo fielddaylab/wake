@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ProtoAqua.Modeling
 {
-    [CreateAssetMenu(menuName = "Aqualab/Modeling/Scenario Data", fileName = "NewModelingScenario")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Modeling Scenario Data", fileName = "NewModelingScenario")]
     public sealed class ModelingScenarioData : ScriptableObject, IOptimizableAsset
     {
         private enum DuplicatedWaterPropertyId : byte

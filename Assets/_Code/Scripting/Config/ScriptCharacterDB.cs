@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Script Character Database")]
+    [CreateAssetMenu(menuName = "Aqualab System/Script Character Database")]
     public class ScriptCharacterDB : DBObjectCollection<ScriptCharacterDef>
     {
         #region Inspector

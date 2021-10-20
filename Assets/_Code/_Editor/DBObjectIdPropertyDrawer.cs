@@ -53,9 +53,12 @@ namespace Aqua.Editor
             }
 
             label = EditorGUI.BeginProperty(position, label, property);
+
+            Rect fieldPosition = position;
+            fieldPosition.width -= 16;
             EditorGUI.showMixedValue = hashProperty.hasMultipleDifferentValues;
             EditorGUI.BeginChangeCheck();
-            StringHash32 newValue = ListGUI.Popup(position, label, new StringHash32((uint) hashProperty.longValue), list);
+            StringHash32 newValue = ListGUI.Popup(fieldPosition, label, new StringHash32((uint) hashProperty.longValue), list);
             if (EditorGUI.EndChangeCheck()) {
                 hashProperty.longValue = newValue.HashValue;
                 if (stringProperty != null) {
@@ -63,6 +66,28 @@ namespace Aqua.Editor
                 }
             }
             EditorGUI.EndProperty();
+
+            Rect pingPosition = position;
+            pingPosition.x = pingPosition.x + pingPosition.width - 16;
+            pingPosition.width = 16;
+
+            using(GUIScopes.IndentLevelScope.SetIndent(0)) {
+                long hashProp = hashProperty.longValue;
+                string reversed = new StringHash32((uint) hashProp).ToDebugString();
+                if (hashProperty.hasMultipleDifferentValues || string.IsNullOrEmpty(reversed)) {
+                    EditorGUI.LabelField(pingPosition, EditorGUIUtility.IconContent("DotFrame"));
+                } else {
+                    EditorGUI.LabelField(pingPosition, EditorGUIUtility.IconContent("DotFill"));
+                    if (Event.current.type == EventType.MouseDown && pingPosition.Contains(Event.current.mousePosition)) {
+                        DBObject asset = (DBObject) AssetDBUtils.FindAsset(attr.AssetType, reversed);
+                        if (Event.current.clickCount >= 2) {
+                            Selection.activeObject = asset;
+                        } else {
+                            EditorGUIUtility.PingObject(asset);
+                        }
+                    }
+                }
+            }
         }
     }
 }

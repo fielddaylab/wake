@@ -24,7 +24,6 @@ namespace Aqua.Portable
 
         static private readonly StringHash32 SelectCritterFact_Label = "ui.portable.app.bestiary.selectCritterFact.label";
         static private readonly StringHash32 SelectEcosystemFact_Label = "ui.portable.app.bestiary.selectEcosystemFact.label";
-        static private readonly StringHash32 SelectModel_Label = "ui.portable.app.bestiary.selectModel.label";
         static private readonly StringHash32 SelectAnyFact_Label = "ui.portable.app.bestiary.selectAnyFact.label";
 
         #endregion // Consts
@@ -158,7 +157,6 @@ namespace Aqua.Portable
         [Header("Types")]
         [SerializeField, Required] private Toggle m_CritterGroupToggle = null;
         [SerializeField, Required] private Toggle m_EcosystemGroupToggle = null;
-        [SerializeField, Required] private Toggle m_ModelGroupToggle = null;
 
         [Header("Entries")]
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
@@ -174,7 +172,6 @@ namespace Aqua.Portable
         [Header("Info")]
         [SerializeField, Required] private BestiaryPage m_CritterPage = null;
         [SerializeField, Required] private BestiaryPage m_EnvPage = null;
-        [SerializeField, Required] private BestiaryPage m_ModelPage = null;
 
         [Header("Facts")]
         [SerializeField] private FactPools m_FactPools = null;
@@ -195,11 +192,9 @@ namespace Aqua.Portable
 
             m_CritterGroupToggle.onValueChanged.AddListener(OnCritterToggled);
             m_EcosystemGroupToggle.onValueChanged.AddListener(OnEcosystemToggled);
-            m_ModelGroupToggle.onValueChanged.AddListener(OnModelToggled);
 
             RegisterPage(m_CritterPage);
             RegisterPage(m_EnvPage);
-            RegisterPage(m_ModelPage);
         }
 
         private void RegisterPage(BestiaryPage inPage)
@@ -220,15 +215,6 @@ namespace Aqua.Portable
 
             if (inbOn)
                 LoadEntryGroup(BestiaryDescCategory.Critter, null, false);
-        }
-
-        private void OnModelToggled(bool inbOn)
-        {
-            if (!IsShowing())
-                return;
-
-            if (inbOn)
-                LoadEntryGroup(BestiaryDescCategory.Model, null, false);
         }
 
         private void OnEcosystemToggled(bool inbOn)
@@ -276,12 +262,10 @@ namespace Aqua.Portable
 
             m_CritterGroupToggle.SetIsOnWithoutNotify(true);
             m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-            m_ModelGroupToggle.SetIsOnWithoutNotify(false);
             LoadEntryGroup(BestiaryDescCategory.Critter, null, true);
 
             m_CritterGroupToggle.interactable = true;
             m_EcosystemGroupToggle.interactable = true;
-            m_ModelGroupToggle.interactable = true;
 
             LoadEntry(null);
         }
@@ -356,7 +340,6 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = false;
-                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText(SelectCritter_Label);
                         break;
                     }
@@ -365,17 +348,7 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = true;
-                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText(SelectEcosystem_Label);
-                        break;
-                    }
-                
-                case BestiaryDescCategory.Model:
-                    {
-                        m_CritterGroupToggle.interactable = false;
-                        m_EcosystemGroupToggle.interactable = false;
-                        m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText("-- Unsupported Mode --");
                         break;
                     }
 
@@ -383,7 +356,6 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
-                        m_ModelGroupToggle.interactable = true;
                         m_PromptText.SetText("-- Unsupported Mode --");
 
                         category = BestiaryDescCategory.Critter;
@@ -407,7 +379,6 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = false;
-                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText(SelectCritterFact_Label);
                         break;
                     }
@@ -416,17 +387,7 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = false;
                         m_EcosystemGroupToggle.interactable = true;
-                        m_ModelGroupToggle.interactable = false;
                         m_PromptText.SetText(SelectEcosystemFact_Label);
-                        break;
-                    }
-
-                case BestiaryDescCategory.Model:
-                    {
-                        m_CritterGroupToggle.interactable = false;
-                        m_EcosystemGroupToggle.interactable = false;
-                        m_ModelGroupToggle.interactable = true;
-                        m_PromptText.SetText(SelectModel_Label);
                         break;
                     }
 
@@ -434,7 +395,6 @@ namespace Aqua.Portable
                     {
                         m_CritterGroupToggle.interactable = true;
                         m_EcosystemGroupToggle.interactable = true;
-                        m_ModelGroupToggle.interactable = true;
                         m_PromptText.SetText(SelectAnyFact_Label);
 
                         category = BestiaryDescCategory.Critter;
@@ -462,7 +422,6 @@ namespace Aqua.Portable
                 case BestiaryDescCategory.Critter:
                     m_CritterGroupToggle.SetIsOnWithoutNotify(true);
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-                    m_ModelGroupToggle.SetIsOnWithoutNotify(false);
 
                     m_CategoryLabel.SetText(Critters_Label);
                     m_CurrentPage = m_CritterPage;
@@ -471,19 +430,9 @@ namespace Aqua.Portable
                 case BestiaryDescCategory.Environment:
                     m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
                     m_CritterGroupToggle.SetIsOnWithoutNotify(false);
-                    m_ModelGroupToggle.SetIsOnWithoutNotify(false);
 
                     m_CategoryLabel.SetText(Ecosystems_Label);
                     m_CurrentPage = m_EnvPage;
-                    break;
-
-                case BestiaryDescCategory.Model:
-                    m_ModelGroupToggle.SetIsOnWithoutNotify(true);
-                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-                    m_CritterGroupToggle.SetIsOnWithoutNotify(false);
-
-                    m_CategoryLabel.SetText(Models_Label);
-                    m_CurrentPage = m_ModelPage;
                     break;
             }
 
@@ -494,14 +443,12 @@ namespace Aqua.Portable
                 StringHash32 mapId = default;
                 foreach(var entry in entities)
                 {
-                    if (inType != BestiaryDescCategory.Model) {
-                        if (mapId != entry.StationId()) {
-                            mapId = entry.StationId();
-                            PortableListHeader header = m_HeaderPool.Alloc();
-                            MapDesc map = Assets.Map(mapId);
-                            header.Header.SetText(map.StationHeaderId());
-                            header.SubHeader.SetText(map.ShortLabelId());
-                        }
+                    if (mapId != entry.StationId()) {
+                        mapId = entry.StationId();
+                        PortableListHeader header = m_HeaderPool.Alloc();
+                        MapDesc map = Assets.Map(mapId);
+                        header.Header.SetText(map.StationHeaderId());
+                        header.SubHeader.SetText(map.ShortLabelId());
                     }
 
                     PortableListElement button = m_EntryPool.Alloc();

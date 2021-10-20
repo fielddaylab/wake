@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Water Property/Water Property Desc", fileName = "NewWaterProp")]
+    [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
     public class WaterPropertyDesc : DBObject
     {
         #region Inspector

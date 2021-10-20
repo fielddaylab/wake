@@ -17,6 +17,9 @@ namespace Aqua
         static private WaterPropertyDB WaterPropertyDB;
 
         static private Dictionary<StringHash32, ScriptableObject> s_GlobalLookup;
+        #if UNITY_EDITOR
+        static private WaterPropertyDesc[] s_EditorWaterProperties;
+        #endif // UNITY_EDITOR
 
         static internal void Assign(AssetsService inService)
         {
@@ -120,6 +123,18 @@ namespace Aqua
         [MethodImpl(256)]
         static public WaterPropertyDesc Property(WaterPropertyId inProperty)
         {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                if (s_EditorWaterProperties == null) {
+                    s_EditorWaterProperties = new WaterPropertyDesc[(int) WaterPropertyId.MAX];
+                    foreach(WaterPropertyDesc prop in ValidationUtils.FindAllAssets<WaterPropertyDesc>()) {
+                        s_EditorWaterProperties[(int) prop.Index()] = prop;
+                    }
+                }
+
+                return s_EditorWaterProperties[(int) inProperty];
+            }
+            #endif // UNITY_EDITOR
             return WaterPropertyDB.Property(inProperty);
         }
     }

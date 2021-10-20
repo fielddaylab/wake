@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Behavior/Produce")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Produce")]
     public class BFProduce : BFBehavior
     {
         #region Inspector

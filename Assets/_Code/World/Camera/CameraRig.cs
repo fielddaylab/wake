@@ -75,6 +75,7 @@ namespace Aqua.Cameras
             {
                 if (m_FOVPlaneEditor) {
                     DestroyImmediate(m_FOVPlaneEditor);
+                    m_FOVPlaneEditor = null;
                 }
             }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Bestiary Database", fileName = "BestiaryDB")]
+    [CreateAssetMenu(menuName = "Aqualab System/Bestiary Database", fileName = "BestiaryDB")]
     public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IOptimizableAsset
     {
         #region Inspector

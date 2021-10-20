@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Script Character Definition")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Character Definition")]
     public class ScriptCharacterDef : DBObject
     {
         [Serializable]

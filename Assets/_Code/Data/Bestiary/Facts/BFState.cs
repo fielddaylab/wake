@@ -7,23 +7,23 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/State/Range State Change")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/State Change")]
     public class BFState : BFBase, IOptimizableAsset
     {
         #region Inspector
 
-        [Header("Property Range")]
+        [Header("State Change")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Temperature;
         
         [Header("Alive State")]
         public bool HasStressed = true;
-        [SerializeField, ShowIfField("HasStressed")] private float m_MinSafe = 0;
-        [SerializeField, ShowIfField("HasStressed")] private float m_MaxSafe = 0;
+        [SerializeField, ShowIfField("HasStressed")] internal float m_MinSafe = 0;
+        [SerializeField, ShowIfField("HasStressed")] internal float m_MaxSafe = 0;
 
         [Header("Stressed State")]
         public bool HasDeath = false;
-        [SerializeField, ShowIfField("HasDeath")] private float m_MinStressed = float.MinValue;
-        [SerializeField, ShowIfField("HasDeath")] private float m_MaxStressed = float.MaxValue;
+        [SerializeField, ShowIfField("HasDeath")] internal float m_MinStressed = float.MinValue;
+        [SerializeField, ShowIfField("HasDeath")] internal float m_MaxStressed = float.MaxValue;
 
         #endregion // Inspector
 

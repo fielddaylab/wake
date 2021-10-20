@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Model")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Model")]
     public class BFModel : BFBase // yes i know models aren't strictly facts in a scientific sense but this fits into our data model
     {
         #region Inspector

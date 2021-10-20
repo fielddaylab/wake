@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Inventory/Inventory Database", fileName = "InventoryDB")]
+    [CreateAssetMenu(menuName = "Aqualab System/Inventory Database", fileName = "InventoryDB")]
     public class InventoryDB : DBObjectCollection<InvItem>, IOptimizableAsset
     {
         [SerializeField, HideInInspector] private int m_CurrencyCount;

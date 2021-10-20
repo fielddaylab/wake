@@ -6,12 +6,12 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Water Property History")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Water Property History")]
     public class BFWaterPropertyHistory : BFBase
     {
         #region Inspector
 
-        [Header("Property")]
+        [Header("Property History")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Temperature;
         [AutoEnum] public BFGraphType Graph = BFGraphType.Flat;
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AquaAudio
 {
-    [CreateAssetMenu(menuName = "Aqualab/Audio/Audio Event")]
+    [CreateAssetMenu(menuName = "Aqualab/Audio Event")]
     public class AudioEvent : ScriptableObject, IKeyValuePair<StringHash32, AudioEvent>
     {
         #region Inspector

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Map/Map Database", fileName = "MapDB")]
+    [CreateAssetMenu(menuName = "Aqualab System/Map Database", fileName = "MapDB")]
     public class MapDB : DBObjectCollection<MapDesc>
     {
         #region Inspector

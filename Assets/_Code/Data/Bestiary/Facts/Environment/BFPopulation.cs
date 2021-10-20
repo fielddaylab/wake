@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Bestiary/Fact/Property/Population")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Fact/Population")]
     public class BFPopulation : BFBase
     {
         #region Inspector

@@ -329,11 +329,11 @@ namespace Aqua
                         LogBestiaryOpenEnvironmentsTab();
                         break;
                     }
-                case (BestiaryDescCategory.Model): //Models Tab
-                    {
-                        LogBestiaryOpenModelsTab();
-                        break;
-                    }
+                // case (BestiaryDescCategory.Model): //Models Tab
+                //     {
+                //         LogBestiaryOpenModelsTab();
+                //         break;
+                //     }
             }
         }
 
@@ -351,11 +351,11 @@ namespace Aqua
                         LogBestiarySelectEnvironment(selectedData.name);
                         break;
                     }
-                case (BestiaryDescCategory.Model): //Model Selected
-                    {
-                        LogBestiarySelectModel(selectedData.name);
-                        break;
-                    }
+                // case (BestiaryDescCategory.Model): //Model Selected
+                //     {
+                //         LogBestiarySelectModel(selectedData.name);
+                //         break;
+                //     }
             }
         }
         #endregion

@@ -7,7 +7,7 @@ namespace Aqua.Animation
     /// <summary>
     /// Animated sequence of sprites.
     /// </summary>
-    [CreateAssetMenu(menuName = "Aqualab/SpriteAnim/Animation")]
+    [CreateAssetMenu(menuName = "Aqualab/Sprite Animation")]
     public class SpriteAnimation : ScriptableObject
     {
         #region Inspector

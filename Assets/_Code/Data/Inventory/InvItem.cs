@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Inventory/Inventory Item", fileName = "NewInvItem")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Inventory Item", fileName = "NewInvItem")]
     public class InvItem : DBObject
     {
         #region Inspector

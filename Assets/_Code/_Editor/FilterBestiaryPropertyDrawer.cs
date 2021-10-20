@@ -28,8 +28,31 @@ namespace Aqua.Editor
             }
             
             label = EditorGUI.BeginProperty(position, label, property);
-            property.objectReferenceValue = ListGUI.Popup(position, label, (BestiaryDesc) property.objectReferenceValue, m_List);
+
+            Rect line = position;
+            line.width -= 16;
+            property.objectReferenceValue = ListGUI.Popup(line, label, (BestiaryDesc) property.objectReferenceValue, m_List);
             EditorGUI.EndProperty();
+
+            Rect pingPosition = position;
+            pingPosition.x = pingPosition.x + pingPosition.width - 16;
+            pingPosition.width = 16;
+
+            using(GUIScopes.IndentLevelScope.SetIndent(0)) {
+                UnityEngine.Object refObj = property.objectReferenceValue;
+                if (property.hasMultipleDifferentValues || !refObj) {
+                    EditorGUI.LabelField(pingPosition, EditorGUIUtility.IconContent("DotFrame"));
+                } else {
+                    EditorGUI.LabelField(pingPosition, EditorGUIUtility.IconContent("DotFill"));
+                    if (Event.current.type == EventType.MouseDown && pingPosition.Contains(Event.current.mousePosition)) {
+                        if (Event.current.clickCount >= 2) {
+                            Selection.activeObject = refObj;
+                        } else {
+                            EditorGUIUtility.PingObject(refObj);
+                        }
+                    }
+                }
+            }
         }
     }
 }

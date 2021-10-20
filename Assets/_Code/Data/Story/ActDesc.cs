@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Story/Act Description", fileName = "NewActDesc")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Act Description", fileName = "NewActDesc")]
     public class ActDesc : DBObject
     {
         #region Inspector

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    [CreateAssetMenu(menuName = "Aqualab/Jobs/Job Description", fileName = "NewJobDesc")]
+    [CreateAssetMenu(menuName = "Aqualab Content/Job Description", fileName = "NewJobDesc")]
     public partial class JobDesc : DBObject
     {
         #region Inspector
