@@ -14,7 +14,7 @@ namespace Aqua
         public const int TypeCount = (int) BFTypeId._COUNT;
 
         static private readonly BFTypeId[] TypeSortingOrder = new BFTypeId[] {
-            BFTypeId.WaterProperty, BFTypeId.Population, BFTypeId.WaterPropertyHistory, BFTypeId.PopulationHistory, BFTypeId.Model,
+            BFTypeId.WaterProperty, BFTypeId.WaterPropertyHistory, BFTypeId.Population, BFTypeId.PopulationHistory, BFTypeId.Model,
             BFTypeId.State, BFTypeId.Parasites, BFTypeId.Eat, BFTypeId.Produce, BFTypeId.Consume, BFTypeId.Grow, BFTypeId.Reproduce, BFTypeId.Death 
         };
         static private readonly int[] TypeSortingOrderIndices = new int[TypeCount];
@@ -140,18 +140,6 @@ namespace Aqua
 
         static private readonly DefaultIconDelegate[] s_DefaultIconDelegates = new DefaultIconDelegate[TypeCount];
         static private readonly ModeDelegate[] s_ModeDelegates = new ModeDelegate[TypeCount];
-
-        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, BFMode inMode)
-        {
-            s_DefaultIconDelegates[(int) inType] = (b) => inDefaultIcon;
-            s_ModeDelegates[(int) inType] = (b) => inMode;
-        }
-
-        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, ModeDelegate inModeDelegate)
-        {
-            s_DefaultIconDelegates[(int) inType] = (b) => inDefaultIcon;
-            s_ModeDelegates[(int) inType] = inModeDelegate;
-        }
 
         static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, BFMode inMode)
         {
@@ -285,16 +273,6 @@ namespace Aqua
         }
 
         #else
-
-        [Conditional("UNITY_EDITOR")]
-        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, BFMode inMode)
-        {
-        }
-
-        [Conditional("UNITY_EDITOR")]
-        static internal void DefineEditor(BFTypeId inType, Sprite inDefaultIcon, ModeDelegate inModeDelegate)
-        {
-        }
 
         [Conditional("UNITY_EDITOR")]
         static internal void DefineEditor(BFTypeId inType, DefaultIconDelegate inIconDelegate, BFMode inMode)

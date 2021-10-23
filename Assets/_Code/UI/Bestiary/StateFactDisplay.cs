@@ -9,9 +9,17 @@ namespace Aqua
     {
         #region Inspector
 
+        [Header("Info")]
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField, Required] private LocText m_Label = null;
+
+        [Header("Backgrounds")]
+        [SerializeField, Required] private Graphic m_IconBackground = null;
         [SerializeField, Required] private Graphic m_KillBackground = null;
+        [SerializeField, Required] private Graphic m_StressBackground = null;
+        [SerializeField, Required] private Graphic m_AliveBackground = null;
+
+        [Header("Ranges")]
         [SerializeField, Required] private RangeDisplay m_StressRange = null;
         [SerializeField, Required] private RangeDisplay m_AliveRange = null;
         [SerializeField] private RectTransform m_EnvironmentValueMarker = null;
@@ -25,6 +33,12 @@ namespace Aqua
             m_CachedPropertyId = inFact.Property;
 
             var propData = Assets.Property(inFact.Property);
+            var palette = propData.Palette();
+
+            m_IconBackground.color = palette.Background;
+            m_StressBackground.color = palette.Shadow;
+            m_AliveBackground.color = palette.Background;
+
             m_Icon.sprite = inFact.Icon;
 
             m_Label.SetText(propData.LabelId());

@@ -22,11 +22,12 @@ namespace Aqua.Editor
         private SerializedProperty m_ScientificNameProperty;
         private SerializedProperty m_CommonNameIdProperty;
         private SerializedProperty m_PluralCommonNameIdProperty;
+        private SerializedProperty m_DescriptionIdProperty;
         private SerializedProperty m_FactsProperty;
         private SerializedProperty m_HistoricalRecordDurationProperty;
         private SerializedProperty m_WaterColorProperty;
         private SerializedProperty m_IconProperty;
-        private SerializedProperty m_SketchProperty;
+        private SerializedProperty m_SketchPathProperty;
         private SerializedProperty m_ColorProperty;
         private SerializedProperty m_ListenAudioEventProperty;
         private SerializedProperty m_SortingOrderProperty;
@@ -58,11 +59,12 @@ namespace Aqua.Editor
             m_ScientificNameProperty = serializedObject.FindProperty("m_ScientificName");
             m_CommonNameIdProperty = serializedObject.FindProperty("m_CommonNameId");
             m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
+            m_DescriptionIdProperty = serializedObject.FindProperty("m_DescriptionId");
             m_FactsProperty = serializedObject.FindProperty("m_Facts");
             m_HistoricalRecordDurationProperty = serializedObject.FindProperty("m_HistoricalRecordDuration");
             m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
             m_IconProperty = serializedObject.FindProperty("m_Icon");
-            m_SketchProperty = serializedObject.FindProperty("m_Sketch");
+            m_SketchPathProperty = serializedObject.FindProperty("m_SketchPath");
             m_ColorProperty = serializedObject.FindProperty("m_Color");
             m_ListenAudioEventProperty = serializedObject.FindProperty("m_ListenAudioEvent");
             m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
@@ -123,11 +125,11 @@ namespace Aqua.Editor
                 EditorGUILayout.PropertyField(m_ScientificNameProperty);
                 EditorGUILayout.PropertyField(m_CommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
+                EditorGUILayout.PropertyField(m_DescriptionIdProperty);
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
-                EditorGUILayout.PropertyField(m_IconProperty);
-                EditorGUILayout.PropertyField(m_SketchProperty);
+                EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
                 EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
             }
@@ -181,11 +183,12 @@ namespace Aqua.Editor
 
             if (Section("Text", ref m_TextExpanded)) {
                 EditorGUILayout.PropertyField(m_CommonNameIdProperty);
+                EditorGUILayout.PropertyField(m_DescriptionIdProperty);
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
                 EditorGUILayout.PropertyField(m_IconProperty);
-                EditorGUILayout.PropertyField(m_SketchProperty);
+                EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
                 EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
                 EditorGUILayout.PropertyField(m_WaterColorProperty);

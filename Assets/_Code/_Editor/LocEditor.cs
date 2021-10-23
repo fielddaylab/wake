@@ -1,21 +1,19 @@
 using System;
-using UnityEngine;
-using UnityEditor;
-using BeauUtil.IO;
-using BeauUtil.Blocks;
-using System.Collections.Generic;
 using System.Collections;
-using BeauUtil.Tags;
-using BeauUtil;
-using BeauUtil.Editor;
+using System.Collections.Generic;
 using System.IO;
-using UnityEditorInternal;
+using BeauUtil;
+using BeauUtil.Blocks;
 using BeauUtil.Debugger;
+using BeauUtil.Editor;
+using BeauUtil.IO;
+using BeauUtil.Tags;
+using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
 
-namespace Aqua.Editor
-{
-    public class LocEditor : ScriptableObject
-    {
+namespace Aqua.Editor {
+    public class LocEditor : ScriptableObject {
         #region Instance
 
         static private LocEditor s_Instance;
@@ -23,13 +21,10 @@ namespace Aqua.Editor
         public const string EditorDatabasePath = "Assets/Editor/LocDatabase.asset";
         public const string EditorDatabaseExportPath = "Assets/_Content/Text/english.bytes";
 
-        static private LocEditor GetInstance()
-        {
-            if (!s_Instance)
-            {
+        static private LocEditor GetInstance() {
+            if (!s_Instance) {
                 s_Instance = AssetDatabase.LoadAssetAtPath<LocEditor>(EditorDatabasePath);
-                if (!s_Instance)
-                {
+                if (!s_Instance) {
                     s_Instance = ScriptableObject.CreateInstance<LocEditor>();
                     AssetDatabase.CreateAsset(s_Instance, EditorDatabasePath);
                     AssetDatabase.SaveAssets();
@@ -44,8 +39,7 @@ namespace Aqua.Editor
         #region Types
 
         [Serializable]
-        private struct BasePathHeader
-        {
+        private struct BasePathHeader {
             public string Path;
             public int Start;
 
@@ -56,8 +50,7 @@ namespace Aqua.Editor
         }
 
         [Serializable]
-        private class PackageRecord : IDataBlockPackage<TextRecord>
-        {
+        private class PackageRecord : IDataBlockPackage<TextRecord> {
             public string Name;
             [HideInInspector] public string FilePath;
 
@@ -70,20 +63,17 @@ namespace Aqua.Editor
 
             [HideInInspector] public bool NeedsExport;
 
-            public PackageRecord(string inName)
-            {
+            public PackageRecord(string inName) {
                 Name = inName;
             }
 
             public int Count { get { return Records.Count; } }
 
-            public IEnumerator<TextRecord> GetEnumerator()
-            {
+            public IEnumerator<TextRecord> GetEnumerator() {
                 return Records.GetEnumerator();
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
+            IEnumerator IEnumerable.GetEnumerator() {
                 return GetEnumerator();
             }
 
@@ -95,36 +85,30 @@ namespace Aqua.Editor
         }
 
         [Serializable]
-        private class TextRecord : IDataBlock
-        {
+        private class TextRecord : IDataBlock {
             public string Id;
-            [Multiline] [BlockContent] public string Content = null;
+            [Multiline][BlockContent] public string Content = null;
 
             [NonSerialized] public PackageRecord Parent;
 
-            public TextRecord(string inId)
-            {
+            public TextRecord(string inId) {
                 Id = inId;
             }
         }
 
-        private class PackageGenerator : AbstractBlockGenerator<TextRecord, PackageRecord>
-        {
+        private class PackageGenerator : AbstractBlockGenerator<TextRecord, PackageRecord> {
             static public readonly PackageGenerator Instance = new PackageGenerator();
 
-            public override PackageRecord CreatePackage(string inFileName)
-            {
+            public override PackageRecord CreatePackage(string inFileName) {
                 return new PackageRecord(inFileName);
             }
 
-            public override void OnStart(IBlockParserUtil inUtil, PackageRecord inPackage)
-            {
+            public override void OnStart(IBlockParserUtil inUtil, PackageRecord inPackage) {
                 base.OnStart(inUtil, inPackage);
                 inPackage.Records.Clear();
             }
 
-            public override bool TryCreateBlock(IBlockParserUtil inUtil, PackageRecord inPackage, TagData inId, out TextRecord outBlock)
-            {
+            public override bool TryCreateBlock(IBlockParserUtil inUtil, PackageRecord inPackage, TagData inId, out TextRecord outBlock) {
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.BasePath);
                 if (!inPackage.BasePath.EndsWith("."))
@@ -136,8 +120,7 @@ namespace Aqua.Editor
                 return true;
             }
 
-            public override void OnEnd(IBlockParserUtil inUtil, PackageRecord inPackage, bool inbError)
-            {
+            public override void OnEnd(IBlockParserUtil inUtil, PackageRecord inPackage, bool inbError) {
                 inPackage.LastLine = inUtil.Position.LineNumber;
                 base.OnEnd(inUtil, inPackage, inbError);
             }
@@ -153,33 +136,29 @@ namespace Aqua.Editor
 
         #region Constructing Records
 
-        [MenuItem("Aqualab/Force Rebuild Loc Database")]
-        static private void ForceRebuildFromMenu()
-        {
+        [MenuItem("Aqualab/Localization/Force Rebuild Database")]
+        static private void ForceRebuildFromMenu() {
             var instance = GetInstance();
             instance.ReloadPackages();
         }
 
-        [MenuItem("Aqualab/Export Loc Database")]
-        static private void ExportLocDatabase()
-        {
+        [MenuItem("Aqualab/Localization/Export Compressed Database")]
+        static private void ExportLocDatabase() {
             var instance = GetInstance();
             instance.ReloadPackages();
 
-            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.Create)))
-            {
-                foreach(var text in instance.m_TextMap)
-                {
+            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.Create))) {
+                foreach (var text in instance.m_TextMap) {
                     writer.Write(text.Key.HashValue);
                     writer.Write(text.Value.Content ?? string.Empty);
                 }
             }
         }
 
-        [MenuItem("Aqualab/Write Loc Changes")]
+        [MenuItem("Aqualab/Localization/Write Changes")]
         static private void WriteAnyChanges() {
             bool bChanges = false;
-            foreach(var record in GetInstance().m_PackageRecords) {
+            foreach (var record in GetInstance().m_PackageRecords) {
                 bChanges |= ReexportPackage(record, false);
             }
             if (!bChanges) {
@@ -187,36 +166,30 @@ namespace Aqua.Editor
             }
         }
 
-        [ContextMenu("Force Reload")]
-        private void ReloadPackages()
-        {
+        private void ReloadPackages() {
             Debug.LogFormat("[LocEditor] Rebuilding loc database...");
 
             m_PackageRecords.Clear();
             m_TextMap.Clear();
             m_FullyInitialized = false;
-            
+
             LocPackage[] allPackages = AssetDBUtils.FindAssets<LocPackage>();
-            try
-            {
+            try {
                 LocPackage package;
                 int packageCount = allPackages.Length;
-                for(int i = 0; i < packageCount; i++)
-                {
+                for (int i = 0; i < packageCount; i++) {
                     package = allPackages[i];
                     string assetPath = AssetDatabase.GetAssetPath(package);
                     string fileContents = File.ReadAllText(assetPath);
-                    
+
                     Debug.LogFormat("[LocEditor] Importing {0}...", assetPath);
-                    EditorUtility.DisplayProgressBar("Updating Loc Database", string.Format("Importing {0}/{1}: {2}", i + 1, packageCount, assetPath), (float) i + 1 / packageCount);
+                    EditorUtility.DisplayProgressBar("Updating Loc Database", string.Format("Importing {0}/{1}: {2}", i + 1, packageCount, assetPath), (float)i + 1 / packageCount);
                     PackageRecord record = BlockParser.Parse(package.name, fileContents, Parsing.Block, PackageGenerator.Instance);
                     record.FilePath = assetPath;
                     record.Asset = package;
                     m_PackageRecords.Add(record);
                 }
-            }
-            finally
-            {
+            } finally {
                 EnsureFullInitialize();
                 EditorUtility.ClearProgressBar();
             }
@@ -228,8 +201,7 @@ namespace Aqua.Editor
 
         #region Map
 
-        private void EnsureFullInitialize()
-        {
+        private void EnsureFullInitialize() {
             if (m_FullyInitialized)
                 return;
 
@@ -238,17 +210,12 @@ namespace Aqua.Editor
 
             m_OpenPackageFileMenu.AddDisabledItem(new GUIContent("Open File"));
             m_OpenPackageFileMenu.AddSeparator(string.Empty);
-            
-            foreach(var package in m_PackageRecords)
-            {
-                foreach(var text in package.Records)
-                {
-                    if (m_TextMap.ContainsKey(text.Id))
-                    {
+
+            foreach (var package in m_PackageRecords) {
+                foreach (var text in package.Records) {
+                    if (m_TextMap.ContainsKey(text.Id)) {
                         Log.Error("[LocEditor] Duplicate text id '{0}'", text.Id);
-                    }
-                    else
-                    {
+                    } else {
                         m_TextMap.Add(text.Id, text);
                         text.Parent = package;
                     }
@@ -260,14 +227,12 @@ namespace Aqua.Editor
             m_FullyInitialized = true;
         }
 
-        private void AddOpenPackageShortcut(PackageRecord inRecord)
-        {
+        private void AddOpenPackageShortcut(PackageRecord inRecord) {
             m_OpenPackageFileMenu.AddItem(new GUIContent(inRecord.Name), false, () => OpenPackage(inRecord));
         }
 
-        static private void OpenPackage(PackageRecord inRecord)
-        {
-            AssetDatabase.OpenAsset(inRecord.Asset, (int) inRecord.LastLine);
+        static private void OpenPackage(PackageRecord inRecord) {
+            AssetDatabase.OpenAsset(inRecord.Asset, (int)inRecord.LastLine);
         }
 
         static private bool ReexportPackage(PackageRecord inPackage, bool inbForce) {
@@ -283,7 +248,7 @@ namespace Aqua.Editor
                 TextRecord currentRecord;
                 string currentBasePath = string.Empty;
 
-                while(recordIdx < totalRecordCount) {
+                while (recordIdx < totalRecordCount) {
                     if (pathIdx < totalPathCount && recordIdx >= nextBasePath.Start) {
                         writer.Write("# basePath ");
                         writer.Write(nextBasePath.Path);
@@ -317,16 +282,19 @@ namespace Aqua.Editor
             return true;
         }
 
+        static private int CompareByKey(TextRecord a, TextRecord b) {
+            return string.Compare(a.Id, b.Id);
+        }
+
         #endregion // Map
 
         #region Initialization
 
         [InitializeOnLoadMethod]
-        static private void Initialize()
-        {
+        static private void Initialize() {
             if (InternalEditorUtility.inBatchMode || !InternalEditorUtility.isHumanControllingUs)
                 return;
-            
+
             var instance = GetInstance();
             if (instance.m_PackageRecords.Count == 0)
                 instance.ReloadPackages();
@@ -336,33 +304,26 @@ namespace Aqua.Editor
 
         #region Statics
 
-        static public bool TryLookup(string inKey, out string outText)
-        {
+        static public bool TryLookup(string inKey, out string outText) {
             var instance = GetInstance();
             instance.EnsureFullInitialize();
             TextRecord text;
-            if (instance.m_TextMap.TryGetValue(inKey, out text))
-            {
+            if (instance.m_TextMap.TryGetValue(inKey, out text)) {
                 outText = text.Content;
                 return true;
-            }
-            else
-            {
+            } else {
                 outText = null;
                 return false;
             }
         }
 
-        static public int Search(string inSearch, ICollection<string> outResults)
-        {
+        static public int Search(string inSearch, ICollection<string> outResults) {
             var instance = GetInstance();
             instance.EnsureFullInitialize();
 
             int count = 0;
-            foreach(var record in instance.m_TextMap.Values)
-            {
-                if (record.Id.Contains(inSearch))
-                {
+            foreach (var record in instance.m_TextMap.Values) {
+                if (record.Id.Contains(inSearch)) {
                     outResults.Add(record.Id);
                     count++;
                 }
@@ -371,8 +332,7 @@ namespace Aqua.Editor
             return count;
         }
 
-        static public void AttemptOpenFile(string inKey)
-        {
+        static public void AttemptOpenFile(string inKey) {
             var instance = GetInstance();
             instance.EnsureFullInitialize();
 
@@ -380,14 +340,12 @@ namespace Aqua.Editor
             instance.m_OpenPackageFileMenu.ShowAsContext();
         }
 
-        static public void OpenFile(string inKey)
-        {
+        static public void OpenFile(string inKey) {
             var instance = GetInstance();
             instance.EnsureFullInitialize();
-            
+
             TextRecord text;
-            if (instance.m_TextMap.TryGetValue(inKey, out text))
-            {
+            if (instance.m_TextMap.TryGetValue(inKey, out text)) {
                 OpenPackage(text.Parent);
             }
         }
@@ -407,13 +365,13 @@ namespace Aqua.Editor
                 PackageRecord blankPackage = null;
                 TextRecord newRecord = null;
                 bool bInserted = false;
-                foreach(var package in instance.m_PackageRecords) {
+                foreach (var package in instance.m_PackageRecords) {
                     if (package.AllBasePaths.Count == 0) {
                         blankPackage = package;
                         break;
                     } else {
                         BasePathHeader basePath;
-                        for(int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
+                        for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
                             basePath = package.AllBasePaths[i];
                             if (inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
                                 newRecord = InsertTextRecord(inKey, inText, package, i);
@@ -449,11 +407,11 @@ namespace Aqua.Editor
                 inPackage.Records.Add(textRecord);
             } else {
                 BasePathHeader nextRecord = inPackage.AllBasePaths[inSectionIdx + 1];
-                int insertIdx = nextRecord.Start - 1;
+                int insertIdx = nextRecord.Start;
 
                 inPackage.Records.Insert(insertIdx, textRecord);
 
-                for(int i = inSectionIdx + 1; i < inPackage.AllBasePaths.Count; i++) {
+                for (int i = inSectionIdx + 1; i < inPackage.AllBasePaths.Count; i++) {
                     BasePathHeader revisedHeader = inPackage.AllBasePaths[i];
                     revisedHeader.Start++;
                     inPackage.AllBasePaths[i] = revisedHeader;
@@ -485,11 +443,10 @@ namespace Aqua.Editor
             }
         }
 
-        private class AssetSaveHook : UnityEditor.AssetModificationProcessor
-        {
+        private class AssetSaveHook : UnityEditor.AssetModificationProcessor {
             static private string[] OnWillSaveAssets(string[] paths) {
                 if (!LockImport) {
-                    foreach(var path in paths) {
+                    foreach (var path in paths) {
                         if (path == EditorDatabasePath) {
                             WriteAnyChanges();
                             break;
@@ -500,31 +457,25 @@ namespace Aqua.Editor
             }
         }
 
-        private class AssetImportHook : AssetPostprocessor
-        {
-            static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-            {
+        private class AssetImportHook : AssetPostprocessor {
+            static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {
                 if (LockImport || Application.isPlaying || InternalEditorUtility.inBatchMode || !InternalEditorUtility.isHumanControllingUs)
                     return;
 
-                if (AnyAreLocPackage(importedAssets) || AnyAreLocPackage(deletedAssets) || AnyAreLocPackage(movedAssets) || AnyAreLocPackage(movedFromAssetPaths))
-                {
+                if (AnyAreLocPackage(importedAssets) || AnyAreLocPackage(deletedAssets) || AnyAreLocPackage(movedAssets) || AnyAreLocPackage(movedFromAssetPaths)) {
                     EditorApplication.delayCall += () => GetInstance().ReloadPackages();
                 }
             }
 
-            static private bool AnyAreLocPackage(string[] assetNames)
-            {
+            static private bool AnyAreLocPackage(string[] assetNames) {
                 if (assetNames == null || assetNames.Length == 0)
                     return false;
-                
-                foreach(var filePath in assetNames)
-                {
+
+                foreach (var filePath in assetNames) {
                     if (filePath.EndsWith("LocEditor.cs"))
                         return true;
-                    
-                    if (filePath.EndsWith(".aqloc"))
-                    {
+
+                    if (filePath.EndsWith(".aqloc")) {
                         StringSlice truncated = filePath.Substring(0, filePath.Length - 6);
                         if (truncated.Length > 3)
                             return truncated[truncated.Length - 3] != '.';

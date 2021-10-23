@@ -69,6 +69,8 @@ namespace Aqua
             private SerializedProperty m_StationSortingOrderProperty;
             private SerializedProperty m_AdditionalPropertiesProperty;
 
+            private MapDB m_MapDB;
+
             private void OnEnable() {
                 m_CategoryProperty = serializedObject.FindProperty("m_Category");
                 m_FlagsProperty = serializedObject.FindProperty("m_Flags");
@@ -81,6 +83,12 @@ namespace Aqua
                 m_EnvironmentIdProperty = serializedObject.FindProperty("m_EnvironmentId");
                 m_StationSortingOrderProperty = serializedObject.FindProperty("m_StationSortingOrder");
                 m_AdditionalPropertiesProperty = serializedObject.FindProperty("m_AdditionalProperties");
+
+                m_MapDB = ValidationUtils.FindAsset<MapDB>();
+
+                foreach(MapDesc desc in targets) {
+                    m_MapDB.TryAdd(desc);
+                }
             }
 
             public override void OnInspectorGUI() {

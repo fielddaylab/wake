@@ -13,7 +13,6 @@ namespace Aqua.Portable
 
         [SerializeField, Required] private CanvasGroup m_Group = null;
         [SerializeField, Required] private Button m_Button = null;
-        [SerializeField, Required] private RectTransform m_ButtonTail = null;
 
         #endregion // Inspector
 
@@ -26,7 +25,6 @@ namespace Aqua.Portable
             m_Group.alpha = inbButtonMode && !inbInteractable ? 0.5f : 1;
 
             m_Button.interactable = !inbButtonMode || inbInteractable;
-            m_ButtonTail.gameObject.SetActive(inbButtonMode);
 
             m_Fact = inFact;
             m_Callback = inCallback;

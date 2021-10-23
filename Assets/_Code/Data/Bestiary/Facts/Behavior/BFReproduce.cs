@@ -31,7 +31,7 @@ namespace Aqua
         {
             BFType.DefineAttributes(BFTypeId.Reproduce, BFDiscoveredFlags.All, CompareStressedPair);
             BFType.DefineMethods(BFTypeId.Reproduce, null, GenerateSentence, GenerateFragments);
-            BFType.DefineEditor(BFTypeId.Reproduce, (Sprite) null, BFMode.Player);
+            BFType.DefineEditor(BFTypeId.Reproduce, null, BFMode.Player);
         }
 
         static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)

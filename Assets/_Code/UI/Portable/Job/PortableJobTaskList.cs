@@ -13,10 +13,15 @@ namespace Aqua
         #region Inspector
 
         [Header("Task List")]
-
         [SerializeField] private JobTaskDisplay.Pool m_TaskDisplays = null;
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private ScrollRect m_ScrollView = null;
+        [SerializeField] private GameObject m_TopArrow = null;
+
+        [Header("Colors")]
+        [SerializeField] private Color m_TopOutlineColor = Color.white;
+        [SerializeField] private Color m_ActiveOutlineColor = Color.white;
+        [SerializeField] private Color m_CompletedOutlineColor = Color.white;
 
         #endregion // Inspector
         
@@ -46,16 +51,20 @@ namespace Aqua
                         activeTasks.Add(task);
                 }
 
+                bool firstJob = true;
                 foreach(var activeTask in activeTasks)
                 {
-                    AllocTaskDisplay(activeTask, false);
+                    AllocTaskDisplay(activeTask, false, firstJob ? m_TopOutlineColor : m_ActiveOutlineColor);
+                    firstJob = false;
                 }
+
+                m_TopArrow.gameObject.SetActive(!firstJob);
 
                 completedTasks.Reverse();
 
                 foreach(var completedTask in completedTasks)
                 {
-                    AllocTaskDisplay(completedTask, true);
+                    AllocTaskDisplay(completedTask, true, m_CompletedOutlineColor);
                 }
             }
 
@@ -72,14 +81,11 @@ namespace Aqua
             m_Group.alpha = 1;
         }
 
-        private JobTaskDisplay AllocTaskDisplay(JobTask inTask, bool inbComplete)
+        private JobTaskDisplay AllocTaskDisplay(JobTask inTask, bool inbComplete, Color inOutlineColor)
         {
             JobTaskDisplay taskDisplay = m_TaskDisplays.Alloc();
             taskDisplay.Populate(inTask, inbComplete);
-
-            // ColorPalette4 palette = inbComplete ? Services.Assets.Jobs.CompletedPortablePalette() : Services.Assets.Jobs.ActivePortablePalette();
-            // taskDisplay.Label.Graphic.color = palette.Content;
-            // taskDisplay.Background.color = palette.Background;
+            taskDisplay.Outline.color = inOutlineColor;
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(taskDisplay.Root);
 

@@ -81,64 +81,55 @@ namespace Aqua
         {
             ConfigurePoolTransforms();
 
-            BFBehavior behavior = inFact as BFBehavior;
-            if (behavior != null)
-            {
-                BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                display.Populate(behavior, inReference, inFlags);
-                return display;
-            }
+            switch(inFact.Type) {
+                case BFTypeId.Model: {
+                    ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
+                    display.Populate((BFModel) inFact);
+                    return display;
+                }
 
-            BFModel model = inFact as BFModel;
-            if (model != null)
-            {
-                ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
-                display.Populate(model);
-                return display;
-            }
+                case BFTypeId.State: {
+                    StateFactDisplay display = m_StateFacts.Alloc(inParent);
+                    display.Populate((BFState) inFact);
+                    return display;
+                }
 
-            BFState state = inFact as BFState;
-            if (state != null)
-            {
-                StateFactDisplay display = m_StateFacts.Alloc(inParent);
-                display.Populate(state);
-                return display;
-            }
+                case BFTypeId.WaterProperty: {
+                    WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
+                    display.Populate((BFWaterProperty) inFact);
+                    return display;
+                }
 
-            BFWaterProperty waterProp = inFact as BFWaterProperty;
-            if (waterProp != null)
-            {
-                WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
-                display.Populate(waterProp);
-                return display;
-            }
+                case BFTypeId.WaterPropertyHistory: {
+                    WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
+                    display.Populate((BFWaterPropertyHistory) inFact);
+                    return display;
+                }
 
-            BFWaterPropertyHistory waterPropHistory = inFact as BFWaterPropertyHistory;
-            if (waterPropHistory != null)
-            {
-                WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
-                display.Populate(waterPropHistory);
-                return display;
-            }
+                case BFTypeId.Population: {
+                    PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
+                    display.Populate((BFPopulation) inFact);
+                    return display;
+                }
 
-            BFPopulation populationProp = inFact as BFPopulation;
-            if (populationProp != null)
-            {
-                PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
-                display.Populate(populationProp);
-                return display;
-            }
+                case BFTypeId.PopulationHistory: {
+                    PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
+                    display.Populate((BFPopulationHistory) inFact);
+                    return display;
+                }
 
-            BFPopulationHistory populationHistoryProp = inFact as BFPopulationHistory;
-            if (populationHistoryProp != null)
-            {
-                PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
-                display.Populate(populationHistoryProp);
-                return display;
-            }
+                default: {
+                    BFBehavior behavior = inFact as BFBehavior;
+                    if (behavior != null) {
+                        BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
+                        display.Populate(behavior, inReference, inFlags);
+                        return display;
+                    }
 
-            Assert.Fail("Unable to find suitable fact");
-            return null;
+                    Assert.Fail("Unable to find suitable fact display for '{0}'", inFact.Type);
+                    return null;
+                }
+            }
         }
 
         public void Free(MonoBehaviour inDisplay)

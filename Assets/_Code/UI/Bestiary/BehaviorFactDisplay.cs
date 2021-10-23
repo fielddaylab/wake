@@ -17,8 +17,13 @@ namespace Aqua
 
         public void Populate(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
-            m_Icon.sprite = inFact.Icon;
-            m_Icon.gameObject.SetActive(inFact.Icon);
+            Sprite icon = inFact.Icon;
+            if (inFact.Type == BFTypeId.Eat && inReference != inFact.Parent) {
+                icon = Services.Assets.Bestiary.DefaultIsEatenIcon();
+            }
+
+            m_Icon.sprite = icon;
+            m_Icon.gameObject.SetActive(icon);
             m_Sentence.Populate(inFact, inReference, inFlags);
 
             m_StressedBadge.gameObject.SetActive(inFact.OnlyWhenStressed);

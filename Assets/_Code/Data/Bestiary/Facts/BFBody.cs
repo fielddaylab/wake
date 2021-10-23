@@ -31,7 +31,7 @@ namespace Aqua
         {
             BFType.DefineAttributes(BFTypeId.Body, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Body, null, null, null);
-            BFType.DefineEditor(BFTypeId.Body, (Sprite) null, BFMode.Internal);
+            BFType.DefineEditor(BFTypeId.Body, null, BFMode.Internal);
         }
 
         #endregion // Behavior

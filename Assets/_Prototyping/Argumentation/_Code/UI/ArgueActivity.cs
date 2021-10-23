@@ -128,8 +128,8 @@ namespace ProtoAqua.Argumentation
 
         private void OnOpenBestiary()
         {
-            var future = BestiaryApp.RequestFact(BestiaryDescCategory.ALL);
-            future.OnComplete(OnFactSelected);
+            PortableMenu.RequestFact()
+                .OnComplete(OnFactSelected);
         }
 
         #endregion // Callbacks

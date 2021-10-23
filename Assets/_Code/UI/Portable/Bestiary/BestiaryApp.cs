@@ -1,637 +1,244 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using Aqua;
+using BeauPools;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
-using TMPro;
-using BeauPools;
-using System;
-using Aqua;
 using BeauUtil.Debugger;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Aqua.Portable
-{
-    public class BestiaryApp : PortableMenuApp
-    {
-        #region Consts
+namespace Aqua.Portable {
+    public sealed class BestiaryApp : PortableMenuApp {
 
-        static private readonly StringHash32 Critters_Label = "ui.portable.app.bestiary.critters.label";
-        static private readonly StringHash32 Ecosystems_Label = "ui.portable.app.bestiary.ecosystems.label";
-        static private readonly StringHash32 Models_Label = "ui.portable.app.bestiary.models.label";
+        public delegate void PopulateEntryToggleDelegate(PortableBestiaryToggle inToggle, BestiaryDesc inEntry);
+        public delegate void PopulateEntryPageDelegate(BestiaryPage inPage, BestiaryDesc inEntry);
+        public delegate void PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
+        public delegate void FinalizeButtonDelegate(BFBase inFact, MonoBehaviour inDisplay);
 
-        static private readonly StringHash32 SelectCritter_Label = "ui.portable.app.bestiary.selectCritter.label";
-        static private readonly StringHash32 SelectEcosystem_Label = "ui.portable.app.bestiary.selectEcosystem.label";
-
-        static private readonly StringHash32 SelectCritterFact_Label = "ui.portable.app.bestiary.selectCritterFact.label";
-        static private readonly StringHash32 SelectEcosystemFact_Label = "ui.portable.app.bestiary.selectEcosystemFact.label";
-        static private readonly StringHash32 SelectAnyFact_Label = "ui.portable.app.bestiary.selectAnyFact.label";
-
-        #endregion // Consts
-
-        #region Types
-
-        public class OpenToRequest : IPortableRequest
-        {
-            public BestiaryUpdateParams Target;
-
-            public OpenToRequest(BestiaryUpdateParams inTarget)
-            {
-                Target = inTarget;
-            }
-
-            public PortableMenu.AppId AppId()
-            {
-                return PortableMenu.AppId.Organisms; 
-            }
-
-            public bool CanClose()
-            {
-                return true;
-            }
-
-            public bool CanNavigateApps()
-            {
-                return true;
-            }
-
-            public bool ForceInputEnabled()
-            {
-                return false;
-            }
-
-            public void Dispose()
-            {
-                Target = default(BestiaryUpdateParams);
-            }
-        }
-
-        public class SelectBestiaryEntryRequest : IPortableRequest
-        {
+        public class DisplayHandler {
             public BestiaryDescCategory Category;
-            public Func<BestiaryDesc, bool> CustomValidator;
-            public Future<StringHash32> Return;
-
-            public SelectBestiaryEntryRequest(BestiaryDescCategory inCategory, Func<BestiaryDesc, bool> inCustomValidator = null)
-            {
-                Category = inCategory;
-                CustomValidator = inCustomValidator;
-                Return = Future.Create<StringHash32>();
-            }
-
-            public PortableMenu.AppId AppId()
-            {
-                return PortableMenu.AppId.Organisms;
-            }
-
-            public bool CanClose()
-            {
-                return true;
-            }
-
-            public bool CanNavigateApps()
-            {
-                return false;
-            }
-
-            public bool ForceInputEnabled()
-            {
-                return true;
-            }
-
-            public void Dispose()
-            {
-                CustomValidator = null;
-                if (Return.IsInProgress())
-                    Return.Fail();
-                Ref.Dispose(ref Return);
-            }
+            public PopulateEntryToggleDelegate PopulateToggle;
+            public PopulateEntryPageDelegate PopulatePage;
+            public PopulateFactsDelegate PopulateFacts;
         }
-
-        public class SelectFactRequest : IPortableRequest
-        {
-            public BestiaryDescCategory Category;
-            public Func<BFBase, bool> CustomValidator;
-            public Future<StringHash32> Return;
-
-            public SelectFactRequest(BestiaryDescCategory inCategory, Func<BFBase, bool> inCustomValidator = null)
-            {
-                Category = inCategory;
-                CustomValidator = inCustomValidator;
-                Return = Future.Create<StringHash32>();
-            }
-
-            public PortableMenu.AppId AppId()
-            {
-                return PortableMenu.AppId.Organisms;
-                // return Category == BestiaryDescCategory.Critter ? PortableMenu.AppId.Organisms : PortableMenu.AppId.Environments;
-            }
-
-            public bool CanClose()
-            {
-                return true;
-            }
-
-            public bool CanNavigateApps()
-            {
-                return false;
-            }
-
-            public bool ForceInputEnabled()
-            {
-                return false;
-            }
-
-            public void Dispose()
-            {
-                CustomValidator = null;
-                if (Return.IsInProgress())
-                    Return.Fail();
-                Ref.Dispose(ref Return);
-            }
-        }
-
-        #endregion // Types
 
         #region Inspector
 
-        [Header("Types")]
-        [SerializeField, Required] private Toggle m_CritterGroupToggle = null;
-        [SerializeField, Required] private Toggle m_EcosystemGroupToggle = null;
-
         [Header("Entries")]
+        [SerializeField, Required] private ScrollRect m_EntryScroll = null;
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
         [SerializeField, Required] private ToggleGroup m_EntryToggleGroup = null;
-        [SerializeField] private PortableListHeader.Pool m_HeaderPool = null;
-        [SerializeField] private PortableListElement.Pool m_EntryPool = null;
-        [SerializeField] private LocText m_CategoryLabel = null;
+        [SerializeField] private PortableStationHeader.Pool m_HeaderPool = null;
+        [SerializeField] private PortableBestiaryToggle.Pool m_EntryPool = null;
 
         [Header("Group")]
-        [SerializeField, Required] private RectTransform m_NoSelectionGroup = null;
-        [SerializeField, Required] private LocText m_PromptText = null;
+        [SerializeField, Required] private GameObject m_NoSelectionGroup = null;
 
         [Header("Info")]
-        [SerializeField, Required] private BestiaryPage m_CritterPage = null;
-        [SerializeField, Required] private BestiaryPage m_EnvPage = null;
-
-        [Header("Facts")]
-        [SerializeField] private FactPools m_FactPools = null;
+        [SerializeField, Required] private BestiaryPage m_InfoPage = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private PortableTweaks m_Tweaks = null;
-        [NonSerialized] private BestiaryDescCategory m_CurrentEntryGroup = BestiaryDescCategory.Critter;
+        public DisplayHandler Handler;
+
         [NonSerialized] private BestiaryDesc m_CurrentEntry;
-        [NonSerialized] private BestiaryPage m_CurrentPage;
-        
-        [NonSerialized] private SelectBestiaryEntryRequest m_SelectBestiaryRequest = null;
-        [NonSerialized] private SelectFactRequest m_SelectFactRequest = null;
+        [NonSerialized] private PortableBestiaryToggle.ToggleDelegate m_CachedToggleDelegate;
+        [NonSerialized] private Action<BFBase> m_CachedSelectFactDelegate;
+        [NonSerialized] private PortableRequest m_Request;
+        [NonSerialized] private int m_SelectCounter;
 
-        protected override void Awake()
-        {
-            base.Awake();
+        #region Panel
 
-            m_CritterGroupToggle.onValueChanged.AddListener(OnCritterToggled);
-            m_EcosystemGroupToggle.onValueChanged.AddListener(OnEcosystemToggled);
+        protected override void OnShowComplete(bool inbInstant) {
+            base.OnShowComplete(inbInstant);
 
-            RegisterPage(m_CritterPage);
-            RegisterPage(m_EnvPage);
+            LoadEntries();
+            LoadEntry(null, false);
         }
 
-        private void RegisterPage(BestiaryPage inPage)
-        {
-            if (inPage.SelectButton)
-            {
-                inPage.SelectButton.onClick.AddListener(OnEntrySelectClicked);
-                inPage.gameObject.SetActive(false);
-            }
-        }
-
-        #region Callbacks
-
-        private void OnCritterToggled(bool inbOn)
-        {
-            if (!IsShowing())
-                return;
-
-            if (inbOn)
-                LoadEntryGroup(BestiaryDescCategory.Critter, null, false);
-        }
-
-        private void OnEcosystemToggled(bool inbOn)
-        {
-            if (!IsShowing())
-                return;
-                
-            if (inbOn)
-                LoadEntryGroup(BestiaryDescCategory.Environment, null, false);
-        }
-
-        private void OnEntryToggled(PortableListElement inElement, bool inbOn)
-        {
-            if (!inbOn)
-            {
-                if (!m_EntryToggleGroup.AnyTogglesOn())
-                    LoadEntry(null);
-                return;
-            }
-
-            Services.Events.Dispatch(GameEvents.PortableEntrySelected, (BestiaryDesc)inElement.Data);
-
-            LoadEntry((BestiaryDesc) inElement.Data);
-        }
-
-        private void OnEntrySelectClicked()
-        {
-            Assert.NotNull(m_SelectBestiaryRequest);
-            m_SelectBestiaryRequest.Return.Complete(m_CurrentEntry.Id());
-            m_ParentMenu.Hide();
-        }
-
-        private void OnFactClicked(BFBase inFact)
-        {
-            Assert.NotNull(m_SelectFactRequest);
-            m_SelectFactRequest.Return.Complete(inFact.Id);
-            m_ParentMenu.Hide();
-        }
-
-        protected override void OnShow(bool inbInstant)
-        {
-            base.OnShow(inbInstant);
-
-            m_Tweaks = Services.Tweaks.Get<PortableTweaks>();
-
-            m_CritterGroupToggle.SetIsOnWithoutNotify(true);
-            m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-            LoadEntryGroup(BestiaryDescCategory.Critter, null, true);
-
-            m_CritterGroupToggle.interactable = true;
-            m_EcosystemGroupToggle.interactable = true;
-
-            LoadEntry(null);
-        }
-
-        protected override void OnHide(bool inbInstant)
-        {
+        protected override void OnHide(bool inbInstant) {
             Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
 
-            m_FactPools.FreeAll();
+            m_InfoPage.Sketch.URL = string.Empty;
+            m_InfoPage.FactPools.FreeAll();
             m_NoSelectionGroup.gameObject.SetActive(true);
 
             m_EntryPool.Reset();
             m_HeaderPool.Reset();
             m_EntryToggleGroup.SetAllTogglesOff(false);
-            
-            if (m_CurrentPage)
-            {
-                m_CurrentPage.gameObject.SetActive(false);
-                m_CurrentPage = null;
-            }
-            m_PromptText.gameObject.SetActive(false);
 
-            Ref.Dispose(ref m_SelectBestiaryRequest);
-            Ref.Dispose(ref m_SelectFactRequest);
+            m_InfoPage.gameObject.SetActive(false);
+
+            m_Request.Dispose();
 
             m_CurrentEntry = null;
+            m_SelectCounter = 0;
 
             base.OnHide(inbInstant);
+        }
+
+        #endregion // Panel
+
+        #region Callbacks
+
+        private void OnEntryToggled(PortableBestiaryToggle inElement, bool inbOn) {
+            if (!inbOn) {
+                if (!m_EntryToggleGroup.AnyTogglesOn())
+                    LoadEntry(null, false);
+                return;
+            }
+
+            Services.Events.Dispatch(GameEvents.PortableEntrySelected, (BestiaryDesc)inElement.Data);
+
+            LoadEntry((BestiaryDesc)inElement.Data, false);
+        }
+
+        private void OnFactClicked(BFBase inFact) {
+            Assert.True(m_Request.Type == PortableRequestType.SelectFact);
+            m_Request.Response.Complete(inFact.Id);
+            m_ParentMenu.Hide();
         }
 
         #endregion // Callbacks
 
         #region Loading
 
-        private void LoadTarget(BestiaryUpdateParams inTarget)
-        {
-            BestiaryDesc targetEntry;
-            switch(inTarget.Type)
-            {
-                case BestiaryUpdateParams.UpdateType.Entity:
-                    {
-                        targetEntry = Assets.Bestiary(inTarget.Id);
-                        break;
-                    }
-
-                case BestiaryUpdateParams.UpdateType.Unknown:
-                    {
-                        targetEntry = null;
-                        break;
-                    }
-
-                default:
-                    {
-                        targetEntry = Assets.Fact(inTarget.Id).Parent;
-                        break;
-                    }
-            }
-
-            LoadEntryGroup(targetEntry == null ? BestiaryDescCategory.Critter : targetEntry.Category(), targetEntry, true);
-        }
-
-        private void LoadBestiarySelection(SelectBestiaryEntryRequest inSelect)
-        {
-            m_SelectBestiaryRequest = inSelect;
-
-            m_PromptText.gameObject.SetActive(true);
-
-            BestiaryDescCategory category = inSelect.Category;
-            switch(inSelect.Category)
-            {
-                case BestiaryDescCategory.Critter:
-                    {
-                        m_CritterGroupToggle.interactable = true;
-                        m_EcosystemGroupToggle.interactable = false;
-                        m_PromptText.SetText(SelectCritter_Label);
-                        break;
-                    }
-
-                case BestiaryDescCategory.Environment:
-                    {
-                        m_CritterGroupToggle.interactable = false;
-                        m_EcosystemGroupToggle.interactable = true;
-                        m_PromptText.SetText(SelectEcosystem_Label);
-                        break;
-                    }
-
-                case BestiaryDescCategory.ALL:
-                    {
-                        m_CritterGroupToggle.interactable = true;
-                        m_EcosystemGroupToggle.interactable = true;
-                        m_PromptText.SetText("-- Unsupported Mode --");
-
-                        category = BestiaryDescCategory.Critter;
-                        break;
-                    }
-            }
-
-            LoadEntryGroup(category, null, true);
-        }
-
-        private void LoadFactSelection(SelectFactRequest inSelect)
-        {
-            m_SelectFactRequest = inSelect;
-
-            m_PromptText.gameObject.SetActive(true);
-
-            BestiaryDescCategory category = inSelect.Category;
-            switch(inSelect.Category)
-            {
-                case BestiaryDescCategory.Critter:
-                    {
-                        m_CritterGroupToggle.interactable = true;
-                        m_EcosystemGroupToggle.interactable = false;
-                        m_PromptText.SetText(SelectCritterFact_Label);
-                        break;
-                    }
-
-                case BestiaryDescCategory.Environment:
-                    {
-                        m_CritterGroupToggle.interactable = false;
-                        m_EcosystemGroupToggle.interactable = true;
-                        m_PromptText.SetText(SelectEcosystemFact_Label);
-                        break;
-                    }
-
-                case BestiaryDescCategory.ALL:
-                    {
-                        m_CritterGroupToggle.interactable = true;
-                        m_EcosystemGroupToggle.interactable = true;
-                        m_PromptText.SetText(SelectAnyFact_Label);
-
-                        category = BestiaryDescCategory.Critter;
-                        break;
-                    }
-            }
-
-            LoadEntryGroup(category, null, true);
-        }
-
-        private void LoadEntryGroup(BestiaryDescCategory inType, BestiaryDesc inTarget, bool inbForce)
-        {
-            if (!inbForce && m_CurrentEntryGroup == inType)
-                return;
-
-            m_CurrentEntryGroup = inType;
+        /// <summary>
+        /// Loads all organism entries.
+        /// </summary>
+        private void LoadEntries() {
             m_EntryPool.Reset();
             m_HeaderPool.Reset();
 
-            if (m_CurrentPage)
-                m_CurrentPage.gameObject.SetActive(false);
-
-            switch(inType)
-            {
-                case BestiaryDescCategory.Critter:
-                    m_CritterGroupToggle.SetIsOnWithoutNotify(true);
-                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(false);
-
-                    m_CategoryLabel.SetText(Critters_Label);
-                    m_CurrentPage = m_CritterPage;
-                    break;
-
-                case BestiaryDescCategory.Environment:
-                    m_EcosystemGroupToggle.SetIsOnWithoutNotify(true);
-                    m_CritterGroupToggle.SetIsOnWithoutNotify(false);
-
-                    m_CategoryLabel.SetText(Ecosystems_Label);
-                    m_CurrentPage = m_EnvPage;
-                    break;
-            }
-
-            using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create())
-            {
-                Services.Data.Profile.Bestiary.GetEntities(inType, entities);
+            using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create()) {
+                Services.Data.Profile.Bestiary.GetEntities(Handler.Category, entities);
                 entities.Sort(BestiaryDesc.SortByEnvironment);
                 StringHash32 mapId = default;
-                foreach(var entry in entities)
-                {
+
+                foreach (var entry in entities) {
                     if (mapId != entry.StationId()) {
                         mapId = entry.StationId();
-                        PortableListHeader header = m_HeaderPool.Alloc();
+                        PortableStationHeader header = m_HeaderPool.Alloc();
                         MapDesc map = Assets.Map(mapId);
                         header.Header.SetText(map.StationHeaderId());
                         header.SubHeader.SetText(map.ShortLabelId());
                     }
 
-                    PortableListElement button = m_EntryPool.Alloc();
-                    button.Initialize(entry.Icon(), m_EntryToggleGroup, entry.CommonName(), entry, OnEntryToggled);
+                    PortableBestiaryToggle toggle = m_EntryPool.Alloc();
+                    toggle.Toggle.group = m_EntryToggleGroup;
+                    toggle.Toggle.SetIsOnWithoutNotify(false);
+                    toggle.Data = entry;
+                    toggle.Callback = m_CachedToggleDelegate ?? (m_CachedToggleDelegate = OnEntryToggled);
+                    Handler.PopulateToggle(toggle, entry);
                 }
             }
-            
-            m_EntryLayoutGroup.ForceRebuild();
-            LoadEntry(inTarget);
 
-            // Services.Events.Dispatch(GameEvents.PortableBestiaryTabSelected, inType);
+            m_EntryLayoutGroup.ForceRebuild();
         }
 
-        private void LoadEntry(BestiaryDesc inEntry)
-        {
-            m_FactPools.FreeAll();
-
-            foreach(var button in m_EntryPool.ActiveObjects)
-            {
-                button.SetState((BestiaryDesc) button.Data == inEntry);
-            }
-
+        /// <summary>
+        /// Loads an organism entry.
+        /// </summary>
+        private void LoadEntry(BestiaryDesc inEntry, bool inbSyncToggles) {
             m_CurrentEntry = inEntry;
 
-            if (inEntry == null)
-            {
-                m_CurrentPage.gameObject.SetActive(false);
+            if (inEntry == null) {
+                m_InfoPage.gameObject.SetActive(false);
+                m_NoSelectionGroup.SetActive(true);
+                LoadEntryFacts(null);
+                m_EntryToggleGroup.SetAllTogglesOff();
                 Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
-                m_NoSelectionGroup.gameObject.SetActive(true);
                 return;
             }
 
             Services.Data.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
+            m_SelectCounter++;
 
-            m_NoSelectionGroup.gameObject.SetActive(false);
-            m_CurrentPage.gameObject.SetActive(true);
+            m_NoSelectionGroup.SetActive(false);
+            m_InfoPage.gameObject.SetActive(true);
 
-            if (m_CurrentPage.ScientificName)
-                m_CurrentPage.ScientificName.SetText(inEntry.ScientificName());
-
-            if (m_CurrentPage.CommonName)
-                m_CurrentPage.CommonName.SetText(inEntry.CommonName());
-
-            if (m_CurrentPage.Sketch)
-            {
-                m_CurrentPage.Sketch.sprite = inEntry.Sketch();
-                m_CurrentPage.Sketch.gameObject.SetActive(inEntry.Sketch());
-            }
-
-            if (m_CurrentPage.SelectButton)
-            {
-                if (m_SelectBestiaryRequest != null)
-                {
-                    m_CurrentPage.SelectButton.gameObject.SetActive(true);
-                    m_CurrentPage.SelectButton.interactable = m_SelectBestiaryRequest.CustomValidator == null || m_SelectBestiaryRequest.CustomValidator(inEntry);
-                }
-                else
-                {
-                    m_CurrentPage.SelectButton.gameObject.SetActive(false);
-                }
-            }
-
-            using(PooledList<BFBase> facts = PooledList<BFBase>.Create())
-            {
-                Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
-                if (facts.Count > 0)
-                {
-                    if (m_CurrentPage.NoFacts)
-                        m_CurrentPage.NoFacts.gameObject.SetActive(false);
-                    if (m_CurrentPage.HasFacts)
-                        m_CurrentPage.HasFacts.gameObject.SetActive(true);
-
-                    facts.Sort(BFType.SortByVisualOrder);
-                    foreach(var fact in facts)
-                    {
-                        VisitFact(fact);
+            if (inbSyncToggles) {
+                foreach (var toggle in m_EntryPool.ActiveObjects) {
+                    if (ReferenceEquals(toggle.Data, inEntry)) {
+                        toggle.Toggle.SetIsOnWithoutNotify(true);
+                        m_EntryScroll.ScrollYToShow((RectTransform) toggle.Toggle.transform);
+                        break;
                     }
                 }
-                else
-                {
-                    if (m_CurrentPage.HasFacts)
-                        m_CurrentPage.HasFacts.gameObject.SetActive(false);
-                    if (m_CurrentPage.NoFacts)
-                        m_CurrentPage.NoFacts.gameObject.SetActive(true);
+            }
+
+            Handler.PopulatePage(m_InfoPage, inEntry);
+            LoadEntryFacts(inEntry);
+
+            // periodically unload unused sketches in memory
+            if (m_SelectCounter >= 10) {
+                m_SelectCounter = 0;
+                Streaming.UnloadUnusedAsync();
+            }
+        }
+
+        /// <summary>
+        /// Loads facts for the entry.
+        /// </summary>
+        private void LoadEntryFacts(BestiaryDesc inEntry) {
+            m_InfoPage.FactPools.FreeAll();
+
+            if (inEntry == null) {
+                return;
+            }
+
+            using(PooledList<BFBase> facts = PooledList<BFBase>.Create()) {
+                Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
+                if (facts.Count == 0) {
+                    m_InfoPage.HasFacts.SetActive(false);
+                    m_InfoPage.NoFacts.SetActive(true);
+                } else {
+                    m_InfoPage.NoFacts.SetActive(false);
+                    m_InfoPage.HasFacts.SetActive(true);
+
+                    facts.Sort(BFType.SortByVisualOrder);
+
+                    Handler.PopulateFacts(m_InfoPage, inEntry, facts, FinalizeFactButton);
                 }
             }
 
-            m_CurrentPage.FactLayout.ForceRebuild();
+            m_InfoPage.FactLayout.ForceRebuild();
 
-            foreach(var layoutfix in m_CurrentPage.LayoutFixes)
+            foreach (var layoutfix in m_InfoPage.LayoutFixes)
                 layoutfix.Rebuild();
+        }
+
+        private void FinalizeFactButton(BFBase inFact, MonoBehaviour inDisplay) {
+            BestiaryFactButton factButton = inDisplay.GetComponent<BestiaryFactButton>();
+            if (m_Request.Type == PortableRequestType.SelectFact) {
+                factButton.Initialize(inFact, true, true, m_CachedSelectFactDelegate ?? (m_CachedSelectFactDelegate = OnFactClicked));
+            } else {
+                factButton.Initialize(inFact, false, true, null);
+            }
         }
 
         #endregion // Loading
 
-        public override bool TryHandle(IPortableRequest inRequest)
-        {
-            OpenToRequest openTo = inRequest as OpenToRequest;
-            if (openTo != null)
-            {
-                Show();
-                LoadTarget(openTo.Target);
-                return true;
-            }
-
-            SelectBestiaryEntryRequest bestiarySelect = inRequest as SelectBestiaryEntryRequest;
-            if (bestiarySelect != null)
-            {
-                Show();
-                LoadBestiarySelection(bestiarySelect);
-                return true;
-            }
-
-            SelectFactRequest factSelect = inRequest as SelectFactRequest;
-            if (factSelect != null)
-            {
-                Show();
-                LoadFactSelection(factSelect);
-                return true;
-            }
-            
-            return false;
-        }
-
-        private void InstantiateFactButton(BFBase inFact) 
-        {
-            MonoBehaviour display = m_FactPools.Alloc(inFact, m_CurrentEntry, Services.Data.Profile.Bestiary.GetDiscoveredFlags(inFact.Id), m_CurrentPage.FactLayout.transform);
-            BestiaryFactButton button = display.GetComponent<BestiaryFactButton>();
-            if (m_SelectFactRequest != null)
-            {
-                button.Initialize(inFact, true, m_SelectFactRequest.CustomValidator == null || m_SelectFactRequest.CustomValidator(inFact), OnFactClicked);
-            }
-            else
-            {
-                button.Initialize(inFact, false, true, null);
-            }
-        }
-
-        #region IFactVisitor
-
-        private void VisitFact(BFBase inFact)
-        {
-            switch(inFact.Type)
-            {
-                case BFTypeId.Body:
+        public override void HandleRequest(PortableRequest inRequest) {
+            switch(inRequest.Type) {
+                case PortableRequestType.ShowBestiary: {
+                    LoadEntry(Assets.Bestiary(inRequest.TargetId), true);
                     break;
+                }
 
-                default:
-                    InstantiateFactButton(inFact);
+                case PortableRequestType.ShowFact: {
+                    LoadEntry(Assets.Fact(inRequest.TargetId).Parent, true);
                     break;
+                }
+
+                case PortableRequestType.SelectFact: {
+                    m_Request = inRequest;
+                    break;
+                }
             }
         }
-    
-        #endregion // IFactVisitor
-    
-        #region Static
-
-        static public void OpenToEntry(StringHash32 inId)
-        {
-            var request = new OpenToRequest(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inId));
-            Services.UI.FindPanel<PortableMenu>().Open(request);
-        }
-
-        static public void OpenToFact(StringHash32 inId)
-        {
-            var request = new OpenToRequest(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inId));
-            Services.UI.FindPanel<PortableMenu>().Open(request);
-        }
-
-        static public Future<StringHash32> RequestEntity(BestiaryDescCategory inCategory, Func<BestiaryDesc, bool> inValidator = null)
-        {
-            var request = new SelectBestiaryEntryRequest(inCategory, inValidator);
-            Services.UI.FindPanel<PortableMenu>().Open(request);
-            return request.Return;
-        }
-
-        static public Future<StringHash32> RequestFact(BestiaryDescCategory inCategory, Func<BFBase, bool> inValidator = null)
-        {
-            var request = new SelectFactRequest(inCategory, inValidator);
-            Services.UI.FindPanel<PortableMenu>().Open(request);
-            return request.Return;
-        }
-
-        #endregion // Static
     }
 }

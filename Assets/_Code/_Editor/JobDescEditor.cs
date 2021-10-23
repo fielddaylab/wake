@@ -76,6 +76,8 @@ namespace Aqua.Editor
         [NonSerialized] private double m_JobStepStationSelectorLastUpdate;
         [NonSerialized] private double m_JobStepItemSelectorLastUpdate;
 
+        [NonSerialized] private JobDB m_JobDB;
+
         static private readonly FieldInfo JobStepTargetFieldInfo = typeof(JobStep).GetField("Target");
         static private readonly FactIdAttribute JobStepFactSelector = new FactIdAttribute();
         static private readonly FilterBestiaryIdAttribute JobStepBestiarySelector = new FilterBestiaryIdAttribute();
@@ -130,6 +132,12 @@ namespace Aqua.Editor
             m_ExtraAssetsList.drawElementCallback = DefaultElementDelegate(m_ExtraAssetsList);
 
             m_TaskSelectorList = new NamedItemList<SerializedHash32>();
+
+            m_JobDB = ValidationUtils.FindAsset<JobDB>();
+
+            foreach(JobDesc desc in targets) {
+                m_JobDB.TryAdd(desc);
+            }
         }
 
         public override void OnInspectorGUI() {

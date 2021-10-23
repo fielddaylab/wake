@@ -22,7 +22,7 @@ namespace Aqua
         {
             BFType.DefineAttributes(BFTypeId.Model, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Model, null, GenerateSentence, null);
-            BFType.DefineEditor(BFTypeId.Model, (Sprite) null, BFMode.Player);
+            BFType.DefineEditor(BFTypeId.Model, null, BFMode.Player);
         }
 
         static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)

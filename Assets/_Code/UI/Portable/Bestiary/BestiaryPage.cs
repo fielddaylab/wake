@@ -8,16 +8,20 @@ namespace Aqua.Portable
     {
         #region Inspector
 
-        [SerializeField] public LocText ScientificName = null;
-        [SerializeField] public LocText CommonName = null;
-        [SerializeField] public Image Sketch = null;
-        [SerializeField] public Button SelectButton = null;
+        public LocText ScientificName;
+        public LocText CommonName;
+        public LocText Description;
+        public StreamedRawImage Sketch;
+        public Button SelectButton;
 
-        [SerializeField] public RectTransform NoFacts = null;
-        [SerializeField] public RectTransform HasFacts = null;
-        [SerializeField, Required] public LayoutGroup FactLayout = null;
+        public GameObject NoFacts;
+        
+        public GameObject HasFacts;
+        [Required] public FactPools FactPools;
+        [Required] public LayoutGroup FactLayout;
+        [Required] public ScrollRect FactScroll;
 
-        [SerializeField, Required] public LayoutGroupFix[] LayoutFixes = null;
+        [Required] public LayoutGroupFix[] LayoutFixes;
 
         #endregion // Inspector
     }

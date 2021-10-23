@@ -1,17 +1,11 @@
-using System;
 using System.Collections;
-using BeauPools;
 using BeauRoutine;
-using BeauUtil.Variants;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Aqua
-{
-    static public class CanvasExtensions
-    {
-        static public void SetAnchorX(this RectTransform inRect, float inX)
-        {
+namespace Aqua {
+    static public class CanvasExtensions {
+        static public void SetAnchorX(this RectTransform inRect, float inX) {
             Vector2 min = inRect.anchorMin,
                 max = inRect.anchorMax;
             min.x = inX;
@@ -20,8 +14,7 @@ namespace Aqua
             inRect.anchorMax = max;
         }
 
-        static public void SetAnchorY(this RectTransform inRect, float inY)
-        {
+        static public void SetAnchorY(this RectTransform inRect, float inY) {
             Vector2 min = inRect.anchorMin,
                 max = inRect.anchorMax;
             min.y = inY;
@@ -30,10 +23,8 @@ namespace Aqua
             inRect.anchorMax = max;
         }
 
-        static public IEnumerator Show(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = true)
-        {
-            if (!inGroup.gameObject.activeSelf)
-            {
+        static public IEnumerator Show(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = true) {
+            if (!inGroup.gameObject.activeSelf) {
                 inGroup.alpha = 0;
                 inGroup.gameObject.SetActive(true);
             }
@@ -52,10 +43,8 @@ namespace Aqua
             inGroup.gameObject.SetActive(true);
         }
 
-        static public IEnumerator Hide(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = false)
-        {
-            if (inGroup.gameObject.activeSelf)
-            {
+        static public IEnumerator Hide(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = false) {
+            if (inGroup.gameObject.activeSelf) {
                 if (inbRaycasts.HasValue)
                     inGroup.blocksRaycasts = inbRaycasts.Value;
                 yield return inGroup.FadeTo(0, inDuration);
@@ -69,6 +58,12 @@ namespace Aqua
             if (inbRaycasts.HasValue) {
                 inGroup.blocksRaycasts = inbRaycasts.Value;
             }
+        }
+
+        static public void ScrollYToShow(this ScrollRect inRect, RectTransform inTransform) {
+            float transformY = inTransform.rect.center.y;
+            float totalHeight = ((RectTransform) inTransform.parent).rect.height;
+            inRect.verticalNormalizedPosition = transformY / totalHeight;
         }
     }
 }

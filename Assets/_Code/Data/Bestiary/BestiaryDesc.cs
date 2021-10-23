@@ -26,6 +26,7 @@ namespace Aqua
         [SerializeField] private string m_ScientificName = null;
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
+        [SerializeField] private TextId m_DescriptionId = default;
         
         [SerializeField] internal BFBase[] m_Facts = null;
 
@@ -33,7 +34,7 @@ namespace Aqua
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField] private Sprite m_Sketch = null;
+        [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
@@ -57,10 +58,12 @@ namespace Aqua
         public BestiaryDescSize Size() { return m_Size; }
 
         public StringHash32 StationId() { return m_StationId; }
+        public StringHash32 DiveSiteId() { Assert.True(m_Type == BestiaryDescCategory.Environment); return m_DiveSiteId; }
 
         public string ScientificName() { return m_ScientificName; }
         public TextId CommonName() { return m_CommonNameId; }
         public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
+        public TextId Description() { return m_DescriptionId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
         public ListSlice<BFBase> PlayerFacts { get { return new ListSlice<BFBase>(m_AllFacts, 0, m_PlayerFactCount); } }
@@ -89,7 +92,7 @@ namespace Aqua
             return m_WaterColor;
         }
 
-        public Sprite Sketch() { return m_Sketch; }
+        public string SketchPath() { return m_SketchPath; }
         public Color Color() { return m_Color; }
 
         public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
@@ -166,10 +169,13 @@ namespace Aqua
         #endregion // Sorting
     }
 
-    [LabeledEnum]
+    [LabeledEnum(false)]
     public enum BestiaryDescCategory
     {
+        [Label("Organism")]
         Critter,
+
+        [Label("Ecosystem")]
         Environment,
 
         [Hidden]

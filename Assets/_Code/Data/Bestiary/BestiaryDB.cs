@@ -14,6 +14,7 @@ namespace Aqua
         [Header("Defaults")]
         [SerializeField] private Sprite m_DefaultEatSprite = null;
         [SerializeField] private Sprite m_DefaultHumanCatchSprite = null;
+        [SerializeField] private Sprite m_DefaultIsEatenSprite = null;
         [SerializeField] private Sprite m_DefaultProduceSprite = null;
         [SerializeField] private Sprite m_DefaultConsumeSprite = null;
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
@@ -59,6 +60,10 @@ namespace Aqua
             }
         }
 
+        public Sprite DefaultIsEatenIcon() {
+            return m_DefaultIsEatenSprite;
+        }
+
         public Sprite GraphTypeToImage(BFGraphType inGraphType)
         {
             return m_Graphs[(int) inGraphType];
@@ -83,9 +88,9 @@ namespace Aqua
             switch(inCategory)
             {
                 case BestiaryDescCategory.Critter:
-                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_CritterCount);
+                    return new ListSlice<BestiaryDesc>(m_Objects, m_EnvironmentCount, m_CritterCount);
                 case BestiaryDescCategory.Environment:
-                    return new ListSlice<BestiaryDesc>(m_Objects, m_CritterCount, m_EnvironmentCount);
+                    return new ListSlice<BestiaryDesc>(m_Objects, 0, m_EnvironmentCount);
 
                 case BestiaryDescCategory.ALL:
                     return m_Objects;

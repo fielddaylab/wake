@@ -31,7 +31,7 @@ namespace Aqua
         {
             BFType.DefineAttributes(BFTypeId.Death, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Death, null, GenerateSentence, GenerateFragments);
-            BFType.DefineEditor(BFTypeId.Death, (Sprite) null, BFMode.Internal);
+            BFType.DefineEditor(BFTypeId.Death, null, BFMode.Internal);
         }
 
         static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)

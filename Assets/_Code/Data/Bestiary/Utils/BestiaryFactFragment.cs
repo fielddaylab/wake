@@ -98,5 +98,6 @@ namespace Aqua
         Amount,
         Conjunction,
         Condition,
+        Image,
     }
 }

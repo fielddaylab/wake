@@ -23,7 +23,7 @@ namespace Aqua.Portable
         [NonSerialized] private bool m_HasNew;
         [NonSerialized] private RectTransformState m_OriginalAnimState;
 
-        [NonSerialized] private IPortableRequest m_Request;
+        [NonSerialized] private PortableRequest m_Request;
 
         public Toggle Toggle { get { return m_Toggle; } }
 
@@ -39,7 +39,7 @@ namespace Aqua.Portable
             m_NewIcon.gameObject.SetActive(false);
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
-                .Register<IPortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
+                .Register<PortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
                 .Register(GameEvents.PortableClosed, OnPortableClosed, this);
         }
 
@@ -87,7 +87,7 @@ namespace Aqua.Portable
             }
 
             m_NewIcon.gameObject.SetActive(true);
-            m_Request = new BestiaryApp.OpenToRequest(inBestiaryUpdate);
+            m_Request = PortableRequest.FromUpdate(inBestiaryUpdate);
         }
 
         // private void OnJobUpdated()
@@ -105,16 +105,16 @@ namespace Aqua.Portable
         //     m_Request = new StatusApp.OpenToPageRequest(StatusApp.PageId.Job);
         // }
 
-        private void OnPortableOpened(IPortableRequest inRequest)
+        private void OnPortableOpened(PortableRequest inRequest)
         {
             m_NewAnim.Stop();
             m_HasNew = false;
-            m_Request = null;
+            m_Request = default;
             m_OriginalAnimState.Apply(m_AnimationRoot);
             m_NewIcon.gameObject.SetActive(false);
 
             m_Toggle.SetIsOnWithoutNotify(true);
-            m_Toggle.interactable = inRequest == null || inRequest.CanClose();
+            m_Toggle.interactable = (inRequest.Flags & PortableRequestFlags.DisableClose) == 0;
         }
 
         private void OnPortableClosed()

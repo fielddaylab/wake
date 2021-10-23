@@ -112,7 +112,7 @@ namespace Aqua
         
         private void OnTaskButtonClicked(PointerEventData _)
         {
-            PortableMenu.OpenApp(PortableMenu.AppId.Job);
+            PortableMenu.OpenApp(PortableAppId.Job);
             
             SyncActiveTasks();
             m_ProcessOperationsJob.Stop();

@@ -132,6 +132,15 @@ namespace Aqua
             Array.Sort(m_Objects, inComparison);
         }
 
+        internal bool TryAdd(T inObj) {
+            if (Array.IndexOf(m_Objects, inObj) < 0) {
+                ArrayUtils.Add(ref m_Objects, inObj);
+                return true;
+            }
+
+            return false;
+        }
+
         [UnityEditor.CustomEditor(typeof(DBObjectCollection<>))]
         protected class BaseInspector : UnityEditor.Editor
         {

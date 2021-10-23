@@ -138,7 +138,7 @@ namespace Aqua
 
         private string m_CurrentJobId = string.Empty;
         private string m_PreviousJobId = string.Empty;
-        private PortableMenu.AppId m_CurrentPortableAppId = PortableMenu.AppId.NULL;
+        private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
 
         #endregion // Logging Variables
@@ -161,8 +161,8 @@ namespace Aqua
                 .Register(SimulationConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(SimulationConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
-                .Register<PortableMenu.AppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
-                .Register<PortableMenu.AppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
+                .Register<PortableAppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
+                .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
@@ -182,7 +182,7 @@ namespace Aqua
 
         private void ClearSceneState()
         {
-            m_CurrentPortableAppId = PortableMenu.AppId.NULL;
+            m_CurrentPortableAppId = PortableAppId.NULL;
             m_CurrentPortableBestiaryTabId = null;
         }
 
@@ -247,7 +247,7 @@ namespace Aqua
         }
 
         #region bestiary handlers
-        private void PortableAppOpenedHandler(PortableMenu.AppId inId)
+        private void PortableAppOpenedHandler(PortableAppId inId)
         {
 
             if (m_CurrentPortableAppId != inId)
@@ -256,21 +256,21 @@ namespace Aqua
             m_CurrentPortableAppId = inId;
             switch(inId)
             {
-                case PortableMenu.AppId.Environments:
-                case PortableMenu.AppId.Organisms:
+                case PortableAppId.Environments:
+                case PortableAppId.Organisms:
                     {
                         LogOpenBestiary();
                         break;
                     }
 
-                case PortableMenu.AppId.Job:
+                case PortableAppId.Job:
                     {
                         LogOpenStatus();
                         LogStatusOpenJobTab();
                         break;
                     }
 
-                case PortableMenu.AppId.Tech:
+                case PortableAppId.Tech:
                     {
                         LogOpenStatus();
                         LogStatusOpenTechTab();
@@ -279,24 +279,24 @@ namespace Aqua
             }
         }
 
-        private void PortableAppClosedHandler(PortableMenu.AppId appId)
+        private void PortableAppClosedHandler(PortableAppId appId)
         {
             if (m_CurrentPortableAppId != appId)
                 return;
 
-            m_CurrentPortableAppId = PortableMenu.AppId.NULL;
+            m_CurrentPortableAppId = PortableAppId.NULL;
             switch(appId)
             {
-                case PortableMenu.AppId.Environments:
-                case PortableMenu.AppId.Organisms:
+                case PortableAppId.Environments:
+                case PortableAppId.Organisms:
                     {
                         m_CurrentPortableBestiaryTabId = null;
                         LogCloseBestiary();
                         break;
                     }
 
-                case PortableMenu.AppId.Job:
-                case PortableMenu.AppId.Tech:
+                case PortableAppId.Job:
+                case PortableAppId.Tech:
                     {
                         LogCloseStatus();
                         break;
@@ -306,7 +306,7 @@ namespace Aqua
 
         private void PortableClosed()
         {
-            if (m_CurrentPortableAppId != PortableMenu.AppId.NULL)
+            if (m_CurrentPortableAppId != PortableAppId.NULL)
                 PortableAppClosedHandler(m_CurrentPortableAppId);
         }
 

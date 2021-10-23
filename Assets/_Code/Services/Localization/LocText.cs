@@ -11,7 +11,7 @@ using UnityEditor;
 
 namespace Aqua
 {
-    [RequireComponent(typeof(TMP_Text))]
+    [RequireComponent(typeof(TMP_Text)), DisallowMultipleComponent]
     public class LocText : MonoBehaviour
     {
         [Serializable] public class Pool : SerializablePool<LocText> { }

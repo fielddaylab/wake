@@ -20,8 +20,10 @@ namespace Aqua
         [Header("Display")]
         [Required] public LocText Label;
         public Graphic Background;
+        public Graphic CheckmarkBackground;
         public Graphic Checkmark;
         public PointerListener Click;
+        public Graphic Outline;
 
         [Header("Animation")]
         public Graphic Flash;
@@ -42,6 +44,8 @@ namespace Aqua
         {
             Label.SetText(inLabelId);
 
+            if (CheckmarkBackground)
+                Checkmark.enabled = inbCompleted;
             if (Checkmark)
                 Checkmark.enabled = inbCompleted;
 
@@ -61,6 +65,8 @@ namespace Aqua
             if (Flash)
                 Flash.enabled = false;
             if (Checkmark)
+                Checkmark.enabled = false;
+            if (CheckmarkBackground)
                 Checkmark.enabled = false;
         }
     }

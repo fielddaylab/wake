@@ -1,186 +1,97 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
+using System.Collections;
+using Aqua;
 using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
-using Aqua;
-using System.Collections;
-using System;
-using BeauUtil.Variants;
 using BeauUtil.UI;
+using BeauUtil.Variants;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Aqua.Portable
-{
-    public class PortableMenu : SharedPanel
-    {
+namespace Aqua.Portable {
+    public class PortableMenu : SharedPanel {
         #region Persistence
 
         static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("global:portable.lastOpenTab");
 
         #endregion // Persistence
 
-        #region Types
-
-        [LabeledEnum]
-        public enum AppId : byte
-        {
-            Organisms,
-            Environments,
-            Job,
-            Tech,
-
-            [Hidden]
-            NULL = 255
-        }
-
-        private class OpenAppRequest : IPortableRequest
-        {
-            public AppId Id;
-
-            public OpenAppRequest(AppId inId)
-            {
-                Id = inId;
-            }
-
-            public AppId AppId()
-            {
-                return Id;
-            }
-
-            public bool CanClose()
-            {
-                return true;
-            }
-
-            public bool CanNavigateApps()
-            {
-                return true;
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public bool ForceInputEnabled()
-            {
-                return false;
-            }
-        }
-
-        #endregion // Types
-
         #region Inspector
 
         [SerializeField, Required] private Canvas m_Canvas = null;
         [SerializeField, Required] private CanvasGroup m_Fader = null;
-        
+
         [Header("Animation")]
         [SerializeField] private float m_OffPosition = 0;
-        [SerializeField] private TweenSettings m_ToOnAnimSettings = new TweenSettings(0.2f, Curve.CubeOut); 
+        [SerializeField] private TweenSettings m_ToOnAnimSettings = new TweenSettings(0.2f, Curve.CubeOut);
         [SerializeField] private float m_OnPosition = 0;
         [SerializeField] private TweenSettings m_ToOffAnimSettings = new TweenSettings(0.2f, Curve.CubeIn);
-        
+
         [Header("Bottom Buttons")]
         [SerializeField, Required] private Button m_CloseButton = null;
         [Space]
         [SerializeField, Required] private CanvasGroup m_AppNavigationGroup = null;
         [SerializeField, Required] private ToggleGroup m_AppButtonToggleGroup = null;
-        [SerializeField, Required] private PortableAppButton[] m_AppButtons = null;
+        [SerializeField, Required] private PortableTabToggle[] m_AppButtons = null;
 
         #endregion // Inspector
 
         [NonSerialized] private BaseInputLayer m_Input;
-        [NonSerialized] private IPortableRequest m_Request;
-        [NonSerialized] private VariantTable m_Table;
+        [NonSerialized] private PortableRequest m_Request;
 
         #region Unity Events
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
             m_Input = BaseInputLayer.Find(this);
 
             m_CloseButton.onClick.AddListener(() => Hide());
             m_Fader.EnsureComponent<PointerListener>().onClick.AddListener((p) => Hide());
-
-            m_Table = new VariantTable("portable");
-            Services.Data.BindTable("portable", m_Table);
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
         }
 
-        protected override void OnDisable()
-        {
+        protected override void OnDisable() {
             base.OnDisable();
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             base.OnDestroy();
-            Services.Data?.UnbindTable("portable");
         }
 
         #endregion // Unity Events
 
         #region Requests
 
-        public void Open(IPortableRequest inRequest = null)
-        {
+        public void Open(PortableRequest inRequest) {
             m_Request = inRequest;
-            
             Show();
-            HandleRequest();
         }
 
-        private void HandleRequest()
-        {
-            bool bHandled = false;
-
-            if (m_Request != null)
-            {
-                m_AppNavigationGroup.interactable = m_Request.CanNavigateApps();
-                m_CloseButton.interactable = m_Request.CanClose();
-                for(int i = 0; i < m_AppButtons.Length; ++i)
-                {
-                    var button = m_AppButtons[i];
-                    if (button.Id() == m_Request.AppId())
-                    {
-                        bHandled = true;
-                        button.Toggle.isOn = true;
-                        button.App.TryHandle(m_Request);
-                    }
-                    else
-                    {
-                        button.Toggle.isOn = false;
-                    }
-                }
-            }
-            else
-            {
-                m_AppNavigationGroup.interactable = true;
-                m_CloseButton.interactable = true;
-                m_AppButtonToggleGroup.SetAllTogglesOff(true);
+        private void HandleRequest() {
+            PortableTabToggle requestTab = null;
+            if (m_Request.Type > 0) {
+                requestTab = GetAppButton(m_Request.App);
+            } else {
+                PortableAppId lastKnownApp = (PortableAppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
+                requestTab = GetAppButton(lastKnownApp);
             }
 
-            if (!bHandled)
-            {
-                AppId appToOpen = (AppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
-                GetAppButton(appToOpen).Toggle.isOn = true;
-            }
+            requestTab.Toggle.isOn = true;
+            m_AppNavigationGroup.interactable = (m_Request.Flags & PortableRequestFlags.DisableNavigation) == 0;
+            m_CloseButton.interactable = (m_Request.Flags & PortableRequestFlags.DisableClose) == 0;
+            requestTab.App.HandleRequest(m_Request);
 
             Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
         }
 
-        private PortableAppButton GetAppButton(AppId inId)
-        {
-            for(int i = 0; i < m_AppButtons.Length; ++i)
-            {
+        private PortableTabToggle GetAppButton(PortableAppId inId) {
+            for (int i = 0; i < m_AppButtons.Length; ++i) {
                 var button = m_AppButtons[i];
-                if (button.Id() == inId)
-                {
+                if (button.Id() == inId) {
                     return button;
                 }
             }
@@ -191,17 +102,13 @@ namespace Aqua.Portable
 
         #region BasePanel
 
-        protected override void OnShow(bool inbInstant)
-        {
+        protected override void OnShow(bool inbInstant) {
             Services.Data.SetVariable("portable:open", true);
 
-            if(m_Request != null && Services.UI.IsLetterboxed() && m_Request.ForceInputEnabled()) 
-            {
+            if (m_Request.Type > 0 && Services.UI.IsLetterboxed() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
                 m_Input.Override = true;
                 BringToFront();
-            }
-            else
-            {
+            } else {
                 m_Input.Override = null;
             }
 
@@ -214,14 +121,13 @@ namespace Aqua.Portable
             Services.Script.TriggerResponse(GameTriggers.PortableOpened);
         }
 
-        protected override void OnHide(bool inbInstant)
-        {
+        protected override void OnHide(bool inbInstant) {
             Services.Data?.SetVariable("portable:open", false);
 
             m_Input.PopPriority();
             m_Input.Override = null;
 
-            m_Request = null;
+            m_Request.Dispose();
             m_CloseButton.interactable = true;
             m_AppNavigationGroup.interactable = true;
 
@@ -230,17 +136,17 @@ namespace Aqua.Portable
             base.OnHide(inbInstant);
         }
 
-        protected override void OnHideComplete(bool inbInstant)
-        {
+        protected override void OnHideComplete(bool inbInstant) {
             m_Canvas.enabled = false;
             m_Input.Override = false;
+
+            Streaming.UnloadUnusedAsync();
+
             base.OnHideComplete(inbInstant);
         }
 
-        protected override IEnumerator TransitionToShow()
-        {
-            if (!m_RootTransform.gameObject.activeSelf)
-            {
+        protected override IEnumerator TransitionToShow() {
+            if (!m_RootTransform.gameObject.activeSelf) {
                 m_RootTransform.SetAnchorPos(m_OffPosition, Axis.X);
                 m_RootTransform.gameObject.SetActive(true);
 
@@ -248,22 +154,23 @@ namespace Aqua.Portable
                 m_Fader.gameObject.SetActive(true);
             }
 
+            HandleRequest();
+
             yield return Routine.Combine(
                 m_RootTransform.AnchorPosTo(m_OnPosition, m_ToOnAnimSettings, Axis.X),
                 m_Fader.FadeTo(1, m_ToOnAnimSettings.Time)
             );
         }
 
-        protected override void InstantTransitionToShow()
-        {
+        protected override void InstantTransitionToShow() {
             m_Fader.alpha = 1;
             m_Fader.gameObject.SetActive(true);
             m_RootTransform.SetAnchorPos(m_OnPosition, Axis.X);
             m_RootTransform.gameObject.SetActive(true);
+            HandleRequest();
         }
 
-        protected override IEnumerator TransitionToHide()
-        {
+        protected override IEnumerator TransitionToHide() {
             yield return Routine.Combine(
                 m_RootTransform.AnchorPosTo(m_OffPosition, m_ToOffAnimSettings, Axis.X),
                 m_Fader.FadeTo(0, m_ToOffAnimSettings.Time)
@@ -272,18 +179,22 @@ namespace Aqua.Portable
             m_Fader.gameObject.SetActive(false);
         }
 
-        protected override void InstantTransitionToHide()
-        {
+        protected override void InstantTransitionToHide() {
             m_Fader.gameObject.SetActive(false);
             m_RootTransform.gameObject.SetActive(false);
             m_RootTransform.SetAnchorPos(m_OffPosition, Axis.X);
         }
-    
+
         #endregion // BasePanel
 
-        static public void OpenApp(AppId inId)
-        {
-            Services.UI.FindPanel<PortableMenu>().Open(new OpenAppRequest(inId));
+        static public void OpenApp(PortableAppId inId) {
+            Services.UI.FindPanel<PortableMenu>().Open(PortableRequest.OpenApp(inId));
+        }
+
+        static public Future<StringHash32> RequestFact() {
+            var request = PortableRequest.SelectFact();
+            Services.UI.FindPanel<PortableMenu>().Open(request);
+            return request.Response;
         }
     }
 }

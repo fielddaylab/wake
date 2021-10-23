@@ -292,6 +292,7 @@ namespace Aqua
                 {
                     case JobStepType.AcquireBestiaryEntry:
                     case JobStepType.AcquireFact:
+                    case JobStepType.UpgradeFact:
                         mask |= TaskEventMask.BestiaryUpdate;
                         break;
 

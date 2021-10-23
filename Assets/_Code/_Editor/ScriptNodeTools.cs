@@ -18,7 +18,7 @@ namespace Aqua.Editor
 {
     static public class ScriptNodeTools
     {
-        [MenuItem("Aqualab/Export String Table")]
+        [MenuItem("Aqualab/Localization/Export String Table")]
         static public void ExportAllStrings()
         {
             StringBuilder sb = new StringBuilder(1024);

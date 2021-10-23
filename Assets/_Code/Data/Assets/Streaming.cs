@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System.Collections.Generic;
 using BeauRoutine;
 using BeauUtil;
@@ -27,6 +31,7 @@ namespace Aqua {
         static private void EditorInitialize() {
             UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChange;
             UnityEditor.SceneManagement.EditorSceneManager.sceneOpened += OnSceneOpened;
+            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
             AppDomain.CurrentDomain.DomainUnload += (e, o) => UnloadAll();
         }
 
@@ -36,6 +41,10 @@ namespace Aqua {
             }
 
             UnloadAll();
+        }
+
+        static private void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage _) {
+            UnityEditor.EditorApplication.delayCall += UnloadUnusedSync;
         }
 
         static private void OnSceneOpened(UnityEngine.SceneManagement.Scene _, UnityEditor.SceneManagement.OpenSceneMode __) {
@@ -53,9 +62,22 @@ namespace Aqua {
             Audio
         }
 
+        public enum AssetStatus : byte {
+            Unloaded = 0,
+            Invalid = 0x01,
+
+            PendingUnload = 0x02,
+            PendingLoad = 0x04,
+            Loaded = 0x08,
+            Error = 0x10,
+        }
+
         private class AssetMeta {
             public AssetType Type;
+            public AssetStatus Status;
             public ushort RefCount;
+            public long Size;
+
             public IFuture Loader;
             #if UNITY_EDITOR
             public HotReloadableFileProxy Proxy;
@@ -68,6 +90,8 @@ namespace Aqua {
         static private readonly Dictionary<int, StringHash32> s_ReverseLookup = new Dictionary<int, StringHash32>();
         static private readonly RingBuffer<StringHash32> s_UnloadQueue = new RingBuffer<StringHash32>();
         static private uint s_LoadCount = 0;
+        static private long s_TextureMemoryUsage = 0;
+        static private AsyncHandle s_UnloadHandle;
         #if UNITY_EDITOR
         static private readonly HotReloadBatcher s_Batcher = new HotReloadBatcher();
         #endif // UNITY_EDITOR
@@ -87,6 +111,7 @@ namespace Aqua {
                 Dereference(texture);
                 texture = loadedTexture;
                 meta.RefCount++;
+                meta.Status &= ~AssetStatus.PendingUnload;
                 s_UnloadQueue.FastRemove(id);
                 return true;
             }
@@ -103,14 +128,15 @@ namespace Aqua {
                 DebugService.Log(LogMask.Loading, "[Streaming] Loading streamed texture '{0}'...", id);
                 
                 meta.Type = AssetType.Texture;
+                meta.Status = AssetStatus.PendingLoad;
                 #if UNITY_EDITOR
                 if (!UnityEditor.EditorApplication.isPlaying) {
-                    loadedTexture = LoadTexture_Editor(id, url, out meta.Proxy);
+                    loadedTexture = LoadTexture_Editor(id, url, meta);
                     s_Batcher.Add(meta.Proxy);
                 } else
                 #endif // UNITY_EDITOR
                 {
-                    loadedTexture = LoadTextureAsync(id, url, out meta.Loader);
+                    loadedTexture = LoadTextureAsync(id, url, meta);
                 }
 
                 s_Metas[id] = meta;
@@ -136,7 +162,7 @@ namespace Aqua {
 
         #if UNITY_EDITOR
 
-        static private Texture2D LoadTexture_Editor(StringHash32 id, string url, out HotReloadableFileProxy proxy) {
+        static private Texture2D LoadTexture_Editor(StringHash32 id, string url, AssetMeta meta) {
             string correctedPath = PathUtility.StreamingAssetsPath(url);
             if (File.Exists(correctedPath)) {
                 byte[] bytes = File.ReadAllBytes(correctedPath);
@@ -147,7 +173,7 @@ namespace Aqua {
                 texture.wrapMode = GetTextureWrapMode(url);
                 texture.LoadImage(bytes, false);
                 DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (sync) '{0}'", id);
-                proxy = new HotReloadableFileProxy(correctedPath, (p, s) => {
+                meta.Proxy = new HotReloadableFileProxy(correctedPath, (p, s) => {
                     if (s == HotReloadOperation.Modified) {
                         texture.LoadImage(File.ReadAllBytes(p), false);
 
@@ -158,42 +184,58 @@ namespace Aqua {
                         texture.SetPixels32(TextureLoadingBytes);
                         texture.Apply(false, true);
 
+                        meta.Status = AssetStatus.Error;
                         DebugService.Log(LogMask.Loading, "[Streaming] Texture '{0}' was deleted", id);
                     }
                 });
+                meta.Status = AssetStatus.Loaded;
                 return texture;
             } else {
                 Log.Error("[Streaming] Failed to load texture from '{0}'", url);
                 Texture2D texture = CreatePlaceholderTexture(url, true);
-                proxy = null;
+                meta.Proxy = null;
+                meta.Status = AssetStatus.Error;
                 return texture;
             }
         }
 
         #endif // UNITY_EDITOR
 
-        static private Texture2D LoadTextureAsync(StringHash32 id, string url, out IFuture loader) {
+        static private Texture2D LoadTextureAsync(StringHash32 id, string url, AssetMeta meta) {
             Texture2D texture = CreatePlaceholderTexture(url, false);
 
             string correctedUrl = PathUtility.PathToURL(PathUtility.StreamingAssetsPath(url));
-            loader = Future.Download.Bytes(correctedUrl)
-                .OnComplete((bytes) => OnTextureDownloadCompleted(id, bytes, url))
-                .OnFail(() => OnTextureDownloadFail(id, correctedUrl));
+            meta.Loader = Future.Download.Bytes(correctedUrl)
+                .OnComplete((bytes) => OnTextureDownloadCompleted(id, bytes, url, meta))
+                .OnFail(() => OnTextureDownloadFail(id, correctedUrl, meta));
             s_LoadCount++;
             return texture;
         }
 
-        static private void OnTextureDownloadCompleted(StringHash32 id, byte[] source, string url) {
+        static private void OnTextureDownloadCompleted(StringHash32 id, byte[] source, string url, AssetMeta meta) {
+            if (meta.Status == AssetStatus.Unloaded || (meta.Status & AssetStatus.PendingUnload) != 0) {
+                s_Metas.Remove(id);
+                return;
+            }
+
             Texture2D dest = s_Textures[id];
             dest.LoadImage(source, true);
             dest.filterMode = GetTextureFilterMode(url);
             dest.wrapMode = GetTextureWrapMode(url);
             s_LoadCount --;
+            meta.Status = AssetStatus.Loaded;
+            meta.Loader = null;
             DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (async) '{0}'", id);
         }
 
-        static private void OnTextureDownloadFail(StringHash32 id, string url) {
+        static private void OnTextureDownloadFail(StringHash32 id, string url, AssetMeta meta) {
+            if (meta.Status == AssetStatus.Unloaded || (meta.Status & AssetStatus.PendingUnload) != 0) {
+                return;
+            }
+
             Log.Error("[Streaming] Failed to load texture '{0}' from '{1}", id, url);
+            meta.Loader = null;
+            meta.Status = AssetStatus.Error;
             s_LoadCount--;
         }
 
@@ -229,16 +271,28 @@ namespace Aqua {
 
         #region Management
 
-        static private void Dereference(UnityEngine.Object inInstance) {
-            if (!inInstance) {
-                return;
+        /// <summary>
+        /// Attempts to return the streaming id associated with the given asset.
+        /// </summary>
+        static public bool TryGetId(UnityEngine.Object instance, out StringHash32 id) {
+            if (!instance) {
+                id = default;
+                return false;
             }
 
-            int instanceId = inInstance.GetInstanceID();
-            StringHash32 id;
+            int instanceId = instance.GetInstanceID();
             if (!s_ReverseLookup.TryGetValue(instanceId, out id)) {
-                Log.Warn("[Streaming] No asset metadata found for {0}'", inInstance);
-                return;
+                Log.Warn("[Streaming] No asset metadata found for {0}'", instance);
+                return false;
+            }
+
+            return true;
+        }
+
+        static private bool Dereference(UnityEngine.Object instance) {
+            StringHash32 id;
+            if (!TryGetId(instance, out id)) {
+                return false;
             }
 
             AssetMeta meta;
@@ -246,14 +300,64 @@ namespace Aqua {
                 if (meta.RefCount > 0) {
                     meta.RefCount--;
                     if (meta.RefCount == 0) {
+                        meta.Status |= AssetStatus.PendingUnload;
                         s_UnloadQueue.PushBack(id);
                     }
+                    return true;
                 }
             }
+
+            return false;
         }
 
+        /// <summary>
+        /// Returns if any loads are currently executing.
+        /// </summary>
         static public bool IsLoading() {
             return s_LoadCount > 0;
+        }
+
+        /// <summary>
+        /// Returns if the asset with the given streaming id is loaded.
+        /// </summary>
+        static public bool IsLoaded(StringHash32 id) {
+            return Status(id) == AssetStatus.Loaded;
+        }
+
+        /// <summary>
+        /// Returns if the given streaming asset is loaded.
+        /// </summary>
+        static public bool IsLoaded(UnityEngine.Object instance) {
+            return Status(instance) == AssetStatus.Loaded;
+        }
+
+        /// <summary>
+        /// Returns the status of the asset with the given streaming id.
+        /// </summary>
+        static public AssetStatus Status(StringHash32 id) {
+            AssetMeta meta;
+            if (s_Metas.TryGetValue(id, out meta)) {
+                return meta.Status;
+            }
+
+            return AssetStatus.Unloaded;
+        }
+
+        /// <summary>
+        /// Returns the status of the given streaming asset.
+        /// </summary>
+        static public AssetStatus Status(UnityEngine.Object instance) {
+            StringHash32 id;
+            if (!TryGetId(instance, out id)) {
+                return AssetStatus.Invalid;
+            }
+
+            AssetMeta meta;
+            if (s_Metas.TryGetValue(id, out meta)) {
+                return meta.Status;
+            }
+
+            return AssetStatus.Unloaded;
         }
 
         #if UNITY_EDITOR
@@ -269,111 +373,30 @@ namespace Aqua {
 
         #if UNITY_EDITOR
 
-        static internal void UnloadUnusedSync() {
+        static private void UnloadUnusedSync() {
             StringHash32 id;
-            AssetMeta meta;
-            UnityEngine.Object resource = null;
             while(s_UnloadQueue.TryPopFront(out id)) {
-                meta = s_Metas[id];
-                if (meta.RefCount > 0) {
-                    break;
-                }
-
-                s_Metas.Remove(id);
-                if (meta.Loader != null) {
-                    if (!meta.Loader.IsDone()) {
-                        s_LoadCount--;
-                    }
-
-                    meta.Loader.Dispose();
-                    meta.Loader = null;
-                }
-
-                #if UNITY_EDITOR
-                if (meta.Proxy != null) {
-                    s_Batcher.Remove(meta.Proxy);
-                    meta.Proxy.Dispose();
-                }
-                #endif // UNITY_EDITOR
-
-                switch(meta.Type) {
-                    case AssetType.Texture: {
-                            resource = s_Textures[id];
-                            s_Textures.Remove(id);
-                            break;
-                        }
-
-                    case AssetType.Audio: {
-                            resource = s_AudioClips[id];
-                            
-                            s_AudioClips.Remove(id);
-                            break;
-                        }
-                }
-
-                s_ReverseLookup.Remove(resource.GetInstanceID());
-                UnityEngine.Object.DestroyImmediate(resource);
-                DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
-
-                resource = null;
+                UnloadSingle(id);
             }
         }
 
         #endif // UNITY_EDITOR
 
         static internal AsyncHandle UnloadUnusedAsync() {
-            return Async.Schedule(UnloadUnusedAsyncJob());
+            if (s_UnloadHandle.IsRunning()) {
+                return s_UnloadHandle;
+            }
+            return s_UnloadHandle = Async.Schedule(UnloadUnusedAsyncJob(), AsyncFlags.MainThreadOnly);
         }
 
         static private IEnumerator UnloadUnusedAsyncJob() {
             StringHash32 id;
-            AssetMeta meta;
-            UnityEngine.Object resource = null;
             while(s_UnloadQueue.TryPopFront(out id)) {
-                meta = s_Metas[id];
-                if (meta.RefCount > 0) {
-                    break;
-                }
-
-                s_Metas.Remove(id);
-                if (meta.Loader != null) {
-                    if (!meta.Loader.IsDone()) {
-                        s_LoadCount--;
-                    }
-
-                    meta.Loader.Dispose();
-                    meta.Loader = null;
-                }
-
-                #if UNITY_EDITOR
-                if (meta.Proxy != null) {
-                    s_Batcher.Remove(meta.Proxy);
-                    meta.Proxy.Dispose();
-                }
-                #endif // UNITY_EDITOR
-
-                switch(meta.Type) {
-                    case AssetType.Texture: {
-                            resource = s_Textures[id];
-                            s_Textures.Remove(id);
-                            break;
-                        }
-
-                    case AssetType.Audio: {
-                            resource = s_AudioClips[id];
-                            
-                            s_AudioClips.Remove(id);
-                            break;
-                        }
-                }
-
-                s_ReverseLookup.Remove(resource.GetInstanceID());
-                UnityEngine.Object.Destroy(resource);
-                DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
-
-                resource = null;
+                UnloadSingle(id);
                 yield return null;
             }
+
+            s_UnloadHandle = default;
         }
 
         static internal void UnloadAll() {
@@ -410,8 +433,68 @@ namespace Aqua {
             #if UNITY_EDITOR
             s_Batcher.Dispose();
             #endif // UNITY_EDITOR
+
+            DebugService.Log(LogMask.Loading, "[Streaming] Unloaded all streamed assets");
         }
     
+        static internal bool UnloadSingle(StringHash32 id) {
+            AssetMeta meta = s_Metas[id];
+            UnityEngine.Object resource = null;
+            if (meta.RefCount > 0) {
+                return false;
+            }
+
+            s_Metas.Remove(id);
+            if (meta.Loader != null) {
+                if (!meta.Loader.IsDone()) {
+                    s_LoadCount--;
+                }
+
+                meta.Loader.Dispose();
+                meta.Loader = null;
+            }
+
+            #if UNITY_EDITOR
+            if (meta.Proxy != null) {
+                s_Batcher.Remove(meta.Proxy);
+                meta.Proxy.Dispose();
+            }
+            #endif // UNITY_EDITOR
+
+            switch(meta.Type) {
+                case AssetType.Texture: {
+                        resource = s_Textures[id];
+                        s_Textures.Remove(id);
+                        break;
+                    }
+
+                case AssetType.Audio: {
+                        resource = s_AudioClips[id];
+                        
+                        s_AudioClips.Remove(id);
+                        break;
+                    }
+            }
+
+            s_ReverseLookup.Remove(resource.GetInstanceID());
+            
+            #if UNITY_EDITOR
+            if (Application.isPlaying) {
+                UnityEngine.Object.Destroy(resource);
+            } else {
+                UnityEngine.Object.DestroyImmediate(resource);
+            }
+            #else
+            UnityEngine.Object.Destroy(resource);
+            #endif // UNITY_EDITOR
+
+            DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
+
+            resource = null;
+
+            return true;
+        }
+
         #endregion // Management
     }
 }

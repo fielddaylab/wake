@@ -36,7 +36,7 @@ namespace Aqua
         {
             BFType.DefineAttributes(BFTypeId.Eat, BFDiscoveredFlags.Base, Compare);
             BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateSentence, GenerateFragments);
-            BFType.DefineEditor(BFTypeId.Eat, DefaultIcon, BFMode.Player);
+            BFType.DefineEditor(BFTypeId.Eat, null, BFMode.Player);
         }
 
         static private void CollectReferences(BFBase inFact, HashSet<StringHash32> outCritters)
@@ -60,22 +60,22 @@ namespace Aqua
                 }
                 if ((inFlags & BFDiscoveredFlags.Rate) != 0)
                 {
-                    yield return BFFragment.CreateAdjective(string.Format("({0})", BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount)));
+                    yield return BFFragment.CreateAmount(BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount));
                 }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
             }
             else
             {
+                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
+                {
+                    yield return BFFragment.CreateAmount(BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount));
+                }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
                 yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
                 if (fact.OnlyWhenStressed)
                 {
                     yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
-                }
-                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
-                {
-                    yield return BFFragment.CreateAdjective(string.Format("({0})", BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount)));
                 }
             }
         }
@@ -106,11 +106,11 @@ namespace Aqua
             return CompareStressedPair(x, y);
         }
 
-        static private Sprite DefaultIcon(BFBase inFact)
-        {
-            BFEat fact = (BFEat) inFact;
-            return fact.Critter.Icon();
-        }
+        // static private Sprite DefaultIcon(BFBase inFact)
+        // {
+        //     BFEat fact = (BFEat) inFact;
+        //     return fact.Critter.Icon();
+        // }
 
         #endregion // Behavior
 

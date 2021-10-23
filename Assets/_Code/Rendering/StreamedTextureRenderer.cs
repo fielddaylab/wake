@@ -31,6 +31,49 @@ namespace Aqua {
         [NonSerialized] private Texture2D m_LoadedTexture;
         [NonSerialized] private Material m_MaterialInstance;
 
+        public string URL {
+            get { return m_Url; }
+            set {
+                if (m_Url != value) {
+                    m_Url = value;
+                    if (isActiveAndEnabled) {
+                        RebuildMaterial();
+                    }
+                }
+            }
+        }
+
+        public void Prefetch() {
+            RebuildMaterial();
+        }
+
+        public bool IsLoaded() {
+            return Streaming.IsLoaded(m_LoadedTexture);
+        }
+
+        private void OnEnable() {
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(this)) {
+                m_MeshFilter = GetComponent<MeshFilter>();
+                m_MeshRenderer = GetComponent<MeshRenderer>();
+                RebuildMesh();
+                RebuildMaterial();
+                return;
+            }
+            #endif // UNITY_EDITOR
+
+            if (Services.State.IsLoadingScene()) {
+                return;
+            }
+
+            RebuildMesh();
+            RebuildMaterial();
+        }
+
+        private void OnDisable() {
+            UnloadResources();
+        }
+
         private void OnDestroy() {
             UnloadResources();
         }
@@ -113,17 +156,6 @@ namespace Aqua {
         #endregion // Scene Loading
 
         #if UNITY_EDITOR
-
-        private void OnEnable() {
-            if (Application.IsPlaying(this))
-                return;
-            
-            m_MeshFilter = GetComponent<MeshFilter>();
-            m_MeshRenderer = GetComponent<MeshRenderer>();
-
-            RebuildMesh();
-            RebuildMaterial();
-        }
 
         private void Reset() {
             m_MeshFilter = GetComponent<MeshFilter>();

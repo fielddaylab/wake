@@ -45,7 +45,7 @@ namespace Aqua
         static public readonly StringHash32 BeginDive = "dive:begin";
         static public readonly StringHash32 BeginArgument = "argument:begin";
 
-        static public readonly StringHash32 PortableOpened = "portable:opened"; // IPortableRequest request
+        static public readonly StringHash32 PortableOpened = "portable:opened"; // PortableRequest request
         static public readonly StringHash32 PortableClosed = "portable:closed"; // no args
         static public readonly StringHash32 PortableAppOpened = "portable:app-opened"; // 
         static public readonly StringHash32 PortableAppClosed = "portable:app-closed";
