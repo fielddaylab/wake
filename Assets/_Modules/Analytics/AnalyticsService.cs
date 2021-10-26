@@ -9,6 +9,7 @@ using BeauUtil.Services;
 using FieldDay;
 using ProtoAqua.ExperimentV2;
 using ProtoAqua.Modeling;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
-        [SerializeField] private int m_AppVersion = 1;
+        [SerializeField] private int m_AppVersion = 2;
         
         #endregion // Inspector
 
@@ -33,111 +34,98 @@ namespace Aqua
 
         //Progression
         [DllImport("__Internal")]
-        public static extern void FBAcceptJob(string jobId);
+        public static extern void FBAcceptJob(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBSwitchJob(string jobId);
+        public static extern void FBSwitchJob(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBReceiveFact(string factId);
+        public static extern void FBReceiveFact(string userCode, int appVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBCompleteJob(string jobId);
+        public static extern void FBCompleteJob(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCompleteTask(string factId, string taskId);
+        public static extern void FBCompleteTask(string userCode, int appVersion, int jobId, string jobName, string taskId);
 
         //Player Actions
         [DllImport("__Internal")]
-        public static extern void FBSceneChanged(string sceneName);
+        public static extern void FBSceneChanged(string userCode, int appVersion, int jobId, string jobName,string sceneName);
         [DllImport("__Internal")]
-        public static extern void FBRoomChanged(string roomName);
+        public static extern void FBRoomChanged(string userCode, int appVersion, int jobId, string jobName, string roomName);
         [DllImport("__Internal")]
-        public static extern void FBBeginExperiment(string jobId, string tankType);
+        public static extern void FBBeginExperiment(string userCode, int appVersion, int jobId, string jobName, string tankType);
         [DllImport("__Internal")]
-        public static extern void FBBeginDive(string jobId, string siteId);
+        public static extern void FBBeginDive(string userCode, int appVersion, int jobId, string jobName, string siteId);
         [DllImport("__Internal")]
-        public static extern void FBBeginArgument(string jobId);
+        public static extern void FBBeginArgument(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBeginModel(string jobId);
+        public static extern void FBBeginModel(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBeginSimulation(string jobId);
+        public static extern void FBBeginSimulation(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBAskForHelp(string nodeId);
+        public static extern void FBAskForHelp(string userCode, int appVersion, int jobId, string jobName, string nodeId);
         [DllImport("__Internal")]
-        public static extern void FBTalkWithGuide(string nodeId);
+        public static extern void FBTalkWithGuide(string userCode, int appVersion, int jobId, string jobName, string nodeId);
             //Bestiary Events
         [DllImport("__Internal")]
-        public static extern void FBOpenBestiary(string jobId);
+        public static extern void FBOpenBestiary(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenSpeciesTab(string jobId);
+        public static extern void FBBestiaryOpenSpeciesTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenEnvironmentsTab(string jobId);
+        public static extern void FBBestiaryOpenEnvironmentsTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenModelsTab(string jobId);
+        public static extern void FBBestiaryOpenModelsTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectSpecies(string jobId, string speciesId);
+        public static extern void FBBestiarySelectSpecies(string userCode, int appVersion, int jobId, string jobName, string speciesId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectEnvironment(string jobId, string environmentId);
+        public static extern void FBBestiarySelectEnvironment(string userCode, int appVersion, int jobId, string jobName, string environmentId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectModel(string jobId, string modelId);
+        public static extern void FBBestiarySelectModel(string userCode, int appVersion, int jobId, string jobName, string modelId);
         [DllImport("__Internal")]
-        public static extern void FBCloseBestiary(string jobId);
+        public static extern void FBCloseBestiary(string userCode, int appVersion, int jobId, string jobName);
 
             //Status Events
         [DllImport("__Internal")]
-        public static extern void FBOpenStatus(string jobId);
+        public static extern void FBOpenStatus(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenJobTab(string jobId);
+        public static extern void FBStatusOpenJobTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenItemTab(string jobId);
+        public static extern void FBStatusOpenItemTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenTechTab(string jobId);
+        public static extern void FBStatusOpenTechTab(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCloseStatus(string jobId);
+        public static extern void FBCloseStatus(string userCode, int appVersion, int jobId, string jobName);
 
         //Game Feedback
         [DllImport("__Internal")]
-        public static extern void FBSimulationSyncAchieved(string jobId);
+        public static extern void FBSimulationSyncAchieved(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBGuideScriptTriggered(string nodeId);
+        public static extern void FBGuideScriptTriggered(string userCode, int appVersion, int jobId, string jobName, string nodeId);
 
         #endregion // Firebase JS Functions
 
         #region Logging Variables
 
-        private SimpleLog m_Logger;
-        private enum m_EventCategories
-        {
-            accept_job,
-            switch_job,
-            receive_fact,
-            complete_job,
-            complete_task,
-            scene_changed,
-            room_changed,
-            begin_experiment,
-            begin_dive,
-            begin_argument,
-            begin_model,
-            begin_simulation,
-            ask_for_help,
-            talk_with_guide,
-            open_bestiary,
-            bestiary_open_species_tab,
-            bestiary_open_environments_tab,
-            bestiary_open_models_tab,
-            bestiary_select_species,
-            bestiary_select_environment,
-            bestiary_select_model,
-            close_bestiary,
-            open_status,
-            status_open_job_tab,
-            status_open_item_tab,
-            status_open_tech_tab,
-            close_status,
-            simulation_sync_achieved,
-            guide_script_triggered
-        }
+        private readonly Dictionary<string, int> m_JobNamesToIDs = new Dictionary<string, int> {
+            { "no-active-job", 0 },
+            { "kelp-welcome", 1 },
+            { "kelp-urchin-barren", 2 },
+            { "kelp-save-urchin-barren", 3 },
+            { "kelp-bull-kelp-forest", 4 },
+            { "coral-urchin-friends", 5 },
+            { "coral-remove-sarg", 6 },
+            { "coral-invade", 7 },
+            { "coral-/fishy-bizz", 8 },
+            { "coral-clear-sarg", 9 },
+            { "bayou-oxygen-tracking", 10 },
+            { "bayou-save-our-shrimp", 11 },
+            { "bayou-shrip-tastrophe", 12 },
+            { "arctic-missing-whale", 13 },
+            { "arctic-time-of-death", 14 },
+            { "arctic-whale-csi", 15 }  
+        };
 
-        private string m_CurrentJobId = string.Empty;
-        private string m_PreviousJobId = string.Empty;
+        private string m_UserCode = string.Empty;
+        private int m_CurrentJobId = 0;
+        private string m_CurrentJobName = "no-active-job";
+        private string m_PreviousJobName = "no-active-job";
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
 
@@ -147,8 +135,8 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_Logger = new SimpleLog(m_AppId, m_AppVersion, null);
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
+                .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
@@ -172,11 +160,14 @@ namespace Aqua
             SceneHelper.OnSceneLoaded += LogSceneChanged;
         }
 
+        private void SetUserCode(string userCode)
+        {
+            m_UserCode = userCode;
+        }
+
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
-            m_Logger?.Flush();
-            m_Logger = null;
         }
         #endregion // IService
 
@@ -219,30 +210,16 @@ namespace Aqua
         private void LogSceneChanged(SceneBinding scene, object context)
         {
             string sceneName = scene.Name;
-            
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "scene_name", sceneName }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.scene_changed));
 
             #if FIREBASE
-            FBSceneChanged(sceneName);
+            FBSceneChanged(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, sceneName);
             #endif
         }
 
         private void LogRoomChanged(string roomName)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "room_name", roomName }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.room_changed));
-
             #if FIREBASE
-            FBRoomChanged(roomName);
+            FBRoomChanged(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, roomName);
             #endif
         }
 
@@ -362,54 +339,64 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
-            m_PreviousJobId = m_CurrentJobId;
+            m_PreviousJobName = m_CurrentJobName;
 
             if (jobId.IsEmpty)
             {
-                m_CurrentJobId = string.Empty;
+                m_CurrentJobName = "no-active-job";
+                m_CurrentJobId = 0;
             }
             else
             {
-                m_CurrentJobId = Assets.Job(jobId).name;
+                m_CurrentJobName = Assets.Job(jobId).name;
+                int id = -1;
+
+                if (m_JobNamesToIDs.TryGetValue(m_CurrentJobName, out id))
+                {
+                    m_CurrentJobId = m_JobNamesToIDs[m_CurrentJobName];
+                }
+                else
+                {
+                    m_CurrentJobId = id;
+                    Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
+                }
             }
 
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.accept_job));
-
             #if FIREBASE
-            FBAcceptJob(m_CurrentJobId);
+            FBAcceptJob(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogSwitchJob(StringHash32 jobId)
         {
             // ignore case where GameEvents.JobSwitched is dispatched when accepting a new job with no current one selected
-            if (m_PreviousJobId.Equals(string.Empty)) return;
+            if (m_PreviousJobName.Equals("no-active-job")) return;
 
-            m_PreviousJobId = m_CurrentJobId;
+            m_PreviousJobName = m_CurrentJobName;
 
             if (jobId.IsEmpty)
             {
-                m_CurrentJobId = string.Empty;
+                m_CurrentJobName = "no-active-job";
+                m_CurrentJobId = 0;
             }
             else
             {
-                m_CurrentJobId = Assets.Job(jobId).name;
+                m_CurrentJobName = Assets.Job(jobId).name;
+                int id = -1;
+
+                if (m_JobNamesToIDs.TryGetValue(m_CurrentJobName, out id))
+                {
+                    m_CurrentJobId = m_JobNamesToIDs[m_CurrentJobName];
+                }
+                else
+                {
+                    m_CurrentJobId = id;
+                    Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
+                }
             }
 
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.switch_job));
-
             #if FIREBASE
-            FBSwitchJob(m_CurrentJobId);
+            FBSwitchJob(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
@@ -418,53 +405,32 @@ namespace Aqua
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
                 string parsedFactId = Assets.Fact(inParams.Id).name;
-                
-                Dictionary<string, string> data = new Dictionary<string, string>()
-                {
-                    { "fact_id", parsedFactId }
-                };
-
-                m_Logger.Log(new LogEvent(data, m_EventCategories.receive_fact));
 
                 #if FIREBASE
-                FBReceiveFact(parsedFactId);
+                FBReceiveFact(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, parsedFactId);
                 #endif
             }
         }
 
         private void LogCompleteJob(StringHash32 jobId)
         {
-            string parsedJobId = Assets.Job(jobId).name;
-
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", parsedJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.complete_job));
+            string parsedJobName = Assets.Job(jobId).name;
 
             #if FIREBASE
-            FBCompleteJob(parsedJobId);
+            FBCompleteJob(m_UserCode, m_AppVersion, m_CurrentJobId, parsedJobName);
             #endif
 
-            m_PreviousJobId = m_CurrentJobId;
-            m_CurrentJobId = string.Empty;
+            m_PreviousJobName = m_CurrentJobName;
+            m_CurrentJobName = "no-active-job";
+            m_CurrentJobId = 0;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)
         {
             string taskId = inTaskId.ToString();
 
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "task_id", taskId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.complete_task));
-
             #if FIREBASE
-            FBCompleteTask(m_CurrentJobId, taskId);
+            FBCompleteTask(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, taskId);
             #endif
         }
 
@@ -472,101 +438,50 @@ namespace Aqua
         {
             string tankType = inTankType.ToString();
 
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "tank_type", tankType }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_experiment));
-
             #if FIREBASE
-            FBBeginExperiment(m_CurrentJobId, tankType);
+            FBBeginExperiment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName,  tankType);
             #endif
         }
 
         private void LogBeginDive(string inTargetScene)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "site_id", inTargetScene }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_dive));
-
             #if FIREBASE
-            FBBeginDive(m_CurrentJobId, inTargetScene);
+            FBBeginDive(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, inTargetScene);
             #endif
         }
 
         private void LogBeginArgument()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_argument));
-
             #if FIREBASE
-            FBBeginArgument(m_CurrentJobId);
+            FBBeginArgument(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogBeginModel()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_model));
-
             #if FIREBASE
-            FBBeginModel(m_CurrentJobId);
+            FBBeginModel(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogBeginSimulation()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.begin_simulation));
-
             #if FIREBASE
-            FBBeginSimulation(m_CurrentJobId);
+            FBBeginSimulation(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogAskForHelp(string nodeId)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "node_id", nodeId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.ask_for_help));
-
             #if FIREBASE
-            FBAskForHelp(nodeId);
+            FBAskForHelp(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
 
         private void LogTalkWithGuide(string nodeId)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "node_id", nodeId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.talk_with_guide));
-
             #if FIREBASE
-            FBTalkWithGuide(nodeId);
+            FBTalkWithGuide(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
 
@@ -575,15 +490,8 @@ namespace Aqua
         {
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.open_bestiary));
-
             #if FIREBASE
-            FBOpenBestiary(m_CurrentJobId);
+            FBOpenBestiary(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
 
             LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
@@ -591,104 +499,45 @@ namespace Aqua
 
         private void LogBestiaryOpenSpeciesTab()
         {
-            //Debug.Log("LOG: opened species tab");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_species_tab));
-
             #if FIREBASE
-            FBBestiaryOpenSpeciesTab(m_CurrentJobId);
+            FBBestiaryOpenSpeciesTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
         private void LogBestiaryOpenEnvironmentsTab()
         {
-            //Debug.Log("LOG: opened environment tab");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_environments_tab));
-
             #if FIREBASE
-            FBBestiaryOpenEnvironmentsTab(m_CurrentJobId);
+            FBBestiaryOpenEnvironmentsTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
         private void LogBestiaryOpenModelsTab()
         {
-            //Debug.Log("LOG: opened model tab");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_open_models_tab));
-
             #if FIREBASE
-            FBBestiaryOpenModelsTab(m_CurrentJobId);
+            FBBestiaryOpenModelsTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogBestiarySelectSpecies(string speciesId)
         {
-            //Debug.Log("LOG: selected a species");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "species_id", speciesId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_species));
-
             #if FIREBASE
-            FBBestiarySelectSpecies(m_CurrentJobId, speciesId);
+            FBBestiarySelectSpecies(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, speciesId);
             #endif
         }
         private void LogBestiarySelectEnvironment(string environmentId)
         {
-            //Debug.Log("LOG: selected an environment");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "environment_id", environmentId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_environment));
-
             #if FIREBASE
-            FBBestiarySelectEnvironment(m_CurrentJobId,environmentId);
+            FBBestiarySelectEnvironment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, environmentId);
             #endif
         }
         private void LogBestiarySelectModel(string modelId)
         {
-            //Debug.Log("LOG: selected an environment");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId },
-                { "model_id", modelId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.bestiary_select_model));
-
             #if FIREBASE
-            FBBestiarySelectModel(m_CurrentJobId,modelId);
+            FBBestiarySelectModel(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, modelId);
             #endif
         }
         private void LogCloseBestiary()
         {
-            //Debug.Log("LOG: closed bestiary");
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.close_bestiary));
-
             #if FIREBASE
-            FBCloseBestiary(m_CurrentJobId);
+            FBCloseBestiary(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
         #endregion
@@ -696,15 +545,10 @@ namespace Aqua
         #region Status App Logging
         private void LogOpenStatus()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.open_status));
+            //m_CurrentPortableStatusTabId = StatusApp.PageId.Job;
 
             #if FIREBASE
-            FBOpenStatus(m_CurrentJobId);
+            FBOpenStatus(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
 
             LogStatusOpenJobTab(); //Status starts by opening tasks tab
@@ -712,86 +556,44 @@ namespace Aqua
 
         private void LogStatusOpenJobTab()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_job_tab));
-
             #if FIREBASE
-            FBStatusOpenJobTab(m_CurrentJobId);
+            FBStatusOpenJobTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogStatusOpenItemTab()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_item_tab));
-
             #if FIREBASE
-            FBStatusOpenItemTab(m_CurrentJobId);
+            FBStatusOpenItemTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogStatusOpenTechTab()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.status_open_tech_tab));
-
             #if FIREBASE
-            FBStatusOpenTechTab(m_CurrentJobId);
+            FBStatusOpenTechTab(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogCloseStatus()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.close_status));
-
             #if FIREBASE
-            FBCloseStatus(m_CurrentJobId);
+            FBCloseStatus(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
         #endregion
 
         private void LogSimulationSyncAchieved()
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "job_id", m_CurrentJobId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.simulation_sync_achieved));
-
             #if FIREBASE
-            FBSimulationSyncAchieved(m_CurrentJobId);
+            FBSimulationSyncAchieved(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogGuideScriptTriggered(string nodeId)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>()
-            {
-                { "node_id", nodeId }
-            };
-
-            m_Logger.Log(new LogEvent(data, m_EventCategories.guide_script_triggered));
-
             #if FIREBASE
-            FBGuideScriptTriggered(nodeId);
+            FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
 
