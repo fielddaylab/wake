@@ -13,16 +13,16 @@
      {
         Tags
         { 
-            "Queue"="Transparent" 
+            "Queue"="Geometry" 
             "IgnoreProjector"="True" 
-            "RenderType"="Transparent" 
+            "RenderType"="Geometry" 
             "PreviewType"="Plane"
             "CanUseSpriteAtlas"="True"
         }
 
         Cull Off
         Lighting Off
-        ZWrite Off
+        ZWrite On
         Blend One OneMinusSrcAlpha
 
         Pass
@@ -72,9 +72,6 @@
             {
                 fixed4 texSample = SampleSpriteTexture (IN.texcoord);
                 fixed4 c = lerp(_SkyColor0, _SkyColor1, 1 - texSample.b) * IN.color;
-                c.a = texSample.a;
-
-                c.rgb *= c.a;
                 return c;
             }
 

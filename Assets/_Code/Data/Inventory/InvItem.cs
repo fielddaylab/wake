@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using BeauUtil;
 using Leaf;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -20,12 +23,16 @@ namespace Aqua
         [SerializeField] private TextId m_DescriptionTextId = default;
 
         [Header("Value")]
-        [SerializeField, ShowIfField("IsCurrency")] private uint m_Default = 0;
-        [SerializeField, ShowIfField("IsSellable")] private uint m_SellCoinsValue = 0;
-        [SerializeField, ShowIfField("IsSellable")] private uint m_SellGearsValue = 0;
+        [SerializeField] private uint m_Default = 0;
+        [SerializeField] private uint m_BuyCoinsValue = 0;
+        [SerializeField] private uint m_BuyGearsValue = 0;
+        [SerializeField] private uint m_SellCoinsValue = 0;
+        [SerializeField] private uint m_SellGearsValue = 0;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
+        [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
+        [SerializeField] private Color m_Color = Color.white;
 
         [Header("Sorting")]
         [SerializeField, AutoEnum] private InvItemSubCategory m_SubCategory = InvItemSubCategory.None;
@@ -45,10 +52,15 @@ namespace Aqua
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
         
         public Sprite Icon() { return m_Icon; }
+        public string SketchPath() { return m_SketchPath; }
 
         public uint DefaultAmount() { return m_Default; }
-        public uint SellCoinsValue() { return m_SellCoinsValue; }
-        public uint SellGearsValue() { return m_SellGearsValue; }
+
+        public int BuyCoinsValue() { return (int) m_BuyCoinsValue; }
+        public int BuyGearsValue() { return (int) m_BuyGearsValue; }
+
+        public int SellCoinsValue() { return (int) m_SellCoinsValue; }
+        public int SellGearsValue() { return (int) m_SellGearsValue; }
 
         #region Sorting
 
@@ -73,14 +85,25 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        private bool IsCurrency()
-        {
-            return m_Category == InvItemCategory.Currency;
-        }
+        // [CustomEditor(typeof(InvItem)), CanEditMultipleObjects]
+        private class Inspector : Editor {
+            private SerializedProperty m_CategoryProperty;
+            private SerializedProperty m_FlagsProperty;
 
-        private bool IsSellable()
-        {
-            return (m_Flags & InvItemFlags.Sellable) != 0;
+            private void OnEnable() {
+                m_CategoryProperty = serializedObject.FindProperty("m_Category");
+                m_FlagsProperty = serializedObject.FindProperty("m_Flags");
+            }
+
+            public override void OnInspectorGUI() {
+                serializedObject.UpdateIfRequiredOrScript();
+
+                EditorGUILayout.PropertyField(m_CategoryProperty);
+                EditorGUILayout.PropertyField(m_FlagsProperty);
+                EditorGUILayout.Space();
+
+                serializedObject.ApplyModifiedProperties();
+            }
         }
 
         #endif // UNITY_EDITOR
@@ -111,6 +134,8 @@ namespace Aqua
         Hidden = 0x01,
         Sellable = 0x02,
         AlwaysDisplay = 0x4,
+        Buyable = 0x8,
+        OnlyOne = 0x10
     }
 
     public class ItemIdAttribute : DBObjectIdAttribute {

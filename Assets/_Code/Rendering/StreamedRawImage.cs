@@ -84,8 +84,10 @@ namespace Aqua {
             m_RawImage.texture = m_LoadedTexture;
 
             #if UNITY_EDITOR
-            if (!EditorApplication.isPlaying && m_LoadedTexture) {
-                AdjustAspectRatio();
+            if (!EditorApplication.isPlaying) {
+                m_RawImage.enabled = m_LoadedTexture;
+                if (m_LoadedTexture)
+                    AdjustAspectRatio();
                 return;
             }
             #endif // UNITY_EDITOR
@@ -108,8 +110,8 @@ namespace Aqua {
         private void UpdateLoadingIndicator(bool inbIndicator, bool inbShowImage) {
             if (m_LoadingIndicator != null) {
                 m_LoadingIndicator.SetActive(inbIndicator);
-                m_RawImage.enabled = inbShowImage && !inbIndicator;
             }
+            m_RawImage.enabled = inbShowImage && !inbIndicator;
         }
 
         private void UnloadResources() {

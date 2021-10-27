@@ -504,10 +504,45 @@ namespace Aqua
                 return Services.Data.Profile.Inventory.ItemCount(inItemId);
             }
 
-            [LeafMember("CanAfford")]
-            static private bool CanAfford(StringHash32 inItemId, int inCount)
+            [LeafMember("HasItemCount")]
+            static private bool HasItemCount(StringHash32 inItemId, int inCount)
             {
                 return Services.Data.Profile.Inventory.ItemCount(inItemId) >= inCount;
+            }
+
+            [LeafMember("CanAfford")]
+            static private bool CanAfford(StringHash32 inItemId)
+            {
+                var itemDesc = Assets.Item(inItemId);
+                var invData = Services.Data.Profile.Inventory;
+                return invData.ItemCount(ItemIds.Cash) >= itemDesc.BuyCoinsValue() && invData.ItemCount(ItemIds.Gear) >= itemDesc.BuyGearsValue();
+            }
+
+            [LeafMember("PurchaseItem")]
+            static private IEnumerator PurchaseItem([BindContext] ScriptThread inThread, StringHash32 inItemId)
+            {
+                var itemDesc = Assets.Item(inItemId);
+                var invData = Services.Data.Profile.Inventory;
+                invData.AdjustItem(ItemIds.Cash, -itemDesc.BuyCoinsValue());
+                invData.AdjustItem(ItemIds.Gear, -itemDesc.BuyGearsValue());
+
+                if (itemDesc.Category() == InvItemCategory.Upgrade) {
+                    invData.AddUpgrade(inItemId);
+                } else {
+                    invData.AdjustItem(inItemId, 1);
+                }
+                
+                inThread.Dialog = null;
+
+                if (Services.UI.IsSkippingCutscene())
+                    return null;
+                
+                Services.Audio.PostEvent("item.popup.new");
+                return Services.UI.Popup.Display(
+                    Loc.Format("ui.popup.newItem.header", itemDesc.NameTextId()),
+                    Loc.Find(itemDesc.DescriptionTextId()),
+                    itemDesc.Icon()
+                ).Wait();
             }
 
             [LeafMember("GiveItem")]

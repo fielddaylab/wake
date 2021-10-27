@@ -28,9 +28,7 @@ namespace Aqua.Portable {
         [SerializeField] private float m_OnPosition = 0;
         [SerializeField] private TweenSettings m_ToOffAnimSettings = new TweenSettings(0.2f, Curve.CubeIn);
 
-        [Header("Bottom Buttons")]
-        [SerializeField, Required] private Button m_CloseButton = null;
-        [Space]
+        [Header("Tabs")]
         [SerializeField, Required] private CanvasGroup m_AppNavigationGroup = null;
         [SerializeField, Required] private ToggleGroup m_AppButtonToggleGroup = null;
         [SerializeField, Required] private PortableTabToggle[] m_AppButtons = null;
@@ -46,7 +44,6 @@ namespace Aqua.Portable {
             base.Awake();
             m_Input = BaseInputLayer.Find(this);
 
-            m_CloseButton.onClick.AddListener(() => Hide());
             m_Fader.EnsureComponent<PointerListener>().onClick.AddListener((p) => Hide());
         }
 
@@ -82,7 +79,6 @@ namespace Aqua.Portable {
 
             requestTab.Toggle.isOn = true;
             m_AppNavigationGroup.interactable = (m_Request.Flags & PortableRequestFlags.DisableNavigation) == 0;
-            m_CloseButton.interactable = (m_Request.Flags & PortableRequestFlags.DisableClose) == 0;
             requestTab.App.HandleRequest(m_Request);
 
             Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
@@ -128,7 +124,6 @@ namespace Aqua.Portable {
             m_Input.Override = null;
 
             m_Request.Dispose();
-            m_CloseButton.interactable = true;
             m_AppNavigationGroup.interactable = true;
 
             Services.Events?.Dispatch(GameEvents.PortableClosed);

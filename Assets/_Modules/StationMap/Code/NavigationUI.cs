@@ -42,6 +42,7 @@ namespace Aqua.StationMap
         #endregion // Inspector
 
         [NonSerialized] private MapDesc m_TargetMap;
+        [NonSerialized] private StringHash32 m_TargetEntrance;
         [NonSerialized] private ScriptObject m_TargetInspect;
         [NonSerialized] private Mode m_Mode;
 
@@ -67,10 +68,11 @@ namespace Aqua.StationMap
             Show();
         }
 
-        public void DisplayMap(Transform inTransform, StringHash32 inMapId)
+        public void DisplayMap(Transform inTransform, StringHash32 inMapId, StringHash32 inEntrance)
         {
             m_Mode = Mode.Map;
             m_TargetMap = Assets.Map(inMapId);
+            m_TargetEntrance = inEntrance;
             m_TargetInspect = null;
 
             m_InteractButtonIcon.sprite = m_MapIcon;
@@ -129,7 +131,7 @@ namespace Aqua.StationMap
                 case Mode.Map:
                     {
                         Hide();
-                        StateUtil.LoadMapWithWipe(m_TargetMap.Id(), null);
+                        StateUtil.LoadMapWithWipe(m_TargetMap.Id(), m_TargetEntrance);
                         break;
                     }
 

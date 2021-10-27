@@ -74,6 +74,19 @@ namespace Aqua.Cameras
     }
 
     /// <summary>
+    /// Data regarding a camera shake.
+    /// </summary>
+    public struct CameraShakeData
+    {
+        public Vector2 Distance;
+        public Vector2 Period;
+        public Vector2 Offset;
+        public float Duration;
+
+        internal double m_StartTime;
+    }
+
+    /// <summary>
     /// Flags indicating which types of modifiers to apply.
     /// </summary>
     [Flags]

@@ -55,6 +55,8 @@ namespace Aqua.Cameras
             size.x = Height * main.aspect / Zoom;
             size.z = 0.01f;
             Gizmos.color = ColorBank.Teal.WithAlpha(0.25f * inAlpha);
+            Gizmos.matrix = Matrix4x4.Rotate(plane.transform.rotation);
+            
             Gizmos.DrawCube(center, size);
 
             Gizmos.color = ColorBank.White.WithAlpha(0.8f * inAlpha);

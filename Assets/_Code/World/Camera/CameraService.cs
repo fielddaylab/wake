@@ -101,6 +101,7 @@ namespace Aqua.Cameras
         private RingBuffer<CameraPointData> m_Hints = new RingBuffer<CameraPointData>();
         private RingBuffer<CameraBoundsData> m_Bounds = new RingBuffer<CameraBoundsData>();
         private RingBuffer<CameraDriftData> m_Drifts = new RingBuffer<CameraDriftData>();
+        private RingBuffer<CameraShakeData> m_Shakes = new RingBuffer<CameraShakeData>();
 
         private Routine m_ScriptedAnimation;
 
@@ -160,16 +161,20 @@ namespace Aqua.Cameras
                     
                     flags = UpdateHintedCamera(ref state, deltaTime, CameraModifierFlags.All);
 
-                    ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All);
+                    ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All, Axis.XY);
                     break;
                 }
             }
 
-            if ((flags & CameraModifierFlags.Drift) != 0 && !m_Rig.IsReferenceNull() && !Accessibility.ReduceCameraMovement)
-            {
+            if (!m_Rig.IsReferenceNull() && !Accessibility.ReduceCameraMovement) {
                 Vector2 offset = default(Vector2);
-                ApplyDrift(ref offset, m_Drifts, m_Time);
+                if ((flags & CameraModifierFlags.Drift) != 0) {
+                    ApplyDrift(ref offset, m_Drifts, m_Time);
+                }
+                UpdateAndApplyShakes(ref offset, m_Shakes, m_Time);
                 m_Rig.EffectsTransform.SetPosition(offset, Axis.XY, Space.Self);
+            } else {
+                m_Shakes.Clear();
             }
 
             UpdateCachedPlanes();
@@ -276,7 +281,7 @@ namespace Aqua.Cameras
             Vector2 size = FrameSize(m_Camera, m_FOVPlane, current.Zoom);
             ApplySoftConstraints(ref current.Position, size, m_Bounds);
             ApplyHardConstraints(ref current.Position, size, m_Bounds);
-            ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.Position);
+            ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.Position, Axis.XY);
         }
 
         private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
@@ -438,6 +443,25 @@ namespace Aqua.Cameras
             }
         }
 
+        static private void UpdateAndApplyShakes(ref Vector2 ioOffset, RingBuffer<CameraShakeData> ioShakes, double inTime)
+        {
+            for(int i = ioShakes.Count - 1; i >= 0; i--)
+            {
+                ref CameraShakeData shake = ref ioShakes[i];
+                double timeSinceStart = inTime - shake.m_StartTime;
+                float fade = 1f - (float) (timeSinceStart / shake.Duration);
+                if (fade <= 0) {
+                    ioShakes.FastRemoveAt(i);
+                    continue;
+                }
+
+                float x = shake.Distance.x * (float) Math.Cos(Math.PI * 2 * ((shake.Offset.x + timeSinceStart) % shake.Period.x) / shake.Period.x) * fade;
+                float y = shake.Distance.y * (float) Math.Cos(Math.PI * 2 * ((shake.Offset.y + timeSinceStart) % shake.Period.y) / shake.Period.y) * fade;
+                ioOffset.x += x;
+                ioOffset.y += y;
+            }
+        }
+
         static private void Average(ref TargetState ioState)
         {
             float weight = ioState.Weight;
@@ -467,11 +491,11 @@ namespace Aqua.Cameras
             return state;
         }
 
-        static private void ApplyCameraState(in CameraState inState, Transform inRoot, Camera inCamera, CameraFOVPlane inPlane, CameraPoseProperties inProperties)
+        static private void ApplyCameraState(in CameraState inState, Transform inRoot, Camera inCamera, CameraFOVPlane inPlane, CameraPoseProperties inProperties, Axis inAxis)
         {
             if ((inProperties & CameraPoseProperties.Position) != 0)
             {
-                inRoot.SetPosition(inState.Position, Axis.XY, Space.Self);
+                inRoot.SetPosition(inState.Position, inAxis, Space.Self);
             }
 
             if (!inPlane.IsReferenceNull())
@@ -553,6 +577,7 @@ namespace Aqua.Cameras
             m_Hints.Clear();
             m_Bounds.Clear();
             m_Drifts.Clear();
+            m_Shakes.Clear();
         }
 
         /// <summary>
@@ -579,7 +604,7 @@ namespace Aqua.Cameras
             CameraTargetData target = UpdateCameraTargetPosition();
             CameraState current = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState state = new CameraState(target.m_CachedPosition, current.Height, target.Zoom);
-            ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, inProperties);
+            ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, Axis.XY);
             m_ScriptedAnimation.Stop();
         }
 
@@ -905,6 +930,36 @@ namespace Aqua.Cameras
 
         #endregion // Drifts
 
+        #region Shakes
+
+        /// <summary>
+        /// Adds a new camera shake.
+        /// </summary>
+        public void AddShake(Vector2 inDistance, Vector2 inPeriod, float inDuration)
+        {
+            if (Accessibility.ReduceCameraMovement) {
+                return;
+            }
+
+            CameraShakeData newShake = default(CameraShakeData);
+            newShake.Distance = inDistance;
+            newShake.Period = inPeriod;
+            newShake.Duration = inDuration;
+            newShake.Offset = new Vector2(RNG.Instance.NextFloat(inDuration), RNG.Instance.NextFloat(inDuration));
+            newShake.m_StartTime = m_Time;
+            m_Shakes.PushBack(newShake);
+        }
+
+        /// <summary>
+        /// Stops all screen shakes.
+        /// </summary>
+        public void StopShaking()
+        {
+            m_Shakes.Clear();
+        }
+
+        #endregion // Shakes
+
         #endregion // Hinted
 
         #region Scripted
@@ -953,7 +1008,7 @@ namespace Aqua.Cameras
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPosition, currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom));
             RecordLatestState(newState);
-            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.PosAndZoom);
+            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.PosAndZoom, Axis.XY);
             m_ScriptedAnimation.Stop();
         }
 
@@ -981,14 +1036,14 @@ namespace Aqua.Cameras
 
             RecordLatestState(newState);
             
-            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties);
+            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, Axis.XY);
             m_ScriptedAnimation.Stop();
         }
 
         /// <summary>
         /// Moves the camera to a specific position.
         /// </summary>
-        public IEnumerator MoveToPosition(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth, Action inOnComplete = null)
+        public IEnumerator MoveToPosition(Vector2 inPosition, float? inZoom, float inDuration, Curve inCurve = Curve.Smooth, Axis inAxis = Axis.XY, Action inOnComplete = null)
         {
             SetAsScripted();
 
@@ -1003,19 +1058,19 @@ namespace Aqua.Cameras
 
             if (inDuration <= 0)
             {
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, properties);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, properties, inAxis);
                 m_ScriptedAnimation.Stop();
                 return null;
             }
 
-            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, properties, inDuration, inCurve, inOnComplete));
+            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, properties, inDuration, inCurve, inAxis, inOnComplete));
             return m_ScriptedAnimation.Wait();
         }
 
         /// <summary>
         /// Moves the camera to a specific pose.
         /// </summary>
-        public IEnumerator MoveToPose(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth, Action inOnComplete = null)
+        public IEnumerator MoveToPose(CameraPose inPose, float inDuration, Curve inCurve = Curve.Smooth, CameraPoseProperties inPropertiesMask = CameraPoseProperties.All, Axis inAxis = Axis.XY, Action inOnComplete = null)
         {
             Assert.NotNull(inPose);
 
@@ -1031,21 +1086,21 @@ namespace Aqua.Cameras
 
             if (inDuration <= 0)
             {
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inPose.Properties);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inPose.Properties & inPropertiesMask, inAxis);
                 m_ScriptedAnimation.Stop();
                 return null;
             }
 
-            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, inPose.Properties, inDuration, inCurve, inOnComplete));
+            m_ScriptedAnimation.Replace(this, MoveCameraTween(currentState, newState, inPose.Properties & inPropertiesMask, inDuration, inCurve, inAxis, inOnComplete));
             return m_ScriptedAnimation.Wait();
         }
 
-        private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Action inOnComplete = null)
+        private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Axis inAxis, Action inOnComplete = null)
         {
             return Tween.ZeroToOne((f) => {
                 CameraState newState = default;
                 CameraState.Lerp(inInitialState, inTarget, ref newState, f);
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, inAxis);
             }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
         }
 
@@ -1248,7 +1303,7 @@ namespace Aqua.Cameras
         }
 
         [LeafMember("CameraMoveToPose")]
-        static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth, Axis inAxis = Axis.XY)
         {
             Assert.NotNull(inPose, "Cannot pass null pose");
             CameraPose pose = inPose.GetComponent<CameraPose>();
@@ -1296,7 +1351,7 @@ namespace Aqua.Cameras
             switch(m_Mode)
             {
                 case CameraMode.Scripted:
-                    ApplyCameraState(m_LastAssignedState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All);
+                    ApplyCameraState(m_LastAssignedState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All, Axis.XY);
                     break;
 
                 case CameraMode.Hinted:

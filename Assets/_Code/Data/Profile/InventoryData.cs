@@ -79,17 +79,17 @@ namespace Aqua.Profile
             return TryFindInv(inId, out item) && item.Count > 0;
         }
 
-        public uint ItemCount(StringHash32 inId)
+        public int ItemCount(StringHash32 inId)
         {
             InvItem itemDesc = Assets.Item(inId);
             if (itemDesc.Category() == InvItemCategory.Upgrade)
             {
-                return m_UpgradeIds.Contains(inId) ? 1u : 0u;
+                return m_UpgradeIds.Contains(inId) ? 1 : 0;
             }
 
             PlayerInv item;
             TryFindInv(inId, out item);
-            return item.Count;
+            return (int) item.Count;
         }
         
         public bool AdjustItem(StringHash32 inId, int inAmount)
