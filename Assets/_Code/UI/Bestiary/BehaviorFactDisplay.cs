@@ -2,6 +2,7 @@ using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
 using BeauPools;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -12,6 +13,7 @@ namespace Aqua
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
         [SerializeField, Required] private RectTransform m_StressedBadge = null;
+        [SerializeField, Required] private RectTransform m_Layout = null;
 
         #endregion // Inspector
 
@@ -26,7 +28,13 @@ namespace Aqua
             m_Icon.gameObject.SetActive(icon);
             m_Sentence.Populate(inFact, inReference, inFlags);
 
-            m_StressedBadge.gameObject.SetActive(inFact.OnlyWhenStressed);
+            if (inFact.OnlyWhenStressed) {
+                m_StressedBadge.gameObject.SetActive(true);
+                m_Layout.SetSizeDelta(46, Axis.Y);
+            } else {
+                m_StressedBadge.gameObject.SetActive(false); 
+                m_Layout.SetSizeDelta(36, Axis.Y);
+            }
         }
 
         void IPoolAllocHandler.OnAlloc()

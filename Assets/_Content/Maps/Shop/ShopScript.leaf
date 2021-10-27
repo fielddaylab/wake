@@ -7,7 +7,7 @@
 @cutscene
 @once
 
-{@merchant} Ah, welcome! I've just opened up shop here.
+{@merchant} Oh, welcome! I've just opened up shop here.
             Ezra at your service!
             Feel free to browse at your leisure!
             
@@ -23,22 +23,52 @@
 {@kevin}    So this is a flying shop?
             How'd you manage that?
 {@merchant} I have my ways!
+{@kevin}    That's not an answer...
 
-:: talk.
+:: talk.base.1
 @trigger    InspectObject
 @when       objectId == "shopkeeper"
 @cutscene
+@repeat 1
 
-{@merchant} See anything you like?
-            Just give it a tap and I'll give you the details.
-            
+{@merchant} See anything you like? Just give it a tap and I'll give you the details.
+
+:: talk.base.2
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@cutscene
+@repeat 1
+
+{@merchant} Just let me know if there's anything that catches your eye.
+
+:: talk.rare.1
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@when       Random(common)
+@cutscene
+@once
+
+{@kevin}    No, seriously, a |flying| shop??
+{@merchant} Why not? Most of my customers roam the ocean. Staying put didn't make sense.
+
 // purchase
 
 :: purchaseAttempt.generic
 @trigger    ShopAttemptBuy
 @cutscene
 
-{@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+$if local:cashCost > 0, local:gearCost > 0
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    That'll be {cash}{$local:cashCost}{/cash} and {gears}{$local:gearCost}{/gears}!
+$elseif local:cashCost > 0
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    That'll be {cash}{$local:cashCost}{/cash}!
+$elseif
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    That'll be {gears}{$local:gearCost}{/gears}!
+$else
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+$endif
 
 $choice .purchaseAttempt.generic.success, CanAfford($(local:itemId)); {h}Yes!{/h}
 $choice .purchaseAttempt.generic.cantAfford, !CanAfford($(local:itemId)); Yes, but...
@@ -48,8 +78,16 @@ $choose branch
 
 :: purchaseAttempt.generic.success
 
-{@merchant} There you go!
+$if Random(50)
+    {@merchant} A fine choice!
+$elseif Random(50)
+    {@merchant} Good call!
+$else
+    {@merchant} It's yours!
+$endif
+
 $set    shop:purchaseCount + 1
+$call AudioOneShot(ShopPurchase)
 $call PurchaseItem($(local:itemId))
 
 :: purchaseAttempt.generic.cantAfford

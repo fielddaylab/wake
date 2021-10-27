@@ -17,6 +17,7 @@ namespace Aqua.Shop {
         [SerializeField] private Transform m_RendererTransform = null;
         [SerializeField] private float m_StoolHeight = 1.6f;
         [SerializeField] private float m_StoolDistance = 1f;
+        [SerializeField] private float m_MovementSpeed = 6;
 
         #endregion // Inspector
 
@@ -68,12 +69,15 @@ namespace Aqua.Shop {
                 destinationX -= offsetX;
             }
 
-            yield return transform.MoveTo(destinationX, 1, Axis.X, Space.World);
+            float dist = Math.Abs(destinationX - transform.position.x);
+
+            yield return transform.MoveTo(destinationX, dist / m_MovementSpeed, Axis.X, Space.World);
         }
 
         private IEnumerator MountStool(Transform stool, bool faceLeft) {
             m_Renderer.flipX = faceLeft;
             m_SittingStool = stool;
+            yield return 0.1f;
             yield return Routine.Combine(
                 transform.MoveTo(stool.position, 0.2f, Axis.X, Space.World).Ease(Curve.Smooth).DelayBy(0.05f),
                 m_RendererTransform.MoveTo(m_OriginalRendererYOffset + m_StoolHeight, 0.2f, Axis.Y, Space.Self).Ease(Curve.BackOut)
@@ -91,6 +95,7 @@ namespace Aqua.Shop {
                     m_RendererTransform.MoveTo(m_OriginalRendererYOffset, 0.2f, Axis.Y, Space.Self).Ease(Curve.BackIn).DelayBy(0.05f)
                 );
                 m_SittingStool = null;
+                yield return 0.1f;
             }
         }
     }

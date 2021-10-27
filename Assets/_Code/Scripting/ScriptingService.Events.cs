@@ -33,8 +33,8 @@ namespace Aqua
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
-            m_TagEventParser.AddReplace("cash", "<#a6c8ff>").CloseWith("ø</color>");
-            m_TagEventParser.AddReplace("gears", "<#c9c86d>").CloseWith("‡</color>");
+            m_TagEventParser.AddReplace("cash", "<#C9C86D>").CloseWith("</color><sprite name=\"cash\">");
+            m_TagEventParser.AddReplace("gears", "<#A6C8FF>").CloseWith("</color><sprite name=\"gear\">");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);

@@ -176,7 +176,7 @@ namespace Aqua.Portable {
             // periodically unload unused sketches in memory
             if (m_SelectCounter >= 10) {
                 m_SelectCounter = 0;
-                Streaming.UnloadUnusedAsync();
+                Streaming.UnloadUnusedAsync(10);
             }
         }
 

@@ -13,6 +13,7 @@ using System;
 using BeauUtil.IO;
 using Aqua.Debugging;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Aqua {
     #if UNITY_EDITOR
@@ -77,6 +78,7 @@ namespace Aqua {
             public AssetStatus Status;
             public ushort RefCount;
             public long Size;
+            public long LastModifiedTS;
 
             public IFuture Loader;
             #if UNITY_EDITOR
@@ -111,6 +113,7 @@ namespace Aqua {
                 Dereference(texture);
                 texture = loadedTexture;
                 meta.RefCount++;
+                meta.LastModifiedTS = CurrentTimestamp();
                 meta.Status &= ~AssetStatus.PendingUnload;
                 s_UnloadQueue.FastRemove(id);
                 return true;
@@ -299,6 +302,7 @@ namespace Aqua {
             if (s_Metas.TryGetValue(id, out meta)) {
                 if (meta.RefCount > 0) {
                     meta.RefCount--;
+                    meta.LastModifiedTS = CurrentTimestamp();
                     if (meta.RefCount == 0) {
                         meta.Status |= AssetStatus.PendingUnload;
                         s_UnloadQueue.PushBack(id);
@@ -360,6 +364,10 @@ namespace Aqua {
             return AssetStatus.Unloaded;
         }
 
+        static private long CurrentTimestamp() {
+            return Stopwatch.GetTimestamp();
+        }
+
         #if UNITY_EDITOR
 
         static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {
@@ -376,23 +384,38 @@ namespace Aqua {
         static private void UnloadUnusedSync() {
             StringHash32 id;
             while(s_UnloadQueue.TryPopFront(out id)) {
-                UnloadSingle(id);
+                UnloadSingle(id, 0, 0);
             }
         }
 
         #endif // UNITY_EDITOR
 
-        static internal AsyncHandle UnloadUnusedAsync() {
+        /// <summary>
+        /// Unloads all unused streaming assets asynchronously.
+        /// </summary>
+        static public AsyncHandle UnloadUnusedAsync() {
             if (s_UnloadHandle.IsRunning()) {
                 return s_UnloadHandle;
             }
-            return s_UnloadHandle = Async.Schedule(UnloadUnusedAsyncJob(), AsyncFlags.MainThreadOnly);
+            return s_UnloadHandle = Async.Schedule(UnloadUnusedAsyncJob(0), AsyncFlags.MainThreadOnly);
         }
 
-        static private IEnumerator UnloadUnusedAsyncJob() {
+        /// <summary>
+        /// Unloads old unused streaming assets asynchronously.
+        /// </summary>
+        static public AsyncHandle UnloadUnusedAsync(float minAge) {
+            if (s_UnloadHandle.IsRunning()) {
+                return s_UnloadHandle;
+            }
+            long minAgeInTicks = (long) (minAge * TimeSpan.TicksPerSecond);
+            return s_UnloadHandle = Async.Schedule(UnloadUnusedAsyncJob(minAgeInTicks), AsyncFlags.MainThreadOnly);
+        }
+
+        static private IEnumerator UnloadUnusedAsyncJob(long deleteThreshold) {
             StringHash32 id;
+            long current = CurrentTimestamp();
             while(s_UnloadQueue.TryPopFront(out id)) {
-                UnloadSingle(id);
+                UnloadSingle(id, current, deleteThreshold);
                 yield return null;
             }
 
@@ -437,10 +460,14 @@ namespace Aqua {
             DebugService.Log(LogMask.Loading, "[Streaming] Unloaded all streamed assets");
         }
     
-        static internal bool UnloadSingle(StringHash32 id) {
+        static internal bool UnloadSingle(StringHash32 id, long now, long deleteThreshold = 0) {
             AssetMeta meta = s_Metas[id];
             UnityEngine.Object resource = null;
             if (meta.RefCount > 0) {
+                return false;
+            }
+
+            if (deleteThreshold > 0 && (now - meta.LastModifiedTS) < deleteThreshold) {
                 return false;
             }
 

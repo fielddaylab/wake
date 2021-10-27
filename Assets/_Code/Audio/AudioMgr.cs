@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using BeauRoutine;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace AquaAudio
 {
@@ -416,5 +417,14 @@ namespace AquaAudio
         }
 
         #endregion // Callbacks
+
+        #region Leaf
+
+        [LeafMember("AudioOneShot")]
+        static private void LeafOneShot(StringHash32 id) {
+            Services.Audio.PostEvent(id);
+        }
+
+        #endregion // Leaf
     }
 }

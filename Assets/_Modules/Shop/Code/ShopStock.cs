@@ -39,6 +39,8 @@ namespace Aqua.Shop {
                 table.Set("itemId", item.ItemId);
                 table.Set("itemName", item.CachedItem.NameTextId().Hash());
                 table.Set("canAfford", CanAfford(Services.Data.Profile.Inventory, item.CachedItem));
+                table.Set("cashCost", item.CachedItem.BuyCoinsValue());
+                table.Set("gearCost", item.CachedItem.BuyGearsValue());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
             }
         }
