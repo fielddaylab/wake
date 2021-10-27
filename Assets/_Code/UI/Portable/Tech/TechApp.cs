@@ -21,11 +21,6 @@ namespace Aqua.Portable
         [SerializeField, Required] private PortableUpgradeSection m_TechExperimentSection = null;
         [SerializeField, Required] private PortableUpgradeSection m_TechTabletSection = null;
 
-        [Header("Item")]
-
-        [SerializeField, Required] private InvItemDisplay m_CoinDisplay = null;
-        [SerializeField, Required] private InvItemDisplay m_GearDisplay = null;
-
         #endregion
 
         #region Panel
@@ -47,10 +42,6 @@ namespace Aqua.Portable
 
         private void LoadData()
         {
-            InventoryData invData = Services.Data.Profile.Inventory;
-            m_CoinDisplay.Populate(invData.GetItem(ItemIds.Cash));
-            m_GearDisplay.Populate(invData.GetItem(ItemIds.Gear));
-
             using(PooledList<InvItem> upgrades = PooledList<InvItem>.Create())
             {
                 foreach(var upgrade in Services.Data.Profile.Inventory.GetItems(InvItemCategory.Upgrade))

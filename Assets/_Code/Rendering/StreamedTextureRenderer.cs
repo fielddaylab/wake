@@ -100,6 +100,7 @@ namespace Aqua {
 
             Streaming.Texture(m_Url, ref m_LoadedTexture);
             m_MaterialInstance.mainTexture = m_LoadedTexture;
+            m_MeshRenderer.enabled = m_LoadedTexture;
 
             m_MeshRenderer.sortingLayerID = m_SortingLayer;
             m_MeshRenderer.sortingOrder = m_SortingOrder;

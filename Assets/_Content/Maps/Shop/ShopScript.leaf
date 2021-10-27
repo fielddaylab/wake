@@ -1,0 +1,78 @@
+# basePath shop
+
+// entrance
+
+:: welcome
+@trigger    ShopReady
+@cutscene
+@once
+
+{@merchant} Ah, welcome! I've just opened up shop here.
+            Ezra at your service!
+            Feel free to browse at your leisure!
+            
+// inspect shopkeeper
+
+:: talk.flyingShip
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@cutscene
+@boostScore 10
+@once
+
+{@kevin}    So this is a flying shop?
+            How'd you manage that?
+{@merchant} I have my ways!
+
+:: talk.
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@cutscene
+
+{@merchant} See anything you like?
+            Just give it a tap and I'll give you the details.
+            
+// purchase
+
+:: purchaseAttempt.generic
+@trigger    ShopAttemptBuy
+@cutscene
+
+{@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+
+$choice .purchaseAttempt.generic.success, CanAfford($(local:itemId)); {h}Yes!{/h}
+$choice .purchaseAttempt.generic.cantAfford, !CanAfford($(local:itemId)); Yes, but...
+$choice .purchaseAttempt.generic.refused; Just looking!
+
+$choose branch
+
+:: purchaseAttempt.generic.success
+
+{@merchant} There you go!
+$set    shop:purchaseCount + 1
+$call PurchaseItem($(local:itemId))
+
+:: purchaseAttempt.generic.cantAfford
+
+$set    shop:notEnoughCount + 1
+{@merchant} Oh no, you seem to be light in the wallet.
+            Come back when you have enough?
+
+:: purchaseAttempt.generic.refused
+
+{@merchant} Okay! Well if you find something you want, let me know.
+
+// exit
+
+:: exit
+@trigger    ShopExit
+@cutscene
+
+{@merchant} Come again! You know where to find me!
+
+:: exit.purchasedSomething
+@trigger    ShopExit
+@when   shop:purchaseCount > 0
+@cutscene
+
+{@merchant} Thank you so much for your patronage!

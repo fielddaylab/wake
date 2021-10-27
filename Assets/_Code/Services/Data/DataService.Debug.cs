@@ -230,19 +230,31 @@ namespace Aqua
 
             DMInfo invMenu = new DMInfo("Inventory");
 
+            invMenu.AddButton("Add 100 Cash", () => Services.Data.Profile.Inventory.AdjustItem(ItemIds.Cash, 100));
+            invMenu.AddButton("Add 100 Gears", () => Services.Data.Profile.Inventory.AdjustItem(ItemIds.Gear, 100));
+
+            invMenu.AddDivider();
+
+            invMenu.AddToggle("Unlock Shop", () => Services.Data.IsProfileLoaded() && Services.Data.GetVariable("world:shopUnlocked").AsBool(),
+                (b) => Services.Data.SetVariable("world:shopUnlocked", b));
+
+            invMenu.AddDivider();
+
             DMInfo upgradesMenu = new DMInfo("Upgrades");
+            upgradesMenu.AddButton("Unlock All", () => UnlockAllUpgrades());
+            upgradesMenu.AddDivider();
             foreach(var upgrade in Services.Assets.Inventory.Upgrades)
             {
                 RegisterUpgradeToggle(upgradesMenu, upgrade.Id());
             }
 
             DMInfo waterPropertiesMenu = new DMInfo("Water Properties", 7);
+            waterPropertiesMenu.AddButton("Unlock All", () => UnlockAllProperties());
+            waterPropertiesMenu.AddDivider();
             for(WaterPropertyId waterProp = 0; waterProp < WaterPropertyId.TRACKED_COUNT; waterProp++)
             {
                 RegisterWaterPropertyToggle(waterPropertiesMenu, waterProp);
             }
-            waterPropertiesMenu.AddDivider();
-            waterPropertiesMenu.AddButton("Unlock All", () => UnlockAllProperties());
 
             invMenu.AddSubmenu(upgradesMenu);
             invMenu.AddSubmenu(waterPropertiesMenu);
@@ -393,6 +405,14 @@ namespace Aqua
                     else
                         Services.Data.Profile.Inventory.RemoveUpgrade(inItem);
                 });
+        }
+
+        static private void UnlockAllUpgrades()
+        {
+            foreach(var entry in Services.Assets.Inventory.Upgrades)
+            {
+                Services.Data.Profile.Inventory.AddUpgrade(entry.Id());
+            }
         }
 
         static private void RegisterWaterPropertyToggle(DMInfo inMenu, WaterPropertyId inItem)

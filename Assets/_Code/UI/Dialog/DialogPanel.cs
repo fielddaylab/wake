@@ -81,10 +81,12 @@ namespace Aqua
         [Header("Speaker")]
         
         [SerializeField] private RectTransform m_SpeakerContainer = null;
+        [SerializeField] private LayoutGroup m_SpeakerLayout = null;
         [SerializeField] private TMP_Text m_SpeakerLabel = null;
         [SerializeField] private Graphic m_SpeakerLabelBackground = null;
+        [SerializeField] private RectTransform m_SpeakerPortraitGroup = null;
         [SerializeField] private Image m_SpeakerPortrait = null;
-        [SerializeField] private float m_SpeakerSizeReference = 128;
+        [SerializeField] private Graphic m_SpeakerPortraitBackground = null;
 
         [Header("Text")]
 
@@ -114,10 +116,10 @@ namespace Aqua
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
         [NonSerialized] private TagStringEventHandler m_EventHandler;
-        [NonSerialized] private Vector2 m_DefaultSpeakerPortraitSize;
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Routine m_RebuildRoutine;
+        [NonSerialized] private float m_OriginalX;
 
         [NonSerialized] private TagString m_TempTagString = new TagString();
 
@@ -135,10 +137,9 @@ namespace Aqua
             if (m_SpeakerLabelBackground)
                 m_DefaultNamePalette.Background = m_SpeakerLabelBackground.color;
 
-            if (m_SpeakerPortrait)
-                m_DefaultSpeakerPortraitSize = m_SpeakerPortrait.rectTransform.sizeDelta;
-
             m_DefaultTextPalette.Content = m_TextDisplay.color;
+
+            m_OriginalX = Root.anchoredPosition.x;
 
             if (m_TextBackground)
                 m_DefaultTextPalette.Background = m_TextBackground.color;
@@ -163,12 +164,17 @@ namespace Aqua
             ResetSpeaker();
 
             m_TextDisplay.SetText(string.Empty);
+
+            Root.SetAnchorPos(m_OriginalX, Axis.X);
             
             if (m_ButtonContainer)
                 m_ButtonContainer.gameObject.SetActive(false);
 
             if (m_OptionContainer)
                 m_OptionContainer.gameObject.SetActive(false);
+
+            if (m_SpeakerPortraitGroup)
+                m_SpeakerPortraitGroup.gameObject.SetActive(false);
         }
 
         #endregion // BasePanel
@@ -289,22 +295,17 @@ namespace Aqua
             m_CurrentState.PortraitId = inPortraitId;
             if (portraitSprite)
             {
-                if (m_SpeakerPortrait)
+                if (m_SpeakerPortraitGroup)
                 {
                     m_SpeakerPortrait.sprite = portraitSprite;
-                    float portraitScale = portraitSprite.rect.width / m_SpeakerSizeReference;
-                    Vector2 newSize;
-                    newSize.x = portraitSprite.rect.width / m_SpeakerSizeReference * m_DefaultSpeakerPortraitSize.x;
-                    newSize.y = portraitSprite.rect.height / m_SpeakerSizeReference * m_DefaultSpeakerPortraitSize.y;
-                    m_SpeakerPortrait.rectTransform.sizeDelta = newSize;
-                    m_SpeakerPortrait.gameObject.SetActive(true);
+                    m_SpeakerPortraitGroup.gameObject.SetActive(true);
                 }
             }
             else
             {
-                if (m_SpeakerPortrait)
+                if (m_SpeakerPortraitGroup)
                 {
-                    m_SpeakerPortrait.gameObject.SetActive(false);
+                    m_SpeakerPortraitGroup.gameObject.SetActive(false);
                     m_SpeakerPortrait.sprite = null;
                 }
             }
@@ -318,6 +319,8 @@ namespace Aqua
                 m_SpeakerLabel.color = inPalette.Content;
             if (m_SpeakerLabelBackground)
                 m_SpeakerLabelBackground.color = inPalette.Background;
+            if (m_SpeakerPortraitBackground)
+                m_SpeakerPortraitBackground.color = inPalette.Background;
         }
 
         private void AssignTextPalette(in ColorPalette4 inPalette)
@@ -570,6 +573,10 @@ namespace Aqua
                 m_OptionButtons[i].Prep();
             }
 
+            float width = ((RectTransform) m_OptionSizer.transform).sizeDelta.x / 2;
+
+            yield return Root.AnchorPosTo(m_OriginalX - width, 0.2f, Axis.X).Ease(Curve.Smooth);
+
             m_OptionGroup.blocksRaycasts = false;
             yield return Routine.ForParallel(
                 0, optionsToShow,
@@ -588,6 +595,8 @@ namespace Aqua
             );
 
             m_OptionContainer.gameObject.SetActive(false);
+
+            yield return Root.AnchorPosTo(m_OriginalX, 0.2f, Axis.X).Ease(Curve.Smooth);
         }
 
         #endregion // Options
