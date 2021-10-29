@@ -757,7 +757,7 @@ namespace Aqua
 
         #region Leaf
 
-        [LeafMember("LoadScene")]
+        [LeafMember("LoadScene"), UnityEngine.Scripting.Preserve]
         static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;

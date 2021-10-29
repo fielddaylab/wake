@@ -81,7 +81,6 @@ namespace Aqua
         [Header("Speaker")]
         
         [SerializeField] private RectTransform m_SpeakerContainer = null;
-        [SerializeField] private LayoutGroup m_SpeakerLayout = null;
         [SerializeField] private TMP_Text m_SpeakerLabel = null;
         [SerializeField] private Graphic m_SpeakerLabelBackground = null;
         [SerializeField] private RectTransform m_SpeakerPortraitGroup = null;

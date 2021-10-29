@@ -453,7 +453,6 @@ GameObject:
   - component: {fileID: 3681416989267480140}
   - component: {fileID: 7686507098736254522}
   - component: {fileID: 3950078806113872808}
-  - component: {fileID: 5034037319274642704}
   m_Layer: 0
   m_Name: Summary
   m_TagString: Untagged
@@ -478,7 +477,6 @@ RectTransform:
   - {fileID: 8781066359480502633}
   - {fileID: 3500994636834581341}
   - {fileID: 4047694298084234345}
-  - {fileID: 1411099480522850527}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -532,85 +530,6 @@ MonoBehaviour:
   FactListRoot: {fileID: 2687872980045677555}
   FactListLayout: {fileID: 7121191910655462526}
   FactPools: {fileID: 0}
---- !u!114 &5034037319274642704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4265533532180872650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9c09be4a80a2954e9028a4f955b8272, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BehaviorFacts:
-    m_Prefab: {fileID: 1422725922857976441, guid: 5d7312b6d0343794099b630df9c98fd7,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_ModelFacts:
-    m_Prefab: {fileID: 0}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_StateFacts:
-    m_Prefab: {fileID: 3030420551475205519, guid: 4c122d6e036533a4eb8efaafe5a693df,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PropertyFacts:
-    m_Prefab: {fileID: 1973736452900859269, guid: 90d1ff9d388fe8c468a25cd6a2742833,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PropertyHistoryFacts:
-    m_Prefab: {fileID: 0}
-    m_Name: 
-    m_InitialCapacity: 32
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 16
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PopulationFacts:
-    m_Prefab: {fileID: 0}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PopulationHistoryFacts:
-    m_Prefab: {fileID: 0}
-    m_Name: 
-    m_InitialCapacity: 32
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 16
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_TransformPool: {fileID: 1411099480522850527}
 --- !u!1 &5706272844177216815
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,36 +745,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &8270230799481914656
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1411099480522850527}
-  m_Layer: 0
-  m_Name: Pool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1411099480522850527
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8270230799481914656}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8269875531994377575}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2281661150736457574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1001,7 +890,7 @@ PrefabInstance:
     - target: {fileID: 5503991433618584336, guid: a55054ed828238d4e846858c3a6fbe24,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 31.205
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5503991433618584336, guid: a55054ed828238d4e846858c3a6fbe24,
         type: 3}

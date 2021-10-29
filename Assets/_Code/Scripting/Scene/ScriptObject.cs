@@ -6,6 +6,7 @@ using BeauUtil.Debugger;
 using BeauUtil.Variants;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
@@ -39,19 +40,19 @@ namespace Aqua
 
         #region Leaf
 
-        [LeafMember("Activate")]
+        [LeafMember("Activate"), Preserve]
         private void Activate()
         {
             gameObject.SetActive(true);
         }
 
-        [LeafMember("Deactivate")]
+        [LeafMember("Deactivate"), Preserve]
         private void Deactivate()
         {
             gameObject.SetActive(false);
         }
 
-        [LeafMember("ToggleActive")]
+        [LeafMember("ToggleActive"), Preserve]
         private void ToggleActive()
         {
             gameObject.SetActive(!gameObject.activeSelf);

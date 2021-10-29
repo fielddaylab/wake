@@ -319,13 +319,13 @@ namespace Aqua
 
             #region Bestiary/Inventory
 
-            [LeafMember("HasEntity")]
+            [LeafMember("HasEntity"), UnityEngine.Scripting.Preserve]
             static private Variant HasEntity(StringHash32 inEntityId)
             {
                 return Services.Data.Profile.Bestiary.HasEntity(inEntityId);
             }
 
-            [LeafMember("GiveEntity")]
+            [LeafMember("GiveEntity"), UnityEngine.Scripting.Preserve]
             static private IEnumerator GiveEntity([BindContext] ScriptThread inThread, StringHash32 inEntityId, PopupMode inMode = PopupMode.Popup)
             {
                 if (Services.Data.Profile.Bestiary.RegisterEntity(inEntityId) && inMode == PopupMode.Popup)
@@ -341,31 +341,33 @@ namespace Aqua
                     {
                         return Services.UI.Popup.Display(
                             Loc.Format("ui.popup.newBestiary.critter.header",
-                                bestiary.CommonName()), null, bestiary.Icon()).Wait();
+                                bestiary.CommonName()), null,
+                                new StreamedImageSet(bestiary.SketchPath(), bestiary.Icon())).Wait();
                     }
                     else
                     {
                         return Services.UI.Popup.Display(
-                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null, bestiary.Icon()).Wait();
+                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null,
+                                new StreamedImageSet(bestiary.SketchPath(), bestiary.Icon())).Wait();
                     }
                 }
 
                 return null;
             }
 
-            [LeafMember("HasFact")]
+            [LeafMember("HasFact"), UnityEngine.Scripting.Preserve]
             static private Variant HasFact(StringHash32 inFactId)
             {
                 return Services.Data.Profile.Bestiary.HasFact(inFactId);
             }
 
-            [LeafMember("IsFactGraphed")]
+            [LeafMember("IsFactGraphed"), UnityEngine.Scripting.Preserve]
             static private Variant IsFactGraphed(StringHash32 inFactId)
             {
                 return Services.Data.Profile.Bestiary.IsFactGraphed(inFactId);
             }
 
-            [LeafMember("GiveFact")]
+            [LeafMember("GiveFact"), UnityEngine.Scripting.Preserve]
             static private IEnumerator GiveFact([BindContext] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
@@ -416,7 +418,7 @@ namespace Aqua
                 return null;
             }
 
-            [LeafMember("UpgradeFact")]
+            [LeafMember("UpgradeFact"), UnityEngine.Scripting.Preserve]
             static private IEnumerator UpgradeFact([BindContext] ScriptThread inThread, StringHash32 inFactId, BFDiscoveredFlags inFlags = BFDiscoveredFlags.Rate, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
@@ -467,7 +469,7 @@ namespace Aqua
                 return null;
             }
 
-            [LeafMember("FinishFactBatch")]
+            [LeafMember("FinishFactBatch"), UnityEngine.Scripting.Preserve]
             static private IEnumerator CompleteFactBatch([BindContext] ScriptThread inThread)
             {
                 if (s_BatchedFacts.Count <= 0)
@@ -492,25 +494,25 @@ namespace Aqua
                 return popup;
             }
 
-            [LeafMember("HasItem")]
+            [LeafMember("HasItem"), UnityEngine.Scripting.Preserve]
             static private Variant HasItem(StringHash32 inItemId)
             {
                 return Services.Data.Profile.Inventory.HasItem(inItemId);
             }
 
-            [LeafMember("ItemCount")]
+            [LeafMember("ItemCount"), UnityEngine.Scripting.Preserve]
             static private Variant ItemCount(StringHash32 inItemId)
             {
                 return Services.Data.Profile.Inventory.ItemCount(inItemId);
             }
 
-            [LeafMember("HasItemCount")]
+            [LeafMember("HasItemCount"), UnityEngine.Scripting.Preserve]
             static private bool HasItemCount(StringHash32 inItemId, int inCount)
             {
                 return Services.Data.Profile.Inventory.ItemCount(inItemId) >= inCount;
             }
 
-            [LeafMember("CanAfford")]
+            [LeafMember("CanAfford"), UnityEngine.Scripting.Preserve]
             static private bool CanAfford(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
@@ -518,7 +520,7 @@ namespace Aqua
                 return invData.ItemCount(ItemIds.Cash) >= itemDesc.BuyCoinsValue() && invData.ItemCount(ItemIds.Gear) >= itemDesc.BuyGearsValue();
             }
 
-            [LeafMember("PurchaseItem")]
+            [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]
             static private IEnumerator PurchaseItem([BindContext] ScriptThread inThread, StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
@@ -541,38 +543,38 @@ namespace Aqua
                 return Services.UI.Popup.Display(
                     Loc.Format("ui.popup.newItem.header", itemDesc.NameTextId()),
                     Loc.Find(itemDesc.DescriptionTextId()),
-                    itemDesc.Icon()
+                    new StreamedImageSet(itemDesc.SketchPath(), itemDesc.Icon())
                 ).Wait();
             }
 
-            [LeafMember("GiveItem")]
+            [LeafMember("GiveItem"), UnityEngine.Scripting.Preserve]
             static private void GiveItem(StringHash32 inItemId, int inCount = 1)
             {
                 Assert.True(inCount >= 0, "GiveItem must be passed a non-negative number");
                 Services.Data.Profile.Inventory.AdjustItem(inItemId, inCount);
             }
 
-            [LeafMember("TakeItem")]
+            [LeafMember("TakeItem"), UnityEngine.Scripting.Preserve]
             static private bool TakeItem(StringHash32 inItemId, int inCount = 1)
             {
                 Assert.True(inCount >= 0, "TakeItem must be passed a non-negative number");
                 return Services.Data.Profile.Inventory.AdjustItem(inItemId, -inCount);
             }
 
-            [LeafMember("SetItem")]
+            [LeafMember("SetItem"), UnityEngine.Scripting.Preserve]
             static private void SetItem(StringHash32 inItemId, int inCount)
             {
                 Assert.True(inCount >= 0, "SetItem must be passed a non-negative number");
                 Services.Data.Profile.Inventory.SetItem(inItemId, inCount);
             }
 
-            [LeafMember("HasUpgrade")]
+            [LeafMember("HasUpgrade"), UnityEngine.Scripting.Preserve]
             static private Variant HasUpgrade(StringHash32 inUpgradeId)
             {
                 return Services.Data.Profile.Inventory.HasUpgrade(inUpgradeId);
             }
 
-            [LeafMember("GiveUpgrade")]
+            [LeafMember("GiveUpgrade"), UnityEngine.Scripting.Preserve]
             static private IEnumerator GiveUpgrade([BindContext] ScriptThread inThread, StringHash32 inUpgradeId, PopupMode inMode = PopupMode.Popup)
             {
                 if (Services.Data.Profile.Inventory.AddUpgrade(inUpgradeId) && inMode != PopupMode.Silent)
@@ -587,26 +589,26 @@ namespace Aqua
                     return Services.UI.Popup.Display(
                         Loc.Format("ui.popup.newUpgrade.header", item.NameTextId()),
                         Loc.Find(item.DescriptionTextId()),
-                        item.Icon()
+                        new StreamedImageSet(item.SketchPath(), item.Icon())
                     ).Wait();
                 }
 
                 return null;
             }
 
-            [LeafMember("HasScanned")]
+            [LeafMember("HasScanned"), UnityEngine.Scripting.Preserve]
             static private Variant HasScanned(StringHash32 inNodeId)
             {
                 return Services.Data.Profile.Inventory.WasScanned(inNodeId);
             }
 
-            [LeafMember("HasWaterProperty")]
+            [LeafMember("HasWaterProperty"), UnityEngine.Scripting.Preserve]
             static private bool HasProperty(WaterPropertyId inProperty)
             {
                 return Services.Data.Profile.Inventory.IsPropertyUnlocked(inProperty);
             }
 
-            [LeafMember("GiveWaterProperty")]
+            [LeafMember("GiveWaterProperty"), UnityEngine.Scripting.Preserve]
             static private bool GiveWaterProperty(WaterPropertyId inProperty)
             {
                 return Services.Data.Profile.Inventory.UnlockProperty(inProperty);
@@ -620,49 +622,49 @@ namespace Aqua
 
             #region Jobs
 
-            [LeafMember("JobStartedOrComplete")]
+            [LeafMember("JobStartedOrComplete"), UnityEngine.Scripting.Preserve]
             static private Variant JobStartedOrComplete(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsStartedOrComplete(inId);
             }
 
-            [LeafMember("JobInProgress")]
+            [LeafMember("JobInProgress"), UnityEngine.Scripting.Preserve]
             static private Variant JobInProgress(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsInProgress(inId);
             }
 
-            [LeafMember("JobCompleted")]
+            [LeafMember("JobCompleted"), UnityEngine.Scripting.Preserve]
             static private Variant JobCompleted(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsComplete(inId);
             }
 
-            [LeafMember("JobAvailable")]
+            [LeafMember("JobAvailable"), UnityEngine.Scripting.Preserve]
             static private Variant JobAvailable(StringHash32 inId)
             {
                 return Services.Assets.Jobs.IsAvailableAndUnstarted(inId);
             }
 
-            [LeafMember("JobTaskActive")]
+            [LeafMember("JobTaskActive"), UnityEngine.Scripting.Preserve]
             static private Variant JobTaskActive(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsTaskActive(inId);
             }
 
-            [LeafMember("JobTaskCompleted")]
+            [LeafMember("JobTaskCompleted"), UnityEngine.Scripting.Preserve]
             static private Variant JobTaskCompleted(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsTaskComplete(inId);
             }
 
-            [LeafMember("JobTaskTop")]
+            [LeafMember("JobTaskTop"), UnityEngine.Scripting.Preserve]
             static public Variant JobTaskTop(StringHash32 inId)
             {
                 return Services.Data.Profile.Jobs.IsTaskTop(inId);
             }
 
-            [LeafMember("AnyJobsAvailable")]
+            [LeafMember("AnyJobsAvailable"), UnityEngine.Scripting.Preserve]
             static private Variant AnyJobsAvailable()
             {
                 var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
@@ -674,31 +676,31 @@ namespace Aqua
                 return count;
             }
 
-            [LeafMember("AnyJobsInProgress")]
+            [LeafMember("AnyJobsInProgress"), UnityEngine.Scripting.Preserve]
             static private Variant AnyJobsInProgress()
             {
                 return Services.Data.Profile.Jobs.InProgressJobs().Length;
             }
 
-            [LeafMember("AnyJobsCompleted")]
+            [LeafMember("AnyJobsCompleted"), UnityEngine.Scripting.Preserve]
             static private Variant AnyJobsCompleted()
             {
                 return Services.Data.Profile.Jobs.CompletedJobIds().Count;
             }
 
-            [LeafMember("UnlockJob")]
+            [LeafMember("UnlockJob"), UnityEngine.Scripting.Preserve]
             static private bool UnlockJob(StringHash32 inJobId)
             {
                 return Services.Data.Profile.Jobs.UnlockHiddenJob(inJobId);
             }
 
-            [LeafMember("SetJob")]
+            [LeafMember("SetJob"), UnityEngine.Scripting.Preserve]
             static private bool SetJob(StringHash32 inJobId)
             {
                 return Services.Data.Profile.Jobs.SetCurrentJob(inJobId);
             }
 
-            [LeafMember("CompleteJob")]
+            [LeafMember("CompleteJob"), UnityEngine.Scripting.Preserve]
             static private bool CompleteJob(StringHash32 inJobId = default(StringHash32))
             {
                 if (inJobId.IsEmpty)
@@ -718,55 +720,55 @@ namespace Aqua
 
             #region World
 
-            [LeafMember("StationUnlocked")]
+            [LeafMember("StationUnlocked"), UnityEngine.Scripting.Preserve]
             static private Variant StationUnlocked(StringHash32 inStationId)
             {
                 return Services.Data.Profile.Map.IsStationUnlocked(inStationId);
             }
 
-            [LeafMember("UnlockStation")]
+            [LeafMember("UnlockStation"), UnityEngine.Scripting.Preserve]
             static private bool UnlockStation(StringHash32 inStationId)
             {
                 return Services.Data.Profile.Map.UnlockStation(inStationId);
             }
 
-            [LeafMember("LockStation")]
+            [LeafMember("LockStation"), UnityEngine.Scripting.Preserve]
             static private bool LockStation(StringHash32 inStationId)
             {
                 return Services.Data.Profile.Map.LockStation(inStationId);
             }
 
-            [LeafMember("SiteUnlocked")]
+            [LeafMember("SiteUnlocked"), UnityEngine.Scripting.Preserve]
             static private Variant SiteUnlocked(StringHash32 inSiteId)
             {
                 return Services.Data.Profile.Map.IsSiteUnlocked(inSiteId);
             }
 
-            [LeafMember("UnlockSite")]
+            [LeafMember("UnlockSite"), UnityEngine.Scripting.Preserve]
             static private bool UnlockSite(StringHash32 inSiteId)
             {
                 return Services.Data.Profile.Map.UnlockSite(inSiteId);
             }
 
-            [LeafMember("LockSite")]
+            [LeafMember("LockSite"), UnityEngine.Scripting.Preserve]
             static private bool LockSite(StringHash32 inSiteId)
             {
                 return Services.Data.Profile.Map.LockSite(inSiteId);
             }
 
-            [LeafMember("RoomUnlocked")]
+            [LeafMember("RoomUnlocked"), UnityEngine.Scripting.Preserve]
             static private bool RoomUnlocked(StringHash32 inRoomId)
             {
                 return Services.Data.Profile.Map.IsRoomUnlocked(inRoomId);
             }
 
-            [LeafMember("UnlockRoom")]
+            [LeafMember("UnlockRoom"), UnityEngine.Scripting.Preserve]
             static private bool UnlockRoom(StringHash32 inRoomId)
             {
                 return Services.Data.Profile.Map.UnlockRoom(inRoomId);
             }
 
-            [LeafMember("LockRoom")]
+            [LeafMember("LockRoom"), UnityEngine.Scripting.Preserve]
             static private bool LockRoom(StringHash32 inRoomId)
             {
                 return Services.Data.Profile.Map.LockRoom(inRoomId);
@@ -776,25 +778,25 @@ namespace Aqua
 
             #region Scheduled Events
 
-            [LeafMember("IsEventScheduled")]
+            [LeafMember("IsEventScheduled"), UnityEngine.Scripting.Preserve]
             static private Variant IsEventScheduled(StringHash32 inEventId)
             {
                 return Services.Data.Profile.Script.IsEventScheduled(inEventId);
             }
 
-            [LeafMember("HoursUntilEvent")]
+            [LeafMember("HoursUntilEvent"), UnityEngine.Scripting.Preserve]
             static private Variant HoursUntilEvent(StringHash32 inEventId)
             {
                 return Services.Data.Profile.Script.TimeUntilScheduled(inEventId).TotalHours;
             }
 
-            [LeafMember("IsEventReady")]
+            [LeafMember("IsEventReady"), UnityEngine.Scripting.Preserve]
             static private Variant IsEventReady(StringHash32 inEventId)
             {
                 return Services.Data.Profile.Script.TimeUntilScheduled(inEventId).Ticks <= 0;
             }
 
-            [LeafMember("GetEventData")]
+            [LeafMember("GetEventData"), UnityEngine.Scripting.Preserve]
             static private Variant ScheduledEventData(StringHash32 inEventId)
             {
                 Variant eventData;
@@ -804,13 +806,13 @@ namespace Aqua
 
             #endregion // Scheduled Events
 
-            [LeafMember("Seen")]
+            [LeafMember("Seen"), UnityEngine.Scripting.Preserve]
             static private Variant Seen(StringHash32 inNodeId)
             {
                 return Services.Data.Profile.Script.HasSeen(inNodeId, PersistenceLevel.Profile);
             }
 
-            [LeafMember("Random")]
+            [LeafMember("Random"), UnityEngine.Scripting.Preserve]
             static private Variant GetRandomByRarity(StringSlice inData)
             {
                 float floatVal;

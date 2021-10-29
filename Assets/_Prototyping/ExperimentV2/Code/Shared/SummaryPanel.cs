@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Aqua;
 using BeauUtil;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class SummaryPanel : MonoBehaviour, ISceneOptimizable
+    public class SummaryPanel : MonoBehaviour
     {
         #region Inspector
 
@@ -16,17 +17,8 @@ namespace ProtoAqua.ExperimentV2
         public Transform FactListRoot;
         public LayoutGroup FactListLayout;
 
-        [HideInInspector] public FactPools FactPools;
+        [InstanceOnly] public FactPools FactPools;
 
         #endregion // Inspector
-
-        #if UNITY_EDITOR
-
-        void ISceneOptimizable.Optimize()
-        {
-            FactPools = this.GetComponentInParent<FactPools>(true);
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

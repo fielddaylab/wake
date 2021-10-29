@@ -77,7 +77,7 @@ namespace Aqua.Editor {
                 return GetEnumerator();
             }
 
-            [BlockMeta("basePath")]
+            [BlockMeta("basePath"), UnityEngine.Scripting.Preserve]
             private void SetBasePath(string path) {
                 BasePath = path;
                 AllBasePaths.Add(new BasePathHeader(path, Records.Count));
@@ -87,7 +87,7 @@ namespace Aqua.Editor {
         [Serializable]
         private class TextRecord : IDataBlock {
             public string Id;
-            [Multiline][BlockContent] public string Content = null;
+            [Multiline][BlockContent, UnityEngine.Scripting.Preserve] public string Content = null;
 
             [NonSerialized] public PackageRecord Parent;
 

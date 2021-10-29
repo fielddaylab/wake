@@ -14,7 +14,7 @@ namespace ProtoAqua.Observation
     {
         private readonly Dictionary<StringHash32, ScanData> m_Data = new Dictionary<StringHash32, ScanData>(32);
 
-        [BlockMeta("basePath")] private string m_RootPath = string.Empty;
+        [BlockMeta("basePath"), UnityEngine.Scripting.Preserve] private string m_RootPath = string.Empty;
 
         #region ICollection
 

@@ -54,7 +54,7 @@ namespace Aqua
             m_Activated = true;
         }
 
-        [LeafMember("Focus")]
+        [LeafMember("Focus"), UnityEngine.Scripting.Preserve]
         public void Focus(StringSlice inObjectId, float inWidth = 0, float inHeight = 0, float inAlpha = 0.6f)
         {
             if (Services.UI.IsSkippingCutscene())
@@ -70,7 +70,7 @@ namespace Aqua
             Focus(obj.transform, new Vector2(inWidth, inHeight), inAlpha);
         }
 
-        [LeafMember("Clear")]
+        [LeafMember("Clear"), UnityEngine.Scripting.Preserve]
         public void Hide(bool inbInstant = false)
         {
             inbInstant |= Services.UI.IsSkippingCutscene();

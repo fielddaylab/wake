@@ -13,7 +13,7 @@ namespace Aqua.Animation
     /// </summary>
     public class SpriteAnimator : MonoBehaviour
     {
-        [ServiceReference] static private SpriteAnimatorService Manager { get; set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static private SpriteAnimatorService Manager { get; set; }
 
         #region Types
 

@@ -8,7 +8,7 @@ using Aqua.Scripting;
 
 namespace Aqua.Portable
 {
-    public abstract class PortableMenuApp : BasePanel
+    public class PortableMenuApp : BasePanel
     {
         #region Inspector
 

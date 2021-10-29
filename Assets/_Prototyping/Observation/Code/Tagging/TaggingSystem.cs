@@ -470,14 +470,14 @@ namespace ProtoAqua.Observation
 
         #region Leaf
 
-        [LeafMember("TaggingHasStarted")]
+        [LeafMember("TaggingHasStarted"), UnityEngine.Scripting.Preserve]
         static private bool LeafHasStartedTagging(StringHash32 inCritterId)
         {
             Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");
             return s_Instance.IsStarted(inCritterId);
         }
 
-        [LeafMember("TaggingHasFinished")]
+        [LeafMember("TaggingHasFinished"), UnityEngine.Scripting.Preserve]
         static private bool LeafHasFinishedTagging(StringHash32 inCritterId)
         {
             Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");

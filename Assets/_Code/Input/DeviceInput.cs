@@ -9,7 +9,7 @@ namespace Aqua
 {
     public class DeviceInput
     {
-        [ServiceReference] static private InputService s_Service;
+        [ServiceReference, UnityEngine.Scripting.Preserve] static private InputService s_Service;
 
         static private bool s_Reset;
 

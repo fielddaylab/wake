@@ -3,7 +3,7 @@ using AquaAudio;
 
 namespace Aqua.Option
 {
-    public class QualityPanel : OptionsMenu.Panel 
+    public class QualityPanel : OptionsDisplay.Panel 
     {
         #region Inspector
 
@@ -11,7 +11,7 @@ namespace Aqua.Option
 
         #endregion // Inspector
 
-        private void Awake()
+        protected override void Init()
         {
             m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("options.quality.level.label",
                 "options.quality.level.tooltip", OnQualityLevelChanged)

@@ -307,7 +307,7 @@ namespace ProtoAqua.Observation
 
         #region Leaf
 
-        [LeafMember("SetTool")]
+        [LeafMember("SetTool"), UnityEngine.Scripting.Preserve]
         private void LeafSetTool(ToolId inToolId)
         {
             SetTool(inToolId, false);

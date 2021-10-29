@@ -5,6 +5,7 @@ using System.Collections;
 using Leaf.Runtime;
 using Aqua.Debugging;
 using System;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -49,7 +50,7 @@ namespace Aqua.Scripting
 
         #region Handlers
 
-        [LeafMember("Hint")]
+        [LeafMember("Hint"), Preserve]
         private void LeafHint()
         {
             OnAutosaveEvent();

@@ -160,5 +160,63 @@ namespace Aqua.Editor
             File.WriteAllText(outputPath, builder.Flush());
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }
+
+        [MenuItem("Aqualab/CodeGen/Regen Jobs")]
+        static private void GenerateJobsConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("using System;");
+            builder.Append("using BeauUtil;");
+            builder.Append("\n\nstatic public class JobIds")
+                .Append("\n{");
+
+            Dictionary<JobDesc, string> safeNames = new Dictionary<JobDesc, string>();
+
+            var allJobs = AssetDBUtils.FindAssets<JobDesc>();
+            Array.Sort(allJobs, CompareJobs);
+
+            foreach(var jobDesc in allJobs)
+            {
+                string safeName = ObjectNames.NicifyVariableName(jobDesc.name.Replace("-", "_")).Replace(" ", "");
+                safeNames[jobDesc] = safeName;
+
+                builder.Append("\n\tstatic public readonly StringHash32 ").Append(safeName).Append(" = new StringHash32(0x").Append(jobDesc.Id().HashValue.ToString("X8")).Append(");");
+            }
+
+            builder.Append("\n\n\tstatic public readonly StringHash32[] All = new StringHash32[]\n\t{");
+            foreach(var job in allJobs)
+                builder.Append("\n\t\t").Append(safeNames[job]).Append(",");
+            builder.Append("\n\t};");
+
+            builder.Append("\n\n\tstatic public int IndexOf(StringHash32 inJobId)")
+                .Append("\n\t{")
+                .Append("\n\t\treturn Array.IndexOf(All, inJobId);")
+                .Append("\n\t}");
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "JobIds.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
+
+        static private int CompareJobs(JobDesc a, JobDesc b) {
+            StringHash32 stationA = a.StationId();
+            StringHash32 stationB = b.StationId();
+
+            if (stationA != stationB) {
+                if (stationA.IsEmpty) {
+                    return 1;
+                } else if (stationB.IsEmpty) {
+                    return -1;
+                } else {
+                    MapDesc mA = AssetDBUtils.FindAsset<MapDesc>(stationA.ToDebugString());
+                    MapDesc mB = AssetDBUtils.FindAsset<MapDesc>(stationB.ToDebugString());
+                    return mA.SortingOrder().CompareTo(mB.SortingOrder());
+                }
+            } else {
+                return a.Id().CompareTo(b.Id());
+            }
+        }
     }
 }

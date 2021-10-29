@@ -154,25 +154,17 @@ namespace Aqua {
             }
             #endif // UNITY_EDITOR
 
-            float aspectRatio;;
-            RectTransform transform = m_RawImage.rectTransform;
-            Vector2 size = transform.sizeDelta;
-
             switch(m_AutoSizeMode) {
                 case AutoSizeMode.StretchX: {
-                    aspectRatio = (float) m_LoadedTexture.width / m_LoadedTexture.height;
-                    size.x = size.y * aspectRatio;
+                    m_RawImage.rectTransform.ResizeXForAspectRatio(m_LoadedTexture.width, m_LoadedTexture.height);
                     break;
                 }
 
                 case AutoSizeMode.StretchY: {
-                    aspectRatio = (float) m_LoadedTexture.height / m_LoadedTexture.width;
-                    size.y = size.x * aspectRatio;
+                    m_RawImage.rectTransform.ResizeYForAspectRatio(m_LoadedTexture.width, m_LoadedTexture.height);
                     break;
                 }
             }
-
-            transform.sizeDelta = size;
         }
 
         #region Scene Loading
@@ -209,23 +201,11 @@ namespace Aqua {
         }
 
         private void FixAspectRatioY() {
-            float aspectRatio = (float) m_LoadedTexture.height / m_LoadedTexture.width;
-            RectTransform transform = m_RawImage.rectTransform;
-            Undo.RecordObject(transform, "Resizing RectTransform");
-            Vector2 size = transform.sizeDelta;
-            size.y = size.x * aspectRatio;
-            transform.sizeDelta = size;
-            EditorUtility.SetDirty(transform);
+            m_RawImage.rectTransform.ResizeYForAspectRatio(m_LoadedTexture.width, m_LoadedTexture.height);
         }
 
         private void FixAspectRatioX() {
-            float aspectRatio = (float) m_LoadedTexture.width / m_LoadedTexture.height;
-            RectTransform transform = m_RawImage.rectTransform;
-            Undo.RecordObject(transform, "Resizing RectTransform");
-            Vector2 size = transform.sizeDelta;
-            size.x = size.y * aspectRatio;
-            transform.sizeDelta = size;
-            EditorUtility.SetDirty(transform);
+            m_RawImage.rectTransform.ResizeXForAspectRatio(m_LoadedTexture.width, m_LoadedTexture.height);
         }
 
         [CustomEditor(typeof(StreamedRawImage)), CanEditMultipleObjects]

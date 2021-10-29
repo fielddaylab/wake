@@ -1,12 +1,12 @@
+using System.Collections;
 using BeauData;
+using BeauRoutine;
 using BeauUtil;
 using TMPro;
 using UnityEngine;
 
-namespace Aqua
-{
-    public class AssetsService : ServiceBehaviour
-    {
+namespace Aqua {
+    public class AssetsService : ServiceBehaviour {
         #region Inspector
 
         [Header("Databases")]
@@ -16,7 +16,7 @@ namespace Aqua
         [SerializeField, Required] private MapDB m_Map = null;
         [SerializeField, Required] private InventoryDB m_Inventory = null;
         [SerializeField, Required] private WaterPropertyDB m_WaterProperties = null;
-        [SerializeField, Required] private ScriptCharacterDB m_ScriptCharacters = null; 
+        [SerializeField, Required] private ScriptCharacterDB m_ScriptCharacters = null;
 
         [Header("Fonts")]
         [SerializeField, Required] private TMP_FontAsset m_RegularFont = null;
@@ -37,8 +37,7 @@ namespace Aqua
         public TMP_FontAsset SemiBoldFont { get { return m_SemiBoldFont; } }
         public TMP_FontAsset BoldFont { get { return m_BoldFont; } }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             base.Initialize();
 
             m_Acts.Initialize();
@@ -50,10 +49,24 @@ namespace Aqua
             m_ScriptCharacters.Initialize();
 
             Assets.Assign(this);
+            Routine.Start(this, StreamingManagementRoutine());
         }
 
-        protected override void Shutdown()
-        {
+        private IEnumerator StreamingManagementRoutine() {
+            object bigWait = 30f;
+            object smallWait = 5f;
+
+            while (true) {
+                yield return bigWait;
+                while (Services.State.IsLoadingScene() || Streaming.IsUnloading()) {
+                    yield return smallWait;
+                }
+
+                yield return Streaming.UnloadUnusedAsync(30f);
+            }
+        }
+
+        protected override void Shutdown() {
             Streaming.UnloadAll();
 
             base.Shutdown();

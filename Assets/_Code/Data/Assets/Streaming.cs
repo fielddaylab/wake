@@ -2,18 +2,17 @@
 #define DEVELOPMENT
 #endif // UNITY_EDITOR || DEVELOPMENT_BUILD
 
-using System.Collections.Generic;
 using BeauRoutine;
 using BeauUtil;
-using UnityEngine;
-using BeauData;
 using BeauUtil.Debugger;
-using System.IO;
-using System;
 using BeauUtil.IO;
-using Aqua.Debugging;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Aqua {
     #if UNITY_EDITOR
@@ -80,7 +79,7 @@ namespace Aqua {
             public long Size;
             public long LastModifiedTS;
 
-            public IFuture Loader;
+            public UnityWebRequest Loader;
             #if UNITY_EDITOR
             public HotReloadableFileProxy Proxy;
             #endif // UNITY_EDITOR
@@ -128,7 +127,7 @@ namespace Aqua {
             if (!s_Metas.TryGetValue(id, out meta)) {
                 meta = new AssetMeta();
 
-                DebugService.Log(LogMask.Loading, "[Streaming] Loading streamed texture '{0}'...", id);
+                Log.Msg( "[Streaming] Loading streamed texture '{0}'...", id);
                 
                 meta.Type = AssetType.Texture;
                 meta.Status = AssetStatus.PendingLoad;
@@ -166,7 +165,7 @@ namespace Aqua {
         #if UNITY_EDITOR
 
         static private Texture2D LoadTexture_Editor(StringHash32 id, string url, AssetMeta meta) {
-            string correctedPath = PathUtility.StreamingAssetsPath(url);
+            string correctedPath = StreamingPath(url);
             if (File.Exists(correctedPath)) {
                 byte[] bytes = File.ReadAllBytes(correctedPath);
                 Texture2D texture = new Texture2D(1, 1);
@@ -175,12 +174,12 @@ namespace Aqua {
                 texture.filterMode = GetTextureFilterMode(url);
                 texture.wrapMode = GetTextureWrapMode(url);
                 texture.LoadImage(bytes, false);
-                DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (sync) '{0}'", id);
+                Log.Msg("[Streaming] ...finished loading (sync) '{0}'", id);
                 meta.Proxy = new HotReloadableFileProxy(correctedPath, (p, s) => {
                     if (s == HotReloadOperation.Modified) {
                         texture.LoadImage(File.ReadAllBytes(p), false);
 
-                        DebugService.Log(LogMask.Loading, "[Streaming] Texture '{0}' reloaded", id);
+                        Log.Msg("[Streaming] Texture '{0}' reloaded", id);
                     } else {
                         texture.filterMode = FilterMode.Point;
                         texture.Resize(2, 2);
@@ -188,7 +187,7 @@ namespace Aqua {
                         texture.Apply(false, true);
 
                         meta.Status = AssetStatus.Error;
-                        DebugService.Log(LogMask.Loading, "[Streaming] Texture '{0}' was deleted", id);
+                        Log.Msg("[Streaming] Texture '{0}' was deleted", id);
                     }
                 });
                 meta.Status = AssetStatus.Loaded;
@@ -207,12 +206,25 @@ namespace Aqua {
         static private Texture2D LoadTextureAsync(StringHash32 id, string url, AssetMeta meta) {
             Texture2D texture = CreatePlaceholderTexture(url, false);
 
-            string correctedUrl = PathUtility.PathToURL(PathUtility.StreamingAssetsPath(url));
-            meta.Loader = Future.Download.Bytes(correctedUrl)
-                .OnComplete((bytes) => OnTextureDownloadCompleted(id, bytes, url, meta))
-                .OnFail(() => OnTextureDownloadFail(id, correctedUrl, meta));
+            string correctedUrl = PathToURL(StreamingPath(url));
+            var request = meta.Loader = new UnityWebRequest(correctedUrl, UnityWebRequest.kHttpVerbGET);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            var sent = request.SendWebRequest();
+            sent.completed += (r) => HandleTextureUWRFinished(id, url, meta, request);
             s_LoadCount++;
             return texture;
+        }
+
+        static private void HandleTextureUWRFinished(StringHash32 id, string url, AssetMeta meta, UnityWebRequest request) {
+            if (request.isNetworkError || request.isHttpError) {
+                OnTextureDownloadFail(id, url, meta);
+                request.Dispose();
+            } else {
+                OnTextureDownloadCompleted(id, request.downloadHandler.data, url, meta);
+            }
+
+            request.Dispose();
+            meta.Loader = null;
         }
 
         static private void OnTextureDownloadCompleted(StringHash32 id, byte[] source, string url, AssetMeta meta) {
@@ -228,7 +240,7 @@ namespace Aqua {
             s_LoadCount --;
             meta.Status = AssetStatus.Loaded;
             meta.Loader = null;
-            DebugService.Log(LogMask.Loading, "[Streaming] ...finished loading (async) '{0}'", id);
+            Log.Msg("[Streaming] ...finished loading (async) '{0}'", id);
         }
 
         static private void OnTextureDownloadFail(StringHash32 id, string url, AssetMeta meta) {
@@ -271,6 +283,36 @@ namespace Aqua {
         }
 
         #endregion // Textures
+
+        #region Paths
+
+        static private string StreamingPath(string relative) {
+            return Path.Combine(Application.streamingAssetsPath, relative);
+        }
+
+        static private string PathToURL(string path) {
+            switch (Application.platform) {
+                case RuntimePlatform.Android:
+                case RuntimePlatform.WebGLPlayer:
+                    return path;
+
+                case RuntimePlatform.WSAPlayerARM:
+                case RuntimePlatform.WSAPlayerX64:
+                case RuntimePlatform.WSAPlayerX86:
+                case RuntimePlatform.WindowsEditor:
+                case RuntimePlatform.WindowsPlayer:
+                    return "file:///" + path;
+
+                default:
+                    return "file://" + path;
+            }
+        }
+
+        static public string RelativeStreamingPathToURL(string relative) {
+            return PathToURL(StreamingPath(relative));
+        }
+
+        #endregion // Paths
 
         #region Management
 
@@ -382,13 +424,33 @@ namespace Aqua {
         #if UNITY_EDITOR
 
         static private void UnloadUnusedSync() {
+            IdentifyUnusedPrefetchSync();
+
             StringHash32 id;
             while(s_UnloadQueue.TryPopFront(out id)) {
                 UnloadSingle(id, 0, 0);
             }
         }
 
+        static private void IdentifyUnusedPrefetchSync() {
+            AssetMeta meta;
+            foreach(var metaKV in s_Metas) {
+                meta = metaKV.Value;
+                if (meta.RefCount == 0 && (meta.Status & AssetStatus.PendingUnload) == 0) {
+                    meta.Status |= AssetStatus.PendingUnload;
+                    s_UnloadQueue.PushBack(metaKV.Key);
+                }
+            }
+        }
+
         #endif // UNITY_EDITOR
+
+        /// <summary>
+        /// Returns if streaming assets are currently unloading.
+        /// </summary>
+        static public bool IsUnloading() {
+            return s_UnloadHandle.IsRunning();
+        }
 
         /// <summary>
         /// Unloads all unused streaming assets asynchronously.
@@ -457,7 +519,7 @@ namespace Aqua {
             s_Batcher.Dispose();
             #endif // UNITY_EDITOR
 
-            DebugService.Log(LogMask.Loading, "[Streaming] Unloaded all streamed assets");
+            Log.Msg("[Streaming] Unloaded all streamed assets");
         }
     
         static internal bool UnloadSingle(StringHash32 id, long now, long deleteThreshold = 0) {
@@ -473,7 +535,7 @@ namespace Aqua {
 
             s_Metas.Remove(id);
             if (meta.Loader != null) {
-                if (!meta.Loader.IsDone()) {
+                if (!meta.Loader.isDone) {
                     s_LoadCount--;
                 }
 
@@ -515,7 +577,7 @@ namespace Aqua {
             UnityEngine.Object.Destroy(resource);
             #endif // UNITY_EDITOR
 
-            DebugService.Log(LogMask.Loading, "[Streaming] Unloaded streamed asset '{0}'", id);
+            Log.Msg("[Streaming] Unloaded streamed asset '{0}'", id);
 
             resource = null;
 

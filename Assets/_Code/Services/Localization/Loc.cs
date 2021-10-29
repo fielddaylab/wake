@@ -9,7 +9,7 @@ namespace Aqua
 {
     static public class Loc
     {
-        [ServiceReference] static private LocService Service;
+        [ServiceReference, UnityEngine.Scripting.Preserve] static private LocService Service;
 
         static private void Process(LocService inLoc, ref object ioObject)
         {

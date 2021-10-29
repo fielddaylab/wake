@@ -10,7 +10,7 @@ namespace Aqua
     public class LocNode : IDataBlock
     {
         private readonly StringHash32 m_Id;
-        [BlockContent] private string m_Content = string.Empty;
+        [BlockContent, UnityEngine.Scripting.Preserve] private string m_Content = string.Empty;
 
         public LocNode(StringHash32 inId)
         {

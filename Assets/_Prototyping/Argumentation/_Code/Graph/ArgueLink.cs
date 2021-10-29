@@ -15,12 +15,12 @@ namespace ProtoAqua.Argumentation
         #region Serialized
 
         // Properties
-        [BlockMeta("tag")] private StringHash32 m_Tag = null;
-        [BlockMeta("showIf")] private string m_Conditions = null;
-        [BlockMeta("shortenedText")] private string m_ShortenedText = null;
+        [BlockMeta("tag"), UnityEngine.Scripting.Preserve] private StringHash32 m_Tag = null;
+        [BlockMeta("showIf"), UnityEngine.Scripting.Preserve] private string m_Conditions = null;
+        [BlockMeta("shortenedText"), UnityEngine.Scripting.Preserve] private string m_ShortenedText = null;
 
         // Text
-        [BlockContent] private string m_DisplayText = null;
+        [BlockContent, UnityEngine.Scripting.Preserve] private string m_DisplayText = null;
 
         #endregion // Serialized
 

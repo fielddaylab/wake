@@ -18,6 +18,7 @@ using Leaf;
 using BeauUtil.Services;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
@@ -679,13 +680,13 @@ namespace Aqua
         /// <summary>
         /// Stops skipping the current cutscene.
         /// </summary>
-        [LeafMember("StopSkippingCutscene")]
+        [LeafMember("StopSkippingCutscene"), Preserve]
         static public void LeafThreadStopSkippingCutscene()
         {
             Services.Script.GetCutscene().GetThread().StopSkipping();
         }
 
-        [LeafMember("StopSkipping")]
+        [LeafMember("StopSkipping"), Preserve]
         static private void LeafThreadStopSkipping([BindContext] ScriptThread inThread)
         {
             inThread.StopSkipping();

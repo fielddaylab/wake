@@ -42,7 +42,7 @@ namespace Aqua.Portable {
             page.ScientificName.SetText(entry.ScientificName());
             page.CommonName.SetText(entry.CommonName());
             page.Description.SetText(entry.Description());
-            page.Sketch.URL = entry.SketchPath();
+            page.Sketch.Display(new StreamedImageSet(entry.SketchPath()));
 
             // TODO: display locations
         }

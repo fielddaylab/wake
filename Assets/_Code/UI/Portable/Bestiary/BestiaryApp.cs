@@ -62,7 +62,7 @@ namespace Aqua.Portable {
         protected override void OnHide(bool inbInstant) {
             Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
 
-            m_InfoPage.Sketch.URL = string.Empty;
+            m_InfoPage.Sketch.Clear();
             m_InfoPage.FactPools.FreeAll();
             m_NoSelectionGroup.gameObject.SetActive(true);
 
@@ -117,6 +117,8 @@ namespace Aqua.Portable {
                 Services.Data.Profile.Bestiary.GetEntities(Handler.Category, entities);
                 entities.Sort(BestiaryDesc.SortByEnvironment);
                 StringHash32 mapId = default;
+
+                m_EntryPool.Prewarm(entities.Count);
 
                 foreach (var entry in entities) {
                     if (mapId != entry.StationId()) {

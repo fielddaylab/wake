@@ -104,6 +104,7 @@ namespace Aqua.Option
 
         private void UpdateMuteIcon(bool inbMuted)
         {
+            m_MuteButton.targetGraphic.color = !inbMuted ? AQColors.ContentBlue : AQColors.Teal;
             m_MuteIconDisplay.sprite = inbMuted ? m_MuteIcon : m_UnmuteIcon;
             m_MuteHint.TooltipId = inbMuted ? UnmuteLabel : MuteLabel;
         }

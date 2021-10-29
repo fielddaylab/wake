@@ -16,21 +16,21 @@ namespace ProtoAqua.Observation
 
         // Properties
         private ScanDataFlags m_Flags = 0;
-        [BlockMeta("scanDuration")] private int m_ScanDuration = 1;
+        [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private int m_ScanDuration = 1;
 
         // Text
-        [BlockMeta("header")] private string m_HeaderText = null;
-        [BlockContent] private string m_DescText = null;
+        [BlockMeta("header"), UnityEngine.Scripting.Preserve] private string m_HeaderText = null;
+        [BlockContent, UnityEngine.Scripting.Preserve] private string m_DescText = null;
 
         // Links
-        [BlockMeta("spriteId")] private StringHash32 m_SpriteId = null;
-        [BlockMeta("logbook")] private StringHash32 m_LogbookId = null;
-        [BlockMeta("bestiary")] private StringHash32 m_BestiaryId = null;
+        [BlockMeta("spriteId"), UnityEngine.Scripting.Preserve] private StringHash32 m_SpriteId = null;
+        [BlockMeta("logbook"), UnityEngine.Scripting.Preserve] private StringHash32 m_LogbookId = null;
+        [BlockMeta("bestiary"), UnityEngine.Scripting.Preserve] private StringHash32 m_BestiaryId = null;
         private StringHash32[] m_BestiaryFactIds = null;
 
         // Requirements
-        [BlockMeta("requires")] private string m_Requirements = null;
-        [BlockMeta("fallback")] private StringHash32 m_Fallback = null;
+        [BlockMeta("requires"), UnityEngine.Scripting.Preserve] private string m_Requirements = null;
+        [BlockMeta("fallback"), UnityEngine.Scripting.Preserve] private StringHash32 m_Fallback = null;
 
         #endregion // Serialized
 
@@ -58,7 +58,7 @@ namespace ProtoAqua.Observation
 
         #region Scan
 
-        [BlockMeta("tool")]
+        [BlockMeta("tool"), UnityEngine.Scripting.Preserve]
         private void ActivateTool(bool inbActivate)
         {
             m_Flags |= ScanDataFlags.Tool;

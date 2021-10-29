@@ -4,6 +4,7 @@ using Leaf.Runtime;
 using UnityEngine.EventSystems;
 using BeauUtil.Debugger;
 using BeauUtil;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -20,7 +21,7 @@ namespace Aqua.Scripting
         [NonSerialized] private bool m_OnTop;
         [NonSerialized] private GameObject m_ClickHandler;
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void ForceOnTop()
         {
             if (m_OnTop)
@@ -32,7 +33,7 @@ namespace Aqua.Scripting
             m_OnTop = true;
         }
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void ResetSorting()
         {
             if (!m_OnTop)
@@ -43,7 +44,7 @@ namespace Aqua.Scripting
             m_OnTop = false;
         }
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void Click()
         {
             GameObject handler = GetClickHandler();
@@ -51,7 +52,7 @@ namespace Aqua.Scripting
                 Services.Input.ExecuteClick(handler);
         }
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void ForceClick()
         {
             GameObject handler = GetClickHandler();

@@ -6,6 +6,7 @@ using Leaf;
 using System;
 using BeauUtil.Variants;
 using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -15,7 +16,7 @@ namespace Aqua.Scripting
 
         [NonSerialized] private VariantTable m_Table;
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void ClearBlackboard()
         {
             if (m_Table != null)

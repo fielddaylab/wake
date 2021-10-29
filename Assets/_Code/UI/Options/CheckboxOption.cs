@@ -33,6 +33,7 @@ namespace Aqua.Option
         public void Sync(bool inbValue)
         {
             m_Checkbox.SetIsOnWithoutNotify(inbValue);
+            m_Checkbox.targetGraphic.color = inbValue ? AQColors.ContentBlue : AQColors.Teal;
         }
 
         private void OnCheckboxUpdate(bool inbSetting) 
@@ -41,6 +42,7 @@ namespace Aqua.Option
 
             OptionsData options = Services.Data.Options;
             options.SetDirty();
+            m_Checkbox.targetGraphic.color = inbSetting ? AQColors.ContentBlue : AQColors.Teal;
             
             Services.Events.QueueForDispatch(GameEvents.OptionsUpdated, options);
         }

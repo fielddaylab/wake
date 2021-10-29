@@ -23,6 +23,44 @@ namespace Aqua {
             inRect.anchorMax = max;
         }
 
+        static public void ResizeXForAspectRatio(this RectTransform inRect, float inWidth, float inHeight) {
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(inRect)) {
+                UnityEditor.Undo.RecordObject(inRect, "Resizing RectTransform");
+            }
+            #endif // UNITY_EDITOR
+            
+            float aspectRatio = inWidth / inHeight;
+            Vector2 size = inRect.sizeDelta;
+            size.x = size.y * aspectRatio;
+            inRect.sizeDelta = size;
+
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(inRect)) {
+                UnityEditor.EditorUtility.SetDirty(inRect);
+            }
+            #endif // UNITY_EDITOR
+        }
+
+        static public void ResizeYForAspectRatio(this RectTransform inRect, float inWidth, float inHeight) {
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(inRect)) {
+                UnityEditor.Undo.RecordObject(inRect, "Resizing RectTransform");
+            }
+            #endif // UNITY_EDITOR
+            
+            float aspectRatio = inHeight / inWidth;
+            Vector2 size = inRect.sizeDelta;
+            size.y = size.x * aspectRatio;
+            inRect.sizeDelta = size;
+
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(inRect)) {
+                UnityEditor.EditorUtility.SetDirty(inRect);
+            }
+            #endif // UNITY_EDITOR
+        }
+
         static public IEnumerator Show(this CanvasGroup inGroup, float inDuration, bool? inbRaycasts = true) {
             if (!inGroup.gameObject.activeSelf) {
                 inGroup.alpha = 0;

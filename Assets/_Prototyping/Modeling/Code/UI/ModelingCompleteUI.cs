@@ -25,7 +25,7 @@ namespace ProtoAqua.Modeling
         public void Load(ModelingScenarioData inData)
         {
             m_Title.SetText(inData.TitleId());
-            m_Desc.SetText(inData.CompleteId());
+            // m_Desc.SetText(inData.CompleteId());
             Show();
         }
 

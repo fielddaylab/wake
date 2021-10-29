@@ -1254,19 +1254,19 @@ namespace Aqua.Cameras
 
         #region Leaf
 
-        [LeafMember("CameraSnapToTarget")]
+        [LeafMember("CameraSnapToTarget"), UnityEngine.Scripting.Preserve]
         static private void LeafSnapToTarget()
         {
             Services.Camera.SnapToTarget();
         }
 
-        [LeafMember("CameraRecenterOnTarget")]
+        [LeafMember("CameraRecenterOnTarget"), UnityEngine.Scripting.Preserve]
         static private IEnumerator LeafRecenterOnTarget(float inDuration, Curve inCurve = Curve.Smooth)
         {
             return Services.Camera.RecenterOnTarget(inDuration, inCurve);
         }
 
-        [LeafMember("CameraSetMode")]
+        [LeafMember("CameraSetMode"), UnityEngine.Scripting.Preserve]
         static private void LeafSetMode(CameraMode inMode)
         {
             switch(inMode)
@@ -1281,7 +1281,7 @@ namespace Aqua.Cameras
             }
         }
 
-        [LeafMember("CameraPushTarget")]
+        [LeafMember("CameraPushTarget"), UnityEngine.Scripting.Preserve]
         static private void LeafPushTarget(ScriptObject inObject, float inLerp = 3, float inZoom = 1)
         {
             Assert.NotNull(inObject, "Cannot pass null target");
@@ -1296,13 +1296,13 @@ namespace Aqua.Cameras
             }
         }
 
-        [LeafMember("CameraPopTarget")]
+        [LeafMember("CameraPopTarget"), UnityEngine.Scripting.Preserve]
         static private void LeafPopTarget()
         {
             Services.Camera.PopTarget();
         }
 
-        [LeafMember("CameraMoveToPose")]
+        [LeafMember("CameraMoveToPose"), UnityEngine.Scripting.Preserve]
         static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth, Axis inAxis = Axis.XY)
         {
             Assert.NotNull(inPose, "Cannot pass null pose");
@@ -1317,7 +1317,7 @@ namespace Aqua.Cameras
             }
         }
 
-        [LeafMember("CameraSnapToPose")]
+        [LeafMember("CameraSnapToPose"), UnityEngine.Scripting.Preserve]
         static private void LeafSnapToPose(ScriptObject inPose)
         {
             Assert.NotNull(inPose, "Cannot pass null pose");

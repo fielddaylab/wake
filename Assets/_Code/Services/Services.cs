@@ -34,30 +34,30 @@ namespace Aqua
 
         #region Accessors
 
-        [ServiceReference] static public AssetsService Assets { get; private set; }
-        [ServiceReference] static public AudioMgr Audio { get; private set; }
-        [ServiceReference] static public CameraService Camera { get; private set; }
-        [ServiceReference] static public DataService Data { get; private set; }
-        [ServiceReference] static public EventService Events { get; private set; }
-        [ServiceReference] static public InputService Input { get; private set; }
-        [ServiceReference] static public LocService Loc { get; private set; }
-        [ServiceReference] static public PauseService Pause { get; private set; }
-        [ServiceReference] static public PhysicsService Physics { get; private set; }
-        [ServiceReference] static public ScriptingService Script { get; private set; }
-        [ServiceReference] static public StateMgr State { get; private set; }
-        [ServiceReference] static public TimeService Time { get; private set; }
-        [ServiceReference] static public TTSService TTS { get; private set; }
-        [ServiceReference] static public TweakMgr Tweaks { get; private set; }
-        [ServiceReference] static public UIMgr UI { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public AssetsService Assets { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public AudioMgr Audio { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public CameraService Camera { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public DataService Data { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public EventService Events { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public InputService Input { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public LocService Loc { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public PauseService Pause { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public PhysicsService Physics { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public ScriptingService Script { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public StateMgr State { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public TimeService Time { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public TTSService TTS { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public TweakMgr Tweaks { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public UIMgr UI { get; private set; }
 
         /// <summary>
         /// Animation services.
         /// </summary>
         static public class Animation
         {
-            [ServiceReference] static public AmbientTransformService AmbientTransforms { get; private set; }
-            [ServiceReference] static public AmbientRendererService AmbientRenderers { get; private set; }
-            [ServiceReference] static public SpriteAnimatorService Sprites { get; private set; }
+            [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientTransformService AmbientTransforms { get; private set; }
+            [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientRendererService AmbientRenderers { get; private set; }
+            [ServiceReference, UnityEngine.Scripting.Preserve] static public SpriteAnimatorService Sprites { get; private set; }
         }
     
         #endregion // Accessors

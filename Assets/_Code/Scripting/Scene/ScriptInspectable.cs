@@ -3,6 +3,7 @@ using UnityEngine;
 using Leaf.Runtime;
 using UnityEngine.EventSystems;
 using BeauUtil.UI;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -10,7 +11,7 @@ namespace Aqua.Scripting
     {
         [SerializeField] private PointerListener m_Proxy = null;
 
-        [LeafMember]
+        [LeafMember, Preserve]
         public void Inspect()
         {
             ScriptObject.Inspect(m_Parent);

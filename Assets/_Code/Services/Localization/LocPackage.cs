@@ -5,6 +5,7 @@ using System.Collections;
 using BeauUtil.Tags;
 using UnityEngine;
 using System.IO;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
@@ -12,7 +13,7 @@ namespace Aqua
     {
         private readonly Dictionary<StringHash32, LocNode> m_Nodes = new Dictionary<StringHash32, LocNode>(512);
 
-        [BlockMeta("basePath")] private string m_RootPath = string.Empty;
+        [BlockMeta("basePath"), Preserve] private string m_RootPath = string.Empty;
 
         #region Retrieve
 

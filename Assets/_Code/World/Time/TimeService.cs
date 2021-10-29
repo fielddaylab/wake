@@ -372,7 +372,7 @@ namespace Aqua
                 Sync
             }
 
-            [LeafMember("AdvanceTime")]
+            [LeafMember("AdvanceTime"), UnityEngine.Scripting.Preserve]
             static private void AdvanceTime(float inHours, SyncMode inMode = SyncMode.Sync)
             {
                 Services.Time.AdvanceTimeBy(inHours);
@@ -380,7 +380,7 @@ namespace Aqua
                     EventApplyTime();
             }
 
-            [LeafMember("SetTime")]
+            [LeafMember("SetTime"), UnityEngine.Scripting.Preserve]
             static private void EventSetTime(float inHours, SyncMode inMode = SyncMode.Sync)
             {
                 Services.Time.AdvanceTimeTo(inHours);
@@ -388,7 +388,7 @@ namespace Aqua
                     EventApplyTime();
             }
 
-            [LeafMember("SyncTime")]
+            [LeafMember("SyncTime"), UnityEngine.Scripting.Preserve]
             static private void EventApplyTime()
             {
                 Services.Time.ProcessQueuedChanges();

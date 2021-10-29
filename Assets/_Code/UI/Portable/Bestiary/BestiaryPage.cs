@@ -11,7 +11,7 @@ namespace Aqua.Portable
         public LocText ScientificName;
         public LocText CommonName;
         public LocText Description;
-        public StreamedRawImage Sketch;
+        public StreamedImageSetDisplay Sketch;
         public Button SelectButton;
 
         public GameObject NoFacts;

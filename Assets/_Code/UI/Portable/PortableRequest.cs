@@ -97,6 +97,8 @@ namespace Aqua.Portable
         Environments,
         Job,
         Tech,
+        Options,
+        Journal,
 
         [Hidden]
         NULL = 255

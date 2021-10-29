@@ -479,7 +479,7 @@ namespace ProtoAqua.Observation
 
         #region Leaf
 
-        [LeafMember("SetScanId")]
+        [LeafMember("SetScanId"), UnityEngine.Scripting.Preserve]
         static public void SetScanId(ScriptObject inObject, StringHash32 inScanId)
         {
             ScanSystem scanSystem = ScanSystem.Find<ScanSystem>();

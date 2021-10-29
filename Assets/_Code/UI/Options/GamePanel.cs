@@ -3,13 +3,13 @@ using AquaAudio;
 
 namespace Aqua.Option
 {
-    public class GamePanel : OptionsMenu.Panel 
+    public class GamePanel : OptionsDisplay.Panel 
     {
         #region Inspector
 
         #endregion // Inspector
 
-        private void Awake()
+        protected override void Init()
         {
         }
 

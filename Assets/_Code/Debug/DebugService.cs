@@ -22,7 +22,7 @@ namespace Aqua.Debugging
 
         #region Static
 
-        [ServiceReference] static private DebugService s_Instance;
+        [ServiceReference, UnityEngine.Scripting.Preserve] static private DebugService s_Instance;
 
         static private DMInfo s_RootMenu;
 

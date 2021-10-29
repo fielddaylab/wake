@@ -90,7 +90,7 @@ namespace ProtoAqua.Argumentation
 
             m_CharacterName.SetText(m_CharacterDef.NameId());
 
-            m_ChatRoutine = Routine.Start(this. OnStartChat());
+            m_ChatRoutine = Routine.Start(this, OnStartChat());
         }
 
         private void NotAvailable()
@@ -277,14 +277,14 @@ namespace ProtoAqua.Argumentation
             StateUtil.LoadPreviousSceneWithWipe();
         }
 
-        [LeafMember("VisitedArgueNode")]
+        [LeafMember("VisitedArgueNode"), UnityEngine.Scripting.Preserve]
         static private bool LeafVisitedNode(StringHash32 inId)
         {
             Assert.NotNull(s_Instance, "Argue Activity not started");
             return s_Instance.m_VisitedNodes.Contains(inId);
         }
 
-        [LeafMember("ArgueFlag")]
+        [LeafMember("ArgueFlag"), UnityEngine.Scripting.Preserve]
         static private bool LeafArgueFlag(StringHash32 inId)
         {
             Assert.NotNull(s_Instance, "Argue Activity not started");

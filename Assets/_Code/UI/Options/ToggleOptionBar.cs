@@ -23,6 +23,7 @@ namespace Aqua.Option
 
         [NonSerialized] private ToggleOptionBarItem[] m_Items;
         [NonSerialized] private int m_UsedItemCount;
+        [NonSerialized] private bool m_Syncing;
 
         public CastableAction<object> OnChanged;
 
@@ -41,6 +42,8 @@ namespace Aqua.Option
 
         public ToggleOptionBar Initialize<T>(TextId inLabel, TextId inDescription, Action<T> inSetter)
         {
+            m_Syncing = true;
+
             m_Label.SetText(inLabel);
             m_Hint.TooltipId = inDescription;
             OnChanged = CastableAction<object>.Create(inSetter);
@@ -66,13 +69,23 @@ namespace Aqua.Option
             }
 
             m_ToggleLayout.ForceRebuild();
+            m_Syncing = false;
         }
 
         public void Sync<T>(T inValue)
         {
+            m_Syncing = true;
+
+            for(int i = 0; i < m_UsedItemCount; i++) {
+                m_Items[i].Sync(false);
+            }
+
             ToggleOptionBarItem item = FindItem<T>(inValue);
-            if (item != null)
-                item.Toggle.SetIsOnWithoutNotify(true);
+            if (item != null) {
+                item.Sync(true);
+            }
+
+            m_Syncing = false;;
         }
 
         private ToggleOptionBarItem FindItem<T>(T inValue)
@@ -94,6 +107,10 @@ namespace Aqua.Option
 
         private void OnItemToggled(object inValue)
         {
+            if (m_Syncing) {
+                return;
+            }
+
             OnChanged.Invoke(inValue);
 
             OptionsData options = Services.Data.Options;

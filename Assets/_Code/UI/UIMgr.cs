@@ -317,7 +317,7 @@ namespace Aqua
 
         #region Leaf
 
-        [LeafMember("ShowPopup")]
+        [LeafMember("ShowPopup"), UnityEngine.Scripting.Preserve]
         static private IEnumerator LeafShowPopup([BindContext] ScriptThread inThread, string inHeader, string inDescription)
         {
             inThread.Dialog = null;

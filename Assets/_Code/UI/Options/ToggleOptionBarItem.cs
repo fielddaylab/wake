@@ -23,11 +23,24 @@ namespace Aqua.Option
 
         public Toggle Toggle { get { return m_Toggle; } }
 
+        private void Awake() {
+            m_Toggle.onValueChanged.AddListener(OnUpdated);
+        }
+
         public void Initialize(TextId inLabel, TextId inTooltip, object inValue)
         {
             m_Label.SetText(inLabel);
             m_Hint.TooltipId = inTooltip;
             UserData = inValue;
+        }
+
+        public void Sync(bool inbSelected) {
+            m_Toggle.SetIsOnWithoutNotify(inbSelected);
+            m_Toggle.targetGraphic.color = inbSelected ? AQColors.ContentBlue : AQColors.Teal;
+        }
+
+        private void OnUpdated(bool inbSelected) {
+            m_Toggle.targetGraphic.color = inbSelected ? AQColors.ContentBlue : AQColors.Teal;
         }
 
         object IKeyValuePair<object, ToggleOptionBarItem>.Key { get { return UserData; } }

@@ -3,7 +3,7 @@ using AquaAudio;
 
 namespace Aqua.Option
 {
-    public class AudioPanel : OptionsMenu.Panel
+    public class AudioPanel : OptionsDisplay.Panel
     {
         #region Inspector
 
@@ -20,11 +20,11 @@ namespace Aqua.Option
 
         #endregion // Inspector
 
-        private void Awake()
+        protected override void Init()
         {
             m_MasterBus.OnChanged = OnMasterBusChanged;
 
-            m_MasterBus.Initialize(AudioBusId.Master, 1);
+            m_MasterBus.Initialize(AudioBusId.Master, 0.9f);
             m_MusicBus.Initialize(AudioBusId.Music, 0.8f);
             m_SFXBus.Initialize(AudioBusId.SFX, 0.8f);
             m_VoiceBus.Initialize(AudioBusId.Voice, 0.8f);

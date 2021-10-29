@@ -41,7 +41,7 @@ namespace Aqua
         [Header("Contents")]
         [SerializeField] private LayoutGroup m_Layout = null;
         [SerializeField] private LocText m_HeaderText = null;
-        [SerializeField] private Image m_ImageDisplay = null;
+        [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
         [SerializeField] private LocText m_ContentsText = null;
         [SerializeField] private FactPools m_FactPools = null;
         [SerializeField] private Transform m_FactPoolTransform = null;
@@ -74,17 +74,17 @@ namespace Aqua
 
         #region Display
 
-        public Future<StringHash32> Display(string inHeader, string inText, Sprite inImage = null)
+        public Future<StringHash32> Display(string inHeader, string inText, StreamedImageSet inImage = default)
         {
             return Present(inHeader, inText, inImage, DefaultOkay);
         }
 
-        public Future<StringHash32> AskYesNo(string inHeader, string inText, Sprite inImage = null)
+        public Future<StringHash32> AskYesNo(string inHeader, string inText, StreamedImageSet inImage = default)
         {
             return Present(inHeader, inText, inImage, DefaultYesNo);
         }
 
-        public Future<StringHash32> Present(string inHeader, string inText, Sprite inImage, params NamedOption[] inOptions)
+        public Future<StringHash32> Present(string inHeader, string inText, StreamedImageSet inImage, params NamedOption[] inOptions)
         {
             Future<StringHash32> future = new Future<StringHash32>();
             m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inImage, inOptions));
@@ -105,7 +105,7 @@ namespace Aqua
             return future;
         }
 
-        private void Configure(string inHeader, string inText, Sprite inImage, NamedOption[] inOptions)
+        private void Configure(string inHeader, string inText, StreamedImageSet inImage, NamedOption[] inOptions)
         {
             if (!string.IsNullOrEmpty(inHeader))
             {
@@ -129,16 +129,7 @@ namespace Aqua
                 m_ContentsText.SetText(string.Empty);
             }
 
-            if (inImage != null)
-            {
-                m_ImageDisplay.sprite = inImage;
-                m_ImageDisplay.gameObject.SetActive(true);
-            }
-            else
-            {
-                m_ImageDisplay.gameObject.SetActive(false);
-                m_ImageDisplay.sprite = null;
-            }
+            m_ImageDisplay.Display(inImage);
 
             m_OptionCount = inOptions.Length;
             for(int i = 0; i < m_Buttons.Length; ++i)
@@ -175,7 +166,7 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, Sprite inImage, NamedOption[] inOptions)
+        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, NamedOption[] inOptions)
         {
             using(ioFuture)
             {
@@ -352,6 +343,7 @@ namespace Aqua
         protected override void OnHideComplete(bool inbInstant)
         {
             m_FactPools.FreeAll();
+            m_ImageDisplay.Clear();
 
             base.OnHideComplete(inbInstant);
         }

@@ -42,7 +42,6 @@ namespace ProtoAqua.Modeling
         [Header("Labels")]
         [SerializeField] private TextId m_TitleId = default;
         [SerializeField] private TextId m_DescId = default;
-        [SerializeField] private TextId m_CompleteId = default;
         [SerializeField] private TextId m_TickLabelId = default;
 
         [Header("Results")]
@@ -71,7 +70,6 @@ namespace ProtoAqua.Modeling
 
         public TextId TitleId() { return m_TitleId; }
         public TextId DescId() { return m_DescId; }
-        public TextId CompleteId() { return m_CompleteId; }
         public TextId TickLabelId() { return m_TickLabelId; }
 
         public StringHash32 BestiaryModelId() { return m_BestiaryModelId; }

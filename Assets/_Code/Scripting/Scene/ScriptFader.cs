@@ -4,6 +4,7 @@ using System.Collections;
 using Leaf.Runtime;
 using BeauRoutine;
 using UnityEngine.UI;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -18,7 +19,7 @@ namespace Aqua.Scripting
 
         #endregion // Inspector
 
-        [LeafMember("FadeTo")]
+        [LeafMember("FadeTo"), Preserve]
         public IEnumerator FadeTo(float inAlpha, float inDuration = 0.5f)
         {
             if (m_CanvasGroup)
@@ -32,7 +33,7 @@ namespace Aqua.Scripting
             return null;
         }
 
-        [LeafMember("SetFade")]
+        [LeafMember("SetFade"), Preserve]
         public void SetFade(float inAlpha)
         {
             if (m_CanvasGroup)

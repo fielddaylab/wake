@@ -199,7 +199,7 @@ namespace ProtoAqua.ExperimentV2
 
         #region Leaf
 
-        [LeafMember("ExperimentHasCritter")]
+        [LeafMember("ExperimentHasCritter"), UnityEngine.Scripting.Preserve]
         static private bool LeafTankHasCritter(StringHash32 inCritterId)
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
@@ -211,7 +211,7 @@ namespace ProtoAqua.ExperimentV2
             return false;
         }
 
-        [LeafMember("ExperimentHasEnv")]
+        [LeafMember("ExperimentHasEnv"), UnityEngine.Scripting.Preserve]
         static private bool LeafTankHasEnvironment(StringHash32 inEnvId)
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
@@ -223,7 +223,7 @@ namespace ProtoAqua.ExperimentV2
             return false;
         }
 
-        [LeafMember("ExperimentType")]
+        [LeafMember("ExperimentType"), UnityEngine.Scripting.Preserve]
         static private StringHash32 LeafTankType()
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
@@ -233,7 +233,7 @@ namespace ProtoAqua.ExperimentV2
             return null;
         }
 
-        [LeafMember("ExperimentViewed")]
+        [LeafMember("ExperimentViewed"), UnityEngine.Scripting.Preserve]
         static private bool LeafTankViewed(TankType inType)
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");
@@ -243,7 +243,7 @@ namespace ProtoAqua.ExperimentV2
             return false;
         }
 
-        [LeafMember("ExperimentIsRunning")]
+        [LeafMember("ExperimentIsRunning"), UnityEngine.Scripting.Preserve]
         static private bool LeafTankIsRunning(TankType inTankType = TankType.Unknown)
         {
             Assert.NotNull(s_Instance, "Cannot call experiment leaf methods when outside of experiment room");

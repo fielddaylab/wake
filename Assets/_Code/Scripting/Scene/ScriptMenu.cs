@@ -7,6 +7,7 @@ using System;
 using BeauUtil.Variants;
 using Leaf.Runtime;
 using BeauRoutine.Extensions;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -18,13 +19,13 @@ namespace Aqua.Scripting
 
         #endregion // Inspector
 
-        [LeafMember("ShowMenu")]
+        [LeafMember("ShowMenu"), Preserve]
         public void Show()
         {
             m_Menu.Show();
         }
 
-        [LeafMember("HideMenu")]
+        [LeafMember("HideMenu"), Preserve]
         public void Hide()
         {
             m_Menu.Hide();

@@ -31,7 +31,7 @@ namespace ProtoAqua.Argumentation
         #region Serialized
 
         // Ids
-        [BlockMeta("invalidNodeId")] private StringHash32 m_InvalidNodeId = null;
+        [BlockMeta("invalidNodeId"), UnityEngine.Scripting.Preserve] private StringHash32 m_InvalidNodeId = null;
 
         [BlockMeta("showClaims"), Preserve]
         private void SetClaimsActive() {
@@ -129,7 +129,7 @@ namespace ProtoAqua.Argumentation
             m_LinkEntries.PushBack(link);
         }
 
-        [BlockMeta("nextNodeId")]
+        [BlockMeta("nextNodeId"), UnityEngine.Scripting.Preserve]
         private void AddNextTonode(StringSlice inNextData) {
             StringSlice nodeId;
             StringSlice conditions;
@@ -150,12 +150,12 @@ namespace ProtoAqua.Argumentation
             m_NextEntries.PushBack(next);
         }
 
-        [BlockMeta("setFlag")]
+        [BlockMeta("setFlag"), UnityEngine.Scripting.Preserve]
         private void SetFlag(StringHash32 inId) {
             m_SetFlags.PushBack(inId);
         }
 
-        [BlockMeta("unsetFlag")]
+        [BlockMeta("unsetFlag"), UnityEngine.Scripting.Preserve]
         private void UnsetFlag(StringHash32 inId) {
             m_UnsetFlags.PushBack(inId);
         }

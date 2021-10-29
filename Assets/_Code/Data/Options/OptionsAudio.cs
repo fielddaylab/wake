@@ -84,7 +84,7 @@ namespace Aqua.Option
 
         public void SetDefaults()
         {
-            Master.SetDefaults(1);
+            Master.SetDefaults(0.9f);
             SFX.SetDefaults(0.8f);
             Music.SetDefaults(0.8f);
             Voice.SetDefaults(0.8f);

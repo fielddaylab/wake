@@ -3,7 +3,7 @@ using AquaAudio;
 
 namespace Aqua.Option
 {
-    public class AccessibilityPanel : OptionsMenu.Panel
+    public class AccessibilityPanel : OptionsDisplay.Panel
     {
         #region Inspector
 
@@ -19,7 +19,7 @@ namespace Aqua.Option
 
         #endregion // Inspector
 
-        private void Awake()
+        protected override void Init()
         {
             m_PhotosensitiveOption.Initialize("options.accessibility.photosensitive.label",
                 "options.accessibility.photosensitive.tooltip",
@@ -63,7 +63,7 @@ namespace Aqua.Option
 
         private void UpdateTTSGroup()
         {
-            bool bHasTTS = true; // TTS.IsAvailable();
+            bool bHasTTS = TTS.IsAvailable();
 
             if (bHasTTS)
             {

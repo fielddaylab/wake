@@ -53,6 +53,7 @@ namespace Aqua.Editor
                 }
             }
 
+            PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
         }
 

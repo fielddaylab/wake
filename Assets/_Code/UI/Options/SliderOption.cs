@@ -67,6 +67,7 @@ namespace Aqua.Option
             {
                 valueString = inValue.ToString();
             }
+            
             m_Value.SetText(valueString);
         }
 

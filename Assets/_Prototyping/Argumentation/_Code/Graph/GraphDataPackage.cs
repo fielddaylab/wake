@@ -14,10 +14,10 @@ namespace ProtoAqua.Argumentation
         [NonSerialized] private readonly Dictionary<StringHash32, ArgueLink> m_Links = new Dictionary<StringHash32, ArgueLink>(32);
 
         // Package Ids
-        [BlockMeta("rootNodeId")] private StringHash32 m_RootNodeId = null;
-        [BlockMeta("endNodeId")] private StringHash32 m_EndNodeId = null;
-        [BlockMeta("defaultInvalidNodeId")] private StringHash32 m_DefaultInvalidNodeId = null;
-        [BlockMeta("characterId")] private StringHash32 m_CharacterId = null;
+        [BlockMeta("rootNodeId"), UnityEngine.Scripting.Preserve] private StringHash32 m_RootNodeId = null;
+        [BlockMeta("endNodeId"), UnityEngine.Scripting.Preserve] private StringHash32 m_EndNodeId = null;
+        [BlockMeta("defaultInvalidNodeId"), UnityEngine.Scripting.Preserve] private StringHash32 m_DefaultInvalidNodeId = null;
+        [BlockMeta("characterId"), UnityEngine.Scripting.Preserve] private StringHash32 m_CharacterId = null;
 
         #region Accessors
 
