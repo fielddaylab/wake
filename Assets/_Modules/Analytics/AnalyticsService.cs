@@ -103,27 +103,8 @@ namespace Aqua
 
         #region Logging Variables
 
-        private readonly Dictionary<string, int> m_JobNamesToIDs = new Dictionary<string, int> {
-            { "no-active-job", 0 },
-            { "kelp-welcome", 1 },
-            { "kelp-urchin-barren", 2 },
-            { "kelp-save-urchin-barren", 3 },
-            { "kelp-bull-kelp-forest", 4 },
-            { "coral-urchin-friends", 5 },
-            { "coral-remove-sarg", 6 },
-            { "coral-invade", 7 },
-            { "coral-/fishy-bizz", 8 },
-            { "coral-clear-sarg", 9 },
-            { "bayou-oxygen-tracking", 10 },
-            { "bayou-save-our-shrimp", 11 },
-            { "bayou-shrip-tastrophe", 12 },
-            { "arctic-missing-whale", 13 },
-            { "arctic-time-of-death", 14 },
-            { "arctic-whale-csi", 15 }  
-        };
-
         private string m_UserCode = string.Empty;
-        private int m_CurrentJobId = 0;
+        private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
         private string m_PreviousJobName = "no-active-job";
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
@@ -344,20 +325,14 @@ namespace Aqua
             if (jobId.IsEmpty)
             {
                 m_CurrentJobName = "no-active-job";
-                m_CurrentJobId = 0;
+                m_CurrentJobId = -1;
             }
             else
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
-                int id = -1;
+                m_CurrentJobId = JobIds.IndexOf(jobId);
 
-                if (m_JobNamesToIDs.TryGetValue(m_CurrentJobName, out id))
-                {
-                    m_CurrentJobId = m_JobNamesToIDs[m_CurrentJobName];
-                }
-                else
-                {
-                    m_CurrentJobId = id;
+                if (m_CurrentJobId == -1) {
                     Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
                 }
             }
@@ -377,20 +352,14 @@ namespace Aqua
             if (jobId.IsEmpty)
             {
                 m_CurrentJobName = "no-active-job";
-                m_CurrentJobId = 0;
+                m_CurrentJobId = -1;
             }
             else
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
-                int id = -1;
+                m_CurrentJobId = JobIds.IndexOf(jobId);
 
-                if (m_JobNamesToIDs.TryGetValue(m_CurrentJobName, out id))
-                {
-                    m_CurrentJobId = m_JobNamesToIDs[m_CurrentJobName];
-                }
-                else
-                {
-                    m_CurrentJobId = id;
+                if (m_CurrentJobId == -1) {
                     Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
                 }
             }
@@ -422,7 +391,7 @@ namespace Aqua
 
             m_PreviousJobName = m_CurrentJobName;
             m_CurrentJobName = "no-active-job";
-            m_CurrentJobId = 0;
+            m_CurrentJobId = -1;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)
