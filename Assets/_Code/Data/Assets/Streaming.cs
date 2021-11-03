@@ -205,12 +205,13 @@ namespace Aqua {
 
         static private Texture2D LoadTextureAsync(StringHash32 id, string url, AssetMeta meta) {
             Texture2D texture = CreatePlaceholderTexture(url, false);
-
             string correctedUrl = PathToURL(StreamingPath(url));
             var request = meta.Loader = new UnityWebRequest(correctedUrl, UnityWebRequest.kHttpVerbGET);
             request.downloadHandler = new DownloadHandlerBuffer();
-            var sent = request.SendWebRequest();
-            sent.completed += (r) => HandleTextureUWRFinished(id, url, meta, request);
+            Async.InvokeAsync(() => {
+                var sent = request.SendWebRequest();
+                sent.completed += (r) => HandleTextureUWRFinished(id, url, meta, request);
+            });
             s_LoadCount++;
             return texture;
         }

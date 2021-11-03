@@ -23,7 +23,7 @@
 {@kevin}    So this is a flying shop?
             How'd you manage that?
 {@merchant} I have my ways!
-{@kevin}    That's not an answer...
+{@kevin #confused}  ...That's not exactly an answer.
 
 :: talk.base.1
 @trigger    InspectObject
@@ -63,7 +63,7 @@ $if local:cashCost > 0, local:gearCost > 0
 $elseif local:cashCost > 0
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
     That'll be {cash}{$local:cashCost}{/cash}!
-$elseif
+$elseif local:gearCost > 0
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
     That'll be {gears}{$local:gearCost}{/gears}!
 $else
@@ -99,6 +99,76 @@ $set    shop:notEnoughCount + 1
 :: purchaseAttempt.generic.refused
 
 {@merchant} Okay! Well if you find something you want, let me know.
+
+// specialized purchase dialog
+
+:: purchaseAttempt.propGuard
+@trigger    ShopAttemptBuy
+@when       itemId == "PropGuard"
+@cutscene
+
+{@merchant} The {nameof PropGuard}! A wise choice!
+            You don't want your propeller getting tangled up out there when moving through thick vegetation!
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.flashlight
+@trigger    ShopAttemptBuy
+@when       itemId == "Flashlight"
+@cutscene
+
+{@merchant} Nice, I see you're looking at the {nameof Flashlight}!
+            The ocean can get pretty dark out there, and who knows what's hiding in it?
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.engine
+@trigger    ShopAttemptBuy
+@when       itemId == "Engine"
+@cutscene
+
+{@merchant} I see you're a person of taste! The {nameof Engine} is a very powerful engine!
+            With it, you'll be able to move against strong undersea currents!
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.hull
+@trigger    ShopAttemptBuy
+@when       itemId == "Hull"
+@cutscene
+
+{@merchant} Oh, you're looking to venture {h}deep{/h}? Then the {nameof Hull} should be your next purchase!
+            With this plating, your sub will be able to withstand much more pressure!
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.iceBreaker
+@trigger    ShopAttemptBuy
+@when       itemId == "Icebreaker"
+@cutscene
+
+{@merchant} Been wondering when you'd take a look at that! The {nameof Icebreaker} is a powerful drill!
+$if player:currentStation != "ArcticStation"
+            It can destroy chunks of ice and open passageways for you. A wise choice if you plan on visiting the {nameof ArcticStation}!
+$else
+            It can destroy chunks of ice nd open assageways for you. A wise choice if you're going to explore the chilly waters below us!
+$endif
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.genericCostLine
+
+$if local:cashCost > 0, local:gearCost > 0
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    It'll be {cash}{$local:cashCost}{/cash} and {gears}{$local:gearCost}{/gears}!
+$elseif local:cashCost > 0
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    It'll be {cash}{$local:cashCost}{/cash}!
+$elseif local:gearCost > 0
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    It'll be {gears}{$local:gearCost}{/gears}!
+$else
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?
+$endif
+
+$choice .purchaseAttempt.generic.success, CanAfford($(local:itemId)); {h}Yes!{/h}
+$choice .purchaseAttempt.generic.cantAfford, !CanAfford($(local:itemId)); Yes, but...
+$choice .purchaseAttempt.generic.refused; Just looking!
 
 // exit
 

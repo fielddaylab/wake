@@ -638,6 +638,8 @@ namespace Aqua
                 Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+
+            Routine.StartLoop(Frame.IncrementFrame).SetPriority(999999);
         }
 
         protected override void Shutdown()

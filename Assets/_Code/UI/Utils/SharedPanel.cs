@@ -12,7 +12,7 @@ namespace Aqua
     {
         [NonSerialized] private Canvas m_CachedCanvas;
         [NonSerialized] private int m_OriginalSortingLayer;
-        [NonSerialized] private bool m_BroughtToFront = false;
+        [NonSerialized] private int m_BroughtToFront = 0;
 
         public Canvas Canvas
         {
@@ -87,13 +87,13 @@ namespace Aqua
         /// <summary>
         /// Brings this panel in front of cutscene.
         /// </summary>
-        public void BringToFront()
+        public void BringToFront(int inLayerId = GameSortingLayers.Cutscene)
         {
-            if (m_BroughtToFront)
+            if (m_BroughtToFront != inLayerId)
                 return;
             
-            Canvas.sortingLayerID = GameSortingLayers.Cutscene;
-            m_BroughtToFront = true;
+            Canvas.sortingLayerID = inLayerId;
+            m_BroughtToFront = inLayerId;
         }
 
         /// <summary>
@@ -101,11 +101,11 @@ namespace Aqua
         /// </summary>
         public void ResetOrder()
         {
-            if (!m_BroughtToFront)
+            if (m_BroughtToFront != 0)
                 return;
             
             Canvas.sortingLayerID = m_OriginalSortingLayer; 
-            m_BroughtToFront = false;
+            m_BroughtToFront = 0;
         }
 
         #endregion // Ordering

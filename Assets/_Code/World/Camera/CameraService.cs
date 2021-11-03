@@ -51,10 +51,32 @@ namespace Aqua.Cameras
             public Camera Camera;
             public Plane GameplayPlane;
             public Matrix4x4 ViewportToWorld;
+            public float GameplayDistance;
 
-            public Vector4 CastToPlane(Transform inTransform)
+            public Vector3 CastToPlane(Transform inTransform)
             {
-                Vector3 from = Camera.WorldToViewportPoint(inTransform.position, Camera.MonoOrStereoscopicEye.Mono);
+                Vector3 transformPos = inTransform.position;
+                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
+
+                from.z = 0;
+                Vector3 near = ViewportToWorld.MultiplyPoint(from);
+                
+                from.z = 1;
+                Vector3 far = ViewportToWorld.MultiplyPoint(from);
+
+                Ray ray = new Ray(near, far - near);
+                Vector3 planeNormal = GameplayPlane.normal;
+
+                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
+                return near + (ray.direction * gameplayDist);
+            }
+
+            public Vector3 CastToPlane(Transform inTransform, out float outDistanceRatio)
+            {
+                Vector3 transformPos = inTransform.position;
+                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
+
+                Plane transformPlane = new Plane(GameplayPlane.normal, transformPos);
                 
                 from.z = 0;
                 Vector3 near = ViewportToWorld.MultiplyPoint(from);
@@ -65,8 +87,15 @@ namespace Aqua.Cameras
                 Ray ray = new Ray(near, far - near);
                 Vector3 planeNormal = GameplayPlane.normal;
 
-                float dist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
-                return near + (ray.direction * dist);
+                float originNormalDot = Vector3.Dot(ray.origin, planeNormal);
+                float directionNormalDot = Vector3.Dot(ray.direction, planeNormal);
+                float gameplayDist = (-originNormalDot - GameplayPlane.distance) / directionNormalDot;
+                float transformDist = (-originNormalDot - transformPlane.distance) / directionNormalDot;
+                
+                Debug.DrawRay(ray.origin, ray.direction * transformDist, Color.yellow, 0.2f);
+
+                outDistanceRatio = transformDist / GameplayDistance;
+                return near + (ray.direction * gameplayDist);
             }
         }
 
@@ -90,6 +119,8 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
 
         [NonSerialized] private Plane m_LastGameplayPlane;
+        [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
+        [NonSerialized] private float m_LastGameplayPlaneDistance;
         [NonSerialized] private Matrix4x4 m_LastVPMatrix;
         [NonSerialized] private Matrix4x4 m_LastVPMatrixInv;
 
@@ -112,6 +143,8 @@ namespace Aqua.Cameras
         public Vector2 Position { get { return m_PositionRoot.localPosition; } }
         public float Zoom { get { return m_FOVPlane.Zoom; } }
         public float AspectRatio { get { return m_Camera.aspect; } }
+
+        public Vector3 FocusPosition { get { return m_LastGameplayPlaneCenter; }}
 
         public CameraMode Mode { get { return m_Mode; } }
 
@@ -285,17 +318,25 @@ namespace Aqua.Cameras
         }
 
         private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
+        private static readonly Vector3 CenterViewportPos = new Vector3(0.5f, 0.5f, 0);
 
         private void UpdateCachedPlanes()
         {
+            Vector3 cameraForwardVector = m_PositionRoot.forward;
+
             if (m_FOVPlane)
             {
-                m_LastGameplayPlane = new Plane(-m_PositionRoot.forward, m_FOVPlane.Target.position);
+                m_LastGameplayPlane = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
             }
             else
             {
-                m_LastGameplayPlane = default(Plane);
+                m_LastGameplayPlane = new Plane(-cameraForwardVector, Vector3.zero);
             }
+
+            Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
+            m_LastGameplayPlane.Raycast(r, out float planeCastDist);
+            m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
+            m_LastGameplayPlaneDistance = planeCastDist;
 
             Matrix4x4 projWorld = m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix;
             m_LastVPMatrix = projWorld;
@@ -1184,7 +1225,8 @@ namespace Aqua.Cameras
             {
                 Camera = m_Camera,
                 GameplayPlane = m_LastGameplayPlane,
-                ViewportToWorld = m_LastVPMatrixInv
+                ViewportToWorld = m_LastVPMatrixInv,
+                GameplayDistance = m_LastGameplayPlaneDistance
             };
         }
 

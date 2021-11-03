@@ -55,6 +55,10 @@ namespace Aqua.Editor
 
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
+
+            if (UnityEditorInternal.InternalEditorUtility.inBatchMode) {
+                NoOverridesAllowed.RevertInAllScenes();
+            }
         }
 
         static private bool IsAutoOptimizeEnabled()

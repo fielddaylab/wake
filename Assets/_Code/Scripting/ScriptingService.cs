@@ -19,11 +19,12 @@ using BeauUtil.Services;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
 using UnityEngine.Scripting;
+using BeauUtil.Blocks;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(UIMgr), typeof(LocService), typeof(AssetsService), typeof(TweakMgr))]
-    public partial class ScriptingService : ServiceBehaviour, IPauseable, IDebuggable
+    public partial class ScriptingService : ServiceBehaviour, IPauseable, IDebuggable, ILoadable
     {
         public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
@@ -36,7 +37,6 @@ namespace Aqua
         // event parsing
         private TagStringEventHandler m_TagEventHandler;
         private CustomTagParserConfig m_TagEventParser;
-        private LeafRuntime<ScriptNode> m_ThreadRuntime;
         private HashSet<StringHash32> m_SkippedEvents;
         private HashSet<StringHash32> m_DialogOnlyEvents;
         private MethodCache<LeafMember> m_LeafCache;
@@ -47,6 +47,11 @@ namespace Aqua
         // script nodes
         private HashSet<ScriptNodePackage> m_LoadedPackages;
         private Dictionary<LeafAsset, ScriptNodePackage> m_LoadedPackageSourcesAssets;
+
+        private RingBuffer<LeafAsset> m_PackageLoadQueue = new RingBuffer<LeafAsset>();
+        private Routine m_PackageLoadWorker;
+        private LeafAsset m_CurrentPackageBeingLoaded;
+        private AsyncHandle m_CurrentPackageLoadHandle;
 
         private Dictionary<StringHash32, ScriptNode> m_LoadedEntrypoints;
         private Dictionary<StringHash32, TriggerResponseSet> m_LoadedResponses;
@@ -495,6 +500,15 @@ namespace Aqua
 
         #endregion // Pausing
 
+        #region Loading
+
+        public bool IsLoading()
+        {
+            return m_PackageLoadQueue.Count > 0 || m_CurrentPackageBeingLoaded != null;
+        }
+
+        #endregion // Loading
+
         #region Unity Events
 
         private void LateUpdate()
@@ -529,6 +543,10 @@ namespace Aqua
             m_LeafCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             m_LeafCache.LoadStatic();
 
+            BlockMetaCache.Default.Cache(typeof(ScriptNode));
+            BlockMetaCache.Default.Cache(typeof(ScriptNodePackage));
+            LookupTables.ToStringLookup(1);
+
             m_ParserPool = new DynamicPool<TagStringParser>(4, (p) => {
                 var parser = new TagStringParser();
                 parser.Delimiters = Parsing.InlineEvent;
@@ -536,8 +554,6 @@ namespace Aqua
                 parser.ReplaceProcessor = m_TagEventParser;
                 return parser;
             });
-
-            m_ThreadRuntime = new LeafRuntime<ScriptNode>(this);
 
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
             m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);

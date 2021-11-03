@@ -36,8 +36,9 @@ namespace Aqua
         [Label("UI/World UI")] WorldUI = 0x100,
         [Label("UI/Game UI")] GameUI = 0x200,
         [Label("UI/Tutorial UI")] TutorialUI = 0x400,
+        [Label("UI/Portable")] Portable = 0x80,
 
-        [Hidden] AllUI = WorldUI | GameUI | TutorialUI,
+        [Hidden] AllUI = WorldUI | GameUI | TutorialUI | Portable,
 
         [Label("System/System")] System = 0x100000,
         [Label("System/Error")] SystemError = 0x200000,

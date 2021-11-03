@@ -57,6 +57,9 @@ namespace Aqua.Shop {
         public void SetItemsSelectable(bool selectable) {
             foreach(var item in m_Items) {
                 item.Clickable.gameObject.SetActive(selectable);
+                if (item.ItemDescriptionGroup) {
+                    item.ItemDescriptionGroup.SetActive(selectable);
+                }
             }
         }
 
@@ -113,6 +116,9 @@ namespace Aqua.Shop {
                 item.Clickable.UserData = item;
                 item.Clickable.onClick.AddListener(OnItemClicked);
                 item.Clickable.gameObject.SetActive(false);
+                if (item.ItemDescriptionGroup) {
+                    item.ItemDescriptionGroup.gameObject.SetActive(false);
+                }
                 UpdateItem(item, profileData);
             }
         }

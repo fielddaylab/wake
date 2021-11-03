@@ -72,8 +72,6 @@ namespace Aqua.Portable {
 
             m_InfoPage.gameObject.SetActive(false);
 
-            m_Request.Dispose();
-
             m_CurrentEntry = null;
             m_SelectCounter = 0;
 
@@ -98,6 +96,7 @@ namespace Aqua.Portable {
 
         private void OnFactClicked(BFBase inFact) {
             Assert.True(m_Request.Type == PortableRequestType.SelectFact);
+            Services.Data.SetVariable("portable:lastSelectedFactId", inFact.Id);
             m_Request.Response.Complete(inFact.Id);
             m_ParentMenu.Hide();
         }
@@ -241,6 +240,10 @@ namespace Aqua.Portable {
                     break;
                 }
             }
+        }
+
+        public override void ClearRequest() {
+            m_Request = default;
         }
     }
 }

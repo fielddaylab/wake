@@ -37,6 +37,7 @@ namespace Aqua.Portable {
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private PortableRequest m_Request;
+        [NonSerialized] private float m_ActiveOnPosition;
 
         #region Unity Events
 
@@ -72,6 +73,10 @@ namespace Aqua.Portable {
             PortableTabToggle requestTab = null;
             if (m_Request.Type > 0) {
                 requestTab = GetAppButton(m_Request.App);
+                if (m_Request.Type == PortableRequestType.SelectFact) {
+                    GetAppButton(PortableAppId.Organisms).App.HandleRequest(m_Request);
+                    GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
+                }
             } else {
                 PortableAppId lastKnownApp = (PortableAppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
                 requestTab = GetAppButton(lastKnownApp);
@@ -103,9 +108,12 @@ namespace Aqua.Portable {
 
             if (m_Request.Type > 0 && Services.UI.IsLetterboxed() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
                 m_Input.Override = true;
-                BringToFront();
+                Services.Input.PushFlags(InputLayerFlags.Portable, this);
+                m_ActiveOnPosition = m_OnPosition * 0.25f;
+                BringToFront(GameSortingLayers.AboveCutscene);
             } else {
                 m_Input.Override = null;
+                m_ActiveOnPosition = m_OnPosition;
             }
 
             m_Canvas.enabled = true;
@@ -121,10 +129,17 @@ namespace Aqua.Portable {
             Services.Data?.SetVariable("portable:open", false);
 
             m_Input.PopPriority();
-            m_Input.Override = null;
+            if (m_Input.Override.HasValue && m_Input.Override.Value == true) {
+                Services.Input?.PopFlags(this);
+                m_Input.Override = null;
+            }
 
             m_Request.Dispose();
             m_AppNavigationGroup.interactable = true;
+
+            foreach(var button in m_AppButtons) {
+                button.App.ClearRequest();
+            }
 
             Services.Events?.Dispatch(GameEvents.PortableClosed);
 
@@ -152,7 +167,7 @@ namespace Aqua.Portable {
             HandleRequest();
 
             yield return Routine.Combine(
-                m_RootTransform.AnchorPosTo(m_OnPosition, m_ToOnAnimSettings, Axis.X),
+                m_RootTransform.AnchorPosTo(m_ActiveOnPosition, m_ToOnAnimSettings, Axis.X),
                 m_Fader.FadeTo(1, m_ToOnAnimSettings.Time)
             );
         }
@@ -160,7 +175,7 @@ namespace Aqua.Portable {
         protected override void InstantTransitionToShow() {
             m_Fader.alpha = 1;
             m_Fader.gameObject.SetActive(true);
-            m_RootTransform.SetAnchorPos(m_OnPosition, Axis.X);
+            m_RootTransform.SetAnchorPos(m_ActiveOnPosition, Axis.X);
             m_RootTransform.gameObject.SetActive(true);
             HandleRequest();
         }

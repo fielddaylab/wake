@@ -18,18 +18,17 @@ namespace Aqua.Scripting
         // Properties
         private string m_FullName = null;
         private ScriptNodeFlags m_Flags = 0;
-        private ScriptNodePackage m_Package = null;
+        private ScriptNodePackage m_ScriptPackage = null;
         private TriggerNodeData m_TriggerData = null;
         private StringHash32 m_TriggerOrFunctionId = null;
         private StringHash32 m_Target = null;
-        private HashSet<StringHash32> m_Tags = new HashSet<StringHash32>();
 
         #endregion // Serialized
 
         public ScriptNode(ScriptNodePackage inPackage, string inFullId)
             : base(inFullId, inPackage)
         {
-            m_Package = inPackage;
+            m_ScriptPackage = inPackage;
             m_Id = inFullId;
             m_FullName = inFullId;
         }
@@ -37,14 +36,13 @@ namespace Aqua.Scripting
         public string FullName() { return m_FullName; }
 
         public ScriptNodeFlags Flags() { return m_Flags; }
-        public ScriptNodePackage Package() { return m_Package; }
+        public new ScriptNodePackage Package() { return m_ScriptPackage; }
 
         public bool IsCutscene() { return (m_Flags & ScriptNodeFlags.Cutscene) != 0; }
         public bool IsTrigger() { return (m_Flags & ScriptNodeFlags.TriggerResponse) != 0; }
         public bool IsFunction() { return (m_Flags & ScriptNodeFlags.Function) != 0; }
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
-        public IReadOnlyCollection<StringHash32> Tags() { return m_Tags; }
         public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
 
         public PersistenceLevel TrackingLevel()
@@ -201,13 +199,6 @@ namespace Aqua.Scripting
                 m_TriggerData.RepeatDuration = (int) inDuration;
                 m_TriggerData.OnceLevel = PersistenceLevel.Untracked;
             }
-        }
-
-        [BlockMeta("tags"), Preserve]
-        private void SetTags(StringSlice inTags)
-        {
-            foreach(var tag in inTags.EnumeratedSplit(Parsing.CommaChar, StringSplitOptions.RemoveEmptyEntries))
-                m_Tags.Add(tag.Trim());
         }
 
         #endregion // Parser

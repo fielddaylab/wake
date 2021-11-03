@@ -25,6 +25,10 @@ namespace Aqua.Portable
         {
         }
 
+        public virtual void ClearRequest()
+        {
+        }
+
         protected override void Awake()
         {
             base.Awake();

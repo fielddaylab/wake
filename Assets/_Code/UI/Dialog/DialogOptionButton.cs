@@ -12,6 +12,7 @@ using Leaf;
 using Leaf.Runtime;
 using BeauUtil.Variants;
 using BeauUtil.Debugger;
+using Aqua.Portable;
 
 namespace Aqua
 {
@@ -38,6 +39,7 @@ namespace Aqua
         [NonSerialized] private Vector2 m_OriginalAnchor;
 
         [NonSerialized] private LeafChoice m_Choice;
+        [NonSerialized] private bool m_FactMode;
 
         private void Awake()
         {
@@ -51,12 +53,13 @@ namespace Aqua
             m_Option = Variant.Null;
         }
 
-        public void Populate(Variant inOption, string inText, LeafChoice inChoice)
+        public void Populate(Variant inOption, string inText, LeafChoice inChoice, bool inbFactMode)
         {
             m_Option = inOption;
             m_Text.SetText(inText);
             m_Choice = inChoice;
             m_Group.alpha = 0;
+            m_FactMode = inbFactMode;
         }
 
         public void Prep()
@@ -86,10 +89,20 @@ namespace Aqua
             );
         }
 
-        private void OnClick()
-        {
+        private void OnClick() {
             Assert.NotNull(m_Choice);
-            m_Choice.Choose(m_Option);
+            if (m_FactMode) {
+                PortableMenu.RequestFact()
+                    .OnComplete(OnFactSelected);
+            } else {
+                m_Choice.Choose(m_Option);
+                m_Group.blocksRaycasts = false;
+            }
+        }
+
+        private void OnFactSelected(StringHash32 inFactId) {
+            Assert.NotNull(m_Choice);
+            m_Choice.Choose(m_Option, inFactId);
             m_Group.blocksRaycasts = false;
         }
     }

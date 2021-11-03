@@ -7,6 +7,8 @@ using Leaf;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
 using Aqua.Debugging;
+using System.Collections;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -49,20 +51,21 @@ namespace Aqua
 
         public void LoadScript(LeafAsset inAsset)
         {
-            if (m_LoadedPackageSourcesAssets.ContainsKey(inAsset))
+            if (m_LoadedPackageSourcesAssets.ContainsKey(inAsset) || m_CurrentPackageBeingLoaded == inAsset || m_PackageLoadQueue.Contains(inAsset))
                 return;
 
-            using(Profiling.Time(string.Format("Loading script {0}", inAsset.name)))
+            m_PackageLoadQueue.PushBack(inAsset);
+            if (!m_PackageLoadWorker)
             {
-                ScriptNodePackage package = LeafAsset.Compile(inAsset, ScriptNodePackage.Generator.Instance);
-                package.BindAsset(inAsset);
-                AddPackage(package);
-                m_LoadedPackageSourcesAssets.Add(inAsset, package);
+                m_PackageLoadWorker = Routine.Start(this, PackageLoadLoop());
             }
         }
 
         public void UnloadScript(LeafAsset inAsset)
         {
+            if (CancelPackageLoad(inAsset))
+                return;
+
             ScriptNodePackage package;
             if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package))
             {
@@ -161,6 +164,47 @@ namespace Aqua
             }
 
             DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Removed package '{0}'", inPackage.Name());
+        }
+
+        private bool CancelPackageLoad(LeafAsset inAsset)
+        {
+            if (m_CurrentPackageBeingLoaded == inAsset)
+            {
+                m_CurrentPackageBeingLoaded = null;
+                m_CurrentPackageLoadHandle.Cancel();
+                return true;
+            }
+
+            return false;
+        }
+
+        private IEnumerator PackageLoadLoop()
+        {
+            LeafAsset assetToLoad;
+            IEnumerator loader;
+            ScriptNodePackage package;
+            while(m_PackageLoadQueue.TryPopFront(out assetToLoad))
+            {
+                m_CurrentPackageBeingLoaded = assetToLoad;
+                package = LeafAsset.CompileAsync(assetToLoad, ScriptNodePackage.Generator.Instance, out loader);
+                m_CurrentPackageLoadHandle = Async.Schedule(loader, AsyncFlags.HighPriority);
+                using(Profiling.Time(string.Format("loading script '{0}'", assetToLoad.name))) {
+                    yield return m_CurrentPackageLoadHandle;
+                }
+
+                if (m_CurrentPackageBeingLoaded != assetToLoad) {
+                    package.Clear();
+                    continue;
+                }
+
+                package.BindAsset(assetToLoad);
+                AddPackage(package);
+                m_LoadedPackageSourcesAssets.Add(assetToLoad, package);
+                // yield return null;
+            }
+
+            m_CurrentPackageBeingLoaded = null;
+            m_CurrentPackageLoadHandle = default;
         }
 
         #endregion // Packages

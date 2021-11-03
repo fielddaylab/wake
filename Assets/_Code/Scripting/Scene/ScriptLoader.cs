@@ -16,15 +16,14 @@ namespace Aqua.Scripting
 
         public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext)
         {
-            using(Profiling.Time("loading scripts"))
+            for(int i = 0; i < m_Scripts.Length; ++i)
             {
-                for(int i = 0; i < m_Scripts.Length; ++i)
-                {
-                    LeafAsset file = m_Scripts[i];
-                    Services.Script.LoadScript(file);
-                    yield return null;
-                }
+                LeafAsset file = m_Scripts[i];
+                Services.Script.LoadScript(file);
             }
+
+
+            return null;
         }
 
         public void OnSceneUnload(SceneBinding inScene, object inContext)

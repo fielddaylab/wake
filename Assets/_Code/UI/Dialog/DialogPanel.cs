@@ -527,7 +527,7 @@ namespace Aqua
 
         #region Options
 
-        internal IEnumerator ShowOptions(ScriptNode inNode, LeafChoice inChoice, ILeafContentResolver inResolver, object inContext)
+        internal IEnumerator ShowOptions(ScriptNode inNode, LeafChoice inChoice, ILeafPlugin inPlugin, object inContext)
         {
             if (!m_OptionContainer)
                 yield break;
@@ -547,9 +547,9 @@ namespace Aqua
                 DialogOptionButton button = m_OptionButtons[buttonIdx++];
                 button.gameObject.SetActive(true);
 
-                inResolver.TryGetLine(option.LineCode, inNode, out line);
+                LeafUtils.TryLookupLine(inPlugin, option.LineCode, inNode, out line);
                 Services.Script.ParseToTag(ref m_TempTagString, line, inContext);
-                button.Populate(option.TargetId, m_TempTagString.RichText, inChoice);
+                button.Populate(option.TargetId, m_TempTagString.RichText, inChoice, (option.Flags & LeafChoice.OptionFlags.IsSelector) != 0);
             }
 
             m_TempTagString.Clear();
