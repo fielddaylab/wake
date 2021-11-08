@@ -34,7 +34,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Eat, BFDiscoveredFlags.Base, Compare);
+            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFDiscoveredFlags.Base, Compare);
             BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateSentence, GenerateFragments);
             BFType.DefineEditor(BFTypeId.Eat, null, BFMode.Player);
         }

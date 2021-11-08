@@ -23,7 +23,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFShapeId.WaterPropertyHistory, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.WaterPropertyHistory, null, GenerateSentence, null);
             BFType.DefineEditor(BFTypeId.WaterPropertyHistory, DefaultIcon, BFMode.Player);
         }

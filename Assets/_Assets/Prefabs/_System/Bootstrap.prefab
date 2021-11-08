@@ -240,6 +240,7 @@ GameObject:
   - component: {fileID: 7690253913131561610}
   - component: {fileID: 2042067694168392023}
   - component: {fileID: 5811573768499641974}
+  - component: {fileID: 937076743335086129}
   m_Layer: 0
   m_Name: GameplayServices
   m_TagString: Untagged
@@ -412,6 +413,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CacheFrameSkip: 1
+--- !u!114 &937076743335086129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5442631026839326357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f89f59bdbc587f45beb898e045bdf44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6707031283120621058
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,6 +738,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4540496805459673728}
     m_Modifications:
+    - target: {fileID: 2152516989932163392, guid: 57256186000d4f14fa26975f6742ae99,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2152516989932163392, guid: 57256186000d4f14fa26975f6742ae99,
+        type: 3}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6243961558806082775, guid: 57256186000d4f14fa26975f6742ae99,
         type: 3}
       propertyPath: m_UVRect.width
@@ -1502,12 +1525,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af61e98a5efdcfd4cbeca294c0612e5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7410801612348799134 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1660318323569540782, guid: 14e7ebc753b45694e903ae3a4f36ff86,
-    type: 3}
-  m_PrefabInstance: {fileID: 8201853693396387376}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2161507982716397060 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7795148714018168884, guid: 14e7ebc753b45694e903ae3a4f36ff86,
@@ -1526,3 +1543,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e4303b9a6760c478212de2de9a89a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7410801612348799134 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1660318323569540782, guid: 14e7ebc753b45694e903ae3a4f36ff86,
+    type: 3}
+  m_PrefabInstance: {fileID: 8201853693396387376}
+  m_PrefabAsset: {fileID: 0}

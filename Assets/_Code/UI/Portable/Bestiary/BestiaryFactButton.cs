@@ -16,26 +16,32 @@ namespace Aqua.Portable
 
         #endregion // Inspector
 
-        private BFBase m_Fact;
+        public BFBase Fact;
         private Action<BFBase> m_Callback;
+        private bool m_ButtonMode;
 
         public void Initialize(BFBase inFact, bool inbButtonMode, bool inbInteractable, Action<BFBase> inCallback)
         {
             m_Group.blocksRaycasts = inbButtonMode;
             m_Group.alpha = inbButtonMode && !inbInteractable ? 0.5f : 1;
 
+            m_ButtonMode = inbButtonMode;
             m_Button.interactable = !inbButtonMode || inbInteractable;
 
-            m_Fact = inFact;
+            Fact = inFact;
             m_Callback = inCallback;
+        }
+
+        public void UpdateInteractable(bool inbInteractable) {
+            m_Button.interactable = !m_ButtonMode || inbInteractable;
         }
 
         private void OnClick()
         {
             Assert.NotNull(m_Callback);
-            Assert.NotNull(m_Fact);
+            Assert.NotNull(Fact);
 
-            m_Callback(m_Fact);
+            m_Callback(Fact);
         }
 
         private void Awake()
@@ -49,7 +55,7 @@ namespace Aqua.Portable
 
         void IPoolAllocHandler.OnFree()
         {
-            m_Fact = null;
+            Fact = null;
             m_Callback = null;
         }
     }

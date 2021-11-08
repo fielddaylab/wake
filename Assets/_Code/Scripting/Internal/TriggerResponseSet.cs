@@ -76,6 +76,12 @@ namespace Aqua.Scripting
 
                 DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id());
 
+                if (!node.Package().IsActive())
+                {
+                    DebugService.Log(LogMask.Scripting, "... node package is being unloaded");
+                    continue;
+                }
+
                 // score cutoff
                 if (triggerData.Score < ioMinScore)
                 {

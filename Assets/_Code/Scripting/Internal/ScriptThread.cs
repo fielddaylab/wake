@@ -38,6 +38,7 @@ namespace Aqua.Scripting
         private bool m_RecordedDialog;
         private StringHash32 m_LastKnownCharacter;
         private string m_LastKnownName;
+        private DialogRecord m_LastKnownChoiceDialog;
 
         // trigger state
         private string m_TriggerNodeName;
@@ -177,6 +178,7 @@ namespace Aqua.Scripting
             m_LastKnownCharacter = record.CharacterId;
             m_LastKnownName = record.Name;
             m_RecordedDialog = true;
+            m_LastKnownChoiceDialog = record;
 
             Services.Data.AddToDialogHistory(record);
         }
@@ -298,6 +300,7 @@ namespace Aqua.Scripting
         public void MarkChoice()
         {
             m_Flags |= ScriptFlags.InChoice;
+            Services.Events.Dispatch(GameEvents.ScriptChoicePresented, m_LastKnownChoiceDialog);
         }
 
         public void EndChoice()
@@ -362,6 +365,7 @@ namespace Aqua.Scripting
             m_LastKnownCharacter = StringHash32.Null;
             m_LastKnownName = null;
             m_RecordedDialog = false;
+            m_LastKnownChoiceDialog = default(DialogRecord);
 
             base.Reset();
 
@@ -397,5 +401,13 @@ namespace Aqua.Scripting
         Skip = 0x10,
         Cutscene = 0x20,
         InChoice = 0x40,
+    }
+
+    public class BindThreadHandleAttribute : BindContextAttribute
+    {
+        public override object Bind(object inSource)
+        {
+            return ((ScriptThread) inSource).GetHandle();
+        }
     }
 }

@@ -17,12 +17,10 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private LocPackage[] m_GlobalStrings = null;
         [SerializeField, Required] private LocPackage[] m_EnglishStrings = null;
 
         #endregion // Inspector
 
-        private LocPackage m_GlobalPackage;
         private LocPackage m_LanguagePackage;
 
         private Routine m_LoadRoutine;
@@ -36,29 +34,9 @@ namespace Aqua
         private IEnumerator InitialLoad()
         {
             m_Loading = true;
-            yield return Routine.Combine(
-                LoadIndependent(true),
-                LoadLanguage(true)
-            );
-
+            yield return LoadLanguage(true);
             m_Loading = false;
             DispatchTextRefresh();
-        }
-
-        private IEnumerator LoadIndependent(bool inbForce)
-        {
-            if (!inbForce && m_GlobalPackage != null)
-                yield break;
-
-            m_GlobalPackage = ScriptableObject.CreateInstance<LocPackage>();
-            m_GlobalPackage.name = "GlobalStrings";
-            foreach(var file in m_GlobalStrings)
-            {
-                var parser = BlockParser.ParseAsync(ref m_GlobalPackage, file.name, file.Source(), Parsing.Block, LocPackage.Generator.Instance);
-                yield return Async.Schedule(parser);
-            }
-
-            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (global)", m_GlobalPackage.Count);
         }
 
         private IEnumerator LoadLanguage(bool inbForce)
@@ -80,37 +58,6 @@ namespace Aqua
         #endregion // Loading
 
         #region Localization
-
-        /// <summary>
-        /// Localizes the given text if the given string starts with a ' character.
-        /// Otherwise uses the text as given.
-        /// </summary>
-        public string MaybeLocalize(StringSlice inString, object inContext = null, bool inbIgnoreEvents = false)
-        {
-            if (inString.IsEmpty)
-                return string.Empty;
-
-            if (inString.StartsWith('\''))
-            {
-                return Localize(inString.Substring(1).Hash32(), inString, inContext, inbIgnoreEvents);
-            }
-
-            StringSlice content = inString;
-            if (!inbIgnoreEvents && inString.IndexOf('{') >= 0)
-            {
-                using(var tagAlloc = m_TagStringPool.TempAlloc())
-                {
-                    TagString tagStr = tagAlloc.Object;
-                    Services.Script.ParseToTag(ref tagStr, content, inContext);
-                    content = tagStr.RichText;
-                    if (tagStr.EventCount > 0)
-                    {
-                        Log.Warn("[LocService] String '{0}' contains {1} embedded events, which are discarded when translating directly to string", inString, tagStr.EventCount);
-                    }
-                }
-            }
-            return content.ToString();
-        }
 
         /// <summary>
         /// Localizes the given key.
@@ -135,7 +82,7 @@ namespace Aqua
                 return inDefault.ToString();
 
             string content;
-            if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
+            if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
                 Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
                 content = inDefault.ToString();
@@ -156,6 +103,10 @@ namespace Aqua
             }
             return content;
         }
+
+        #endregion // Localization
+
+        #region Tagged
 
         public TagString LocalizeTagged(StringHash32 inKey, object inContext = null)
         {
@@ -183,7 +134,7 @@ namespace Aqua
             }
 
             string content;
-            if (!m_LanguagePackage.TryGetContent(inKey, out content) && !m_GlobalPackage.TryGetContent(inKey, out content))
+            if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
                 Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
                 return false;
@@ -193,7 +144,7 @@ namespace Aqua
             return true;
         }
 
-        #endregion // Localization
+        #endregion // Tagged
 
         #region Texts
 
@@ -232,7 +183,6 @@ namespace Aqua
 
         protected override void Shutdown()
         {
-            UnityHelper.SafeDestroy(ref m_GlobalPackage);
             UnityHelper.SafeDestroy(ref m_LanguagePackage);
 
             base.Shutdown();

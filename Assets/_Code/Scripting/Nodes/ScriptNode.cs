@@ -19,6 +19,7 @@ namespace Aqua.Scripting
         private string m_FullName = null;
         private ScriptNodeFlags m_Flags = 0;
         private ScriptNodePackage m_ScriptPackage = null;
+        private StringHash32 m_ScriptPackageRoot = null;
         private TriggerNodeData m_TriggerData = null;
         private StringHash32 m_TriggerOrFunctionId = null;
         private StringHash32 m_Target = null;
@@ -29,6 +30,7 @@ namespace Aqua.Scripting
             : base(inFullId, inPackage)
         {
             m_ScriptPackage = inPackage;
+            m_ScriptPackageRoot = inPackage.RootPath();
             m_Id = inFullId;
             m_FullName = inFullId;
         }
@@ -202,6 +204,18 @@ namespace Aqua.Scripting
         }
 
         #endregion // Parser
+
+        /// <summary>
+        /// Resolves a node id given a relative or absolute path.
+        /// Relative paths start with '.', whereas absolute ones do not.
+        /// </summary>
+        static public StringHash32 ResolveNodeId(ScriptNode inFrom, StringSlice inPath) {
+            if (inPath.StartsWith('.')) {
+                return inFrom.m_ScriptPackageRoot.Concat(inPath);
+            }
+
+            return inPath;
+        }
     }
     
     [Flags]

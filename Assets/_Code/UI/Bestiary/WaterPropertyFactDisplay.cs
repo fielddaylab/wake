@@ -22,7 +22,6 @@ namespace Aqua
             ColorPalette4 palette = propData.Palette();
 
             m_Icon.sprite = inFact.Icon;
-            m_Icon.gameObject.SetActive(inFact.Icon);
 
             m_Label.SetText(propData.LabelId());
             m_Value.SetText(propData.FormatValue(inFact.Value));

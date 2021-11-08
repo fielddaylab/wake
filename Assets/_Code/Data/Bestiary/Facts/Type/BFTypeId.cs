@@ -30,4 +30,15 @@ namespace Aqua
 
         _COUNT
     }
+
+    public enum BFShapeId : ushort {
+        None,
+        Behavior,
+        State,
+        WaterProperty,
+        WaterPropertyHistory,
+        Population,
+        PopulationHistory,
+        Model
+    }
 }

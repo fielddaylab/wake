@@ -89,7 +89,7 @@ namespace Aqua
         /// </summary>
         public void BringToFront(int inLayerId = GameSortingLayers.Cutscene)
         {
-            if (m_BroughtToFront != inLayerId)
+            if (m_BroughtToFront == inLayerId)
                 return;
             
             Canvas.sortingLayerID = inLayerId;
@@ -101,7 +101,7 @@ namespace Aqua
         /// </summary>
         public void ResetOrder()
         {
-            if (m_BroughtToFront != 0)
+            if (m_BroughtToFront == 0)
                 return;
             
             Canvas.sortingLayerID = m_OriginalSortingLayer; 

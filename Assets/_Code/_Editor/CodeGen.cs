@@ -162,7 +162,7 @@ namespace Aqua.Editor
         }
 
         [MenuItem("Aqualab/CodeGen/Regen Jobs")]
-        static private void GenerateJobsConsts()
+        static internal void GenerateJobsConsts()
         {
             StringBuilder builder = new StringBuilder(1024);
             builder.Append("using System;");

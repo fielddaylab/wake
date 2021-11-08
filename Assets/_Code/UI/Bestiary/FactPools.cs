@@ -10,17 +10,6 @@ namespace Aqua
 {
     public class FactPools : MonoBehaviour
     {
-        private enum PoolSource : byte {
-            Behavior,
-            BehaviorQuantitative,
-            Model,
-            State,
-            Property,
-            PropertyHistory,
-            Population,
-            PopulationHistory
-        }
-
         #region Types
 
         [Serializable] private class BehaviorPool : SerializablePool<BehaviorFactDisplay> { }
@@ -36,7 +25,6 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private BehaviorPool m_BehaviorFacts = null;
-        [SerializeField] private BehaviorPool m_BehaviorQuantitativeFacts = null;
         [SerializeField] private ModelPool m_ModelFacts = null;
         [SerializeField] private StatePool m_StateFacts = null;
         [SerializeField] private PropertyPool m_PropertyFacts = null;
@@ -49,7 +37,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private bool m_ConfiguredPools;
-        [NonSerialized] private Dictionary<MonoBehaviour, PoolSource> m_PoolSources = new Dictionary<MonoBehaviour, PoolSource>(64);
+        [NonSerialized] private Dictionary<MonoBehaviour, BFShapeId> m_PoolSources = new Dictionary<MonoBehaviour, BFShapeId>(64);
 
         private void Awake()
         {
@@ -70,7 +58,6 @@ namespace Aqua
                 return;
 
             m_BehaviorFacts.ConfigureTransforms(m_TransformPool, null, false);
-            m_BehaviorQuantitativeFacts.ConfigureTransforms(m_TransformPool, null, false);
             m_ModelFacts.ConfigureTransforms(m_TransformPool, null, false);
             m_StateFacts.ConfigureTransforms(m_TransformPool, null, false);
             m_PropertyFacts.ConfigureTransforms(m_TransformPool, null, false);
@@ -84,7 +71,6 @@ namespace Aqua
         public void FreeAll()
         {
             m_BehaviorFacts.Reset();
-            m_BehaviorQuantitativeFacts.Reset();
             m_ModelFacts.Reset();
             m_StateFacts.Reset();
             m_PropertyFacts.Reset();
@@ -99,65 +85,118 @@ namespace Aqua
         {
             ConfigurePoolTransforms();
 
-            switch(inFact.Type) {
-                case BFTypeId.Model: {
+            switch(BFType.Shape(inFact)) {
+                case BFShapeId.Model: {
                     ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
                     display.Populate((BFModel) inFact);
-                    m_PoolSources.Add(display, PoolSource.Model);
+                    m_PoolSources.Add(display, BFShapeId.Model);
                     return display;
                 }
 
-                case BFTypeId.State: {
+                case BFShapeId.State: {
                     StateFactDisplay display = m_StateFacts.Alloc(inParent);
                     display.Populate((BFState) inFact);
-                    m_PoolSources.Add(display, PoolSource.State);
+                    m_PoolSources.Add(display, BFShapeId.State);
                     return display;
                 }
 
-                case BFTypeId.WaterProperty: {
+                case BFShapeId.WaterProperty: {
                     WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
                     display.Populate((BFWaterProperty) inFact);
-                    m_PoolSources.Add(display, PoolSource.Property);
+                    m_PoolSources.Add(display, BFShapeId.WaterProperty);
                     return display;
                 }
 
-                case BFTypeId.WaterPropertyHistory: {
+                case BFShapeId.WaterPropertyHistory: {
                     WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
                     display.Populate((BFWaterPropertyHistory) inFact);
-                    m_PoolSources.Add(display, PoolSource.PropertyHistory);
+                    m_PoolSources.Add(display, BFShapeId.WaterPropertyHistory);
                     return display;
                 }
 
-                case BFTypeId.Population: {
+                case BFShapeId.Population: {
                     PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
                     display.Populate((BFPopulation) inFact);
-                    m_PoolSources.Add(display, PoolSource.Population);
+                    m_PoolSources.Add(display, BFShapeId.Population);
                     return display;
                 }
 
-                case BFTypeId.PopulationHistory: {
+                case BFShapeId.PopulationHistory: {
                     PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
                     display.Populate((BFPopulationHistory) inFact);
-                    m_PoolSources.Add(display, PoolSource.PopulationHistory);
+                    m_PoolSources.Add(display, BFShapeId.PopulationHistory);
+                    return display;
+                }
+
+                case BFShapeId.Behavior: {
+                    BFBehavior behavior = (BFBehavior) inFact;
+                    BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
+                    display.Populate(behavior, inReference, inFlags);
+                    m_PoolSources.Add(display, BFShapeId.Behavior);
                     return display;
                 }
 
                 default: {
-                    BFBehavior behavior = inFact as BFBehavior;
-                    if (behavior != null) {
-                        bool isQuantitative = inFact.Type == BFTypeId.Eat && (inFlags & BFDiscoveredFlags.Rate) != 0;
-                        if (m_BehaviorQuantitativeFacts.Prefab != null && isQuantitative) {
-                            BehaviorFactDisplay display = m_BehaviorQuantitativeFacts.Alloc(inParent);
-                            display.Populate(behavior, inReference, inFlags);
-                            return display;
-                        } else {
-                            BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                            display.Populate(behavior, inReference, inFlags);
-                            return display;
-                        }
-                    }
-
                     Assert.Fail("Unable to find suitable fact display for '{0}'", inFact.Type);
+                    return null;
+                }
+            }
+        }
+
+        public MonoBehaviour Alloc(BFTypeId inFactType, BFDiscoveredFlags inFlags, Transform inParent)
+        {
+            return Alloc(BFType.Shape(inFactType), inFlags, inParent);
+        }
+
+        public MonoBehaviour Alloc(BFShapeId inShape, BFDiscoveredFlags inFlags, Transform inParent)
+        {
+            ConfigurePoolTransforms();
+
+            switch(inShape) {
+                case BFShapeId.Model: {
+                    ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.Model);
+                    return display;
+                }
+
+                case BFShapeId.State: {
+                    StateFactDisplay display = m_StateFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.State);
+                    return display;
+                }
+
+                case BFShapeId.WaterProperty: {
+                    WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.WaterProperty);
+                    return display;
+                }
+
+                case BFShapeId.WaterPropertyHistory: {
+                    WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.WaterPropertyHistory);
+                    return display;
+                }
+
+                case BFShapeId.Population: {
+                    PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.Population);
+                    return display;
+                }
+
+                case BFShapeId.PopulationHistory: {
+                    PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.PopulationHistory);
+                    return display;
+                }
+
+                case BFShapeId.Behavior: {
+                    BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
+                    m_PoolSources.Add(display, BFShapeId.Behavior);
+                    return display;
+                }
+
+                default: {
+                    Assert.Fail("Unable to find suitable fact display for '{0}'", inShape);
                     return null;
                 }
             }
@@ -165,65 +204,99 @@ namespace Aqua
 
         public void Free(MonoBehaviour inDisplay)
         {
-            if (!m_PoolSources.TryGetValue(inDisplay, out PoolSource source)) {
+            if (!m_PoolSources.TryGetValue(inDisplay, out BFShapeId source)) {
                 Assert.Fail("Unable to find suitable pool");
             }
 
             m_PoolSources.Remove(inDisplay);
 
             switch(source) {
-                case PoolSource.Behavior: {
+                case BFShapeId.Behavior: {
                     TryFree(inDisplay, m_BehaviorFacts);
                     break;
                 }
 
-                case PoolSource.BehaviorQuantitative: {
-                    TryFree(inDisplay, m_BehaviorQuantitativeFacts);
-                    break;
-                }
-
-                case PoolSource.Model: {
+                case BFShapeId.Model: {
                     TryFree(inDisplay, m_ModelFacts);
                     break;
                 }
 
-                case PoolSource.Population: {
+                case BFShapeId.Population: {
                     TryFree(inDisplay, m_PopulationFacts);
                     break;
                 }
 
-                case PoolSource.PopulationHistory: {
+                case BFShapeId.PopulationHistory: {
                     TryFree(inDisplay, m_PopulationHistoryFacts);
                     break;
                 }
 
-                case PoolSource.Property: {
+                case BFShapeId.WaterProperty: {
                     TryFree(inDisplay, m_PropertyFacts);
                     break;
                 }
 
-                case PoolSource.PropertyHistory: {
+                case BFShapeId.WaterPropertyHistory: {
                     TryFree(inDisplay, m_PropertyHistoryFacts);
                     break;
                 }
 
-                case PoolSource.State: {
+                case BFShapeId.State: {
                     TryFree(inDisplay, m_StateFacts);
                     break;
                 }
             }
         }
 
-        static private bool TryFree<T>(MonoBehaviour inBehavior, IPool<T> inPool) where T : MonoBehaviour
+        static private void TryFree<T>(MonoBehaviour inBehavior, IPool<T> inPool) where T : MonoBehaviour
         {
             T asType = inBehavior as T;
-            if (asType != null)
-            {
-                inPool.Free(asType);
-                return true;
-            }
+            Assert.NotNull(asType, "Attempted to free {0} to a pool of {1}", inBehavior.GetType().Name, typeof(T).Name);
+            inPool.Free(asType);
+        }
 
-            return false;
+        static public void Populate(MonoBehaviour inBehavior, BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags) {
+            switch(BFType.Shape(inFact)){
+                case BFShapeId.Model: {
+                    ((ModelFactDisplay) inBehavior).Populate((BFModel) inFact);
+                    break;
+                }
+
+                case BFShapeId.State: {
+                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact);
+                    break;
+                }
+
+                case BFShapeId.WaterProperty: {
+                    ((WaterPropertyFactDisplay) inBehavior).Populate((BFWaterProperty) inFact);
+                    break;
+                }
+
+                case BFShapeId.WaterPropertyHistory: {
+                    ((WaterPropertyHistoryFactDisplay) inBehavior).Populate((BFWaterPropertyHistory) inFact);
+                    break;
+                }
+
+                case BFShapeId.Population: {
+                    ((PopulationFactDisplay) inBehavior).Populate((BFPopulation) inFact);
+                    break;
+                }
+
+                case BFShapeId.PopulationHistory: {
+                    ((PopulationHistoryFactDisplay) inBehavior).Populate((BFPopulationHistory) inFact);
+                    break;
+                }
+
+                default: {
+                    if (BFType.IsBehavior(inFact.Type)) {
+                        ((BehaviorFactDisplay) inBehavior).Populate((BFBehavior) inFact, inReference, inFlags);
+                        return;
+                    }
+
+                    Assert.Fail("Unable to populate fact type '{0}'", inFact.Id);
+                    break;
+                }
+            }
         }
     }
 }

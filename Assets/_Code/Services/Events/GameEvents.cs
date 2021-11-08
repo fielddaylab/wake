@@ -30,6 +30,7 @@ namespace Aqua
         static public readonly StringHash32 CutsceneEnd = "cutscene:end"; // no args
         static public readonly StringHash32 CutsceneSkip = "cutscene:skip"; // no args
         static public readonly StringHash32 ScriptNodeSeen = "script:node-seen"; // StringHash32 nodeId
+        static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
 
         static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start"; // no args
         static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end"; // no args

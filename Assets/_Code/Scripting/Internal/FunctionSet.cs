@@ -59,6 +59,9 @@ namespace Aqua.Scripting
             for(int nodeIdx = 0, nodeCount = m_FunctionNodes.Count; nodeIdx < nodeCount; ++nodeIdx)
             {
                 node = m_FunctionNodes[nodeIdx];
+
+                if (!node.Package().IsActive())
+                    continue;
                 
                 // not the right target
                 if (!inTarget.IsEmpty && inTarget != node.TargetId())

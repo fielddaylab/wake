@@ -17,15 +17,6 @@ namespace Aqua
             };
         }
 
-        static public BFFragment CreateNoun(StringSlice inWord)
-        {
-            return new BFFragment()
-            {
-                Type = BestiaryFactFragmentType.Noun,
-                String = Services.Loc.MaybeLocalize(inWord, null, true)
-            };
-        }
-
         static public BFFragment CreateLocNoun(TextId inWord)
         {
             return new BFFragment()

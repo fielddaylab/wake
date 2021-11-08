@@ -10,6 +10,8 @@ namespace Aqua.Portable
         public PortableRequestFlags Flags;
         public StringHash32 TargetId;
         public Future<StringHash32> Response;
+        public BestiaryApp.CanSelectFactDelegate CanSelect;
+        public BestiaryApp.SelectForSetDelegate OnSelect;
 
         public void Dispose() {
             Ref.Dispose(ref Response);
@@ -31,6 +33,16 @@ namespace Aqua.Portable
                 App = PortableAppId.Organisms,
                 Flags = PortableRequestFlags.ForceInputEnabled,
                 Response = Future.Create<StringHash32>()
+            };
+        }
+
+        static public PortableRequest SelectFactSet(BestiaryApp.SelectForSetDelegate inSelectDelegate) {
+            return new PortableRequest() {
+                Type = PortableRequestType.SelectFactSet,
+                App = PortableAppId.Organisms,
+                Flags = PortableRequestFlags.ForceInputEnabled,
+                Response = Future.Create<StringHash32>(),
+                OnSelect = inSelectDelegate
             };
         }
 
@@ -83,6 +95,7 @@ namespace Aqua.Portable
         ShowBestiary,
         ShowFact,
         SelectFact,
+        SelectFactSet
     }
 
     public enum PortableRequestFlags : byte {

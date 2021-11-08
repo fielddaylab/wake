@@ -39,7 +39,7 @@ namespace Aqua
         [NonSerialized] private Vector2 m_OriginalAnchor;
 
         [NonSerialized] private LeafChoice m_Choice;
-        [NonSerialized] private bool m_FactMode;
+        [NonSerialized] private bool m_SelectorMode;
 
         private void Awake()
         {
@@ -53,13 +53,13 @@ namespace Aqua
             m_Option = Variant.Null;
         }
 
-        public void Populate(Variant inOption, string inText, LeafChoice inChoice, bool inbFactMode)
+        public void Populate(Variant inOption, string inText, LeafChoice inChoice, bool inbSelectorMode)
         {
             m_Option = inOption;
             m_Text.SetText(inText);
             m_Choice = inChoice;
             m_Group.alpha = 0;
-            m_FactMode = inbFactMode;
+            m_SelectorMode = inbSelectorMode;
         }
 
         public void Prep()
@@ -91,18 +91,18 @@ namespace Aqua
 
         private void OnClick() {
             Assert.NotNull(m_Choice);
-            if (m_FactMode) {
-                PortableMenu.RequestFact()
-                    .OnComplete(OnFactSelected);
+            Future<StringHash32> selectorFuture = null;
+            if (m_SelectorMode && Services.Script.TryHandleChoiceSelector(m_Option.AsStringHash(), out selectorFuture)) {
+                selectorFuture.OnComplete(OnSelectorSelected);
             } else {
                 m_Choice.Choose(m_Option);
                 m_Group.blocksRaycasts = false;
             }
         }
 
-        private void OnFactSelected(StringHash32 inFactId) {
+        private void OnSelectorSelected(StringHash32 inSelected) {
             Assert.NotNull(m_Choice);
-            m_Choice.Choose(m_Option, inFactId);
+            m_Choice.Choose(m_Option, inSelected);
             m_Group.blocksRaycasts = false;
         }
     }

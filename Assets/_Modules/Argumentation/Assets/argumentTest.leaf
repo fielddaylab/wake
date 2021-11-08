@@ -1,0 +1,67 @@
+# basePath argumentationTest
+
+// test
+
+:: testArgument
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(testArgue)
+@cutscene
+
+$call ArgueLoad(testArgue)
+$if !ArgueIsComplete()
+    $if ArgueSetClaim(testClaim, TestArgumentationClaimLabel)
+        $call ArgueFactSlot(Urchin.Eats.BullKelp)
+        $call ArgueFactSlot(KelpForest.Population.BullKelp)
+        $call ArgueFactSlot(SeaOtter.Eats.Urchin)
+    $endif
+
+    $call ArgueDisplayClaim()
+    $branch .testArgument.root
+$endif
+
+:: testArgument.root
+
+$call ArgueDisplayClaim()
+
+{@kevin}    Give me the three facts I'm thinking of...
+$goto .testArgument.choiceBranch
+
+:: testArgument.choiceBranch
+$if ArgueAllFactsCorrect()
+    $goto .testArgument.done
+$else
+    $choice #argueFactSet; Present facts from AQOS
+        $answer correct, .testArgument.done
+        $answer incorrect, .testArgument.unrelated
+        $answer *, .testArgument.unrelated
+    $choice .testArgument.giveUp; I give up
+$endif
+
+:: testArgument.giveUp
+{@kevin}    Your choice!
+
+:: testArgument.unrelated
+{@kevin}    Nope! Try again!
+$call ArgueRejectIncorrect()
+$goto .testArgument.choiceBranch
+
+:: testArgument.urchin
+$if ArgueAcceptFact()
+    {@kevin}    Nice job! Urchins!
+$else
+    {@kevin}    C'mon, you already told me about urchins...
+$endif
+$goto .testArgument.choiceBranch
+
+:: testArgument.seaOtter
+$if ArgueAcceptFact()
+    {@kevin}    Nice job! Sea Otters!
+$else
+    {@kevin}    C'mon, you already told me about sea otters...
+$endif
+$goto .testArgument.choiceBranch
+
+:: testArgument.done
+$call ArgueComplete()
+{@kevin}    Wow! It's almost like you can read my mind or something?
+$call CompleteJob()

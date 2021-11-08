@@ -16,6 +16,7 @@ namespace Aqua.Scripting
         private LeafAsset m_Source;
         private IHotReloadable m_HotReload;
         private int m_UseCount;
+        private bool m_Active;
 
         public ScriptNodePackage(string inName)
             : base(inName)
@@ -87,18 +88,34 @@ namespace Aqua.Scripting
 
         public void IncrementUseCount()
         {
-            ++m_UseCount;
+            m_UseCount++;
         }
 
         public void DecrementUseCount()
         {
             Assert.True(m_UseCount > 0, "Unbalanced Increment/Decrement");
-            --m_UseCount;
+            m_UseCount--;
         }
 
         public bool IsInUse()
         {
             return m_UseCount > 0;
+        }
+
+        public bool SetActive(bool inbActive)
+        {
+            if (m_Active != inbActive)
+            {
+                m_Active = inbActive;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsActive()
+        {
+            return m_Active;
         }
 
         #endregion // Use Count
@@ -223,7 +240,7 @@ namespace Aqua.Scripting
                     // #else
                     // return false;
                     // #endif // UNITY_EDITOR
-                    return false;
+                    return true;
                 }
             }
 

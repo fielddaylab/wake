@@ -51,14 +51,46 @@ namespace Aqua
 
         public void LoadScript(LeafAsset inAsset)
         {
-            if (m_LoadedPackageSourcesAssets.ContainsKey(inAsset) || m_CurrentPackageBeingLoaded == inAsset || m_PackageLoadQueue.Contains(inAsset))
+            ScriptNodePackage package;
+            if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package))
+            {
+                package.SetActive(true);
+                m_PackageUnloadQueue.FastRemove(inAsset);
                 return;
+            }
+
+            if (m_CurrentPackageBeingLoaded == inAsset || m_PackageLoadQueue.Contains(inAsset)) {
+                return;
+            }
 
             m_PackageLoadQueue.PushBack(inAsset);
+            m_PackageUnloadQueue.FastRemove(inAsset);
             if (!m_PackageLoadWorker)
             {
                 m_PackageLoadWorker = Routine.Start(this, PackageLoadLoop());
             }
+        }
+
+        public void LoadScriptNow(LeafAsset inAsset)
+        {
+            ScriptNodePackage package;
+            if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package))
+            {
+                package.SetActive(true);
+                m_PackageUnloadQueue.FastRemove(inAsset);
+                return;
+            }
+
+            CancelPackageLoad(inAsset);
+            m_PackageLoadQueue.FastRemove(inAsset);
+
+            using(Profiling.Time(string.Format("loading script '{0}'", inAsset.name))) {
+                package = LeafAsset.Compile(inAsset, ScriptNodePackage.Generator.Instance);
+            }
+
+            package.BindAsset(inAsset);
+            AddPackage(package);
+            m_LoadedPackageSourcesAssets.Add(inAsset, package);
         }
 
         public void UnloadScript(LeafAsset inAsset)
@@ -67,16 +99,19 @@ namespace Aqua
                 return;
 
             ScriptNodePackage package;
-            if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package))
+            if (m_LoadedPackageSourcesAssets.TryGetValue(inAsset, out package) && package.SetActive(false))
             {
-                package.UnbindAsset();
-                RemovePackage(package);
-                m_LoadedPackageSourcesAssets.Remove(inAsset);
+                m_PackageUnloadQueue.PushBack(inAsset);
+                if (!m_PackageUnloadWorker) {
+                    m_PackageUnloadWorker = Routine.Start(this, PackageUnloadLoop());
+                }
             }
         }
 
         internal void AddPackage(ScriptNodePackage inPackage)
         {
+            inPackage.SetActive(true);
+
             if (!m_LoadedPackages.Add(inPackage))
                 return;
 
@@ -205,6 +240,35 @@ namespace Aqua
 
             m_CurrentPackageBeingLoaded = null;
             m_CurrentPackageLoadHandle = default;
+        }
+
+        private IEnumerator PackageUnloadLoop()
+        {
+            LeafAsset assetToUnload;
+            ScriptNodePackage package;
+            int count;
+            while((count = m_PackageUnloadQueue.Count) > 0)
+            {
+                for(int i = count - 1; i >= 0; i--) {
+                    assetToUnload = m_PackageUnloadQueue[i];
+                    if (!m_LoadedPackageSourcesAssets.TryGetValue(assetToUnload, out package)) {
+                        m_PackageUnloadQueue.FastRemoveAt(i);
+                        continue;
+                    }
+
+                    if (package.IsInUse()) {
+                        continue;
+                    }
+
+                    package.UnbindAsset();
+                    RemovePackage(package);
+                    package.Clear();
+                    m_LoadedPackageSourcesAssets.Remove(assetToUnload);
+                    m_PackageUnloadQueue.FastRemoveAt(i);
+                }
+
+                yield return null;
+            }
         }
 
         #endregion // Packages

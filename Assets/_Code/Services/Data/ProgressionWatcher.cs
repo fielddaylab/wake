@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
@@ -175,7 +176,7 @@ namespace Aqua
             m_ActScript = Assets.Act(inAct)?.Scripting();
             
             if (m_ActScript)
-                Services.Script.LoadScript(m_ActScript);
+                Services.Script.LoadScriptNow(m_ActScript);
         }
 
         private void LoadJob(StringHash32 inJob)
@@ -193,7 +194,7 @@ namespace Aqua
             m_JobScript = job?.Scripting();
             
             if (m_JobScript)
-                Services.Script.LoadScript(m_JobScript);
+                Services.Script.LoadScriptNow(m_JobScript);
         }
 
         #endregion // Loading

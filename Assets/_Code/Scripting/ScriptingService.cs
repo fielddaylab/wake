@@ -28,6 +28,7 @@ namespace Aqua
     {
         public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
+        public delegate Future<StringHash32> ChoiceSelectorHandler();
 
         // thread management
         private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
@@ -40,6 +41,7 @@ namespace Aqua
         private HashSet<StringHash32> m_SkippedEvents;
         private HashSet<StringHash32> m_DialogOnlyEvents;
         private MethodCache<LeafMember> m_LeafCache;
+        private Dictionary<StringHash32, ChoiceSelectorHandler> m_ChoiceSelectors;
 
         // trigger eval
         private CustomVariantResolver m_CustomResolver;
@@ -49,7 +51,9 @@ namespace Aqua
         private Dictionary<LeafAsset, ScriptNodePackage> m_LoadedPackageSourcesAssets;
 
         private RingBuffer<LeafAsset> m_PackageLoadQueue = new RingBuffer<LeafAsset>();
+        private RingBuffer<LeafAsset> m_PackageUnloadQueue = new RingBuffer<LeafAsset>();
         private Routine m_PackageLoadWorker;
+        private Routine m_PackageUnloadWorker;
         private LeafAsset m_CurrentPackageBeingLoaded;
         private AsyncHandle m_CurrentPackageLoadHandle;
 
@@ -355,6 +359,29 @@ namespace Aqua
 
         #endregion // Contexts
 
+        #region Choice Handlers
+
+        public void RegisterChoiceSelector(StringHash32 inId, ChoiceSelectorHandler inHandler)
+        {
+            m_ChoiceSelectors[inId] = inHandler;
+        }
+
+        public bool TryHandleChoiceSelector(StringHash32 inId, out Future<StringHash32> outResponse)
+        {
+            ChoiceSelectorHandler handler;
+            if (m_ChoiceSelectors.TryGetValue(inId, out handler))
+            {
+                outResponse = handler();
+                Assert.NotNull(outResponse, "Cannot return null future from a choice handler");
+                return true;
+            }
+
+            outResponse = null;
+            return false;
+        }
+
+        #endregion // Choice Handlers
+
         #region Utils
 
         /// <summary>
@@ -504,7 +531,7 @@ namespace Aqua
 
         public bool IsLoading()
         {
-            return m_PackageLoadQueue.Count > 0 || m_CurrentPackageBeingLoaded != null;
+            return m_PackageLoadQueue.Count > 0 || m_CurrentPackageBeingLoaded != null || m_PackageUnloadQueue.Count > 0;
         }
 
         #endregion // Loading
@@ -555,6 +582,7 @@ namespace Aqua
                 return parser;
             });
 
+            m_ChoiceSelectors = new Dictionary<StringHash32, ChoiceSelectorHandler>();
             m_LoadedPackages = new HashSet<ScriptNodePackage>();
             m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
             m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();

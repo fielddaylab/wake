@@ -41,18 +41,50 @@ namespace Aqua
         #endregion // Types
 
         static private readonly BFDiscoveredFlags[] s_DefaultDiscoveredFlags = new BFDiscoveredFlags[TypeCount];
+        static private readonly BFShapeId[] s_Shapes = new BFShapeId[TypeCount];
         static private readonly CollectReferencesDelegate[] s_CollectReferencesDelegates = new CollectReferencesDelegate[TypeCount];
         static private readonly GenerateSentenceDelegate[] s_GenerateSentenceDelegates = new GenerateSentenceDelegate[TypeCount];
         static private readonly GenerateFragmentsDelegate[] s_GenerateFragmentsDelegates = new GenerateFragmentsDelegate[TypeCount];
         static private readonly Comparison<BFBase>[] s_ComparisonDelegates = new Comparison<BFBase>[TypeCount];
 
+        static public bool IsBehavior(BFTypeId inTypeId) {
+            switch(inTypeId) {
+                case BFTypeId.Consume:
+                case BFTypeId.Eat:
+                case BFTypeId.Death:
+                case BFTypeId.Grow:
+                case BFTypeId.Parasites:
+                case BFTypeId.Produce:
+                case BFTypeId.Reproduce:
+                    return true;
+                
+                default:
+                    return false;
+            }
+        }
+
         #region Attributes
+
+        static public BFShapeId Shape(BFBase inFact)
+        {
+            return s_Shapes[(int) inFact.Type];
+        }
+
+        static public BFShapeId Shape(BFTypeId inFactType)
+        {
+            return s_Shapes[(int) inFactType];
+        }
 
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact)
         {
             if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
                 return BFDiscoveredFlags.All;
             return s_DefaultDiscoveredFlags[(int) inFact.Type];
+        }
+
+        static public BFDiscoveredFlags DefaultDiscoveredFlags(BFTypeId inFactType)
+        {
+            return s_DefaultDiscoveredFlags[(int) inFactType];
         }
 
         #endregion // Attributes
@@ -112,8 +144,9 @@ namespace Aqua
 
         #region Definitions
 
-        static internal void DefineAttributes(BFTypeId inType, BFDiscoveredFlags inFlags, Comparison<BFBase> inComparison)
+        static internal void DefineAttributes(BFTypeId inType, BFShapeId inShape, BFDiscoveredFlags inFlags, Comparison<BFBase> inComparison)
         {
+            s_Shapes[(int) inType] = inShape;
             s_DefaultDiscoveredFlags[(int) inType] = inFlags;
             s_ComparisonDelegates[(int) inType] = inComparison;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BeauUtil;
+using BeauUtil.Debugger;
 using Leaf.Runtime;
 
 namespace Aqua.Scripting
@@ -112,6 +113,55 @@ namespace Aqua.Scripting
         public bool Equals(ScriptThreadHandle other)
         {
             return m_Thread == other.m_Thread;
+        }
+
+        /// <summary>
+        /// Resolves a potentially 
+        /// </summary>
+        public StringHash32 RelativeNodeId(StringSlice inId)
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                ScriptNode current = thread.PeekNode();
+                return ScriptNode.ResolveNodeId(current, inId);
+            }
+
+            return inId;
+        }
+
+        public bool GotoNode(StringHash32 inId)
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                ScriptNode node;
+                if (!Services.Script.TryGetScriptNode(thread.PeekNode(), inId, out node)) {
+                    Log.Error("[ScriptThreadHandle] Cannot go to unknown node '{0}'", inId);
+                    return false;
+                } else {
+                    thread.GotoNode(node);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool BranchNode(StringHash32 inId)
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                ScriptNode node;
+                if (!Services.Script.TryGetScriptNode(thread.PeekNode(), inId, out node)) {
+                    Log.Error("[ScriptThreadHandle] Cannot branch to unknown node '{0}'", inId);
+                    return false;
+                } else {
+                    thread.PushNode(node);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

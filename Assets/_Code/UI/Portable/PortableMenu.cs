@@ -35,6 +35,8 @@ namespace Aqua.Portable {
 
         #endregion // Inspector
 
+        static private bool s_RegisteredHandler = false;
+
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private PortableRequest m_Request;
         [NonSerialized] private float m_ActiveOnPosition;
@@ -46,18 +48,10 @@ namespace Aqua.Portable {
             m_Input = BaseInputLayer.Find(this);
 
             m_Fader.EnsureComponent<PointerListener>().onClick.AddListener((p) => Hide());
-        }
 
-        protected override void OnEnable() {
-            base.OnEnable();
-        }
-
-        protected override void OnDisable() {
-            base.OnDisable();
-        }
-
-        protected override void OnDestroy() {
-            base.OnDestroy();
+            if (!s_RegisteredHandler) {
+                Services.Script.RegisterChoiceSelector("fact", RequestFact);
+            }
         }
 
         #endregion // Unity Events
@@ -66,14 +60,19 @@ namespace Aqua.Portable {
 
         public void Open(PortableRequest inRequest) {
             m_Request = inRequest;
-            Show();
+            if (!IsShowing()) {
+                Show();
+            } else {
+                AdjustInputForRequest();
+                HandleRequest();
+            }
         }
 
         private void HandleRequest() {
             PortableTabToggle requestTab = null;
             if (m_Request.Type > 0) {
                 requestTab = GetAppButton(m_Request.App);
-                if (m_Request.Type == PortableRequestType.SelectFact) {
+                if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
                     GetAppButton(PortableAppId.Organisms).App.HandleRequest(m_Request);
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
                 }
@@ -99,13 +98,7 @@ namespace Aqua.Portable {
             return null;
         }
 
-        #endregion // Requests
-
-        #region BasePanel
-
-        protected override void OnShow(bool inbInstant) {
-            Services.Data.SetVariable("portable:open", true);
-
+        private void AdjustInputForRequest() {
             if (m_Request.Type > 0 && Services.UI.IsLetterboxed() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
                 m_Input.Override = true;
                 Services.Input.PushFlags(InputLayerFlags.Portable, this);
@@ -115,6 +108,16 @@ namespace Aqua.Portable {
                 m_Input.Override = null;
                 m_ActiveOnPosition = m_OnPosition;
             }
+        }
+
+        #endregion // Requests
+
+        #region BasePanel
+
+        protected override void OnShow(bool inbInstant) {
+            Services.Data.SetVariable("portable:open", true);
+
+            AdjustInputForRequest();
 
             m_Canvas.enabled = true;
             m_AppButtonToggleGroup.allowSwitchOff = false;
@@ -199,6 +202,10 @@ namespace Aqua.Portable {
 
         static public void OpenApp(PortableAppId inId) {
             Services.UI.FindPanel<PortableMenu>().Open(PortableRequest.OpenApp(inId));
+        }
+
+        static public void Request(PortableRequest inRequest) {
+            Services.UI.FindPanel<PortableMenu>().Open(inRequest);
         }
 
         static public Future<StringHash32> RequestFact() {

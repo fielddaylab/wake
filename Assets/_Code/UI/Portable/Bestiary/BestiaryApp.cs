@@ -18,6 +18,9 @@ namespace Aqua.Portable {
         public delegate void PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
         public delegate void FinalizeButtonDelegate(BFBase inFact, MonoBehaviour inDisplay);
 
+        public delegate bool CanSelectFactDelegate(BFBase inFact);
+        public delegate bool SelectForSetDelegate(BFBase inFact, Future<StringHash32> ioFuture);
+
         public class DisplayHandler {
             public BestiaryDescCategory Category;
             public PopulateEntryToggleDelegate PopulateToggle;
@@ -46,6 +49,7 @@ namespace Aqua.Portable {
 
         [NonSerialized] private BestiaryDesc m_CurrentEntry;
         [NonSerialized] private PortableBestiaryToggle.ToggleDelegate m_CachedToggleDelegate;
+        [NonSerialized] private List<BestiaryFactButton> m_InstantiatedButtons = new List<BestiaryFactButton>();
         [NonSerialized] private Action<BFBase> m_CachedSelectFactDelegate;
         [NonSerialized] private PortableRequest m_Request;
         [NonSerialized] private int m_SelectCounter;
@@ -64,6 +68,7 @@ namespace Aqua.Portable {
 
             m_InfoPage.Sketch.Clear();
             m_InfoPage.FactPools.FreeAll();
+            m_InstantiatedButtons.Clear();
             m_NoSelectionGroup.gameObject.SetActive(true);
 
             m_EntryPool.Reset();
@@ -95,10 +100,18 @@ namespace Aqua.Portable {
         }
 
         private void OnFactClicked(BFBase inFact) {
-            Assert.True(m_Request.Type == PortableRequestType.SelectFact);
+            Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);
             Services.Data.SetVariable("portable:lastSelectedFactId", inFact.Id);
-            m_Request.Response.Complete(inFact.Id);
-            m_ParentMenu.Hide();
+            if (m_Request.OnSelect != null) {
+                if (!m_Request.OnSelect(inFact, m_Request.Response)) {
+                    m_ParentMenu.Hide();
+                } else {
+                    UpdateAllFactInstances();
+                }
+            } else {
+                m_Request.Response.Complete(inFact.Id);
+                m_ParentMenu.Hide();
+            }
         }
 
         #endregion // Callbacks
@@ -186,6 +199,7 @@ namespace Aqua.Portable {
         /// </summary>
         private void LoadEntryFacts(BestiaryDesc inEntry) {
             m_InfoPage.FactPools.FreeAll();
+            m_InstantiatedButtons.Clear();
 
             if (inEntry == null) {
                 return;
@@ -214,10 +228,33 @@ namespace Aqua.Portable {
 
         private void FinalizeFactButton(BFBase inFact, MonoBehaviour inDisplay) {
             BestiaryFactButton factButton = inDisplay.GetComponent<BestiaryFactButton>();
-            if (m_Request.Type == PortableRequestType.SelectFact) {
-                factButton.Initialize(inFact, true, true, m_CachedSelectFactDelegate ?? (m_CachedSelectFactDelegate = OnFactClicked));
-            } else {
-                factButton.Initialize(inFact, false, true, null);
+            switch(m_Request.Type) {
+                case PortableRequestType.SelectFact: {
+                    bool bInteractable = m_Request.CanSelect != null ? m_Request.CanSelect(inFact) : true;
+                    factButton.Initialize(inFact, true, bInteractable, m_CachedSelectFactDelegate ?? (m_CachedSelectFactDelegate = OnFactClicked));
+                    break;
+                }
+
+                case PortableRequestType.SelectFactSet: {
+                    bool bInteractable = m_Request.CanSelect != null ? m_Request.CanSelect(inFact) : true;
+                    factButton.Initialize(inFact, true, bInteractable, m_CachedSelectFactDelegate ?? (m_CachedSelectFactDelegate = OnFactClicked));
+                    break;
+                }
+
+                default: {
+                    factButton.Initialize(inFact, false, true, null);
+                    break;
+                }
+            }
+            
+            m_InstantiatedButtons.Add(factButton);
+        }
+
+        private void UpdateAllFactInstances() {
+            if (m_Request.CanSelect != null) {
+                foreach(var button in m_InstantiatedButtons) {
+                    button.UpdateInteractable(m_Request.CanSelect(button.Fact));
+                }
             }
         }
 
@@ -236,6 +273,11 @@ namespace Aqua.Portable {
                 }
 
                 case PortableRequestType.SelectFact: {
+                    m_Request = inRequest;
+                    break;
+                }
+
+                case PortableRequestType.SelectFactSet: {
                     m_Request = inRequest;
                     break;
                 }

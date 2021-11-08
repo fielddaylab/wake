@@ -9,6 +9,7 @@ namespace Aqua
     {
         #region Inspector
 
+        [SerializeField, Required] private Graphic m_IconBG = null;
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField, Required] private LocText m_Label = null;
         [SerializeField, Required] private TMP_Text m_Population = null;
@@ -17,6 +18,7 @@ namespace Aqua
 
         public void Populate(BFPopulation inFact)
         {
+            m_IconBG.color = inFact.Critter.Color();
             m_Icon.sprite = inFact.Icon;
             m_Label.SetText(inFact.Critter.CommonName());
             m_Population.SetText(BestiaryUtils.FormatPopulation(inFact.Critter, inFact.Value));

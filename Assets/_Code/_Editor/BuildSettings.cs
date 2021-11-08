@@ -55,10 +55,6 @@ namespace Aqua.Editor
 
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
-
-            if (UnityEditorInternal.InternalEditorUtility.inBatchMode) {
-                NoOverridesAllowed.RevertInAllScenes();
-            }
         }
 
         static private bool IsAutoOptimizeEnabled()
@@ -162,10 +158,15 @@ namespace Aqua.Editor
             public void OnPreprocessBuild(BuildReport report)
             {
                 string branch = BuildUtils.GetSourceControlBranchName();
+                bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode;
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try
                 {
                     OptimizeAllAssets();
+                    if (bBatch) {
+                        CodeGen.GenerateJobsConsts();
+                        NoOverridesAllowed.RevertInAllScenes();
+                    }
                 }
                 catch(Exception e)
                 {

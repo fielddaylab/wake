@@ -13,6 +13,7 @@ namespace Aqua
         [SerializeField, Required] private LocText m_Label = null;
         [SerializeField, Required] private Graphic m_Background = null;
         [SerializeField, Required] private Image m_GraphIcon = null;
+        [SerializeField, Required] private LocText m_GraphLabel = null;
 
         #endregion // Inspector
 
@@ -22,14 +23,14 @@ namespace Aqua
             ColorPalette4 palette = propData.Palette();
 
             m_Icon.sprite = inFact.Icon;
-            m_Icon.gameObject.SetActive(inFact.Icon);
 
             m_Label.SetText(propData.LabelId());
 
-            m_Label.Graphic.color = palette.Content;
+            m_Label.Graphic.color = m_GraphLabel.Graphic.color = palette.Content;
             m_Background.color = palette.Shadow;
 
             m_GraphIcon.sprite = Services.Assets.Bestiary.GraphTypeToImage(inFact.Graph);
+            m_GraphLabel.SetText(Services.Assets.Bestiary.GraphTypeToLabel(inFact.Graph));
         }
     }
 }

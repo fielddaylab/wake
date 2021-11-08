@@ -11,6 +11,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private Image m_Icon = null;
+        [SerializeField, Required] private Graphic m_Background = null;
         [SerializeField, Required] private FactSentenceDisplay m_Sentence = null;
         [SerializeField, Required] private RectTransform m_StressedBadge = null;
         [SerializeField, Required] private RectTransform m_Layout = null;
@@ -26,6 +27,8 @@ namespace Aqua
 
             m_Icon.sprite = icon;
             m_Icon.gameObject.SetActive(icon);
+            m_Background.color = Services.Assets.Bestiary.BehaviorColor(inFact, inFlags);
+            
             m_Sentence.Populate(inFact, inReference, inFlags);
 
             if (inFact.OnlyWhenStressed) {

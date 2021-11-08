@@ -20,9 +20,14 @@ namespace Aqua
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
         [SerializeField] private Sprite m_DefaultGrowSprite = null;
         [SerializeField] private Sprite m_DefaultDeathSprite = null;
+        
+        [Header("Colors")]
+        [SerializeField] private Color m_BehaviorQualitativeBGColor = Color.blue;
+        [SerializeField] private Color m_BehaviorQuantitativeBGColor = Color.blue;
 
         [Header("Graphs")]
         [SerializeField] private Sprite[] m_Graphs = new Sprite[(int) BFGraphType.MAX];
+        [SerializeField] private TextId[] m_GraphLabels = new TextId[(int) BFGraphType.MAX];
 
         // HIDDEN
 
@@ -69,7 +74,18 @@ namespace Aqua
             return m_Graphs[(int) inGraphType];
         }
 
+        public TextId GraphTypeToLabel(BFGraphType inGraphType)
+        {
+            return m_GraphLabels[(int) inGraphType];
+        }
+
         #endregion // Defaults
+
+        public Color BehaviorColor(BFBehavior inBehavior, BFDiscoveredFlags inFlags)
+        {
+            bool isQuantitative = (BFType.DefaultDiscoveredFlags(inBehavior.Type) & BFDiscoveredFlags.Rate) == 0 && (inFlags & BFDiscoveredFlags.Rate) != 0;
+            return isQuantitative ? m_BehaviorQuantitativeBGColor : m_BehaviorQualitativeBGColor;
+        }
 
         #region Lookup
 
