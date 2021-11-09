@@ -250,7 +250,7 @@ namespace ProtoAqua.Modeling
                     Texture2D lineTexture = m_SolidLineTexture;
                     
                     BFBase fact = linkData.Tag as BFBase;
-                    if (fact != null && !Services.Data.Profile.Bestiary.IsFactFullyUpgraded(fact.Id))
+                    if (fact != null && !Save.Bestiary.IsFactFullyUpgraded(fact.Id))
                     {
                         lineTexture = m_DottedLineTexture;
                     }

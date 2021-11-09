@@ -1,5 +1,8 @@
 # basePath experiment
 
+:: backToShip.tooltip
+Return to Ship Exterior
+
 :: env.none
 <color=yellow>No Environment Set</color>
 
@@ -21,48 +24,99 @@ Water Stabilizer
 :: autoFeeder.button.tooltip
 Auto-Feeder
 
-:: observation.newBehavior.header
+:: button.addOrganism
+Add Organisms
+
+:: button.run
+Run Experiment
+
+:: button.addWater
+Add Water
+
+:: button.features
+Select Features
+
+# basePath experiment.stress
+
+# basePath experiment.observation
+
+:: newBehavior.header
 New Fact Observed!
 
-:: backToShip.tooltip
-Return to Ship Exterior
+# basePath experiment.measure
 
-:: measure.feedback.dead
+:: feedback.dead
 Dead organisms
 
-:: measure.feedback.header.all
+:: feedback.isDeadMatter
+Dead matter
+
+:: feedback.header.all
 Results Unavailable
 
-:: measure.feedback.header.repro
+:: feedback.header.repro
+Reproduction Rates
+
+:: feedback.header.reproFail
 Reproduction Rates Unavailable
 
-:: measure.feedback.header.eat
+:: feedback.header.eat
+Eating Rates
+
+:: feedback.header.eatFail
 Eating Rates Unavailable
 
-:: measure.feedback.header.water
+:: feedback.header.water
+Water Interactions
+
+:: feedback.header.waterFail
 Water Interactions Unavailable
 
-:: measure.feedback.moreThanOne
+:: feedback.moreThanOne
 More than one species present
 
-:: measure.feedback.moreThanTwo
+:: feedback.moreThanTwo
 More than two species present
 
-:: measure.feedback.lessThanTwo
+:: feedback.lessThanTwo
 Less than two species present
 
-:: measure.feedback.feederOn
+:: feedback.feederOn
 Auto-Feeder enabled
 
-:: measure.feedback.feederOff
+:: feedback.feederOff
 Auto-Feeder disabled
 
-:: measure.feedback.stabilizerOn
-Water Stabilizer enabled
+:: feedback.stabilizerOn
+Tank Stabilizer enabled
 
-:: measure.feedback.stabilizerOff
-Water Stabilizer disabled
+:: feedback.stabilizerOff
+Tank Stabilizer disabled
 
-:: measure.feedback.noRelationship
+:: feedback.noRelationship
 Relationship between species is undocumented
+
+:: feedback.noRepro
+Organism does not reproduce
+
+:: feedback.noWaterChem
+Organism does not affect water chemistry
+
+:: feedback.cannotMeasureWaterChem
+Could not measure water chemistry
+
+:: stabilizer.malfunction
+MALFUNCTION: Unable to be disabled
+
+:: stabilizer.desc
+The Tank Stabilizer maintains consistant water chemistry parameters in order to observe an organism's effect on its environment.
+
+:: stabilizer.name
+Tank Stabilizer
+
+:: feeder.name
+Auto-Feeder
+
+:: feeder.desc
+The Auto-Feeder dispenses a nutrient-dense food system to ensure maximum organism survival rates while discouraging predation.
 

@@ -87,7 +87,7 @@ namespace Aqua.Shop {
         }
 
         static private IEnumerator BackToMap() {
-            StateUtil.LoadMapWithWipe(Services.Data.Profile.Map.CurrentStationId(), ExitEntrance);
+            StateUtil.LoadMapWithWipe(Save.Map.CurrentStationId(), ExitEntrance);
             yield return 0.3f;
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();

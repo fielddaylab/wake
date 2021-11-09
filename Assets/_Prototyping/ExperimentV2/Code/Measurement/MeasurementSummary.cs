@@ -14,6 +14,11 @@ namespace ProtoAqua.ExperimentV2
         public LocText.Pool HeaderPool;
         public LocText.Pool TextPool;
 
+        public Color SuccessHeaderColor;
+        public Color SuccessTextColor;
+        public Color FailureHeaderColor;
+        public Color FailureTextColor;
+
         #endregion // Inspector
     }
 }

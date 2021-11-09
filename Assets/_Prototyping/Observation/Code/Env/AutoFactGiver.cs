@@ -13,7 +13,7 @@ namespace ProtoAqua.Observation
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            var bestiaryData = Services.Data.Profile.Bestiary;
+            var bestiaryData = Save.Bestiary;
             foreach(StringHash32 entityId in EntityIds)
             {
                 bestiaryData.RegisterEntity(entityId);

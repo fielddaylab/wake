@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using BeauUtil;
-using BeauUtil.Variants;
 using BeauPools;
-using BeauRoutine;
 
 namespace Aqua
 {

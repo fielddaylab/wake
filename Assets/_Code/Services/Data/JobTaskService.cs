@@ -92,7 +92,7 @@ namespace Aqua
             if (inJobId.IsEmpty)
                 return;
 
-            SaveData saveData = Services.Data.Profile;
+            SaveData saveData = Save.Current;
             
             m_JobLoading = true;
 
@@ -108,7 +108,7 @@ namespace Aqua
             if (m_LoadedJobId != inJobId)
                 return;
 
-            ProcessUpdateQueue(Services.Data.Profile.Jobs);
+            ProcessUpdateQueue(Save.Jobs);
 
             m_LoadedJobId = StringHash32.Null;
             m_TaskGraph.Clear();
@@ -117,7 +117,7 @@ namespace Aqua
 
         private void OnCutsceneEnd()
         {
-            ProcessUpdateQueue(Services.Data.Profile.Jobs);
+            ProcessUpdateQueue(Save.Jobs);
         }
 
         #endregion // Handlers
@@ -165,7 +165,7 @@ namespace Aqua
             if (inMask != 0 && (m_TaskMask & inMask) == 0)
                 return;
             
-            SaveData saveData = Services.Data.Profile;
+            SaveData saveData = Save.Current;
             JobsData jobsData = saveData.Jobs;
 
             ScanForUpdates(saveData, m_TaskUpdateQueue);

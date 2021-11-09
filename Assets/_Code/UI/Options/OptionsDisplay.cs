@@ -3,6 +3,7 @@ using BeauRoutine;
 using BeauUtil;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Aqua.Option
 {
@@ -26,6 +27,7 @@ namespace Aqua.Option
         #region Inspector
 
         [SerializeField] private TMP_Text m_UserNameLabel = null;
+        [SerializeField, Required] private LayoutGroup m_Layout = null;
 
         [Header("Pages")]
         [SerializeField, Required] private AudioPanel m_AudioPanel = null;
@@ -35,12 +37,16 @@ namespace Aqua.Option
 
         #endregion //Inspector
 
+        private void Awake() {
+            Async.InvokeAsync(() => m_Layout.ForceRebuild());
+        }
+
         private void OnEnable() {
             if (m_UserNameLabel) {
-                m_UserNameLabel.SetText(Services.Data.Profile.Id);
+                m_UserNameLabel.SetText(Save.Id);
             }
 
-            LoadOptions(Services.Data.Options);
+            LoadOptions(Save.Options);
         }
 
         private void OnDisable() {

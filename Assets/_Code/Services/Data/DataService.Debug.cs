@@ -52,6 +52,8 @@ namespace Aqua
                 m_LastBookmarkName = inBookmarkName;
                 StartPlaying(null, true);
             }
+
+            Resources.UnloadAsset(bookmarkAsset);
         }
 
         private void ForceReloadSave()
@@ -136,8 +138,8 @@ namespace Aqua
 
             jobsMenu.AddSubmenu(startJobMenu);
             jobsMenu.AddDivider();
-            jobsMenu.AddButton("Complete Current Job", () => Services.Data.Profile.Jobs.MarkComplete(Services.Data.CurrentJob()), () => !Services.Data.CurrentJobId().IsEmpty);
-            jobsMenu.AddButton("Clear All Job Progress", () => Services.Data.Profile.Jobs.ClearAll());
+            jobsMenu.AddButton("Complete Current Job", () => Save.Jobs.MarkComplete(Services.Data.CurrentJob()), () => !Services.Data.CurrentJobId().IsEmpty);
+            jobsMenu.AddButton("Clear All Job Progress", () => Save.Jobs.ClearAll());
 
             yield return jobsMenu;
 
@@ -230,8 +232,8 @@ namespace Aqua
 
             DMInfo invMenu = new DMInfo("Inventory");
 
-            invMenu.AddButton("Add 100 Cash", () => Services.Data.Profile.Inventory.AdjustItem(ItemIds.Cash, 100));
-            invMenu.AddButton("Add 100 Gears", () => Services.Data.Profile.Inventory.AdjustItem(ItemIds.Gear, 100));
+            invMenu.AddButton("Add 100 Cash", () => Save.Inventory.AdjustItem(ItemIds.Cash, 100));
+            invMenu.AddButton("Add 100 Gears", () => Save.Inventory.AdjustItem(ItemIds.Gear, 100));
 
             invMenu.AddDivider();
 
@@ -330,21 +332,21 @@ namespace Aqua
         {
             inMenu.AddButton(inJobId.ToDebugString(), () => 
             {
-                Services.Data.Profile.Jobs.ForgetJob(inJobId);
-                Services.Data.Profile.Jobs.SetCurrentJob(inJobId); 
+                Save.Jobs.ForgetJob(inJobId);
+                Save.Jobs.SetCurrentJob(inJobId); 
             }, () => Services.Data.CurrentJobId() != inJobId);
         }
 
         static private void RegisterEntityToggle(DMInfo inMenu, StringHash32 inEntityId)
         {
             inMenu.AddToggle(inEntityId.ToDebugString(),
-                () => { return Services.Data.Profile.Bestiary.HasEntity(inEntityId); },
+                () => { return Save.Bestiary.HasEntity(inEntityId); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Bestiary.RegisterEntity(inEntityId);
+                        Save.Bestiary.RegisterEntity(inEntityId);
                     else
-                        Services.Data.Profile.Bestiary.DeregisterEntity(inEntityId);
+                        Save.Bestiary.DeregisterEntity(inEntityId);
                 }
             );
         }
@@ -352,13 +354,13 @@ namespace Aqua
         static private void RegisterFactToggle(DMInfo inMenu, StringHash32 inFactId)
         {
             inMenu.AddToggle(inFactId.ToDebugString(),
-                () => { return Services.Data.Profile.Bestiary.HasFact(inFactId); },
+                () => { return Save.Bestiary.HasFact(inFactId); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Bestiary.RegisterFact(inFactId, true);
+                        Save.Bestiary.RegisterFact(inFactId, true);
                     else
-                        Services.Data.Profile.Bestiary.DeregisterFact(inFactId);
+                        Save.Bestiary.DeregisterFact(inFactId);
                 }
             );
         }
@@ -368,13 +370,13 @@ namespace Aqua
             bool bChanged = false;
             foreach(var entry in Services.Assets.Bestiary.Objects)
             {
-                bChanged |= Services.Data.Profile.Bestiary.DebugRegisterEntityNoEvent(entry.Id());
+                bChanged |= Save.Bestiary.DebugRegisterEntityNoEvent(entry.Id());
                 if (inbIncludeFacts)
                 {
                     foreach(var fact in entry.Facts)
                     {
-                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactNoEvent(fact.Id);
-                        bChanged |= Services.Data.Profile.Bestiary.DebugRegisterFactFlagsNoEvent(fact.Id, BFDiscoveredFlags.All);
+                        bChanged |= Save.Bestiary.DebugRegisterFactNoEvent(fact.Id);
+                        bChanged |= Save.Bestiary.DebugRegisterFactFlagsNoEvent(fact.Id, BFDiscoveredFlags.All);
                     }
                 }
             }
@@ -388,22 +390,22 @@ namespace Aqua
         {
             foreach(var entry in Services.Assets.Bestiary.Objects)
             {
-                Services.Data.Profile.Bestiary.DeregisterEntity(entry.Id());
+                Save.Bestiary.DeregisterEntity(entry.Id());
                 foreach(var fact in entry.Facts)
-                    Services.Data.Profile.Bestiary.DeregisterFact(fact.Id);
+                    Save.Bestiary.DeregisterFact(fact.Id);
             }
         }
 
         static private void RegisterUpgradeToggle(DMInfo inMenu, StringHash32 inItem)
         {
             inMenu.AddToggle(inItem.ToDebugString(),
-                () => { return Services.Data.Profile.Inventory.HasUpgrade(inItem); },
+                () => { return Save.Inventory.HasUpgrade(inItem); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Inventory.AddUpgrade(inItem);
+                        Save.Inventory.AddUpgrade(inItem);
                     else
-                        Services.Data.Profile.Inventory.RemoveUpgrade(inItem);
+                        Save.Inventory.RemoveUpgrade(inItem);
                 });
         }
 
@@ -411,39 +413,39 @@ namespace Aqua
         {
             foreach(var entry in Services.Assets.Inventory.Upgrades)
             {
-                Services.Data.Profile.Inventory.AddUpgrade(entry.Id());
+                Save.Inventory.AddUpgrade(entry.Id());
             }
         }
 
         static private void RegisterWaterPropertyToggle(DMInfo inMenu, WaterPropertyId inItem)
         {
             inMenu.AddToggle(Assets.Property(inItem).name,
-                () => { return Services.Data.Profile.Inventory.IsPropertyUnlocked(inItem); },
+                () => { return Save.Inventory.IsPropertyUnlocked(inItem); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Inventory.UnlockProperty(inItem);
+                        Save.Inventory.UnlockProperty(inItem);
                     else
-                        Services.Data.Profile.Inventory.LockProperty(inItem);
+                        Save.Inventory.LockProperty(inItem);
                 });
         }
 
         static private void UnlockAllProperties()
         {
             for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
-                Services.Data.Profile.Inventory.UnlockProperty(id);
+                Save.Inventory.UnlockProperty(id);
         }
 
         static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)
         {
             inMenu.AddToggle(inStationId.ToDebugString(),
-                () => { return Services.Data.Profile.Map.IsStationUnlocked(inStationId); },
+                () => { return Save.Map.IsStationUnlocked(inStationId); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Map.UnlockStation(inStationId);
+                        Save.Map.UnlockStation(inStationId);
                     else
-                        Services.Data.Profile.Map.LockStation(inStationId);
+                        Save.Map.LockStation(inStationId);
                 }
             );
         }
@@ -451,13 +453,13 @@ namespace Aqua
         static private void RegisterSiteToggle(DMInfo inMenu, StringHash32 inSiteId)
         {
             inMenu.AddToggle(inSiteId.ToDebugString(),
-                () => { return Services.Data.Profile.Map.IsSiteUnlocked(inSiteId); },
+                () => { return Save.Map.IsSiteUnlocked(inSiteId); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Map.UnlockSite(inSiteId);
+                        Save.Map.UnlockSite(inSiteId);
                     else
-                        Services.Data.Profile.Map.LockSite(inSiteId);
+                        Save.Map.LockSite(inSiteId);
                 }
             );
         }
@@ -465,13 +467,13 @@ namespace Aqua
         static private void RegisterRoomToggle(DMInfo inMenu, StringHash32 inRoomId)
         {
             inMenu.AddToggle(inRoomId.ToDebugString(),
-                () => { return Services.Data.Profile.Map.IsRoomUnlocked(inRoomId); },
+                () => { return Save.Map.IsRoomUnlocked(inRoomId); },
                 (b) =>
                 {
                     if (b)
-                        Services.Data.Profile.Map.UnlockRoom(inRoomId);
+                        Save.Map.UnlockRoom(inRoomId);
                     else
-                        Services.Data.Profile.Map.LockRoom(inRoomId);
+                        Save.Map.LockRoom(inRoomId);
                 }
             );
         }
@@ -480,7 +482,7 @@ namespace Aqua
         {
             foreach(var roomId in Services.Assets.Map.Rooms())
             {
-                Services.Data.Profile.Map.UnlockRoom(roomId);
+                Save.Map.UnlockRoom(roomId);
             }
         }
 
@@ -488,7 +490,7 @@ namespace Aqua
         {
             foreach(var map in Services.Assets.Map.Stations())
             {
-                Services.Data.Profile.Map.UnlockStation(map.Id());
+                Save.Map.UnlockStation(map.Id());
             }
         }
 
@@ -496,7 +498,7 @@ namespace Aqua
         {
             foreach(var map in Services.Assets.Map.DiveSites())
             {
-                Services.Data.Profile.Map.UnlockSite(map.Id());
+                Save.Map.UnlockSite(map.Id());
             }
         }
 

@@ -24,8 +24,6 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
         [SerializeField, Required] private CanvasGroup m_WaterPropertyGroup = null;
 
-        [SerializeField] private ActorAllocator m_Allocator = null;
-
         [Header("Summary Popup")]
         [SerializeField] private StressSummary m_Summary = null;
 
@@ -87,7 +85,7 @@ namespace ProtoAqua.ExperimentV2
         {
             if (m_World == null)
             {
-                m_World = new ActorWorld(m_Allocator, m_ParentTank.Bounds, null, null, 1, this);
+                m_World = new ActorWorld(m_ParentTank.ActorAllocator, m_ParentTank.Bounds, null, null, 1, this);
             }
 
             m_SetupPanelGroup.Hide();
@@ -125,7 +123,7 @@ namespace ProtoAqua.ExperimentV2
             List<ExperimentFactResult> experimentFacts = new List<ExperimentFactResult>();
 
             BFState state;
-            BestiaryData saveData = Services.Data.Profile.Bestiary;
+            BestiaryData saveData = Save.Bestiary;
             foreach (WaterPropertyId id in m_RequiredReveals)
             {
                 state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, id);
@@ -266,7 +264,7 @@ namespace ProtoAqua.ExperimentV2
                     RebuildPropertyDials();
                 }
                 m_CritterTransitions = m_SelectedCritter.GetActorStateTransitions();
-                ResetWaterPropertiesForCritter(Services.Data.Profile.Bestiary);
+                ResetWaterPropertiesForCritter(Save.Bestiary);
 
                 m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
@@ -388,16 +386,17 @@ namespace ProtoAqua.ExperimentV2
                 return;
             }
 
-            Assert.True(m_Dials.Length == (int) WaterPropertyId.TRACKED_COUNT, "{0} dials to handle {1} properties", m_Dials.Length, (int) WaterPropertyId.TRACKED_COUNT);
             Array.Clear(m_DialMap, 0, m_DialMap.Length);
 
             m_DialsUsed = 0;
             m_VisiblePropertiesMask = default;
 
+            InventoryData invData = Save.Inventory;
+
             WaterPropertyDial dial;
             foreach(var property in Services.Assets.WaterProp.Sorted())
             {
-                if (!Services.Data.Profile.Inventory.IsPropertyUnlocked(property.Index()))
+                if (!property.HasFlags(WaterPropertyFlags.IsProperty) || !invData.IsPropertyUnlocked(property.Index()))
                     continue;
 
                 dial = m_Dials[m_DialsUsed++];
@@ -465,7 +464,6 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneOptimizable.Optimize()
         {
-            m_Allocator = FindObjectOfType<ActorAllocator>();
             m_Dials = GetComponentsInChildren<WaterPropertyDial>(true);
         }
 

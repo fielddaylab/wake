@@ -1,4 +1,5 @@
-using System;using BeauUtil;
+using System;
+using BeauUtil;
 
 static public class JobIds
 {

@@ -61,7 +61,7 @@ namespace Aqua.Scripting
             if (!Services.Valid || !Services.Data.IsProfileLoaded())
                 return;
 
-            Services.Data.Profile.Map.FullSync();
+            Save.Map.FullSync();
             OnAutosaveEventPreserveEntrance();
         }
 
@@ -131,7 +131,7 @@ namespace Aqua.Scripting
 
         private void OnAutoSaveTimeEvent()
         {
-            Services.Data.Profile.Map.SyncTime();
+            Save.Map.SyncTime();
             OnAutosaveEvent();
         }
 

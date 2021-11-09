@@ -36,22 +36,13 @@ namespace Aqua
             return m_DisplaySortedMap;
         }
 
-        public IEnumerable<WaterPropertyDesc> Measurable()
-        {
-            foreach(var prop in m_DisplaySortedMap)
-            {
-                if (prop.HasFlags(WaterPropertyFlags.IsMeasureable))
-                    yield return prop;
-            }
-        }
-
         static private readonly WaterPropertyId[] SortOrder = new WaterPropertyId[]
         {
             WaterPropertyId.Temperature,
             WaterPropertyId.Light,
+            WaterPropertyId.PH,
             WaterPropertyId.Oxygen,
-            WaterPropertyId.CarbonDioxide,
-            WaterPropertyId.PH
+            WaterPropertyId.CarbonDioxide
         };
 
         static private int SortingOrder(WaterPropertyId inId)

@@ -72,7 +72,7 @@ namespace Aqua.Option
 
         private void MuteChanged(bool inbValue) 
         {
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             OptionAudioBus currentSettings = options.Audio[m_Id];
 
             currentSettings.Mute = inbValue;
@@ -88,7 +88,7 @@ namespace Aqua.Option
 
         private void VolumeChange(float inVolume) 
         {
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             OptionAudioBus currentSettings = options.Audio[m_Id];
             
             currentSettings.Volume = inVolume / m_Slider.maxValue;

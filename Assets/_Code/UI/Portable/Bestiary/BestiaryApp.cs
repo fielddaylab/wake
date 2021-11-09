@@ -126,7 +126,7 @@ namespace Aqua.Portable {
             m_HeaderPool.Reset();
 
             using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create()) {
-                Services.Data.Profile.Bestiary.GetEntities(Handler.Category, entities);
+                Save.Bestiary.GetEntities(Handler.Category, entities);
                 entities.Sort(BestiaryDesc.SortByEnvironment);
                 StringHash32 mapId = default;
 
@@ -206,7 +206,7 @@ namespace Aqua.Portable {
             }
 
             using(PooledList<BFBase> facts = PooledList<BFBase>.Create()) {
-                Services.Data.Profile.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
+                Save.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
                 if (facts.Count == 0) {
                     m_InfoPage.HasFacts.SetActive(false);
                     m_InfoPage.NoFacts.SetActive(true);

@@ -44,7 +44,7 @@ namespace Aqua.Argumentation {
 
             UnloadArgue(false);
 
-            ScienceData profile = Services.Data.Profile.Science;
+            ScienceData profile = Save.Science;
             m_CurrentId = id;
             m_CurrentStatus = profile.GetArgue(id, out created);
             m_CurrentCompleted = m_CurrentStatus == null;
@@ -78,12 +78,12 @@ namespace Aqua.Argumentation {
                 }
             }
 
-            return Services.Data.Profile.Science.IsArgueCompleted(id);
+            return Save.Science.IsArgueCompleted(id);
         }
 
         private bool Complete() {
             if (!m_CurrentId.IsEmpty && !m_CurrentCompleted) {
-                Services.Data.Profile.Science.CompleteArgue(m_CurrentId);
+                Save.Science.CompleteArgue(m_CurrentId);
                 m_CurrentCompleted = true;
                 m_ClaimSetup = false;
                 Services.Events.QueueForDispatch(ArgueEvents.Completed, m_CurrentId);

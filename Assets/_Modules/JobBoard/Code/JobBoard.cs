@@ -64,7 +64,7 @@ namespace Aqua.JobBoard
             UpdateButtonStatuses();
             OrderButtons();
 
-            MapDesc currentStation = Assets.Map(Services.Data.Profile.Map.CurrentStationId());
+            MapDesc currentStation = Assets.Map(Save.Map.CurrentStationId());
             m_StationIcon.sprite = currentStation.Icon();
             m_StationName.SetText(currentStation.LabelId());
 
@@ -83,7 +83,7 @@ namespace Aqua.JobBoard
 
         private void OnJobAction()
         {
-            var profileJobData = Services.Data.Profile.Jobs;
+            var profileJobData = Save.Jobs;
             switch(m_SelectedJobButton.Status)
             {
                 case PlayerJobStatus.NotStarted:
@@ -130,7 +130,7 @@ namespace Aqua.JobBoard
         {
             bool bUpdated = false;
 
-            var profileJobData = Services.Data.Profile.Jobs;
+            var profileJobData = Save.Jobs;
             foreach(var button in m_ButtonPool.ActiveObjects)
             {
                 bUpdated |= button.UpdateStatus(profileJobData.GetStatus(button.Job.Id()), m_ButtonAppearance );

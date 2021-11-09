@@ -120,7 +120,7 @@ namespace Aqua.Portable {
                 }
 
                 MonoBehaviour factDisplay = page.FactPools.Alloc(fact, entry,
-                    Services.Data.Profile.Bestiary.GetDiscoveredFlags(fact.Id),
+                    Save.Bestiary.GetDiscoveredFlags(fact.Id),
                     target);
 
                 finalizeCallback(fact, factDisplay);

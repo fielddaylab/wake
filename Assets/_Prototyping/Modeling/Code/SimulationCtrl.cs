@@ -48,8 +48,8 @@ namespace ProtoAqua.Modeling
             
             m_Buffer.SetScenario(scenario);
 
-            m_UniversalState.Sync(Services.Data.Profile.Bestiary);
-            m_ModelingUI.PopulateMap(Services.Data.Profile.Bestiary, m_UniversalState);
+            m_UniversalState.Sync(Save.Bestiary);
+            m_ModelingUI.PopulateMap(Save.Bestiary, m_UniversalState);
             m_ModelingUI.SetScenario(scenario, scenario && BootParams.BootedFromCurrentScene);
 
             m_ModelingUI.ScenarioPanel.OnSimulateSelect = OnScenarioSimulateClick;
@@ -159,7 +159,7 @@ namespace ProtoAqua.Modeling
         private void StartActivity()
         {
             // import critters and their graphed facts
-            BestiaryData bestiaryData = Services.Data.Profile.Bestiary;
+            BestiaryData bestiaryData = Save.Bestiary;
             foreach(var critter in m_Buffer.Scenario().Critters())
             {
                 if (m_UniversalState.IsCritterGraphed(critter.Id()))
@@ -215,7 +215,7 @@ namespace ProtoAqua.Modeling
 
             StringHash32 fact = m_Buffer.Scenario().BestiaryModelId();
             if (!fact.IsEmpty)
-                Services.Data.Profile.Bestiary.RegisterFact(fact, true);
+                Save.Bestiary.RegisterFact(fact, true);
             m_SimulationUI.Complete();
 
             Services.Audio.PostEvent("predictionSynced");
@@ -313,8 +313,8 @@ namespace ProtoAqua.Modeling
 
         private void OnBestiaryUpdated()
         {
-            m_UniversalState.Sync(Services.Data.Profile.Bestiary);
-            m_ModelingUI.PopulateMap(Services.Data.Profile.Bestiary, m_UniversalState);
+            m_UniversalState.Sync(Save.Bestiary);
+            m_ModelingUI.PopulateMap(Save.Bestiary, m_UniversalState);
             m_ModelingUI.UpdateScenarioPanel();
         }
 

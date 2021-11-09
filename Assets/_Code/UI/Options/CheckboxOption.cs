@@ -40,7 +40,7 @@ namespace Aqua.Option
         {
             OnChanged?.Invoke(inbSetting);
 
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             options.SetDirty();
             m_Checkbox.targetGraphic.color = inbSetting ? AQColors.ContentBlue : AQColors.Teal;
             

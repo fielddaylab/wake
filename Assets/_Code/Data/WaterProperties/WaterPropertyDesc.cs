@@ -87,10 +87,7 @@ namespace Aqua
     [Flags]
     public enum WaterPropertyFlags : ushort
     {
-        HideAlways = 0x001,
-        HideIfZero = 0x002,
-        TransferThroughEating = 0x004,
-        IsMeasureable = 0x008,
-        IsCountable = 0x010,
+        IsResource = 0x01,
+        IsProperty = 0x02
     }
 }

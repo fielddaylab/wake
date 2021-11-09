@@ -42,16 +42,24 @@ namespace ProtoAqua.ExperimentV2
         static public readonly TextId StabilizerEnabled = "experiment.measure.feedback.stabilizerOn";
         static public readonly TextId StabilizerDisabled = "experiment.measure.feedback.stabilizerOff";
         static public readonly TextId NoRelationship = "experiment.measure.feedback.noRelationship";
-        static public readonly TextId NoRelationshipObserved = "experiment.measure.feedback.noRelationshipObserved";
+        static public readonly TextId DoesNotReproduce = "experiment.measure.feedback.noRepro";
+        static public readonly TextId NoWaterChemistry = "experiment.measure.feedback.noWaterChem";
+        static public readonly TextId CannotMeasureWaterChem = "experiment.measure.feedback.cannotMeasureWaterChem";
         static public readonly TextId DeadCritters = "experiment.measure.feedback.dead";
+        static public readonly TextId IsDeadMatter = "experiment.measure.feedback.isDeadMatter";
+
+        public const uint FailureFlag = 0x01;
+        public const uint NotUnlockedFlag = 0x02;
 
         public StringHash32 Category;
         public StringHash32 Id;
+        public uint Flags;
 
-        public ExperimentFeedback(StringHash32 inCategory, StringHash32 inId)
+        public ExperimentFeedback(StringHash32 inCategory, StringHash32 inId, uint inFlags)
         {
             Category = inCategory;
             Id = inId;
+            Flags = inFlags;
         }
     }
 }

@@ -69,16 +69,6 @@ namespace Aqua
 
         #region Save Data
 
-        public SaveData Profile
-        {
-            get { return m_CurrentSaveData; }
-        }
-
-        public OptionsData Options
-        {
-            get { return m_CurrentOptions; }
-        }
-
         public string CurrentCharacterName()
         {
             return m_CurrentSaveData?.Character?.DisplayName ?? m_DefaultPlayerDisplayName;
@@ -281,7 +271,6 @@ namespace Aqua
             data.Id = inId;
             data.Map.SetDefaults();
             data.Inventory.SetDefaults();
-            OptionsData.SyncFrom(m_CurrentOptions, data.Options, OptionsData.Authority.All);
             return data;
         }
 
@@ -341,6 +330,7 @@ namespace Aqua
         private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
         {
             m_CurrentSaveData = inProfile;
+            Save.DeclareProfile(inProfile);
             
             #if DEVELOPMENT
             m_IsDebugProfile = IdentifyDebugProfile(ref inProfile.Id);
@@ -624,6 +614,8 @@ namespace Aqua
                 m_CurrentOptions = new OptionsData();
                 m_CurrentOptions.SetDefaults(OptionsData.Authority.All);
             }
+
+            Save.DeclareOptions(m_CurrentOptions);
         }
 
         public void SaveOptionsSettings()

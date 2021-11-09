@@ -41,7 +41,7 @@ namespace Aqua.Portable
 
         private void LoadData()
         {
-            JobsData jobsData = Services.Data.Profile.Jobs;
+            JobsData jobsData = Save.Jobs;
             PlayerJob currentJob = jobsData.CurrentJob;
             if (currentJob == null)
             {

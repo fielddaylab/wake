@@ -182,7 +182,7 @@ namespace ProtoAqua.ExperimentV2
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
-                CollectCritters(Services.Data.Profile.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
+                CollectCritters(Save.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
                 availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);

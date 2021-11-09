@@ -115,7 +115,7 @@ namespace ProtoAqua.Modeling
             }
             
             StringHash32 modelId = inScenario.BestiaryModelId();
-            bool bCompleted = Services.Data.Profile.Bestiary.HasFact(modelId);
+            bool bCompleted = Save.Bestiary.HasFact(modelId);
             if (bCompleted)
             {
                 m_SimulationAllowed = false;
@@ -123,7 +123,7 @@ namespace ProtoAqua.Modeling
                 return;
             }
 
-            bool bHasEnvironment = Services.Data.Profile.Bestiary.HasEntity(inScenario.Environment().Id());
+            bool bHasEnvironment = Save.Bestiary.HasEntity(inScenario.Environment().Id());
             if (!bHasEnvironment)
             {
                 m_SimulationAllowed = false;

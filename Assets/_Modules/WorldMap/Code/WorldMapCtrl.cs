@@ -57,7 +57,7 @@ namespace Aqua.WorldMap
 
             // TODO: SOmething fancy??
 
-            Services.Data.Profile.Map.SetCurrentStationId(m_TargetStation);
+            Save.Map.SetCurrentStationId(m_TargetStation);
 
             yield return 0.2f;
 
@@ -72,7 +72,7 @@ namespace Aqua.WorldMap
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
             MapDB mapDB = Services.Assets.Map;
-            MapData profileData = Services.Data.Profile.Map;
+            MapData profileData = Save.Map;
 
             m_CurrentStation = profileData.CurrentStationId();
             m_TargetStation = m_CurrentStation;

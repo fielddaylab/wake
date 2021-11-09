@@ -22,7 +22,7 @@ namespace Aqua
             var thread = ScriptThread(inThreadState);
             inNode.Package().IncrementUseCount();
 
-            Services.Data.Profile.Script.RecordNodeVisit(inNode.Id(), inNode.TrackingLevel());
+            Save.Script.RecordNodeVisit(inNode.Id(), inNode.TrackingLevel());
             if (inNode.IsCutscene())
             {
                 thread.PushCutscene();

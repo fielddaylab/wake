@@ -113,7 +113,7 @@ namespace Aqua.Option
 
             OnChanged.Invoke(inValue);
 
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             options.SetDirty();
             
             Services.Events.QueueForDispatch(GameEvents.OptionsUpdated, options);

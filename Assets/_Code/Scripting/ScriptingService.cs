@@ -144,7 +144,7 @@ namespace Aqua
                     DebugService.Log(LogMask.Scripting, "[ScriptingService] Evaluating trigger {0}...", inTriggerId.ToDebugString());
                     
                     int minScore = int.MinValue;
-                    int responseCount = responseSet.GetHighestScoringNodes(resolver, m_LeafCache, inContext, Services.Data.Profile?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
+                    int responseCount = responseSet.GetHighestScoringNodes(resolver, m_LeafCache, inContext, Save.Current?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
@@ -668,19 +668,19 @@ namespace Aqua
                 }
 
                 psb.Builder.Append("\nAll Visited Nodes");
-                foreach(var node in Services.Data.Profile.Script.ProfileNodeHistory)
+                foreach(var node in Save.Script.ProfileNodeHistory)
                 {
                     psb.Builder.Append("\n  ").Append(node.ToDebugString());
                 }
 
                 psb.Builder.Append("\nAll Visited in Current Session");
-                foreach(var node in Services.Data.Profile.Script.SessionNodeHistory)
+                foreach(var node in Save.Script.SessionNodeHistory)
                 {
                     psb.Builder.Append("\n  ").Append(node.ToDebugString());
                 }
 
                 psb.Builder.Append("\nRecent Node History");
-                foreach(var node in Services.Data.Profile.Script.RecentNodeHistory)
+                foreach(var node in Save.Script.RecentNodeHistory)
                 {
                     psb.Builder.Append("\n  ").Append(node.ToDebugString());
                 }
@@ -711,7 +711,7 @@ namespace Aqua
             {
                 table.Clear();
             }
-            Services.Data.Profile.Script.Reset();
+            Save.Script.Reset();
             Log.Warn("[DebugService] Cleared all scripting state");
         }
 

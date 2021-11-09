@@ -33,7 +33,7 @@ namespace ProtoAqua.Modeling
 
             m_ModelState = inModelState;
 
-            var bestiaryData = Services.Data.Profile.Bestiary;
+            var bestiaryData = Save.Bestiary;
             foreach(var factId in inFacts)
             {
                 BFBase fact = Assets.Fact(factId);
@@ -68,7 +68,7 @@ namespace ProtoAqua.Modeling
 
         private void Add(StringHash32 inFactId)
         {
-            if (Services.Data.Profile.Bestiary.AddFactToGraph(inFactId))
+            if (Save.Bestiary.AddFactToGraph(inFactId))
             {
                 BFBase fact = Assets.Fact(inFactId);
                 m_Map.AddFact(fact);

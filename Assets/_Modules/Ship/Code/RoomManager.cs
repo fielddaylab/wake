@@ -57,7 +57,7 @@ namespace Aqua.Ship
                 yield return null;
             }
 
-            Services.Data.Profile.Map.UnlockRoom(m_DefaultRoom.Id());
+            Save.Map.UnlockRoom(m_DefaultRoom.Id());
             RefreshRoomLinks();
         }
 
@@ -74,7 +74,7 @@ namespace Aqua.Ship
 
         public void LoadNavRoom()
         {
-            StateUtil.LoadMapWithWipe(Services.Data.Profile.Map.CurrentStationId(), "Ship");
+            StateUtil.LoadMapWithWipe(Save.Map.CurrentStationId(), "Ship");
         }
 
         public void LoadScene(string inScene)
@@ -134,7 +134,7 @@ namespace Aqua.Ship
 
         private void RefreshRoomLinks()
         {
-            MapData map = Services.Data.Profile.Map;
+            MapData map = Save.Map;
             foreach(var roomLink in m_Links)
             {
                 if (map.IsRoomUnlocked(roomLink.LinkId))

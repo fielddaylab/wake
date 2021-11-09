@@ -228,7 +228,7 @@ namespace ProtoAqua.Observation
             return bFound;
         }
 
-        public bool WasScanned(StringHash32 inId) { return Services.Data.Profile.Inventory.WasScanned(inId); }
+        public bool WasScanned(StringHash32 inId) { return Save.Inventory.WasScanned(inId); }
 
         public ScanResult RegisterScanned(ScanData inData)
         {
@@ -239,12 +239,12 @@ namespace ProtoAqua.Observation
             {
                 table.Set("scanId", inData.Id());
 
-                if (Services.Data.Profile.Inventory.RegisterScanned(inData.Id()))
+                if (Save.Inventory.RegisterScanned(inData.Id()))
                 {
                     result |= ScanResult.NewScan;
 
                     StringHash32 bestiaryId = inData.BestiaryId();
-                    if (!bestiaryId.IsEmpty && Services.Data.Profile.Bestiary.RegisterEntity(bestiaryId))
+                    if (!bestiaryId.IsEmpty && Save.Bestiary.RegisterEntity(bestiaryId))
                     {
                         result |= ScanResult.NewBestiary;
                     }
@@ -253,7 +253,7 @@ namespace ProtoAqua.Observation
 
                     foreach(var factId in inData.FactIds())
                     {
-                        if (Services.Data.Profile.Bestiary.RegisterFact(factId, false))
+                        if (Save.Bestiary.RegisterFact(factId, false))
                         {
                             result |= ScanResult.NewBestiary;
                         }

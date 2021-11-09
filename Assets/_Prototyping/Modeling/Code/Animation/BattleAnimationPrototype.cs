@@ -102,7 +102,7 @@ namespace ProtoAqua.Modeling
             int used = 0;
             Array.Clear(m_WaterPropMap, 0, m_WaterPropMap.Length);
 
-            m_UnlockedProperties = Services.Data.Profile.Inventory.GetPropertyUnlockedMask();
+            m_UnlockedProperties = Save.Inventory.GetPropertyUnlockedMask();
             foreach(var propDesc in Services.Assets.WaterProp.Sorted())
             {
                 if (m_UnlockedProperties[propDesc.Index()])

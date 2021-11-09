@@ -316,7 +316,7 @@ namespace Aqua
 
         private void OnProfileLoaded()
         {
-            var mapData = Services.Data.Profile.Map;
+            var mapData = Save.Map;
 
             m_CurrentTime = mapData.CurrentTime.Ticks;
             m_TotalDays = (ushort) mapData.CurrentTime.Day;

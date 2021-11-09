@@ -98,8 +98,8 @@ namespace Aqua
             var job = Assets.Job(inJobId);
 
             // inventory adjustment
-            Services.Data.Profile.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
-            Services.Data.Profile.Inventory.AdjustItem(ItemIds.Gear, job.GearReward());
+            Save.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
+            Save.Inventory.AdjustItem(ItemIds.Gear, job.GearReward());
 
             using(var table = TempVarTable.Alloc())
             {

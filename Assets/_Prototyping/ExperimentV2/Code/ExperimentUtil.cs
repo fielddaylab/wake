@@ -35,7 +35,7 @@ namespace ProtoAqua.ExperimentV2
 
         static public ExperimentFactResult NewFact(StringHash32 inFactId)
         {
-            var bestiaryData = Services.Data.Profile.Bestiary;
+            var bestiaryData = Save.Bestiary;
             if (bestiaryData.HasFact(inFactId))
             {
                 return new ExperimentFactResult(inFactId, ExperimentFactResultType.Known, BFDiscoveredFlags.None);
@@ -48,7 +48,7 @@ namespace ProtoAqua.ExperimentV2
 
         static public ExperimentFactResult NewFactFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
-            var bestiaryData = Services.Data.Profile.Bestiary;
+            var bestiaryData = Save.Bestiary;
             if (!bestiaryData.HasFact(inFactId))
                 return default(ExperimentFactResult);
             if ((bestiaryData.GetDiscoveredFlags(inFactId) & inFlags) != inFlags)
@@ -63,8 +63,8 @@ namespace ProtoAqua.ExperimentV2
             Assert.NotNull(fader);
             transform.SetScale(1.05f, Axis.XY);
             fader.alpha = 0;
-            return Routine.Combine(transform.ScaleTo(1, 0.1f, Axis.XY),
-                fader.FadeTo(inAlpha, 0.1f)
+            return Routine.Combine(transform.ScaleTo(1, 0.15f, Axis.XY),
+                fader.FadeTo(inAlpha, 0.15f)
             );
         }
     }

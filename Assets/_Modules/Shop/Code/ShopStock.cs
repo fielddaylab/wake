@@ -38,7 +38,7 @@ namespace Aqua.Shop {
             using(var table = TempVarTable.Alloc()) {
                 table.Set("itemId", item.ItemId);
                 table.Set("itemName", item.CachedItem.NameTextId().Hash());
-                table.Set("canAfford", CanAfford(Services.Data.Profile.Inventory, item.CachedItem));
+                table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
                 table.Set("cashCost", item.CachedItem.BuyCoinsValue());
                 table.Set("gearCost", item.CachedItem.BuyGearsValue());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
@@ -64,7 +64,7 @@ namespace Aqua.Shop {
         }
 
         private void UpdateAllItems() {
-            InventoryData profileData = Services.Data.Profile.Inventory;
+            InventoryData profileData = Save.Inventory;
 
             foreach(var item in m_Items) {
                 UpdateItem(item, profileData);
@@ -108,7 +108,7 @@ namespace Aqua.Shop {
         #region Loading
 
         public void OnSceneLoad(SceneBinding inScene, object inContext) {
-            InventoryData profileData = Services.Data.Profile.Inventory;
+            InventoryData profileData = Save.Inventory;
 
             foreach(var item in m_Items) {
                 item.CachedItem = Assets.Item(item.ItemId);

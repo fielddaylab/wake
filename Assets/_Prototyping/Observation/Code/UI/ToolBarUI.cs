@@ -48,8 +48,8 @@ namespace ProtoAqua.Observation
 
         private void RefreshItemList()
         {
-            bool bHasScanner = Services.Data.Profile.Inventory.HasUpgrade(ItemIds.ROVScanner);
-            bool bHasTagger = Services.Data.Profile.Inventory.HasUpgrade(ItemIds.ROVTagger);
+            bool bHasScanner = Save.Inventory.HasUpgrade(ItemIds.ROVScanner);
+            bool bHasTagger = Save.Inventory.HasUpgrade(ItemIds.ROVTagger);
 
             int itemCount = 0;
             if (bHasScanner)

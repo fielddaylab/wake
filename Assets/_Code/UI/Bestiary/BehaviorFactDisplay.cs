@@ -21,7 +21,7 @@ namespace Aqua
         public void Populate(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
         {
             Sprite icon = inFact.Icon;
-            if (inFact.Type == BFTypeId.Eat && inReference != inFact.Parent) {
+            if (inFact.Type == BFTypeId.Eat && (inReference != null && inReference != inFact.Parent)) {
                 icon = Services.Assets.Bestiary.DefaultIsEatenIcon();
             }
 

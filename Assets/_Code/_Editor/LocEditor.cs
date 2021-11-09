@@ -249,7 +249,7 @@ namespace Aqua.Editor {
                 string currentBasePath = string.Empty;
 
                 while (recordIdx < totalRecordCount) {
-                    if (pathIdx < totalPathCount && recordIdx >= nextBasePath.Start) {
+                    while (pathIdx < totalPathCount && recordIdx >= nextBasePath.Start) {
                         writer.Write("# basePath ");
                         writer.Write(nextBasePath.Path);
                         writer.Write("\n\n");
@@ -371,14 +371,20 @@ namespace Aqua.Editor {
                         break;
                     } else {
                         BasePathHeader basePath;
+                        int bestMatchIdx = -1;
+                        int bestMatchLength = 0;
                         for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
                             basePath = package.AllBasePaths[i];
-                            if (inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
-                                newRecord = InsertTextRecord(inKey, inText, package, i);
-                                EditorUtility.SetDirty(instance);
-                                bInserted = true;
-                                break;
+                            if (basePath.Path.Length > bestMatchLength & inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
+                                bestMatchLength = basePath.Path.Length;
+                                bestMatchIdx = i;
                             }
+                        }
+
+                        if (bestMatchIdx >= 0) {
+                            newRecord = InsertTextRecord(inKey, inText, package, bestMatchIdx);
+                            EditorUtility.SetDirty(instance);
+                            bInserted = true;
                         }
                     }
                 }

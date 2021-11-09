@@ -70,7 +70,7 @@ namespace ProtoAqua.Modeling
         static public bool HasPopulationHistory(ModelingScenarioData inScenario, int inCritterIndex)
         {
             StringHash32 factId = inScenario.PopulationHistoryFacts()[inCritterIndex];
-            return factId.IsEmpty || Services.Data.Profile.Bestiary.HasFact(factId);
+            return factId.IsEmpty || Save.Bestiary.HasFact(factId);
         }
     }
 }

@@ -1,9 +1,7 @@
 using UnityEngine;
 using BeauPools;
-using TMPro;
 using BeauUtil;
 using System;
-using UnityEngine.UI;
 
 namespace Aqua
 {
@@ -13,7 +11,6 @@ namespace Aqua
 
         [SerializeField, Required] private LocText m_Text = null;
         [SerializeField, Required] private ColorGroup m_Background = null;
-        [SerializeField, Required] private LayoutGroup m_Layout = null;
 
         #endregion // Inspector
 
@@ -25,11 +22,11 @@ namespace Aqua
             m_Background.Color = inBackgroundColor;
             m_Text.Graphic.color = inTextColor;
 
-            // if (inBackgroundColor.a > 0) {
-            //     m_Layout.padding = default;
-            // } else {
-            //     m_Layout.padding = new RectOffset(2, 2, 0, 0);
-            // }
+            if (inBackgroundColor.a > 0) {
+                m_Text.Graphic.margin = new Vector4(4, 0, 4, 0);
+            } else {
+                m_Text.Graphic.margin = new Vector4(2, 0, 2, 0);
+            }
         }
 
         public void Configure(StringSlice inText)

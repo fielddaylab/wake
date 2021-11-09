@@ -18,7 +18,7 @@ namespace Aqua
             Services.Events.Register<OptionsData>(GameEvents.OptionsUpdated, ApplyOptions, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this);
 
-            ApplyOptions(Services.Data.Options);
+            ApplyOptions(Save.Options);
         }
 
         protected override void Shutdown()
@@ -30,7 +30,7 @@ namespace Aqua
 
         private void OnProfileLoaded()
         {
-            ApplyOptions(Services.Data.Options);
+            ApplyOptions(Save.Options);
         }
 
         private void ApplyOptions(OptionsData inOptions)

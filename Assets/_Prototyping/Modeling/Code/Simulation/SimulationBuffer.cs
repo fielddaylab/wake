@@ -559,7 +559,7 @@ namespace ProtoAqua.Modeling
             }
 
             m_KnownHistoricalPopulations.Clear();
-            var bestiaryData = Services.Data.Profile.Bestiary;
+            var bestiaryData = Save.Bestiary;
             var actors = m_Scenario.Actors();
             var historical = m_Scenario.PopulationHistoryFacts();
             for(int i = 0; i < actors.Length; i++)

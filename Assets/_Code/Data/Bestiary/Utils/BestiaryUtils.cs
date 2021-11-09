@@ -56,6 +56,44 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Returns the eating rule associated with this pair of creatures.
+        /// </summary>
+        static public BFEat FindEatingRule(BestiaryDesc inParent, BestiaryDesc inTarget, ActorStateId inState = ActorStateId.Alive)
+        {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            if (inState == ActorStateId.Dead)
+                return null;
+
+            BFEat defaultEat = null;
+            foreach (var fact in inParent.Facts)
+            {
+                BFEat eat = fact as BFEat;
+                if (eat == null)
+                    continue;
+
+                if (eat.Critter != inTarget)
+                    continue;
+
+                if (eat.OnlyWhenStressed)
+                {
+                    if (inState == ActorStateId.Stressed)
+                        return eat;
+                }
+                else
+                {
+                    if (inState == ActorStateId.Alive)
+                        return eat;
+
+                    defaultEat = eat;
+                }
+            }
+
+            return defaultEat;
+        }
+
+        /// <summary>
         /// Locates produce rule associated with the given creature and water property.
         /// </summary>
         static public BFProduce FindProduceRule(BestiaryDesc inParent, WaterPropertyId inPropertyId, ActorStateId inState = ActorStateId.Alive)

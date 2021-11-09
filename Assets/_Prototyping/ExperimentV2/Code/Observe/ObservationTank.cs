@@ -147,7 +147,7 @@ namespace ProtoAqua.ExperimentV2
                 m_SummaryPanel.FactPools.FreeAll();
             }
             if (m_ParentTank.WaterFillProportion > 0) {
-                m_DrainRoutine.Replace(this, TankWaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
+                m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
             }
             m_ParentTank.CurrentState = 0;
         }
@@ -274,7 +274,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void AttemptCaptureBehavior(StringHash32 inFactId)
         {
-            if (Services.Data.Profile.Bestiary.RegisterFact(inFactId))
+            if (Save.Bestiary.RegisterFact(inFactId))
             {
                 foreach(var circle in m_BehaviorCircles.ActiveObjects)
                 {
@@ -336,7 +336,7 @@ namespace ProtoAqua.ExperimentV2
 
         static public void EmitEmoji(BFBase inFact, ActorInstance inActor, ActorWorld inWorld)
         {
-            if (!Services.Data.Profile.Bestiary.HasFact(inFact.Id))
+            if (!Save.Bestiary.HasFact(inFact.Id))
                 return;
             
             ObservationTank tank = (ObservationTank) inWorld.Tag;
@@ -417,7 +417,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private IEnumerator BackToEnvironment() {
-            m_DrainRoutine.Replace(this, TankWaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
+            m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
             m_AddCrittersPanel.ClearSelection();
             
             yield return Routine.Combine(
@@ -479,7 +479,7 @@ namespace ProtoAqua.ExperimentV2
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
             using(Profiling.Time("getting potential observations")) {
-                potentialNewObservationsCount = m_ActorBehavior.GetPotentialNewObservations(Services.Data.Profile.Bestiary.HasFact, m_PotentialNewFacts);
+                potentialNewObservationsCount = ObservationBehaviorSystem.GetPotentialNewObservations(m_World, Save.Bestiary.HasFact, m_PotentialNewFacts);
                 Log.Msg("[ObservationTank] {0} potentially observable facts", potentialNewObservationsCount);
             }
             m_MissedFactCount = 0;
@@ -587,7 +587,7 @@ namespace ProtoAqua.ExperimentV2
             using(var fader = Services.UI.WorldFaders.AllocFader())
             {
                 yield return fader.Object.Show(Color.black, 0.5f);
-                yield return TankWaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
+                yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
                 ClearStateAfterExperiment();
                 yield return 0.5f;
                 InitializeSummaryScreen(inResult);
@@ -652,7 +652,7 @@ namespace ProtoAqua.ExperimentV2
                 newFact = m_SummaryPanel.FactPools.Alloc(Assets.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
                 m_SummaryPanel.FactListLayout.ForceRebuild();
                 yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, 1);
-                yield return 0.1f;
+                yield return 0.2f;
             }
         }
 

@@ -2,14 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
-using Aqua.Profile;
 using Aqua.Scripting;
-using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -26,7 +23,6 @@ namespace ProtoAqua.ExperimentV2
         }
 
         [SerializeField] private SelectableTank m_Tank = null;
-        [SerializeField] private ActorAllocator m_Allocator = null;
 
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         
@@ -37,7 +33,7 @@ namespace ProtoAqua.ExperimentV2
             if (World != null)
                 return;
 
-            World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, OnFree, 16, inTank);
+            World = new ActorWorld(m_Tank.ActorAllocator, m_Tank.Bounds, null, OnFree, 16, inTank);
         }
 
         #region Critters
@@ -138,7 +134,7 @@ namespace ProtoAqua.ExperimentV2
             ActorWorld.RegenerateActorCounts(World);
         }
 
-        public int GetPotentialNewObservations(HasFactDelegate inDelegate, ICollection<BFBase> outFactIds)
+        static public int GetPotentialNewObservations(ActorWorld inWorld, HasFactDelegate inDelegate, ICollection<BFBase> outFactIds)
         {
             Assert.NotNull(inDelegate);
             
@@ -146,17 +142,17 @@ namespace ProtoAqua.ExperimentV2
             ActorDefinition def;
             ActorStateId state;
             ActorDefinition.ValidEatTarget[] possibleEats;
-            foreach(var critterCount in World.ActorCounts)
+            foreach(var critterCount in inWorld.ActorCounts)
             {
                 if (critterCount.Population == 0)
                     continue;
 
-                def = World.Allocator.Define(critterCount.Id);
-                state = def.StateEvaluator.Evaluate(World.Water);
+                def = inWorld.Allocator.Define(critterCount.Id);
+                state = def.StateEvaluator.Evaluate(inWorld.Water);
                 possibleEats = ActorDefinition.GetEatTargets(def, state);
                 
                 foreach(var eat in possibleEats) {
-                    if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(World, eat.TargetId) == 0)
+                    if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(inWorld, eat.TargetId) == 0)
                         continue;
 
                     factCount++;
@@ -337,7 +333,7 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance target = inActor.CurrentInteractionActor;
             BFEat eatRule = Assets.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
 
-            bool bHas = Services.Data.Profile.Bestiary.HasFact(eatRule.Id);
+            bool bHas = Save.Bestiary.HasFact(eatRule.Id);
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("factId", eatRule.Id);
@@ -379,7 +375,7 @@ namespace ProtoAqua.ExperimentV2
 
                 if (capture.IsValid())
                 {
-                    bHas = Services.Data.Profile.Bestiary.HasFact(eatRule.Id);
+                    bHas = Save.Bestiary.HasFact(eatRule.Id);
                     using(var table = TempVarTable.Alloc())
                     {
                         table.Set("factId", eatRule.Id);
@@ -549,7 +545,6 @@ namespace ProtoAqua.ExperimentV2
 
         void ISceneOptimizable.Optimize()
         {
-            m_Allocator = FindObjectOfType<ActorAllocator>();
             m_Tank = GetComponentInParent<SelectableTank>();
         }
 

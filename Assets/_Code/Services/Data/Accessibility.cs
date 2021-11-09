@@ -12,22 +12,22 @@ namespace Aqua
     {
         static public OptionsAccessibility.TTSMode TTSMode
         {
-            get { return Services.Data.Options.Accessibility.TTS; }
+            get { return Save.Options.Accessibility.TTS; }
         }
 
         static public bool TTSEnabled
         {
-            get { return Services.Data.Options.Accessibility.TTS > 0; }
+            get { return Save.Options.Accessibility.TTS > 0; }
         }
 
         static public bool ReduceCameraMovement
         {
-            get { return Services.Data.Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceCameraMovement); }
+            get { return Save.Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceCameraMovement); }
         }
 
         static public bool Photosensitive
         {
-            get { return Services.Data.Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceFlashing); }
+            get { return Save.Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceFlashing); }
         }
     }
 }

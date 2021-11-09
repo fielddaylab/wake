@@ -19,6 +19,7 @@ namespace Aqua.Option
 
         [NonSerialized] private float m_MinValue = 0;
         [NonSerialized] private float m_MaxValue = 0;
+        [NonSerialized] private bool m_Initializing;
 
         public Action<float> OnChanged;
         public Func<float, string> GenerateString;
@@ -39,6 +40,8 @@ namespace Aqua.Option
 
             m_Default.SetAnchorX(Mathf.InverseLerp(inMinValue, inMaxValue, inDefault));
 
+            m_Initializing = true;
+
             if (inIncrement > 0)
             {
                 m_Slider.wholeNumbers = true;
@@ -51,6 +54,8 @@ namespace Aqua.Option
                 m_Slider.minValue = 0;
                 m_Slider.maxValue = 1;
             }
+
+            m_Initializing = false;
         }
 
         public void Sync(float inValue)
@@ -73,11 +78,15 @@ namespace Aqua.Option
 
         private void OnSliderUpdated(float inValue) 
         {
+            if (m_Initializing) {
+                return;
+            }
+
             float actualValue = Mathf.Lerp(m_MinValue, m_MaxValue, inValue / m_Slider.maxValue);
 
             OnChanged?.Invoke(actualValue);
 
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             options.SetDirty();
 
             string valueString;

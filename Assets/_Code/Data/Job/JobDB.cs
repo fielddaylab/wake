@@ -31,8 +31,8 @@ namespace Aqua
         {
             EnsureCreated();
 
-            var jobsData = Services.Data.Profile.Jobs;
-            var mapData = Services.Data.Profile.Map;
+            var jobsData = Save.Jobs;
+            var mapData = Save.Map;
 
             foreach(var job in Objects)
             {
@@ -59,8 +59,8 @@ namespace Aqua
         {
             EnsureCreated();
 
-            var jobsData = Services.Data.Profile.Jobs;
-            var mapData = Services.Data.Profile.Map;
+            var jobsData = Save.Jobs;
+            var mapData = Save.Map;
 
             var job = Get(inId);
             return job != null && job.IsAtStation(mapData) && !jobsData.IsStartedOrComplete(inId) && job.ShouldBeAvailable(jobsData);
@@ -70,8 +70,8 @@ namespace Aqua
         {
             EnsureCreated();
 
-            var jobsData = Services.Data.Profile.Jobs;
-            var mapData = Services.Data.Profile.Map;
+            var jobsData = Save.Jobs;
+            var mapData = Save.Map;
 
             foreach(var job in Objects)
             {

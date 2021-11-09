@@ -18,7 +18,7 @@ namespace Aqua.Ship
 
         IEnumerable<string> ISceneSubsceneSelector.GetAdditionalScenesNames(SceneBinding inNew, object inContext)
         {
-            StringHash32 currentStationId = Services.Data.Profile.Map.CurrentStationId();
+            StringHash32 currentStationId = Save.Map.CurrentStationId();
             if (currentStationId == MapIds.KelpStation)
                 yield return KelpStationPath;
             else if (currentStationId == MapIds.CoralStation)

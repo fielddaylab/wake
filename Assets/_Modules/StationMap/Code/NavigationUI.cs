@@ -193,7 +193,7 @@ namespace Aqua.StationMap
             Services.UI.ShowLetterbox();
             Services.Events.Dispatch(Event_Dive, inMap);
             yield return 2;
-            StateUtil.LoadMapWithWipe(inMap.Id(), Services.Data.Profile.Map.CurrentStationId());
+            StateUtil.LoadMapWithWipe(inMap.Id(), Save.Map.CurrentStationId());
             yield return 0.3f;
             Services.UI.HideLetterbox();
         }

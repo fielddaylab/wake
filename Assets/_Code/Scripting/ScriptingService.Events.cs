@@ -151,7 +151,7 @@ namespace Aqua
         {
             InvItem itemDesc = Assets.Item(inTag.Data);
             StringHash32 itemId = itemDesc.Id();
-            int itemCount = Services.Data.Profile.Inventory.ItemCount(itemId);
+            int itemCount = Save.Inventory.ItemCount(itemId);
             
             if (itemId == ItemIds.Cash)
             {

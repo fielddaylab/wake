@@ -150,21 +150,9 @@ namespace Aqua.Editor
                     using(new GUIScopes.LabelWidthScope(40)) {
                         using(new EditorGUILayout.HorizontalScope()) {
                             GUILayout.FlexibleSpace();
-                            RenderStressStateWizard(stateFacts, WaterPropertyId.Oxygen);
                             RenderStressStateWizard(stateFacts, WaterPropertyId.Temperature);
-                            GUILayout.FlexibleSpace();
-                        }
-
-                        using(new EditorGUILayout.HorizontalScope()) {
-                            GUILayout.FlexibleSpace();
                             RenderStressStateWizard(stateFacts, WaterPropertyId.Light);
                             RenderStressStateWizard(stateFacts, WaterPropertyId.PH);
-                            GUILayout.FlexibleSpace();
-                        }
-
-                        using(new EditorGUILayout.HorizontalScope()) {
-                            GUILayout.FlexibleSpace();
-                            RenderStressStateWizard(stateFacts, WaterPropertyId.CarbonDioxide);
                             GUILayout.FlexibleSpace();
                         }
                     }
@@ -539,11 +527,9 @@ namespace Aqua.Editor
                         stateMask[state.Property] = true;
                     }
 
-                    AddStateFactCreator(menu, WaterPropertyId.Oxygen, stateMask);
                     AddStateFactCreator(menu, WaterPropertyId.Temperature, stateMask);
                     AddStateFactCreator(menu, WaterPropertyId.Light, stateMask);
                     AddStateFactCreator(menu, WaterPropertyId.PH, stateMask);
-                    AddStateFactCreator(menu, WaterPropertyId.CarbonDioxide, stateMask);
 
                     menu.AddSeparator("");
 

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class SelectableTank : MonoBehaviour
+    public class SelectableTank : MonoBehaviour, ISceneOptimizable
     {
         #region Inspector
 
@@ -35,6 +35,8 @@ namespace ProtoAqua.ExperimentV2
         [Required] public ParticleSystem WaterDrainParticles;
         [HideInInspector] public Rect WaterRect;
 
+        [HideInInspector] public ActorAllocator ActorAllocator;
+
         #endregion // Inspector
 
         [NonSerialized] private StringHash32 m_Id;
@@ -51,6 +53,15 @@ namespace ProtoAqua.ExperimentV2
         public Action DeactivateMethod;
         public Func<StringHash32, bool> HasCritter;
         public Func<StringHash32, bool> HasEnvironment;
+
+        #if UNITY_EDITOR
+
+        void ISceneOptimizable.Optimize()
+        {
+            ActorAllocator = FindObjectOfType<ActorAllocator>();
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     [Flags]

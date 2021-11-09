@@ -40,7 +40,7 @@ namespace ProtoAqua.ExperimentV2
         public void InitializeTank(SelectableTank inTank) {
             WorldUtils.ListenForLayerMask(inTank.WaterTrigger, GameLayers.Critter_Mask, (c) => OnWaterEnter(inTank, c), null);
 
-            if (inTank.Type == TankType.Stress || inTank.Type == TankType.Measurement) {
+            if (inTank.Type == TankType.Stress) {
                 SetWaterHeight(inTank, 1);
             } else {
                 SetWaterHeight(inTank, 0);
@@ -236,17 +236,19 @@ namespace ProtoAqua.ExperimentV2
             inTank.WaterRenderer.SetScale(newHeight, Axis.Y);
         }
     
-        static public IEnumerator DrainWaterOverTime(SelectableTank inTank, float inDuration) {
+        public IEnumerator DrainWaterOverTime(SelectableTank inTank, float inDuration) {
             var audio = Services.Audio.PostEvent("tank_water_drain");
             try {
                 inTank.CurrentState |= TankState.Draining;
                 inTank.WaterDrainParticles.Play();
+                m_RippleParticles.Clear();
                 yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeight(inTank, f), inDuration * inTank.WaterFillProportion)
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
                 inTank.CurrentState &= ~TankState.Draining;
                 inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
             finally {
+                inTank.WaterDrainParticles.Stop();
                 audio.Stop(0);
             }
         }

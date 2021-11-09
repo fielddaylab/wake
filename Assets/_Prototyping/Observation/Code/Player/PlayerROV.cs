@@ -104,7 +104,7 @@ namespace ProtoAqua.Observation
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            if (Services.Data.Profile.Inventory.HasUpgrade(ItemIds.ROVScanner))
+            if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner))
             {
                 SetTool(ToolId.Scanner, true);
             }

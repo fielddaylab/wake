@@ -272,7 +272,7 @@ namespace Aqua
             if (m_CurrentJob == null)
                 return;
             
-            JobsData jobsData = Services.Data.Profile.Jobs;
+            JobsData jobsData = Save.Jobs;
             m_CurrentActiveTasks.Clear();
             foreach(var task in m_CurrentJob.Tasks())
             {

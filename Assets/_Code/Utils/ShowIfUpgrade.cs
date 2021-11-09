@@ -48,7 +48,7 @@ namespace Aqua
 
         private void Refresh()
         {
-            SetState(Services.Data.Profile.Inventory.HasUpgrade(m_ItemName));
+            SetState(Save.Inventory.HasUpgrade(m_ItemName));
             if (!m_ContinuousCheck)
                 Destroy(this);
         }

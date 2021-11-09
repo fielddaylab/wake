@@ -44,7 +44,7 @@ namespace Aqua.Portable
         {
             using(PooledList<InvItem> upgrades = PooledList<InvItem>.Create())
             {
-                foreach(var upgrade in Services.Data.Profile.Inventory.GetItems(InvItemCategory.Upgrade))
+                foreach(var upgrade in Save.Inventory.GetItems(InvItemCategory.Upgrade))
                 {
                     upgrades.Add(Assets.Item(upgrade.ItemId));
                 }

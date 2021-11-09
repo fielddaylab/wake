@@ -126,9 +126,9 @@ namespace ProtoAqua.Observation
             StringHash32 mapId = MapDB.LookupCurrentMap();
             Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", inScene.Name);
             
-            m_SiteData = Services.Data.Profile.Science.GetSiteData(mapId);
+            m_SiteData = Save.Science.GetSiteData(mapId);
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
-            m_BestiaryData = Services.Data.Profile.Bestiary;
+            m_BestiaryData = Save.Bestiary;
             
             TaggableCritter critter;
             for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--)
@@ -367,7 +367,7 @@ namespace ProtoAqua.Observation
                     Loc.Find("ui.popup.newPopulationFact.header"),
                     null,
                     Assets.Fact(factId),
-                    Services.Data.Profile.Bestiary.GetDiscoveredFlags(factId)
+                    Save.Bestiary.GetDiscoveredFlags(factId)
                 ).Wait();
             }
         }

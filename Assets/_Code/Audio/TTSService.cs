@@ -113,7 +113,7 @@ namespace AquaAudio
 
         private void OnOptionsChanged()
         {
-            OptionsData options = Services.Data.Options;
+            OptionsData options = Save.Options;
             OptionsAccessibility accessibility = options.Accessibility;
             m_Mode = accessibility.TTS;
             TTS.Rate = accessibility.TTSRate;

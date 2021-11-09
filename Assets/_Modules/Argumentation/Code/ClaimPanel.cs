@@ -111,7 +111,7 @@ namespace Aqua.Argumentation {
         }
 
         private int InsertFact(StringHash32 id) {
-            BFDiscoveredFlags flags = Services.Data.Profile.Bestiary.GetDiscoveredFlags(id);
+            BFDiscoveredFlags flags = Save.Bestiary.GetDiscoveredFlags(id);
             int factIdx = GetDataSlot(id);
             m_CurrentlyDisplayed[factIdx] = id;
             m_FactDisplays[factIdx].Populate(Assets.Fact(id), flags);
@@ -141,7 +141,7 @@ namespace Aqua.Argumentation {
                 submitted = m_CurrentStatus.SubmittedFacts[i];
                 if (!submitted.IsEmpty) {
                     fact = Assets.Fact(submitted);
-                    factDisplay.Populate(fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(submitted));
+                    factDisplay.Populate(fact, Save.Bestiary.GetDiscoveredFlags(submitted));
                 }
                 m_FactDisplays[i] = factDisplay;
             }
@@ -208,7 +208,7 @@ namespace Aqua.Argumentation {
                 submitted = m_CurrentStatus.SubmittedFacts[i];
                 if (!submitted.IsEmpty) {
                     fact = Assets.Fact(submitted);
-                    factDisplay.Populate(fact, Services.Data.Profile.Bestiary.GetDiscoveredFlags(submitted));
+                    factDisplay.Populate(fact, Save.Bestiary.GetDiscoveredFlags(submitted));
                 } else {
                     factDisplay.Clear();
                 }

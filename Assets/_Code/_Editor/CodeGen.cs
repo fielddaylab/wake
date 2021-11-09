@@ -166,7 +166,7 @@ namespace Aqua.Editor
         {
             StringBuilder builder = new StringBuilder(1024);
             builder.Append("using System;");
-            builder.Append("using BeauUtil;");
+            builder.Append("\nusing BeauUtil;");
             builder.Append("\n\nstatic public class JobIds")
                 .Append("\n{");
 

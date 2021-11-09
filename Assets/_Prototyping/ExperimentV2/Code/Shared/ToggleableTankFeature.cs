@@ -10,8 +10,6 @@ namespace ProtoAqua.ExperimentV2
     {
         #region Inspector
 
-        public Collider Clickable;
-        public PointerListener Pointer;
         public ParticleSystem Particles;
         public AmbientRenderer Light;
 
@@ -19,27 +17,6 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] public bool State = false;
         [NonSerialized] public Action<bool> OnStateChanged;
-
-        static public void RegisterHandlers(ToggleableTankFeature inFeature, Action<bool> inbOnChanged)
-        {
-            inFeature.Pointer.UserData = inFeature;
-            inFeature.Pointer.onClick.AddListener(OnClicked);
-        }
-
-        static private void OnClicked(PointerEventData inEvent)
-        {
-            ToggleableTankFeature tank;
-            PointerListener.TryGetUserData<ToggleableTankFeature>(inEvent, out tank);
-
-            if (tank.State)
-            {
-                Disable(tank);
-            }
-            else
-            {
-                Enable(tank);
-            }
-        }
 
         static public void Enable(ToggleableTankFeature inFeature, bool inbForce = false)
         {
@@ -61,6 +38,9 @@ namespace ProtoAqua.ExperimentV2
 
             inFeature.State = false;
             inFeature.Particles.Stop();
+            if (inbForce) {
+                inFeature.Particles.Clear();
+            }
             inFeature.Light.enabled = false;
             inFeature.OnStateChanged?.Invoke(false);
         }
