@@ -267,6 +267,68 @@ $endif
 {@player} 	What now?
 {@kevin}	Let's tell {nameof @drJules} what we found out.
 
+//ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(welcomeArgue)
+@cutscene
+
+$call ArgueLoad(welcomeArgue)
+	$if ArgueSetClaim(welcomeArgueClaim, jobs.kelp-welcome.argue.claimLabel)
+			$call ArgueFactSlot(SeaOtter.Eats.Urchin)
+			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
+	$endif
+
+	$branch .argue.hello
+	
+::argue.hello
+{@drJules}    Thanks for your help out there, {player-name}! What did you find out?
+$goto .argue.chooseFacts
+
+
+::argue.chooseFacts
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+        $answer SeaOtter.Eats.Urchin, .argue.otter
+        $answer Urchin.Eats.GiantKelp, .argue.urchin
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; I give up
+$endif
+
+
+::argue.otter
+$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
+	$goto .argue.done
+$else
+	{@drJules}    Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+	$goto .argue.chooseFacts
+$endif
+
+::argue.urchin
+$if ArgueIsFactSubmitted(SeaOtter.Eats.Urchin)
+	$goto .argue.done
+$else
+	{@drJules}    So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
+	$goto .argue.chooseFacts
+$endif
+
+::argue.unrelated
+{@drJules}    Hmm, no, that isn't relevant.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFacts
+
+::argue.giveUp
+{@drJules}    OK get back to me when you're ready.
+
+::argue.done
+$call ArgueComplete()
+{@drJules}    Really nice work! You just explained the basis of the kelp forest food web.
+$call CompleteJob()
+
 // DONE
 
 :: end
