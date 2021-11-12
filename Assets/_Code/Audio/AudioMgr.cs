@@ -11,36 +11,45 @@ using Aqua.Debugging;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine.Scripting;
+using BeauUWT;
 
 namespace AquaAudio
 {
     public class AudioMgr : ServiceBehaviour
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
+        private const int MaxSampleTracks = 32;
+        private const int MaxStreamTracks = 4;
+        private const int MaxTracks = MaxSampleTracks + MaxStreamTracks;
 
         #region Types
 
-        [Serializable] private class AudioPool : SerializablePool<AudioPlaybackTrack> { }
+        [Serializable] private class SamplePool : SerializablePool<AudioSource> { }
+        [Serializable] private class StreamPool : SerializablePool<UWTStreamPlayer> { }
 
         #endregion // Types
 
         #region Inspector
 
         [SerializeField] private AudioPackage m_DefaultPackage = null;
-        [SerializeField] private AudioPool m_Pool = null;
+        [SerializeField] private SamplePool m_SamplePlayers = null;
+        [SerializeField] private StreamPool m_StreamPlayers = null;
         [SerializeField] private float m_DefaultMusicCrossfade = 0.5f;
 
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
         private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>();
-        private readonly RingBuffer<AudioPlaybackTrack> m_Playing = new RingBuffer<AudioPlaybackTrack>(32, RingBufferMode.Expand);
+
+        private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
+        private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
+        private readonly RingBuffer<AudioTrackState> m_ActiveStreams = new RingBuffer<AudioTrackState>(MaxStreamTracks, RingBufferMode.Fixed);
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
         private AudioPropertyBlock m_MixerProperties;
         private AudioPropertyBlock m_DebugProperties;
-        private uint m_Id;
+        private ushort m_Id;
 
         private AudioPropertyBlock[] m_BusMixes;
 
@@ -92,8 +101,6 @@ namespace AquaAudio
 
         private unsafe void UnsafeUpdate()
         {
-            int count = m_Playing.Count;
-            
             AudioPropertyBlock masterProperties = m_MasterProperties;
             AudioPropertyBlock.Combine(masterProperties, m_MixerProperties, ref masterProperties);
             AudioPropertyBlock.Combine(masterProperties, m_DebugProperties, ref masterProperties);
@@ -110,15 +117,27 @@ namespace AquaAudio
             properties[(int) AudioBusId.Voice].Volume *= m_FadeMultiplier;
 
             float deltaTime = Time.deltaTime;
-            AudioPlaybackTrack track;
+            AudioTrackState track;
 
-            for(int i = count - 1; i >= 0; --i)
+            int count = m_ActiveStreams.Count;
+            for(int i = count - 1; i >= 0; i--)
             {
-                track = m_Playing[i];
-                if (!track.UpdatePlayback(ref properties[(int) track.BusId()], deltaTime))
+                track = m_ActiveStreams[i];
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime))
                 {
-                    m_Pool.Free(track);
-                    m_Playing.FastRemoveAt(i);
+                    FreePlayer(track);
+                    m_ActiveStreams.FastRemoveAt(i);
+                }
+            }
+
+            count = m_ActiveSamples.Count;
+            for(int i = count - 1; i >= 0; i--)
+            {
+                track = m_ActiveSamples[i];
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime))
+                {
+                    FreePlayer(track);
+                    m_ActiveSamples.FastRemoveAt(i);
                 }
             }
         }
@@ -127,15 +146,7 @@ namespace AquaAudio
 
         #region Playback
 
-        public bool HasEvent(string inId)
-        {
-            if (string.IsNullOrEmpty(inId))
-                return false;
-
-            return GetEvent(inId) != null;
-        }
-
-        public AudioHandle PostEvent(StringHash32 inId)
+        public AudioHandle PostEvent(StringHash32 inId, AudioPlaybackFlags inFlags = 0)
         {
             if (inId.IsEmpty)
                 return AudioHandle.Null;
@@ -147,25 +158,10 @@ namespace AquaAudio
                 return AudioHandle.Null;
             }
 
-            if (!evt.CanPlay())
-                return AudioHandle.Null;
-
-            AudioPlaybackTrack track = m_Pool.Alloc();
-            AudioHandle handle = track.TryLoad(evt, NextId(), m_Random);
-            if (handle != AudioHandle.Null)
-            {
-                m_Playing.PushBack(track);
-                track.Play();
-            }
-            else
-            {
-                m_Pool.Free(track);
-            }
-
-            return handle;
+            return PostEvent(evt, inFlags);
         }
 
-        public AudioHandle PostEvent(AudioEvent inEvent)
+        public AudioHandle PostEvent(AudioEvent inEvent, AudioPlaybackFlags inFlags = 0)
         {
             if (!inEvent)
                 return AudioHandle.Null;
@@ -173,35 +169,87 @@ namespace AquaAudio
             if (!inEvent.CanPlay())
                 return AudioHandle.Null;
 
-            AudioPlaybackTrack track = m_Pool.Alloc();
-            AudioHandle handle = track.TryLoad(inEvent, NextId(), m_Random);
-            if (handle != AudioHandle.Null)
-            {
-                m_Playing.PushBack(track);
-                track.Play();
-            }
-            else
-            {
-                m_Pool.Free(track);
+            AudioTrackState track = m_TrackPool.Alloc();
+            AudioHandle handle = default;
+
+            switch(inEvent.Mode()) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    EnsureFreeSlot(m_ActiveSamples);
+                    handle = AudioTrackState.LoadSample(track, inEvent, m_SamplePlayers.Alloc(), NextId(), m_Random);
+                    m_ActiveSamples.PushBack(track);
+                    break;
+                }
+
+                case AudioEvent.PlaybackMode.Stream: {
+                    EnsureFreeSlot(m_ActiveStreams);
+                    handle = AudioTrackState.LoadStream(track, inEvent, m_StreamPlayers.Alloc(), NextId(), m_Random);
+                    m_ActiveStreams.PushBack(track);
+                    break;
+                }
             }
 
+            AudioTrackState.Play(track);
             return handle;
         }
 
         public void StopAll()
         {
-            foreach(var player in m_Pool.ActiveObjects)
+            foreach(var player in m_SamplePlayers.ActiveObjects)
             {
                 player.Stop();
             }
         }
 
-        private uint NextId()
+        private ushort NextId()
         {
-            if (m_Id == uint.MaxValue)
+            if (m_Id == ushort.MaxValue)
                 return (m_Id = 1);
             else
                 return (++m_Id);
+        }
+
+        private void EnsureFreeSlot(RingBuffer<AudioTrackState> stateList) {
+            if (stateList.Count < stateList.Capacity) {
+                return;
+            }
+
+            // free up all stopped objects
+            AudioTrackState state;
+            int count = stateList.Count;
+            for(int i = count - 1; i >= 0; i--) {
+                state = stateList[i];
+                if (state.State == AudioTrackState.StateId.Stopped) {
+                    FreePlayer(state);
+                    stateList.FastRemoveAt(i);
+                }
+            }
+
+            // if we removed anything, exit
+            if (stateList.Count < count) {
+                return;
+            }
+        }
+
+        private void FreePlayer(AudioTrackState state) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    AudioSource sample = state.Sample;
+                    sample.Stop();
+                    sample.clip = null;
+                    m_SamplePlayers.Free(sample);
+                    break;
+                }
+                case AudioEvent.PlaybackMode.Stream: {
+                    UWTStreamPlayer stream = state.Stream;
+                    stream.Stop();
+                    stream.SourceURL = null;
+                    m_StreamPlayers.Free(stream);
+                    break;
+                }
+            }
+            
+            AudioTrackState.Unload(state);
+            m_TrackPool.Free(state);
         }
 
         #endregion // Playback
@@ -350,15 +398,27 @@ namespace AquaAudio
             
             foreach(var evt in inPackage.Events())
             {
-                foreach(var player in m_Pool.ActiveObjects)
-                {
-                    if (player.IsEvent(evt))
-                    {
-                        player.Stop();
+                foreach(var player in m_ActiveSamples) {
+                    if (player.Event == evt) {
+                        AudioTrackState.Stop(player);
                     }
                 }
+
+                foreach(var player in m_ActiveStreams) {
+                    if (player.Event == evt) {
+                        AudioTrackState.Stop(player);
+                    }
+                }
+
                 m_EventLookup.Remove(evt.Id());
             }
+        }
+
+        public bool HasEvent(StringHash32 inId) {
+            if (inId.IsEmpty)
+                return false;
+
+            return GetEvent(inId) != null;
         }
 
         public AudioEvent GetEvent(StringHash32 inId)
@@ -374,17 +434,20 @@ namespace AquaAudio
 
         private void InitPool()
         {
-            m_Pool.Reset();
+            m_SamplePlayers.Reset();
+            m_SamplePlayers.TryInitialize();
 
-            if (m_Pool.IsInitialized())
-                return;
-            
-            m_Pool.Initialize();
+            m_StreamPlayers.Reset();
+            m_StreamPlayers.TryInitialize();
+
+            m_TrackPool.Prewarm();
         }
 
         private void DestroyPool()
         {
-            m_Pool.Destroy();
+            m_SamplePlayers.Destroy();
+            m_StreamPlayers.Destroy();
+
             m_Id = 0;
         }
     
@@ -392,11 +455,18 @@ namespace AquaAudio
 
         #region Callbacks
 
-        private void OnAudioSettingsChanged(bool deviceWasChanged)
-        {
-            foreach(var player in m_Playing)
-            {
-                player.Restore();
+        private void OnAudioSettingsChanged(bool deviceWasChanged) {
+            Async.InvokeAsync(RestoreAudio);
+        }
+
+        private void RestoreAudio() {
+            // TODO: investigate why webgl builds crash when changing speaker mode
+            foreach(var player in m_ActiveSamples) {
+                AudioTrackState.Restore(player);
+            }
+
+            foreach(var player in m_ActiveStreams) {
+                AudioTrackState.Restore(player);
             }
         }
 
@@ -427,5 +497,9 @@ namespace AquaAudio
         }
 
         #endregion // Leaf
+    }
+
+    public enum AudioPlaybackFlags {
+        // Persistent = 0x01
     }
 }

@@ -11,6 +11,8 @@ namespace BeauUWT
     // Unity AudioSource implementation
     public partial class UWTStreamPlayer : MonoBehaviour
     {
+        public const bool IsNative = false;
+
         private const ulong HeaderBufferSize = 1024 * 16;
 
         [NonSerialized] private AudioSource m_UnitySource;
@@ -20,6 +22,7 @@ namespace BeauUWT
         [NonSerialized] private AsyncOperation m_Operation;
         [NonSerialized] private Coroutine m_LoadCoroutine;
         [NonSerialized] private AudioClip m_StreamingClip;
+        [NonSerialized] private float m_QueuedTime = 0;
 
         #region Resources
 
@@ -139,6 +142,10 @@ namespace BeauUWT
 
         private void SetTime(float inTime)
         {
+            if (m_PlayRequested)
+            {
+                m_QueuedTime = inTime;
+            }
             EnsureSource().time = inTime;
         }
 
@@ -168,10 +175,17 @@ namespace BeauUWT
                 return;
             
             m_PlayRequested = true;
+            m_QueuedTime = 0;
             if (m_StreamingClip != null)
-                EnsureSource().Play();
+            {
+                var source = EnsureSource();
+                source.enabled = true;
+                source.Play();
+            }
             else
+            {
                 Preload();
+            }
         }
 
         /// <summary>
@@ -193,6 +207,7 @@ namespace BeauUWT
                 return;
 
             m_PlayRequested = true;
+            m_QueuedTime = 0;
             if (m_StreamingClip != null)
                 EnsureSource().UnPause();
         }
@@ -206,16 +221,15 @@ namespace BeauUWT
         /// </summary>
         public void Preload()
         {
-            if (!isActiveAndEnabled || string.IsNullOrEmpty(m_StreamURL) || m_WebRequest != null)
+            if (!isActiveAndEnabled || string.IsNullOrEmpty(m_StreamURL) || m_WebRequest != null || m_StreamingClip)
                 return;
 
-            string randomizedURL = m_StreamURL + "?t=" + UnityEngine.Random.value.ToString();
-            Debug.LogFormat("[UWTStream] Downloading from {0}", randomizedURL);
+            Debug.LogFormat("[UWTStream] Downloading from {0}", m_StreamURL);
 
-            m_WebRequest = UnityWebRequest.Get(randomizedURL);
+            m_WebRequest = UnityWebRequest.Get(m_StreamURL);
             m_WebRequest.useHttpContinue = false;
             
-            m_WebRequest.downloadHandler = m_AudioClipDownloadHandler = new DownloadHandlerAudioClip(randomizedURL, GetAudioTypeForURL(m_StreamURL));
+            m_WebRequest.downloadHandler = m_AudioClipDownloadHandler = new DownloadHandlerAudioClip(m_StreamURL, GetAudioTypeForURL(m_StreamURL));
             m_AudioClipDownloadHandler.streamAudio = true;
             m_AudioClipDownloadHandler.compressed = true;
 
@@ -321,6 +335,12 @@ namespace BeauUWT
                 m_LoadCoroutine = null;
                 ReadyAudioClip();
             }
+
+            m_WebRequest.Dispose();
+            m_WebRequest = null;
+
+            m_AudioClipDownloadHandler.Dispose();
+            m_AudioClipDownloadHandler = null;
         }
 
         private void ReadyAudioClip()
@@ -341,7 +361,10 @@ namespace BeauUWT
             if (m_PlayRequested)
             {
                 Debug.LogFormat("[UWTStreamPlayer] Playing clip (download progress is {0})", m_WebRequest.downloadProgress);
+                m_UnitySource.enabled = true;
+                m_UnitySource.time = m_QueuedTime;
                 m_UnitySource.Play();
+                m_PlayRequested = false;
             }
         }
 
@@ -350,7 +373,7 @@ namespace BeauUWT
         /// </summary>
         public bool IsReady()
         {
-            return m_WebRequest != null && m_StreamingClip != null && m_LoadCoroutine == null && m_LastError == ErrorCode.NoError;
+            return m_StreamingClip != null && m_LoadCoroutine == null && m_LastError == ErrorCode.NoError;
         }
 
         #endregion // Loading

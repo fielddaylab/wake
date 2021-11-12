@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using BeauPools;
-using BeauRoutine.Extensions;
 using BeauUtil;
 using Aqua;
 using UnityEngine;
@@ -10,7 +8,7 @@ using UnityEngine;
 namespace AquaAudio
 {
     [CreateAssetMenu(menuName = "Aqualab/Audio Package")]
-    public class AudioPackage : ScriptableObject
+    public class AudioPackage : ScriptableObject, IOptimizableAsset
     {
         #region Inspector
 
@@ -47,13 +45,20 @@ namespace AquaAudio
             ValidationUtils.EnsureUnique(ref m_Events);
         }
 
-        [ContextMenu("Load All In Directory")]
         private void FindAllAudioEvents()
         {
             string myPath = UnityEditor.AssetDatabase.GetAssetPath(this);
             string myDirectory = Path.GetDirectoryName(myPath);
             m_Events = ValidationUtils.FindAllAssets<AudioEvent>(myDirectory);
             UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        int IOptimizableAsset.Order { get { return 0; } }
+
+        bool IOptimizableAsset.Optimize()
+        {
+            FindAllAudioEvents();
+            return true;
         }
 
         [UnityEditor.CustomEditor(typeof(AudioPackage)), UnityEditor.CanEditMultipleObjects]

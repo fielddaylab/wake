@@ -1,6 +1,6 @@
 var UWTStreamLibraryImpl = {
     
-    $UWTStreamLibrary: {
+    $uwt: {
         /**
          * Streaming element
          * @property {number} index    Index
@@ -46,8 +46,8 @@ var UWTStreamLibraryImpl = {
                 return null;
             }
 
-            const index = UWTStreamLibrary.ExtractIndex(id);
-            const pool = UWTStreamLibrary.ElementPool;
+            const index = uwt.ExtractIndex(id);
+            const pool = uwt.ElementPool;
 
             if (index < 0 || index >= pool.length) {
                 console.error("[UWTStreamLibrary] Invalid Stream Id " + id);
@@ -89,14 +89,14 @@ var UWTStreamLibraryImpl = {
      */
     UWTStreamInit: function (poolSize) {
 
-        if (UWTStreamLibrary.ElementPool) {
+        if (uwt.ElementPool) {
             return false;
         }
 
-        const elementPool = UWTStreamLibrary.ElementPool = new Array(poolSize);
+        const elementPool = uwt.ElementPool = new Array(poolSize);
 
         for(var i = 0; i < poolSize; i++) {
-            elementPool[i] = new UWTStreamLibrary.StreamElement(i);
+            elementPool[i] = new uwt.StreamElement(i);
         }
 
         const mediaSession = navigator.mediaSession;
@@ -110,7 +110,7 @@ var UWTStreamLibraryImpl = {
             mediaSession.setActionHandler('seekto', emptyFunc);
             mediaSession.setActionHandler('previoustrack', emptyFunc);
             mediaSession.setActionHandler('nexttrack', emptyFunc);
-            mediaSession.setActionHandler('skipad', emptyFunc);
+            // mediaSession.setActionHandler('skipad', emptyFunc);
         }
 
         return true;
@@ -127,7 +127,7 @@ var UWTStreamLibraryImpl = {
         /** @type {StreamElement} **/
         var element = null;
 
-        const pool = UWTStreamLibrary.ElementPool;
+        const pool = uwt.ElementPool;
         const elementCount = pool.length;
         
         for(var i = 0; i < elementCount; i++) {
@@ -138,7 +138,7 @@ var UWTStreamLibraryImpl = {
         }
 
         if (!element) {
-            element = new UWTStreamLibrary.StreamElement(elementCount);
+            element = new uwt.StreamElement(elementCount);
             pool.push(element);
         }
 
@@ -149,10 +149,8 @@ var UWTStreamLibraryImpl = {
         element.playing = false;
         element.active = true;
 
-        document.body.appendChild(element.resource);
-
         element.magic = (element.magic + 1) % 256;
-        return (element.id = UWTStreamLibrary.ConstructId(element.index, element.magic));
+        return (element.id = uwt.ConstructId(element.index, element.magic));
     },
 
     /**
@@ -162,11 +160,10 @@ var UWTStreamLibraryImpl = {
      */
      UWTStreamFree: function(id) {
         
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element)
             return false;
 
-        element.resource.parentNode.removeChild(element.resource);
         element.resource.pause();
         element.resource.src = null;
         element.active = false;
@@ -183,7 +180,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean}   If the stream is ready to play.
      */
     UWTStreamIsReady: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -197,7 +194,7 @@ var UWTStreamLibraryImpl = {
      * @returns {int}   The error code for the stream
      */
     UWTStreamGetError: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -214,7 +211,7 @@ var UWTStreamLibraryImpl = {
      * @returns {number}   The duration of the stream
      */
      UWTStreamGetDuration: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return 0;
         }
@@ -228,7 +225,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean}   If the stream is playing.
      */
      UWTStreamIsPlaying: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -246,7 +243,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} If the stream is muted
      */
      UWTStreamGetMute: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -261,7 +258,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} Whether or not the operation was successful
      */
     UWTStreamSetMute: function(id, mute) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -276,7 +273,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} If the stream is looping
      */
      UWTStreamGetLoop: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -291,7 +288,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} Whether or not the operation was successful
      */
     UWTStreamSetLoop: function(id, loop) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -306,7 +303,7 @@ var UWTStreamLibraryImpl = {
      * @returns {number}
      */
      UWTStreamGetVolume: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return 0;
         }
@@ -321,7 +318,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} Whether or not the operation was successful
      */
     UWTStreamSetVolume: function(id, volume) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -338,7 +335,7 @@ var UWTStreamLibraryImpl = {
      * @returns {number} The current position, in seconds
      */
     UWTStreamGetPosition: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return 0;
         }
@@ -353,7 +350,7 @@ var UWTStreamLibraryImpl = {
      * @returns {boolean} Whether or not the operation was successful
      */
      UWTStreamSetPosition: function(id, position) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -373,7 +370,7 @@ var UWTStreamLibraryImpl = {
      * @returns If the operation was successful
      */
     UWTStreamPlay: function(id, reset) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -392,7 +389,7 @@ var UWTStreamLibraryImpl = {
      * @returns If the operation was successful
      */
      UWTStreamPause: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -407,7 +404,7 @@ var UWTStreamLibraryImpl = {
      * @returns If the operation was successful
      */
      UWTStreamStop: function(id) {
-        const element = UWTStreamLibrary.GetActiveElement(id);
+        const element = uwt.GetActiveElement(id);
         if (!element) {
             return false;
         }
@@ -420,5 +417,5 @@ var UWTStreamLibraryImpl = {
     // #endregion Operations
 };
 
-autoAddDeps(UWTStreamLibraryImpl, '$UWTStreamLibrary');
+autoAddDeps(UWTStreamLibraryImpl, '$uwt');
 mergeInto(LibraryManager.library, UWTStreamLibraryImpl);

@@ -1,0 +1,334 @@
+using System;
+using System.Collections;
+using BeauRoutine;
+using BeauUtil.Debugger;
+using BeauUWT;
+using UnityEngine;
+
+namespace AquaAudio
+{
+    internal class AudioTrackState
+    {
+        public enum StateId : byte { Idle, PlayRequested, Playing, Paused, Stopped };
+
+        public ushort Id;
+        public ushort InstanceId;
+        public StateId State;
+        public AudioEvent.PlaybackMode Mode;
+        public AudioPlaybackFlags Flags;
+
+        public AudioEvent Event;
+        public AudioBusId Bus;
+
+        public AudioSource Sample;
+        public UWTStreamPlayer Stream;
+        public Transform Position;
+
+        public float Delay;
+        public byte StopCounter;
+        public float LastKnownTime;
+
+        public AudioPropertyBlock EventProperties;
+        public AudioPropertyBlock LocalProperties;
+        public AudioPropertyBlock LastKnownProperties;
+
+        public Routine VolumeChangeRoutine;
+        public Routine PitchChangeRoutine;
+
+        private Action<float> m_VolumeSetter;
+        private Action<float> m_PitchSetter;
+        private Action m_StopDelegate;
+
+        public AudioTrackState() {
+            m_VolumeSetter = (f) => LocalProperties.Volume = f;
+            m_PitchSetter = (f) => LocalProperties.Pitch = f;
+            m_StopDelegate = () => Stop(this, 0);
+        }
+
+        #region Loading
+
+        static public AudioHandle LoadSample(AudioTrackState state, AudioEvent evt, AudioSource samplePlayer, ushort id, System.Random random) {
+            state.InstanceId = id;
+            state.Sample = samplePlayer;
+            state.Position = samplePlayer.transform;
+            state.Mode = AudioEvent.PlaybackMode.Sample;
+            state.Event = evt;
+            state.Bus = evt.Bus();
+
+            evt.LoadSample(samplePlayer, random, out state.EventProperties, out state.Delay);
+
+            state.LocalProperties = AudioPropertyBlock.Default;
+            state.Delay = 0;
+            state.State = StateId.Idle;
+            state.Flags = 0;
+            state.StopCounter = 0;
+
+            return new AudioHandle(state, id);
+        }
+
+        static public AudioHandle LoadStream(AudioTrackState state, AudioEvent evt, UWTStreamPlayer streamPlayer, ushort id, System.Random random) {
+            state.InstanceId = id;
+            state.Stream = streamPlayer;
+            state.Position = streamPlayer.transform;
+            state.Mode = AudioEvent.PlaybackMode.Stream;
+            state.Event = evt;
+            state.Bus = evt.Bus();
+
+            evt.LoadStream(streamPlayer, random, out state.EventProperties, out state.Delay);
+
+            state.LocalProperties = AudioPropertyBlock.Default;
+            state.Delay = 0;
+            state.State = StateId.Idle;
+            state.Flags = 0;
+            state.StopCounter = 0;
+
+            return new AudioHandle(state, id);
+        }
+
+        static public void Unload(AudioTrackState state) {
+            state.InstanceId = 0;
+            state.Sample = null;
+            state.Stream = null;
+            state.Position = null;
+            state.Event = null;
+            state.Bus = AudioBusId.Master;
+            state.VolumeChangeRoutine.Stop();
+            state.PitchChangeRoutine.Stop();
+        }
+
+        #endregion // Loading
+
+        #region Playback
+
+        static public void Play(AudioTrackState state) {
+            if (state.State != StateId.PlayRequested) {
+                state.Sample?.Stop();
+                state.Stream?.Stop();
+
+                state.State = StateId.PlayRequested;
+            }
+        }
+
+        static public void Pause(AudioTrackState state) {
+            state.LocalProperties.Pause = true;
+        }
+
+        static public void Resume(AudioTrackState state) {
+            state.LocalProperties.Pause = false;
+        }
+
+        static public void Stop(AudioTrackState state, float duration = 0, Curve curve = Curve.Linear) {
+            if (duration <= 0 || state.State != StateId.Playing) {
+                state.Sample?.Stop();
+                state.Stream?.Stop();
+                state.VolumeChangeRoutine.Stop();
+                state.State = StateId.Stopped;
+                return;
+            }
+
+            state.VolumeChangeRoutine.Replace(Tween.Float(state.LastKnownProperties.Volume, 0, state.m_VolumeSetter, duration).Ease(curve).OnComplete(state.m_StopDelegate));
+        }
+
+        static public void Restore(AudioTrackState state) {
+            if (state.State != StateId.Playing) {
+                return;
+            }
+
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    if (state.Sample.loop || (state.LastKnownTime < state.Sample.clip.length - 0.1f)) {
+                        state.Sample.time = state.LastKnownTime;
+                        state.Sample.Play();
+                    }
+                    break;
+                }
+
+                case AudioEvent.PlaybackMode.Stream: {
+                    if (state.Stream.Loop) {
+                        state.Stream.Unload();
+                        state.Stream.Play();
+                        state.Stream.Time = state.LastKnownTime;
+                    }
+                    break;
+                }
+            }
+        }
+
+        #endregion // Playback
+
+        #region Properties
+
+        static public void SetVolume(AudioTrackState state, float volume, float duration = 0, Curve curve = Curve.Linear) {
+            if (duration <= 0) {
+                state.LocalProperties.Volume = volume;
+                state.VolumeChangeRoutine.Stop();
+                return;
+            }
+
+            state.VolumeChangeRoutine.Replace(Tween.Float(state.LocalProperties.Volume, volume, state.m_VolumeSetter, duration).Ease(curve));
+        }
+
+        static public void SetPitch(AudioTrackState state, float pitch, float duration = 0, Curve curve = Curve.Linear) {
+            if (duration <= 0) {
+                state.LocalProperties.Pitch = pitch;
+                state.PitchChangeRoutine.Stop();
+                return;
+            }
+
+            state.PitchChangeRoutine.Replace(Tween.Float(state.LocalProperties.Pitch, pitch, state.m_PitchSetter, duration).Ease(curve));
+        }
+
+        #endregion // Properties
+
+        #region Status
+
+        static public bool IsReady(AudioTrackState state) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    return state.Sample.clip.loadState >= AudioDataLoadState.Loaded;
+                }
+                case AudioEvent.PlaybackMode.Stream: {
+                    return state.Stream.GetError() > 0 || state.Stream.IsReady();
+                }
+                default: {
+                    Assert.Fail("unknown audiotrackstate mode");
+                    return false;
+                }
+            }
+        }
+
+        static public bool IsPlaying(AudioTrackState state) {
+            return state.State == StateId.Playing;
+        }
+
+        static public IEnumerator Wait(AudioTrackState state, ushort instanceId) {
+            if (instanceId == 0) {
+                yield break;
+            }
+
+            while(state.InstanceId == instanceId && IsPlaying(state)) {
+                yield return null;
+            }
+        }
+
+        #endregion // Status
+
+        #region Update
+
+        static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime) {
+            state.LastKnownProperties = parentSettings;
+            AudioPropertyBlock.Combine(state.LastKnownProperties, state.EventProperties, ref state.LastKnownProperties);
+            AudioPropertyBlock.Combine(state.LastKnownProperties, state.LocalProperties, ref state.LastKnownProperties);
+
+            switch(state.State) {
+                case StateId.PlayRequested: {
+                    return UpdatePlayRequested(state, deltaTime);
+                }
+                case StateId.Playing: {
+                    return UpdatePlaying(state);
+                }
+                case StateId.Paused: {
+                    return UpdatePaused(state);
+                }
+                case StateId.Idle: {
+                    return true;
+                }
+                case StateId.Stopped: {
+                    return false;
+                }
+                default: {
+                    Assert.Fail("Unknown playback state {0}", state.State);
+                    return false;
+                }
+            }
+        }
+
+        static private bool UpdatePlayRequested(AudioTrackState state, float deltaTime) {
+            if (state.LastKnownProperties.Pause) {
+                return true;
+            }
+            
+            state.Delay -= deltaTime;
+            if (state.Delay <= 0) {
+                SyncSettings(state);
+                state.State = StateId.Playing;
+                state.Sample?.Play();
+                state.Stream?.Play();
+            }
+
+            return true;
+        }
+
+        static private bool UpdatePlaying(AudioTrackState state) {
+            SyncSettings(state);
+
+            if (state.LastKnownProperties.Pause) {
+                state.Sample?.Pause();
+                state.Stream?.Pause();
+                state.StopCounter = 0;
+                state.State = StateId.Paused;
+                return true;
+            }
+
+            bool bIsPlaying = false;
+            float currentTime = 0;
+
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    bIsPlaying = state.Sample.isPlaying;
+                    currentTime = state.Sample.time;
+                    break;
+                }
+                case AudioEvent.PlaybackMode.Stream: {
+                    bIsPlaying = state.Stream.IsPlaying;
+                    currentTime = state.Stream.Time;
+                    break;
+                }
+            }
+
+            if (!bIsPlaying) {
+                if (++state.StopCounter > 5) {
+                    state.Sample?.Stop();
+                    state.Stream?.Stop();
+                    state.State = StateId.Stopped;
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                state.LastKnownTime = currentTime;
+                state.StopCounter = 0;
+                return true;
+            }
+        }
+
+        static private bool UpdatePaused(AudioTrackState state) {
+            if (!state.LastKnownProperties.Pause) {
+                SyncSettings(state);
+                state.Sample?.UnPause();
+                state.Stream?.UnPause();
+                state.State = StateId.Playing;
+            }
+            return true;
+        }
+
+        static private void SyncSettings(AudioTrackState state) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    state.Sample.volume = state.LastKnownProperties.Volume;
+                    state.Sample.pitch = state.LastKnownProperties.Pitch;
+                    state.Sample.mute = !state.LastKnownProperties.IsAudible();
+                    break;
+                }
+
+                case AudioEvent.PlaybackMode.Stream: {
+                    state.Stream.Volume = state.LastKnownProperties.Volume;
+                    state.Stream.Mute = !state.LastKnownProperties.IsAudible();
+                    break;
+                }
+            }
+        }
+    
+        #endregion // Update
+    }
+}
