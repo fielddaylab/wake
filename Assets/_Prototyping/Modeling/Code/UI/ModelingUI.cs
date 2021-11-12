@@ -27,7 +27,7 @@ namespace ProtoAqua.Modeling
         {
             m_UniversalModel = inModelState;
 
-            ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts(), inModelState);
+            // ConceptMap.SetInitialFacts(inPlayerData.GraphedFacts(), inModelState);
             ScenarioPanel.SetUniversalModel(inModelState);
         }
 

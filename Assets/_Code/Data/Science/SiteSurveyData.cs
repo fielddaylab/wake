@@ -9,7 +9,8 @@ namespace Aqua
     {
         public StringHash32 MapId;
         public HashSet<StringHash32> TaggedCritters = new HashSet<StringHash32>();
-        public byte SiteVersion;
+        public HashSet<StringHash32> GraphedCritters = new HashSet<StringHash32>();
+        public HashSet<StringHash32> GraphedFacts = new HashSet<StringHash32>();
 
         public Action OnChanged;
 
@@ -22,13 +23,23 @@ namespace Aqua
 
         #region ISerializedObject
 
-        public ushort Version { get { return 1; } }
+        // v2: removed site version, added graphing
+        public ushort Version { get { return 2; } }
 
         public void Serialize(Serializer ioSerializer)
         {
             ioSerializer.UInt32Proxy("mapId", ref MapId);
             ioSerializer.UInt32ProxySet("taggedCritters", ref TaggedCritters);
-            ioSerializer.Serialize("siteVersion", ref SiteVersion);
+            if (ioSerializer.ObjectVersion < 2)
+            {
+                byte version = 0;
+                ioSerializer.Serialize("siteVersion", ref version);
+            }
+            else
+            {
+                ioSerializer.UInt32ProxySet("graphedCritters", ref GraphedCritters);
+                ioSerializer.UInt32ProxySet("graphedFacts", ref GraphedFacts);
+            }
         }
 
         #endregion // ISerializedObject

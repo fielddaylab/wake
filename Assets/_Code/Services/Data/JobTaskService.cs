@@ -27,7 +27,8 @@ namespace Aqua
             VariableUpdated = 0x10,
             ObjectScanned = 0x20,
             InventoryUpdated = 0x40,
-            ModelUpdated = 0x80
+            SiteDataUpdated = 0x80,
+            ArgumentUpdated = 0x100
         }
 
         [NonSerialized] private StringHash32 m_LoadedJobId;
@@ -53,7 +54,8 @@ namespace Aqua
             RegisterTaskEvent(events, GameEvents.VariableSet, TaskEventMask.VariableUpdated);
             RegisterTaskEvent(events, GameEvents.ScanLogUpdated, TaskEventMask.ObjectScanned);
             RegisterTaskEvent(events, GameEvents.InventoryUpdated, TaskEventMask.InventoryUpdated);
-            RegisterTaskEvent(events, GameEvents.ModelUpdated, TaskEventMask.ModelUpdated);
+            RegisterTaskEvent(events, GameEvents.SiteDataUpdated, TaskEventMask.SiteDataUpdated);
+            RegisterTaskEvent(events, GameEvents.ArgueDataUpdated, TaskEventMask.ArgumentUpdated);
         }
 
         private void RegisterTaskEvent(EventService inService, StringHash32 inEventId, TaskEventMask inMask)
@@ -321,7 +323,11 @@ namespace Aqua
                         break;
 
                     case JobStepType.AddFactToModel:
-                        mask |= TaskEventMask.ModelUpdated;
+                        mask |= TaskEventMask.SiteDataUpdated;
+                        break;
+
+                    case JobStepType.FinishArgumentation:
+                        mask |= TaskEventMask.ArgumentUpdated;
                         break;
                 }
             }
@@ -374,10 +380,12 @@ namespace Aqua
                     return inData.Script.HasSeen(inStep.Target, Scripting.PersistenceLevel.Profile);
 
                 case JobStepType.AddFactToModel:
-                    return inData.Bestiary.IsFactGraphed(inStep.Target);
+                    // TODO: Implement
+                    // return inData.Bestiary.IsFactGraphed(inStep.Target);
+                    return false;
 
                 case JobStepType.FinishArgumentation:
-                    return false;
+                    return inData.Science.IsArgueCompleted(inStep.Target);
 
                 default:
                     return true;

@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using BeauUtil;
 using BeauUtil.Debugger;
-using UnityEngine;
 
 namespace Aqua
 {
@@ -52,19 +49,15 @@ namespace Aqua
     [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ActorStateTransitionSet
     {
-        public ActorStateTransitionRange Oxygen;
         public ActorStateTransitionRange Temperature;
         public ActorStateTransitionRange Light;
         public ActorStateTransitionRange PH;
-        public ActorStateTransitionRange CarbonDioxide;
 
         public void Reset()
         {
-            Oxygen.Reset();
             Temperature.Reset();
             Light.Reset();
             PH.Reset();
-            CarbonDioxide.Reset();
         }
 
         public unsafe ActorStateTransitionRange this[WaterPropertyId inId]
@@ -72,19 +65,32 @@ namespace Aqua
             get
             {
                 Assert.True(inId >= 0 && inId < WaterPropertyId.TRACKED_COUNT);
-                
-                fixed(ActorStateTransitionRange* start = &this.Oxygen)
-                {
-                    return *((ActorStateTransitionRange*) (start + (int) inId));
+
+                switch(inId) {
+                    case WaterPropertyId.Temperature:
+                        return Temperature;
+                    case WaterPropertyId.Light:
+                        return Light;
+                    case WaterPropertyId.PH:
+                        return PH;
+                    default:
+                        return ActorStateTransitionRange.Default;
                 }
             }
             set
             {
                 Assert.True(inId >= 0 && inId < WaterPropertyId.TRACKED_COUNT);
 
-                fixed(ActorStateTransitionRange* start = &this.Oxygen)
-                {
-                    *((ActorStateTransitionRange*) (start + (int) inId)) = value;
+                switch(inId) {
+                    case WaterPropertyId.Temperature:
+                        Temperature = value;
+                        break;
+                    case WaterPropertyId.Light:
+                        Light = value;
+                        break;
+                    case WaterPropertyId.PH:
+                        PH = value;
+                        break;
                 }
             }
         }
@@ -99,13 +105,6 @@ namespace Aqua
             ActorStateId current = ActorStateId.Alive;
             ActorStateId evaluated;
             outAffectedRange = default(WaterPropertyMask);
-
-            if ((evaluated = Oxygen.Evaluate(inEnvironment.Oxygen)) > 0)
-            {
-                if (evaluated > current)
-                    current = evaluated;
-                outAffectedRange[WaterPropertyId.Oxygen] = true;
-            }
 
             if ((evaluated = Temperature.Evaluate(inEnvironment.Temperature)) > 0)
             {
@@ -126,13 +125,6 @@ namespace Aqua
                 if (evaluated > current)
                     current = evaluated;
                 outAffectedRange[WaterPropertyId.PH] = true;
-            }
-
-            if ((evaluated = PH.Evaluate(inEnvironment.CarbonDioxide)) > 0)
-            {
-                if (evaluated > current)
-                    current = evaluated;
-                outAffectedRange[WaterPropertyId.CarbonDioxide] = true;
             }
 
             return current;

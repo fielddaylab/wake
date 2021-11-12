@@ -334,10 +334,21 @@ namespace Aqua.Editor
                 line.y += EditorGUIUtility.singleLineHeight + 2;
 
                 switch(stepType) {
-                    case JobStepType.ScanObject:
-                    case JobStepType.SeeScriptNode: {
+                    case JobStepType.ScanObject: {
                         stepProp.Next(false);
                         EditorGUI.PropertyField(line, stepProp, TempContent("Scan Id"));
+                        break;
+                    }
+
+                    case JobStepType.SeeScriptNode: {
+                        stepProp.Next(false);
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Script Node Id"));
+                        break;
+                    }
+
+                    case JobStepType.FinishArgumentation: {
+                        stepProp.Next(false);
+                        EditorGUI.PropertyField(line, stepProp, TempContent("Argumentation Id"));
                         break;
                     }
 
@@ -443,9 +454,6 @@ namespace Aqua.Editor
                 switch(stepType) {
                     case JobStepType.GetItem:
                         numLines += 2;
-                        break;
-
-                    case JobStepType.FinishArgumentation:
                         break;
 
                     default:

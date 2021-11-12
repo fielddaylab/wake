@@ -328,10 +328,11 @@ namespace ProtoAqua.Observation
                     m_SiteData.TaggedCritters.Add(inCritter.CritterId);
                     m_CritterTypes.FastRemoveAt(idx);
                     m_SiteData.OnChanged();
+                    Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
 
                     DeregisterAll(inCritter.CritterId, true);
 
-                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id, m_SiteData.SiteVersion);
+                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id);
 
                     #if UNITY_EDITOR
                     Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());

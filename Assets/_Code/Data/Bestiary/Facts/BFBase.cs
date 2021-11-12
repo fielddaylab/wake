@@ -118,6 +118,11 @@ namespace Aqua
         Internal
     }
 
+    public enum BFFlags : byte
+    {
+        IsGraphable = 0x01
+    }
+
     public class FactIdAttribute : PropertyAttribute
     {
         public Type FactType;

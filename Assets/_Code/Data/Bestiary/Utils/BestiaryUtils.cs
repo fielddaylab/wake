@@ -256,19 +256,19 @@ namespace Aqua
         /// <summary>
         /// Locates the population rule associated with the given environment and critter type.
         /// </summary>
-        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, StringHash32 inCritterId, byte inSiteVersion = 0)
+        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, StringHash32 inCritterId)
         {
-            return FindPopulationRule(inEnvironment, Assets.Bestiary(inCritterId), inSiteVersion);
+            return FindPopulationRule(inEnvironment, Assets.Bestiary(inCritterId));
         }
 
         /// <summary>
         /// Locates the population rule associated with the given environment and critter type.
         /// </summary>
-        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, BestiaryDesc inCritter, byte inSiteVersion = 0)
+        static public BFPopulation FindPopulationRule(BestiaryDesc inEnvironment, BestiaryDesc inCritter)
         {
             foreach(var fact in inEnvironment.FactsOfType<BFPopulation>())
             {
-                if (fact.SiteVersion == inSiteVersion && fact.Critter == inCritter)
+                if (fact.Critter == inCritter)
                     return fact;
             }
 
@@ -365,11 +365,11 @@ namespace Aqua
         static public WaterPropertyBlockF32 FindHealthyWaterValues(ActorStateTransitionSet inStates, WaterPropertyBlockF32 inDefaultValues)
         {
             WaterPropertyBlockF32 waterProperties;
-            waterProperties.Oxygen = FindHealthyWaterValue(inStates.Oxygen, inDefaultValues.Oxygen);
+            waterProperties.Oxygen = inDefaultValues.Oxygen;
             waterProperties.Temperature = FindHealthyWaterValue(inStates.Temperature, inDefaultValues.Temperature);
             waterProperties.Light = FindHealthyWaterValue(inStates.Light, inDefaultValues.Light);
             waterProperties.PH = FindHealthyWaterValue(inStates.PH, inDefaultValues.PH);
-            waterProperties.CarbonDioxide = FindHealthyWaterValue(inStates.CarbonDioxide, inDefaultValues.CarbonDioxide);
+            waterProperties.CarbonDioxide = inDefaultValues.CarbonDioxide;
             return waterProperties;
         }
 

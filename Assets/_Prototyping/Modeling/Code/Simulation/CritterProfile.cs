@@ -125,9 +125,10 @@ namespace ProtoAqua.Modeling
             m_EatAmountTotal = 0;
             m_EatAmountStressedTotal = 0;
 
+            m_Transitions.Reset();
+
             for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; i++)
             {
-                m_Transitions[i] = ActorStateTransitionRange.Default;
                 m_ToProducePerPopulation[i] = m_ToProducePerPopulationStressed[i] = NotAssignedF32;
                 m_ToConsumePerPopulation[i] = m_ToConsumePerPopulationStressed[i] = NotAssignedF32;
             }

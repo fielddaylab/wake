@@ -28,7 +28,6 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
                 .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
-                .Register<StringHash32>(GameEvents.ModelUpdated, OnModelUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this);
         }
@@ -147,15 +146,6 @@ namespace Aqua
                             break;
                         }
                 }
-            }
-        }
-
-        private void OnModelUpdated(StringHash32 inFactAdded)
-        {
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("factId", inFactAdded);
-                Services.Script.TriggerResponse(GameTriggers.BestiaryFactAddedToModel, table);
             }
         }
 

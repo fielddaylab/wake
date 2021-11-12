@@ -1,17 +1,11 @@
 using System;
 using Aqua;
-using Aqua.Cameras;
-using BeauRoutine;
-using BeauRoutine.Extensions;
-using BeauUtil;
-using BeauUtil.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2
+namespace Aqua
 {
-    public class BestiaryButton : MonoBehaviour
+    public class BestiarySelectButton : MonoBehaviour
     {
         public delegate void ToggleDelegate(BestiaryDesc inCritter, bool inbOn);
 

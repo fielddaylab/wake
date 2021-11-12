@@ -20,7 +20,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Model, BFShapeId.Model, BFDiscoveredFlags.All, null);
+            BFType.DefineAttributes(BFTypeId.Model, BFShapeId.Model, 0, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Model, null, GenerateSentence, null);
             BFType.DefineEditor(BFTypeId.Model, null, BFMode.Player);
         }

@@ -2,24 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
-using Aqua.Cameras;
 using Aqua.Profile;
 using BeauPools;
-using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
-using BeauUtil.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2
+namespace Aqua
 {
     public class BestiaryAddPanel : BasePanel, ISceneOptimizable
     {
         #region Types
 
-        [Serializable] private class BestiaryButtonPool : SerializablePool<BestiaryButton> { }
+        [Serializable] private class BestiaryButtonPool : SerializablePool<BestiarySelectButton> { }
 
         #endregion // Types
 
@@ -43,7 +39,7 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private bool m_NeedsRebuild = true;
         [NonSerialized] private int m_SelectedCount;
         private readonly HashSet<BestiaryDesc> m_SelectedSet = new HashSet<BestiaryDesc>();
-        private BestiaryButton.ToggleDelegate m_ToggleDelegate;
+        private BestiarySelectButton.ToggleDelegate m_ToggleDelegate;
 
         public Action<BestiaryDesc> OnAdded;
         public Action<BestiaryDesc> OnRemoved;
@@ -182,7 +178,7 @@ namespace ProtoAqua.ExperimentV2
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
-                CollectCritters(Save.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
+                CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
                 availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);
@@ -200,14 +196,7 @@ namespace ProtoAqua.ExperimentV2
             else if (m_PerRow > 0)
             {
                 int onRow = critterCount % m_PerRow;
-                if (onRow > 0)
-                {
-                    emptyCount = m_PerRow - onRow;
-                }
-                else
-                {
-                    emptyCount = 0;
-                }
+                emptyCount = (m_PerRow - onRow) % m_PerRow;
             }
             else
             {
@@ -219,7 +208,7 @@ namespace ProtoAqua.ExperimentV2
 
             bool bIsAtCapacity = m_MaxAllowed > 1 && m_SelectedCount >= m_MaxAllowed;
 
-            BestiaryButton button;
+            BestiarySelectButton button;
             foreach(var critter in inCritters)
             {
                 button = m_ButtonPool.Alloc();
@@ -307,14 +296,14 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // ISceneOptimizable
 
-        static private void CollectCritters(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, ICollection<BestiaryDesc> outCritters)
+        static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, ICollection<BestiaryDesc> outCritters)
         {
-            foreach(var critter in inSaveData.GetEntities(inCategory))
+            foreach(var entity in inSaveData.GetEntities(inCategory))
             {
-                if (critter.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | inIgnore))
+                if (entity.HasFlags(inIgnore))
                     continue;
 
-                outCritters.Add(critter);
+                outCritters.Add(entity);
             }
         }
     }

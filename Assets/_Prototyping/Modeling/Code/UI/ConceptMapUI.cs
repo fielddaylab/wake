@@ -68,13 +68,13 @@ namespace ProtoAqua.Modeling
 
         private void Add(StringHash32 inFactId)
         {
-            if (Save.Bestiary.AddFactToGraph(inFactId))
-            {
-                BFBase fact = Assets.Fact(inFactId);
-                m_Map.AddFact(fact);
-                m_ModelState.AddFact(fact);
-                OnGraphUpdated?.Invoke(fact.Id);
-            }
+            // if (Save.Bestiary.AddFactToGraph(inFactId))
+            // {
+            //     BFBase fact = Assets.Fact(inFactId);
+            //     m_Map.AddFact(fact);
+            //     m_ModelState.AddFact(fact);
+            //     OnGraphUpdated?.Invoke(fact.Id);
+            // }
         }
 
         private void UpdateUnadded()

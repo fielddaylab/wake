@@ -24,12 +24,12 @@ namespace ProtoAqua.Modeling
             m_GraphedCritters.Clear();
             m_UngraphedFacts.Clear();
 
-            foreach(var graphedFactId in inPlayerData.GraphedFacts())
-            {
-                AddFact(Assets.Fact(graphedFactId));
-            }
+            // foreach(var graphedFactId in inPlayerData.GraphedFacts())
+            // {
+            //     AddFact(Assets.Fact(graphedFactId));
+            // }
 
-            inPlayerData.GetUngraphedFacts(m_UngraphedFacts);
+            // inPlayerData.GetUngraphedFacts(m_UngraphedFacts);
         }
 
         public bool IsFactGraphed(StringHash32 inFactId)
