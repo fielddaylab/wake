@@ -270,7 +270,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 {@kevin}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
             That doesn't sound great...
 
-// ARGUMENTATION
+// SUGGEST ARGUMENTATION
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
@@ -287,6 +287,78 @@ $else
 	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drJules}.
                 We should first head back to the {map-name}Office{/map-name}.$endif
 $endif
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(urchinBarrenArgue)
+@cutscene
+
+$call ArgueLoad(urchinBarrenArgue)
+	$if ArgueSetClaim(urchinBarrenClaim, jobs.kelp-urchin-barren.argue.claimLabel)
+			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
+			$call ArgueFactSlot(Model.UrchinBarrenPrediction)
+	$endif
+
+	$branch .argue.hello
+
+	
+::argue.hello
+{@drJules}    I see you explored Site B. What's causing the {nameof GiantKelp} population to decrease?
+$goto .argue.chooseFacts
+
+
+::argue.chooseFacts
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+        $answer Urchin.Eats.GiantKelp, .argue.urchinEatsKelp
+        $answer Model.UrchinBarrenPrediction, .argue.barrenModel
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; I give up
+$endif
+
+::argue.urchinEatsKelp
+$if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
+	$goto .argue.done
+$else
+	{@drJules}    I see. So do you know if they will ever grow back?
+	$goto .argue.chooseFacts
+$endif
+
+::argue.barrenModel
+$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
+	$goto .argue.done
+$else
+	{@drJules}    Hmm. What is causing that decrease in kelp population?
+	$goto .argue.chooseFacts
+$endif
+
+::argue.unrelated
+$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
+	{@drJules}    Do you have anything that predicts what's going to happen at Site B?
+$else
+	$if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
+		{@drJules}  Is something eating the {nameof GiantKelp}?
+	$else
+		{@drJules}  I don't know if that's it.
+	$endif
+$endif
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFacts
+
+::argue.giveUp
+{@drJules}    OK get back to me when you're ready.
+
+::argue.done
+$call ArgueComplete()
+{@drJules}    Ok then... That is rather bleak.
+$call CompleteJob()
+
+// END
 
 :: end
 @trigger    JobCompleted
