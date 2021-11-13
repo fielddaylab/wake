@@ -10,7 +10,7 @@ namespace ProtoAqua.ExperimentV2
 {
 
     public class TankWaterSystem : MonoBehaviour {
-        private const float MaxWaterPitch = 1.6f;
+        private const float MaxWaterPitch = 3f;
         private const Curve WaterPitchCurve = Curve.CubeIn;
 
         private class ParticleListenerProxy : MonoBehaviour {

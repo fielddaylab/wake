@@ -18,7 +18,7 @@ using Leaf.Runtime;
 
 namespace Aqua
 {
-    [ServiceDependency(typeof(UIMgr))]
+    [ServiceDependency(typeof(UIMgr)), DefaultExecutionOrder(999999)]
     public partial class StateMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
@@ -627,6 +627,10 @@ namespace Aqua
             }
         }
 
+        private void LateUpdate() {
+            Frame.IncrementFrame();
+        }
+
         #region IService
 
         protected override void Initialize()
@@ -638,8 +642,6 @@ namespace Aqua
                 Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
-
-            Routine.StartLoop(Frame.IncrementFrame).SetPriority(999999);
         }
 
         protected override void Shutdown()

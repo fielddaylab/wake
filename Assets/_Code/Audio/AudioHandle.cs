@@ -3,70 +3,77 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 
-namespace AquaAudio
-{
-    public struct AudioHandle : IEquatable<AudioHandle>
-    {
-        private uint m_Id;
-        private AudioPlaybackTrack m_Track;
+namespace AquaAudio {
+    public struct AudioHandle : IEquatable<AudioHandle> {
+        private AudioTrackState m_State;
+        private ushort m_InstanceId;
 
-        internal AudioHandle(uint inId, AudioPlaybackTrack inTrack)
-        {
-            m_Id = inId;
-            m_Track = inTrack;
+        internal AudioHandle(AudioTrackState state, ushort instanceId) {
+            m_State = state;
+            m_InstanceId = instanceId;
         }
 
         #region Operations
 
-        public AudioHandle Play()
-        {
-            GetTrack()?.Play();
-            return this;
-        }
-
-        public AudioHandle Pause()
-        {
-            GetTrack()?.Pause();
-            return this;
-        }
-
-        public AudioHandle Resume()
-        {
-            GetTrack()?.Resume();
-            return this;
-        }
-
-        public AudioHandle Stop(float inFadeDuration = 0)
-        {
-            GetTrack()?.Stop(inFadeDuration);
-            return this;
-        }
-
-        public float GetVolume()
-        {
+        public AudioHandle Play() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.Settings.Volume;
+                AudioTrackState.Play(track);
+            return this;
+        }
+
+        public AudioHandle Pause() {
+            var track = GetTrack();
+            if (track != null) {
+                track.LocalProperties.Pause = true;
+            }
+            return this;
+        }
+
+        public AudioHandle Resume() {
+            var track = GetTrack();
+            if (track != null) {
+                track.LocalProperties.Pause = false;
+            }
+            return this;
+        }
+
+        public AudioHandle Stop(float inFadeDuration = 0) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                AudioTrackState.Stop(track, inFadeDuration);
+            }
+            return this;
+        }
+
+        public float GetVolume() {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                return track.LocalProperties.Volume;
+            }
             return 1;
         }
 
-        public AudioHandle SetVolume(float inVolume, float inDuration = 0, Curve inCurve = Curve.Linear)
-        {
-            GetTrack()?.SetVolume(inVolume, inDuration, inCurve);
+        public AudioHandle SetVolume(float inVolume, float inDuration = 0, Curve inCurve = Curve.Linear) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                AudioTrackState.SetVolume(track, inVolume, inDuration, inCurve);
+            }
             return this;
         }
 
-        public float GetPitch()
-        {
+        public float GetPitch() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.Settings.Pitch;
+                return track.LocalProperties.Pitch;
             return 1;
         }
 
-        public AudioHandle SetPitch(float inPitch, float inDuration = 0, Curve inCurve = Curve.Linear)
-        {
-            GetTrack()?.SetPitch(inPitch, inDuration, inCurve);
+        public AudioHandle SetPitch(float inPitch, float inDuration = 0, Curve inCurve = Curve.Linear) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                AudioTrackState.SetPitch(track, inPitch, inDuration, inCurve);
+            }
             return this;
         }
 
@@ -74,56 +81,49 @@ namespace AquaAudio
 
         #region Checks
 
-        public bool Exists()
-        {
+        public bool Exists() {
             var track = GetTrack();
             return track != null;
         }
 
-        public bool IsPlaying()
-        {
+        public bool IsPlaying() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.IsPlaying();
+                return track.State == AudioTrackState.StateId.Playing;
             return false;
         }
 
-        public bool IsPaused()
-        {
+        public bool IsPaused() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.Settings.Pause;
+                return track.LocalProperties.Pause;
             return false;
         }
 
-        public IEnumerator Wait()
-        {
+        public IEnumerator Wait() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.Wait(m_Id);
+                return AudioTrackState.Wait(track, m_InstanceId);
             return null;
         }
 
-        private AudioPlaybackTrack GetTrack()
-        {
-            if (m_Id == 0)
+        private AudioTrackState GetTrack() {
+            if (m_InstanceId == 0)
                 return null;
 
-            if (m_Track == null || !m_Track.IsId(m_Id))
-            {
-                m_Id = 0;
-                m_Track = null;
+            if (m_State == null || m_State.InstanceId != m_InstanceId) {
+                m_InstanceId = 0;
+                m_State = null;
                 return null;
             }
 
-            return m_Track;
+            return m_State;
         }
 
-        public StringHash32 EventId()
-        {
+        public StringHash32 EventId() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))
-                return track.EventId();
+                return track.Event.Id();
             return StringHash32.Null;
         }
 
@@ -131,40 +131,33 @@ namespace AquaAudio
 
         #region Overrides
 
-        public override bool Equals(object other)
-        {
+        public override bool Equals(object other) {
             if (other is AudioHandle)
-                return Equals((AudioHandle) other);
+                return Equals((AudioHandle)other);
             return false;
         }
 
-        public override int GetHashCode()
-        {
-            return m_Id.GetHashCode();
+        public override int GetHashCode() {
+            return m_InstanceId.GetHashCode();
         }
 
-        public bool Equals(AudioHandle other)
-        {
-            return m_Id == other.m_Id;
+        public bool Equals(AudioHandle other) {
+            return m_InstanceId == other.m_InstanceId && m_State == other.m_State;
         }
 
-        static public bool operator==(AudioHandle inLeft, AudioHandle inRight)
-        {
-            return inLeft.m_Id == inRight.m_Id;
+        static public bool operator ==(AudioHandle inLeft, AudioHandle inRight) {
+            return inLeft.m_InstanceId == inRight.m_InstanceId && inLeft.m_State == inRight.m_State;
         }
 
-        static public bool operator!=(AudioHandle inLeft, AudioHandle inRight)
-        {
-            return inLeft.m_Id != inRight.m_Id;
+        static public bool operator !=(AudioHandle inLeft, AudioHandle inRight) {
+            return inLeft.m_InstanceId != inRight.m_InstanceId || inLeft.m_State != inRight.m_State;
         }
 
         #endregion // Overrides
 
         #region Null
 
-        static private readonly AudioHandle s_NullHandle = default(AudioHandle);
-
-        static public AudioHandle Null { get { return s_NullHandle; } }
+        static public AudioHandle Null { get { return default(AudioHandle); } }
 
         #endregion // Null
     }

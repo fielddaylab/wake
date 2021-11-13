@@ -189,7 +189,10 @@ namespace Aqua
 
         private void SetTime(int inHour, int inMinutes)
         {
-            m_CurrentTime = GTDate.ClockToTicks(inHour, inMinutes);
+            if (m_FullTime.Hour != inHour || m_FullTime.Minute != inMinutes) {
+                m_CurrentTime = GTDate.ClockToTicks(inHour, inMinutes);
+            }
+
             ConsumeQueuedAdvance();
         }
 

@@ -10,6 +10,8 @@ namespace BeauUWT
     // WebGL implementation
     public partial class UWTStreamPlayer : MonoBehaviour
     {
+        public const bool IsNative = true;
+
         [NonSerialized] private uint m_WebHandle;
         [NonSerialized] private Coroutine m_LoadCoroutine;
         static private bool s_Initialized;

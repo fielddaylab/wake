@@ -473,16 +473,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_DefaultPackage: {fileID: 11400000, guid: 80a7720767e116342a994588d68298c2, type: 2}
-  m_Pool:
-    m_Prefab: {fileID: 3026598248367540829, guid: ef87c6cac7dcc7e44a70e1c8a4c65d63,
+  m_SamplePlayers:
+    m_Prefab: {fileID: 3832034530315721956, guid: ef87c6cac7dcc7e44a70e1c8a4c65d63,
       type: 3}
-    m_Name: Audio
+    m_Name: 
     m_InitialCapacity: 32
     m_PrewarmOnInitialize: 1
     m_InitialPrewarm: 16
     m_DefaultPoolRoot: {fileID: 5443727366179796613}
     m_DefaultSpawnRoot: {fileID: 5443727366179796613}
-    m_ResetTransformOnAlloc: 0
+    m_ResetTransformOnAlloc: 1
+  m_StreamPlayers:
+    m_Prefab: {fileID: 306071894044257201, guid: c13ce5f5d8c84d148952cb1a835be14a,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 5443727366179796613}
+    m_DefaultSpawnRoot: {fileID: 5443727366179796613}
+    m_ResetTransformOnAlloc: 1
   m_DefaultMusicCrossfade: 0.25
 --- !u!81 &8925071889256839533
 AudioListener:
@@ -518,7 +528,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3677342b3ba9c904d8f4a58e736bc2bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GlobalStrings: []
   m_EnglishStrings:
   - {fileID: -4270002856181823206, guid: 5ebd366b5f289b944a3a098fdbcd156c, type: 3}
   - {fileID: -4270002856181823206, guid: 7d1950f779963c9498dcf9e7576ae18e, type: 3}
