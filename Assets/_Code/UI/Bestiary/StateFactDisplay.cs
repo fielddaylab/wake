@@ -42,12 +42,14 @@ namespace Aqua
             m_Icon.sprite = inFact.Icon;
 
             m_Label.SetText(propData.LabelId());
+            m_Label.Graphic.color = palette.Content;
 
             ActorStateTransitionRange range = inFact.Range;
 
             if (inFact.HasDeath)
             {
                 m_KillBackground.gameObject.SetActive(true);
+                m_KillBackground.color = ((Color) palette.Shadow * 0.8f).WithAlpha(1);
                 m_StressRange.Display(range.StressedMin, range.StressedMax, propData.MinValue(), propData.MaxValue());
             }
             else

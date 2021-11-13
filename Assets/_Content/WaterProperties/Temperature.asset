@@ -27,18 +27,18 @@ MonoBehaviour:
       rgba: 4281610496
     Shadow:
       serializedVersion: 2
-      rgba: 4283651023
+      rgba: 4286282713
     Highlight:
       serializedVersion: 2
       rgba: 4284901119
-  m_Format: "{0}\xB0F"
+  m_Format: "{0}\xB0C"
   m_DisplayScale: 1
   m_EnvironmentFactFormat:
     m_Source: properties.temperature.sentence
     m_Hash: 1696510307
   m_EnvironmentHistoryFormat:
-    m_Source: properties.co2.history.sentence
-    m_Hash: 106736535
+    m_Source: properties.temperature.history.sentence
+    m_Hash: 1535282733
   m_StateChangeFormat:
     m_Source: properties.temperature.range
     m_Hash: 2319997683
@@ -48,6 +48,6 @@ MonoBehaviour:
   m_StateChangeUnaffectedFormat:
     m_Source: properties.temperature.range.unaffected
     m_Hash: 325404348
-  m_MinValue: 0
-  m_MaxValue: 300
-  m_DefaultValue: 70
+  m_MinValue: -20
+  m_MaxValue: 50
+  m_DefaultValue: 21

@@ -55,7 +55,7 @@ namespace Aqua
         
         public string FormatValue(float inValue)
         {
-            return string.Format(m_Format, inValue * m_DisplayScale);
+            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);;
         }
 
         public float DisplayValue(float inValue)

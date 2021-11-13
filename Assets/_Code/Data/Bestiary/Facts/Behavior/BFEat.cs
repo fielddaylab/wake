@@ -15,7 +15,7 @@ namespace Aqua
 
         [Header("Eating")]
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
-        public uint Amount = 0;
+        public float Amount = 0;
         [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
