@@ -150,9 +150,9 @@ namespace Aqua.Editor
                     using(new GUIScopes.LabelWidthScope(40)) {
                         using(new EditorGUILayout.HorizontalScope()) {
                             GUILayout.FlexibleSpace();
-                            RenderStressStateWizard(stateFacts, WaterPropertyId.Temperature);
-                            RenderStressStateWizard(stateFacts, WaterPropertyId.Light);
-                            RenderStressStateWizard(stateFacts, WaterPropertyId.PH);
+                            RenderStressStateWizard(stateFacts, WaterPropertyId.Temperature, DefaultTemperatureDeathRange);
+                            RenderStressStateWizard(stateFacts, WaterPropertyId.Light, null);
+                            RenderStressStateWizard(stateFacts, WaterPropertyId.PH, DefaultPHDeathRange);
                             GUILayout.FlexibleSpace();
                         }
                     }
@@ -419,7 +419,7 @@ namespace Aqua.Editor
             }
         }
 
-        private void RenderStressStateWizard(in WaterPropertyBlock<BFState> inProperties, WaterPropertyId inId) {
+        private void RenderStressStateWizard(in WaterPropertyBlock<BFState> inProperties, WaterPropertyId inId, Action<BFState> inAutoFill) {
             using(new EditorGUILayout.VerticalScope(GUILayout.Width(200))) {
                 BFState fact = inProperties[inId];
                 GUILayout.Label(ObjectNames.NicifyVariableName(inId.ToString()));
@@ -480,8 +480,28 @@ namespace Aqua.Editor
                             }
                         }
                     }
+
+                    using(new EditorGUI.DisabledScope(inAutoFill == null || !fact.HasStressed)) {
+                        if (GUILayout.Button("Auto-Generate Remaining Values")) {
+                            Undo.RecordObject(fact, "Changing stress state");
+                            inAutoFill(fact);
+                            EditorUtility.SetDirty(fact);
+                        }
+                    }
                 }
             }
+        }
+
+        static private void DefaultTemperatureDeathRange(BFState ioState) {
+            ioState.HasDeath = true;
+            ioState.m_MinStressed = ioState.m_MinSafe - 15;
+            ioState.m_MaxStressed = ioState.m_MaxSafe + 15;
+        }
+
+        static private void DefaultPHDeathRange(BFState ioState) {
+            ioState.HasDeath = true;
+            ioState.m_MinStressed = ioState.m_MinSafe - 0.5f;
+            ioState.m_MaxStressed = ioState.m_MaxSafe + 0.5f;
         }
 
         #region Fact Creation
@@ -862,5 +882,50 @@ namespace Aqua.Editor
             c.tooltip = inTooltip;
             return c;
         }
+
+        // [MenuItem("Aqualab/Convert To Celsius")]
+        // static private void ConvertToCelsius() {
+        //     foreach(var stateFact in AssetDBUtils.FindAssets<BFState>()) {
+        //         if (stateFact.Property != WaterPropertyId.Temperature) {
+        //             continue;
+        //         }
+
+        //         Undo.RecordObject(stateFact, "Converting to celsius");
+        //         Log.Msg("[BestiaryDescEditor] Converting {0} from fahrenheit to celsius", stateFact.name);
+
+        //         if (stateFact.HasStressed) {
+        //             stateFact.m_MinSafe = FtoC(stateFact.m_MinSafe);
+        //             stateFact.m_MaxSafe = FtoC(stateFact.m_MaxSafe);
+        //         }
+
+        //         if (stateFact.HasDeath) {
+        //             stateFact.m_MinStressed = FtoC(stateFact.m_MinStressed);
+        //             stateFact.m_MaxStressed = FtoC(stateFact.m_MaxStressed);
+        //         }
+
+        //         UnityEditor.EditorUtility.SetDirty(stateFact);
+        //     }
+
+        //     foreach(var waterProp in AssetDBUtils.FindAssets<BFWaterProperty>()) {
+        //         if (waterProp.Property != WaterPropertyId.Temperature) {
+        //             continue;
+        //         }
+
+        //         Undo.RecordObject(waterProp, "Converting to celsius");
+        //         Log.Msg("[BestiaryDescEditor] Converting {0} from fahrenheit to celsius", waterProp.name);
+
+        //         waterProp.Value = FtoC(waterProp.Value);
+                
+        //         UnityEditor.EditorUtility.SetDirty(waterProp);
+        //     }
+        // }
+
+        // static private float FtoC(float f) {
+        //     return (f - 32) / 1.8f;
+        // }
+
+        // static private float CtoF(float c) {
+        //     return (c * 1.8f) + 32;
+        // }
     }
 }

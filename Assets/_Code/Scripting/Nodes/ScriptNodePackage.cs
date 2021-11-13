@@ -142,26 +142,6 @@ namespace Aqua.Scripting
             }
         }
 
-        /// <summary>
-        /// Binds a source asset for hot reloading.
-        /// </summary>
-        public void BindAsset(string inFilePath)
-        {
-            m_Source = null;
-
-            if (m_HotReload != null)
-            {
-                ReloadableAssetCache.Remove(m_HotReload);
-                Ref.TryDispose(ref m_HotReload);
-            }
-
-            if (!string.IsNullOrEmpty(inFilePath))
-            {
-                m_HotReload = new HotReloadableFileProxy(inFilePath, "ScriptNodePackage", ReloadFromFilePath);
-                ReloadableAssetCache.Add(m_HotReload);
-            }
-        }
-
         private void ReloadFromAsset(LeafAsset inAsset, HotReloadAssetRemapArgs<LeafAsset> inRemap, HotReloadOperation inOperation)
         {
             var mgr = Services.Script;
@@ -171,36 +151,14 @@ namespace Aqua.Scripting
             }
 
             m_Nodes.Clear();
+            m_LineTable.Clear();
+            m_Instructions = default;
             m_RootPath = string.Empty;
 
             if (inOperation == HotReloadOperation.Modified)
             {
                 var self = this;
                 BlockParser.Parse(ref self, m_Name, inAsset.Source(), Parsing.Block, Generator.Instance);
-
-                if (mgr != null)
-                {
-                    mgr.AddPackage(this);
-                }
-            }
-        }
-
-        private void ReloadFromFilePath(string inFilePath, HotReloadOperation inOperation)
-        {
-            var mgr = Services.Script;
-            if (mgr != null)
-            {
-                mgr.RemovePackage(this);
-            }
-
-            Clear();
-
-            m_RootPath = string.Empty;
-
-            if (inOperation == HotReloadOperation.Modified)
-            {
-                var self = this;
-                BlockParser.Parse(ref self, m_Name, File.ReadAllText(inFilePath), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {
@@ -235,12 +193,11 @@ namespace Aqua.Scripting
             {
                 get
                 {
-                    // #if UNITY_EDITOR
-                    // return true;
-                    // #else
-                    // return false;
-                    // #endif // UNITY_EDITOR
+                    #if UNITY_EDITOR
                     return true;
+                    #else
+                    return false;
+                    #endif // UNITY_EDITOR
                 }
             }
 
