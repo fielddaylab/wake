@@ -108,6 +108,54 @@ $else
 	{@kevin}	Just like last time, you can report your findings using the {h}Computer{/h}.
 $endif
 
+//ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(bullKelpArgue)
+@cutscene
+
+$call ArgueLoad(bullKelpArgue)
+	$if ArgueSetClaim(bullKelpClaim, jobs.kelp-bull-kelp-forest.argue.claimLabel)
+			$call ArgueFactSlot(Urchin.Eats.BullKelp)
+	$endif
+	
+$branch .argue.introQuestion
+
+
+::argue.introQuestion
+{@drJules} It seems you are really getting the hang of this scientist thing!
+So what did you two learn about {nameof BullKelp} in Site A?
+
+{@drJules} Did you do any experiments to see if {nameof BullKelp} eat any other species?
+Or are eaten by any other species?
+$branch .argue.chooseFacts
+
+::argue.chooseFacts
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+		$answer Urchin.Eats.BullKelp, .argue.done
+		$answer *, .argue.unrelated
+$choice .argue.giveUp; I give up
+
+::argue.unrelated
+{@drJules} No, that doesn't answer my question. Let's try again.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFacts
+
+
+::argue.giveUp
+{@drJules} OK.  Get back to me when you're ready.
+
+
+::argue.done
+$call ArgueComplete()
+{@drJules} Aha! So just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
+And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
+$call CompleteJob()
+
+
+
 // END
 
 :: end
