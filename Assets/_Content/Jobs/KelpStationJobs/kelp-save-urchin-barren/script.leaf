@@ -113,6 +113,115 @@ $else
 	{@kevin}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
 $endif
 
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(saveBarrenArgue)
+@cutscene
+
+$call ArgueLoad(saveBarrenArgue)
+{@drJules} I figured it was hopeless... There's no way we can fix Site B, right?
+	$choice .argue.hopeless; You're right, Site B is hopeless.
+	$choice .argue.otterSolution; Site B can be fixed by adding {pluralnameof SeaOtter}!
+$choose branch
+
+::argue.introRevisit
+{@drJules} What do you think?  Can we fix Site B?
+	$choice .argue.hopeless; Site B is hopeless.
+	$choice .argue.otterSolution; Site B can be fixed by adding {pluralnameof SeaOtter}!
+$choose branch
+
+//it's hopeless
+
+:: argue.hopeless
+$if ArgueSetClaim(saveBarrenClaim, jobs.kelp-save-urchin-barren.argue.claimHopeless)
+		$call ArgueFactSlot(Model.UrchinBarrenPrediction)
+$endif
+$goto .argue.checkHopeless
+
+::argue.checkHopeless
+{@drJules}    I thought so... Maybe I could take a look at your model to see for sure?
+$goto .argue.chooseFactsHopeless
+
+::argue.chooseFactsHopeless
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+		$answer Model.UrchinBarrenPrediction, .argue.currentModel
+		$answer Model.UrchinBarrenIntroduceOtters, .argue.hopelessButOtters
+		$answer *, .argue.unrelatedHopeless
+$choice .argue.giveUpHopeless; I give up
+
+::argue.currentModel
+{@drJules}    No, that's not relevant. Show me the model you made of changing the Urchin Barren.
+$call ArgueClearFacts()
+$goto .argue.chooseFactsHopeless
+
+::argue.hopelessButOtters
+{@drJules}    Huh, I'm seeing something different in your model...
+I think we should revisit your claim.
+$call ArgueCancelClaim()
+$goto .argue.introRevisit
+
+::argue.incomplete
+{@drJules}    I don't think you've tried to model every type of intervention, here.  Come back when you're absolutely sure nothing can be done.
+$call ArgueCancelClaim()
+$goto .argue.introRevisit
+
+::argue.giveUpHopeless
+{@drJules}    Maybe you should revisit your claim.
+$call ArgueCancelClaim()
+
+::argue.unrelatedHopeless
+{@drJules}    Hmm, no, that isn't relevant.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFactsHopeless
+
+
+// just add otters
+
+::argue.otterSolution	
+$if ArgueSetClaim(saveBarrenClaim, jobs.kelp-save-urchin-barren.argue.claimOtters)
+		$call ArgueFactSlot(Model.UrchinBarrenIntroduceOtters)
+$endif
+$goto .argue.checkOtters
+
+::argue.checkOtters
+{@drJules}    Do you have a model that shows how otters would help?
+$goto .argue.chooseFactsOtters
+
+::argue.chooseFactsOtters
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+        $answer Model.UrchinBarrenIntroduceOtters, .argue.otters
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; I give up
+$endif
+
+::argue.otters
+$call ArgueComplete()
+{@drJules}    Aha! So according to your model, the increase in {critter-name}Kelp{/critter-name} is linked to adding {critter-name}Otters{/critter-name}!
+$goto .argue.done
+
+::argue.unrelated
+{@drJules}    Hmm, no, that isn't relevant.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFactsOtters
+
+::argue.giveUp
+{@drJules}    OK. Get back to me when you're ready.
+
+::argue.done
+{@drJules}    Okay, so because {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
+Adding some {pluralnameof SeaOtter} will ultimately let the {critter-name}Kelp{/critter-name} repopulate!
+Now... where to find some otters..
+You know what, I'll work on that.
+$call CompleteJob()
+
+
 // END
 
 :: end
