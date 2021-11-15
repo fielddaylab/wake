@@ -403,6 +403,7 @@ namespace Aqua.Scripting
         InChoice = 0x40,
     }
 
+    [UnityEngine.Scripting.Preserve]
     public class BindThreadHandleAttribute : BindContextAttribute
     {
         public override object Bind(object inSource)

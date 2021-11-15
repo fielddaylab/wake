@@ -47,6 +47,7 @@ namespace AquaAudio {
         public StringHash32 Id() { return !m_Id.IsEmpty ? m_Id : (m_Id = name); }
         public PlaybackMode Mode() { return m_Mode; }
         public AudioBusId Bus() { return m_Bus; }
+        public bool Looping() { return m_Loop; }
 
         public bool CanPlay() {
             if (m_Mode == PlaybackMode.Stream) {

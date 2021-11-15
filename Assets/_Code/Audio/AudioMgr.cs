@@ -15,11 +15,11 @@ using BeauUWT;
 
 namespace AquaAudio
 {
-    public class AudioMgr : ServiceBehaviour
+    public class AudioMgr : ServiceBehaviour, ILoadable
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
-        private const int MaxSampleTracks = 32;
-        private const int MaxStreamTracks = 4;
+        private const int MaxSampleTracks = 56;
+        private const int MaxStreamTracks = 8;
         private const int MaxTracks = MaxSampleTracks + MaxStreamTracks;
 
         #region Types
@@ -119,11 +119,13 @@ namespace AquaAudio
             float deltaTime = Time.deltaTime;
             AudioTrackState track;
 
+            double currentTime = AudioSettings.dspTime;
+
             int count = m_ActiveStreams.Count;
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveStreams[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
                 {
                     FreePlayer(track);
                     m_ActiveStreams.FastRemoveAt(i);
@@ -134,7 +136,7 @@ namespace AquaAudio
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveSamples[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
                 {
                     FreePlayer(track);
                     m_ActiveSamples.FastRemoveAt(i);
@@ -172,23 +174,30 @@ namespace AquaAudio
             AudioTrackState track = m_TrackPool.Alloc();
             AudioHandle handle = default;
 
+            double currentTime = AudioSettings.dspTime;
+
+            DebugService.Log(LogMask.Audio, "[AudioMgr] Allocating event track '{0}' (type {1})...", inEvent.Id().ToDebugString(), inEvent.Mode());
+
             switch(inEvent.Mode()) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    EnsureFreeSlot(m_ActiveSamples);
+                    EnsureFreeSlot(m_ActiveSamples, currentTime);
                     handle = AudioTrackState.LoadSample(track, inEvent, m_SamplePlayers.Alloc(), NextId(), m_Random);
                     m_ActiveSamples.PushBack(track);
                     break;
                 }
 
                 case AudioEvent.PlaybackMode.Stream: {
-                    EnsureFreeSlot(m_ActiveStreams);
+                    EnsureFreeSlot(m_ActiveStreams, currentTime);
                     handle = AudioTrackState.LoadStream(track, inEvent, m_StreamPlayers.Alloc(), NextId(), m_Random);
                     m_ActiveStreams.PushBack(track);
                     break;
                 }
             }
 
-            AudioTrackState.Play(track);
+            AudioTrackState.Preload(track);
+            if ((inFlags & AudioPlaybackFlags.PreloadOnly) == 0) {
+                AudioTrackState.Play(track);
+            }
             return handle;
         }
 
@@ -208,7 +217,7 @@ namespace AquaAudio
                 return (++m_Id);
         }
 
-        private void EnsureFreeSlot(RingBuffer<AudioTrackState> stateList) {
+        private void EnsureFreeSlot(RingBuffer<AudioTrackState> stateList, double currentTime) {
             if (stateList.Count < stateList.Capacity) {
                 return;
             }
@@ -228,6 +237,44 @@ namespace AquaAudio
             if (stateList.Count < count) {
                 return;
             }
+
+            Log.Warn("[AudioMgr] Not enough space available for new playback track - freeing oldest one");
+            
+            int highestScoreIndex = -1;
+            double highestScore = 0;
+
+            double score;
+            for(int i = count - 1; i >= 0; i--) {
+                state = stateList[i];
+
+                // oldest scores higher
+                score = currentTime - state.LastStartTime;
+
+                // paused scores a little lower (presuming manual pause)
+                if (state.State == AudioTrackState.StateId.Paused) {
+                    score *= 0.5;
+                }
+
+                // audible events score lower
+                if (state.LastKnownProperties.IsAudible() && state.LastKnownProperties.Volume > 0.1f) {
+                    score *= 0.5f;
+                }
+
+                // looping scores lower (interrupting these is more damaging to the experience)
+                if (state.Event.Looping()) {
+                    score *= 0.2;
+                }
+
+                if (score > highestScore) {
+                    highestScore = score;
+                    highestScoreIndex = i;
+                }
+            }
+
+            Assert.True(highestScoreIndex >= 0);
+            state = stateList[highestScoreIndex];
+            FreePlayer(state);
+            stateList.FastRemoveAt(highestScoreIndex);
         }
 
         private void FreePlayer(AudioTrackState state) {
@@ -247,6 +294,8 @@ namespace AquaAudio
                     break;
                 }
             }
+
+            DebugService.Log(LogMask.Audio, "[AudioMgr] Freeing event track '{0}'", state.Event.Id().ToDebugString());
             
             AudioTrackState.Unload(state);
             m_TrackPool.Free(state);
@@ -263,6 +312,11 @@ namespace AquaAudio
             return SetMusic(inId, m_DefaultMusicCrossfade);
         }
 
+        public AudioHandle SetMusic(AudioHandle inHandle)
+        {
+            return SetMusic(inHandle, m_DefaultMusicCrossfade);
+        }
+
         public AudioHandle SetMusic(StringHash32 inId, float inCrossFade)
         {
             if (m_BGM.EventId() == inId)
@@ -270,6 +324,22 @@ namespace AquaAudio
 
             m_BGM.Stop(inCrossFade);
             m_BGM = PostEvent(inId);
+            if (inCrossFade > 0)
+                m_BGM.SetVolume(0).SetVolume(1, inCrossFade);
+            return m_BGM;
+        }
+
+        public AudioHandle SetMusic(AudioHandle inHandle, float inCrossFade)
+        {
+            if (m_BGM.EventId() == inHandle.EventId())
+            {
+                inHandle.Stop();
+                return m_BGM;
+            }
+
+            m_BGM.Stop(inCrossFade);
+            m_BGM = inHandle;
+            m_BGM.Play();
             if (inCrossFade > 0)
                 m_BGM.SetVolume(0).SetVolume(1, inCrossFade);
             return m_BGM;
@@ -450,6 +520,16 @@ namespace AquaAudio
 
             m_Id = 0;
         }
+
+        bool ILoadable.IsLoading() {
+            for(int i = 0; i < m_ActiveStreams.Count; i++) {
+                if (!m_ActiveStreams[i].Stream.IsReady()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     
         #endregion // Load/Unload
 
@@ -500,6 +580,6 @@ namespace AquaAudio
     }
 
     public enum AudioPlaybackFlags {
-        // Persistent = 0x01
+        PreloadOnly = 0x01
     }
 }

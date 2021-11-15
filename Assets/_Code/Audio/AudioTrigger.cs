@@ -17,6 +17,7 @@ namespace AquaAudio
         {
             if (Services.State.IsLoadingScene())
             {
+                m_Playback = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
                 m_WaitRoutine = Routine.Start(this, WaitToPlay());
             }
             else
@@ -32,7 +33,7 @@ namespace AquaAudio
                 yield return null;
             }
 
-            m_Playback = Services.Audio.PostEvent(m_EventId);
+            m_Playback.Play();
         }
 
         private void OnDisable()
