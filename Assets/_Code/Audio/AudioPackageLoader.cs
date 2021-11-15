@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace AquaAudio
 {
+    [DefaultExecutionOrder(-100)]
     public class AudioPackageLoader : MonoBehaviour
     {
         #region Inspector

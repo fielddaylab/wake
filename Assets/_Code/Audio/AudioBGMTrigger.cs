@@ -17,8 +17,14 @@ namespace AquaAudio
 
         private void OnEnable()
         {
+            if (Services.Audio.CurrentMusic().EventId() == m_EventId)
+            {
+                return;
+            }
+
             if (Services.State.IsLoadingScene())
             {
+                m_BGM = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
                 m_WaitRoutine = Routine.Start(this, WaitToPlay());
             }
             else
@@ -34,7 +40,7 @@ namespace AquaAudio
                 yield return null;
             }
 
-            m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+            Services.Audio.SetMusic(m_BGM, m_Crossfade);
         }
 
         private void OnDisable()

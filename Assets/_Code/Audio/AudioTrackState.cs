@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Debugging;
 using BeauRoutine;
 using BeauUtil.Debugger;
 using BeauUWT;
@@ -27,6 +28,7 @@ namespace AquaAudio
         public float Delay;
         public byte StopCounter;
         public float LastKnownTime;
+        public double LastStartTime;
 
         public AudioPropertyBlock EventProperties;
         public AudioPropertyBlock LocalProperties;
@@ -109,6 +111,15 @@ namespace AquaAudio
             }
         }
 
+        static public void Preload(AudioTrackState state) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Stream: {
+                    state.Stream.Preload();
+                    break;
+                }
+            }
+        }
+
         static public void Pause(AudioTrackState state) {
             state.LocalProperties.Pause = true;
         }
@@ -188,7 +199,7 @@ namespace AquaAudio
                     return state.Sample.clip.loadState >= AudioDataLoadState.Loaded;
                 }
                 case AudioEvent.PlaybackMode.Stream: {
-                    return state.Stream.GetError() > 0 || state.Stream.IsReady();
+                    return state.Stream.GetError() == 0 && state.Stream.IsReady();
                 }
                 default: {
                     Assert.Fail("unknown audiotrackstate mode");
@@ -215,14 +226,14 @@ namespace AquaAudio
 
         #region Update
 
-        static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime) {
+        static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime, double currentTime) {
             state.LastKnownProperties = parentSettings;
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.EventProperties, ref state.LastKnownProperties);
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.LocalProperties, ref state.LastKnownProperties);
 
             switch(state.State) {
                 case StateId.PlayRequested: {
-                    return UpdatePlayRequested(state, deltaTime);
+                    return UpdatePlayRequested(state, deltaTime, currentTime);
                 }
                 case StateId.Playing: {
                     return UpdatePlaying(state);
@@ -243,15 +254,16 @@ namespace AquaAudio
             }
         }
 
-        static private bool UpdatePlayRequested(AudioTrackState state, float deltaTime) {
+        static private bool UpdatePlayRequested(AudioTrackState state, float deltaTime, double currentTime) {
             if (state.LastKnownProperties.Pause) {
                 return true;
             }
             
             state.Delay -= deltaTime;
-            if (state.Delay <= 0) {
+            if (state.Delay <= 0 && (state.Stream == null || state.Stream.IsReady())) {
                 SyncSettings(state);
                 state.State = StateId.Playing;
+                state.LastStartTime = currentTime;
                 state.Sample?.Play();
                 state.Stream?.Play();
             }

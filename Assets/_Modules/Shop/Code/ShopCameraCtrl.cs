@@ -9,9 +9,10 @@ using System;
 using UnityEngine.UI;
 using Aqua.Scripting;
 using BeauUtil.Debugger;
+using AquaAudio;
 
 namespace Aqua.Shop {
-    public class ShopCameraCtrl : MonoBehaviour, ISceneOptimizable, ISceneLoadHandler, ISceneUnloadHandler {
+    public class ShopCameraCtrl : MonoBehaviour, ISceneOptimizable, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
         static public StringHash32 BelowEntrance = "station";
         static public StringHash32 ExitEntrance = "shop";
         
@@ -34,6 +35,7 @@ namespace Aqua.Shop {
 
         [NonSerialized] private ShopTable m_SelectedTable;
         [NonSerialized] private Routine m_EnterExitAnim;
+        [NonSerialized] private AudioHandle m_BGM;
 
         #region Routines
 
@@ -94,7 +96,7 @@ namespace Aqua.Shop {
         }
 
         private void OnShopReady(bool inbCrossfade) {
-            Services.Audio.SetMusic("ShopBGM", inbCrossfade ? 0.2f : 0);
+            Services.Audio.SetMusic(m_BGM, inbCrossfade ? 0.2f : 0);
             Services.Script.TriggerResponse(Trigger_ShopReady);
         }
 
@@ -137,6 +139,11 @@ namespace Aqua.Shop {
         #endregion // Table Management
 
         #region Loading
+
+        public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext) {
+            m_BGM = Services.Audio.PostEvent("ShopBGM", AudioPlaybackFlags.PreloadOnly);
+            return null;
+        }
 
         public void OnSceneLoad(SceneBinding inScene, object inContext) {
             foreach(var table in m_Tables) {
