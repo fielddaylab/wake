@@ -8,7 +8,7 @@
 
 $branch common.ringPhone
 
-{@drJules}	Oh, welcome back, {player-name}! 
+{@drKelp}	Oh, welcome back, {player-name}! 
             I need you to head over to Site A and see if anything has changed. 
             When you're done, check in with me at your {map-name}Office{/map-name}!
 
@@ -124,10 +124,10 @@ $branch .argue.introQuestion
 
 
 ::argue.introQuestion
-{@drJules} It seems you are really getting the hang of this scientist thing!
+{@drKelp} It seems you are really getting the hang of this scientist thing!
 So what did you two learn about {nameof BullKelp} in Site A?
 
-{@drJules} Did you do any experiments to see if {nameof BullKelp} eat any other species?
+{@drKelp} Did you do any experiments to see if {nameof BullKelp} eat any other species?
 Or are eaten by any other species?
 $branch .argue.chooseFacts
 
@@ -139,18 +139,18 @@ $choice #argueFact; Present facts from AQOS
 $choice .argue.giveUp; I give up
 
 ::argue.unrelated
-{@drJules} No, that doesn't answer my question. Let's try again.
+{@drKelp} No, that doesn't answer my question. Let's try again.
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 
 ::argue.giveUp
-{@drJules} OK.  Get back to me when you're ready.
+{@drKelp} OK.  Get back to me when you're ready.
 
 
 ::argue.done
 $call ArgueComplete()
-{@drJules} Aha! So just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
+{@drKelp} Aha! So just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
 
@@ -162,9 +162,9 @@ $call CompleteJob()
 @trigger    JobCompleted
 @cutscene
 
-{@drJules}  Nice work!
+{@drKelp}  Nice work!
             You've learned that {pluralnameof BullKelp} power the whole forest at Site A.
 {@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
-{@drJules}  Indeed! Finding those parallels can be quite rewarding.
+{@drKelp}  Indeed! Finding those parallels can be quite rewarding.
             For now, though, you should head back to the {map-name}Job Board{/map-name}.
             I have another job for you.
