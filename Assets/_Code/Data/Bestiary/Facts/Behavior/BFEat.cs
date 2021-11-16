@@ -56,7 +56,7 @@ namespace Aqua
                 yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
                 if (fact.OnlyWhenStressed)
                 {
-                    yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                    yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
                 }
                 if ((inFlags & BFDiscoveredFlags.Rate) != 0)
                 {
@@ -75,7 +75,7 @@ namespace Aqua
                 yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
                 if (fact.OnlyWhenStressed)
                 {
-                    yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                    yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
                 }
             }
         }

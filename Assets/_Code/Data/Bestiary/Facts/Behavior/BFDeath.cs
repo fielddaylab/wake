@@ -42,7 +42,7 @@ namespace Aqua
             yield return BFFragment.CreateLocVerb(DeathVerb);
             if (fact.OnlyWhenStressed)
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
             }
         }
 

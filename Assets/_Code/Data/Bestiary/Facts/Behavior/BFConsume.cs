@@ -34,7 +34,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsGraphable, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.Consume, null, GenerateSentence, GenerateFragments);
             BFType.DefineEditor(BFTypeId.Consume, DefaultIcon, BFMode.Player);
         }
@@ -48,7 +48,7 @@ namespace Aqua
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
             if (fact.OnlyWhenStressed)
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
             }
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
         }

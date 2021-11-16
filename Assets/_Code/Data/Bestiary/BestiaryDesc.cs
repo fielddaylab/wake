@@ -195,8 +195,6 @@ namespace Aqua
     [Flags]
     public enum BestiaryDescFlags
     {
-        Rare = 0x01,
-        LargeCreature = 0x02,
         DoNotUseInExperimentation = 0x04,
         TreatAsHerd = 0x08,
         Human = 0x10,
