@@ -66,31 +66,40 @@ namespace Aqua
             {
                 Assert.True(inId >= 0 && inId < WaterPropertyId.TRACKED_COUNT);
 
-                switch(inId) {
-                    case WaterPropertyId.Temperature:
+                switch(inId)
+                {
+                    case WaterPropertyId.Temperature: {
                         return Temperature;
-                    case WaterPropertyId.Light:
+                    }
+                    case WaterPropertyId.Light: {
                         return Light;
-                    case WaterPropertyId.PH:
+                    }
+                    case WaterPropertyId.PH: {
                         return PH;
-                    default:
+                    }
+                    default: {
                         return ActorStateTransitionRange.Default;
+                    }
                 }
             }
             set
             {
                 Assert.True(inId >= 0 && inId < WaterPropertyId.TRACKED_COUNT);
 
-                switch(inId) {
-                    case WaterPropertyId.Temperature:
+                switch(inId)
+                {
+                    case WaterPropertyId.Temperature: {
                         Temperature = value;
                         break;
-                    case WaterPropertyId.Light:
+                    }
+                    case WaterPropertyId.Light: {
                         Light = value;
                         break;
-                    case WaterPropertyId.PH:
+                    }
+                    case WaterPropertyId.PH: {
                         PH = value;
                         break;
+                    }
                 }
             }
         }
