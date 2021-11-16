@@ -11,7 +11,7 @@
 $branch common.ringPhone
 
 $set    player:seen.drJules = true
-{@drJules}	Lovely! Thanks for the help.
+{@drKelp}	Lovely! Thanks for the help.
             Drive your sub over to site C to get started. 
 {@player}	Ok, great! The sub, which is located...um... 
 {@kevin}	Right outside the door. 
@@ -20,7 +20,7 @@ $set    player:seen.drJules = true
 
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-{@drJules}   One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+{@drKelp}   One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
 $call hotbar.portable->ResetSorting()
 $call FocusHighlight->Clear()
 
@@ -49,7 +49,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drJules}	Head over to Site C and get to work!
+{@drKelp}	Head over to Site C and get to work!
 			
 
 // player does not have anything from site C yet, tell them to go there
@@ -71,12 +71,12 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 
-{@drJules}  Welcome to the kelp forest! Beautiful, isn't it?
+{@drKelp}  Welcome to the kelp forest! Beautiful, isn't it?
 {@player}   Totally beautiful. Not creepy at all. 
-{@drJules}  Use your {nameof ROVScanner} to ID all the species down here.
+{@drKelp}  Use your {nameof ROVScanner} to ID all the species down here.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
-{@drJules}  The {nameof ROVScanner} searches for life forms automatically. 
+{@drKelp}  The {nameof ROVScanner} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species! 
 
 :: helpAtSiteC
@@ -95,7 +95,7 @@ $call Player->SetTool(Scanner)
 $set    jobs:kelp-welcome.got.scans = true
 $branch common.ringPhone
 
-{@drJules}  Excellent work! Looks like you got everything.
+{@drKelp}  Excellent work! Looks like you got everything.
             Meet me back up at the surface!
 
 :: helpAtSiteCCompleted
@@ -114,7 +114,7 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 
-{@drJules}  Head back to the ship for your next task!
+{@drKelp}  Head back to the ship for your next task!
 
 :: navigation.return.incomplete
 @trigger    SceneStart
@@ -123,7 +123,7 @@ $branch common.ringPhone
 $branch common.ringPhone
 
 {@player}   Is that it? 
-{@drJules}  Oh dear. I'm afraid you missed something. 
+{@drKelp}  Oh dear. I'm afraid you missed something. 
             Why don't you head back to Site C and try again?
 
 :: helpReturnToShip
@@ -142,19 +142,19 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 
-{@drJules}  Great! You scanned some life forms! 
+{@drKelp}  Great! You scanned some life forms! 
             Now I need you to find out how they interact.
 {@player}   Interact? What's that mean?
 {@kevin}    It's a nice way of saying we need to find out which ones eat each other.
 {@player}   Yikes. Ok. How do we do that? 
-{@drJules}  Your ship has a built-in {nameof Experimentation}!
+{@drKelp}  Your ship has a built-in {nameof Experimentation}!
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
 $call FocusHighlight->Focus("exterior.experimentation", 200, 200)
 {wait 1}
 
-{@drJules}  Head over there to start your next task! 
+{@drKelp}  Head over there to start your next task! 
 $call FocusHighlight->Clear()
 
 :: helpGoToExperimentRoom
@@ -171,7 +171,7 @@ $call FocusHighlight->Clear()
 @cutscene
 $branch common.ringPhone
 
-{@drJules}  What a lovely old tank! This ship really is ancient, isn't it
+{@drKelp}  What a lovely old tank! This ship really is ancient, isn't it
             Go ahead, take a closer look! 
 
 :: firstExperiment.2
@@ -180,7 +180,7 @@ $branch common.ringPhone
 @cutscene
 @once
 
-{@drJules}  This is the {h}Observation Tank{/h}. 
+{@drKelp}  This is the {h}Observation Tank{/h}. 
             Use the buttons at the bottom to fill the tank. 
             Then use the {h}Run{/h} button to start your experiment.
             You'll need to record how the different life forms interact!
@@ -240,7 +240,7 @@ $endif
 @once
 
 $branch common.ringPhone
-{@drJules}  Excellent work, {player-name}! 
+{@drKelp}  Excellent work, {player-name}! 
             Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
 
 $call   UnlockRoom("office")
@@ -253,7 +253,7 @@ $call   UnlockRoom("Argumentation")
 @when 		JobTaskActive(reportBack)
 @cutscene
 {@player} 	What now?
-{@kevin}	Let's report back to {nameof @drJules}.
+{@kevin}	Let's report back to {nameof @drKelp}.
 $if global:nav.shipRoom != "office"
 	{@kevin}	We should head back to the {map-name}Office{/map-name}.
 $else
@@ -265,7 +265,7 @@ $endif
 @when 		JobTaskActive(reportBack), scene:name == "Argumentation"
 @cutscene
 {@player} 	What now?
-{@kevin}	Let's tell {nameof @drJules} what we found out.
+{@kevin}	Let's tell {nameof @drKelp} what we found out.
 
 //ARGUMENTATION
 
@@ -283,7 +283,7 @@ $call ArgueLoad(welcomeArgue)
 	$branch .argue.hello
 	
 ::argue.hello
-{@drJules}    Thanks for your help out there, {player-name}! What did you find out?
+{@drKelp}    Thanks for your help out there, {player-name}! What did you find out?
 $goto .argue.chooseFacts
 
 
@@ -304,7 +304,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.done
 $else
-	{@drJules}    Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+	{@drKelp}    Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
 	$goto .argue.chooseFacts
 $endif
 
@@ -312,21 +312,21 @@ $endif
 $if ArgueIsFactSubmitted(SeaOtter.Eats.Urchin)
 	$goto .argue.done
 $else
-	{@drJules}    So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
+	{@drKelp}    So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
 	$goto .argue.chooseFacts
 $endif
 
 ::argue.unrelated
-{@drJules}    Hmm, no, that isn't relevant.
+{@drKelp}    Hmm, no, that isn't relevant.
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drJules}    OK get back to me when you're ready.
+{@drKelp}    OK get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drJules}    Really nice work! You just explained the basis of the kelp forest food web.
+{@drKelp}    Really nice work! You just explained the basis of the kelp forest food web.
 $call CompleteJob()
 
 // DONE
@@ -334,10 +334,10 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
-{@drJules}	Wonderful! Thank you for your help, {player-name}! 
+{@drKelp}	Wonderful! Thank you for your help, {player-name}! 
 {@player}   Easy peasy. I was glad to help. 
 {@kevin}    Ahem.
 {@player}   Oh. Uh, Kevin helped too. A little. 
-{@drJules}  Don't suppose you'd like another job?
+{@drKelp}  Don't suppose you'd like another job?
             I've got work available at other research sites.
             You can find them on the {map-name}Job Board{/map-name}!
