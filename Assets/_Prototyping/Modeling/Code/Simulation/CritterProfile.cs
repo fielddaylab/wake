@@ -81,10 +81,7 @@ namespace ProtoAqua.Modeling
             m_IsHerd = inDesc.HasFlags(BestiaryDescFlags.TreatAsHerd);
             m_IgnoreStarvation = inDesc.HasFlags(BestiaryDescFlags.IgnoreStarvation);
 
-            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; ++i)
-            {
-                m_Transitions[i] = ActorStateTransitionRange.Default;
-            }
+            m_Transitions.Reset();
         }
 
         public StringHash32 Id() { return m_Id; }
@@ -125,9 +122,10 @@ namespace ProtoAqua.Modeling
             m_EatAmountTotal = 0;
             m_EatAmountStressedTotal = 0;
 
+            m_Transitions.Reset();
+
             for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax; i++)
             {
-                m_Transitions[i] = ActorStateTransitionRange.Default;
                 m_ToProducePerPopulation[i] = m_ToProducePerPopulationStressed[i] = NotAssignedF32;
                 m_ToConsumePerPopulation[i] = m_ToConsumePerPopulationStressed[i] = NotAssignedF32;
             }
@@ -244,17 +242,7 @@ namespace ProtoAqua.Modeling
             if (ioData.Population == 0)
                 return;
 
-            ActorStateId state = ActorStateId.Alive;
-            ActorStateId checkedState;
-            for(WaterPropertyId i = 0; i <= WaterProperties.TrackedMax && state != ActorStateId.Dead; ++i)
-            {
-                checkedState = m_Transitions[i].Evaluate(inEnvironment[i]);
-                if (checkedState > state)
-                {
-                    state = checkedState;
-                }
-            }
-
+            ActorStateId state = m_Transitions.Evaluate(inEnvironment);
             if ((inFlags & SimulatorFlags.Debug) != 0)
             {
                 Log.Msg("[CritterProfile] Critter '{0}' is {1}", Id(), state);

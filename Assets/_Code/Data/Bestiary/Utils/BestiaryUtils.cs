@@ -365,11 +365,11 @@ namespace Aqua
         static public WaterPropertyBlockF32 FindHealthyWaterValues(ActorStateTransitionSet inStates, WaterPropertyBlockF32 inDefaultValues)
         {
             WaterPropertyBlockF32 waterProperties;
-            waterProperties.Oxygen = FindHealthyWaterValue(inStates.Oxygen, inDefaultValues.Oxygen);
+            waterProperties.Oxygen = inDefaultValues.Oxygen;
             waterProperties.Temperature = FindHealthyWaterValue(inStates.Temperature, inDefaultValues.Temperature);
             waterProperties.Light = FindHealthyWaterValue(inStates.Light, inDefaultValues.Light);
             waterProperties.PH = FindHealthyWaterValue(inStates.PH, inDefaultValues.PH);
-            waterProperties.CarbonDioxide = FindHealthyWaterValue(inStates.CarbonDioxide, inDefaultValues.CarbonDioxide);
+            waterProperties.CarbonDioxide = inDefaultValues.CarbonDioxide;
             return waterProperties;
         }
 
