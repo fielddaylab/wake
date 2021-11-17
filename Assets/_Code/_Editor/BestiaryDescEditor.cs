@@ -130,6 +130,7 @@ namespace Aqua.Editor
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
+                EditorGUILayout.PropertyField(m_IconProperty);
                 EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
                 EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
