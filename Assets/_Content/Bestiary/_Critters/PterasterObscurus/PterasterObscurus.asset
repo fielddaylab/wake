@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e24fa547cf3bec940b282a7759ac4639, type: 3}
-  m_Name: '[Null_Critter_For_Copying]'
+  m_Name: PterasterObscurus
   m_EditorClassIdentifier: 
   m_Type: 0
   m_Flags: 0
   m_Size: 0
   m_StationId:
-    m_HashValue: 0
+    m_HashValue: 1297447963
   m_DiveSiteId:
     m_HashValue: 0
-  m_ScientificName: 
+  m_ScientificName: Pteraster Obscurus
   m_CommonNameId:
-    m_Source: critters.
-    m_Hash: 1530060749
+    m_Source: critters.pterasterObscurus.commonName
+    m_Hash: 706205803
   m_PluralCommonNameId:
     m_Source: 
     m_Hash: 0
@@ -30,24 +30,29 @@ MonoBehaviour:
     m_Source: 
     m_Hash: 0
   m_Facts:
-  - {fileID: 11400000, guid: d1db60ec75fe70f4286b51e4c529b083, type: 2}
-  - {fileID: 11400000, guid: 8bfa6f2232f24b74a9e35a29aa518e22, type: 2}
-  - {fileID: 11400000, guid: 5e376e2eeed17304180bd68502ec6794, type: 2}
+  - {fileID: 11400000, guid: 211dd3c09d61de9438a3d803c56036c4, type: 2}
+  - {fileID: 11400000, guid: dc107f57c900ff441a2fb9d7c2a69b75, type: 2}
+  - {fileID: 11400000, guid: a5b9666293042304c9065148e928f1ae, type: 2}
+  - {fileID: 11400000, guid: 1e3f06f93a850374fba184f0b529f0c8, type: 2}
   m_HistoricalRecordDuration: 2
   m_WaterColor: {r: 0, g: 0, b: 1, a: 1}
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5858043881073471752, guid: cc4f86ee3cca1e649bcb76a08e75c622, type: 3}
   m_SketchPath: 
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_ListenAudioEvent:
     m_Source: 
     m_Hash: 0
   m_SortingOrder: 0
-  m_AllFacts: []
-  m_PlayerFactCount: 0
+  m_AllFacts:
+  - {fileID: 11400000, guid: dc107f57c900ff441a2fb9d7c2a69b75, type: 2}
+  - {fileID: 11400000, guid: a5b9666293042304c9065148e928f1ae, type: 2}
+  - {fileID: 11400000, guid: 1e3f06f93a850374fba184f0b529f0c8, type: 2}
+  - {fileID: 11400000, guid: 211dd3c09d61de9438a3d803c56036c4, type: 2}
+  m_PlayerFactCount: 3
   m_AlwaysFactCount: 0
-  m_InternalFactOffset: 0
-  m_InternalFactCount: 0
-  m_StationSortingOrder: -1
+  m_InternalFactOffset: 3
+  m_InternalFactCount: 1
+  m_StationSortingOrder: 3
   m_EnvState:
     Oxygen: 0
     Temperature: 0
@@ -56,17 +61,17 @@ MonoBehaviour:
     CarbonDioxide: 0
   m_StateTransitions:
     Temperature:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: -2.7778
+      AliveMax: 1.66667
+      StressedMin: -17.7778
+      StressedMax: 16.66667
     Light:
       AliveMin: -Infinity
       AliveMax: Infinity
       StressedMin: -Infinity
       StressedMax: Infinity
     PH:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: 7.8
+      AliveMax: 8.3
+      StressedMin: 7.3
+      StressedMax: 8.8
