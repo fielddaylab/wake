@@ -9,6 +9,7 @@ using Leaf;
 using System.IO;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Aqua.Editor
 {
@@ -881,6 +882,82 @@ namespace Aqua.Editor
             c.text = inText;
             c.tooltip = inTooltip;
             return c;
+        }
+
+        [MenuItem("Aqualab/Bestiary/Analyze Critter States")]
+        static private void AnalyzeCritterStates() {
+            var allBestiaryEntries = AssetDBUtils.FindAssets<BestiaryDesc>();
+            List<BestiaryDesc> ecosystems = new List<BestiaryDesc>();
+            foreach(var entry in allBestiaryEntries) {
+                switch(entry.Category()) {
+                    case BestiaryDescCategory.Environment: {
+                        ecosystems.Add(entry);
+                        break;
+                    }
+                }
+            }
+
+            StringBuilder report = new StringBuilder();
+            report.Append("[BestiaryDescEditor] Analyzing critter states");
+
+            WaterPropertyBlockF32 envWater;
+            BestiaryDesc critter;
+            ActorStateId critterState;
+            WaterPropertyMask critterAffected;
+            HashSet<StringHash32> checkedCritterIds = new HashSet<StringHash32>();
+            int stressedCount = 0;
+            int deadCount = 0;
+            foreach(var entry in ecosystems) {
+                checkedCritterIds.Clear();
+                envWater = entry.GetEnvironment();
+                report.Append("\n\t").Append(entry.name);
+                foreach(var fact in entry.m_Facts) {
+                    switch(fact.Type) {
+                        case BFTypeId.Population: {
+                            critter = ((BFPopulation) fact).Critter;
+                            break;
+                        }
+                        case BFTypeId.PopulationHistory: {
+                            critter = ((BFPopulationHistory) fact).Critter;
+                            break;
+                        }
+                        default: {
+                            critter = null;
+                            break;
+                        }
+                    }
+
+                    if (critter && checkedCritterIds.Add(critter.name)) {
+                        critterState = critter.EvaluateActorState(envWater, out critterAffected);
+                        if (critterState == ActorStateId.Stressed) {
+                            stressedCount++;
+                            report.Append("\n\t\tWARNING: ").Append(critter.name).Append(" is stressed ");
+                            AppendStressReason(report, critterAffected);
+                        } else if (critterState == ActorStateId.Dead) {
+                            deadCount++;
+                            report.Append("\n\t\tMAJOR WARNING: ").Append(critter.name).Append(" is dead ");
+                            AppendStressReason(report, critterAffected);
+                        }
+                    }
+                }
+            }
+
+            void AppendStressReason(StringBuilder builder, WaterPropertyMask mask) {
+                builder.Append('(');
+                foreach(var reason in mask) {
+                    builder.Append(reason.ToString()).Append(", ");
+                }
+                builder.Length -= 2;
+                builder.Append(')');
+            }
+
+            if (deadCount > 0) {
+                Log.Error(report.Flush());
+            } else if (stressedCount > 0) {
+                Log.Warn(report.Flush());
+            } else {
+                Log.Msg(report.Flush());
+            }
         }
 
         // [MenuItem("Aqualab/Convert To Celsius")]
