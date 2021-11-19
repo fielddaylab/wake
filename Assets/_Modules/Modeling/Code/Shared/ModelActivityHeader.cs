@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,8 @@ namespace Aqua.Modeling {
 
         #endregion // Inspector
 
+        private ModelPhases m_CurrentPhase = ModelPhases.Ecosystem;
+
         public Action<ModelPhases> OnPhaseChanged;
 
         private void Awake() {
@@ -24,16 +27,22 @@ namespace Aqua.Modeling {
             m_SyncToggle.Toggle.onValueChanged.AddListener((b) => OnToggleUpdated(b, ModelPhases.Sync, m_SyncToggle));
             m_PredictToggle.Toggle.onValueChanged.AddListener((b) => OnToggleUpdated(b, ModelPhases.Predict, m_PredictToggle));
             m_InterveneToggle.Toggle.onValueChanged.AddListener((b) => OnToggleUpdated(b, ModelPhases.Intervene, m_InterveneToggle));
+
+            m_EcosystemToggle.Toggle.group.allowSwitchOff = false;
         }
 
-        private void OnToggleUpdated(bool state, ModelPhases phases, ModelPhaseToggle toggle) {
+        private void OnToggleUpdated(bool state, ModelPhases phase, ModelPhaseToggle toggle) {
             toggle.Label.font = Assets.Font(state ? TMPro.FontWeight.SemiBold : TMPro.FontWeight.Regular);
-            if (state && OnPhaseChanged != null) {
-                OnPhaseChanged(phases);
+            if (state) {
+                m_CurrentPhase = phase;
+                if (OnPhaseChanged != null) {
+                    OnPhaseChanged(phase);
+                }
             }
         }
 
-        public void SetSelected(ModelPhases phase) {
+        public void SetSelected(ModelPhases phase, bool force) {
+            bool bManualInvoke = force && phase == m_CurrentPhase;
             switch(phase) {
                 case ModelPhases.Ecosystem: {
                     m_EcosystemToggle.Toggle.isOn = true;
@@ -55,6 +64,9 @@ namespace Aqua.Modeling {
                     m_InterveneToggle.Toggle.isOn = true;
                     break;
                 }
+            }
+            if (bManualInvoke && OnPhaseChanged != null) {
+                OnPhaseChanged(phase);
             }
         }
 

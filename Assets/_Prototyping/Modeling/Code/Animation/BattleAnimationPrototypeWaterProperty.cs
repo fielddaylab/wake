@@ -32,8 +32,6 @@ namespace ProtoAqua.Modeling
             m_Background.color = colors.Background;
             m_Meter.color = colors.Content;
             m_Icon.sprite = inWaterProp.Icon();
-
-            SetValue(inWaterProp.DefaultValue());
         }
 
         public void SetValue(float inValue)
