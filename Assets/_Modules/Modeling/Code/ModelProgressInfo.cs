@@ -4,6 +4,7 @@ namespace Aqua.Modeling
 {
     public class ModelProgressInfo {
         public JobModelScope Scope;
+        public BFSim Sim;
         public ModelPhases Phases = ModelPhases.Ecosystem;
 
         public readonly RingBuffer<BestiaryDesc> ImportableEntities = new RingBuffer<BestiaryDesc>();
@@ -17,6 +18,8 @@ namespace Aqua.Modeling
                 Reset(currentEnvironment);
                 return;
             }
+
+            Sim = currentEnvironment.FactOfType<BFSim>();
 
             Phases = ModelPhases.Ecosystem | ModelPhases.Concept;
             if (!Scope.SyncModelId.IsEmpty) {
@@ -50,8 +53,11 @@ namespace Aqua.Modeling
             ImportableEntities.Clear();
             ImportableFacts.Clear();
             if (currentEnvironment) {
+                Sim = currentEnvironment.FactOfType<BFSim>();
                 Phases |= ModelPhases.Concept;
                 FactUtil.GatherImportableFacts(currentEnvironment, ImportableEntities, ImportableFacts);
+            } else {
+                Sim = null;
             }
 
             RequiredEntities.Clear();

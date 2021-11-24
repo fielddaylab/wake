@@ -180,7 +180,7 @@ namespace Aqua
             typeof(BFDeath), typeof(BFGrow), typeof(BFReproduce),
             typeof(BFPopulation), typeof(BFPopulationHistory),
             typeof(BFWaterProperty), typeof(BFWaterPropertyHistory),
-            typeof(BFModel)
+            typeof(BFModel), typeof(BFSim)
         };
 
         static private readonly DefaultIconDelegate[] s_DefaultIconDelegates = new DefaultIconDelegate[TypeCount];
@@ -309,6 +309,10 @@ namespace Aqua
                 case BFTypeId.WaterPropertyHistory: {
                     BFWaterPropertyHistory water = (BFWaterPropertyHistory) inFact;
                     return string.Format("{0}.{1}.History", parentName, water.Property.ToString());
+                }
+
+                case BFTypeId.Sim: {
+                    return string.Format("{0}.Sim", parentName);
                 }
 
                 default: {

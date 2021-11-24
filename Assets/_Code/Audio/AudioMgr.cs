@@ -250,8 +250,8 @@ namespace AquaAudio
                 // oldest scores higher
                 score = currentTime - state.LastStartTime;
 
-                // paused scores a little lower (presuming manual pause)
-                if (state.State == AudioTrackState.StateId.Paused) {
+                // manual pause scores a little lower
+                if (state.LocalProperties.Pause) {
                     score *= 0.5;
                 }
 

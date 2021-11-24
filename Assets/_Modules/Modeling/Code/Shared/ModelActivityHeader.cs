@@ -29,6 +29,8 @@ namespace Aqua.Modeling {
             m_InterveneToggle.Toggle.onValueChanged.AddListener((b) => OnToggleUpdated(b, ModelPhases.Intervene, m_InterveneToggle));
 
             m_EcosystemToggle.Toggle.group.allowSwitchOff = false;
+
+            UpdateHighlightMask(0);
         }
 
         private void OnToggleUpdated(bool state, ModelPhases phase, ModelPhaseToggle toggle) {
@@ -76,6 +78,14 @@ namespace Aqua.Modeling {
             m_SyncToggle.Toggle.interactable = (mask & ModelPhases.Sync) != 0;
             m_PredictToggle.Toggle.interactable = (mask & ModelPhases.Predict) != 0;
             m_InterveneToggle.Toggle.interactable = (mask & ModelPhases.Intervene) != 0;
+        }
+
+        public void UpdateHighlightMask(ModelPhases mask) {
+            m_EcosystemToggle.Highlight.SetActive((mask & ModelPhases.Ecosystem) != 0);
+            m_ConceptToggle.Highlight.SetActive((mask & ModelPhases.Concept) != 0);
+            m_SyncToggle.Highlight.SetActive((mask & ModelPhases.Sync) != 0);
+            m_PredictToggle.Highlight.SetActive((mask & ModelPhases.Predict) != 0);
+            m_InterveneToggle.Highlight.SetActive((mask & ModelPhases.Intervene) != 0);
         }
     
         public void SetInputActive(bool active) {

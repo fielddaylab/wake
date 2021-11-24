@@ -83,7 +83,7 @@ namespace Aqua.Modeling {
             m_ProgressionInfo.Load(selected, Assets.Job(Save.Jobs.CurrentJobId));
 
             EvaluateConceptStatus();
-            EvaluatePhaseMask();
+            RefreshPhaseHeader();
         }
 
         private void OnEcosystemRemoved(BestiaryDesc selected) {
@@ -102,7 +102,7 @@ namespace Aqua.Modeling {
                 m_ProgressionInfo.Reset(null);
                 m_Header.SetSelected(ModelPhases.Ecosystem, false);
 
-                EvaluatePhaseMask();
+                RefreshPhaseHeader();
             });
         }
 
@@ -117,12 +117,12 @@ namespace Aqua.Modeling {
             m_ProgressionInfo.Reset(null);
             m_Header.SetSelected(ModelPhases.Ecosystem, false);
             
-            EvaluatePhaseMask();
+            RefreshPhaseHeader();
         }
 
         private void OnBestiaryUpdated() {
             EvaluateConceptStatus();
-            EvaluatePhaseMask();
+            RefreshPhaseHeader();
         }
 
         private IEnumerator OnRequestConceptualImport() {
@@ -158,12 +158,17 @@ namespace Aqua.Modeling {
             Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
             yield return null;
             EvaluateConceptStatus();
-            EvaluatePhaseMask();
+            RefreshPhaseHeader();
         }
 
         #endregion // Callbacks
 
         #region Evaluation
+
+        private void RefreshPhaseHeader() {
+            EvaluatePhaseMask();
+            EvaluateHighlightMask();
+        }
 
         private void EvaluateConceptStatus() {
             ConceptualModelState.StatusId status = ConceptualModelState.StatusId.UpToDate;
@@ -196,6 +201,15 @@ namespace Aqua.Modeling {
             }
 
             m_Header.UpdateAllowedMask(mask);
+        }
+
+        private void EvaluateHighlightMask() {
+            ModelPhases mask = 0;
+            if (m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady || m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport) {
+                mask |= ModelPhases.Concept;
+            }
+
+            m_Header.UpdateHighlightMask(mask);
         }
 
         static private bool HasRequiredModel(StringHash32 modelId) {

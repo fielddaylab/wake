@@ -655,6 +655,12 @@ namespace Aqua.Editor
 
                     menu.AddItem(new GUIContent("Model"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Model));
 
+                    menu.AddSeparator("");
+
+                    // sim
+
+                    menu.AddItem(new GUIContent("Sim"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Sim));
+
                     break;
                 }
             }

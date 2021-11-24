@@ -28,6 +28,8 @@ namespace Aqua
         
         Model,
 
+        Sim,
+
         _COUNT
     }
 

@@ -26,7 +26,7 @@ namespace Aqua.Modeling {
 
         #region Consts
 
-        private const int MaxGraphNodes = 32;
+        private const int MaxGraphNodes = 16;
         private const int MaxSolverIterations = 64;
         private const float SolverVelocityThresholdSq = .2f * .2f;
 
@@ -54,7 +54,6 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_PositionScale = 96;
         [SerializeField] private float m_ForceMultiplier = 1;
         [SerializeField] private float m_RepulsiveForce = 1024;
-        [SerializeField] private float m_MinRepulseDistance = 1024;
         [SerializeField] private float m_SpringForce = 1024;
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
@@ -72,9 +71,9 @@ namespace Aqua.Modeling {
         private GraphSolverState m_SolverState;
 
         private unsafe ModelWorldDisplay() {
-            m_SolverState.Positions = (Vector2*) Unsafe.AllocArray<Vector2>(MaxGraphNodes * 2);
+            m_SolverState.Positions = Unsafe.AllocArray<Vector2>(MaxGraphNodes * 2);
             m_SolverState.Forces = m_SolverState.Positions + MaxGraphNodes;
-            m_SolverState.ConnectionMasks = (uint*) Unsafe.AllocArray<uint>(MaxGraphNodes);
+            m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(MaxGraphNodes);
         }
 
         unsafe ~ModelWorldDisplay() {
@@ -157,6 +156,8 @@ namespace Aqua.Modeling {
             if (organismCount == 0) {
                 yield break;
             }
+
+            Assert.True(organismCount <= MaxGraphNodes, "More than maximum allowed critters ({0}) in graph - attempting to populate with {1} nodes", organismCount, MaxGraphNodes);
             
             ModelOrganismDisplay display;
             int index = 0;
@@ -180,14 +181,19 @@ namespace Aqua.Modeling {
             using(Profiling.Time("solving conceptual model graph")) {
                 int iterations = MaxSolverIterations;
                 while(m_SolverState.MovedOutputMask != 0 && iterations > 0) {
-                    SolveStep(ref m_SolverState, organismCount);
                     iterations--;
+                    SolveStep(ref m_SolverState, organismCount);
                     yield return null;
                 }
-                Log.Msg("[ModelWorldDisplay] Solved graph layout in {0} iterations", MaxSolverIterations - iterations);
+                if (m_SolverState.MovedOutputMask != 0) {
+                    Log.Warn("[ModelWorldDisplay] Graph layout did not reach equilibrium in {0} iterations", MaxSolverIterations - iterations);
+                } else {
+                    Log.Msg("[ModelWorldDisplay] Solved graph layout in {0} iterations", MaxSolverIterations - iterations);
+                }
             }
 
             UpdateOrganismPositions(organismCount);
+            yield return null;
             UpdateConnectionPositions();
         }
 
