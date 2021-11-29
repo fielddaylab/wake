@@ -148,3 +148,87 @@ $endif
 $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
+
+//ARGUMENT
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(coralFishyBizzArgue)
+@cutscene
+$call ArgueLoad(coralFishyBizzArgue)
+$goto .argue.chooseEvidence
+
+:: argue.chooseEvidence
+{@profCempaka} So, how many people can we have fishing for Grouper?
+	$choice .argue.claimNone; None. We can't sustainably harvest Grouper here.
+	$choice .argue.claimSome; We can allow up to 40 Grouper Fishers in this area.
+	$choice .argue.claimTooMany; We can allow up to 200 Grouper Fishers.
+$choose branch
+
+:: argue.claimNone
+{@profCempaka} We've had fishing here for centuries! Please check your data.
+
+:: argue.claimTooMany
+{@profCempaka} I don't think we have ever had that many. Can you check your evidence?
+
+:: argue.claimSome
+{@profCempaka} Not too many, not too few. This seems reasonable. Do you have evidence?
+$goto .argue.defendClaim
+
+:: argue.defendClaim
+$if ArgueSetClaim(coralFishyBizzArgueClaim, jobs.coral-fishy-bizz.argue.claimLabel)
+			$call ArgueFactSlot(RedGrouper.Reproduce)
+			$call ArgueFactSlot(Fishers.Eats.RedGrouper)
+			$call ArgueFactSlot(Model.GrouperFishingRate)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.giveUp; I give up
+
+:: argue.correctFacts
+$call ArgueComplete()
+{@profCempaka} Excellent! This is exactly what they need to see!
+$call CompleteJob()
+
+:: argue.incorrectFacts
+$if ArgueIsFactSubmitted(RedGrouper.Reproduce)
+	$if ArgueIsFactSubmitted(Fishers.Eats.RedGrouper)
+		// first two facts correct
+		{@profCempaka} Almost there, but I need to see a Model of the grouper fishing rate.
+	$else
+		$if ArgueIsFactSubmitted(Model.GrouperFishingRate)
+			// first and last facts correct
+			{@profCempaka} Do we know who's eating the Red Grouper?
+		$else
+			// just the first fact correct
+			{@profCempaka} Not great.  Do the fishers eat Red Grouper?
+		$endif
+	$endif
+$else
+	$if ArgueIsFactSubmitted(Fishers.Eats.RedGrouper)
+		$if ArgueIsFactSubmitted(Model.GrouperFishingRate)
+			// 2nd & 3rd facts correct
+			{@profCempaka} Close, but we need the Grouper Reproduction Rate.
+		$else
+			// just 2nd fact
+			{@profCempaka} Did you get the Grouper Reproduction Rate?
+		$endif
+	$else
+		$if ArgueIsFactSubmitted(Model.GrouperFishingRate)
+			//just the 3rd fact
+			{@profCempaka} That's great.  We still need the grouper Reproduction Rate, though.
+		$else
+			// no facts correct
+			{@profCempaka} Surely we need the Grouper Reproduction Rate, at least.
+		$endif
+	$endif
+$endif
+$call ArgueRejectIncorrect()
+$goto .argue.defendClaim
+
+:: argue.giveUp
+{@profCempaka} OK. Get back to me when you're ready.
+
+:: end
