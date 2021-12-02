@@ -13,7 +13,7 @@ namespace Aqua
 
         [Header("Sync")]
 
-        [KeyValuePair("Id", "Population")] public ActorCountI32[] InitialActors = null;
+        [KeyValuePair("Id", "Population")] public ActorCountU32[] InitialActors = null;
         public WaterPropertyBlockF32 InitialWater = default;
         public uint SyncTickCount = 10;
 

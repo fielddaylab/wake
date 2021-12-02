@@ -14,7 +14,9 @@ namespace Aqua.Modeling {
         [SerializeField] private ModelEcosystemHeader m_EcosystemHeader = null;
         [SerializeField] private BestiaryAddPanel m_EcosystemSelect = null;
         [SerializeField] private ModelWorldDisplay m_World = null;
+        [SerializeField] private SimulationDataCtrl m_SimDataCtrl = null;
         [SerializeField] private ConceptualModelUI m_ConceptualUI = null;
+        [SerializeField] private SimulationUI m_SimulationUI = null;
 
         #endregion // Inspector
 
@@ -33,6 +35,9 @@ namespace Aqua.Modeling {
             m_ConceptualUI.OnRequestExport = OnRequestConceptualExport;
 
             m_ConceptualUI.SetData(m_State, m_ProgressionInfo);
+            m_SimulationUI.SetData(m_State, m_ProgressionInfo);
+            m_SimDataCtrl.SetData(m_State, m_ProgressionInfo);
+            
             Services.Events.Register(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this);
             
             m_World.SetData(m_State);
@@ -69,6 +74,12 @@ namespace Aqua.Modeling {
                 m_ConceptualUI.Show();
             } else {
                 m_ConceptualUI.Hide();
+            }
+
+            if (phase >= ModelPhases.Sync) {
+                m_SimulationUI.Show();
+            } else {
+                m_SimulationUI.Hide();
             }
         }
 
@@ -159,6 +170,8 @@ namespace Aqua.Modeling {
             yield return null;
             EvaluateConceptStatus();
             RefreshPhaseHeader();
+
+            m_SimDataCtrl.TESTBuildProfile(); // TODO: Remove
         }
 
         #endregion // Callbacks

@@ -35,6 +35,11 @@ namespace Aqua
                 && StressedMax == other.StressedMax;
         }
 
+        public override string ToString()
+        {
+            return string.Format("Dead {0} / Stressed {1} -- Stressed {2} / Dead {3}", StressedMin, AliveMin, AliveMax, StressedMax);
+        }
+
         static ActorStateTransitionRange()
         {
             s_DefaultRange = new ActorStateTransitionRange();

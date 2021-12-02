@@ -714,6 +714,12 @@ namespace Aqua.Editor
                     fact.Property = inParams.PropertyId;
                     break;
                 }
+
+                case BFTypeId.Sim: {
+                    BFSim sim = (BFSim) createdFact;
+                    sim.InitialWater = desc.GetEnvironment();
+                    break;
+                }
             }
 
             FinalizeFact(desc, createdFact);
