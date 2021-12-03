@@ -32,7 +32,7 @@ $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
 		$answer Model.SiteRPrediction, .argue.modelWrong
     $answer *, .argue.unrelatedWrong
-$choice .argue.giveUpWrong; I give up
+$choice .argue.giveUpWrong; Let me get back to you
 $choose branch
 
 :: argue.modelWrong
@@ -60,7 +60,7 @@ $choice #argueFact; Present facts from AQOS
 		$answer Urchin.Reproduce.Stressed, .argue.reproStress
 		$answer Model.SiteRPrediction, .argue.model
     $answer *, .argue.unrelated
-$choice .argue.giveUp; I give up
+$choice .argue.giveUp; Let me get back to you
 $choose branch
 
 :: argue.urchinTemp

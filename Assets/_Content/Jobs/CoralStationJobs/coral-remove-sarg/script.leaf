@@ -158,7 +158,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.dontYankCorrect
 		$answer incorrect, .argue.dontYankIncorrect
-$choice .argue.giveUpNo; I give up
+$choice .argue.giveUpNo; Let me get back to you
 
 :: argue.dontYankCorrect
 {@profCempaka} This doesn't make any sense.
@@ -189,7 +189,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.yankCorrect
 		$answer incorrect, .argue.yankIncorrect
-$choice .argue.giveUp; I give up
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.yankIncorrect
 $if !ArgueIsFactSubmitted(SargassumCoveredReef.Light)

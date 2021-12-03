@@ -212,7 +212,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctLight
 		$answer incorrect, .argue.incorrectLight
-$choice .argue.giveUp; I give up
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.correctLight
 $call ArgueComplete()
@@ -242,7 +242,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.incorrectOld
 		$answer incorrect, .argue.incorrectOld
-$choice .argue.giveUp; I give up
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.incorrectOld
 $call ArgueRejectIncorrect()
@@ -264,7 +264,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctSargassumLight
 		$answer incorrect, .argue.incorrectSargassumLight
-$choice .argue.giveUp; I give up
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.correctSargassumLight
 {@profCempaka} I see what you're saying, but I don't see how it's relevant.

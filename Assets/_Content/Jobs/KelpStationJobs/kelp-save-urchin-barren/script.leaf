@@ -150,7 +150,7 @@ $choice #argueFact; Present facts from AQOS
 		$answer Model.UrchinBarrenPrediction, .argue.currentModel
 		$answer Model.UrchinBarrenIntroduceOtters, .argue.hopelessButOtters
 		$answer *, .argue.unrelatedHopeless
-$choice .argue.giveUpHopeless; I give up
+$choice .argue.giveUpHopeless; Let me get back to you
 
 ::argue.currentModel
 {@drKelp}    No, that's not relevant. Show me the model you made of changing the Urchin Barren.
@@ -198,7 +198,7 @@ $else
     $choice #argueFact; Present facts from AQOS
         $answer Model.UrchinBarrenIntroduceOtters, .argue.otters
         $answer *, .argue.unrelated
-    $choice .argue.giveUp; I give up
+    $choice .argue.giveUp; Let me get back to you
 $endif
 
 ::argue.otters
