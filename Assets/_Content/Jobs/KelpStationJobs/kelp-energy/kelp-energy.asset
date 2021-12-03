@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: kelp-energy
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.kelp-energy.name
+    m_Hash: 3065923789
+  m_PosterId:
+    m_Source: jobs.kelp-energy.poster
+    m_Hash: 3764899191
+  m_DescId:
+    m_Source: jobs.kelp-energy.desc
+    m_Hash: 10625999
+  m_DescShortId:
+    m_Source: 
+    m_Hash: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_Hash: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 1
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: b572abe8741ac9d478304240f9d3084d, type: 2}
+  m_PrereqConditions: 
+  m_StationId:
+    m_Source: KelpStation
+    m_Hash: 2724389503
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: foodweb
+      m_Hash: 3643636253
+    LabelId:
+      m_Source: jobs.kelp-energy.task.model
+      m_Hash: 4169997988
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.ConceptualModel
+        m_Hash: 4255109252
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    LabelId:
+      m_Source: jobs.kelp-bull-kelp-forest.task.reportBack
+      m_Hash: 1189211000
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: foodweb
+      m_Hash: 3643636253
+    Index: 0
+    LabelId:
+      m_Source: jobs.kelp-bull-kelp-forest.task.foodweb
+      m_Hash: 1120255105
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Urchin.Eats.BullKelp
+        m_Hash: 3905127850
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_Hash: 2059105924
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-bull-kelp-forest.task.reportBack
+      m_Hash: 1189211000
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 100
+  m_GearReward: 5
+  m_AdditionalRewards: []
+  m_Scripting: {fileID: -1942890987711236906, guid: db7ed56e203134abfaf30f0b54fd6aef,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: -4270002856181823206, guid: c9307d675b303f14da6d5d34d76b9e66, type: 3}
