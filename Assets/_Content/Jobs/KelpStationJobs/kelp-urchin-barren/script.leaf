@@ -325,7 +325,7 @@ $endif
 $if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
 	$goto .argue.done
 $else
-	{@drKelp}    I see. So do you know if they will ever grow back?
+	{@drKelp}    I see. Do you have a model that predicts if they will grow back?
 	$goto .argue.chooseFacts
 $endif
 
@@ -339,7 +339,7 @@ $endif
 
 ::argue.unrelated
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
-	{@drKelp}    Do you have anything that predicts what's going to happen at Site B?
+	{@drKelp}    Do you have a model that predicts what's going to happen at Site B?
 $else
 	$if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
 		{@drKelp}  Is something eating the {nameof GiantKelp}?
