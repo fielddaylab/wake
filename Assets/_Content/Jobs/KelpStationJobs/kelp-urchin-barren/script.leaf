@@ -57,7 +57,7 @@ $call GiveUpgrade(ROVTagger)
 @when 		scene:name == "RS-1B", JobTaskTop(getTagged)
 @cutscene
 {@player} 	I made it to Site B, what should I do now?
-{@kevin}	Let's explore and tag all these organisms.
+{@kevin}	Let's explore and count all these organisms.
 $if !TaggingHasStarted(Urchin)
     {@kevin}    Are there any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
