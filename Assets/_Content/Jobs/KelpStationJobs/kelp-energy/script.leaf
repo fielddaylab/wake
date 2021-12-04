@@ -1,4 +1,4 @@
-#basePath   job.kelp-bull-kelp-forest
+#basePath   job.kelp-energy
 
 // beginning
 
@@ -8,90 +8,34 @@
 
 $branch common.ringPhone
 
-{@drKelp}	Oh, welcome back, {player-name}! 
-            I need you to head over to Site A and see if anything has changed. 
-            When you're done, check in with me at your {map-name}Office{/map-name}!
+{@drKelp}	Good to see you again, {player-name}! 
+            I need you to create a model of Site A's food web.
+            Check in with me at your {map-name}Office{/map-name} when you are finished!
 
-$call UnlockSite(RS-1A)
-
-:: helpGoOutside
+:: helpGoModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(siteA)
+@when 		scene:name == "Ship", JobTaskTop(foodweb)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	Go out to your sub and head over to Site A.
+{@kevin}	Let's head to the {nameof Modeling} to model the food web.
 
-:: helpWrongSite
-@trigger    RequestPartnerHelp
-@when       scene:name == "RS-1C", JobTaskTop(siteA)
-{player}    Is this where we should be?
-{@kevin}    No, I don't think so...
-            Let's surface and head over to Site A.
+// IN MODELING
 
-:: helpGoToSiteA
+:: helpModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", JobTaskTop(siteA)
+@when 		scene:name == "ModelingPrototype", JobTaskTop(foodweb)
 @cutscene
-{@player} 	Where should we be going again?
-{@kevin}	Site A should be just west of the ship.
-            Let's head over!
+{@player}   Any idea what to do here?
+{@kevin}	When you are making a food web, the first step is to import your facts into the model.
 
-// at the site
-
-:: helpAtSiteA
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1A", JobTaskTop(siteA)
+:: ModelingSetupPhase2
+@trigger    UniversalModelUpdated
+@when       !jobs:kelp-energy.upgradedFacts
+@once
 @cutscene
-{@player} 	So... what now?
-{@kevin}	We need to look around for new species. 
+{@kevin}  Looks like we have our model! Lets bring it back to the {map-name}Office{/map-name}.
+	// Levi Question: How does the player make a conceptual model without the simulation process?
 
-// to experimentation
-
-::helpGoToLab
-@trigger    RequestPartnerHelp
-@when 		JobTaskTop(foodweb), scene:name != "ExperimentV2"
-@cutscene
-{@player} 	Where should I go next?
-{@kevin}	Now that we've discovered {nameof BullKelp}, let's head back to the {nameof Experimentation}.
-
-$if scene:name == "RS-1A"
-	{@kevin}	It's pretty down here and all, but we should head back to the surface. 
-$elseif scene:name != "Ship"
-	{@kevin}	First, let's head back to the ship.
-$endif
-
-::helpDoExperiment
-@trigger    RequestPartnerHelp
-@when 		JobTaskTop(foodweb), scene:name == "ExperimentV2"
-@cutscene
-{@player} 	What should we do now? 
-$if ExperimentIsRunning(Observation)
-    $branch .helpDoExperiment.InExperiment
-$elseif ExperimentViewed(Observation)
-    $branch .helpDoExperiment.TankView
-$else
-    $branch .helpDoExperiment.None
-$endif
-
-:: helpDoExperiment.InExperiment
-$if ExperimentHasCritter(BullKelp)
-    {@kevin}    Is anything interacting with the {pluralnameof BullKelp}?
-$else
-    {@kevin}    Is it possible to get any new information from this experiment?
-                I don't see any {pluralname BullKelp} in this tank...
-$endif
-
-:: helpDoExperiment.TankView
-{@kevin}    We have a new species - let's see if anything we already have interacts with it.
-$if ExperimentHasCritter(BullKelp)
-    We've added some {pluralnameof BullKelp} - what might it interact with?
-$else
-    Maybe we should add some {pluralnameof BullKelp}?
-$endif
-
-:: helpDoExperiment.None
-{@kevin}    We have a new species - let's see if anything we already have interacts with it.
-            We should be able to run an {h}Observation Tank{/h} experiment like last time.
 
 // report back
 
@@ -101,70 +45,110 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	What should we do now?
-{@kevin}	We've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}. So let's report back to Kel.
+{@kevin}	We've modeled the relationships between {pluralnameof Urchin}, {pluralnameof GiantKelp}, and {pluralnameof SeaOtter}. So let's report back to Kel.
 $if global:nav.shipRoom != "office"
 	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	Just like last time, you can report your findings using the {h}Computer{/h}.
+	{@kevin}	Same as before, you can report your findings using the {h}Computer{/h}.
 $endif
 
-//ARGUMENTATION
+// SUGGEST ARGUMENTATION
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(reportBack)
+@cutscene
+$if scene:name == "Argumentation"
+    {@player}   What should I be doing again?
+    {@kevin}    Report your findings to {nameof @drKelp}.
+$elseif global:nav.shipRoom == "office"
+    {@player}   What should we do now?
+    {@kevin}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+$else
+    {@player} 	What should we do now?
+	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
+                We should first head back to the {map-name}Office{/map-name}.
+$endif
+
+
+// ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(bullKelpArgue)
+@when   !ArgueIsComplete(energyArgue)
 @cutscene
 
-$call ArgueLoad(bullKelpArgue)
-	$if ArgueSetClaim(bullKelpClaim, jobs.kelp-bull-kelp-forest.argue.claimLabel)
-			$call ArgueFactSlot(Urchin.Eats.BullKelp)
-	$endif
+$call ArgueLoad(energyArgue)
+	//$if ArgueSetClaim(energyClaim, jobs.kelp-energy.argue.claimLabel)
+			//$call ArgueFactSlot(Urchin.Eats.GiantKelp)
+			//$call ArgueFactSlot(Model.EnergyConceptual)
+				// Levi Question: What is the name of this?
+	//$endif
+
+	$branch .argue.hello
+
 	
-$branch .argue.introQuestion
-
-
-::argue.introQuestion
-{@drKelp} It seems you are really getting the hang of this scientist thing!
-So what did you two learn about {nameof BullKelp} in Site A?
-
-{@drKelp} Did you do any experiments to see if {nameof BullKelp} eat any other species?
-Or are eaten by any other species?
-$branch .argue.chooseFacts
-
-::argue.chooseFacts
-$call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
-		$answer Urchin.Eats.BullKelp, .argue.done
-		$answer *, .argue.unrelated
-$choice .argue.giveUp; Let me get back to you
-
-::argue.unrelated
-{@drKelp} No, that doesn't answer my question. Let's try again.
-$call ArgueRejectIncorrect()
+::argue.hello
+{@drKelp}    Where does energy come from in the food web?
 $goto .argue.chooseFacts
 
 
-::argue.giveUp
-{@drKelp} OK.  Get back to me when you're ready.
+::argue.chooseEnergy
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice .argue.giantKelp; Giant Kelp
+	$choice .argue.urchins; Urchins
+	$choice .argue.otters; Otters
+    $choice .argue.giveUp; Let me get back to you
+$endif
 
+:argue.giantKelp
+$if ArgueIsFactSubmitted(Model.EnergyConceptual)
+	$goto .argue.done
+$else
+	{@drKelp}    Can I see your model?
+	$goto .argue.chooseFacts
+$endif
+
+:argue.chooseFacts
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+		$answer Model.EnergyConceptual, .argue.energyModel
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; Let me get back to you
+$endif
+
+::argue.urchins
+{@drKelp}	Not quite, you need to look at the way the eat rules move in the model.
+			That organism needs to eat something else to get energy.
+
+::argue.otters
+{@drKelp}   Not quite, you need to look at the way the eat rules move in the model.
+			That organism needs to eat something else to get energy.
+
+::argue.energyModel
+{@drKelp}	Awesome! Kelp is like a plant. It gets its energy from the sun.
+$goto .argue.done
+
+::argue.unrelated
+{@drKelp}	That's not a model. If you made a model, it should be saved in AQOS for this ecosystem. Can I see your model?
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFacts
+
+::argue.giveUp
+{@drKelp}    OK get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp} Aha! So just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
-And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
+{@drKelp}	Thanks so much for your help!
 $call CompleteJob()
-
-
 
 // END
 
 :: end
 @trigger    JobCompleted
-@cutscene
-
-{@drKelp}  Nice work!
-            You've learned that {pluralnameof BullKelp} power the whole forest at Site A.
-{@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
-{@drKelp}  Indeed! Finding those parallels can be quite rewarding.
-            For now, though, you should head back to the {map-name}Job Board{/map-name}.
-            I have another job for you.

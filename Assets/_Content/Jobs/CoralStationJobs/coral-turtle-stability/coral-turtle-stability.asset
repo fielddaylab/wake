@@ -148,17 +148,41 @@ MonoBehaviour:
       m_Hash: 523491196
   m_OptimizedTaskList:
   - Id:
-      m_Source: siteR
-      m_Hash: 2528761364
+      m_Source: scanAll
+      m_Hash: 1784740587
     Index: 0
     LabelId:
-      m_Source: jobs.coral-invade.task.SiteR
-      m_Hash: 3897917586
+      m_Source: jobs.coral-turtle-stability.task.SiteV
+      m_Hash: 3770236753
     Steps:
     - Type: 0
       Target:
-        m_Source: Sargassum
-        m_Hash: 444981425
+        m_Source: LoggerheadTurtle
+        m_Hash: 3290936401
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Copepod
+        m_Hash: 1053183451
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_Hash: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: QueenConch
+        m_Hash: 2098174204
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_Hash: 3187223953
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -167,56 +191,56 @@ MonoBehaviour:
         m_Hash: 2717353052
       ConditionString: 
       Amount: 0
-    - Type: 1
-      Target:
-        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
-        m_Hash: 2762679420
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: SargassumCoveredReef.PopulationHistory.StaghornCoral
-        m_Hash: 2773834985
-      ConditionString: 
-      Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: stressCoral
-      m_Hash: 470518738
+      m_Source: behavior
+      m_Hash: 3488202279
     Index: 1
     LabelId:
-      m_Source: jobs.coral-invade.task.stressCoral
-      m_Hash: 4084246020
+      m_Source: jobs.coral-turtle-stability.task.scanTurtle
+      m_Hash: 1327499417
     Steps:
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Light.Stressed
-        m_Hash: 3171531273
+        m_Source: LoggerheadTurtle.Eats.QueenConch
+        m_Hash: 1192689825
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
+        m_Hash: 1090187846
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.Copepod
+        m_Hash: 1033032444
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: coralLight
-      m_Hash: 3561425398
+      m_Source: turtleModel
+      m_Hash: 523491196
     Index: 2
     LabelId:
-      m_Source: jobs.coral-invade.task.coralLight
-      m_Hash: 1288826080
+      m_Source: jobs.coral-turtle-stability.task.turtleModel
+      m_Hash: 503602137
     Steps:
     - Type: 1
       Target:
-        m_Source: SargassumCoveredReef.WaterChemHistory.Light
-        m_Hash: 2480504015
+        m_Source: ReefEdge.Model.TurtleVisual
+        m_Hash: 4167532367
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
     Index: 3
     LabelId:
-      m_Source: jobs.coral-invade.task.reportBack
-      m_Hash: 1677863150
+      m_Source: jobs.coral-turtle-stability.task.reportBack
+      m_Hash: 3158413991
     Steps:
     - Type: 10
       Target:
@@ -224,7 +248,7 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 31
   m_GearReward: 128
   m_AdditionalRewards: []

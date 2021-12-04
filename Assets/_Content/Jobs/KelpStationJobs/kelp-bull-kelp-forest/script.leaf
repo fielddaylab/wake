@@ -24,6 +24,7 @@ $call UnlockSite(RS-1A)
 :: helpWrongSite
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C", JobTaskTop(siteA)
+@cutscene
 {player}    Is this where we should be?
 {@kevin}    No, I don't think so...
             Let's surface and head over to Site A.
