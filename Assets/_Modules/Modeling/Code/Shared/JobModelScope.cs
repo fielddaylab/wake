@@ -10,6 +10,8 @@ namespace Aqua.Modeling {
         [Header("Requirements")]
         [FilterBestiaryId(BestiaryDescCategory.Critter)] public StringHash32[] OrganismIds = null;
         [FactId(typeof(BFBehavior))] public StringHash32[] BehaviorIds = null;
+        [Range(0, 100)] public int MinimumSyncAccuracy = 85;
+        public bool IncludeWaterChemistryInAccuracy;
         
         [Header("Models")]
         [FactId(typeof(BFModel))] public StringHash32 ConceptualModelId = null;

@@ -2,11 +2,14 @@ using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI.Extensions;
 using System;
+using BeauPools;
 
 namespace Aqua
 {
     public class GraphLine : MonoBehaviour
     {
+        [Serializable] public class Pool : SerializablePool<GraphLine> { }
+
         #region Inspector
 
         [SerializeField] private UILineRenderer m_Renderer = null;
@@ -35,7 +38,7 @@ namespace Aqua
             m_RawPoints.PushBack(new Vector2(inX, inY));
         }
 
-        public void Render(Rect inBounds, int inPointCount = -1)
+        public void Render(Rect inBounds, int inPointCount = -1, bool inRenderInitial = false)
         {
             if (inPointCount < 0 || inPointCount > m_RawPoints.Count)
                 inPointCount = m_RawPoints.Count;
@@ -58,7 +61,7 @@ namespace Aqua
 
             if (m_InitialPointRenderer)
             {
-                if (inPointCount > 0)
+                if (inPointCount > 0 && inRenderInitial)
                 {
                     m_InitialPointRenderer.gameObject.SetActive(true);
                     m_InitialPointRenderer.SetPoint(m_RawPoints[0]);

@@ -10,38 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
-  m_Name: WarmKelpForest.Sim
+  m_Name: UrchinBarren.Sim
   m_EditorClassIdentifier: 
   Id:
-    m_Source: WarmKelpForest.Sim
-    m_Hash: 3422610716
-  Parent: {fileID: 11400000, guid: 044b3f75348b94f9dab8729d832fb746, type: 2}
+    m_Source: UrchinBarren.Sim
+    m_Hash: 3343181761
+  Parent: {fileID: 11400000, guid: 02b17e617ca106a47917d693294dbde5, type: 2}
   Icon: {fileID: 0}
   Mode: 0
   m_IconOverride: {fileID: 0}
   InitialActors:
   - Id:
-      m_Source: GiantKelp
-      m_Hash: 3510470690
-    Population: 10000
-  - Id:
-      m_Source: SeaOtter
-      m_Hash: 3836809010
-    Population: 16
-  - Id:
       m_Source: Urchin
       m_Hash: 1973276590
-    Population: 2000
+    Population: 1000
   - Id:
-      m_Source: SeaStar
-      m_Hash: 1773058804
-    Population: 200
+      m_Source: GiantKelp
+      m_Hash: 3510470690
+    Population: 100000
   InitialWater:
-    Oxygen: 5
-    Temperature: 21
+    Oxygen: 3
+    Temperature: 19
     Light: 100
-    PH: 8.1
-    CarbonDioxide: 27
+    PH: 8
+    CarbonDioxide: 30
   SyncTickCount: 10
   PredictTickCount: 10
   OxygenPerTick: 4

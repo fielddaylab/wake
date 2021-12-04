@@ -36,6 +36,14 @@ namespace Aqua.Modeling {
                             }
                             break;
                         }
+                        
+                        case BFTypeId.Population:
+                        case BFTypeId.WaterProperty:
+                        case BFTypeId.Sim:
+                        case BFTypeId.Model: {
+                            break;
+                        }
+
                         default: {
                             importableFacts.PushBack(fact);
                             break;
@@ -53,10 +61,22 @@ namespace Aqua.Modeling {
             }
         }
 
-        static public void GatherPendingFacts(RingBuffer<BFBase> all, BestiaryData filter, HashSet<BFBase> current, HashSet<BFBase> pending) {
+        static public void GatherPendingFacts(RingBuffer<BFBase> all, BestiaryData filter, HashSet<BestiaryDesc> currentEntities, HashSet<BestiaryDesc> pendingEntities, HashSet<BFBase> current, HashSet<BFBase> pending) {
             foreach(var fact in all) {
                 if (!current.Contains(fact) && filter.HasFact(fact.Id)) {
-                    pending.Add(fact);
+                    bool add = true;
+                    switch(fact.Type) {
+                        case BFTypeId.Eat: {
+                            BestiaryDesc target = ((BFEat) fact).Critter;
+                            if (!currentEntities.Contains(target) && !pendingEntities.Contains(target)) {
+                                add = false;
+                            }
+                            break;
+                        }
+                    }
+                    if (add) {
+                        pending.Add(fact);
+                    }
                 }
             }
         }

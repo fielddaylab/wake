@@ -13,15 +13,21 @@ namespace Aqua.Modeling
         public readonly RingBuffer<BestiaryDesc> RequiredEntities = new RingBuffer<BestiaryDesc>();
         public readonly RingBuffer<BFBase> RequiredFacts = new RingBuffer<BFBase>();
 
-        public void Load(BestiaryDesc currentEnvironment, JobDesc desc) {
-            if (!currentEnvironment || desc == null || (Scope = desc.FindAsset<JobModelScope>()) == null || Scope.EnvironmentId != currentEnvironment.Id()) {
+        public void LoadFromJob(BestiaryDesc currentEnvironment, JobDesc desc) {
+            LoadFromScope(currentEnvironment, desc?.FindAsset<JobModelScope>());
+        }
+
+        public void LoadFromScope(BestiaryDesc currentEnvironment, JobModelScope scope) {
+            if (!currentEnvironment || !scope || scope.EnvironmentId != currentEnvironment.Id()) {
                 Reset(currentEnvironment);
                 return;
             }
 
             Sim = currentEnvironment.FactOfType<BFSim>();
+            Scope = scope;
 
             Phases = ModelPhases.Ecosystem | ModelPhases.Concept;
+            
             if (!Scope.SyncModelId.IsEmpty) {
                 Phases |= ModelPhases.Sync;
             }
@@ -32,6 +38,7 @@ namespace Aqua.Modeling
                 Phases |= ModelPhases.Intervene;
             }
 
+            ImportableEntities.Clear();
             ImportableFacts.Clear();
             FactUtil.GatherImportableFacts(currentEnvironment, ImportableEntities, ImportableFacts);
 
@@ -58,6 +65,10 @@ namespace Aqua.Modeling
                 FactUtil.GatherImportableFacts(currentEnvironment, ImportableEntities, ImportableFacts);
             } else {
                 Sim = null;
+            }
+
+            if (Sim) {
+                Phases |= ModelPhases.Sync;
             }
 
             RequiredEntities.Clear();

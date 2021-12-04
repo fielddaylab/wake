@@ -2,6 +2,7 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
+using Aqua.Cameras;
 
 namespace Aqua.Modeling {
 
@@ -17,15 +18,21 @@ namespace Aqua.Modeling {
         [SerializeField] private SimulationDataCtrl m_SimDataCtrl = null;
         [SerializeField] private ConceptualModelUI m_ConceptualUI = null;
         [SerializeField] private SimulationUI m_SimulationUI = null;
+        [SerializeField] private CameraPose m_ConceptualCamera = null;
+        [SerializeField] private CameraPose m_SimulationCamera = null;
+
+        [Header("-- DEBUG --")]
+
+        [SerializeField] private JobModelScope m_DEBUGModelScope = null;
 
         #endregion // Inspector
 
         private readonly ModelState m_State = new ModelState();
-        private readonly ModelProgressInfo m_ProgressionInfo = new ModelProgressInfo();
+        private readonly ModelProgressInfo m_ProgressInfo = new ModelProgressInfo();
 
         #region Unity
 
-        private void Awake() {
+        private void Start() {
             m_Header.OnPhaseChanged = OnPhaseChanged;
             m_EcosystemSelect.OnAdded = OnEcosystemSelected;
             m_EcosystemSelect.OnRemoved = OnEcosystemRemoved;
@@ -34,9 +41,14 @@ namespace Aqua.Modeling {
             m_ConceptualUI.OnRequestImport = OnRequestConceptualImport;
             m_ConceptualUI.OnRequestExport = OnRequestConceptualExport;
 
-            m_ConceptualUI.SetData(m_State, m_ProgressionInfo);
-            m_SimulationUI.SetData(m_State, m_ProgressionInfo);
-            m_SimDataCtrl.SetData(m_State, m_ProgressionInfo);
+            m_SimulationUI.OnSyncAchieved = OnSyncAchieved;
+            m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
+
+            m_State.Simulation = m_SimDataCtrl;
+
+            m_ConceptualUI.SetData(m_State, m_ProgressInfo);
+            m_SimulationUI.SetData(m_State, m_ProgressInfo);
+            m_SimDataCtrl.SetData(m_State, m_ProgressInfo);
             
             Services.Events.Register(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this);
             
@@ -77,8 +89,17 @@ namespace Aqua.Modeling {
             }
 
             if (phase >= ModelPhases.Sync) {
+                if (prevPhase < ModelPhases.Sync) {
+                    m_SimDataCtrl.LoadConceptualModel();
+                    Services.Camera.MoveToPose(m_SimulationCamera, 0.3f, Curve.CubeOut);
+                }
                 m_SimulationUI.Show();
+                m_SimulationUI.SetPhase(phase);
             } else {
+                if (prevPhase >= ModelPhases.Sync) {
+                    Services.Camera.MoveToPose(m_ConceptualCamera, 0.3f, Curve.CubeOut);
+                    m_SimDataCtrl.ClearSimulatedData();
+                }
                 m_SimulationUI.Hide();
             }
         }
@@ -91,7 +112,16 @@ namespace Aqua.Modeling {
             m_State.SiteData = Save.Science.GetSiteData(selected.Id());
             m_State.Conceptual.LoadFrom(m_State.SiteData);
 
-            m_ProgressionInfo.Load(selected, Assets.Job(Save.Jobs.CurrentJobId));
+            #if UNITY_EDITOR
+            if (BootParams.BootedFromCurrentScene && m_DEBUGModelScope != null) {
+                m_ProgressInfo.LoadFromScope(selected, m_DEBUGModelScope);
+            } else {
+                m_ProgressInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
+            }
+            #else
+            m_ProgressionInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
+            #endif // UNITY_EDITOR
+            m_SimDataCtrl.LoadSite();
 
             EvaluateConceptStatus();
             RefreshPhaseHeader();
@@ -110,7 +140,9 @@ namespace Aqua.Modeling {
                 m_State.Conceptual.Reset();
                 m_State.SiteData = null;
 
-                m_ProgressionInfo.Reset(null);
+                m_ProgressInfo.Reset(null);
+                m_SimDataCtrl.ClearSite();
+
                 m_Header.SetSelected(ModelPhases.Ecosystem, false);
 
                 RefreshPhaseHeader();
@@ -125,7 +157,8 @@ namespace Aqua.Modeling {
             m_State.Conceptual.Reset();
             m_State.SiteData = null;
             
-            m_ProgressionInfo.Reset(null);
+            m_SimDataCtrl.ClearSite();
+            m_ProgressInfo.Reset(null);
             m_Header.SetSelected(ModelPhases.Ecosystem, false);
             
             RefreshPhaseHeader();
@@ -138,10 +171,6 @@ namespace Aqua.Modeling {
 
         private IEnumerator OnRequestConceptualImport() {
             return Routine.Start(this, ImportProcess()).Wait();
-        }
-
-        private void OnRequestConceptualExport() {
-
         }
 
         private IEnumerator ImportProcess() {
@@ -166,12 +195,45 @@ namespace Aqua.Modeling {
             m_State.Conceptual.PendingFacts.Clear();
             m_State.SiteData.OnChanged();
 
+            m_SimDataCtrl.GeneratePlayerProfile();
+
             Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
             yield return null;
             EvaluateConceptStatus();
             RefreshPhaseHeader();
+        }
 
-            m_SimDataCtrl.TESTBuildProfile(); // TODO: Remove
+        private void OnRequestConceptualExport() {
+            if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.ConceptualModelId)) {
+                BFBase fact = Assets.Fact(m_ProgressInfo.Scope.ConceptualModelId);
+                Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                EvaluateConceptStatus();
+                RefreshPhaseHeader();
+            }
+        }
+
+        private void OnSyncAchieved() {
+            if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.SyncModelId)) {
+                BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
+                Services.UI.Popup.PresentFact("'modeling.newSyncModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                RefreshPhaseHeader();
+            }
+        }
+
+        private void OnPredictCompleted() {
+            if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.PredictModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.PredictModelId)) {
+                BFBase fact = Assets.Fact(m_ProgressInfo.Scope.PredictModelId);
+                Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                RefreshPhaseHeader();
+            }
+        }
+
+        private void OnInterventionCompleted() {
+            if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.InterveneModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.InterveneModelId)) {
+                BFBase fact = Assets.Fact(m_ProgressInfo.Scope.InterveneModelId);
+                Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                RefreshPhaseHeader();
+            }
         }
 
         #endregion // Callbacks
@@ -185,14 +247,14 @@ namespace Aqua.Modeling {
 
         private void EvaluateConceptStatus() {
             ConceptualModelState.StatusId status = ConceptualModelState.StatusId.UpToDate;
-            FactUtil.GatherPendingEntities(m_ProgressionInfo.ImportableEntities, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities);
-            FactUtil.GatherPendingFacts(m_ProgressionInfo.ImportableFacts, Save.Bestiary, m_State.Conceptual.GraphedFacts, m_State.Conceptual.PendingFacts);
+            FactUtil.GatherPendingEntities(m_ProgressInfo.ImportableEntities, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities);
+            FactUtil.GatherPendingFacts(m_ProgressInfo.ImportableFacts, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.PendingFacts);
 
             if (m_State.Conceptual.PendingEntities.Count > 0 || m_State.Conceptual.PendingFacts.Count > 0) {
                 status = ConceptualModelState.StatusId.PendingImport;
             } else if (!HasRequiredEntities() || !HasRequiredBehaviors()) {
                 status = ConceptualModelState.StatusId.MissingData;
-            } else if (m_ProgressionInfo.Scope != null && !m_ProgressionInfo.Scope.ConceptualModelId.IsEmpty && !Save.Bestiary.HasFact(m_ProgressionInfo.Scope.ConceptualModelId)) {
+            } else if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && !Save.Bestiary.HasFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 status = ConceptualModelState.StatusId.ExportReady;
             } else {
                 status = ConceptualModelState.StatusId.UpToDate;
@@ -202,17 +264,31 @@ namespace Aqua.Modeling {
         }
 
         private void EvaluatePhaseMask() {
-            ModelPhases mask = m_ProgressionInfo.Phases;
-            if (m_ProgressionInfo.Scope != null) {
-                if (ConceptualStatusWillBlockProgression(m_State.Conceptual.Status) || !HasRequiredModel(m_ProgressionInfo.Scope.ConceptualModelId)) {
+            ModelPhases mask = m_ProgressInfo.Phases;
+            ModelPhases completed = m_ProgressInfo.Phases;
+            if (m_ProgressInfo.Scope != null) {
+                if (ConceptualStatusWillBlockProgression(m_State.Conceptual.Status) || !HasRequiredModel(m_ProgressInfo.Scope.ConceptualModelId)) {
                     mask &= ~ComputationalPhaseMask;
-                } else if (!HasRequiredModel(m_ProgressionInfo.Scope.SyncModelId)) {
+                    completed &= ~(ComputationalPhaseMask | ModelPhases.Concept);
+                } else if (!HasRequiredModel(m_ProgressInfo.Scope.SyncModelId)) {
                     mask &= ~(ModelPhases.Predict | ModelPhases.Intervene);
-                } else if (!HasRequiredModel(m_ProgressionInfo.Scope.PredictModelId)) {
+                    completed &= ~ComputationalPhaseMask;
+                } else if (!HasRequiredModel(m_ProgressInfo.Scope.PredictModelId)) {
                     mask &= ~ModelPhases.Intervene;
+                    completed &= ~(ModelPhases.Predict | ModelPhases.Intervene);
+                } else if (!HasRequiredModel(m_ProgressInfo.Scope.InterveneModelId)) {
+                    completed &= ~ModelPhases.Intervene;
+                }
+            } else {
+                completed &= ~ComputationalPhaseMask;
+                if (ConceptualStatusWillBlockProgression(m_State.Conceptual.Status)) {
+                    mask &= ~ComputationalPhaseMask;
+                    completed &= ~ModelPhases.Concept;
                 }
             }
 
+            m_State.AllowedPhases = mask;
+            m_State.CompletedPhases = completed;
             m_Header.UpdateAllowedMask(mask);
         }
 
@@ -230,7 +306,7 @@ namespace Aqua.Modeling {
         }
 
         private bool HasRequiredEntities() {
-            foreach(var requirement in m_ProgressionInfo.RequiredEntities) {
+            foreach(var requirement in m_ProgressInfo.RequiredEntities) {
                 if (!m_State.Conceptual.GraphedEntities.Contains(requirement)) {
                     return false;
                 }
@@ -240,7 +316,7 @@ namespace Aqua.Modeling {
         }
 
         private bool HasRequiredBehaviors() {
-            foreach(var requirement in m_ProgressionInfo.RequiredFacts) {
+            foreach(var requirement in m_ProgressInfo.RequiredFacts) {
                 if (!m_State.Conceptual.GraphedFacts.Contains(requirement)) {
                     return false;
                 }

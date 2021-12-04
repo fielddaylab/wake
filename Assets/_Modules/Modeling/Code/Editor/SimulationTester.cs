@@ -5,30 +5,37 @@ using UnityEditor;
 using BeauUtil.Debugger;
 
 namespace Aqua.Modeling.Editor {
-    public class SimulationTester : ScriptableWizard {
+    public class SimulationTester : EditorWindow {
         public BFSim Sim;
-
         private readonly ModelProgressInfo m_ProgressInfo = new ModelProgressInfo();
 
         [MenuItem("Aqualab/Test Modeling Simulation")]
         static private void CreateWizard() {
-            ScriptableWizard.DisplayWizard<SimulationTester>("Test Simulation", "Export", "Simulate");
+            EditorWindow.GetWindow<SimulationTester>().Show();
         }
 
-        private void OnWizardUpdate() {
-            isValid = Sim != null;
+        private void OnEnable() {
+            titleContent = new GUIContent("Simulation Tester");
         }
 
-        private void OnWizardOtherButton() {
-            if (Sim == null) {
-                return;
+        private void OnGUI() {
+            Sim = (BFSim) EditorGUILayout.ObjectField("Sim", Sim, typeof(BFSim), false);
+
+            EditorGUILayout.Space();
+            
+            using(new EditorGUI.DisabledScope(Sim == null)) {
+                if (GUILayout.Button("Simulate")) {
+                    Simulate();
+                }
             }
+        }
 
+        private void Simulate() {
             using(Profiling.Time("generating report")) {
-                m_ProgressInfo.Load(Sim.Parent, null);
+                m_ProgressInfo.LoadFromScope(Sim.Parent, null);
 
                 using(var buffer = new Simulation.Buffer())
-                using(var profile = new SimulationProfile()) {
+                using(var profile = new SimProfile()) {
                     profile.ImportSim(m_ProgressInfo.Sim);
 
                     foreach(var entity in m_ProgressInfo.ImportableEntities) {
@@ -39,16 +46,16 @@ namespace Aqua.Modeling.Editor {
 
                     foreach(var entity in m_ProgressInfo.ImportableEntities) {
                         foreach(var internalFact in entity.InternalFacts) {
-                            profile.ImportFact(internalFact);
+                            profile.ImportFact(internalFact, BFDiscoveredFlags.All);
                         }
 
                         foreach(var alwaysFact in entity.AssumedFacts) {
-                            profile.ImportFact(alwaysFact);
+                            profile.ImportFact(alwaysFact, BFDiscoveredFlags.All);
                         }
                     }
 
                     foreach(var fact in m_ProgressInfo.ImportableFacts) {
-                        profile.ImportFact(fact);
+                        profile.ImportFact(fact, BFDiscoveredFlags.All);
                     }
 
                     profile.FinishFacts();
@@ -57,19 +64,18 @@ namespace Aqua.Modeling.Editor {
                     Simulation.Prepare(buffer, profile, initialSnapshot);
 
                     SimSnapshot current = initialSnapshot;
-                    for(int i = 0; i < m_ProgressInfo.Sim.SyncTickCount; i++) {
-                        current = Simulation.Simulate(buffer, profile, current, SimulationFlags.Debug);
+                    for(uint i = 0; i < m_ProgressInfo.Sim.SyncTickCount; i++) {
+                        current = Simulation.Simulate(buffer, profile, current, i + 1, SimulationFlags.Debug);
                         Log.Msg(buffer.DebugReport?.Flush());
                     }
 
-                    for(int i = 0; i < m_ProgressInfo.Sim.PredictTickCount; i++) {
-                        current = Simulation.Simulate(buffer, profile, current, SimulationFlags.Debug);
+                    for(uint i = 0; i < m_ProgressInfo.Sim.PredictTickCount; i++) {
+                        current = Simulation.Simulate(buffer, profile, current, m_ProgressInfo.Sim.SyncTickCount + i + 1, SimulationFlags.Debug);
                         Log.Msg(buffer.DebugReport?.Flush());
                     }
                 }
 
-                m_ProgressInfo.Load(null, null);
-
+                m_ProgressInfo.Reset(null);
             }
         }
     }

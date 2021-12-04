@@ -1,14 +1,16 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
 using BeauUtil;
-using BeauUtil.Debugger;
-using ActorInfo = Aqua.Modeling.SimulationProfile.ActorInfo;
-using BehaviorInfo = Aqua.Modeling.SimulationProfile.BehaviorInfo;
-using EatInfo = Aqua.Modeling.SimulationProfile.EatInfo;
-using ParasiteInfo = Aqua.Modeling.SimulationProfile.ParasiteInfo;
+using ActorInfo = Aqua.Modeling.SimProfile.ActorInfo;
+using BehaviorInfo = Aqua.Modeling.SimProfile.BehaviorInfo;
+using EatInfo = Aqua.Modeling.SimProfile.EatInfo;
+using ParasiteInfo = Aqua.Modeling.SimProfile.ParasiteInfo;
+using System.Collections.Generic;
 
-namespace Aqua.Modeling {
+namespace Aqua.Modeling
+{
     static public unsafe class Simulation {
 
         #region Consts
@@ -24,10 +26,13 @@ namespace Aqua.Modeling {
         public const float IncreasePHRatio = 0.002f;
         public const float DecreasePHRatio = 0.002f;
 
+        public const int MaxTicks = 32;
+
         #endregion // Consts
 
         #region Types
 
+        [StructLayout(LayoutKind.Sequential, Size = 8)]
         public struct PopulationPair {
             public uint Alive;
             public uint Stressed;
@@ -52,6 +57,8 @@ namespace Aqua.Modeling {
         }
 
         public class Buffer : IDisposable {
+            static private readonly int BufferSize = sizeof(PopulationPair) * 4 * MaxTrackedCritters + sizeof(ProduceConsumePair) * MaxTrackedCritters;
+
             public PopulationPair* Populations;
             public ProduceConsumePair* Unconsumed;
             public PopulationPair* Hungers;
@@ -60,20 +67,36 @@ namespace Aqua.Modeling {
             public WaterPropertyBlockF32 Water;
             public StringBuilder DebugReport;
 
+            private Unsafe.ArenaHandle m_Allocator;
+
             public Buffer() {
-                Populations = Unsafe.AllocArray<PopulationPair>(MaxTrackedCritters);
-                Unconsumed = Unsafe.AllocArray<ProduceConsumePair>(MaxTrackedCritters);
-                Hungers = Unsafe.AllocArray<PopulationPair>(MaxTrackedCritters);
-                PopulationsConsumed = Unsafe.AllocArray<PopulationPair>(MaxTrackedCritters);
-                MassConsumptionBuffer = Unsafe.AllocArray<PopulationPair>(MaxTrackedCritters);
+                m_Allocator = Unsafe.CreateArena(BufferSize);
+                Populations = Unsafe.AllocArray<PopulationPair>(m_Allocator, MaxTrackedCritters);
+                Unconsumed = Unsafe.AllocArray<ProduceConsumePair>(m_Allocator, MaxTrackedCritters);
+                Hungers = Unsafe.AllocArray<PopulationPair>(m_Allocator, MaxTrackedCritters);
+                PopulationsConsumed = Unsafe.AllocArray<PopulationPair>(m_Allocator, MaxTrackedCritters);
+                MassConsumptionBuffer = Unsafe.AllocArray<PopulationPair>(m_Allocator, MaxTrackedCritters);
+            }
+
+            public Buffer(Unsafe.ArenaHandle allocator) {
+                Populations = Unsafe.AllocArray<PopulationPair>(allocator, MaxTrackedCritters);
+                Unconsumed = Unsafe.AllocArray<ProduceConsumePair>(allocator, MaxTrackedCritters);
+                Hungers = Unsafe.AllocArray<PopulationPair>(allocator, MaxTrackedCritters);
+                PopulationsConsumed = Unsafe.AllocArray<PopulationPair>(allocator, MaxTrackedCritters);
+                MassConsumptionBuffer = Unsafe.AllocArray<PopulationPair>(allocator, MaxTrackedCritters);
             }
 
             public void Dispose() {
-                Unsafe.Free(Populations);
-                Unsafe.Free(Unconsumed);
-                Unsafe.Free(Hungers);
-                Unsafe.Free(PopulationsConsumed);
-                Unsafe.Free(MassConsumptionBuffer);
+                Unsafe.TryFreeArena(ref m_Allocator);
+                Populations = null;
+                Unconsumed = null;
+                Hungers = null;
+                PopulationsConsumed = null;
+                MassConsumptionBuffer = null;
+                if (DebugReport != null) {
+                    DebugReport.Length = 0;
+                    DebugReport = null;
+                }
             }
         }
 
@@ -84,9 +107,8 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Generates the initial snapshot for the given sim and profile.
         /// </summary>
-        static public SimSnapshot GenerateInitialSnapshot(SimulationProfile profile, BFSim sim) {
+        static public SimSnapshot GenerateInitialSnapshot(SimProfile profile, BFSim sim) {
             SimSnapshot snapshot = default;
-            snapshot.Timestamp = 0;
             snapshot.Water = profile.Water;
 
             ActorCountU32 actorPop;
@@ -105,14 +127,14 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Prepares the given buffer for simulation.
         /// </summary>
-        static public void Prepare(Buffer buffer, SimulationProfile profile, SimSnapshot start) {
+        static public void Prepare(Buffer buffer, SimProfile profile, SimSnapshot start) {
             PopulationPair* p;
             float stressed;
             for(int i = 0; i < profile.ActorCount; i++) {
                 // copy populations
                 p = &buffer.Populations[i];
                 stressed = start.StressedRatio[i] / 128f;
-                p->Stressed = SimulationMath.FixedMultiply(start.Populations[i], stressed);
+                p->Stressed = SimMath.FixedMultiply(start.Populations[i], stressed);
                 p->Alive = start.Populations[i] - p->Stressed;
 
                 // reset temporary buffers
@@ -125,7 +147,10 @@ namespace Aqua.Modeling {
             buffer.Water = start.Water;
         }
 
-        static public SimSnapshot Simulate(Buffer buffer, SimulationProfile profile, SimSnapshot start, SimulationFlags flags = 0) {
+        /// <summary>
+        /// Simulates one tick.
+        /// </summary>
+        static public SimSnapshot Simulate(Buffer buffer, SimProfile profile, SimSnapshot start, uint inTimestamp, SimulationFlags flags = 0) {
             bool bLogging = (flags & SimulationFlags.Debug) != 0;
             bool bDetails = (flags & SimulationFlags.DetailedOutput) != 0;
 
@@ -136,7 +161,7 @@ namespace Aqua.Modeling {
             }
 
             if (bLogging) {
-                Report(buffer, "--- Beginning Tick {0}", start.Timestamp + 1);
+                Report(buffer, "--- Beginning Tick {0}", inTimestamp);
             }
 
             // reset light
@@ -175,7 +200,7 @@ namespace Aqua.Modeling {
                     continue;
                 }
 
-                uint desiredAffected = SimulationMath.FixedMultiply(totalSource, parasite.Affected);
+                uint desiredAffected = SimMath.FixedMultiply(totalSource, parasite.Affected);
                 uint newAffected = 0;
                 if (desiredAffected > source->Stressed) {
                     newAffected = Math.Min(desiredAffected - source->Stressed, source->Alive);
@@ -248,13 +273,13 @@ namespace Aqua.Modeling {
 
                 buffer.PopulationsConsumed[i] = default;
                 
-                if ((actorInfo->Flags & SimulationProfile.ActorFlags.Alive_DoesNotEat) == 0) {
+                if ((actorInfo->Flags & SimProfile.ActorFlags.Alive_DoesNotEat) == 0) {
                     buffer.Hungers[i].Alive = buffer.Populations[i].Alive * HungerPerPopulation;
                 } else {
                     buffer.Hungers[i].Alive = 0;
                 }
                 
-                if ((actorInfo->Flags & SimulationProfile.ActorFlags.Alive_DoesNotEat) == 0) {
+                if ((actorInfo->Flags & SimProfile.ActorFlags.Alive_DoesNotEat) == 0) {
                     buffer.Hungers[i].Stressed = buffer.Populations[i].Stressed * HungerPerPopulation;
                 } else {
                     buffer.Hungers[i].Stressed = 0;
@@ -328,7 +353,7 @@ namespace Aqua.Modeling {
                     targetActorInfo = &profile.Actors[eatTargetIndex];
 
                     PerformEaten(targetActorInfo, ref buffer.Populations[eatTargetIndex], ((uint*) &buffer.MassConsumptionBuffer[j])[sourceIndex], out consumedMass, ref buffer.PopulationsConsumed[eatTargetIndex]);
-                    hungerEffect = SimulationMath.FixedMultiply(consumedMass, eat->MassToFood);
+                    hungerEffect = SimMath.FixedMultiply(consumedMass, eat->MassToFood);
                     foodToAllocate[sourceIndex] -= Math.Min(foodToAllocate[sourceIndex], hungerEffect);
 
                     if (bLogging && consumedMass > 0) {
@@ -396,18 +421,17 @@ namespace Aqua.Modeling {
                     Report(buffer, "{0} population: {1} alive, {2} stressed", actorInfo->Id.ToDebugString(), buffer.Populations[i].Alive, buffer.Populations[i].Stressed);
                 }
 
-                Report(buffer, "--- Tick {0} finished!", start.Timestamp + 1);
+                Report(buffer, "--- Tick {0} finished!", inTimestamp);
             }
 
-            return Export(buffer, profile, start.Timestamp + 1);
+            return Export(buffer, profile);
         }
 
         /// <summary>
         /// Exports the given buffer to a snapshot.
         /// </summary>
-        static public SimSnapshot Export(Buffer buffer, SimulationProfile profile, uint timestamp) {
+        static public SimSnapshot Export(Buffer buffer, SimProfile profile) {
             SimSnapshot snapshot = default;
-            snapshot.Timestamp = timestamp;
             snapshot.Water = buffer.Water;
 
             PopulationPair* p;
@@ -480,14 +504,14 @@ namespace Aqua.Modeling {
                 return;
             }
 
-            uint mass = SimulationMath.FixedMultiply(sourceHunger, eat->FoodToMass);
-            mass = SimulationMath.FixedMultiply(mass, proportion);
+            uint mass = SimMath.FixedMultiply(sourceHunger, eat->FoodToMass);
+            mass = SimMath.FixedMultiply(mass, proportion);
             if (mass > totalMass) {
                 mass = totalMass;
             }
 
             massToConsume = mass;
-            hungerEffect = SimulationMath.FixedMultiply(mass, eat->MassToFood);
+            hungerEffect = SimMath.FixedMultiply(mass, eat->MassToFood);
         }
 
         #endregion // Evaluations
@@ -585,11 +609,11 @@ namespace Aqua.Modeling {
             if (scarcityLevel > 0) {
                 float ratio = (float) totalPopulation / (float) scarcityLevel;
                 if (ratio < 1) {
-                    localConsumedPopulation = SimulationMath.FixedMultiply(localConsumedPopulation, ratio);
+                    localConsumedPopulation = SimMath.FixedMultiply(localConsumedPopulation, ratio);
                 }
             }
 
-            uint max = SimulationMath.FixedMultiply(totalPopulation, MaxEatProportion);
+            uint max = SimMath.FixedMultiply(totalPopulation, MaxEatProportion);
             if (localConsumedPopulation > max) {
                 localConsumedPopulation = max;
             }
@@ -635,14 +659,14 @@ namespace Aqua.Modeling {
                 return 0;
             }
 
-            uint increase = SimulationMath.FixedMultiply(population.Alive, alive->Reproduce) + SimulationMath.FixedMultiply(population.Stressed, stress->Reproduce);
+            uint increase = SimMath.FixedMultiply(population.Alive, alive->Reproduce) + SimMath.FixedMultiply(population.Stressed, stress->Reproduce);
             if (population.Alive > 0) {
                 increase += (alive->Growth / actorInfo->MassPerPopulation);
             }
             if (population.Stressed > 0) {
                 increase += (stress->Growth / actorInfo->MassPerPopulation);
             }
-            uint max = SimulationMath.FixedMultiply(actorInfo->PopulationCap - totalPopulation, MaxReproduceProportion);
+            uint max = SimMath.FixedMultiply(actorInfo->PopulationCap - totalPopulation, MaxReproduceProportion);
 
             if (increase > max) {
                 increase = max;
@@ -677,12 +701,12 @@ namespace Aqua.Modeling {
                 return 0;
             }
 
-            uint aliveDecrease = SimulationMath.FixedMultiply(population.Alive, alive->Death) + excess.Alive;
-            uint stressDecrease = SimulationMath.FixedMultiply(population.Stressed, stress->Death) + excess.Stressed;
+            uint aliveDecrease = SimMath.FixedMultiply(population.Alive, alive->Death) + excess.Alive;
+            uint stressDecrease = SimMath.FixedMultiply(population.Stressed, stress->Death) + excess.Stressed;
 
             if ((aliveDecrease + stressDecrease) >= totalPopulation) {
-                aliveDecrease = SimulationMath.FixedMultiply(population.Alive, MaxDeathProportion);
-                stressDecrease = SimulationMath.FixedMultiply(population.Stressed, MaxDeathProportion);
+                aliveDecrease = SimMath.FixedMultiply(population.Alive, MaxDeathProportion);
+                stressDecrease = SimMath.FixedMultiply(population.Stressed, MaxDeathProportion);
             }
 
             population.Alive -= aliveDecrease;
@@ -756,11 +780,116 @@ namespace Aqua.Modeling {
 
         #endregion // Reporting
     
-        #region Comparison
+        #region Snapshots
 
-        
+        /// <summary>
+        /// Copies the given snapshot with a given profile to another snapshot with a different profile.
+        /// </summary>
+        static public void CopyTo(SimSnapshot* source, SimProfile sourceProfile, SimSnapshot* target, SimProfile targetProfile) {
+            *target = default;
+            target->Water = source->Water;
+            for(int i = 0; i < sourceProfile.ActorCount; i++) {
+                StringHash32 actorId = sourceProfile.Actors[i].Id;
+                int remap = targetProfile.IndexOfActorType(actorId);
+                if (remap >= 0) {
+                    target->Populations[remap] = source->Populations[i];
+                    target->StressedRatio[remap] = source->StressedRatio[i];
+                }
+            }
+        }
 
-        #endregion // Comparison
+        /// <summary>
+        /// Sets the population of a specific actor.
+        /// </summary>
+        static public void SetPopulation(SimSnapshot* target, SimProfile targetProfile, StringHash32 id, uint population, float stressedRatio) {
+            int index = targetProfile.IndexOfActorType(id);
+            if (index >= 0) {
+                target->Populations[index] = population;
+                target->StressedRatio[index] = (byte) (stressedRatio * 128);
+            }
+        }
+
+        /// <summary>
+        /// Gets the population of a specific actor.
+        /// </summary>
+        static public void GetPopulation(SimSnapshot* target, SimProfile targetProfile, StringHash32 id, out uint population, out float stressedRatio) {
+            int index = targetProfile.IndexOfActorType(id);
+            if (index >= 0) {
+                population = target->Populations[index];
+                stressedRatio = target->StressedRatio[index] / 128f;
+            } else {
+                population = 0;
+                stressedRatio = 0;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the average error between the given source and target snapshots over a particular set of organisms.
+        /// </summary>
+        static public float CalculateAverageError(SimSnapshot* sources, SimProfile sourceProfile, SimSnapshot* targets, SimProfile targetProfile, uint snapshotCount, HashSet<StringHash32> organismFilter, bool calculateWaterChemistry) {
+            if (snapshotCount == 0) {
+                return 0;
+            }
+
+            // build remap
+            int* remap = stackalloc int[MaxTrackedCritters];
+            int unsyncedOrganisms = organismFilter.Count;
+            for(int i = 0; i < sourceProfile.ActorCount; i++) {
+                StringHash32 actorId = sourceProfile.Actors[i].Id;
+                if (organismFilter.Contains(actorId)) {
+                    remap[i] = targetProfile.IndexOfActorType(actorId);
+                    if (remap[i] != -1) {
+                        unsyncedOrganisms--;
+                    }
+                } else{
+                    remap[i] = -1;
+                }
+            }
+
+            float accum = 0;
+            for(int i = 0; i < snapshotCount; i++) {
+                // prefetch stuff
+                Unsafe.Prefetch(&sources[i + 1]);
+                Unsafe.Prefetch(&targets[i + 1]);
+                accum += CalculateSingleError(&sources[i], &targets[i], sourceProfile.ActorCount, remap, unsyncedOrganisms, unsyncedOrganisms, calculateWaterChemistry);
+            }
+
+            return accum / snapshotCount;
+        }
+
+        /// <summary>
+        /// Calculates the average error for the given 
+        /// </summary>
+        static private float CalculateSingleError(SimSnapshot* source, SimSnapshot* target, int sourcePopulationCount, int* indexRemap, float extraError, int extraErrorCounter, bool syncWater) {
+            float accum = extraError;
+            int counter = extraErrorCounter;
+
+            WaterPropertyBlockF32 sourceWater = source->Water;
+            WaterPropertyBlockF32 targetWater = target->Water;
+
+            if (syncWater) {
+                counter += 5;
+                accum += GraphingUtils.RPD(sourceWater.Oxygen, targetWater.Oxygen);
+                accum += GraphingUtils.RPD(sourceWater.Temperature, targetWater.Temperature);
+                accum += GraphingUtils.RPD(sourceWater.Light, targetWater.Light);
+                accum += GraphingUtils.RPD(sourceWater.PH, targetWater.PH);
+                accum += GraphingUtils.RPD(sourceWater.CarbonDioxide, targetWater.CarbonDioxide);
+            }
+            
+            counter += sourcePopulationCount;
+            for(int i = 0; i < sourcePopulationCount; i++) {
+                int remap = indexRemap[i];
+                if (remap >= 0) {
+                    accum += GraphingUtils.RPD(source->Populations[i], target->Populations[remap]);
+                } else {
+                    accum += 1;
+                }
+            }
+
+            return counter == 0 ? 0 : accum / counter;
+        }
+
+        #endregion // Snapshots
     }
 
     public enum SimulationFlags {
