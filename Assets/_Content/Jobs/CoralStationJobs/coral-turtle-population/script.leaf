@@ -1,4 +1,4 @@
-#basePath   job.coral-invade
+#basePath   job.coral-turtle-population
 
 :: start
 @trigger    JobStarted
@@ -188,93 +188,38 @@ $endif
 
 // ARGUMENTATION
 
-::argue.chooseClaim
+::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralInvadeArgue)
+@when   !ArgueIsComplete(turtlePopulationArgue)
 @cutscene
-$call ArgueLoad(coralInvadeArgue)
-{@profCempaka} So, what's going on with the coral?
-	$choice .argue.coralNeedsLightIntro; The coral needs more light.
-	$choice .argue.coralIsOldIntro; The coral is old.
-	$choice .argue.sargassumBlocksLightIntro; The sargassum is blocking the light.
-$choose branch
-
-::argue.coralNeedsLightIntro
-{@profCempaka} Ahhh, I see! It did seem shady down there, did you have proof?
-$goto .argue.coralNeedsLight
-
-::argue.coralNeedsLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralNeedsLightClaim)
-		$call ArgueFactSlot(SargassumCoveredReef.Light)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$call ArgueLoad(turtlePopulationArgue)
+$if ArgueSetClaim(Claim, jobs.coral-turtle-population.argue.turtlePopulationClaim)
+		$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle)
 $endif
+{@profCempaka} What is the current turtle population?
+$goto .argue.showClaim
+
+::argue.showClaim
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctLight
-		$answer incorrect, .argue.incorrectLight
-$choice .argue.giveUp; I give up
+		$answer correct, .argue.correctPopulation
+		$answer incorrect, .argue.incorrectPopulation
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
 
-:: argue.correctLight
+::argue.correctPopulation
 $call ArgueComplete()
-{@profCempaka} I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum that keeps floating on in. That'll be your next investigation if you stick around...
+{@profCempaka} That looks great. 
+{@profCempaka} It looks like you are getting good at studying populations with your sub.
 $call CompleteJob()
 
-:: argue.incorrectLight
-{@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
+::argue.incorrectPopulation
 $call ArgueRejectIncorrect()
-$goto .argue.coralNeedsLight
+{@profCempaka} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
-
-
-
-:: argue.coralIsOldIntro
-{@profCempaka} Do you even have evidence of age?
-$goto .argue.coralIsOld
-
-:: argue.coralIsOld
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralIsOldClaim)
-		// they can't have this evidence, right?
-		$call ArgueFactSlot(W_WhaleFall.Oxygen)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.incorrectOld
-		$answer incorrect, .argue.incorrectOld
-$choice .argue.giveUp; I give up
-
-:: argue.incorrectOld
-$call ArgueRejectIncorrect()
-{@profCempaka} That certainly doesn't prove the coral are old.  I'm not even sure we have the ability to determine that, yet.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-
-
-:: argue.sargassumBlocksLightIntro
-{@profCempaka} Hmmm... Not sure that tells me anything about the Coral.
-$goto .argue.sargassumBlocksLight
-
-:: argue.sargassumBlocksLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.sargassumTakesLightClaim)
-		$call ArgueFactSlot(Sargassum.Consume.Light)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctSargassumLight
-		$answer incorrect, .argue.incorrectSargassumLight
-$choice .argue.giveUp; I give up
-
-:: argue.correctSargassumLight
-{@profCempaka} I see what you're saying, but I don't see how it's relevant.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-:: argue.incorrectSargassumLight
-{@profCempaka} That doesn't show Sargassum's effect on light, and I'm not sure it would matter if it did.
-$call ArgueRejectIncorrect()
-$goto .argue.sargassumBlocksLight
 
 
 ::end
