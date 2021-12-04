@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
-  m_Name: coral-invade
+  m_Name: coral-turtle-population
   m_EditorClassIdentifier: 
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: jobs.coral-invade.name
-    m_Hash: 3280053589
+    m_Source: jobs.coral-turtle-population.name
+    m_Hash: 3193398050
   m_PosterId:
-    m_Source: jobs.coral-invade.poster
-    m_Hash: 1642256687
+    m_Source: jobs.coral-turtle-population.poster
+    m_Hash: 1371347848
   m_DescId:
-    m_Source: jobs.coral-invade.desc
-    m_Hash: 2748701527
+    m_Source: jobs.coral-turtle-population.desc
+    m_Hash: 3020145588
   m_DescShortId:
     m_Source: 
     m_Hash: 0
@@ -31,83 +31,69 @@ MonoBehaviour:
     m_Hash: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 1
+  m_ArgumentationDifficulty: 0
   m_PrerequisiteJobs:
-  - {fileID: 11400000, guid: 55237f27d66b541dc99e54b798ae27f8, type: 2}
+  - {fileID: 11400000, guid: b572abe8741ac9d478304240f9d3084d, type: 2}
   m_PrereqConditions: 
   m_StationId:
     m_Source: CoralStation
     m_Hash: 707943182
   m_DiveSiteIds:
-  - m_Source: RS-2R
-    m_Hash: 2229569357
+  - m_Source: RS-2V
+    m_Hash: 2162458881
   m_Tasks:
   - Id:
-      m_Source: siteR
-      m_Hash: 2528761364
+      m_Source: siteV
+      m_Hash: 2461650888
     LabelId:
-      m_Source: jobs.coral-invade.task.SiteR
-      m_Hash: 3897917586
+      m_Source: jobs.coral-turtle-population.task.SiteV
+      m_Hash: 51855077
     Steps:
-    - Type: 0
+    - Type: 3
       Target:
-        m_Source: Sargassum
-        m_Hash: 444981425
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: StaghornCoral
-        m_Hash: 2717353052
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
-        m_Hash: 2762679420
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: SargassumCoveredReef.PopulationHistory.StaghornCoral
-        m_Hash: 2773834985
+        m_Source: RS-2V
+        m_Hash: 2162458881
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: stressCoral
-      m_Hash: 470518738
+      m_Source: scanTurtle
+      m_Hash: 941606826
     LabelId:
-      m_Source: jobs.coral-invade.task.stressCoral
-      m_Hash: 4084246020
+      m_Source: jobs.coral-turtle-population.task.scanTurtle
+      m_Hash: 216022589
     Steps:
-    - Type: 1
+    - Type: 0
       Target:
-        m_Source: StaghornCoral.Light.Stressed
-        m_Hash: 3171531273
+        m_Source: LoggerheadTurtle
+        m_Hash: 3290936401
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: siteV
+      m_Hash: 2461650888
   - Id:
-      m_Source: coralLight
-      m_Hash: 3561425398
+      m_Source: turtleModel
+      m_Hash: 523491196
     LabelId:
-      m_Source: jobs.coral-invade.task.coralLight
-      m_Hash: 1288826080
+      m_Source: jobs.coral-turtle-population.task.turtleModel
+      m_Hash: 3883106277
     Steps:
     - Type: 1
       Target:
-        m_Source: SargassumCoveredReef.WaterChemHistory.Light
-        m_Hash: 2480504015
+        m_Source: ReefEdge.Model.TurtleVisual
+        m_Hash: 4167532367
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: scanTurtle
+      m_Hash: 941606826
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
     LabelId:
-      m_Source: jobs.coral-invade.task.reportBack
-      m_Hash: 1677863150
+      m_Source: jobs.coral-turtle-population.task.reportBack
+      m_Hash: 1159626771
     Steps:
     - Type: 10
       Target:
@@ -115,7 +101,9 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: turtleModel
+      m_Hash: 523491196
   m_OptimizedTaskList:
   - Id:
       m_Source: siteR
@@ -198,7 +186,7 @@ MonoBehaviour:
   m_CashReward: 31
   m_GearReward: 128
   m_AdditionalRewards: []
-  m_Scripting: {fileID: -1942890987711236906, guid: 5a0af15e31dc444f4b4acdda64065bf7,
+  m_Scripting: {fileID: -1942890987711236906, guid: 9fc37425d4de14b3ab0a9308915f10db,
     type: 3}
   m_ExtraAssets:
   - {fileID: -4270002856181823206, guid: 9f79591e1652747f9bcc73bb018ef42d, type: 3}
