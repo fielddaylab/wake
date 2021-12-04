@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
-  m_Name: coral-turtle-population
+  m_Name: coral-turtle-stability
   m_EditorClassIdentifier: 
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: jobs.coral-turtle-population.name
-    m_Hash: 3193398050
+    m_Source: jobs.coral-turtle-stability.name
+    m_Hash: 556869326
   m_PosterId:
-    m_Source: jobs.coral-turtle-population.poster
-    m_Hash: 1371347848
+    m_Source: jobs.coral-turtle-stability.poster
+    m_Hash: 2009192724
   m_DescId:
     m_Source: jobs.coral-turtle-population.desc
     m_Hash: 3020145588
@@ -33,7 +33,7 @@ MonoBehaviour:
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 0
   m_PrerequisiteJobs:
-  - {fileID: 11400000, guid: b572abe8741ac9d478304240f9d3084d, type: 2}
+  - {fileID: 11400000, guid: 55237f27d66b541dc99e54b798ae27f8, type: 2}
   m_PrereqConditions: 
   m_StationId:
     m_Source: CoralStation
@@ -43,25 +43,11 @@ MonoBehaviour:
     m_Hash: 2162458881
   m_Tasks:
   - Id:
-      m_Source: siteV
-      m_Hash: 2461650888
+      m_Source: scanAll
+      m_Hash: 1784740587
     LabelId:
-      m_Source: jobs.coral-turtle-population.task.SiteV
-      m_Hash: 51855077
-    Steps:
-    - Type: 3
-      Target:
-        m_Source: RS-2V
-        m_Hash: 2162458881
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: scanTurtle
-      m_Hash: 941606826
-    LabelId:
-      m_Source: jobs.coral-turtle-population.task.scanTurtle
-      m_Hash: 216022589
+      m_Source: jobs.coral-turtle-stability.task.SiteV
+      m_Hash: 3770236753
     Steps:
     - Type: 0
       Target:
@@ -69,31 +55,87 @@ MonoBehaviour:
         m_Hash: 3290936401
       ConditionString: 
       Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Copepod
+        m_Hash: 1053183451
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_Hash: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: QueenConch
+        m_Hash: 2098174204
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_Hash: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_Hash: 2717353052
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: behavior
+      m_Hash: 3488202279
+    LabelId:
+      m_Source: jobs.coral-turtle-stability.task.scanTurtle
+      m_Hash: 1327499417
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.QueenConch
+        m_Hash: 1192689825
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
+        m_Hash: 1090187846
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.Copepod
+        m_Hash: 1033032444
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: siteV
-      m_Hash: 2461650888
+    - m_Source: scanAll
+      m_Hash: 1784740587
   - Id:
       m_Source: turtleModel
       m_Hash: 523491196
     LabelId:
-      m_Source: jobs.coral-turtle-population.task.turtleModel
-      m_Hash: 3883106277
+      m_Source: jobs.coral-turtle-stability.task.turtleModel
+      m_Hash: 503602137
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.LoggerheadTurtle
-        m_Hash: 1905950827
+        m_Source: ReefEdge.Model.TurtleVisual
+        m_Hash: 4167532367
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: scanTurtle
-      m_Hash: 941606826
+    - m_Source: behavior
+      m_Hash: 3488202279
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
     LabelId:
-      m_Source: jobs.coral-turtle-population.task.reportBack
-      m_Hash: 1159626771
+      m_Source: jobs.coral-turtle-stability.task.reportBack
+      m_Hash: 3158413991
     Steps:
     - Type: 10
       Target:
@@ -186,7 +228,7 @@ MonoBehaviour:
   m_CashReward: 31
   m_GearReward: 128
   m_AdditionalRewards: []
-  m_Scripting: {fileID: -1942890987711236906, guid: 9fc37425d4de14b3ab0a9308915f10db,
+  m_Scripting: {fileID: -1942890987711236906, guid: 216ac30c37e4647f2ae6f6188c356d26,
     type: 3}
   m_ExtraAssets:
   - {fileID: -4270002856181823206, guid: 9f79591e1652747f9bcc73bb018ef42d, type: 3}
