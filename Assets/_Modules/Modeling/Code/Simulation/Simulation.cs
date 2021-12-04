@@ -846,7 +846,7 @@ namespace Aqua.Modeling
                         unsyncedOrganisms--;
                     }
                 } else{
-                    remap[i] = -1;
+                    remap[i] = -2;
                 }
             }
 
@@ -886,7 +886,9 @@ namespace Aqua.Modeling
                 if (remap >= 0) {
                     accum += GraphingUtils.RPD(source->Populations[i], target->Populations[remap]);
                 } else {
-                    accum += 1;
+                    if (remap != -2) {
+                        accum += 1;
+                    }
                 }
             }
 

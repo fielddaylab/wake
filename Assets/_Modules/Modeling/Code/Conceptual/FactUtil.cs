@@ -30,8 +30,9 @@ namespace Aqua.Modeling {
 
                 foreach(var fact in potentialFacts) { 
                     switch(fact.Type) {
-                        case BFTypeId.Eat: {
-                            if (critters.Contains(((BFEat) fact).Critter)) {
+                        case BFTypeId.Eat:
+                        case BFTypeId.Parasites: {
+                            if (critters.Contains(BFType.Target(fact))) {
                                 importableFacts.PushBack(fact);
                             }
                             break;
@@ -53,6 +54,37 @@ namespace Aqua.Modeling {
             }
         }
 
+        static public void GatherSimulatedSubset(HashSet<BestiaryDesc> filter, HashSet<BestiaryDesc> graphedEntities, HashSet<BFBase> graphedFacts, HashSet<BestiaryDesc> simulatedEntities, HashSet<BFBase> simulatedFacts) {
+            foreach(var graphed in graphedEntities) {
+                if (filter.Contains(graphed)) {
+                    simulatedEntities.Add(graphed);
+                }
+            }
+
+            foreach(var graphed in graphedFacts) {
+                BestiaryDesc target = BFType.Target(graphed);
+                if (filter.Contains(graphed.Parent) && (target == null || filter.Contains(target))) {
+                    simulatedFacts.Add(graphed);
+                }
+            }
+        }
+
+        static public void GatherInterventionSubset(BestiaryDesc additional, BestiaryData data, HashSet<BestiaryDesc> simulatedEntities, HashSet<BestiaryDesc> additionalEntities, HashSet<BFBase> additionalFacts) {
+            if (additional != null && !simulatedEntities.Contains(additional)) {
+                additionalEntities.Add(additional);
+
+                foreach(var fact in additional.PlayerFacts) {
+                    if (fact.Parent != additional || !data.HasFact(fact.Id)) {
+                        continue;
+                    }
+                    BestiaryDesc target = BFType.Target(fact);
+                    if (target == null || simulatedEntities.Contains(target)) {
+                        additionalFacts.Add(fact);
+                    }
+                }
+            }
+        }
+
         static public void GatherPendingEntities(RingBuffer<BestiaryDesc> all, BestiaryData filter, HashSet<BestiaryDesc> current, HashSet<BestiaryDesc> pending) {
             foreach(var entity in all) {
                 if (!current.Contains(entity) && filter.HasEntity(entity.Id())) {
@@ -65,14 +97,9 @@ namespace Aqua.Modeling {
             foreach(var fact in all) {
                 if (!current.Contains(fact) && filter.HasFact(fact.Id)) {
                     bool add = true;
-                    switch(fact.Type) {
-                        case BFTypeId.Eat: {
-                            BestiaryDesc target = ((BFEat) fact).Critter;
-                            if (!currentEntities.Contains(target) && !pendingEntities.Contains(target)) {
-                                add = false;
-                            }
-                            break;
-                        }
+                    BestiaryDesc target = BFType.Target(fact);
+                    if (target != null && !currentEntities.Contains(target) && !pendingEntities.Contains(target)) {
+                        add = false;
                     }
                     if (add) {
                         pending.Add(fact);

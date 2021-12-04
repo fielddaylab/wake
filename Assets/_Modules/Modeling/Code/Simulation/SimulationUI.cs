@@ -41,6 +41,7 @@ namespace Aqua.Modeling {
         #endregion // Inspector
 
         [NonSerialized] private bool m_IsPredicting;
+        [NonSerialized] private bool m_IsIntervention;
         [NonSerialized] private BaseInputLayer m_InputLayer;
 
         private ModelState m_State;
@@ -109,6 +110,7 @@ namespace Aqua.Modeling {
 
         public void SetPhase(ModelPhases phase) {
             m_IsPredicting = phase > ModelPhases.Sync;
+            m_IsIntervention = phase == ModelPhases.Intervene;
             m_PredictTimeDisplay.gameObject.SetActive(m_IsPredicting);
             bool alreadyCompleted = (m_State.CompletedPhases & phase) != 0;
 
@@ -119,6 +121,7 @@ namespace Aqua.Modeling {
                 case ModelPhases.Sync: {
                     m_PredictButton.gameObject.SetActive(false);
                     m_AccuracyDisplay.gameObject.SetActive(true);
+                    m_InterveneButtonGroup.gameObject.SetActive(false);
                     m_State.LastKnownAccuracy = 0;
                     RenderAccuracy();
                     
@@ -143,11 +146,27 @@ namespace Aqua.Modeling {
                     m_SimulateButton.gameObject.SetActive(false);
                     m_HistoricalMissingDisplay.SetActive(false);
                     m_AccuracyDisplay.gameObject.SetActive(false);
+                    m_InterveneButtonGroup.gameObject.SetActive(false);
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
                         m_PhaseRoutine.Replace(this, Predict_AlreadyCompleted()).TryManuallyUpdate(0);
                     } else {
                         m_PredictButton.gameObject.SetActive(true);
+                        m_PredictGraph.Clear();
+                    }
+                    break;
+                }
+            
+                case ModelPhases.Intervene: {
+                    m_SimulateButton.gameObject.SetActive(false);
+                    m_HistoricalMissingDisplay.SetActive(false);
+                    m_AccuracyDisplay.gameObject.SetActive(false);
+                    m_PredictButton.gameObject.SetActive(false);
+                    if (alreadyCompleted) {
+                        m_InterveneButtonGroup.gameObject.SetActive(false);
+                        m_PhaseRoutine.Replace(this, Intervene_AlreadyCompleted()).TryManuallyUpdate(0);
+                    } else {
+                        m_InterveneButtonGroup.gameObject.SetActive(true);
                         m_PredictGraph.Clear();
                     }
                     break;
@@ -254,6 +273,25 @@ namespace Aqua.Modeling {
 
         #endregion // Predict
 
+        #region Intervene
+
+        private IEnumerator Intervene_AlreadyCompleted() {
+            m_PredictGraph.Clear();
+
+            m_State.Simulation.EnsureHistorical();
+            m_State.Simulation.EnsurePlayerData();
+            
+            while(m_State.Simulation.IsExecutingRequests()) {
+                yield return null;
+            }
+
+            PopulateHistoricalGraph();
+            PopulatePlayerGraph();
+            RenderLines((int) m_ProgressInfo.Sim.SyncTickCount, false);
+        }
+
+        #endregion // Intervene
+
         #region Rendering
 
         private void RenderLines(int ticksToRender, bool predicting) {
@@ -276,7 +314,7 @@ namespace Aqua.Modeling {
             m_PlayerGraph.RenderLines(fullRect, historicalRange);
 
             if (predicting) {
-                m_PredictGraph.RenderLines(fullRect, predictRange);
+                m_PredictGraph.RenderLines(fullRect, predictRange, m_IsIntervention);
             } else {
                 m_PredictGraph.Clear();
             }
@@ -310,6 +348,7 @@ namespace Aqua.Modeling {
             ((RectTransform) m_SimulateButton.transform).SetAnchorX(left);
             ((RectTransform) m_HistoricalMissingDisplay.transform).SetAnchorX(left);
             ((RectTransform) m_PredictButton.transform).SetAnchorX(right);
+            m_InterveneButtonGroup.SetAnchorX(right);
         }
 
         private void RenderAccuracy() {

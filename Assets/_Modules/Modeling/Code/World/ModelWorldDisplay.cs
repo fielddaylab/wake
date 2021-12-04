@@ -165,13 +165,26 @@ namespace Aqua.Modeling {
                 display = AllocOrganism(organism, index++);
                 yield return null;
             }
+
+            var intervention = m_State.Simulation.Intervention;
+            foreach(var entity in intervention.AdditionalEntities) {
+                display = AllocOrganism(entity, index++);
+                yield return null;
+            }
+
             m_SolverState.MovedOutputMask = (1u << organismCount) - 1;
             foreach(var fact in m_State.Conceptual.GraphedFacts) {
-                switch(fact.Type) {
-                    case BFTypeId.Eat: {
-                        GenerateConnection(fact, fact.Parent, ((BFEat) fact).Critter);
-                        break;
-                    }
+                BestiaryDesc target = BFType.Target(fact);
+                if (target != null) {
+                    GenerateConnection(fact, fact.Parent, target);
+                }
+                yield return null;
+            }
+
+            foreach(var fact in intervention.AdditionalFacts) {
+                BestiaryDesc target = BFType.Target(fact);
+                if (target != null) {
+                    GenerateConnection(fact, fact.Parent, target);
                 }
                 yield return null;
             }

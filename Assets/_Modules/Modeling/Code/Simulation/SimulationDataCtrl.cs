@@ -38,9 +38,12 @@ namespace Aqua.Modeling {
             }
         }
 
-        public struct InterventionData {
+        public class InterventionData {
             public BestiaryDesc Target;
             public int Amount;
+
+            public readonly HashSet<BestiaryDesc> AdditionalEntities = new HashSet<BestiaryDesc>();
+            public readonly HashSet<BFBase> AdditionalFacts = new HashSet<BFBase>();
         }
 
         [SerializeField] private float m_ErrorScale = 2;
@@ -70,10 +73,13 @@ namespace Aqua.Modeling {
         private AsyncHandle m_PredictProfileTask;
         private AsyncHandle m_PredictDataTask;
 
-        private readonly HashSet<StringHash32> m_CrittersToSync = new HashSet<StringHash32>();
+        private readonly HashSet<BestiaryDesc> m_RelevantCritters = new HashSet<BestiaryDesc>();
+        private readonly HashSet<StringHash32> m_RelevantCritterIds = new HashSet<StringHash32>();
         private readonly HashSet<StringHash32> m_CrittersWithHistoricalData = new HashSet<StringHash32>();
 
-        public InterventionData Intervention;
+        public readonly InterventionData Intervention = new InterventionData();
+
+        public Action OnInterventionUpdated;
 
         public void SetData(ModelState state, ModelProgressInfo info) {
             m_State = state;
@@ -87,7 +93,7 @@ namespace Aqua.Modeling {
                 return m_CrittersWithHistoricalData.Contains(id);
             };
             ShouldGraphHistorical = (StringHash32 id) => {
-                return m_CrittersToSync.Contains(id) && HasHistoricalPopulation(id);
+                return m_RelevantCritterIds.Contains(id) && HasHistoricalPopulation(id);
             };
         }
 
@@ -133,27 +139,30 @@ namespace Aqua.Modeling {
         }
 
         public void LoadSite() {
-            GenerateHistorical();
-            GeneratePlayerProfile();
-
             if (m_ProgressInfo.Sim) {
                 m_PredictOutputSlice = new ResultWrapper(m_PlayerOutput.Ptr + m_ProgressInfo.Sim.SyncTickCount + 1);
             } else {
                 m_PredictOutputSlice = default;
             }
 
-            m_CrittersToSync.Clear();
+            m_RelevantCritters.Clear();
+            m_RelevantCritterIds.Clear();
             if (m_ProgressInfo.Scope != null) {
                 foreach(var organismId in m_ProgressInfo.Scope.OrganismIds) {
-                    m_CrittersToSync.Add(organismId);
+                    m_RelevantCritters.Add(Assets.Bestiary(organismId));
+                    m_RelevantCritterIds.Add(organismId);
                 }
             } else {
                 foreach(var organism in m_ProgressInfo.ImportableEntities) {
                     if (organism.Category() == BestiaryDescCategory.Critter) {
-                        m_CrittersToSync.Add(organism.Id());
+                        m_RelevantCritters.Add(organism);
+                        m_RelevantCritterIds.Add(organism.Id());
                     }
                 }
             }
+
+            GenerateHistorical();
+            GeneratePlayerProfile();
         }
 
         public void LoadConceptualModel() {
@@ -188,6 +197,12 @@ namespace Aqua.Modeling {
             return m_HistoricalDataTask.IsRunning() || m_HistoricalProfileTask.IsRunning()
                 || m_PlayerDataTask.IsRunning() || m_PlayerProfileTask.IsRunning()
                 || m_PredictProfileTask.IsRunning() || m_PredictDataTask.IsRunning();
+        }
+
+        private void GenerateSimulatedSubset() {
+            m_State.Conceptual.SimulatedEntities.Clear();
+            m_State.Conceptual.SimulatedFacts.Clear();
+            FactUtil.GatherSimulatedSubset(m_RelevantCritters, m_State.Conceptual.GraphedEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.SimulatedEntities, m_State.Conceptual.SimulatedFacts);
         }
 
         #region Historical Data
@@ -255,7 +270,7 @@ namespace Aqua.Modeling {
         /// Returns if any historical data is missing.
         /// </summary>
         public bool IsAnyHistoricalDataMissing() {
-            foreach(var sync in m_CrittersToSync) {
+            foreach(var sync in m_RelevantCritterIds) {
                 if (!m_CrittersWithHistoricalData.Contains(sync)) {
                     return true;
                 }
@@ -310,7 +325,8 @@ namespace Aqua.Modeling {
         /// </summary>
         public void EnsurePlayerProfile() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
-                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+                GenerateSimulatedSubset();
+                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerReady &= ~DataReadyFlags.Data;
 
                 // prediction data depends on player data
@@ -323,7 +339,8 @@ namespace Aqua.Modeling {
         /// </summary>
         public void EnsurePlayerData() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
-                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+                GenerateSimulatedSubset();
+                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerDataTask.Cancel();
                 m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
                 
@@ -346,7 +363,8 @@ namespace Aqua.Modeling {
             m_PlayerDataTask.Cancel();
             m_PlayerReady = 0;
 
-            m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+            GenerateSimulatedSubset();
+            m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
             
             // prediction data depends on player data
             ClearPredict();
@@ -358,7 +376,8 @@ namespace Aqua.Modeling {
         public void GeneratePlayerData() {
             // if profile is not ready, we also need to rebuild that
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
-                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+                GenerateSimulatedSubset();
+                m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 ClearPredict();
             }
             m_PlayerReady &= ~DataReadyFlags.Data;
@@ -375,7 +394,7 @@ namespace Aqua.Modeling {
         /// Calculates accuracy between historical data and player data.
         /// </summary>
         public int CalculateAccuracy(uint snapshotCount) {
-            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_CrittersToSync.Count, m_ProgressInfo.Scope?.IncludeWaterChemistryInAccuracy ?? false));
+            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_RelevantCritterIds.Count, m_ProgressInfo.Scope?.IncludeWaterChemistryInAccuracy ?? false));
         }
 
         #endregion // Player Data
@@ -414,7 +433,6 @@ namespace Aqua.Modeling {
             m_PredictDataTask.Cancel();
             m_PredictProfile.Clear();
             m_PredictReady = 0;
-            Intervention = default;
         }
 
         /// <summary>
@@ -434,7 +452,7 @@ namespace Aqua.Modeling {
             EnsurePlayerData();
 
             if ((m_PredictReady & DataReadyFlags.Profile) == 0 && !m_PredictProfileTask.IsRunning()) {
-                m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Predict), AsyncFlags.HighPriority);
+                m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, Intervention, SectionType.Predict), AsyncFlags.HighPriority);
                 m_PredictDataTask.Cancel();
                 m_PredictDataTask = Async.Schedule(PredictDataTask(m_PredictProfile, m_PlayerBuffer, m_ProgressInfo, Intervention, m_PredictOutputSlice), AsyncFlags.HighPriority);
             } else if ((m_PredictReady & DataReadyFlags.Data) == 0 && !m_PredictDataTask.IsRunning()) {
@@ -450,7 +468,7 @@ namespace Aqua.Modeling {
             m_PredictDataTask.Cancel();
             m_PredictReady = 0;
 
-            m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Predict), AsyncFlags.HighPriority);
+            m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, Intervention, SectionType.Predict), AsyncFlags.HighPriority);
         }
 
         /// <summary>
@@ -461,12 +479,45 @@ namespace Aqua.Modeling {
 
             // if profile is not ready, we also need to rebuild that
             if ((m_PredictReady & DataReadyFlags.Profile) == 0 && !m_PredictProfileTask.IsRunning()) {
-                m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Predict), AsyncFlags.HighPriority);
+                m_PredictProfileTask = Async.Schedule(PlayerProfileTask(m_PredictProfile, m_ProgressInfo, m_State.Conceptual, Intervention, SectionType.Predict), AsyncFlags.HighPriority);
             }
             m_PredictReady &= ~DataReadyFlags.Data;
 
             m_PredictDataTask.Cancel();
             m_PredictDataTask = Async.Schedule(PredictDataTask(m_PredictProfile, m_PlayerBuffer, m_ProgressInfo, Intervention, m_PredictOutputSlice), AsyncFlags.HighPriority);
+        }
+
+        /// <summary>
+        /// Regenerates intervention data.
+        /// </summary>
+        public void RegenerateIntervention() {
+            Intervention.AdditionalEntities.Clear();
+            Intervention.AdditionalFacts.Clear();
+            
+            FactUtil.GatherInterventionSubset(Intervention.Target, Save.Bestiary, m_State.Conceptual.SimulatedEntities, Intervention.AdditionalEntities, Intervention.AdditionalFacts);
+            ClearPredict();
+            DispatchInterventionUpdate();
+        }
+
+        /// <summary>
+        /// Dispatches the intervention update message.
+        /// </summary>
+        public void DispatchInterventionUpdate() {
+            OnInterventionUpdated?.Invoke();
+        }
+
+        /// <summary>
+        /// Clears the intervention.
+        /// </summary>
+        public void ClearIntervention() {
+            if (Intervention.Target != null) {
+                Intervention.Target = null;
+                Intervention.AdditionalEntities.Clear();
+                Intervention.AdditionalFacts.Clear();
+                Intervention.Amount = 0;
+                ClearPredict();
+                DispatchInterventionUpdate();
+            }
         }
 
         #endregion // Prediction Data
@@ -524,22 +575,21 @@ namespace Aqua.Modeling {
                 profile.ImportSim(info.Sim);
             }
 
-            foreach(var entity in model.GraphedEntities) {
+            foreach(var entity in model.SimulatedEntities) {
                 profile.ImportActor(entity);
                 yield return null;
             }
 
-            bool interventionIsNew = intervention.Target != null && !model.GraphedEntities.Contains(intervention.Target);
-
-            if (interventionIsNew) {
-                profile.ImportActor(intervention.Target);
-                yield return null;
+            if (intervention != null) {
+                foreach(var entity in intervention.AdditionalEntities) {
+                    yield return null;
+                }
             }
 
             profile.FinishActors();
             yield return null;
 
-            foreach(var entity in model.GraphedEntities) {
+            foreach(var entity in model.SimulatedEntities) {
                 foreach(var internalFact in entity.InternalFacts) {
                     profile.ImportFact(internalFact, BFDiscoveredFlags.All);
                     yield return null;
@@ -551,28 +601,30 @@ namespace Aqua.Modeling {
                 }
             }
 
-            if (interventionIsNew) {
-                foreach(var internalFact in intervention.Target.InternalFacts) {
-                    profile.ImportFact(internalFact, BFDiscoveredFlags.All);
-                    yield return null;
-                }
+            if (intervention != null) {
+                foreach(var entity in intervention.AdditionalEntities) {
+                    foreach(var internalFact in entity.InternalFacts) {
+                        profile.ImportFact(internalFact, BFDiscoveredFlags.All);
+                        yield return null;
+                    }
 
-                foreach(var alwaysFact in intervention.Target.AssumedFacts) {
-                    profile.ImportFact(alwaysFact, BFDiscoveredFlags.All);
-                    yield return null;
-                }
-
-                foreach(var playerFact in intervention.Target.PlayerFacts) {
-                    if (playerFact.Parent == intervention.Target && Save.Bestiary.HasFact(playerFact.Id)) {
-                        profile.ImportFact(playerFact, Save.Bestiary.GetDiscoveredFlags(playerFact.Id));
+                    foreach(var alwaysFact in entity.AssumedFacts) {
+                        profile.ImportFact(alwaysFact, BFDiscoveredFlags.All);
                         yield return null;
                     }
                 }
             }
 
-            foreach(var fact in model.GraphedFacts) {
+            foreach(var fact in model.SimulatedFacts) {
                 profile.ImportFact(fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
                 yield return null;
+            }
+
+            if (intervention != null) {
+                foreach(var fact in intervention.AdditionalFacts) {
+                    profile.ImportFact(fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                    yield return null;
+                }
             }
 
             profile.FinishFacts();

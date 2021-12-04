@@ -15,14 +15,20 @@ namespace Aqua.Modeling {
         public StatusId Status;
         public readonly HashSet<BestiaryDesc> GraphedEntities = new HashSet<BestiaryDesc>();
         public readonly HashSet<BFBase> GraphedFacts = new HashSet<BFBase>();
+
         public readonly HashSet<BestiaryDesc> PendingEntities = new HashSet<BestiaryDesc>();
         public readonly HashSet<BFBase> PendingFacts = new HashSet<BFBase>();
+
+        public readonly HashSet<BestiaryDesc> SimulatedEntities = new HashSet<BestiaryDesc>();
+        public readonly HashSet<BFBase> SimulatedFacts = new HashSet<BFBase>();
 
         public void LoadFrom(SiteSurveyData siteData) {
             GraphedEntities.Clear();
             GraphedFacts.Clear();
             PendingEntities.Clear();
             PendingFacts.Clear();
+            SimulatedEntities.Clear();
+            SimulatedFacts.Clear();
 
             foreach(var critterId in siteData.GraphedCritters) {
                 GraphedEntities.Add(Assets.Bestiary(critterId));
@@ -38,6 +44,8 @@ namespace Aqua.Modeling {
             GraphedFacts.Clear();
             PendingEntities.Clear();
             PendingFacts.Clear();
+            SimulatedEntities.Clear();
+            SimulatedFacts.Clear();
             Status = StatusId.UpToDate;
         }
     }

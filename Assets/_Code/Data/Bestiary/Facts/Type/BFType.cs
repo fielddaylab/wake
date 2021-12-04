@@ -98,6 +98,24 @@ namespace Aqua
             return s_DefaultDiscoveredFlags[(int) inFactType];
         }
 
+        static public BestiaryDesc Target(BFBase inFact)
+        {
+            switch(inFact.Type)
+            {
+                case BFTypeId.Eat:
+                {
+                    return ((BFEat) inFact).Critter;
+                }
+                
+                // TODO: Parasite
+                
+                default :
+                {
+                    return null;
+                }
+            }
+        }
+
         #endregion // Attributes
 
         #region Methods
@@ -258,6 +276,8 @@ namespace Aqua
                         return string.Format("{0}.Eats.{1}", parentName, !eat.Critter ? "Unknown" : eat.Critter.name);
                     }
                 }
+
+                // TODO: Parasites
 
                 case BFTypeId.Grow: {
                     BFGrow grow = (BFGrow) inFact;

@@ -44,6 +44,8 @@ namespace Aqua.Modeling {
             m_SimulationUI.OnSyncAchieved = OnSyncAchieved;
             m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
 
+            m_SimDataCtrl.OnInterventionUpdated = OnInterventionUpdated;
+
             m_State.Simulation = m_SimDataCtrl;
 
             m_ConceptualUI.SetData(m_State, m_ProgressInfo);
@@ -80,6 +82,10 @@ namespace Aqua.Modeling {
                     m_EcosystemHeader.Show(m_State.Environment);
                     m_World.Show();
                 }
+            }
+
+            if (prevPhase == ModelPhases.Intervene && phase < ModelPhases.Intervene) {
+                m_SimDataCtrl.ClearIntervention();
             }
 
             if (phase == ModelPhases.Concept) {
@@ -226,6 +232,10 @@ namespace Aqua.Modeling {
                 Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
                 RefreshPhaseHeader();
             }
+        }
+
+        private void OnInterventionUpdated() {
+            m_World.Reconstruct();
         }
 
         private void OnInterventionCompleted() {

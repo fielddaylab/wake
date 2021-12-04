@@ -81,6 +81,7 @@ namespace Aqua
             BFDeath.Configure();
             BFConsume.Configure();
             BFBody.Configure();
+            BFSim.Configure();
         }
 
         #endregion // Initialization

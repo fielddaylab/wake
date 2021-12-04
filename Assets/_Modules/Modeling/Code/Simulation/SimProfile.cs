@@ -333,14 +333,17 @@ namespace Aqua.Modeling {
                 }
 
                 case BFTypeId.Eat: {
-                    BFEat eat = (BFEat) fact;
-                    int targetIdx = IndexOfActorType(eat.Critter.Id());
-                    if (targetIdx >= 0) {
-                        WorkingEatInfo* workingInfo = AllocWorkingEat((byte) index, (byte) targetIdx);
-                        if (eat.OnlyWhenStressed) {
-                            workingInfo->AmountWhenStressed = eat.Amount;
-                        } else {
-                            workingInfo->AmountWhenAlive = eat.Amount;
+                    // only import if the player has the rate
+                    if ((flags & BFDiscoveredFlags.Rate) != 0) {
+                        BFEat eat = (BFEat) fact;
+                        int targetIdx = IndexOfActorType(eat.Critter.Id());
+                        if (targetIdx >= 0) {
+                            WorkingEatInfo* workingInfo = AllocWorkingEat((byte) index, (byte) targetIdx);
+                            if (eat.OnlyWhenStressed) {
+                                workingInfo->AmountWhenStressed = eat.Amount;
+                            } else {
+                                workingInfo->AmountWhenAlive = eat.Amount;
+                            }
                         }
                     }
                     break;
