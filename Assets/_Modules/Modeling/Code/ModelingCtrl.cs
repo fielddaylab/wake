@@ -296,6 +296,14 @@ namespace Aqua.Modeling {
             ModelPhases mask = 0;
             if (m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady || m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport) {
                 mask |= ModelPhases.Concept;
+            } else if (m_ProgressInfo.Scope != null && m_State.Conceptual.Status != ConceptualModelState.StatusId.MissingData) {
+                if (!HasRequiredModel(m_ProgressInfo.Scope.SyncModelId)) {
+                    mask |= ModelPhases.Sync;
+                } else if (!HasRequiredModel(m_ProgressInfo.Scope.PredictModelId)) {
+                    mask |= ModelPhases.Predict;
+                } else if (!HasRequiredModel(m_ProgressInfo.Scope.InterveneModelId)) {
+                    mask |= ModelPhases.Intervene;
+                }
             }
 
             m_Header.UpdateHighlightMask(mask);

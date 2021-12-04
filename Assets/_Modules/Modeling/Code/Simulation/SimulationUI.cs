@@ -23,6 +23,7 @@ namespace Aqua.Modeling {
 
         [Header("Sync")]
         [SerializeField] private Button m_SimulateButton = null;
+        [SerializeField] private GameObject m_HistoricalMissingDisplay = null;
         [SerializeField] private GameObject m_AccuracyDisplay = null;
         [SerializeField] private RectTransform m_AccuracyMeter = null;
         [SerializeField] private RectTransform m_AccuracyGoal = null;
@@ -123,9 +124,15 @@ namespace Aqua.Modeling {
                     
                     if (alreadyCompleted) {
                         m_SimulateButton.gameObject.SetActive(false);
+                        m_HistoricalMissingDisplay.SetActive(false);
                         m_PhaseRoutine.Replace(this, Sync_AlreadyCompleted()).TryManuallyUpdate(0);
+                    } else if (m_State.Simulation.IsAnyHistoricalDataMissing()) {
+                        m_SimulateButton.gameObject.SetActive(false);
+                        m_HistoricalMissingDisplay.SetActive(true);
+                        ClearLines();
                     } else {
                         m_SimulateButton.gameObject.SetActive(true);
+                        m_HistoricalMissingDisplay.SetActive(false);
                         ClearLines();
                     }
                     
@@ -134,6 +141,7 @@ namespace Aqua.Modeling {
 
                 case ModelPhases.Predict: {
                     m_SimulateButton.gameObject.SetActive(false);
+                    m_HistoricalMissingDisplay.SetActive(false);
                     m_AccuracyDisplay.gameObject.SetActive(false);
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
@@ -300,6 +308,7 @@ namespace Aqua.Modeling {
             }
 
             ((RectTransform) m_SimulateButton.transform).SetAnchorX(left);
+            ((RectTransform) m_HistoricalMissingDisplay.transform).SetAnchorX(left);
             ((RectTransform) m_PredictButton.transform).SetAnchorX(right);
         }
 

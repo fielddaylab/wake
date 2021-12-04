@@ -84,8 +84,7 @@ namespace Aqua.Modeling {
 
         private SimulationDataCtrl() {
             HasHistoricalPopulation = (StringHash32 id) => {
-                // return m_CrittersWithHistoricalData.Contains(id);
-                return true;
+                return m_CrittersWithHistoricalData.Contains(id);
             };
             ShouldGraphHistorical = (StringHash32 id) => {
                 return m_CrittersToSync.Contains(id) && HasHistoricalPopulation(id);
@@ -234,9 +233,9 @@ namespace Aqua.Modeling {
             if ((m_HistoricalReady & DataReadyFlags.Profile) == 0 && !m_HistoricalProfileTask.IsRunning()) {
                 m_HistoricalProfileTask = Async.Schedule(HistoricalProfileTask(m_HistoricalProfile, m_ProgressInfo), AsyncFlags.HighPriority);
                 m_HistoricalDataTask.Cancel();
-                m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical), AsyncFlags.HighPriority);
+                m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical, null), AsyncFlags.HighPriority);
             } else if ((m_HistoricalReady & DataReadyFlags.Data) == 0 && !m_HistoricalDataTask.IsRunning()) {
-                m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical), AsyncFlags.HighPriority);
+                m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical, null), AsyncFlags.HighPriority);
             }
         }
 
@@ -249,7 +248,20 @@ namespace Aqua.Modeling {
             m_HistoricalReady = 0;
 
             m_HistoricalProfileTask = Async.Schedule(HistoricalProfileTask(m_HistoricalProfile, m_ProgressInfo), AsyncFlags.HighPriority);
-            m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical), AsyncFlags.HighPriority);
+            m_HistoricalDataTask = Async.Schedule(DescriptiveDataTask(m_HistoricalProfile, m_HistoricalBuffer, m_ProgressInfo, m_HistoricalOutput, SectionType.Historical, null), AsyncFlags.HighPriority);
+        }
+
+        /// <summary>
+        /// Returns if any historical data is missing.
+        /// </summary>
+        public bool IsAnyHistoricalDataMissing() {
+            foreach(var sync in m_CrittersToSync) {
+                if (!m_CrittersWithHistoricalData.Contains(sync)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion // Historical Data
@@ -288,6 +300,9 @@ namespace Aqua.Modeling {
             m_PlayerDataTask.Cancel();
             m_PlayerProfile.Clear();
             m_PlayerReady = 0;
+
+            // prediction data depends on player data
+            ClearPredict();
         }
 
         /// <summary>
@@ -297,6 +312,9 @@ namespace Aqua.Modeling {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerReady &= ~DataReadyFlags.Data;
+
+                // prediction data depends on player data
+                ClearPredict();
             }
         }
 
@@ -307,9 +325,16 @@ namespace Aqua.Modeling {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerDataTask.Cancel();
-                m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player), AsyncFlags.HighPriority);
+                m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
+                
+                // prediction data depends on player data
+                ClearPredict();
             } else if ((m_PlayerReady & DataReadyFlags.Data) == 0 && !m_PlayerDataTask.IsRunning()) {
-                m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player), AsyncFlags.HighPriority);
+                m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
+                
+                // prediction data depends on player data
+                m_PredictReady &= ~DataReadyFlags.Data;
+                m_PredictDataTask.Cancel();
             }
         }
 
@@ -322,6 +347,9 @@ namespace Aqua.Modeling {
             m_PlayerReady = 0;
 
             m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+            
+            // prediction data depends on player data
+            ClearPredict();
         }
 
         /// <summary>
@@ -331,18 +359,23 @@ namespace Aqua.Modeling {
             // if profile is not ready, we also need to rebuild that
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, default, SectionType.Player), AsyncFlags.HighPriority);
+                ClearPredict();
             }
             m_PlayerReady &= ~DataReadyFlags.Data;
 
             m_PlayerDataTask.Cancel();
-            m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player), AsyncFlags.HighPriority);
+            m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
+
+            // prediction data depends on player data
+            m_PredictReady &= ~DataReadyFlags.Data;
+            m_PredictDataTask.Cancel();
         }
 
         /// <summary>
         /// Calculates accuracy between historical data and player data.
         /// </summary>
         public int CalculateAccuracy(uint snapshotCount) {
-            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, m_CrittersToSync, m_ProgressInfo.Scope?.IncludeWaterChemistryInAccuracy ?? false));
+            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_CrittersToSync.Count, m_ProgressInfo.Scope?.IncludeWaterChemistryInAccuracy ?? false));
         }
 
         #endregion // Player Data
@@ -556,14 +589,14 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Builds descriptive data.
         /// </summary>
-        private IEnumerator DescriptiveDataTask(SimProfile profile, Simulation.Buffer buffer, ModelProgressInfo info, ResultWrapper output, SectionType type) {
+        private IEnumerator DescriptiveDataTask(SimProfile profile, Simulation.Buffer buffer, ModelProgressInfo info, ResultWrapper output, SectionType type, Predicate<StringHash32> organismFilter) {
             if (info.Sim == null) {
                 Log.Warn("[SimulationDataCtrl] No simulation available");
                 yield break;
             }
 
             using(Profiling.Time(string.Format("generating {0} data", type))) {
-                SimSnapshot initialSnapshot = Simulation.GenerateInitialSnapshot(profile, info.Sim);
+                SimSnapshot initialSnapshot = Simulation.GenerateInitialSnapshot(profile, info.Sim, organismFilter);
                 Simulation.Prepare(buffer, profile, initialSnapshot);
                 yield return null;
 

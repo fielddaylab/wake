@@ -107,7 +107,7 @@ namespace Aqua.Modeling
         /// <summary>
         /// Generates the initial snapshot for the given sim and profile.
         /// </summary>
-        static public SimSnapshot GenerateInitialSnapshot(SimProfile profile, BFSim sim) {
+        static public SimSnapshot GenerateInitialSnapshot(SimProfile profile, BFSim sim, Predicate<StringHash32> organismFilter = null) {
             SimSnapshot snapshot = default;
             snapshot.Water = profile.Water;
 
@@ -115,6 +115,10 @@ namespace Aqua.Modeling
             int actorIdx;
             for(int i = 0; i < sim.InitialActors.Length; i++) {
                 actorPop = sim.InitialActors[i];
+                if (organismFilter != null && !organismFilter(actorPop.Id)) {
+                    continue;
+                }
+                
                 actorIdx = profile.IndexOfActorType(actorPop.Id);
                 if (actorIdx >= 0) {
                     snapshot.Populations[actorIdx] = actorPop.Population;
@@ -826,17 +830,17 @@ namespace Aqua.Modeling
         /// <summary>
         /// Calculates the average error between the given source and target snapshots over a particular set of organisms.
         /// </summary>
-        static public float CalculateAverageError(SimSnapshot* sources, SimProfile sourceProfile, SimSnapshot* targets, SimProfile targetProfile, uint snapshotCount, HashSet<StringHash32> organismFilter, bool calculateWaterChemistry) {
+        static public float CalculateAverageError(SimSnapshot* sources, SimProfile sourceProfile, SimSnapshot* targets, SimProfile targetProfile, uint snapshotCount, Predicate<StringHash32> organismFilter, int expectedOrganismCount, bool calculateWaterChemistry) {
             if (snapshotCount == 0) {
                 return 0;
             }
 
             // build remap
             int* remap = stackalloc int[MaxTrackedCritters];
-            int unsyncedOrganisms = organismFilter.Count;
+            int unsyncedOrganisms = expectedOrganismCount;
             for(int i = 0; i < sourceProfile.ActorCount; i++) {
                 StringHash32 actorId = sourceProfile.Actors[i].Id;
-                if (organismFilter.Contains(actorId)) {
+                if (organismFilter(actorId)) {
                     remap[i] = targetProfile.IndexOfActorType(actorId);
                     if (remap[i] != -1) {
                         unsyncedOrganisms--;
