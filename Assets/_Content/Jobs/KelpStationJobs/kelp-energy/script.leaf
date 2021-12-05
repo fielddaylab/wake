@@ -23,10 +23,10 @@ $branch common.ringPhone
 
 :: helpModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", JobTaskTop(foodweb)
+@when 		scene:name == "Modeling", JobTaskTop(foodweb)
 @cutscene
 {@player}   Any idea what to do here?
-{@kevin}	When you are making a food web, the first step is to import your facts into the model.
+{@kevin}	When we make a food web, the first step is to import our facts into the model.
 
 :: ModelingComplete
 @trigger    ModelCompleted
