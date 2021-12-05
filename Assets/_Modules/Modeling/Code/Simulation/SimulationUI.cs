@@ -97,6 +97,9 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator DebugReloadGraph() {
+            m_State.Simulation.LoadSite();
+            m_State.Simulation.LoadConceptualModel();
+            
             RenderSyncPredictDivider();
 
             m_State.Simulation.ClearHistorical();
@@ -525,7 +528,7 @@ namespace Aqua.Modeling {
 
         private void PopulatePredictGraph() {
             SimSnapshot* data = m_State.Simulation.RetrievePredictData(out uint count);
-            m_PredictGraph.LoadOrganisms(data, count, m_ProgressInfo.Sim.PredictTickCount, m_State.Simulation.PredictProfile, (b) => true);
+            m_PredictGraph.LoadOrganisms(data, count, m_ProgressInfo.Sim.SyncTickCount, m_State.Simulation.PredictProfile, (b) => true);
         }
 
         static private GraphingUtils.AxisRangePair CalculateGraphRect(in Rect inA, in Rect inB, in Rect inC, in Rect inD, uint inTickCountX, uint inTickCountY) {

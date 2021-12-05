@@ -104,10 +104,10 @@ namespace Aqua.Modeling {
             m_HistoricalBuffer = new Simulation.Buffer(m_HistoricalArena);
             m_HistoricalOutput = new ResultWrapper(m_HistoricalArena, 0);
 
-            m_PlayerArena = Unsafe.CreateArena(ArenaSize + SimProfile.BufferSize, "sim.player");
+            m_PlayerArena = Unsafe.CreateArena(ArenaSize + SimProfile.BufferSize + 1024, "sim.player");
             m_PlayerProfile = new SimProfile(m_PlayerArena);
             m_PlayerBuffer = new Simulation.Buffer(m_PlayerArena);
-            m_PlayerOutput = new ResultWrapper(m_PlayerArena, 1);
+            m_PlayerOutput = new ResultWrapper(m_PlayerArena, 2);
             m_PredictProfile = new SimProfile(m_PlayerArena);
 
             Log.Msg("Simulation arenas spare bytes = {0} / {1}", Unsafe.ArenaFreeBytes(m_HistoricalArena), Unsafe.ArenaFreeBytes(m_PlayerArena));
