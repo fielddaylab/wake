@@ -28,13 +28,12 @@ $branch common.ringPhone
 {@player}   Any idea what to do here?
 {@kevin}	When you are making a food web, the first step is to import your facts into the model.
 
-:: ModelingSetupPhase2
-@trigger    UniversalModelUpdated
+:: ModelingComplete
+@trigger    ModelCompleted
 @when       !jobs:kelp-energy.upgradedFacts
 @once
 @cutscene
 {@kevin}  Looks like we have our model! Lets bring it back to the {map-name}Office{/map-name}.
-	// Levi Question: How does the player make a conceptual model without the simulation process?
 
 
 // report back
@@ -54,7 +53,7 @@ $endif
 
 // SUGGEST ARGUMENTATION
 
-:: helpReportBack
+:: helpArgumentation
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportBack)
 @cutscene
@@ -73,27 +72,21 @@ $endif
 
 // ARGUMENTATION
 
-::argue.intro
+:: argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(energyArgue)
 @cutscene
 
 $call ArgueLoad(energyArgue)
-	//$if ArgueSetClaim(energyClaim, jobs.kelp-energy.argue.claimLabel)
-			//$call ArgueFactSlot(Urchin.Eats.GiantKelp)
-			//$call ArgueFactSlot(Model.EnergyConceptual)
-				// Levi Question: What is the name of this?
-	//$endif
-
 	$branch .argue.hello
 
 	
-::argue.hello
+:: argue.hello
 {@drKelp}    Where does energy come from in the food web?
-$goto .argue.chooseFacts
+$goto .argue.chooseEnergy
 
 
-::argue.chooseEnergy
+:: argue.chooseEnergy
 $call ArgueDisplayClaim()
 $if ArgueAllFactsCorrect()
     $goto .argue.done
@@ -104,7 +97,7 @@ $else
     $choice .argue.giveUp; Let me get back to you
 $endif
 
-:argue.giantKelp
+:: argue.giantKelp
 $if ArgueIsFactSubmitted(Model.EnergyConceptual)
 	$goto .argue.done
 $else
@@ -112,38 +105,38 @@ $else
 	$goto .argue.chooseFacts
 $endif
 
-:argue.chooseFacts
+:: argue.chooseFacts
 $call ArgueDisplayClaim()
 $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-		$answer Model.EnergyConceptual, .argue.energyModel
+		$answer task.model, .argue.energyModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
 
-::argue.urchins
+:: argue.urchins
 {@drKelp}	Not quite, you need to look at the way the eat rules move in the model.
 			That organism needs to eat something else to get energy.
 
-::argue.otters
+:: argue.otters
 {@drKelp}   Not quite, you need to look at the way the eat rules move in the model.
 			That organism needs to eat something else to get energy.
 
-::argue.energyModel
+:: argue.energyModel
 {@drKelp}	Awesome! Kelp is like a plant. It gets its energy from the sun.
 $goto .argue.done
 
-::argue.unrelated
+:: argue.unrelated
 {@drKelp}	That's not a model. If you made a model, it should be saved in AQOS for this ecosystem. Can I see your model?
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
-::argue.giveUp
+:: argue.giveUp
 {@drKelp}    OK get back to me when you're ready.
 
-::argue.done
+:: argue.done
 $call ArgueComplete()
 {@drKelp}	Thanks so much for your help!
 $call CompleteJob()
