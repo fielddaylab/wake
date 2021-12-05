@@ -130,7 +130,7 @@ namespace Aqua.Modeling {
                 m_ProgressInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
             }
             #else
-            m_ProgressionInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
+            m_ProgressInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
             #endif // UNITY_EDITOR
             m_SimDataCtrl.LoadSite();
 
