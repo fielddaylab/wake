@@ -43,8 +43,11 @@ namespace Aqua.Modeling {
 
             m_SimulationUI.OnSyncAchieved = OnSyncAchieved;
             m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
+            m_SimulationUI.OnInterventionReset = OnInterventionReset;
+            m_SimulationUI.OnAnimationStart = OnAnimationStart;
+            m_SimulationUI.OnInterventionSuccessful = OnInterventionCompleted;
 
-            m_SimDataCtrl.OnInterventionUpdated = OnInterventionUpdated;
+            m_SimDataCtrl.OnInterventionUpdated += OnInterventionUpdated;
 
             m_State.Simulation = m_SimDataCtrl;
 
@@ -108,6 +111,8 @@ namespace Aqua.Modeling {
                 }
                 m_SimulationUI.Hide();
             }
+
+            m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
         }
 
         private void OnEcosystemSelected(BestiaryDesc selected) {
@@ -235,7 +240,17 @@ namespace Aqua.Modeling {
         }
 
         private void OnInterventionUpdated() {
-            m_World.Reconstruct();
+            m_World.ReconstructForIntervention();
+        }
+
+        private void OnAnimationStart() {
+            if (m_State.Phase == ModelPhases.Intervene) {
+                m_World.DisableIntervention();
+            }
+        }
+
+        private void OnInterventionReset() {
+            m_World.EnableIntervention();
         }
 
         private void OnInterventionCompleted() {

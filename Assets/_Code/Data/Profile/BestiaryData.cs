@@ -202,6 +202,13 @@ namespace Aqua.Profile
 
             if (m_ObservedFacts.Remove(inFactId))
             {
+                int metaIdx = m_FactMetas.BinarySearch(inFactId);
+                if (metaIdx >= 0)
+                {
+                    m_FactMetas.FastRemoveAt(metaIdx);
+                    m_FactMetas.SortByKey<StringHash32, FactData>();
+                }
+                
                 m_HasChanges = true;
                 Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
@@ -258,6 +265,41 @@ namespace Aqua.Profile
 
             m_HasChanges = true;
             return true;
+        }
+
+        public bool RemoveDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
+        {
+            if (inFlags <= 0)
+                return false;
+            
+            BFBase fact = Assets.Fact(inFactId);
+
+            BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);
+            if ((existingFlags & inFlags) == inFlags)
+            {
+                return false;
+            }
+
+            int metaIdx = m_FactMetas.BinarySearch(inFactId);
+            if (metaIdx >= 0)
+            {
+                if ((m_FactMetas[metaIdx].Flags & inFlags) == 0)
+                {
+                    return false;
+                }
+
+                m_FactMetas[metaIdx].Flags &= ~inFlags;
+                bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
+                if (bVisible)
+                {
+                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                }
+
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
         }
 
         public bool IsFactFullyUpgraded(StringHash32 inFactId)

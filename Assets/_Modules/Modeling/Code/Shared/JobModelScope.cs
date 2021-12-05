@@ -12,6 +12,7 @@ namespace Aqua.Modeling {
         [FactId(typeof(BFBehavior))] public StringHash32[] BehaviorIds = null;
         [Range(0, 100)] public int MinimumSyncAccuracy = 85;
         public bool IncludeWaterChemistryInAccuracy;
+        public ActorCountRange[] InterventionTargets;
         
         [Header("Models")]
         [FactId(typeof(BFModel))] public StringHash32 ConceptualModelId = null;

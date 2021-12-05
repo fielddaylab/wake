@@ -520,6 +520,57 @@ namespace Aqua.Modeling {
             }
         }
 
+        /// <summary>
+        /// Returns if the given organism can be introduced as an intervention.
+        /// </summary>
+        public bool CanIntroduceForIntervention(BestiaryDesc organism) {
+            return !m_State.Conceptual.SimulatedEntities.Contains(organism);
+        }
+
+        /// <summary>
+        /// Returns if the current intervention is a new organism
+        /// </summary>
+        public bool IsInterventionNewOrganism() {
+            return Intervention.Target != null && !m_State.Conceptual.SimulatedEntities.Contains(Intervention.Target);
+        }
+
+        /// <summary>
+        /// Returns the intervention starting position.
+        /// </summary>
+        public uint GetInterventionStartingPopulation(BestiaryDesc organism) {
+            SimSnapshot* endSnapshot = m_PredictOutputSlice.Ptr - 1;
+            Simulation.GetPopulation(endSnapshot, m_PlayerProfile, organism.Id(), out uint population, out float _);
+            return population;
+        }
+
+        /// <summary>
+        /// Evaluates whether or not intervention goals were met.
+        /// </summary>
+        public bool EvaluateInterventionGoals() {
+            if (!m_ProgressInfo.Scope) {
+                return false;
+            }
+
+            SimProfile finalProfile = m_PredictProfile;
+            SimSnapshot finalShapshot = m_PredictOutputSlice.Ptr[m_ProgressInfo.Sim.PredictTickCount];
+            ActorCountRange[] targets = m_ProgressInfo.Scope.InterventionTargets;
+            for(int i = 0; i < targets.Length; i++) {
+                ActorCountRange target = targets[i];
+                int actorIdx = finalProfile.IndexOfActorType(target.Id);
+                if (actorIdx < 0) {
+                    return false;
+                }
+
+                uint population = finalShapshot.Populations[actorIdx];
+                long diff = (long) population - target.Population;
+                if (diff > target.Range || diff < -target.Range) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion // Prediction Data
 
         #region Profiles
@@ -582,6 +633,7 @@ namespace Aqua.Modeling {
 
             if (intervention != null) {
                 foreach(var entity in intervention.AdditionalEntities) {
+                    profile.ImportActor(entity);
                     yield return null;
                 }
             }
@@ -686,7 +738,7 @@ namespace Aqua.Modeling {
 
                 SimSnapshot current = initialSnapshot;
                 for(uint i = 1; i <= info.Sim.PredictTickCount; i++) {
-                    current = Simulation.Simulate(buffer, profile, current, i, SimulationFlags.Debug);
+                    current = Simulation.Simulate(buffer, profile, current, info.Sim.SyncTickCount + i, SimulationFlags.Debug);
                     WriteResult(ref current, output, i);
                     yield return null;
                     Log.Msg(buffer.DebugReport?.Flush());

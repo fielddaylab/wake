@@ -41,6 +41,7 @@ namespace Aqua
         private readonly HashSet<BestiaryDesc> m_SelectedSet = new HashSet<BestiaryDesc>();
         private BestiarySelectButton.ToggleDelegate m_ToggleDelegate;
 
+        public Predicate<BestiaryDesc> Filter;
         public Action<BestiaryDesc> OnAdded;
         public Action<BestiaryDesc> OnRemoved;
         public Action OnCleared;
@@ -178,7 +179,7 @@ namespace Aqua
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
             {
-                CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, availableCritters);
+                CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, Filter, availableCritters);
                 availableCritters.Sort(BestiaryDesc.SortByEnvironment);
 
                 PopulateCritters(availableCritters);
@@ -296,11 +297,11 @@ namespace Aqua
 
         #endregion // ISceneOptimizable
 
-        static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, ICollection<BestiaryDesc> outCritters)
+        static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, Predicate<BestiaryDesc> inFilter, ICollection<BestiaryDesc> outCritters)
         {
             foreach(var entity in inSaveData.GetEntities(inCategory))
             {
-                if (entity.HasFlags(inIgnore))
+                if (entity.HasFlags(inIgnore) || (inFilter != null && !inFilter(entity)))
                     continue;
 
                 outCritters.Add(entity);

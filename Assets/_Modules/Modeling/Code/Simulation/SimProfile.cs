@@ -204,10 +204,6 @@ namespace Aqua.Modeling {
             ResetBehavior(&actor->AliveBehavior);
             ResetBehavior(&actor->StressedBehavior);
 
-            if (desc.Id() == DetritusId) {
-                DetritusIndex = newIdx;
-            }
-
             return actor;
         }
 
@@ -406,6 +402,7 @@ namespace Aqua.Modeling {
             Assert.True(m_CurrentPhase == Phase.ImportingActors, "Actor import is already completed - in '{0}' phase", m_CurrentPhase);
             Quicksort(Actors, 0, ActorCount - 1);
             m_CurrentPhase = Phase.ImportingFacts;
+            DetritusIndex = IndexOfActorType(DetritusId);
         }
 
         public void FinishFacts() {

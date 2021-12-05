@@ -82,6 +82,19 @@ namespace Aqua.Modeling {
                         additionalFacts.Add(fact);
                     }
                 }
+
+                foreach(var entity in simulatedEntities) {
+                    foreach(var fact in entity.PlayerFacts) {
+                        if (fact.Parent != entity || !data.HasFact(fact.Id)) {
+                            continue;
+                        }
+
+                        BestiaryDesc target = BFType.Target(fact);
+                        if (target == additional) {
+                            additionalFacts.Add(fact);
+                        }
+                    }
+                }
             }
         }
 

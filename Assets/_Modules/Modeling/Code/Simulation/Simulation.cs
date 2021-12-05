@@ -179,7 +179,7 @@ namespace Aqua.Modeling
             for(int i = 0; i < profile.ActorCount; i++) {
                 actorInfo = &profile.Actors[i];
                 float lightReduced = PerformLightAbsorption(actorInfo, &actorInfo->AliveBehavior, buffer.Populations[i].Alive, ref buffer.Water);
-                lightReduced = PerformLightAbsorption(actorInfo, &actorInfo->StressedBehavior, buffer.Populations[i].Stressed, ref buffer.Water);
+                lightReduced += PerformLightAbsorption(actorInfo, &actorInfo->StressedBehavior, buffer.Populations[i].Stressed, ref buffer.Water);
 
                 if (bLogging && lightReduced > 0) {
                     Report(buffer, "{0} reduced light by {1}", actorInfo->Id.ToDebugString(), lightReduced);
@@ -309,7 +309,7 @@ namespace Aqua.Modeling
                 ProcessEatenReductions(actorInfo, &actorInfo->StressedBehavior, ref sourceHunger[1], ref buffer.Unconsumed[i].Stressed, ref buffer.PopulationsConsumed[i].Stressed);
 
                 // clear eat mass buffer
-                for(int j = 0; j < profile.ActorCount; j++) {
+                for(int j = 0; j < eatCount; j++) {
                     buffer.MassConsumptionBuffer[j] = default;
                 }
 
@@ -350,23 +350,22 @@ namespace Aqua.Modeling
                 }
 
                 // actually perform eating
-                for(int j = 0; j < eatCount && foodToAllocateBacking > 0; j++) {
+                for(int j = 0; j < eatCount; j++) {
                     eat = &eatStart[j];
                     sourceIndex = (int) eat->State;
                     eatTargetIndex = eat->Target;
                     targetActorInfo = &profile.Actors[eatTargetIndex];
 
-                    PerformEaten(targetActorInfo, ref buffer.Populations[eatTargetIndex], ((uint*) &buffer.MassConsumptionBuffer[j])[sourceIndex], out consumedMass, ref buffer.PopulationsConsumed[eatTargetIndex]);
+                    consumedMass = (uint) Math.Min(sourceHunger[sourceIndex] * eat->FoodToMass, ((uint*) &buffer.MassConsumptionBuffer[j])[sourceIndex]);
+
+                    PerformEaten(targetActorInfo, ref buffer.Populations[eatTargetIndex], consumedMass, out consumedMass, ref buffer.PopulationsConsumed[eatTargetIndex]);
                     hungerEffect = SimMath.FixedMultiply(consumedMass, eat->MassToFood);
-                    foodToAllocate[sourceIndex] -= Math.Min(foodToAllocate[sourceIndex], hungerEffect);
+                    sourceHunger[sourceIndex] -= Math.Min(sourceHunger[sourceIndex], hungerEffect);
 
                     if (bLogging && consumedMass > 0) {
                         Report(buffer, "{0} ate {1} mass of {2}", actorInfo->Id.ToDebugString(), consumedMass, targetActorInfo->Id.ToDebugString());
                     }
                 }
-
-                sourceHunger[0] = foodToAllocate[0];
-                sourceHunger[1] = foodToAllocate[1];
             }
 
             // death
@@ -404,7 +403,7 @@ namespace Aqua.Modeling
                 detritusProduced = PerformGenericPopulationIncrease(actorInfo, ref buffer.Populations[profile.DetritusIndex], detritusProduced);
 
                 if (bLogging) {
-                    Report(buffer, "Dead organisms converted to {0} units of detritus", detritusProduced);
+                    Report(buffer, "Dead organisms converted to {0} units of detritus ({1} now)", detritusProduced, buffer.Populations[profile.DetritusIndex].Total());
                 }
             }
 

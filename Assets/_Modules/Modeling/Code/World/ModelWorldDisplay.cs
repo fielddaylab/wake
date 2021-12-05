@@ -57,6 +57,8 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_SpringForce = 1024;
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
+        [SerializeField] private float m_BoundaryY = 6;
+        [SerializeField] private float m_BoundaryForce = 2;
 
         #endregion // Inspector
 
@@ -65,15 +67,19 @@ namespace Aqua.Modeling {
         private AsyncHandle m_ReconstructHandle;
         private TransformState m_OriginalCanvasState;
         [NonSerialized] private StringHash32 m_LastConstructedId;
+        [NonSerialized] private BestiaryDesc m_LastConstructedInterventionTarget;
 
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
         private readonly ModelWaterPropertyDisplay[] m_WaterChemMap = new ModelWaterPropertyDisplay[(int) WaterPropertyId.TRACKED_COUNT];
         private GraphSolverState m_SolverState;
 
+        private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
+
         private unsafe ModelWorldDisplay() {
             m_SolverState.Positions = Unsafe.AllocArray<Vector2>(MaxGraphNodes * 2);
             m_SolverState.Forces = m_SolverState.Positions + MaxGraphNodes;
             m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(MaxGraphNodes);
+            m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
         }
 
         unsafe ~ModelWorldDisplay() {
@@ -99,6 +105,7 @@ namespace Aqua.Modeling {
 
         public void SetData(ModelState state) {
             m_State = state;
+            m_State.OnPhaseChanged += OnPhaseChanged;
         }
 
         public void Show() {
@@ -127,6 +134,16 @@ namespace Aqua.Modeling {
             }
         }
 
+        public void EnableIntervention() {
+            UpdateInterventionControls();
+        }
+
+        public void DisableIntervention() {
+            foreach(var display in m_OrganismPool.ActiveObjects) {
+                display.DisableIntervention();
+            }
+        }
+
         #if UNITY_EDITOR
 
         private void LateUpdate() {
@@ -138,11 +155,26 @@ namespace Aqua.Modeling {
         #endif // UNITY_EDITOR
 
         #region Reconstruction
+
+        public void ReconstructForIntervention() {
+            bool prevExtraConstruct = m_LastConstructedInterventionTarget != null && !m_State.Conceptual.SimulatedEntities.Contains(m_LastConstructedInterventionTarget);
+            bool newExtraConstruct = m_State.Simulation.IsInterventionNewOrganism();
+            if (prevExtraConstruct && newExtraConstruct) {
+                if (m_LastConstructedInterventionTarget == m_State.Simulation.Intervention.Target) {
+                    return;
+                }
+            } else if (!prevExtraConstruct && !newExtraConstruct) {
+                return;
+            }
+            
+            Reconstruct();
+        }
         
         public IEnumerator Reconstruct() {
             m_ReconstructHandle.Cancel();
             m_LastConstructedId = m_State.Environment.Id();
             m_ReconstructHandle = Async.Schedule(ReconstructProcess(), AsyncFlags.HighPriority | AsyncFlags.MainThreadOnly);
+            m_LastConstructedInterventionTarget = m_State.Simulation.Intervention.Target;
             return m_ReconstructHandle;
         }
 
@@ -150,6 +182,7 @@ namespace Aqua.Modeling {
             m_OrganismPool.Reset();
             m_ConnectionPool.Reset();
             m_OrganismMap.Clear();
+            m_Input.Override = false;
             yield return null;
 
             int organismCount = m_State.Conceptual.GraphedEntities.Count;
@@ -168,8 +201,11 @@ namespace Aqua.Modeling {
 
             var intervention = m_State.Simulation.Intervention;
             foreach(var entity in intervention.AdditionalEntities) {
-                display = AllocOrganism(entity, index++);
-                yield return null;
+                if (!m_State.Conceptual.GraphedEntities.Contains(entity)) {
+                    organismCount++;
+                    display = AllocOrganism(entity, index++);
+                    yield return null;
+                }
             }
 
             m_SolverState.MovedOutputMask = (1u << organismCount) - 1;
@@ -182,6 +218,10 @@ namespace Aqua.Modeling {
             }
 
             foreach(var fact in intervention.AdditionalFacts) {
+                if (m_State.Conceptual.GraphedFacts.Contains(fact)) {
+                    continue;
+                }
+
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target);
@@ -208,11 +248,16 @@ namespace Aqua.Modeling {
             UpdateOrganismPositions(organismCount);
             yield return null;
             UpdateConnectionPositions();
+            yield return null;
+            UpdateInterventionControls();
+            yield return null;
+
+            m_Input.Override = null;
         }
 
         private unsafe ModelOrganismDisplay AllocOrganism(BestiaryDesc desc, int index) {
             ModelOrganismDisplay display = m_OrganismPool.Alloc();
-            display.Initialize(desc, index);
+            display.Initialize(desc, index, m_OrganismInterventionDelegate);
             m_OrganismMap.Add(desc.Id(), display);
             m_SolverState.Positions[index] = new Vector2(RNG.Instance.NextFloat(-2, 2), RNG.Instance.NextFloat(-2, 2));
             m_SolverState.Forces[index] = default;
@@ -283,6 +328,7 @@ namespace Aqua.Modeling {
                 // gravity force
                 posB = default(Vector2);
                 vecAB = -posA;
+                vecAB.y *= 1.3f;
                 *forceA += vecAB * m_GravityForce;
 
                 for(b = a + 1; b < count; b++) {
@@ -351,6 +397,94 @@ namespace Aqua.Modeling {
             m_PHProperty.SetValue(environment.PH);
             m_OxygenProperty.SetValue(environment.Oxygen);
             m_CarbonDioxideProperty.SetValue(environment.CarbonDioxide);
+        }
+
+        private ModelOrganismDisplay.AddRemoveResult OnOrganismRequestAddRemove(BestiaryDesc organism, int sign) {
+            bool changedTarget = Ref.Replace(ref m_State.Simulation.Intervention.Target, organism);
+            if (changedTarget) {
+                m_State.Simulation.Intervention.Amount = 0;
+            }
+
+            BFBody body = organism.FactOfType<BFBody>();
+
+            uint startingPopulation = m_State.Simulation.GetInterventionStartingPopulation(organism);
+            int adjust = (int) (m_State.Simulation.Intervention.Amount + sign * body.PopulationSoftIncrement);
+            long next = startingPopulation + adjust;
+            
+            if (next < 0) {
+                next = 0;
+            } else if (adjust > 0 && next > body.PopulationSoftCap) {
+                next = body.PopulationSoftCap;
+            } else if (adjust > -body.PopulationSoftIncrement && adjust < body.PopulationSoftIncrement) {
+                next = startingPopulation;
+            }
+
+            adjust = (int) (next - startingPopulation);
+            if (m_State.Simulation.Intervention.Amount != adjust) {
+                m_State.Simulation.Intervention.Amount = adjust;
+                if (adjust == 0 && !m_State.Simulation.IsInterventionNewOrganism()) {
+                    changedTarget = true;
+                    m_State.Simulation.Intervention.Target = null;
+                } else if (!changedTarget) {
+                    m_State.Simulation.DispatchInterventionUpdate();
+                }
+            }
+
+            if (changedTarget) {
+                m_State.Simulation.DispatchInterventionUpdate();
+                UpdateInterventionControls();
+            }
+
+            ModelOrganismDisplay.AddRemoveResult result;
+            result.CanAdd = adjust < 0 || next + body.PopulationSoftIncrement <= body.PopulationSoftCap;
+            result.CanRemove = next - body.PopulationSoftIncrement >= 0;
+            result.DifferenceValue = adjust;
+            return result;
+        }
+
+        private void OnPhaseChanged(ModelPhases prev, ModelPhases current) {
+            if (current == ModelPhases.Intervene) {
+                EnableIntervention();
+            } else if (prev == ModelPhases.Intervene) {
+                DisableIntervention();
+            }
+        }
+
+        private void UpdateInterventionControls() {
+            if (m_State.Phase != ModelPhases.Intervene) {
+                return;
+            }
+
+            if (m_State.Simulation.Intervention.Target == null) {
+                foreach(var display in m_OrganismPool.ActiveObjects) {
+                    if (m_State.Conceptual.SimulatedEntities.Contains(display.Organism)) {
+                        display.EnableIntervention(GetDesiredState(display.Organism, 0));
+                    } else {
+                        display.DisableIntervention();
+                    }
+                }
+            } else {
+                foreach(var display in m_OrganismPool.ActiveObjects) {
+                    if (display.Organism == m_State.Simulation.Intervention.Target) {
+                        display.EnableIntervention(GetDesiredState(display.Organism, m_State.Simulation.Intervention.Amount));
+                    } else {
+                        display.DisableIntervention();
+                    }
+                }
+            }
+        }
+
+        private ModelOrganismDisplay.AddRemoveResult GetDesiredState(BestiaryDesc organism, int adjust) {
+            BFBody body = organism.FactOfType<BFBody>();
+
+            uint startingPopulation = m_State.Simulation.GetInterventionStartingPopulation(organism);
+            long next = startingPopulation + adjust;
+
+            ModelOrganismDisplay.AddRemoveResult result;
+            result.CanAdd = adjust < 0 || next + body.PopulationSoftIncrement <= body.PopulationSoftCap;
+            result.CanRemove = next - body.PopulationSoftIncrement >= 0;
+            result.DifferenceValue = adjust;
+            return result;
         }
     }
 }
