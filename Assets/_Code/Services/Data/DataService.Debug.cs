@@ -171,7 +171,7 @@ namespace Aqua
                     factMenu.AddSubmenu(submenu);
                 }
 
-                RegisterFactToggle(submenu, fact.Id);
+                RegisterFactToggle(submenu, fact.Id, BFType.DefaultDiscoveredFlags(fact));
             }
 
             bestiaryMenu.AddSubmenu(critterMenu);
@@ -351,7 +351,7 @@ namespace Aqua
             );
         }
 
-        static private void RegisterFactToggle(DMInfo inMenu, StringHash32 inFactId)
+        static private void RegisterFactToggle(DMInfo inMenu, StringHash32 inFactId, BFDiscoveredFlags inDefaultFlags)
         {
             inMenu.AddToggle(inFactId.ToDebugString(),
                 () => { return Save.Bestiary.HasFact(inFactId); },
@@ -363,6 +363,20 @@ namespace Aqua
                         Save.Bestiary.DeregisterFact(inFactId);
                 }
             );
+            if (inDefaultFlags != BFDiscoveredFlags.All) {
+                inMenu.AddToggle(inFactId.ToDebugString() + " (with Rate)",
+                    () => { return Save.Bestiary.IsFactFullyUpgraded(inFactId); },
+                    (b) =>
+                    {
+                        if (b) {
+                            Save.Bestiary.RegisterFact(inFactId, true);
+                            Save.Bestiary.AddDiscoveredFlags(inFactId, BFDiscoveredFlags.Rate);
+                        } else {
+                            Save.Bestiary.RemoveDiscoveredFlags(inFactId, BFDiscoveredFlags.Rate);
+                        }
+                    }
+                );
+            }
         }
 
         static private void UnlockAllBestiaryEntries(bool inbIncludeFacts)

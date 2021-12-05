@@ -1,69 +1,75 @@
 # basePath modeling
 
-:: urchinBarrenPrediction.title
-Urchin Barren Population Data
+:: tab.ecosystem
+Ecosystem
 
-:: urchinBarrenPrediction.description
-The urchin barren had Urchins and Giant Kelp. Simulate how these populations will change over time.
+:: tab.concept
+Visualize
 
-:: urchinBarrenPrediction.complete
-Prediction successful. The simulator shows that the urchin barren at Site B is only going to get worse.
+:: tab.sync
+Describe
 
-:: urchinBarrenIntroduceOtters.title
-Urchin Barren Population Data
+:: tab.predict
+Predict
 
-:: urchinBarrenIntroduceOtters.description
-Can an urchin barren be repaired? Use what you've learned from healthy Kelp Forests to intervene with the Urchin Baren, then simulate the outcome.
+:: tab.intervene
+Intervene
 
-:: urchinBarrenIntroduceOtters.complete
-Intervention successful. The simulator shows that the urchin barren can be repaired by releasing sea otters.
+:: importing.organisms
+Importing Organisms...
 
-:: coolKelpForest.title
-Cool Kelp Forest Population Data
+:: importing.facts
+Importing Behaviors...
 
-:: coolKelpForest.description
-Is an urchin barren likely to occur in the cool kelp forest?
+:: importing.historical
+Importing Environmental Data...
 
-:: coolKelpForest.complete
-Prediction successful. Ecosystem is sustainable for the forseeable future.
+:: importing.completed
+Import Completed.
 
-:: coralSargPrediction.title
-Sargassum Covered Reef Population Data
+:: importing.tolerances
+Importing Tolerances...
 
-:: coralSargPrediction.description
-How does Sargassum change the light levels and affect the Staghorn Coral?
+:: importing.starting
+Processing Import...
 
-:: coralSargPrediction.complete
-Prediction successful. The simulator shows Sargassum reduces the light to levels dangerous to Staghorn Coral.
+:: syncRegion.label
+Last {0} Years
 
-:: grouperFishingPrediction.title
-Reef Edge Population Data
+:: predictRegion.label
+Next {0} Years
 
-:: grouperFishingPrediction.description
-How does the number of Fishers affect the Red Grouper population?
+:: accuracy.label
+Accuracy
 
-:: grouperFishingPrediction.complete
-Prediction successful. The simulator shows up to 40 Fishers can safely sustain the Red Grouper population.
+:: newConceptualModel.header
+New Visualization Model
 
-:: deadZoneOxygen.title
-Oxygen in the Dead Zone
+:: newSyncModel.header
+New Descriptive Model
 
-:: deadZoneOxygen.description
-What seems to be causing the Oxygen deficit in the dead zone?
+:: newPredictModel.header
+New Predictive Model
 
-:: deadZoneOxygen.complete
-Model Successful.  It appears that the Decomposing Bacteria are causing our oxygen issue.
+:: newInterveneModel.header
+New Intervention Model
 
-:: alreadyCompleted.title
-Modeling Already Complete
+:: simulateButton
+Simulate
 
-:: alreadyCompleted.desc
-This model has already been completed.
+:: predictButton
+Run Prediction
+
+:: interveneResetButton
+Reset
+
+:: interveneButton
+Run Intervention
+
+:: interveneAddButton
+Introduce Organism
 
 # basePath models
-
-:: kelpStation.name
-Kelp Station Models
 
 :: kelpStation.coolKelpForest.name
 Cool Kelp Forest Prediction
@@ -83,9 +89,6 @@ Urchin Barren Prediction
 :: kelpStation.urchinBarren.description
 The {env-name}Urchin Barren{/env-name} will continue to die.
 
-:: coralStation.name
-Coral Station Models
-
 :: coralStation.sargLightPrediction.name
 Sargassum Covered Reef Light Predition
 
@@ -98,17 +101,11 @@ Red Grouper population prediction from number of Fishers.
 :: coralStation.grouperFishingRate.description
 The {critter-name}Red Grouper{/critter-name} population can be safely sustained with up to 40 {critter-name}Fishers{/critter-name}.
 
-:: bayouStation.name
-Bayou Station Models
-
 :: bayouStation.deadZoneOxygen.name
 Oxygen Tracking Model in the Dead Zone
 
 :: bayouStation.deadZoneOxygen.description
 The {critter-name}Decomposing Bacteria{/critter-name} are causing the lack of oxygen in the dead zone.
-
-:: arcticStation.name
-Arctic Station Models
 
 :: arcticStation.whaleFallStages.name
 Whale Fall Stages

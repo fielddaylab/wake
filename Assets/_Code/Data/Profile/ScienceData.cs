@@ -32,17 +32,6 @@ namespace Aqua.Profile
             return data;
         }
 
-        public void SetSiteVersion(StringHash32 inMapId, byte inVersion)
-        {
-            SiteSurveyData data = GetSiteData(inMapId);
-            if (data.SiteVersion != inVersion)
-            {
-                data.TaggedCritters.Clear();
-                data.SiteVersion = inVersion;
-                m_HasChanges = true;
-            }
-        }
-
         #endregion // Sites
 
         #region Argumentations
@@ -95,6 +84,7 @@ namespace Aqua.Profile
                         break;
                     }
                 }
+                Services.Events.QueueForDispatch(GameEvents.ArgueDataUpdated, inArgumentId);
                 return true;
             }
             

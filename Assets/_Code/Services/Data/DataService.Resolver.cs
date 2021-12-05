@@ -361,12 +361,6 @@ namespace Aqua
                 return Save.Bestiary.HasFact(inFactId);
             }
 
-            [LeafMember("IsFactGraphed"), UnityEngine.Scripting.Preserve]
-            static private Variant IsFactGraphed(StringHash32 inFactId)
-            {
-                return Save.Bestiary.IsFactGraphed(inFactId);
-            }
-
             [LeafMember("GiveFact"), UnityEngine.Scripting.Preserve]
             static private IEnumerator GiveFact([BindContext] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
             {

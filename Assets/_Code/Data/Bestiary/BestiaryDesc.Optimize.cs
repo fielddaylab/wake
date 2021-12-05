@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 #endif // UNITY_EDITOR
@@ -36,14 +37,36 @@ namespace Aqua
             {
                 case BestiaryDescCategory.Environment:
                     {
+                        HashSet<StringHash32> populationSet = new HashSet<StringHash32>();
                         m_EnvState = ValidationUtils.FindAsset<WaterPropertyDB>().DefaultValues();
                         foreach(var fact in m_Facts)
                         {
-                            BFWaterProperty waterProp = fact as BFWaterProperty;
-                            if (waterProp != null)
+                            switch(fact.Type)
                             {
-                                m_EnvState[waterProp.Property] = waterProp.Value;
+                                case BFTypeId.WaterProperty:
+                                {
+                                    BFWaterProperty waterProp = (BFWaterProperty) fact;
+                                    m_EnvState[waterProp.Property] = waterProp.Value;
+                                    break;
+                                }
+
+                                case BFTypeId.Population:
+                                {
+                                    BFPopulation population = (BFPopulation) fact;
+                                    populationSet.Add(population.Critter.Id());
+                                    break;
+                                }
+
+                                case BFTypeId.PopulationHistory:
+                                {
+                                    BFPopulationHistory population = (BFPopulationHistory) fact;
+                                    populationSet.Add(population.Critter.Id());
+                                    break;
+                                }
                             }
+
+                            m_InhabitingOrganisms = new StringHash32[populationSet.Count];
+                            populationSet.CopyTo(m_InhabitingOrganisms);
                         }
                         break;
                     }
@@ -53,9 +76,9 @@ namespace Aqua
                         m_StateTransitions.Reset();
                         foreach(var fact in m_Facts)
                         {
-                            BFState state = fact as BFState;
-                            if (state != null)
+                            if (fact.Type == BFTypeId.State)
                             {
+                                BFState state = (BFState) fact;
                                 m_StateTransitions[state.Property] = state.Range;
                             }
                         }

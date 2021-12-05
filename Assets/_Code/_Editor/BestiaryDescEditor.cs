@@ -655,6 +655,12 @@ namespace Aqua.Editor
 
                     menu.AddItem(new GUIContent("Model"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Model));
 
+                    menu.AddSeparator("");
+
+                    // sim
+
+                    AddSingleFactCreator<BFSim>(inDesc, menu, "Sim");
+
                     break;
                 }
             }
@@ -708,6 +714,12 @@ namespace Aqua.Editor
                     fact.Property = inParams.PropertyId;
                     break;
                 }
+
+                case BFTypeId.Sim: {
+                    BFSim sim = (BFSim) createdFact;
+                    sim.InitialWater = desc.GetEnvironment();
+                    break;
+                }
             }
 
             FinalizeFact(desc, createdFact);
@@ -737,6 +749,14 @@ namespace Aqua.Editor
                 inMenu.AddDisabledItem(new GUIContent(inName), true);
             } else {
                 inMenu.AddItem(new GUIContent(inName), false, CreateAndAddFactCallback, new FactCreateParams(BFType.ResolveFactType(typeof(T)), inbStressed));
+            }
+        }
+
+        private void AddSingleFactCreator<T>(BestiaryDesc inDesc, GenericMenu inMenu, string inName) where T : BFBase {
+            if (HasFact<T>(inDesc)) {
+                inMenu.AddDisabledItem(new GUIContent(inName), true);
+            } else {
+                inMenu.AddItem(new GUIContent(inName), false, CreateAndAddFactCallback, new FactCreateParams(BFType.ResolveFactType(typeof(T))));
             }
         }
 

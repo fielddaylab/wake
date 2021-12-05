@@ -75,6 +75,11 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public BestiaryDesc Bestiary(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return ValidationUtils.FindAsset<BestiaryDesc>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return BestiaryDB.Get(inId);
         }
 

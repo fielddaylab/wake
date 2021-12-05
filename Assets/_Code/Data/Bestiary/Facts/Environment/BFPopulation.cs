@@ -14,7 +14,6 @@ namespace Aqua
         [Header("Population")]
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
         public uint Value = 0;
-        public byte SiteVersion = 0;
 
         #endregion // Inspector
 
@@ -27,7 +26,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Population, BFShapeId.Population, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.Population, BFShapeId.Population, 0, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.Population, null, GenerateSentence, null);
             BFType.DefineEditor(BFTypeId.Population, DefaultIcon, BFMode.Player);
         }

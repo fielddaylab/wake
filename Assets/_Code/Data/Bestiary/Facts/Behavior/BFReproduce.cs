@@ -29,7 +29,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Reproduce, BFShapeId.Behavior, BFDiscoveredFlags.All, CompareStressedPair);
+            BFType.DefineAttributes(BFTypeId.Reproduce, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, CompareStressedPair);
             BFType.DefineMethods(BFTypeId.Reproduce, null, GenerateSentence, GenerateFragments);
             BFType.DefineEditor(BFTypeId.Reproduce, null, BFMode.Player);
         }
@@ -42,7 +42,7 @@ namespace Aqua
             yield return BFFragment.CreateLocVerb(ReproduceVerb);
             if (fact.OnlyWhenStressed)
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
             }
         }
 

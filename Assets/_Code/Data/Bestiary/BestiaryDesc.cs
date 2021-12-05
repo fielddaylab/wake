@@ -49,6 +49,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private ushort m_InternalFactCount;
         [SerializeField, HideInInspector] private int m_StationSortingOrder;
         [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_EnvState;
+        [SerializeField, HideInInspector] private StringHash32[] m_InhabitingOrganisms;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
 
         #endregion // Inspector
@@ -90,6 +91,12 @@ namespace Aqua
         {
             Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
             return m_WaterColor;
+        }
+
+        public ListSlice<StringHash32> Organisms()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
+            return m_InhabitingOrganisms;
         }
 
         public string SketchPath() { return m_SketchPath; }
@@ -188,8 +195,6 @@ namespace Aqua
     [Flags]
     public enum BestiaryDescFlags
     {
-        Rare = 0x01,
-        LargeCreature = 0x02,
         DoNotUseInExperimentation = 0x04,
         TreatAsHerd = 0x08,
         Human = 0x10,

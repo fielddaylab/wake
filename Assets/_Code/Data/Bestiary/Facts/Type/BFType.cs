@@ -42,6 +42,7 @@ namespace Aqua
 
         static private readonly BFDiscoveredFlags[] s_DefaultDiscoveredFlags = new BFDiscoveredFlags[TypeCount];
         static private readonly BFShapeId[] s_Shapes = new BFShapeId[TypeCount];
+        static private readonly BFFlags[] s_Flags = new BFFlags[TypeCount];
         static private readonly CollectReferencesDelegate[] s_CollectReferencesDelegates = new CollectReferencesDelegate[TypeCount];
         static private readonly GenerateSentenceDelegate[] s_GenerateSentenceDelegates = new GenerateSentenceDelegate[TypeCount];
         static private readonly GenerateFragmentsDelegate[] s_GenerateFragmentsDelegates = new GenerateFragmentsDelegate[TypeCount];
@@ -75,6 +76,16 @@ namespace Aqua
             return s_Shapes[(int) inFactType];
         }
 
+        static public BFFlags Flags(BFBase inFact)
+        {
+            return s_Flags[(int) inFact.Type];
+        }
+
+        static public BFFlags Flags(BFTypeId inFactType)
+        {
+            return s_Flags[(int) inFactType];
+        }
+
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact)
         {
             if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
@@ -85,6 +96,24 @@ namespace Aqua
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFTypeId inFactType)
         {
             return s_DefaultDiscoveredFlags[(int) inFactType];
+        }
+
+        static public BestiaryDesc Target(BFBase inFact)
+        {
+            switch(inFact.Type)
+            {
+                case BFTypeId.Eat:
+                {
+                    return ((BFEat) inFact).Critter;
+                }
+                
+                // TODO: Parasite
+                
+                default :
+                {
+                    return null;
+                }
+            }
         }
 
         #endregion // Attributes
@@ -144,10 +173,11 @@ namespace Aqua
 
         #region Definitions
 
-        static internal void DefineAttributes(BFTypeId inType, BFShapeId inShape, BFDiscoveredFlags inFlags, Comparison<BFBase> inComparison)
+        static internal void DefineAttributes(BFTypeId inType, BFShapeId inShape, BFFlags inFlags, BFDiscoveredFlags inDefaultDiscoveredFlags, Comparison<BFBase> inComparison)
         {
             s_Shapes[(int) inType] = inShape;
-            s_DefaultDiscoveredFlags[(int) inType] = inFlags;
+            s_Flags[(int) inType] = inFlags;
+            s_DefaultDiscoveredFlags[(int) inType] = inDefaultDiscoveredFlags;
             s_ComparisonDelegates[(int) inType] = inComparison;
         }
 
@@ -168,7 +198,7 @@ namespace Aqua
             typeof(BFDeath), typeof(BFGrow), typeof(BFReproduce),
             typeof(BFPopulation), typeof(BFPopulationHistory),
             typeof(BFWaterProperty), typeof(BFWaterPropertyHistory),
-            typeof(BFModel)
+            typeof(BFModel), typeof(BFSim)
         };
 
         static private readonly DefaultIconDelegate[] s_DefaultIconDelegates = new DefaultIconDelegate[TypeCount];
@@ -247,6 +277,8 @@ namespace Aqua
                     }
                 }
 
+                // TODO: Parasites
+
                 case BFTypeId.Grow: {
                     BFGrow grow = (BFGrow) inFact;
                     if (grow.OnlyWhenStressed) {
@@ -297,6 +329,10 @@ namespace Aqua
                 case BFTypeId.WaterPropertyHistory: {
                     BFWaterPropertyHistory water = (BFWaterPropertyHistory) inFact;
                     return string.Format("{0}.{1}.History", parentName, water.Property.ToString());
+                }
+
+                case BFTypeId.Sim: {
+                    return string.Format("{0}.Sim", parentName);
                 }
 
                 default: {

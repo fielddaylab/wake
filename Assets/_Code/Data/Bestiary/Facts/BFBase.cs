@@ -81,6 +81,7 @@ namespace Aqua
             BFDeath.Configure();
             BFConsume.Configure();
             BFBody.Configure();
+            BFSim.Configure();
         }
 
         #endregion // Initialization
@@ -116,6 +117,11 @@ namespace Aqua
         Player = 0,
         Always,
         Internal
+    }
+
+    public enum BFFlags : byte
+    {
+        IsGraphable = 0x01
     }
 
     public class FactIdAttribute : PropertyAttribute
