@@ -1,4 +1,4 @@
-#basePath   job.coral-invade
+#basePath   job.coral-turtle-stability
 
 :: start
 @trigger    JobStarted
@@ -6,275 +6,216 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
-{@profCempaka}	I need you to head over to Site R and see what you can find.
-{@player} 	We'll be right over there!
-$call GiveUpgrade(StressTank)
+{@profCempaka}	We need to know why the turtles are doing so well here.
+				I need you to scan the species at the reef edge.
+
+// SCAN ALL
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-invade.seen.bottom
+@when 		scene:name == "Ship", JobTaskTop(scanAll)
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
 
-
-:: navigation
-@trigger    SceneStart
-@when       scene:name == "Station2"
-@once
-@cutscene
-{@kevin} You're gonna want to take your sub over to Dive Site R.
-                    It should be just north of the ship. When you're there, dive.
-					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-invade.got.scans
+@when 		scene:name == "CoralStation", !jobs:coral-turtle-stability.got.scans
 @cutscene
 {@player}   Where should we go next?
-{@kevin}	Site R should be to the north of the ship, let's head over and dive down!
+{@kevin}	Site V should be to the East of the ship, let's head over and dive down!
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-2R"
+@when       scene:name == "RS-2V"
 @once
 @cutscene
-$set    	jobs:coral-invade.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what's down there.
-{@kevin}   Remember to get the probe data too!
+$set    	jobs:coral-turtle-stability.seen.bottom = true
+{@kevin}   Looks like we made it! Time to see what else is here besides turtles.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-2R"
+@when 		scene:name == "RS-2V"
 @cutscene
 {@player}   What should I be doing here?
-$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@kevin}   Did you remember to scan the population probe?
+$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
+	$set    jobs:coral-turtle-stability.got.scans = true
+	{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 $else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
-		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
-	$else
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
+	{@kevin}   Make sure to get all those little things swimming around, and the coral too.
 $endif
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
+@when       HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) // , HasEntity(SeaGrass)
 @once
 @cutscene
-$set jobs:coral-invade.gotScans = true
+$set jobs:coral-turtle-stability.gotScans = true
 {@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
+@when       scene:name == "CoralStation", jobs:coral-turtle-stability.seen.bottom, jobs:coral-turtle-stability.got.scans == false
 @once
 @cutscene
-{@player}   Alright, I think we got everything?
+{@player}   Alright, do you think we got everything?
 {@kevin}   Let me check...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Did you remember to scan the probe?
+$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
+	$set    jobs:coral-invade.got.scans = true
+	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
-		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
-	$else
-    {@kevin}   Hmm... I think there's more we need to find. Let's head back down
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
-$endif
-
-:: navigation.return.again
-@trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
-@cutscene
-{@player}   Alright, what about now?
-{@kevin}   	Let me take a look...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Looks like you didn't scan the probe, let's dive down and get that!
-$else
-	$if HasEntity(Sargassum)
-		$if HasEntity(StaghornCoral)
-			$set    jobs:coral-invade.got.scans = true
-			{@kevin}   That's everything. Nice work!
-			{@kevin}   Let's head back to the ship and analyze this coral!
-		$else
-			{@kevin}   Looks like you're still missing the coral. It should be down on the ocean floor.
-		$endif
-	$else
-		{@kevin}   Not quite, dive back down and scan that weird stuff floating at the top of the water.
-		$if !HasEntity(StaghornCoral)
-			{@kevin}   Don't forget about the coral too!
-		$endif
-	$endif
+	{@kevin}   Hmm... I think there's more we need to find. Let's head back down
+	{@kevin}   Make sure to get all those little things that were swimming around, and the coral too.
 $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-invade.got.scans
+@when 		scene:name == "CoralStation", jobs:coral-turtle-stability.got.scans
 @cutscene
 {@player} 	Where should we go from here?
-{@kevin}	Let's head south and return to the ship.
+{@kevin}	Let's head west and return to the ship.
 
+// BEHAVIOR
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when       scene:name == "Ship", jobs:coral-turtle-stability.got.scans == true
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
+{@kevin}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
 {@player}   On it!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when 		scene:name == "Ship", jobs:coral-turtle-stability.got.scans == true
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
-
+{@kevin}	Let's head over to the {nameof Experimentation} and see what the turtles eat.
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when       scene:name == "ExperimentV2", jobs:coral-turtle-stability.got.scans == true
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
+{@kevin}  	Let's put the organisms in the tank and see what eats what.
 
-:: openStressTank
-@trigger	ExperimentTankViewed
-@when		tankType == "Stress", jobs:coral-invade.got.scans == true
-@once
-@cutscene
-{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
-{@profCempaka}	Think of it like a treadmill!
-
-:: helpAtExperiment
+::helpDoExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when 		scene:name == "ExperimentV2", jobs:coral-turtle-stability.got.scans == true
 @cutscene
-{@player} 	How should I do this again?
-{@kevin}	This time, select the stressor tank instead of an observation one.
-{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
+{@player} 	What kind of experiment should we be doing this time?
+$if ExperimentIsRunning(Observation)
+    $branch .helpDoExperiment.InExperiment
+$elseif ExperimentViewed(Observation)
+    $branch .helpDoExperiment.TankView
+$else
+    $branch .helpDoExperiment.None
+$endif
 
+:: helpDoExperiment.InExperiment
+$if ExperimentHasCritter(Copepod)
+    {@kevin}    Is anything interacting with the {pluralnameof Copepod}?
+$elseif ExperimentHasCritter(QueenConch)
+    {@kevin}    Is anything interacting with the {pluralnameof QueenConch}?
+$elseif ExperimentHasCritter(WhiteShrimp)
+    {@kevin}    Is anything interacting with the {pluralnameof WhiteShrimp}?
+$else
+    {@kevin}    Is it possible to get any new information from this experiment?
+                Maybe add some of the swimmers, like {pluralnameof WhiteShrimp} or {pluralnameof Copepod}.
+$endif
 
-:: experimentEnd
-@trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Light.Stressed)
+:: helpDoExperiment.TankView
+{@kevin}    We have a few new species - let's see which of them the turtle eats.
+$if ExperimentHasCritter(Copepod)
+    {@kevin}    Well, we've added some {pluralnameof Copepod} - what might it interact with?
+$elseif ExperimentHasCritter(QueenConch)
+    {@kevin}    Well, we've added some {pluralnameof QueenConch} - what might it interact with?
+$elseif ExperimentHasCritter(WhiteShrimp)
+    {@kevin}    Well, we've added some {pluralnameof WhiteShrimp} - what might it interact with?
+$else
+    {@kevin}    Maybe we should add some {pluralnameof Copepod}?
+$endif
+
+:: helpDoExperiment.None
+{@kevin}    We have a few new species - let's see which of them the turtle eats.
+            We should be able to run an {h}Observation Tank{/h} experiment for that.
+
+// TURTLE MODEL
+
+:: helpModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Modeling", JobTaskTop(turtleModel)
+@cutscene
+{@player}   Any idea what to do here?
+{@kevin}	When we make a food web, the first step is to import our facts into the model.
+
+:: ModelingComplete
+@trigger    ModelCompleted // TODO: coordinate this with how Conceptual Modeling works
+@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @once
 @cutscene
-{@kevin}	So the low light must be causing the coral to be stressed...
-{@kevin}	Let's report this information back to Professor Cempaka!
+{@kevin}	Huh, turns out turtles eat a lot of things.
+{@kevin}	Lets bring our model back to the {map-name}Office{/map-name}.
 
+// report back
+				
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
-$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
-	{@kevin} We need to get the historical light levels of Site R. Let's head back and scan the water chemistry probe. 
-$else
-	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
-	$if global:nav.shipRoom == "office"
-		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-	$endif
+{@kevin}	That should be everything we need for now. Let's report back to Professor Cempaka.
+$if global:nav.shipRoom == "office"
+	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 // ARGUMENTATION
 
 ::argue.chooseClaim
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralInvadeArgue)
-@cutscene
-$call ArgueLoad(coralInvadeArgue)
-{@profCempaka} So, what's going on with the coral?
-	$choice .argue.coralNeedsLightIntro; The coral needs more light.
-	$choice .argue.coralIsOldIntro; The coral is old.
-	$choice .argue.sargassumBlocksLightIntro; The sargassum is blocking the light.
-$choose branch
 
-::argue.coralNeedsLightIntro
-{@profCempaka} Ahhh, I see! It did seem shady down there, did you have proof?
-$goto .argue.coralNeedsLight
-
-::argue.coralNeedsLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralNeedsLightClaim)
-		$call ArgueFactSlot(SargassumCoveredReef.Light)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
-$endif
+$call ArgueLoad(turtleStabilityArgue)
+	$if ArgueSetClaim(turtleStabilityClaim, jobs.coral-turtle-stability.argue.claimLabel)
+			$call ArgueFactSlot(Model.TurtleVisual)
+	$endif
+	
+{@profCempaka} So, why are the turtles so plentiful here? going on with the coral?
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctLight
-		$answer incorrect, .argue.incorrectLight
-$choice .argue.giveUp; I give up
+	$choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
 
-:: argue.correctLight
+::argue.coralMultipleFood
+$if ArgueIsFactSubmitted(Model.TurtleVisual)
+	$goto .argue.done
+$else
+	{@profCempaka}	That would make sense that a buffet is a big draw.
+					What species are being consumed by turtles?
+					Do you have a model of those connections?
+	$goto .argue.chooseFacts
+$endif
+
+:: argue.chooseFacts
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+		$answer Model.TurtleVisual, .argue.turtleModel
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.turtleModel
 $call ArgueComplete()
-{@profCempaka} I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum that keeps floating on in. That'll be your next investigation if you stick around...
+{@profCempaka}	Thank you! Eventually we may need more information to complete this food web.
 $call CompleteJob()
-
-:: argue.incorrectLight
-{@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
-$call ArgueRejectIncorrect()
-$goto .argue.coralNeedsLight
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
 
 
+// END
 
-:: argue.coralIsOldIntro
-{@profCempaka} Do you even have evidence of age?
-$goto .argue.coralIsOld
-
-:: argue.coralIsOld
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralIsOldClaim)
-		// they can't have this evidence, right?
-		$call ArgueFactSlot(W_WhaleFall.Oxygen)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.incorrectOld
-		$answer incorrect, .argue.incorrectOld
-$choice .argue.giveUp; I give up
-
-:: argue.incorrectOld
-$call ArgueRejectIncorrect()
-{@profCempaka} That certainly doesn't prove the coral are old.  I'm not even sure we have the ability to determine that, yet.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-
-
-:: argue.sargassumBlocksLightIntro
-{@profCempaka} Hmmm... Not sure that tells me anything about the Coral.
-$goto .argue.sargassumBlocksLight
-
-:: argue.sargassumBlocksLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.sargassumTakesLightClaim)
-		$call ArgueFactSlot(Sargassum.Consume.Light)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctSargassumLight
-		$answer incorrect, .argue.incorrectSargassumLight
-$choice .argue.giveUp; I give up
-
-:: argue.correctSargassumLight
-{@profCempaka} I see what you're saying, but I don't see how it's relevant.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-:: argue.incorrectSargassumLight
-{@profCempaka} That doesn't show Sargassum's effect on light, and I'm not sure it would matter if it did.
-$call ArgueRejectIncorrect()
-$goto .argue.sargassumBlocksLight
-
-
-::end
+:: end
+@trigger    JobCompleted
