@@ -153,7 +153,7 @@ $endif
 
 :: ModelingComplete
 @trigger    ModelCompleted // TODO: coordinate this with how Conceptual Modeling works
-@when 		HasFact(Turtle.Eats.QueenConch), HasFact(Turtle.Eats.Copepod), HasFact(Turtle.Eats.WhiteShrimp)
+@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @once
 @cutscene
 {@kevin}	Huh, turns out turtles eat a lot of things.
@@ -163,7 +163,7 @@ $endif
 				
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(Turtle.Eats.QueenConch), HasFact(Turtle.Eats.Copepod), HasFact(Turtle.Eats.WhiteShrimp)
+@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
@@ -176,6 +176,12 @@ $endif
 
 ::argue.chooseClaim
 @trigger    TryArgumentation
+
+$call ArgueLoad(turtleStabilityArgue)
+	$if ArgueSetClaim(turtleStabilityClaim, jobs.coral-turtle-stability.argue.claimLabel)
+			$call ArgueFactSlot(Model.TurtleVisual)
+	$endif
+	
 {@profCempaka} So, why are the turtles so plentiful here? going on with the coral?
 $call ArgueDisplayClaim()
 	$choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
@@ -191,12 +197,11 @@ $else
 $endif
 
 :: argue.chooseFacts
-$call ArgueDisplayClaim()
 $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-		$answer task.model, .argue.turtleModel
+		$answer Model.TurtleVisual, .argue.turtleModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
