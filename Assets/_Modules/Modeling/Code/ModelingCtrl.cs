@@ -112,6 +112,29 @@ namespace Aqua.Modeling {
                 m_SimulationUI.Hide();
             }
 
+            switch(phase) {
+                case ModelPhases.Ecosystem: {
+                    Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Ecosystem);
+                    break;
+                }
+                case ModelPhases.Concept: {
+                    Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Visual);
+                    break;
+                }
+                case ModelPhases.Sync: {
+                    Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Describe);
+                    break;
+                }
+                case ModelPhases.Predict: {
+                    Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Predict);
+                    break;
+                }
+                case ModelPhases.Intervene: {
+                    Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Intervene);
+                    break;
+                }
+            }
+
             m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
         }
 
@@ -133,6 +156,9 @@ namespace Aqua.Modeling {
             m_ProgressInfo.LoadFromJob(selected, Assets.Job(Save.Jobs.CurrentJobId));
             #endif // UNITY_EDITOR
             m_SimDataCtrl.LoadSite();
+
+            Services.Data.SetVariable(ModelingConsts.Var_EcosystemSelected, selected.Id());
+            Services.Data.SetVariable(ModelingConsts.Var_HasJob, m_ProgressInfo.Scope != null);
 
             EvaluateConceptStatus();
             RefreshPhaseHeader();
@@ -156,6 +182,9 @@ namespace Aqua.Modeling {
 
                 m_Header.SetSelected(ModelPhases.Ecosystem, false);
 
+                Services.Data.SetVariable(ModelingConsts.Var_EcosystemSelected, null);
+                Services.Data.SetVariable(ModelingConsts.Var_HasJob, false);
+
                 RefreshPhaseHeader();
             });
         }
@@ -171,6 +200,9 @@ namespace Aqua.Modeling {
             m_SimDataCtrl.ClearSite();
             m_ProgressInfo.Reset(null);
             m_Header.SetSelected(ModelPhases.Ecosystem, false);
+
+            Services.Data.SetVariable(ModelingConsts.Var_EcosystemSelected, null);
+            Services.Data.SetVariable(ModelingConsts.Var_HasJob, false);
             
             RefreshPhaseHeader();
         }
@@ -226,7 +258,9 @@ namespace Aqua.Modeling {
         private void OnSyncAchieved() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.SyncModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
-                Services.UI.Popup.PresentFact("'modeling.newSyncModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                Services.UI.Popup.PresentFact("'modeling.newSyncModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
+                });
                 RefreshPhaseHeader();
             }
         }
@@ -234,7 +268,9 @@ namespace Aqua.Modeling {
         private void OnPredictCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.PredictModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.PredictModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.PredictModelId);
-                Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
+                });
                 RefreshPhaseHeader();
             }
         }
@@ -256,7 +292,9 @@ namespace Aqua.Modeling {
         private void OnInterventionCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.InterveneModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.InterveneModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.InterveneModelId);
-                Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact));
+                Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
+                });;
                 RefreshPhaseHeader();
             }
         }

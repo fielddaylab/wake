@@ -231,12 +231,16 @@ namespace Aqua.Modeling {
             m_State.Simulation.EnsurePlayerData();
             m_SimulateButton.gameObject.SetActive(false);
 
+            Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, 0);
+
             while(m_State.Simulation.IsExecutingRequests()) {
                 yield return null;
             }
 
             PopulateHistoricalGraph();
             PopulatePlayerGraph();
+
+            OnAnimationStart?.Invoke();
 
             for(uint i = 0; i <= m_ProgressInfo.Sim.SyncTickCount; i++) {
                 RenderLines((int) i, false);
@@ -245,11 +249,16 @@ namespace Aqua.Modeling {
                 yield return 0.2f;
             }
 
+            Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, m_State.LastKnownAccuracy);
+
+            OnAnimationFinished?.Invoke();
+
             if (m_ProgressInfo.Scope != null && m_ProgressInfo.Scope.MinimumSyncAccuracy > 0) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
                     OnSyncAchieved?.Invoke();
                 } else {
                     OnSyncUnsuccessful?.Invoke();
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
                 }
             }
         }
@@ -290,10 +299,14 @@ namespace Aqua.Modeling {
             PopulatePlayerGraph();
             PopulatePredictGraph();
 
+            OnAnimationStart?.Invoke();
+
             for(uint i = 0; i <= m_ProgressInfo.Sim.PredictTickCount; i++) {
                 RenderLines((int) i, true);
                 yield return 0.2f;
             }
+
+            OnAnimationFinished?.Invoke();
 
             if (m_ProgressInfo.Scope != null) {
                 OnPredictCompleted?.Invoke();
@@ -351,6 +364,8 @@ namespace Aqua.Modeling {
                     OnInterventionSuccessful?.Invoke();
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 }
             }
         }
@@ -444,6 +459,8 @@ namespace Aqua.Modeling {
             m_AccuracyDisplay.SetActive(false);
             m_SimulateButton.gameObject.SetActive(false);
             RenderSyncPredictDivider();
+            Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Begin);
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_GraphStarted);
         }
 
         protected override void OnHide(bool _) {

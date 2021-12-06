@@ -136,6 +136,7 @@ namespace Aqua.Modeling {
             m_ImportFader.SetActive(false);
             UpdateButtons();
             Services.Input.ResumeAll();
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
         }
 
         private IEnumerator ImportTextSequence(bool hadOrganisms, bool hadTolerances, bool hadBehaviors, bool hadHistorical) {
@@ -164,6 +165,8 @@ namespace Aqua.Modeling {
 
         protected override void OnShow(bool inbInstant) {
             UpdateButtons();
+            Services.Events.QueueForDispatch(ModelingConsts.Event_Model_Begin);
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptStarted);
         }
 
         private void UpdateButtons() {
