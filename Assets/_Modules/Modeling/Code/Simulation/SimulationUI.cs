@@ -365,13 +365,13 @@ namespace Aqua.Modeling {
             
             int historicalRange, predictRange;
             if (predicting) {
-                axis = CalculateGraphRect(m_HistoricalGraph.Range, m_PlayerGraph.Range, m_PredictGraph.Range, default, totalTicks, 8);
                 predictRange = 1 + ticksToRender;
                 historicalRange = 1 + (int) m_ProgressInfo.Sim.SyncTickCount;
+                axis = CalculateGraphRect(m_HistoricalGraph.Range, m_PlayerGraph.Range, m_PredictGraph.BoundedRange(predictRange), default, totalTicks, 8);
             } else {
-                axis = CalculateGraphRect(m_HistoricalGraph.Range, default, default, default, totalTicks, 8);
                 historicalRange = 1 + ticksToRender;
                 predictRange = 0;
+                axis = CalculateGraphRect(m_HistoricalGraph.BoundedRange(historicalRange), default, default, default, totalTicks, 8);
             }
 
             Rect fullRect = axis.ToRect();

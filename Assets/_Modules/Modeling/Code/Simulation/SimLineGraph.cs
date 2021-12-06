@@ -23,6 +23,15 @@ namespace Aqua.Modeling {
         }
 
         public Rect Range { get { return m_LastRect; } }
+        public Rect BoundedRange(int pointCount) {
+            float maxHeight = 0;
+            foreach(var line in m_LinePool.ActiveObjects) {
+                maxHeight = Math.Max(line.MaximumHeight(pointCount), maxHeight);
+            }
+            Rect r = m_LastRect;
+            r.height = maxHeight;
+            return r;
+        }
 
         public unsafe Rect LoadOrganisms(SimSnapshot* results, uint resultCount, uint timestampOffset, SimProfile profile, Predicate<StringHash32> predicate) {
             Assert.True(results != null);
