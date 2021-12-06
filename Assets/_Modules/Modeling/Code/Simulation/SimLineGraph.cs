@@ -89,54 +89,54 @@ namespace Aqua.Modeling {
             return (m_LastRect = varRange);
         }
 
-        // public Rect LoadProperty(SimulationResult[] inResults, WaterPropertyId inProperty, ModelingScenarioData inScenario, Predicate<WaterPropertyId> inCanGraphPredicate) {
-        //     Assert.NotNull(inResults);
-        //     Assert.NotNull(inScenario);
+        public unsafe Rect LoadProperties(SimSnapshot* results, uint resultCount, uint timestampOffset, Predicate<WaterPropertyId> predicate) {
+            Assert.True(results != null);
 
-        //     Rect varRange = new Rect(0, 0, inResults[inResults.Length - 1].Timestamp, 0);
+            Rect varRange = new Rect(0, 0, timestampOffset + resultCount - 1, 0);
 
-        //     if (!inCanGraphPredicate(inProperty)) {
-        //         m_LinePool.Reset();
-        //         m_LineMap.Clear();
-        //         return (m_LastRect = varRange);
-        //     }
+            using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys)) {
+                GraphLine line;
 
-        //     using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys)) {
-        //         GraphLine line;
+                int propertyCount = (int) WaterPropertyId.TRACKED_COUNT;
+                uint tickCount = resultCount;
 
-        //         int tickCount = inResults.Length;
+                for (int propertyIdx = 0; propertyIdx < propertyCount; propertyIdx++) {
+                    WaterPropertyId propId = (WaterPropertyId) propertyIdx;
+                    if (!predicate(propId))
+                        continue;
+                    
+                    WaterPropertyDesc propertyEntry = Assets.Property(propId);
+                    StringHash32 id = propertyEntry.Id();
 
-        //         WaterPropertyDesc propertyEntry = Assets.Property(inProperty);
-        //         StringHash32 id = propertyEntry.Id();
+                    unusedLines.Remove(id);
+                    if (!m_LineMap.TryGetValue(id, out line)) {
+                        line = m_LinePool.Alloc();
+                        m_LineMap[id] = line;
+                        line.Renderer.color = propertyEntry.Color();
+                        line.Renderer.LineThickness = m_LineThickness;
+                    }
 
-        //         unusedLines.Remove(id);
-        //         if (!m_LineMap.TryGetValue(id, out line)) {
-        //             line = m_LinePool.Alloc();
-        //             m_LineMap[id] = line;
-        //             line.Renderer.color = propertyEntry.Color();
-        //             line.Renderer.LineThickness = m_LineThickness;
-        //         }
+                    line.ClearPoints();
 
-        //         line.ClearPoints();
+                    float value;
+                    for (int tickIdx = 0; tickIdx < tickCount; ++tickIdx) {
+                        value = results[tickIdx].Water[propId];
+                        line.AddPoint(timestampOffset + tickIdx, value);
 
-        //         float value;
-        //         for (int tickIdx = 0; tickIdx < tickCount; ++tickIdx) {
-        //             value = inResults[tickIdx].Environment[inProperty];
-        //             line.AddPoint(inResults[tickIdx].Timestamp, value);
+                        if (value > varRange.height)
+                            varRange.height = value;
+                    }
+                }
 
-        //             if (value > varRange.height)
-        //                 varRange.height = value;
-        //         }
+                foreach (var lineId in unusedLines) {
+                    line = m_LineMap[lineId];
+                    m_LinePool.Free(line);
+                    m_LineMap.Remove(lineId);
+                }
+            }
 
-        //         foreach (var lineId in unusedLines) {
-        //             line = m_LineMap[lineId];
-        //             m_LinePool.Free(line);
-        //             m_LineMap.Remove(lineId);
-        //         }
-        //     }
-
-        //     return (m_LastRect = varRange);
-        // }
+            return (m_LastRect = varRange);
+        }
 
         public void RenderLines(Rect inRange, int inPointCount = -1, bool inbRenderInitialPoint = false) {
             foreach (var line in m_LinePool.ActiveObjects) {
