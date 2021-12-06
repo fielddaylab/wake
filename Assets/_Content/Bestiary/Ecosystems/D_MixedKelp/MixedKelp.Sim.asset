@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
-  m_Name: WarmKelpForest.Sim
+  m_Name: MixedKelp.Sim
   m_EditorClassIdentifier: 
   Id:
-    m_Source: WarmKelpForest.Sim
-    m_Hash: 3422610716
-  Parent: {fileID: 11400000, guid: 044b3f75348b94f9dab8729d832fb746, type: 2}
+    m_Source: MixedKelp.Sim
+    m_Hash: 964010985
+  Parent: {fileID: 11400000, guid: eb1ed085536003f46840c8705ccdb065, type: 2}
   Icon: {fileID: 0}
   Mode: 2
   m_IconOverride: {fileID: 0}
@@ -23,29 +23,25 @@ MonoBehaviour:
   - Id:
       m_Source: GiantKelp
       m_Hash: 3510470690
-    Population: 10000
+    Population: 500
+  - Id:
+      m_Source: BullKelp
+      m_Hash: 3363669640
+    Population: 500
   - Id:
       m_Source: SeaOtter
       m_Hash: 3836809010
-    Population: 16
-  - Id:
-      m_Source: Urchin
-      m_Hash: 1973276590
-    Population: 2000
-  - Id:
-      m_Source: SeaStar
-      m_Hash: 1773058804
-    Population: 200
+    Population: 1
   - Id:
       m_Source: Mussel
       m_Hash: 605356284
     Population: 50
   InitialWater:
-    Oxygen: 5
-    Temperature: 21
+    Oxygen: 5.5
+    Temperature: 13
     Light: 100
-    PH: 8.1
-    CarbonDioxide: 27
+    PH: 8.2
+    CarbonDioxide: 30
   SyncTickCount: 10
   PredictTickCount: 10
   OxygenPerTick: 4
