@@ -181,13 +181,15 @@ $endif
 @when   !ArgueIsComplete(turtleStabilityArgue)
 @cutscene
 $call ArgueLoad(turtleStabilityArgue)
-
 {@profCempaka} So, why are the turtles so plentiful here?
-$call ArgueDisplayClaim()
 $choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
 
 
 ::argue.coralMultipleFood
+$if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.claimLabel)
+			$call ArgueFactSlot(LoggerheadTurtle.Eats.WhiteShrimp) // should be model?
+$endif
+$call ArgueDisplayClaim()
 $if ArgueIsFactSubmitted(Model.TurtleVisual)
 	$goto .argue.done
 $else
