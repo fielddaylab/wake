@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a407e9eb66160d42bc983b0083c5d1c, type: 3}
-  m_Name: UrchinModelScope
+  m_Name: urchinBarrenIntroduceOttersModelScope
   m_EditorClassIdentifier: 
   EnvironmentId:
     m_HashValue: 1712208608
@@ -21,12 +21,17 @@ MonoBehaviour:
   - m_HashValue: 3556196180
   MinimumSyncAccuracy: 85
   IncludeWaterChemistryInAccuracy: 0
-  InterventionTargets: []
+  InterventionTargets:
+  - Id:
+      m_Source: GiantKelp
+      m_Hash: 3510470690
+    Population: 2000
+    Range: 300
   ConceptualModelId:
-    m_HashValue: 351135428
-  SyncModelId:
-    m_HashValue: 690303041
-  PredictModelId:
-    m_HashValue: 197703572
-  InterveneModelId:
     m_HashValue: 0
+  SyncModelId:
+    m_HashValue: 0
+  PredictModelId:
+    m_HashValue: 0
+  InterveneModelId:
+    m_HashValue: 690303041
