@@ -64,7 +64,7 @@ $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity
 	$set    jobs:coral-invade.got.scans = true
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down
+	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
 	{@kevin}   Make sure to get all those little things that were swimming around, and the coral too.
 $endif
 
@@ -172,19 +172,20 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+
 // ARGUMENTATION
 
 ::argue.chooseClaim
 @trigger    TryArgumentation
 
+@when   !ArgueIsComplete(turtleStabilityArgue)
+@cutscene
 $call ArgueLoad(turtleStabilityArgue)
-	$if ArgueSetClaim(turtleStabilityClaim, jobs.coral-turtle-stability.argue.claimLabel)
-			$call ArgueFactSlot(Model.TurtleVisual)
-	$endif
-	
-{@profCempaka} So, why are the turtles so plentiful here? going on with the coral?
+
+{@profCempaka} So, why are the turtles so plentiful here?
 $call ArgueDisplayClaim()
-	$choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
+$choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
+
 
 ::argue.coralMultipleFood
 $if ArgueIsFactSubmitted(Model.TurtleVisual)
@@ -195,6 +196,7 @@ $else
 					Do you have a model of those connections?
 	$goto .argue.chooseFacts
 $endif
+`
 
 :: argue.chooseFacts
 $if ArgueAllFactsCorrect()

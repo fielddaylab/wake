@@ -112,7 +112,7 @@ $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-		$answer task.model, .argue.energyModel
+		$answer WarmKelpForest.ConceptualModel, .argue.energyModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
