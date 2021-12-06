@@ -38,6 +38,20 @@ namespace Aqua
             m_RawPoints.PushBack(new Vector2(inX, inY));
         }
 
+        public float MaximumHeight(int inPointCount = -1)
+        {
+            if (inPointCount < 0 || inPointCount > m_RawPoints.Count)
+                inPointCount = m_RawPoints.Count;
+
+            float maxHeight = 0;
+            for(int i = 0; i < inPointCount; i++)
+            {
+                maxHeight = Math.Max(m_RawPoints[i].y, maxHeight);
+            }
+            
+            return maxHeight;
+        }
+
         public void Render(Rect inBounds, int inPointCount = -1, bool inRenderInitial = false)
         {
             if (inPointCount < 0 || inPointCount > m_RawPoints.Count)
@@ -47,7 +61,7 @@ namespace Aqua
 
             float xMin = inBounds.xMin, xMax = inBounds.xMax, yMin = inBounds.yMin, yMax = inBounds.yMax;
 
-            for(int i = 0, len = m_RelativePoints.Length; i < len; ++i)
+            for(int i = 0, len = m_RelativePoints.Length; i < len; i++)
             {
                 ref Vector2 rawPoint = ref m_RawPoints[i];
                 m_RelativePoints[i] = new Vector2(
