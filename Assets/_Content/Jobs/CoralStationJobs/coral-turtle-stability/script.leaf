@@ -187,10 +187,10 @@ $choice .argue.coralMultipleFood; There are multiple food sources for the turtle
 
 ::argue.coralMultipleFood
 $if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.claimLabel)
-			$call ArgueFactSlot(LoggerheadTurtle.Eats.WhiteShrimp) // should be model?
+			$call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
 $endif
 $call ArgueDisplayClaim()
-$if ArgueIsFactSubmitted(Model.TurtleVisual)
+$if ArgueIsFactSubmitted(ReefEdge.Model.TurtleVisual)
 	$goto .argue.done
 $else
 	{@profCempaka}	That would make sense that a buffet is a big draw.
@@ -205,7 +205,7 @@ $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-		$answer Model.TurtleVisual, .argue.turtleModel
+		$answer ReefEdge.Model.TurtleVisual, .argue.turtleModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
