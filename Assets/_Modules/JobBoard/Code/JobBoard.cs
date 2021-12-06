@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using TMPro;
 using BeauData;
 using BeauPools;
+using BeauRoutine;
 
 namespace Aqua.JobBoard
 {
@@ -90,9 +91,21 @@ namespace Aqua.JobBoard
                 case PlayerJobStatus.InProgress:
                     {
                         profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
+                        Routine.Start(WaitToExit()).TryManuallyUpdate(0);
                         break;
                     }
             }
+        }
+
+        static private IEnumerator WaitToExit()
+        {
+            Services.UI.ShowLetterbox();
+            while(Services.Script.IsCutscene())
+            {
+                yield return null;
+            }
+            yield return StateUtil.LoadPreviousSceneWithWipe();
+            Services.UI.HideLetterbox();
         }
 
         #endregion // Handlers

@@ -19,7 +19,7 @@ $endif
 
 :: helpScanProbe
 @trigger    RequestPartnerHelp
-@when 		!HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@when 		scene:name == "CoralStation", !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
@@ -64,7 +64,7 @@ $endif
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
-@when 		HasFact(Sargassum.Consume.Light), scene:name != "ModelingPrototype", !HasFact(Model.SargLightPrediction)
+@when 		HasFact(Sargassum.Consume.Light), scene:name != "Modeling", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
 {@kevin}	We should take this new knowledge about Sargassum and make a model to know for sure what's causing the low light. 
@@ -78,7 +78,7 @@ $endif
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "universal", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
@@ -92,7 +92,7 @@ $endif
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
@@ -108,7 +108,7 @@ $endif
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a prediction of how the light levels change over time. 

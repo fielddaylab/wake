@@ -401,7 +401,7 @@ namespace Aqua.Argumentation {
             Array.Copy(m_CurrentStatus.SubmittedFacts, m_RevertSubmitState, ArgueConsts.MaxFactsPerClaim);
 
             PortableRequest request = PortableRequest.SelectFact();
-            request.CanSelect = CanSelect;
+            request.CanSelect = CanSelectAndHasSlot;
             request.OnSelect = HandleSingleSelect;
             request.Response.OnComplete((f) => SubmitFact(f));
 
@@ -416,7 +416,7 @@ namespace Aqua.Argumentation {
             m_ShouldRevert = true;
 
             PortableRequest request = PortableRequest.SelectFactSet(HandleMultiSelect);
-            request.CanSelect = CanSelect;
+            request.CanSelect = CanSelectAndHasSlot;
 
             PortableMenu.Request(request);
             return request.Response;

@@ -17,6 +17,7 @@ namespace Aqua.Modeling {
         [SerializeField] private SimLineGraph m_HistoricalGraph = null;
         [SerializeField] private SimLineGraph m_PlayerGraph = null;
         [SerializeField] private SimLineGraph m_PredictGraph = null;
+        [SerializeField] private SimTargetGraph m_TargetGraph = null;
         [SerializeField] private RectTransform m_SyncPredictLine = null;
         [SerializeField] private TMP_Text m_SyncTimeLabelDisplay = null;
         [SerializeField] private TMP_Text m_PredictTimeDisplay = null;
@@ -122,6 +123,9 @@ namespace Aqua.Modeling {
             
             if (m_IsPredicting) {
                 PopulatePredictGraph();
+                if (m_IsIntervention) {
+                    PopulateTargetGraph();
+                }
                 RenderLines((int) m_ProgressInfo.Sim.PredictTickCount, true);
             } else {
                 RenderLines((int) m_ProgressInfo.Sim.SyncTickCount, false);
@@ -231,12 +235,16 @@ namespace Aqua.Modeling {
             m_State.Simulation.EnsurePlayerData();
             m_SimulateButton.gameObject.SetActive(false);
 
+            Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, 0);
+
             while(m_State.Simulation.IsExecutingRequests()) {
                 yield return null;
             }
 
             PopulateHistoricalGraph();
             PopulatePlayerGraph();
+
+            OnAnimationStart?.Invoke();
 
             for(uint i = 0; i <= m_ProgressInfo.Sim.SyncTickCount; i++) {
                 RenderLines((int) i, false);
@@ -245,11 +253,16 @@ namespace Aqua.Modeling {
                 yield return 0.2f;
             }
 
+            Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, m_State.LastKnownAccuracy);
+
+            OnAnimationFinished?.Invoke();
+
             if (m_ProgressInfo.Scope != null && m_ProgressInfo.Scope.MinimumSyncAccuracy > 0) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
                     OnSyncAchieved?.Invoke();
                 } else {
                     OnSyncUnsuccessful?.Invoke();
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
                 }
             }
         }
@@ -290,10 +303,14 @@ namespace Aqua.Modeling {
             PopulatePlayerGraph();
             PopulatePredictGraph();
 
+            OnAnimationStart?.Invoke();
+
             for(uint i = 0; i <= m_ProgressInfo.Sim.PredictTickCount; i++) {
                 RenderLines((int) i, true);
                 yield return 0.2f;
             }
+
+            OnAnimationFinished?.Invoke();
 
             if (m_ProgressInfo.Scope != null) {
                 OnPredictCompleted?.Invoke();
@@ -316,6 +333,8 @@ namespace Aqua.Modeling {
 
             PopulateHistoricalGraph();
             PopulatePlayerGraph();
+            PopulateTargetGraph();
+            
             RenderLines((int) m_ProgressInfo.Sim.SyncTickCount, false);
         }
 
@@ -351,6 +370,8 @@ namespace Aqua.Modeling {
                     OnInterventionSuccessful?.Invoke();
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 }
             }
         }
@@ -365,18 +386,24 @@ namespace Aqua.Modeling {
             
             int historicalRange, predictRange;
             if (predicting) {
-                axis = CalculateGraphRect(m_HistoricalGraph.Range, m_PlayerGraph.Range, m_PredictGraph.Range, default, totalTicks, 8);
                 predictRange = 1 + ticksToRender;
                 historicalRange = 1 + (int) m_ProgressInfo.Sim.SyncTickCount;
+                axis = CalculateGraphRect(m_HistoricalGraph.Range, m_PlayerGraph.Range, m_PredictGraph.BoundedRange(predictRange), GetInterventionTargetRect(), default, totalTicks, 8);
             } else {
-                axis = CalculateGraphRect(m_HistoricalGraph.Range, default, default, default, totalTicks, 8);
                 historicalRange = 1 + ticksToRender;
                 predictRange = 0;
+                axis = CalculateGraphRect(m_HistoricalGraph.BoundedRange(historicalRange), GetInterventionTargetRect(), default, default, default, totalTicks, 8);
             }
 
             Rect fullRect = axis.ToRect();
             m_HistoricalGraph.RenderLines(fullRect, historicalRange);
             m_PlayerGraph.RenderLines(fullRect, historicalRange);
+
+            if (m_IsIntervention) {
+                m_TargetGraph.RenderTargets(fullRect);
+            } else {
+                m_TargetGraph.Clear();
+            }
 
             if (predicting) {
                 m_PredictGraph.RenderLines(fullRect, predictRange, m_IsIntervention);
@@ -389,6 +416,7 @@ namespace Aqua.Modeling {
             m_PlayerGraph.Clear();
             m_HistoricalGraph.Clear();
             m_PredictGraph.Clear();
+            m_TargetGraph.Clear();
         }
 
         private void RenderSyncPredictDivider() {
@@ -414,6 +442,20 @@ namespace Aqua.Modeling {
             ((RectTransform) m_HistoricalMissingDisplay.transform).SetAnchorX(left);
             ((RectTransform) m_PredictButton.transform).SetAnchorX(right);
             m_InterveneButtonGroup.SetAnchorX(right);
+        }
+
+        private Rect GetInterventionTargetRect() {
+            Rect r = default;
+            if (m_IsIntervention && m_ProgressInfo.Scope != null) {
+                float maxHeight = 0;
+                ActorCountRange count;
+                for(int i = 0; i < m_ProgressInfo.Scope.InterventionTargets.Length; i++) {
+                    count = m_ProgressInfo.Scope.InterventionTargets[i];
+                    maxHeight = Math.Max(count.Population + count.Range, maxHeight);
+                }
+                r.height = maxHeight;
+            }
+            return r;
         }
 
         private void RenderAccuracy() {
@@ -444,6 +486,8 @@ namespace Aqua.Modeling {
             m_AccuracyDisplay.SetActive(false);
             m_SimulateButton.gameObject.SetActive(false);
             RenderSyncPredictDivider();
+            Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Begin);
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_GraphStarted);
         }
 
         protected override void OnHide(bool _) {
@@ -531,11 +575,20 @@ namespace Aqua.Modeling {
             m_PredictGraph.LoadOrganisms(data, count, m_ProgressInfo.Sim.SyncTickCount, m_State.Simulation.PredictProfile, (b) => true);
         }
 
-        static private GraphingUtils.AxisRangePair CalculateGraphRect(in Rect inA, in Rect inB, in Rect inC, in Rect inD, uint inTickCountX, uint inTickCountY) {
+        private void PopulateTargetGraph() {
+            if (m_ProgressInfo.Scope) {
+                m_TargetGraph.LoadTargets(m_ProgressInfo.Scope);
+            } else {
+                m_TargetGraph.Clear();
+            }
+        }
+
+        static private GraphingUtils.AxisRangePair CalculateGraphRect(in Rect inA, in Rect inB, in Rect inC, in Rect inD, in Rect inE, uint inTickCountX, uint inTickCountY) {
             Rect rect = inA;
             Geom.Encapsulate(ref rect, inB);
             Geom.Encapsulate(ref rect, inC);
             Geom.Encapsulate(ref rect, inD);
+            Geom.Encapsulate(ref rect, inE);
 
             GraphingUtils.AxisRangePair pair;
             pair.X = new GraphingUtils.AxisRangeInfo() { Min = 0, Max = inTickCountX, TickCount = inTickCountX + 1, TickInterval = 1 };
