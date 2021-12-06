@@ -29,8 +29,8 @@ $branch common.ringPhone
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
 :: ModelingComplete
-@trigger    ModelCompleted
-@when       !jobs:kelp-energy.upgradedFacts
+@trigger    ModelCompleted // TODO: coordinate this with how Conceptual Modeling works
+@when       JobTaskTop(reportBack)
 @once
 @cutscene
 {@kevin}  Looks like we have our model! Lets bring it back to the {map-name}Office{/map-name}.
@@ -99,7 +99,7 @@ $else
 $endif
 
 :: argue.giantKelp
-$if ArgueIsFactSubmitted(Model.EnergyConceptual)
+$if ArgueIsFactSubmitted(WarmKelpForest.ConceptualModel)
 	$goto .argue.done
 $else
 	{@drKelp}    Can I see your model?
