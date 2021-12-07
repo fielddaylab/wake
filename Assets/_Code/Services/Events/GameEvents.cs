@@ -53,6 +53,9 @@ namespace Aqua
         static public readonly StringHash32 PortableAppClosed = "portable:app-closed";
         static public readonly StringHash32 PortableEntrySelected = "portable:bestiary-entrySelected";
 
+        static public readonly StringHash32 PopupOpened = "popup:opened"; // no args
+        static public readonly StringHash32 PopupClosed = "popup:closed"; // no args
+
         static public readonly StringHash32 JobUnload = "job:unload"; // StringHash32 jobId
         static public readonly StringHash32 JobPreload = "job:preload"; // StringHash32 jobId
 

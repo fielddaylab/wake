@@ -100,7 +100,7 @@ namespace Aqua.JobBoard
         static private IEnumerator WaitToExit()
         {
             Services.UI.ShowLetterbox();
-            while(Services.Script.IsCutscene())
+            while(Script.ShouldBlock())
             {
                 yield return null;
             }

@@ -45,7 +45,8 @@ namespace Aqua
             events.Register<StringHash32>(GameEvents.JobPreload, OnJobPreload, this)
                 .Register<StringHash32>(GameEvents.JobUnload, OnJobUnload, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
-                .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this);
+                .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
+                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this);
 
             RegisterTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
             RegisterTaskEvent(events, GameEvents.BestiaryUpdated, TaskEventMask.BestiaryUpdate);
@@ -119,7 +120,10 @@ namespace Aqua
 
         private void OnCutsceneEnd()
         {
-            ProcessUpdateQueue(Save.Jobs);
+            if (!Script.ShouldBlock())
+            {
+                ProcessUpdateQueue(Save.Jobs);
+            }
         }
 
         #endregion // Handlers
@@ -171,7 +175,7 @@ namespace Aqua
             JobsData jobsData = saveData.Jobs;
 
             ScanForUpdates(saveData, m_TaskUpdateQueue);
-            if (!Services.Script.IsCutscene())
+            if (!Script.ShouldBlock())
             {
                 ProcessUpdateQueue(jobsData);
             }

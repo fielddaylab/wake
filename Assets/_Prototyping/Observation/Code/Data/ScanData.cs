@@ -23,7 +23,7 @@ namespace ProtoAqua.Observation
         [BlockContent, UnityEngine.Scripting.Preserve] private string m_DescText = null;
 
         // Links
-        [BlockMeta("spriteId"), UnityEngine.Scripting.Preserve] private StringHash32 m_SpriteId = null;
+        [BlockMeta("image"), UnityEngine.Scripting.Preserve] private string m_ImagePath = null;
         [BlockMeta("logbook"), UnityEngine.Scripting.Preserve] private StringHash32 m_LogbookId = null;
         [BlockMeta("bestiary"), UnityEngine.Scripting.Preserve] private StringHash32 m_BestiaryId = null;
         private StringHash32[] m_BestiaryFactIds = null;
@@ -47,7 +47,7 @@ namespace ProtoAqua.Observation
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }
 
-        public StringHash32 SpriteId() { return m_SpriteId; }
+        public string ImagePath() { return m_ImagePath; }
         public StringHash32 LogbookId() { return m_LogbookId; }
         public StringHash32 BestiaryId() { return m_BestiaryId; }
 

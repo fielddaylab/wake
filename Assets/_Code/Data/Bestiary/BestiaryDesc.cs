@@ -101,6 +101,7 @@ namespace Aqua
 
         public string SketchPath() { return m_SketchPath; }
         public Color Color() { return m_Color; }
+        public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
 
         public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
 

@@ -82,6 +82,8 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskRemoved, OnTaskDeactivate, this)
                 .Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
+                .Register(GameEvents.PopupOpened, OnCutsceneStart, this)
+                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
                 .Register(GameEvents.PortableOpened, OnPortableOpened, this);
 
             m_TaskDisplays.Initialize(null, null, 0);
@@ -168,7 +170,7 @@ namespace Aqua
             if (m_OperationQueue.Count <= 0)
                 return;
             
-            if (Services.UI.IsLetterboxed() || Services.State.IsLoadingScene())
+            if (Script.ShouldBlock())
                 return;
 
             if (!m_ProcessOperationsJob)

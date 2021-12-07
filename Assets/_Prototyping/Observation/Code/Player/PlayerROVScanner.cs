@@ -9,6 +9,8 @@ namespace ProtoAqua.Observation
 {
     public class PlayerROVScanner : MonoBehaviour, PlayerROV.ITool
     {
+        private const ScanResult PopupResultMask = ScanResult.NewBestiary | ScanResult.NewLogbook;
+
         #region Inspector
 
         [SerializeField] private CircleCollider2D m_RangeCollider = null;
@@ -178,8 +180,6 @@ namespace ProtoAqua.Observation
             float duration = m_ScanSystem.GetScanDuration(data);
             float increment = 1f / duration;
 
-            scanUI.AdjustForScannableVisibility(m_TargetScannable.Collider.transform.position, gameObject.transform.parent.position);
-
             m_TargetScannable.CurrentIcon.SetSpinning(true);
 
             while(progress < 1 && m_TargetScannable.InRange)
@@ -203,6 +203,20 @@ namespace ProtoAqua.Observation
                 if (data != null && !data.BestiaryId().IsEmpty)
                 {
                     Services.Audio.PostEvent("scan_bestiary");
+                    var bestiary = Assets.Bestiary(data.BestiaryId());
+                    if (bestiary.Category() == BestiaryDescCategory.Critter)
+                    {
+                        Services.UI.Popup.Display(
+                            Loc.Format("ui.popup.newBestiary.critter.header",
+                                bestiary.CommonName()), data.Text(),
+                                bestiary.ImageSet()).Wait();
+                    }
+                    else
+                    {
+                        Services.UI.Popup.Display(
+                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), data.Text(),
+                                bestiary.ImageSet()).Wait();
+                    }
                 }
                 if (data != null && !data.LogbookId().IsEmpty)
                 {
@@ -221,7 +235,14 @@ namespace ProtoAqua.Observation
                 ShowTool(transform.parent.position, m_TargetScannable.transform.position, m_CurrentToolView);
             }
 
-            scanUI.ShowScan(data, result);
+            if ((result & PopupResultMask) == 0)
+            {
+                scanUI.ShowScan(data, result);
+            }
+            else
+            {
+                scanUI.Hide();
+            }
         }
 
         public void HideCurrentToolView()

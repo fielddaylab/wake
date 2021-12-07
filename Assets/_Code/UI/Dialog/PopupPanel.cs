@@ -173,6 +173,8 @@ namespace Aqua
                 Configure(inHeader, inText, inImage, inOptions);
                 ConfigureFacts(default, default);
 
+                Services.Events.QueueForDispatch(GameEvents.PopupOpened);
+
                 if (IsShowing())
                 {
                     m_BoxAnim.Replace(this, BounceAnim());
@@ -222,6 +224,8 @@ namespace Aqua
                 Configure(inHeader, inText, null, inOptions);
                 ConfigureFacts(inFact, inFlags);
 
+                Services.Events.QueueForDispatch(GameEvents.PopupOpened);
+
                 if (IsShowing())
                 {
                     m_BoxAnim.Replace(this, BounceAnim());
@@ -262,6 +266,11 @@ namespace Aqua
 
                 Hide();
             }
+        }
+
+        public bool IsDisplaying()
+        {
+            return m_DisplayRoutine;
         }
 
         #endregion // Display
@@ -333,6 +342,11 @@ namespace Aqua
             m_DisplayRoutine.Stop();
 
             m_RaycastBlocker.Override = false;
+
+            if (WasShowing())
+            {
+                Services.Events?.QueueForDispatch(GameEvents.PopupClosed);
+            }
 
             if (WasShowing())
             {

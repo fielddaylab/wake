@@ -23,7 +23,7 @@ namespace ProtoAqua.Observation
         [Header("Data")]
         [SerializeField] private CanvasGroup m_DataGroup = null;
         [SerializeField] private LocText m_HeaderText = null;
-        [SerializeField] private Image m_ImageDisplay = null;
+        [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
         [SerializeField] private LocText m_DescriptionText = null;
 
         #endregion // Inspector
@@ -135,16 +135,17 @@ namespace ProtoAqua.Observation
                     m_TypeRoutine.Replace(this, TypeOut());
                 }
 
-                StringHash32 spriteId = inData.SpriteId();
-                if (spriteId.IsEmpty)
+                BestiaryDesc bestiary = Assets.Bestiary(inData.BestiaryId());
+                StreamedImageSet imageSet = new StreamedImageSet(string.IsNullOrEmpty(inData.ImagePath()) ? bestiary?.SketchPath() : null, bestiary?.Icon());
+                if (imageSet.IsEmpty)
                 {
                     m_ImageDisplay.gameObject.SetActive(false);
-                    m_ImageDisplay.sprite = null;
+                    m_ImageDisplay.Clear();
                 }
                 else
                 {
+                    m_ImageDisplay.Display(imageSet);
                     m_ImageDisplay.gameObject.SetActive(true);
-                    m_ImageDisplay.sprite = null ; // TODO: Find sprite with id
                 }
             }
 
@@ -155,21 +156,6 @@ namespace ProtoAqua.Observation
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_RootTransform);
 
             Services.Audio.PostEvent(config.OpenSound);
-        }
-
-
-        public void AdjustForScannableVisibility(Vector2 inScannableObjectPosition, Vector2 inPlayerROVPosition)
-        {
-            if (inScannableObjectPosition.x < inPlayerROVPosition.x)
-            {
-                m_RectTransform.SetAnchorPos(-m_AnchorOffsetX, Axis.X);
-                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(1f, 0.5f);
-            }
-            else
-            {
-                m_RectTransform.SetAnchorPos(m_AnchorOffsetX, Axis.X);
-                m_RectTransform.anchorMin = m_RectTransform.anchorMax = new Vector2(0f, 0.5f);
-            }
         }
 
         public void CancelIfProgress()
@@ -251,7 +237,9 @@ namespace ProtoAqua.Observation
         {
             m_HeaderText.SetText(string.Empty);
             m_DescriptionText.SetText(string.Empty);
-            m_ImageDisplay.sprite = null;
+            m_ImageDisplay.Clear();
+
+            Streaming.UnloadUnusedAsync(20);
         }
 
         #endregion // Callbacks

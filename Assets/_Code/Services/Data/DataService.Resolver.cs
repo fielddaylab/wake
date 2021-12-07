@@ -342,13 +342,13 @@ namespace Aqua
                         return Services.UI.Popup.Display(
                             Loc.Format("ui.popup.newBestiary.critter.header",
                                 bestiary.CommonName()), null,
-                                new StreamedImageSet(bestiary.SketchPath(), bestiary.Icon())).Wait();
+                                bestiary.ImageSet()).Wait();
                     }
                     else
                     {
                         return Services.UI.Popup.Display(
                             Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null,
-                                new StreamedImageSet(bestiary.SketchPath(), bestiary.Icon())).Wait();
+                                bestiary.ImageSet()).Wait();
                     }
                 }
 

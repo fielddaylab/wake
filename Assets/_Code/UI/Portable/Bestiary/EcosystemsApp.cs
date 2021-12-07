@@ -48,7 +48,7 @@ namespace Aqua.Portable {
             string text = string.Format("{0}: {1}", Loc.Find(map.ShortLabelId()), Loc.Find(entry.CommonName()));
 
             page.CommonName.SetText(text);
-            page.Sketch.Display(new StreamedImageSet(entry.SketchPath(), entry.Icon()));
+            page.Sketch.Display(entry.ImageSet());
             page.Description.SetText(entry.Description());
         }
 
