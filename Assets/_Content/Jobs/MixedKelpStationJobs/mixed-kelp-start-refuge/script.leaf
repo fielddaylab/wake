@@ -10,7 +10,7 @@ $branch common.ringPhone
 {@drKelp}	We are trying to determine which site would be the best choice for a Kelp refuge.
 {@drKelp}	You can use the {h}Stress Tank{/h} to find out what stresses the Kelp!
 
-:: helpLeaveShip
+:: helpToExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", !jobs:coral-invade.seen.bottom
 @cutscene
@@ -51,9 +51,9 @@ $branch common.ringPhone
 @cutscene
 $call ArgueLoad(startRefugeArgue)
 {@drKelp} All right, which bay is ideal for establishing the refuge?
-	$choice .argue.site1; Potential Site 1 (Temp 2° C; Light 60%)
-	$choice .argue.site2; Potential Site 2 (Temp 20° C; Light 100%)
-	$choice .argue.site3; Potential Site 3 (Temp 13° C; Light 100%)
+	$choice .argue.site1; Potential Site 1 (Temp 2°C; Light 60%)
+	$choice .argue.site2; Potential Site 2 (Temp 20°C; Light 100%)
+	$choice .argue.site3; Potential Site 3 (Temp 13°C; Light 100%)
 $choose branch
 
 
@@ -88,6 +88,7 @@ $endif
 $call ArgueComplete()
 {@drKelp}	That does it! Site 3 should work well for both types of Kelp.
 $call CompleteJob()
+// $call UnlockSite(MixedKelp)?
 
 :: argue.incorrectFacts
 {@drKelp} That doesn't work. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
@@ -95,7 +96,7 @@ $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@drKelp} OK. Get back to me when you're ready.
 
 // END
 
