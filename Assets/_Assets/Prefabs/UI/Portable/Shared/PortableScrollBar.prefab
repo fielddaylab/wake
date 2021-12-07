@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5335947386381755547}
   - component: {fileID: 7027473198317334485}
+  - component: {fileID: 3134715259155277605}
   m_Layer: 5
-  m_Name: ScrollBar
+  m_Name: PortableScrollBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,13 +80,30 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 4895797801198967832}
   m_HandleRect: {fileID: 444765440531040813}
-  m_Direction: 3
+  m_Direction: 2
   m_Value: 0
   m_Size: 0.559
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3134715259155277605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154064707076080402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: 
+    m_Hash: 0
+  TooltipOverride: 
+  Cursor: 1
 --- !u!1 &2619066295976145735
 GameObject:
   m_ObjectHideFlags: 0

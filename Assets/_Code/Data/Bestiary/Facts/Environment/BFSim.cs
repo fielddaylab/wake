@@ -15,11 +15,11 @@ namespace Aqua
 
         [KeyValuePair("Id", "Population")] public ActorCountU32[] InitialActors = null;
         public WaterPropertyBlockF32 InitialWater = default;
-        [Range(1, 16)] public uint SyncTickCount = 10;
+        [Range(1, 12)] public uint SyncTickCount = 10;
 
         [Header("Predict")]
 
-        [Range(1, 16)] public uint PredictTickCount = 10;
+        [Range(1, 12)] public uint PredictTickCount = 10;
 
         [Header("Resources")]
 

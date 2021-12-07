@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using Aqua.Profile;
 using Aqua.Portable;
 using UnityEngine.EventSystems;
+using BeauUtil.Variants;
 
 namespace Aqua
 {
     public class InlineJobTaskList : SharedPanel
     {
+        static private readonly TableKeyPair Var_NewJobRequest = TableKeyPair.Parse("session:jobSwitchedShowOnNewScene");
+
         #region Types
         
         private struct TaskOperation
@@ -101,7 +104,8 @@ namespace Aqua
 
         private void OnSceneLoaded()
         {
-            ReloadTasks(true, false);
+            bool bDisplayOnLoad = Services.Data.PopVariable(Var_NewJobRequest).AsBool();
+            ReloadTasks(true, bDisplayOnLoad);
             TryStartProcessing();
         }
 
@@ -557,5 +561,10 @@ namespace Aqua
         };
 
         #endregion // Reordering
+    
+        static public void RequestDisplayOnSceneLoad()
+        {
+            Services.Data.SetVariable(Var_NewJobRequest, true);
+        }
     }
 }

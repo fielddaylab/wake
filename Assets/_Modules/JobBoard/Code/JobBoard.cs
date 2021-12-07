@@ -104,6 +104,7 @@ namespace Aqua.JobBoard
             {
                 yield return null;
             }
+            InlineJobTaskList.RequestDisplayOnSceneLoad();
             yield return StateUtil.LoadPreviousSceneWithWipe();
             Services.UI.HideLetterbox();
         }

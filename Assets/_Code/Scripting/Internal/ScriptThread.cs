@@ -215,8 +215,11 @@ namespace Aqua.Scripting
 
         public void PopCutscene()
         {
-            --m_CutsceneCount;
-            Services.UI.HideLetterbox();
+            if (m_CutsceneCount > 0)
+            {
+                --m_CutsceneCount;
+                Services.UI.HideLetterbox();
+            }
         }
 
         #endregion // Cutscene
@@ -346,12 +349,6 @@ namespace Aqua.Scripting
                 Services.UI.StopSkipCutscene();
             }
 
-            while(m_CutsceneCount > 0)
-            {
-                Services.UI.HideLetterbox();
-                --m_CutsceneCount;
-            }
-
             m_SkipRoutine.Stop();
 
             m_Mgr.UntrackThread(this);
@@ -368,6 +365,12 @@ namespace Aqua.Scripting
             m_LastKnownChoiceDialog = default(DialogRecord);
 
             base.Reset();
+
+            while(m_CutsceneCount > 0)
+            {
+                Services.UI.HideLetterbox();
+                --m_CutsceneCount;
+            }
 
             m_Pool.Free(this);
         }

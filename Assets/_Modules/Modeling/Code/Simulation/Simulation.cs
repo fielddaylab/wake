@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -7,7 +8,6 @@ using ActorInfo = Aqua.Modeling.SimProfile.ActorInfo;
 using BehaviorInfo = Aqua.Modeling.SimProfile.BehaviorInfo;
 using EatInfo = Aqua.Modeling.SimProfile.EatInfo;
 using ParasiteInfo = Aqua.Modeling.SimProfile.ParasiteInfo;
-using System.Collections.Generic;
 
 namespace Aqua.Modeling
 {
@@ -15,7 +15,7 @@ namespace Aqua.Modeling
 
         #region Consts
 
-        public const int MaxTrackedCritters = 16;
+        public const int MaxTrackedCritters = 12;
         public const float MaxEatProportion = 0.75f;
         public const float MaxReproduceProportion = 0.75f;
         public const float MaxDeathProportion = 0.5f;
@@ -26,7 +26,7 @@ namespace Aqua.Modeling
         public const float IncreasePHRatio = 0.002f;
         public const float DecreasePHRatio = 0.002f;
 
-        public const int MaxTicks = 32;
+        public const int MaxTicks = 24;
 
         #endregion // Consts
 
@@ -57,7 +57,7 @@ namespace Aqua.Modeling
         }
 
         public class Buffer : IDisposable {
-            static private readonly int BufferSize = sizeof(PopulationPair) * 4 * MaxTrackedCritters + sizeof(ProduceConsumePair) * MaxTrackedCritters;
+            static public readonly int BufferSize = sizeof(PopulationPair) * 4 * MaxTrackedCritters + sizeof(ProduceConsumePair) * MaxTrackedCritters;
 
             public PopulationPair* Populations;
             public ProduceConsumePair* Unconsumed;

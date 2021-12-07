@@ -57,8 +57,8 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_SpringForce = 1024;
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
-        [SerializeField] private float m_BoundaryY = 6;
-        [SerializeField] private float m_BoundaryForce = 2;
+        // [SerializeField] private float m_BoundaryY = 6;
+        // [SerializeField] private float m_BoundaryForce = 2;
 
         #endregion // Inspector
 
