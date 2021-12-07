@@ -1,0 +1,103 @@
+#basePath   job.mixed-kelp-start-refuge
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@drKelp}	Hello again, {player-name}! // will this be Dr. Kelpurnia?
+{@drKelp}	We are trying to determine which site would be the best choice for a Kelp refuge.
+{@drKelp}	You can use the {h}Stress Tank{/h} to find out what stresses the Kelp!
+
+:: helpToExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name != "ExperimentV2", !jobs:coral-invade.seen.bottom
+@cutscene
+{@player}   Where should I go from here?
+{@kevin}	Let's head to the {h}Stress Tank{/h} to see how Kelp respond to different environments.
+
+
+:: startExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentV2"
+@once
+@cutscene
+{@player}   What kind of experiment should we be doing this time?
+{@kevin}  	Let's put the Kelp in the stressor tank with different temperatures and amounts of light.
+{@kevin}  	Then we'll see which ones stress our two types of Kelp.
+
+:: helpAtExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentV2"
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	First you will want to select the stressor tank.
+{@kevin}	Then add the Kelp in, and try to expose them to varying temperatures and amounts of light.
+
+:: experimentEnd
+@trigger    JobTasksUpdated
+@when 		HasFact(GiantKelp.Light.Stressed), HasFact(GiantKelp.Temperature.Stressed), HasFact(BullKelp.Light.Stressed), HasFact(BullKelp.Temperature.Stressed)
+@once
+@cutscene
+{@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
+{@kevin}	Let's report this information back to Professor Kelpurnia!
+
+// ARGUMENTATION
+
+::argue.chooseClaim
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(startRefugeArgue)
+@cutscene
+$call ArgueLoad(startRefugeArgue)
+{@drKelp} All right, which bay is ideal for establishing the refuge?
+	$choice .argue.site1; Potential Site 1 (Temp 2°C; Light 60%)
+	$choice .argue.site2; Potential Site 2 (Temp 20°C; Light 100%)
+	$choice .argue.site3; Potential Site 3 (Temp 13°C; Light 100%)
+$choose branch
+
+
+::argue.site1
+{@drKelp}	Hmmmm... This is way too cold for Giant Kelp, even if there is enough light.
+
+::argue.site2
+{@drKelp}	The bull kelp will boil here! Although... There is plenty of light.
+
+::argue.site3
+{@drKelp}	Wow, this looks ideal! Does it fit the stress ranges?
+$if ArgueSetClaim(startRefugeArgueClaim, jobs.mixed-kelp-start-refuge.argue.claimLabel)
+			$call ArgueFactSlot(GiantKelp.Light.Stressed)
+			$call ArgueFactSlot(GiantKelp.Temperature.Stressed)
+			$call ArgueFactSlot(BullKelp.Light.Stressed)
+			$call ArgueFactSlot(BullKelp.Temperature.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$goto .argue.defendClaim
+
+::argue.defendClaim
+$if ArgueAllFactsCorrect()
+    $goto .argue.correctFacts
+$else
+	$choice #argueFactSet; Present facts from AQOS
+			$answer correct, .argue.correctFacts
+			$answer incorrect, .argue.incorrectFacts
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.correctFacts
+$call ArgueComplete()
+{@drKelp}	That does it! Site 3 should work well for both types of Kelp.
+$call CompleteJob()
+// $call UnlockSite(MixedKelp)?
+
+:: argue.incorrectFacts
+{@drKelp} That doesn't work. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
+$call ArgueRejectIncorrect()
+$goto .argue.defendClaim
+
+:: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
+
+// END
+
+:: end
