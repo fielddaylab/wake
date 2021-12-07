@@ -339,16 +339,16 @@ namespace Aqua
                     Services.Audio.PostEvent("item.popup.new");
                     if (bestiary.Category() == BestiaryDescCategory.Critter)
                     {
-                        return Services.UI.Popup.Display(
+                        return Services.UI.Popup.Present(
                             Loc.Format("ui.popup.newBestiary.critter.header",
                                 bestiary.CommonName()), null,
-                                bestiary.ImageSet()).Wait();
+                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
                     }
                     else
                     {
-                        return Services.UI.Popup.Display(
+                        return Services.UI.Popup.Present(
                             Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null,
-                                bestiary.ImageSet()).Wait();
+                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
                     }
                 }
 

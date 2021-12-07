@@ -19,9 +19,9 @@ namespace Aqua
         static public readonly StringHash32 Option_No = "";
         static public readonly StringHash32 Option_Cancel = "";
 
-        static private readonly NamedOption[] DefaultOkay = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.okay") };
-        static private readonly NamedOption[] DefaultYesNo = new NamedOption[] { new NamedOption(Option_Yes, "ui.popup.yes"), new NamedOption(Option_No, "ui.popup.no") };
-        static private readonly NamedOption[] DefaultAddToBestiary = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.addToBestiaryButton") };
+        static public readonly NamedOption[] DefaultOkay = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.okay") };
+        static public readonly NamedOption[] DefaultYesNo = new NamedOption[] { new NamedOption(Option_Yes, "ui.popup.yes"), new NamedOption(Option_No, "ui.popup.no") };
+        static public readonly NamedOption[] DefaultAddToBestiary = new NamedOption[] { new NamedOption(Option_Okay, "ui.popup.addToBestiaryButton") };
 
         [Serializable]
         private struct ButtonConfig
