@@ -6,15 +6,14 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
-{@profCempaka}	I need you to head over to Site R and see what you can find.
-{@player} 	We'll be right over there!
-$call GiveUpgrade(StressTank)
+{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at Site V.
+{@profCempaka}  Drop in at Site V and use your Scanner to locate a Turtle.
+{@profCempaka}  Then switch to Counting mode and navigate the site to get a representative sample.
+{@player} 	We're on our way!
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-invade.seen.bottom
+@when 		scene:name == "Ship", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
@@ -25,166 +24,85 @@ $call GiveUpgrade(StressTank)
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin} You're gonna want to take your sub over to Dive Site R.
-                    It should be just north of the ship. When you're there, dive.
+{@kevin} You're gonna want to Dive at Site V.  Should be around here somewhere.
 					
-:: helpGoToSiteR
+:: helpGoToSiteV
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-invade.got.scans
+@when 		scene:name == "Station2", !jobs:coral-turtle-population.got.pop
 @cutscene
-{@player}   Where should we go next?
-{@kevin}	Site R should be to the north of the ship, let's head over and dive down!
+{@player}   I think I'm lost?
+{@kevin}	Site V should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-2R"
+@when       scene:name == "RS-2V"
 @once
 @cutscene
-$set    	jobs:coral-invade.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what's down there.
-{@kevin}   Remember to get the probe data too!
+$set    	jobs:coral-turtle-population.seen.bottom = true
+{@kevin}   Let's look around for that Loggerhead Turtle.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-2R"
+@when 		scene:name == "RS-2V"
 @cutscene
 {@player}   What should I be doing here?
-$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@kevin}   Did you remember to scan the population probe?
+$if !HasEntity(LoggerheadTurtle)
+	{@kevin}   Have you Scanned a Turtle, yet?  You need to be in Scan mode.
 $else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
+	$if HasFact(ReefEdge.Population.LoggerheadTurtle)
+		$set    jobs:coral-turtle-population.got.pop = true
 		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
+	{@kevin}   Switch to Count mode and try to get near all tthe Turtles you can!
 	$endif
 $endif
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
+@when       HasFact(ReefEdge.Population.LoggerheadTurtle)
 @once
 @cutscene
-$set jobs:coral-invade.gotScans = true
-{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+$set jobs:coral-turtle-population.got.pop = true
+{@kevin}    Nice.  We got the estimated population of Turtles at Site V.  Let's head back.
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
+@when       scene:name == "Station2", jobs:coral-turtle-population.seen.bottom, !jobs:coral-turtle-population.got.pop
 @once
 @cutscene
-{@player}   Alright, I think we got everything?
-{@kevin}   Let me check...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Did you remember to scan the probe?
-$else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
-		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
-	$else
-    {@kevin}   Hmm... I think there's more we need to find. Let's head back down
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
-$endif
+{@kevin}   Looks like you didn't get a representative count of the Turtles.
+{@kevin}   We should head back to Site V when we can.
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
+@when       scene:name == "Station2", jobs:coral-turtle-population.seen.bottom, Seen(job.coral-invade.navigation.return), !jobs:coral-turtle-population.got.pop
 @cutscene
-{@player}   Alright, what about now?
-{@kevin}   	Let me take a look...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Looks like you didn't scan the probe, let's dive down and get that!
-$else
-	$if HasEntity(Sargassum)
-		$if HasEntity(StaghornCoral)
-			$set    jobs:coral-invade.got.scans = true
-			{@kevin}   That's everything. Nice work!
-			{@kevin}   Let's head back to the ship and analyze this coral!
-		$else
-			{@kevin}   Looks like you're still missing the coral. It should be down on the ocean floor.
-		$endif
-	$else
-		{@kevin}   Not quite, dive back down and scan that weird stuff floating at the top of the water.
-		$if !HasEntity(StaghornCoral)
-			{@kevin}   Don't forget about the coral too!
-		$endif
-	$endif
-$endif
+{@kevin}   	We still don't have a representative Count of Loggerhead Turtles at Site V...
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-invade.got.scans
+@when 		scene:name == "Station2", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	Where should we go from here?
-{@kevin}	Let's head south and return to the ship.
+{@kevin}	Let's head West and return to the ship.
 
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when       scene:name == "Ship", jobs:coral-turtle-population.got.pop
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
-{@player}   On it!
+{@kevin}   	Let's report back with our findings.
+{@player}   OK!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when 		scene:name == "Ship", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
-
-
-:: startExperiment
-@trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
-@once
-@cutscene
-{@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
-
-:: openStressTank
-@trigger	ExperimentTankViewed
-@when		tankType == "Stress", jobs:coral-invade.got.scans == true
-@once
-@cutscene
-{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
-{@profCempaka}	Think of it like a treadmill!
-
-:: helpAtExperiment
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
-@cutscene
-{@player} 	How should I do this again?
-{@kevin}	This time, select the stressor tank instead of an observation one.
-{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
-
-
-:: experimentEnd
-@trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Light.Stressed)
-@once
-@cutscene
-{@kevin}	So the low light must be causing the coral to be stressed...
-{@kevin}	Let's report this information back to Professor Cempaka!
-
-:: helpReportBack
-@trigger    RequestPartnerHelp
-@when 		HasFact(StaghornCoral.Light.Stressed)
-@boostScore 1
-@cutscene
-{@player} 	What should we be doing now?
-$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
-	{@kevin} We need to get the historical light levels of Site R. Let's head back and scan the water chemistry probe. 
-$else
-	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
-	$if global:nav.shipRoom == "office"
-		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-	$endif
-$endif
+{@kevin}	Let's get to the Office so we can report over the Comms. 
+//TODO: {nameof CaptainsOffice}?
 
 // ARGUMENTATION
 
