@@ -37,17 +37,17 @@ $set    	jobs:coral-turtle-stability.seen.bottom = true
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
 @cutscene
-{@player}   What should I be doing here?
+{@player}   What do you think? Have we got everything?
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
 	$set    jobs:coral-turtle-stability.got.scans = true
-	{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
+	{@kevin}   I think so! Head back up to the surface when you're ready to leave.
 $else
 	{@kevin}   Make sure to get all those little things swimming around, and the coral too.
 $endif
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) // , HasEntity(SeaGrass)
+@when       JobTaskTop(behavior), HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) // , HasEntity(SeaGrass)
 @once
 @cutscene
 $set jobs:coral-turtle-stability.gotScans = true
@@ -141,6 +141,13 @@ $endif
 :: helpDoExperiment.None
 {@kevin}    We have a few new species - let's see which of them the turtle eats.
             We should be able to run an {h}Observation Tank{/h} experiment for that.
+			
+:: completedExperiment
+@trigger    JobTaskCompleted
+@when       scene:name == "ExperimentV2", JobTaskTop(turtleModel)
+@once
+@cutscene
+{@kevin}   Nice work! Now we need to model the food web at the Modeling Lab.
 
 // TURTLE MODEL
 
@@ -151,8 +158,10 @@ $endif
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
+	// TODO: coordinate this with how Conceptual Modeling works
+
 :: ModelingComplete
-@trigger    ModelCompleted // TODO: coordinate this with how Conceptual Modeling works
+@trigger    ModelCompleted
 @when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @once
 @cutscene
@@ -163,7 +172,7 @@ $endif
 				
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
+@when 		HasFact(ReefEdge.Model.TurtleVisual)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?

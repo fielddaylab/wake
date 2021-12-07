@@ -28,8 +28,10 @@ $branch common.ringPhone
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
+	// TODO: coordinate this with how Conceptual Modeling works
+
 :: ModelingComplete
-@trigger    ModelCompleted // TODO: coordinate this with how Conceptual Modeling works
+@trigger    ModelCompleted
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
