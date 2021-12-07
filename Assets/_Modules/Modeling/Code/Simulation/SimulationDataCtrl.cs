@@ -11,7 +11,9 @@ using BeauUtil;
 namespace Aqua.Modeling {
     public unsafe class SimulationDataCtrl : MonoBehaviour {
 
-        private const int ArenaSize = (int) (1024 * 8f);
+        private const int HistoricalArenaSize = (int) (1024 * 5.5f);
+        private const int PlayerArenaSize = (int) (1024 * 9f);
+        private const int TotalArenaSize = HistoricalArenaSize + PlayerArenaSize;
 
         private enum SectionType {
             Historical,
@@ -48,13 +50,13 @@ namespace Aqua.Modeling {
 
         [SerializeField] private float m_ErrorScale = 2;
         
-        private Unsafe.ArenaHandle m_HistoricalArena;
+        private Unsafe.ArenaHandle m_Allocator;
+
         private SimProfile m_HistoricalProfile;
         private Simulation.Buffer m_HistoricalBuffer;
         private ResultWrapper m_HistoricalOutput;
         private DataReadyFlags m_HistoricalReady;
         
-        private Unsafe.ArenaHandle m_PlayerArena;
         private SimProfile m_PlayerProfile;
         private Simulation.Buffer m_PlayerBuffer;
         private ResultWrapper m_PlayerOutput; // 0 - syncTicks
@@ -98,24 +100,24 @@ namespace Aqua.Modeling {
         }
 
         private void Awake() {
-            m_HistoricalArena = Unsafe.CreateArena(ArenaSize, "sim.historical");
+            Log.Msg("profile size = {0}, buffer size = {1}, snapshot size = {2}", SimProfile.BufferSize, Simulation.Buffer.BufferSize, sizeof(SimSnapshot));
 
-            m_HistoricalProfile = new SimProfile(m_HistoricalArena);
-            m_HistoricalBuffer = new Simulation.Buffer(m_HistoricalArena);
-            m_HistoricalOutput = new ResultWrapper(m_HistoricalArena, 0);
+            m_Allocator = Unsafe.CreateArena(TotalArenaSize, "sim");
 
-            m_PlayerArena = Unsafe.CreateArena(ArenaSize + SimProfile.BufferSize + 1024, "sim.player");
-            m_PlayerProfile = new SimProfile(m_PlayerArena);
-            m_PlayerBuffer = new Simulation.Buffer(m_PlayerArena);
-            m_PlayerOutput = new ResultWrapper(m_PlayerArena, 2);
-            m_PredictProfile = new SimProfile(m_PlayerArena);
+            m_HistoricalProfile = new SimProfile(m_Allocator);
+            m_HistoricalBuffer = new Simulation.Buffer(m_Allocator);
+            m_HistoricalOutput = new ResultWrapper(m_Allocator, 0);
 
-            Log.Msg("Simulation arenas spare bytes = {0} / {1}", Unsafe.ArenaFreeBytes(m_HistoricalArena), Unsafe.ArenaFreeBytes(m_PlayerArena));
+            m_PlayerProfile = new SimProfile(m_Allocator);
+            m_PlayerBuffer = new Simulation.Buffer(m_Allocator);
+            m_PlayerOutput = new ResultWrapper(m_Allocator, 2);
+            m_PredictProfile = new SimProfile(m_Allocator);
+
+            Log.Msg("Simulation arena spare bytes = {0} / {1}", Unsafe.ArenaFreeBytes(m_Allocator), Unsafe.ArenaSize(m_Allocator));
         }
 
         private void OnDestroy() {
-            Unsafe.TryFreeArena(ref m_HistoricalArena);
-            Unsafe.TryFreeArena(ref m_PlayerArena);
+            Unsafe.TryFreeArena(ref m_Allocator);
 
             m_HistoricalProfile.Dispose();
             m_PlayerProfile.Dispose();

@@ -50,6 +50,10 @@ namespace Aqua
 
         private void Refresh()
         {
+            if (Services.State.IsLoadingScene()) {
+                return;
+            }
+            
             SetState(Services.Data.CheckConditions(m_Conditions));
             if (!m_ContinuousCheck)
                 Destroy(this);
