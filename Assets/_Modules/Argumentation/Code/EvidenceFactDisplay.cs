@@ -12,6 +12,7 @@ namespace Aqua.Argumentation {
         [SerializeField] private Behaviour[] m_InnerToDisable = null;
         [SerializeField] private GameObject[] m_InnerToDeactivate = null;
         [SerializeField] private TMP_Text[] m_LayoutTexts = null;
+        [SerializeField] private GameObject[] m_EmptyClaim = null;
         [SerializeField] private FactSentenceDisplay m_Sentence = null;
         [SerializeField] private float m_EmptyHeight = 36;
 
@@ -21,6 +22,9 @@ namespace Aqua.Argumentation {
             }
             foreach(var go in m_InnerToDeactivate) {
                 go.SetActive(false);
+            }
+            foreach(var go in m_EmptyClaim) {
+                go.SetActive(true);
             }
             foreach(var text in m_LayoutTexts) {
                 text.text = " ";
@@ -37,6 +41,9 @@ namespace Aqua.Argumentation {
             }
             foreach(var obj in m_InnerToDisable) {
                 obj.enabled = true;
+            }
+            foreach(var go in m_EmptyClaim) {
+                go.SetActive(false);
             }
 
             FactPools.Populate(Display, inFact, null, inFlags);
