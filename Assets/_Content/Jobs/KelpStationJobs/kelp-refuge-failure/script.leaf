@@ -1,4 +1,4 @@
-#basePath   job.mixed-kelp-refuge-failure
+#basePath   job.kelp-refuge-failure
 
 :: start
 @trigger    JobStarted
@@ -15,14 +15,14 @@ $branch common.ringPhone
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:mixed-kelp-refuge-failure.seen.bottom
+@when 		scene:name == "Ship", !jobs:kelp-refuge-failure.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	We need to check the historical Kelp population data from the refuge site. To the sub!
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-1C" // Site 3?
+@when       scene:name == "RS-1D"
 @once
 @cutscene
 $set    	jobs:coral-invade.seen.bottom = true
@@ -39,13 +39,13 @@ $set    	jobs:coral-invade.seen.bottom = true
 
 {@kevin}	Alright, we got the historical data.
             Let's hurry back to {nameof @drKelp} and figure out what happened.
-$set    	jobs:mixed-kelp-refuge-failure.collected.probe = true
+$set    	jobs:kelp-refuge-failure.collected.probe = true
 
 // MODELING
 
 :: directToExperiment
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:mixed-kelp-refuge-failure.collected.probe == true
+@when       scene:name == "Ship", jobs:kelp-refuge-failure.collected.probe == true
 @once
 @cutscene
 {@drKelp}   You got the data, good! It seems the Bull Kelp stopped growing.
@@ -55,7 +55,7 @@ $set    	jobs:mixed-kelp-refuge-failure.collected.probe = true
 
 :: helpToExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ExperimentV2", jobs:mixed-kelp-refuge-failure.collected.probe == true
+@when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's head to the {h}Measurement Tank{/h} to measure Kelp growth rates.
@@ -120,7 +120,7 @@ $goto .argue.chooseClaim
 
 ::argue.slowGrowth
 {@drKelp}	Interesting idea. What about your model? Does it explain why the Bull Kelp are growing more slowly?
-$if ArgueSetClaim(refugeFailureArgueClaim, jobs.mixed-kelp-refuge-failure.argue.claimLabel)
+$if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
 			$call ArgueFactSlot(Model.RefugeFail)
 $endif
 $call ArgueDisplayClaim()
@@ -144,7 +144,7 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.incorrectFacts
-{@drKelp} That doesn' explain it. Did you make a model of the site?
+{@drKelp} That doesn't explain it. Did you make a model of the site?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
