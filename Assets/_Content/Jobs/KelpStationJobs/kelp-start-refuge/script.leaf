@@ -1,4 +1,4 @@
-#basePath   job.mixed-kelp-start-refuge
+#basePath   job.kelp-start-refuge
 
 :: start
 @trigger    JobStarted
@@ -65,7 +65,7 @@ $choose branch
 
 ::argue.site3
 {@drKelp}	Wow, this looks ideal! Does it fit the stress ranges?
-$if ArgueSetClaim(startRefugeArgueClaim, jobs.mixed-kelp-start-refuge.argue.claimLabel)
+$if ArgueSetClaim(startRefugeArgueClaim, jobs.kelp-start-refuge.argue.claimLabel)
 			$call ArgueFactSlot(GiantKelp.Light.Stressed)
 			$call ArgueFactSlot(GiantKelp.Temperature.Stressed)
 			$call ArgueFactSlot(BullKelp.Light.Stressed)
@@ -88,7 +88,7 @@ $endif
 $call ArgueComplete()
 {@drKelp}	That does it! Site 3 should work well for both types of Kelp.
 $call CompleteJob()
-$call UnlockSite(RS_1D)
+$call UnlockSite(RS-1D)
 
 :: argue.incorrectFacts
 {@drKelp} That doesn't work. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
