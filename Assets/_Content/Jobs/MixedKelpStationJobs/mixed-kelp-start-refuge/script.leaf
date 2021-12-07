@@ -6,281 +6,97 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
-{@profCempaka}	I need you to head over to Site R and see what you can find.
-{@player} 	We'll be right over there!
-$call GiveUpgrade(StressTank)
+{@drKelp}	Hello again, {player-name}! // will this be Dr. Kelpurnia?
+{@drKelp}	We are trying to determine which site would be the best choice for a Kelp refuge.
+{@drKelp}	You can use the {h}Stress Tank{/h} to find out what stresses the Kelp!
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-invade.seen.bottom
+@when 		scene:name != "ExperimentV2", !jobs:coral-invade.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's exit the ship and head to the sub.
-
-
-:: navigation
-@trigger    SceneStart
-@when       scene:name == "Station2"
-@once
-@cutscene
-{@kevin} You're gonna want to take your sub over to Dive Site R.
-                    It should be just north of the ship. When you're there, dive.
-					
-:: helpGoToSiteR
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-invade.got.scans
-@cutscene
-{@player}   Where should we go next?
-{@kevin}	Site R should be to the north of the ship, let's head over and dive down!
-
-:: diveSite
-@trigger    SceneStart
-@when       scene:name == "RS-2R"
-@once
-@cutscene
-$set    	jobs:coral-invade.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what's down there.
-{@kevin}   Remember to get the probe data too!
-
-:: helpAtSiteR
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-2R"
-@cutscene
-{@player}   What should I be doing here?
-$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@kevin}   Did you remember to scan the population probe?
-$else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
-		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
-	$else
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
-$endif
-
-:: navigation.goBackUp
-@trigger    JobTasksUpdated
-@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
-@once
-@cutscene
-$set jobs:coral-invade.gotScans = true
-{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
-
-:: navigation.return
-@trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
-@once
-@cutscene
-{@player}   Alright, I think we got everything?
-{@kevin}   Let me check...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Did you remember to scan the probe?
-$else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
-		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
-	$else
-    {@kevin}   Hmm... I think there's more we need to find. Let's head back down
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
-$endif
-
-:: navigation.return.again
-@trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
-@cutscene
-{@player}   Alright, what about now?
-{@kevin}   	Let me take a look...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Looks like you didn't scan the probe, let's dive down and get that!
-$else
-	$if HasEntity(Sargassum)
-		$if HasEntity(StaghornCoral)
-			$set    jobs:coral-invade.got.scans = true
-			{@kevin}   That's everything. Nice work!
-			{@kevin}   Let's head back to the ship and analyze this coral!
-		$else
-			{@kevin}   Looks like you're still missing the coral. It should be down on the ocean floor.
-		$endif
-	$else
-		{@kevin}   Not quite, dive back down and scan that weird stuff floating at the top of the water.
-		$if !HasEntity(StaghornCoral)
-			{@kevin}   Don't forget about the coral too!
-		$endif
-	$endif
-$endif
-
-:: helpBackToShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-invade.got.scans
-@cutscene
-{@player} 	Where should we go from here?
-{@kevin}	Let's head south and return to the ship.
-
-
-:: atShip
-@trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-invade.got.scans == true
-@once
-@cutscene
-{@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
-{@player}   On it!
-
-:: helpBackAtShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-invade.got.scans == true
-@cutscene
-{@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
+{@kevin}	Let's head to the {h}Stress Tank{/h} to see how Kelp respond to different environments.
 
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when       scene:name == "ExperimentV2"
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
-
-:: openStressTank
-@trigger	ExperimentTankViewed
-@when		tankType == "Stress", jobs:coral-invade.got.scans == true
-@once
-@cutscene
-{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
-{@profCempaka}	Think of it like a treadmill!
+{@kevin}  	Let's put the Kelp in the stressor tank with different temperatures and amounts of light.
+{@kevin}  	Then we'll see which ones stress our two types of Kelp.
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when 		scene:name == "ExperimentV2"
 @cutscene
 {@player} 	How should I do this again?
-{@kevin}	This time, select the stressor tank instead of an observation one.
-{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
-
+{@kevin}	First you will want to select the stressor tank.
+{@kevin}	Then add the Kelp in, and try to expose them to varying temperatures and amounts of light.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@when 		HasFact(GiantKelp.Light.Stressed), HasFact(GiantKelp.Temperature.Stressed), HasFact(BullKelp.Light.Stressed), HasFact(BullKelp.Temperature.Stressed)
 @once
 @cutscene
 {@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
-{@kevin}	For each environment variable, the bars show values from low to high,
-{@kevin}	and the grayed parts show the range where the organism is stressed.
-{@player} 	Got it. So it tells us the ranges a species is stressed?
-{@kevin}	Exactly. So this experiement tells us the staghorn coral is stressed
-{@kevin}	if the temperature is too hot or too cold, or if the light is too low.
-{@kevin}	I wonder if either of those are true at Site R?
-{@kevin}	Let's report this information back to Professor Cempaka!
-
-:: helpReportBack
-@trigger    RequestPartnerHelp
-@when 		HasFact(StaghornCoral.Light.Stressed)
-@boostScore 1
-@cutscene
-{@player} 	What should we be doing now?
-$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
-	{@kevin} We need to get the historical light levels of Site R. Let's head back and scan the water chemistry probe. 
-$else
-	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
-	$if global:nav.shipRoom == "office"
-		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-	$endif
-$endif
+{@kevin}	Let's report this information back to Professor Kelpurnia!
 
 // ARGUMENTATION
 
 ::argue.chooseClaim
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralInvadeArgue)
+@when   !ArgueIsComplete(startRefugeArgue)
 @cutscene
-$call ArgueLoad(coralInvadeArgue)
-{@profCempaka} So, what's going on with the coral?
-	$choice .argue.coralNeedsLightIntro; The coral needs more light.
-	$choice .argue.coralIsOldIntro; The coral is old.
-	$choice .argue.sargassumBlocksLightIntro; The sargassum is blocking the light.
+$call ArgueLoad(startRefugeArgue)
+{@drKelp} All right, which bay is ideal for establishing the refuge?
+	$choice .argue.site1; Potential Site 1 (Temp 2° C; Light 60%)
+	$choice .argue.site2; Potential Site 2 (Temp 20° C; Light 100%)
+	$choice .argue.site3; Potential Site 3 (Temp 13° C; Light 100%)
 $choose branch
 
-::argue.coralNeedsLightIntro
-{@profCempaka} Ahhh, I see! It did seem shady down there, did you have proof?
-$goto .argue.coralNeedsLight
 
-::argue.coralNeedsLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralNeedsLightClaim)
-		$call ArgueFactSlot(SargassumCoveredReef.Light)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+::argue.site1
+{@drKelp}	Hmmmm... This is way too cold for Giant Kelp, even if there is enough light.
+
+::argue.site2
+{@drKelp}	The bull kelp will boil here! Although... There is plenty of light.
+
+::argue.site3
+{@drKelp}	Wow, this looks ideal! Does it fit the stress ranges?
+$if ArgueSetClaim(startRefugeArgueClaim, jobs.mixed-kelp-start-refuge.argue.claimLabel)
+			$call ArgueFactSlot(GiantKelp.Light.Stressed)
+			$call ArgueFactSlot(GiantKelp.Temperature.Stressed)
+			$call ArgueFactSlot(BullKelp.Light.Stressed)
+			$call ArgueFactSlot(BullKelp.Temperature.Stressed)
 $endif
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctLight
-		$answer incorrect, .argue.incorrectLight
-$choice .argue.giveUp; Let me get back to you
+$goto .argue.defendClaim
 
-:: argue.correctLight
+::argue.defendClaim
+$if ArgueAllFactsCorrect()
+    $goto .argue.correctFacts
+$else
+	$choice #argueFactSet; Present facts from AQOS
+			$answer correct, .argue.correctFacts
+			$answer incorrect, .argue.incorrectFacts
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.correctFacts
 $call ArgueComplete()
-{@profCempaka} I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum that keeps floating on in. That'll be your next investigation if you stick around...
+{@drKelp}	That does it! Site 3 should work well for both types of Kelp.
 $call CompleteJob()
 
-:: argue.incorrectLight
-{@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
+:: argue.incorrectFacts
+{@drKelp} That doesn't work. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
 $call ArgueRejectIncorrect()
-$goto .argue.coralNeedsLight
+$goto .argue.defendClaim
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
 
+// END
 
-
-:: argue.coralIsOldIntro
-{@profCempaka} Do you even have evidence of age?
-$goto .argue.coralIsOld
-
-:: argue.coralIsOld
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralIsOldClaim)
-		// they can't have this evidence, right?
-		$call ArgueFactSlot(W_WhaleFall.Oxygen)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.incorrectOld
-		$answer incorrect, .argue.incorrectOld
-$choice .argue.giveUp; Let me get back to you
-
-:: argue.incorrectOld
-$call ArgueRejectIncorrect()
-{@profCempaka} That certainly doesn't prove the coral are old.  I'm not even sure we have the ability to determine that, yet.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-
-
-:: argue.sargassumBlocksLightIntro
-{@profCempaka} Hmmm... Not sure that tells me anything about the Coral.
-$goto .argue.sargassumBlocksLight
-
-:: argue.sargassumBlocksLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.sargassumTakesLightClaim)
-		$call ArgueFactSlot(Sargassum.Consume.Light)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctSargassumLight
-		$answer incorrect, .argue.incorrectSargassumLight
-$choice .argue.giveUp; Let me get back to you
-
-:: argue.correctSargassumLight
-{@profCempaka} I see what you're saying, but I don't see how it's relevant.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-:: argue.incorrectSargassumLight
-{@profCempaka} That doesn't show Sargassum's effect on light, and I'm not sure it would matter if it did.
-$call ArgueRejectIncorrect()
-$goto .argue.sargassumBlocksLight
-
-
-::end
+:: end
