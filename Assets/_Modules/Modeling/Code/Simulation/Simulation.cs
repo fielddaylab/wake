@@ -283,7 +283,7 @@ namespace Aqua.Modeling
                     buffer.Hungers[i].Alive = 0;
                 }
                 
-                if ((actorInfo->Flags & SimProfile.ActorFlags.Alive_DoesNotEat) == 0) {
+                if ((actorInfo->Flags & SimProfile.ActorFlags.Stressed_DoesNotEat) == 0) {
                     buffer.Hungers[i].Stressed = buffer.Populations[i].Stressed * HungerPerPopulation;
                 } else {
                     buffer.Hungers[i].Stressed = 0;

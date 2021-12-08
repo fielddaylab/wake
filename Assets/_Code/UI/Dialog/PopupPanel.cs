@@ -91,17 +91,17 @@ namespace Aqua
             return future;
         }
 
-        public Future<StringHash32> PresentFact(string inHeader, string inText, BFBase inFact, BFDiscoveredFlags inFlags)
+        public Future<StringHash32> PresentFact(string inHeader, string inText, StreamedImageSet inImage, BFBase inFact, BFDiscoveredFlags inFlags)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary)).TryManuallyUpdate(0);
             return future;
         }
 
-        public Future<StringHash32> PresentFacts(string inHeader, string inText, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags)
+        public Future<StringHash32> PresentFacts(string inHeader, string inText, StreamedImageSet inImage, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags = default)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inFacts, inFlags, DefaultAddToBestiary)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inFlags, DefaultAddToBestiary)).TryManuallyUpdate(0);
             return future;
         }
 
@@ -158,11 +158,9 @@ namespace Aqua
             if (inFacts.IsEmpty)
                 return;
 
-            Assert.True(inFacts.Length == inFlags.Length);
-
             for(int i = 0; i < inFacts.Length; i++)
             {
-                m_FactPools.Alloc(inFacts[i], null, inFlags[i], m_FactPoolTransform);
+                m_FactPools.Alloc(inFacts[i], null, i >= inFlags.Length ? BFType.DefaultDiscoveredFlags(inFacts[i]) : inFlags[i], m_FactPoolTransform);
             }
         }
 
@@ -217,11 +215,11 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, ListSlice<BFBase> inFact, ListSlice<BFDiscoveredFlags> inFlags, NamedOption[] inOptions)
+        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImages, ListSlice<BFBase> inFact, ListSlice<BFDiscoveredFlags> inFlags, NamedOption[] inOptions)
         {
             using(ioFuture)
             {
-                Configure(inHeader, inText, null, inOptions);
+                Configure(inHeader, inText, inImages, inOptions);
                 ConfigureFacts(inFact, inFlags);
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);

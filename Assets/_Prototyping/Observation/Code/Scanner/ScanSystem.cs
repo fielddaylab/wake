@@ -255,7 +255,7 @@ namespace ProtoAqua.Observation
                     {
                         if (Save.Bestiary.RegisterFact(factId, false))
                         {
-                            result |= ScanResult.NewBestiary;
+                            result |= ScanResult.NewFacts;
                         }
                     }
 
@@ -505,6 +505,7 @@ namespace ProtoAqua.Observation
         NoChange =  0x0,
         NewScan =   0x1,
         NewLogbook = 0x2,
-        NewBestiary = 0x4
+        NewBestiary = 0x4,
+        NewFacts = 0x08
     }
 }

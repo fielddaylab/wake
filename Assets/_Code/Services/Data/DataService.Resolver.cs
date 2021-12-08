@@ -335,21 +335,8 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
 
-                    BestiaryDesc bestiary = Assets.Bestiary(inEntityId);
                     Services.Audio.PostEvent("item.popup.new");
-                    if (bestiary.Category() == BestiaryDescCategory.Critter)
-                    {
-                        return Services.UI.Popup.Present(
-                            Loc.Format("ui.popup.newBestiary.critter.header",
-                                bestiary.CommonName()), null,
-                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
-                    }
-                    else
-                    {
-                        return Services.UI.Popup.Present(
-                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), null,
-                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
-                    }
+                    return Script.PopupNewEntity(Assets.Bestiary(inEntityId)).Wait();
                 }
 
                 return null;
@@ -397,13 +384,14 @@ namespace Aqua
                             s_BatchedFacts.PushBack(fact);
                             s_BatchedFactFlags.PushBack(flags);
 
-                            popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                            popup = Script.PopupNewFacts(s_BatchedFacts, s_BatchedFactFlags).Wait();
+
                             s_BatchedFactFlags.Clear();
                             s_BatchedFacts.Clear();
                         }
                         else
                         {
-                            popup = Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, fact, Save.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                            popup = Script.PopupNewFact(fact).Wait();
                         }
 
                         return popup;
@@ -448,13 +436,13 @@ namespace Aqua
                             s_BatchedFacts.PushBack(fact);
                             s_BatchedFactFlags.PushBack(flags);
 
-                            popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                            popup = Script.PopupUpgradedFacts(s_BatchedFacts, s_BatchedFactFlags).Wait();
                             s_BatchedFactFlags.Clear();
                             s_BatchedFacts.Clear();
                         }
                         else
                         {
-                            popup = Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, fact, Save.Bestiary.GetDiscoveredFlags(inFactId)).Wait();
+                            popup = Script.PopupUpgradedFact(fact).Wait();
                         }
 
                         return popup;
@@ -481,7 +469,7 @@ namespace Aqua
 
                 IEnumerator popup;
 
-                popup = Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, s_BatchedFacts, s_BatchedFactFlags).Wait();
+                popup = Script.PopupUpgradedFacts(s_BatchedFacts, s_BatchedFactFlags).Wait();
                 s_BatchedFactFlags.Clear();
                 s_BatchedFacts.Clear();
 

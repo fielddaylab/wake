@@ -204,19 +204,7 @@ namespace ProtoAqua.Observation
                 {
                     Services.Audio.PostEvent("scan_bestiary");
                     var bestiary = Assets.Bestiary(data.BestiaryId());
-                    if (bestiary.Category() == BestiaryDescCategory.Critter)
-                    {
-                        Services.UI.Popup.Present(
-                            Loc.Format("ui.popup.newBestiary.critter.header",
-                                bestiary.CommonName()), data.Text(),
-                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
-                    }
-                    else
-                    {
-                        Services.UI.Popup.Present(
-                            Loc.Format("ui.popup.newBestiary.env.header", bestiary.CommonName()), data.Text(),
-                                bestiary.ImageSet(), PopupPanel.DefaultAddToBestiary).Wait();
-                    }
+                    Script.PopupNewEntity(bestiary, data.Text());
                 }
                 if (data != null && !data.LogbookId().IsEmpty)
                 {

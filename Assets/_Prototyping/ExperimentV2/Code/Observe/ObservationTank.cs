@@ -292,7 +292,7 @@ namespace ProtoAqua.ExperimentV2
 
                 Services.Audio.PostEvent("capture_new");
 
-                Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, factDef, BFType.DefaultDiscoveredFlags(factDef))
+                Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, null, factDef, BFType.DefaultDiscoveredFlags(factDef))
                     .OnComplete((r) => {
                         m_FinishButton.interactable = true;
                         using(var table = TempVarTable.Alloc())

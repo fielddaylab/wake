@@ -367,6 +367,7 @@ namespace ProtoAqua.Observation
                 yield return Services.UI.Popup.PresentFact(
                     Loc.Find("ui.popup.newPopulationFact.header"),
                     null,
+                    null,
                     Assets.Fact(factId),
                     Save.Bestiary.GetDiscoveredFlags(factId)
                 ).Wait();
