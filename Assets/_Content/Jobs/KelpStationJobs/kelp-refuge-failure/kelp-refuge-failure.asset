@@ -29,8 +29,8 @@ MonoBehaviour:
   m_DescCompletedId:
     m_Source: 
     m_Hash: 0
-  m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
+  m_ExperimentDifficulty: 2
+  m_ModelingDifficulty: 2
   m_ArgumentationDifficulty: 0
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: 08d549744d816b2409b45af59ac99395, type: 2}
@@ -38,11 +38,159 @@ MonoBehaviour:
   m_StationId:
     m_Source: KelpStation
     m_Hash: 2724389503
-  m_DiveSiteIds: []
-  m_Tasks: []
-  m_OptimizedTaskList: []
-  m_CashReward: 0
-  m_GearReward: 0
+  m_DiveSiteIds:
+  - m_Source: RS-1D
+    m_Hash: 2094907120
+  m_Tasks:
+  - Id:
+      m_Source: visitSite
+      m_Hash: 375978279
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.visitSite
+      m_Hash: 3160486164
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1D
+        m_Hash: 2094907120
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: histPop
+      m_Hash: 1662730776
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.histPop
+      m_Hash: 733026455
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: MixedKelp.PopulationHistory.BullKelp
+        m_Hash: 2494218494
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: MixedKelp.PopulationHistory.GiantKelp
+        m_Hash: 1002310368
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: visitSite
+      m_Hash: 375978279
+  - Id:
+      m_Source: growthRates
+      m_Hash: 1111871253
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.growthRates
+      m_Hash: 2881083366
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Reproduce
+        m_Hash: 1731775823
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Reproduce.Stressed
+        m_Hash: 118051450
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: visitSite
+      m_Hash: 375978279
+  - Id:
+      m_Source: growthRatesBull
+      m_Hash: 356089400
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.growthRatesBull
+      m_Hash: 252314555
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Reproduce
+        m_Hash: 4371601
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Reproduce.Stressed
+        m_Hash: 932500436
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: visitSite
+      m_Hash: 375978279
+  - Id:
+      m_Source: newModel
+      m_Hash: 2854125062
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.newModel
+      m_Hash: 2830310567
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.RefugeFail
+        m_Hash: 3689453408
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: histPop
+      m_Hash: 1662730776
+    - m_Source: growthRates
+      m_Hash: 1111871253
+    - m_Source: growthRatesBull
+      m_Hash: 356089400
+  - Id:
+      m_Source: getPaid
+      m_Hash: 2143477857
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.getPaid
+      m_Hash: 3159939990
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: newModel
+      m_Hash: 2854125062
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: visitSite
+      m_Hash: 375978279
+    Index: 0
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.visitSite
+      m_Hash: 3160486164
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-1D
+        m_Hash: 2094907120
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: histPop
+      m_Hash: 1662730776
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.histPop
+      m_Hash: 733026455
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: RS-1D
+        m_Hash: 2094907120
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 10
+  m_GearReward: 10
   m_AdditionalRewards: []
   m_Scripting: {fileID: -1942890987711236906, guid: 82cc87b3bb724ed4ba6699b527ee2470,
     type: 3}
