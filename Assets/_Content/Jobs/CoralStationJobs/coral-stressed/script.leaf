@@ -1,4 +1,4 @@
-#basePath   job.coral-invade
+#basePath   job.coral-stressed
 
 :: start
 @trigger    JobStarted
@@ -14,7 +14,7 @@ $call GiveUpgrade(StressTank)
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-invade.seen.bottom
+@when 		scene:name == "Ship", !jobs:coral-stressed.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
@@ -30,7 +30,7 @@ $call GiveUpgrade(StressTank)
 					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-invade.got.scans
+@when 		scene:name == "Station2", !jobs:coral-stressed.got.scans
 @cutscene
 {@player}   Where should we go next?
 {@kevin}	Site R should be to the north of the ship, let's head over and dive down!
@@ -40,7 +40,7 @@ $call GiveUpgrade(StressTank)
 @when       scene:name == "RS-2R"
 @once
 @cutscene
-$set    	jobs:coral-invade.seen.bottom = true
+$set    	jobs:coral-stressed.seen.bottom = true
 {@kevin}   Looks like we made it! Time to see what's down there.
 {@kevin}   Remember to get the probe data too!
 
@@ -53,7 +53,7 @@ $if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}   Did you remember to scan the population probe?
 $else
 	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
+		$set    jobs:coral-stressed.got.scans = true
 		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
 	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
@@ -65,12 +65,12 @@ $endif
 @when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
 @once
 @cutscene
-$set jobs:coral-invade.gotScans = true
+$set jobs:coral-stressed.gotScans = true
 {@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, jobs:coral-invade.got.scans == false
+@when       scene:name == "Station2", jobs:coral-stressed.seen.bottom, jobs:coral-stressed.got.scans == false
 @once
 @cutscene
 {@player}   Alright, I think we got everything?
@@ -80,7 +80,7 @@ $if !HasEntity(SargassumCoveredReef)
 	{@kevin}   Did you remember to scan the probe?
 $else
 	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-invade.got.scans = true
+		$set    jobs:coral-stressed.got.scans = true
 		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 	$else
     {@kevin}   Hmm... I think there's more we need to find. Let's head back down
@@ -90,7 +90,7 @@ $endif
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-invade.seen.bottom, Seen(job.coral-invade.navigation.return), jobs:coral-invade.got.scans == false
+@when       scene:name == "Station2", jobs:coral-stressed.seen.bottom, Seen(job.coral-stressed.navigation.return), jobs:coral-stressed.got.scans == false
 @cutscene
 {@player}   Alright, what about now?
 {@kevin}   	Let me take a look...
@@ -99,7 +99,7 @@ $if !HasEntity(SargassumCoveredReef)
 $else
 	$if HasEntity(Sargassum)
 		$if HasEntity(StaghornCoral)
-			$set    jobs:coral-invade.got.scans = true
+			$set    jobs:coral-stressed.got.scans = true
 			{@kevin}   That's everything. Nice work!
 			{@kevin}   Let's head back to the ship and analyze this coral!
 		$else
@@ -115,7 +115,7 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-invade.got.scans
+@when 		scene:name == "Station2", jobs:coral-stressed.got.scans
 @cutscene
 {@player} 	Where should we go from here?
 {@kevin}	Let's head south and return to the ship.
@@ -123,7 +123,7 @@ $endif
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when       scene:name == "Ship", jobs:coral-stressed.got.scans == true
 @once
 @cutscene
 {@player}   We're back. Now what?
@@ -132,7 +132,7 @@ $endif
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-invade.got.scans == true
+@when 		scene:name == "Ship", jobs:coral-stressed.got.scans == true
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
@@ -140,7 +140,7 @@ $endif
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when       scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
@@ -148,7 +148,7 @@ $endif
 
 :: openStressTank
 @trigger	ExperimentTankViewed
-@when		tankType == "Stress", jobs:coral-invade.got.scans == true
+@when		tankType == "Stress", jobs:coral-stressed.got.scans == true
 @once
 @cutscene
 {@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
@@ -156,7 +156,7 @@ $endif
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-invade.got.scans == true
+@when 		scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	This time, select the stressor tank instead of an observation one.
@@ -196,9 +196,9 @@ $endif
 
 ::argue.chooseClaim
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralInvadeArgue)
+@when   !ArgueIsComplete(coralstressedArgue)
 @cutscene
-$call ArgueLoad(coralInvadeArgue)
+$call ArgueLoad(coralstressedArgue)
 {@profCempaka} So, what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
 	$choice .argue.coralIsOldIntro; The coral is old.
@@ -210,7 +210,7 @@ $choose branch
 $goto .argue.coralNeedsLight
 
 ::argue.coralNeedsLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralNeedsLightClaim)
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralNeedsLightClaim)
 		$call ArgueFactSlot(SargassumCoveredReef.Light)
 		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
 $endif
@@ -240,7 +240,7 @@ $goto .argue.coralNeedsLight
 $goto .argue.coralIsOld
 
 :: argue.coralIsOld
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.coralIsOldClaim)
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralIsOldClaim)
 		// they can't have this evidence, right?
 		$call ArgueFactSlot(W_WhaleFall.Oxygen)
 $endif
@@ -263,7 +263,7 @@ $goto .argue.chooseClaim
 $goto .argue.sargassumBlocksLight
 
 :: argue.sargassumBlocksLight
-$if ArgueSetClaim(coralInvadeClaim, jobs.coral-invade.argue.sargassumTakesLightClaim)
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.sargassumTakesLightClaim)
 		$call ArgueFactSlot(Sargassum.Consume.Light)
 $endif
 $call ArgueDisplayClaim()

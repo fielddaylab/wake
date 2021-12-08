@@ -61,7 +61,7 @@ $set jobs:coral-turtle-stability.gotScans = true
 {@player}   Alright, do you think we got everything?
 {@kevin}   Let me check...
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
-	$set    jobs:coral-invade.got.scans = true
+	$set    jobs:coral-stressed.got.scans = true
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
