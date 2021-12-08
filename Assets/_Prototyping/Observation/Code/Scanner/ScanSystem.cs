@@ -230,7 +230,7 @@ namespace ProtoAqua.Observation
 
         public bool WasScanned(StringHash32 inId) { return Save.Inventory.WasScanned(inId); }
 
-        public ScanResult RegisterScanned(ScanData inData)
+        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts)
         {
             ScriptThreadHandle responseHandle = default;
             ScanResult result = ScanResult.NoChange;
@@ -251,11 +251,24 @@ namespace ProtoAqua.Observation
 
                     // TODO: Logbook
 
+                    if (!bestiaryId.IsEmpty && (inData.Flags() & ScanDataFlags.DynamicFactType) != 0)
+                    {
+                        foreach(var fact in Assets.Bestiary(bestiaryId).FactsOfType(inData.DynamicFactType()))
+                        {
+                            if (Save.Bestiary.RegisterFact(fact.Id, false))
+                            {
+                                result |= ScanResult.NewFacts;
+                                outNewFacts.Add(fact.Id);
+                            }
+                        }
+                    }
+
                     foreach(var factId in inData.FactIds())
                     {
                         if (Save.Bestiary.RegisterFact(factId, false))
                         {
                             result |= ScanResult.NewFacts;
+                            outNewFacts.Add(factId);
                         }
                     }
 

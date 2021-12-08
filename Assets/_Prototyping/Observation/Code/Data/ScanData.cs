@@ -26,6 +26,7 @@ namespace ProtoAqua.Observation
         [BlockMeta("image"), UnityEngine.Scripting.Preserve] private string m_ImagePath = null;
         [BlockMeta("logbook"), UnityEngine.Scripting.Preserve] private StringHash32 m_LogbookId = null;
         [BlockMeta("bestiary"), UnityEngine.Scripting.Preserve] private StringHash32 m_BestiaryId = null;
+        private BFTypeId m_DynamicFactType = BFTypeId._COUNT;
         private StringHash32[] m_BestiaryFactIds = null;
 
         // Requirements
@@ -52,9 +53,11 @@ namespace ProtoAqua.Observation
         public StringHash32 BestiaryId() { return m_BestiaryId; }
 
         public ListSlice<StringHash32> FactIds() { return m_BestiaryFactIds; }
+        public BFTypeId DynamicFactType() { return m_DynamicFactType; }
 
         public StringSlice Requirements() { return m_Requirements; }
         public StringHash32 FallbackId() { return m_Fallback; }
+
 
         #region Scan
 
@@ -83,6 +86,13 @@ namespace ProtoAqua.Observation
             m_BestiaryFactIds = ArrayUtils.MapFrom(split, (s) => {
                 return new StringHash32(s.Trim());
             });
+        }
+
+        [BlockMeta("factsOfType"), Preserve]
+        private void SetDynamicFacts(BFTypeId inTypeId)
+        {
+            m_Flags |= ScanDataFlags.DynamicFactType;
+            m_DynamicFactType = inTypeId;
         }
 
         void IValidatable.Validate()
@@ -126,5 +136,7 @@ namespace ProtoAqua.Observation
 
         Important   = 0x10,
         ActivateTool = 0x20,
+
+        DynamicFactType = 0x40
     }
 }

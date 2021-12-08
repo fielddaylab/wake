@@ -4,12 +4,13 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using Aqua;
+using BeauPools;
 
 namespace ProtoAqua.Observation
 {
     public class PlayerROVScanner : MonoBehaviour, PlayerROV.ITool
     {
-        private const ScanResult PopupResultMask = ScanResult.NewBestiary | ScanResult.NewLogbook;
+        private const ScanResult PopupResultMask = ScanResult.NewBestiary | ScanResult.NewLogbook | ScanResult.NewFacts;
 
         #region Inspector
 
@@ -197,22 +198,38 @@ namespace ProtoAqua.Observation
 
             m_TargetScannable.CurrentIcon.SetSpinning(false);
 
-            ScanResult result = m_ScanSystem.RegisterScanned(data);
-            if (result != 0)
+            ScanResult result;
+
+            using(PooledList<StringHash32> newFactIds = PooledList<StringHash32>.Create())
+            using(PooledList<BFBase> newFacts = PooledList<BFBase>.Create())
             {
-                if (data != null && !data.BestiaryId().IsEmpty)
+                result = m_ScanSystem.RegisterScanned(data, newFactIds);
+                if (result != 0)
                 {
-                    Services.Audio.PostEvent("scan_bestiary");
-                    var bestiary = Assets.Bestiary(data.BestiaryId());
-                    Script.PopupNewEntity(bestiary, data.Text());
-                }
-                if (data != null && !data.LogbookId().IsEmpty)
-                {
-                    Services.Audio.PostEvent("scan_logbook");
-                }
-                else
-                {
-                    Services.Audio.PostEvent("scan_complete");
+                    foreach(var id in newFactIds)
+                    {
+                        newFacts.Add(Assets.Fact(id));
+                    }
+
+                    if ((result & ScanResult.NewBestiary) != 0)
+                    {
+                        Services.Audio.PostEvent("scan_bestiary");
+                        var bestiary = Assets.Bestiary(data.BestiaryId());
+                        Script.PopupNewEntity(bestiary, data.Text(), newFacts);
+                    }
+                    else if ((result & ScanResult.NewFacts) != 0)
+                    {
+                        var bestiary = Assets.Bestiary(data.BestiaryId());
+                        Script.PopupNewFacts(newFacts, default, bestiary);
+                    }
+                    else if ((result & ScanResult.NewLogbook) != 0)
+                    {
+                        Services.Audio.PostEvent("scan_logbook");
+                    }
+                    else if ((result & ScanResult.NewScan) != 0)
+                    {
+                        Services.Audio.PostEvent("scan_complete");
+                    }
                 }
             }
 

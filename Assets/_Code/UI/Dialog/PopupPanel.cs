@@ -129,7 +129,15 @@ namespace Aqua
                 m_ContentsText.SetText(string.Empty);
             }
 
-            m_ImageDisplay.Display(inImage);
+            if (inImage.IsEmpty)
+            {
+                m_ImageDisplay.gameObject.SetActive(false);
+            }
+            else
+            {
+                m_ImageDisplay.gameObject.SetActive(true);
+                m_ImageDisplay.Display(inImage);
+            }
 
             m_OptionCount = inOptions.Length;
             for(int i = 0; i < m_Buttons.Length; ++i)

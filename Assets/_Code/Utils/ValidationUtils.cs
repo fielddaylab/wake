@@ -137,6 +137,26 @@ namespace Aqua
             return null;
         }
 
+        static public T FindPrefab<T>(string inName, params string[] inDirectories) where T : Component
+        {
+            string[] assetGuids = AssetDatabase.FindAssets("t:GameObject", inDirectories);
+            if (assetGuids == null)
+                return null;
+            
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (obj.name != inName)
+                    continue;
+                T component = obj.GetComponent<T>();
+                if (component)
+                    return component;
+            }
+
+            return null;
+        }
+
         static public T[] FindAllAssets<T>(params string[] inDirectories) where T : UnityEngine.Object
         {
             if (inDirectories.Length == 0)
