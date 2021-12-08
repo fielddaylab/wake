@@ -7,6 +7,10 @@ namespace Aqua {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
         }
 
+        static public bool ShouldBlockIgnoreLetterbox() {
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.State.IsLoadingScene();
+        }
+
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null) {
             if (entity.Category() == BestiaryDescCategory.Critter)
             {
