@@ -49,7 +49,10 @@ namespace Aqua.Modeling
 
             RequiredFacts.Clear();
             foreach(var id in Scope.BehaviorIds) {
-                RequiredFacts.PushBack(Assets.Fact(id));
+                if (!Services.Assets.Bestiary.IsAutoFact(id)) {
+                    var fact = Assets.Fact(id);
+                    RequiredFacts.PushBack(fact);
+                }
             }
         }
 

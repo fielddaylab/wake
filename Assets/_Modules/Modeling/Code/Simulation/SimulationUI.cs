@@ -25,6 +25,7 @@ namespace Aqua.Modeling {
         [Header("Sync")]
         [SerializeField] private Button m_SimulateButton = null;
         [SerializeField] private GameObject m_HistoricalMissingDisplay = null;
+        [SerializeField] private LocText m_HistoricalMissingText = null;
         [SerializeField] private GameObject m_AccuracyDisplay = null;
         [SerializeField] private RectTransform m_AccuracyMeter = null;
         [SerializeField] private RectTransform m_AccuracyGoal = null;
@@ -42,6 +43,9 @@ namespace Aqua.Modeling {
         [Header("Settings")]
         [SerializeField] private TextId m_SyncTimeLabel = default;
         [SerializeField] private TextId m_PredictTimeLabel = default;
+        [SerializeField] private TextId m_MissingPopulationsLabel = default;
+        [SerializeField] private TextId m_MissingWaterChemistryLabel = default;
+        [SerializeField] private TextId m_MissingPopulationsWaterChemistryLabel = default;
 
         #endregion // Inspector
 
@@ -164,15 +168,32 @@ namespace Aqua.Modeling {
                 case ModelPhases.Sync: {
                     m_State.LastKnownAccuracy = 0;
                     RenderAccuracy();
+
+                    ModelMissingReasons missing;
                     
                     if (alreadyCompleted) {
                         m_SimulateButton.gameObject.SetActive(false);
                         m_HistoricalMissingDisplay.SetActive(false);
                         m_PhaseRoutine.Replace(this, Sync_AlreadyCompleted()).TryManuallyUpdate(0);
-                    } else if (m_State.Simulation.IsAnyHistoricalDataMissing()) {
+                    } else if ((missing = m_State.Simulation.EvaluateHistoricalDataMissing()) != 0) {
                         m_SimulateButton.gameObject.SetActive(false);
                         m_HistoricalMissingDisplay.SetActive(true);
                         ClearLines();
+
+                        switch(missing) {
+                            case ModelMissingReasons.HistoricalPopulations: {
+                                m_HistoricalMissingText.SetText(m_MissingPopulationsLabel);
+                                break;
+                            }
+                            case ModelMissingReasons.HistoricalWaterChem: {
+                                m_HistoricalMissingText.SetText(m_MissingWaterChemistryLabel);
+                                break;
+                            }
+                            case ModelMissingReasons.HistoricalWaterChem | ModelMissingReasons.HistoricalPopulations: {
+                                m_HistoricalMissingText.SetText(m_MissingPopulationsWaterChemistryLabel);
+                                break;
+                            }
+                        }
                     } else {
                         m_SimulateButton.gameObject.SetActive(true);
                         m_HistoricalMissingDisplay.SetActive(false);
