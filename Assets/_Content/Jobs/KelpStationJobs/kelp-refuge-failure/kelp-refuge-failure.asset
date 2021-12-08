@@ -184,11 +184,89 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: RS-1D
-        m_Hash: 2094907120
+        m_Source: MixedKelp.PopulationHistory.BullKelp
+        m_Hash: 2494218494
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    - Type: 1
+      Target:
+        m_Source: MixedKelp.PopulationHistory.GiantKelp
+        m_Hash: 1002310368
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: growthRates
+      m_Hash: 1111871253
+    Index: 2
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.growthRates
+      m_Hash: 2881083366
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Reproduce
+        m_Hash: 1731775823
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Reproduce.Stressed
+        m_Hash: 118051450
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: growthRatesBull
+      m_Hash: 356089400
+    Index: 3
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.growthRatesBull
+      m_Hash: 252314555
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Reproduce
+        m_Hash: 4371601
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Reproduce.Stressed
+        m_Hash: 932500436
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: newModel
+      m_Hash: 2854125062
+    Index: 4
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.newModel
+      m_Hash: 2830310567
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Model.RefugeFail
+        m_Hash: 3689453408
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 010002000300
+  - Id:
+      m_Source: getPaid
+      m_Hash: 2143477857
+    Index: 5
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.getPaid
+      m_Hash: 3159939990
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0400
   m_CashReward: 10
   m_GearReward: 10
   m_AdditionalRewards: []
