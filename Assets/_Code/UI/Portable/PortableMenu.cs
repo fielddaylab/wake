@@ -77,7 +77,11 @@ namespace Aqua.Portable {
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
                 }
             } else {
-                PortableAppId lastKnownApp = (PortableAppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
+                Variant lastKnownAppVar = Services.Data.GetVariable(Var_LastOpenTab);
+                PortableAppId lastKnownApp = PortableAppId.Job;
+                if (!lastKnownAppVar.IsNull()) {
+                    lastKnownApp = (PortableAppId) lastKnownAppVar.AsInt();
+                }
                 requestTab = GetAppButton(lastKnownApp);
             }
 
