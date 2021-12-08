@@ -73,50 +73,53 @@ namespace Aqua.Portable {
                 switch (fact.Type) {
                     case BFTypeId.WaterProperty:
                     case BFTypeId.WaterPropertyHistory: {
-                            if (!bWaterChem) {
-                                m_WaterChemistryHeader.gameObject.SetActive(true);
-                                m_WaterChemistryHeader.SetAsLastSibling();
-                                m_WaterChemistryGroup.gameObject.SetActive(true);
-                                m_WaterChemistryGroup.SetAsLastSibling();
-                                bWaterChem = true;
+                        if (!bWaterChem) {
+                            if (bModels || bPopulation) {
+                                AllocSpacing(ref spacingsUsed);
                             }
-                            if (fact.Type == BFTypeId.WaterProperty) {
-                                target = m_WaterChemistryGroup;
-                            }
-                            break;
+                            m_WaterChemistryHeader.gameObject.SetActive(true);
+                            m_WaterChemistryHeader.SetAsLastSibling();
+                            m_WaterChemistryGroup.gameObject.SetActive(true);
+                            m_WaterChemistryGroup.SetAsLastSibling();
+                            bWaterChem = true;
                         }
+                        if (fact.Type == BFTypeId.WaterProperty) {
+                            target = m_WaterChemistryGroup;
+                        }
+                        break;
+                    }
 
                     case BFTypeId.Population:
                     case BFTypeId.PopulationHistory: {
-                            if (!bPopulation) {
-                                if (bWaterChem) {
-                                    AllocSpacing(ref spacingsUsed);
-                                }
+                        if (!bPopulation) {
+                            if (bWaterChem || bModels) {
+                                AllocSpacing(ref spacingsUsed);
+                            }
 
-                                m_PopulationHeader.gameObject.SetActive(true);
-                                m_PopulationHeader.SetAsLastSibling();
-                                m_PopulationGroup.gameObject.SetActive(true);
-                                m_PopulationGroup.SetAsLastSibling();
-                                bPopulation = true;
-                            }
-                            if (fact.Type == BFTypeId.Population) {
-                                target = m_PopulationGroup;
-                            }
-                            break;
+                            m_PopulationHeader.gameObject.SetActive(true);
+                            m_PopulationHeader.SetAsLastSibling();
+                            m_PopulationGroup.gameObject.SetActive(true);
+                            m_PopulationGroup.SetAsLastSibling();
+                            bPopulation = true;
                         }
+                        if (fact.Type == BFTypeId.Population) {
+                            target = m_PopulationGroup;
+                        }
+                        break;
+                    }
 
                     case BFTypeId.Model: {
-                            if (!bModels) {
-                                if (bWaterChem || bPopulation) {
-                                    AllocSpacing(ref spacingsUsed);
-                                }
-
-                                m_ModelsHeader.gameObject.SetActive(true);
-                                m_ModelsHeader.SetAsLastSibling();
-                                bModels = true;
+                        if (!bModels) {
+                            if (bWaterChem || bPopulation) {
+                                AllocSpacing(ref spacingsUsed);
                             }
-                            break;
+
+                            m_ModelsHeader.gameObject.SetActive(true);
+                            m_ModelsHeader.SetAsLastSibling();
+                            bModels = true;
                         }
+                        break;
+                    }
                 }
 
                 MonoBehaviour factDisplay = page.FactPools.Alloc(fact, entry,
