@@ -486,6 +486,9 @@ namespace Aqua.Modeling
         /// Returns how many to kill of starvation.
         /// </summary>
         static private uint EvaluateStarvation(ActorInfo* actorInfo, BehaviorInfo* behavior, uint population, uint hunger, SimProduceConsumeSnapshot unconsumed) {
+            if ((actorInfo-> Flags & SimProfile.ActorFlags.IgnoreStarvation) != 0) {
+                return 0;
+            }
             uint toKill = hunger / HungerPerPopulation;
             if (behavior->ConsumeOxygen > 0) {
                 toKill = Math.Max(toKill, (uint) (unconsumed.Oxygen / behavior->ConsumeOxygen));
