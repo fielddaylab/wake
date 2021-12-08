@@ -75,7 +75,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-turtle-population.seen.bottom, Seen(job.coral-invade.navigation.return), !jobs:coral-turtle-population.got.pop
+@when       scene:name == "Station2", jobs:coral-turtle-population.seen.bottom, Seen(job.coral-stressed.navigation.return), !jobs:coral-turtle-population.got.pop
 @cutscene
 {@kevin}   	We still don't have a representative Count of Loggerhead Turtles at Site V...
 
