@@ -77,7 +77,9 @@ namespace Aqua.Modeling {
 
         private readonly HashSet<BestiaryDesc> m_RelevantCritters = new HashSet<BestiaryDesc>();
         private readonly HashSet<StringHash32> m_RelevantCritterIds = new HashSet<StringHash32>();
+        private WaterPropertyMask m_RelevantWaterProperties = default;
         private readonly HashSet<StringHash32> m_CrittersWithHistoricalData = new HashSet<StringHash32>();
+        private WaterPropertyMask m_WaterPropertiesWithHistoricalData = default;
 
         public readonly InterventionData Intervention = new InterventionData();
 
@@ -96,6 +98,9 @@ namespace Aqua.Modeling {
             };
             ShouldGraphHistorical = (StringHash32 id) => {
                 return m_RelevantCritterIds.Contains(id) && HasHistoricalPopulation(id);
+            };
+            ShouldGraphWaterProperty = (WaterPropertyId id) => {
+                return m_RelevantWaterProperties[id] && m_WaterPropertiesWithHistoricalData[id];
             };
         }
 
@@ -149,10 +154,15 @@ namespace Aqua.Modeling {
 
             m_RelevantCritters.Clear();
             m_RelevantCritterIds.Clear();
+            m_RelevantWaterProperties.Mask = 0;
+
             if (m_ProgressInfo.Scope != null) {
                 foreach(var organismId in m_ProgressInfo.Scope.OrganismIds) {
                     m_RelevantCritters.Add(Assets.Bestiary(organismId));
                     m_RelevantCritterIds.Add(organismId);
+                }
+                if (m_ProgressInfo.Scope.IncludeWaterChemistryInAccuracy) {
+                    m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask();
                 }
             } else {
                 foreach(var organism in m_ProgressInfo.ImportableEntities) {
@@ -161,6 +171,7 @@ namespace Aqua.Modeling {
                         m_RelevantCritterIds.Add(organism.Id());
                     }
                 }
+                m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask();
             }
 
             GenerateHistorical();
@@ -169,6 +180,7 @@ namespace Aqua.Modeling {
 
         public void LoadConceptualModel() {
             m_CrittersWithHistoricalData.Clear();
+            m_WaterPropertiesWithHistoricalData.Mask = 0;
 
             foreach(var entity in m_State.Conceptual.GraphedEntities) {
                 if (entity.Category() == BestiaryDescCategory.Environment) {
@@ -179,6 +191,13 @@ namespace Aqua.Modeling {
                 BFPopulationHistory popHistory = BestiaryUtils.FindPopulationHistoryRule(m_State.Environment, id);
                 if (m_State.Conceptual.GraphedFacts.Contains(popHistory)) {
                     m_CrittersWithHistoricalData.Add(id);
+                }
+            }
+
+            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++) {
+                BFWaterPropertyHistory waterHistory = BestiaryUtils.FindWaterPropertyHistoryRule(m_State.Environment, id);
+                if (m_State.Conceptual.GraphedFacts.Contains(waterHistory)) {
+                    m_WaterPropertiesWithHistoricalData[id] = true;
                 }
             }
         }
@@ -271,14 +290,24 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Returns if any historical data is missing.
         /// </summary>
-        public bool IsAnyHistoricalDataMissing() {
+        public ModelMissingReasons EvaluateHistoricalDataMissing() {
+            ModelMissingReasons reasons = 0;
+            
             foreach(var sync in m_RelevantCritterIds) {
                 if (!m_CrittersWithHistoricalData.Contains(sync)) {
-                    return true;
+                    reasons |= ModelMissingReasons.HistoricalPopulations;
+                    Log.Msg("[SimulationDataCtrl] Missing historical population for '{0}'", sync);
                 }
             }
 
-            return false;
+            foreach(var prop in m_RelevantWaterProperties) {
+                if (!m_WaterPropertiesWithHistoricalData[prop]) {
+                    reasons |= ModelMissingReasons.HistoricalWaterChem;
+                    Log.Msg("[SimulationDataCtrl] Missing historical water chemistry for '{0}'", prop);
+                }
+            }
+
+            return reasons;
         }
 
         #endregion // Historical Data
@@ -781,6 +810,7 @@ namespace Aqua.Modeling {
 
         public readonly Predicate<StringHash32> HasHistoricalPopulation;
         public readonly Predicate<StringHash32> ShouldGraphHistorical;
+        public readonly Predicate<WaterPropertyId> ShouldGraphWaterProperty;
 
         #endregion // Evaluation
     }

@@ -44,7 +44,8 @@ namespace Aqua
         [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
         [SerializeField] private LocText m_ContentsText = null;
         [SerializeField] private FactPools m_FactPools = null;
-        [SerializeField] private Transform m_FactPoolTransform = null;
+        [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
+        [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;
 
@@ -164,11 +165,56 @@ namespace Aqua
             m_FactPools.FreeAll();
 
             if (inFacts.IsEmpty)
+            {
+                m_VerticalFactLayout.gameObject.SetActive(false);
+                m_GridFactLayout.gameObject.SetActive(false);
                 return;
+            }
+
+            bool bUsedGrid = false, bUsedVertical = false;
+
+            Transform target;
 
             for(int i = 0; i < inFacts.Length; i++)
             {
-                m_FactPools.Alloc(inFacts[i], null, i >= inFlags.Length ? BFType.DefaultDiscoveredFlags(inFacts[i]) : inFlags[i], m_FactPoolTransform);
+                BFBase fact = inFacts[i];
+                BFDiscoveredFlags flags = i >= inFlags.Length ? BFType.DefaultDiscoveredFlags(inFacts[i]) : inFlags[i];
+                switch(fact.Type) {
+                    case BFTypeId.WaterProperty:
+                    case BFTypeId.WaterPropertyHistory:
+                    case BFTypeId.Population:
+                    case BFTypeId.PopulationHistory:
+                        target = m_GridFactLayout.transform;
+                        bUsedGrid = true;
+                        break;
+
+                    default: {
+                        target = m_VerticalFactLayout.transform;
+                        bUsedVertical = true;
+                        break;
+                    }
+                }
+                m_FactPools.Alloc(inFacts[i], null, flags, target);
+            }
+
+            if (bUsedVertical)
+            {
+                m_VerticalFactLayout.gameObject.SetActive(true);
+                m_VerticalFactLayout.ForceRebuild();
+            }
+            else
+            {
+                m_VerticalFactLayout.gameObject.SetActive(false);
+            }
+
+            if (bUsedGrid)
+            {
+                m_GridFactLayout.gameObject.SetActive(true);
+                m_GridFactLayout.ForceRebuild();
+            }
+            else
+            {
+                m_GridFactLayout.gameObject.SetActive(false);
             }
         }
 

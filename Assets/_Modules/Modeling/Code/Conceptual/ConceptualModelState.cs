@@ -13,6 +13,8 @@ namespace Aqua.Modeling {
         }
 
         public StatusId Status;
+        public ModelMissingReasons MissingReasons;
+
         public readonly HashSet<BestiaryDesc> GraphedEntities = new HashSet<BestiaryDesc>();
         public readonly HashSet<BFBase> GraphedFacts = new HashSet<BFBase>();
 
@@ -47,6 +49,7 @@ namespace Aqua.Modeling {
             SimulatedEntities.Clear();
             SimulatedFacts.Clear();
             Status = StatusId.UpToDate;
+            MissingReasons = 0;
         }
     }
 }

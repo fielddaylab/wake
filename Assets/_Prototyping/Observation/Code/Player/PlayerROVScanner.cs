@@ -95,7 +95,10 @@ namespace ProtoAqua.Observation
                 {
                     Vector2 mousePos = inInput.Mouse.Target.Value;
                     int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
-                    Collider2D closest = ScoringUtils.GetMinElement(m_ColliderBuffer, 0, overlappingColliders, (c) => Vector2.SqrMagnitude((Vector2) c.transform.position - mousePos) + c.transform.localPosition.z);
+                    Collider2D closest = ScoringUtils.GetMinElement(m_ColliderBuffer, 0, overlappingColliders, (c) => {
+                        Vector3 pos = c.transform.position;
+                        return Vector2.SqrMagnitude((Vector2) pos - mousePos) + pos.z;
+                    });
                     Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
 
                     bool bFound = false;

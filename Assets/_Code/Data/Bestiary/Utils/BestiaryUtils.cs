@@ -297,6 +297,20 @@ namespace Aqua
             return null;
         }
 
+        /// <summary>
+        /// Locates the water property history rule associated with the given environment and property id.
+        /// </summary>
+        static public BFWaterPropertyHistory FindWaterPropertyHistoryRule(BestiaryDesc inEnvironment, WaterPropertyId inPropertyId)
+        {
+            foreach(var fact in inEnvironment.FactsOfType<BFWaterPropertyHistory>())
+            {
+                if (fact.Property == inPropertyId)
+                    return fact;
+            }
+
+            return null;
+        }
+
         #endregion // Find Facts
 
         #region Text

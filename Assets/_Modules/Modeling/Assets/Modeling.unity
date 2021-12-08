@@ -396,6 +396,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf03bbd7a27d8434bb8c01e0b3760361, type: 3}
+--- !u!114 &104730973 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 647747556343697287, guid: f1c2be4f9e1c4b64fa6358c6b27dbad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 8735941181835428184}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d846625481429e4bb310e7d50693c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &164925640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1546,6 +1558,7 @@ MonoBehaviour:
   m_PredictTimeDisplay: {fileID: 695941782}
   m_SimulateButton: {fileID: 912375367}
   m_HistoricalMissingDisplay: {fileID: 238190373}
+  m_HistoricalMissingText: {fileID: 1791751403}
   m_AccuracyDisplay: {fileID: 230135952}
   m_AccuracyMeter: {fileID: 1756677539}
   m_AccuracyGoal: {fileID: 887465469}
@@ -1561,6 +1574,15 @@ MonoBehaviour:
   m_PredictTimeLabel:
     m_Source: modeling.predictRegion.label
     m_Hash: 240245057
+  m_MissingPopulationsLabel:
+    m_Source: modeling.missing.historicalPopulations
+    m_Hash: 1878371902
+  m_MissingWaterChemistryLabel:
+    m_Source: modeling.missing.historicalWaterChem
+    m_Hash: 3056279944
+  m_MissingPopulationsWaterChemistryLabel:
+    m_Source: modeling.missing.historicalPopulationsAndWaterChem
+    m_Hash: 3257799719
 --- !u!225 &555147996
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2060,6 +2082,7 @@ MonoBehaviour:
   m_InputBehavior: 1
   m_HideOnStart: 1
   m_MissingData: {fileID: 1692383108}
+  m_MissingDataText: {fileID: 104730973}
   m_ImportButton: {fileID: 1472048840}
   m_ExportButton: {fileID: 337254408}
   m_ImportGroup: {fileID: 1788148838}
@@ -2069,6 +2092,15 @@ MonoBehaviour:
   m_ImportBehaviorsText: {fileID: 1480719502}
   m_ImportHistoricalText: {fileID: 775334321}
   m_ImportCompletedText: {fileID: 1971641653}
+  m_MissingOrganismsLabel:
+    m_Source: modeling.missing.organisms
+    m_Hash: 909081547
+  m_MissingBehaviorsLabel:
+    m_Source: modeling.missing.behaviors
+    m_Hash: 1031135925
+  m_MissingOrganismsBehaviorsLabel:
+    m_Source: modeling.missing.organismsAndBehaviors
+    m_Hash: 1269799079
 --- !u!1 &655596826
 GameObject:
   m_ObjectHideFlags: 0
@@ -5917,6 +5949,18 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &1791751403 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 647747556343697287, guid: f1c2be4f9e1c4b64fa6358c6b27dbad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 513040081}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d846625481429e4bb310e7d50693c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1799581787
 PrefabInstance:
   m_ObjectHideFlags: 0

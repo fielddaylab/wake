@@ -313,10 +313,20 @@ namespace Aqua.Modeling {
             FactUtil.GatherPendingEntities(m_ProgressInfo.ImportableEntities, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities);
             FactUtil.GatherPendingFacts(m_ProgressInfo.ImportableFacts, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.PendingFacts);
 
+            bool missingEntities = !HasRequiredEntities();
+            bool missingBehaviors = !HasRequiredBehaviors();
+            ModelMissingReasons missingReason = 0;
+
             if (m_State.Conceptual.PendingEntities.Count > 0 || m_State.Conceptual.PendingFacts.Count > 0) {
                 status = ConceptualModelState.StatusId.PendingImport;
-            } else if (!HasRequiredEntities() || !HasRequiredBehaviors()) {
+            } else if (missingEntities || missingBehaviors) {
                 status = ConceptualModelState.StatusId.MissingData;
+                if (missingEntities) {
+                    missingReason |= ModelMissingReasons.Organisms;
+                }
+                if (missingBehaviors) {
+                    missingReason |= ModelMissingReasons.Behaviors;
+                }
             } else if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && !Save.Bestiary.HasFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 status = ConceptualModelState.StatusId.ExportReady;
             } else {
@@ -324,6 +334,7 @@ namespace Aqua.Modeling {
             }
 
             m_State.Conceptual.Status = status;
+            m_State.Conceptual.MissingReasons = missingReason;
         }
 
         private void EvaluatePhaseMask() {
@@ -427,5 +438,12 @@ namespace Aqua.Modeling {
         Sync = 0x04,
         Predict = 0x08,
         Intervene = 0x10
+    }
+
+    public enum ModelMissingReasons : byte {
+        Organisms = 0x01,
+        Behaviors = 0x02,
+        HistoricalPopulations = 0x04,
+        HistoricalWaterChem = 0x08,
     }
 }

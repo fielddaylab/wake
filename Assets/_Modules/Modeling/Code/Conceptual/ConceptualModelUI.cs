@@ -14,6 +14,7 @@ namespace Aqua.Modeling {
         #region Inspector
 
         [SerializeField] private GameObject m_MissingData = null;
+        [SerializeField] private LocText m_MissingDataText = null;
         [SerializeField] private Button m_ImportButton = null;
         [SerializeField] private Button m_ExportButton = null;
 
@@ -25,6 +26,11 @@ namespace Aqua.Modeling {
         [SerializeField] private GameObject m_ImportBehaviorsText = null;
         [SerializeField] private GameObject m_ImportHistoricalText = null;
         [SerializeField] private GameObject m_ImportCompletedText = null;
+
+        [Header("Settings")]
+        [SerializeField] private TextId m_MissingOrganismsLabel = null;
+        [SerializeField] private TextId m_MissingBehaviorsLabel = null;
+        [SerializeField] private TextId m_MissingOrganismsBehaviorsLabel = null;
 
         #endregion // Inspector
 
@@ -173,6 +179,21 @@ namespace Aqua.Modeling {
             m_ExportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady);
             m_MissingData.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.MissingData);
             m_ImportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport);
+
+            switch(m_State.Conceptual.MissingReasons) {
+                case ModelMissingReasons.Organisms: {
+                    m_MissingDataText.SetText(m_MissingOrganismsLabel);
+                    break;
+                }
+                case ModelMissingReasons.Behaviors: {
+                    m_MissingDataText.SetText(m_MissingBehaviorsLabel);
+                    break;
+                }
+                case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
+                    m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
+                    break;
+                }
+            }
         }
     }
 }
