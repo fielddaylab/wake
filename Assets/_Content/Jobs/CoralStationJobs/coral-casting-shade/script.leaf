@@ -1,4 +1,4 @@
-#basePath   job.coral-remove-sarg
+#basePath   job.coral-casting-shade
 
 :: start
 @trigger    JobStarted
@@ -151,7 +151,7 @@ $choose branch
 $goto .argue.noDontYank
 
 :: argue.noDontYank
-$if ArgueSetClaim(removeSargClaim, jobs.coral-remove-sarg.argue.claimNoRemoval)
+$if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimNoRemoval)
 		$call ArgueFactSlot(W_WhaleFall.Oxygen)
 $endif
 $call ArgueDisplayClaim()
@@ -179,7 +179,7 @@ $call ArgueCancelClaim()
 $goto .argue.yesYank
 
 :: argue.yesYank
-$if ArgueSetClaim(removeSargClaim, jobs.coral-remove-sarg.argue.claimRemoveSarg)
+$if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimcasting-shade)
 		$call ArgueFactSlot(SargassumCoveredReef.Light)
 		$call ArgueFactSlot(Sargassum.Consume.Light)
 		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
