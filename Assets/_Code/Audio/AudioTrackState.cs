@@ -130,8 +130,12 @@ namespace AquaAudio
 
         static public void Stop(AudioTrackState state, float duration = 0, Curve curve = Curve.Linear) {
             if (duration <= 0 || state.State != StateId.Playing) {
-                state.Sample?.Stop();
-                state.Stream?.Stop();
+                if (state.Sample) {
+                    state.Sample.Stop();
+                }
+                if (state.Stream) {
+                    state.Stream.Stop();
+                }
                 state.VolumeChangeRoutine.Stop();
                 state.State = StateId.Stopped;
                 return;

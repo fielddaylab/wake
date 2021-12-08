@@ -129,6 +129,15 @@ namespace Aqua
             }
         }
 
+        public IEnumerable<BFBase> FactsOfType(BFTypeId inTypeId)
+        {
+            foreach(var fact in m_AllFacts)
+            {
+                if (fact.Type == inTypeId)
+                    yield return fact;
+            }
+        }
+
         #endregion // Facts
 
         #region Checks

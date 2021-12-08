@@ -50,7 +50,7 @@ namespace ProtoAqua.ExperimentV2
         {
             foreach(var definition in CritterDefinitions)
             {
-                ActorDefinition.LoadFromBestiary(definition, definition.Type, ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name));
+                ActorDefinition.LoadFromBestiary(definition, definition.Type, ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name, "Assets/_Content/Experiments/"));
             }
 
             return true;

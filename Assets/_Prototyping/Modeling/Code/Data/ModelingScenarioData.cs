@@ -8,7 +8,7 @@ using UnityEngine;
 namespace ProtoAqua.Modeling
 {
     // [CreateAssetMenu(menuName = "Aqualab Content/Modeling Scenario Data", fileName = "NewModelingScenario")]
-    public sealed class ModelingScenarioData : ScriptableObject, IOptimizableAsset
+    public sealed class ModelingScenarioData : ScriptableObject
     {
         private enum DuplicatedWaterPropertyId : byte
         {
@@ -86,50 +86,5 @@ namespace ProtoAqua.Modeling
 
             return false;
         }
-
-        #if UNITY_EDITOR
-
-        int IOptimizableAsset.Order { get { return 20; } }
-
-        bool IOptimizableAsset.Optimize()
-        {
-            KeyValueUtils.SortByKey<StringHash32, uint, ActorCountU32>(m_InitialActors);
-            KeyValueUtils.SortByKey<StringHash32, ActorCountRange>(m_TargetActors);
-
-            m_Critters = new List<BestiaryDesc>(m_InitialActors.Length);
-
-            foreach(var critter in m_InitialActors)
-            {
-                m_Critters.Add(ValidationUtils.FindAsset<BestiaryDesc>(critter.Id.ToDebugString()));
-            }
-
-            foreach(var critter in m_AdjustableActors)
-            {
-                BestiaryDesc desc = ValidationUtils.FindAsset<BestiaryDesc>(critter.Id.ToDebugString());
-                if (!m_Critters.Contains(desc))
-                    m_Critters.Add(desc);
-            }
-
-            m_HistoricalPopulationFactIds = new StringHash32[m_InitialActors.Length];
-            for(int i = 0; i < m_InitialActors.Length; i++)
-            {
-                BFPopulationHistory popHistory = BestiaryUtils.FindPopulationHistoryRule(m_Environment, m_Critters[i]);
-                if (!popHistory)
-                {
-                    Log.Error("[ModelingScenarioData] Scenario '{0}' contains critter '{1}' that has no population history fact for environment '{2}'",
-                        name, m_Critters[i].name, m_Environment.name);
-                }
-                else
-                {
-                    m_HistoricalPopulationFactIds[i] = popHistory.Id;
-                }
-            }
-
-            m_Critters.Sort(BestiaryDesc.SortById);
-
-            return true;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

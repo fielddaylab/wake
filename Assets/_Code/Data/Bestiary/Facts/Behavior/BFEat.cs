@@ -122,6 +122,13 @@ namespace Aqua
             return eat != null && eat.Critter == Critter;
         }
 
+        // static private BFMode TypeMode(BFBase inFact)
+        // {
+        //     if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+        //         return BFMode.Always;
+        //     return BFMode.Player;
+        // }
+
         public override bool Optimize()
         {
             if (OnlyWhenStressed)
