@@ -29,20 +29,192 @@ MonoBehaviour:
   m_DescCompletedId:
     m_Source: 
     m_Hash: 0
-  m_ExperimentDifficulty: 0
+  m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 0
+  m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: ffcb01ca3fde9498d999046d7660f28e, type: 2}
   m_PrereqConditions: 
   m_StationId:
     m_Source: KelpStation
     m_Hash: 2724389503
-  m_DiveSiteIds: []
-  m_Tasks: []
-  m_OptimizedTaskList: []
-  m_CashReward: 0
-  m_GearReward: 0
+  m_DiveSiteIds:
+  - m_Source: RS-1C
+    m_Hash: 2212350453
+  m_Tasks:
+  - Id:
+      m_Source: scanMussels
+      m_Hash: 4079502178
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.scanMussels
+      m_Hash: 4098094746
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Mussel
+        m_Hash: 605356284
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: waterData
+      m_Hash: 3464971544
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.waterData
+      m_Hash: 1152367680
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.TemperatureHistory
+        m_Hash: 1198691031
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.LightHistory
+        m_Hash: 3328440249
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.PHHistory
+        m_Hash: 3281797559
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanMussels
+      m_Hash: 4079502178
+  - Id:
+      m_Source: stressParam
+      m_Hash: 4236126898
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.stressParam
+      m_Hash: 2006971082
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Light.Stressed
+        m_Hash: 843538345
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Mussel.PH.Stressed
+        m_Hash: 2930248125
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Mussel.Temperature.Stressed
+        m_Hash: 864886083
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: waterData
+      m_Hash: 3464971544
+  - Id:
+      m_Source: report
+      m_Hash: 431699179
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.report
+      m_Hash: 624845683
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: stressParam
+      m_Hash: 4236126898
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanMussels
+      m_Hash: 4079502178
+    Index: 0
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.scanMussels
+      m_Hash: 4098094746
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Mussel
+        m_Hash: 605356284
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: waterData
+      m_Hash: 3464971544
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.waterData
+      m_Hash: 1152367680
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.TemperatureHistory
+        m_Hash: 1198691031
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.LightHistory
+        m_Hash: 3328440249
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WarmKelpForest.LightHistory
+        m_Hash: 3328440249
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: stressParam
+      m_Hash: 4236126898
+    Index: 2
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.stressParam
+      m_Hash: 2006971082
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Light.Stressed
+        m_Hash: 843538345
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Mussel.PH.Stressed
+        m_Hash: 2930248125
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Mussel.Temperature.Stressed
+        m_Hash: 864886083
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: report
+      m_Hash: 431699179
+    Index: 3
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest.task.report
+      m_Hash: 624845683
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_Hash: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  m_CashReward: 10
+  m_GearReward: 10
   m_AdditionalRewards: []
   m_Scripting: {fileID: -1942890987711236906, guid: 936a54abd180e574886ded71d3f0a5bc,
     type: 3}
