@@ -26,6 +26,7 @@ namespace Aqua
         public void ClearPoints()
         {
             m_RawPoints.Clear();
+            m_Renderer.enabled = false;
         }
 
         public void AddPoint(Vector2 inPoint)
@@ -70,6 +71,7 @@ namespace Aqua
                 );
             }
 
+            m_Renderer.enabled = true;
             m_Renderer.RelativeSize = true;
             m_Renderer.Points = m_RelativePoints;
 
@@ -86,6 +88,11 @@ namespace Aqua
                     m_InitialPointRenderer.gameObject.SetActive(false);
                 }
             }
+        }
+
+        public void Hide()
+        {
+            m_Renderer.enabled = false;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_SpringForce = 1024;
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
-        // [SerializeField] private float m_BoundaryY = 6;
+        [SerializeField] private float m_ConnectionOffsetFactor = 1.25f;
         // [SerializeField] private float m_BoundaryForce = 2;
 
         #endregion // Inspector
@@ -298,7 +298,7 @@ namespace Aqua.Modeling {
                 vecAB = b - a;
                 centerAB = (a + b) * 0.5f;
                 distAB = vecAB.magnitude;
-                distAB -= m_PositionScale * 1.1f;
+                distAB -= m_PositionScale * m_ConnectionOffsetFactor;
                 display.Transform.SetSizeDelta(distAB, Axis.X);
                 display.Transform.SetAnchorPos(centerAB);
                 display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);

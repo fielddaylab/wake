@@ -336,7 +336,7 @@ namespace Aqua.Modeling {
             PopulatePlayerGraph();
             PopulateTargetGraph();
             
-            RenderLines((int) m_ProgressInfo.Sim.SyncTickCount, false);
+            RenderLines(-1, true);
         }
 
         private IEnumerator Intervene_Attempt() {
@@ -525,7 +525,7 @@ namespace Aqua.Modeling {
             m_InterveneAddPanel.ClearSelection();
             m_InterveneAddPanel.Hide();
             m_InterveneAddToggle.SetIsOnWithoutNotify(false);
-            RenderLines((int) m_ProgressInfo.Sim.SyncTickCount, false);
+            RenderLines(-1, true);
             OnInterventionReset?.Invoke();
         }
 
