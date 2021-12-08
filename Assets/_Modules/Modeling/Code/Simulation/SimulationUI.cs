@@ -152,6 +152,7 @@ namespace Aqua.Modeling {
             m_PredictButton.gameObject.SetActive(phase == ModelPhases.Predict);
             m_InterveneButtonGroup.gameObject.SetActive(phase == ModelPhases.Intervene);
             m_InterveneResetButton.gameObject.SetActive(phase == ModelPhases.Intervene);
+            m_HistoricalMissingDisplay.gameObject.SetActive(false);
 
             if (phase != ModelPhases.Predict) {
                 m_InterveneAddPanel.ClearSelection();
