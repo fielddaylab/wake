@@ -348,7 +348,10 @@ namespace ProtoAqua.Observation
                     m_BestiaryData.RegisterFact(population.Id);
                     m_FactDisplayQueue.PushBack(population.Id);
                     if (!m_QueueProcessor)
+                    {
                         m_QueueProcessor = Routine.Start(this, DisplayModelQueue());
+                        m_QueueProcessor.TryManuallyUpdate(0);
+                    }
                 }
 
                 Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);

@@ -660,7 +660,7 @@ namespace ProtoAqua.ExperimentV2
         {
             m_SummaryPanel.gameObject.SetActive(false);
             m_SummaryPanel.FactPools.FreeAll();
-            OnBeginClick();
+            m_BeginButton.gameObject.SetActive(true);
         }
 
         #endregion // Sequence
