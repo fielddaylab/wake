@@ -155,11 +155,11 @@ namespace Aqua
             
             if (itemId == ItemIds.Cash)
             {
-                return string.Format("<#a6c8ff>{0}ø</color>", itemCount);
+                return string.Format("<#a6c8ff>{0</color><sprite name=\"cash\">", itemCount);
             }
             else if (itemId == ItemIds.Gear)
             {
-                return string.Format("<#c9c86d>{0}‡</color>", itemCount);
+                return string.Format("<#c9c86d>{0}</color><sprite name=\"gear\">", itemCount);
             }
             else if (itemDesc.Category() == InvItemCategory.Upgrade)
             {
@@ -199,9 +199,9 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#a6c8ff>{0}ø</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#a6c8ff>{0}</color><sprite name=\"cash\">", item.NameTextId());
                 else if (item.Id() == ItemIds.Gear)
-                    return Loc.FormatFromString("<#c9c86d>{0}‡</color>", item.NameTextId());
+                    return Loc.FormatFromString("<#c9c86d>{0}</color><sprite name=\"gear\">", item.NameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
                     return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
                 else
@@ -218,6 +218,12 @@ namespace Aqua
             if (!map.IsReferenceNull())
             {
                 return Loc.FormatFromString("<#FFCCF9>{0}</color>", map.LabelId());
+            }
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull())
+            {
+                return Loc.Find(charDef.ShortNameId());
             }
 
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
@@ -246,9 +252,9 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#a6c8ff>{0}ø</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#a6c8ff>{0}</color><sprite name=\"cash\">", item.PluralNameTextId());
                 else if (item.Id() == ItemIds.Gear)
-                    return Loc.FormatFromString("<#c9c86d>{0}‡</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#c9c86d>{0}</color><sprite name=\"gear\">", item.PluralNameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
                     return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
                 else
@@ -264,6 +270,14 @@ namespace Aqua
             {
                 StringHash32 characterId = inTag.Data.Substring(1);
                 return Loc.Find(Assets.Character(characterId).NameId());
+            }
+
+            ScriptableObject obj = Assets.Find(inTag.Data);
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull())
+            {
+                return Loc.Find(charDef.NameId());
             }
 
             return ReplaceNameOf(inTag, inContext);

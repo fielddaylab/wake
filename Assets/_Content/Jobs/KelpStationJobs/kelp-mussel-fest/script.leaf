@@ -90,7 +90,7 @@ $endif
 @once
 @cutscene
 {@kevin}	Great! The {h}Stress Tank{/h} gave us some new clues.
-{@kevin}	Let's report this information back to {nameof drKelp}!
+{@kevin}	Let's report this information back to {nameof @drKelp}!
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
@@ -98,7 +98,7 @@ $endif
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	That should be everything we need for now. Let's report back to {nameof drKelp}.
+{@kevin}	That should be everything we need for now. Let's report back to {nameof @drKelp}.
 $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
@@ -106,7 +106,7 @@ $endif
 // ARGUMENTATION
 
 ::argue.hello
-{@drKelp}	Hi {nameof player}.
+{@drKelp}	Hi {nameof @player}.
 $goto .argue.chooseClaim
 
 ::argue.chooseClaim
