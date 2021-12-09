@@ -15,7 +15,9 @@ namespace Aqua.Modeling {
         private const int PlayerArenaSize = (int) (1024 * 9f);
         private const int TotalArenaSize = HistoricalArenaSize + PlayerArenaSize;
 
-        static private readonly WaterPropertyMask GraphedPropertyMask = new WaterPropertyMask(new WaterPropertyId[] { WaterPropertyId.Temperature, WaterPropertyId.PH, WaterPropertyId.Light });
+        static private readonly WaterPropertyMask GraphedPropertyMask = new WaterPropertyMask(new WaterPropertyId[]
+            { WaterPropertyId.Light }
+        );
 
         private enum SectionType {
             Historical,
