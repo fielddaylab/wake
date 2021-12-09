@@ -10,7 +10,6 @@ $branch common.ringPhone
 {@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
 {@profCempaka}	I need you to head over to Site R and see what you can find.
 {@player} 	We'll be right over there!
-$call GiveUpgrade(StressTank)
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
@@ -129,6 +128,7 @@ $endif
 {@player}   We're back. Now what?
 {@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
 {@player}   On it!
+$call GiveUpgrade(StressTank)
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
