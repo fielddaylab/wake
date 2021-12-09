@@ -15,6 +15,8 @@ namespace Aqua.Modeling {
         private const int PlayerArenaSize = (int) (1024 * 9f);
         private const int TotalArenaSize = HistoricalArenaSize + PlayerArenaSize;
 
+        static private readonly WaterPropertyMask GraphedPropertyMask = new WaterPropertyMask(new WaterPropertyId[] { WaterPropertyId.Temperature, WaterPropertyId.PH, WaterPropertyId.Light });
+
         private enum SectionType {
             Historical,
             Player,
@@ -162,7 +164,7 @@ namespace Aqua.Modeling {
                     m_RelevantCritterIds.Add(organismId);
                 }
                 if (m_ProgressInfo.Scope.IncludeWaterChemistryInAccuracy) {
-                    m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask();
+                    m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask() & GraphedPropertyMask;
                 }
             } else {
                 foreach(var organism in m_ProgressInfo.ImportableEntities) {
@@ -171,7 +173,7 @@ namespace Aqua.Modeling {
                         m_RelevantCritterIds.Add(organism.Id());
                     }
                 }
-                m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask();
+                m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask() & GraphedPropertyMask;
             }
 
             GenerateHistorical();
@@ -425,7 +427,7 @@ namespace Aqua.Modeling {
         /// Calculates accuracy between historical data and player data.
         /// </summary>
         public int CalculateAccuracy(uint snapshotCount) {
-            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_RelevantCritterIds.Count, m_ProgressInfo.Scope?.IncludeWaterChemistryInAccuracy ?? false));
+            return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_RelevantCritterIds.Count, m_RelevantWaterProperties));
         }
 
         #endregion // Player Data

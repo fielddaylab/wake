@@ -257,11 +257,11 @@ namespace Aqua.Modeling
             }
 
             // carbon dioxide / ph exchange
-            // float phAdjust;
-            // ProcessCarbonDioxideExchange(ref buffer.Water, out phAdjust);
-            // if (bLogging && phAdjust != 0) {
-            //     Report(buffer, "Carbon Dioxide levels adjusted PH by {0}; final values {1} carbon dioxide, {2} ph", phAdjust, buffer.Water.CarbonDioxide, buffer.Water.PH);
-            // }
+            float phAdjust;
+            ProcessCarbonDioxideExchange(ref buffer.Water, out phAdjust);
+            if (bLogging && phAdjust != 0) {
+                Report(buffer, "Carbon Dioxide levels adjusted PH by {0}; final values {1} carbon dioxide, {2} ph", phAdjust, buffer.Water.CarbonDioxide, buffer.Water.PH);
+            }
 
             if (bLogging) {
                 Report(buffer, "Current environment conditions: {0}", buffer.Water.ToString());
@@ -832,7 +832,7 @@ namespace Aqua.Modeling
         /// <summary>
         /// Calculates the average error between the given source and target snapshots over a particular set of organisms.
         /// </summary>
-        static public float CalculateAverageError(SimSnapshot* sources, SimProfile sourceProfile, SimSnapshot* targets, SimProfile targetProfile, uint snapshotCount, Predicate<StringHash32> organismFilter, int expectedOrganismCount, bool calculateWaterChemistry) {
+        static public float CalculateAverageError(SimSnapshot* sources, SimProfile sourceProfile, SimSnapshot* targets, SimProfile targetProfile, uint snapshotCount, Predicate<StringHash32> organismFilter, int expectedOrganismCount, WaterPropertyMask waterPropertyMask) {
             if (snapshotCount == 0) {
                 return 0;
             }
@@ -857,7 +857,7 @@ namespace Aqua.Modeling
                 // prefetch stuff
                 Unsafe.Prefetch(&sources[i + 1]);
                 Unsafe.Prefetch(&targets[i + 1]);
-                accum += CalculateSingleError(&sources[i], &targets[i], sourceProfile.ActorCount, remap, unsyncedOrganisms, unsyncedOrganisms, calculateWaterChemistry);
+                accum += CalculateSingleError(&sources[i], &targets[i], sourceProfile.ActorCount, remap, unsyncedOrganisms, unsyncedOrganisms, waterPropertyMask);
             }
 
             return accum / snapshotCount;
@@ -866,20 +866,26 @@ namespace Aqua.Modeling
         /// <summary>
         /// Calculates the average error for the given 
         /// </summary>
-        static private float CalculateSingleError(SimSnapshot* source, SimSnapshot* target, int sourcePopulationCount, int* indexRemap, float extraError, int extraErrorCounter, bool syncWater) {
+        static private float CalculateSingleError(SimSnapshot* source, SimSnapshot* target, int sourcePopulationCount, int* indexRemap, float extraError, int extraErrorCounter, WaterPropertyMask waterPropertyMask) {
             float accum = extraError;
             int counter = extraErrorCounter;
 
             WaterPropertyBlockF32 sourceWater = source->Water;
             WaterPropertyBlockF32 targetWater = target->Water;
 
-            if (syncWater) {
-                counter += 5;
-                accum += GraphingUtils.RPD(sourceWater.Oxygen, targetWater.Oxygen);
+            if (waterPropertyMask[WaterPropertyId.Temperature]) {
+                counter++;
                 accum += GraphingUtils.RPD(sourceWater.Temperature, targetWater.Temperature);
-                accum += GraphingUtils.RPD(sourceWater.Light, targetWater.Light);
+            }
+
+            if (waterPropertyMask[WaterPropertyId.PH]) {
+                counter++;
                 accum += GraphingUtils.RPD(sourceWater.PH, targetWater.PH);
-                accum += GraphingUtils.RPD(sourceWater.CarbonDioxide, targetWater.CarbonDioxide);
+            }
+
+            if (waterPropertyMask[WaterPropertyId.Light]) {
+                counter++;
+                accum += GraphingUtils.RPD(sourceWater.Light, targetWater.Light);
             }
             
             counter += sourcePopulationCount;

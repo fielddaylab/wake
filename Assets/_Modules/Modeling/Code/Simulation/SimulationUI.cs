@@ -11,12 +11,22 @@ using TMPro;
 
 namespace Aqua.Modeling {
     public unsafe class SimulationUI : BasePanel {
+        #region Types
+
+        [Serializable]
+        private struct GraphSet {
+            public SimLineGraph Populations;
+            public SimLineGraph Water;
+        }
+
+        #endregion // 
+
         #region Inspector
 
         [Header("Graphs")]
-        [SerializeField] private SimLineGraph m_HistoricalGraph = null;
-        [SerializeField] private SimLineGraph m_PlayerGraph = null;
-        [SerializeField] private SimLineGraph m_PredictGraph = null;
+        [SerializeField] private GraphSet m_HistoricalGraph = default;
+        [SerializeField] private GraphSet m_PlayerGraph = default;
+        [SerializeField] private GraphSet m_PredictGraph = default;
         [SerializeField] private SimTargetGraph m_TargetGraph = null;
         [SerializeField] private RectTransform m_SyncPredictLine = null;
         [SerializeField] private TMP_Text m_SyncTimeLabelDisplay = null;
@@ -64,11 +74,16 @@ namespace Aqua.Modeling {
             m_State.Simulation.OnInterventionUpdated += OnInterventionUpdated;
         }
 
+        public Action<SimSnapshot> OnTickDisplay;
+
         public Action OnSyncAchieved;
         public Action OnSyncUnsuccessful;
+
         public Action OnPredictCompleted;
+
         public Action OnInterventionSuccessful;
         public Action OnInterventionUnsuccessful;
+        
         public Action OnAnimationStart;
         public Action OnAnimationFinished;
         public Action OnInterventionReset;
@@ -209,14 +224,14 @@ namespace Aqua.Modeling {
                         m_PhaseRoutine.Replace(this, Predict_AlreadyCompleted()).TryManuallyUpdate(0);
                     } else {
                         m_PredictButton.gameObject.SetActive(true);
-                        m_PredictGraph.Clear();
+                        Clear(m_PredictGraph);
                     }
                     break;
                 }
             
                 case ModelPhases.Intervene: {
                     m_InterveneButtonGroup.gameObject.SetActive(true);
-                    m_PredictGraph.Clear();
+                    Clear(m_PredictGraph);
                     m_State.Simulation.ClearIntervention();
                     m_PhaseRoutine.Replace(this, Intervene_Boot());
                     OnInterventionUpdated();
@@ -294,7 +309,7 @@ namespace Aqua.Modeling {
         #region Predict
 
         private IEnumerator Predict_AlreadyCompleted() {
-            m_PredictGraph.Clear();
+            Clear(m_PredictGraph);
 
             m_State.Simulation.EnsurePredictData();
             
@@ -311,7 +326,7 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator Predict_Attempt() {
-            m_PredictGraph.Clear();
+            Clear(m_PredictGraph);
 
             m_State.Simulation.EnsurePredictData();
 
@@ -361,7 +376,7 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator Intervene_Attempt() {
-            m_PredictGraph.Clear();
+            Clear(m_PredictGraph);
 
             m_State.Simulation.EnsurePredictData();
 
@@ -403,41 +418,48 @@ namespace Aqua.Modeling {
         #region Rendering
 
         private void RenderLines(int ticksToRender, bool predicting) {
-            GraphingUtils.AxisRangePair axis;
             uint totalTicks = m_ProgressInfo.Sim.SyncTickCount + m_ProgressInfo.Sim.PredictTickCount;
+            
+            GraphingUtils.AxisRangePair populationAxis;
+            GraphingUtils.AxisRangePair waterAxis = CalculateNormalizedGraphRect(totalTicks, 8);
             
             int historicalRange, predictRange;
             if (predicting) {
                 predictRange = 1 + ticksToRender;
                 historicalRange = 1 + (int) m_ProgressInfo.Sim.SyncTickCount;
-                axis = CalculateGraphRect(m_HistoricalGraph.Range, m_PlayerGraph.Range, m_PredictGraph.BoundedRange(predictRange), GetInterventionTargetRect(), default, totalTicks, 8);
+                populationAxis = CalculateGraphRect(m_HistoricalGraph.Populations.Range, m_PlayerGraph.Populations.Range, m_PredictGraph.Populations.BoundedRange(predictRange), GetInterventionTargetRect(), default, totalTicks, 8);
             } else {
                 historicalRange = 1 + ticksToRender;
                 predictRange = 0;
-                axis = CalculateGraphRect(m_HistoricalGraph.BoundedRange(historicalRange), GetInterventionTargetRect(), default, default, default, totalTicks, 8);
+                populationAxis = CalculateGraphRect(m_HistoricalGraph.Populations.BoundedRange(historicalRange), GetInterventionTargetRect(), default, default, default, totalTicks, 8);
             }
 
-            Rect fullRect = axis.ToRect();
-            m_HistoricalGraph.RenderLines(fullRect, historicalRange);
-            m_PlayerGraph.RenderLines(fullRect, historicalRange);
+            Rect populationRect = populationAxis.ToRect();
+            Rect waterRect = waterAxis.ToRect();
+
+            m_HistoricalGraph.Populations.RenderLines(populationRect, historicalRange);
+            m_HistoricalGraph.Water.RenderLines(waterRect, historicalRange);
+            m_PlayerGraph.Populations.RenderLines(populationRect, historicalRange);
+            m_PlayerGraph.Water.RenderLines(waterRect, historicalRange);
 
             if (m_IsIntervention) {
-                m_TargetGraph.RenderTargets(fullRect);
+                m_TargetGraph.RenderTargets(populationRect);
             } else {
                 m_TargetGraph.Clear();
             }
 
             if (predicting) {
-                m_PredictGraph.RenderLines(fullRect, predictRange, m_IsIntervention);
+                m_PredictGraph.Populations.RenderLines(populationRect, predictRange, m_IsIntervention);
+                m_PredictGraph.Water.RenderLines(waterRect, predictRange, false);
             } else {
-                m_PredictGraph.Clear();
+                Clear(m_PredictGraph);
             }
         }
 
         private void ClearLines() {
-            m_PlayerGraph.Clear();
-            m_HistoricalGraph.Clear();
-            m_PredictGraph.Clear();
+            Clear(m_PlayerGraph);
+            Clear(m_PredictGraph);
+            Clear(m_HistoricalGraph);
             m_TargetGraph.Clear();
         }
 
@@ -542,7 +564,9 @@ namespace Aqua.Modeling {
             m_InterveneButtonGroup.gameObject.SetActive(true);
             m_State.Simulation.ClearIntervention();
             m_PhaseRoutine.Stop();
-            m_PredictGraph.Clear();
+
+            Clear(m_PredictGraph);
+            
             m_InterveneAddPanel.ClearSelection();
             m_InterveneAddPanel.Hide();
             m_InterveneAddToggle.SetIsOnWithoutNotify(false);
@@ -584,17 +608,20 @@ namespace Aqua.Modeling {
 
         private void PopulateHistoricalGraph() {
             SimSnapshot* data = m_State.Simulation.RetrieveHistoricalData(out uint count);
-            m_HistoricalGraph.LoadOrganisms(data, count, 0, m_State.Simulation.HistoricalProfile, m_State.Simulation.ShouldGraphHistorical);
+            m_HistoricalGraph.Populations.LoadOrganisms(data, count, 0, m_State.Simulation.HistoricalProfile, m_State.Simulation.ShouldGraphHistorical);
+            m_HistoricalGraph.Water.LoadProperties(data, count, 0, m_State.Simulation.ShouldGraphWaterProperty);
         }
 
         private void PopulatePlayerGraph() {
             SimSnapshot* data = m_State.Simulation.RetrievePlayerData(out uint count);
-            m_PlayerGraph.LoadOrganisms(data, count, 0, m_State.Simulation.PlayerProfile, m_State.Simulation.ShouldGraphHistorical);
+            m_PlayerGraph.Populations.LoadOrganisms(data, count, 0, m_State.Simulation.PlayerProfile, m_State.Simulation.ShouldGraphHistorical);
+            m_PlayerGraph.Water.LoadProperties(data, count, 0, m_State.Simulation.ShouldGraphWaterProperty);
         }
 
         private void PopulatePredictGraph() {
             SimSnapshot* data = m_State.Simulation.RetrievePredictData(out uint count);
-            m_PredictGraph.LoadOrganisms(data, count, m_ProgressInfo.Sim.SyncTickCount, m_State.Simulation.PredictProfile, (b) => true);
+            m_PredictGraph.Populations.LoadOrganisms(data, count, m_ProgressInfo.Sim.SyncTickCount, m_State.Simulation.PredictProfile, (b) => true);
+            m_PredictGraph.Water.LoadProperties(data, count, m_ProgressInfo.Sim.SyncTickCount, m_State.Simulation.ShouldGraphWaterProperty);
         }
 
         private void PopulateTargetGraph() {
@@ -603,6 +630,11 @@ namespace Aqua.Modeling {
             } else {
                 m_TargetGraph.Clear();
             }
+        }
+
+        static private void Clear(GraphSet set) {
+            set.Populations.Clear();
+            set.Water.Clear();
         }
 
         static private GraphingUtils.AxisRangePair CalculateGraphRect(in Rect inA, in Rect inB, in Rect inC, in Rect inD, in Rect inE, uint inTickCountX, uint inTickCountY) {
@@ -615,6 +647,14 @@ namespace Aqua.Modeling {
             GraphingUtils.AxisRangePair pair;
             pair.X = new GraphingUtils.AxisRangeInfo() { Min = 0, Max = inTickCountX, TickCount = inTickCountX + 1, TickInterval = 1 };
             pair.Y = GraphingUtils.CalculateAxis(rect.yMin, rect.yMax, inTickCountY);
+            pair.Y.SetMinAtOrigin();
+            return pair;
+        }
+
+        static private GraphingUtils.AxisRangePair CalculateNormalizedGraphRect(uint inTickCountX, uint inTickCountY) {
+            GraphingUtils.AxisRangePair pair;
+            pair.X = new GraphingUtils.AxisRangeInfo() { Min = 0, Max = inTickCountX, TickCount = inTickCountX + 1, TickInterval = 1 };
+            pair.Y = GraphingUtils.CalculateAxis(0, 1, inTickCountY);
             pair.Y.SetMinAtOrigin();
             return pair;
         }
