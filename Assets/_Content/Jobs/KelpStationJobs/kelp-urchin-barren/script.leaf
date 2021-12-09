@@ -47,10 +47,12 @@ $call UnlockSite(RS-1B)
 $branch common.ringPhone
 
 {@drKelp}  This time, I'll also need you to gather some information on the population counts here.
-            And for that, you'll need this {nameof ROVTagger}.
-$call GiveUpgrade(ROVTagger)
-{@drKelp}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
-            Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+            And for that, you'll need the {nameof ROVTagger}.
+$if !HasUpgrade(ROVTagger)
+	$call GiveUpgrade(ROVTagger)
+	{@drKelp}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+							Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+$endif
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp

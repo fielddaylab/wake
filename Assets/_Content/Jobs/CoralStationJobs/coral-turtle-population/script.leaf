@@ -41,6 +41,19 @@ $branch common.ringPhone
 $set    	jobs:coral-turtle-population.seen.bottom = true
 {@kevin}   Let's look around for that Loggerhead Turtle.
 
+:: countTurtles
+@trigger JobTasksUpdated
+@when    HasEntity(LoggerheadTurtle), !HasFact(ReefEdge.Population.LoggerheadTurtle)
+@cutscene
+$if !HasUpgrade(ROVTagger)
+	{@profCempaka} I see you've scanned a turtle.  I need you to start counting how many are here.
+	$call GiveUpgrade(ROVTagger)
+	{@profCempaka} You should see the {nameof ROVTagger} at the top of your view.  
+	{@profCempaka} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+	{@profCempaka} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+	{@kevin} That's really convenient.
+$endif
+
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
@@ -53,7 +66,7 @@ $else
 		$set    jobs:coral-turtle-population.got.pop = true
 		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
-	{@kevin}   Switch to Count mode and try to get near all tthe Turtles you can!
+	{@kevin}   Switch to Count mode and try to get near all the Turtles you can!
 	$endif
 $endif
 
