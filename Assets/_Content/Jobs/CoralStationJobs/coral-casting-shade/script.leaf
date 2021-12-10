@@ -14,6 +14,8 @@ $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}		{player-name}, let's start by heading to the {nameof Experimentation}!
 $else
 	{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
+	{@profCempaka}	You'll need this.
+	$call GiveUpgrade(ProbeHacker)
 $endif
 {@player} 		Good thinking, Kevin!
 
@@ -24,6 +26,12 @@ $endif
 @cutscene
 {@player} 	What should we be doing now?
 {@kevin} 	First, let's head back to Site R and scan the population Probe.
+
+:: probeScanned
+@trigger    JobTasksUpdated
+@when		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), !HasFact(Sargassum.Consume.Light)
+{@player} I guess we need to do some Experimentation now, right?
+{@kevin} Right.  Let's get back to the ship.
 
 :: helpGoToExperiment
 @trigger    RequestPartnerHelp
