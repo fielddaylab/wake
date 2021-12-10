@@ -1,5 +1,6 @@
 using System.Collections;
 using Aqua;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -66,6 +67,17 @@ namespace ProtoAqua.ExperimentV2
             return Routine.Combine(transform.ScaleTo(1, 0.15f, Axis.XY),
                 fader.FadeTo(inAlpha, 0.15f)
             );
+        }
+
+        static public void TriggerExperimentScreenViewed(SelectableTank inTank, StringHash32 inScreenId)
+        {
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("tankType", inTank.Type.ToString());
+                table.Set("tankId", inTank.Id);
+                table.Set("screenId", inScreenId);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenViewed, table);
+            }
         }
     }
 }
