@@ -163,6 +163,7 @@ $call ArgueLoad(coralstressedArgue)
 {@profCempaka} So, what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
 	$choice .argue.coralIsOldIntro; The coral is old.
+$call ArgueCancelClaim()
 $choose branch
 
 ::argue.coralNeedsLightIntro
