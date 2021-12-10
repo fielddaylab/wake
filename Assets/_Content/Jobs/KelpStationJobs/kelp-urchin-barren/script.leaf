@@ -82,8 +82,12 @@ $branch common.ringPhone
 {@drKelp}	Alright, that's the current population... the urchins are really getting out of hand...
 			Maybe you can try getting some historical population data from the {h}Probe{/h}?
 			There should be a probe around here somewhere.
-			Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
-$call GiveUpgrade(ProbeHacker)
+            
+$if !HasUpgrade(ProbeHacker)
+	{@drKelp}   Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
+    $call GiveUpgrade(ProbeHacker)
+$endif
+
 {@drKelp}  Once you've done that, head back to the ship.
 
 :: helpAtSiteB.B
@@ -122,18 +126,24 @@ $call GiveUpgrade(ProbeHacker)
 $branch common.ringPhone
 
 {@drKelp}  Okay, it's time for you to learn how to put your facts together into a model.
-{@kevin}    Ah, is this another room on the ship?
-{@drKelp}  Yep! Your ship also has a {nameof Modeling}.
+$if RoomUnlocked(Modeling)
+    {@kevin}    Oh, the {nameof Modeling}?
+    {@drKelp}  Oh, you already know about it!    {hide-dialog}
+$else
+    {@kevin}    Ah, is this another room on the ship?
+    {@drKelp}  Yep! Your ship also has a {nameof Modeling}.
+    
+    $call	UnlockRoom(modelingRoom)
+    $call	UnlockRoom(Modeling)
+$endif // RoomUnlocked(Modeling)
+
 {hide-dialog}
-
-$call	UnlockRoom(modelingRoom)
-$call	UnlockRoom(Modeling)
-
 $call FocusHighlight->Focus("exterior.modeling", 200, 200)
 {wait 1}
 
 {@drKelp}  Head in there and open up the big whiteboard on the wall.
 $call FocusHighlight->Clear()
+
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp

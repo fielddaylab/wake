@@ -83,6 +83,8 @@ namespace Aqua.Modeling {
             ModelPhases prevPhase = m_State.Phase;
             m_State.Phase = phase;
 
+            UpdatePhaseVariable(phase);
+
             // basic state
             if (phase == ModelPhases.Ecosystem) {
                 m_EcosystemSelect.Show();
@@ -123,6 +125,10 @@ namespace Aqua.Modeling {
                 m_SimulationUI.Hide();
             }
 
+            m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
+        }
+
+        private void UpdatePhaseVariable(ModelPhases phase) {
             switch(phase) {
                 case ModelPhases.Ecosystem: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Ecosystem);
@@ -145,8 +151,6 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
-
-            m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
         }
 
         private void OnEcosystemSelected(BestiaryDesc selected) {
