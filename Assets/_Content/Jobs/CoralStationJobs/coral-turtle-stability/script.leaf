@@ -165,7 +165,7 @@ $call UnlockRoom("Modeling")
 	// TODO: coordinate this with how Conceptual Modeling works
 
 :: ModelingComplete
-@trigger    ModelCompleted
+@trigger    VisualModelExported
 @when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @once
 @cutscene

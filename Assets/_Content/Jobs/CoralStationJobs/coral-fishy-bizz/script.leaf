@@ -95,14 +95,14 @@ $endif
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "universal", !HasFact(Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
 
 
 :: modelGetSync
-@trigger	ModelGraphStarted
+@trigger	SimulationModelStarted
 @once
 @cutscene
 {@kevin} 	Time to match up the historical data again.
@@ -116,7 +116,7 @@ $endif
 
 
 :: modelSyncedImmediate
-@trigger	ModelSyncedImmediate
+@trigger	SimulationSyncSuccess
 @who        kevin
 @once
 @chatter
@@ -124,7 +124,7 @@ $endif
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == , !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a predition of how the Fisher population affects the Grouper population. 
@@ -133,7 +133,7 @@ $endif
 
 
 :: modelingGraphComplete
-@trigger	ModelCompleted
+@trigger	SimulationInterveneSuccess
 @once
 @cutscene
 {@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 

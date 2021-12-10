@@ -36,13 +36,13 @@ $branch common.ringPhone
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "universal"
+@when 		scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
 {@player} 	What should I do again?
 {@kevin}	Let's start up the {h}Simulator{/h}.
 
 :: InterventionGetSync
-@trigger	ModelGraphStarted
+@trigger	SimulationModelStarted
 @once
 @cutscene
 {@drKelp}  Just like before, you should set up your populations so they match up with the historical populations you got from the {h}Probe{/h}.
@@ -56,15 +56,8 @@ $branch common.ringPhone
 {@kevin}	Drag the sliders on the left so your model matches the data from Site B.
             Once everything lines up, press the "Sync" button to continue.
 
-:: InterventionModelSyncedImmediate
-@trigger	ModelSyncedImmediate
-@who        kevin
-@once
-@chatter
-{@kevin}    Yes! Nailed it!
-
 :: InterventionModelSynced
-@trigger	ModelSynced
+@trigger	SimulationSyncSuccess
 @once
 @cutscene
 {@drKelp}  Nice work! Now I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
@@ -76,7 +69,7 @@ $branch common.ringPhone
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "predict"
+@when 		scene:name == "Modeling", modeling:phase == "intervene"
 @cutscene
 {@player} 	I'm a bit stuck here - got any tips for me, Kevin?
 {@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
@@ -84,15 +77,15 @@ $branch common.ringPhone
             I wonder if there's something we could add that would keep the {nameof Urchin} population under control...
 
 
-:: InterventionModelPredictImmediate
-@trigger	ModelPredictImmediate
+:: InterventionSimulationPredictSuccess
+@trigger	SimulationPredictSuccess
 @who        kevin
 @once
 @chatter
 {@kevin}    That looks promising! Let's save the result.
 
 :: InterventionModelingGraphComplete
-@trigger	ModelCompleted
+@trigger	SimulationInterveneSuccess
 @once
 @cutscene
 {@kevin}    Ok. It looks like we have a plan!
