@@ -13,7 +13,7 @@ namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {
         #region Persistence
 
-        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("global:portable.lastOpenTab");
+        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("session:portable.lastOpenTab");
 
         #endregion // Persistence
 

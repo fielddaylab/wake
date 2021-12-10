@@ -31,38 +31,29 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  This time, we're going to use the modeling tool to {h}predict{/h} what could happen if we intervened with the ecosystem in some way.
-            You should have all the rules from your {item-name}AQOS Tablet{/item-name} added already, so hit that {h}Simulate{/h} button!
+{@drKelp}   This time, we're going to use the modeling tool to predict what could happen if we {h}intervened{/h} with the ecosystem in some way.
+            You should have all the rules from your {item-name}AQOS Tablet{/item-name} added already, so hit that {h}Intervene{/h} tab at the top.
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
 {@player} 	What should I do again?
-{@kevin}	Let's start up the {h}Simulator{/h}.
-
-:: InterventionGetSync
-@trigger	SimulationModelStarted
-@once
-@cutscene
-{@drKelp}  Just like before, you should set up your populations so they match up with the historical populations you got from the {h}Probe{/h}.
-            If they line up, our model is good, and then we can use it to {h}predict{/h}.
-
-::ModelHelp2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "model"
-@cutscene
-{@player} 	How do I do this again?
-{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
-            Once everything lines up, press the "Sync" button to continue.
+{@kevin}	Let's head to the {h}Intervene{/h} tab.
 
 :: InterventionModelSynced
-@trigger	SimulationSyncSuccess
+@trigger	SimulationModelStarted
+@when       modeling:phase == "intervene"
 @once
 @cutscene
-{@drKelp}  Nice work! Now I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
-            What would happen if we added {critter-name}Kelp{/critter-name}, or removed {pluralnameof Urchin}, or even...
-            Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
+
+{@drKelp}   Alright, so this is the {h}Intervene{/h} screen. From here you can see what might happen if you intervene in an ecosystem.
+            I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
+            What would happen if we added more {critter-name}Kelp{/critter-name}, or removed {pluralnameof Urchin}, or even added another organism.
+            You can use the plus and minus buttons next to the organisms to increase or decrease their populations.
+            And use the {h}Add Organism{/h} button to select a new organism to add.
+            We can only simulate one intervention at a time, though, so no adding multiple new organisms or adjusting multiple populations.
+            ...Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
 {hide-dialog}
 {wait 1}
 {@kevin}    Looks like we're on our own. Let's see what we can do.
@@ -75,14 +66,6 @@ $branch common.ringPhone
 {@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
             It seems like the main problem now is that it keeps getting eaten by {pluralnameof Urchin}.
             I wonder if there's something we could add that would keep the {nameof Urchin} population under control...
-
-
-:: InterventionSimulationPredictSuccess
-@trigger	SimulationPredictSuccess
-@who        kevin
-@once
-@chatter
-{@kevin}    That looks promising! Let's save the result.
 
 :: InterventionModelingGraphComplete
 @trigger	SimulationInterveneSuccess
