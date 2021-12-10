@@ -13,11 +13,29 @@ $branch common.ringPhone
 $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}		{player-name}, let's start by heading to the {nameof Experimentation}!
 $else
-	{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
-	{@profCempaka}	You'll need this.
-	$call GiveUpgrade(ProbeHacker)
+	$if HasEntry(Sargassum)
+		{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
+	$else 
+		{@kevin}		{player-name}, let's start by heading back to Site R to scan the Sargassum!
+	$endif
 $endif
-{@player} 		Good thinking, Kevin!
+
+:: helpScanSargassum
+@trigger    RequestPartnerHelp
+@when 		scene:name == "CoralStation", !HasEntry(Sargassum)
+@boostScore 1
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin} 	First, let's head back to Site R and scan some Sargassum.
+
+:: scannedSargassum
+@trigger    JobTasksUpdated
+@when 		HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@cutscene
+{@player} OK, I can see the Sargassum, but how do we get the population history?
+{@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
+$call GiveUpgrade(ProbeHacker)
+{@player} 		Thanks!
 
 :: helpScanProbe
 @trigger    RequestPartnerHelp
@@ -27,15 +45,31 @@ $endif
 {@player} 	What should we be doing now?
 {@kevin} 	First, let's head back to Site R and scan the population Probe.
 
+:: helpScanProbeAtSite
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2R", HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@boostScore 1
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin} 	Find the Population Probe and try to scan it.
+
 :: probeScanned
 @trigger    JobTasksUpdated
-@when		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), !HasFact(Sargassum.Consume.Light)
+@when		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+{@kevin} There should be another probe around here with the Light History. Let's scan that one, too.
+
+:: gotPopHistory
+@trigger    JobTasksUpdated
+@when 		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+@cutscene
+@once
 {@player} I guess we need to do some Experimentation now, right?
 {@kevin} Right.  Let's get back to the ship.
 
+
 :: helpGoToExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ExperimentV2", !HasFact(Sargassum.Consume.Light)
+@when 		scene:name != "ExperimentV2", !HasFact(Sargassum.Consume.Light), HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @cutscene
 {@player} 	What should we be doing now?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about Sargassum.
@@ -58,8 +92,21 @@ $if HasUpgrade(MeasurementTank)
 	{@kevin}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
 $else
 	{@profCempaka} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
-	{@profCempaka} I don't have any spares. Maybe check with my colleagues at other stations.
+	//{@profCempaka} I don't have any spares. Maybe check with my colleagues at other stations.
+	// TODO: When the bayou is ready, restore to the above ^^
+	{@profCempaka} I happen to have a spare measurement tank.  Here you go!
+	$call GiveUpgrade(MeasurementTank)
+	$call GiveUpgrade(MeasurementTankStabilizerToggle)
+	{@profCempaka} Why don't you focus on the Measurement Tank and I'll show you how it works.
 $endif
+
+::measurementTank
+@trigger	ExperimentTankViewed
+@when		tankType == "Measurement"
+@once 
+@cutscene
+{@profCempaka} We need to match the conditions of the site we're interested in.
+{@profCempaka} Let's select the water of the Sargassum Covered Reef, then add Sargassum ONLY.
 
 
 :: experimentEnd
