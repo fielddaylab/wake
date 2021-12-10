@@ -11,6 +11,7 @@ namespace Aqua.Modeling {
 
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private LocText m_EnvironmentLabel = null;
+        [SerializeField] private GameObject m_JobModeGroup = null;
 
         #endregion // Inspector
 
@@ -20,9 +21,10 @@ namespace Aqua.Modeling {
             m_Group.Hide();
         }
 
-        public void Show(BestiaryDesc environment) {
+        public void Show(BestiaryDesc environment, JobModelScope scope) {
             m_ShowHideRoutine.Replace(this, m_Group.Show(0.2f)).ExecuteWhileDisabled();
             m_EnvironmentLabel.SetText(environment.CommonName());
+            m_JobModeGroup.SetActive(scope);
         }
 
         public void Hide() {

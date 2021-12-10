@@ -320,7 +320,6 @@ namespace Aqua.Modeling {
                     OnSyncAchieved?.Invoke();
                 } else {
                     OnSyncUnsuccessful?.Invoke();
-                    Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
                 }
             }
         }
@@ -426,10 +425,9 @@ namespace Aqua.Modeling {
                 if (bSuccess) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
                     OnInterventionSuccessful?.Invoke();
+                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
-                    Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
-                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 }
             }
         }

@@ -41,11 +41,13 @@ namespace Aqua.Modeling {
             m_ConceptualUI.OnRequestImport = OnRequestConceptualImport;
             m_ConceptualUI.OnRequestExport = OnRequestConceptualExport;
 
+            m_SimulationUI.OnSyncUnsuccessful = OnSyncFailed;
             m_SimulationUI.OnSyncAchieved = OnSyncAchieved;
             m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
             m_SimulationUI.OnInterventionReset = OnInterventionReset;
             m_SimulationUI.OnAnimationStart = OnAnimationStart;
             m_SimulationUI.OnInterventionSuccessful = OnInterventionCompleted;
+            m_SimulationUI.OnInterventionUnsuccessful = OnInterventionUnsuccessful;
 
             m_SimDataCtrl.OnInterventionUpdated += OnInterventionUpdated;
 
@@ -82,7 +84,7 @@ namespace Aqua.Modeling {
             } else {
                 m_EcosystemSelect.Hide();
                 if (prevPhase == ModelPhases.Ecosystem) {
-                    m_EcosystemHeader.Show(m_State.Environment);
+                    m_EcosystemHeader.Show(m_State.Environment, m_ProgressInfo.Scope);
                     m_World.Show();
                 }
             }
@@ -255,6 +257,14 @@ namespace Aqua.Modeling {
             }
         }
 
+        private void OnSyncFailed() {
+            Services.UI.Popup.Display(
+                Loc.Find("modeling.noSyncPopup.header"), Loc.Find("modeling.noSyncPopup.description")
+            ).OnComplete((_) => {
+                Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
+            });
+        }
+
         private void OnSyncAchieved() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.SyncModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
@@ -277,6 +287,10 @@ namespace Aqua.Modeling {
 
         private void OnInterventionUpdated() {
             m_World.ReconstructForIntervention();
+        }
+
+        private void OnInterventionUnsuccessful() {
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
         }
 
         private void OnAnimationStart() {
