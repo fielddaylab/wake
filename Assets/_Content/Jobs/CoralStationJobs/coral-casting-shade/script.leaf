@@ -100,30 +100,38 @@ $else
 	{@profCempaka} Why don't you focus on the Measurement Tank and I'll show you how it works.
 $endif
 
-::measurementTank
+::measurementTankSelectWater
 @trigger	ExperimentTankViewed
 @when		tankType == "Measurement"
 @once 
 @cutscene
+{@profCempaka} Let's start by figuring out the Sargasum Growth Rate.
 {@profCempaka} We need to match the conditions of the site we're interested in.
-{@profCempaka} Let's select the water of the Sargassum Covered Reef, then add Sargassum ONLY.
+{@profCempaka} Let's select the water of the Sargassum Covered Reef.
 
+::measurementTankSelectSpecies
+@trigger	ExperimentScreenViewed
+@when		screenId == "measurement.organisms"
+@once 
+@cutscene
+{@profCempaka} Now add only the Sargassum. We don't want the species interacting with each other.
+
+::measurementTankSelectFeatures
+@trigger	ExperimentScreenViewed
+@when		screenId == "measurement.features"
+@once 
+@cutscene
+{@profCempaka} Since we want to measure the growth rate, turn on the tank stabilizer and auto feeder.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(Sargassum.Consume.Light)
+@when 		HasFact(Sargassum.Reproduce)
 @once
 @cutscene
-{@player}	Seems like we were right, Kevin!
-{@kevin}	Great! Now let's see how this affects the coral by making a model.
-
-:: helpAfterExperiment
-@trigger    RequestPartnerHelp
-@when 		HasFact(Sargassum.Consume.Light), scene:name != "Modeling", !HasFact(Model.SargLightPrediction)
-@cutscene
-{@player} 	What should we be doing next?
-{@kevin}	We should take this new knowledge about Sargassum and make a model to know for sure what's causing the low light. 
-
+{@kevin}	Great! You measured how quickly Sargassum grow in an ideal environment. 
+{@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
+{@kevin}	Now setup a few more experiements to determine the other rates we need to build a simulation model. 
+{@kevin}	You can use different combinations of enviroments that stress an organism, the tank stabilizer and auto feeder. 
 
 :: InterventionModelingSetup
 @trigger	VisualModelStarted
