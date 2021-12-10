@@ -361,6 +361,23 @@ namespace Aqua
             }
         }
 
+        /// <summary>
+        /// Calculates the mass for a given population.
+        /// </summary>
+        static public float PopulationToMass(StringHash32 inCritterId, uint inPopulation)
+        {
+            return PopulationToMass(Assets.Bestiary(inCritterId), inPopulation);
+        }
+
+        /// <summary>
+        /// Calculates the mass for a given population.
+        /// </summary>
+        static public float PopulationToMass(BestiaryDesc inCritter, uint inPopulation)
+        {
+            BFBody body = inCritter.FactOfType<BFBody>();
+            return body.MassDisplayScale * body.MassPerPopulation * inPopulation;
+        }
+
         #endregion // Facts
 
         #region Water Properties

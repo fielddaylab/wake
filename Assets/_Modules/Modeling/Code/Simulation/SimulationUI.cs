@@ -514,7 +514,7 @@ namespace Aqua.Modeling {
                 ActorCountRange count;
                 for(int i = 0; i < m_ProgressInfo.Scope.InterventionTargets.Length; i++) {
                     count = m_ProgressInfo.Scope.InterventionTargets[i];
-                    maxHeight = Math.Max(count.Population + count.Range, maxHeight);
+                    maxHeight = Math.Max(BestiaryUtils.PopulationToMass(count.Id, count.Population + count.Range), maxHeight);
                 }
                 r.height = maxHeight;
             }
