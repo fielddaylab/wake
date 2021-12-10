@@ -210,9 +210,8 @@ namespace Aqua.Modeling {
                             }
                         }
                     } else {
-                        m_SimulateButton.gameObject.SetActive(true);
                         m_HistoricalMissingDisplay.SetActive(false);
-                        ClearLines();
+                        m_PhaseRoutine.Replace(this, Sync_Boot()).TryManuallyUpdate(0);
                     }
                     
                     break;
@@ -262,6 +261,28 @@ namespace Aqua.Modeling {
 
             m_State.LastKnownAccuracy = m_State.Simulation.CalculateAccuracy(m_ProgressInfo.Sim.SyncTickCount + 1);
             RenderAccuracy();
+        }
+
+        private IEnumerator Sync_Boot() {
+            ClearLines();
+
+            ClearLines();
+            m_State.LastKnownAccuracy = 0;
+            RenderAccuracy();
+
+            m_State.Simulation.EnsureHistorical();
+            m_SimulateButton.gameObject.SetActive(false);
+
+            Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, 0);
+
+            while(m_State.Simulation.IsExecutingRequests()) {
+                yield return null;
+            }
+
+            PopulateHistoricalGraph();
+            RenderLines(-1, false);
+
+            m_SimulateButton.gameObject.SetActive(true);
         }
 
         private IEnumerator Sync_Attempt() {
@@ -431,14 +452,14 @@ namespace Aqua.Modeling {
             } else {
                 historicalRange = 1 + ticksToRender;
                 predictRange = 0;
-                populationAxis = CalculateGraphRect(m_HistoricalGraph.Populations.BoundedRange(historicalRange), GetInterventionTargetRect(), default, default, default, totalTicks, 8);
+                populationAxis = CalculateGraphRect(m_HistoricalGraph.Populations.Range, GetInterventionTargetRect(), default, default, default, totalTicks, 8);
             }
 
             Rect populationRect = populationAxis.ToRect();
             Rect waterRect = waterAxis.ToRect();
 
-            m_HistoricalGraph.Populations.RenderLines(populationRect, historicalRange);
-            m_HistoricalGraph.Water.RenderLines(waterRect, historicalRange);
+            m_HistoricalGraph.Populations.RenderLines(populationRect, -1);
+            m_HistoricalGraph.Water.RenderLines(waterRect, -1);
             m_PlayerGraph.Populations.RenderLines(populationRect, historicalRange);
             m_PlayerGraph.Water.RenderLines(waterRect, historicalRange);
 

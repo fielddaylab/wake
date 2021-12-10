@@ -26,7 +26,7 @@ $endif
 // in modeling
 
 :: InterventionModelingSetup
-@trigger	UniversalModelStarted
+@trigger	VisualModelStarted
 @once
 @cutscene
 $branch common.ringPhone
@@ -36,7 +36,7 @@ $branch common.ringPhone
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal"
+@when 		scene:name == "Modeling", modeling:phase == "universal"
 @cutscene
 {@player} 	What should I do again?
 {@kevin}	Let's start up the {h}Simulator{/h}.
@@ -50,7 +50,7 @@ $branch common.ringPhone
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@when 		scene:name == "Modeling", modeling:phase == "model"
 @cutscene
 {@player} 	How do I do this again?
 {@kevin}	Drag the sliders on the left so your model matches the data from Site B.
@@ -76,7 +76,7 @@ $branch common.ringPhone
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@when 		scene:name == "Modeling", modeling:phase == "predict"
 @cutscene
 {@player} 	I'm a bit stuck here - got any tips for me, Kevin?
 {@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.

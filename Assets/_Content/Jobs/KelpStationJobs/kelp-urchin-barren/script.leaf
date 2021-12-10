@@ -151,7 +151,7 @@ $endif
 // IN MODELING
 
 :: ModelingSetup
-@trigger	UniversalModelStarted
+@trigger	VisualModelStarted
 @once
 @cutscene
 $branch common.ringPhone
@@ -164,7 +164,7 @@ $branch common.ringPhone
             Just use the {h}Import Facts{/h} button to add all the facts you have in {item-name}AQOS{/item-name}.
             
 :: ModelingSetupPhase2
-@trigger    UniversalModelUpdated
+@trigger    VisualModelUpdated
 @when       !jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
@@ -178,12 +178,9 @@ $branch common.ringPhone
             Let me just send you the missing pieces...
 
 $branch common.download
-$call UpgradeFact(Urchin.Eats.BullKelp, Rate, Batch)
 $call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
-$call UpgradeFact(SeaOtter.Eats.Urchin, Rate, Batch)
 $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
-$call GiveFact(BullKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce, Batch)
 $call GiveFact(UrchinBarren.PopulationHistory.GiantKelp, Batch)
 $call GiveFact(UrchinBarren.PopulationHistory.Urchin)
@@ -194,7 +191,7 @@ $call GiveFact(UrchinBarren.PopulationHistory.Urchin)
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 :: ModelingSetupPhase3
-@trigger    UniversalModelUpdated
+@trigger    VisualModelUpdated
 @when       jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
@@ -204,7 +201,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
+@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have to add our facts to the {h}Universal Model{/h}.
@@ -212,7 +209,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             
 ::ModelHelp1.B
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
+@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	They just gave us some new facts to add.
@@ -220,7 +217,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.C
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
+@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have everything imported. I think we should start up the simulator.
@@ -243,7 +240,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@when 		scene:name == "Modeling", modeling:phase == "model"
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left so your model matches the data from Site B.
@@ -258,7 +255,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@when 		scene:name == "Modeling", modeling:phase == "predict"
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph seems to be showing a prediction of what the populations will be in the future.
