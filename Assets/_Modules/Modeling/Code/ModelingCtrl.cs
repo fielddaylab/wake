@@ -3,6 +3,9 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using Aqua.Cameras;
+using BeauUtil.Debugger;
+using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua.Modeling {
 
@@ -29,6 +32,8 @@ namespace Aqua.Modeling {
 
         private readonly ModelState m_State = new ModelState();
         private readonly ModelProgressInfo m_ProgressInfo = new ModelProgressInfo();
+
+        static private ModelingCtrl s_Instance;
 
         #region Unity
 
@@ -60,10 +65,14 @@ namespace Aqua.Modeling {
             Services.Events.Register(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this);
             
             m_World.SetData(m_State);
+
+            s_Instance = this;
         }
 
         private void OnDestroy() {
             Services.Events?.DeregisterAll(this);
+
+            s_Instance = null;
         }
 
         #endregion // Unity
@@ -355,6 +364,10 @@ namespace Aqua.Modeling {
 
             m_State.Conceptual.Status = status;
             m_State.Conceptual.MissingReasons = missingReason;
+
+            Services.Data.SetVariable(ModelingConsts.Var_HasMissingFacts, status == ConceptualModelState.StatusId.MissingData);
+            Services.Data.SetVariable(ModelingConsts.Var_HasPendingFacts, status == ConceptualModelState.StatusId.PendingImport);
+            Services.Data.SetVariable(ModelingConsts.Var_HasPendingExport, status == ConceptualModelState.StatusId.ExportReady);
         }
 
         private void EvaluatePhaseMask() {
@@ -450,6 +463,16 @@ namespace Aqua.Modeling {
         }
 
         #endregion // ISceneLoadHandler
+
+        #region Leaf
+
+        [LeafMember("ModelingSetPhase"), Preserve]
+        static private void LeafSetPhase(ModelPhases phase) {
+            Assert.NotNull(s_Instance, "Cannot call modeling leaf methods when outside of modeling room");
+            s_Instance.m_Header.SetSelected(phase, true);
+        }
+
+        #endregion // Leaf
     }
     
     public enum ModelPhases : byte {
