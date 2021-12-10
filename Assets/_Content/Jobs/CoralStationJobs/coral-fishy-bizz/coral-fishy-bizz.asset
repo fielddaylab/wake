@@ -56,6 +56,20 @@ MonoBehaviour:
         m_Hash: 4257683625
       ConditionString: 
       Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_Hash: 1605956068
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: historicalPopulations
+      m_Hash: 3787514863
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.rhistoricalPopulations
+      m_Hash: 57648497
+    Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.RedGrouper
@@ -112,6 +126,21 @@ MonoBehaviour:
         m_Hash: 4257683625
       ConditionString: 
       Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_Hash: 1605956068
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: historicalPopulations
+      m_Hash: 3787514863
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-fishy-bizz.task.rhistoricalPopulations
+      m_Hash: 57648497
+    Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.RedGrouper
@@ -128,7 +157,7 @@ MonoBehaviour:
   - Id:
       m_Source: getModel
       m_Hash: 48080564
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.getModel
       m_Hash: 1352391234
@@ -143,7 +172,7 @@ MonoBehaviour:
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.reportBack
       m_Hash: 818144618
