@@ -147,7 +147,11 @@ $endif
 @when       scene:name == "ExperimentV2", JobTaskTop(turtleModel)
 @once
 @cutscene
-{@kevin}   Nice work! Now we need to model the food web at the Modeling Lab.
+{@kevin}   Nice work! I think we know all the facts about what Turtles eat.
+            Now lets build a visual model of the food web.
+            We can use the {map-name}the Modeling Lab{/map-name} on your ship to do this.
+$call UnlockRoom("modelingRoom")
+$call UnlockRoom("Modeling")
 
 // TURTLE MODEL
 
