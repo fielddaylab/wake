@@ -254,6 +254,7 @@ namespace Aqua.Modeling {
                 Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact));
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
         }
 
