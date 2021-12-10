@@ -43,32 +43,6 @@ MonoBehaviour:
     m_Hash: 2229569357
   m_Tasks:
   - Id:
-      m_Source: getScans
-      m_Hash: 1025619015
-    LabelId:
-      m_Source: jobs.eat-seaweed.task.getScans
-      m_Hash: 3661212435
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: RedGrouper
-        m_Hash: 1605956068
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: BlueTang
-        m_Hash: 1734724709
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_Hash: 793706139
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: urchinSarg
       m_Hash: 1406225829
     LabelId:
@@ -81,9 +55,7 @@ MonoBehaviour:
         m_Hash: 430969211
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: getScans
-      m_Hash: 1025619015
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: urchinSargArgue
       m_Hash: 1996554441
@@ -100,36 +72,9 @@ MonoBehaviour:
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
-      m_Source: getScans
-      m_Hash: 1025619015
-    Index: 0
-    LabelId:
-      m_Source: jobs.eat-seaweed.task.getScans
-      m_Hash: 3661212435
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: RedGrouper
-        m_Hash: 1605956068
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: BlueTang
-        m_Hash: 1734724709
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_Hash: 793706139
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: urchinSarg
       m_Hash: 1406225829
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.eat-seaweed.task.urchinSarg
       m_Hash: 1268927417
@@ -140,11 +85,11 @@ MonoBehaviour:
         m_Hash: 430969211
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: ffff
   - Id:
       m_Source: urchinSargArgue
       m_Hash: 1996554441
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.eat-seaweed.task.urchinSargArgue
       m_Hash: 4151805389

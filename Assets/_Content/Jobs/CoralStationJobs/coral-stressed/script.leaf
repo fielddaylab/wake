@@ -6,10 +6,11 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	Ugh, what is this stuff?! We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka}  Now complaints are coming in that something gross is in the water. Are they connected?
-{@profCempaka}	I need you to head over to Site R and see what you can find.
-{@player} 	We'll be right over there!
+{@profCempaka}	We've been studying the coral at R for a long time because it hasn't looked right. 
+{@profCempaka} It just seems... well, stressed.
+{@profCempaka}	I need you to head over to Site R to observe to Coral.
+{@profCempaka}	Then we can run some experiments to see if something about the enviroment is stressing it.
+{@player} 	Ok. I'm on my way to site R!
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
@@ -41,7 +42,7 @@ $branch common.ringPhone
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
 {@kevin}   Looks like we made it! Time to see what's down there.
-{@kevin}   Remember to get the probe data too!
+
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
@@ -55,62 +56,19 @@ $else
 		$set    jobs:coral-stressed.got.scans = true
 		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
+	{@kevin}   Make sure to scan the coral.
 	$endif
 $endif
 
+
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       HasEntity(Sargassum), HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
+@when       HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
 @once
 @cutscene
 $set jobs:coral-stressed.gotScans = true
 {@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
-:: navigation.return
-@trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-stressed.seen.bottom, jobs:coral-stressed.got.scans == false
-@once
-@cutscene
-{@player}   Alright, I think we got everything?
-{@kevin}   Let me check...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Did you remember to scan the probe?
-$else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-stressed.got.scans = true
-		{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
-	$else
-    {@kevin}   Hmm... I think there's more we need to find. Let's head back down
-	{@kevin}   Make sure to get the coral, and whatever that weird stuff floating in the water is.
-	$endif
-$endif
-
-:: navigation.return.again
-@trigger    SceneStart
-@when       scene:name == "Station2", jobs:coral-stressed.seen.bottom, Seen(job.coral-stressed.navigation.return), jobs:coral-stressed.got.scans == false
-@cutscene
-{@player}   Alright, what about now?
-{@kevin}   	Let me take a look...
-$if !HasEntity(SargassumCoveredReef)
-	{@kevin}   Looks like you didn't scan the probe, let's dive down and get that!
-$else
-	$if HasEntity(Sargassum)
-		$if HasEntity(StaghornCoral)
-			$set    jobs:coral-stressed.got.scans = true
-			{@kevin}   That's everything. Nice work!
-			{@kevin}   Let's head back to the ship and analyze this coral!
-		$else
-			{@kevin}   Looks like you're still missing the coral. It should be down on the ocean floor.
-		$endif
-	$else
-		{@kevin}   Not quite, dive back down and scan that weird stuff floating at the top of the water.
-		$if !HasEntity(StaghornCoral)
-			{@kevin}   Don't forget about the coral too!
-		$endif
-	$endif
-$endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
@@ -126,7 +84,8 @@ $endif
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
+{@kevin}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
+{@kevin}   	I'm upgrading your Experiementation Lab with a new kind of experiement to determine stress.
 {@player}   On it!
 $call GiveUpgrade(StressTank)
 $call GiveWaterProperty(Light)
@@ -142,11 +101,11 @@ $call GiveWaterProperty(Temperature)
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
+@when       scene:name == "ExperimentV2", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the coral in the stressor tank and see if that can tell us what's happening to it.
+{@kevin}  	Let's put the coral in the stress tank and see if that can tell us what's happening to it.
 
 :: openStressTank
 @trigger	ExperimentTankViewed
@@ -204,7 +163,7 @@ $call ArgueLoad(coralstressedArgue)
 {@profCempaka} So, what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
 	$choice .argue.coralIsOldIntro; The coral is old.
-	$choice .argue.sargassumBlocksLightIntro; The sargassum is blocking the light.
+$call ArgueCancelClaim()
 $choose branch
 
 ::argue.coralNeedsLightIntro
@@ -236,53 +195,8 @@ $goto .argue.coralNeedsLight
 {@profCempaka} OK. Get back to me when you're ready.
 
 
-
 :: argue.coralIsOldIntro
-{@profCempaka} Do you even have evidence of age?
-$goto .argue.coralIsOld
-
-:: argue.coralIsOld
-$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralIsOldClaim)
-		// they can't have this evidence, right?
-		$call ArgueFactSlot(W_WhaleFall.Oxygen)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.incorrectOld
-		$answer incorrect, .argue.incorrectOld
-$choice .argue.giveUp; Let me get back to you
-
-:: argue.incorrectOld
-$call ArgueRejectIncorrect()
-{@profCempaka} That certainly doesn't prove the coral are old.  I'm not even sure we have the ability to determine that, yet.
-$call ArgueCancelClaim()
+{@profCempaka} I don't think we have any way to measure coral Age yet. Any other ideas?
 $goto .argue.chooseClaim
-
-
-
-:: argue.sargassumBlocksLightIntro
-{@profCempaka} Hmmm... Not sure that tells me anything about the Coral.
-$goto .argue.sargassumBlocksLight
-
-:: argue.sargassumBlocksLight
-$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.sargassumTakesLightClaim)
-		$call ArgueFactSlot(Sargassum.Consume.Light)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctSargassumLight
-		$answer incorrect, .argue.incorrectSargassumLight
-$choice .argue.giveUp; Let me get back to you
-
-:: argue.correctSargassumLight
-{@profCempaka} I see what you're saying, but I don't see how it's relevant.
-$call ArgueCancelClaim()
-$goto .argue.chooseClaim
-
-:: argue.incorrectSargassumLight
-{@profCempaka} That doesn't show Sargassum's effect on light, and I'm not sure it would matter if it did.
-$call ArgueRejectIncorrect()
-$goto .argue.sargassumBlocksLight
-
 
 ::end
