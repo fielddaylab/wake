@@ -31,20 +31,20 @@ namespace Aqua {
             }
         }
 
-        static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null) {
-            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), null, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+        static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
+            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
         }
 
-        static public Future<StringHash32> PopupNewFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, entity ? entity.ImageSet() : null, facts, flags);
+        static public Future<StringHash32> PopupNewFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
+            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, facts, flags);
         }
 
-        static public Future<StringHash32> PopupUpgradedFact(BFBase fact, BestiaryDesc entity = null) {
-            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), null, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+        static public Future<StringHash32> PopupUpgradedFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
+            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
         }
 
-        static public Future<StringHash32> PopupUpgradedFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), null, entity ? entity.ImageSet() : null, facts, flags);
+        static public Future<StringHash32> PopupUpgradedFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
+            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, facts, flags);
         }
     }
 }

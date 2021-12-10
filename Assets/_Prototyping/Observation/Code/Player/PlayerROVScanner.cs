@@ -223,7 +223,7 @@ namespace ProtoAqua.Observation
                     else if ((result & ScanResult.NewFacts) != 0)
                     {
                         var bestiary = Assets.Bestiary(data.BestiaryId());
-                        Script.PopupNewFacts(newFacts, default, bestiary);
+                        Script.PopupNewFacts(newFacts, default, bestiary, data.Text());
                     }
                     else if ((result & ScanResult.NewLogbook) != 0)
                     {
