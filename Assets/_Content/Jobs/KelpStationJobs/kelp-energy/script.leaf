@@ -33,7 +33,7 @@ $call UnlockRoom("Modeling")
 	// TODO: coordinate this with how Conceptual Modeling works
 
 :: ModelingComplete
-@trigger    ModelCompleted
+@trigger    VisualModelExported
 @when       JobTaskTop(reportBack)
 @once
 @cutscene

@@ -263,6 +263,7 @@ namespace Aqua.Modeling {
             ).OnComplete((_) => {
                 Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
             });
+            Services.Audio.PostEvent("syncDenied");
         }
 
         private void OnSyncAchieved() {
@@ -272,6 +273,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
                 });
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
         }
 
@@ -282,6 +284,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
                 });
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
         }
 
@@ -291,6 +294,7 @@ namespace Aqua.Modeling {
 
         private void OnInterventionUnsuccessful() {
             Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+            Services.Audio.PostEvent("syncDenied");
         }
 
         private void OnAnimationStart() {
@@ -310,6 +314,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
                 });;
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("predictionSynced");
             }
         }
 

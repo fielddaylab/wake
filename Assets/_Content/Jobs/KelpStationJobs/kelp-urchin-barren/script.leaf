@@ -178,10 +178,10 @@ $branch common.ringPhone
             Let me just send you the missing pieces...
 
 $branch common.download
-$call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
+$call UpgradeFact(Urchin.Eats.GiantKelp, Rate)
 $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
-$call GiveFact(SeaOtter.Reproduce, Batch)
+$call GiveFact(SeaOtter.Reproduce)
 $call GiveFact(UrchinBarren.PopulationHistory.GiantKelp, Batch)
 $call GiveFact(UrchinBarren.PopulationHistory.Urchin)
 
@@ -201,7 +201,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
+@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have to add our facts to the {h}Universal Model{/h}.
@@ -209,7 +209,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             
 ::ModelHelp1.B
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
+@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	They just gave us some new facts to add.
@@ -217,13 +217,13 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.C
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
+@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have everything imported. I think we should start up the simulator.
 
 :: GetSync
-@trigger	ModelGraphStarted
+@trigger	SimulationModelStarted
 @once
 @cutscene
 
@@ -247,7 +247,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             Once everything lines up, hit the {h}Sync{/h} button to continue.
 
 :: ModelSynced
-@trigger	ModelSyncedImmediate
+@trigger	SimulationSyncSuccess
 @once
 @cutscene
 {@drKelp}  Perfect! The model's output lines up with actual past population data, so we know we've created a useful model.
@@ -262,7 +262,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             There's a big {h}Save Prediction{/h} button on the right. Maybe we should hit it?
 
 :: ModelingGraphComplete
-@trigger	ModelCompleted
+@trigger	SimulationPredictSuccess
 @once
 @cutscene
 {@drKelp}  Nice work! You've just made a {h}model{/h}!

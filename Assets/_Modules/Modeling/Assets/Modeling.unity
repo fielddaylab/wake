@@ -2113,6 +2113,9 @@ MonoBehaviour:
   m_IdealSpringLength: 2.8
   m_GravityForce: 0.5
   m_ConnectionOffsetFactor: 1.35
+  m_PartialLineTexture: {fileID: -8328923581568760697, guid: 4c516fc2ad56a1046b8333dff3d22f47,
+    type: 3}
+  m_FullLineTexture: {fileID: 2800000, guid: 510a9ede8615ea84b99bd898b716ef68, type: 3}
 --- !u!1 &998958502
 GameObject:
   m_ObjectHideFlags: 0
@@ -2124,6 +2127,7 @@ GameObject:
   - component: {fileID: 998958505}
   - component: {fileID: 998958504}
   - component: {fileID: 998958503}
+  - component: {fileID: 998958506}
   m_Layer: 0
   m_Name: Assets
   m_TagString: Untagged
@@ -2174,6 +2178,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &998958506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998958502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: ModelingAmbience
 --- !u!1001 &1033867380
 PrefabInstance:
   m_ObjectHideFlags: 0
