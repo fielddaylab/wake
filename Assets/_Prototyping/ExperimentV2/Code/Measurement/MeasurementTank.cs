@@ -234,6 +234,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return m_DrainRoutine;
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
         }
 
         private void OnNextClick() {
@@ -274,6 +275,8 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
+            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.organisms");
         }
 
         private IEnumerator ToFeaturesSequence() {
@@ -294,6 +297,8 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
+            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.features");
         }
 
         private void OnBackClick() {
@@ -341,6 +346,8 @@ namespace ProtoAqua.ExperimentV2 {
             );
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
+            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.organisms");
         }
 
         private IEnumerator BackToEnvironment() {
@@ -362,6 +369,8 @@ namespace ProtoAqua.ExperimentV2 {
             );
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
+            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
         }
 
         private IEnumerator BackToBegin() {

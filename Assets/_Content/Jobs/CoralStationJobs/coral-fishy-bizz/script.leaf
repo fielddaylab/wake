@@ -159,20 +159,20 @@ $call ArgueLoad(coralFishyBizzArgue)
 $branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
-{@profCempaka} So, how many people can we have fishing for Grouper?
-	$choice .argue.claimSome; We can allow up to 40 Grouper Fishers in this area.
-	$choice .argue.claimTooMany; We can have up to 200 Grouper Fishers.
-	$choice .argue.claimNone; None. We can't sustainably harvest Grouper here.
+{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
+	$choice .argue.claimSome; We can reduce fishing by 12 fishers.
+	$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
+	$choice .argue.claimNone; We can't fish here at all.
 $choose branch
 
 :: argue.claimNone
-{@profCempaka} We've had fishing here for centuries! Please check your data.
+{@profCempaka} Hold on, we've been fishing here for centuries! Please check your data.
 
 :: argue.claimTooMany
-{@profCempaka} That seems like a lot. Can you check your evidence?
+{@profCempaka} That doesn't seem like it'd have an impact... Go check your evidence again and come back to me.
 
 :: argue.claimSome
-{@profCempaka} Not too many,... seems reasonable. What evidence do you have to show that's the most fishers we can have?
+{@profCempaka} Not too many... seems reasonable. What evidence do you have to show to support that?
 $goto .argue.defendClaim
 
 :: argue.defendClaim
