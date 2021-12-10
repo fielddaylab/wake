@@ -5,12 +5,14 @@
 :: start
 @trigger    JobStarted
 @cutscene
-
 $branch common.ringPhone
-
 {@drKelp}	Good to see you again, {player-name}! 
             I need you to create a model of Site A's food web.
-            Check in with me at your {map-name}Office{/map-name} when you are finished!
+            I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+            Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
+            When you are done, check back with me at your {map-name}Office{/map-name}!
+$call UnlockRoom("modelingRoom")
+$call UnlockRoom("Modeling")
 
 :: helpGoModeling
 @trigger    RequestPartnerHelp
