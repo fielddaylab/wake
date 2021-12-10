@@ -232,29 +232,3 @@ $branch common.ringPhone
 
 {@drKelp}  Absolutely fantastic work, you two.
 {@player}   Thanks. It was nice being able to use some science to help.
-{@drKelp}  Here, take this. It might be helpful in the future.
-
-$branch common.download
-
-$call GiveWaterProperty(Oxygen)
-$call GiveWaterProperty(Temperature)
-$call GiveWaterProperty(Light)
-$call GiveUpgrade(WaterChemistry)
-
-{@player}	Oh, thanks!
-{@drKelp}	I have colleagues out there in other parts of the ocean too.
-			Maybe you can find work with them too?
-			I'll mark their stations on your map.
-
-$branch common.download
-
-$set world:shopUnlocked = true
-$call UnlockStation(CoralStation)
-$call UnlockStation(ArcticStation)
-$call UnlockStation(BayouStation)
-$call UnlockRoom(WorldMap)
-$call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
-$call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
-
-{@player}	Thanks, Kel!
-{@drKelp}  No problem! Good luck out there!

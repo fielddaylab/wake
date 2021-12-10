@@ -166,7 +166,25 @@ $call CompleteJob()
 {@drKelp}  Nice work!
             You've learned that {pluralnameof BullKelp} power the whole forest at Site A.
 {@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
-{@drKelp}  Indeed! Finding those parallels can be quite rewarding.
-            For now, though, you should head back to the {map-name}Job Board{/map-name}.
-            I have another job for you.
+{@drKelp}   Indeed! Finding those parallels can be quite rewarding.
+            You're doing some excellent work for us! I have some colleages in other parts of the ocean that would love some help.
+{@kevin}	Oh, the extra cash would be great.
+{@drKelp}	Yep! Maybe they'll have work for you too!
+			I'll mark their stations on your map.
+
+$branch common.download
+
+$set world:shopUnlocked = true
 $call UnlockStation(CoralStation)
+
+// TODO: Uncomment when these stations are ready
+// $call UnlockStation(ArcticStation)
+// $call UnlockStation(BayouStation)
+
+$call UnlockRoom(WorldMap)
+$call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
+$call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
+
+{@player}   Thanks, Kel!
+{@drKelp}   No problem! Now if you head back to the {map-name}Job Board{/map-name} I have some more work for you!
+            But don't be afraid to pay my colleagues a visit first!
