@@ -156,7 +156,7 @@ $endif
 @when   !ArgueIsComplete(coralFishyBizzArgue)
 @cutscene
 $call ArgueLoad(coralFishyBizzArgue)
-$goto .argue.chooseEvidence
+$branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
 {@profCempaka} So, how many people can we have fishing for Grouper?

@@ -9,7 +9,7 @@
 @when   !ArgueIsComplete(coralUrchinFriendArgue)
 @cutscene
 $call ArgueLoad(coralUrchinFriendArgue)
-$goto .argue.intro
+$branch .argue.intro
 
 ::argue.intro
 {@profCempaka} So do you think it's safe to add Urchins to Site R?

@@ -165,7 +165,7 @@ $if ArgueSetClaim(musselFestArgueMusselTempClaim, jobs.kelp-mussel-fest.argue.cl
 			$call ArgueFactSlot(Mussel.Temperature.Stressed)
 $endif
 $call ArgueDisplayClaim()
-$goto .argue.defendClaimMusselTemp
+$branch .argue.defendClaimMusselTemp
 
 :: argue.incorrectFactsPopulationTemp
 {@drKelp} That isn't it. Do you have the temperature data from the probe at Site B?

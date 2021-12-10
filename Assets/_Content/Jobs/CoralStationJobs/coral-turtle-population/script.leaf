@@ -128,7 +128,7 @@ $if ArgueSetClaim(Claim, jobs.coral-turtle-population.argue.turtlePopulationClai
 		$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle)
 $endif
 {@profCempaka} What is the current turtle population?
-$goto .argue.showClaim
+$branch .argue.showClaim
 
 ::argue.showClaim
 $call ArgueDisplayClaim()

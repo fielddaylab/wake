@@ -60,7 +60,7 @@ $endif
 @when   !ArgueIsComplete(coralClearSargArgue)
 @cutscene
 $call ArgueLoad(coralClearSargArgue)
-$goto .argue.intro
+$branch .argue.intro
 
 :: argue.intro
 {@profCempaka} Is there an organism that can clear the Sargassum?

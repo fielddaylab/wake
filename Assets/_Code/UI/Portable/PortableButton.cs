@@ -143,7 +143,7 @@ namespace Aqua.Portable
 
         private IEnumerator NewAnim()
         {
-            while(Services.UI.IsLetterboxed())
+            while(Script.ShouldBlock())
                 yield return null;
             
             Services.Audio.PostEvent("portable.ping.new");

@@ -103,7 +103,7 @@ namespace Aqua.Portable {
         }
 
         private void AdjustInputForRequest() {
-            if (m_Request.Type > 0 && Services.UI.IsLetterboxed() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
+            if (m_Request.Type > 0 && Script.ShouldBlock() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
                 m_Input.Override = true;
                 Services.Input.PushFlags(InputLayerFlags.Portable, this);
                 m_ActiveOnPosition = m_OnPosition * 0.25f;
