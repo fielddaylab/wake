@@ -122,17 +122,19 @@ $endif
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-stressed.got.scans == true
+@when       scene:name == "Ship", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
 @once
 @cutscene
 {@player}   We're back. Now what?
 {@kevin}   	Let's head to the {nameof Experimentation} and see what's strange with the coral.
 {@player}   On it!
 $call GiveUpgrade(StressTank)
+$call GiveWaterProperty(Light)
+$call GiveWaterProperty(Temperature)
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-stressed.got.scans == true
+@when 		scene:name == "Ship", JobTaskActive(stressCoral)
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
