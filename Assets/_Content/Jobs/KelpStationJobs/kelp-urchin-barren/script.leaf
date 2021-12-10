@@ -11,6 +11,7 @@ $branch common.ringPhone
 {@drKelp}  Okay, this next job is going to be a little different.
 {@player}   How so?
 {@drKelp}  First, you are going to help us study Site B. It's... not doing well.
+            It's become what we refer to as an {h}Urchin Barren{/h}, where there are a whole lot of urchins and not so much kelp as a result.
             Second, you're going to learn how to build a model and perform simulations of what is likely going to happen in the future.
 {@player}   Ooh, you mean we get to predict the future? Sounds cool.
 {@drKelp}  Agreed. Models and simulations are very powerful tools!
@@ -183,7 +184,9 @@ $call UpgradeFact(SeaOtter.Eats.Urchin, Rate, Batch)
 $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
 $call GiveFact(BullKelp.Reproduce, Batch)
-$call GiveFact(SeaOtter.Reproduce)
+$call GiveFact(SeaOtter.Reproduce, Batch)
+$call GiveFact(UrchinBarren.PopulationHistory.GiantKelp, Batch)
+$call GiveFact(UrchinBarren.PopulationHistory.Urchin)
 
 {@drKelp}  The simulator doesn't really work well unless you have numbers to go along with your facts.
             But once you add these, then we should be good to go.
