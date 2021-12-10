@@ -320,7 +320,7 @@ namespace Aqua
             #region Bestiary/Inventory
 
             [LeafMember("HasEntity"), UnityEngine.Scripting.Preserve]
-            static private Variant HasEntity(StringHash32 inEntityId)
+            static private bool HasEntity(StringHash32 inEntityId)
             {
                 return Save.Bestiary.HasEntity(inEntityId);
             }
@@ -343,9 +343,23 @@ namespace Aqua
             }
 
             [LeafMember("HasFact"), UnityEngine.Scripting.Preserve]
-            static private Variant HasFact(StringHash32 inFactId)
+            static private bool HasFact(StringHash32 inFactId)
             {
                 return Save.Bestiary.HasFact(inFactId);
+            }
+
+            [LeafMember("IsFactGraphed"), UnityEngine.Scripting.Preserve]
+            static private bool IsFactGraphed(StringHash32 inMapId, StringHash32 inFactId)
+            {
+                var data = Save.Science.TryGetSiteData(inMapId);
+                return data != null && data.GraphedFacts.Contains(inFactId);
+            }
+
+            [LeafMember("IsEntityGraphed"), UnityEngine.Scripting.Preserve]
+            static private bool IsEntityGraphed(StringHash32 inMapId, StringHash32 inEntityId)
+            {
+                var data = Save.Science.TryGetSiteData(inMapId);
+                return data != null && data.GraphedCritters.Contains(inEntityId);
             }
 
             [LeafMember("GiveFact"), UnityEngine.Scripting.Preserve]
@@ -477,13 +491,13 @@ namespace Aqua
             }
 
             [LeafMember("HasItem"), UnityEngine.Scripting.Preserve]
-            static private Variant HasItem(StringHash32 inItemId)
+            static private bool HasItem(StringHash32 inItemId)
             {
                 return Save.Inventory.HasItem(inItemId);
             }
 
             [LeafMember("ItemCount"), UnityEngine.Scripting.Preserve]
-            static private Variant ItemCount(StringHash32 inItemId)
+            static private int ItemCount(StringHash32 inItemId)
             {
                 return Save.Inventory.ItemCount(inItemId);
             }
@@ -551,7 +565,7 @@ namespace Aqua
             }
 
             [LeafMember("HasUpgrade"), UnityEngine.Scripting.Preserve]
-            static private Variant HasUpgrade(StringHash32 inUpgradeId)
+            static private bool HasUpgrade(StringHash32 inUpgradeId)
             {
                 return Save.Inventory.HasUpgrade(inUpgradeId);
             }
@@ -579,7 +593,7 @@ namespace Aqua
             }
 
             [LeafMember("HasScanned"), UnityEngine.Scripting.Preserve]
-            static private Variant HasScanned(StringHash32 inNodeId)
+            static private bool HasScanned(StringHash32 inNodeId)
             {
                 return Save.Inventory.WasScanned(inNodeId);
             }
@@ -605,49 +619,49 @@ namespace Aqua
             #region Jobs
 
             [LeafMember("JobStartedOrComplete"), UnityEngine.Scripting.Preserve]
-            static private Variant JobStartedOrComplete(StringHash32 inId)
+            static private bool JobStartedOrComplete(StringHash32 inId)
             {
                 return Save.Jobs.IsStartedOrComplete(inId);
             }
 
             [LeafMember("JobInProgress"), UnityEngine.Scripting.Preserve]
-            static private Variant JobInProgress(StringHash32 inId)
+            static private bool JobInProgress(StringHash32 inId)
             {
                 return Save.Jobs.IsInProgress(inId);
             }
 
             [LeafMember("JobCompleted"), UnityEngine.Scripting.Preserve]
-            static private Variant JobCompleted(StringHash32 inId)
+            static private bool JobCompleted(StringHash32 inId)
             {
                 return Save.Jobs.IsComplete(inId);
             }
 
             [LeafMember("JobAvailable"), UnityEngine.Scripting.Preserve]
-            static private Variant JobAvailable(StringHash32 inId)
+            static private bool JobAvailable(StringHash32 inId)
             {
                 return Services.Assets.Jobs.IsAvailableAndUnstarted(inId);
             }
 
             [LeafMember("JobTaskActive"), UnityEngine.Scripting.Preserve]
-            static private Variant JobTaskActive(StringHash32 inId)
+            static private bool JobTaskActive(StringHash32 inId)
             {
                 return Save.Jobs.IsTaskActive(inId);
             }
 
             [LeafMember("JobTaskCompleted"), UnityEngine.Scripting.Preserve]
-            static private Variant JobTaskCompleted(StringHash32 inId)
+            static private bool JobTaskCompleted(StringHash32 inId)
             {
                 return Save.Jobs.IsTaskComplete(inId);
             }
 
             [LeafMember("JobTaskTop"), UnityEngine.Scripting.Preserve]
-            static public Variant JobTaskTop(StringHash32 inId)
+            static public bool JobTaskTop(StringHash32 inId)
             {
                 return Save.Jobs.IsTaskTop(inId);
             }
 
             [LeafMember("AnyJobsAvailable"), UnityEngine.Scripting.Preserve]
-            static private Variant AnyJobsAvailable()
+            static private int AnyJobsAvailable()
             {
                 var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
                 int count = 0;
@@ -659,13 +673,13 @@ namespace Aqua
             }
 
             [LeafMember("AnyJobsInProgress"), UnityEngine.Scripting.Preserve]
-            static private Variant AnyJobsInProgress()
+            static private int AnyJobsInProgress()
             {
                 return Save.Jobs.InProgressJobs().Length;
             }
 
             [LeafMember("AnyJobsCompleted"), UnityEngine.Scripting.Preserve]
-            static private Variant AnyJobsCompleted()
+            static private int AnyJobsCompleted()
             {
                 return Save.Jobs.CompletedJobIds().Count;
             }
@@ -703,7 +717,7 @@ namespace Aqua
             #region World
 
             [LeafMember("StationUnlocked"), UnityEngine.Scripting.Preserve]
-            static private Variant StationUnlocked(StringHash32 inStationId)
+            static private bool StationUnlocked(StringHash32 inStationId)
             {
                 return Save.Map.IsStationUnlocked(inStationId);
             }
@@ -721,7 +735,7 @@ namespace Aqua
             }
 
             [LeafMember("SiteUnlocked"), UnityEngine.Scripting.Preserve]
-            static private Variant SiteUnlocked(StringHash32 inSiteId)
+            static private bool SiteUnlocked(StringHash32 inSiteId)
             {
                 return Save.Map.IsSiteUnlocked(inSiteId);
             }
@@ -761,19 +775,19 @@ namespace Aqua
             #region Scheduled Events
 
             [LeafMember("IsEventScheduled"), UnityEngine.Scripting.Preserve]
-            static private Variant IsEventScheduled(StringHash32 inEventId)
+            static private bool IsEventScheduled(StringHash32 inEventId)
             {
                 return Save.Script.IsEventScheduled(inEventId);
             }
 
             [LeafMember("HoursUntilEvent"), UnityEngine.Scripting.Preserve]
-            static private Variant HoursUntilEvent(StringHash32 inEventId)
+            static private float HoursUntilEvent(StringHash32 inEventId)
             {
                 return Save.Script.TimeUntilScheduled(inEventId).TotalHours;
             }
 
             [LeafMember("IsEventReady"), UnityEngine.Scripting.Preserve]
-            static private Variant IsEventReady(StringHash32 inEventId)
+            static private bool IsEventReady(StringHash32 inEventId)
             {
                 return Save.Script.TimeUntilScheduled(inEventId).Ticks <= 0;
             }
@@ -789,13 +803,13 @@ namespace Aqua
             #endregion // Scheduled Events
 
             [LeafMember("Seen"), UnityEngine.Scripting.Preserve]
-            static private Variant Seen(StringHash32 inNodeId)
+            static private bool Seen(StringHash32 inNodeId)
             {
                 return Save.Script.HasSeen(inNodeId, PersistenceLevel.Profile);
             }
 
             [LeafMember("Random"), UnityEngine.Scripting.Preserve]
-            static private Variant GetRandomByRarity(StringSlice inData)
+            static private bool GetRandomByRarity(StringSlice inData)
             {
                 float floatVal;
                 if (StringParser.TryParseFloat(inData, out floatVal))

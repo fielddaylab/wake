@@ -36,6 +36,7 @@ namespace Aqua.Modeling {
 
         private ModelState m_State;
         private ModelProgressInfo m_ProgressionInfo;
+        private Routine m_ImportRoutine;
 
         public ImportDelegate OnRequestImport;
         public Action OnRequestExport;
@@ -52,6 +53,13 @@ namespace Aqua.Modeling {
 
             m_ImportFader.SetActive(false);
             m_ImportGroup.SetActive(false);
+
+            Services.Events.Register(GameEvents.BestiaryUpdated, OnShouldRefreshButtons, this)
+                .Register(GameEvents.SiteDataUpdated, OnShouldRefreshButtons, this);
+        }
+
+        private void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
         }
 
         #region BasePanel
@@ -78,7 +86,8 @@ namespace Aqua.Modeling {
 
         private void OnImportClicked() {
             m_ImportButton.gameObject.SetActive(false);
-            Routine.Start(this, ImportSequence()).TryManuallyUpdate(0);
+            m_ImportRoutine = Routine.Start(this, ImportSequence());
+            m_ImportRoutine.TryManuallyUpdate(0);
         }
 
         private void OnExportClicked() {
@@ -193,6 +202,12 @@ namespace Aqua.Modeling {
                     m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
                     break;
                 }
+            }
+        }
+
+        private void OnShouldRefreshButtons() {
+            if (IsShowing() && !m_ImportRoutine) {
+                UpdateButtons();
             }
         }
     }
