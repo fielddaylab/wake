@@ -24,7 +24,7 @@ namespace Aqua
             m_Icon.sprite = inFact.Icon;
 
             m_Label.SetText(propData.LabelId());
-            m_Value.SetText(propData.FormatValue(inFact.Value));
+            m_Value.SetTextFromString(propData.FormatValue(inFact.Value));
 
             m_Label.Graphic.color = m_Value.Graphic.color = palette.Content;
             m_Background.color = palette.Shadow;

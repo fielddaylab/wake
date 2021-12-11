@@ -97,23 +97,23 @@ namespace ProtoAqua.Observation
             m_DataGroup.gameObject.SetActive(true);
             if (inData == null)
             {
-                m_HeaderText.SetText("Missing Scan");
+                m_HeaderText.SetTextFromString("Missing Scan");
                 m_ImageDisplay.gameObject.SetActive(false);
-                m_DescriptionText.SetText("This scan data was either not set or not loaded.");
+                m_DescriptionText.SetTextFromString("This scan data was either not set or not loaded.");
             }
             else
             {
                 string header = inData.Header();
                 if (string.IsNullOrEmpty(header))
                 {
-                    m_HeaderText.SetText(string.Empty);
+                    m_HeaderText.SetTextFromString(string.Empty);
                     m_HeaderText.gameObject.SetActive(false);
 
                     m_DescriptionText.Graphic.margin = Vector4.zero;
                 }
                 else
                 {
-                    m_HeaderText.SetText(header);
+                    m_HeaderText.SetTextFromString(header);
                     m_HeaderText.gameObject.SetActive(true);
 
                     m_DescriptionText.Graphic.margin = m_DefaultTextMargins;
@@ -122,12 +122,12 @@ namespace ProtoAqua.Observation
                 string text = inData.Text();
                 if (string.IsNullOrEmpty(text))
                 {
-                    m_DescriptionText.SetText(string.Empty);
+                    m_DescriptionText.SetTextFromString(string.Empty);
                     m_DescriptionText.gameObject.SetActive(false);
                 }
                 else
                 {
-                    m_DescriptionText.SetText(text);
+                    m_DescriptionText.SetTextFromString(text);
                     m_DescriptionText.gameObject.SetActive(true);
 
                     m_DescriptionText.Graphic.maxVisibleCharacters = 0;
@@ -235,8 +235,8 @@ namespace ProtoAqua.Observation
 
         protected override void OnHideComplete(bool inbInstant)
         {
-            m_HeaderText.SetText(string.Empty);
-            m_DescriptionText.SetText(string.Empty);
+            m_HeaderText.SetTextFromString(string.Empty);
+            m_DescriptionText.SetTextFromString(string.Empty);
             m_ImageDisplay.Clear();
 
             Streaming.UnloadUnusedAsync(20);

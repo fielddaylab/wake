@@ -74,7 +74,7 @@ namespace Aqua
         {
             if (m_Loading)
             {
-                Log.Error("[LocService] Localization is still loading");
+                Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return inDefault.ToString();
             }
 
@@ -84,7 +84,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
+                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey);
                 content = inDefault.ToString();
             }
             
@@ -124,7 +124,7 @@ namespace Aqua
 
             if (m_Loading)
             {
-                Log.Error("[LocService] Localization is still loading");
+                Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return false;
             }
 
@@ -136,7 +136,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
+                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}'", inKey);
                 return false;
             }
 
@@ -175,7 +175,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_LoadRoutine.Replace(this, InitialLoad());
+            m_LoadRoutine.Replace(this, InitialLoad()).TryManuallyUpdate(0);
 
             m_TagStringPool = new DynamicPool<TagString>(4, Pool.DefaultConstructor<TagString>());
             m_TagStringPool.Prewarm();

@@ -27,6 +27,11 @@ namespace Aqua
             m_Hash = inHash.HashValue;
         }
 
+        public string Source()
+        {
+            return m_Source;
+        }
+
         public bool IsEmpty
         {
             get { return m_Hash == 0; }

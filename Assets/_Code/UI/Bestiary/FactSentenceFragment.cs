@@ -31,7 +31,7 @@ namespace Aqua
 
         public void Configure(StringSlice inText)
         {
-            m_Text.SetText(inText.ToString());
+            m_Text.SetTextFromString(inText.ToString());
         }
         
         public void Recycle()

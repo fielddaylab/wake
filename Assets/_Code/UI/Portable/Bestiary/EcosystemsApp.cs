@@ -40,14 +40,14 @@ namespace Aqua.Portable {
             string text = string.Format("{0}:\n{1}", Loc.Find(map.ShortLabelId()).ToUpper(), Loc.Find(entry.CommonName()));
 
             toggle.Cursor.TooltipId = entry.CommonName();
-            toggle.Text.SetText(text);
+            toggle.Text.SetTextFromString(text);
         }
 
         static private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {
             MapDesc map = Assets.Map(entry.DiveSiteId());
             string text = string.Format("{0}: {1}", Loc.Find(map.ShortLabelId()), Loc.Find(entry.CommonName()));
 
-            page.CommonName.SetText(text);
+            page.CommonName.SetTextFromString(text);
             page.Sketch.Display(entry.ImageSet());
             page.Description.SetText(entry.Description());
         }

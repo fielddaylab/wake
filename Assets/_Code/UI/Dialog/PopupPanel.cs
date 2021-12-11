@@ -110,24 +110,24 @@ namespace Aqua
         {
             if (!string.IsNullOrEmpty(inHeader))
             {
-                m_HeaderText.SetText(inHeader);
+                m_HeaderText.SetTextFromString(inHeader);
                 m_HeaderText.gameObject.SetActive(true);
             }
             else
             {
                 m_HeaderText.gameObject.SetActive(false);
-                m_HeaderText.SetText(string.Empty);
+                m_HeaderText.SetTextFromString(string.Empty);
             }
 
             if (!string.IsNullOrEmpty(inText))
             {
-                m_ContentsText.SetText(inText);
+                m_ContentsText.SetTextFromString(inText);
                 m_ContentsText.gameObject.SetActive(true);
             }
             else
             {
                 m_ContentsText.gameObject.SetActive(false);
-                m_ContentsText.SetText(string.Empty);
+                m_ContentsText.SetTextFromString(string.Empty);
             }
 
             if (inImage.IsEmpty)
