@@ -198,84 +198,49 @@ $endif
 @when   !ArgueIsComplete(saveBarrenArgue)
 @cutscene
 $call ArgueLoad(saveBarrenArgue)
-{@profCempaka} Should I get my people ready to start yanking out the Sargassum?
-	$choice .argue.yesYank; Yes, we need to remove the Sargassum.
-	$choice .argue.noDontYank; No, the Sargassum can stay.
+{@profCempaka} Have you got evidence that Sargassum is going to hurt the Coral?
+	$choice .argue.yesEvidence; Yes, I've got the evidence.
+	$choice .argue.noEvidence; No, I don't have it, yet.
+	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
 :: argue.introRevisit
-{@profCempaka} So do we need to pull out all the Sargassum?
-	$choice .argue.yesYankIntro; Yes, we need to remove the Sargassum.
-	$choice .argue.noDontYankIntro; No, the Sargassum can stay.
+{@profCempaka} So, do you have the model showing Sargassum will keep hurting the Coral?
+	$choice .argue.yesEvidence; Yes, I've got the evidence.
+	$choice .argue.noEvidence; No, I don't have it, yet.
+	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
-:: argue.noDontYankIntro
-{@profCempaka} Really? Well, that makes for less work. What is your evidence?
-$goto .argue.noDontYank
+:: argue.noEvidence
+{@profCempaka} Let me know when you have something for me to review.
 
-:: argue.noDontYank
-$if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimNoRemoval)
-		$call ArgueFactSlot(W_WhaleFall.Oxygen)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.dontYankCorrect
-		$answer incorrect, .argue.dontYankIncorrect
-$choice .argue.giveUpNo; Let me get back to you
+:: argue.disagree
+{@profCempaka} Have you been down to Site R?  It's pretty obvious.
+{@profCempaka} I just need you to confirm it numerically.
+$goto .argue.introRevisit
 
-:: argue.dontYankCorrect
-{@profCempaka} This doesn't make any sense.
-$call ArgueCancelClaim()
-$goto .argue.intro
-
-:: argue.dontYankIncorrect
-{@profCempaka} I don't think that's important here.
-$call ArgueRejectIncorrect()
-$goto .argue.noDontYank
-
-:: argue.giveUpNo
-$call ArgueCancelClaim()
-{@profCempaka} Yeah this whole claim seems dubious.
-
-:: argue.yesYankIntro
-{@profCempaka} I knew it! I'm going to need evidence to get people behind this decision.
-$goto .argue.yesYank
-
-:: argue.yesYank
-$if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimcasting-shade)
-		$call ArgueFactSlot(SargassumCoveredReef.Light)
-		$call ArgueFactSlot(Sargassum.Consume.Light)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+:: argue.yesEvidence
+$if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimEvidence)
 		$call ArgueFactSlot(Model.SargLightPrediction)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.yankCorrect
-		$answer incorrect, .argue.yankIncorrect
+		$answer correct, .argue.correctModelSupplied
+		$answer incorrect, .argue.wrongModelSupplied
 $choice .argue.giveUp; Let me get back to you
 
-:: argue.yankIncorrect
-$if !ArgueIsFactSubmitted(SargassumCoveredReef.Light)
-	{@profCempaka} What are the light conditions at Site R?
-	$goto .argue.yesYank
-$endif
-$if !ArgueIsFactSubmitted(Sargassum.Consume.Light)
-	{@profCempaka} I see where you're going, but this doesn't help me understand whether the Sargassum is changing the light.
-	$goto .argue.yesYank
-$endif
-$if !ArgueIsFactSubmitted(StaghornCoral.Light.Stressed)
-	{@profCempaka} What light levels can the Coral tolerate?
-	$goto .argue.yesYank
-$endif
-$if !ArgueIsFactSubmitted(Model.SargLightPrediction)
-	{@profCempaka} Do you have any proof that the Sargassum is harmful to the coral?  Maybe you have a model?
-	$goto .argue.yesYank
-$endif
-
-:: argue.yankCorrect
+:: argue.correctModelSupplied
 $call ArgueComplete()
-{@profCempaka} Perfect! I was joking about getting people to remove it. That stuff STINKS! Maybe there's another solution...
+{@profCempaka} Thank you! 
+{@profCempaka} We need to reduce the Sargassum population, but yanking it out would be STINKY.
+{@profCempaka} Maybe there's another solution...
 $call CompleteJob()
+
+:: argue.wrongModelSupplied
+{@profCempaka} If I'm going to convince people to pull the Sargassum, I need a model.
+{@profCempaka} It should show that Sargassum is predicted to hurt the Coral in the future.
+$call ArgueRejectIncorrect()
+$goto .argue.yesEvidence
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
