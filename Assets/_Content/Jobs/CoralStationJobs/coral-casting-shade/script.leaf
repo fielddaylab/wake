@@ -208,6 +208,7 @@ $endif
 @trigger    JobTasksUpdated
 @when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
 @cutscene
+@once
 {@kevin}	I think we're finally ready to build a model!
 
 :: helpAllExperimentsDone
@@ -215,7 +216,7 @@ $endif
 @when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
 @cutscene
 {@kevin}	Head over to the Modeling Lab.
-{@kevin}	We need to build a predictive model of how Sargassum affects Coral.
+{@kevin}	We need to build a descriptive model of how Sargassum affects Coral.
 
 
 :: InterventionModelingSetup
@@ -283,14 +284,14 @@ $endif
 @when   !ArgueIsComplete(saveBarrenArgue)
 @cutscene
 $call ArgueLoad(saveBarrenArgue)
-{@profCempaka} Have you got evidence that Sargassum is going to hurt the Coral?
+{@profCempaka} Have you got evidence that Sargassum is hurting the Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
 :: argue.introRevisit
-{@profCempaka} So, do you have the model showing Sargassum will keep hurting the Coral?
+{@profCempaka} So, do you have the model showing Sargassum is hurting the Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
@@ -323,7 +324,7 @@ $call CompleteJob()
 
 :: argue.wrongModelSupplied
 {@profCempaka} If I'm going to convince people to pull the Sargassum, I need a model.
-{@profCempaka} It should show that Sargassum is predicted to hurt the Coral in the future.
+{@profCempaka} It should show that Sargassum is hurting the Coral.
 $call ArgueRejectIncorrect()
 $goto .argue.yesEvidence
 
