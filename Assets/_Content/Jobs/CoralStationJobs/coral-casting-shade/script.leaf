@@ -105,7 +105,7 @@ $endif
 @when		tankType == "Measurement"
 @once 
 @cutscene
-{@profCempaka} Let's start by figuring out the Sargasum Growth Rate.
+{@profCempaka} Let's start by figuring out the Sargassum Growth Rate.
 {@profCempaka} We need to match the conditions of the site we're interested in.
 {@profCempaka} Let's select the water of the Sargassum Covered Reef.
 
@@ -125,26 +125,111 @@ $endif
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(Sargassum.Reproduce)
+@when 		HasFact(Sargassum.Reproduce), !jobs:coral-casting-shade.gotMeasurement
 @once
 @cutscene
+$set    	jobs:coral-casting-shade.gotMeasurement = true
 {@kevin}	Great! You measured how quickly Sargassum grow in an ideal environment. 
+$if !jobs:coral-casting-shade.gotOtherMeasurement
+	{@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
+	{@kevin}	Now setup a few more experiements to determine the other rates we need to build a simulation model. 
+	{@kevin}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
+$endif
+
+:: experimentEndOtherLight
+@trigger    JobTasksUpdated
+@when 		HasFact(Sargassum.Consume.Light), !jobs:coral-casting-shade.gotMeasurement
+@once
+@cutscene
+$set    	jobs:coral-casting-shade.gotMeasurement = true
+{@kevin}	OK! Looks like you're really experimenting!
 {@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
-{@kevin}	Now setup a few more experiements to determine the other rates we need to build a simulation model. 
-{@kevin}	You can use different combinations of enviroments that stress an organism, the tank stabilizer and auto feeder. 
+{@kevin}	Setup a few more experiements to determine the other rates we need to build a simulation model. 
+{@kevin}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
+
+:: experimentEndOtherCoralGrowStressed
+@trigger    JobTasksUpdated
+@when 		HasFact(StaghornCoral.Grow.Stressed), !jobs:coral-casting-shade.gotMeasurement
+@once
+@cutscene
+$set    	jobs:coral-casting-shade.gotMeasurement = true
+{@kevin}	OK! Looks like you're really experimenting!
+{@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
+{@kevin}	Setup a few more experiements to determine the other rates we need to build a simulation model. 
+{@kevin}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
+
+:: experimentEndOtherCoralGrow
+@trigger    JobTasksUpdated
+@when 		HasFact(StaghornCoral.Grow), !jobs:coral-casting-shade.gotMeasurement
+@once
+@cutscene
+$set    	jobs:coral-casting-shade.gotMeasurement = true
+{@kevin}	OK! Looks like you're really experimenting!
+{@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
+{@kevin}	Setup a few more experiements to determine the other rates we need to build a simulation model. 
+{@kevin}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
+
+:: helpNeedMeasurementsInTankRoom
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
+@cutscene
+$if !HasFact(Sargassum.Reproduce)
+	{@kevin}	Looks like you still need to try more experiments.
+	{@kevin}	We'll need more information to build a model.
+	{@kevin}	Try measuring the Sargassum with both the tank stabilizer and auto feeder activated.
+$else
+	$if !HasFact(Sargassum.Consume.Light)
+		{@kevin}	Looks like you still need to try more experiments.
+		{@kevin}	We'll need more information to build a model.
+		{@kevin}	Try measuring the Sargassum with the tank stabilizer turned off and auto-feeder on.
+	$else
+		$if !HasFact(StaghornCoral.Grow.Stressed)
+			{@kevin}	Looks like you still need to try more experiments.
+			{@kevin}	We'll need more information to build a model.
+			{@kevin}	Try measuring the Coral with both the tank stabilizer and auto feeder on.
+		$else
+			$if !HasFact(StaghornCoral.Grow)
+				{@kevin}	Looks like you still need to try more experiments.
+				{@kevin}	We'll need more information to build a model.
+				{@kevin}	Try measuring the Coral in a different Environment.
+			$endif
+		$endif
+	$endif
+$endif
+
+:: helpNeedMeasurementsOutsideTankRoom
+@trigger    RequestPartnerHelp
+@when 		scene:name != "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
+@cutscene
+{@kevin} We still need more information about how Sargassum and Coral behave.
+{@kevin} Go back to the Experiment Lab.
+
+:: allExperimentsDone
+@trigger    JobTasksUpdated
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@cutscene
+{@kevin}	I think we're finally ready to build a model!
+
+:: helpAllExperimentsDone
+@trigger    RequestPartnerHelp
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@cutscene
+{@kevin}	Head over to the Modeling Lab.
+{@kevin}	We need to build a predictive model of how Sargassum affects Coral.
+
 
 :: InterventionModelingSetup
 @trigger	VisualModelStarted
 @once
 @cutscene
-{@kevin} 	Make sure you add the rule we just learned, and let's get started!
+{@kevin} 	Make sure you add the facts we just learned, and let's get started!
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
+{@kevin}	Make sure to import the new facts we just learned, and then press "Simulate"
 
 
 :: InterventionGetSync
