@@ -87,7 +87,7 @@ $endif
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ModelingPrototype", jobs:coral-fishy-bizz.gotScans == true, !HasFact(Model.GrouperFishingRate)
+@when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should we be doing next?
 {@kevin}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
@@ -95,28 +95,28 @@ $endif
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", !HasFact(Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
 
 
 :: modelGetSync
-@trigger	ModelGraphStarted
+@trigger	SimulationModelStarted
 @once
 @cutscene
 {@kevin} 	Time to match up the historical data again.
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model", !HasFact(Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
 
 
 :: modelSyncedImmediate
-@trigger	ModelSyncedImmediate
+@trigger	SimulationSyncSuccess
 @who        kevin
 @once
 @chatter
@@ -124,7 +124,7 @@ $endif
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == , !HasFact(Model.SargLightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a predition of how the Fisher population affects the Grouper population. 
@@ -133,7 +133,7 @@ $endif
 
 
 :: modelingGraphComplete
-@trigger	ModelCompleted
+@trigger	SimulationInterveneSuccess
 @once
 @cutscene
 {@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
@@ -156,23 +156,23 @@ $endif
 @when   !ArgueIsComplete(coralFishyBizzArgue)
 @cutscene
 $call ArgueLoad(coralFishyBizzArgue)
-$goto .argue.chooseEvidence
+$branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
-{@profCempaka} So, how many people can we have fishing for Grouper?
-	$choice .argue.claimSome; We can allow up to 40 Grouper Fishers in this area.
-	$choice .argue.claimTooMany; We can have up to 200 Grouper Fishers.
-	$choice .argue.claimNone; None. We can't sustainably harvest Grouper here.
+{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
+	$choice .argue.claimSome; We can reduce fishing by 12 fishers.
+	$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
+	$choice .argue.claimNone; We can't fish here at all.
 $choose branch
 
 :: argue.claimNone
-{@profCempaka} We've had fishing here for centuries! Please check your data.
+{@profCempaka} Hold on, we've been fishing here for centuries! Please check your data.
 
 :: argue.claimTooMany
-{@profCempaka} That seems like a lot. Can you check your evidence?
+{@profCempaka} That doesn't seem like it'd have an impact... Go check your evidence again and come back to me.
 
 :: argue.claimSome
-{@profCempaka} Not too many,... seems reasonable. What evidence do you have to show that's the most fishers we can have?
+{@profCempaka} Not too many... seems reasonable. What evidence do you have to show to support that?
 $goto .argue.defendClaim
 
 :: argue.defendClaim

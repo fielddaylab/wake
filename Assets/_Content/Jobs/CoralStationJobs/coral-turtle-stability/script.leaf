@@ -61,7 +61,7 @@ $set jobs:coral-turtle-stability.gotScans = true
 {@player}   Alright, do you think we got everything?
 {@kevin}   Let me check...
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
-	$set    jobs:coral-invade.got.scans = true
+	$set    jobs:coral-stressed.got.scans = true
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
@@ -147,7 +147,11 @@ $endif
 @when       scene:name == "ExperimentV2", JobTaskTop(turtleModel)
 @once
 @cutscene
-{@kevin}   Nice work! Now we need to model the food web at the Modeling Lab.
+{@kevin}   Nice work! I think we know all the facts about what Turtles eat.
+            Now lets build a visual model of the food web.
+            We can use the {map-name}the Modeling Lab{/map-name} on your ship to do this.
+$call UnlockRoom("modelingRoom")
+$call UnlockRoom("Modeling")
 
 // TURTLE MODEL
 
@@ -161,7 +165,7 @@ $endif
 	// TODO: coordinate this with how Conceptual Modeling works
 
 :: ModelingComplete
-@trigger    ModelCompleted
+@trigger    VisualModelExported
 @when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
 @once
 @cutscene
@@ -190,8 +194,9 @@ $endif
 @when   !ArgueIsComplete(turtleStabilityArgue)
 @cutscene
 $call ArgueLoad(turtleStabilityArgue)
-{@profCempaka} So, why are the turtles so plentiful here?
+{@profCempaka} So, why are the turtles so well-fed here?
 $choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
+$choose branch
 
 
 ::argue.coralMultipleFood

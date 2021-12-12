@@ -138,7 +138,7 @@ namespace Aqua
             else
             {
                 gameObject.SetActive(true);
-                m_Text.SetText(inOverride);
+                m_Text.SetTextFromString(inOverride);
                 m_Layout.ForceRebuild();
             }
         }

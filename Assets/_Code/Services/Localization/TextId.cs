@@ -1,12 +1,16 @@
 using System;
 using System.Text;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua
 {
     [Serializable]
     public struct TextId : IDebugString
+#if UNITY_EDITOR
+        , ISerializationCallbackReceiver
+#endif // UNITY_EDITOR
     {
         #region Inspector
 
@@ -27,6 +31,11 @@ namespace Aqua
             m_Hash = inHash.HashValue;
         }
 
+        public string Source()
+        {
+            return m_Source;
+        }
+
         public bool IsEmpty
         {
             get { return m_Hash == 0; }
@@ -34,26 +43,18 @@ namespace Aqua
 
         public StringHash32 Hash()
         {
-            #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            if (!string.IsNullOrEmpty(m_Source))
-                return new StringHash32(m_Source);
+            // #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+            // if (!string.IsNullOrEmpty(m_Source))
+            //     return new StringHash32(m_Source);
+            // return new StringHash32(m_Hash);
+            // #else
             return new StringHash32(m_Hash);
-            #else
-            return new StringHash32(m_Hash);
-            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+            // #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
         public string ToDebugString()
         {
-            #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            if (!string.IsNullOrEmpty(m_Source))
-                return m_Source;
-            if (m_Hash == 0)
-                return string.Empty;
-            return new StringHash32(m_Hash).ToDebugString();
-            #else
             return Hash().ToDebugString();
-            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
         public override string ToString()
@@ -79,6 +80,30 @@ namespace Aqua
         {
             return inId.Hash();
         }
+
+        #if UNITY_EDITOR
+
+        public void OnBeforeSerialize()
+		{
+            uint hash = new StringHash32(m_Source).HashValue;
+            if (m_Hash != hash)
+            {
+                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_Hash, hash);
+                m_Hash = hash;
+            }
+		}
+
+        public void OnAfterDeserialize()
+        {
+            uint hash = new StringHash32(m_Source).HashValue;
+            if (m_Hash != hash)
+            {
+                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_Hash, hash);
+                m_Hash = hash;
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     static public class TextIdExtensions

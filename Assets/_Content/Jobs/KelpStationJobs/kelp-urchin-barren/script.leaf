@@ -11,6 +11,7 @@ $branch common.ringPhone
 {@drKelp}  Okay, this next job is going to be a little different.
 {@player}   How so?
 {@drKelp}  First, you are going to help us study Site B. It's... not doing well.
+            It's become what we refer to as an {h}Urchin Barren{/h}, where there are a whole lot of urchins and not so much kelp as a result.
             Second, you're going to learn how to build a model and perform simulations of what is likely going to happen in the future.
 {@player}   Ooh, you mean we get to predict the future? Sounds cool.
 {@drKelp}  Agreed. Models and simulations are very powerful tools!
@@ -47,10 +48,12 @@ $call UnlockSite(RS-1B)
 $branch common.ringPhone
 
 {@drKelp}  This time, I'll also need you to gather some information on the population counts here.
-            And for that, you'll need this {nameof ROVTagger}.
-$call GiveUpgrade(ROVTagger)
-{@drKelp}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
-            Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+            And for that, you'll need the {nameof ROVTagger}.
+$if !HasUpgrade(ROVTagger)
+	$call GiveUpgrade(ROVTagger)
+	{@drKelp}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+							Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+$endif
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
@@ -79,8 +82,12 @@ $branch common.ringPhone
 {@drKelp}	Alright, that's the current population... the urchins are really getting out of hand...
 			Maybe you can try getting some historical population data from the {h}Probe{/h}?
 			There should be a probe around here somewhere.
-			Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
-$call GiveUpgrade(ProbeHacker)
+            
+$if !HasUpgrade(ProbeHacker)
+	{@drKelp}   Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
+    $call GiveUpgrade(ProbeHacker)
+$endif
+
 {@drKelp}  Once you've done that, head back to the ship.
 
 :: helpAtSiteB.B
@@ -119,18 +126,24 @@ $call GiveUpgrade(ProbeHacker)
 $branch common.ringPhone
 
 {@drKelp}  Okay, it's time for you to learn how to put your facts together into a model.
-{@kevin}    Ah, is this another room on the ship?
-{@drKelp}  Yep! Your ship also has a {nameof Modeling}.
+$if RoomUnlocked(Modeling)
+    {@kevin}    Oh, the {nameof Modeling}?
+    {@drKelp}  Oh, you already know about it!    {hide-dialog}
+$else
+    {@kevin}    Ah, is this another room on the ship?
+    {@drKelp}  Yep! Your ship also has a {nameof Modeling}.
+    
+    $call	UnlockRoom(modelingRoom)
+    $call	UnlockRoom(Modeling)
+$endif // RoomUnlocked(Modeling)
+
 {hide-dialog}
-
-$call	UnlockRoom(modelingRoom)
-$call	UnlockRoom(Modeling)
-
 $call FocusHighlight->Focus("exterior.modeling", 200, 200)
 {wait 1}
 
 {@drKelp}  Head in there and open up the big whiteboard on the wall.
 $call FocusHighlight->Clear()
+
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
@@ -147,67 +160,81 @@ $endif
 
 // IN MODELING
 
-:: ModelingSetup
-@trigger	UniversalModelStarted
+:: ModelingIntro
+@trigger    SceneStart
+@when       scene:name == "Modeling"
 @once
 @cutscene
+
 $branch common.ringPhone
 
-{@drKelp}  Okay, this is the {h}Modeling Whiteboard{/h}.
+{@drKelp}   Okay, this is the {h}Modeling Whiteboard{/h}.
             So you observed that {pluralnameof Urchin} eat {critter-name}Kelp{/critter-name}.
             And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
-            We can take those facts and add them to our {h}Universal Model{/h}.
-            That can help us see how they fit together.
-            Just use the {h}Import Facts{/h} button to add all the facts you have in {item-name}AQOS{/item-name}.
+            We can take those facts and add them to a {h}Visual Model{/h}. That can help us see how they fit together.
+            Select the {nameof UrchinBarren} ecosystem and click on the {h}Visualize{/h} tab.
+
+:: ModelingSetup-Wrong
+@trigger	VisualModelStarted
+@when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@cutscene
+
+{@drKelp}   Ah, hang on, this isn't the right ecosystem.
+            Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
-:: ModelingSetupPhase2
-@trigger    UniversalModelUpdated
-@when       !jobs:kelp-urchin-barren.upgradedFacts
+:: ModelingSetup
+@trigger	VisualModelStarted
+@when       modeling:ecosystemSelected == "UrchinBarren"
 @once
 @cutscene
 
-{@drKelp}  Nice work! So now you can see how there's a sort of {h}web{/h} that emerges from these facts.
-            What you're seeing now is what's known as a {h}Food Web{/h}.
-            Now, the tool you're using can do much| much more than just create food webs.
+{@drKelp}  Next, use the {h}Import New Facts{/h} button to add all the facts you have for this site in {item-name}AQOS{/item-name}.
+            
+:: ModelingSetupPhase2
+@trigger    VisualModelUpdated
+@when       modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@once
+@cutscene
+
+{@drKelp}   Nice work! So now you can see how there's a sort of {h}web{/h} that emerges from these facts.
+            Now, the tool you're using can do much| much more than just create visual models.
             It can also {h}simulate ecosystems{/h}.
             Oh! But it'll require a bit more data than you have right now.
             You see how some of the connections on your web aren't solid? That means your fact isn't able to be simulated yet.
             Let me just send you the missing pieces...
 
 $branch common.download
-$call UpgradeFact(Urchin.Eats.BullKelp, Rate, Batch)
 $call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
-$call UpgradeFact(SeaOtter.Eats.Urchin, Rate, Batch)
+$call UpgradeFact(SeaOtter.Eats.Urchin, Rate)
 $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
-$call GiveFact(BullKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
 
-{@drKelp}  The simulator doesn't really work well unless you have numbers to go along with your facts.
+{@drKelp}  The simulator doesn't really work unless you have numbers to go along with your facts.
             But once you add these, then we should be good to go.
             
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 :: ModelingSetupPhase3
-@trigger    UniversalModelUpdated
-@when       jobs:kelp-urchin-barren.upgradedFacts
+@trigger    VisualModelUpdated
+@when       modeling:ecosystemSelected == "UrchinBarren", jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
 
-{@drKelp}  Alright, the simulator should be ready for you now.
-            Just hit the {h}Simulate{/h} button on the bottom right to start the simulator up.
+{@drKelp}   Alright, the simulator should be ready for you now.
+            Just hit the {h}Describe{/h} button on the bottom right to start the simulator up.
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
+@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	We have to add our facts to the {h}Universal Model{/h}.
-            Just use the {h}Import Rules{/h} button to add the behaviors we've noticed so far. 
+{@kevin}	We have to add our facts to the {h}Visual Model{/h}.
+            Just use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
             
 ::ModelHelp1.B
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount > 0
+@when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:hasPendingImport
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	They just gave us some new facts to add.
@@ -215,52 +242,50 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.C
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "universal", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:unimportedCount == 0
+@when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, !modeling:hasPendingImport
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have everything imported. I think we should start up the simulator.
+            Use the {h}Describe{/h} tab on the top to start it.
 
 :: GetSync
-@trigger	ModelGraphStarted
+@trigger	SimulationModelStarted
 @once
 @cutscene
 
-{@drKelp}  Welcome to the {h}Simulator{/h}! This is where all your facts get turned into a big simulation.
-            What that practically means is that we have a bunch of virtual {pluralnameof Urchin} and {pluralnameof GiantKelp} interacting with each other.
+{@drKelp}   Welcome to the {h}Simulator{/h}! This is where all your facts get turned into a big simulation.
+            What that practically means is we have a bunch of virtual {pluralnameof Urchin} and {pluralnameof GiantKelp} interacting with each other.
             And their interactions are driven by the facts you have.
             So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
             More than that, though, you've also got the population histories you downloaded from the {h}Probe{/h} back in Site B.
             Those histories are represented on the graph by those thick faded lines.
             As your virtual organisms eat, and die, and reproduce, their populations will show up on the graph too.
-            Your goal is to get those to line up with the historical populations!
-            Start by setting the starting populations for your virtual organisms. You should just be able to drag those sliders on the left to match the historical population.
-            If you can get the resulting graph to line up with the historical graph, then we know enough to be able to make a model!
+            Your goal is to get those lines to line up with the historical populations!
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "model"
+@when 		scene:name == "Modeling", modeling:phase == "sync"
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	Drag the sliders on the left so your model matches the data from Site B.
-            Once everything lines up, hit the {h}Sync{/h} button to continue.
+{@kevin}	Let's try hitting the {h}Simulate{/h} button over there.
 
 :: ModelSynced
-@trigger	ModelSyncedImmediate
+@trigger	SimulationSyncSuccess
 @once
 @cutscene
 {@drKelp}  Perfect! The model's output lines up with actual past population data, so we know we've created a useful model.
-            Now let's see what it predicts will happen next. Hit the {h}Sync{/h} button.
+            Now let's see what it predicts will happen next. Hit the {h}Predict{/h} tab.
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ModelingPrototype", modeling:phase == "predict"
+@when 		scene:name == "Modeling", modeling:phase == "predict"
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The graph seems to be showing a prediction of what the populations will be in the future.
-            There's a big {h}Save Prediction{/h} button on the right. Maybe we should hit it?
+{@kevin}	There seems to be a big {h}Run Prediction{/h} button over there...
+            Let's give that a test.
 
 :: ModelingGraphComplete
-@trigger	ModelCompleted
+@trigger	SimulationPredictSuccess
 @once
 @cutscene
 {@drKelp}  Nice work! You've just made a {h}model{/h}!

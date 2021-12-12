@@ -69,7 +69,9 @@ MonoBehaviour:
         m_Hash: 3905127850
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: siteA
+      m_Hash: 2310652317
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
@@ -83,7 +85,9 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: foodweb
+      m_Hash: 3643636253
   m_OptimizedTaskList:
   - Id:
       m_Source: siteA
@@ -114,7 +118,7 @@ MonoBehaviour:
         m_Hash: 3905127850
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
@@ -129,7 +133,7 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 100
   m_GearReward: 5
   m_AdditionalRewards: []

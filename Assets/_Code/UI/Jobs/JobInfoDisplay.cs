@@ -27,19 +27,19 @@ namespace Aqua
         {
             if (!inJob)
             {
-                m_NameLabel.SetText(null);
+                m_NameLabel.SetTextFromString(null);
 
                 if (m_PosterLabel)
-                    m_PosterLabel.SetText(null);
+                    m_PosterLabel.SetTextFromString(null);
 
                 if (m_LocationLabel)
-                    m_LocationLabel.SetText(null);
+                    m_LocationLabel.SetTextFromString(null);
                 
                 if (m_DescriptionLabel)
-                    m_DescriptionLabel.SetText(null);
+                    m_DescriptionLabel.SetTextFromString(null);
 
                 if (m_ShortDescriptionLabel)
-                    m_ShortDescriptionLabel.SetText(null);
+                    m_ShortDescriptionLabel.SetTextFromString(null);
                 
                 for(int i = 0; i < m_Rewards.Length; ++i)
                     m_Rewards[i].gameObject.SetActive(false);
@@ -110,7 +110,7 @@ namespace Aqua
         {
             if (m_DescriptionLabel)
             {
-                StringHash32 desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
+                TextId desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
                 m_DescriptionLabel.SetText(desc);
             }
 

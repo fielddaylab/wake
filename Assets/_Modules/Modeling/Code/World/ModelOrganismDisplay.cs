@@ -21,6 +21,7 @@ namespace Aqua.Modeling {
         public RectTransform Transform;
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private Graphic m_Outline = null;
 
         [Header("Intervention")]
         [SerializeField] private CanvasGroup m_InterveneGroup = null;
@@ -60,6 +61,7 @@ namespace Aqua.Modeling {
             m_Label.SetText(organism.CommonName());
             Index = index;
             m_OnAddRemove = onAddRemove;
+            m_Outline.color = organism.Color();
         }
 
         public void EnableIntervention(AddRemoveResult result) {

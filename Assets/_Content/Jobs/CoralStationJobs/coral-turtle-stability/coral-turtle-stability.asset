@@ -43,6 +43,20 @@ MonoBehaviour:
     m_Hash: 2162458881
   m_Tasks:
   - Id:
+      m_Source: goToSite
+      m_Hash: 3741074197
+    LabelId:
+      m_Source: jobs.coral-turtle-stability.task.goToSite
+      m_Hash: 63152894
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-2V
+        m_Hash: 2162458881
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
       m_Source: scanAll
       m_Hash: 1784740587
     LabelId:
@@ -85,7 +99,9 @@ MonoBehaviour:
         m_Hash: 2717353052
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: goToSite
+      m_Hash: 3741074197
   - Id:
       m_Source: behavior
       m_Hash: 3488202279
@@ -148,9 +164,24 @@ MonoBehaviour:
       m_Hash: 523491196
   m_OptimizedTaskList:
   - Id:
+      m_Source: goToSite
+      m_Hash: 3741074197
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-turtle-stability.task.goToSite
+      m_Hash: 63152894
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-2V
+        m_Hash: 2162458881
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
       m_Source: scanAll
       m_Hash: 1784740587
-    Index: 0
+    Index: 1
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.SiteV
       m_Hash: 3770236753
@@ -191,11 +222,11 @@ MonoBehaviour:
         m_Hash: 2717353052
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: behavior
       m_Hash: 3488202279
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.scanTurtle
       m_Hash: 1327499417
@@ -218,11 +249,11 @@ MonoBehaviour:
         m_Hash: 1033032444
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: turtleModel
       m_Hash: 523491196
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.turtleModel
       m_Hash: 503602137
@@ -233,11 +264,11 @@ MonoBehaviour:
         m_Hash: 4167532367
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: reportBack
       m_Hash: 2059105924
-    Index: 3
+    Index: 4
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.reportBack
       m_Hash: 3158413991
@@ -248,11 +279,11 @@ MonoBehaviour:
         m_Hash: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0300
   m_CashReward: 31
   m_GearReward: 128
   m_AdditionalRewards: []
   m_Scripting: {fileID: -1942890987711236906, guid: 216ac30c37e4647f2ae6f6188c356d26,
     type: 3}
   m_ExtraAssets:
-  - {fileID: -4270002856181823206, guid: 9f79591e1652747f9bcc73bb018ef42d, type: 3}
+  - {fileID: 11400000, guid: 163e1a258574f024cb3bbe59029a1d26, type: 2}

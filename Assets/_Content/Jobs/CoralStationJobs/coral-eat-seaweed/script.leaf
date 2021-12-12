@@ -1,0 +1,101 @@
+#basePath   job.coral-eat-seaweed
+
+:: start
+@trigger    JobStarted
+@cutscene
+$branch common.ringPhone
+
+$set jobs:coral-clear-sarg.siteRScans = 0
+{@profCempaka}	This time I need you to analyze the relations between Sargassum and everything else you've found so far.
+{@profCempaka}	Hopefully we can find something that can deal with that Sargassum!
+{@profCempaka}	It's a bit of a grind, but you will need to run experiements until you've figured out a solution. 
+
+:: helpBackAtShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !HasFact(Urchin.Eats.Sargassum)
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
+
+:: startExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum)
+@once
+@cutscene
+{@player}   How should we set up the experiment this time?
+{@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
+{@kevin} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
+
+::helpAtExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum)
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	We want to figure out if there's anything that eats the Sargassum.
+{@kevin}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
+{@kevin}	Maybe start with organisms that weren't at Site R?
+
+
+:: experiementEnd
+@trigger    JobTasksUpdated
+@when 		HasFact(Urchin.Eats.Sargassum)
+@once
+@cutscene
+{@kevin}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		HasFact(Urchin.Eats.Sargassum)
+@cutscene
+{@player} 	What should we be doing now?
+{@kevin}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
+$if global:nav.shipRoom == "office"
+	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+$endif
+
+// ARGUMENTATION
+
+:: argue.setup
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(coralClearSargArgue)
+@cutscene
+$call ArgueLoad(coralClearSargArgue)
+$branch .argue.intro
+
+:: argue.intro
+{@profCempaka} Is there an organism that can clear the Sargassum?
+	$choice .argue.doesntEatSargasssum; Blue Tang
+	$choice .argue.doesntEatSargasssum; Bluehead Wrasse
+	$choice .argue.eatsSargassum; Urchin
+$choose branch
+
+:: argue.doesntEatSargasssum
+{@profCempaka} Hmm. That doesn't eat Sargassum, does it?
+$goto .argue.intro
+
+:: argue.eatsSargassum
+{@profCempaka} Urchins?! No way! Did you see this happen?!
+$goto .argue.evidence
+
+:: argue.evidence
+$if ArgueSetClaim(coralClearSargArgueClaim, jobs.coral-clear-sarg.argue.claimLabel)
+			$call ArgueFactSlot(Urchin.Eats.Sargassum)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+		$answer Urchin.Eats.Sargassum, .argue.urchin
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.urchin
+$call ArgueComplete()
+{@profCempaka} Perfect! I wonder if they can actually live here... I've heard they destroy the Kelp Forests...
+$call CompleteJob()
+
+:: argue.unrelated
+{@profCempaka} How does that help the Sargassum situation?
+{@profCempaka} Are you sure you saw Urchins eat Sargassum?
+$call ArgueRejectIncorrect()
+$goto .argue.evidence
+
+:: end

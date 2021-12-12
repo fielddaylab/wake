@@ -221,16 +221,9 @@ namespace Aqua.Editor
 
                     using(new EditorGUILayout.HorizontalScope()) {
                         GUILayout.FlexibleSpace();
-                        RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.Oxygen);
                         RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.Temperature);
                         RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.Light);
-                        GUILayout.FlexibleSpace();
-                    }
-
-                    using(new EditorGUILayout.HorizontalScope()) {
-                        GUILayout.FlexibleSpace();
                         RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.PH);
-                        RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.CarbonDioxide);
                         GUILayout.FlexibleSpace();
                     }
                 }

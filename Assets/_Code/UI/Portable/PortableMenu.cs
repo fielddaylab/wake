@@ -13,7 +13,7 @@ namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {
         #region Persistence
 
-        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("global:portable.lastOpenTab");
+        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("session:portable.lastOpenTab");
 
         #endregion // Persistence
 
@@ -77,7 +77,11 @@ namespace Aqua.Portable {
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
                 }
             } else {
-                PortableAppId lastKnownApp = (PortableAppId) Services.Data.GetVariable(Var_LastOpenTab).AsInt();
+                Variant lastKnownAppVar = Services.Data.GetVariable(Var_LastOpenTab);
+                PortableAppId lastKnownApp = PortableAppId.Job;
+                if (!lastKnownAppVar.IsNull()) {
+                    lastKnownApp = (PortableAppId) lastKnownAppVar.AsInt();
+                }
                 requestTab = GetAppButton(lastKnownApp);
             }
 
@@ -99,7 +103,7 @@ namespace Aqua.Portable {
         }
 
         private void AdjustInputForRequest() {
-            if (m_Request.Type > 0 && Services.UI.IsLetterboxed() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
+            if (m_Request.Type > 0 && Script.ShouldBlock() && (m_Request.Flags & PortableRequestFlags.ForceInputEnabled) != 0) {
                 m_Input.Override = true;
                 Services.Input.PushFlags(InputLayerFlags.Portable, this);
                 m_ActiveOnPosition = m_OnPosition * 0.25f;

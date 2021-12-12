@@ -7,11 +7,15 @@ namespace Aqua.Modeling
     {
         static public readonly TableKeyPair Var_EcosystemSelected = TableKeyPair.Parse("modeling:ecosystemSelected");
         static public readonly TableKeyPair Var_HasJob = TableKeyPair.Parse("modeling:hasJob");
+        static public readonly TableKeyPair Var_HasMissingFacts = TableKeyPair.Parse("modeling:hasMissingFacts");
+        static public readonly TableKeyPair Var_HasPendingFacts = TableKeyPair.Parse("modeling:hasPendingFacts");
+        static public readonly TableKeyPair Var_HasPendingExport = TableKeyPair.Parse("modeling:hasPendingExport");
         static public readonly TableKeyPair Var_SimulationSync = TableKeyPair.Parse("modeling:simSync");
         static public readonly TableKeyPair Var_ModelPhase = TableKeyPair.Parse("modeling:phase");
 
         static public readonly StringHash32 Trigger_ConceptStarted = "VisualModelStarted";
         static public readonly StringHash32 Trigger_ConceptUpdated = "VisualModelUpdated";
+        static public readonly StringHash32 Trigger_ConceptExported = "VisualModelExported";
         static public readonly StringHash32 Trigger_GraphStarted = "SimulationModelStarted";
         static public readonly StringHash32 Trigger_SyncError = "SimulationSyncError";
         static public readonly StringHash32 Trigger_SyncCompleted = "SimulationSyncSuccess";

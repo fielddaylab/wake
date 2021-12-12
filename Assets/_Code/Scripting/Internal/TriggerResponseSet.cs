@@ -97,7 +97,7 @@ namespace Aqua.Scripting
                 }
 
                 // cannot play during cutscene
-                if ((node.Flags() & ScriptNodeFlags.SuppressDuringCutscene) != 0 && Services.UI.IsLetterboxed())
+                if ((node.Flags() & ScriptNodeFlags.SuppressDuringCutscene) != 0 && Script.ShouldBlock())
                 {
                     DebugService.Log(LogMask.Scripting, "...cutscene is playing");
                     continue;

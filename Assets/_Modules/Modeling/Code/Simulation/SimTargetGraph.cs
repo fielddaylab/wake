@@ -33,7 +33,10 @@ namespace Aqua.Modeling {
                 RectGraphic graphic = m_TargetPool.Alloc();
                 graphic.color = targetEntry.Color();
 
-                m_TargetRangesAbs.PushBack(new Vector2(target.Population - target.Range, target.Population + target.Range));
+                m_TargetRangesAbs.PushBack(new Vector2(
+                    BestiaryUtils.PopulationToMass(targetEntry, target.Population - target.Range),
+                    BestiaryUtils.PopulationToMass(targetEntry, target.Population + target.Range)
+                ));
             }
         }
 
@@ -46,8 +49,8 @@ namespace Aqua.Modeling {
                 RectTransform transform = target.rectTransform;
 
                 Vector2 min, max;
-                min = transform.anchorMin;
-                max = transform.anchorMax;
+                min = new Vector2(1, 0);
+                max = new Vector2(1, 0);
 
                 min.y = range.x / inRange.height;
                 max.y = range.y / inRange.height;

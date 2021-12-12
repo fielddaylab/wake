@@ -57,8 +57,12 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_SpringForce = 1024;
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
-        // [SerializeField] private float m_BoundaryY = 6;
+        [SerializeField] private float m_ConnectionOffsetFactor = 1.25f;
         // [SerializeField] private float m_BoundaryForce = 2;
+
+        [Header("Textures")]
+        [SerializeField] private Texture2D m_PartialLineTexture = null;
+        [SerializeField] private Texture2D m_FullLineTexture = null;
 
         #endregion // Inspector
 
@@ -212,7 +216,7 @@ namespace Aqua.Modeling {
             foreach(var fact in m_State.Conceptual.GraphedFacts) {
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
-                    GenerateConnection(fact, fact.Parent, target);
+                    GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
                 }
                 yield return null;
             }
@@ -224,7 +228,7 @@ namespace Aqua.Modeling {
 
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
-                    GenerateConnection(fact, fact.Parent, target);
+                    GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
                 }
                 yield return null;
             }
@@ -265,7 +269,7 @@ namespace Aqua.Modeling {
             return display;
         }
 
-        private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, BestiaryDesc target) {
+        private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, BestiaryDesc target, BFDiscoveredFlags flags) {
             int indexA = m_OrganismMap[owner.Id()].Index;
             int indexB = m_OrganismMap[target.Id()].Index;
             m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
@@ -275,6 +279,7 @@ namespace Aqua.Modeling {
             connection.Fact = fact;
             connection.IndexA = indexA;
             connection.IndexB = indexB;
+            connection.Texture.texture = flags == BFDiscoveredFlags.All ? m_FullLineTexture : m_PartialLineTexture;
         }
 
         private void UpdateOrganismPositions(int count) {
@@ -298,7 +303,7 @@ namespace Aqua.Modeling {
                 vecAB = b - a;
                 centerAB = (a + b) * 0.5f;
                 distAB = vecAB.magnitude;
-                distAB -= m_PositionScale * 1.1f;
+                distAB -= m_PositionScale * m_ConnectionOffsetFactor;
                 display.Transform.SetSizeDelta(distAB, Axis.X);
                 display.Transform.SetAnchorPos(centerAB);
                 display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);

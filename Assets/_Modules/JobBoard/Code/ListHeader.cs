@@ -25,7 +25,7 @@ namespace Aqua.JobBoard
         {
             if (text != null)
             {
-                m_Label.SetText(text);
+                m_Label.SetTextFromString(text);
             }
         }
     }

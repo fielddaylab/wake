@@ -159,6 +159,11 @@ namespace Aqua.Editor
             {
                 string branch = BuildUtils.GetSourceControlBranchName();
                 bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode;
+                if (bBatch)
+                {
+                    PlayerSettings.SplashScreen.show = false;
+                    PlayerSettings.SplashScreen.showUnityLogo = false;
+                }
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try
                 {

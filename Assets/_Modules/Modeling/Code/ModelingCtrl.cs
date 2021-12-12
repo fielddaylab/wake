@@ -3,6 +3,9 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using Aqua.Cameras;
+using BeauUtil.Debugger;
+using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua.Modeling {
 
@@ -30,6 +33,8 @@ namespace Aqua.Modeling {
         private readonly ModelState m_State = new ModelState();
         private readonly ModelProgressInfo m_ProgressInfo = new ModelProgressInfo();
 
+        static private ModelingCtrl s_Instance;
+
         #region Unity
 
         private void Start() {
@@ -41,11 +46,13 @@ namespace Aqua.Modeling {
             m_ConceptualUI.OnRequestImport = OnRequestConceptualImport;
             m_ConceptualUI.OnRequestExport = OnRequestConceptualExport;
 
+            m_SimulationUI.OnSyncUnsuccessful = OnSyncFailed;
             m_SimulationUI.OnSyncAchieved = OnSyncAchieved;
             m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
             m_SimulationUI.OnInterventionReset = OnInterventionReset;
             m_SimulationUI.OnAnimationStart = OnAnimationStart;
             m_SimulationUI.OnInterventionSuccessful = OnInterventionCompleted;
+            m_SimulationUI.OnInterventionUnsuccessful = OnInterventionUnsuccessful;
 
             m_SimDataCtrl.OnInterventionUpdated += OnInterventionUpdated;
 
@@ -58,10 +65,14 @@ namespace Aqua.Modeling {
             Services.Events.Register(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this);
             
             m_World.SetData(m_State);
+
+            s_Instance = this;
         }
 
         private void OnDestroy() {
             Services.Events?.DeregisterAll(this);
+
+            s_Instance = null;
         }
 
         #endregion // Unity
@@ -71,6 +82,8 @@ namespace Aqua.Modeling {
         private void OnPhaseChanged(ModelPhases phase) {
             ModelPhases prevPhase = m_State.Phase;
             m_State.Phase = phase;
+
+            UpdatePhaseVariable(phase);
 
             // basic state
             if (phase == ModelPhases.Ecosystem) {
@@ -82,7 +95,7 @@ namespace Aqua.Modeling {
             } else {
                 m_EcosystemSelect.Hide();
                 if (prevPhase == ModelPhases.Ecosystem) {
-                    m_EcosystemHeader.Show(m_State.Environment);
+                    m_EcosystemHeader.Show(m_State.Environment, m_ProgressInfo.Scope);
                     m_World.Show();
                 }
             }
@@ -112,6 +125,10 @@ namespace Aqua.Modeling {
                 m_SimulationUI.Hide();
             }
 
+            m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
+        }
+
+        private void UpdatePhaseVariable(ModelPhases phase) {
             switch(phase) {
                 case ModelPhases.Ecosystem: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Ecosystem);
@@ -134,8 +151,6 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
-
-            m_State.OnPhaseChanged?.Invoke(prevPhase, phase);
         }
 
         private void OnEcosystemSelected(BestiaryDesc selected) {
@@ -252,7 +267,17 @@ namespace Aqua.Modeling {
                 Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact));
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
+        }
+
+        private void OnSyncFailed() {
+            Services.UI.Popup.Display(
+                Loc.Find("modeling.noSyncPopup.header"), Loc.Find("modeling.noSyncPopup.description")
+            ).OnComplete((_) => {
+                Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
+            });
+            Services.Audio.PostEvent("syncDenied");
         }
 
         private void OnSyncAchieved() {
@@ -262,6 +287,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
                 });
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
         }
 
@@ -272,11 +298,17 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
                 });
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("modelSynced");
             }
         }
 
         private void OnInterventionUpdated() {
             m_World.ReconstructForIntervention();
+        }
+
+        private void OnInterventionUnsuccessful() {
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+            Services.Audio.PostEvent("syncDenied");
         }
 
         private void OnAnimationStart() {
@@ -296,6 +328,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
                 });;
                 RefreshPhaseHeader();
+                Services.Audio.PostEvent("predictionSynced");
             }
         }
 
@@ -313,10 +346,20 @@ namespace Aqua.Modeling {
             FactUtil.GatherPendingEntities(m_ProgressInfo.ImportableEntities, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities);
             FactUtil.GatherPendingFacts(m_ProgressInfo.ImportableFacts, Save.Bestiary, m_State.Conceptual.GraphedEntities, m_State.Conceptual.PendingEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.PendingFacts);
 
+            bool missingEntities = !HasRequiredEntities();
+            bool missingBehaviors = !HasRequiredBehaviors();
+            ModelMissingReasons missingReason = 0;
+
             if (m_State.Conceptual.PendingEntities.Count > 0 || m_State.Conceptual.PendingFacts.Count > 0) {
                 status = ConceptualModelState.StatusId.PendingImport;
-            } else if (!HasRequiredEntities() || !HasRequiredBehaviors()) {
+            } else if (missingEntities || missingBehaviors) {
                 status = ConceptualModelState.StatusId.MissingData;
+                if (missingEntities) {
+                    missingReason |= ModelMissingReasons.Organisms;
+                }
+                if (missingBehaviors) {
+                    missingReason |= ModelMissingReasons.Behaviors;
+                }
             } else if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && !Save.Bestiary.HasFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 status = ConceptualModelState.StatusId.ExportReady;
             } else {
@@ -324,6 +367,11 @@ namespace Aqua.Modeling {
             }
 
             m_State.Conceptual.Status = status;
+            m_State.Conceptual.MissingReasons = missingReason;
+
+            Services.Data.SetVariable(ModelingConsts.Var_HasMissingFacts, status == ConceptualModelState.StatusId.MissingData);
+            Services.Data.SetVariable(ModelingConsts.Var_HasPendingFacts, status == ConceptualModelState.StatusId.PendingImport);
+            Services.Data.SetVariable(ModelingConsts.Var_HasPendingExport, status == ConceptualModelState.StatusId.ExportReady);
         }
 
         private void EvaluatePhaseMask() {
@@ -419,6 +467,16 @@ namespace Aqua.Modeling {
         }
 
         #endregion // ISceneLoadHandler
+
+        #region Leaf
+
+        [LeafMember("ModelingSetPhase"), Preserve]
+        static private void LeafSetPhase(ModelPhases phase) {
+            Assert.NotNull(s_Instance, "Cannot call modeling leaf methods when outside of modeling room");
+            s_Instance.m_Header.SetSelected(phase, true);
+        }
+
+        #endregion // Leaf
     }
     
     public enum ModelPhases : byte {
@@ -427,5 +485,12 @@ namespace Aqua.Modeling {
         Sync = 0x04,
         Predict = 0x08,
         Intervene = 0x10
+    }
+
+    public enum ModelMissingReasons : byte {
+        Organisms = 0x01,
+        Behaviors = 0x02,
+        HistoricalPopulations = 0x04,
+        HistoricalWaterChem = 0x08,
     }
 }

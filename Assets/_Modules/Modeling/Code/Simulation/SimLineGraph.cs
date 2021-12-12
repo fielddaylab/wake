@@ -120,7 +120,7 @@ namespace Aqua.Modeling {
 
                     float value;
                     for (int tickIdx = 0; tickIdx < tickCount; ++tickIdx) {
-                        value = results[tickIdx].Water[propId];
+                        value = propertyEntry.RemapValue(results[tickIdx].Water[propId]);
                         line.AddPoint(timestampOffset + tickIdx, value);
 
                         if (value > varRange.height)

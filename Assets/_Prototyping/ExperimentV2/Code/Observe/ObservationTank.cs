@@ -527,7 +527,7 @@ namespace ProtoAqua.ExperimentV2
             bool bHadFacts = m_PotentialNewFacts.Count > 0;
             while(true) {
                 while(m_IdleUpdateCounter > 0) {
-                    if (!Services.UI.IsLetterboxed() && !Services.UI.Popup.IsShowing()) {
+                    if (!Script.ShouldBlock()) {
                         m_IdleUpdateCounter -= Routine.DeltaTime;
                     }
                     yield return null;
@@ -660,7 +660,7 @@ namespace ProtoAqua.ExperimentV2
         {
             m_SummaryPanel.gameObject.SetActive(false);
             m_SummaryPanel.FactPools.FreeAll();
-            OnBeginClick();
+            m_BeginButton.gameObject.SetActive(true);
         }
 
         #endregion // Sequence

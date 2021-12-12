@@ -14,6 +14,7 @@ namespace Aqua.Modeling {
         #region Inspector
 
         [SerializeField] private GameObject m_MissingData = null;
+        [SerializeField] private LocText m_MissingDataText = null;
         [SerializeField] private Button m_ImportButton = null;
         [SerializeField] private Button m_ExportButton = null;
 
@@ -26,10 +27,16 @@ namespace Aqua.Modeling {
         [SerializeField] private GameObject m_ImportHistoricalText = null;
         [SerializeField] private GameObject m_ImportCompletedText = null;
 
+        [Header("Settings")]
+        [SerializeField] private TextId m_MissingOrganismsLabel = null;
+        [SerializeField] private TextId m_MissingBehaviorsLabel = null;
+        [SerializeField] private TextId m_MissingOrganismsBehaviorsLabel = null;
+
         #endregion // Inspector
 
         private ModelState m_State;
         private ModelProgressInfo m_ProgressionInfo;
+        private Routine m_ImportRoutine;
 
         public ImportDelegate OnRequestImport;
         public Action OnRequestExport;
@@ -46,6 +53,13 @@ namespace Aqua.Modeling {
 
             m_ImportFader.SetActive(false);
             m_ImportGroup.SetActive(false);
+
+            Services.Events.Register(GameEvents.BestiaryUpdated, OnShouldRefreshButtons, this)
+                .Register(GameEvents.SiteDataUpdated, OnShouldRefreshButtons, this);
+        }
+
+        private void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
         }
 
         #region BasePanel
@@ -72,7 +86,8 @@ namespace Aqua.Modeling {
 
         private void OnImportClicked() {
             m_ImportButton.gameObject.SetActive(false);
-            Routine.Start(this, ImportSequence()).TryManuallyUpdate(0);
+            m_ImportRoutine = Routine.Start(this, ImportSequence());
+            m_ImportRoutine.TryManuallyUpdate(0);
         }
 
         private void OnExportClicked() {
@@ -173,6 +188,27 @@ namespace Aqua.Modeling {
             m_ExportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady);
             m_MissingData.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.MissingData);
             m_ImportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport);
+
+            switch(m_State.Conceptual.MissingReasons) {
+                case ModelMissingReasons.Organisms: {
+                    m_MissingDataText.SetText(m_MissingOrganismsLabel);
+                    break;
+                }
+                case ModelMissingReasons.Behaviors: {
+                    m_MissingDataText.SetText(m_MissingBehaviorsLabel);
+                    break;
+                }
+                case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
+                    m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
+                    break;
+                }
+            }
+        }
+
+        private void OnShouldRefreshButtons() {
+            if (IsShowing() && !m_ImportRoutine) {
+                UpdateButtons();
+            }
         }
     }
 }

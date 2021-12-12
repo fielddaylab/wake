@@ -1,0 +1,202 @@
+#basePath   job.coral-stressed
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@profCempaka}	We've been studying the coral at R for a long time because it hasn't looked right. 
+{@profCempaka} It just seems... well, stressed.
+{@profCempaka}	I need you to head over to Site R to observe to Coral.
+{@profCempaka}	Then we can run some experiments to see if something about the enviroment is stressing it.
+{@player} 	Ok. I'm on my way to site R!
+
+:: helpLeaveShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !jobs:coral-stressed.seen.bottom
+@cutscene
+{@player}   Where should I go from here?
+{@kevin}	Let's exit the ship and head to the sub.
+
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station2"
+@once
+@cutscene
+{@kevin} You're gonna want to take your sub over to Dive Site R.
+                    It should be just north of the ship. When you're there, dive.
+					
+:: helpGoToSiteR
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", !jobs:coral-stressed.got.scans
+@cutscene
+{@player}   Where should we go next?
+{@kevin}	Site R should be to the north of the ship, let's head over and dive down!
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-2R"
+@once
+@cutscene
+$set    	jobs:coral-stressed.seen.bottom = true
+{@kevin}   Looks like we made it! Time to see what's down there.
+
+
+:: helpAtSiteR
+@trigger    RequestPartnerHelp
+@when 		scene:name == "RS-2R"
+@cutscene
+{@player}   What should I be doing here?
+$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+	{@kevin}   Did you remember to scan the population probe?
+$else
+	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
+		$set    jobs:coral-stressed.got.scans = true
+		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
+	$else
+	{@kevin}   Make sure to scan the coral.
+	$endif
+$endif
+
+
+:: navigation.goBackUp
+@trigger    JobTasksUpdated
+@when       HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
+@once
+@cutscene
+$set jobs:coral-stressed.gotScans = true
+{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+
+
+:: helpBackToShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", jobs:coral-stressed.got.scans
+@cutscene
+{@player} 	Where should we go from here?
+{@kevin}	Let's head south and return to the ship.
+
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Ship", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
+@once
+@cutscene
+{@player}   We're back. Now what?
+{@kevin}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
+{@kevin}   	I'm upgrading your Experiementation Lab with a new kind of experiement to determine stress.
+{@player}   On it!
+$call GiveUpgrade(StressTank)
+$call GiveWaterProperty(Light)
+$call GiveWaterProperty(Temperature)
+
+:: helpBackAtShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", JobTaskActive(stressCoral)
+@cutscene
+{@player} 	We're back at the ship, but what should we be doing now?
+{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
+
+
+:: startExperiment
+@trigger    SceneStart
+@when       scene:name == "ExperimentV2", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
+@once
+@cutscene
+{@player}   What kind of experiment should we be doing this time?
+{@kevin}  	Let's put the coral in the stress tank and see if that can tell us what's happening to it.
+
+:: openStressTank
+@trigger	ExperimentTankViewed
+@when		tankType == "Stress", jobs:coral-stressed.got.scans == true
+@once
+@cutscene
+{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
+{@profCempaka}	Think of it like a treadmill!
+
+:: helpAtExperiment
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
+@cutscene
+{@player} 	How should I do this again?
+{@kevin}	This time, select the stressor tank instead of an observation one.
+{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
+
+
+:: experimentEnd
+@trigger    JobTasksUpdated
+@when 		HasFact(StaghornCoral.Light.Stressed)
+@once
+@cutscene
+{@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
+{@kevin}	For each environment variable, the bars show values from low to high,
+{@kevin}	and the grayed parts show the range where the organism is stressed.
+{@player} 	Got it. So it tells us the ranges a species is stressed?
+{@kevin}	Exactly. So this experiement tells us the staghorn coral is stressed
+{@kevin}	if the temperature is too hot or too cold, or if the light is too low.
+{@kevin}	I wonder if either of those are true at Site R?
+{@kevin}	Let's report this information back to Professor Cempaka!
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		HasFact(StaghornCoral.Light.Stressed)
+@boostScore 1
+@cutscene
+{@player} 	What should we be doing now?
+$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+	{@kevin} We need to get the historical light levels of Site R. Let's head back and scan the water chemistry probe. 
+$else
+	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
+	$if global:nav.shipRoom == "office"
+		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	$endif
+$endif
+
+// ARGUMENTATION
+
+::argue.chooseClaim
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(coralstressedArgue)
+@cutscene
+$call ArgueLoad(coralstressedArgue)
+{@profCempaka} So, what's going on with the coral?
+	$choice .argue.coralNeedsLightIntro; The coral needs more light.
+	$choice .argue.coralIsOldIntro; The coral is old.
+$call ArgueCancelClaim()
+$choose branch
+
+::argue.coralNeedsLightIntro
+{@profCempaka} Ahhh, I see! It did seem shady down there, did you have proof?
+$goto .argue.coralNeedsLight
+
+::argue.coralNeedsLight
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralNeedsLightClaim)
+		$call ArgueFactSlot(SargassumCoveredReef.Light)
+		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctLight
+		$answer incorrect, .argue.incorrectLight
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.correctLight
+$call ArgueComplete()
+{@profCempaka} I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum that keeps floating on in. That'll be your next investigation if you stick around...
+$call CompleteJob()
+
+:: argue.incorrectLight
+{@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
+$call ArgueRejectIncorrect()
+$goto .argue.coralNeedsLight
+
+:: argue.giveUp
+{@profCempaka} OK. Get back to me when you're ready.
+
+
+:: argue.coralIsOldIntro
+{@profCempaka} I don't think we have any way to measure coral Age yet. Any other ideas?
+$goto .argue.chooseClaim
+
+::end

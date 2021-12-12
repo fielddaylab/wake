@@ -74,7 +74,7 @@ namespace Aqua
         {
             if (m_Loading)
             {
-                Log.Error("[LocService] Localization is still loading");
+                Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return inDefault.ToString();
             }
 
@@ -84,7 +84,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
+                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
                 content = inDefault.ToString();
             }
             
@@ -108,14 +108,14 @@ namespace Aqua
 
         #region Tagged
 
-        public TagString LocalizeTagged(StringHash32 inKey, object inContext = null)
+        public TagString LocalizeTagged(TextId inKey, object inContext = null)
         {
             TagString tagString = new TagString();
             LocalizeTagged(ref tagString, inKey, inContext);
             return tagString;
         }
 
-        public bool LocalizeTagged(ref TagString ioTagString, StringHash32 inKey, object inContext = null)
+        public bool LocalizeTagged(ref TagString ioTagString, TextId inKey, object inContext = null)
         {
             if (ioTagString == null)
                 ioTagString = new TagString();
@@ -124,7 +124,7 @@ namespace Aqua
 
             if (m_Loading)
             {
-                Log.Error("[LocService] Localization is still loading");
+                Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return false;
             }
 
@@ -136,7 +136,7 @@ namespace Aqua
             string content;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Log.Error("[LocService] Unable to locate entry for '{0}'", inKey);
+                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
                 return false;
             }
 
@@ -175,7 +175,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_LoadRoutine.Replace(this, InitialLoad());
+            m_LoadRoutine.Replace(this, InitialLoad()).TryManuallyUpdate(0);
 
             m_TagStringPool = new DynamicPool<TagString>(4, Pool.DefaultConstructor<TagString>());
             m_TagStringPool.Prewarm();

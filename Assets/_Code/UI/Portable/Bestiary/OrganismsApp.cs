@@ -39,7 +39,7 @@ namespace Aqua.Portable {
         }
 
         static private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {
-            page.ScientificName.SetText(entry.ScientificName());
+            page.ScientificName.SetTextFromString(entry.ScientificName());
             page.CommonName.SetText(entry.CommonName());
             page.Description.SetText(entry.Description());
             page.Sketch.Display(entry.ImageSet());

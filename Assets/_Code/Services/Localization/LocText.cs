@@ -23,7 +23,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private StringHash32 m_LastId;
+        [NonSerialized] private TextId m_LastId;
         [NonSerialized] private string m_CurrentText;
         private TagString m_TagString;
         [NonSerialized] private bool m_Initialized;
@@ -33,7 +33,7 @@ namespace Aqua
         public TMP_Text Graphic { get { return m_Text; } }
         public TagString CurrentText { get { return m_TagString ?? (m_TagString = new TagString()); } }
 
-        public void SetText(StringHash32 inId, object inContext = null)
+        public void SetText(TextId inId, object inContext = null)
         {
             m_LastId = inId;
 
@@ -50,11 +50,11 @@ namespace Aqua
             }
             else
             {
-                InternalSetText(string.Format("<color=red>ERROR:</color> {0}", inId.ToDebugString()));
+                InternalSetText(string.Format("<color=red>ERROR:</color> {0}", inId.Source()));
             }
         }
 
-        public void SetText(StringSlice inString, object inContext = null)
+        public void SetTextFromString(StringSlice inString, object inContext = null)
         {
             if (inString.IsEmpty)
             {

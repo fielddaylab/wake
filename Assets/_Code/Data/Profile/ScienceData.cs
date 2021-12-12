@@ -32,6 +32,13 @@ namespace Aqua.Profile
             return data;
         }
 
+        public SiteSurveyData TryGetSiteData(StringHash32 inMapId)
+        {
+            SiteSurveyData data;
+            m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data);
+            return data;
+        }
+
         #endregion // Sites
 
         #region Argumentations

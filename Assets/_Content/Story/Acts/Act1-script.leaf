@@ -45,3 +45,15 @@ $call hotbar.kevin->ResetSorting()
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
+
+// on unlocking world map-name
+
+:: afterUnlockWorldMap
+@trigger    RoomEnter
+@when       roomId == "helm", RoomUnlocked(WorldMap)
+@once
+@cutscene
+@boostScore 100
+
+{@kevin}    Hey, Kel gave us coordinates to a new station!
+            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and head over there instead!
