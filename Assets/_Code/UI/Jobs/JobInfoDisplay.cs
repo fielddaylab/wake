@@ -110,7 +110,7 @@ namespace Aqua
         {
             if (m_DescriptionLabel)
             {
-                StringHash32 desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
+                TextId desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
                 m_DescriptionLabel.SetText(desc);
             }
 

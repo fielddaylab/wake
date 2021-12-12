@@ -6,6 +6,7 @@ using BeauUtil.Tags;
 using UnityEngine;
 using System.IO;
 using UnityEngine.Scripting;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -79,7 +80,7 @@ namespace Aqua
                 string fullId = inUtil.TempBuilder.Flush();
                 outBlock = new LocNode(fullId);
                 inPackage.m_Nodes.Add(fullId, outBlock);
-                Debug.LogFormat("adding loc entry {0}", fullId);
+                Log.Msg("adding loc entry {0} ({1})", fullId, ((TextId) fullId).Hash().HashValue);
                 return true;
             }
         }

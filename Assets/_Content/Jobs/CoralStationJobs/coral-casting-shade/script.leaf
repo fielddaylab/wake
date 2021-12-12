@@ -13,7 +13,7 @@ $branch common.ringPhone
 $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@kevin}		{player-name}, let's start by heading to the {nameof Experimentation}!
 $else
-	$if HasEntry(Sargassum)
+	$if HasEntity(Sargassum)
 		{@kevin}		{player-name}, let's start by heading back to Site R to get the population history!
 	$else 
 		{@kevin}		{player-name}, let's start by heading back to Site R to scan the Sargassum!
@@ -22,7 +22,7 @@ $endif
 
 :: helpScanSargassum
 @trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", !HasEntry(Sargassum)
+@when 		scene:name == "CoralStation", !HasEntity(Sargassum)
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
