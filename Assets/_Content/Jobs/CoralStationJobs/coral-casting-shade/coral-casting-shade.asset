@@ -127,22 +127,6 @@ MonoBehaviour:
     - m_Source: chemHistory
       m_Hash: 3712428404
   - Id:
-      m_Source: coralGrowthStressed
-      m_Hash: 3469730432
-    LabelId:
-      m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
-      m_Hash: 1512437364
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: StaghornCoral.Grow.Stressed
-        m_Hash: 2544394604
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: chemHistory
-      m_Hash: 3712428404
-  - Id:
       m_Source: coralGrowthRate
       m_Hash: 35919339
     LabelId:
@@ -153,6 +137,22 @@ MonoBehaviour:
       Target:
         m_Source: StaghornCoral.Grow
         m_Hash: 1328520329
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: chemHistory
+      m_Hash: 3712428404
+  - Id:
+      m_Source: coralGrowthStressed
+      m_Hash: 3469730432
+    LabelId:
+      m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
+      m_Hash: 1512437364
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Grow.Stressed
+        m_Hash: 2544394604
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -279,24 +279,9 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
-      m_Source: coralGrowthStressed
-      m_Hash: 3469730432
-    Index: 5
-    LabelId:
-      m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
-      m_Hash: 1512437364
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: StaghornCoral.Grow.Stressed
-        m_Hash: 2544394604
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0200
-  - Id:
       m_Source: coralGrowthRate
       m_Hash: 35919339
-    Index: 6
+    Index: 5
     LabelId:
       m_Source: jobs.coral-casting-shade.task.coralGrowthRate
       m_Hash: 1335604207
@@ -305,6 +290,21 @@ MonoBehaviour:
       Target:
         m_Source: StaghornCoral.Grow
         m_Hash: 1328520329
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  - Id:
+      m_Source: coralGrowthStressed
+      m_Hash: 3469730432
+    Index: 6
+    LabelId:
+      m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
+      m_Hash: 1512437364
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Grow.Stressed
+        m_Hash: 2544394604
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
@@ -322,7 +322,7 @@ MonoBehaviour:
         m_Hash: 3265207088
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500040003000600
+    PrerequisiteTaskIndices: 0600040003000500
   - Id:
       m_Source: sargArgue
       m_Hash: 2971658416
