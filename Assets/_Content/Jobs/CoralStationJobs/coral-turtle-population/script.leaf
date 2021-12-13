@@ -35,7 +35,7 @@ $branch common.ringPhone
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-2V"
+@when       scene:name == "RS-2V", !HasEntity(LoggerheadTurtle)
 @once
 @cutscene
 $set    	jobs:coral-turtle-population.seen.bottom = true
