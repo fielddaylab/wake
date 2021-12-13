@@ -36,7 +36,7 @@ namespace Aqua
         [NonSerialized] private TaskEventMask m_TaskMask;
         [NonSerialized] private bool m_JobLoading;
         private readonly RingBuffer<TaskState> m_TaskGraph = new RingBuffer<TaskState>(16, RingBufferMode.Expand);
-        private readonly RingBuffer<ushort> m_TaskUpdateQueue = new RingBuffer<ushort>(16, RingBufferMode.Expand);
+        private ulong m_TaskUpdateMask = 0;
 
         protected override void Initialize()
         {
@@ -68,7 +68,8 @@ namespace Aqua
         private void RegisterDelayedTaskEvent(EventService inService, StringHash32 inEventId, TaskEventMask inMask)
         {
             inService.Register(inEventId, () => {
-                Async.InvokeAsync(() => ProcessUpdates(inMask));
+                ProcessUpdates(inMask, false);
+                Async.InvokeAsync(() => TryProcessUpdateQueue(inMask));
             }, this);
         }
 
@@ -86,7 +87,7 @@ namespace Aqua
             m_LoadedJobId = null;
             m_TaskGraph.Clear();
             m_TaskMask = 0;
-            m_TaskUpdateQueue.Clear();
+            m_TaskUpdateMask = 0;
         }
 
         private void OnJobPreload(StringHash32 inJobId)
@@ -94,7 +95,7 @@ namespace Aqua
             if (m_LoadedJobId == inJobId)
                 return;
 
-            Assert.True(m_TaskUpdateQueue.Count == 0, "Cannot preload while job queue contains entries");
+            Assert.True(m_TaskUpdateMask == 0, "Cannot preload while job queue contains entries");
 
             m_LoadedJobId = inJobId;
             m_TaskGraph.Clear();
@@ -174,7 +175,7 @@ namespace Aqua
             }
         }
 
-        private void ProcessUpdates(TaskEventMask inMask)
+        private void ProcessUpdates(TaskEventMask inMask, bool inbAllowTriggers = true)
         {
             if (inMask != 0 && (m_TaskMask & inMask) == 0)
                 return;
@@ -182,14 +183,25 @@ namespace Aqua
             SaveData saveData = Save.Current;
             JobsData jobsData = saveData.Jobs;
 
-            ScanForUpdates(saveData, m_TaskUpdateQueue);
+            ScanForUpdates(saveData, jobsData, ref m_TaskUpdateMask);
+            TryProcessUpdateQueue(inMask);
+        }
+
+        private void TryProcessUpdateQueue(TaskEventMask inMask)
+        {
+            if (inMask != 0 && (m_TaskMask & inMask) == 0)
+                return;
+
+            SaveData saveData = Save.Current;
+            JobsData jobsData = saveData.Jobs;
+
             if (!Script.ShouldBlock())
             {
                 ProcessUpdateQueue(jobsData);
             }
         }
 
-        private void ScanForUpdates(SaveData inData, RingBuffer<ushort> outUpdated)
+        private void ScanForUpdates(SaveData inData, JobsData inJobs, ref ulong ioUpdateMask)
         {
             // this assumes all tasks are sorted from root to leaf,
             // such that prerequisite tasks are always evaluated before the task that requires them
@@ -201,7 +213,24 @@ namespace Aqua
                 if (desiredStatus != taskState.Status)
                 {
                     taskState.Status = desiredStatus;
-                    outUpdated.PushBack((ushort) taskIdx);
+                    uint taskMask = 1u << taskIdx;
+                    switch(desiredStatus)
+                    {
+                        case JobTaskStatus.Active:
+                            if (inJobs.SetTaskActive(taskState.Task.Id))
+                                ioUpdateMask |= taskMask;
+                            break;
+
+                        case JobTaskStatus.Complete:
+                            if (inJobs.SetTaskComplete(taskState.Task.Id))
+                                ioUpdateMask |= taskMask;
+                            break;
+
+                        case JobTaskStatus.Inactive:
+                            if (inJobs.SetTaskInactive(taskState.Task.Id))
+                                ioUpdateMask |= taskMask;
+                            break;
+                    }
                 }
             }
         }
@@ -226,71 +255,43 @@ namespace Aqua
 
         private void ProcessUpdateQueue(JobsData inData)
         {
-            int count = m_TaskUpdateQueue.Count;
-            if (count <= 0)
+            if (m_TaskUpdateMask == 0)
                 return;
 
-            Assert.True(count <= 64, "More than 64 tasks updated in one frame, how the...");
-            ulong updateMask = 0; // 64-bit mask indicating which tasks in the queue actually updated in the save data
-            
-            ushort taskIndex;
-            ulong taskMask;
-            for(int i = 0; i < count; i++)
+            if (m_JobLoading)
             {
-                taskMask = (ulong) 1 << i;
-                taskIndex = m_TaskUpdateQueue[i];
+                m_TaskUpdateMask = 0;
+                return;
+            }
 
-                ref TaskState state = ref m_TaskGraph[taskIndex];
+            ulong taskMask;
+            
+            for(int taskIdx = 0, taskCount = m_TaskGraph.Count; taskIdx < taskCount; taskIdx++)
+            {
+                taskMask = (ulong) 1 << taskIdx;
+                if ((taskMask & m_TaskUpdateMask) == 0)
+                    continue;
+                
+                ref TaskState state = ref m_TaskGraph[taskIdx];
                 switch(state.Status)
                 {
                     case JobTaskStatus.Active:
-                        if (inData.SetTaskActive(state.Task.Id))
-                            updateMask |= taskMask;
+                        Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id.Hash());
                         break;
 
                     case JobTaskStatus.Complete:
-                        if (inData.SetTaskComplete(state.Task.Id))
-                            updateMask |= taskMask;
+                        Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id.Hash());
                         break;
 
                     case JobTaskStatus.Inactive:
-                        if (inData.SetTaskInactive(state.Task.Id))
-                            updateMask |= taskMask;
+                        Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id.Hash());
                         break;
                 }
             }
 
-            if (!m_JobLoading && updateMask != 0)
-            {
-                for(int i = 0; i < count; i++)
-                {
-                    taskMask = (ulong) 1 << i;
-                    if ((taskMask & updateMask) == 0)
-                        continue;
-                    
-                    taskIndex = m_TaskUpdateQueue[i];
-                    
-                    ref TaskState state = ref m_TaskGraph[taskIndex];
-                    switch(state.Status)
-                    {
-                        case JobTaskStatus.Active:
-                            Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id.Hash());
-                            break;
+            Services.Events.Dispatch(GameEvents.JobTasksUpdated);
 
-                        case JobTaskStatus.Complete:
-                            Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id.Hash());
-                            break;
-
-                        case JobTaskStatus.Inactive:
-                            Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id.Hash());
-                            break;
-                    }
-                }
-
-                Services.Events.Dispatch(GameEvents.JobTasksUpdated);
-            }
-
-            m_TaskUpdateQueue.Clear();
+            m_TaskUpdateMask = 0;
         }
 
         #endregion // Queue
