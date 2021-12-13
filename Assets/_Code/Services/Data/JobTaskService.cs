@@ -4,6 +4,7 @@ using Aqua.Profile;
 using BeauUtil.Services;
 using BeauUtil.Debugger;
 using System.Runtime.InteropServices;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -48,11 +49,11 @@ namespace Aqua
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
                 .Register(GameEvents.PopupClosed, OnCutsceneEnd, this);
 
-            RegisterTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
+            RegisterDelayedTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
             RegisterTaskEvent(events, GameEvents.BestiaryUpdated, TaskEventMask.BestiaryUpdate);
             RegisterTaskEvent(events, GameEvents.StationChanged, TaskEventMask.StationUpdate);
             RegisterTaskEvent(events, GameEvents.ScriptNodeSeen, TaskEventMask.ScriptNodeSeen);
-            RegisterTaskEvent(events, GameEvents.VariableSet, TaskEventMask.VariableUpdated);
+            RegisterDelayedTaskEvent(events, GameEvents.VariableSet, TaskEventMask.VariableUpdated);
             RegisterTaskEvent(events, GameEvents.ScanLogUpdated, TaskEventMask.ObjectScanned);
             RegisterTaskEvent(events, GameEvents.InventoryUpdated, TaskEventMask.InventoryUpdated);
             RegisterTaskEvent(events, GameEvents.SiteDataUpdated, TaskEventMask.SiteDataUpdated);
@@ -62,6 +63,13 @@ namespace Aqua
         private void RegisterTaskEvent(EventService inService, StringHash32 inEventId, TaskEventMask inMask)
         {
             inService.Register(inEventId, () => ProcessUpdates(inMask), this);
+        }
+
+        private void RegisterDelayedTaskEvent(EventService inService, StringHash32 inEventId, TaskEventMask inMask)
+        {
+            inService.Register(inEventId, () => {
+                Async.InvokeAsync(() => ProcessUpdates(inMask));
+            }, this);
         }
 
         protected override void Shutdown()

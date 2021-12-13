@@ -281,9 +281,9 @@ $endif
 
 :: argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(saveBarrenArgue)
+@when   !ArgueIsComplete(castingShadeArgue)
 @cutscene
-$call ArgueLoad(saveBarrenArgue)
+$call ArgueLoad(castingShadeArgue)
 {@profCempaka} Have you got evidence that Sargassum is hurting the Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
