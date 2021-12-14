@@ -28,6 +28,16 @@ $endif
 {@player} 	What should we be doing now?
 {@kevin} 	First, let's head back to Site R and scan some Sargassum.
 
+:: enterAndScannedSargassum
+@trigger    SceneStart
+@when       scene:name = "RS-2R", HasEntity(Sargassum), !HasUpgrade(ProbeHacker)
+@cutscene
+@once
+{@player} OK, I've already got the Sargassum, but how do we get the population history?
+{@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
+$call GiveUpgrade(ProbeHacker)
+{@player} 		Thanks!
+
 :: scannedSargassum
 @trigger    JobTasksUpdated
 @when 		HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
