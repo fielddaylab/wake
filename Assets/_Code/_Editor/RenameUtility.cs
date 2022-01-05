@@ -59,8 +59,16 @@ namespace EditorScripts
             Event currentEvt = Event.current;
             if (lastRect.Contains(currentEvt.mousePosition)) {
                 if (currentEvt.type == EventType.DragUpdated) {
-                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                    currentEvt.Use();
+                    foreach(UnityEngine.Object obj in DragAndDrop.objectReferences) {
+                        ScriptableObject file = obj as ScriptableObject;
+                        if (!file) {
+                            continue;
+                        }
+
+                        DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                        currentEvt.Use();
+                        break;
+                    }
                 } else if (currentEvt.type == EventType.DragPerform) {
                     foreach(UnityEngine.Object obj in DragAndDrop.objectReferences) {
                         ScriptableObject file = obj as ScriptableObject;
@@ -232,7 +240,7 @@ namespace EditorScripts
         }
 
         static private RegexPair[] GenerateRegex(RenamePair[] batch) {
-            RegexPair[] regexes = new RegexPair[3 * batch.Length];
+            RegexPair[] regexes = new RegexPair[4 * batch.Length];
             for(int i = 0; i < batch.Length; i++) {
                 RenamePair rename = batch[i];
                 StringHash32 oldHash = rename.src;
@@ -240,17 +248,21 @@ namespace EditorScripts
 
                 string oldNamePattern = EscapeRegex(rename.src);
                 
-                regexes[3 * i + 0] = new RegexPair() {
+                regexes[4 * i + 0] = new RegexPair() {
                     find = new Regex(string.Format("\\b{0}\\b", oldNamePattern)),
                     replace = rename.dest,
                 };
-                regexes[3 * i + 1] = new RegexPair() {
+                regexes[4 * i + 1] = new RegexPair() {
                     find = new Regex(string.Format("(m_Hash: {0}\\n)", oldHash.HashValue)),
                     replace = string.Format("m_Hash: {0}\n", newHash.HashValue)
                 };
-                regexes[3 * i + 2] = new RegexPair() {
+                regexes[4 * i + 2] = new RegexPair() {
                     find = new Regex(string.Format("(m_HashValue: {0}\\n)", oldHash.HashValue)),
                     replace = string.Format("m_HashValue: {0}\n", newHash.HashValue)
+                };
+                regexes[4 * i + 3] = new RegexPair() {
+                    find = new Regex(string.Format("(value: {0}\\n)", oldHash.HashValue)),
+                    replace = string.Format("value: {0}\n", newHash.HashValue)
                 };
             }
 

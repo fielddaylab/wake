@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections.Generic;
 using BeauUtil;
@@ -162,6 +166,9 @@ namespace Aqua
             foreach(var fact in m_AllFacts)
             {
                 StringHash32 factId = fact.Id;
+                #if DEVELOPMENT
+                new StringHash32(fact.name);
+                #endif
                 Assert.False(m_FactMap.ContainsKey(factId), "Duplicate fact id '{0}'", factId);
                 m_FactMap.Add(factId, fact);
                 if (fact.Mode != BFMode.Player)
