@@ -75,6 +75,8 @@ namespace Aqua.Editor
             StringBuilder sb = new StringBuilder(1024);
             List<AttributeBinding<LeafMember, MethodInfo>> conditions = new List<AttributeBinding<LeafMember, MethodInfo>>(64);
             List<AttributeBinding<LeafMember, MethodInfo>> actions = new List<AttributeBinding<LeafMember, MethodInfo>>(64);
+            List<FieldInfo> triggers = new List<FieldInfo>(64);
+            List<FieldInfo> variables = new List<FieldInfo>(64);
             foreach(var pair in Reflect.FindAllMethods<LeafMember>(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
             {
                 pair.Attribute.AssignId(pair.Info);

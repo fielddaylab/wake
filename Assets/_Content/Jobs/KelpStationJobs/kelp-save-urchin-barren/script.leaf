@@ -112,7 +112,7 @@ $choose branch
 
 :: argue.hopeless
 $if ArgueSetClaim(saveBarrenClaim, jobs.kelp-save-urchin-barren.argue.claimHopeless)
-		$call ArgueFactSlot(Model.UrchinBarrenPrediction)
+		$call ArgueFactSlot(UrchinBarren.Model.Prediction)
 $endif
 $goto .argue.checkHopeless
 
@@ -123,8 +123,8 @@ $goto .argue.chooseFactsHopeless
 ::argue.chooseFactsHopeless
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-		$answer Model.UrchinBarrenPrediction, .argue.currentModel
-		$answer Model.UrchinBarrenIntroduceOtters, .argue.hopelessButOtters
+		$answer UrchinBarren.Model.Prediction, .argue.currentModel
+		$answer UrchinBarren.Model.IntroduceOtters, .argue.hopelessButOtters
 		$answer *, .argue.unrelatedHopeless
 $choice .argue.giveUpHopeless; Let me get back to you
 
@@ -158,7 +158,7 @@ $goto .argue.chooseFactsHopeless
 
 ::argue.otterSolution	
 $if ArgueSetClaim(saveBarrenClaim, jobs.kelp-save-urchin-barren.argue.claimOtters)
-		$call ArgueFactSlot(Model.UrchinBarrenIntroduceOtters)
+		$call ArgueFactSlot(UrchinBarren.Model.IntroduceOtters)
 $endif
 $goto .argue.checkOtters
 
@@ -172,7 +172,7 @@ $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-        $answer Model.UrchinBarrenIntroduceOtters, .argue.otters
+        $answer UrchinBarren.Model.IntroduceOtters, .argue.otters
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif

@@ -11,12 +11,6 @@ using UnityEngine.UI;
 
 namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {
-        #region Persistence
-
-        static public readonly TableKeyPair Var_LastOpenTab = TableKeyPair.Parse("session:portable.lastOpenTab");
-
-        #endregion // Persistence
-
         #region Inspector
 
         [SerializeField, Required] private Canvas m_Canvas = null;
@@ -77,12 +71,7 @@ namespace Aqua.Portable {
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
                 }
             } else {
-                Variant lastKnownAppVar = Services.Data.GetVariable(Var_LastOpenTab);
-                PortableAppId lastKnownApp = PortableAppId.Job;
-                if (!lastKnownAppVar.IsNull()) {
-                    lastKnownApp = (PortableAppId) lastKnownAppVar.AsInt();
-                }
-                requestTab = GetAppButton(lastKnownApp);
+                requestTab = GetAppButton(PortableAppId.Job);
             }
 
             requestTab.Toggle.isOn = true;

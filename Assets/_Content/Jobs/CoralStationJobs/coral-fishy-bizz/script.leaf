@@ -87,7 +87,7 @@ $endif
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(Model.GrouperFishingRate)
+@when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should we be doing next?
 {@kevin}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
@@ -95,7 +95,7 @@ $endif
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
@@ -109,7 +109,7 @@ $endif
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
@@ -124,7 +124,7 @@ $endif
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == , !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == , !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a predition of how the Fisher population affects the Grouper population. 
@@ -177,7 +177,7 @@ $goto .argue.defendClaim
 
 :: argue.defendClaim
 $if ArgueSetClaim(coralFishyBizzArgueClaim, jobs.coral-fishy-bizz.argue.claimLabel)
-			$call ArgueFactSlot(Model.GrouperFishingRate)
+			$call ArgueFactSlot(ReefEdge.Model.GrouperFishingRate)
 $endif
 
 $call ArgueDisplayClaim()

@@ -121,7 +121,7 @@ $goto .argue.chooseClaim
 ::argue.slowGrowth
 {@drKelp}	Interesting idea. What about your model? Does it explain why the Bull Kelp are growing more slowly?
 $if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
-			$call ArgueFactSlot(Model.RefugeFail)
+			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.defendClaim

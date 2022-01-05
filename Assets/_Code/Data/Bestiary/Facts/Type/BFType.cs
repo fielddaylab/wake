@@ -166,7 +166,7 @@ namespace Aqua
                     return compareCustom;
             }
 
-            return x.Id.Hash().CompareTo(y.Id.Hash());
+            return x.Id.CompareTo(y.Id);
         };
 
         #endregion // Methods

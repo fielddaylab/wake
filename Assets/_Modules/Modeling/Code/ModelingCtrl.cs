@@ -264,7 +264,9 @@ namespace Aqua.Modeling {
         private void OnRequestConceptualExport() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.ConceptualModelId);
-                Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact));
+                Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                    Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
+                });
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("modelSynced");

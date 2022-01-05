@@ -206,7 +206,7 @@ namespace Aqua.Argumentation {
             
             m_CurrentStatus.SubmittedFacts[factIdx] = inFact.Id;
             m_CurrentStatus.OnChanged();
-            Services.Events.QueueForDispatch(ArgueEvents.FactSubmitted, inFact.Id.Hash());
+            Services.Events.QueueForDispatch(ArgueEvents.FactSubmitted, inFact.Id);
             return true;
         }
 

@@ -13,7 +13,6 @@ namespace Aqua
 
         static public readonly StringHash32 BestiaryEntryAdded = "BestiaryEntryAdded";
         static public readonly StringHash32 BestiaryFactAdded = "BestiaryFactAdded";
-        static public readonly StringHash32 BestiaryFactAddedToModel = "BestiaryFactAddedToModel";
 
         static public readonly StringHash32 PortableOpened = "PortableOpened";
         static public readonly StringHash32 PortableAppOpened = "PortableAppOpened";

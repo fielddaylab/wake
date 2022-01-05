@@ -10,7 +10,7 @@ namespace Aqua
     public abstract class BFBase : ScriptableObject
     {
         [Header("-- DEBUG DISPLAY --")]
-        [SerializeField, HideInInspector] public SerializedHash32 Id;
+        [SerializeField, HideInInspector] public StringHash32 Id;
         public readonly BFTypeId Type;
         
         [SerializeField, HideInInspector] public BestiaryDesc Parent;
@@ -43,7 +43,7 @@ namespace Aqua
             if (typeCompare != 0)
                 return typeCompare;
 
-            return x.Id.Hash().CompareTo(y.Id.Hash());
+            return x.Id.CompareTo(y.Id);
         };
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Aqua
             if (modeCompare != 0)
                 return modeCompare;
 
-            return x.Id.Hash().CompareTo(y.Id.Hash());
+            return x.Id.CompareTo(y.Id);
         };
 
         #endregion // Sorting

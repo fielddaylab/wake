@@ -270,8 +270,8 @@ namespace Aqua.Modeling {
         }
 
         private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, BestiaryDesc target, BFDiscoveredFlags flags) {
-            int indexA = m_OrganismMap[owner.Id()].Index;
-            int indexB = m_OrganismMap[target.Id()].Index;
+            int indexA = m_OrganismMap[target.Id()].Index;
+            int indexB = m_OrganismMap[owner.Id()].Index;
             m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
             m_SolverState.ConnectionMasks[indexB] |= (1u << indexA);
 

@@ -323,7 +323,7 @@ $endif
 $call ArgueLoad(urchinBarrenArgue)
 	$if ArgueSetClaim(urchinBarrenClaim, jobs.kelp-urchin-barren.argue.claimLabel)
 			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
-			$call ArgueFactSlot(Model.UrchinBarrenPrediction)
+			$call ArgueFactSlot(UrchinBarren.Model.Prediction)
 	$endif
 
 	$branch .argue.hello
@@ -341,13 +341,13 @@ $if ArgueAllFactsCorrect()
 $else
     $choice #argueFact; Present facts from AQOS
         $answer Urchin.Eats.GiantKelp, .argue.urchinEatsKelp
-        $answer Model.UrchinBarrenPrediction, .argue.barrenModel
+        $answer UrchinBarren.Model.Prediction, .argue.barrenModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
 
 ::argue.urchinEatsKelp
-$if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
+$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
 	$goto .argue.done
 $else
 	{@drKelp}    I see. Do you have a model that predicts if they will grow back?
@@ -366,7 +366,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	{@drKelp}    Do you have a model that predicts what's going to happen at Site B?
 $else
-	$if ArgueIsFactSubmitted(Model.UrchinBarrenPrediction)
+	$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
 		{@drKelp}  Is something eating the {nameof GiantKelp}?
 	$else
 		{@drKelp}  I don't know if that's it.

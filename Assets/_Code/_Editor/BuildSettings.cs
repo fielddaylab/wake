@@ -96,7 +96,7 @@ namespace Aqua.Editor
                     }
                     if ((fact = asset as BFBase) != null)
                     {
-                        fact.Id.Hash();
+                        new StringHash32(fact.name);
                     }
                 }
 

@@ -16,9 +16,9 @@ namespace Aqua.Shop {
         static public StringHash32 BelowEntrance = "station";
         static public StringHash32 ExitEntrance = "shop";
         
-        static public StringHash32 Trigger_ShopReady = "ShopReady";
-        static public StringHash32 Trigger_ShopViewTable = "ShopViewTable";
-        static public StringHash32 Trigger_ShopExit = "ShopExit";
+        static public readonly StringHash32 Trigger_ShopReady = "ShopReady";
+        static public readonly StringHash32 Trigger_ShopViewTable = "ShopViewTable";
+        static public readonly StringHash32 Trigger_ShopExit = "ShopExit";
 
         #region Inspector
 

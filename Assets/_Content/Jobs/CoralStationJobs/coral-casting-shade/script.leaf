@@ -237,7 +237,7 @@ $endif
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Make sure to import the new facts we just learned, and then press "Simulate"
@@ -251,7 +251,7 @@ $endif
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
@@ -267,7 +267,7 @@ $endif
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "predict", !HasFact(Model.SargLightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "predict", !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	The graph now shows a prediction of how the light levels change over time. 
@@ -282,7 +282,7 @@ $endif
 
 :: helpAfterModel
 @trigger    RequestPartnerHelp
-@when 		HasFact(Model.SargLightPrediction)
+@when 		HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
 {@kevin}	Let's report back to the {map-name}Office{/map-name} with our findings!
@@ -317,7 +317,7 @@ $goto .argue.introRevisit
 
 :: argue.yesEvidence
 $if ArgueSetClaim(casting-shadeClaim, jobs.coral-casting-shade.argue.claimEvidence)
-		$call ArgueFactSlot(Model.SargLightPrediction)
+		$call ArgueFactSlot(SargassumCoveredReef.Model.LightPrediction)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS

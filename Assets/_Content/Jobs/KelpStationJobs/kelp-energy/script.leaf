@@ -102,7 +102,7 @@ $else
 $endif
 
 :: argue.giantKelp
-$if ArgueIsFactSubmitted(WarmKelpForest.ConceptualModel)
+$if ArgueIsFactSubmitted(WarmKelpForest.Model.Conceptual)
 	$goto .argue.done
 $else
 	{@drKelp}    Can I see your model?
@@ -111,14 +111,14 @@ $endif
 
 :: argue.chooseFacts
 $if ArgueSetClaim(kelpEnergyArgueClaim, jobs.kelp-energy.argue.claimLabel)
-			$call ArgueFactSlot(WarmKelpForest.ConceptualModel)
+			$call ArgueFactSlot(WarmKelpForest.Model.Conceptual)
 $endif
 $call ArgueDisplayClaim()
 $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-		$answer WarmKelpForest.ConceptualModel, .argue.energyModel
+		$answer WarmKelpForest.Model.Conceptual, .argue.energyModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
