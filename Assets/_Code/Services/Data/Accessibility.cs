@@ -15,6 +15,11 @@ namespace Aqua
             get { return Save.Options.Accessibility.TTS; }
         }
 
+        static public bool TTSFull
+        {
+            get { return Save.Options.Accessibility.TTS == OptionsAccessibility.TTSMode.Full; }
+        }
+
         static public bool TTSEnabled
         {
             get { return Save.Options.Accessibility.TTS > 0; }

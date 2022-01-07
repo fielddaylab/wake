@@ -381,10 +381,20 @@ namespace Aqua.Profile
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
-            if (inMode == Serializer.Mode.Read)
-            {
-                m_CurrentJob = InternalGetProgress(m_CurrentJobId);
-                m_CurrentJobTaskIds.Clear();
+            if (inMode != Serializer.Mode.Read) {
+                return;
+            }
+
+            var jobsDB = Services.Assets.Jobs;
+            
+            if (!m_CurrentJobId.IsEmpty) {
+                if (!jobsDB.HasId(m_CurrentJobId)) {
+                    Log.Warn("[JobsData] Unknown job id '{0}'", m_CurrentJobId);
+                    m_CurrentJobId = StringHash32.Null;
+                } else {
+                    m_CurrentJob = InternalGetProgress(m_CurrentJobId);
+                    m_CurrentJobTaskIds.Clear();
+                }
             }
         }
 

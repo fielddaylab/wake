@@ -337,11 +337,32 @@ namespace Aqua.Profile
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
-            for(int i = 0; i < m_Items.Count; i++)
+            if (inMode != Serializer.Mode.Read) {
+                return;
+            }
+
+            var invDB = Services.Assets.Inventory;
+
+            for(int i = m_Items.Count - 1; i >= 0; i--)
             {
                 ref PlayerInv inv = ref m_Items[i];
-                inv.Descriptor = Assets.Item(inv.ItemId);
+                if (!invDB.HasId(inv.ItemId)) {
+                    Log.Warn("[InventoryData] Unknown item id '{0}'", inv.ItemId);
+                    m_Items.FastRemoveAt(i);
+                } else {
+                    inv.Descriptor = Assets.Item(inv.ItemId);
+                }
             }
+
+            m_UpgradeIds.RemoveWhere((itemId) => {
+                if (!invDB.HasId(itemId))
+                {
+                    Log.Warn("[InventoryData] Unknown upgrade id '{0}'", itemId);
+                    return true;
+                }
+
+                return false;
+            });
         }
 
         public bool HasChanges()

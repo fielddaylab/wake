@@ -1,3 +1,4 @@
+using BeauUtil;
 using UnityEngine;
 
 namespace Aqua
@@ -9,8 +10,10 @@ namespace Aqua
 
         [Header("Model")]
         public Sprite Image = null;
+        public TextId HeaderId = default;
         public TextId DescriptionId = default;
         public TextId SentenceId = default;
+        [StreamingPath("png,jpg,jpeg,webm,mp4")] public string HighResImagePath = null;
 
         #endregion // Inspector
 

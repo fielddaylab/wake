@@ -2,6 +2,9 @@ using System;
 using Aqua;
 using BeauUtil.Services;
 using Aqua.Option;
+using System.Text;
+using BeauUtil;
+using BeauUtil.Tags;
 
 namespace AquaAudio
 {
@@ -20,6 +23,9 @@ namespace AquaAudio
         [NonSerialized] private OptionsAccessibility.TTSMode m_Mode;
 
         [NonSerialized] private Priority m_CurrentPriority = Priority.Empty;
+
+        private readonly TagStringParser m_StripRichText = new TagStringParser();
+        private TagString m_StrippedText;
 
         public void Tooltip(TextId inTextId)
         {
@@ -91,7 +97,7 @@ namespace AquaAudio
         private void Speak(Priority inNewPriority, string inText, float inPitch)
         {
             m_CurrentPriority = inNewPriority;
-            TTS.Speak(inText, inPitch);
+            TTS.Speak(ProcessText(inText), inPitch);
         }
 
         public void Cancel()
@@ -107,6 +113,12 @@ namespace AquaAudio
         {
             if (m_CurrentPriority > 0 && !TTS.IsSpeaking())
                 m_CurrentPriority = 0;
+        }
+
+        private string ProcessText(string inText)
+        {
+            m_StripRichText.Parse(ref m_StrippedText, inText);
+            return m_StrippedText.VisibleText;
         }
 
         #region Handlers

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using BeauUtil;
 using UnityEngine.UI;
+using BeauRoutine;
+using System;
+using TMPro;
 
 namespace Aqua
 {
@@ -23,14 +26,28 @@ namespace Aqua
 
             m_Icon.sprite = inFact.Icon;
 
-            m_Label.SetText(propData.LabelId());
+            string labelFormat = Loc.Format("properties.measurement.format", propData.LabelId());
+            m_Label.SetTextFromString(labelFormat);
             m_Value.SetTextFromString(propData.FormatValue(inFact.Value));
 
-            m_Label.Graphic.color = m_Value.Graphic.color = palette.Content;
-            m_Background.color = palette.Shadow;
-            m_Bar.color = palette.Background;
+            m_Background.color = palette.Background;
+            m_Value.Graphic.color = palette.Content;
 
-            m_Bar.rectTransform.anchorMax = new Vector2(propData.RemapValue(inFact.Value), 1f);
+            float remap = propData.RemapValue(inFact.Value);
+            remap = RangeDisplay.AdjustValue(remap, 0.9f);
+            m_Bar.rectTransform.SetAnchorX(remap);
+
+            RectTransform valueTransform = m_Value.Graphic.rectTransform;
+            TMP_Text valueText = m_Value.Graphic;
+            if (remap < 0.4f) {
+                valueTransform.pivot = new Vector2(0, 0.5f);
+                valueTransform.SetAnchorPos(Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
+                valueText.alignment = TextAlignmentOptions.Left;
+            } else {
+                valueTransform.pivot = new Vector2(1, 0.5f);
+                valueTransform.SetAnchorPos(-Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
+                valueText.alignment = TextAlignmentOptions.Right;
+            }
         }
     }
 }

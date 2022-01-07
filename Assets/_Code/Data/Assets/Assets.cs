@@ -69,6 +69,11 @@ namespace Aqua {
         }
 
         [MethodImpl(256)]
+        static public bool Has(StringHash32 inId) {
+            return s_GlobalLookup.ContainsKey(inId);
+        }
+
+        [MethodImpl(256)]
         static public T Find<T>(StringHash32 inId)where T : ScriptableObject {
             return (T)Find(inId);
         }

@@ -116,6 +116,42 @@ namespace Aqua
             }
         }
 
+        static public WaterPropertyId WaterProperty(BFBase inFact)
+        {
+            switch(inFact.Type)
+            {
+                case BFTypeId.Consume:
+                {
+                    return ((BFConsume) inFact).Property;
+                }
+
+                case BFTypeId.Produce:
+                {
+                    return ((BFProduce) inFact).Property;
+                }
+
+                case BFTypeId.State:
+                {
+                    return ((BFState) inFact).Property;
+                }
+
+                case BFTypeId.WaterProperty:
+                {
+                    return ((BFWaterProperty) inFact).Property;
+                }
+
+                case BFTypeId.WaterPropertyHistory:
+                {
+                    return ((BFWaterPropertyHistory) inFact).Property;
+                }
+
+                default:
+                {
+                    return WaterPropertyId.NONE;
+                }
+            }
+        }
+
         #endregion // Attributes
 
         #region Methods

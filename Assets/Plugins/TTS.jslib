@@ -42,12 +42,21 @@ var TTSLibraryImpl = {
 
         speechSynthesis.cancel();
 
-        const utterance = new SpeechSynthesisUtterance(Pointer_stringify(text));
-        utterance.volume = volume;
-        utterance.rate = rate;
-        utterance.pitch = pitch;
-        utterance.lang = Pointer_stringify(lang);
-        speechSynthesis.speak(utterance);
+        text = Pointer_stringify(text);
+        lang = Pointer_stringify(lang);
+        const textChunks = text.split("\n");
+
+        var textChunk, utterance;
+        for(var i = 0; i < textChunks.length; i++) {
+            textChunk = textChunks[i] + "!!";
+            utterance = new SpeechSynthesisUtterance(textChunk);
+            utterance.volume = volume;
+            utterance.rate = rate;
+            utterance.pitch = pitch;
+            utterance.lang = lang;
+            speechSynthesis.speak(utterance);
+        }
+
         return true;
     },
 

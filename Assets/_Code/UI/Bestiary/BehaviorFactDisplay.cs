@@ -33,7 +33,7 @@ namespace Aqua
 
             if (inFact.OnlyWhenStressed) {
                 m_StressedBadge.gameObject.SetActive(true);
-                m_Layout.SetSizeDelta(46, Axis.Y);
+                m_Layout.SetSizeDelta(52, Axis.Y);
             } else {
                 m_StressedBadge.gameObject.SetActive(false); 
                 m_Layout.SetSizeDelta(36, Axis.Y);

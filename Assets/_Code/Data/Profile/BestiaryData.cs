@@ -332,6 +332,10 @@ namespace Aqua.Profile
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
+            if (inMode != Serializer.Mode.Read) {
+                return;
+            }
+
             var bestiary = Services.Assets.Bestiary;
 
             m_ObservedEntities.RemoveWhere((entityId) => {

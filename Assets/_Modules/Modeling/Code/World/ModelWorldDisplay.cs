@@ -16,17 +16,21 @@ namespace Aqua.Modeling {
         [Serializable] private class ConnectionPool : SerializablePool<ModelConnectionDisplay> { }
 
         private unsafe struct GraphSolverState {
+            public Unsafe.ArenaHandle Allocator;
             public Vector2* Positions;
             public Vector2* Forces;
             public uint* ConnectionMasks;
             public uint MovedOutputMask;
+            public Vector2* FixedPropertyPositions;
         }
 
         #endregion // Types
 
         #region Consts
 
-        private const int MaxGraphNodes = 16;
+        private const int MaxOrganismNodes = 16;
+        private const int MaxPropertyNodes = (int) WaterProperties.TrackedMax + 1;
+        private const int MaxGraphNodes = MaxOrganismNodes + MaxPropertyNodes;
         private const int MaxSolverIterations = 64;
         private const float SolverVelocityThresholdSq = .2f * .2f;
 
@@ -80,15 +84,16 @@ namespace Aqua.Modeling {
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
         private unsafe ModelWorldDisplay() {
-            m_SolverState.Positions = Unsafe.AllocArray<Vector2>(MaxGraphNodes * 2);
-            m_SolverState.Forces = m_SolverState.Positions + MaxGraphNodes;
-            m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(MaxGraphNodes);
+            m_SolverState.Allocator = Unsafe.CreateArena(1024);
+            m_SolverState.Positions = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxGraphNodes);
+            m_SolverState.Forces = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxGraphNodes);
+            m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(m_SolverState.Allocator, MaxGraphNodes);
+            m_SolverState.FixedPropertyPositions = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxPropertyNodes);
             m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
         }
 
         unsafe ~ModelWorldDisplay() {
-            Unsafe.Free(m_SolverState.Positions);
-            Unsafe.Free(m_SolverState.ConnectionMasks);
+            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
         }
 
         private void Awake() {
@@ -97,10 +102,19 @@ namespace Aqua.Modeling {
             m_WaterChemMap[(int) WaterPropertyId.PH] = m_PHProperty;
             m_WaterChemMap[(int) WaterPropertyId.Oxygen] = m_OxygenProperty;
             m_WaterChemMap[(int) WaterPropertyId.CarbonDioxide] = m_CarbonDioxideProperty;
+            InitFixedPositions();
 
             m_OriginalCanvasState = TransformState.LocalState(m_Canvas.transform);
 
             Services.Events.Register(GameEvents.WaterPropertiesUpdated, UpdateWaterPropertiesUnlocked, this);
+        }
+
+        private unsafe void InitFixedPositions() {
+            m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.Light] = GetPositionInv(m_LightProperty);
+            m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.Temperature] = GetPositionInv(m_TemperatureProperty);
+            m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.PH] = GetPositionInv(m_PHProperty);
+            m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.Oxygen] = GetPositionInv(m_OxygenProperty);
+            m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.CarbonDioxide] = GetPositionInv(m_CarbonDioxideProperty);
         }
 
         private void OnDestroy() {
@@ -194,7 +208,7 @@ namespace Aqua.Modeling {
                 yield break;
             }
 
-            Assert.True(organismCount <= MaxGraphNodes, "More than maximum allowed critters ({0}) in graph - attempting to populate with {1} nodes", organismCount, MaxGraphNodes);
+            Assert.True(organismCount <= MaxOrganismNodes, "More than maximum allowed critters ({0}) in graph - attempting to populate with {1} nodes", organismCount, MaxOrganismNodes);
             
             ModelOrganismDisplay display;
             int index = 0;
@@ -313,6 +327,10 @@ namespace Aqua.Modeling {
 
         private unsafe void PositionOrganism(ModelOrganismDisplay display, ref GraphSolverState solverState, int index) {
             display.Transform.SetAnchorPos(m_SolverState.Positions[index] * m_PositionScale, Axis.XY);
+        }
+
+        private Vector2 GetPositionInv(ModelWaterPropertyDisplay display) {
+            return display.GetComponent<RectTransform>().anchoredPosition / m_PositionScale;
         }
 
         private unsafe void SolveStep(ref GraphSolverState solverState, int count) {

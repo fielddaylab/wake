@@ -147,6 +147,10 @@ namespace Aqua.Profile
 
         void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
         {
+            if (inMode != Serializer.Mode.Read) {
+                return;
+            }
+
             foreach(var data in m_SiteData)
             {
                 data.OnChanged = MarkChanged;

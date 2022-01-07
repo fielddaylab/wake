@@ -8,6 +8,7 @@ using System;
 using BeauUtil.Tags;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauPools;
 
 namespace Aqua
 {
@@ -29,6 +30,7 @@ namespace Aqua
             public Transform Root;
             public TMP_Text Text;
             public Button Button;
+            public CursorInteractionHint Tooltip;
 
             [NonSerialized] public StringHash32 OptionId;
         }
@@ -46,7 +48,9 @@ namespace Aqua
         [SerializeField] private FactPools m_FactPools = null;
         [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
+        [SerializeField] private GameObject m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
+        [SerializeField] private Button m_CloseButton = null;
         [SerializeField] private float m_AutoCloseDelay = 0.01f;
 
         #endregion // Inspector
@@ -69,44 +73,51 @@ namespace Aqua
                 int cachedIdx = i;
                 m_Buttons[i].Button.onClick.AddListener(() => OnButtonClicked(cachedIdx));
             }
+
+            m_CloseButton.onClick.AddListener(OnCloseClicked);
         }
 
         #endregion // Initialization
 
         #region Display
 
-        public Future<StringHash32> Display(string inHeader, string inText, StreamedImageSet inImage = default)
+        public Future<StringHash32> Display(string inHeader, string inText, StreamedImageSet inImage = default, PopupFlags inPopupFlags = default)
         {
-            return Present(inHeader, inText, inImage, DefaultOkay);
+            return Present(inHeader, inText, inImage, inPopupFlags, DefaultOkay);
         }
 
-        public Future<StringHash32> AskYesNo(string inHeader, string inText, StreamedImageSet inImage = default)
+        public Future<StringHash32> DisplayWithClose(string inHeader, string inText, StreamedImageSet inImage = default, PopupFlags inPopupFlags = default)
         {
-            return Present(inHeader, inText, inImage, DefaultYesNo);
+            return Present(inHeader, inText, inImage, inPopupFlags | PopupFlags.ShowCloseButton, null);
         }
 
-        public Future<StringHash32> Present(string inHeader, string inText, StreamedImageSet inImage, params NamedOption[] inOptions)
+        public Future<StringHash32> AskYesNo(string inHeader, string inText, StreamedImageSet inImage = default, PopupFlags inPopupFlags = default)
+        {
+            return Present(inHeader, inText, inImage, inPopupFlags, DefaultYesNo);
+        }
+
+        public Future<StringHash32> Present(string inHeader, string inText, StreamedImageSet inImage, PopupFlags inPopupFlags, params NamedOption[] inOptions)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inImage, inOptions));
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inImage, inOptions, inPopupFlags));
             return future;
         }
 
-        public Future<StringHash32> PresentFact(string inHeader, string inText, StreamedImageSet inImage, BFBase inFact, BFDiscoveredFlags inFlags)
+        public Future<StringHash32> PresentFact(string inHeader, string inText, StreamedImageSet inImage, BFBase inFact, BFDiscoveredFlags inFlags, PopupFlags inPopupFlags = default)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary, inPopupFlags)).TryManuallyUpdate(0);
             return future;
         }
 
-        public Future<StringHash32> PresentFacts(string inHeader, string inText, StreamedImageSet inImage, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags = default)
+        public Future<StringHash32> PresentFacts(string inHeader, string inText, StreamedImageSet inImage, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags = default, PopupFlags inPopupFlags = default)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inFlags, DefaultAddToBestiary)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inFlags, DefaultAddToBestiary, inPopupFlags)).TryManuallyUpdate(0);
             return future;
         }
 
-        private void Configure(string inHeader, string inText, StreamedImageSet inImage, NamedOption[] inOptions)
+        private void Configure(string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags)
         {
             if (!string.IsNullOrEmpty(inHeader))
             {
@@ -151,13 +162,19 @@ namespace Aqua
                     config.Text.SetText(Loc.Find(option.TextId));
                     config.OptionId = option.Id;
                     config.Root.gameObject.SetActive(true);
+                    config.Tooltip.TooltipOverride = config.Text.text;
+                    config.Button.interactable = option.Enabled;
                 }
                 else
                 {
                     config.OptionId = null;
                     config.Root.gameObject.SetActive(false);
+                    config.Tooltip.TooltipOverride = null;
                 }
             }
+
+            m_DividerGroup.SetActive(m_OptionCount > 0);
+            m_CloseButton.gameObject.SetActive((inPopupFlags & PopupFlags.ShowCloseButton) != 0);
         }
 
         private void ConfigureFacts(ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags)
@@ -218,11 +235,11 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, NamedOption[] inOptions)
+        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags)
         {
             using(ioFuture)
             {
-                Configure(inHeader, inText, inImage, inOptions);
+                Configure(inHeader, inText, inImage, inOptions, inPopupFlags);
                 ConfigureFacts(default, default);
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);
@@ -237,7 +254,7 @@ namespace Aqua
                 }
 
                 SetInputState(true);
-                Services.TTS.Text(inText);
+                AttemptTTS(inHeader, inText, inImage);
 
                 m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
@@ -269,11 +286,11 @@ namespace Aqua
             }
         }
 
-        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImages, ListSlice<BFBase> inFact, ListSlice<BFDiscoveredFlags> inFlags, NamedOption[] inOptions)
+        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, ListSlice<BFBase> inFact, ListSlice<BFDiscoveredFlags> inFlags, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags)
         {
             using(ioFuture)
             {
-                Configure(inHeader, inText, inImages, inOptions);
+                Configure(inHeader, inText, inImage, inOptions, inPopupFlags);
                 ConfigureFacts(inFact, inFlags);
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);
@@ -288,7 +305,7 @@ namespace Aqua
                 }
 
                 SetInputState(true);
-                Services.TTS.Text(inText);
+                AttemptTTS(inHeader, inText, inImage);
 
                 m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
@@ -317,6 +334,25 @@ namespace Aqua
                     yield return m_AutoCloseDelay;
 
                 Hide();
+            }
+        }
+
+        private void AttemptTTS(string inHeader, string inText, StreamedImageSet inImage)
+        {
+            if (Accessibility.TTSFull)
+            {
+                using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                    if (!string.IsNullOrEmpty(inHeader)) {
+                        psb.Builder.Append(inHeader).Append("\n\n");
+                    }
+                    if (!inImage.IsEmpty && !string.IsNullOrEmpty(inImage.Tooltip)) {
+                        psb.Builder.Append(inImage.Tooltip).Append("\n\n");
+                    }
+                    if (!string.IsNullOrEmpty(inText)) {
+                        psb.Builder.Append(inText);
+                    }
+                    Services.TTS.Text(psb.Builder.Flush());
+                }
             }
         }
 
@@ -368,6 +404,12 @@ namespace Aqua
         private void OnButtonClicked(int inIndex)
         {
             m_SelectedOption = m_Buttons[inIndex].OptionId;
+            m_OptionWasSelected = true;
+        }
+
+        private void OnCloseClicked()
+        {
+            m_SelectedOption = StringHash32.Null;
             m_OptionWasSelected = true;
         }
 
@@ -427,5 +469,10 @@ namespace Aqua
             Input = inInput;
             Option = inOption;
         }
+    }
+
+    [Flags]
+    public enum PopupFlags {
+        ShowCloseButton = 0x01,
     }
 }

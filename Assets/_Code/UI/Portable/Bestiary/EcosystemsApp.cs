@@ -18,7 +18,6 @@ namespace Aqua.Portable {
 
         [Header("Fact Grouping")]
         [SerializeField] private RectTransform m_WaterChemistryHeader = null;
-        [SerializeField] private RectTransform m_WaterChemistryGroup = null;
         [SerializeField] private RectTransform m_PopulationHeader = null;
         [SerializeField] private RectTransform m_PopulationGroup = null;
         [SerializeField] private RectTransform m_ModelsHeader = null;
@@ -57,7 +56,6 @@ namespace Aqua.Portable {
             m_PopulationHeader.gameObject.SetActive(false);
             m_WaterChemistryHeader.gameObject.SetActive(false);
             m_PopulationGroup.gameObject.SetActive(false);
-            m_WaterChemistryGroup.gameObject.SetActive(false);
 
             bool bWaterChem = false, bPopulation = false, bModels = false;
             int spacingsUsed = 0;
@@ -79,12 +77,7 @@ namespace Aqua.Portable {
                             }
                             m_WaterChemistryHeader.gameObject.SetActive(true);
                             m_WaterChemistryHeader.SetAsLastSibling();
-                            m_WaterChemistryGroup.gameObject.SetActive(true);
-                            m_WaterChemistryGroup.SetAsLastSibling();
                             bWaterChem = true;
-                        }
-                        if (fact.Type == BFTypeId.WaterProperty) {
-                            target = m_WaterChemistryGroup;
                         }
                         break;
                     }

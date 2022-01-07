@@ -129,7 +129,7 @@ namespace Aqua
 
         private void OnCutsceneEnd()
         {
-            if (!Script.ShouldBlock())
+            if (Save.IsLoaded && !Script.ShouldBlock())
             {
                 ProcessUpdateQueue(Save.Jobs);
             }

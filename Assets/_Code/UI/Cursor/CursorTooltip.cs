@@ -32,7 +32,7 @@ namespace Aqua
 
         public void Process(Vector2 inCursorPosition)
         {
-            if (m_LastId.IsEmpty)
+            if (m_LastId.IsEmpty && string.IsNullOrEmpty(m_LastOverride))
                 return;
 
             Vector2 offset = default(Vector2);

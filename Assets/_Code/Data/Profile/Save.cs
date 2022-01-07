@@ -28,6 +28,10 @@ namespace Aqua {
             [MethodImpl(256)] get { return s_CachedProfile; }
         }
 
+        static public bool IsLoaded {
+            [MethodImpl(256)] get { return Services.Data.IsProfileLoaded(); }
+        }
+
         static public string Id {
             [MethodImpl(256)] get { return s_CachedProfile.Id; }
         }

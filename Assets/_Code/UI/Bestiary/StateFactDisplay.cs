@@ -14,7 +14,6 @@ namespace Aqua
         [SerializeField, Required] private LocText m_Label = null;
 
         [Header("Backgrounds")]
-        [SerializeField, Required] private Graphic m_IconBackground = null;
         [SerializeField, Required] private Graphic m_KillBackground = null;
         [SerializeField, Required] private Graphic m_StressBackground = null;
         [SerializeField, Required] private Graphic m_AliveBackground = null;
@@ -35,14 +34,13 @@ namespace Aqua
             var propData = Assets.Property(inFact.Property);
             var palette = propData.Palette();
 
-            m_IconBackground.color = palette.Background;
             m_StressBackground.color = palette.Shadow;
             m_AliveBackground.color = palette.Background;
 
             m_Icon.sprite = inFact.Icon;
 
-            m_Label.SetText(propData.LabelId());
-            m_Label.Graphic.color = palette.Content;
+            string labelFormat = Loc.Format("properties.tolerance.format", propData.LabelId());
+            m_Label.SetTextFromString(labelFormat);
 
             ActorStateTransitionRange range = inFact.Range;
 
@@ -50,15 +48,15 @@ namespace Aqua
             {
                 m_KillBackground.gameObject.SetActive(true);
                 m_KillBackground.color = ((Color) palette.Shadow * 0.8f).WithAlpha(1);
-                m_StressRange.Display(range.StressedMin, range.StressedMax, propData.MinValue(), propData.MaxValue());
+                m_StressRange.Display(range.StressedMin, range.StressedMax, propData.MinValue(), propData.MaxValue(), !inFact.HasStressed);
             }
             else
             {
                 m_KillBackground.gameObject.SetActive(false);
-                m_StressRange.Display(0, 1, 0, 1);
+                m_StressRange.Display(0, 1, 0, 1, true);
             }
 
-            m_AliveRange.Display(range.AliveMin, range.AliveMax, propData.MinValue(), propData.MaxValue());
+            m_AliveRange.Display(range.AliveMin, range.AliveMax, propData.MinValue(), propData.MaxValue(), !inFact.HasStressed);
 
             SetEnvironment(inEnvironment);
         }

@@ -117,7 +117,7 @@ namespace Aqua.Title
             if (!newProfile.IsComplete())
             {
                 Services.Input.ResumeAll();
-                Services.UI.Popup.Display(
+                Services.UI.Popup.DisplayWithClose(
                     Loc.Find("ui.title.saveError.header"),
                     Loc.Format("ui.title.saveError.description"));
             }
@@ -142,7 +142,7 @@ namespace Aqua.Title
             if (!load.IsComplete())
             {
                 Services.Input.ResumeAll();
-                Services.UI.Popup.Display(
+                Services.UI.Popup.DisplayWithClose(
                     Loc.Find("ui.title.fileMissing.header"),
                     Loc.Format("ui.title.fileMissing.description", profileName));
             }
@@ -209,7 +209,7 @@ namespace Aqua.Title
             Log.Error("[TitleInteractions] Generating new player id failed: {0}", msg);
             Services.Input.ResumeAll();
             m_NameLoadingSpinner.SetActive(false);
-            Services.UI.Popup.Display(
+            Services.UI.Popup.DisplayWithClose(
                 Loc.Find("ui.title.idGenerationError.header"),
                 Loc.Format("ui.title.idGenerationError.description"))
                 .OnComplete((e) => LoadPage(Page.Title));
