@@ -176,6 +176,11 @@ namespace Aqua {
                     return;
                 }
                 RebuildMesh();
+
+                if (!m_Material) {
+                    m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
+                }
+
                 RebuildMaterial();
             };
         }

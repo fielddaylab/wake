@@ -250,6 +250,63 @@ namespace Aqua
             }
         }
 
+        // Implements the event listener
+        private sealed class WaitForEventHandler : IEnumerator, IDisposable
+        {
+            private StringHash32 m_EventId;
+            private Action m_Listener;
+            private int m_Phase = 0; // 0 uninitialized 1 waiting 2 done
+
+            public WaitForEventHandler(StringHash32 inEventId)
+            {
+                m_EventId = inEventId;
+                m_Phase = 0;
+                m_Listener = OnInvoke;
+            }
+
+            public object Current { get { return null; } }
+
+            public void Dispose()
+            {
+                if (m_Phase > 0)
+                {
+                    Services.Events?.Deregister(m_EventId, m_Listener);
+                }
+
+                m_Phase = 0;
+                m_EventId = null;
+                m_Listener = null;
+            }
+
+            public bool MoveNext()
+            {
+                switch (m_Phase)
+                {
+                    case 0:
+                        m_Phase = 1;
+                        Services.Events.Register(m_EventId, m_Listener);
+                        return true;
+
+                    case 2:
+                        return false;
+
+                    case 1:
+                    default:
+                        return true;
+                }
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            private void OnInvoke()
+            {
+                m_Phase = 2;
+            }
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -385,6 +442,18 @@ namespace Aqua
         }
 
         #endregion // Registration
+
+        #region Async
+
+        /// <summary>
+        /// Waits for the given event to execute.
+        /// </summary>
+        public IEnumerator WaitForEvent(StringHash32 inEventId)
+        {
+            return new WaitForEventHandler(inEventId);
+        }
+
+        #endregion // Async
 
         #region Operations
 

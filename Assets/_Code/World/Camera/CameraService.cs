@@ -49,6 +49,7 @@ namespace Aqua.Cameras
         public struct PlanePositionHelper
         {
             public Camera Camera;
+            public Ray CenterRay;
             public Plane GameplayPlane;
             public Matrix4x4 ViewportToWorld;
             public float GameplayDistance;
@@ -87,14 +88,12 @@ namespace Aqua.Cameras
                 Ray ray = new Ray(near, far - near);
                 Vector3 planeNormal = GameplayPlane.normal;
 
-                float originNormalDot = Vector3.Dot(ray.origin, planeNormal);
-                float directionNormalDot = Vector3.Dot(ray.direction, planeNormal);
-                float gameplayDist = (-originNormalDot - GameplayPlane.distance) / directionNormalDot;
-                float transformDist = (-originNormalDot - transformPlane.distance) / directionNormalDot;
-                
-                Debug.DrawRay(ray.origin, ray.direction * transformDist, Color.yellow, 0.2f);
+                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
+                float planeDist = (-Vector3.Dot(CenterRay.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(CenterRay.direction, planeNormal);
 
-                outDistanceRatio = transformDist / GameplayDistance;
+                // Debug.DrawRay(ray.origin, ray.direction * transformDist, Color.yellow, 0.2f);
+
+                outDistanceRatio = planeDist / GameplayDistance;
                 return near + (ray.direction * gameplayDist);
             }
         }
@@ -121,6 +120,7 @@ namespace Aqua.Cameras
         [NonSerialized] private Plane m_LastGameplayPlane;
         [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
+        [NonSerialized] private Ray m_LastCenterRay;
         [NonSerialized] private Matrix4x4 m_LastVPMatrix;
         [NonSerialized] private Matrix4x4 m_LastVPMatrixInv;
 
@@ -337,6 +337,8 @@ namespace Aqua.Cameras
             m_LastGameplayPlane.Raycast(r, out float planeCastDist);
             m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
+
+            m_LastCenterRay = r;
 
             Matrix4x4 projWorld = m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix;
             m_LastVPMatrix = projWorld;
@@ -1224,6 +1226,7 @@ namespace Aqua.Cameras
             return new PlanePositionHelper()
             {
                 Camera = m_Camera,
+                CenterRay = m_LastCenterRay,
                 GameplayPlane = m_LastGameplayPlane,
                 ViewportToWorld = m_LastVPMatrixInv,
                 GameplayDistance = m_LastGameplayPlaneDistance

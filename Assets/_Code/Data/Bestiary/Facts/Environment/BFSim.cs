@@ -26,6 +26,12 @@ namespace Aqua
         public float OxygenPerTick = 4;
         public float CarbonDioxidePerTick = 4;
 
+        [Header("Tweaks")]
+
+        public float EatRateMultiplier = 1;
+        public float ReproductionRateMultiplier = 1;
+        public float DeathRateMultiplier = 1;
+
         #endregion // Inspector
 
         private BFSim() : base(BFTypeId.Sim) { }

@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif
+
 using System.Collections.Generic;
 using Aqua.Debugging;
 using BeauData;
@@ -349,6 +353,41 @@ namespace Aqua.Profile
         }
 
         #endregion // Tasks
+
+        #region Debug
+
+        #if DEVELOPMENT
+
+        public void DebugMarkComplete(StringHash32 inJobId)
+        {
+            if (m_CompletedJobs.Add(inJobId))
+            {
+                bool bIsCurrent = m_CurrentJobId == inJobId;
+
+                m_HasChanges = true;
+                for(int i = 0; i < m_JobStatuses.Count; i++)
+                {
+                    if (m_JobStatuses[i].JobId == inJobId)
+                    {
+                        m_JobStatuses.FastRemoveAt(i);
+                        break;
+                    }
+                }
+
+                m_CompletedTasks.RemoveWhere((t) => t.JobId == inJobId);
+
+                if (bIsCurrent)
+                {
+                    m_CurrentJobId = StringHash32.Null;
+                    m_CurrentJob = null;
+                    m_CurrentJobTaskIds.Clear();
+                }
+            }
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // Debug
 
         #region Clearing
 

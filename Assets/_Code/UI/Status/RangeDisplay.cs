@@ -60,5 +60,14 @@ namespace Aqua
         {
             return (1 - inRange) / 2 + inInput * inRange;
         }
+
+        static public float AdjustInputIgnoreEdges(float inInput, float inRange)
+        {
+            if (inInput == 0 || inInput == 1)
+            {
+                return inInput;
+            }
+            return (1 - inRange) / 2 + inInput * inRange;
+        }
     }
 }

@@ -3,6 +3,7 @@ using Aqua;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,19 +20,21 @@ namespace ProtoAqua.ExperimentV2
         public delegate void ReleasedDelegate(WaterPropertyId inProperty);
 
         public Slider Slider;
-        public RectTransform Needle;
+        public Image Icon;
         public LocText Label;
+        public LocText Value;
         public CursorInteractionHint Tooltip;
 
         [Header("Stress Regions")]
-        public Image MinStressed;
-        public Image MinDeath;
-        public Image MaxStressed;
-        public Image MaxDeath;
+        public Graphic AliveRegion;
+        public Graphic MinStressed;
+        public Graphic MinDeath;
+        public Graphic MaxStressed;
+        public Graphic MaxDeath;
 
         [Header("Indicators")]
-        public RectGraphic HasMin;
-        public RectGraphic HasMax;
+        public GameObject HasMin;
+        public GameObject HasMax;
 
         [NonSerialized] public WaterPropertyDesc Property;
         [NonSerialized] public ValueChangedDelegate OnChanged;
@@ -49,8 +52,8 @@ namespace ProtoAqua.ExperimentV2
         private void InvokeChanged(float inSliderValue)
         {
             float ratio = inSliderValue / Slider.maxValue;
-            UpdateNeedle(ratio);
             float actualValue = Property.InverseRemap(ratio);
+            AdjustValueLabel(actualValue);
             OnChanged?.Invoke(Property.Index(), actualValue);
         }
 
@@ -62,18 +65,30 @@ namespace ProtoAqua.ExperimentV2
         public void SetValue(float inValue)
         {
             float ratio = Property.RemapValue(inValue);
-            UpdateNeedle(ratio);
             
             if (Slider != null)
             {
                 float dialValue = ratio * Slider.maxValue;
                 Slider.SetValueWithoutNotify(dialValue);
+                AdjustValueLabel(inValue);
             }
         }
 
-        private void UpdateNeedle(float inRatio)
+        private void AdjustValueLabel(float inActualValue)
         {
-            Needle.SetRotation(MinAngle + AngleDelta * inRatio, Axis.Z, Space.Self);
+            Value.SetTextFromString(Property.FormatValue(inActualValue));
+
+            RectTransform valueTransform = Value.Graphic.rectTransform;
+            TMP_Text valueText = Value.Graphic;
+            if (Slider.normalizedValue < 0.5f) {
+                valueTransform.pivot = new Vector2(0, 0.5f);
+                valueTransform.SetAnchorPos(Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
+                valueText.alignment = TextAlignmentOptions.Left;
+            } else {
+                valueTransform.pivot = new Vector2(1, 0.5f);
+                valueTransform.SetAnchorPos(-Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
+                valueText.alignment = TextAlignmentOptions.Right;
+            }
         }
 
         static public void ConfigureStress(WaterPropertyDial inDial, ActorStateTransitionRange inRange)
@@ -89,35 +104,35 @@ namespace ProtoAqua.ExperimentV2
         {
             inDial.MinStressed.gameObject.SetActive(inMin);
             inDial.MinDeath.gameObject.SetActive(inMin);
-            inDial.HasMin.gameObject.SetActive(inMin);
+            inDial.HasMin.SetActive(inMin);
 
             inDial.MaxStressed.gameObject.SetActive(inMax);
             inDial.MaxDeath.gameObject.SetActive(inMax);
-            inDial.HasMax.gameObject.SetActive(inMax);
+            inDial.HasMax.SetActive(inMax);
         }
 
-        static private void ConfigureMinFill(Image inImage, WaterPropertyDesc inDesc, float inAmount)
+        static private void ConfigureMinFill(Graphic inSection, WaterPropertyDesc inDesc, float inAmount)
         {
             if (float.IsInfinity(inAmount))
             {
-                inImage.fillAmount = 0;
+                inSection.rectTransform.anchorMax = new Vector2(0, 1);
                 return;
             }
 
-            float minPercentage = inDesc.RemapValue(inAmount) / 2;
-            inImage.fillAmount = minPercentage;
+            float minPercentage = RangeDisplay.AdjustInputIgnoreEdges(inDesc.RemapValue(inAmount), 0.9f);
+            inSection.rectTransform.anchorMax = new Vector2(minPercentage, 1);
         }
 
-        static private void ConfigureMaxFill(Image inImage, WaterPropertyDesc inDesc, float inAmount)
+        static private void ConfigureMaxFill(Graphic inSection, WaterPropertyDesc inDesc, float inAmount)
         {
             if (float.IsInfinity(inAmount))
             {
-                inImage.fillAmount = 0;
+                inSection.rectTransform.anchorMin = new Vector2(1, 0);
                 return;
             }
 
-            float maxPercentage = (1 - inDesc.RemapValue(inAmount)) / 2;
-            inImage.fillAmount = maxPercentage;
+            float maxPercentage = RangeDisplay.AdjustInputIgnoreEdges(inDesc.RemapValue(inAmount), 0.9f);
+            inSection.rectTransform.anchorMin = new Vector2(maxPercentage, 0);
         }
     }
 }

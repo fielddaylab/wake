@@ -8,6 +8,7 @@ using System.IO;
 using BeauUtil.Editor;
 using Leaf;
 using Leaf.Runtime;
+using Leaf.Editor;
 using Aqua.Scripting;
 using BeauUtil;
 using System.Text;
@@ -24,49 +25,8 @@ namespace Aqua.Editor
         [MenuItem("Aqualab/Localization/Export String Table")]
         static public void ExportAllStrings()
         {
-            StringBuilder sb = new StringBuilder(1024);
-            sb.Append("Line Name, Code, English");
-            foreach(var asset in AssetDBUtils.FindAssets<LeafAsset>())
-            {
-                ScriptNodePackage package = LeafAsset.Compile(asset, ScriptNodePackage.Generator.Instance);
-                if (package == null)
-                    continue;
-                
-                foreach(var line in package.AllLines())
-                {
-                    if (TagStringParser.ContainsText(line.Value, Parsing.InlineEvent))
-                    {
-                        string sourceKey = line.Key.ToDebugString();
-                        string smallKey = line.Key.ToString();
-
-                        sb.Append('\n').Append(sourceKey).Append(", ").Append(smallKey).Append(", \"");
-                        StringUtils.Escape(line.Value, sb, StringUtils.CSV.Escaper.Instance);
-                        sb.Append("\"");
-                    }
-                }
-            }
-
-            File.WriteAllText("LeafExport.csv", sb.Flush());
-
-            foreach(var asset in AssetDBUtils.FindAssets<LocPackage>())
-            {
-                asset.Parse(LocPackage.Generator.Instance);
-                foreach(var node in asset)
-                {
-                    if (TagStringParser.ContainsText(node.Content(), Parsing.InlineEvent))
-                    {
-                        string sourceKey = node.Id().ToDebugString();
-                        string smallKey = node.Id().ToString();
-
-                        sb.Append('\n').Append(sourceKey).Append(", ").Append(smallKey).Append(", \"");
-                        StringUtils.Escape(node.Content(), sb, StringUtils.CSV.Escaper.Instance);
-                        sb.Append("\"");
-                    }
-                }
-            }
-
-            File.WriteAllText("LocExport.csv", sb.Flush());
-            EditorUtility.RevealInFinder("LocExport.csv");
+            LeafExport.StringsAsCSV<ScriptNode, ScriptNodePackage>("Assets", "LocExport.csv", "English", ScriptNodePackage.Generator.Instance,
+                new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
         }
     
         [MenuItem("Aqualab/Leaf/Export Leaf Function Outline")]

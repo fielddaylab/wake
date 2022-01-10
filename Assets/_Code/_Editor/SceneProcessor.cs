@@ -28,6 +28,10 @@ namespace Aqua.Editor
             RemoveDebug(scene);
             Flatten(scene);
             Optimize(scene);
+            if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
+            {
+                StripEditorInfo(scene);
+            }
         }
 
         static private void RemoveBootstrap(Scene scene)
@@ -115,6 +119,24 @@ namespace Aqua.Editor
                     {
                         Debug.LogFormat("[SceneProcessor] ...optimizing {0}", optimizable.ToString());
                         optimizable.Optimize();
+                    }
+                }
+            }
+        }
+
+        static private void StripEditorInfo(Scene scene)
+        {
+            List<IEditorOnlyData> allStrippable = new List<IEditorOnlyData>();
+            scene.GetAllComponents<IEditorOnlyData>(true, allStrippable);
+            if (allStrippable.Count > 0)
+            {
+                Debug.LogFormat("[SceneProcessor] Stripping editor data from {0} objects scene '{1}'...", allStrippable.Count, scene.name);
+                using(Profiling.Time("stripping editor data"))
+                {
+                    foreach(var strippable in allStrippable)
+                    {
+                        Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
+                        strippable.ClearEditorOnlyData();
                     }
                 }
             }

@@ -244,14 +244,8 @@ namespace Aqua.Spatial {
                     TrySetActiveState(ref heapItem, itemDistance <= 0, parms);
 
                     // scale score by distance to account for distance parallax effect
-                    float scoreScale = parms.Visual2DDistanceScale;
-                    if (scoreScale < 1) {
-                        heapItem.Score = m_ScoreAccumulator + 0.15f;
-                    } else {
-                        scoreScale = 0.5f;
-                        heapItem.Score = m_ScoreAccumulator + Math.Abs(itemDistance * scoreScale);
-                    }
-                    // Log.Msg("[DistanceHeap] Requeueing item {0} further {1} (distance {2}, distance scale {3})", heapItem.Item, heapItem.Score - m_ScoreAccumulator, itemDistance, parms.Visual2DDistanceScale);
+                    heapItem.Score = m_ScoreAccumulator + Math.Abs(itemDistance * parms.Visual2DDistanceScale);
+                    Log.Msg("[DistanceHeap] Requeueing item {0} further {1} (distance {2}, distance scale {3})", heapItem.Item, heapItem.Score - m_ScoreAccumulator, itemDistance, parms.Visual2DDistanceScale);
                     DistanceHeap.ReheapifyDown(m_Heap, 0);
                 }
             }

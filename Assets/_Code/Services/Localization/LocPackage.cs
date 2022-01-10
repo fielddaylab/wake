@@ -92,6 +92,15 @@ namespace Aqua
         [ScriptedExtension(1, "aqloc")]
         private class Importer : ImporterBase<LocPackage> { }
 
+        static internal IEnumerable<KeyValuePair<StringHash32, string>> GatherStrings(LocPackage inPackage)
+        {
+            inPackage.Parse(Generator.Instance);
+            foreach(var node in inPackage)
+            {
+                yield return new KeyValuePair<StringHash32, string>(node.Id(), node.Content());
+            }
+        }
+
         #endif // UNITY_EDITOR
     }
 }

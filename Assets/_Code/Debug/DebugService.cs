@@ -356,7 +356,7 @@ namespace Aqua.Debugging
 
         #endregion // Asset Reloading
 
-        private void OnProfileLoading()
+        private void HideMenu()
         {
             if (m_DebugMenu.isActiveAndEnabled)
             {
@@ -376,7 +376,7 @@ namespace Aqua.Debugging
             #endif // PREVIEW
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
-            Services.Events.Register(GameEvents.ProfileLoaded, OnProfileLoading, this);
+            Services.Events.Register(GameEvents.ProfileLoaded, HideMenu, this);
 
             m_Canvas.gameObject.SetActive(true);
             m_Input = DeviceInput.Find(m_Canvas);
@@ -457,6 +457,8 @@ namespace Aqua.Debugging
         static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inArg0, inArg1, inArg2); }
         static public void Log(LogMask inMask, string inMessage, params object[] inParams) { if ((s_LoggingMask & (uint) inMask) != 0) BeauUtil.Debugger.Log.Msg(inMessage, inParams); }
 
+        static public void Hide() { s_Instance.HideMenu(); }
+
         #else
 
         static internal void AllowLogs(LogMask inMask) { }
@@ -468,6 +470,8 @@ namespace Aqua.Debugging
         [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1) { }
         [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, object inArg0, object inArg1, object inArg2) { }
         [Conditional("ALWAYS_EXCLUDE")] static public void Log(LogMask inMask, string inMessage, params object[] inParams) { }
+
+        [Conditional("ALWAYS_EXCLUDE")] static public void Hide() { }
 
         #endif // DEVELOPMENT
 

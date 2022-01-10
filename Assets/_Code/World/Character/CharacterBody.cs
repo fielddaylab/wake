@@ -14,6 +14,7 @@ namespace Aqua.Character
         #endregion // Inspector
 
         [NonSerialized] protected Transform m_Transform;
+        [NonSerialized] protected FacingId m_Facing;
 
         protected virtual void Awake()
         {

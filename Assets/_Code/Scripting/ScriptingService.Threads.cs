@@ -119,7 +119,7 @@ namespace Aqua
         // Performs a node
         private IEnumerator ProcessNodeInstructions(ScriptThread inThread, ScriptNode inStartingNode)
         {
-            return LeafRuntime.Execute(this, inThread, inStartingNode);
+            return LeafRuntime.Execute(inThread, inStartingNode);
         }
 
         // Reads a line of scripting

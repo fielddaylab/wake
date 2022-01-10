@@ -39,7 +39,7 @@ namespace Aqua
 
             RectTransform valueTransform = m_Value.Graphic.rectTransform;
             TMP_Text valueText = m_Value.Graphic;
-            if (remap < 0.4f) {
+            if (remap < 0.5f) {
                 valueTransform.pivot = new Vector2(0, 0.5f);
                 valueTransform.SetAnchorPos(Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
                 valueText.alignment = TextAlignmentOptions.Left;

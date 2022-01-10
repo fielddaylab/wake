@@ -151,6 +151,44 @@ namespace Aqua.Editor
             return IsAutoOptimizeEnabled();
         }
 
+        static private void StripEditorInfoFromAssets()
+        {
+            List<IEditorOnlyData> allStrippable = new List<IEditorOnlyData>(512);
+            using(Profiling.Time("optimize scriptable objects"))
+            {
+                foreach(var asset in AssetDBUtils.FindAssets<ScriptableObject>())
+                {
+                    IEditorOnlyData strippable;
+                    if ((strippable = asset as IEditorOnlyData) != null)
+                    {
+                        allStrippable.Add(strippable);
+                    }
+                }
+
+                int count = allStrippable.Count;
+                int current = 0;
+                ScriptableObject scriptableAsset;
+                try
+                {
+                    foreach(var strippable in allStrippable)
+                    {
+                        scriptableAsset = (ScriptableObject) strippable;
+                        EditorUtility.DisplayProgressBar("Stripping Editor Data", string.Format("{0} ({1}/{2})", scriptableAsset.name, current + 1, count), current / (float) count);
+                        strippable.ClearEditorOnlyData();
+                        EditorUtility.SetDirty(scriptableAsset);
+                        Debug.LogFormat("[BuildSettings] Stripped editor-only data from asset '{0}' of type '{1}'", scriptableAsset.name, strippable.GetType().Name);
+                        current++;
+                    }
+
+                    AssetDatabase.SaveAssets();
+                }
+                finally
+                {
+                    EditorUtility.ClearProgressBar();
+                }
+            }
+        }
+
         private class BuildPreprocess : IPreprocessBuildWithReport
         {
             public int callbackOrder { get { return 99; } }
@@ -171,6 +209,7 @@ namespace Aqua.Editor
                     if (bBatch) {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
+                        StripEditorInfoFromAssets();
                     }
                 }
                 catch(Exception e)

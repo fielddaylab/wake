@@ -681,7 +681,7 @@ namespace Aqua
             inMenu.AddButton(inBinding.Name, () => DebugLoadScene(inBinding));
         }
 
-        static private void DebugLoadScene(SceneBinding inBinding)
+        static internal void DebugLoadScene(SceneBinding inBinding)
         {
             Services.UI.HideAll();
             Services.Script.KillAllThreads();

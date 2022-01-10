@@ -103,6 +103,7 @@ namespace Aqua.Modeling {
         public WaterPropertyBlockF32 Water;
         public float OxygenPerTick;
         public float CarbonDioxidePerTick;
+        public uint HungerPerPopulation;
 
         public ActorInfo* Actors;
         public int ActorCount;
@@ -272,6 +273,7 @@ namespace Aqua.Modeling {
             Water = sim.InitialWater;
             OxygenPerTick = sim.OxygenPerTick;
             CarbonDioxidePerTick = sim.CarbonDioxidePerTick;
+            HungerPerPopulation = SimMath.FixedMultiply(Simulation.HungerPerPopulation, sim.EatRateMultiplier);
         }
 
         public void ImportActor(BestiaryDesc desc) {
@@ -619,7 +621,7 @@ namespace Aqua.Modeling {
                 sb.Append("\n\tPH Range: ").Append(actor.StateTransitions.PH);
                 sb.Append("\n\tLight Range: ").Append(actor.StateTransitions.Light);
                 sb.Append("\n\tEat Entry Count: ").Append(actor.EatCount);
-                sb.Append("\n\tAction Priority: ").Append(actor.ActionOrder);
+                sb.Append("\n\tAction Order: ").Append(actor.ActionOrder);
                 
                 sb.Append("\n\tAlive Behavior:");
                 DumpBehaviorBlock(sb, actor.AliveBehavior);

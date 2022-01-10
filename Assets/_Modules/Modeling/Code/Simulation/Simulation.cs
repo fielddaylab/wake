@@ -278,13 +278,13 @@ namespace Aqua.Modeling
                 buffer.PopulationsConsumed[i] = default;
                 
                 if ((actorInfo->Flags & SimProfile.ActorFlags.Alive_DoesNotEat) == 0) {
-                    buffer.Hungers[i].Alive = buffer.Populations[i].Alive * HungerPerPopulation;
+                    buffer.Hungers[i].Alive = buffer.Populations[i].Alive * profile.HungerPerPopulation;
                 } else {
                     buffer.Hungers[i].Alive = 0;
                 }
                 
                 if ((actorInfo->Flags & SimProfile.ActorFlags.Stressed_DoesNotEat) == 0) {
-                    buffer.Hungers[i].Stressed = buffer.Populations[i].Stressed * HungerPerPopulation;
+                    buffer.Hungers[i].Stressed = buffer.Populations[i].Stressed * profile.HungerPerPopulation;
                 } else {
                     buffer.Hungers[i].Stressed = 0;
                 }

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class BestiaryDesc : DBObject, IOptimizableAsset
+    public partial class BestiaryDesc : DBObject, IOptimizableAsset, IEditorOnlyData
     {
         #if UNITY_EDITOR
 
@@ -163,6 +163,11 @@ namespace Aqua
         }
 
         #endregion // Optimize
+
+        void IEditorOnlyData.ClearEditorOnlyData()
+        {
+            m_Facts = null;
+        }
 
         #endif // UNITY_EDITOR
     }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class JobDesc : DBObject, IOptimizableAsset
+    public partial class JobDesc : DBObject, IOptimizableAsset, IEditorOnlyData
     {
         private const int MaxTasks = ushort.MaxValue;
 
@@ -134,6 +134,11 @@ namespace Aqua
         static private Comparison<EditorJobTask> CompareEditorTasks = (a, b) => {
             return b.Depth.CompareTo(a.Depth);
         };
+
+        void IEditorOnlyData.ClearEditorOnlyData()
+        {
+            m_Tasks = null;
+        }
 
         #endif // UNITY_EDITOR
 

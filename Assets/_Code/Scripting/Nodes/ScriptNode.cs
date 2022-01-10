@@ -154,23 +154,8 @@ namespace Aqua.Scripting
         {
             if (m_TriggerData != null)
             {
-                using(PooledList<StringSlice> conditions = PooledList<StringSlice>.Create())
-                {
-                    int conditionsCount = inConditionsList.Split(Parsing.QuoteAwareArgSplitter, StringSplitOptions.RemoveEmptyEntries, conditions);
-                    if (conditionsCount > 0)
-                    {
-                        m_TriggerData.Conditions = new VariantComparison[conditionsCount];
-                        for(int i = 0; i < conditionsCount; ++i)
-                        {
-                            if (!VariantComparison.TryParse(conditions[i], out m_TriggerData.Conditions[i]))
-                            {
-                                Log.Error("[ScriptNode] Unable to parse condition '{0}'", conditions[i]);
-                            }
-                        }
-
-                        m_TriggerData.Score += conditionsCount;
-                    }
-                }
+                m_TriggerData.Conditions = LeafUtils.ParseConditionsList(inConditionsList);
+                m_TriggerData.Score += m_TriggerData.Conditions.Length;
             }
         }
 

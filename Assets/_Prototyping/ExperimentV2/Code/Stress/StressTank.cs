@@ -401,9 +401,17 @@ namespace ProtoAqua.ExperimentV2
 
                 dial = m_Dials[m_DialsUsed++];
                 dial.Property = property;
+                dial.Icon.sprite = property.Icon();
                 dial.Label.SetText(property.LabelId());
                 dial.OnChanged = m_DialChangedDelegate ?? (m_DialChangedDelegate = OnPropertyChanged);
                 dial.OnReleased = m_DialReleasedDelegate ?? (m_DialReleasedDelegate = OnPropertyReleased);
+
+                var palette = property.Palette();
+
+                dial.AliveRegion.color = palette.Background;
+                dial.MinStressed.color = dial.MaxStressed.color = palette.Shadow;
+                dial.MinDeath.color = dial.MaxDeath.color = ((Color) palette.Shadow * 0.8f).WithAlpha(1);
+                dial.Value.Graphic.color = palette.Content;
 
                 m_DialMap[(int) property.Index()] = dial;
                 m_VisiblePropertiesMask[property.Index()] = true;
