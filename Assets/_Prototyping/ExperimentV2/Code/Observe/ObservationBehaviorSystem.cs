@@ -219,9 +219,9 @@ namespace ProtoAqua.ExperimentV2
                 moveCount = 0;
             } else {
                 if (inWorld.Lifetime >= SpeedUpLifetimeThreshold) {
-                    moveCount = RNG.Instance.Next(1, 4);
+                    moveCount = RNG.Instance.Next(0, 2);
                 } else  {
-                    moveCount = RNG.Instance.Next(2, 5);
+                    moveCount = RNG.Instance.Next(1, 3);
                 }
             }
             Vector3 current;
@@ -240,8 +240,8 @@ namespace ProtoAqua.ExperimentV2
                 yield return inActor.CachedTransform.MoveTo(target, duration, Axis.XY, Space.Self).Ease(def.Movement.MovementCurve);
                 yield return interval;
 
-                if (inWorld.Lifetime >= SpeedUpLifetimeThreshold && moveCount > 2) {
-                    moveCount = 2;
+                if (inWorld.Lifetime >= SpeedUpLifetimeThreshold && moveCount > 1) {
+                    moveCount = 1;
                 }
             }
 

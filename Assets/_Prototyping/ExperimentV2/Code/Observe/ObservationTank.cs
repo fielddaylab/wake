@@ -65,6 +65,7 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleUpdateCounter;
         [NonSerialized] private Routine m_DrainRoutine;
+        [NonSerialized] private bool m_PlayerHadObservationChance;
 
         private void Awake()
         {
@@ -516,7 +517,7 @@ namespace ProtoAqua.ExperimentV2
             if (potentialNewObservationsCount > 0) {
                 Services.Audio.PostEvent("Experiment.HasNewBehaviors");
                 yield return m_UnobservedStateLabel.transform.ScaleTo(1.02f, 0.2f, Axis.XY).Ease(Curve.CubeOut).Yoyo(true).RevertOnCancel();
-                yield return 15;
+                yield return 20;
             }
 
             m_FinishButton.interactable = true;
