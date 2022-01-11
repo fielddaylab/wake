@@ -132,22 +132,27 @@ namespace Aqua.Modeling {
             switch(phase) {
                 case ModelPhases.Ecosystem: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Ecosystem);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Ecosystem);
                     break;
                 }
                 case ModelPhases.Concept: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Visual);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Visual);
                     break;
                 }
                 case ModelPhases.Sync: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Describe);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Describe);
                     break;
                 }
                 case ModelPhases.Predict: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Predict);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Predict);
                     break;
                 }
                 case ModelPhases.Intervene: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Intervene);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Intervene);
                     break;
                 }
             }
@@ -174,6 +179,8 @@ namespace Aqua.Modeling {
 
             Services.Data.SetVariable(ModelingConsts.Var_EcosystemSelected, selected.Id());
             Services.Data.SetVariable(ModelingConsts.Var_HasJob, m_ProgressInfo.Scope != null);
+
+            Services.Events.Dispatch(ModelingConsts.Event_Ecosystem_Selected, selected.Id());
 
             EvaluateConceptStatus();
             RefreshPhaseHeader();
@@ -266,6 +273,7 @@ namespace Aqua.Modeling {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.ConceptualModelId);
                 Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
+                    Services.Events.Dispatch(ModelingConsts.Event_Concept_Exported);
                 });
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
@@ -278,6 +286,7 @@ namespace Aqua.Modeling {
                 Loc.Find("modeling.noSyncPopup.header"), Loc.Find("modeling.noSyncPopup.description")
             ).OnComplete((_) => {
                 Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
+                Services.Events.Dispatch(ModelingConsts.Event_Sync_Error);
             });
             Services.Audio.PostEvent("syncDenied");
         }
@@ -298,6 +307,7 @@ namespace Aqua.Modeling {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.PredictModelId);
                 Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
+                    Services.Events.Dispatch(ModelingConsts.Event_Predict_Complete);
                 });
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("modelSynced");
@@ -310,6 +320,7 @@ namespace Aqua.Modeling {
 
         private void OnInterventionUnsuccessful() {
             Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error);
             Services.Audio.PostEvent("syncDenied");
         }
 
@@ -328,6 +339,7 @@ namespace Aqua.Modeling {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.InterveneModelId);
                 Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
+                    Services.Events.Dispatch(ModelingConsts.Event_Intervene_Complete);
                 });;
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("predictionSynced");

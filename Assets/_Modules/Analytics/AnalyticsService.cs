@@ -6,6 +6,7 @@ using Aqua.Portable;
 using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
+using BeauUtil.Variants;
 using FieldDay;
 using ProtoAqua.ExperimentV2;
 using Aqua.Modeling;
@@ -127,13 +128,22 @@ namespace Aqua
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(GameEvents.BeginArgument, LogBeginArgument, this)
-                .Register(ModelingConsts.Event_Model_Begin, LogBeginModel, this)
+                .Register(ModelingConsts.Event_Model_Begin, LogConceptStarted, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
                 .Register<PortableAppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
+                .Register<StringHash32>(ModelingConsts.Event_Phase_Changed, LogPhaseChanged, this)
+                .Register<StringHash32>(ModelingConsts.Event_Ecosystem_Selected, LogEcosystemSelected, this)
+                .Register(ModelingConsts.Event_Concept_Updated, LogConceptUpdated, this)
+                .Register(ModelingConsts.Event_Concept_Exported, LogConceptExported, this)
+                .Register(ModelingConsts.Event_Sync_Error, LogSyncError, this)
+                .Register(ModelingConsts.Event_Simulation_Complete, LogSyncCompleted, this)
+                .Register(ModelingConsts.Event_Predict_Complete, LogPredictCompleted, this)
+                .Register(ModelingConsts.Event_Intervene_Error, LogInterveneError, this)
+                .Register(ModelingConsts.Event_Intervene_Complete, LogInterveneCompleted, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
                 .Register(GameEvents.PortableClosed, PortableClosed, this);
@@ -566,6 +576,70 @@ namespace Aqua
             FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
+
+        #region Modeling Logging
+
+        private void LogModelingStarted()
+        {
+            Debug.Log("ANALYTICS: Modeling started");
+        }
+
+        private void LogPhaseChanged(StringHash32 phase)
+        {
+            Debug.Log("ANALYTICS: Phase changed");
+        }
+
+        private void LogEcosystemSelected(StringHash32 ecosystem)
+        {
+            Debug.Log("ANALYTICS: Ecosystem selected");
+        }
+
+        private void LogConceptStarted()
+        {
+            Debug.Log("ANALYTICS: Concept started");
+        }
+
+        private void LogConceptUpdated()
+        {
+            Debug.Log("ANALYTICS: Concept updated");
+        }
+
+        private void LogConceptExported()
+        {
+            Debug.Log("ANALYTICS: Concept exported");
+        }
+
+        private void LogSyncError()
+        {
+            Debug.Log("ANALYTICS: Sync error");
+        }
+
+        private void LogSyncCompleted()
+        {
+            Debug.Log("ANALYTICS: Sync completed");
+        }
+
+        private void LogPredictCompleted()
+        {
+            Debug.Log("ANALYTICS: Predict completed");
+        }
+
+        private void LogInterveneError()
+        {
+            Debug.Log("ANALYTICS: Intervene error");
+        }
+
+        private void LogInterveneCompleted()
+        {
+            Debug.Log("ANALYTICS: Intervene completed");
+        }
+
+        private void LogModelingEnd()
+        {
+            Debug.Log("ANALYTICS: Modeling started");
+        }
+
+        #endregion // Modeling Logging
 
         #endregion // Log Events
     }
