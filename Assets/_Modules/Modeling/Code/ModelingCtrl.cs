@@ -286,7 +286,7 @@ namespace Aqua.Modeling {
                 Loc.Find("modeling.noSyncPopup.header"), Loc.Find("modeling.noSyncPopup.description")
             ).OnComplete((_) => {
                 Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncError);
-                Services.Events.Dispatch(ModelingConsts.Event_Sync_Error);
+                Services.Events.Dispatch(ModelingConsts.Event_Sync_Error, m_State.LastKnownAccuracy);
             });
             Services.Audio.PostEvent("syncDenied");
         }

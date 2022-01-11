@@ -152,7 +152,7 @@ namespace Aqua.Modeling {
             UpdateButtons();
             Services.Input.ResumeAll();
             Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
-            Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated);
+            Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, m_State.Conceptual.Status);
         }
 
         private IEnumerator ImportTextSequence(bool hadOrganisms, bool hadTolerances, bool hadBehaviors, bool hadHistorical) {
