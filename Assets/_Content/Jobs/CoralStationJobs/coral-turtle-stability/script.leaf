@@ -58,7 +58,7 @@ $set jobs:coral-turtle-stability.gotScans = true
 @when       scene:name == "CoralStation", jobs:coral-turtle-stability.seen.bottom, jobs:coral-turtle-stability.got.scans == false
 @once
 @cutscene
-{@player}   Alright, do you think we got everything?
+{@player}   Hmm, do you think we got everything?
 {@kevin}   Let me check...
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
 	$set    jobs:coral-stressed.got.scans = true
@@ -148,7 +148,7 @@ $endif
 @once
 @cutscene
 {@kevin}   Nice work! I think we know all the facts about what Turtles eat.
-            Now lets build a visual model of the food web.
+            Now let's build a visual model of the food web.
             We can use the {map-name}the Modeling Lab{/map-name} on your ship to do this.
 $call UnlockRoom("modelingRoom")
 $call UnlockRoom("Modeling")
@@ -170,7 +170,7 @@ $call UnlockRoom("Modeling")
 @once
 @cutscene
 {@kevin}	Huh, turns out turtles eat a lot of things.
-{@kevin}	Lets bring our model back to the {map-name}Office{/map-name}.
+{@kevin}	Let's bring our model back to the {map-name}Office{/map-name}.
 
 // report back
 				

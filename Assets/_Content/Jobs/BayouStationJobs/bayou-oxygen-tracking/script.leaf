@@ -40,7 +40,7 @@ $if global:nav.shipRoom == "experiment"
     {@player} How should I continue from here?
     {@kevin} Try using the measurement tank to find how these new species use oxygen.
 $else
-    {@player} Alright, what's next on the docket?
+    {@player} Okay, what's next on the docket?
     {@kevin} These new microscopic creatures are super interesting, but we still don't know what exactly they do...
     {@kevin} Finding the ways they interact with oxygen is important, so let's head to the {nameof Experimentation}!
 $endif
@@ -58,7 +58,7 @@ $endif
 @when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, modeling:phase == "visual"
 @cutscene
 
-{@player} Alright, how do I get this started again?
+{@player} Wait, how do I get this started again?
 {@kevin} Go ahead and plug in those new organisms into the modeling software, using the "Import Rule" button.
 
 :: helpModel2

@@ -6,7 +6,7 @@
 
 $branch common.ringPhone
 
-{@drKelp}	Hi {player-name}. We need someone to work out the mussel situation at Site B.
+{@drKelp}	Hi {player-name}. We need someone to work out the mussel situation at Site C.
 {@drKelp}	The mussels in the area are becoming funny-shaped, and we don't know why.
 {@drKelp}	First we need you to scan the mussels and collect the historical probe data.
 
@@ -24,11 +24,11 @@ $branch common.ringPhone
 @when 		scene:name == "Station2", !HasFact(KelpForest.Population.Mussel)
 @cutscene
 {@player}   Where should we go next?
-{@kevin}	Let's head over to Site B and dive down!
+{@kevin}	Let's head over to Site C and dive down!
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-1B"
+@when       scene:name == "RS-1C"
 @once
 @cutscene
 $set    	jobs:kelp-mussel-fest.seen.bottom = true
@@ -168,7 +168,7 @@ $call ArgueDisplayClaim()
 $branch .argue.defendClaimMusselTemp
 
 :: argue.incorrectFactsPopulationTemp
-{@drKelp} That isn't it. Do you have the temperature data from the probe at Site B?
+{@drKelp} That isn't it. Do you have the temperature data from the probe at Site C?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaimPopulationTemp
 
@@ -188,7 +188,7 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.incorrectFactsMusselTemp
-{@drKelp}	That doesn't explain why the mussels would be stressed in Site B's temperatures.
+{@drKelp}	That doesn't explain why the mussels would be stressed in Site C's temperatures.
 {@drKelp}	Do you have anything else that explains it?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaimMusselTemp
