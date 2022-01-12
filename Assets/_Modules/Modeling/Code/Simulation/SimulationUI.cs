@@ -426,7 +426,6 @@ namespace Aqua.Modeling {
                 if (bSuccess) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
                     OnInterventionSuccessful?.Invoke();
-                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
                 }

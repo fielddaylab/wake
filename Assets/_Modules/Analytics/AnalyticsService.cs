@@ -155,23 +155,23 @@ namespace Aqua
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(GameEvents.BeginArgument, LogBeginArgument, this)
-                .Register(ModelingConsts.Event_Model_Begin, LogModelConceptStarted, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
                 .Register<PortableAppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
-                .Register(ModelingConsts.Event_Modeling_Start, LogStartModel, this)
+                .Register(ModelingConsts.Event_Begin_Model, LogBeginModel, this)
                 .Register<byte>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
                 .Register<string>(ModelingConsts.Event_Ecosystem_Selected, LogModelEcosystemSelected, this)
+                .Register(ModelingConsts.Event_Concept_Started, LogModelConceptStarted, this)
                 .Register<ConceptualModelState.StatusId>(ModelingConsts.Event_Concept_Updated, LogModelConceptUpdated, this)
                 .Register(ModelingConsts.Event_Concept_Exported, LogModelConceptExported, this)
                 .Register<int>(ModelingConsts.Event_Sync_Error, LogModelSyncError, this)
                 .Register(ModelingConsts.Event_Predict_Complete, LogModelPredictCompleted, this)
                 .Register(ModelingConsts.Event_Intervene_Error, LogModelInterveneError, this)
                 .Register(ModelingConsts.Event_Intervene_Complete, LogModelInterveneCompleted, this)
-                .Register(ModelingConsts.Event_Modeling_End, LogEndModel, this)
+                .Register(ModelingConsts.Event_End_Model, LogEndModel, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
                 .Register(GameEvents.PortableClosed, PortableClosed, this);
@@ -593,7 +593,6 @@ namespace Aqua
 
         private void LogSimulationSyncAchieved()
         {
-            Debug.Log("ANALYTICS: sim sync achieved");
             #if FIREBASE
             FBSimulationSyncAchieved(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
@@ -608,66 +607,47 @@ namespace Aqua
 
         #region Modeling Events
 
-        // TODO:
-        //  Update event parameters
-        //  QA
-
         private void LogStartModel()
         {
-            Debug.Log("ANALYTICS: model started");
-
             #if FIREBASE
-            FBModelStart(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
+            FBModelingStart(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
         private void LogModelPhaseChanged(byte inPhase)
         {
-            Debug.Log("ANALYTICS: Phase changed " + ((ModelPhases)inPhase).ToString());
-
-            string phase = ((ModelPhases)inPhase).ToString();
-            m_CurrentModelPhase = phase;
+            m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
             #if FIREBASE
-            FBModelPhaseChanged(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, phase);
+            FBModelPhaseChanged(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase);
             #endif
         }
 
         private void LogModelEcosystemSelected(string ecosystem)
         {
-            Debug.Log("ANALYTICS: Ecosystem selected " + ecosystem);
-
             m_CurrentModelEcosystem = ecosystem;
 
             #if FIREBASE
-            FBModelEcosystemSelected(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, ecosystem);
+            FBModelEcosystemSelected(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelConceptStarted()
         {
-            Debug.Log("ANALYTICS: Concept started");
-
             #if FIREBASE
             FBModelConceptStarted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
-        private void LogModelConceptUpdated(ConceptualModelState.StatusId inStatus)
+        private void LogModelConceptUpdated(ConceptualModelState.StatusId status)
         {
-            Debug.Log("ANALYTICS: Concept updated " + inStatus.ToString());
-
-            string status = inStatus.ToString();
-
             #if FIREBASE
-            FBModelConceptUpdated(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, status);
+            FBModelConceptUpdated(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, status.ToString());
             #endif
         }
 
         private void LogModelConceptExported()
         {
-            Debug.Log("ANALYTICS: Concept exported");
-
             #if FIREBASE
             FBModelConceptExported(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
@@ -675,8 +655,6 @@ namespace Aqua
 
         private void LogModelSyncError(int sync)
         {
-            Debug.Log("ANALYTICS: Sync error " + sync);
-
             #if FIREBASE
             FBModelSyncError(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, sync);
             #endif
@@ -684,8 +662,6 @@ namespace Aqua
 
         private void LogModelPredictCompleted()
         {
-            Debug.Log("ANALYTICS: Predict completed");
-
             #if FIREBASE
             FBModelPredictCompleted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
@@ -693,8 +669,6 @@ namespace Aqua
 
         private void LogModelInterveneError()
         {
-            Debug.Log("ANALYTICS: Intervene error");
-
             #if FIREBASE
             FBModelInterveneError(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
@@ -702,8 +676,6 @@ namespace Aqua
 
         private void LogModelInterveneCompleted()
         {
-            Debug.Log("ANALYTICS: Intervene completed");
-
             #if FIREBASE
             FBModelInterveneCompleted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
@@ -711,8 +683,6 @@ namespace Aqua
 
         private void LogEndModel()
         {
-            Debug.Log("ANALYTICS: Modeling end");
-
             #if FIREBASE
             FBModelingEnd(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase, m_CurrentModelEcosystem);
             #endif

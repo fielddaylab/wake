@@ -56,11 +56,11 @@ namespace Aqua.Modeling {
 
             Services.Events.Register(GameEvents.BestiaryUpdated, OnShouldRefreshButtons, this)
                 .Register(GameEvents.SiteDataUpdated, OnShouldRefreshButtons, this);
-            Services.Events.Dispatch(ModelingConsts.Event_Modeling_Start);
+            Services.Events.Dispatch(ModelingConsts.Event_Begin_Model);
         }
 
         private void OnDestroy() {
-            Services.Events.Dispatch(ModelingConsts.Event_Modeling_End);
+            Services.Events.Dispatch(ModelingConsts.Event_End_Model);
             Services.Events?.DeregisterAll(this);
         }
 
@@ -183,7 +183,7 @@ namespace Aqua.Modeling {
 
         protected override void OnShow(bool inbInstant) {
             UpdateButtons();
-            Services.Events.QueueForDispatch(ModelingConsts.Event_Model_Begin);
+            Services.Events.QueueForDispatch(ModelingConsts.Event_Concept_Started);
             Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptStarted);
         }
 

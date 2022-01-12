@@ -45,8 +45,6 @@ Firebase automatically adds the following meaningful events
 * MORE HERE
 * begin_argument (job_id)
 * MORE HERE
-* begin_model (job_id)
-* MORE HERE
 * begin_simulation (job_id)
 * ask_for_help (node_id) - User clicked the hint button
 * talk_with_guide (node_id) - User clicked the button for Kevin
@@ -72,7 +70,7 @@ Firebase automatically adds the following meaningful events
 
 ### Modeling
 
-#### model_start
+#### begin_model
 
 Player enters the modeling room
 
@@ -156,6 +154,17 @@ Player saves the conceptual model to AQOS
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
+#### begin_simulation
+
+Player enters the sync phase of modeling
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
 #### model_sync_error
 
 Player attempts to sync the model but fails
@@ -168,7 +177,7 @@ Player attempts to sync the model but fails
 | job_name | String name of the current job |
 | sync | Sync % achieved with the current model |
 
-#### model_sync_completed
+#### simulation_sync_achieved
 
 Player successfully syncs the model
 
@@ -212,7 +221,7 @@ Player successfully completes the intervention model
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
-#### model_end
+#### end_model
 
 Player exits the modeling room
 

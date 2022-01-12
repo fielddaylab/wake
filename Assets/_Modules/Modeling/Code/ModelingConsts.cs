@@ -29,10 +29,10 @@ namespace Aqua.Modeling
         static public readonly StringHash32 ModelPhase_Predict = "predict";
         static public readonly StringHash32 ModelPhase_Intervene = "intervene";
 
-        static public readonly StringHash32 Event_Modeling_Start = "modeling:start";
+        static public readonly StringHash32 Event_Begin_Model = "modeling:begin";
         static public readonly StringHash32 Event_Phase_Changed = "modeling:phase-changed";
         static public readonly StringHash32 Event_Ecosystem_Selected = "modeling:ecosystem-selected";
-        static public readonly StringHash32 Event_Model_Begin = "modeling:model-begin";
+        static public readonly StringHash32 Event_Concept_Started = "modeling:concept-started";
         static public readonly StringHash32 Event_Concept_Updated = "modeling:concept-updated";
         static public readonly StringHash32 Event_Concept_Exported = "modeling:concept-exported";
         static public readonly StringHash32 Event_Simulation_Begin = "simulation:simulation-begin";
@@ -41,6 +41,6 @@ namespace Aqua.Modeling
         static public readonly StringHash32 Event_Predict_Complete = "simulation:predict-complete";
         static public readonly StringHash32 Event_Intervene_Error = "simulation:intervene-error";
         static public readonly StringHash32 Event_Intervene_Complete = "simulation:intervene-complete";
-        static public readonly StringHash32 Event_Modeling_End = "modeling:end";
+        static public readonly StringHash32 Event_End_Model = "modeling:end";
     }
 }
