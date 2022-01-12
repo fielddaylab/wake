@@ -132,27 +132,27 @@ namespace Aqua.Modeling {
             switch(phase) {
                 case ModelPhases.Ecosystem: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Ecosystem);
-                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Ecosystem);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelPhases.Ecosystem);
                     break;
                 }
                 case ModelPhases.Concept: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Visual);
-                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Visual);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelPhases.Concept);
                     break;
                 }
                 case ModelPhases.Sync: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Describe);
-                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Describe);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelPhases.Sync);
                     break;
                 }
                 case ModelPhases.Predict: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Predict);
-                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Predict);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelPhases.Predict);
                     break;
                 }
                 case ModelPhases.Intervene: {
                     Services.Data.SetVariable(ModelingConsts.Var_ModelPhase, ModelingConsts.ModelPhase_Intervene);
-                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelingConsts.ModelPhase_Intervene);
+                    Services.Events.Dispatch(ModelingConsts.Event_Phase_Changed, ModelPhases.Intervene);
                     break;
                 }
             }
@@ -180,7 +180,7 @@ namespace Aqua.Modeling {
             Services.Data.SetVariable(ModelingConsts.Var_EcosystemSelected, selected.Id());
             Services.Data.SetVariable(ModelingConsts.Var_HasJob, m_ProgressInfo.Scope != null);
 
-            Services.Events.Dispatch(ModelingConsts.Event_Ecosystem_Selected, selected.Id());
+            Services.Events.Dispatch(ModelingConsts.Event_Ecosystem_Selected, selected.name);
 
             EvaluateConceptStatus();
             RefreshPhaseHeader();
