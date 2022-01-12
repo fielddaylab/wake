@@ -56,9 +56,11 @@ namespace Aqua.Modeling {
 
             Services.Events.Register(GameEvents.BestiaryUpdated, OnShouldRefreshButtons, this)
                 .Register(GameEvents.SiteDataUpdated, OnShouldRefreshButtons, this);
+            Services.Events.Dispatch(ModelingConsts.Event_Modeling_Start);
         }
 
         private void OnDestroy() {
+            Services.Events.Dispatch(ModelingConsts.Event_Modeling_End);
             Services.Events?.DeregisterAll(this);
         }
 
@@ -151,8 +153,8 @@ namespace Aqua.Modeling {
             m_ImportFader.SetActive(false);
             UpdateButtons();
             Services.Input.ResumeAll();
-            Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
             Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, m_State.Conceptual.Status);
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
         }
 
         private IEnumerator ImportTextSequence(bool hadOrganisms, bool hadTolerances, bool hadBehaviors, bool hadHistorical) {

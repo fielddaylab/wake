@@ -72,6 +72,17 @@ Firebase automatically adds the following meaningful events
 
 ### Modeling
 
+#### model_start
+
+Player enters the modeling room
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
 #### model_phase_changed
 
 Player selects a given modeling phase
@@ -82,7 +93,15 @@ Player selects a given modeling phase
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
-| phase | The selected modeling phase - Ecosystem, Concept, Sync, Predict, Intervene |
+| phase | The selected modeling phase |
+
+| phase |
+| --- |
+| Ecosystem |
+| Concept |
+| Sync | 
+| Predict |
+| Intervene |
 
 #### model_ecosystem_selected
 
@@ -117,7 +136,14 @@ Player imports new facts / behaviors into the conceptual model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
-| state | Updated state of the concept model - MissingData, PendingImport, ExportReady, UpToDate |
+| status | Updated status of the concept model |
+
+| status |
+| --- |
+| MissingData |
+| PendingImport |
+| ExportReady | 
+| UpToDate |
 
 #### model_concept_exported
 
@@ -185,3 +211,16 @@ Player successfully completes the intervention model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+
+#### model_end
+
+Player exits the modeling room
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| phase | The selected modeling phase upon leaving |
+| ecosystem | The selected ecosystem upon leaving |

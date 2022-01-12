@@ -384,6 +384,18 @@ mergeInto(LibraryManager.library, {
 
     // Modeling Events
 
+    FBModelingStart: function(userCode, appVersion, jobId, jobName) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+
+        analytics.logEvent("model_start", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName
+        });
+    },
+
     FBModelPhaseChanged: function(userCode, appVersion, jobId, jobName, phase) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
@@ -412,90 +424,120 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelConceptStarted: function(userCode, appVersion, jobId, jobName) {
+    FBModelConceptStarted: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_started", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
-            job_name: jobName
+            job_name: jobName,
+            ecosystem: ecosystem
         });
     }, 
 
-    FBModelConceptUpdated: function(userCode, appVersion, jobId, jobName, modelState) {
+    FBModelConceptUpdated: function(userCode, appVersion, jobId, jobName, ecosystem, status) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
-        var modelState = Pointer_stringify(modelState);
+        var ecosystem = Pointer_stringify(ecosystem);
+        var status = Pointer_stringify(status);
 
         analytics.logEvent("model_concept_updated", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
             job_name: jobName,
-            model_state: modelState
+            ecosystem: ecosystem,
+            status: status
         });
     }, 
 
-    FBModelConceptExported: function(userCode, appVersion, jobId, jobName) {
+    FBModelConceptExported: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_exported", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
             job_name: jobName,
+            ecosystem: ecosystem
         });
     }, 
 
-    FBModelSyncError: function(userCode, appVersion, jobId, jobName, sync) {
+    FBModelSyncError: function(userCode, appVersion, jobId, jobName, ecosystem, sync) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_sync_error", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
             job_name: jobName,
+            ecosystem: ecosystem,
             sync: sync
         });
     }, 
 
-    FBModelPredictCompleted: function(userCode, appVersion, jobId, jobName) {
+    FBModelPredictCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_predict_completed", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
-            job_name: jobName
+            job_name: jobName,
+            ecosystem: ecosystem
         });
     }, 
 
-    FBModelInterveneError: function(userCode, appVersion, jobId, jobName) {
+    FBModelInterveneError: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_error", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
-            job_name: jobName
+            job_name: jobName,
+            ecosystem: ecosystem
         });
     }, 
 
-    FBModelInterveneCompleted: function(userCode, appVersion, jobId, jobName) {
+    FBModelInterveneCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_completed", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
-            job_name: jobName
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    },
+
+    FBModelingEnd: function(userCode, appVersion, jobId, jobName, phase, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var phase = Pointer_stringify(phase);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_end", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            phase: phase,
+            ecosystem: ecosystem
         });
     }
 
