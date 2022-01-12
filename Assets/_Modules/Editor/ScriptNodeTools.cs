@@ -17,6 +17,7 @@ using BeauUtil.Tags;
 using BeauUtil.IO;
 using System.Reflection;
 using BeauUtil.Variants;
+using ProtoAqua.Observation;
 
 namespace Aqua.Editor
 {
@@ -25,8 +26,8 @@ namespace Aqua.Editor
         [MenuItem("Aqualab/Localization/Export String Table")]
         static public void ExportAllStrings()
         {
-            LeafExport.StringsAsCSV<ScriptNode, ScriptNodePackage>("Assets", "LocExport.csv", "English", ScriptNodePackage.Generator.Instance,
-                new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
+            LocEditor.Export(
+            );
         }
     
         [MenuItem("Aqualab/Leaf/Export Leaf Function Outline")]

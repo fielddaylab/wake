@@ -223,10 +223,12 @@ namespace Aqua
                     button.Toggle.SetIsOnWithoutNotify(false);
                     button.Toggle.interactable = !bIsAtCapacity;
                 }
+
+                string name = BestiaryUtils.FullLabel(critter);
                 button.Toggle.group = m_ToggleGroup;
                 button.Icon.sprite = critter.Icon();
-                button.Tooltip.TooltipId = critter.CommonName();
-                button.Label.SetText(critter.CommonName());
+                button.Tooltip.TooltipOverride = name;
+                button.Label.SetTextFromString(name);
                 button.Critter = critter;
                 button.OnToggle = m_ToggleDelegate ?? (m_ToggleDelegate = OnToggleSelected);
             }

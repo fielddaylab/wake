@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
 using BeauUtil.Editor;
 using BeauUtil.IO;
 using BeauUtil.Tags;
+using Leaf.Editor;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -494,5 +496,16 @@ namespace Aqua.Editor {
         }
 
         #endregion // Asset Postprocessor
+    
+        #region Export
+
+        static public void Export(params LeafExport.CustomRule[] customRules) {
+            LeafExport.CustomRule[] rules = customRules;
+            ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
+            LeafExport.StringsAsCSV<ScriptNode, ScriptNodePackage>("Assets", "LocExport.csv", "English", ScriptNodePackage.Generator.Instance,
+                rules);
+        }
+
+        #endregion // Export
     }
 }

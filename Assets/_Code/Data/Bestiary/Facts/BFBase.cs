@@ -124,6 +124,13 @@ namespace Aqua
         IsGraphable = 0x01
     }
 
+    public struct BFDetails
+    {
+        public string Header;
+        public StreamedImageSet Image;
+        public string Description;
+    }
+
     public class FactIdAttribute : PropertyAttribute
     {
         public Type FactType;

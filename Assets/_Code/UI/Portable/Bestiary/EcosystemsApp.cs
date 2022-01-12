@@ -35,18 +35,18 @@ namespace Aqua.Portable {
         }
 
         static private void PopulateEntryToggle(PortableBestiaryToggle toggle, BestiaryDesc entry) {
-            MapDesc map = Assets.Map(entry.DiveSiteId());
-            string text = string.Format("{0}:\n{1}", Loc.Find(map.ShortLabelId()).ToUpper(), Loc.Find(entry.CommonName()));
+            string name = BestiaryUtils.FullLabel(entry, true);
+            toggle.Icon.gameObject.SetActive(false);
 
-            toggle.Cursor.TooltipId = entry.CommonName();
-            toggle.Text.SetTextFromString(text);
+            toggle.Cursor.TooltipId = default;
+            toggle.Cursor.TooltipOverride = name;
+
+            toggle.Text.SetTextFromString(name);
+            toggle.Text.Graphic.rectTransform.offsetMin = new Vector2(8, 4);
         }
 
         static private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {
-            MapDesc map = Assets.Map(entry.DiveSiteId());
-            string text = string.Format("{0}: {1}", Loc.Find(map.ShortLabelId()), Loc.Find(entry.CommonName()));
-
-            page.CommonName.SetTextFromString(text);
+            page.CommonName.SetTextFromString(BestiaryUtils.FullLabel(entry));
             page.Sketch.Display(entry.ImageSet());
             page.Description.SetText(entry.Description());
         }

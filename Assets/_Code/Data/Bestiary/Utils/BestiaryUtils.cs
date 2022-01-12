@@ -378,6 +378,24 @@ namespace Aqua
             return body.MassDisplayScale * body.MassPerPopulation * inPopulation;
         }
 
+        /// <summary>
+        /// Returns the string to use for an organism.
+        /// </summary>
+        static public string FullLabel(BestiaryDesc inEntry, bool inbSeparateLines = false)
+        {
+            if (inEntry.Category() == BestiaryDescCategory.Critter)
+            {
+                return Loc.Find(inEntry.CommonName());
+            }
+            else
+            {
+                MapDesc map = Assets.Map(inEntry.DiveSiteId());
+                if (inbSeparateLines)
+                    return Loc.FormatFromString("{0}:\n{1}", Loc.Find(map.ShortLabelId()), Loc.Find(inEntry.CommonName()));
+                return Loc.FormatFromString("{0}: {1}", Loc.Find(map.ShortLabelId()), Loc.Find(inEntry.CommonName()));
+            }
+        }
+
         #endregion // Facts
 
         #region Water Properties

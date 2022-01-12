@@ -43,6 +43,9 @@ namespace Aqua
         [SerializeField, Required] private KeycodeDisplayMap m_KeyboardMap = null;
         [SerializeField] private float m_TooltipHoverTime = 0.6f;
 
+        [Header("Game UI")]
+        [SerializeField] private string m_PersistentGameUIPath = null;
+
         [Header("Flattening")]
         [SerializeField] private Transform[] m_HierarchiesToFlatten = null;
 
@@ -54,6 +57,9 @@ namespace Aqua
         [NonSerialized] private bool m_SkippingCutscene;
         [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
         [NonSerialized] private CursorHintMgr m_CursorHintMgr;
+        [NonSerialized] private List<GameObject> m_PersistentUIObjects = new List<GameObject>();
+
+        [NonSerialized] private Routine m_PersistentUILoad;
 
         #region Loading Screen
 
@@ -230,6 +236,50 @@ namespace Aqua
         }
 
         #endregion // Additional Panels
+
+        #region Persistent UI
+
+        public IEnumerator LoadPersistentUI()
+        {
+            if (m_PersistentUIObjects.Count == 0 && !m_PersistentUILoad)
+            {
+                return (m_PersistentUILoad = Routine.Start(this, LoadPersistentUI_Routine())).Wait();
+            }
+
+            return null;
+        }
+
+        private IEnumerator LoadPersistentUI_Routine()
+        {
+            using(Profiling.Time("loading persistent ui"))
+            {
+                var request = Future.Resources.LoadAsync<GameObject>(m_PersistentGameUIPath);
+                yield return request;
+                GameObject asset = request.Get();
+                GameObject instantiated = Instantiate(asset);
+                yield return null;
+                DontDestroyOnLoad(instantiated);
+                foreach(Transform child in instantiated.transform)
+                {
+                    m_PersistentUIObjects.Add(child.gameObject);
+                }
+                instantiated.transform.FlattenHierarchy(false);
+                GameObject.Destroy(instantiated);
+            }
+        }
+
+        public void UnloadPersistentUI()
+        {
+            m_PersistentUILoad.Stop();
+            foreach(var obj in m_PersistentUIObjects)
+            {
+                GameObject.Destroy(obj);
+            }
+
+            m_PersistentUIObjects.Clear();
+        }
+
+        #endregion // Persistent UI
 
         public InputCursor Cursor { get { return m_Cursor; } }
         public CursorHintMgr CursorHintMgr { get { return m_CursorHintMgr; } }

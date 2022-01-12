@@ -34,8 +34,13 @@ namespace Aqua.Portable {
 
         static private void PopulateEntryToggle(PortableBestiaryToggle toggle, BestiaryDesc entry) {
             toggle.Icon.sprite = entry.Icon();
+            toggle.Icon.gameObject.SetActive(true);
+
             toggle.Cursor.TooltipId = entry.CommonName();
+            toggle.Cursor.TooltipOverride = null;
+
             toggle.Text.SetText(entry.CommonName());
+            toggle.Text.Graphic.rectTransform.offsetMin = new Vector2(38, 4);
         }
 
         static private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {

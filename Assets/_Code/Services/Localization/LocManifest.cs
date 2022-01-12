@@ -1,3 +1,4 @@
+using BeauData;
 using UnityEngine;
 
 namespace Aqua
@@ -6,6 +7,7 @@ namespace Aqua
     {
         #region Inspector
 
+        public FourCC CharacterCode;
         public LocPackage[] Packages;
 
         #endregion // Inspector

@@ -34,8 +34,8 @@ namespace Aqua.Portable {
         [SerializeField, Required] private ScrollRect m_EntryScroll = null;
         [SerializeField, Required] private VerticalLayoutGroup m_EntryLayoutGroup = null;
         [SerializeField, Required] private ToggleGroup m_EntryToggleGroup = null;
-        [SerializeField] private PortableStationHeader.Pool m_HeaderPool = null;
-        [SerializeField] private PortableBestiaryToggle.Pool m_EntryPool = null;
+        [SerializeField, Required] private BestiaryPools m_ListPools = null;
+        [SerializeField, Required] private RectTransform m_ListObjectRoot = null;
 
         [Header("Group")]
         [SerializeField, Required] private GameObject m_NoSelectionGroup = null;
@@ -71,8 +71,7 @@ namespace Aqua.Portable {
             m_InstantiatedButtons.Clear();
             m_NoSelectionGroup.gameObject.SetActive(true);
 
-            m_EntryPool.Reset();
-            m_HeaderPool.Reset();
+            m_ListPools.Clear();
             m_EntryToggleGroup.SetAllTogglesOff(false);
 
             m_InfoPage.gameObject.SetActive(false);
@@ -122,26 +121,25 @@ namespace Aqua.Portable {
         /// Loads all organism entries.
         /// </summary>
         private void LoadEntries() {
-            m_EntryPool.Reset();
-            m_HeaderPool.Reset();
+            m_ListPools.Clear();
 
             using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create()) {
                 Save.Bestiary.GetEntities(Handler.Category, entities);
                 entities.Sort(BestiaryDesc.SortByEnvironment);
                 StringHash32 mapId = default;
 
-                m_EntryPool.Prewarm(entities.Count);
+                m_ListPools.PrewarmEntries(entities.Count);
 
                 foreach (var entry in entities) {
                     if (mapId != entry.StationId()) {
                         mapId = entry.StationId();
-                        PortableStationHeader header = m_HeaderPool.Alloc();
+                        PortableStationHeader header = m_ListPools.AllocHeader(m_ListObjectRoot);
                         MapDesc map = Assets.Map(mapId);
                         header.Header.SetText(map.StationHeaderId());
                         header.SubHeader.SetText(map.ShortLabelId());
                     }
 
-                    PortableBestiaryToggle toggle = m_EntryPool.Alloc();
+                    PortableBestiaryToggle toggle = m_ListPools.AllocEntry(m_ListObjectRoot);
                     toggle.Toggle.group = m_EntryToggleGroup;
                     toggle.Toggle.SetIsOnWithoutNotify(false);
                     toggle.Data = entry;
@@ -175,7 +173,7 @@ namespace Aqua.Portable {
             m_InfoPage.gameObject.SetActive(true);
 
             if (inbSyncToggles) {
-                foreach (var toggle in m_EntryPool.ActiveObjects) {
+                foreach (var toggle in m_ListPools.AllEntries()) {
                     if (ReferenceEquals(toggle.Data, inEntry)) {
                         toggle.Toggle.SetIsOnWithoutNotify(true);
                         m_EntryScroll.ScrollYToShow((RectTransform) toggle.Toggle.transform);

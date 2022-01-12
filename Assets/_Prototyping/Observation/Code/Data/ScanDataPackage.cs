@@ -61,6 +61,15 @@ namespace ProtoAqua.Observation
         [ScriptedExtension(1, "scan")]
         private class Importer : ImporterBase<ScanDataPackage> { }
 
+        // static internal IEnumerable<KeyValuePair<StringHash32, string>> ExportStrings(ScanDataPackage inPackage)
+        // {
+        //     inPackage.Parse(Generator.Instance);
+        //     foreach(var data in inPackage)
+        //     {
+        //         data.Header()
+        //     }
+        // }
+
         #endif // UNITY_EDITOR
     }
 }

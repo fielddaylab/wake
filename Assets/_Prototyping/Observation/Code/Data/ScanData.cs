@@ -43,7 +43,7 @@ namespace ProtoAqua.Observation
         public StringHash32 Id() { return m_Id; }
 
         public ScanDataFlags Flags() { return m_Flags; }
-        public int ScanSpeed() { return m_ScanDuration; }
+        public int ScanDuration() { return m_ScanDuration; }
 
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }

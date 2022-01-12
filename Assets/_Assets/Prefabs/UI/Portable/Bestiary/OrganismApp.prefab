@@ -840,7 +840,6 @@ GameObject:
   - component: {fileID: 4982296943496057031}
   - component: {fileID: 1333880249574280643}
   - component: {fileID: 5090373563741158217}
-  - component: {fileID: 7144031170772090635}
   m_Layer: 5
   m_Name: OrganismApp
   m_TagString: Untagged
@@ -893,26 +892,8 @@ MonoBehaviour:
   m_EntryScroll: {fileID: 3288535918947753754}
   m_EntryLayoutGroup: {fileID: 6627476120995022207}
   m_EntryToggleGroup: {fileID: 3213028946769118309}
-  m_HeaderPool:
-    m_Prefab: {fileID: 4584669555134369020, guid: 3a548b04722af3d4f91851b34a128c98,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 4
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 5815391663597668195}
-    m_DefaultSpawnRoot: {fileID: 9046352267975036589}
-    m_ResetTransformOnAlloc: 1
-  m_EntryPool:
-    m_Prefab: {fileID: 2030212896130406029, guid: 4d5414401a5d5cd4596cf57c88865cc1,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 32
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 16
-    m_DefaultPoolRoot: {fileID: 5815391663597668195}
-    m_DefaultSpawnRoot: {fileID: 9046352267975036589}
-    m_ResetTransformOnAlloc: 1
+  m_ListPools: {fileID: 0}
+  m_ListObjectRoot: {fileID: 9046352267975036589}
   m_NoSelectionGroup: {fileID: 5002729627727686056}
   m_InfoPage: {fileID: 5059907617908761198}
 --- !u!114 &1333880249574280643
@@ -942,89 +923,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &7144031170772090635
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5861326315416843158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9c09be4a80a2954e9028a4f955b8272, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BehaviorFacts:
-    m_Prefab: {fileID: 4562623441835997388, guid: 293797ecd5dd3874b9e628dd8e4052c5,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_ModelFacts:
-    m_Prefab: {fileID: 6608727729718028685, guid: d9d296ea1d58b3b49bfe491df9534d30,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_StateFacts:
-    m_Prefab: {fileID: 1118759910594505797, guid: ee703efdb7ad265478d927abaffe4ea2,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PropertyFacts:
-    m_Prefab: {fileID: 6431742058912314138, guid: 7cec7104858dc7048b05fc5be798cb08,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PropertyHistoryFacts:
-    m_Prefab: {fileID: 5843688489517719355, guid: 931862b80a1923b41a0561f6f8d030f1,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PopulationFacts:
-    m_Prefab: {fileID: 8999737306323268303, guid: d30c723c51f04fc42b690eea8790f4d3,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_PopulationHistoryFacts:
-    m_Prefab: {fileID: 5247148871104312106, guid: 4dfd8f16b2ed58f4085b461f0e2a2b07,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 1
-    m_InitialPrewarm: 4
-    m_DefaultPoolRoot: {fileID: 0}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_TransformPool: {fileID: 5815391663597668195}
 --- !u!1 &6469328254177927281
 GameObject:
   m_ObjectHideFlags: 0
@@ -1977,7 +1875,7 @@ MonoBehaviour:
   SelectButton: {fileID: 0}
   NoFacts: {fileID: 182741330215617524}
   HasFacts: {fileID: 6799251533678267166}
-  FactPools: {fileID: 7144031170772090635}
+  FactPools: {fileID: 0}
   FactLayout: {fileID: 8346572171788988462}
   FactScroll: {fileID: 7051295545752396457}
   LayoutFixes:
@@ -2111,6 +2009,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a025284d7de5ab84f861daff9a66d30d, type: 3}
+--- !u!1 &6217008356801388710 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9161685396572264809, guid: a025284d7de5ab84f861daff9a66d30d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2982395030256941519}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3960496147995937352 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2275754022407451527, guid: a025284d7de5ab84f861daff9a66d30d,
@@ -2141,12 +2045,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &6217008356801388710 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9161685396572264809, guid: a025284d7de5ab84f861daff9a66d30d,
-    type: 3}
-  m_PrefabInstance: {fileID: 2982395030256941519}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3836581415342180997
 PrefabInstance:
   m_ObjectHideFlags: 0

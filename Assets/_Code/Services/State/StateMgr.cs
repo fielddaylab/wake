@@ -213,11 +213,18 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
-            #if DEVELOPMENT
             // if we started from another scene than the boot or title scene
             if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
+            {
+                #if DEVELOPMENT
                 Services.Data.UseDebugProfile();
-            #endif // DEVELOPMENT
+                #endif // DEVELOPMENT
+                yield return Services.UI.LoadPersistentUI();
+            }
+            else
+            {
+                Services.UI.UnloadPersistentUI();
+            }
 
             #if UNITY_EDITOR
             yield return WaitForOptimize(active, null);
@@ -264,10 +271,19 @@ namespace Aqua
                 yield return Services.UI.ShowLoadingScreen();
             }
 
-            #if DEVELOPMENT
-            if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart && !Services.Data.IsProfileLoaded())
-                Services.Data.UseDebugProfile();
-            #endif // DEVELOPMENT
+            // if we started from another scene than the boot or title scene
+            if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
+            {
+                #if DEVELOPMENT
+                if (!Services.Data.IsProfileLoaded())
+                    Services.Data.UseDebugProfile();
+                #endif // DEVELOPMENT
+                yield return Services.UI.LoadPersistentUI();
+            }
+            else
+            {
+                Services.UI.UnloadPersistentUI();
+            }
 
             SceneBinding active = SceneHelper.ActiveScene();
             m_EntranceId = inEntrance;

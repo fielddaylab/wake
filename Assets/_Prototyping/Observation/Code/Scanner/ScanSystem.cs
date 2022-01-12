@@ -310,7 +310,7 @@ namespace ProtoAqua.Observation
             if (WasScanned(inData.Id()))
                 return m_CompletedScanDuration;
             
-            return m_BaseScanDuration * inData.ScanSpeed();
+            return m_BaseScanDuration * inData.ScanDuration();
         }
 
         #endregion // ScanData
