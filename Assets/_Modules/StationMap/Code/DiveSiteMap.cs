@@ -29,6 +29,9 @@ namespace Aqua.StationMap
             SpawnLocation location = m_Spawns.FindLocation(entrance);
             if (location != null)
                 m_Player.TeleportTo(location);
+
+            StringHash32 currentMap = MapDB.LookupCurrentMap();
+            mapData.SetCurrentStationId(currentMap);
         }
 
         #if UNITY_EDITOR

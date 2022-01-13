@@ -45,7 +45,6 @@ namespace Aqua
         [ServiceReference, UnityEngine.Scripting.Preserve] static public PhysicsService Physics { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public ScriptingService Script { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public StateMgr State { get; private set; }
-        [ServiceReference, UnityEngine.Scripting.Preserve] static public TimeService Time { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public TTSService TTS { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public TweakMgr Tweaks { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public UIMgr UI { get; private set; }

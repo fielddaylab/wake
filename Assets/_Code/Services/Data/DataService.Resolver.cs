@@ -197,13 +197,6 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.SceneName, GetSceneName);
             m_VariableResolver.SetVar(GameVars.MapId, () => MapDB.LookupCurrentMap());
             m_VariableResolver.SetVar(GameVars.LastEntrance, () => Services.State.LastEntranceId);
-            
-            m_VariableResolver.SetVar(GameVars.DayName, GetDayOfWeek);
-            m_VariableResolver.SetVar(GameVars.DayNumber, () => Services.Time.Current.Day);
-            m_VariableResolver.SetVar(GameVars.Hour, () => Services.Time.Current.HourF);
-            m_VariableResolver.SetVar(GameVars.DayPhase, GetDayPhase);
-            m_VariableResolver.SetVar(GameVars.IsDay, () => Services.Time.Current.IsDay);
-            m_VariableResolver.SetVar(GameVars.IsNight, () => Services.Time.Current.IsNight);
 
             m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerPronouns);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
@@ -221,46 +214,6 @@ namespace Aqua
         }
 
         #region Callbacks
-
-        static private Variant GetDayOfWeek()
-        {
-            switch(Services.Time.Current.DayName)
-            {
-                case DayName.Sunday:
-                    return GameConsts.DayName_Sunday;
-                case DayName.Monday:
-                    return GameConsts.DayName_Monday;
-                case DayName.Tuesday:
-                    return GameConsts.DayName_Tuesday;
-                case DayName.Wednesday:
-                    return GameConsts.DayName_Wednesday;
-                case DayName.Thursday:
-                    return GameConsts.DayName_Thursday;
-                case DayName.Friday:
-                    return GameConsts.DayName_Friday;
-                case DayName.Saturday:
-                    return GameConsts.DayName_Saturday;
-                default:
-                    return Variant.Null;
-            }
-        }
-
-        static private Variant GetDayPhase()
-        {
-            switch(Services.Time.Current.Phase)
-            {
-                case DayPhase.Morning:
-                    return GameConsts.DayPhase_Morning;
-                case DayPhase.Day:
-                    return GameConsts.DayPhase_Day;
-                case DayPhase.Evening:
-                    return GameConsts.DayPhase_Evening;
-                case DayPhase.Night:
-                    return GameConsts.DayPhase_Night;
-                default:
-                    return Variant.Null;
-            }
-        }
 
         private Variant GetPlayerPronouns()
         {
@@ -771,36 +724,6 @@ namespace Aqua
             }
 
             #endregion // World
-
-            #region Scheduled Events
-
-            [LeafMember("IsEventScheduled"), UnityEngine.Scripting.Preserve]
-            static private bool IsEventScheduled(StringHash32 inEventId)
-            {
-                return Save.Script.IsEventScheduled(inEventId);
-            }
-
-            [LeafMember("HoursUntilEvent"), UnityEngine.Scripting.Preserve]
-            static private float HoursUntilEvent(StringHash32 inEventId)
-            {
-                return Save.Script.TimeUntilScheduled(inEventId).TotalHours;
-            }
-
-            [LeafMember("IsEventReady"), UnityEngine.Scripting.Preserve]
-            static private bool IsEventReady(StringHash32 inEventId)
-            {
-                return Save.Script.TimeUntilScheduled(inEventId).Ticks <= 0;
-            }
-
-            [LeafMember("GetEventData"), UnityEngine.Scripting.Preserve]
-            static private Variant ScheduledEventData(StringHash32 inEventId)
-            {
-                Variant eventData;
-                Save.Script.TryGetScheduledEventData(inEventId, out eventData);
-                return eventData;
-            }
-
-            #endregion // Scheduled Events
 
             [LeafMember("Seen"), UnityEngine.Scripting.Preserve]
             static private bool Seen(StringHash32 inNodeId)

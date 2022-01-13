@@ -10,6 +10,25 @@ namespace Aqua.Profile
 {
     public class MapData : IProfileChunk, ISerializedVersion
     {
+        private enum TimeMode : byte
+        {
+            Normal,
+            Realtime,
+            
+            FreezeAt0 = 16,
+            FreezeAt2,
+            FreezeAt4,
+            FreezeAt6,
+            FreezeAt8,
+            FreezeAt10,
+            FreezeAt12,
+            FreezeAt14,
+            FreezeAt16,
+            FreezeAt18,
+            FreezeAt20,
+            FreezeAt22,
+        }
+
         private StringHash32 m_CurrentStationId;
         private StringHash32 m_CurrentMapId;
         private StringHash32 m_CurrentMapEntranceId;
@@ -17,9 +36,6 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedRoomIds = new HashSet<StringHash32>();
-
-        public GTDate CurrentTime;
-        public TimeMode TimeMode = TimeMode.FreezeAt12;
 
         private int m_RandomSeedOffset;
         
@@ -153,7 +169,6 @@ namespace Aqua.Profile
             m_CurrentStationId = Services.Assets.Map.DefaultStationId();
             m_UnlockedStationIds.Add(m_CurrentStationId);
 
-            CurrentTime = Services.Time.StartingTime();
             m_RandomSeedOffset = RNG.Instance.Next();
 
             foreach(var room in Services.Assets.Map.DefaultUnlockedRooms())
@@ -171,7 +186,6 @@ namespace Aqua.Profile
         public void FullSync()
         {
             SyncMapId();
-            SyncTime();
         }
 
         public bool SyncMapId()
@@ -201,28 +215,14 @@ namespace Aqua.Profile
             return false;
         }
 
-        public bool SyncTime()
-        {
-            Services.Time.ProcessQueuedChanges();
-
-            GTDate currentTime = Services.Time.Current;
-            if (currentTime != CurrentTime)
-            {
-                CurrentTime = currentTime;
-                m_HasChanges = true;
-                DebugService.Log(LogMask.DataService, "[MapData] Current time id is '{0}'", currentTime);
-                return true;
-            }
-
-            return false;
-        }
-
         public StringHash32 SavedSceneId() { return m_CurrentMapId; }
         public StringHash32 SavedSceneLocationId() { return m_CurrentMapEntranceId; }
 
         #region IProfileChunk
 
-        ushort ISerializedVersion.Version { get { return 5; } }
+        // v5: site unlocks
+        // v6: removed time :(
+        ushort ISerializedVersion.Version { get { return 6; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -246,8 +246,13 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 2)
             {
                 ioSerializer.UInt32Proxy("mapLocationId", ref m_CurrentMapEntranceId);
-                ioSerializer.Int64Proxy("time", ref CurrentTime);
-                ioSerializer.Enum("timeMode", ref TimeMode);
+                if (ioSerializer.ObjectVersion < 6)
+                {
+                    Int64 temp0 = 0;
+                    TimeMode mode = 0;
+                    ioSerializer.Serialize("time", ref temp0);
+                    ioSerializer.Enum("timeMode", ref mode);
+                }
             }
 
             if (ioSerializer.ObjectVersion >= 3)

@@ -32,9 +32,7 @@ namespace Aqua.Scripting
                 .Register(GameEvents.ArgueDataUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.JobSwitched, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.JobTaskCompleted, OnAutosaveDelayedEvent, this)
-                .Register(GameEvents.CutsceneEnd, OnAutosaveDelayedEvent, this)
-                .Register(GameEvents.TimeDayChanged, OnAutoSaveTimeEvent, this)
-                .Register(GameEvents.TimeDayNightChanged, OnAutoSaveTimeEvent, this);
+                .Register(GameEvents.CutsceneEnd, OnAutosaveDelayedEvent, this);
         }
 
         private void OnDestroy()
@@ -128,12 +126,6 @@ namespace Aqua.Scripting
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Delayed save re-delayed due to more changes");
             }
-        }
-
-        private void OnAutoSaveTimeEvent()
-        {
-            Save.Map.SyncTime();
-            OnAutosaveEvent();
         }
 
         private bool CanSave()

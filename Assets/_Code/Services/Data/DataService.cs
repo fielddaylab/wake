@@ -459,7 +459,6 @@ namespace Aqua
         {
             m_CurrentSaveData.LastUpdated = DateTime.UtcNow.ToFileTime();
             OptionsData.SyncFrom(m_CurrentOptions, m_CurrentSaveData.Options, OptionsData.Authority.All);
-            m_CurrentSaveData.Map.SyncTime();
         }
 
         public bool NeedsSave()

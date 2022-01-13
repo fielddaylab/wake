@@ -25,8 +25,6 @@ namespace Aqua
         public StringHash32[] CritterIds;
         public StringHash32 EnvironmentId;
         public Flags Settings;
-        public GTDate Start;
-        public GTTimeSpan Duration;
 
         #region KeyValue
 
@@ -38,7 +36,8 @@ namespace Aqua
 
         #region ISerializedObject
 
-        public ushort Version { get { return 1; } }
+        // v2: removed time
+        public ushort Version { get { return 2; } }
 
         public void Serialize(Serializer ioSerializer)
         {
@@ -47,8 +46,13 @@ namespace Aqua
             ioSerializer.UInt32ProxyArray("critters", ref CritterIds);
             ioSerializer.UInt32Proxy("environment", ref EnvironmentId);
             ioSerializer.Enum("flags'", ref Settings);
-            ioSerializer.Int64Proxy("start", ref Start);
-            ioSerializer.Int64Proxy("duration", ref Duration);
+            
+            if (ioSerializer.ObjectVersion < 2)
+            {
+                Int64 temp0 = 0;
+                ioSerializer.Serialize("start", ref temp0);
+                ioSerializer.Serialize("duration", ref temp0);
+            }
         }
 
         #endregion // ISerializedObject

@@ -24,8 +24,8 @@ namespace Aqua.Profile
 
         static private void UpgradeFromVersion0(SaveData ioData)
         {
-            ioData.Map.TimeMode = TimeMode.FreezeAt12;
-            ioData.Map.CurrentTime = new GTDate(12, 0, 0);
+            // ioData.Map.TimeMode = TimeMode.FreezeAt12;
+            // ioData.Map.CurrentTime = new GTDate(12, 0, 0);
 
             foreach(var diveSite in Services.Assets.Map.DiveSites())
             {

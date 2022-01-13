@@ -70,9 +70,5 @@ namespace Aqua
 
         static public readonly StringHash32 ActChanged = "act:changed"; // uint actIndex
         static public readonly StringHash32 StationChanged = "station:changed"; // StringHash32 stationId
-
-        static public readonly StringHash32 TimeDayChanged = "time:dayChanged"; // InGameTime time
-        static public readonly StringHash32 TimePhaseChanged = "time:phaseChanged"; // InGameTime time
-        static public readonly StringHash32 TimeDayNightChanged = "time:dayNightChanged"; // InGameTime time
     }
 }

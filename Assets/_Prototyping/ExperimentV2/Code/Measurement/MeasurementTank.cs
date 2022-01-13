@@ -409,8 +409,6 @@ namespace ProtoAqua.ExperimentV2 {
             if (m_FeederFeature.State)
                 experimentData.Settings |= InProgressExperimentData.Flags.Feeder;
             experimentData.CritterIds = ArrayUtils.MapFrom<BestiaryDesc, StringHash32>(m_AddCrittersPanel.Selected, (a) => a.Id());
-            experimentData.Start = GTDate.Now;
-            experimentData.Duration = GTTimeSpan.Zero;
 
             using(var table = TempVarTable.Alloc()) {
                 table.Set("tankType", m_ParentTank.Type.ToString());
