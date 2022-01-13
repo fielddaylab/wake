@@ -23,7 +23,6 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
-        //[SerializeField] private int m_AppVersion = 2;
         
         #endregion // Inspector
 
@@ -130,7 +129,7 @@ namespace Aqua
         #region Logging Variables
 
         private string m_UserCode = string.Empty;
-        private int m_AppVersion = 2;
+        private int m_AppVersion = 3;
         private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
         private string m_PreviousJobName = "no-active-job";
