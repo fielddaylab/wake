@@ -30,7 +30,6 @@ namespace Aqua
         
         [SerializeField] internal BFBase[] m_Facts = null;
 
-        [SerializeField] private uint m_HistoricalRecordDuration = 2;
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
         [SerializeField] private Sprite m_Icon = null;
@@ -50,6 +49,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private int m_StationSortingOrder;
         [SerializeField, HideInInspector] private WaterPropertyBlockF32 m_EnvState;
         [SerializeField, HideInInspector] private StringHash32[] m_InhabitingOrganisms;
+        [SerializeField, HideInInspector] private uint m_HistoricalRecordDuration = 2;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
 
         #endregion // Inspector

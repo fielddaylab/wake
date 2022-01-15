@@ -18,12 +18,12 @@ namespace Aqua
         Mass, // mass (for growth)
 
         [Hidden]
-        MAX,
+        COUNT,
 
         [Hidden]
         TRACKED_COUNT = CarbonDioxide + 1,
         [Hidden]
-        NONE = MAX,
+        NONE = COUNT,
     }
 
     static public class WaterProperties

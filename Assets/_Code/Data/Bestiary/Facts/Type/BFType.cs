@@ -33,8 +33,10 @@ namespace Aqua
         #region Types
 
         internal delegate void CollectReferencesDelegate(BFBase inFact, HashSet<StringHash32> outCritterIds);
-        internal delegate string GenerateSentenceDelegate(BFBase inFact, BFDiscoveredFlags inFlags);
+        internal delegate BFDetails GenerateDetailsDelegate(BFBase inFact, BFDiscoveredFlags inFlags);
         internal delegate IEnumerable<BFFragment> GenerateFragmentsDelegate(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags);
+        internal delegate BestiaryDesc GetTargetDelegate(BFBase inFact);
+        internal delegate WaterPropertyId GetPropertyDelegate(BFBase inFact);
         internal delegate Sprite DefaultIconDelegate(BFBase inFact);
         internal delegate BFMode ModeDelegate(BFBase inFact);
 
@@ -44,24 +46,14 @@ namespace Aqua
         static private readonly BFShapeId[] s_Shapes = new BFShapeId[TypeCount];
         static private readonly BFFlags[] s_Flags = new BFFlags[TypeCount];
         static private readonly CollectReferencesDelegate[] s_CollectReferencesDelegates = new CollectReferencesDelegate[TypeCount];
-        static private readonly GenerateSentenceDelegate[] s_GenerateSentenceDelegates = new GenerateSentenceDelegate[TypeCount];
+        static private readonly GenerateDetailsDelegate[] s_GenerateDetailsDelegates = new GenerateDetailsDelegate[TypeCount];
         static private readonly GenerateFragmentsDelegate[] s_GenerateFragmentsDelegates = new GenerateFragmentsDelegate[TypeCount];
+        static private readonly GetTargetDelegate[] s_GetTargetDelegates = new GetTargetDelegate[TypeCount];
+        static private readonly GetPropertyDelegate[] s_GetPropertyDelegates = new GetPropertyDelegate[TypeCount];
         static private readonly Comparison<BFBase>[] s_ComparisonDelegates = new Comparison<BFBase>[TypeCount];
 
         static public bool IsBehavior(BFTypeId inTypeId) {
-            switch(inTypeId) {
-                case BFTypeId.Consume:
-                case BFTypeId.Eat:
-                case BFTypeId.Death:
-                case BFTypeId.Grow:
-                case BFTypeId.Parasites:
-                case BFTypeId.Produce:
-                case BFTypeId.Reproduce:
-                    return true;
-                
-                default:
-                    return false;
-            }
+            return (s_Flags[(int) inTypeId] & BFFlags.IsBehavior) != 0;
         }
 
         #region Attributes
@@ -100,76 +92,42 @@ namespace Aqua
 
         static public BestiaryDesc Target(BFBase inFact)
         {
-            switch(inFact.Type)
-            {
-                case BFTypeId.Eat:
-                {
-                    return ((BFEat) inFact).Critter;
-                }
-                
-                // TODO: Parasite
-                
-                default :
-                {
-                    return null;
-                }
-            }
+            GetTargetDelegate custom = s_GetTargetDelegates[(int) inFact.Type];
+            if (custom != null)
+                return custom(inFact);
+            
+            return null;
         }
 
         static public WaterPropertyId WaterProperty(BFBase inFact)
         {
-            switch(inFact.Type)
-            {
-                case BFTypeId.Consume:
-                {
-                    return ((BFConsume) inFact).Property;
-                }
-
-                case BFTypeId.Produce:
-                {
-                    return ((BFProduce) inFact).Property;
-                }
-
-                case BFTypeId.State:
-                {
-                    return ((BFState) inFact).Property;
-                }
-
-                case BFTypeId.WaterProperty:
-                {
-                    return ((BFWaterProperty) inFact).Property;
-                }
-
-                case BFTypeId.WaterPropertyHistory:
-                {
-                    return ((BFWaterPropertyHistory) inFact).Property;
-                }
-
-                default:
-                {
-                    return WaterPropertyId.NONE;
-                }
-            }
+            GetPropertyDelegate custom = s_GetPropertyDelegates[(int) inFact.Type];
+            if (custom != null)
+                return custom(inFact);
+            
+            return WaterPropertyId.NONE;
         }
 
         #endregion // Attributes
 
         #region Methods
 
-        static public void CollectReferences(BFBase inFact, HashSet<StringHash32> outCritterIds)
+        static public BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
-            outCritterIds.Add(inFact.Parent.Id());
-            s_CollectReferencesDelegates[(int) inFact.Type]?.Invoke(inFact, outCritterIds);
+            GenerateDetailsDelegate custom = s_GenerateDetailsDelegates[(int) inFact.Type];
+            if (custom != null)
+                return custom(inFact, inFlags);
+
+            BFDetails details;
+            details.Image = inFact.Icon;
+            details.Description = null;
+            details.Header = null;
+            return details;
         }
 
-        static public string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static public BFDetails GenerateDetails(BFBase inFact)
         {
-            return s_GenerateSentenceDelegates[(int) inFact.Type]?.Invoke(inFact, inFlags);
-        }
-
-        static public string GenerateSentence(BFBase inFact)
-        {
-            return GenerateSentence(inFact, s_DefaultDiscoveredFlags[(int) inFact.Type]);
+            return GenerateDetails(inFact, s_DefaultDiscoveredFlags[(int) inFact.Type]);
         }
 
         static public IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
@@ -217,11 +175,13 @@ namespace Aqua
             s_ComparisonDelegates[(int) inType] = inComparison;
         }
 
-        static internal void DefineMethods(BFTypeId inType, CollectReferencesDelegate inCollectReferences, GenerateSentenceDelegate inGenerateSentences, GenerateFragmentsDelegate inGenerateFragments)
+        static internal void DefineMethods(BFTypeId inType, CollectReferencesDelegate inCollectReferences, GenerateDetailsDelegate inGenerateDetails, GenerateFragmentsDelegate inGenerateFragments, GetTargetDelegate inGetTarget, GetPropertyDelegate inGetProperty)
         {
             s_CollectReferencesDelegates[(int) inType] = inCollectReferences;
-            s_GenerateSentenceDelegates[(int) inType] = inGenerateSentences;
+            s_GenerateDetailsDelegates[(int) inType] = inGenerateDetails;
             s_GenerateFragmentsDelegates[(int) inType] = inGenerateFragments;
+            s_GetTargetDelegates[(int) inType] = inGetTarget;
+            s_GetPropertyDelegates[(int) inType] = inGetProperty;
         }
 
         #endregion // Definitions

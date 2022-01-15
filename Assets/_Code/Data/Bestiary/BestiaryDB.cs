@@ -24,6 +24,10 @@ namespace Aqua
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
         [SerializeField] private Sprite m_DefaultGrowSprite = null;
         [SerializeField] private Sprite m_DefaultDeathSprite = null;
+        [SerializeField] private Sprite m_DefaultVisualModelSprite = null;
+        [SerializeField] private Sprite m_DefaultDescribeModelSprite = null;
+        [SerializeField] private Sprite m_DefaultPredictModelSprite = null;
+        [SerializeField] private Sprite m_DefaultInterveneModelSprite = null;
         
         [Header("Colors")]
         [SerializeField] private Color m_BehaviorQualitativeBGColor = Color.blue;
@@ -64,6 +68,21 @@ namespace Aqua
                     return m_DefaultGrowSprite;
                 case BFTypeId.Death:
                     return m_DefaultDeathSprite;
+                case BFTypeId.Model:
+                    BFModelType modelType = ((BFModel) inFact).ModelType;
+                    switch(modelType)
+                    {
+                        case BFModelType.Visual:
+                            return m_DefaultVisualModelSprite;
+                        case BFModelType.Descriptive:
+                            return m_DefaultDescribeModelSprite;
+                        case BFModelType.Prediction:
+                            return m_DefaultPredictModelSprite;
+                        case BFModelType.Intervention:
+                            return m_DefaultInterveneModelSprite;
+                        default:
+                            return null;
+                    }
                 default:
                     return null;
             }

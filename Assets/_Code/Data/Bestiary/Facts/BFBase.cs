@@ -121,7 +121,9 @@ namespace Aqua
 
     public enum BFFlags : byte
     {
-        IsGraphable = 0x01
+        IsGraphable = 0x01,
+        IsBehavior = 0x02,
+        HideFactInDetails = 0x04
     }
 
     public struct BFDetails

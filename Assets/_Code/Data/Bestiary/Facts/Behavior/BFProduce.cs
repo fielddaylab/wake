@@ -30,8 +30,8 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.Produce, null, GenerateSentence, GenerateFragments);
+            BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, Compare);
+            BFType.DefineMethods(BFTypeId.Produce, null, GenerateDetails, GenerateFragments, null, (f) => ((BFProduce) f).Property);
             BFType.DefineEditor(BFTypeId.Produce, DefaultIcon, BFMode.Player);
         }
 
@@ -48,15 +48,25 @@ namespace Aqua
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFProduce fact = (BFProduce) inFact;
+            WaterPropertyDesc property = BestiaryUtils.Property(fact.Property);
+
+            BFDetails details;
+            details.Header = Loc.Find(DetailsHeader);
+            details.Image = property.ImageSet();
 
             if (fact.OnlyWhenStressed)
             {
-                return Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), BestiaryUtils.Property(fact.Property).LabelId());
             }
-            return Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.Property(fact.Property).LabelId());
+            else
+            {
+                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.Property(fact.Property).LabelId());
+            }
+
+            return details;
         }
 
         static private int Compare(BFBase x, BFBase y)

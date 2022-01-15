@@ -128,7 +128,7 @@ namespace Aqua {
             #if UNITY_EDITOR
             if (!UnityEditor.EditorApplication.isPlaying) {
                 if (s_EditorWaterProperties == null) {
-                    s_EditorWaterProperties = new WaterPropertyDesc[(int)WaterPropertyId.MAX];
+                    s_EditorWaterProperties = new WaterPropertyDesc[(int)WaterPropertyId.COUNT];
                     foreach (WaterPropertyDesc prop in ValidationUtils.FindAllAssets<WaterPropertyDesc>()) {
                         s_EditorWaterProperties[(int)prop.Index()] = prop;
                     }

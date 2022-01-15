@@ -117,6 +117,13 @@ namespace Aqua
             return future;
         }
 
+        public Future<StringHash32> PresentFactDetails(BFDetails inDetails, BFBase inFact, BFDiscoveredFlags inFlags, PopupFlags inPopupFlags, params NamedOption[] inOptions)
+        {
+            Future<StringHash32> future = new Future<StringHash32>();
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inDetails.Header, inDetails.Description, inDetails.Image, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, inOptions, inPopupFlags)).TryManuallyUpdate(0);
+            return future;
+        }
+
         private void Configure(string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags)
         {
             if (!string.IsNullOrEmpty(inHeader))
@@ -196,20 +203,28 @@ namespace Aqua
             {
                 BFBase fact = inFacts[i];
                 BFDiscoveredFlags flags = i >= inFlags.Length ? BFType.DefaultDiscoveredFlags(inFacts[i]) : inFlags[i];
-                switch(fact.Type) {
-                    case BFTypeId.WaterProperty:
-                    case BFTypeId.WaterPropertyHistory:
-                    case BFTypeId.Population:
-                    case BFTypeId.PopulationHistory:
-                        target = m_GridFactLayout.transform;
-                        bUsedGrid = true;
-                        break;
+                if (inFlags.Length > 1)
+                {
+                    switch(fact.Type) {
+                        case BFTypeId.WaterProperty:
+                        case BFTypeId.WaterPropertyHistory:
+                        case BFTypeId.Population:
+                        case BFTypeId.PopulationHistory:
+                            target = m_GridFactLayout.transform;
+                            bUsedGrid = true;
+                            break;
 
-                    default: {
-                        target = m_VerticalFactLayout.transform;
-                        bUsedVertical = true;
-                        break;
+                        default: {
+                            target = m_VerticalFactLayout.transform;
+                            bUsedVertical = true;
+                            break;
+                        }
                     }
+                }
+                else
+                {
+                    target = m_VerticalFactLayout.transform;
+                    bUsedVertical = true;
                 }
                 m_FactPools.Alloc(inFacts[i], null, flags, target);
             }
@@ -425,6 +440,7 @@ namespace Aqua
             if (!WasShowing())
             {
                 Services.Input?.PushPriority(m_RaycastBlocker);
+                Services.Input?.PushFlags(m_RaycastBlocker);
             }
         }
 
@@ -444,6 +460,7 @@ namespace Aqua
 
             if (WasShowing())
             {
+                Services.Input?.PopFlags(m_RaycastBlocker);
                 Services.Input?.PopPriority(m_RaycastBlocker);
             }
         }

@@ -92,6 +92,36 @@ been cycling
 :: whenStressed.label
 When Stressed
 
+:: behavior.header
+Behavior Report
+
+:: state.header
+Environmental Tolerance Report
+
+:: population.header
+Population Report
+
+:: populationHistory.header
+Historical Population Report
+
+:: waterChem.header
+Water Chemistry Report
+
+:: waterChemHistory.header
+Historical Water Chemistry Report
+
+:: visualModel.header
+Visual Model Report
+
+:: descriptiveModel.header
+Descriptive Model Report
+
+:: predictionModel.header
+Predictive Model Report
+
+:: interveneModel.header
+Intervention Model Report
+
 # basePath factFormat
 
 :: eat
@@ -140,11 +170,11 @@ When Stressed
 {critter-name}{0}{/critter-name} dies {1} when stressed.
 
 :: population
-There are {0} {critter-name}{1}{/critter-name} at {2}.
+There are {0} {critter-name}{1}{/critter-name} at {env-name}{2}{/env-name}.
 
 :: population.herd
-There are {0} {critter-name}{1}{/critter-name} at {2}.
+There are {0} {critter-name}{1}{/critter-name} at {env-name}{2}{/env-name}.
 
 :: populationHistory
-The {critter-name}{0}{/critter-name} population at {1} has {2} over the past {3} years.
+The {critter-name}{0}{/critter-name} population at {env-name}{1}{/env-name} has {2} over the past {3} years.
 

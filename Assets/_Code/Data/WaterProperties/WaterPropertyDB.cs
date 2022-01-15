@@ -22,7 +22,7 @@ namespace Aqua
         {
             EnsureCreated();
 
-            if (inId < 0 || inId >= WaterPropertyId.MAX)
+            if (inId < 0 || inId >= WaterPropertyId.COUNT)
                 return null;
 
             return m_IndexMap[(int) inId];
@@ -65,7 +65,7 @@ namespace Aqua
         {
             SortObjects((a, b) => a.Index().CompareTo(b.Index()));
             m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];
-            m_IndexMap = new WaterPropertyDesc[(int) WaterPropertyId.MAX];
+            m_IndexMap = new WaterPropertyDesc[(int) WaterPropertyId.COUNT];
 
             foreach(var property in m_Objects)
             {

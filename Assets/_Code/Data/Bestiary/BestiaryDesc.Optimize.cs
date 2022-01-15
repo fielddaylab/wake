@@ -63,6 +63,13 @@ namespace Aqua
                                     populationSet.Add(population.Critter.Id());
                                     break;
                                 }
+
+                                case BFTypeId.Sim:
+                                {
+                                    BFSim sim = (BFSim) fact;
+                                    m_HistoricalRecordDuration = sim.SyncTickCount;
+                                    break;
+                                }
                             }
 
                             m_InhabitingOrganisms = new StringHash32[populationSet.Count];

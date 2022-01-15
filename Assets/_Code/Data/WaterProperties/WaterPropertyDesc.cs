@@ -17,6 +17,7 @@ namespace Aqua
         [Header("Display")]
         [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private Sprite m_Icon = null;
+        [SerializeField, StreamedImagePath] private string m_HiResIconPath = null;
         [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
 
         [Header("Text")]
@@ -44,6 +45,7 @@ namespace Aqua
 
         public TextId LabelId() { return m_LabelId; }
         public Sprite Icon() { return m_Icon; }
+        public StreamedImageSet ImageSet() { return new StreamedImageSet(m_HiResIconPath, m_Icon); }
         public Color Color() { return m_Palette.Background; }
         public ColorPalette4 Palette() { return m_Palette; }
         

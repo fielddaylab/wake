@@ -31,7 +31,7 @@ namespace Aqua
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
+        [SerializeField, StreamedImagePath] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = Color.white;
 
         [Header("Sorting")]

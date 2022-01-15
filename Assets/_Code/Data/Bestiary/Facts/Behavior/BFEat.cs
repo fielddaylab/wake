@@ -34,8 +34,8 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsGraphable, BFDiscoveredFlags.Base, Compare);
-            BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateSentence, GenerateFragments);
+            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable, BFDiscoveredFlags.Base, Compare);
+            BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateDetails, GenerateFragments, (f) => ((BFEat)f).Critter, null);
             BFType.DefineEditor(BFTypeId.Eat, null, BFMode.Player);
         }
 
@@ -80,21 +80,29 @@ namespace Aqua
             }
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFEat fact = (BFEat) inFact;
             bool bIsHuman = inFact.Parent.HasFlags(BestiaryDescFlags.Human);
 
+            BFDetails details;
+            details.Header = Loc.Find(DetailsHeader);
+            details.Image = fact.Critter.ImageSet();
+
             if (bIsHuman)
             {
-                return Loc.Format(CatchSentence, fact.Parent.CommonName(), fact.Critter.CommonName());
+                details.Description = Loc.Format(CatchSentence, fact.Parent.CommonName(), fact.Critter.CommonName());
+            }
+            else if (fact.OnlyWhenStressed)
+            {
+                details.Description = Loc.Format(EatSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), fact.Critter.CommonName());
+            }
+            else
+            {
+                details.Description = Loc.Format(EatSentence, inFact.Parent.CommonName(), fact.Critter.CommonName());
             }
 
-            if (fact.OnlyWhenStressed)
-            {
-                return Loc.Format(EatSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), fact.Critter.CommonName());
-            }
-            return Loc.Format(EatSentence, inFact.Parent.CommonName(), fact.Critter.CommonName());
+            return details;
         }
 
         static private int Compare(BFBase x, BFBase y)

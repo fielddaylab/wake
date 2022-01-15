@@ -27,7 +27,7 @@ namespace Aqua
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Population, BFShapeId.Population, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.Population, null, GenerateSentence, null);
+            BFType.DefineMethods(BFTypeId.Population, null, GenerateDetails, null, (f) => ((BFPopulation) f).Critter, null);
             BFType.DefineEditor(BFTypeId.Population, DefaultIcon, BFMode.Player);
         }
 
@@ -36,13 +36,19 @@ namespace Aqua
             return BestiaryDesc.SortById(((BFPopulation) x).Critter, ((BFPopulation) y).Critter);
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFPopulation fact = (BFPopulation) inFact;
+            BFDetails details;
+            details.Header = Loc.Find("fact.population.header");
+            details.Image = fact.Critter.ImageSet();
+
             TextId format = PopulationSentence;
             if (fact.Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
                 format = PopulationHerdSentence;
-            return Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Parent, fact.Value), fact.Critter.PluralCommonName(), fact.Parent.CommonName());
+            details.Description = Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Parent, fact.Value), fact.Critter.PluralCommonName(), BestiaryUtils.LocationLabel(fact.Parent));
+
+            return details;
         }
 
         static private Sprite DefaultIcon(BFBase inFact)

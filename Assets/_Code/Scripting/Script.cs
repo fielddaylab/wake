@@ -46,5 +46,20 @@ namespace Aqua {
         static public Future<StringHash32> PopupUpgradedFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
             return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, facts, flags);
         }
+
+        static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, params NamedOption[] options) {
+            BFDetails details = BFType.GenerateDetails(fact, flags);
+            bool showFact = (BFType.Flags(fact) & BFFlags.HideFactInDetails) == 0;
+
+            if (showFact) {
+                return Services.UI.Popup.PresentFactDetails(
+                    details, fact, flags, PopupFlags.ShowCloseButton, options
+                );
+            } else {
+                return Services.UI.Popup.Present(
+                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton, options
+                );
+            }
+        }
     }
 }

@@ -29,8 +29,8 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, CompareStressedPair);
-            BFType.DefineMethods(BFTypeId.Grow, null, GenerateSentence, GenerateFragments);
+            BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, CompareStressedPair);
+            BFType.DefineMethods(BFTypeId.Grow, null, GenerateDetails, GenerateFragments, null, null);
             BFType.DefineEditor(BFTypeId.Grow, null, BFMode.Player);
         }
 
@@ -46,15 +46,24 @@ namespace Aqua
             }
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFGrow fact = (BFGrow) inFact;
 
+            BFDetails details;
+            details.Header = Loc.Find(DetailsHeader);
+            details.Image = fact.Parent.ImageSet();
+
             if (fact.OnlyWhenStressed)
             {
-                return Loc.Format(GrowSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative));
+                details.Description = Loc.Format(GrowSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative));
             }
-            return Loc.Format(GrowSentence, inFact.Parent.CommonName());
+            else
+            {
+                details.Description = Loc.Format(GrowSentence, inFact.Parent.CommonName());
+            }
+
+            return details;
         }
 
         #endregion // Behavior

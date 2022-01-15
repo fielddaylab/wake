@@ -29,32 +29,9 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Death, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, null);
-            BFType.DefineMethods(BFTypeId.Death, null, GenerateSentence, GenerateFragments);
+            BFType.DefineAttributes(BFTypeId.Death, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, null);
+            BFType.DefineMethods(BFTypeId.Death, null, null, null, null, null);
             BFType.DefineEditor(BFTypeId.Death, null, BFMode.Internal);
-        }
-
-        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
-        {
-            BFDeath fact = (BFDeath) inFact;
-
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
-            yield return BFFragment.CreateLocVerb(DeathVerb);
-            if (fact.OnlyWhenStressed)
-            {
-                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
-            }
-        }
-
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
-        {
-            BFDeath fact = (BFDeath) inFact;
-
-            if (fact.OnlyWhenStressed)
-            {
-                return Loc.Format(DeathSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative));
-            }
-            return Loc.Format(DeathSentence, inFact.Parent.CommonName());
         }
 
         #endregion // Behavior

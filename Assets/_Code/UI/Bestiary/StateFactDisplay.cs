@@ -62,7 +62,7 @@ namespace Aqua
         }
 
         public void SetEnvironment(BestiaryDesc inEnvironment = null) {
-            if (!m_EnvironmentValueMarker || m_CachedPropertyId == WaterPropertyId.MAX) {
+            if (!m_EnvironmentValueMarker || m_CachedPropertyId == WaterPropertyId.COUNT) {
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace Aqua
         void IPoolAllocHandler.OnAlloc() { }
 
         void IPoolAllocHandler.OnFree() {
-            m_CachedPropertyId = WaterPropertyId.MAX;
+            m_CachedPropertyId = WaterPropertyId.COUNT;
             if (m_EnvironmentValueMarker) {
                 m_EnvironmentValueMarker.gameObject.SetActive(false);
             }

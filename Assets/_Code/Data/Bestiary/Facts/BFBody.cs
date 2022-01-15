@@ -30,7 +30,7 @@ namespace Aqua
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Body, BFShapeId.None, 0, BFDiscoveredFlags.All, null);
-            BFType.DefineMethods(BFTypeId.Body, null, null, null);
+            BFType.DefineMethods(BFTypeId.Body, null, null, null, null, null);
             BFType.DefineEditor(BFTypeId.Body, null, BFMode.Internal);
         }
 

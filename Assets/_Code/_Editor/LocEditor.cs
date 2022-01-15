@@ -370,24 +370,25 @@ namespace Aqua.Editor {
                 foreach (var package in instance.m_PackageRecords) {
                     if (package.AllBasePaths.Count == 0) {
                         blankPackage = package;
-                        break;
-                    } else {
-                        BasePathHeader basePath;
-                        int bestMatchIdx = -1;
-                        int bestMatchLength = 0;
-                        for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
-                            basePath = package.AllBasePaths[i];
-                            if (basePath.Path.Length > bestMatchLength & inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
-                                bestMatchLength = basePath.Path.Length;
-                                bestMatchIdx = i;
-                            }
+                        continue;
+                    }
+                    
+                    BasePathHeader basePath;
+                    int bestMatchIdx = -1;
+                    int bestMatchLength = 0;
+                    for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
+                        basePath = package.AllBasePaths[i];
+                        if (basePath.Path.Length > bestMatchLength & inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
+                            bestMatchLength = basePath.Path.Length;
+                            bestMatchIdx = i;
                         }
+                    }
 
-                        if (bestMatchIdx >= 0) {
-                            newRecord = InsertTextRecord(inKey, inText, package, bestMatchIdx);
-                            EditorUtility.SetDirty(instance);
-                            bInserted = true;
-                        }
+                    if (bestMatchIdx >= 0) {
+                        newRecord = InsertTextRecord(inKey, inText, package, bestMatchIdx);
+                        EditorUtility.SetDirty(instance);
+                        bInserted = true;
+                        break;
                     }
                 }
 

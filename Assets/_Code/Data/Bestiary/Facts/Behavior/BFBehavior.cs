@@ -9,6 +9,8 @@ namespace Aqua
     {
         #region Consts
 
+        static protected readonly TextId DetailsHeader = "fact.behavior.header";
+
         static private readonly TextId[] s_QualitativeWords = new TextId[]
         {
             default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster"

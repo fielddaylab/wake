@@ -587,4 +587,10 @@ namespace Aqua {
 
         #endregion // Management
     }
+
+    public class StreamedImagePathAttribute : StreamingPathAttribute {
+        public StreamedImagePathAttribute()
+            : base("png,jpg,jpeg,webm,mp4")
+        { }
+    }
 }

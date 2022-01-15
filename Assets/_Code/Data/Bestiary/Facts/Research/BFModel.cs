@@ -6,14 +6,18 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Model")]
     public class BFModel : BFBase // yes i know models aren't strictly facts in a scientific sense but this fits into our data model
     {
+        static private readonly TextId[] DefaultHeaders = new TextId[] {
+            "fact.visualModel.header", "fact.descriptiveModel.header", "fact.predictionModel.header", "fact.interveneModel.header", ""
+        };
+
         #region Inspector
 
         [Header("Model")]
-        public Sprite Image = null;
+        public BFModelType ModelType = BFModelType.Visual;
+        [StreamedImagePath] public string HighResImagePath = null;
         public TextId HeaderId = default;
         public TextId DescriptionId = default;
         public TextId SentenceId = default;
-        [StreamingPath("png,jpg,jpeg,webm,mp4")] public string HighResImagePath = null;
 
         #endregion // Inspector
 
@@ -23,20 +27,54 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Model, BFShapeId.Model, 0, BFDiscoveredFlags.All, null);
-            BFType.DefineMethods(BFTypeId.Model, null, GenerateSentence, null);
+            BFType.DefineAttributes(BFTypeId.Model, BFShapeId.Model, BFFlags.HideFactInDetails, BFDiscoveredFlags.All, Compare);
+            BFType.DefineMethods(BFTypeId.Model, null, GenerateDetails, null, null, null);
             BFType.DefineEditor(BFTypeId.Model, null, BFMode.Player);
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private int Compare(BFBase x, BFBase y)
+        {
+            BFModel modelX = (BFModel) x;
+            BFModel modelY = (BFModel) y;
+
+            int typeCompare = (int) modelX.ModelType - (int) modelY.ModelType;
+            if (typeCompare < 0)
+                return -1;
+            if (typeCompare > 0)
+                return 1;
+
+            return x.Id.CompareTo(y.Id);
+        }
+
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFModel fact = (BFModel) inFact;
+
+            BFDetails details;
+            TextId header = fact.HeaderId;
+            if (header.IsEmpty)
+                header = DefaultHeaders[(int) fact.ModelType];
+            details.Header = Loc.Find(header);
+
+            details.Image = new StreamedImageSet(fact.HighResImagePath, fact.Icon);
+
             TextId sentenceId = fact.SentenceId;
             if (sentenceId.IsEmpty)
                 sentenceId = fact.DescriptionId;
-            return Loc.Find(sentenceId);
+            details.Description = Loc.Find(sentenceId);
+
+            return details;
         }
 
         #endregion // Behavior
+    }
+
+    public enum BFModelType : byte
+    {
+        Visual,
+        Descriptive,
+        Prediction,
+        Intervention,
+        Custom
     }
 }

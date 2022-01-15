@@ -23,8 +23,8 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFShapeId.WaterPropertyHistory, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.WaterPropertyHistory, null, GenerateSentence, null);
+            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFShapeId.WaterPropertyHistory, BFFlags.HideFactInDetails, BFDiscoveredFlags.All, Compare);
+            BFType.DefineMethods(BFTypeId.WaterPropertyHistory, null, GenerateDetails, null, null, (f) => ((BFWaterPropertyHistory) f).Property);
             BFType.DefineEditor(BFTypeId.WaterPropertyHistory, DefaultIcon, BFMode.Player);
         }
 
@@ -33,11 +33,17 @@ namespace Aqua
             return WaterPropertyDB.SortByVisualOrder(((BFWaterPropertyHistory) x).Property, ((BFWaterPropertyHistory) y).Property);
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
-            BFWaterPropertyHistory propFact = (BFWaterPropertyHistory) inFact;
-            WaterPropertyDesc desc = BestiaryUtils.Property(propFact.Property);
-            return Loc.Format(desc.EnvironmentHistoryFactFormat(), propFact.Parent.CommonName(), BestiaryUtils.GraphTypeToTextId(propFact.Graph), propFact.Parent.HistoricalRecordDuration());
+            BFWaterPropertyHistory fact = (BFWaterPropertyHistory) inFact;
+            WaterPropertyDesc desc = BestiaryUtils.Property(fact.Property);
+
+            BFDetails details;
+            details.Header = Loc.Find("fact.waterChemHistory.header");
+            details.Image = Services.Assets.Bestiary.GraphTypeToImage(fact.Graph);
+            details.Description = Loc.Format(desc.EnvironmentHistoryFactFormat(), BestiaryUtils.LocationLabel(fact.Parent), BestiaryUtils.GraphTypeToTextId(fact.Graph), fact.Parent.HistoricalRecordDuration());
+
+            return details;
         }
 
         static private Sprite DefaultIcon(BFBase inFact)

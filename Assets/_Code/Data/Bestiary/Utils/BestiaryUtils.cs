@@ -396,6 +396,24 @@ namespace Aqua
             }
         }
 
+        /// <summary>
+        /// Returns the text for the location of the given organism or environment.
+        /// </summary>
+        static public TextId LocationLabel(BestiaryDesc inEntry)
+        {
+            MapDesc map;
+            if (inEntry.Category() == BestiaryDescCategory.Critter)
+            {
+                map = Assets.Map(inEntry.StationId());
+            }
+            else
+            {
+                map = Assets.Map(inEntry.DiveSiteId());
+            }
+
+            return map.ShortLabelId();
+        }
+
         #endregion // Facts
 
         #region Water Properties

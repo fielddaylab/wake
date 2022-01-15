@@ -13,6 +13,10 @@ using UnityEngine.UI;
 namespace Aqua.Portable {
     public sealed class BestiaryApp : PortableMenuApp {
 
+        static private readonly NamedOption[] PresentFactOptions = new NamedOption[] {
+            new NamedOption("present", "ui.popup.presentButton")
+        };
+
         public delegate void PopulateEntryToggleDelegate(PortableBestiaryToggle inToggle, BestiaryDesc inEntry);
         public delegate void PopulateEntryPageDelegate(BestiaryPage inPage, BestiaryDesc inEntry);
         public delegate void PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
@@ -99,18 +103,30 @@ namespace Aqua.Portable {
         }
 
         private void OnFactClicked(BFBase inFact) {
-            Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);
             Services.Data.SetVariable("portable:lastSelectedFactId", inFact.Id);
-            if (m_Request.OnSelect != null) {
-                if (!m_Request.OnSelect(inFact, m_Request.Response)) {
-                    m_ParentMenu.Hide();
-                } else {
-                    UpdateAllFactInstances();
-                }
+            NamedOption[] options;
+            if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
+                options = PresentFactOptions;
             } else {
-                m_Request.Response.Complete(inFact.Id);
-                m_ParentMenu.Hide();
+                options = Array.Empty<NamedOption>();
             }
+
+            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), options);
+            request.OnComplete((o) => {
+                if (!o.IsEmpty) {
+                    Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);
+                    if (m_Request.OnSelect != null) {
+                        if (!m_Request.OnSelect(inFact, m_Request.Response)) {
+                            m_ParentMenu.Hide();
+                        } else {
+                            UpdateAllFactInstances();
+                        }
+                    } else {
+                        m_Request.Response.Complete(inFact.Id);
+                        m_ParentMenu.Hide();
+                    }
+                }
+            });
         }
 
         #endregion // Callbacks
@@ -240,7 +256,7 @@ namespace Aqua.Portable {
                 }
 
                 default: {
-                    factButton.Initialize(inFact, false, true, null);
+                    factButton.Initialize(inFact, true, true, m_CachedSelectFactDelegate ?? (m_CachedSelectFactDelegate = OnFactClicked));
                     break;
                 }
             }

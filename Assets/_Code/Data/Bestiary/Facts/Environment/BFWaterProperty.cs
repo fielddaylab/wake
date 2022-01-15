@@ -24,7 +24,7 @@ namespace Aqua
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.WaterProperty, BFShapeId.WaterProperty, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.WaterProperty, null, GenerateSentence, null);
+            BFType.DefineMethods(BFTypeId.WaterProperty, null, GenerateDetails, null, null, (f) => ((BFWaterProperty) f).Property);
             BFType.DefineEditor(BFTypeId.WaterProperty, DefaultIcon, BFMode.Always);
         }
 
@@ -33,11 +33,17 @@ namespace Aqua
             return WaterPropertyDB.SortByVisualOrder(((BFWaterProperty) x).Property, ((BFWaterProperty) y).Property);
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
-            BFWaterProperty propFact = (BFWaterProperty) inFact;
-            WaterPropertyDesc desc = BestiaryUtils.Property(propFact.Property);
-            return Loc.Format(desc.EnvironmentFactFormat(), propFact.Parent.CommonName(), desc.FormatValue(propFact.Value));
+            BFWaterProperty fact = (BFWaterProperty) inFact;
+            WaterPropertyDesc desc = BestiaryUtils.Property(fact.Property);
+            
+            BFDetails details;
+            details.Header = Loc.Find("fact.waterChem.header");
+            details.Image = desc.ImageSet();
+            details.Description = Loc.Format(desc.EnvironmentFactFormat(), BestiaryUtils.LocationLabel(fact.Parent), desc.FormatValue(fact.Value));
+
+            return details;
         }
 
         static private Sprite DefaultIcon(BFBase inFact)

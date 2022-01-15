@@ -66,7 +66,7 @@ namespace Aqua
             if (inArgs != null)
             {
                 for(int i = 0; i < inArgs.Length; i++)
-                    Process(locService, ref inArgs[0]);
+                    Process(locService, ref inArgs[i]);
             }
             return string.Format(format, inArgs);
         }
@@ -101,7 +101,7 @@ namespace Aqua
             if (inArgs != null)
             {
                 for(int i = 0; i < inArgs.Length; i++)
-                    Process(locService, ref inArgs[0]);
+                    Process(locService, ref inArgs[i]);
             }
             return string.Format(inFormat, inArgs);
         }

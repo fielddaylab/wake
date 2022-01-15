@@ -34,6 +34,7 @@ namespace Aqua.Portable {
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private PortableRequest m_Request;
         [NonSerialized] private float m_ActiveOnPosition;
+        [NonSerialized] private bool? m_InputOverrideSetting;
 
         #region Unity Events
 
@@ -46,6 +47,9 @@ namespace Aqua.Portable {
             if (!s_RegisteredHandler) {
                 Services.Script.RegisterChoiceSelector("fact", RequestFact);
             }
+
+            Services.UI.Popup.OnShowEvent.AddListener((s) => OnPopupOpened());
+            Services.UI.Popup.OnHideCompleteEvent.AddListener((s) => OnPopupClosed());
         }
 
         #endregion // Unity Events
@@ -101,6 +105,8 @@ namespace Aqua.Portable {
                 m_Input.Override = null;
                 m_ActiveOnPosition = m_OnPosition;
             }
+
+            m_InputOverrideSetting = m_Input.Override;
         }
 
         #endregion // Requests
@@ -125,10 +131,12 @@ namespace Aqua.Portable {
             Services.Data?.SetVariable("portable:open", false);
 
             m_Input.PopPriority();
-            if (m_Input.Override.HasValue && m_Input.Override.Value == true) {
+            if (m_InputOverrideSetting.HasValue) {
                 Services.Input?.PopFlags(this);
                 m_Input.Override = null;
+                m_InputOverrideSetting = null;
             }
+
 
             m_Request.Dispose();
             m_AppNavigationGroup.interactable = true;
@@ -192,6 +200,20 @@ namespace Aqua.Portable {
         }
 
         #endregion // BasePanel
+
+        #region Handlers
+
+        private void OnPopupOpened() {
+            if (IsShowing()) {
+                m_Input.Override = false;
+            }
+        }
+
+        private void OnPopupClosed() {
+            m_Input.Override = m_InputOverrideSetting;
+        }
+
+        #endregion // Handlers
 
         static public void OpenApp(PortableAppId inId) {
             Services.UI.FindPanel<PortableMenu>().Open(PortableRequest.OpenApp(inId));

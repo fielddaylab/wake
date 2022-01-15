@@ -36,7 +36,7 @@ namespace Aqua
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.State, BFShapeId.State, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.State, null, GenerateSentence, null);
+            BFType.DefineMethods(BFTypeId.State, null, GenerateDetails, null, null, (f) => ((BFState) f).Property);
             BFType.DefineEditor(BFTypeId.State, DefaultIcon, BFMode.Player);
         }
 
@@ -45,25 +45,32 @@ namespace Aqua
             return WaterPropertyDB.SortByVisualOrder(((BFState) x).Property, ((BFState) y).Property);
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFState stateFact = (BFState) inFact;
             WaterPropertyDesc desc = BestiaryUtils.Property(stateFact.Property);
+            BFDetails details;
+
+            details.Header = Loc.Find("fact.state.header");
+            details.Image = desc.ImageSet();
             
             if (stateFact.HasDeath)
             {
-                return Loc.Format(desc.StateChangeFormat(), stateFact.Parent.CommonName()
+                details.Description = Loc.Format(desc.StateChangeFormat(), stateFact.Parent.CommonName()
                     , desc.FormatValue(stateFact.m_MinSafe), desc.FormatValue(stateFact.m_MaxSafe)
                     , desc.FormatValue(stateFact.m_MinStressed), desc.FormatValue(stateFact.m_MaxStressed)
                 );
             }
-
-            if (stateFact.HasStressed)
+            else if (stateFact.HasStressed)
             {
-                return Loc.Format(desc.StateChangeStressOnlyFormat(), stateFact.Parent.CommonName(), desc.FormatValue(stateFact.m_MinSafe), desc.FormatValue(stateFact.m_MaxSafe));
+                details.Description = Loc.Format(desc.StateChangeStressOnlyFormat(), stateFact.Parent.CommonName(), desc.FormatValue(stateFact.m_MinSafe), desc.FormatValue(stateFact.m_MaxSafe));
+            }
+            else
+            {
+                details.Description = Loc.Format(desc.StateChangeUnaffectedFormat(), stateFact.Parent.CommonName());
             }
 
-            return Loc.Format(desc.StateChangeUnaffectedFormat(), stateFact.Parent.CommonName());
+            return details;
         }
 
         static private Sprite DefaultIcon(BFBase inFact)

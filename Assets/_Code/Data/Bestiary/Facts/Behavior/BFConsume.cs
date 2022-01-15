@@ -34,8 +34,8 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, 0, BFDiscoveredFlags.All, Compare);
-            BFType.DefineMethods(BFTypeId.Consume, null, GenerateSentence, GenerateFragments);
+            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, Compare);
+            BFType.DefineMethods(BFTypeId.Consume, null, GenerateDetails, GenerateFragments, null, (f) => ((BFConsume) f).Property);
             BFType.DefineEditor(BFTypeId.Consume, DefaultIcon, BFMode.Player);
         }
 
@@ -53,16 +53,26 @@ namespace Aqua
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
         }
 
-        static private string GenerateSentence(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
         {
             BFConsume fact = (BFConsume) inFact;
             bool bIsLight = fact.Property == WaterPropertyId.Light;
+            WaterPropertyDesc property = BestiaryUtils.Property(fact.Property);
+
+            BFDetails details;
+            details.Header = Loc.Find(DetailsHeader);
+            details.Image = property.ImageSet();
 
             if (fact.OnlyWhenStressed)
             {
-                return Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), property.LabelId());
             }
-            return Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), BestiaryUtils.Property(fact.Property).LabelId());
+            else
+            {
+                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), property.LabelId());
+            }
+
+            return details;
         }
 
         static private int Compare(BFBase x, BFBase y)

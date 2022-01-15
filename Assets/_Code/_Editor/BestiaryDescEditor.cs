@@ -25,7 +25,6 @@ namespace Aqua.Editor
         private SerializedProperty m_PluralCommonNameIdProperty;
         private SerializedProperty m_DescriptionIdProperty;
         private SerializedProperty m_FactsProperty;
-        private SerializedProperty m_HistoricalRecordDurationProperty;
         private SerializedProperty m_WaterColorProperty;
         private SerializedProperty m_IconProperty;
         private SerializedProperty m_SketchPathProperty;
@@ -62,7 +61,6 @@ namespace Aqua.Editor
             m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
             m_DescriptionIdProperty = serializedObject.FindProperty("m_DescriptionId");
             m_FactsProperty = serializedObject.FindProperty("m_Facts");
-            m_HistoricalRecordDurationProperty = serializedObject.FindProperty("m_HistoricalRecordDuration");
             m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
             m_IconProperty = serializedObject.FindProperty("m_Icon");
             m_SketchPathProperty = serializedObject.FindProperty("m_SketchPath");
@@ -168,7 +166,6 @@ namespace Aqua.Editor
             if (Section("Environment", ref m_CategoryExpanded)) {
                 m_SizeProperty.intValue = (int) BestiaryDescSize.Ecosystem;
                 EditorGUILayout.PropertyField(m_DiveSiteIdProperty);
-                EditorGUILayout.PropertyField(m_HistoricalRecordDurationProperty);
             }
 
             if (Section("Text", ref m_TextExpanded)) {
@@ -509,7 +506,7 @@ namespace Aqua.Editor
             public FactCreateParams(BFTypeId inType, bool inbStressed = false) {
                 Type = inType;
                 Stressed = inbStressed;
-                PropertyId = WaterPropertyId.MAX;
+                PropertyId = WaterPropertyId.COUNT;
             }
 
             public FactCreateParams(BFTypeId inType, WaterPropertyId inWaterProperty, bool inbStressed = false) {
