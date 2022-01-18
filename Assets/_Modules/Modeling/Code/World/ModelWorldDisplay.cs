@@ -228,6 +228,10 @@ namespace Aqua.Modeling {
 
             m_SolverState.MovedOutputMask = (1u << organismCount) - 1;
             foreach(var fact in m_State.Conceptual.GraphedFacts) {
+                if (!BFType.IsBehavior(fact)) {
+                    continue;
+                }
+
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
@@ -236,7 +240,7 @@ namespace Aqua.Modeling {
             }
 
             foreach(var fact in intervention.AdditionalFacts) {
-                if (m_State.Conceptual.GraphedFacts.Contains(fact)) {
+                if (m_State.Conceptual.GraphedFacts.Contains(fact) || !BFType.IsBehavior(fact)) {
                     continue;
                 }
 

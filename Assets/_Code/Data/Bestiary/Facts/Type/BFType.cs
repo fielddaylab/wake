@@ -56,6 +56,10 @@ namespace Aqua
             return (s_Flags[(int) inTypeId] & BFFlags.IsBehavior) != 0;
         }
 
+        static public bool IsBehavior(BFBase inFact) {
+            return (s_Flags[(int) inFact.Type] & BFFlags.IsBehavior) != 0;
+        }
+
         #region Attributes
 
         static public BFShapeId Shape(BFBase inFact)

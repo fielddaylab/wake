@@ -5,18 +5,24 @@ using UnityEngine.UI;
 using BeauUtil;
 using BeauRoutine;
 using System.Collections;
+using System;
 
 namespace Aqua
 {
-    public class PortableUpgradeSection : MonoBehaviour, ISceneOptimizable
+    public class PortableUpgradeSection : MonoBehaviour
     {
         #region Inspector
 
         [SerializeField] private GameObject m_NoUpgradesGroup = null;
         [SerializeField] private GameObject m_HasUpgradesGroup = null;
-        [SerializeField, HideInInspector] private PortableUpgradeIcon[] m_UpgradeIcons = null;
+        [NonSerialized] private PortableUpgradeIcon[] m_UpgradeIcons = null;
 
         #endregion // Inspector
+
+        private void Awake()
+        {
+            m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeIcon>(true);
+        }
 
         public void Clear()
         {
@@ -53,14 +59,5 @@ namespace Aqua
             ioIcon.Icon.sprite = inInv.Icon();
             ioIcon.gameObject.SetActive(true);
         }
-
-        #if UNITY_EDITOR
-
-        void ISceneOptimizable.Optimize()
-        {
-            m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeIcon>(true);
-        }
-
-        #endif // UNITY_EDITOR
     }
 }
