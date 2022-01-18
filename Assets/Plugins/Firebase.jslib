@@ -497,6 +497,23 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
+    FBModelInterveneUpdate: function(userCode, appVersion, jobId, jobName, ecosystem, organism, differenceValue) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+        var organism = Pointer_stringify(organism);
+
+        analytics.logEvent("model_intervene_update", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem,
+            organism: organism,
+            difference_value: differenceValue
+        });
+    }, 
+
     FBModelInterveneError: function(userCode, appVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);

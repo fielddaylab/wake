@@ -39,6 +39,7 @@ namespace Aqua.Modeling
         static public readonly StringHash32 Event_Sync_Error = "simulation:sync-error";
         static public readonly StringHash32 Event_Simulation_Complete = "simulation:simulation-complete";
         static public readonly StringHash32 Event_Predict_Complete = "simulation:predict-complete";
+        static public readonly StringHash32 Event_Intervene_Update = "simulation:intervene-update";
         static public readonly StringHash32 Event_Intervene_Error = "simulation:intervene-error";
         static public readonly StringHash32 Event_Intervene_Complete = "simulation:intervene-complete";
         static public readonly StringHash32 Event_End_Model = "modeling:end";

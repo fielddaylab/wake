@@ -117,6 +117,8 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBModelPredictCompleted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
+        public static extern void FBModelInterveneUpdate(string userCode, int appVersion, int jobId, string jobName, string ecosystem, string organism, int differenceValue);
+        [DllImport("__Internal")]
         public static extern void FBModelInterveneError(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
         public static extern void FBModelInterveneCompleted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
@@ -168,6 +170,7 @@ namespace Aqua
                 .Register(ModelingConsts.Event_Concept_Exported, LogModelConceptExported, this)
                 .Register<int>(ModelingConsts.Event_Sync_Error, LogModelSyncError, this)
                 .Register(ModelingConsts.Event_Predict_Complete, LogModelPredictCompleted, this)
+                .Register<InterveneUpdateData>(ModelingConsts.Event_Intervene_Update, LogModelInterveneUpdate, this)
                 .Register(ModelingConsts.Event_Intervene_Error, LogModelInterveneError, this)
                 .Register(ModelingConsts.Event_Intervene_Complete, LogModelInterveneCompleted, this)
                 .Register(ModelingConsts.Event_End_Model, LogEndModel, this)
@@ -663,6 +666,13 @@ namespace Aqua
         {
             #if FIREBASE
             FBModelPredictCompleted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelInterveneUpdate(InterveneUpdateData data)
+        {
+            #if FIREBASE
+            FBModelInterveneUpdate(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, data.Organism, data.DifferenceValue);
             #endif
         }
 

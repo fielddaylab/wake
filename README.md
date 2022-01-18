@@ -123,6 +123,7 @@ Player starts the conceptual modeling phase
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### model_concept_updated
 
@@ -134,6 +135,7 @@ Player imports new facts / behaviors into the conceptual model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 | status | Updated status of the concept model |
 
 | status |
@@ -153,6 +155,7 @@ Player saves the conceptual model to AQOS
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### begin_simulation
 
@@ -164,6 +167,7 @@ Player enters the sync phase of modeling
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### model_sync_error
 
@@ -175,6 +179,7 @@ Player attempts to sync the model but fails
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 | sync | Sync % achieved with the current model |
 
 #### simulation_sync_achieved
@@ -187,6 +192,7 @@ Player successfully syncs the model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### model_predict_completed
 
@@ -198,6 +204,21 @@ Player completes the prediction model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
+
+#### model_intervene_update
+
+Player introduces a new organism or updates an existing organism's population count in the intervention model
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
+| organism | The organism having its population modified by the player |
+| difference_value | The population change for the selected organism |
 
 #### model_intervene_error
 
@@ -209,6 +230,7 @@ Player’s intervention model is unsuccessful
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### model_intervene_completed
 
@@ -220,6 +242,7 @@ Player successfully completes the intervention model
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+| ecosystem | Ecosystem selected for modeling |
 
 #### end_model
 

@@ -462,6 +462,12 @@ namespace Aqua.Modeling {
             result.CanAdd = adjust < 0 || next + body.PopulationSoftIncrement <= body.PopulationSoftCap;
             result.CanRemove = next - body.PopulationSoftIncrement >= 0;
             result.DifferenceValue = adjust;
+
+            InterveneUpdateData data;
+            data.Organism = organism.name;
+            data.DifferenceValue = result.DifferenceValue;
+            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Update, data);
+
             return result;
         }
 
@@ -509,5 +515,11 @@ namespace Aqua.Modeling {
             result.DifferenceValue = adjust;
             return result;
         }
+    }
+
+    public struct InterveneUpdateData
+    {
+        public string Organism;
+        public int DifferenceValue;
     }
 }
