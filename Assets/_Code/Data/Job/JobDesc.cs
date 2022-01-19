@@ -26,18 +26,19 @@ namespace Aqua
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ArgumentationDifficulty = 0;
 
-        [SerializeField] private JobDesc[] m_PrerequisiteJobs = null;
+        [SerializeField] private JobDesc[] m_PrerequisiteJobs = Array.Empty<JobDesc>();
         [SerializeField] private string m_PrereqConditions = null;
+        [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_PrereqUpgrades = Array.Empty<StringHash32>(); 
 
         [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
-        [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = Array.Empty<SerializedHash32>();
 
-        [SerializeField] internal EditorJobTask[] m_Tasks = null;
-        [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = null;
+        [SerializeField] internal EditorJobTask[] m_Tasks = Array.Empty<EditorJobTask>();
+        [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
 
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_GearReward = 0;
-        [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = null;
+        [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = Array.Empty<SerializedHash32>();
 
         [SerializeField] internal LeafAsset m_Scripting = null;
         [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
@@ -106,6 +107,7 @@ namespace Aqua
             return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
         }
 
+        public ListSlice<StringHash32> RequiredUpgrades() { return m_PrereqUpgrades; }
         public ListSlice<JobTask> Tasks() { return m_OptimizedTaskList; }
         
         public JobTask Task(StringHash32 inId)
@@ -187,5 +189,12 @@ namespace Aqua
     {
         [Hidden] None = 0x0,
         Hidden = 0x0001
+    }
+
+    public enum JobVisibility : byte
+    {
+        Hidden,
+        Locked,
+        Available
     }
 }

@@ -49,14 +49,18 @@ namespace Aqua
                         if (!string.IsNullOrEmpty(m_CurrentHint.TooltipOverride))
                         {
                             m_Tooltip.SetOverride(m_CurrentHint.TooltipOverride);
+                            if (prevTimer < inTooltipTime)
+                            {
+                                Services.TTS.Tooltip(m_CurrentHint.TooltipOverride);
+                            }
                         }
                         else
                         {
                             m_Tooltip.SetId(m_CurrentHint.TooltipId);
-                        }
-                        if (prevTimer < inTooltipTime)
-                        {
-                            Services.TTS.Tooltip(m_CurrentHint.TooltipId);
+                            if (prevTimer < inTooltipTime)
+                            {
+                                Services.TTS.Tooltip(m_CurrentHint.TooltipId);
+                            }
                         }
                     }
                 }

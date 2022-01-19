@@ -28,7 +28,7 @@ namespace Aqua
         [SerializeField] private TextId m_PluralCommonNameId = default;
         [SerializeField] private TextId m_DescriptionId = default;
         
-        [SerializeField] internal BFBase[] m_Facts = null;
+        [SerializeField] internal BFBase[] m_Facts = Array.Empty<BFBase>();
 
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 

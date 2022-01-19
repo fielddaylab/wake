@@ -30,6 +30,7 @@ namespace Aqua.Editor
 
         private SerializedProperty m_PrerequisiteJobsProperty;
         private SerializedProperty m_PrereqConditionsProperty;
+        private SerializedProperty m_PrereqUpgradesProperty;
 
         private SerializedProperty m_StationIdProperty;
         private SerializedProperty m_DiveSiteIdsProperty;
@@ -44,6 +45,7 @@ namespace Aqua.Editor
         private SerializedProperty m_ExtraAssetsProperty;
 
         private ReorderableList m_PrerequisiteJobsList;
+        private ReorderableList m_PrereqUpgradesList;
         private ReorderableList m_DiveSiteIdsList;
         private ReorderableList m_TasksList;
         private ReorderableList m_AdditionalRewardsList;
@@ -97,6 +99,7 @@ namespace Aqua.Editor
             m_ArgumentationDifficultyProperty = serializedObject.FindProperty("m_ArgumentationDifficulty");
             m_PrerequisiteJobsProperty = serializedObject.FindProperty("m_PrerequisiteJobs");
             m_PrereqConditionsProperty = serializedObject.FindProperty("m_PrereqConditions");
+            m_PrereqUpgradesProperty = serializedObject.FindProperty("m_PrereqUpgrades");
             m_StationIdProperty = serializedObject.FindProperty("m_StationId");
             m_DiveSiteIdsProperty = serializedObject.FindProperty("m_DiveSiteIds");
             m_TasksProperty = serializedObject.FindProperty("m_Tasks");
@@ -109,6 +112,10 @@ namespace Aqua.Editor
             m_PrerequisiteJobsList = new ReorderableList(serializedObject, m_PrerequisiteJobsProperty);
             m_PrerequisiteJobsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Jobs");
             m_PrerequisiteJobsList.drawElementCallback = DefaultElementDelegate(m_PrerequisiteJobsList);
+
+            m_PrereqUpgradesList = new ReorderableList(serializedObject, m_PrereqUpgradesProperty);
+            m_PrereqUpgradesList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Upgrades");
+            m_PrereqUpgradesList.drawElementCallback = DefaultElementDelegate(m_PrereqUpgradesList);
 
             m_DiveSiteIdsList = new ReorderableList(serializedObject, m_DiveSiteIdsProperty);
             m_DiveSiteIdsList.drawHeaderCallback = (r) => { };
@@ -157,6 +164,7 @@ namespace Aqua.Editor
 
             if (Section("Prerequisites", ref m_PrerequisitesExpanded)) {
                 m_PrerequisiteJobsList.DoLayoutList();
+                m_PrereqUpgradesList.DoLayoutList();
                 EditorGUILayout.PropertyField(m_PrereqConditionsProperty);
             }
 
