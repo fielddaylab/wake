@@ -47,6 +47,10 @@ namespace Aqua.Ship
             foreach(var roomReparent in allRoomRetargets)
             {
                 roomReparent.transform.SetParent(GetRoom(roomReparent.RoomId).transform, true);
+                if (roomReparent.Flatten)
+                {
+                    roomReparent.transform.FlattenHierarchy(false);
+                }
                 Destroy(roomReparent);
                 yield return null;
             }

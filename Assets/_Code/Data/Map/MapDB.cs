@@ -12,11 +12,11 @@ namespace Aqua
         #region Inspector
 
         [Header("Rooms")]
-        [SerializeField] private SerializedHash32[] m_RoomIds = null;
+        [SerializeField] private SerializedHash32[] m_RoomIds = Array.Empty<SerializedHash32>();
 
         [Header("Defaults")]
         [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_DefaultStationId = "Station1";
-        [SerializeField] private SerializedHash32[] m_DefaultUnlockedRooms = null;
+        [SerializeField] private SerializedHash32[] m_DefaultUnlockedRooms = Array.Empty<SerializedHash32>();
 
         #endregion // Inspector
 

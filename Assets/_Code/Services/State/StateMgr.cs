@@ -676,20 +676,18 @@ namespace Aqua
             var loadSceneMenu = new DMInfo("Load Scene", 16);
 
             loadSceneMenu.AddButton("Reload Current Scene", DebugReloadScene);
+            loadSceneMenu.AddButton("Dump Scene Hierarchy", DebugDumpSceneHierarchy);
             loadSceneMenu.AddDivider();
             
             foreach(var scene in SceneHelper.FindScenes(SceneCategories.Build))
             {
+                if (scene.Name.EndsWith("Layer"))
+                    continue;
+                
                 RegisterLoadButton(loadSceneMenu, scene);
             }
 
             yield return loadSceneMenu;
-
-            var currentSceneMenu = new DMInfo("Current Scene");
-
-            currentSceneMenu.AddButton("Dump Scene Hierarchy", DebugDumpSceneHierarchy);
-            
-            yield return currentSceneMenu;
         }
 
         static private void RegisterLoadButton(DMInfo inMenu, SceneBinding inBinding)

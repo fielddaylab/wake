@@ -16,6 +16,7 @@ namespace Aqua
 
         [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
         [SerializeField, AutoEnum] private InvItemFlags m_Flags = InvItemFlags.None;
+        [SerializeField] private InvItem m_Prerequisite = null;
 
         [Header("Text")]
         [SerializeField] private TextId m_NameTextId = default;
@@ -47,12 +48,15 @@ namespace Aqua
         public bool HasFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) != 0; }
         public bool HasAllFlags(InvItemFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
+        public InvItem Prerequisite() { return m_Prerequisite; }
+
         public TextId NameTextId() { return m_NameTextId; }
         public TextId PluralNameTextId() { return m_PluralNameTextId.IsEmpty ? m_NameTextId : m_PluralNameTextId; }
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
         
         public Sprite Icon() { return m_Icon; }
         public string SketchPath() { return m_SketchPath; }
+        public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
 
         public uint DefaultAmount() { return m_Default; }
 

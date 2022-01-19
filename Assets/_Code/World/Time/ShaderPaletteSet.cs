@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Aqua
 {
+    [ExecuteAlways]
     public class ShaderPaletteSet : MonoBehaviour
     {
         #region Inspector
@@ -24,6 +25,16 @@ namespace Aqua
 
         private void OnEnable()
         {
+            #if UNITY_EDITOR
+            if (!gameObject.scene.IsValid())
+                return;
+            #endif // UNITY_EDITOR
+
+            ApplySettings();
+        }
+
+        private void ApplySettings()
+        {
             Shader.SetGlobalColor(ShaderPalettes.WorldLightColor, WorldLightPalette.Color);
             Shader.SetGlobalColor(ShaderPalettes.WorldShadowColor, WorldShadowPalette.Color);
             Shader.SetGlobalColor(ShaderPalettes.ActorLightColor, ActorLightPalette.Color);
@@ -35,6 +46,16 @@ namespace Aqua
         }
 
         #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            #if UNITY_EDITOR
+            if (!gameObject.scene.IsValid())
+                return;
+            #endif // UNITY_EDITOR
+
+            ApplySettings();
+        }
 
         [ContextMenu("Generate Sea and Sky alt colors")]
         private void AutoGenerateSeaAndSkyAlts()
