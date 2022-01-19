@@ -317,6 +317,7 @@ namespace Aqua.Modeling {
 
             if (m_ProgressInfo.Scope != null && m_ProgressInfo.Scope.MinimumSyncAccuracy > 0) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
+                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
                     OnSyncAchieved?.Invoke();
                 } else {
                     OnSyncUnsuccessful?.Invoke();
@@ -425,7 +426,6 @@ namespace Aqua.Modeling {
                 if (bSuccess) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
                     OnInterventionSuccessful?.Invoke();
-                    Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Complete);
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
                 }

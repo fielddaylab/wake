@@ -380,6 +380,182 @@ mergeInto(LibraryManager.library, {
             job_name: jobName,
             node_id: nodeId
         });
+    }, 
+
+    // Modeling Events
+
+    FBModelingStart: function(userCode, appVersion, jobId, jobName) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+
+        analytics.logEvent("model_start", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName
+        });
+    },
+
+    FBModelPhaseChanged: function(userCode, appVersion, jobId, jobName, phase) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var phase = Pointer_stringify(phase);
+
+        analytics.logEvent("model_phase_changed", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            phase: phase
+        });
+    }, 
+
+    FBModelEcosystemSelected: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_ecosystem_selected", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    }, 
+
+    FBModelConceptStarted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_concept_started", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    }, 
+
+    FBModelConceptUpdated: function(userCode, appVersion, jobId, jobName, ecosystem, status) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+        var status = Pointer_stringify(status);
+
+        analytics.logEvent("model_concept_updated", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem,
+            status: status
+        });
+    }, 
+
+    FBModelConceptExported: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_concept_exported", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    }, 
+
+    FBModelSyncError: function(userCode, appVersion, jobId, jobName, ecosystem, sync) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_sync_error", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem,
+            sync: sync
+        });
+    }, 
+
+    FBModelPredictCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_predict_completed", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    }, 
+
+    FBModelInterveneUpdate: function(userCode, appVersion, jobId, jobName, ecosystem, organism, differenceValue) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+        var organism = Pointer_stringify(organism);
+
+        analytics.logEvent("model_intervene_update", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem,
+            organism: organism,
+            difference_value: differenceValue
+        });
+    }, 
+
+    FBModelInterveneError: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_intervene_error", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    }, 
+
+    FBModelInterveneCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_intervene_completed", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            ecosystem: ecosystem
+        });
+    },
+
+    FBModelingEnd: function(userCode, appVersion, jobId, jobName, phase, ecosystem) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var phase = Pointer_stringify(phase);
+        var ecosystem = Pointer_stringify(ecosystem);
+
+        analytics.logEvent("model_end", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            phase: phase,
+            ecosystem: ecosystem
+        });
     }
 
 });
