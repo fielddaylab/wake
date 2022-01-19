@@ -2,13 +2,14 @@
 #define FIREBASE
 #endif // UNITY_WEBGL && !UNITY_EDITOR
 
+using Aqua.Modeling;
 using Aqua.Portable;
 using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Services;
+using BeauUtil.Variants;
 using FieldDay;
 using ProtoAqua.ExperimentV2;
-using Aqua.Modeling;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -22,7 +23,6 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
-        //[SerializeField] private int m_AppVersion = 2;
         
         #endregion // Inspector
 
@@ -99,17 +99,46 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBGuideScriptTriggered(string userCode, int appVersion, int jobId, string jobName, string nodeId);
 
+        // Modeling Events
+        [DllImport("__Internal")]
+        public static extern void FBModelingStart(string userCode, int appVersion, int jobId, string jobName);
+        [DllImport("__Internal")]
+        public static extern void FBModelPhaseChanged(string userCode, int appVersion, int jobId, string jobName, string phase);
+        [DllImport("__Internal")]
+        public static extern void FBModelEcosystemSelected(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelConceptStarted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelConceptUpdated(string userCode, int appVersion, int jobId, string jobName, string ecosystem, string status);
+        [DllImport("__Internal")]
+        public static extern void FBModelConceptExported(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelSyncError(string userCode, int appVersion, int jobId, string jobName, string ecosystem, int sync);
+        [DllImport("__Internal")]
+        public static extern void FBModelPredictCompleted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelInterveneUpdate(string userCode, int appVersion, int jobId, string jobName, string ecosystem, string organism, int differenceValue);
+        [DllImport("__Internal")]
+        public static extern void FBModelInterveneError(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelInterveneCompleted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
+        [DllImport("__Internal")]
+        public static extern void FBModelingEnd(string userCode, int appVersion, int jobId, string jobName, string phase, string ecosystem);
+        
+
         #endregion // Firebase JS Functions
 
         #region Logging Variables
 
         private string m_UserCode = string.Empty;
-        private int m_AppVersion = 2;
+        private int m_AppVersion = 3;
         private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
         private string m_PreviousJobName = "no-active-job";
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
+        private string m_CurrentModelPhase = string.Empty;
+        private string m_CurrentModelEcosystem = string.Empty;
 
         #endregion // Logging Variables
 
@@ -127,13 +156,24 @@ namespace Aqua
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(GameEvents.BeginArgument, LogBeginArgument, this)
-                .Register(ModelingConsts.Event_Model_Begin, LogBeginModel, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
                 .Register<PortableAppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
+                .Register(ModelingConsts.Event_Begin_Model, LogBeginModel, this)
+                .Register<byte>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
+                .Register<string>(ModelingConsts.Event_Ecosystem_Selected, LogModelEcosystemSelected, this)
+                .Register(ModelingConsts.Event_Concept_Started, LogModelConceptStarted, this)
+                .Register<ConceptualModelState.StatusId>(ModelingConsts.Event_Concept_Updated, LogModelConceptUpdated, this)
+                .Register(ModelingConsts.Event_Concept_Exported, LogModelConceptExported, this)
+                .Register<int>(ModelingConsts.Event_Sync_Error, LogModelSyncError, this)
+                .Register(ModelingConsts.Event_Predict_Complete, LogModelPredictCompleted, this)
+                .Register<InterveneUpdateData>(ModelingConsts.Event_Intervene_Update, LogModelInterveneUpdate, this)
+                .Register(ModelingConsts.Event_Intervene_Error, LogModelInterveneError, this)
+                .Register(ModelingConsts.Event_Intervene_Complete, LogModelInterveneCompleted, this)
+                .Register(ModelingConsts.Event_End_Model, LogEndModel, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
                 .Register(GameEvents.PortableClosed, PortableClosed, this);
@@ -566,6 +606,101 @@ namespace Aqua
             FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
+
+        #region Modeling Events
+
+        private void LogStartModel()
+        {
+            #if FIREBASE
+            FBModelingStart(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
+            #endif
+        }
+
+        private void LogModelPhaseChanged(byte inPhase)
+        {
+            m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
+
+            #if FIREBASE
+            FBModelPhaseChanged(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase);
+            #endif
+        }
+
+        private void LogModelEcosystemSelected(string ecosystem)
+        {
+            m_CurrentModelEcosystem = ecosystem;
+
+            #if FIREBASE
+            FBModelEcosystemSelected(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelConceptStarted()
+        {
+            #if FIREBASE
+            FBModelConceptStarted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelConceptUpdated(ConceptualModelState.StatusId status)
+        {
+            #if FIREBASE
+            FBModelConceptUpdated(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, status.ToString());
+            #endif
+        }
+
+        private void LogModelConceptExported()
+        {
+            #if FIREBASE
+            FBModelConceptExported(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelSyncError(int sync)
+        {
+            #if FIREBASE
+            FBModelSyncError(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, sync);
+            #endif
+        }
+
+        private void LogModelPredictCompleted()
+        {
+            #if FIREBASE
+            FBModelPredictCompleted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelInterveneUpdate(InterveneUpdateData data)
+        {
+            #if FIREBASE
+            FBModelInterveneUpdate(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, data.Organism, data.DifferenceValue);
+            #endif
+        }
+
+        private void LogModelInterveneError()
+        {
+            #if FIREBASE
+            FBModelInterveneError(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogModelInterveneCompleted()
+        {
+            #if FIREBASE
+            FBModelInterveneCompleted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            #endif
+        }
+
+        private void LogEndModel()
+        {
+            #if FIREBASE
+            FBModelingEnd(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase, m_CurrentModelEcosystem);
+            #endif
+
+            m_CurrentModelPhase = string.Empty;
+            m_CurrentModelEcosystem = string.Empty;
+        }
+
+        #endregion // Modeling Events
 
         #endregion // Log Events
     }
