@@ -23,7 +23,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public void Populate(JobDesc inJob, PlayerJobStatus inStatus = PlayerJobStatus.NotStarted)
+        public void Populate(JobDesc inJob, JobStatusFlags inStatus = JobStatusFlags.Mask_Available)
         {
             if (!inJob)
             {
@@ -75,7 +75,7 @@ namespace Aqua
                 }
                 if (inJob.GearReward() > 0)
                 {
-                    PopulateReward(rewardCount++, ItemIds.Cash, inJob.GearReward());
+                    PopulateReward(rewardCount++, ItemIds.Gear, inJob.GearReward());
                 }
 
                 for(int i = rewardCount; i < m_Rewards.Length; ++i)
@@ -106,11 +106,13 @@ namespace Aqua
             item.Populate(inId, inAmount);
         }
 
-        public void UpdateStatus(JobDesc inJob, PlayerJobStatus inStatus)
+        public void UpdateStatus(JobDesc inJob, JobStatusFlags inStatus)
         {
+            JobProgressCategory category = PlayerJob.StatusToCategory(inStatus);
+
             if (m_DescriptionLabel)
             {
-                TextId desc = inStatus == PlayerJobStatus.Completed ? inJob.DescCompletedId() : inJob.DescId();
+                TextId desc = category == JobProgressCategory.Completed ? inJob.DescCompletedId() : inJob.DescId();
                 m_DescriptionLabel.SetText(desc);
             }
 
@@ -118,7 +120,7 @@ namespace Aqua
                 m_ShortDescriptionLabel.SetText(inJob.DescShortId());
 
             if (m_CompletedDisplay)
-                m_CompletedDisplay.gameObject.SetActive(inStatus == PlayerJobStatus.Completed);
+                m_CompletedDisplay.gameObject.SetActive(category == JobProgressCategory.Completed);
         }
     }
 }

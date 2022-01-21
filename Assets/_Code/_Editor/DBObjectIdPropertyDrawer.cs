@@ -31,7 +31,7 @@ namespace Aqua.Editor
                 hashProperty = property.FindPropertyRelative("m_HashValue");
                 stringProperty = null;
             } else if (fieldType == typeof(SerializedHash32)) {
-                hashProperty = property.FindPropertyRelative("m_Hash");
+                hashProperty = property.FindPropertyRelative("m_HashValue");
                 stringProperty = property.FindPropertyRelative("m_Source");
             } else {
                 hashProperty = null;

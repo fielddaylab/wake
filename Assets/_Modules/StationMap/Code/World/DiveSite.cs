@@ -43,7 +43,7 @@ namespace Aqua.StationMap
                 return;
             }
 
-            if (inCurrentJob != null && inCurrentJob.UsesDiveSite(m_MapId))
+            if (inCurrentJob != null && inCurrentJob.DiveSiteIds().Contains(m_MapId))
             {
                 m_Highlighted = true;
                 m_RenderGroup.SetAlpha(1);

@@ -265,7 +265,7 @@ namespace Aqua
 
             if (actorDef.HasFlags(ScriptActorTypeFlags.IsPlayer))
             {
-                SetSpeakerName(Services.Data.CurrentCharacterName());
+                SetSpeakerName(Save.Name);
             }
             else
             {

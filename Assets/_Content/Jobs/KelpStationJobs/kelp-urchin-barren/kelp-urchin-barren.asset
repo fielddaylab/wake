@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.kelp-urchin-barren.name
-    m_Hash: 688585909
+    m_HashValue: 688585909
   m_PosterId:
     m_Source: jobs.kelp-urchin-barren.poster
-    m_Hash: 1026242447
+    m_HashValue: 1026242447
   m_DescId:
     m_Source: jobs.kelp-urchin-barren.desc
-    m_Hash: 198913719
+    m_HashValue: 198913719
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 1
   m_ArgumentationDifficulty: 1
@@ -37,183 +37,181 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: KelpStation
-    m_Hash: 2724389503
+    m_HashValue: 2724389503
   m_DiveSiteIds:
-  - m_Source: RS-1B
-    m_Hash: 2195572834
+  - m_HashValue: 2195572834
   m_Tasks:
   - Id:
       m_Source: gotoSiteB
-      m_Hash: 1699253461
+      m_HashValue: 1699253461
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.gotoSiteB
-      m_Hash: 1120825735
+      m_HashValue: 1120825735
     Steps:
     - Type: 3
       Target:
         m_Source: RS-1B
-        m_Hash: 2195572834
+        m_HashValue: 2195572834
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: getTagged
-      m_Hash: 4293603887
+      m_HashValue: 4293603887
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.getTagged
-      m_Hash: 3398702153
+      m_HashValue: 3398702153
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.Population.Urchin
-        m_Hash: 2284154954
+        m_HashValue: 2284154954
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: UrchinBarren.Population.GiantKelp
-        m_Hash: 4254476398
+        m_HashValue: 4254476398
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: gotoSiteB
-      m_Hash: 1699253461
+      m_HashValue: 1699253461
   - Id:
       m_Source: getProbeData
-      m_Hash: 21751579
+      m_HashValue: 21751579
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.getProbeData
-      m_Hash: 1362052301
+      m_HashValue: 1362052301
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.PopulationHistory.Urchin
-        m_Hash: 3276014112
+        m_HashValue: 3276014112
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: UrchinBarren.PopulationHistory.GiantKelp
-        m_Hash: 2173383160
+        m_HashValue: 2173383160
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: getTagged
-      m_Hash: 4293603887
+      m_HashValue: 4293603887
   - Id:
       m_Source: predictSiteB
-      m_Hash: 984087169
+      m_HashValue: 984087169
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.predictSiteB
-      m_Hash: 325935475
+      m_HashValue: 325935475
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.Model.Prediction
-        m_Hash: 3441057362
+        m_HashValue: 3441057362
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.reportBack
-      m_Hash: 593347598
+      m_HashValue: 593347598
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
       m_Source: gotoSiteB
-      m_Hash: 1699253461
+      m_HashValue: 1699253461
     Index: 0
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.gotoSiteB
-      m_Hash: 1120825735
+      m_HashValue: 1120825735
     Steps:
     - Type: 3
       Target:
         m_Source: RS-1B
-        m_Hash: 2195572834
+        m_HashValue: 2195572834
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: getTagged
-      m_Hash: 4293603887
+      m_HashValue: 4293603887
     Index: 1
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.getTagged
-      m_Hash: 3398702153
+      m_HashValue: 3398702153
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.Population.Urchin
-        m_Hash: 2284154954
+        m_HashValue: 2284154954
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: UrchinBarren.Population.GiantKelp
-        m_Hash: 4254476398
+        m_HashValue: 4254476398
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: getProbeData
-      m_Hash: 21751579
+      m_HashValue: 21751579
     Index: 2
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.getProbeData
-      m_Hash: 1362052301
+      m_HashValue: 1362052301
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.PopulationHistory.Urchin
-        m_Hash: 3276014112
+        m_HashValue: 3276014112
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: UrchinBarren.PopulationHistory.GiantKelp
-        m_Hash: 2173383160
+        m_HashValue: 2173383160
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: predictSiteB
-      m_Hash: 984087169
+      m_HashValue: 984087169
     Index: 3
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.predictSiteB
-      m_Hash: 325935475
+      m_HashValue: 325935475
     Steps:
     - Type: 1
       Target:
         m_Source: UrchinBarren.Model.Prediction
-        m_Hash: 3441057362
+        m_HashValue: 3441057362
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     Index: 4
     LabelId:
       m_Source: jobs.kelp-urchin-barren.task.reportBack
-      m_Hash: 593347598
+      m_HashValue: 593347598
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

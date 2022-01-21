@@ -7,11 +7,9 @@ using UnityEngine;
 using UnityEditor;
 #endif // UNITY_EDITOR
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Inventory Item", fileName = "NewInvItem")]
-    public class InvItem : DBObject
-    {
+    public class InvItem : DBObject {
         #region Inspector
 
         [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
@@ -53,23 +51,22 @@ namespace Aqua
         public TextId NameTextId() { return m_NameTextId; }
         public TextId PluralNameTextId() { return m_PluralNameTextId.IsEmpty ? m_NameTextId : m_PluralNameTextId; }
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
-        
+
         public Sprite Icon() { return m_Icon; }
         public string SketchPath() { return m_SketchPath; }
         public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
 
         public uint DefaultAmount() { return m_Default; }
 
-        public int BuyCoinsValue() { return (int) m_BuyCoinsValue; }
-        public int BuyGearsValue() { return (int) m_BuyGearsValue; }
+        public int BuyCoinsValue() { return (int)m_BuyCoinsValue; }
+        public int BuyGearsValue() { return (int)m_BuyGearsValue; }
 
-        public int SellCoinsValue() { return (int) m_SellCoinsValue; }
-        public int SellGearsValue() { return (int) m_SellGearsValue; }
+        public int SellCoinsValue() { return (int)m_SellCoinsValue; }
+        public int SellGearsValue() { return (int)m_SellGearsValue; }
 
         #region Sorting
 
-        static public readonly Comparison<InvItem> SortByCategoryAndOrder = (x, y) =>
-        {
+        static public readonly Comparison<InvItem> SortByCategoryAndOrder = (x, y) => {
             int categoryOrder = x.m_Category.CompareTo(y.m_Category);
             if (categoryOrder != 0)
                 return categoryOrder;
@@ -113,15 +110,13 @@ namespace Aqua
         #endif // UNITY_EDITOR
     }
 
-    public enum InvItemCategory : byte
-    {
+    public enum InvItemCategory : byte {
         Currency,
         Upgrade,
         Artifact
     }
 
-    public enum InvItemSubCategory : byte
-    {
+    public enum InvItemSubCategory : byte {
         None,
         Ship,
         Submarine,
@@ -130,8 +125,7 @@ namespace Aqua
     }
 
     [Flags]
-    public enum InvItemFlags : byte
-    {
+    public enum InvItemFlags : byte {
         [Hidden]
         None = 0x00,
 
@@ -155,7 +149,7 @@ namespace Aqua
 
         public override bool Filter(DBObject inObject) {
             if (Category.HasValue) {
-                InvItem item = (InvItem) inObject;
+                InvItem item = (InvItem)inObject;
                 return item.Category() == Category.Value;
             } else {
                 return true;
@@ -167,7 +161,7 @@ namespace Aqua
                 return inObject.name;
             }
 
-            InvItem desc = (InvItem) inObject;
+            InvItem desc = (InvItem)inObject;
             return string.Format("{0}/{1}", desc.Category().ToString(), desc.name);
         }
     }

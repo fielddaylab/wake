@@ -44,8 +44,8 @@ namespace Aqua
         {
             ClearState();
 
-            LoadAct(Services.Data.CurrentAct());
-            LoadJob(Services.Data.CurrentJobId());
+            LoadAct(Save.ActIndex);
+            LoadJob(Save.CurrentJobId);
         }
 
         private void ClearState()

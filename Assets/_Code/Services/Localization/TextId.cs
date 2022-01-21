@@ -3,6 +3,7 @@ using System.Text;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Aqua
 {
@@ -15,20 +16,20 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private string m_Source;
-        [SerializeField] private uint m_Hash;
+        [SerializeField, FormerlySerializedAs("m_Hash")] private uint m_HashValue;
 
         #endregion // Inspector
 
         private TextId(string inSource)
         {
             m_Source = inSource;
-            m_Hash = new StringHash32(inSource).HashValue;
+            m_HashValue = new StringHash32(inSource).HashValue;
         }
 
         private TextId(StringHash32 inHash)
         {
             m_Source = null;
-            m_Hash = inHash.HashValue;
+            m_HashValue = inHash.HashValue;
         }
 
         public string Source()
@@ -38,7 +39,7 @@ namespace Aqua
 
         public bool IsEmpty
         {
-            get { return m_Hash == 0; }
+            get { return m_HashValue == 0; }
         }
 
         public StringHash32 Hash()
@@ -46,9 +47,9 @@ namespace Aqua
             // #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
             // if (!string.IsNullOrEmpty(m_Source))
             //     return new StringHash32(m_Source);
-            // return new StringHash32(m_Hash);
+            // return new StringHash32(m_HashValue);
             // #else
-            return new StringHash32(m_Hash);
+            return new StringHash32(m_HashValue);
             // #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
@@ -86,20 +87,20 @@ namespace Aqua
         public void OnBeforeSerialize()
 		{
             uint hash = new StringHash32(m_Source).HashValue;
-            if (m_Hash != hash)
+            if (m_HashValue != hash)
             {
-                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_Hash, hash);
-                m_Hash = hash;
+                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
+                m_HashValue = hash;
             }
 		}
 
         public void OnAfterDeserialize()
         {
             uint hash = new StringHash32(m_Source).HashValue;
-            if (m_Hash != hash)
+            if (m_HashValue != hash)
             {
-                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_Hash, hash);
-                m_Hash = hash;
+                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
+                m_HashValue = hash;
             }
         }
 

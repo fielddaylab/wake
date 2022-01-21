@@ -32,7 +32,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("player-name", () => Services.Data.CurrentCharacterName());
+            m_TagEventParser.AddReplace("player-name", () => Save.Name);
             m_TagEventParser.AddReplace("cash", "<#C9C86D>").CloseWith("</color><sprite name=\"cash\">");
             m_TagEventParser.AddReplace("gears", "<#A6C8FF>").CloseWith("</color><sprite name=\"gear\">");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
@@ -103,7 +103,7 @@ namespace Aqua
         {
             TempList16<StringSlice> slices = new TempList16<StringSlice>();
             int sliceCount = inTag.Data.Split(ChoiceSplitChars, StringSplitOptions.None, ref slices);
-            Pronouns playerPronouns = Services.Data.CurrentCharacterPronouns();
+            Pronouns playerPronouns = Save.Pronouns;
             
             if (sliceCount < 3)
             {

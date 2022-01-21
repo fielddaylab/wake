@@ -93,7 +93,7 @@ namespace Aqua.Editor
             
             EditorGUI.BeginChangeCheck();
             var stringProp = property.FindPropertyRelative("m_Source");
-            var hashProp = property.FindPropertyRelative("m_Hash");
+            var hashProp = property.FindPropertyRelative("m_HashValue");
 
             if (!stringProp.hasMultipleDifferentValues && stringProp.stringValue != m_LastKnownKey) {
                 m_Overwrite = true;
@@ -253,7 +253,7 @@ namespace Aqua.Editor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var hashProp = property.FindPropertyRelative("m_Hash");
+            var hashProp = property.FindPropertyRelative("m_HashValue");
             if (hashProp.longValue == 0) {
                 return EditorGUIUtility.singleLineHeight;
             }

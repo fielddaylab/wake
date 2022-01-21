@@ -248,7 +248,7 @@ namespace Aqua
 
         private void ReloadTasks(bool inbForce, bool inbDisplay)
         {
-            JobDesc currentJob = Services.Data.CurrentJob()?.Job;
+            JobDesc currentJob = Save.CurrentJob.Job;
             if (!inbForce && m_CurrentJob == currentJob)
                 return;
 

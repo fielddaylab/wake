@@ -43,7 +43,8 @@ namespace Aqua.Portable
         {
             JobsData jobsData = Save.Jobs;
             PlayerJob currentJob = jobsData.CurrentJob;
-            if (currentJob == null)
+            
+            if (!currentJob.IsValid)
             {
                 m_JobDisplay.gameObject.SetActive(false);
                 m_NoJobDisplay.gameObject.SetActive(true);
@@ -52,7 +53,7 @@ namespace Aqua.Portable
             {
                 m_NoJobDisplay.gameObject.SetActive(false);
                 m_JobDisplay.gameObject.SetActive(true);
-                m_JobDisplay.Populate(currentJob.Job, currentJob.Status());
+                m_JobDisplay.Populate(currentJob.Job, currentJob.Status);
                 m_JobTaskList.LoadTasks(currentJob.Job, jobsData);
 
                 m_LayoutRebuilder.ForceRebuild();

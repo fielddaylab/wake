@@ -30,15 +30,15 @@ namespace Aqua
         [SerializeField] private string m_PrereqConditions = null;
         [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_PrereqUpgrades = Array.Empty<StringHash32>(); 
 
-        [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
-        [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32[] m_DiveSiteIds = Array.Empty<SerializedHash32>();
+        [SerializeField, MapId(MapCategory.Station)] private StringHash32 m_StationId = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32[] m_DiveSiteIds = Array.Empty<StringHash32>();
 
         [SerializeField] internal EditorJobTask[] m_Tasks = Array.Empty<EditorJobTask>();
         [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
 
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_GearReward = 0;
-        [SerializeField, ItemId] private SerializedHash32[] m_AdditionalRewards = Array.Empty<SerializedHash32>();
+        [SerializeField, ItemId] private StringHash32[] m_AdditionalRewards = Array.Empty<StringHash32>();
 
         [SerializeField] internal LeafAsset m_Scripting = null;
         [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
@@ -72,42 +72,13 @@ namespace Aqua
             }
         }
 
-        public bool ShouldBeAvailable(JobsData inData)
-        {
-            if (HasFlags(JobDescFlags.Hidden) && !inData.IsHiddenUnlocked(Id()))
-                return false;
-
-            foreach(var job in m_PrerequisiteJobs)
-            {
-                if (!inData.IsComplete(job.Id()))
-                    return false;
-            }
-
-            if (!string.IsNullOrEmpty(m_PrereqConditions))
-                return Services.Data.CheckConditions(m_PrereqConditions);
-
-            return true;
-        }
-
         public StringHash32 StationId() { return m_StationId; }
+        public ListSlice<StringHash32> DiveSiteIds() { return m_DiveSiteIds; }
 
-        public bool IsAtStation(MapData inMap)
-        {
-            if (!m_StationId.IsEmpty)
-            {
-                if (inMap.CurrentStationId() != m_StationId)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public bool UsesDiveSite(StringHash32 inDiveSiteId)
-        {
-            return Array.IndexOf(m_DiveSiteIds, inDiveSiteId) >= 0;
-        }
-
+        public ListSlice<JobDesc> RequiredJobs() { return m_PrerequisiteJobs; } 
         public ListSlice<StringHash32> RequiredUpgrades() { return m_PrereqUpgrades; }
+        public StringSlice RequiredConditions() { return m_PrereqConditions; }
+
         public ListSlice<JobTask> Tasks() { return m_OptimizedTaskList; }
         
         public JobTask Task(StringHash32 inId)
@@ -189,12 +160,5 @@ namespace Aqua
     {
         [Hidden] None = 0x0,
         Hidden = 0x0001
-    }
-
-    public enum JobVisibility : byte
-    {
-        Hidden,
-        Locked,
-        Available
     }
 }

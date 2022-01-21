@@ -254,7 +254,7 @@ namespace EditorScripts
                 };
                 regexes[4 * i + 1] = new RegexPair() {
                     find = new Regex(string.Format("(m_Hash: {0}\\n)", oldHash.HashValue)),
-                    replace = string.Format("m_Hash: {0}\n", newHash.HashValue)
+                    replace = string.Format("m_HashValue: {0}\n", newHash.HashValue)
                 };
                 regexes[4 * i + 2] = new RegexPair() {
                     find = new Regex(string.Format("(m_HashValue: {0}\\n)", oldHash.HashValue)),

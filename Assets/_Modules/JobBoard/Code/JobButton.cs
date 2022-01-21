@@ -17,6 +17,7 @@ namespace Aqua.JobBoard
         {
             public Sprite ActiveIcon;
             public Sprite CompletedIcon;
+            public Sprite LockedIcon;
         }
 
         #region Inspector
@@ -31,10 +32,12 @@ namespace Aqua.JobBoard
         [NonSerialized] private Transform m_Transform;
         [NonSerialized] private Action<JobButton> m_OnSelected;
         [NonSerialized] private JobDesc m_Job;
-        [NonSerialized] private PlayerJobStatus m_Status;
+        [NonSerialized] private JobStatusFlags m_Status;
+        [NonSerialized] private JobProgressCategory m_Group;
 
         public JobDesc Job { get { return m_Job; } }
-        public PlayerJobStatus Status { get { return m_Status; } }
+        public JobStatusFlags Status { get { return m_Status; } }
+        public JobProgressCategory Group { get { return m_Group; } }
         public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
         private void Awake()
@@ -48,10 +51,11 @@ namespace Aqua.JobBoard
             m_OnSelected = inSelectedCallback;
         }
 
-        public void Populate(JobDesc inJob, PlayerJobStatus inStatus)
+        public void Populate(JobDesc inJob, JobStatusFlags inStatus)
         {
             m_Job = inJob;
             m_Status = inStatus;
+            m_Group = PlayerJob.StatusToCategory(inStatus);
 
             m_NameLabel.SetText(inJob.NameId());
             
@@ -71,24 +75,32 @@ namespace Aqua.JobBoard
             }
         }
 
-        public bool UpdateStatus(PlayerJobStatus inStatus, in ButtonAppearanceConfig inConfig)
+        public bool UpdateStatus(JobStatusFlags inStatus, in ButtonAppearanceConfig inConfig)
         {
             if (m_Status != inStatus)
             {
                 m_Status = inStatus;
-                switch(inStatus)
+                m_Group = PlayerJob.StatusToCategory(inStatus);
+                switch(m_Group)
                 {
-                    case PlayerJobStatus.Completed:
+                    case JobProgressCategory.Completed:
                         {
                             m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.CompletedIcon;
                             break;
                         }
                     
-                    case PlayerJobStatus.Active:
+                    case JobProgressCategory.Active:
                         {
                             m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.ActiveIcon;
+                            break;
+                        }
+
+                    case JobProgressCategory.Locked:
+                        {
+                            m_Icon.gameObject.SetActive(true);
+                            m_Icon.sprite = inConfig.LockedIcon;
                             break;
                         }
 

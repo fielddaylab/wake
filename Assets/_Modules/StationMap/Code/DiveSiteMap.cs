@@ -15,7 +15,7 @@ namespace Aqua.StationMap
         {
             StringHash32 entrance = Services.State.LastEntranceId;
 
-            var job = Save.Jobs.CurrentJob?.Job;
+            var job = Save.Jobs.CurrentJob.Job;
             var mapData = Save.Map;
 
             foreach(var site in m_DiveSites)

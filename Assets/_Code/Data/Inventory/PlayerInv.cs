@@ -11,7 +11,7 @@ namespace Aqua
         public StringHash32 ItemId;
         public uint Count;
 
-        [NonSerialized] public InvItem Descriptor;
+        [NonSerialized] public InvItem Item;
 
         #region KeyValue
 
@@ -20,11 +20,11 @@ namespace Aqua
 
         #endregion // KeyValue
 
-        public PlayerInv(StringHash32 inId, uint inCount, InvItem inDescriptor)
+        public PlayerInv(StringHash32 inId, uint inCount, InvItem inDesc)
         {
             ItemId = inId;
             Count = inCount;
-            Descriptor = inDescriptor;
+            Item = inDesc;
         }
 
         public void Serialize(Serializer ioSerializer)

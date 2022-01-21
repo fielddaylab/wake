@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.kelp-bull-kelp-forest.name
-    m_Hash: 1918435795
+    m_HashValue: 1918435795
   m_PosterId:
     m_Source: jobs.kelp-bull-kelp-forest.poster
-    m_Hash: 4044175277
+    m_HashValue: 4044175277
   m_DescId:
     m_Source: jobs.kelp-bull-kelp-forest.desc
-    m_Hash: 861889761
+    m_HashValue: 861889761
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 0
@@ -37,101 +37,99 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: KelpStation
-    m_Hash: 2724389503
+    m_HashValue: 2724389503
   m_DiveSiteIds:
-  - m_Source: RS-1A
-    m_Hash: 2178795215
+  - m_HashValue: 2178795215
   m_Tasks:
   - Id:
       m_Source: siteA
-      m_Hash: 2310652317
+      m_HashValue: 2310652317
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.siteA
-      m_Hash: 2169305873
+      m_HashValue: 2169305873
     Steps:
     - Type: 0
       Target:
         m_Source: BullKelp
-        m_Hash: 3363669640
+        m_HashValue: 3363669640
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: foodweb
-      m_Hash: 3643636253
+      m_HashValue: 3643636253
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.foodweb
-      m_Hash: 1120255105
+      m_HashValue: 1120255105
     Steps:
     - Type: 1
       Target:
         m_Source: Urchin.Eats.BullKelp
-        m_Hash: 3905127850
+        m_HashValue: 3905127850
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: siteA
-      m_Hash: 2310652317
+      m_HashValue: 2310652317
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.reportBack
-      m_Hash: 1189211000
+      m_HashValue: 1189211000
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: foodweb
-      m_Hash: 3643636253
+      m_HashValue: 3643636253
   m_OptimizedTaskList:
   - Id:
       m_Source: siteA
-      m_Hash: 2310652317
+      m_HashValue: 2310652317
     Index: 0
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.siteA
-      m_Hash: 2169305873
+      m_HashValue: 2169305873
     Steps:
     - Type: 0
       Target:
         m_Source: BullKelp
-        m_Hash: 3363669640
+        m_HashValue: 3363669640
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: foodweb
-      m_Hash: 3643636253
+      m_HashValue: 3643636253
     Index: 1
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.foodweb
-      m_Hash: 1120255105
+      m_HashValue: 1120255105
     Steps:
     - Type: 1
       Target:
         m_Source: Urchin.Eats.BullKelp
-        m_Hash: 3905127850
+        m_HashValue: 3905127850
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     Index: 2
     LabelId:
       m_Source: jobs.kelp-bull-kelp-forest.task.reportBack
-      m_Hash: 1189211000
+      m_HashValue: 1189211000
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0100

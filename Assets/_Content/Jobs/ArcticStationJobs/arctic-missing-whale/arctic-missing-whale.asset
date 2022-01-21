@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.arctic-missing-whale.name
-    m_Hash: 4043326469
+    m_HashValue: 4043326469
   m_PosterId:
     m_Source: jobs.arctic-missing-whale.poster
-    m_Hash: 2865183263
+    m_HashValue: 2865183263
   m_DescId:
     m_Source: jobs.arctic-missing-whale.desc
-    m_Hash: 3633731623
+    m_HashValue: 3633731623
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 1
@@ -36,68 +36,66 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: ArcticStation
-    m_Hash: 1297447963
+    m_HashValue: 1297447963
   m_DiveSiteIds:
-  - m_Source: RS-4W
-    m_Hash: 2144695524
+  - m_HashValue: 2144695524
   m_Tasks:
   - Id:
       m_Source: findWhale
-      m_Hash: 2388539047
+      m_HashValue: 2388539047
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.findWhale
-      m_Hash: 3913478049
+      m_HashValue: 3913478049
     Steps:
     - Type: 7
       Target:
         m_Source: RS-4W.deadWhale
-        m_Hash: 1529514489
+        m_HashValue: 1529514489
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.reportBack
-      m_Hash: 3992557886
+      m_HashValue: 3992557886
     Steps:
     - Type: 3
       Target:
         m_Source: Something_Impossible
-        m_Hash: 1027975093
+        m_HashValue: 1027975093
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
       m_Source: findWhale
-      m_Hash: 2388539047
+      m_HashValue: 2388539047
     Index: 0
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.findWhale
-      m_Hash: 3913478049
+      m_HashValue: 3913478049
     Steps:
     - Type: 7
       Target:
         m_Source: RS-4W.deadWhale
-        m_Hash: 1529514489
+        m_HashValue: 1529514489
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     Index: 1
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.reportBack
-      m_Hash: 3992557886
+      m_HashValue: 3992557886
     Steps:
     - Type: 3
       Target:
         m_Source: Something_Impossible
-        m_Hash: 1027975093
+        m_HashValue: 1027975093
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

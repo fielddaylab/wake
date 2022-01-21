@@ -37,7 +37,7 @@ namespace Aqua.JobBoard
         #endregion
 
         [NonSerialized] private JobButton m_SelectedJobButton = null;
-        [NonSerialized] private ListHeader[] m_StatusHeaderMap = new ListHeader[4];
+        [NonSerialized] private ListHeader[] m_GroupHeaderMap = new ListHeader[5];
         [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
 
         #region Unity Events
@@ -85,10 +85,10 @@ namespace Aqua.JobBoard
         private void OnJobAction()
         {
             var profileJobData = Save.Jobs;
-            switch(m_SelectedJobButton.Status)
+            switch(m_SelectedJobButton.Group)
             {
-                case PlayerJobStatus.NotStarted:
-                case PlayerJobStatus.InProgress:
+                case JobProgressCategory.Available:
+                case JobProgressCategory.InProgress:
                     {
                         profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
                         Routine.Start(WaitToExit()).TryManuallyUpdate(0);
@@ -118,14 +118,14 @@ namespace Aqua.JobBoard
         {
             StringHash32 id;
             JobButton button;
-            foreach(var job in Services.Assets.Jobs.VisibleJobs())
+            foreach(var job in JobUtils.VisibleJobs())
             {
-                id = job.Id();
+                id = job.JobId;
                 if (!m_JobButtonMap.TryGetValue(id, out button))
                 {
                     button = m_ButtonPool.Alloc();
                     button.Initialize(m_JobToggle, OnButtonSelected);
-                    button.Populate(job, PlayerJobStatus.NotStarted);
+                    button.Populate(job.Job, JobStatusFlags.Hidden);
                     m_JobButtonMap[id] = button;
                 }
             }
@@ -146,9 +146,11 @@ namespace Aqua.JobBoard
             bool bUpdated = false;
 
             var profileJobData = Save.Jobs;
+            PlayerJob job;
             foreach(var button in m_ButtonPool.ActiveObjects)
             {
-                bUpdated |= button.UpdateStatus(profileJobData.GetStatus(button.Job.Id()), m_ButtonAppearance );
+                job = JobUtils.GetJobStatus(button.Job, Save.Current, true);
+                bUpdated |= button.UpdateStatus(job.Status, m_ButtonAppearance);
             }
 
             return bUpdated;
@@ -161,61 +163,67 @@ namespace Aqua.JobBoard
             using(PooledList<JobButton> progress = PooledList<JobButton>.Create())
             using(PooledList<JobButton> completed = PooledList<JobButton>.Create())
             using(PooledList<JobButton> available = PooledList<JobButton>.Create())
+            using(PooledList<JobButton> locked = PooledList<JobButton>.Create())
             {
                 foreach(var button in m_ButtonPool.ActiveObjects)
                 {
-                    switch(button.Status)
+                    switch(button.Group)
                     {
-                        case PlayerJobStatus.Active:
+                        case JobProgressCategory.Active:
                             active = button;
                             break;
 
-                        case PlayerJobStatus.Completed:
+                        case JobProgressCategory.Completed:
                             completed.Add(button);
                             break;
 
-                        case PlayerJobStatus.InProgress:
+                        case JobProgressCategory.InProgress:
                             progress.Add(button);
                             break;
 
-                        case PlayerJobStatus.NotStarted:
+                        case JobProgressCategory.Available:
                             available.Add(button);
+                            break;
+
+                        case JobProgressCategory.Locked:
+                            locked.Add(button);
                             break;
                     }
                 }
 
                 int siblingIndex = 0;
-                OrderList(PlayerJobStatus.Active, active, ref siblingIndex);
-                OrderList(PlayerJobStatus.InProgress, progress, ref siblingIndex);
-                OrderList(PlayerJobStatus.NotStarted, available, ref siblingIndex);
-                OrderList(PlayerJobStatus.Completed, completed, ref siblingIndex);
+                OrderList(JobProgressCategory.Active, active, ref siblingIndex);
+                OrderList(JobProgressCategory.InProgress, progress, ref siblingIndex);
+                OrderList(JobProgressCategory.Available, available, ref siblingIndex);
+                OrderList(JobProgressCategory.Locked, locked, ref siblingIndex);
+                OrderList(JobProgressCategory.Completed, completed, ref siblingIndex);
             }
         }
 
-        private void OrderList(PlayerJobStatus inStatus, JobButton inButton, ref int ioSiblingIndex)
+        private void OrderList(JobProgressCategory inGroup, JobButton inButton, ref int ioSiblingIndex)
         {
             if (inButton == null)
             {
-                FindHeader(inStatus, false)?.gameObject.SetActive(false);
+                FindHeader(inGroup, false)?.gameObject.SetActive(false);
                 return;
             }
 
-            ListHeader header = FindHeader(inStatus, true);
+            ListHeader header = FindHeader(inGroup, true);
             header.gameObject.SetActive(true);
             header.Transform.SetSiblingIndex(ioSiblingIndex++);
 
             inButton.Transform.SetSiblingIndex(ioSiblingIndex++);
         }
 
-        private void OrderList(PlayerJobStatus inStatus, List<JobButton> inButtons, ref int ioSiblingIndex)
+        private void OrderList(JobProgressCategory inGroup, List<JobButton> inButtons, ref int ioSiblingIndex)
         {
             if (inButtons.Count <= 0)
             {
-                FindHeader(inStatus, false)?.gameObject.SetActive(false);
+                FindHeader(inGroup, false)?.gameObject.SetActive(false);
                 return;
             }
 
-            ListHeader header = FindHeader(inStatus, true);
+            ListHeader header = FindHeader(inGroup, true);
             header.gameObject.SetActive(true);
             header.Transform.SetSiblingIndex(ioSiblingIndex++);
 
@@ -225,28 +233,32 @@ namespace Aqua.JobBoard
             }
         }
 
-        private ListHeader FindHeader(PlayerJobStatus inStatus, bool inbCreate)
+        private ListHeader FindHeader(JobProgressCategory inGroup, bool inbCreate)
         {
-            ref ListHeader header = ref m_StatusHeaderMap[(int) inStatus];
+            ref ListHeader header = ref m_GroupHeaderMap[(int) inGroup];
             if (header == null && inbCreate)
             {
                 header = m_HeaderPool.Alloc();
-                switch(inStatus)
+                switch(inGroup)
                 {
-                    case PlayerJobStatus.Active:
-                        header.SetText("Active");
+                    case JobProgressCategory.Active:
+                        header.SetText("ui.jobBoard.group.active");
                         break;
 
-                    case PlayerJobStatus.Completed:
-                        header.SetText("Completed");
+                    case JobProgressCategory.Completed:
+                        header.SetText("ui.jobBoard.group.completed");
                         break;
 
-                    case PlayerJobStatus.InProgress:
-                        header.SetText("In Progress");
+                    case JobProgressCategory.Available:
+                        header.SetText("ui.jobBoard.group.available");
                         break;
 
-                    case PlayerJobStatus.NotStarted:
-                        header.SetText("Available");
+                    case JobProgressCategory.InProgress:
+                        header.SetText("ui.jobBoard.group.inProgress");
+                        break;
+
+                    case JobProgressCategory.Locked:
+                        header.SetText("ui.jobBoard.group.locked");
                         break;
                 }
             }

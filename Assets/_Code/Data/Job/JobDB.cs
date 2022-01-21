@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using BeauUtil;
 using UnityEngine;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab System/Job Database", fileName = "JobDB")]
-    public class JobDB : DBObjectCollection<JobDesc>
-    {
+    public class JobDB : DBObjectCollection<JobDesc> {
         #region Inspector
 
         [Header("Colors")]
@@ -26,75 +24,36 @@ namespace Aqua
         public ColorPalette4 CompletedPortablePalette() { return m_CompletedPortablePalette; }
 
         private HashSet<StringHash32> m_HiddenJobs;
+        private Dictionary<StringHash32, List<JobDesc>> m_JobsPerSite;
+        private List<JobDesc> m_CommonJobs;
 
-        public IEnumerable<JobDesc> UnstartedJobs()
-        {
+        public ListSlice<JobDesc> JobsForStation(StringHash32 inStationId) {
             EnsureCreated();
 
-            var jobsData = Save.Jobs;
-            var mapData = Save.Map;
-
-            foreach(var job in Objects)
-            {
-                if (!job.IsAtStation(mapData))
-                    continue;
-                if (jobsData.IsStartedOrComplete(job.Id()))
-                    continue;
-                if (!job.ShouldBeAvailable(jobsData))
-                    continue;
-                
-                yield return job;
-            }
+            m_JobsPerSite.TryGetValue(inStationId, out List<JobDesc> jobs);
+            return jobs;
         }
 
-        public bool HasUnstartedJobs()
-        {
+        public ListSlice<JobDesc> CommonJobs() {
             EnsureCreated();
 
-            var unstarted = UnstartedJobs().GetEnumerator();;
-            return unstarted.MoveNext();
+            return m_CommonJobs;
         }
-        
-        public bool IsAvailableAndUnstarted(StringHash32 inId)
-        {
+
+        public bool IsHiddenJob(StringHash32 inId) {
             EnsureCreated();
-
-            var jobsData = Save.Jobs;
-            var mapData = Save.Map;
-
-            var job = Get(inId);
-            return job != null && job.IsAtStation(mapData) && !jobsData.IsStartedOrComplete(inId) && job.ShouldBeAvailable(jobsData);
-        }
-
-        public IEnumerable<JobDesc> VisibleJobs()
-        {
-            EnsureCreated();
-
-            var jobsData = Save.Jobs;
-            var mapData = Save.Map;
-
-            foreach(var job in Objects)
-            {
-                if (jobsData.IsStartedOrComplete(job.Id()) || (job.IsAtStation(mapData) && job.ShouldBeAvailable(jobsData)))
-                {
-                    yield return job;
-                }
-            }
-        }
-
-        public bool IsHiddenJob(StringHash32 inId)
-        {
+            
             return m_HiddenJobs.Contains(inId);
         }
 
-        protected override void PreLookupConstruct()
-        {
+        protected override void PreLookupConstruct() {
             base.PreLookupConstruct();
             m_HiddenJobs = new HashSet<StringHash32>();
+            m_JobsPerSite = new Dictionary<StringHash32, List<JobDesc>>();
+            m_CommonJobs = new List<JobDesc>();
         }
 
-        protected override void ConstructLookupForItem(JobDesc inItem, int inIndex)
-        {
+        protected override void ConstructLookupForItem(JobDesc inItem, int inIndex) {
             base.ConstructLookupForItem(inItem, inIndex);
 
             if (inItem.HasFlags(JobDescFlags.Hidden))
@@ -103,13 +62,25 @@ namespace Aqua
             #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
             JobDesc.ValidateTaskIds(inItem);
             #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+
+            List<JobDesc> bucket;
+            StringHash32 stationId = inItem.StationId();
+            if (stationId.IsEmpty) {
+                bucket = m_CommonJobs;
+            } else {
+                if (!m_JobsPerSite.TryGetValue(stationId, out bucket)) {
+                    bucket = new List<JobDesc>(8);
+                    m_JobsPerSite.Add(stationId, bucket);
+                }
+            }
+
+            bucket.Add(inItem);
         }
 
         #if UNITY_EDITOR
 
         [UnityEditor.CustomEditor(typeof(JobDB))]
-        private class Inspector : BaseInspector
-        {}
+        private class Inspector : BaseInspector { }
 
         #endif // UNITY_EDITOR
     }

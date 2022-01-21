@@ -138,7 +138,7 @@ namespace Aqua
 
             jobsMenu.AddSubmenu(startJobMenu);
             jobsMenu.AddDivider();
-            jobsMenu.AddButton("Complete Current Job", () => Save.Jobs.MarkComplete(Services.Data.CurrentJob()), () => !Services.Data.CurrentJobId().IsEmpty);
+            jobsMenu.AddButton("Complete Current Job", () => Save.Jobs.MarkComplete(Save.CurrentJobId), () => Save.CurrentJob.IsValid);
             jobsMenu.AddButton("Clear All Job Progress", () => Save.Jobs.ClearAll());
 
             yield return jobsMenu;
@@ -334,7 +334,7 @@ namespace Aqua
             {
                 Save.Jobs.ForgetJob(inJobId);
                 Save.Jobs.SetCurrentJob(inJobId); 
-            }, () => Services.Data.CurrentJobId() != inJobId);
+            }, () => Save.CurrentJobId != inJobId);
         }
 
         static private void RegisterEntityToggle(DMInfo inMenu, StringHash32 inEntityId)

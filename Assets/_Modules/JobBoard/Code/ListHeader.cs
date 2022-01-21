@@ -21,11 +21,11 @@ namespace Aqua.JobBoard
 
         public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
-        public void SetText(string text)
+        public void SetText(TextId text)
         {
-            if (text != null)
+            if (!text.IsEmpty)
             {
-                m_Label.SetTextFromString(text);
+                m_Label.SetText(text);
             }
         }
     }

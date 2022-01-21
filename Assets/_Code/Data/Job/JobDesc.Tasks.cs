@@ -155,7 +155,7 @@ namespace Aqua
                 foreach(var task in inItem.m_Tasks)
                 {
                     if (task.PrerequisiteTaskIds.Length == 0)
-                        ++rootCount;
+                        rootCount++;
                     
                     if (!taskIds.Add(task.Id))
                     {

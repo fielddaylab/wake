@@ -1,148 +1,69 @@
+using System;
 using BeauData;
 using BeauUtil;
 
-namespace Aqua
-{
-    public class PlayerJob : ISerializedObject
-    {
-        private StringHash32 m_JobId;
-        private PlayerJobStatus m_Status;
+namespace Aqua {
+    public struct PlayerJob : ISerializedObject {
+        public StringHash32 JobId;
+        public JobStatusFlags Status;
 
-        private JobDesc m_CachedJob;
+        [NonSerialized] public JobDesc Job;
 
-        public PlayerJob() { }
-        public PlayerJob(StringHash32 inJobId)
-        {
-            m_JobId = inJobId;
+        public PlayerJob(StringHash32 inJobId, JobStatusFlags inStatus, JobDesc inDesc) {
+            JobId = inJobId;
+            Status = inStatus;
+            Job = inDesc;
         }
 
-        public StringHash32 JobId
-        {
-            get { return m_JobId; }
-            private set
-            {
-                if (m_JobId != null)
-                {
-                    m_JobId = value;
-                    m_CachedJob = null;
-                }
-            }
-        }
-        public JobDesc Job
-        {
-            get
-            {
-                if (m_CachedJob == null)
-                {
-                    m_CachedJob = Assets.Job(m_JobId);
-                }
-
-                return m_CachedJob;
-            }
+        public void Serialize(Serializer ioSerializer) {
+            ioSerializer.UInt32Proxy("id", ref JobId);
+            ioSerializer.Enum("status", ref Status);
         }
 
-        public PlayerJobStatus Status() { return m_Status; }
-
-        #region Checks
-
-        public bool IsStarted()
-        {
-            return m_Status != PlayerJobStatus.NotStarted;
+        public bool IsValid {
+            get { return !JobId.IsEmpty; }
         }
 
-        public bool IsInProgress()
-        {
-            return m_Status == PlayerJobStatus.InProgress || m_Status == PlayerJobStatus.Active;
-        }
-
-        public bool IsActive()
-        {
-            return m_Status == PlayerJobStatus.Active;
-        }
-
-        public bool IsComplete()
-        {
-            return m_Status == PlayerJobStatus.Completed;
-        }
-
-        #endregion // Checks
-
-        #region Internal
-
-        internal void Reset()
-        {
-            m_Status = PlayerJobStatus.InProgress;
-        }
-
-        internal bool Begin()
-        {
-            if (m_Status == PlayerJobStatus.NotStarted)
-            {
-                m_Status = PlayerJobStatus.Active;
-                return true;
+        static public JobProgressCategory StatusToCategory(JobStatusFlags inStatus) {
+            if ((inStatus & JobStatusFlags.Completed) != 0)
+                return JobProgressCategory.Completed;
+            if ((inStatus & JobStatusFlags.Active) != 0)
+                return JobProgressCategory.Active;
+            if ((inStatus & JobStatusFlags.InProgress) != 0)
+                return JobProgressCategory.InProgress;
+            if ((inStatus & JobStatusFlags.Visible) != 0) {
+                if ((inStatus & JobStatusFlags.Unlocked) == 0)
+                    return JobProgressCategory.Locked;
+                return JobProgressCategory.Available;
             }
 
-            return false;
+            return JobProgressCategory.Hidden;
         }
-
-        internal bool SetAsActive()
-        {
-            if (m_Status == PlayerJobStatus.InProgress)
-            {
-                m_Status = PlayerJobStatus.Active;
-                return true;
-            }
-
-            return false;
-        }
-
-        internal bool SetAsNotActive()
-        {
-            if (m_Status == PlayerJobStatus.Active)
-            {
-                m_Status = PlayerJobStatus.InProgress;
-                return true;
-            }
-
-            return false;
-        }
-
-        internal bool Complete()
-        {
-            if (m_Status == PlayerJobStatus.InProgress || m_Status == PlayerJobStatus.Active)
-            {
-                m_Status = PlayerJobStatus.Completed;
-                return true;
-            }
-
-            return false;
-        }
-
-        internal void SetAsTemp(StringHash32 inHash32, PlayerJobStatus inStatus)
-        {
-            m_Status = inStatus;
-            m_JobId = inHash32;
-            m_CachedJob = null;
-        }
-
-        #endregion // Internal
-
-        #region ISerializedObject
-
-        void ISerializedObject.Serialize(Serializer ioSerializer)
-        {
-            ioSerializer.UInt32Proxy("id", ref m_JobId);
-            ioSerializer.Enum("status", ref m_Status);
-        }
-
-        #endregion // ISerializedObject
     }
 
-    public enum PlayerJobStatus : byte
-    {
-        NotStarted,
-        InProgress,
+    [Flags]
+    public enum JobStatusFlags : byte {
+        Hidden = 0,
+        Visible = 0x01,
+        Unlocked = 0x02,
+        InProgress = 0x04,
+        Active = 0x08,
+        Completed = 0x10,
+
+        [Hidden] Mask_Progress = InProgress | Active | Completed,
+        [Hidden] Mask_Available = Visible | Unlocked,
+
+        [Hidden] Default_InProgress = Mask_Available | InProgress,
+        [Hidden] Default_Active = Mask_Available | InProgress | Active,
+        [Hidden] Default_Completed = Mask_Available | Completed,
+    }
+
+    public enum JobProgressCategory : byte {
         Active,
-        Completed
+        InProgress,
+        Completed,
+        Available,
+        Locked,
+        Hidden
     }
 }

@@ -69,30 +69,9 @@ namespace Aqua
 
         #region Save Data
 
-        public string CurrentCharacterName()
+        public string DefaultCharacterName()
         {
-            return m_CurrentSaveData?.Character?.DisplayName ?? m_DefaultPlayerDisplayName;
-        }
-
-        public Pronouns CurrentCharacterPronouns()
-        {
-            CharacterProfile profile = m_CurrentSaveData?.Character;
-            return profile != null ? profile.Pronouns : Pronouns.Neutral;
-        }
-
-        public StringHash32 CurrentJobId()
-        {
-            return m_CurrentSaveData?.Jobs?.CurrentJobId ?? StringHash32.Null;
-        }
-
-        public PlayerJob CurrentJob()
-        {
-            return m_CurrentSaveData?.Jobs?.CurrentJob;
-        }
-
-        public uint CurrentAct()
-        {
-            return m_CurrentSaveData?.Script?.ActIndex ?? 0;
+            return m_DefaultPlayerDisplayName;
         }
 
         #if DEVELOPMENT

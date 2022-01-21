@@ -774,7 +774,7 @@ namespace Aqua
                             var character = Assets.Character(target);
                             if (character.HasFlags(ScriptActorTypeFlags.IsPlayer))
                             {
-                                outName = Services.Data.CurrentCharacterName();
+                                outName = Save.Name;
                             }
                             else
                             {

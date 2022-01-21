@@ -217,7 +217,7 @@ namespace Aqua
 
         private Variant GetPlayerPronouns()
         {
-            switch(CurrentCharacterPronouns())
+            switch(Save.Pronouns)
             {
                 case Pronouns.Masculine:
                     return "m";
@@ -592,7 +592,7 @@ namespace Aqua
             [LeafMember("JobAvailable"), UnityEngine.Scripting.Preserve]
             static private bool JobAvailable(StringHash32 inId)
             {
-                return Services.Assets.Jobs.IsAvailableAndUnstarted(inId);
+                return JobUtils.IsAvailableAndUnstarted(inId, Save.Current);
             }
 
             [LeafMember("JobTaskActive"), UnityEngine.Scripting.Preserve]
@@ -614,21 +614,32 @@ namespace Aqua
             }
 
             [LeafMember("AnyJobsAvailable"), UnityEngine.Scripting.Preserve]
-            static private int AnyJobsAvailable()
+            static private int AnyJobsAvailable(StringHash32 inStationId = default)
             {
-                var unstarted = Services.Assets.Jobs.UnstartedJobs().GetEnumerator();
-                int count = 0;
-                
-                while(unstarted.MoveNext())
-                    ++count;
-
-                return count;
+                JobProgressSummary summary;
+                if (inStationId.IsEmpty)
+                {
+                    summary = JobUtils.SummarizeJobProgress(Save.Current);
+                }
+                else
+                {
+                    summary = JobUtils.SummarizeJobProgress(inStationId, Save.Current);
+                }
+                return summary.Available;
             }
 
             [LeafMember("AnyJobsInProgress"), UnityEngine.Scripting.Preserve]
-            static private int AnyJobsInProgress()
+            static private int AnyJobsInProgress(StringHash32 inStationId = default)
             {
-                return Save.Jobs.InProgressJobs().Length;
+                if (inStationId.IsEmpty)
+                {
+                    return Save.Jobs.InProgressJobIds().Count;
+                }
+                else
+                {
+                    JobProgressSummary summary = JobUtils.SummarizeJobProgress(inStationId, Save.Current);
+                    return summary.InProgress;
+                }
             }
 
             [LeafMember("AnyJobsCompleted"), UnityEngine.Scripting.Preserve]
@@ -654,7 +665,7 @@ namespace Aqua
             {
                 if (inJobId.IsEmpty)
                 {
-                    inJobId = Save.Jobs.CurrentJobId;
+                    inJobId = Save.CurrentJobId;
                     if (inJobId.IsEmpty)
                     {
                         Log.Error("[ScriptingService] Attempting to complete job, but no job specified and no job active");
@@ -662,7 +673,7 @@ namespace Aqua
                     }
                 }
                 
-                return Save.Jobs.MarkComplete(Save.Jobs.GetProgress(inJobId));
+                return Save.Jobs.MarkComplete(inJobId);
             }
 
             #endregion // Jobs

@@ -350,7 +350,7 @@ namespace Aqua.Profile
                     Log.Warn("[InventoryData] Unknown item id '{0}'", inv.ItemId);
                     m_Items.FastRemoveAt(i);
                 } else {
-                    inv.Descriptor = Assets.Item(inv.ItemId);
+                    inv.Item = Assets.Item(inv.ItemId);
                 }
             }
 

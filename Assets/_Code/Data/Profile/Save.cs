@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Aqua.Option;
 using Aqua.Profile;
+using BeauUtil;
 
 namespace Aqua {
     
@@ -36,6 +37,16 @@ namespace Aqua {
             [MethodImpl(256)] get { return s_CachedProfile.Id; }
         }
 
+        static public string Name {
+            [MethodImpl(256)] get { return s_CachedProfile?.Character.DisplayName ?? Services.Data.DefaultCharacterName(); }
+        }
+
+        static public Pronouns Pronouns {
+            [MethodImpl(256)] get { return s_CachedProfile?.Character.Pronouns ?? Pronouns.Neutral; }
+        }
+
+        #region Sections
+
         static public CharacterProfile Character {
             [MethodImpl(256)] get { return s_CachedProfile.Character; }
         }
@@ -66,6 +77,20 @@ namespace Aqua {
 
         static public ScienceData Science {
             [MethodImpl(256)] get { return s_CachedProfile.Science; }
+        }
+
+        #endregion // Sections
+
+        static public uint ActIndex {
+            [MethodImpl(256)] get { return s_CachedProfile.Script.ActIndex; }
+        }
+
+        static public PlayerJob CurrentJob {
+            [MethodImpl(256)] get { return s_CachedProfile.Jobs.CurrentJob; }
+        }
+
+        static public StringHash32 CurrentJobId {
+            [MethodImpl(256)] get { return s_CachedProfile.Jobs.CurrentJobId; }
         }
     }
 }

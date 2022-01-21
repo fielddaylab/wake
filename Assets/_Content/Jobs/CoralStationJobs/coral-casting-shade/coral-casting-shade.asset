@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.coral-casting-shade.name
-    m_Hash: 130489507
+    m_HashValue: 130489507
   m_PosterId:
     m_Source: jobs.coral-casting-shade.poster
-    m_Hash: 254332797
+    m_HashValue: 254332797
   m_DescId:
     m_Source: jobs.coral-casting-shade.desc
-    m_Hash: 1865565969
+    m_HashValue: 1865565969
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 3
   m_ModelingDifficulty: 3
   m_ArgumentationDifficulty: 3
@@ -37,305 +37,303 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: CoralStation
-    m_Hash: 707943182
+    m_HashValue: 707943182
   m_DiveSiteIds:
-  - m_Source: RS-2R
-    m_Hash: 2229569357
+  - m_HashValue: 2229569357
   m_Tasks:
   - Id:
       m_Source: scanSarg
-      m_Hash: 3291856323
+      m_HashValue: 3291856323
     LabelId:
       m_Source: jobs.coral-casting-shade.task.scanSarg
-      m_Hash: 2433147327
+      m_HashValue: 2433147327
     Steps:
     - Type: 0
       Target:
         m_Source: Sargassum
-        m_Hash: 444981425
+        m_HashValue: 444981425
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: popProbe
-      m_Hash: 1454319354
+      m_HashValue: 1454319354
     LabelId:
       m_Source: jobs.coral-casting-shade.task.popProbe
-      m_Hash: 1355691134
+      m_HashValue: 1355691134
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
-        m_Hash: 2762679420
+        m_HashValue: 2762679420
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: scanSarg
-      m_Hash: 3291856323
+      m_HashValue: 3291856323
   - Id:
       m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
     LabelId:
       m_Source: jobs.coral-casting-shade.task.chemHistory
-      m_Hash: 176418440
+      m_HashValue: 176418440
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.Temperature.History
-        m_Hash: 2213750137
+        m_HashValue: 2213750137
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.WaterChemHistory.Light
-        m_Hash: 2480504015
+        m_HashValue: 2480504015
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: popProbe
-      m_Hash: 1454319354
+      m_HashValue: 1454319354
   - Id:
       m_Source: sargGrowthRate
-      m_Hash: 3209418523
+      m_HashValue: 3209418523
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargGrowthRate
-      m_Hash: 2731220687
+      m_HashValue: 2731220687
     Steps:
     - Type: 2
       Target:
         m_Source: Sargassum.Reproduce
-        m_Hash: 3860466180
+        m_HashValue: 3860466180
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
   - Id:
       m_Source: sargLight
-      m_Hash: 522930950
+      m_HashValue: 522930950
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargLight
-      m_Hash: 1947787242
+      m_HashValue: 1947787242
     Steps:
     - Type: 1
       Target:
         m_Source: Sargassum.Consume.Light
-        m_Hash: 2760913775
+        m_HashValue: 2760913775
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
   - Id:
       m_Source: coralGrowthRate
-      m_Hash: 35919339
+      m_HashValue: 35919339
     LabelId:
       m_Source: jobs.coral-casting-shade.task.coralGrowthRate
-      m_Hash: 1335604207
+      m_HashValue: 1335604207
     Steps:
     - Type: 1
       Target:
         m_Source: StaghornCoral.Grow
-        m_Hash: 1328520329
+        m_HashValue: 1328520329
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
   - Id:
       m_Source: coralGrowthStressed
-      m_Hash: 3469730432
+      m_HashValue: 3469730432
     LabelId:
       m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
-      m_Hash: 1512437364
+      m_HashValue: 1512437364
     Steps:
     - Type: 1
       Target:
         m_Source: StaghornCoral.Grow.Stressed
-        m_Hash: 2544394604
+        m_HashValue: 2544394604
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
   - Id:
       m_Source: sargModel
-      m_Hash: 1151503519
+      m_HashValue: 1151503519
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargModel
-      m_Hash: 1811849747
+      m_HashValue: 1811849747
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.Model.LightPrediction
-        m_Hash: 424106143
+        m_HashValue: 424106143
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: coralGrowthStressed
-      m_Hash: 3469730432
+      m_HashValue: 3469730432
     - m_Source: sargLight
-      m_Hash: 522930950
+      m_HashValue: 522930950
     - m_Source: sargGrowthRate
-      m_Hash: 3209418523
+      m_HashValue: 3209418523
     - m_Source: coralGrowthRate
-      m_Hash: 35919339
+      m_HashValue: 35919339
   - Id:
       m_Source: sargArgue
-      m_Hash: 2971658416
+      m_HashValue: 2971658416
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargArgue
-      m_Hash: 68390100
+      m_HashValue: 68390100
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: sargModel
-      m_Hash: 1151503519
+      m_HashValue: 1151503519
   m_OptimizedTaskList:
   - Id:
       m_Source: scanSarg
-      m_Hash: 3291856323
+      m_HashValue: 3291856323
     Index: 0
     LabelId:
       m_Source: jobs.coral-casting-shade.task.scanSarg
-      m_Hash: 2433147327
+      m_HashValue: 2433147327
     Steps:
     - Type: 0
       Target:
         m_Source: Sargassum
-        m_Hash: 444981425
+        m_HashValue: 444981425
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: popProbe
-      m_Hash: 1454319354
+      m_HashValue: 1454319354
     Index: 1
     LabelId:
       m_Source: jobs.coral-casting-shade.task.popProbe
-      m_Hash: 1355691134
+      m_HashValue: 1355691134
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.PopulationHistory.Sargassum
-        m_Hash: 2762679420
+        m_HashValue: 2762679420
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: chemHistory
-      m_Hash: 3712428404
+      m_HashValue: 3712428404
     Index: 2
     LabelId:
       m_Source: jobs.coral-casting-shade.task.chemHistory
-      m_Hash: 176418440
+      m_HashValue: 176418440
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.Temperature.History
-        m_Hash: 2213750137
+        m_HashValue: 2213750137
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.WaterChemHistory.Light
-        m_Hash: 2480504015
+        m_HashValue: 2480504015
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: sargGrowthRate
-      m_Hash: 3209418523
+      m_HashValue: 3209418523
     Index: 3
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargGrowthRate
-      m_Hash: 2731220687
+      m_HashValue: 2731220687
     Steps:
     - Type: 2
       Target:
         m_Source: Sargassum.Reproduce
-        m_Hash: 3860466180
+        m_HashValue: 3860466180
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: sargLight
-      m_Hash: 522930950
+      m_HashValue: 522930950
     Index: 4
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargLight
-      m_Hash: 1947787242
+      m_HashValue: 1947787242
     Steps:
     - Type: 1
       Target:
         m_Source: Sargassum.Consume.Light
-        m_Hash: 2760913775
+        m_HashValue: 2760913775
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: coralGrowthRate
-      m_Hash: 35919339
+      m_HashValue: 35919339
     Index: 5
     LabelId:
       m_Source: jobs.coral-casting-shade.task.coralGrowthRate
-      m_Hash: 1335604207
+      m_HashValue: 1335604207
     Steps:
     - Type: 1
       Target:
         m_Source: StaghornCoral.Grow
-        m_Hash: 1328520329
+        m_HashValue: 1328520329
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: coralGrowthStressed
-      m_Hash: 3469730432
+      m_HashValue: 3469730432
     Index: 6
     LabelId:
       m_Source: jobs.coral-casting-shade.task.coralGrowthStressed
-      m_Hash: 1512437364
+      m_HashValue: 1512437364
     Steps:
     - Type: 1
       Target:
         m_Source: StaghornCoral.Grow.Stressed
-        m_Hash: 2544394604
+        m_HashValue: 2544394604
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: sargModel
-      m_Hash: 1151503519
+      m_HashValue: 1151503519
     Index: 7
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargModel
-      m_Hash: 1811849747
+      m_HashValue: 1811849747
     Steps:
     - Type: 1
       Target:
         m_Source: SargassumCoveredReef.Model.LightPrediction
-        m_Hash: 424106143
+        m_HashValue: 424106143
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0600040003000500
   - Id:
       m_Source: sargArgue
-      m_Hash: 2971658416
+      m_HashValue: 2971658416
     Index: 8
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargArgue
-      m_Hash: 68390100
+      m_HashValue: 68390100
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0700

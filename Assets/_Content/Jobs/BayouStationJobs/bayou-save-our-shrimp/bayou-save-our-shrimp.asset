@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.bayou-save-our-shrimp.name
-    m_Hash: 4024410165
+    m_HashValue: 4024410165
   m_PosterId:
     m_Source: jobs.bayou-save-our-shrimp.poster
-    m_Hash: 1733117711
+    m_HashValue: 1733117711
   m_DescId:
     m_Source: jobs.bayou-save-our-shrimp.desc
-    m_Hash: 3534737975
+    m_HashValue: 3534737975
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 1
@@ -36,92 +36,90 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: BayouStation
-    m_Hash: 2992071853
+    m_HashValue: 2992071853
   m_DiveSiteIds:
-  - m_Source: RS-3P
-    m_Hash: 3168968926
+  - m_HashValue: 3168968926
   m_Tasks:
   - Id:
       m_Source: getScans
-      m_Hash: 1025619015
+      m_HashValue: 1025619015
     LabelId:
       m_Source: jobs.bayou-save-our-shrimp.task.getScans
-      m_Hash: 2969327493
+      m_HashValue: 2969327493
     Steps:
     - Type: 0
       Target:
         m_Source: P_DeadZone
-        m_Hash: 1572930800
+        m_HashValue: 1572930800
       ConditionString: 
       Amount: 0
     - Type: 0
       Target:
         m_Source: WhiteShrimp
-        m_Hash: 3187223953
+        m_HashValue: 3187223953
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: P_DeadZone.Population.WhiteShrimp
-        m_Hash: 136046965
+        m_HashValue: 136046965
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.bayou-save-our-shrimp.task.reportBack
-      m_Hash: 2303883918
+      m_HashValue: 2303883918
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
       m_Source: getScans
-      m_Hash: 1025619015
+      m_HashValue: 1025619015
     Index: 0
     LabelId:
       m_Source: jobs.bayou-save-our-shrimp.task.getScans
-      m_Hash: 2969327493
+      m_HashValue: 2969327493
     Steps:
     - Type: 0
       Target:
         m_Source: P_DeadZone
-        m_Hash: 1572930800
+        m_HashValue: 1572930800
       ConditionString: 
       Amount: 0
     - Type: 0
       Target:
         m_Source: WhiteShrimp
-        m_Hash: 3187223953
+        m_HashValue: 3187223953
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: P_DeadZone.Population.WhiteShrimp
-        m_Hash: 136046965
+        m_HashValue: 136046965
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     Index: 1
     LabelId:
       m_Source: jobs.bayou-save-our-shrimp.task.reportBack
-      m_Hash: 2303883918
+      m_HashValue: 2303883918
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

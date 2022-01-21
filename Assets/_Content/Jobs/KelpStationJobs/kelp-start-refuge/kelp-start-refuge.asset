@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.kelp-start-refuge.name
-    m_Hash: 2195154756
+    m_HashValue: 2195154756
   m_PosterId:
     m_Source: jobs.kelp-start-refuge.poster
-    m_Hash: 3240708866
+    m_HashValue: 3240708866
   m_DescId:
     m_Source: jobs.kelp-start-refuge.desc
-    m_Hash: 3489815634
+    m_HashValue: 3489815634
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 2
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 2
@@ -37,104 +37,103 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: KelpStation
-    m_Hash: 2724389503
+    m_HashValue: 2724389503
   m_DiveSiteIds: []
   m_Tasks:
   - Id:
       m_Source: getStressRanges
-      m_Hash: 2191648757
+      m_HashValue: 2191648757
     LabelId:
       m_Source: jobs.kelp-start-refuge.task.getStressRanges
-      m_Hash: 1511999946
+      m_HashValue: 1511999946
     Steps:
     - Type: 1
       Target:
         m_Source: BullKelp.Light.Stressed
-        m_Hash: 3186636197
+        m_HashValue: 3186636197
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: BullKelp.PH.Stressed
-        m_Hash: 2608411801
+        m_HashValue: 2608411801
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: GiantKelp.Light.Stressed
-        m_Hash: 2681108959
+        m_HashValue: 2681108959
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: GiantKelp.PH.Stressed
-        m_Hash: 1763384947
+        m_HashValue: 1763384947
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: argueSite
-      m_Hash: 1930577458
+      m_HashValue: 1930577458
     LabelId:
       m_Source: jobs.kelp-start-refuge.task.argueSite
-      m_Hash: 2753005113
+      m_HashValue: 2753005113
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: getStressRanges
-      m_Hash: 2191648757
+      m_HashValue: 2191648757
   m_OptimizedTaskList:
   - Id:
       m_Source: getStressRanges
-      m_Hash: 2191648757
+      m_HashValue: 2191648757
     Index: 0
     LabelId:
       m_Source: jobs.kelp-start-refuge.task.getStressRanges
-      m_Hash: 1511999946
+      m_HashValue: 1511999946
     Steps:
     - Type: 1
       Target:
         m_Source: BullKelp.Light.Stressed
-        m_Hash: 3186636197
+        m_HashValue: 3186636197
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: BullKelp.PH.Stressed
-        m_Hash: 2608411801
+        m_HashValue: 2608411801
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: GiantKelp.Light.Stressed
-        m_Hash: 2681108959
+        m_HashValue: 2681108959
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: GiantKelp.PH.Stressed
-        m_Hash: 1763384947
+        m_HashValue: 1763384947
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: argueSite
-      m_Hash: 1930577458
+      m_HashValue: 1930577458
     Index: 1
     LabelId:
       m_Source: jobs.kelp-start-refuge.task.argueSite
-      m_Hash: 2753005113
+      m_HashValue: 2753005113
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0000

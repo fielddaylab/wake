@@ -16,19 +16,19 @@ MonoBehaviour:
   m_Flags: 0
   m_NameId:
     m_Source: jobs.coral-fishy-bizz.name
-    m_Hash: 2785212121
+    m_HashValue: 2785212121
   m_PosterId:
     m_Source: jobs.coral-fishy-bizz.poster
-    m_Hash: 411411267
+    m_HashValue: 411411267
   m_DescId:
     m_Source: jobs.coral-fishy-bizz.desc
-    m_Hash: 3163738963
+    m_HashValue: 3163738963
   m_DescShortId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_DescCompletedId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   m_ExperimentDifficulty: 0
   m_ModelingDifficulty: 1
   m_ArgumentationDifficulty: 1
@@ -38,150 +38,148 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades: []
   m_StationId:
-    m_Source: CoralStation
-    m_Hash: 707943182
+    m_HashValue: 707943182
   m_DiveSiteIds:
-  - m_Source: RS-2V
-    m_Hash: 2162458881
+  - m_HashValue: 2162458881
   m_Tasks:
   - Id:
       m_Source: getScans
-      m_Hash: 1025619015
+      m_HashValue: 1025619015
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.getScans
-      m_Hash: 3516419945
+      m_HashValue: 3516419945
     Steps:
     - Type: 0
       Target:
         m_Source: Fishers
-        m_Hash: 4257683625
+        m_HashValue: 4257683625
       ConditionString: 
       Amount: 0
     - Type: 0
       Target:
         m_Source: RedGrouper
-        m_Hash: 1605956068
+        m_HashValue: 1605956068
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: historicalPopulations
-      m_Hash: 3787514863
+      m_HashValue: 3787514863
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.rhistoricalPopulations
-      m_Hash: 57648497
+      m_HashValue: 57648497
     Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_Hash: 45586372
+        m_HashValue: 45586372
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.Fishers
-        m_Hash: 3141005769
+        m_HashValue: 3141005769
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: getModel
-      m_Hash: 48080564
+      m_HashValue: 48080564
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.getModel
-      m_Hash: 1352391234
+      m_HashValue: 1352391234
     Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.Model.GrouperFishingRate
-        m_Hash: 3905184225
+        m_HashValue: 3905184225
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.reportBack
-      m_Hash: 818144618
+      m_HashValue: 818144618
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
   m_OptimizedTaskList:
   - Id:
       m_Source: getScans
-      m_Hash: 1025619015
+      m_HashValue: 1025619015
     Index: 0
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.getScans
-      m_Hash: 3516419945
+      m_HashValue: 3516419945
     Steps:
     - Type: 0
       Target:
         m_Source: Fishers
-        m_Hash: 4257683625
+        m_HashValue: 4257683625
       ConditionString: 
       Amount: 0
     - Type: 0
       Target:
         m_Source: RedGrouper
-        m_Hash: 1605956068
+        m_HashValue: 1605956068
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: historicalPopulations
-      m_Hash: 3787514863
+      m_HashValue: 3787514863
     Index: 1
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.rhistoricalPopulations
-      m_Hash: 57648497
+      m_HashValue: 57648497
     Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_Hash: 45586372
+        m_HashValue: 45586372
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
         m_Source: ReefEdge.PopulationHistory.Fishers
-        m_Hash: 3141005769
+        m_HashValue: 3141005769
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: getModel
-      m_Hash: 48080564
+      m_HashValue: 48080564
     Index: 2
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.getModel
-      m_Hash: 1352391234
+      m_HashValue: 1352391234
     Steps:
     - Type: 1
       Target:
         m_Source: ReefEdge.Model.GrouperFishingRate
-        m_Hash: 3905184225
+        m_HashValue: 3905184225
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
-      m_Hash: 2059105924
+      m_HashValue: 2059105924
     Index: 3
     LabelId:
       m_Source: jobs.coral-fishy-bizz.task.reportBack
-      m_Hash: 818144618
+      m_HashValue: 818144618
     Steps:
     - Type: 10
       Target:
         m_Source: 
-        m_Hash: 0
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
