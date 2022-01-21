@@ -159,6 +159,7 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(coralstressedArgue)
 @cutscene
+
 $call ArgueLoad(coralstressedArgue)
 {@profCempaka} So, what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
@@ -167,7 +168,7 @@ $call ArgueCancelClaim()
 $choose branch
 
 ::argue.coralNeedsLightIntro
-{@profCempaka} Ahhh, I see! It did seem shady down there, did you have proof?
+{@profCempaka} Ahhh, I see! It did seem shady down there. What evidence do you have about that, and how it affected the coral?
 $goto .argue.coralNeedsLight
 
 ::argue.coralNeedsLight
@@ -196,7 +197,23 @@ $goto .argue.coralNeedsLight
 
 
 :: argue.coralIsOldIntro
+{@profCempaka} What evidence do you have about that, and how it affected the coral?
+$goto .argue.coralIsOld
+
+::argue.coralIsOld
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralIsOldClaim)
+		$call ArgueFactSlot(SargassumCoveredReef.Light) // arbitrary slot, since there is no correct answer
+		$call ArgueFactSlot(StaghornCoral.Light.Stressed) // arbitrary slot, since there is no correct answer
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.incorrectAge
+		$answer incorrect, .argue.incorrectAge
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.incorrectAge
 {@profCempaka} I don't think we have any way to measure coral Age yet. Any other ideas?
+$call ArgueRejectIncorrect()
 $goto .argue.chooseClaim
 
 ::end
