@@ -17,9 +17,12 @@ namespace Aqua.Modeling
         static public readonly StringHash32 Trigger_ConceptUpdated = "VisualModelUpdated";
         static public readonly StringHash32 Trigger_ConceptExported = "VisualModelExported";
         static public readonly StringHash32 Trigger_GraphStarted = "SimulationModelStarted";
+        static public readonly StringHash32 Trigger_SyncStarted = "SyncModelStarted";
         static public readonly StringHash32 Trigger_SyncError = "SimulationSyncError";
         static public readonly StringHash32 Trigger_SyncCompleted = "SimulationSyncSuccess";
+        static public readonly StringHash32 Trigger_PredictStarted = "PredictModelStarted";
         static public readonly StringHash32 Trigger_PredictCompleted = "SimulationPredictSuccess";
+        static public readonly StringHash32 Trigger_InterveneStarted = "InterveneModelStarted";
         static public readonly StringHash32 Trigger_InterveneError = "SimulationInterveneError";
         static public readonly StringHash32 Trigger_InterveneCompleted = "SimulationInterveneSuccess";
 

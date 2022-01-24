@@ -1,0 +1,35 @@
+# basePath modeling
+
+// intro scripts
+
+:: generic.visual-model.intro
+@trigger	VisualModelStarted
+@boostScore 1052 // arbitraryily high number
+@when		scene:name == "Modeling", HasUpgrade(VisualModel)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof VisualModel}.
+
+:: generic.sync-model.intro
+@trigger	SyncModelStarted
+@boostScore 1051 // arbitraryily high number
+@when		scene:name == "Modeling", HasUpgrade(SyncModel)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof SyncModel}.
+
+:: generic.prediction-model.intro
+@trigger	PredictModelStarted
+@boostScore 1050 // arbitraryily high number
+@when		scene:name == "Modeling", HasUpgrade(PredictionModel)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof PredictionModel}.
+
+:: generic.intervene-model.intro
+@trigger	InterveneModelStarted
+@boostScore 1049 // arbitraryily high number
+@when		scene:name == "Modeling", HasUpgrade(InterveneModel)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof InterveneModel}.

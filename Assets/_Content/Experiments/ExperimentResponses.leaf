@@ -79,3 +79,53 @@ $set temp:newObservationTimer = 0
 @repeat 1
 @chatter
 {@kevin}    We've already seen something - maybe there's something else to observe?
+
+// intro scripts
+
+:: generic.observation-tank.intro
+@trigger	ExperimentTankViewed
+@boostScore 1052 // arbitraryily high number
+@when		tankType == "Observation"
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof ObservationTank}.
+
+:: generic.stress-tank.intro
+@trigger	ExperimentTankViewed
+@boostScore 1051 // arbitraryily high number
+@when		tankType == "Stress"
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof StressTank}.
+
+:: generic.water-chemistry.intro
+@trigger	ExperimentStarted
+@boostScore 1049 // arbitraryily high number
+@when		tankType == "Stress", HasUpgrade(WaterChemistry)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the  {nameof WaterChemistry}.
+
+:: generic.measurement-tank.intro
+@trigger	ExperimentTankViewed
+@boostScore 1050 // arbitraryily high number
+@when		tankType == "Measurement"
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof MeasurementTank}.
+
+:: generic.stabilizer.intro
+@trigger	ExperimentScreenViewed
+@boostScore 1049 // arbitraryily high number
+@when		screenId == "measurement.features", HasUpgrade(MeasurementTankStabilizerToggle)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the  {nameof MeasurementTankStabilizerToggle}.
+
+:: generic.auto-feeder.intro
+@trigger	ExperimentScreenViewed
+@boostScore 1048 // arbitraryily high number
+@when		screenId == "measurement.features", HasUpgrade(AutoFeeder)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the  {nameof AutoFeeder}.

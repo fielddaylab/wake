@@ -15,3 +15,38 @@ $set    player:noProbeHacker.triedToScan = true
 @repeat     1
 $set    player:noProbeHacker.triedToScan = true
 {@kevin}    Looks like we'll need some new equipment if we're going to scan these probes.
+
+
+// intro scripts
+
+:: generic.scanner.intro
+@trigger	SceneStart
+@boostScore 1052 // arbitraryily high number
+@when		HasUpgrade(ROVScanner)
+@once
+@cutscene
+{@kevin}	This is the tutorial for the {nameof ROVScanner}.
+{@kevin}	Use your {nameof ROVScanner} to ID all the species down here.
+$call Player->SetTool(Scanner)
+{@kevin}	The {nameof ROVScanner} searches for life forms automatically.
+			Click the red targets to ID a new plant or animal species!
+
+:: generic.tagger.intro
+@trigger    SceneStart
+@boostScore 1051 // arbitraryily high number
+@when		HasUpgrade(ROVTagger)
+@once
+@cutscene
+
+{@kevin}	This is the tutorial for the {nameof ROVTagger}.
+{@kevin}	Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+			Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+			
+:: generic.probe-hacker.intro
+@trigger    SceneStart
+@boostScore 1050 // arbitraryily high number
+@when		HasUpgrade(ProbeHacker)
+@once
+@cutscene
+
+{@kevin}	This is the tutorial for the {nameof ProbeHacker}.

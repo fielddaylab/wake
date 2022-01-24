@@ -40,32 +40,53 @@ namespace Aqua.Modeling {
                 if (OnPhaseChanged != null) {
                     OnPhaseChanged(phase);
                 }
+
+                switch (phase) {
+                    case ModelPhases.Ecosystem: {
+                            break;
+                        }
+                    case ModelPhases.Concept: {
+                            break;
+                        }
+                    case ModelPhases.Sync: {
+                            Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncStarted);
+                            break;
+                        }
+                    case ModelPhases.Predict: {
+                            Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictStarted);
+                            break;
+                        }
+                    case ModelPhases.Intervene: {
+                            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneStarted);
+                            break;
+                        }
+                }
             }
         }
 
         public void SetSelected(ModelPhases phase, bool force) {
             bool bManualInvoke = force && phase == m_CurrentPhase;
-            switch(phase) {
+            switch (phase) {
                 case ModelPhases.Ecosystem: {
-                    m_EcosystemToggle.Toggle.isOn = true;
-                    break;
-                }
+                        m_EcosystemToggle.Toggle.isOn = true;
+                        break;
+                    }
                 case ModelPhases.Concept: {
-                    m_ConceptToggle.Toggle.isOn = true;
-                    break;
-                }
+                        m_ConceptToggle.Toggle.isOn = true;
+                        break;
+                    }
                 case ModelPhases.Sync: {
-                    m_SyncToggle.Toggle.isOn = true;
-                    break;
-                }
+                        m_SyncToggle.Toggle.isOn = true;
+                        break;
+                    }
                 case ModelPhases.Predict: {
-                    m_PredictToggle.Toggle.isOn = true;
-                    break;
-                }
+                        m_PredictToggle.Toggle.isOn = true;
+                        break;
+                    }
                 case ModelPhases.Intervene: {
-                    m_InterveneToggle.Toggle.isOn = true;
-                    break;
-                }
+                        m_InterveneToggle.Toggle.isOn = true;
+                        break;
+                    }
             }
             if (bManualInvoke && OnPhaseChanged != null) {
                 OnPhaseChanged(phase);
@@ -87,7 +108,7 @@ namespace Aqua.Modeling {
             m_PredictToggle.Highlight.SetActive((mask & ModelPhases.Predict) != 0);
             m_InterveneToggle.Highlight.SetActive((mask & ModelPhases.Intervene) != 0);
         }
-    
+
         public void SetInputActive(bool active) {
             m_Group.blocksRaycasts = active;
         }
