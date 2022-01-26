@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Aqua.WorldMap
 {
-    public class WorldMapCtrl : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable
+    public class WorldMapCtrl : MonoBehaviour, IScenePreloader, ISceneOptimizable
     {
         static public readonly StringHash32 Event_RequestChangeStation = "worldmap:request-change-station"; // StringHash32 stationId
 
@@ -69,7 +69,7 @@ namespace Aqua.WorldMap
 
         #region IScene
 
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
+        IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
         {
             MapDB mapDB = Services.Assets.Map;
             MapData profileData = Save.Map;
@@ -88,15 +88,20 @@ namespace Aqua.WorldMap
                 {
                     MapDesc desc = mapDB.Get(id);
 
+                    bool seen = profileData.HasVisitedLocation(id);
+                    JobProgressSummary summary = JobUtils.SummarizeJobProgress(id, Save.Current);
+
                     if (m_CurrentStation == id)
                     {
                         m_PlayerTransform.SetPosition(station.transform.position, Axis.XY, Space.Self);
-                        station.Show(desc, true);
+                        station.Show(desc, true, seen, summary);
                     }
                     else
                     {
-                        station.Show(desc, false);
+                        station.Show(desc, false, seen, summary);
                     }
+
+                    yield return null;
                 }
             }
 

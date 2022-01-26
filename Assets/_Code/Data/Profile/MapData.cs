@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Aqua.Profile
 {
-    public class MapData : IProfileChunk, ISerializedVersion
+    public class MapData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
         private enum TimeMode : byte
         {
@@ -36,6 +36,7 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UnlockedRoomIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_VisitedLocations = new HashSet<StringHash32>();
 
         private int m_RandomSeedOffset;
         
@@ -164,6 +165,26 @@ namespace Aqua.Profile
 
         #endregion // Ship Rooms
 
+        #region Seen
+
+        public bool HasVisitedLocation(StringHash32 inLocationId)
+        {
+            return m_VisitedLocations.Contains(inLocationId);
+        }
+
+        public bool RecordVisitedLocation(StringHash32 inLocationId)
+        {
+            if (m_VisitedLocations.Add(inLocationId))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Seen
+
         public void SetDefaults()
         {
             m_CurrentStationId = Services.Assets.Map.DefaultStationId();
@@ -222,7 +243,8 @@ namespace Aqua.Profile
 
         // v5: site unlocks
         // v6: removed time :(
-        ushort ISerializedVersion.Version { get { return 6; } }
+        // v7: added "seen"
+        ushort ISerializedVersion.Version { get { return 7; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -274,6 +296,24 @@ namespace Aqua.Profile
                 {
                     m_UnlockedRoomIds.Add(room);
                 }
+            }
+
+            if (ioSerializer.ObjectVersion >= 6)
+            {
+                ioSerializer.UInt32ProxySet("visitedLocations", ref m_VisitedLocations);
+            }
+        }
+
+        void ISerializedCallbacks.PostSerialize(Serializer.Mode inMode, ISerializerContext inContext)
+        {
+            if (inMode != Serializer.Mode.Read)
+                return;
+
+            StringHash32 mapId = m_CurrentMapId;
+            if (!Services.Assets.Map.HasId(mapId))
+            {
+                Log.Warn("[MapData] No map with id '{0}'", mapId);
+                m_CurrentMapId = null;
             }
         }
 

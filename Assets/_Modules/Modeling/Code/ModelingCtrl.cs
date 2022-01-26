@@ -490,6 +490,11 @@ namespace Aqua.Modeling {
             s_Instance.m_Header.SetSelected(phase, true);
         }
 
+        // [LeafMember("ModelingCanRunPhase")]
+        // static private bool LeafCheckCanRunPhase(ModelPhases phase) {
+        //     JobModelScope scope = Save.CurrentJob.Job?.FindAsset<JobModelScope>();
+        // }
+
         #endregion // Leaf
     }
     

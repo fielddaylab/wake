@@ -236,6 +236,8 @@ namespace Aqua
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
+            RecordCurrentMapAsSeen(active);
+
             m_SceneLock = false;
             Services.UI.HideLoadingScreen();
 
@@ -326,6 +328,8 @@ namespace Aqua
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
+            RecordCurrentMapAsSeen(active);
+
             m_SceneLock = false;
 
             if (bShowLoading)
@@ -339,12 +343,15 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
             inNextScene.BroadcastLoaded(inContext);
-            Services.Input.ResumeAll();
-            Services.Physics.Enabled = true;
-            m_SceneLock = false;
+            if (!m_SceneLock)
+            {
+                Services.Input.ResumeAll();
+                Services.Physics.Enabled = true;
+                m_SceneLock = false;
 
-            Services.Events.Dispatch(GameEvents.SceneLoaded);
-            Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                Services.Events.Dispatch(GameEvents.SceneLoaded);
+                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            }
         }
 
         private IEnumerator WaitForServiceLoading()
@@ -540,6 +547,16 @@ namespace Aqua
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
             }
             yield return SceneManager.UnloadSceneAsync(unityScene);
+        }
+
+        private void RecordCurrentMapAsSeen(SceneBinding inBinding)
+        {
+            if (inBinding.BuildIndex < GameConsts.GameSceneIndexStart)
+                return;
+
+            StringHash32 map = MapDB.LookupMap(inBinding);
+            if (!map.IsEmpty)
+                Save.Map.RecordVisitedLocation(map);
         }
 
         #endregion // Scene Loading

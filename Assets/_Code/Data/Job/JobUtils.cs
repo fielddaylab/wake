@@ -62,6 +62,7 @@ namespace Aqua {
 
             PlayerJob status;
             JobProgressSummary summary = default;
+            summary.Total = (ushort) db.Count();
 
             foreach(var job in db.Objects) {
                 StringHash32 stationId = job.StationId();
@@ -110,7 +111,10 @@ namespace Aqua {
             PlayerJob status;
             JobProgressSummary summary = default;
 
-            foreach(var job in db.JobsForStation(stationId)) {
+            var jobList = db.JobsForStation(stationId);
+            summary.Total = (ushort) jobList.Length;
+
+            foreach(var job in jobList) {
                 status = GetJobStatus(job, saveData, true);
 
                 // if in progress
@@ -192,5 +196,6 @@ namespace Aqua {
         public ushort InProgress;
         public ushort Completed;
         public bool HasActive;
+        public ushort Total;
     }
 }

@@ -67,6 +67,9 @@ namespace Aqua.Ship
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            StringHash32 currentStationId = Save.Map.CurrentStationId();
+            Save.Map.RecordVisitedLocation(currentStationId);
+
             StringHash32 currentSceneId = Services.Data.GetVariable(GameVars.ShipRoom).AsStringHash();
             Room room = GetRoom(currentSceneId);
             LoadRoom(room);

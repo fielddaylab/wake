@@ -36,9 +36,9 @@ namespace Aqua.WorldMap
             m_Label.Hide();
         }
 
-        public void Show(MapDesc inMap, bool inbCurrent)
+        public void Show(MapDesc inMap, bool inbCurrent, bool inbSeen, JobProgressSummary inSummary)
         {
-            m_Label.Show(inMap);
+            m_Label.Show(inMap, inbCurrent, inbSeen, inSummary);
             
             m_CursorHint.TooltipId = inMap.LabelId();
             m_Icon.sprite = inbCurrent ? m_CurrentSprite : m_OpenSprite;
