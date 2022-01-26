@@ -43,6 +43,7 @@ namespace Aqua.Ship
         {
             Services.Camera.SnapToPose(m_CameraTarget);
             Services.Events.Dispatch(GameEvents.RoomChanged, m_Id.Source());
+            Save.Map.RecordVisitedLocation(m_Id);
 
             Show();
         }

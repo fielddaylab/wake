@@ -301,6 +301,12 @@ namespace Aqua
                 return Save.Bestiary.HasFact(inFactId);
             }
 
+            [LeafMember("IsFactFullyUpgraded"), UnityEngine.Scripting.Preserve]
+            static private bool IsFactFullyUpgraded(StringHash32 inFactId)
+            {
+                return Save.Bestiary.IsFactFullyUpgraded(inFactId);
+            }
+
             [LeafMember("IsFactGraphed"), UnityEngine.Scripting.Preserve]
             static private bool IsFactGraphed(StringHash32 inMapId, StringHash32 inFactId)
             {
@@ -732,6 +738,12 @@ namespace Aqua
             static private bool LockRoom(StringHash32 inRoomId)
             {
                 return Save.Map.LockRoom(inRoomId);
+            }
+
+            [LeafMember("LocationVisited"), UnityEngine.Scripting.Preserve]
+            static private bool LocationVisited(StringHash32 inLocationId)
+            {
+                return Save.Map.HasVisitedLocation(inLocationId);
             }
 
             #endregion // World
