@@ -25,11 +25,19 @@ $set    player:noProbeHacker.triedToScan = true
 @when		HasUpgrade(ROVScanner)
 @once
 @cutscene
-{@kevin}	This is the tutorial for the {nameof ROVScanner}.
-{@kevin}	Use your {nameof ROVScanner} to ID all the species down here.
+{@kevin}	Now that you have the {nameof ROVScanner}, you can use it to ID all the species down here.
 $call Player->SetTool(Scanner)
 {@kevin}	The {nameof ROVScanner} searches for life forms automatically.
-			Click the red targets to ID a new plant or animal species!
+			Click any red targets you find to ID a new plant or animal species!
+$set    jobs:common-dive.seen.scan-intro = true
+$if HasUpgrade(ROVTagger), !jobs:common-dive.seen.tagger-intro
+	{@kevin}	Also...
+	$goto .generic.tagger.intro
+$endif
+$if HasUpgrade(ProbeHacker), !jobs:common-dive.seen.probe-intro
+	{@kevin}	Also...
+	$goto .generic.probe-hacker.intro
+$endif
 
 :: generic.tagger.intro
 @trigger    SceneStart
@@ -38,9 +46,14 @@ $call Player->SetTool(Scanner)
 @once
 @cutscene
 
-{@kevin}	This is the tutorial for the {nameof ROVTagger}.
+{@kevin}	Your new {nameof ROVTagger} allows you to count species populations.
 {@kevin}	Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
 			Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+$set    jobs:common-dive.seen.tagger-intro = true
+$if HasUpgrade(ProbeHacker), !jobs:common-dive.seen.probe-intro
+	{@kevin}	Also...
+	$goto .generic.probe-hacker.intro
+$endif
 			
 :: generic.probe-hacker.intro
 @trigger    SceneStart
@@ -49,4 +62,7 @@ $call Player->SetTool(Scanner)
 @once
 @cutscene
 
-{@kevin}	This is the tutorial for the {nameof ProbeHacker}.
+{@kevin}	Now that you have the {nameof ProbeHacker}, you can gather additional data from probes!
+{@kevin}	When you see a probe, move close and scan it.
+{@kevin}	The {nameof ProbeHacker} will download the data to your {item-name}AQOS Tablet{/item-name}!
+$set    jobs:common-dive.seen.probe-intro = true

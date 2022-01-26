@@ -140,11 +140,6 @@ $endif
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
 {@kevin}	Great! You measured how quickly Sargassum grow in an ideal environment. 
-$if !jobs:coral-casting-shade.gotOtherMeasurement
-	{@kevin}	These numerical facts are what's required to run simulations in the Modeling Lab.
-	{@kevin}	Now set up a few more experiments to determine the other rates we need to build a simulation model. 
-	{@kevin}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
-$endif
 
 :: experimentEndOtherLight
 @trigger    JobTasksUpdated

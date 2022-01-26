@@ -172,18 +172,7 @@ $call FocusHighlight->Clear()
 $branch common.ringPhone
 
 {@drKelp}  What a lovely old tank! This ship really is ancient, isn't it
-            Go ahead, take a closer look! 
-
-:: firstExperiment.2
-@trigger    ExperimentTankViewed
-@when       tankType == "Observation"
-@cutscene
-@once
-
-{@drKelp}  This is the {h}Observation Tank{/h}. 
-            Click the Add Water button to fill the tank. 
-            Then click the {h}Run Experiment{/h} button.
-            You'll need to record how the different life forms interact!
+            Go ahead, take a closer look!
             
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance

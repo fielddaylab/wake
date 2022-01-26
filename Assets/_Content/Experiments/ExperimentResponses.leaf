@@ -88,7 +88,10 @@ $set temp:newObservationTimer = 0
 @when		tankType == "Observation"
 @once
 @cutscene
-{@kevin}	This is the tutorial for the {nameof ObservationTank}.
+{@kevin}	This is the {h}{nameof ObservationTank}{/h}. 
+            Click the {h}Add Water{/h} button to fill the tank. 
+            Then click the {h}Run Experiment{/h} button.
+            You'll need to record how the different life forms interact!
 
 :: generic.stress-tank.intro
 @trigger	ExperimentTankViewed
@@ -96,15 +99,10 @@ $set temp:newObservationTimer = 0
 @when		tankType == "Stress"
 @once
 @cutscene
-{@kevin}	This is the tutorial for the {nameof StressTank}.
-
-:: generic.water-chemistry.intro
-@trigger	ExperimentStarted
-@boostScore 1049 // arbitraryily high number
-@when		tankType == "Stress", HasUpgrade(WaterChemistry)
-@once
-@cutscene
-{@kevin}	This is the tutorial for the  {nameof WaterChemistry}.
+{@kevin}	This is the {h}{nameof StressTank}{/h}.
+			Once you start an experiment, there will be dials on the bottom.
+			Turning the dials affects the tank conditions.
+			They will auto adjust to make sure the organisms don't get hurt.
 
 :: generic.measurement-tank.intro
 @trigger	ExperimentTankViewed
@@ -112,15 +110,26 @@ $set temp:newObservationTimer = 0
 @when		tankType == "Measurement"
 @once
 @cutscene
-{@kevin}	This is the tutorial for the {nameof MeasurementTank}.
-
+{@kevin}	This is the {h}{nameof MeasurementTank}{/h}.
+			We can use it to gather numberical facts that we'll need to run simulations in the Modeling Lab.
+			First you will select an {h}Environment{/h}.
+			Then you will select the {h}Organisms{/h} you are trying to measure something about.
+			After that, you can set the {nameof MeasurementTankStabilizerToggle} or the {nameof AutoFeeder} if you have them.
+			Click the {h}Add Water{/h} button to get started!
+			
 :: generic.stabilizer.intro
 @trigger	ExperimentScreenViewed
 @boostScore 1049 // arbitraryily high number
 @when		screenId == "measurement.features", HasUpgrade(MeasurementTankStabilizerToggle)
 @once
 @cutscene
-{@kevin}	This is the tutorial for the  {nameof MeasurementTankStabilizerToggle}.
+{@kevin}	You have {h}{nameof MeasurementTankStabilizerToggle}{/h} now! That's cool.
+			When it's activated, {h}{nameof MeasurementTankStabilizerToggle}{/h} will keep the tank conditions stable.
+			You can deactivate it if you want to see how an organism affects its environment.
+$if HasUpgrade(AutoFeeder), !jobs:experiment-responses.seen.auto-feeder-intro
+	{@kevin}	Also...
+	$goto .generic.auto-feeder.intro
+$endif
 
 :: generic.auto-feeder.intro
 @trigger	ExperimentScreenViewed
@@ -128,4 +137,7 @@ $set temp:newObservationTimer = 0
 @when		screenId == "measurement.features", HasUpgrade(AutoFeeder)
 @once
 @cutscene
-{@kevin}	This is the tutorial for the  {nameof AutoFeeder}.
+{@kevin}	Now that you have the {nameof AutoFeeder}, you can control how organisms are fed.
+{@kevin}	With the {nameof AutoFeeder} on, organisms will leave each other alone.
+{@kevin}	Turn off the {nameof AutoFeeder} to find out the rate at which one organism eats another.
+$set	jobs:experiment-responses.seen.auto-feeder-intro = true
