@@ -411,7 +411,7 @@ namespace Aqua.Modeling {
 
         private void UpdateWaterPropertiesUnlocked() {
             var save = Save.Inventory;
-            bool canSee = save.HasUpgrade(ItemIds.WaterChemistry);
+            bool canSee = save.HasUpgrade(ItemIds.WaterModeling);
             m_LightProperty.gameObject.SetActive(canSee);
             m_TemperatureProperty.gameObject.SetActive(canSee);
             m_PHProperty.gameObject.SetActive(canSee);
