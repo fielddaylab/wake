@@ -202,6 +202,9 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
+            m_VariableResolver.SetVar(GameVars.PlayerCash, () => (int) Save.Cash);
+            m_VariableResolver.SetVar(GameVars.PlayerExp, () => (int) Save.Exp);
+            m_VariableResolver.SetVar(GameVars.PlayerLevel, () => (int) Save.ExpLevel);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -467,20 +470,11 @@ namespace Aqua
                 return Save.Inventory.ItemCount(inItemId) >= inCount;
             }
 
-            [LeafMember("CanSeeItem"), UnityEngine.Scripting.Preserve]
-            static private bool CanSeeItem(StringHash32 inItemId)
-            {
-                var itemDesc = Assets.Item(inItemId);
-                var invData = Save.Inventory;
-                return invData.ItemCount(ItemIds.Cash) >= itemDesc.CashCost() && Save.Science.CurrentLevel() >= itemDesc.RequiredLevel();
-            }
-
             [LeafMember("CanAffordItem"), UnityEngine.Scripting.Preserve]
             static private bool CanAffordItem(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
-                var invData = Save.Inventory;
-                return invData.ItemCount(ItemIds.Cash) >= itemDesc.CashCost() && Save.Science.CurrentLevel() >= itemDesc.RequiredLevel();
+                return Save.Cash >= itemDesc.CashCost() && Save.Exp >= itemDesc.RequiredExp();
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]

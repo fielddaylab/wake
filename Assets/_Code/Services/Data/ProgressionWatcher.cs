@@ -183,10 +183,11 @@ namespace Aqua
 
         private void OnItemUpdated(StringHash32 inItemId)
         {
-            if (inItemId != ItemIds.Exp)
-                return;
+            // TODO: Re-enable once we want levels?
+            // if (inItemId != ItemIds.Exp)
+            //     return;
 
-            ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+            // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)

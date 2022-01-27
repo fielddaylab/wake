@@ -20,14 +20,18 @@ namespace Aqua.Ship
         [SerializeField] private LinkType m_LinkType = LinkType.Room;
         [SerializeField, ShowIfField("ShowRoom")] private Room m_Room = null;
         [SerializeField, ShowIfField("ShowScene")] private string m_Scene = null;
+        [SerializeField, ShowIfField("ShowScene")] private string m_Entrance = default;
         [SerializeField, ShowIfField("ShowScene")] private bool m_StopMusic = true;
         [SerializeField, ShowIfField("ShowScene")] private bool m_SuppressAutosave = false;
+        [SerializeField] private bool m_AlwaysAvailable = false;
         [Space]
         [Inline(InlineAttribute.DisplayType.HeaderLabel), SerializeField] private EnableDisableGroup m_Objects = null;
 
         #endregion // Inspector
 
         [SerializeField, HideInInspector] public StringHash32 LinkId;
+
+        public bool IsAlwaysAvailable() { return m_AlwaysAvailable; }
 
         private void Awake()
         {
@@ -50,7 +54,7 @@ namespace Aqua.Ship
                     break;
 
                 case LinkType.Scene:
-                    roomMgr.LoadScene(m_Scene);
+                    roomMgr.LoadScene(m_Scene, m_Entrance);
                     if (m_StopMusic)
                         Services.Audio.StopMusic();
                     if (m_SuppressAutosave)

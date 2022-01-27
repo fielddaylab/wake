@@ -92,5 +92,17 @@ namespace Aqua {
         static public StringHash32 CurrentJobId {
             [MethodImpl(256)] get { return s_CachedProfile.Jobs.CurrentJobId; }
         }
+
+        static public uint Cash {
+            [MethodImpl(256)] get { return Inventory.ItemCount(ItemIds.Cash); }
+        }
+
+        static public uint Exp {
+            [MethodImpl(256)] get { return Inventory.ItemCount(ItemIds.Exp); }
+        }
+
+        static public uint ExpLevel {
+            [MethodImpl(256)] get { return Science.CurrentLevel(); }
+        }
     }
 }

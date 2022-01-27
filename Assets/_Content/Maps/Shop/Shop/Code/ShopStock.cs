@@ -40,14 +40,14 @@ namespace Aqua.Shop {
                 table.Set("itemName", item.CachedItem.NameTextId().Hash());
                 table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
                 table.Set("cashCost", item.CachedItem.CashCost());
-                table.Set("expCost", item.CachedItem.RequiredLevel());
+                table.Set("expCost", item.CachedItem.RequiredExp());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
             }
         }
 
         static private bool CanAfford(InventoryData profile, InvItem item) {
             return profile.ItemCount(ItemIds.Cash) >= item.CashCost()
-                && profile.ItemCount(ItemIds.Exp) >= item.RequiredLevel();
+                && profile.ItemCount(ItemIds.Exp) >= item.RequiredExp();
         }
 
         #endregion // Callbacks
@@ -91,10 +91,10 @@ namespace Aqua.Shop {
                     item.CoinsRoot.SetActive(false);
                 }
 
-                if (itemData.RequiredLevel() > 0) {
+                if (itemData.RequiredExp() > 0) {
                     item.GearsRoot.SetActive(true);
-                    item.GearsText.SetText(itemData.RequiredLevel().ToStringLookup());
-                    item.GearsText.color = profile.ItemCount(ItemIds.Exp) >= itemData.RequiredLevel() ? m_CanAffordColor : m_CannotAffordColor;
+                    item.GearsText.SetText(itemData.RequiredExp().ToStringLookup());
+                    item.GearsText.color = profile.ItemCount(ItemIds.Exp) >= itemData.RequiredExp() ? m_CanAffordColor : m_CannotAffordColor;
                 } else {
                     item.GearsRoot.SetActive(false);
                 }

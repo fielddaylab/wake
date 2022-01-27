@@ -84,9 +84,9 @@ namespace Aqua.Ship
             StateUtil.LoadMapWithWipe(Save.Map.CurrentStationId(), "Ship");
         }
 
-        public void LoadScene(string inScene)
+        public void LoadScene(string inScene, StringHash32 inEntrance = default)
         {
-            StateUtil.LoadSceneWithWipe(inScene);
+            StateUtil.LoadSceneWithWipe(inScene, inEntrance);
         }
 
         public void LoadRoom(Room inRoom)
@@ -144,7 +144,7 @@ namespace Aqua.Ship
             MapData map = Save.Map;
             foreach(var roomLink in m_Links)
             {
-                if (map.IsRoomUnlocked(roomLink.LinkId))
+                if (roomLink.IsAlwaysAvailable() || map.IsRoomUnlocked(roomLink.LinkId))
                 {
                     roomLink.Show();
                 }
