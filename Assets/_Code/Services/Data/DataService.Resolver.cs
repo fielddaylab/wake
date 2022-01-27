@@ -558,18 +558,6 @@ namespace Aqua
                 return Save.Inventory.WasScanned(inNodeId);
             }
 
-            [LeafMember("HasWaterProperty"), UnityEngine.Scripting.Preserve]
-            static private bool HasProperty(WaterPropertyId inProperty)
-            {
-                return Save.Inventory.IsPropertyUnlocked(inProperty);
-            }
-
-            [LeafMember("GiveWaterProperty"), UnityEngine.Scripting.Preserve]
-            static private bool GiveWaterProperty(WaterPropertyId inProperty)
-            {
-                return Save.Inventory.UnlockProperty(inProperty);
-            }
-
             #endregion // Bestiary/Inventory
 
             #region Shop

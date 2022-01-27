@@ -33,8 +33,8 @@ namespace Aqua
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Save.Name);
-            m_TagEventParser.AddReplace("cash", "<#C9C86D>").CloseWith("</color><sprite name=\"cash\">");
-            m_TagEventParser.AddReplace("exp", "<#A6C8FF>").CloseWith("</color><sprite name=\"exp\">");
+            m_TagEventParser.AddReplace("cash", "<#DDDC64>").CloseWith("</color><sprite name=\"cash\">");
+            m_TagEventParser.AddReplace("exp", "<#79A4EA>").CloseWith("</color><sprite name=\"exp\">");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
@@ -155,11 +155,11 @@ namespace Aqua
             
             if (itemId == ItemIds.Cash)
             {
-                return string.Format("<#a6c8ff>{0</color><sprite name=\"cash\">", itemCount);
+                return string.Format("<#DDDC64>{0</color><sprite name=\"cash\">", itemCount);
             }
             else if (itemId == ItemIds.Exp)
             {
-                return string.Format("<#c9c86d>{0}</color><sprite name=\"exp\">", itemCount);
+                return string.Format("<#79A4EA>{0}</color><sprite name=\"exp\">", itemCount);
             }
             else if (itemDesc.Category() == InvItemCategory.Upgrade)
             {
@@ -199,9 +199,9 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#a6c8ff>{0}</color><sprite name=\"cash\">", item.NameTextId());
+                    return Loc.FormatFromString("<#DDDC64>{0}</color><sprite name=\"cash\">", item.NameTextId());
                 else if (item.Id() == ItemIds.Exp)
-                    return Loc.FormatFromString("<#c9c86d>{0}</color><sprite name=\"exp\">", item.NameTextId());
+                    return Loc.FormatFromString("<#79A4EA>{0}</color><sprite name=\"exp\">", item.NameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
                     return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
                 else
@@ -252,9 +252,9 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#a6c8ff>{0}</color><sprite name=\"cash\">", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#DDDC64>{0}</color><sprite name=\"cash\">", item.PluralNameTextId());
                 else if (item.Id() == ItemIds.Exp)
-                    return Loc.FormatFromString("<#c9c86d>{0}</color><sprite name=\"exp\">", item.PluralNameTextId());
+                    return Loc.FormatFromString("<#79A4EA>{0}</color><sprite name=\"exp\">", item.PluralNameTextId());
                 else if (item.Category() == InvItemCategory.Upgrade)
                     return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
                 else

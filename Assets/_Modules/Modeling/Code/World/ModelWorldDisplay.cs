@@ -411,11 +411,12 @@ namespace Aqua.Modeling {
 
         private void UpdateWaterPropertiesUnlocked() {
             var save = Save.Inventory;
-            m_LightProperty.gameObject.SetActive(save.IsPropertyUnlocked(WaterPropertyId.Light));
-            m_TemperatureProperty.gameObject.SetActive(save.IsPropertyUnlocked(WaterPropertyId.Temperature));
-            m_PHProperty.gameObject.SetActive(save.IsPropertyUnlocked(WaterPropertyId.PH));
-            m_OxygenProperty.gameObject.SetActive(save.IsPropertyUnlocked(WaterPropertyId.Oxygen));
-            m_CarbonDioxideProperty.gameObject.SetActive(save.IsPropertyUnlocked(WaterPropertyId.CarbonDioxide));
+            bool canSee = save.HasUpgrade(ItemIds.WaterChemistry);
+            m_LightProperty.gameObject.SetActive(canSee);
+            m_TemperatureProperty.gameObject.SetActive(canSee);
+            m_PHProperty.gameObject.SetActive(canSee);
+            m_OxygenProperty.gameObject.SetActive(canSee);
+            m_CarbonDioxideProperty.gameObject.SetActive(canSee);
         }
 
         private void SyncEnvironmentChemistry(WaterPropertyBlockF32 environment) {

@@ -49,9 +49,6 @@ namespace Aqua.Testing {
                 }
             } else if (type == typeof(JobDesc)) {
                 Save.Jobs.DebugMarkComplete(assetId);
-            } else if (type == typeof(WaterPropertyDesc)) {
-                WaterPropertyDesc water = (WaterPropertyDesc) asset;
-                Save.Inventory.UnlockProperty(water.Index());
             }
         }
 

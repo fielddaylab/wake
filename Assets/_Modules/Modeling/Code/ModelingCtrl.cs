@@ -351,8 +351,9 @@ namespace Aqua.Modeling {
         #region Evaluation
 
         private void RefreshPhaseHeader() {
-            EvaluatePhaseMask();
-            EvaluateHighlightMask();
+            ModelPhases saveMask = GetUnlockedPhases();
+            EvaluatePhaseMask(saveMask);
+            EvaluateHighlightMask(saveMask);
         }
 
         private void EvaluateConceptStatus() {
@@ -388,7 +389,7 @@ namespace Aqua.Modeling {
             Services.Data.SetVariable(ModelingConsts.Var_HasPendingExport, status == ConceptualModelState.StatusId.ExportReady);
         }
 
-        private void EvaluatePhaseMask() {
+        private void EvaluatePhaseMask(ModelPhases saveMask) {
             ModelPhases mask = m_ProgressInfo.Phases;
             ModelPhases completed = m_ProgressInfo.Phases;
             if (m_ProgressInfo.Scope != null) {
@@ -412,12 +413,31 @@ namespace Aqua.Modeling {
                 }
             }
 
+            mask &= saveMask;
+            completed &= saveMask;
+
             m_State.AllowedPhases = mask;
             m_State.CompletedPhases = completed;
             m_Header.UpdateAllowedMask(mask);
         }
 
-        private void EvaluateHighlightMask() {
+        static private ModelPhases GetUnlockedPhases()
+        {
+            ModelPhases mask = ModelPhases.Ecosystem;
+
+            if (Save.Inventory.HasUpgrade(ItemIds.VisualModel))
+                mask |= ModelPhases.Concept;
+            if (Save.Inventory.HasUpgrade(ItemIds.SyncModel))
+                mask |= ModelPhases.Sync;
+            if (Save.Inventory.HasUpgrade(ItemIds.PredictionModel))
+                mask |= ModelPhases.Predict;
+            if (Save.Inventory.HasUpgrade(ItemIds.InterveneModel))
+                mask |= ModelPhases.Intervene;
+
+            return mask;
+        }
+
+        private void EvaluateHighlightMask(ModelPhases saveMask) {
             ModelPhases mask = 0;
             if (m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady || m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport) {
                 mask |= ModelPhases.Concept;
@@ -430,6 +450,8 @@ namespace Aqua.Modeling {
                     mask |= ModelPhases.Intervene;
                 }
             }
+
+            mask &= saveMask;
 
             m_Header.UpdateHighlightMask(mask);
         }

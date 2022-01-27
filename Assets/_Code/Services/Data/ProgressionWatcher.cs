@@ -183,6 +183,16 @@ namespace Aqua
 
         private void OnItemUpdated(StringHash32 inItemId)
         {
+            var item = Assets.Item(inItemId);
+            if (item.Category() == InvItemCategory.Upgrade)
+            {
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("upgradeId", inItemId);
+                    Services.Script.TryCallFunctions(GameTriggers.UpgradeAdded, null, null, table);
+                }
+            }
+
             // TODO: Re-enable once we want levels?
             // if (inItemId != ItemIds.Exp)
             //     return;

@@ -160,13 +160,15 @@ namespace Aqua.Modeling {
             m_RelevantCritterIds.Clear();
             m_RelevantWaterProperties.Mask = 0;
 
+            bool bHasUpgrade = Save.Inventory.HasUpgrade(ItemIds.WaterChemistry);
+
             if (m_ProgressInfo.Scope != null) {
                 foreach(var organismId in m_ProgressInfo.Scope.OrganismIds) {
                     m_RelevantCritters.Add(Assets.Bestiary(organismId));
                     m_RelevantCritterIds.Add(organismId);
                 }
-                if (m_ProgressInfo.Scope.IncludeWaterChemistryInAccuracy) {
-                    m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask() & GraphedPropertyMask;
+                if (m_ProgressInfo.Scope.IncludeWaterChemistryInAccuracy && bHasUpgrade) {
+                    m_RelevantWaterProperties = GraphedPropertyMask;
                 }
             } else {
                 foreach(var organism in m_ProgressInfo.ImportableEntities) {
@@ -175,7 +177,9 @@ namespace Aqua.Modeling {
                         m_RelevantCritterIds.Add(organism.Id());
                     }
                 }
-                m_RelevantWaterProperties = Save.Inventory.GetPropertyUnlockedMask() & GraphedPropertyMask;
+                if (bHasUpgrade) {
+                    m_RelevantWaterProperties = GraphedPropertyMask;
+                }
             }
 
             GenerateHistorical();

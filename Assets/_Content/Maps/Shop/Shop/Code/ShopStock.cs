@@ -73,15 +73,25 @@ namespace Aqua.Shop {
 
         private void UpdateItem(ShopItem item, InventoryData profile, bool showEffects) {
             InvItem itemData = item.CachedItem;
+            bool bMissingPrerequisite = itemData.Prerequisite() != null && !profile.HasUpgrade(itemData.Prerequisite().Id());
             bool bSoldOut = (itemData.Category() == InvItemCategory.Upgrade && profile.HasUpgrade(item.ItemId))
                 || itemData.HasFlags(InvItemFlags.OnlyOne) && profile.ItemCount(item.ItemId) > 0;
 
-            if (bSoldOut) {
+            if (bMissingPrerequisite) {
+                item.AvailableRoot.SetActive(false);
+                item.SoldOutRoot.SetActive(false);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(true);
+            } else if (bSoldOut) {
                 item.AvailableRoot.SetActive(false);
                 item.SoldOutRoot.SetActive(true);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(false);
             } else {
                 item.SoldOutRoot.SetActive(false);
                 item.AvailableRoot.SetActive(true);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(false);
 
                 if (itemData.CashCost() > 0) {
                     item.CoinsRoot.SetActive(true);

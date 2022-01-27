@@ -11,7 +11,6 @@ namespace Aqua.Profile
         private RingBuffer<PlayerInv> m_Items = new RingBuffer<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
-        private uint m_WaterProperties = 0;
 
         [NonSerialized] private bool m_ItemListDirty = true;
         [NonSerialized] private bool m_HasChanges;
@@ -284,46 +283,6 @@ namespace Aqua.Profile
 
         #endregion // Upgrades
 
-        #region Water Properties
-
-        public bool IsPropertyUnlocked(WaterPropertyId inId)
-        {
-            return Bits.Contains(m_WaterProperties, (int) inId);
-        }
-
-        public WaterPropertyMask GetPropertyUnlockedMask()
-        {
-            return new WaterPropertyMask((byte) m_WaterProperties);
-        }
-
-        public bool UnlockProperty(WaterPropertyId inId)
-        {
-            if (!Bits.Contains(m_WaterProperties, (int) inId))
-            {
-                Bits.Add(ref m_WaterProperties, (int) inId);
-                m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.WaterPropertiesUpdated, inId);
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool LockProperty(WaterPropertyId inId)
-        {
-            if (Bits.Contains(m_WaterProperties, (int) inId))
-            {
-                Bits.Remove(ref m_WaterProperties, (int) inId);
-                m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.WaterPropertiesUpdated, inId);
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion // Water Properties
-
         #region IProfileChunk
 
         public void SetDefaults()
@@ -332,34 +291,31 @@ namespace Aqua.Profile
             {
                 if (item.DefaultAmount() > 0)
                 {
-                    ref PlayerInv playerInv = ref RequireInv(item.Id());
-                    playerInv.Count = item.DefaultAmount();
+                    if (item.Category() == InvItemCategory.Upgrade)
+                    {
+                        AddUpgrade(item.Id());
+                    }
+                    else
+                    {
+                        ref PlayerInv playerInv = ref RequireInv(item.Id());
+                        playerInv.Count = item.DefaultAmount();
+                    }
                 }
-            }
-
-            foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
-            {
-                m_WaterProperties |= (1U << (int) property);
             }
         }
 
-        ushort ISerializedVersion.Version { get { return 2; } }
+        // v3: removed water property
+        ushort ISerializedVersion.Version { get { return 3; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
             ioSerializer.ObjectArray("items", ref m_Items);
             ioSerializer.UInt32ProxySet("scannerIds", ref m_ScannerIds);
             ioSerializer.UInt32ProxySet("upgradeIds", ref m_UpgradeIds);
-            if (ioSerializer.ObjectVersion >= 2)
+            if (ioSerializer.ObjectVersion >= 2 && ioSerializer.ObjectVersion < 3)
             {
-                ioSerializer.Serialize("waterProps", ref m_WaterProperties);
-            }
-            else
-            {
-                foreach(var property in Services.Assets.WaterProp.DefaultUnlocked())
-                {
-                    m_WaterProperties |= (1U << (int) property);
-                }
+                uint ignored = 0;
+                ioSerializer.Serialize("waterProps", ref ignored);
             }
         }
 
