@@ -38,8 +38,7 @@ namespace Aqua.Editor
         private SerializedProperty m_TasksProperty;
 
         private SerializedProperty m_CashRewardProperty;
-        private SerializedProperty m_GearRewardProperty;
-        private SerializedProperty m_AdditionalRewardsProperty;
+        private SerializedProperty m_ExpRewardProperty;
 
         private SerializedProperty m_ScriptingProperty;
         private SerializedProperty m_ExtraAssetsProperty;
@@ -48,7 +47,6 @@ namespace Aqua.Editor
         private ReorderableList m_PrereqUpgradesList;
         private ReorderableList m_DiveSiteIdsList;
         private ReorderableList m_TasksList;
-        private ReorderableList m_AdditionalRewardsList;
         private ReorderableList m_ExtraAssetsList;
         private ReorderableList m_TaskPrerequisiteList;
         private ReorderableList m_TaskStepList;
@@ -104,8 +102,7 @@ namespace Aqua.Editor
             m_DiveSiteIdsProperty = serializedObject.FindProperty("m_DiveSiteIds");
             m_TasksProperty = serializedObject.FindProperty("m_Tasks");
             m_CashRewardProperty = serializedObject.FindProperty("m_CashReward");
-            m_GearRewardProperty = serializedObject.FindProperty("m_GearReward");
-            m_AdditionalRewardsProperty = serializedObject.FindProperty("m_AdditionalRewards");
+            m_ExpRewardProperty = serializedObject.FindProperty("m_ExpReward");
             m_ScriptingProperty = serializedObject.FindProperty("m_Scripting");
             m_ExtraAssetsProperty = serializedObject.FindProperty("m_ExtraAssets");
 
@@ -129,10 +126,6 @@ namespace Aqua.Editor
             m_TasksList.drawElementCallback = RenderTaskListElement;
             m_TasksList.footerHeight = 0;
             m_TasksList.drawFooterCallback = (r) => { };
-
-            m_AdditionalRewardsList = new ReorderableList(serializedObject, m_AdditionalRewardsProperty);
-            m_AdditionalRewardsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Additional Rewards");
-            m_AdditionalRewardsList.drawElementCallback = DefaultElementDelegate(m_AdditionalRewardsList);
 
             m_ExtraAssetsList = new ReorderableList(serializedObject, m_ExtraAssetsProperty);
             m_ExtraAssetsList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Extra Assets");
@@ -210,9 +203,8 @@ namespace Aqua.Editor
             }
 
             if (Section("Rewards", ref m_RewardsExpanded)) {
+                EditorGUILayout.PropertyField(m_ExpRewardProperty);
                 EditorGUILayout.PropertyField(m_CashRewardProperty);
-                EditorGUILayout.PropertyField(m_GearRewardProperty);
-                m_AdditionalRewardsList.DoLayoutList();
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {

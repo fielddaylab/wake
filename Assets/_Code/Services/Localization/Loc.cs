@@ -23,6 +23,10 @@ namespace Aqua
         [MethodImpl(256)]
         static public string Find(TextId inText)
         {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying && EditorLoc != null)
+                return EditorLoc(inText);
+            #endif // UNITY_EDITOR
             return Service.Localize(inText);
         }
 
@@ -105,5 +109,12 @@ namespace Aqua
             }
             return string.Format(inFormat, inArgs);
         }
+
+        #if UNITY_EDITOR
+
+        public delegate string EditorLocCallback(TextId inTextId);
+        static internal EditorLocCallback EditorLoc;
+
+        #endif // UNITY_EDITOR
     }
 }

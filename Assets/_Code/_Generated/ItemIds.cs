@@ -2,12 +2,18 @@ using BeauUtil;
 
 static public class ItemIds
 {
-	static public readonly StringHash32 BigStatue = new StringHash32(0x352EE7FD);
+	static public readonly StringHash32 FancyStatue = new StringHash32(0x14669812);
 	static public readonly StringHash32 Cash = new StringHash32(0x16517CF2);
-	static public readonly StringHash32 Gear = new StringHash32(0xFB334B4E);
+	static public readonly StringHash32 Exp = new StringHash32(0xD7AB87C8);
+	static public readonly StringHash32 AutoFeeder = new StringHash32(0x66977859);
+	static public readonly StringHash32 InterveneModel = new StringHash32(0xAADB355A);
 	static public readonly StringHash32 MeasurementTank = new StringHash32(0x10E3A147);
 	static public readonly StringHash32 MeasurementTankStabilizerToggle = new StringHash32(0xD75F6C06);
+	static public readonly StringHash32 ObservationTank = new StringHash32(0x09DE9891);
+	static public readonly StringHash32 PredictionModel = new StringHash32(0x422912D1);
 	static public readonly StringHash32 StressTank = new StringHash32(0xE5262769);
+	static public readonly StringHash32 SyncModel = new StringHash32(0xA8F7AE37);
+	static public readonly StringHash32 VisualModel = new StringHash32(0x47BA360E);
 	static public readonly StringHash32 AutoTagger = new StringHash32(0x602904D0);
 	static public readonly StringHash32 Engine = new StringHash32(0xDB61155B);
 	static public readonly StringHash32 Flashlight = new StringHash32(0xD184FA33);

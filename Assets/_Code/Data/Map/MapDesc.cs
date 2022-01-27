@@ -49,7 +49,7 @@ namespace Aqua
         public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
 
-        public PropertyBlock AdditionalProperties() { return m_AdditionalProperties; }
+        public IReadOnlyPropertyBlock<PropertyName> AdditionalProperties() { return m_AdditionalProperties; }
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
 

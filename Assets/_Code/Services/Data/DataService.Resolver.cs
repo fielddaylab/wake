@@ -458,7 +458,7 @@ namespace Aqua
             [LeafMember("ItemCount"), UnityEngine.Scripting.Preserve]
             static private int ItemCount(StringHash32 inItemId)
             {
-                return Save.Inventory.ItemCount(inItemId);
+                return (int) Save.Inventory.ItemCount(inItemId);
             }
 
             [LeafMember("HasItemCount"), UnityEngine.Scripting.Preserve]
@@ -467,12 +467,20 @@ namespace Aqua
                 return Save.Inventory.ItemCount(inItemId) >= inCount;
             }
 
-            [LeafMember("CanAfford"), UnityEngine.Scripting.Preserve]
-            static private bool CanAfford(StringHash32 inItemId)
+            [LeafMember("CanSeeItem"), UnityEngine.Scripting.Preserve]
+            static private bool CanSeeItem(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
                 var invData = Save.Inventory;
-                return invData.ItemCount(ItemIds.Cash) >= itemDesc.BuyCoinsValue() && invData.ItemCount(ItemIds.Gear) >= itemDesc.BuyGearsValue();
+                return invData.ItemCount(ItemIds.Cash) >= itemDesc.CashCost() && Save.Science.CurrentLevel() >= itemDesc.RequiredLevel();
+            }
+
+            [LeafMember("CanAffordItem"), UnityEngine.Scripting.Preserve]
+            static private bool CanAffordItem(StringHash32 inItemId)
+            {
+                var itemDesc = Assets.Item(inItemId);
+                var invData = Save.Inventory;
+                return invData.ItemCount(ItemIds.Cash) >= itemDesc.CashCost() && Save.Science.CurrentLevel() >= itemDesc.RequiredLevel();
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]
@@ -480,8 +488,7 @@ namespace Aqua
             {
                 var itemDesc = Assets.Item(inItemId);
                 var invData = Save.Inventory;
-                invData.AdjustItem(ItemIds.Cash, -itemDesc.BuyCoinsValue());
-                invData.AdjustItem(ItemIds.Gear, -itemDesc.BuyGearsValue());
+                invData.AdjustItem(ItemIds.Cash, -itemDesc.CashCost());
 
                 if (itemDesc.Category() == InvItemCategory.Upgrade) {
                     invData.AddUpgrade(inItemId);
@@ -520,7 +527,7 @@ namespace Aqua
             static private void SetItem(StringHash32 inItemId, int inCount)
             {
                 Assert.True(inCount >= 0, "SetItem must be passed a non-negative number");
-                Save.Inventory.SetItem(inItemId, inCount);
+                Save.Inventory.SetItem(inItemId, (uint) inCount);
             }
 
             [LeafMember("HasUpgrade"), UnityEngine.Scripting.Preserve]

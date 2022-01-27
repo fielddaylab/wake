@@ -22,7 +22,7 @@ namespace Aqua {
         {
             if (inItemId == ItemIds.Cash)
                 return Cash;
-            if (inItemId == ItemIds.Gear)
+            if (inItemId == ItemIds.Exp)
                 return Exp;
 
             return inDefault;

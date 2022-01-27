@@ -4,13 +4,13 @@ using UnityEngine.UI;
 using System;
 using BeauUtil;
 using Aqua.Profile;
+using UnityEngine.Serialization;
 
 namespace Aqua {
     public class CurrencyDisplay : MonoBehaviour, ISceneLoadHandler {
         #region Inspector
 
         [SerializeField] private TMP_Text m_CoinsText = null;
-        [SerializeField] private TMP_Text m_GearsText = null;
 
         #endregion // Inspector
 
@@ -26,15 +26,14 @@ namespace Aqua {
         }
 
         private void OnInventoryChanged(StringHash32 itemId) {
-            if (itemId == ItemIds.Cash || itemId == ItemIds.Gear) {
+            if (itemId == ItemIds.Cash) {
                 Refresh();
             }
         }
 
         private void Refresh() {
             var profile = Save.Inventory;
-            m_CoinsText.text = profile.ItemCount(ItemIds.Cash).ToStringLookup();
-            m_GearsText.text = profile.ItemCount(ItemIds.Gear).ToStringLookup();
+            m_CoinsText.text = ((int) profile.ItemCount(ItemIds.Cash)).ToStringLookup();
         }
 
         public void OnSceneLoad(SceneBinding inScene, object inContext) {

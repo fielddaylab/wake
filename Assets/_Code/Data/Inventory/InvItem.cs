@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauUtil;
 using Leaf;
 using UnityEngine;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif // UNITY_EDITOR
@@ -23,10 +24,8 @@ namespace Aqua {
 
         [Header("Value")]
         [SerializeField] private uint m_Default = 0;
-        [SerializeField] private uint m_BuyCoinsValue = 0;
-        [SerializeField] private uint m_BuyGearsValue = 0;
-        [SerializeField] private uint m_SellCoinsValue = 0;
-        [SerializeField] private uint m_SellGearsValue = 0;
+        [SerializeField, FormerlySerializedAs("m_BuyCoinsValue")] private uint m_CashCost = 0;
+        [SerializeField] private uint m_RequiredLevel = 0;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
@@ -58,11 +57,8 @@ namespace Aqua {
 
         public uint DefaultAmount() { return m_Default; }
 
-        public int BuyCoinsValue() { return (int)m_BuyCoinsValue; }
-        public int BuyGearsValue() { return (int)m_BuyGearsValue; }
-
-        public int SellCoinsValue() { return (int)m_SellCoinsValue; }
-        public int SellGearsValue() { return (int)m_SellGearsValue; }
+        public int CashCost() { return (int) m_CashCost; }
+        public int RequiredLevel() { return (int) m_RequiredLevel; }
 
         #region Sorting
 

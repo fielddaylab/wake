@@ -244,6 +244,8 @@ namespace Aqua
 
         private IEnumerator PackageUnloadLoop()
         {
+            yield return null;
+
             LeafAsset assetToUnload;
             ScriptNodePackage package;
             int count;

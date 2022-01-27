@@ -58,7 +58,7 @@ namespace Aqua
             m_NameLabel.SetText(inJob.NameId());
             
             if (m_PosterLabel)
-                m_PosterLabel.SetText(inJob.PosterId());
+                m_PosterLabel.SetText(Assets.Character(inJob.PosterId()).ShortNameId());
 
             if (m_LocationLabel)
             {
@@ -69,9 +69,9 @@ namespace Aqua
             if (m_Rewards.Length > 0)
             {
                 int rewardCount = 0;
-                if (inJob.GearReward() > 0)
+                if (inJob.ExpReward() > 0)
                 {
-                    PopulateReward(rewardCount++, ItemIds.Gear, inJob.GearReward());
+                    PopulateReward(rewardCount++, ItemIds.Exp, inJob.ExpReward());
                 }
                 if (inJob.CashReward() > 0)
                 {

@@ -57,21 +57,21 @@
 @trigger    ShopAttemptBuy
 @cutscene
 
-$if local:cashCost > 0, local:gearCost > 0
+$if local:cashCost > 0, local:expCost > 0
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    That'll be {cash}{$local:cashCost}{/cash} and {gears}{$local:gearCost}{/gears}!
+    That'll be {cash}{$local:cashCost}{/cash} and {exp}{$local:expCost}{/exp}!
 $elseif local:cashCost > 0
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
     That'll be {cash}{$local:cashCost}{/cash}!
-$elseif local:gearCost > 0
+$elseif local:expCost > 0
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    That'll be {gears}{$local:gearCost}{/gears}!
+    That'll be {exp}{$local:expCost}{/exp}!
 $else
     {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
 $endif
 
-$choice .purchaseAttempt.generic.success, CanAfford($(local:itemId)); {h}Yes!{/h}
-$choice .purchaseAttempt.generic.cantAfford, !CanAfford($(local:itemId)); Yes, but...
+$choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes!{/h}
+$choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); Yes, but...
 $choice .purchaseAttempt.generic.refused; Just looking!
 
 $choose branch
@@ -153,21 +153,21 @@ $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.genericCostLine
 
-$if local:cashCost > 0, local:gearCost > 0
+$if local:cashCost > 0, local:expCost > 0
     {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    It'll be {cash}{$local:cashCost}{/cash} and {gears}{$local:gearCost}{/gears}!
+    It'll be {cash}{$local:cashCost}{/cash} and {exp}{$local:expCost}{/exp}!
 $elseif local:cashCost > 0
     {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
     It'll be {cash}{$local:cashCost}{/cash}!
-$elseif local:gearCost > 0
+$elseif local:expCost > 0
     {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    It'll be {gears}{$local:gearCost}{/gears}!
+    It'll be {exp}{$local:expCost}{/exp}!
 $else
     {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?
 $endif
 
-$choice .purchaseAttempt.generic.success, CanAfford($(local:itemId)); {h}Yes!{/h}
-$choice .purchaseAttempt.generic.cantAfford, !CanAfford($(local:itemId)); Yes, but...
+$choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes!{/h}
+$choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); Yes, but...
 $choice .purchaseAttempt.generic.refused; Just looking!
 
 // exit

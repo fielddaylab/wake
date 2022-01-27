@@ -30,6 +30,36 @@ namespace Aqua
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
         public delegate Future<StringHash32> ChoiceSelectorHandler();
 
+        private struct QueuedEvent {
+            public int Priority;
+            public uint Id;
+
+            public Action OnStart;
+            public Action OnComplete;
+
+            public StringHash32 TriggerId;
+            public TempVarTable Vars;
+            public Future<ScriptThreadHandle> Return;
+
+            static public readonly Comparison<QueuedEvent> SortByPriority = (x, y) => {
+                int priorityCompare = Math.Sign(y.Priority - x.Priority);
+                if (priorityCompare == 0) {
+                    return Math.Sign((int) x.Id - (int) y.Id);
+                } else {
+                    return priorityCompare;
+                }
+            };
+
+            static private uint s_CurrentId = 0;
+            static internal uint NextId() {
+                return s_CurrentId++;
+            }
+
+            static internal void ResetIds() {
+                s_CurrentId = 0;
+            }
+        }
+
         // thread management
         private Dictionary<StringHash32, ScriptThread> m_ThreadTargetMap = new Dictionary<StringHash32, ScriptThread>(8);
         private List<ScriptThread> m_ThreadList = new List<ScriptThread>(64);
@@ -45,6 +75,7 @@ namespace Aqua
 
         // trigger eval
         private CustomVariantResolver m_CustomResolver;
+        private RingBuffer<QueuedEvent> m_QueuedTriggers;
 
         // script nodes
         private HashSet<ScriptNodePackage> m_LoadedPackages;
@@ -130,7 +161,7 @@ namespace Aqua
         /// <summary>
         /// Attempts to trigger a response.
         /// </summary>
-        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget, ScriptObject inContext = null, VariantTable inContextTable = null)
+        public ScriptThreadHandle TriggerResponse(StringHash32 inTriggerId, StringHash32 inTarget, ScriptObject inContext = null, VariantTable inContextTable = null, Action inOnComplete = null)
         {
             TryCallFunctions(inTriggerId, inTarget, inContext, inContextTable);
 
@@ -149,7 +180,7 @@ namespace Aqua
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
                         DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId, node.Id());
-                        handle = StartThreadInternalNode(inContext, node, inContextTable);
+                        handle = StartThreadInternalNode(inContext, node, inContextTable, inOnComplete);
                     }
                 }
             }
@@ -205,7 +236,7 @@ namespace Aqua
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
                             DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id(), inFunctionId);
-                            StartThreadInternalNode(inContext, nodes[i], inContextTable);
+                            StartThreadInternalNode(inContext, nodes[i], inContextTable, null);
                         }
                     }
                     else
@@ -260,6 +291,12 @@ namespace Aqua
             m_ThreadList.Clear();
             m_ThreadTargetMap.Clear();
             m_CutsceneThread = null;
+
+            foreach(var trigger in m_QueuedTriggers)
+            {
+                trigger.Vars.Dispose();
+            }
+            m_QueuedTriggers.Clear();
         }
 
         /// <summary>
@@ -337,6 +374,82 @@ namespace Aqua
         }
 
         #endregion // Calling Methods
+
+        #region Queued Triggers
+
+        /// <summary>
+        /// Queues up a trigger response.
+        /// </summary>
+        public void QueueTriggerResponse(StringHash32 inTriggerId, int inPriority = 0, TempVarTable inContextTable = default, Action inOnCompleted = null)
+        {
+            m_QueuedTriggers.PushBack(new QueuedEvent()
+            {
+                Id = QueuedEvent.NextId(),
+                TriggerId = inTriggerId,
+                Priority = inPriority,
+                Vars = inContextTable,
+                OnComplete = inOnCompleted
+            });
+        }
+
+        /// <summary>
+        /// Queues up an invocation.
+        /// </summary>
+        public void QueueInvoke(Action inInvoke, int inPriority = 0)
+        {
+            m_QueuedTriggers.PushBack(new QueuedEvent()
+            {
+                Id = QueuedEvent.NextId(),
+                OnStart = inInvoke,
+                Priority = inPriority,
+            });
+        }
+
+        private void ProcessQueuedTriggers()
+        {
+            if (m_QueuedTriggers.Count == 0)
+            {
+                QueuedEvent.ResetIds();
+                return;
+            }
+
+            if (Script.ShouldBlock())
+            {
+                return;
+            }
+            
+            ScriptThreadHandle handle;
+            QueuedEvent trigger;
+            m_QueuedTriggers.Sort(QueuedEvent.SortByPriority);
+            while(m_QueuedTriggers.TryPopFront(out trigger))
+            {
+                int expectedSize = m_QueuedTriggers.Count;
+                trigger.OnStart?.Invoke();
+
+                if (!trigger.TriggerId.IsEmpty)
+                {
+                    handle = TriggerResponse(trigger.TriggerId, null, null, trigger.Vars, trigger.OnComplete);
+                    trigger.Vars.Dispose();
+                    if (handle.IsRunning())
+                    {
+                        trigger.Return?.Complete(handle);
+                        break;
+                    }
+                }
+            
+                trigger.OnComplete?.Invoke();
+
+                if (Script.ShouldBlock())
+                    break;
+
+                if (m_QueuedTriggers.Count != expectedSize)
+                {
+                    m_QueuedTriggers.Sort(QueuedEvent.SortByPriority);
+                }
+            }
+        }
+
+        #endregion // Queued Triggers
 
         #endregion // Operations
 
@@ -425,7 +538,7 @@ namespace Aqua
                 m_CutsceneThread = null;
         }
 
-        private ScriptThreadHandle StartThreadInternalNode(ScriptObject inContext, ScriptNode inNode, VariantTable inVars)
+        private ScriptThreadHandle StartThreadInternalNode(ScriptObject inContext, ScriptNode inNode, VariantTable inVars, Action inOnComplete)
         {
             if (inNode == null || !CheckPriority(inNode))
             {
@@ -448,7 +561,13 @@ namespace Aqua
             ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inContext, tempVars);
             thread.SyncPriority(inNode);
-            thread.AttachRoutine(Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual));
+            Routine routine = Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual);
+            if (inOnComplete != null)
+            {
+                routine.OnComplete(inOnComplete);
+                routine.OnStop(inOnComplete);
+            }
+            thread.AttachRoutine(routine);
 
             m_ThreadList.Add(thread);
 
@@ -541,7 +660,10 @@ namespace Aqua
         private void LateUpdate()
         {
             if (m_PauseCount == 0)
+            {
                 Routine.ManualUpdate(Time.deltaTime);
+                ProcessQueuedTriggers();
+            }
         }
 
         #endregion // Unity Events
@@ -594,6 +716,7 @@ namespace Aqua
             m_TablePool.Prewarm();
 
             m_ThreadPool = new DynamicPool<ScriptThread>(16, (p) => new ScriptThread(this));
+            m_QueuedTriggers = new RingBuffer<QueuedEvent>(16, RingBufferMode.Expand);
         }
 
         protected override void Shutdown()

@@ -60,7 +60,7 @@ namespace Aqua.JobBoard
             m_NameLabel.SetText(inJob.NameId());
             
             if (m_PosterLabel)
-                m_PosterLabel.SetText(inJob.PosterId());
+                m_PosterLabel.SetText(Assets.Character(inJob.PosterId()).ShortNameId());
 
             Sprite jobIcon = null; // TODO: REIMPLEMENT
             if (jobIcon != null)

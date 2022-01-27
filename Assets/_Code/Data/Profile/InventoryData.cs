@@ -79,17 +79,17 @@ namespace Aqua.Profile
             return TryFindInv(inId, out item) && item.Count > 0;
         }
 
-        public int ItemCount(StringHash32 inId)
+        public uint ItemCount(StringHash32 inId)
         {
             InvItem itemDesc = Assets.Item(inId);
             if (itemDesc.Category() == InvItemCategory.Upgrade)
             {
-                return m_UpgradeIds.Contains(inId) ? 1 : 0;
+                return m_UpgradeIds.Contains(inId) ? 1u : 0u;
             }
 
             PlayerInv item;
             TryFindInv(inId, out item);
-            return (int) item.Count;
+            return item.Count;
         }
         
         public bool AdjustItem(StringHash32 inId, int inAmount)
@@ -98,7 +98,7 @@ namespace Aqua.Profile
                 return true;
 
             ref PlayerInv item = ref RequireInv(inId);
-            if (TryAdjust(ref item, inAmount))
+            if (TryAdjust(ref item, inAmount, false))
             {
                 m_HasChanges = true;
                 return true;
@@ -107,10 +107,37 @@ namespace Aqua.Profile
             return false;
         }
 
-        public bool SetItem(StringHash32 inId, int inAmount)
+        public bool AdjustItemWithoutNotify(StringHash32 inId, int inAmount)
+        {
+            if (inAmount == 0)
+                return true;
+
+            ref PlayerInv item = ref RequireInv(inId);
+            if (TryAdjust(ref item, inAmount, true))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SetItem(StringHash32 inId, uint inAmount)
         {
             ref PlayerInv item = ref RequireInv(inId);
-            if (TrySet(ref item, inAmount))
+            if (TrySet(ref item, inAmount, false))
+            {
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SetItemWithoutNotify(StringHash32 inId, uint inAmount)
+        {
+            ref PlayerInv item = ref RequireInv(inId);
+            if (TrySet(ref item, inAmount, true))
             {
                 m_HasChanges = true;
                 return true;
@@ -170,27 +197,28 @@ namespace Aqua.Profile
             m_ItemListDirty = false;
         }
 
-        private bool TryAdjust(ref PlayerInv ioItem, int inValue)
+        private bool TryAdjust(ref PlayerInv ioItem, int inValue, bool inbSuppressEvent)
         {
             if (inValue == 0 || (ioItem.Count + inValue) < 0)
                 return false;
 
             ioItem.Count = (uint) (ioItem.Count + inValue);
-            Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+            if (!inbSuppressEvent)
+            {
+                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+            }
             return true;
         }
 
-        private bool TrySet(ref PlayerInv ioItem, int inValue)
+        private bool TrySet(ref PlayerInv ioItem, uint inValue, bool inbSuppressEvent)
         {
-            if (inValue < 0)
-            {
-                inValue = 0;
-            }
-
             if (ioItem.Count != inValue)
             {
                 ioItem.Count = (uint) inValue;
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                if (!inbSuppressEvent)
+                {
+                    Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                }
                 return true;
             }
 

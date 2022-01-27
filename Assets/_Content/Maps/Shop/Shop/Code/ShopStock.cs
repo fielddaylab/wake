@@ -39,15 +39,15 @@ namespace Aqua.Shop {
                 table.Set("itemId", item.ItemId);
                 table.Set("itemName", item.CachedItem.NameTextId().Hash());
                 table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
-                table.Set("cashCost", item.CachedItem.BuyCoinsValue());
-                table.Set("gearCost", item.CachedItem.BuyGearsValue());
+                table.Set("cashCost", item.CachedItem.CashCost());
+                table.Set("expCost", item.CachedItem.RequiredLevel());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
             }
         }
 
         static private bool CanAfford(InventoryData profile, InvItem item) {
-            return profile.ItemCount(ItemIds.Cash) >= item.BuyCoinsValue()
-                && profile.ItemCount(ItemIds.Gear) >= item.BuyGearsValue();
+            return profile.ItemCount(ItemIds.Cash) >= item.CashCost()
+                && profile.ItemCount(ItemIds.Exp) >= item.RequiredLevel();
         }
 
         #endregion // Callbacks
@@ -67,11 +67,11 @@ namespace Aqua.Shop {
             InventoryData profileData = Save.Inventory;
 
             foreach(var item in m_Items) {
-                UpdateItem(item, profileData);
+                UpdateItem(item, profileData, true);
             }
         }
 
-        private void UpdateItem(ShopItem item, InventoryData profile) {
+        private void UpdateItem(ShopItem item, InventoryData profile, bool showEffects) {
             InvItem itemData = item.CachedItem;
             bool bSoldOut = (itemData.Category() == InvItemCategory.Upgrade && profile.HasUpgrade(item.ItemId))
                 || itemData.HasFlags(InvItemFlags.OnlyOne) && profile.ItemCount(item.ItemId) > 0;
@@ -83,18 +83,18 @@ namespace Aqua.Shop {
                 item.SoldOutRoot.SetActive(false);
                 item.AvailableRoot.SetActive(true);
 
-                if (itemData.BuyCoinsValue() > 0) {
+                if (itemData.CashCost() > 0) {
                     item.CoinsRoot.SetActive(true);
-                    item.CoinsText.SetText(itemData.BuyCoinsValue().ToStringLookup());
-                    item.CoinsText.color = profile.ItemCount(ItemIds.Cash) >= itemData.BuyCoinsValue() ? m_CanAffordColor : m_CannotAffordColor;
+                    item.CoinsText.SetText(itemData.CashCost().ToStringLookup());
+                    item.CoinsText.color = profile.ItemCount(ItemIds.Cash) >= itemData.CashCost() ? m_CanAffordColor : m_CannotAffordColor;
                 } else {
                     item.CoinsRoot.SetActive(false);
                 }
 
-                if (itemData.BuyGearsValue() > 0) {
+                if (itemData.RequiredLevel() > 0) {
                     item.GearsRoot.SetActive(true);
-                    item.GearsText.SetText(itemData.BuyGearsValue().ToStringLookup());
-                    item.GearsText.color = profile.ItemCount(ItemIds.Gear) >= itemData.BuyGearsValue() ? m_CanAffordColor : m_CannotAffordColor;
+                    item.GearsText.SetText(itemData.RequiredLevel().ToStringLookup());
+                    item.GearsText.color = profile.ItemCount(ItemIds.Exp) >= itemData.RequiredLevel() ? m_CanAffordColor : m_CannotAffordColor;
                 } else {
                     item.GearsRoot.SetActive(false);
                 }
@@ -119,7 +119,7 @@ namespace Aqua.Shop {
                 if (item.ItemDescriptionGroup) {
                     item.ItemDescriptionGroup.gameObject.SetActive(false);
                 }
-                UpdateItem(item, profileData);
+                UpdateItem(item, profileData, false);
             }
         }
 

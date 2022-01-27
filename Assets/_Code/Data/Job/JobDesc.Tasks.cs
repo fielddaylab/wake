@@ -38,6 +38,7 @@ namespace Aqua
             }
 
             m_OptimizedTaskList = GenerateOptimizedTasks(m_Tasks);
+            ValidationUtils.EnsureUnique(ref m_ExtraAssets);
             return true;
         }
 

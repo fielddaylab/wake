@@ -233,7 +233,7 @@ namespace Aqua
             DMInfo invMenu = new DMInfo("Inventory");
 
             invMenu.AddButton("Add 100 Cash", () => Save.Inventory.AdjustItem(ItemIds.Cash, 100));
-            invMenu.AddButton("Add 100 Gears", () => Save.Inventory.AdjustItem(ItemIds.Gear, 100));
+            invMenu.AddButton("Add 10 Exp", () => Save.Inventory.AdjustItem(ItemIds.Exp, 10));
 
             invMenu.AddDivider();
 

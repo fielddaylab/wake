@@ -440,6 +440,10 @@ namespace Aqua.Editor {
         [UnityEditor.InitializeOnLoadMethod]
         static private void EditorInitialize() {
             UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChange;
+            Loc.EditorLoc = (k) => {
+                TryLookup(k.Hash().ToDebugString(), out string val);
+                return val;
+            };
         }
 
         static private void PlayModeStateChange(UnityEditor.PlayModeStateChange stateChange) {
