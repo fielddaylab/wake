@@ -396,7 +396,7 @@ namespace ProtoAqua.ExperimentV2
             WaterPropertyDial dial;
             foreach(var property in Services.Assets.WaterProp.Sorted())
             {
-                if (!property.HasFlags(WaterPropertyFlags.IsProperty) || !invData.IsPropertyUnlocked(property.Index()))
+                if (!property.HasFlags(WaterPropertyFlags.IsProperty))
                     continue;
 
                 dial = m_Dials[m_DialsUsed++];

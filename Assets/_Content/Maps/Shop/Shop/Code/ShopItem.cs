@@ -26,6 +26,9 @@ namespace Aqua.Shop
         [Header("Sold Out")]
         public GameObject SoldOutRoot;
 
+        [Header("Cannot Access")]
+        public GameObject UnavailableRoot;
+
         [NonSerialized] public InvItem CachedItem;
     }
 }

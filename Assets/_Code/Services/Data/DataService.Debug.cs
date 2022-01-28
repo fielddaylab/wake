@@ -233,12 +233,7 @@ namespace Aqua
             DMInfo invMenu = new DMInfo("Inventory");
 
             invMenu.AddButton("Add 100 Cash", () => Save.Inventory.AdjustItem(ItemIds.Cash, 100));
-            invMenu.AddButton("Add 100 Gears", () => Save.Inventory.AdjustItem(ItemIds.Gear, 100));
-
-            invMenu.AddDivider();
-
-            invMenu.AddToggle("Unlock Shop", () => Services.Data.IsProfileLoaded() && Services.Data.GetVariable("world:shopUnlocked").AsBool(),
-                (b) => Services.Data.SetVariable("world:shopUnlocked", b));
+            invMenu.AddButton("Add 10 Exp", () => Save.Inventory.AdjustItem(ItemIds.Exp, 10));
 
             invMenu.AddDivider();
 
@@ -250,16 +245,7 @@ namespace Aqua
                 RegisterUpgradeToggle(upgradesMenu, upgrade.Id());
             }
 
-            DMInfo waterPropertiesMenu = new DMInfo("Water Properties", 7);
-            waterPropertiesMenu.AddButton("Unlock All", () => UnlockAllProperties());
-            waterPropertiesMenu.AddDivider();
-            for(WaterPropertyId waterProp = 0; waterProp < WaterPropertyId.TRACKED_COUNT; waterProp++)
-            {
-                RegisterWaterPropertyToggle(waterPropertiesMenu, waterProp);
-            }
-
             invMenu.AddSubmenu(upgradesMenu);
-            invMenu.AddSubmenu(waterPropertiesMenu);
 
             yield return invMenu;
 
@@ -429,25 +415,6 @@ namespace Aqua
             {
                 Save.Inventory.AddUpgrade(entry.Id());
             }
-        }
-
-        static private void RegisterWaterPropertyToggle(DMInfo inMenu, WaterPropertyId inItem)
-        {
-            inMenu.AddToggle(Assets.Property(inItem).name,
-                () => { return Save.Inventory.IsPropertyUnlocked(inItem); },
-                (b) =>
-                {
-                    if (b)
-                        Save.Inventory.UnlockProperty(inItem);
-                    else
-                        Save.Inventory.LockProperty(inItem);
-                });
-        }
-
-        static private void UnlockAllProperties()
-        {
-            for(WaterPropertyId id = 0; id < WaterPropertyId.TRACKED_COUNT; id++)
-                Save.Inventory.UnlockProperty(id);
         }
 
         static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)

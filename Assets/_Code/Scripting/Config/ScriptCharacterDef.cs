@@ -49,7 +49,7 @@ namespace Aqua
         #endregion // Inspector
 
         public TextId NameId() { return m_NameId; }
-        public TextId ShortNameId() { return m_ShortNameId; }
+        public TextId ShortNameId() { return m_ShortNameId.IsEmpty ? m_NameId : m_ShortNameId; }
         public ScriptActorTypeFlags Flags() { return m_Flags; }
         
         public ColorPalette4? NamePaletteOverride() { return m_OverrideNamePalette ? m_NameColor : new ColorPalette4?(); }
@@ -84,6 +84,20 @@ namespace Aqua
     [Flags]
     public enum ScriptActorTypeFlags
     {
-        IsPlayer = 0x01,
+        IsPlayer = 0x01
+    }
+
+    public sealed class ScriptCharacterIdAttribute : DBObjectIdAttribute
+    {
+        public ScriptCharacterIdAttribute()
+            : base(typeof(ScriptCharacterDef)) { }
+
+        public override string Name(DBObject inObject) {
+            var def = (ScriptCharacterDef) inObject;
+            string found = Loc.Find(def.ShortNameId());
+            if (string.IsNullOrEmpty(found))
+                return base.Name(inObject);
+            return found;
+        }
     }
 }

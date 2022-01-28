@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Aqua.Scripting;
+using BeauPools;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
@@ -29,7 +30,9 @@ namespace Aqua
                 .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
-                .Register(GameEvents.ProfileLoaded, InitScripts, this);
+                .Register(GameEvents.ProfileLoaded, InitScripts, this)
+                .Register<StringHash32>(GameEvents.InventoryUpdated, OnItemUpdated, this)
+                .Register<ScienceLevelUp>(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated, this);
         }
 
         protected override void Shutdown()
@@ -76,34 +79,63 @@ namespace Aqua
 
         private void OnJobStarted(StringHash32 inJobId)
         {
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobStarted, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", inJobId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobStarted, 600, table);
         }
 
         private void OnJobSwitched(StringHash32 inJobId)
         {
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobSwitched, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", inJobId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobSwitched, 500, table);
         }
 
         private void OnJobCompleted(StringHash32 inJobId)
         {
             var job = Assets.Job(inJobId);
 
-            // inventory adjustment
-            Save.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
-            Save.Inventory.AdjustItem(ItemIds.Gear, job.GearReward());
-
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobCompleted, table);
+                var response = Services.Script.TriggerResponse(GameTriggers.JobCompleted, null, null, table, () => JobCompletedPopup(job));
+                if (!response.IsRunning())
+                {
+                    JobCompletedPopup(job);
+                }
+            }
+        }
+
+        private void JobCompletedPopup(JobDesc inJob)
+        {
+            var character = Assets.Character(inJob.PosterId());
+
+            // inventory adjustment
+            Save.Inventory.AdjustItem(ItemIds.Cash, inJob.CashReward());
+            Save.Inventory.AdjustItem(ItemIds.Exp, inJob.ExpReward());
+
+            using(var psb = PooledStringBuilder.Create(Loc.Format("ui.popup.jobComplete.description")))
+            {
+                psb.Builder.Append('\n', 2);
+
+                if (inJob.ExpReward() > 0)
+                {
+                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.expReward", inJob.ExpReward())).Append('\n');
+                }
+
+                if (inJob.CashReward() > 0)
+                {
+                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.cashReward", inJob.CashReward())).Append('\n');
+                }
+
+                psb.Builder.TrimEnd(StringUtils.DefaultNewLineChars);
+
+                Services.Audio.PostEvent("job.completed");
+
+                Services.UI.Popup.Display(
+                    Loc.Format("ui.popup.jobComplete.header", inJob.NameId()),
+                    psb.Builder.Flush(), character?.DefaultPortrait()
+                );
             }
         }
 
@@ -147,6 +179,47 @@ namespace Aqua
                         }
                 }
             }
+        }
+
+        private void OnItemUpdated(StringHash32 inItemId)
+        {
+            var item = Assets.Item(inItemId);
+            if (item.Category() == InvItemCategory.Upgrade)
+            {
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("upgradeId", inItemId);
+                    Services.Script.TryCallFunctions(GameTriggers.UpgradeAdded, null, null, table);
+                }
+            }
+
+            // TODO: Re-enable once we want levels?
+            // if (inItemId != ItemIds.Exp)
+            //     return;
+
+            // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+        }
+
+        private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)
+        {
+            if (inLevelUp.LevelAdjustment <= 0)
+                return;
+
+            var scienceTweaks = Services.Tweaks.Get<ScienceTweaks>();
+            int cashAdjust = scienceTweaks.CashPerLevel() * inLevelUp.LevelAdjustment;
+            uint newLevel = inLevelUp.OriginalLevel + (uint) inLevelUp.LevelAdjustment;
+
+            Services.Script.QueueInvoke(() => {
+                Save.Inventory.AdjustItem(ItemIds.Cash, cashAdjust);
+                Services.Audio.PostEvent("ShopPurchase");
+                Services.UI.Popup.DisplayWithClose(
+                    Loc.Format("ui.popup.levelUp.header", newLevel),
+                    Loc.Format("ui.popup.levelUp.description", inLevelUp.OriginalLevel + 1, newLevel + 1, cashAdjust),
+                null, PopupFlags.ShowCloseButton
+                ).OnComplete((_) => {
+                    Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
+                });
+            });
         }
 
         #endregion // Handlers

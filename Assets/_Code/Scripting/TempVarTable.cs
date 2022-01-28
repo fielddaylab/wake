@@ -19,9 +19,9 @@ namespace Aqua.Scripting
             m_Table.Object?.Set(inId, inValue);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            m_Table.Dispose();
+            m_Table?.Dispose();
         }
 
         static public implicit operator VariantTable(TempVarTable inTable)

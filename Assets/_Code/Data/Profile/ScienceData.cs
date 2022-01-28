@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -11,6 +12,7 @@ namespace Aqua.Profile
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
         private HashSet<StringHash32> m_CompletedArgues = new HashSet<StringHash32>();
+        private uint m_CurrentLevel = 0;
 
         private bool m_HasChanges;
 
@@ -100,13 +102,38 @@ namespace Aqua.Profile
 
         #endregion // Argumentations
 
+        #region Leveling
+
+        public uint CurrentLevel() { return m_CurrentLevel; }
+        public bool SetCurrentLevel(uint inNextLevel)
+        {
+            if (m_CurrentLevel != inNextLevel)
+            {
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player level changed from {0} to {1}", m_CurrentLevel, inNextLevel);
+
+                Services.Events.QueueForDispatch(GameEvents.ScienceLevelUpdated, new ScienceLevelUp() {
+                    OriginalLevel = m_CurrentLevel,
+                    LevelAdjustment = (int) inNextLevel - (int) m_CurrentLevel
+                });
+
+                m_CurrentLevel = inNextLevel;
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion // Leveling
+
         #region IProfileChunk
 
         // v1: experiment data
         // v2: add site survey data
         // v3: remove experiment data
         // v4: add claim data
-        ushort ISerializedVersion.Version { get { return 4; } }
+        // v5: added level
+        ushort ISerializedVersion.Version { get { return 5; } }
 
         public bool HasChanges()
         {
@@ -125,7 +152,7 @@ namespace Aqua.Profile
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
-            if (ioSerializer.ObjectVersion <= 2) {
+            if (ioSerializer.ObjectVersion < 3) {
                 int[] _ = null;
                 ioSerializer.Array("ongoingExperiments", ref _);
 
@@ -142,6 +169,11 @@ namespace Aqua.Profile
             {
                 ioSerializer.ObjectArray("argues", ref m_ArgueData);
                 ioSerializer.UInt32ProxySet("completedArgues", ref m_CompletedArgues);
+            }
+
+            if (ioSerializer.ObjectVersion >= 5)
+            {
+                ioSerializer.Serialize("level", ref m_CurrentLevel);
             }
         }
 

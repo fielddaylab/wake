@@ -60,7 +60,7 @@ namespace Aqua.Modeling {
         }
 
         private void OnDestroy() {
-            Services.Events.Dispatch(ModelingConsts.Event_End_Model);
+            Services.Events?.Dispatch(ModelingConsts.Event_End_Model);
             Services.Events?.DeregisterAll(this);
         }
 

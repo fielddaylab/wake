@@ -157,8 +157,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8327343969535996199}
+  - component: {fileID: 1019016922955067588}
   m_Layer: 5
-  m_Name: Gear
+  m_Name: Exp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,6 +188,25 @@ RectTransform:
   m_AnchoredPosition: {x: 188, y: -16}
   m_SizeDelta: {x: 120, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1019016922955067588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971564807235040912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a527db2ca2ae68541a711a93af53af01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LevelText: {fileID: 0}
+  m_ExpText: {fileID: 1243547154345068126}
+  m_ExpBar: {fileID: 0}
+  m_ExpToNextLabel: {fileID: 0}
+  m_ExpToNextText:
+    m_Source: 
+    m_HashValue: 0
 --- !u!1 &1333845633139334900
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +365,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7130598351652865355}
+  - component: {fileID: 8797625425924466129}
   m_Layer: 5
   m_Name: Cash
   m_TagString: Untagged
@@ -375,6 +396,19 @@ RectTransform:
   m_AnchoredPosition: {x: 60, y: -16}
   m_SizeDelta: {x: 120, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8797625425924466129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853295793914126993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af6c65404925a4145be92b85e1d4c8c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CoinsText: {fileID: 2456506352323918575}
 --- !u!1 &3513635696072887333
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,7 +815,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3891269495536304776, guid: bf9975f828b0628439693494e47fc8af,
+  m_Sprite: {fileID: 5375727711944648528, guid: bf9975f828b0628439693494e47fc8af,
     type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -802,7 +836,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8951713925483117634}
   - component: {fileID: 1411146992562866006}
-  - component: {fileID: 4179574648500046673}
   - component: {fileID: 2633109018744432067}
   m_Layer: 5
   m_Name: CurrencyUI
@@ -844,20 +877,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &4179574648500046673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6763196101910746852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af6c65404925a4145be92b85e1d4c8c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CoinsText: {fileID: 2456506352323918575}
-  m_GearsText: {fileID: 1243547154345068126}
 --- !u!114 &2633109018744432067
 MonoBehaviour:
   m_ObjectHideFlags: 0

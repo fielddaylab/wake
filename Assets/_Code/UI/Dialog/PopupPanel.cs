@@ -250,6 +250,18 @@ namespace Aqua
             }
         }
 
+        private void ShowOrBounce()
+        {
+            if (IsShowing())
+            {
+                m_BoxAnim.Replace(this, BounceAnim());
+            }
+            else
+            {
+                Show();
+            }
+        }
+
         private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags)
         {
             using(ioFuture)
@@ -259,14 +271,7 @@ namespace Aqua
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);
 
-                if (IsShowing())
-                {
-                    m_BoxAnim.Replace(this, BounceAnim());
-                }
-                else
-                {
-                    Show();
-                }
+                ShowOrBounce();
 
                 SetInputState(true);
                 AttemptTTS(inHeader, inText, inImage);
@@ -310,14 +315,7 @@ namespace Aqua
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);
 
-                if (IsShowing())
-                {
-                    m_BoxAnim.Replace(this, BounceAnim());
-                }
-                else
-                {
-                    Show();
-                }
+                ShowOrBounce();
 
                 SetInputState(true);
                 AttemptTTS(inHeader, inText, inImage);
@@ -382,23 +380,29 @@ namespace Aqua
 
         private IEnumerator BounceAnim()
         {
-            yield return Routine.Inline(m_RootTransform.ScaleTo(1.03f, 0.04f).RevertOnCancel().Yoyo());
+            m_RootGroup.alpha = 0.5f;
+            m_RootTransform.SetScale(0.5f);
+            yield return Routine.Combine(
+                m_RootTransform.ScaleTo(1, 0.2f).ForceOnCancel().Ease(Curve.BackOut),
+                m_RootGroup.FadeTo(1, 0.2f)
+            );
         }
 
         protected override IEnumerator TransitionToShow()
         {
-            if (!m_RootTransform.gameObject.activeSelf)
-            {
-                m_RootGroup.alpha = 0;
-                m_RootTransform.SetScale(0.5f);
-                m_RootTransform.gameObject.SetActive(true);
-            }
+            float durationMultiplier = 1;
+            if (m_RootGroup.alpha > 0 && m_RootGroup.alpha < 1)
+                durationMultiplier = 0.5f;
+
+            m_RootGroup.alpha = durationMultiplier < 1 ? 0.5f : 0;
+            m_RootTransform.SetScale(durationMultiplier < 1 ? 0.75f : 0.5f);
+            m_RootTransform.gameObject.SetActive(true);
 
             m_Layout.ForceRebuild();
 
             yield return Routine.Combine(
-                m_RootGroup.FadeTo(1, 0.2f),
-                m_RootTransform.ScaleTo(1f, 0.2f).Ease(Curve.BackOut)
+                m_RootGroup.FadeTo(1, 0.2f * durationMultiplier),
+                m_RootTransform.ScaleTo(1f, 0.2f * durationMultiplier).Ease(Curve.BackOut)
             );
         }
 
@@ -469,6 +473,7 @@ namespace Aqua
         {
             m_FactPools.FreeAll();
             m_ImageDisplay.Clear();
+            m_RootGroup.alpha = 0;
 
             base.OnHideComplete(inbInstant);
         }

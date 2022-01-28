@@ -202,6 +202,9 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
+            m_VariableResolver.SetVar(GameVars.PlayerCash, () => (int) Save.Cash);
+            m_VariableResolver.SetVar(GameVars.PlayerExp, () => (int) Save.Exp);
+            m_VariableResolver.SetVar(GameVars.PlayerLevel, () => (int) Save.ExpLevel);
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -458,7 +461,7 @@ namespace Aqua
             [LeafMember("ItemCount"), UnityEngine.Scripting.Preserve]
             static private int ItemCount(StringHash32 inItemId)
             {
-                return Save.Inventory.ItemCount(inItemId);
+                return (int) Save.Inventory.ItemCount(inItemId);
             }
 
             [LeafMember("HasItemCount"), UnityEngine.Scripting.Preserve]
@@ -467,12 +470,11 @@ namespace Aqua
                 return Save.Inventory.ItemCount(inItemId) >= inCount;
             }
 
-            [LeafMember("CanAfford"), UnityEngine.Scripting.Preserve]
-            static private bool CanAfford(StringHash32 inItemId)
+            [LeafMember("CanAffordItem"), UnityEngine.Scripting.Preserve]
+            static private bool CanAffordItem(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
-                var invData = Save.Inventory;
-                return invData.ItemCount(ItemIds.Cash) >= itemDesc.BuyCoinsValue() && invData.ItemCount(ItemIds.Gear) >= itemDesc.BuyGearsValue();
+                return Save.Cash >= itemDesc.CashCost() && Save.Exp >= itemDesc.RequiredExp();
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]
@@ -480,8 +482,7 @@ namespace Aqua
             {
                 var itemDesc = Assets.Item(inItemId);
                 var invData = Save.Inventory;
-                invData.AdjustItem(ItemIds.Cash, -itemDesc.BuyCoinsValue());
-                invData.AdjustItem(ItemIds.Gear, -itemDesc.BuyGearsValue());
+                invData.AdjustItem(ItemIds.Cash, -itemDesc.CashCost());
 
                 if (itemDesc.Category() == InvItemCategory.Upgrade) {
                     invData.AddUpgrade(inItemId);
@@ -520,7 +521,7 @@ namespace Aqua
             static private void SetItem(StringHash32 inItemId, int inCount)
             {
                 Assert.True(inCount >= 0, "SetItem must be passed a non-negative number");
-                Save.Inventory.SetItem(inItemId, inCount);
+                Save.Inventory.SetItem(inItemId, (uint) inCount);
             }
 
             [LeafMember("HasUpgrade"), UnityEngine.Scripting.Preserve]
@@ -555,18 +556,6 @@ namespace Aqua
             static private bool HasScanned(StringHash32 inNodeId)
             {
                 return Save.Inventory.WasScanned(inNodeId);
-            }
-
-            [LeafMember("HasWaterProperty"), UnityEngine.Scripting.Preserve]
-            static private bool HasProperty(WaterPropertyId inProperty)
-            {
-                return Save.Inventory.IsPropertyUnlocked(inProperty);
-            }
-
-            [LeafMember("GiveWaterProperty"), UnityEngine.Scripting.Preserve]
-            static private bool GiveWaterProperty(WaterPropertyId inProperty)
-            {
-                return Save.Inventory.UnlockProperty(inProperty);
             }
 
             #endregion // Bestiary/Inventory

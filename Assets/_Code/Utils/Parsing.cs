@@ -15,7 +15,7 @@ namespace Aqua
         static public readonly IDelimiterRules InlineEvent = TagStringParser.CurlyBraceDelimiters;
 
         static public readonly string[] ReplaceTags = new string[] {
-            "n", "newline", "highlight", "player-name", "cash", "gears", /*"loc",*/
+            "n", "newline", "highlight", "player-name", "cash", "exp", /*"loc",*/
             "pg", "var", "var-i", "var-f", "var-b", "var-s", "switch-var", "slow", "reallySlow"
         };
 

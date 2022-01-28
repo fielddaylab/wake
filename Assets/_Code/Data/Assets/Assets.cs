@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 
 namespace Aqua {
-    static public class Assets {
+    static public partial class Assets {
         static private BestiaryDB BestiaryDB;
         static private ScriptCharacterDB CharacterDB;
         static private InventoryDB InventoryDB;

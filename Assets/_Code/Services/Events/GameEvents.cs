@@ -41,6 +41,7 @@ namespace Aqua
         static public readonly StringHash32 ScanLogUpdated = "scan-log:updated"; // StringHash32 scanId
         static public readonly StringHash32 SiteDataUpdated = "site-data:updated"; // StringHash32 siteId
         static public readonly StringHash32 ArgueDataUpdated = "argue:updated"; // StringHash32 argumentationId
+        static public readonly StringHash32 ScienceLevelUpdated = "science:level-updated"; // ScienceLevelUp
 
         static public readonly StringHash32 VariableSet = "data:variable-set"; // TableKeyPair variableId
 

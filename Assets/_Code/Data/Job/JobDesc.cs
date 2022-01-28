@@ -17,7 +17,7 @@ namespace Aqua
         [SerializeField, AutoEnum] private JobDescFlags m_Flags = 0;
 
         [SerializeField] private TextId m_NameId = default;
-        [SerializeField] private TextId m_PosterId = default;
+        [SerializeField, ScriptCharacterId] private StringHash32 m_PosterId = default;
         [SerializeField] private TextId m_DescId = default;
         [SerializeField] private TextId m_DescShortId = default;
         [SerializeField] private TextId m_DescCompletedId = default;
@@ -37,8 +37,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
 
         [SerializeField] private int m_CashReward = 0;
-        [SerializeField] private int m_GearReward = 0;
-        [SerializeField, ItemId] private StringHash32[] m_AdditionalRewards = Array.Empty<StringHash32>();
+        [SerializeField] private int m_ExpReward = 5;
 
         [SerializeField] internal LeafAsset m_Scripting = null;
         [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
@@ -52,7 +51,7 @@ namespace Aqua
         public bool HasAllFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public TextId NameId() { return m_NameId; }
-        public TextId PosterId() { return m_PosterId; }
+        public StringHash32 PosterId() { return m_PosterId; }
         public TextId DescId() { return m_DescId; }
         public TextId DescShortId() { return m_DescShortId.IsEmpty ? m_DescId : m_DescShortId; }
         public TextId DescCompletedId() { return m_DescCompletedId.IsEmpty ? m_DescId : m_DescCompletedId; }
@@ -93,13 +92,8 @@ namespace Aqua
             return null;
         }
 
+        public int ExpReward() { return m_ExpReward; }
         public int CashReward() { return m_CashReward; }
-        public int GearReward() { return m_GearReward; }
-        public IEnumerable<StringHash32> ExtraRewards()
-        {
-            foreach(var reward in m_AdditionalRewards)
-                yield return reward;
-        }
 
         public LeafAsset Scripting() { return m_Scripting; }
 

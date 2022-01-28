@@ -105,7 +105,7 @@ namespace Aqua
         LeafThreadState<ScriptNode> ILeafPlugin<ScriptNode>.Fork(LeafThreadState<ScriptNode> inThreadState, ScriptNode inForkNode)
         {
             var thread = ScriptThread(inThreadState);
-            var handle = StartThreadInternalNode(thread.Actor, inForkNode, thread.Locals);
+            var handle = StartThreadInternalNode(thread.Actor, inForkNode, thread.Locals, null);
             return handle.GetThread();
         }
 

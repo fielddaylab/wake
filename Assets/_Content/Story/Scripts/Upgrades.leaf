@@ -1,0 +1,15 @@
+#basePath   upgrades
+
+:: unlockRoomsForUpgrades
+@function   UpgradeAdded
+
+$if local:upgradeId == "VisualModel"
+    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("Modeling")
+    $return
+$endif
+
+$if local:upgradeId == "ObservationTank"
+    $call UnlockRoom("Experimentation")
+    $return
+$endif

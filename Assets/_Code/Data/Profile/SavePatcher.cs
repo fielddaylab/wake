@@ -2,7 +2,7 @@ namespace Aqua.Profile
 {
     static public class SavePatcher
     {
-        public const uint CurrentVersion = 1;
+        public const uint CurrentVersion = 2;
 
         static public bool TryPatch(SaveData ioData)
         {
@@ -32,6 +32,11 @@ namespace Aqua.Profile
                 if (diveSite.HasFlags(MapFlags.UnlockedByDefault))
                     ioData.Map.UnlockSite(diveSite.Id());
             }
+        }
+
+        static private void UpgradeFromVersion1(SaveData ioData)
+        {
+            
         }
     }
 }
