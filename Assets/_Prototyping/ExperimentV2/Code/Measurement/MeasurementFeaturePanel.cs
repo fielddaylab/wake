@@ -13,6 +13,7 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField] private Toggle m_StabilizerToggle = null;
         [SerializeField] private Toggle m_AutoFeederToggle = null;
         [SerializeField] private GameObject m_StabilizerDisabledObject = null;
+        [SerializeField] private GameObject m_AutoFeederDisabledObject = null;
 
         #endregion // Inspector
 
@@ -34,9 +35,13 @@ namespace ProtoAqua.ExperimentV2
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
 
-            bool bHasStabilizer = Save.Inventory.HasUpgrade(ItemIds.MeasurementTankStabilizerToggle);
+            bool bHasStabilizer = Save.Inventory.HasUpgrade(ItemIds.WaterStabilizer);
             m_StabilizerToggle.interactable = bHasStabilizer;
             m_StabilizerDisabledObject.SetActive(!bHasStabilizer);
+
+            bool bHasFeeder = Save.Inventory.HasUpgrade(ItemIds.AutoFeeder);
+            m_AutoFeederToggle.interactable = bHasFeeder;
+            m_AutoFeederDisabledObject.SetActive(!bHasFeeder);
         }
 
         protected override void InstantTransitionToShow() {

@@ -160,7 +160,7 @@ namespace Aqua.Modeling {
             m_RelevantCritterIds.Clear();
             m_RelevantWaterProperties.Mask = 0;
 
-            bool bHasUpgrade = Save.Inventory.HasUpgrade(ItemIds.WaterChemistry);
+            bool bHasUpgrade = Save.Inventory.HasUpgrade(ItemIds.WaterModeling);
 
             if (m_ProgressInfo.Scope != null) {
                 foreach(var organismId in m_ProgressInfo.Scope.OrganismIds) {
