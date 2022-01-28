@@ -67,11 +67,16 @@ $branch .argue.intro
 	$choice .argue.doesntEatSargasssum; Blue Tang
 	$choice .argue.doesntEatSargasssum; Bluehead Wrasse
 	$choice .argue.eatsSargassum; Urchin
+	$choice .argue.nothingEatsSargassum; Nothing eats the Sargassum.
 $choose branch
 
 :: argue.doesntEatSargasssum
 {@profCempaka} Hmm. That doesn't eat Sargassum, does it?
 $goto .argue.intro
+
+:: argue.nothingEatsSargassum
+{@profCempaka}	Hmm. That seems unlikely.
+				Perhaps running more experiments will reveal something?
 
 :: argue.eatsSargassum
 {@profCempaka} Urchins?! No way! Did you see this happen?!
@@ -86,6 +91,9 @@ $choice #argueFact; Present facts from AQOS
 		$answer Urchin.Eats.Sargassum, .argue.urchin
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
+
+::argue.giveUp
+{@profCempaka}    OK. Get back to me when you're ready.
 
 :: argue.urchin
 $call ArgueComplete()
