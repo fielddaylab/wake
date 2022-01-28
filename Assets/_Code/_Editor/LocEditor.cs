@@ -507,7 +507,14 @@ namespace Aqua.Editor {
         static public void Export(params LeafExport.CustomRule[] customRules) {
             LeafExport.CustomRule[] rules = customRules;
             ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
-            LeafExport.StringsAsCSV<ScriptNode, ScriptNodePackage>("Assets", "LocExport.csv", "English", ScriptNodePackage.Generator.Instance,
+            IMethodCache methodCache = Leaf.LeafUtils.CreateMethodCache(typeof(IScriptComponent));
+            methodCache.LoadStatic();
+            foreach(var type in Reflect.FindAllDerivedTypes(typeof(IScriptComponent))) {
+                methodCache.Load(type);
+            }
+            var generator = ScriptNodePackage.Generator.Instance;
+            generator.MethodCache = methodCache;
+            LeafExport.StringsAsCSV<ScriptNode, ScriptNodePackage>("Assets", "LocExport.csv", "English", generator,
                 rules);
         }
 

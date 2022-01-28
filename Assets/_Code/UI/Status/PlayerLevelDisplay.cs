@@ -39,13 +39,13 @@ namespace Aqua {
 
         private void Refresh() {
             if (m_LevelText) {
-                m_LevelText.text = ((int) Save.Science.CurrentLevel() + 1).ToStringLookup();
+                m_LevelText.text = ((int) Save.ExpLevel + 1).ToStringLookup();
             }
             if (m_ExpText) {
-                m_ExpText.text = ((int) Save.Inventory.ItemCount(ItemIds.Exp)).ToStringLookup();
+                m_ExpText.text = ((int) Save.Exp).ToStringLookup();
             }
             if (m_ExpBar || m_ExpToNextLabel) {
-                uint baseNext = ScienceUtils.ExpForLevel(Save.Science.CurrentLevel() + 1);
+                uint baseNext = ScienceUtils.ExpForLevel(Save.ExpLevel + 1);
                 uint toNext = ScienceUtils.ExpForNextLevel(Save.Current);
                 if (m_ExpBar) {
                     float percent = 1 - ((float) toNext / baseNext);

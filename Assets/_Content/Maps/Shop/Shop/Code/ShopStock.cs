@@ -40,14 +40,14 @@ namespace Aqua.Shop {
                 table.Set("itemName", item.CachedItem.NameTextId().Hash());
                 table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
                 table.Set("cashCost", item.CachedItem.CashCost());
-                table.Set("expCost", item.CachedItem.RequiredLevel());
+                table.Set("expCost", item.CachedItem.RequiredExp());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
             }
         }
 
         static private bool CanAfford(InventoryData profile, InvItem item) {
             return profile.ItemCount(ItemIds.Cash) >= item.CashCost()
-                && profile.ItemCount(ItemIds.Exp) >= item.RequiredLevel();
+                && profile.ItemCount(ItemIds.Exp) >= item.RequiredExp();
         }
 
         #endregion // Callbacks
@@ -73,15 +73,25 @@ namespace Aqua.Shop {
 
         private void UpdateItem(ShopItem item, InventoryData profile, bool showEffects) {
             InvItem itemData = item.CachedItem;
+            bool bMissingPrerequisite = itemData.Prerequisite() != null && !profile.HasUpgrade(itemData.Prerequisite().Id());
             bool bSoldOut = (itemData.Category() == InvItemCategory.Upgrade && profile.HasUpgrade(item.ItemId))
                 || itemData.HasFlags(InvItemFlags.OnlyOne) && profile.ItemCount(item.ItemId) > 0;
 
-            if (bSoldOut) {
+            if (bMissingPrerequisite) {
+                item.AvailableRoot.SetActive(false);
+                item.SoldOutRoot.SetActive(false);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(true);
+            } else if (bSoldOut) {
                 item.AvailableRoot.SetActive(false);
                 item.SoldOutRoot.SetActive(true);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(false);
             } else {
                 item.SoldOutRoot.SetActive(false);
                 item.AvailableRoot.SetActive(true);
+                if (item.UnavailableRoot)
+                    item.UnavailableRoot.SetActive(false);
 
                 if (itemData.CashCost() > 0) {
                     item.CoinsRoot.SetActive(true);
@@ -91,10 +101,10 @@ namespace Aqua.Shop {
                     item.CoinsRoot.SetActive(false);
                 }
 
-                if (itemData.RequiredLevel() > 0) {
+                if (itemData.RequiredExp() > 0) {
                     item.GearsRoot.SetActive(true);
-                    item.GearsText.SetText(itemData.RequiredLevel().ToStringLookup());
-                    item.GearsText.color = profile.ItemCount(ItemIds.Exp) >= itemData.RequiredLevel() ? m_CanAffordColor : m_CannotAffordColor;
+                    item.GearsText.SetText(itemData.RequiredExp().ToStringLookup());
+                    item.GearsText.color = profile.ItemCount(ItemIds.Exp) >= itemData.RequiredExp() ? m_CanAffordColor : m_CannotAffordColor;
                 } else {
                     item.GearsRoot.SetActive(false);
                 }

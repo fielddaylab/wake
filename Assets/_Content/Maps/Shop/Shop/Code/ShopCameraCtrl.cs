@@ -13,8 +13,9 @@ using AquaAudio;
 
 namespace Aqua.Shop {
     public class ShopCameraCtrl : MonoBehaviour, ISceneOptimizable, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
-        static public StringHash32 BelowEntrance = "station";
-        static public StringHash32 ExitEntrance = "shop";
+        static public readonly StringHash32 BelowEntrance = "station";
+        static public readonly StringHash32 ShipEntrance = "ship";
+        static public readonly StringHash32 ExitEntrance = "shop";
         
         static public readonly StringHash32 Trigger_ShopReady = "ShopReady";
         static public readonly StringHash32 Trigger_ShopViewTable = "ShopViewTable";
@@ -89,7 +90,7 @@ namespace Aqua.Shop {
         }
 
         static private IEnumerator BackToMap() {
-            StateUtil.LoadMapWithWipe(Save.Map.CurrentStationId(), ExitEntrance);
+            StateUtil.LoadSceneWithWipe("Ship", ExitEntrance);
             yield return 0.3f;
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();
@@ -153,7 +154,7 @@ namespace Aqua.Shop {
 
             m_BackButton.onClick.AddListener(OnBackClicked);
 
-            if (BootParams.BootedFromCurrentScene || Services.State.LastEntranceId == BelowEntrance) {
+            if (BootParams.BootedFromCurrentScene || Services.State.LastEntranceId == BelowEntrance || Services.State.LastEntranceId == ShipEntrance) {
                 Services.Camera.SnapToPose(m_OffscreenPose);
                 m_CurrencyGroup.Hide();
                 m_EnterExitAnim = Routine.Start(this, EnterAnimation());

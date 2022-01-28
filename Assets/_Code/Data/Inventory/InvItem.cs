@@ -15,7 +15,6 @@ namespace Aqua {
 
         [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
         [SerializeField, AutoEnum] private InvItemFlags m_Flags = InvItemFlags.None;
-        [SerializeField] private InvItem m_Prerequisite = null;
 
         [Header("Text")]
         [SerializeField] private TextId m_NameTextId = default;
@@ -25,7 +24,8 @@ namespace Aqua {
         [Header("Value")]
         [SerializeField] private uint m_Default = 0;
         [SerializeField, FormerlySerializedAs("m_BuyCoinsValue")] private uint m_CashCost = 0;
-        [SerializeField] private uint m_RequiredLevel = 0;
+        [SerializeField] private uint m_RequiredExp = 0;
+        [SerializeField] private InvItem m_Prerequisite = null;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
@@ -58,7 +58,7 @@ namespace Aqua {
         public uint DefaultAmount() { return m_Default; }
 
         public int CashCost() { return (int) m_CashCost; }
-        public int RequiredLevel() { return (int) m_RequiredLevel; }
+        public int RequiredExp() { return (int) m_RequiredExp; }
 
         #region Sorting
 
@@ -117,7 +117,8 @@ namespace Aqua {
         Ship,
         Submarine,
         Experimentation,
-        Portable
+        Portable,
+        Modeling
     }
 
     [Flags]

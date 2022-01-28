@@ -639,15 +639,13 @@ namespace ProtoAqua.ExperimentV2 {
                     BFConsume consume = BestiaryUtils.FindConsumeRule(critter, prop.Index(), critterState);
                     BFProduce produce = BestiaryUtils.FindProduceRule(critter, prop.Index(), critterState);
                     bHadFacts |= (consume || produce);
-                    if (Save.Inventory.IsPropertyUnlocked(prop.Index())) {
-                        if (consume != null) {
-                            ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
-                            bAddedFacts = true;
-                        }
-                        if (produce != null) {
-                            ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
-                            bAddedFacts = true;
-                        }
+                    if (consume != null) {
+                        ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
+                        bAddedFacts = true;
+                    }
+                    if (produce != null) {
+                        ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
+                        bAddedFacts = true;
                     }
                 }
 

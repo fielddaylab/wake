@@ -183,10 +183,21 @@ namespace Aqua
 
         private void OnItemUpdated(StringHash32 inItemId)
         {
-            if (inItemId != ItemIds.Exp)
-                return;
+            var item = Assets.Item(inItemId);
+            if (item.Category() == InvItemCategory.Upgrade)
+            {
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("upgradeId", inItemId);
+                    Services.Script.TryCallFunctions(GameTriggers.UpgradeAdded, null, null, table);
+                }
+            }
 
-            ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+            // TODO: Re-enable once we want levels?
+            // if (inItemId != ItemIds.Exp)
+            //     return;
+
+            // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)

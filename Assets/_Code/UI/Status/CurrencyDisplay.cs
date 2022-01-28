@@ -32,8 +32,7 @@ namespace Aqua {
         }
 
         private void Refresh() {
-            var profile = Save.Inventory;
-            m_CoinsText.text = ((int) profile.ItemCount(ItemIds.Cash)).ToStringLookup();
+            m_CoinsText.text = ((int) Save.Cash).ToStringLookup();
         }
 
         public void OnSceneLoad(SceneBinding inScene, object inContext) {

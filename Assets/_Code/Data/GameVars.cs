@@ -18,6 +18,11 @@ namespace Aqua
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
         static public readonly TableKeyPair CurrentStation = TableKeyPair.Parse("player:currentStation");
 
+        // currency
+        static public readonly TableKeyPair PlayerCash = TableKeyPair.Parse("player:cash");
+        static public readonly TableKeyPair PlayerExp = TableKeyPair.Parse("player:exp");
+        static public readonly TableKeyPair PlayerLevel = TableKeyPair.Parse("player:expLevel");
+
         // global
         static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");

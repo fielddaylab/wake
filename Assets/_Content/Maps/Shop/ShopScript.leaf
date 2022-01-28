@@ -51,32 +51,66 @@
 {@kevin}    No, seriously, a |flying| shop??
 {@merchant} Why not? Most of my customers roam the ocean. Staying put didn't make sense.
 
+:: talk.credit.1
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@when       shop:lastFailure, shop:lastFailureReason == "cash"
+@cutscene
+@repeat     2
+
+{@kevin}    Any chance we could just| have| the {item-name}{$shop:lastFailure|loc}{/item-name} for free?
+{@merchant} Not| a| chance.
+
+:: talk.credit.2
+@trigger    InspectObject
+@when       objectId == "shopkeeper"
+@when       shop:lastFailure, shop:lastFailureReason == "exp"
+@cutscene
+@repeat     2
+
+{@kevin}    Could you just, uh... overlook the fact that we don't have enough {pluralnameof Exp}?
+{@merchant} And risk giving you a tool you can't handle yet?| No way.
+
 // purchase
 
 :: purchaseAttempt.generic
 @trigger    ShopAttemptBuy
 @cutscene
 
-$if local:cashCost > 0, local:expCost > 0
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    That'll be {cash}{$local:cashCost}{/cash} and {exp}{$local:expCost}{/exp}!
-$elseif local:cashCost > 0
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    That'll be {cash}{$local:cashCost}{/cash}!
-$elseif local:expCost > 0
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    That'll be {exp}{$local:expCost}{/exp}!
-$else
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+// if player doesn't have enough exp
+$if player:exp < local:expCost
+    // hack for subtraction
+    $set    local:needExp = local:expCost
+    $set    local:needExp - player:exp
+
+    $set    shop:lastFailure = local:itemName
+    $set    shop:lastFailureReason = "exp"
+
+    {@merchant} Oh, you want the {item-name}{$local:itemName|loc}{/item-name}?
+                I'm sorry|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    $stop
 $endif
 
-$choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes!{/h}
-$choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); Yes, but...
+$if local:cashCost > 0
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    That'll be {cash}{$local:cashCost}{/cash}!
+
+    $choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}I'll take it! (Purchase){/h}
+    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); ...Yes?
+$else
+    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+
+    $choice .purchaseAttempt.generic.success; {h}I'll take it! (Install){/h}
+$endif
+
 $choice .purchaseAttempt.generic.refused; Just looking!
 
 $choose branch
 
 :: purchaseAttempt.generic.success
+
+$set    shop:lastFailure = null
+$set    shop:lastFailureReason = null
 
 $if Random(50)
     {@merchant} A fine choice!
@@ -92,9 +126,12 @@ $call PurchaseItem($(local:itemId))
 
 :: purchaseAttempt.generic.cantAfford
 
+$set    shop:lastFailure = local:itemName
+$set    shop:lastFailureReason = "cash"
+
 $set    shop:notEnoughCount + 1
-{@merchant} Oh no, you seem to be light in the wallet.
-            Come back when you have enough?
+{@merchant} I'm sorry|, but you seem to be light in the wallet.
+            Come back when you have enough!
 
 :: purchaseAttempt.generic.refused
 
@@ -147,27 +184,37 @@ $branch .purchaseAttempt.genericCostLine
 $if player:currentStation != "ArcticStation"
             It can destroy chunks of ice and open passageways for you. A wise choice if you plan on visiting the {nameof ArcticStation}!
 $else
-            It can destroy chunks of ice nd open assageways for you. A wise choice if you're going to explore the chilly waters below us!
+            It can destroy chunks of ice and open passageways for you. A wise choice if you're going to explore the chilly waters below us!
 $endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.genericCostLine
 
-$if local:cashCost > 0, local:expCost > 0
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    It'll be {cash}{$local:cashCost}{/cash} and {exp}{$local:expCost}{/exp}!
-$elseif local:cashCost > 0
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    It'll be {cash}{$local:cashCost}{/cash}!
-$elseif local:expCost > 0
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
-    It'll be {exp}{$local:expCost}{/exp}!
-$else
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?
+// if player doesn't have enough exp
+$if player:exp < local:expCost
+    // hack for subtraction
+    $set    local:needExp = local:expCost
+    $set    local:needExp - player:exp
+
+    $set    shop:lastFailure = local:itemName
+    $set    shop:lastFailureReason = "exp"
+
+    {@merchant} Oh, I'm sorry... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    $stop
 $endif
 
-$choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes!{/h}
-$choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); Yes, but...
+$if local:cashCost > 0
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    It'll be {cash}{$local:cashCost}{/cash}!
+    
+    $choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes! (Purchase){/h}
+    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); ...Yes?
+$else
+    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?
+    
+    $choice .purchaseAttempt.generic.success; {h}Yes! (Install){/h}
+$endif
+
 $choice .purchaseAttempt.generic.refused; Just looking!
 
 // exit

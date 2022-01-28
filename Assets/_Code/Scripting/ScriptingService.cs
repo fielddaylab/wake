@@ -692,6 +692,8 @@ namespace Aqua
             m_LeafCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             m_LeafCache.LoadStatic();
 
+            ScriptNodePackage.Generator.Instance.MethodCache = m_LeafCache;
+
             BlockMetaCache.Default.Cache(typeof(ScriptNode));
             BlockMetaCache.Default.Cache(typeof(ScriptNodePackage));
             LookupTables.ToStringLookup(1);
