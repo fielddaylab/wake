@@ -60,6 +60,7 @@ namespace AquaAudio
             evt.LoadSample(samplePlayer, random, out state.EventProperties, out state.Delay);
 
             state.LocalProperties = AudioPropertyBlock.Default;
+            state.LastKnownTime = 0;
             state.Delay = 0;
             state.State = StateId.Idle;
             state.Flags = 0;
@@ -79,6 +80,7 @@ namespace AquaAudio
             evt.LoadStream(streamPlayer, random, out state.EventProperties, out state.Delay);
 
             state.LocalProperties = AudioPropertyBlock.Default;
+            state.LastKnownTime = 0;
             state.Delay = 0;
             state.State = StateId.Idle;
             state.Flags = 0;
@@ -106,6 +108,7 @@ namespace AquaAudio
             if (state.State != StateId.PlayRequested) {
                 state.Sample?.Stop();
                 state.Stream?.Stop();
+                state.LastKnownTime = 0;
 
                 state.State = StateId.PlayRequested;
             }
@@ -230,6 +233,25 @@ namespace AquaAudio
 
         #region Update
 
+        static public void SyncPlayback(AudioTrackState source, AudioTrackState target) {
+            if (source == target) {
+                return;
+            }
+            
+            float sourceTime = source.LastKnownTime;
+            target.LastKnownTime = sourceTime;
+            switch(target.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    target.Sample.time = sourceTime;
+                    break;
+                }
+                case AudioEvent.PlaybackMode.Stream: {
+                    target.Stream.Time = sourceTime;
+                    break;
+                }
+            }
+        }
+
         static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime, double currentTime) {
             state.LastKnownProperties = parentSettings;
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.EventProperties, ref state.LastKnownProperties);
@@ -270,6 +292,7 @@ namespace AquaAudio
                 state.LastStartTime = currentTime;
                 state.Sample?.Play();
                 state.Stream?.Play();
+                SyncTime(state);
             }
 
             return true;
@@ -321,6 +344,7 @@ namespace AquaAudio
         static private bool UpdatePaused(AudioTrackState state) {
             if (!state.LastKnownProperties.Pause) {
                 SyncSettings(state);
+                SyncTime(state);
                 state.Sample?.UnPause();
                 state.Stream?.UnPause();
                 state.State = StateId.Playing;
@@ -340,6 +364,20 @@ namespace AquaAudio
                 case AudioEvent.PlaybackMode.Stream: {
                     state.Stream.Volume = state.LastKnownProperties.Volume;
                     state.Stream.Mute = !state.LastKnownProperties.IsAudible();
+                    break;
+                }
+            }
+        }
+
+        static private void SyncTime(AudioTrackState state) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    state.Sample.time = state.LastKnownTime;
+                    break;
+                }
+
+                case AudioEvent.PlaybackMode.Stream: {
+                    state.Stream.Time = state.LastKnownTime;
                     break;
                 }
             }

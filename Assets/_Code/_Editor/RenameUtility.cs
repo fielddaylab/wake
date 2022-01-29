@@ -32,6 +32,8 @@ namespace EditorScripts
             ".leaf", ".scan", ".aqloc", ".asset", ".unity", ".prefab"
         };
 
+        private const string RenameRecordPath = "Assets/_Content/IdRenames.txt";
+
         [MenuItem("Aqualab/Content Renaming Tool")]
         static private void Create() {
             var rename = EditorWindow.GetWindow<RenameUtility>();
@@ -111,7 +113,7 @@ namespace EditorScripts
                     if (EditorUtility.DisplayDialog("Confirm Rename",
                         string.Format("Renaming {0} identifiers\n\nAre you sure?", m_Batch.Count),
                         "Yes!", "No")) {
-                            bool success = Rename(GenerateBatch(m_Batch), "Assets/", DefaultExtensions);
+                            bool success = Rename(GenerateBatch(m_Batch), "Assets/", DefaultExtensions, true, RenameRecordPath);
                             if (success) {
                                 m_Batch.Clear();
                             }
@@ -182,14 +184,14 @@ namespace EditorScripts
             }
         }
 
-        static public bool Rename(string oldName, string newName, string directory, string[] allowedExtensions = null, bool forceUpdateDatabase = true) {
+        static public bool Rename(string oldName, string newName, string directory, string[] allowedExtensions = null, bool forceUpdateDatabase = true, string outputResultsTo = null) {
             RenamePair[] pair = new RenamePair[] {
                 new RenamePair(oldName, newName)
             };
-            return Rename(pair, directory, allowedExtensions, forceUpdateDatabase);
+            return Rename(pair, directory, allowedExtensions, forceUpdateDatabase, outputResultsTo);
         }
 
-        static public bool Rename(RenamePair[] batch, string directory, string[] allowedExtensions = null, bool forceUpdateDatabase = true) {
+        static public bool Rename(RenamePair[] batch, string directory, string[] allowedExtensions = null, bool forceUpdateDatabase = true, string outputResultsTo = null) {
             if (batch.Length == 0) {
                 return true;
             }
@@ -215,6 +217,17 @@ namespace EditorScripts
                     foreach(var path in paths) {
                         EditorUtility.DisplayProgressBar(header, "Processing File: " + path, 0.25f + (processedCount++ * processedProgressFactor));
                         ProcessFile(path, renameOps);
+                    }
+
+                    if (!string.IsNullOrEmpty(outputResultsTo)) {
+                        using(var writer = new StreamWriter(File.Open(outputResultsTo, FileMode.Append))) {
+                            foreach(var pair in batch) {
+                                writer.WriteLine();
+                                writer.Write(pair.src);
+                                writer.Write("");
+                                writer.Write(pair.dest);
+                            }
+                        }
                     }
                 } finally {
                     EditorUtility.ClearProgressBar();

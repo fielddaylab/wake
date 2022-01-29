@@ -7,7 +7,7 @@
 @cutscene
 @once
 
-{@merchant} Oh, welcome! I've just opened up shop here.
+{@merchant} Oh, welcome! Haven't seen your face before!
             Ezra at your service!
             Feel free to browse at your leisure!
             
@@ -58,7 +58,7 @@
 @cutscene
 @repeat     2
 
-{@kevin}    Any chance we could just| have| the {item-name}{$shop:lastFailure|loc}{/item-name} for free?
+{@kevin}    Any chance we could just| have| the {nameof $shop:lastFailure} for free?
 {@merchant} Not| a| chance.
 
 :: talk.credit.2
@@ -83,22 +83,23 @@ $if player:exp < local:expCost
     $set    local:needExp = local:expCost
     $set    local:needExp - player:exp
 
-    $set    shop:lastFailure = local:itemName
+    $set    shop:lastFailure = local:itemId
     $set    shop:lastFailureReason = "exp"
+    $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-    {@merchant} Oh, you want the {item-name}{$local:itemName|loc}{/item-name}?
+    {@merchant} Oh, you want the {nameof $local:itemId}?
                 I'm sorry|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    {@merchant} Ah, you want the {nameof $local:itemId}?\
     That'll be {cash}{$local:cashCost}{/cash}!
 
-    $choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}I'll take it! (Purchase){/h}
-    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); ...Yes?
+    $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}I'll take it! (Purchase){/h}
+    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} Ah, you want the {item-name}{$local:itemName|loc}{/item-name}?
+    {@merchant} Ah, you want the {nameof $local:itemId}?
 
     $choice .purchaseAttempt.generic.success; {h}I'll take it! (Install){/h}
 $endif
@@ -120,14 +121,23 @@ $else
     {@merchant} It's yours!
 $endif
 
+$if player:hasAttemptedPurchaseNoCash == local:itemId
+    $set player:hasAttemptedPurchaseNoCash = null
+$endif
+
+$if player:hasAttemptedPurchaseUnderleveled == local:itemId
+    $set player:hasAttemptedPurchaseUnderleveled = null
+$endif
+
 $set    shop:purchaseCount + 1
 $call AudioOneShot(ShopPurchase)
-$call PurchaseItem($(local:itemId))
+$call PurchaseItem($local:itemId)
 
 :: purchaseAttempt.generic.cantAfford
 
-$set    shop:lastFailure = local:itemName
+$set    shop:lastFailure = local:itemId
 $set    shop:lastFailureReason = "cash"
+$set    player:hasAttemptedPurchaseNoCash = local:itemId
 
 $set    shop:notEnoughCount + 1
 {@merchant} I'm sorry|, but you seem to be light in the wallet.
@@ -196,21 +206,22 @@ $if player:exp < local:expCost
     $set    local:needExp = local:expCost
     $set    local:needExp - player:exp
 
-    $set    shop:lastFailure = local:itemName
+    $set    shop:lastFailure = local:itemId
     $set    shop:lastFailureReason = "exp"
+    $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
     {@merchant} Oh, I'm sorry... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?\
+    {@merchant} So, do you want the {nameof $local:itemId}\
     It'll be {cash}{$local:cashCost}{/cash}!
     
-    $choice .purchaseAttempt.generic.success, CanAffordItem($(local:itemId)); {h}Yes! (Purchase){/h}
-    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($(local:itemId)); ...Yes?
+    $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
+    $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} So, do you want the {item-name}{$local:itemName|loc}{/item-name}?
+    {@merchant} So, do you want the {nameof $local:itemId}?
     
     $choice .purchaseAttempt.generic.success; {h}Yes! (Install){/h}
 $endif

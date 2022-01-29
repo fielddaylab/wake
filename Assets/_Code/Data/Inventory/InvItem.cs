@@ -47,8 +47,8 @@ namespace Aqua {
 
         public InvItem Prerequisite() { return m_Prerequisite; }
 
-        public TextId NameTextId() { return m_NameTextId; }
-        public TextId PluralNameTextId() { return m_PluralNameTextId.IsEmpty ? m_NameTextId : m_PluralNameTextId; }
+        [LeafLookup("Name")] public TextId NameTextId() { return m_NameTextId; }
+        [LeafLookup("PluralName")] public TextId PluralNameTextId() { return m_PluralNameTextId.IsEmpty ? m_NameTextId : m_PluralNameTextId; }
         public TextId DescriptionTextId() { return m_DescriptionTextId; }
 
         public Sprite Icon() { return m_Icon; }
@@ -57,8 +57,8 @@ namespace Aqua {
 
         public uint DefaultAmount() { return m_Default; }
 
-        public int CashCost() { return (int) m_CashCost; }
-        public int RequiredExp() { return (int) m_RequiredExp; }
+        [LeafLookup("Cost")] public int CashCost() { return (int) m_CashCost; }
+        [LeafLookup("Exp")] public int RequiredExp() { return (int) m_RequiredExp; }
 
         #region Sorting
 

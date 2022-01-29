@@ -193,11 +193,12 @@ namespace Aqua
                 }
             }
 
-            // TODO: Re-enable once we want levels?
-            // if (inItemId != ItemIds.Exp)
-            //     return;
+            if (inItemId == ItemIds.Exp)
+            {
+                // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+                Services.Script.QueueTriggerResponse(GameTriggers.PlayerExpUp, -5);
+            }
 
-            // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)

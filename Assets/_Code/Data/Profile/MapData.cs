@@ -309,6 +309,14 @@ namespace Aqua.Profile
             if (inMode != Serializer.Mode.Read)
                 return;
 
+            SavePatcher.PatchId(ref m_CurrentStationId);
+            SavePatcher.PatchId(ref m_CurrentMapEntranceId);
+            SavePatcher.PatchId(ref m_CurrentMapId);
+            SavePatcher.PatchIds(m_UnlockedRoomIds);
+            SavePatcher.PatchIds(m_UnlockedSiteIds);
+            SavePatcher.PatchIds(m_UnlockedStationIds);
+            SavePatcher.PatchIds(m_VisitedLocations);
+
             StringHash32 mapId = m_CurrentMapId;
             if (!Services.Assets.Map.HasId(mapId))
             {

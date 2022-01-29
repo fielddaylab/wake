@@ -149,8 +149,8 @@ namespace Aqua
 
         static private string ReplaceItemCount(TagData inTag, object inContext)
         {
-            InvItem itemDesc = Assets.Item(inTag.Data);
-            StringHash32 itemId = itemDesc.Id();
+            StringHash32 itemId = Script.ParseArg<StringHash32>(inTag.Data);
+            InvItem itemDesc = Assets.Item(itemId);
             int itemCount = (int) Save.Inventory.ItemCount(itemId);
             
             if (itemId == ItemIds.Cash)
@@ -179,7 +179,7 @@ namespace Aqua
                 return Loc.Find(Assets.Character(characterId).ShortNameId());
             }
 
-            ScriptableObject obj = Assets.Find(inTag.Data);
+            ScriptableObject obj = Assets.Find(Script.ParseArg<StringHash32>(inTag.Data, inContext));
             
             BestiaryDesc bestiary = obj as BestiaryDesc;
             if (!bestiary.IsReferenceNull())
@@ -232,7 +232,7 @@ namespace Aqua
 
         static private string ReplacePluralNameOf(TagData inTag, object inContext)
         {
-            ScriptableObject obj = Assets.Find(inTag.Data);
+            ScriptableObject obj = Assets.Find(Script.ParseArg<StringHash32>(inTag.Data, inContext));
             
             BestiaryDesc bestiary = obj as BestiaryDesc;
             if (!bestiary.IsReferenceNull())
@@ -272,7 +272,7 @@ namespace Aqua
                 return Loc.Find(Assets.Character(characterId).NameId());
             }
 
-            ScriptableObject obj = Assets.Find(inTag.Data);
+            ScriptableObject obj = Assets.Find(Script.ParseArg<StringHash32>(inTag.Data, inContext));
 
             ScriptCharacterDef charDef = obj as ScriptCharacterDef;
             if (!charDef.IsReferenceNull())

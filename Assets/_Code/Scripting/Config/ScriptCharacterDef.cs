@@ -48,8 +48,8 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public TextId NameId() { return m_NameId; }
-        public TextId ShortNameId() { return m_ShortNameId.IsEmpty ? m_NameId : m_ShortNameId; }
+        [LeafLookup("Name")] public TextId NameId() { return m_NameId; }
+        [LeafLookup("ShortName")] public TextId ShortNameId() { return m_ShortNameId.IsEmpty ? m_NameId : m_ShortNameId; }
         public ScriptActorTypeFlags Flags() { return m_Flags; }
         
         public ColorPalette4? NamePaletteOverride() { return m_OverrideNamePalette ? m_NameColor : new ColorPalette4?(); }

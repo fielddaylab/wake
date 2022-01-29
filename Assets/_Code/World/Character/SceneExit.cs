@@ -56,6 +56,10 @@ namespace Aqua.Character
                 {
                     m_Routine = Routine.Start(this, WaitToEnter(response));
                 }
+                else
+                {
+                    Enter();
+                }
             }
         }
 

@@ -18,8 +18,8 @@ namespace AquaAudio
     public class AudioMgr : ServiceBehaviour, ILoadable
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
-        private const int MaxSampleTracks = 56;
-        private const int MaxStreamTracks = 8;
+        private const int MaxSampleTracks = 48;
+        private const int MaxStreamTracks = 16;
         private const int MaxTracks = MaxSampleTracks + MaxStreamTracks;
 
         #region Types

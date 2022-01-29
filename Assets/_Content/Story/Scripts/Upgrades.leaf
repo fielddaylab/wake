@@ -6,10 +6,20 @@
 $if local:upgradeId == "VisualModel"
     $call UnlockRoom("modelingRoom")
     $call UnlockRoom("Modeling")
+    $call GiveUpgrade("SyncModel", Silent)
+    $call GiveUpgrade("PredictionModel", Silent)
+    $call GiveUpgrade("InterveneModel", Silent)
+    $call GiveUpgrade("WaterModeling", Silent)
     $return
 $endif
 
 $if local:upgradeId == "ObservationTank"
     $call UnlockRoom("Experimentation")
+    $return
+$endif
+
+$if local:upgradeId == "MeasurementTank"
+    $call GiveUpgrade("WaterStabilizer", Silent)
+    $call GiveUpgrade("AutoFeeder", Silent)
     $return
 $endif

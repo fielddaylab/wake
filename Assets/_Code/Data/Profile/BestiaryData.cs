@@ -338,6 +338,14 @@ namespace Aqua.Profile
 
             var bestiary = Services.Assets.Bestiary;
 
+            SavePatcher.PatchIds(m_ObservedEntities);
+            SavePatcher.PatchIds(m_ObservedFacts);
+
+            for(int i = 0; i < m_FactMetas.Count; i++) {
+                ref var meta = ref m_FactMetas[i];
+                SavePatcher.PatchId(ref meta.FactId);
+            }
+
             m_ObservedEntities.RemoveWhere((entityId) => {
                 if (!bestiary.HasId(entityId))
                 {

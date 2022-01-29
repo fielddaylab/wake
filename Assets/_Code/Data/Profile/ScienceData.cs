@@ -185,11 +185,17 @@ namespace Aqua.Profile
 
             foreach(var data in m_SiteData)
             {
+                SavePatcher.PatchId(ref data.MapId);
+                SavePatcher.PatchIds(data.TaggedCritters);
+                SavePatcher.PatchIds(data.GraphedCritters);
+                SavePatcher.PatchIds(data.GraphedFacts);
                 data.OnChanged = MarkChanged;
             }
 
             foreach(var data in m_ArgueData)
             {
+                SavePatcher.PatchIds(data.ExpectedFacts);
+                SavePatcher.PatchIds(data.SubmittedFacts);
                 data.OnChanged = MarkChanged;
             }
         }

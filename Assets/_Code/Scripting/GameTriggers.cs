@@ -25,6 +25,7 @@ namespace Aqua
 
         static public readonly StringHash32 UpgradeAdded = "UpgradeAdded";
 
+        static public readonly StringHash32 PlayerExpUp = "ExpUp";
         static public readonly StringHash32 PlayerLevelUp = "LevelUp";
 
         static public readonly StringHash32 TryExitScene = "TryExitScene";

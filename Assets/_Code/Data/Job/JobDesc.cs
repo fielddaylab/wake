@@ -50,8 +50,8 @@ namespace Aqua
         public bool HasFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) != 0; }
         public bool HasAllFlags(JobDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
-        public TextId NameId() { return m_NameId; }
-        public StringHash32 PosterId() { return m_PosterId; }
+        [LeafLookup("Name")] public TextId NameId() { return m_NameId; }
+        [LeafLookup("PosterId")] public StringHash32 PosterId() { return m_PosterId; }
         public TextId DescId() { return m_DescId; }
         public TextId DescShortId() { return m_DescShortId.IsEmpty ? m_DescId : m_DescShortId; }
         public TextId DescCompletedId() { return m_DescCompletedId.IsEmpty ? m_DescId : m_DescCompletedId; }
@@ -71,7 +71,7 @@ namespace Aqua
             }
         }
 
-        public StringHash32 StationId() { return m_StationId; }
+        [LeafLookup("StationId")] public StringHash32 StationId() { return m_StationId; }
         public ListSlice<StringHash32> DiveSiteIds() { return m_DiveSiteIds; }
 
         public ListSlice<JobDesc> RequiredJobs() { return m_PrerequisiteJobs; } 
@@ -92,8 +92,8 @@ namespace Aqua
             return null;
         }
 
-        public int ExpReward() { return m_ExpReward; }
-        public int CashReward() { return m_CashReward; }
+        [LeafLookup("ExpReward")] public int ExpReward() { return m_ExpReward; }
+        [LeafLookup("CashReward")] public int CashReward() { return m_CashReward; }
 
         public LeafAsset Scripting() { return m_Scripting; }
 

@@ -328,7 +328,7 @@ namespace Aqua
             yield return WaitForServiceLoading();
             yield return WaitForCleanup();
 
-            RecordCurrentMapAsSeen(active);
+            RecordCurrentMapAsSeen(inNextScene);
 
             m_SceneLock = false;
 

@@ -339,6 +339,11 @@ namespace Aqua.Profile {
                 return;
             }
 
+            SavePatcher.PatchId(ref m_CurrentJobId);
+            SavePatcher.PatchIds(m_CompletedJobs);
+            SavePatcher.PatchIds(m_InProgressJobs);
+            SavePatcher.PatchIds(m_UnlockedJobs);
+
             var jobsDB = Services.Assets.Jobs;
 
             if (!m_CurrentJobId.IsEmpty) {

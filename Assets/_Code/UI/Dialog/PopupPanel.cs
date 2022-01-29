@@ -203,7 +203,7 @@ namespace Aqua
             {
                 BFBase fact = inFacts[i];
                 BFDiscoveredFlags flags = i >= inFlags.Length ? BFType.DefaultDiscoveredFlags(inFacts[i]) : inFlags[i];
-                if (inFlags.Length > 1)
+                if (inFacts.Length > 1)
                 {
                     switch(fact.Type) {
                         case BFTypeId.WaterProperty:

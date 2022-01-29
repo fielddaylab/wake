@@ -314,8 +314,11 @@ namespace Aqua.Profile
             ioSerializer.UInt32ProxySet("upgradeIds", ref m_UpgradeIds);
             if (ioSerializer.ObjectVersion >= 2 && ioSerializer.ObjectVersion < 3)
             {
-                uint ignored = 0;
-                ioSerializer.Serialize("waterProps", ref ignored);
+                uint waterChem = 0;
+                ioSerializer.Serialize("waterProps", ref waterChem);
+                if (waterChem != 0) {
+                    m_UpgradeIds.Add(ItemIds.WaterModeling);
+                }
             }
         }
 
@@ -325,11 +328,15 @@ namespace Aqua.Profile
                 return;
             }
 
+            SavePatcher.PatchIds(m_UpgradeIds);
+
             var invDB = Services.Assets.Inventory;
 
             for(int i = m_Items.Count - 1; i >= 0; i--)
             {
                 ref PlayerInv inv = ref m_Items[i];
+                SavePatcher.PatchId(ref inv.ItemId);
+
                 if (!invDB.HasId(inv.ItemId)) {
                     Log.Warn("[InventoryData] Unknown item id '{0}'", inv.ItemId);
                     m_Items.FastRemoveAt(i);
