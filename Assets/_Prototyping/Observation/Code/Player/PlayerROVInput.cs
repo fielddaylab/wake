@@ -23,7 +23,7 @@ namespace ProtoAqua.Observation
 
         #region Input Generation
 
-        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, out InputData outInputData)
+        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, PlayerBodyStatus inStatus, out InputData outInputData)
         {
             if (!IsInputEnabled)
             {
@@ -33,7 +33,7 @@ namespace ProtoAqua.Observation
 
             m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, out outInputData.Mouse);
 
-            bool bAllowLeftClick = !Services.Input.IsPointerOverUI();
+            bool bAllowLeftClick = (inStatus & PlayerBodyStatus.Stunned) == 0 && !Services.Input.IsPointerOverUI();
 
             outInputData.UseHold = bAllowLeftClick && Device.MouseDown(0);
             outInputData.UsePress = bAllowLeftClick && Device.MousePressed(0);

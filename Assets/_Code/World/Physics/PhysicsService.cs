@@ -182,6 +182,9 @@ namespace Aqua
             int objIdx = 0;
             foreach(var obj in objectCollection)
             {
+                obj.State.Velocity += obj.AccumulatedForce;
+                obj.AccumulatedForce = default;
+
                 states[objIdx] = obj.State;
                 configs[objIdx] = obj.Config;
                 positions[objIdx] = obj.Body.position;
