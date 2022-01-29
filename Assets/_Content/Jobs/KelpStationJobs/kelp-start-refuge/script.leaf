@@ -6,42 +6,38 @@
 
 $branch common.ringPhone
 
-{@drKelp}	Hello again, {player-name}! // will this be Dr. Kelpurnia?
-{@drKelp}	We are trying to determine which site would be the best choice for a Kelp refuge.
-{@drKelp}	You can use the {h}Stress Tank{/h} to find out what stresses the Kelp!
+{@drKelp}	Hello again, {player-name}!
+{@drKelp}	We need to figure out what conditions would make a good kelp refuge.
+			The {nameof StressTank} should be able to tell us what environments the different types of kelp can handle. 
 
 :: helpToExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", !jobs:kelp-start-refuge.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's head to the {h}Stress Tank{/h} to see how Kelp respond to different environments.
-
-
-:: startExperiment
-@trigger    SceneStart
-@when       scene:name == "ExperimentV2"
-@once
-@cutscene
-{@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the Kelp in the stressor tank with different temperatures and amounts of light.
-{@kevin}  	Then we'll see which ones stress our two types of Kelp.
+{@kevin}	Remember, you can use the {nameof StressTank} in the experiment room to figure out what conditions stress a species.
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2"
 @cutscene
-{@player} 	How should I do this again?
-{@kevin}	First you will want to select the stressor tank.
-{@kevin}	Then add the Kelp in, and try to expose them to varying temperatures and amounts of light.
+{@player} 	Any idea what we should try?
+{@kevin}	Let's check out how kelp do in the stress tank.
+
+:: experimentContinue
+@trigger    JobTasksUpdated
+@when 		!JobTaskTop(argueSite)
+@once
+@cutscene
+{@kevin}	Nice!
+{@kevin}	There's still one other species of kelp we need to test in the stress tank.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(GiantKelp.Light.Stressed), HasFact(GiantKelp.Temperature.Stressed), HasFact(BullKelp.Light.Stressed), HasFact(BullKelp.Temperature.Stressed)
+@when 		JobTaskTop(argueSite)
 @once
 @cutscene
-{@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
-{@kevin}	Let's report this information back to Professor Kelpurnia!
+{@kevin}	Fantastic! Head to the communications room, where you can advise {nameof drKelp} about a suitable environment for a kelp refuge.
 
 // ARGUMENTATION
 
@@ -50,7 +46,8 @@ $branch common.ringPhone
 @when   !ArgueIsComplete(startRefugeArgue)
 @cutscene
 $call ArgueLoad(startRefugeArgue)
-{@drKelp} All right, which bay is ideal for establishing the refuge?
+{@drKelp}	We've already narrowed it down to a few candidates.
+			Which bay is ideal for establishing the refuge?
 	$choice .argue.site1; Potential Site 1 (Temp 2°C; Light 60%)
 	$choice .argue.site2; Potential Site 2 (Temp 20°C; Light 100%)
 	$choice .argue.site3; Potential Site 3 (Temp 13°C; Light 100%)
@@ -88,6 +85,7 @@ $endif
 $call ArgueComplete()
 {@drKelp}	That does it! Site 3 should work well for both types of Kelp.
 $call CompleteJob()
+// Unlock Mixed Kelp Refuge Site
 $call UnlockSite(RS-1D)
 
 :: argue.incorrectFacts

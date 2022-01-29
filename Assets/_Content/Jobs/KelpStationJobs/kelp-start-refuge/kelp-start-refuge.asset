@@ -40,11 +40,11 @@ MonoBehaviour:
   m_DiveSiteIds: []
   m_Tasks:
   - Id:
-      m_Source: getStressRanges
-      m_HashValue: 2191648757
+      m_Source: getBullKelpStress
+      m_HashValue: 3825303838
     LabelId:
-      m_Source: jobs.kelp-start-refuge.task.getStressRanges
-      m_HashValue: 1511999946
+      m_Source: jobs.kelp-start-refuge.task.getBullKelpStress
+      m_HashValue: 4280061809
     Steps:
     - Type: 1
       Target:
@@ -54,10 +54,18 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BullKelp.PH.Stressed
-        m_HashValue: 2608411801
+        m_Source: BullKelp.Temperature.Stressed
+        m_HashValue: 2038925839
       ConditionString: 
       Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: getGiantKelpStress
+      m_HashValue: 1580392536
+    LabelId:
+      m_Source: jobs.kelp-start-refuge.task.getGiantKelpStress
+      m_HashValue: 3559721285
+    Steps:
     - Type: 1
       Target:
         m_Source: GiantKelp.Light.Stressed
@@ -66,8 +74,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: GiantKelp.PH.Stressed
-        m_HashValue: 1763384947
+        m_Source: GiantKelp.Temperature.Stressed
+        m_HashValue: 1576409533
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -85,16 +93,18 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: getStressRanges
-      m_HashValue: 2191648757
+    - m_Source: getBullKelpStress
+      m_HashValue: 3825303838
+    - m_Source: getGiantKelpStress
+      m_HashValue: 1580392536
   m_OptimizedTaskList:
   - Id:
-      m_Source: getStressRanges
-      m_HashValue: 2191648757
+      m_Source: getBullKelpStress
+      m_HashValue: 3825303838
     Index: 0
     LabelId:
-      m_Source: jobs.kelp-start-refuge.task.getStressRanges
-      m_HashValue: 1511999946
+      m_Source: jobs.kelp-start-refuge.task.getBullKelpStress
+      m_HashValue: 4280061809
     Steps:
     - Type: 1
       Target:
@@ -104,10 +114,19 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BullKelp.PH.Stressed
-        m_HashValue: 2608411801
+        m_Source: BullKelp.Temperature.Stressed
+        m_HashValue: 2038925839
       ConditionString: 
       Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: getGiantKelpStress
+      m_HashValue: 1580392536
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-start-refuge.task.getGiantKelpStress
+      m_HashValue: 3559721285
+    Steps:
     - Type: 1
       Target:
         m_Source: GiantKelp.Light.Stressed
@@ -116,15 +135,15 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: GiantKelp.PH.Stressed
-        m_HashValue: 1763384947
+        m_Source: GiantKelp.Temperature.Stressed
+        m_HashValue: 1576409533
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: argueSite
       m_HashValue: 1930577458
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.kelp-start-refuge.task.argueSite
       m_HashValue: 2753005113
@@ -135,10 +154,9 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 00000100
   m_CashReward: 10
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 86e3d981279f4f948aaeb5d7c006e986,
     type: 3}
-  m_ExtraAssets:
-  - {fileID: 11400000, guid: dd8363a24975195478560c9a14147435, type: 2}
+  m_ExtraAssets: []
