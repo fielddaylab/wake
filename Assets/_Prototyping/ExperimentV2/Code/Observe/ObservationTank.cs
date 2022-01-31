@@ -96,7 +96,7 @@ namespace ProtoAqua.ExperimentV2
             m_BackButton.onClick.AddListener(OnBackClick);
             m_RunButton.onClick.AddListener(OnRunClick);
             m_FinishButton.onClick.AddListener(OnFinishClick);
-            m_SummaryPanel.ContinueButton.onClick.AddListener(OnSummaryCloseClick);
+            m_SummaryPanel.Button.onClick.AddListener(OnSummaryCloseClick);
 
             m_UnobservedStateLabel.gameObject.SetActive(false);
         }
@@ -636,13 +636,19 @@ namespace ProtoAqua.ExperimentV2
 
             if (inResult.Facts.Length == 0)
             {
-                m_SummaryPanel.HasFacts.SetActive(false);
-                m_SummaryPanel.NoFacts.SetActive(true);
+                m_SummaryPanel.FactGroup.SetActive(false);
+                m_SummaryPanel.HintGroup.SetActive(true);
+
+                m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
+                m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
                 return;
             }
 
-            m_SummaryPanel.NoFacts.SetActive(false);
-            m_SummaryPanel.HasFacts.SetActive(true);
+            m_SummaryPanel.HintGroup.SetActive(false);
+            m_SummaryPanel.FactGroup.SetActive(true);
+
+            m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
+            m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
         }
 
         private IEnumerator PopulateSummaryScreen(ExperimentResult inResult)

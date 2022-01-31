@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.Scripting;
 using BeauUtil;
 using BeauUtil.Variants;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -11,7 +12,7 @@ namespace Aqua.Scripting
     {
         public TriggerPriority TriggerPriority;
 
-        public VariantComparison[] Conditions;
+        public LeafExpressionGroup Conditions;
         public int Score;
 
         public PersistenceLevel OnceLevel = PersistenceLevel.Untracked;

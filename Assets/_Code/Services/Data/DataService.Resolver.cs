@@ -282,7 +282,7 @@ namespace Aqua
             }
 
             [LeafMember("GiveEntity"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator GiveEntity([BindContext] ScriptThread inThread, StringHash32 inEntityId, PopupMode inMode = PopupMode.Popup)
+            static private IEnumerator GiveEntity([BindThread] ScriptThread inThread, StringHash32 inEntityId, PopupMode inMode = PopupMode.Popup)
             {
                 if (Save.Bestiary.RegisterEntity(inEntityId) && inMode == PopupMode.Popup)
                 {
@@ -325,7 +325,7 @@ namespace Aqua
             }
 
             [LeafMember("GiveFact"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator GiveFact([BindContext] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
+            static private IEnumerator GiveFact([BindThread] ScriptThread inThread, StringHash32 inFactId, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
                 if (Save.Bestiary.RegisterFact(inFactId, fact.Type == BFTypeId.Model) && inMode != PopupMode.Silent)
@@ -377,7 +377,7 @@ namespace Aqua
             }
 
             [LeafMember("UpgradeFact"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator UpgradeFact([BindContext] ScriptThread inThread, StringHash32 inFactId, BFDiscoveredFlags inFlags = BFDiscoveredFlags.Rate, PopupMode inMode = PopupMode.Popup)
+            static private IEnumerator UpgradeFact([BindThread] ScriptThread inThread, StringHash32 inFactId, BFDiscoveredFlags inFlags = BFDiscoveredFlags.Rate, PopupMode inMode = PopupMode.Popup)
             {
                 BFBase fact = Assets.Fact(inFactId);
                 if (Save.Bestiary.AddDiscoveredFlags(inFactId, inFlags) && inMode != PopupMode.Silent)
@@ -428,7 +428,7 @@ namespace Aqua
             }
 
             [LeafMember("FinishFactBatch"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator CompleteFactBatch([BindContext] ScriptThread inThread)
+            static private IEnumerator CompleteFactBatch([BindThread] ScriptThread inThread)
             {
                 if (s_BatchedFacts.Count <= 0)
                     return null;
@@ -478,7 +478,7 @@ namespace Aqua
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator PurchaseItem([BindContext] ScriptThread inThread, StringHash32 inItemId)
+            static private IEnumerator PurchaseItem([BindThread] ScriptThread inThread, StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
                 var invData = Save.Inventory;
@@ -531,7 +531,7 @@ namespace Aqua
             }
 
             [LeafMember("GiveUpgrade"), UnityEngine.Scripting.Preserve]
-            static private IEnumerator GiveUpgrade([BindContext] ScriptThread inThread, StringHash32 inUpgradeId, PopupMode inMode = PopupMode.Popup)
+            static private IEnumerator GiveUpgrade([BindThread] ScriptThread inThread, StringHash32 inUpgradeId, PopupMode inMode = PopupMode.Popup)
             {
                 if (Save.Inventory.AddUpgrade(inUpgradeId) && inMode != PopupMode.Silent)
                 {

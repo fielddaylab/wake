@@ -369,7 +369,7 @@ namespace Aqua
         #region Leaf
 
         [LeafMember("ShowPopup"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafShowPopup([BindContext] ScriptThread inThread, StringHash32 inHeader, StringHash32 inDescription)
+        static private IEnumerator LeafShowPopup([BindThread] ScriptThread inThread, StringHash32 inHeader, StringHash32 inDescription)
         {
             inThread.Dialog = null;
             if (Services.UI.IsSkippingCutscene())

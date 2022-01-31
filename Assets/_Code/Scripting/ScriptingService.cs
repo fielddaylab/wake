@@ -175,7 +175,8 @@ namespace Aqua
                     DebugService.Log(LogMask.Scripting, "[ScriptingService] Evaluating trigger {0}...", inTriggerId.ToDebugString());
                     
                     int minScore = int.MinValue;
-                    int responseCount = responseSet.GetHighestScoringNodes(resolver, m_LeafCache, (object) inContext ?? this, Save.Current?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
+                    LeafEvalContext context = LeafEvalContext.FromResolver(this, resolver, inContext);
+                    int responseCount = responseSet.GetHighestScoringNodes(context, Save.Current?.Script, inTarget, m_ThreadTargetMap, nodes, ref minScore);
                     if (responseCount > 0)
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
@@ -856,7 +857,7 @@ namespace Aqua
         }
 
         [LeafMember("StopSkipping"), Preserve]
-        static private void LeafThreadStopSkipping([BindContext] ScriptThread inThread)
+        static private void LeafThreadStopSkipping([BindThread] ScriptThread inThread)
         {
             inThread.StopSkipping();
         }

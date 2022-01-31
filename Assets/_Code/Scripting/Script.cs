@@ -2,6 +2,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using Leaf;
+using Leaf.Runtime;
 
 namespace Aqua {
     static public class Script {
@@ -10,11 +11,11 @@ namespace Aqua {
         }
 
         static public T ParseArg<T>(StringSlice inArg, object inContext, T inDefault = default(T)) {
-            return LeafUtils.ParseArgument<T>(Services.Script, inArg, inContext, inDefault);
+            return LeafUtils.ParseArgument<T>(LeafEvalContext.FromObject(inContext, Services.Script), inArg, inDefault);
         }
 
         static public T ParseArg<T>(StringSlice inArg, T inDefault = default(T)) {
-            return LeafUtils.ParseArgument<T>(Services.Script, inArg, null, inDefault);
+            return LeafUtils.ParseArgument<T>(LeafEvalContext.FromPlugin(Services.Script), inArg, inDefault);
         }
 
         static public bool ShouldBlock() {
