@@ -3,6 +3,7 @@ using UnityEngine;
 using BeauPools;
 using System.Collections.Generic;
 using BeauUtil.Debugger;
+using System;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -10,7 +11,7 @@ namespace ProtoAqua.ExperimentV2
     {
         #region Types
 
-        private class ActorInstancePool : SerializablePool<ActorInstance> { }
+        [Serializable] private class ActorInstancePool : SerializablePool<ActorInstance> { }
 
         #endregion // Types
 

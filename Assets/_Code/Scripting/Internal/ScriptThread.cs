@@ -411,10 +411,10 @@ namespace Aqua.Scripting
     {
         public override object Bind(object inSource)
         {
-            LeafThreadState thread = (LeafThreadState) base.Bind(inSource);
+            ScriptThread thread = (ScriptThread) base.Bind(inSource);
             if (thread != null)
                 return thread.GetHandle();
-            return default(LeafThreadHandle);
+            return default(ScriptThreadHandle);
         }
     }
 }

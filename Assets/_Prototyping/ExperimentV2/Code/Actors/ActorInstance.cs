@@ -43,7 +43,7 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] public Routine ActionAnimation;
         
-        [NonSerialized] public TempAlloc<Transform> StateEffect;
+        [NonSerialized] public TempAlloc<VFX> StateEffect;
         [NonSerialized] public Routine StateAnimation;
         
         [NonSerialized] public bool InWater;
