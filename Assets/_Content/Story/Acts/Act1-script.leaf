@@ -57,3 +57,36 @@ $call FocusHighlight->Clear()
 
 {@kevin}    Hey, Kel gave us coordinates to a new station!
             We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and head over there instead!
+
+// exp   
+   
+:: after25Exp
+@trigger    ExpUp
+@when       player:exp >= 25
+@once
+@cutscene
+
+{@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
+
+// if player has already attempted to purchase something where they didn't have enough exp
+$if player:hasAttemptedPurchaseUnderleveled
+    Maybe we should head back to {nameof @merchant}'s shop?
+    
+    // look up exp cost for last attempted item
+    $set local:itemExp = Lookup($player:hasAttemptedPurchaseUnderleveled, "Exp")
+    
+    // player could be able to get it now
+    $if player:exp >= local:itemExp
+        If I remember correctly, they might be willing to sell us the {nameof $player:hasAttemptedPurchaseUnderleveled} now.
+    $else
+        I'm not sure we'll be able to get the {nameof $player:hasAttemptedPurchaseUnderleveled} yet, but perhaps there's something else?
+    $endif 
+$elseif LocationVisited(Shop) // player has at least visited the merchant once
+    Maybe we should head back to {nameof @merchant}'s shop!
+    They might have something new for us to buy!
+$else
+    I hear there's a merchant right off the dock!
+    Maybe we should check them out?
+$endif
+
+

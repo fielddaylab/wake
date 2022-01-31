@@ -11,13 +11,22 @@ namespace ProtoAqua.ExperimentV2
     {
         #region Inspector
 
-        [Required] public Button ContinueButton;
-        public GameObject HasFacts;
-        public GameObject NoFacts;
-        public Transform FactListRoot;
-        public LayoutGroup FactListLayout;
+        [Header("Header")]
+        [Required] public LocText HeaderText;
 
+        [Header("Hint")]
+        [Required] public GameObject HintGroup;
+        [Required] public LocText HintText;
+        
+        [Header("Facts")]
+        [Required] public GameObject FactGroup;
+        [Required] public Transform FactListRoot;
         [InstanceOnly] public FactPools FactPools;
+        [Required] public LayoutGroup FactListLayout;
+
+        [Header("Button")]
+        [Required] public Button Button;
+        [Required] public LocText ButtonLabel;
 
         #endregion // Inspector
     }

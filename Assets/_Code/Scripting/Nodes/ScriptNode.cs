@@ -154,8 +154,8 @@ namespace Aqua.Scripting
         {
             if (m_TriggerData != null)
             {
-                m_TriggerData.Conditions = LeafUtils.ParseConditionsList(inConditionsList);
-                m_TriggerData.Score += m_TriggerData.Conditions.Length;
+                m_TriggerData.Conditions = LeafUtils.CompileExpressionGroup(this, inConditionsList);
+                m_TriggerData.Score += m_TriggerData.Conditions.Count;
             }
         }
 

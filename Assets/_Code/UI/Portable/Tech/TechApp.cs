@@ -25,7 +25,7 @@ namespace Aqua.Portable
 
         #region Panel
 
-        protected override void OnShow(bool inbInstant)
+        protected override void OnShowComplete(bool inbInstant)
         {
             base.OnShow(inbInstant);
             LoadData();

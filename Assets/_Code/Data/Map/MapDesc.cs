@@ -40,13 +40,13 @@ namespace Aqua
         public bool HasAllFlags(MapFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public string SceneName() { return m_SceneName; }
-        public TextId LabelId() { return m_LabelId; }
-        public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
+        [LeafLookup("Name")] public TextId LabelId() { return m_LabelId; }
+        [LeafLookup("ShortName")] public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
         public Sprite Icon() { return m_Icon; }
         public MapDesc Parent() { return m_Parent; }
 
-        public StringHash32 EnvironmentId() { return m_EnvironmentId; }
+        [LeafLookup("Environment")] public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
 
         public IReadOnlyPropertyBlock<PropertyName> AdditionalProperties() { return m_AdditionalProperties; }

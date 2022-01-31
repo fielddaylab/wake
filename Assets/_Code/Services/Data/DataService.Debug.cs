@@ -234,18 +234,14 @@ namespace Aqua
 
             invMenu.AddButton("Add 100 Cash", () => Save.Inventory.AdjustItem(ItemIds.Cash, 100));
             invMenu.AddButton("Add 10 Exp", () => Save.Inventory.AdjustItem(ItemIds.Exp, 10));
+            invMenu.AddButton("Unlock All Upgrades", () => UnlockAllUpgrades());
 
             invMenu.AddDivider();
 
-            DMInfo upgradesMenu = new DMInfo("Upgrades");
-            upgradesMenu.AddButton("Unlock All", () => UnlockAllUpgrades());
-            upgradesMenu.AddDivider();
             foreach(var upgrade in Services.Assets.Inventory.Upgrades)
             {
-                RegisterUpgradeToggle(upgradesMenu, upgrade.Id());
+                RegisterUpgradeToggle(invMenu, upgrade.Id());
             }
-
-            invMenu.AddSubmenu(upgradesMenu);
 
             yield return invMenu;
 

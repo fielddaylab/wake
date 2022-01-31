@@ -33,6 +33,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private string m_ServerAddress = null;
+        [SerializeField, Required] private TextAsset m_IdRenames = null;
 
         [Header("Conversation History")]
         [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
@@ -282,7 +283,13 @@ namespace Aqua
                 {
                     DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", m_ProfileName);
                     SaveData serverData = null;
-                    if (!Serializer.Read(ref serverData, future.Get()))
+                    bool bSuccess;
+                    using(Profiling.Time("reading save data from server"))
+                    {
+                        bSuccess = Serializer.Read(ref serverData, future.Get());
+                    }
+                    
+                    if (!bSuccess)
                     {
                         Log.Error("[DataService] Server profile could not be read...");
                         ioFuture.Complete(null);
@@ -303,7 +310,12 @@ namespace Aqua
         private bool TryLoadProfileFromBytes(byte[] inBytes, out SaveData outProfile)
         {
             outProfile = null;
-            return Serializer.Read(ref outProfile, inBytes);
+            bool bSuccess;
+            using(Profiling.Time("reading save data from server"))
+            {
+                bSuccess = Serializer.Read(ref outProfile, inBytes);
+            }
+            return bSuccess;
         }
 
         private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
@@ -383,7 +395,11 @@ namespace Aqua
 
             // push an empty save up to the server
 
-            string saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
+            string saveData;
+            using(Profiling.Time("writing save data to binary"))
+            {
+                saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
+            }
 
             using(var future = Future.Create())
             using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r, s) => future.Fail(r)))
@@ -627,6 +643,8 @@ namespace Aqua
 
             m_LastKnownProfile = PlayerPrefs.GetString(LastUserNameKey, string.Empty);
             LoadOptionsSettings();
+
+            SavePatcher.InitializeIdPatcher(m_IdRenames);
 
             m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
 

@@ -27,6 +27,8 @@ namespace Aqua
         [NonSerialized] public Transform Transform;
         [NonSerialized] public RingBuffer<PhysicsContact> Contacts = new RingBuffer<PhysicsContact>(16, RingBufferMode.Overwrite);
 
+        [NonSerialized] public Vector2 AccumulatedForce;
+
         #endregion // Inspector
 
         private void OnEnable()

@@ -160,5 +160,17 @@ namespace AquaAudio {
         static public AudioHandle Null { get { return default(AudioHandle); } }
 
         #endregion // Null
+
+        #region Sync
+
+        static public void Sync(AudioHandle source, AudioHandle target) {
+            var sourceTrack = source.GetTrack();
+            var targetTrack = target.GetTrack();
+            if (sourceTrack != null && targetTrack != null) {
+                AudioTrackState.SyncPlayback(sourceTrack, targetTrack);
+            }
+        }
+
+        #endregion // Sync
     }
 }

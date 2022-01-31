@@ -1,21 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Variants;
-using Aqua;
 using Aqua.Profile;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using Aqua.Debugging;
 using BeauUtil.Debugger;
 using System.Text;
+using Leaf.Runtime;
 
-namespace Aqua.Scripting
-{
+namespace Aqua.Scripting {
     internal class TriggerResponseSet : IReadOnlyCollection<ScriptNode>
     {
         private readonly List<ScriptNode> m_TriggerNodes = new List<ScriptNode>(16);
@@ -62,7 +56,7 @@ namespace Aqua.Scripting
         /// <summary>
         /// Returns the highest-scoring nodes for this response set.
         /// </summary>
-        public int GetHighestScoringNodes(IVariantResolver inResolver, IMethodCache inInvoker, object inContext, ScriptingData inScriptData, StringHash32 inTarget, Dictionary<StringHash32, ScriptThread> inTargetStates, ICollection<ScriptNode> outNodes, ref int ioMinScore)
+        public int GetHighestScoringNodes(LeafEvalContext inContext, ScriptingData inScriptData, StringHash32 inTarget, Dictionary<StringHash32, ScriptThread> inTargetStates, ICollection<ScriptNode> outNodes, ref int ioMinScore)
         {
             Optimize();
 
@@ -129,25 +123,19 @@ namespace Aqua.Scripting
                 }
 
                 // cannot play due to conditions
-                if (triggerData.Conditions != null)
+                if (triggerData.Conditions.Count > 0)
                 {
-                    bool bFailed = false;
-                    for(int condIdx = 0, condCount = triggerData.Conditions.Length; condIdx < condCount; condIdx++)
+                    LeafExpression failure;
+                    Variant result = triggerData.Conditions.Evaluate(inContext, out failure);
+                    if (!result.AsBool())
                     {
-                        ref var comp = ref triggerData.Conditions[condIdx];
-                        if (!comp.Evaluate(inResolver, inContext, inInvoker))
+                        if (DebugService.IsLogging(LogMask.Scripting))
                         {
-                            if (DebugService.IsLogging(LogMask.Scripting))
-                            {
-                                DebugService.Log(LogMask.Scripting, "...node condition '{0}' failed", comp);
-                            }
-                            bFailed = true;
-                            break;
+                            DebugService.Log(LogMask.Scripting, "...node condition '{0}' failed", failure.ToDebugString(node));
                         }
-                    }
 
-                    if (bFailed)
                         continue;
+                    }
                 }
 
                 DebugService.Log(LogMask.Scripting, "...node passed!");

@@ -1,11 +1,25 @@
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using Leaf;
+using Leaf.Runtime;
 
 namespace Aqua {
     static public class Script {
+        static public ILeafPlugin Plugin {
+            get { return Services.Script; }
+        }
+
+        static public T ParseArg<T>(StringSlice inArg, object inContext, T inDefault = default(T)) {
+            return LeafUtils.ParseArgument<T>(LeafEvalContext.FromObject(inContext, Services.Script), inArg, inDefault);
+        }
+
+        static public T ParseArg<T>(StringSlice inArg, T inDefault = default(T)) {
+            return LeafUtils.ParseArgument<T>(LeafEvalContext.FromPlugin(Services.Script), inArg, inDefault);
+        }
+
         static public bool ShouldBlock() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
         }
 
         static public bool ShouldBlockIgnoreLetterbox() {

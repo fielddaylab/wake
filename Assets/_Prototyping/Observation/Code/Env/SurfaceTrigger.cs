@@ -20,10 +20,7 @@ namespace ProtoAqua.Observation
 
         private void Awake()
         {
-            var listener = m_Collider.EnsureComponent<TriggerListener2D>();
-            listener.TagFilter.Add("Player");
-            listener.onTriggerEnter.AddListener(OnPlayerEnter);
-            listener.onTriggerExit.AddListener(OnPlayerExit);
+            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
         }
 
         private void OnPlayerEnter(Collider2D other)

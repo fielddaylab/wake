@@ -37,7 +37,6 @@ namespace Aqua.Shop {
 
             using(var table = TempVarTable.Alloc()) {
                 table.Set("itemId", item.ItemId);
-                table.Set("itemName", item.CachedItem.NameTextId().Hash());
                 table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
                 table.Set("cashCost", item.CachedItem.CashCost());
                 table.Set("expCost", item.CachedItem.RequiredExp());

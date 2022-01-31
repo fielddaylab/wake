@@ -58,12 +58,12 @@ namespace Aqua
         public BestiaryDescFlags Flags() { return m_Flags; }
         public BestiaryDescSize Size() { return m_Size; }
 
-        public StringHash32 StationId() { return m_StationId; }
-        public StringHash32 DiveSiteId() { Assert.True(m_Type == BestiaryDescCategory.Environment); return m_DiveSiteId; }
+        [LeafLookup("StationId")] public StringHash32 StationId() { return m_StationId; }
+        [LeafLookup("DiveSiteId")] public StringHash32 DiveSiteId() { Assert.True(m_Type == BestiaryDescCategory.Environment); return m_DiveSiteId; }
 
         public string ScientificName() { return m_ScientificName; }
-        public TextId CommonName() { return m_CommonNameId; }
-        public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
+        [LeafLookup("Name")] public TextId CommonName() { return m_CommonNameId; }
+        [LeafLookup("PluralName")] public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
         public TextId Description() { return m_DescriptionId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }

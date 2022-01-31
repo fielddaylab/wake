@@ -9,7 +9,7 @@ namespace AquaAudio
     public class AudioBGMTrigger : MonoBehaviour
     {
         [SerializeField] private string m_EventId = null;
-        [SerializeField] private float m_Crossfade = 0;
+        [SerializeField] private float m_Crossfade = 0.5f;
         [SerializeField] private bool m_StopOnDisable = true;
 
         private Routine m_WaitRoutine;

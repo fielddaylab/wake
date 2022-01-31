@@ -407,11 +407,14 @@ namespace Aqua.Scripting
     }
 
     [UnityEngine.Scripting.Preserve]
-    public class BindThreadHandleAttribute : BindContextAttribute
+    public class BindThreadHandleAttribute : BindThreadAttribute
     {
         public override object Bind(object inSource)
         {
-            return ((ScriptThread) inSource).GetHandle();
+            LeafThreadState thread = (LeafThreadState) base.Bind(inSource);
+            if (thread != null)
+                return thread.GetHandle();
+            return default(LeafThreadHandle);
         }
     }
 }

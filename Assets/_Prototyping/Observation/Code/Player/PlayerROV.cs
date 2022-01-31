@@ -8,6 +8,7 @@ using BeauUtil.Debugger;
 using Aqua.Scripting;
 using Aqua.Character;
 using Leaf.Runtime;
+using System.Collections;
 
 namespace ProtoAqua.Observation
 {
@@ -81,6 +82,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_CameraDriftHint;
         [NonSerialized] private ITool m_CurrentTool;
         [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
+        [NonSerialized] private Routine m_StunRoutine;
 
         private void Start()
         {
@@ -126,7 +128,7 @@ namespace ProtoAqua.Observation
         {
             Vector3? lockOn = GetLockOn();
 
-            m_Input.GenerateInput(m_Transform, lockOn, out m_LastInputData);
+            m_Input.GenerateInput(m_Transform, lockOn, m_StunRoutine ? PlayerBodyStatus.Stunned : PlayerBodyStatus.Normal, out m_LastInputData);
 
             if (m_Moving || !UpdateTool())
             {
@@ -304,6 +306,12 @@ namespace ProtoAqua.Observation
             else if (inItemId == ItemIds.ROVTagger)
                 SetTool(ToolId.Tagger, false);
         }
+
+        // TODO: Implement
+        // private IEnumerator StunRoutine()
+        // {
+            
+        // }
 
         #region Leaf
 

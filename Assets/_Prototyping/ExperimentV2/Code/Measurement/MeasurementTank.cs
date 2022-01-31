@@ -56,7 +56,10 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required] private Button m_RunButton = null;
 
         [Header("Summary")]
-        [SerializeField] private MeasurementSummary m_SummaryPanel = null;
+        [SerializeField] private SummaryPanel m_SummaryPanel = null;
+        [SerializeField] private TextId m_EatingHintId = default;
+        [SerializeField] private TextId m_ReproHintId = default;
+        [SerializeField] private TextId m_WaterHintId = default;
 
         #endregion // Inspector
 
@@ -90,7 +93,7 @@ namespace ProtoAqua.ExperimentV2 {
             m_BackButton.onClick.AddListener(OnBackClick);
             m_RunButton.onClick.AddListener(OnRunClicked);
             
-            m_SummaryPanel.Base.ContinueButton.onClick.AddListener(OnSummaryCloseClick);
+            m_SummaryPanel.Button.onClick.AddListener(OnSummaryCloseClick);
         }
 
         private void OnDestroy() {
@@ -128,9 +131,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             if (m_SummaryPanel.gameObject.activeSelf) {
                 m_SummaryPanel.gameObject.SetActive(false);
-                m_SummaryPanel.Base.FactPools.FreeAll();
-                m_SummaryPanel.HeaderPool.Reset();
-                m_SummaryPanel.TextPool.Reset();
+                m_SummaryPanel.FactPools.FreeAll();
             }
 
             if (m_ParentTank.WaterFillProportion > 0) {
@@ -430,6 +431,7 @@ namespace ProtoAqua.ExperimentV2 {
                 yield return fader.Object.Show(Color.black, 0.5f);
                 yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
                 ClearStateAfterExperiment();
+                InitializeSummaryScreen(result);
                 yield return 0.5f;
                 yield return fader.Object.Hide(0.5f, false);
             }
@@ -486,73 +488,56 @@ namespace ProtoAqua.ExperimentV2 {
             m_SummaryPanel.gameObject.SetActive(true);
         }
 
-        private IEnumerator PopulateSummaryScreen(ExperimentResult inResult) {
-            MonoBehaviour newFact;
-            bool bSpawnedHeader = false;
-            BFBase fact;
-            foreach (var factResult in inResult.Facts) {
-                fact = Assets.Fact(factResult.Id);
-                if (!bSpawnedHeader) {
-                    switch(fact.Type) {
-                        case BFTypeId.Consume:
-                        case BFTypeId.Produce: {
-                            yield return InstantiateFeedbackHeader(m_SummaryPanel, FeedbackCategory_Water, true);
-                            break;
-                        }
+        private void InitializeSummaryScreen(ExperimentResult inResult) {
+            if (inResult.Facts.Length == 0)
+            {
+                m_SummaryPanel.FactGroup.SetActive(false);
+                m_SummaryPanel.HintGroup.SetActive(true);
 
-                        case BFTypeId.Grow:
-                        case BFTypeId.Reproduce: {
-                            yield return InstantiateFeedbackHeader(m_SummaryPanel, FeedbackCategory_Repro, true);
-                            break;
-                        }
-
-                        case BFTypeId.Eat: {
-                            yield return InstantiateFeedbackHeader(m_SummaryPanel, FeedbackCategory_Eat, true);
-                            break;
-                        }
+                TempList8<TextId> labels = default;
+                foreach(var feedback in inResult.Feedback) {
+                    if (feedback.Category == FeedbackCategory_ReproFailure) {
+                        labels.Add(m_ReproHintId);
+                    } else if (feedback.Category == FeedbackCategory_EatFailure) {
+                        labels.Add(m_EatingHintId);
+                    } else if (feedback.Category == FeedbackCategory_WaterFailure) {
+                        labels.Add(m_WaterHintId);
                     }
-                    bSpawnedHeader = true;
                 }
-                newFact = m_SummaryPanel.Base.FactPools.Alloc(fact, null, Save.Bestiary.GetDiscoveredFlags(fact.Id), m_SummaryPanel.Base.FactListRoot);
-                newFact.GetComponent<CanvasGroup>().alpha = 0;
-                yield return null;
-                m_SummaryPanel.Base.FactListLayout.ForceRebuild();
-                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, factResult.Type == ExperimentFactResultType.Known ? 0.5f : 1);
-                yield return 0.2f;
+
+                m_SummaryPanel.HintText.SetText(RNG.Instance.Choose(labels));
+
+                m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
+                m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
+                return;
             }
 
-            foreach (var feedback in inResult.Feedback) {
-                yield return InstantiateFeedbackHeader(m_SummaryPanel, feedback.Category, feedback.Flags == 0);
-                yield return InstantiateFeedbackLine(m_SummaryPanel, feedback.Id, feedback.Flags == 0);
-                yield return 0.2f;
+            m_SummaryPanel.HintGroup.SetActive(false);
+            m_SummaryPanel.FactGroup.SetActive(true);
+
+            m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
+            m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
+        }
+
+        private IEnumerator PopulateSummaryScreen(ExperimentResult inResult) {
+            if (inResult.Facts.Length > 0) {
+                MonoBehaviour newFact;
+                BFBase fact;
+                foreach (var factResult in inResult.Facts) {
+                    fact = Assets.Fact(factResult.Id);
+                    newFact = m_SummaryPanel.FactPools.Alloc(fact, null, Save.Bestiary.GetDiscoveredFlags(fact.Id), m_SummaryPanel.FactListRoot);
+                    newFact.GetComponent<CanvasGroup>().alpha = 0;
+                    yield return null;
+                    m_SummaryPanel.FactListLayout.ForceRebuild();
+                    yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, factResult.Type == ExperimentFactResultType.Known ? 0.5f : 1);
+                    yield return 0.2f;
+                }
             }
-        }
-
-        static private IEnumerator InstantiateFeedbackHeader(MeasurementSummary inSummary, StringHash32 inCategory, bool inbSuccess) {
-            LocText newFeedback = inSummary.HeaderPool.Alloc(inSummary.Base.FactListRoot);
-            newFeedback.SetText(inCategory);
-            newFeedback.Graphic.color = inbSuccess ? inSummary.SuccessHeaderColor : inSummary.FailureHeaderColor;
-            newFeedback.GetComponent<CanvasGroup>().alpha = 0;
-            yield return null;
-            inSummary.Base.FactListLayout.ForceRebuild();
-            yield return ExperimentUtil.AnimateFeedbackItemToOn(newFeedback, 1);
-        }
-
-        static private IEnumerator InstantiateFeedbackLine(MeasurementSummary inSummary, StringHash32 inText, bool inbSuccess) {
-            LocText newFeedback = inSummary.TextPool.Alloc(inSummary.Base.FactListRoot);
-            newFeedback.SetText(inText);
-            newFeedback.Graphic.color = inbSuccess ? inSummary.SuccessTextColor : inSummary.FailureTextColor;
-            newFeedback.GetComponent<CanvasGroup>().alpha = 0;
-            yield return null;
-            inSummary.Base.FactListLayout.ForceRebuild();
-            yield return ExperimentUtil.AnimateFeedbackItemToOn(newFeedback, 1);
         }
 
         private void OnSummaryCloseClick() {
             m_SummaryPanel.gameObject.SetActive(false);
-            m_SummaryPanel.Base.FactPools.FreeAll();
-            m_SummaryPanel.HeaderPool.Reset();
-            m_SummaryPanel.TextPool.Reset();
+            m_SummaryPanel.FactPools.FreeAll();
             OnBeginClick();
         }
 
