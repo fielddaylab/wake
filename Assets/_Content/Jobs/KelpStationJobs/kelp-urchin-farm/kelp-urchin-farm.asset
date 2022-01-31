@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: kelp-urchin-farm
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.kelp-urchin-farm.name
+    m_HashValue: 4171356163
+  m_PosterId:
+    m_HashValue: 46959747
+  m_DescId:
+    m_Source: jobs.kelp-urchin-farm.desc
+    m_HashValue: 2035922801
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 2
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: c39edddea71f8c44db1a3a4ae4ea5e55, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades: []
+  m_StationId:
+    m_HashValue: 2724389503
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: urchinEatBull
+      m_HashValue: 2554306445
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.urchinEatBull
+      m_HashValue: 2008727161
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: Urchin.Eats.BullKelp
+        m_HashValue: 3905127850
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: urchinEatGiant
+      m_HashValue: 192288209
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.urchinEatGiant
+      m_HashValue: 1387438373
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: Urchin.Eats.GiantKelp
+        m_HashValue: 3556196180
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.reportBack
+      m_HashValue: 1297576520
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: urchinEatBull
+      m_HashValue: 2554306445
+    - m_Source: urchinEatGiant
+      m_HashValue: 192288209
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: urchinEatBull
+      m_HashValue: 2554306445
+    Index: 0
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.urchinEatBull
+      m_HashValue: 2008727161
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: Urchin.Eats.BullKelp
+        m_HashValue: 3905127850
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: urchinEatGiant
+      m_HashValue: 192288209
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.urchinEatGiant
+      m_HashValue: 1387438373
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: Urchin.Eats.GiantKelp
+        m_HashValue: 3556196180
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    Index: 2
+    LabelId:
+      m_Source: jobs.kelp-urchin-farm.task.reportBack
+      m_HashValue: 1297576520
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 00000100
+  m_CashReward: 10
+  m_ExpReward: 5
+  m_Scripting: {fileID: -1942890987711236906, guid: c487d11310b4efd46ab5445a4c362765,
+    type: 3}
+  m_ExtraAssets: []

@@ -1,0 +1,75 @@
+#basePath   job.kelp-urchin-farm
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@kevin}	You'll need to use the {nameof MeasurementTank} to figure out how much Urchins eat.
+			It's in the Experiment Room.
+
+:: measurementTankSelect
+@trigger	ExperimentTankViewed
+@when		tankType == "Measurement"
+@once 
+@cutscene
+{@kevin}	We know the Urchins behave normally in the Kelp Forest.
+			
+:: measurementChooseKelp
+@trigger	ExperimentScreenViewed
+@when		screenId == "measurement.ecosystem"
+@once 
+@cutscene
+{@kevin}	Pick {nameof Urchin} and something we know the {nameof Urchin} eats.
+
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(urchinFarmArgue)
+@cutscene
+$call ArgueLoad(urchinFarmArgue)
+{@drKelp} Which type of kelp should I feed?
+	$choice .argue.giantOrBull; Giant Kelp
+	$choice .argue.giantOrBull; Bull Kelp
+	$choice .argue.either; Either one
+    $choice .argue.giveUp; Let me get back to you
+$choose branch
+
+:: argue.giantOrBull
+{@drKelp}	How do the rates compare?
+$goto .argue.presentFacts
+
+:: argue.either
+{@drKelp}	What do you mean?
+$goto .argue.presentFacts
+
+: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
+
+:: argue.presentFacts
+$if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEvidence)
+		// TODO: require the upgraded versions of these facts
+		$call ArgueFactSlot(KelpForest.Urchin.Eats.BullKelp)
+		$call ArgueFactSlot(KelpForest.Urchin.Eats.GiantKelp)
+$endif
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+	// TODO: create separate nodes for each completion dialogue
+	$goto .argue.notMatter
+$else
+	{@drKelp}	Surely you know that's not relevant.
+	$goto .argue.giantOrBull
+$endif
+
+:: argue.notMatter
+{@drKelp}	Huh, it actually looks like it doesn't matter. The rates are the same.
+			Thank you!
+$goto .argue.done
+
+:: argue.done
+$call ArgueComplete()
+{@drKelp}	Thanks so much for your help!
+$call CompleteJob()
