@@ -16,7 +16,7 @@ namespace Aqua {
 
         private void OnEnable() {
             Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged);
-            if (!Services.State.IsLoadingScene()) {
+            if (!Script.IsLoading) {
                 Refresh();
             }
         }

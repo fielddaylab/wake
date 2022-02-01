@@ -7,7 +7,7 @@ namespace Aqua.Character
 {
     public class SpawnLocationMap : MonoBehaviour, ISceneOptimizable
     {
-        [SerializeField] private SpawnLocation[] m_Locations;
+        [SerializeField, HideInInspector] private SpawnLocation[] m_Locations;
 
         public SpawnLocation FindLocation(StringHash32 inId)
         {
@@ -21,9 +21,13 @@ namespace Aqua.Character
             return null;
         }
 
-        public SpawnLocation FindLocationForLastEntrance()
+        public SpawnLocation FindLocationForLastEntrance(StringHash32 inDefault = default)
         {
-            return FindLocation(Services.State.LastEntranceId);
+            StringHash32 entrance = Services.State.LastEntranceId;
+            if (entrance.IsEmpty)
+                entrance = inDefault;
+
+            return FindLocation(entrance);
         }
 
         #if UNITY_EDITOR

@@ -30,7 +30,7 @@ namespace Aqua
                     .Register(GameEvents.CutsceneEnd, Refresh, this);
             }
             
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
             {
                 Services.Events.Register(GameEvents.SceneLoaded, Refresh, this);
             }
@@ -50,7 +50,7 @@ namespace Aqua
 
         private void Refresh()
         {
-            if (Services.State.IsLoadingScene()) {
+            if (Script.IsLoading) {
                 return;
             }
             

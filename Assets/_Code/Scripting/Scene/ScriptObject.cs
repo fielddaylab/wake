@@ -129,7 +129,19 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
-                return Services.Script.TriggerResponse(GameTriggers.InspectObject, table);
+                return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, inObject, table);
+            }
+        }
+
+        static public ScriptThreadHandle Interact(ScriptObject inObject, bool inbLocked = false, StringHash32 inTarget = default)
+        {
+            Assert.NotNull(inObject);
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("locked", inbLocked);
+                table.Set("target", inTarget);
+                return Services.Script.TriggerResponse(GameTriggers.InteractObject, null, inObject, table);
             }
         }
 

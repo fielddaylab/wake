@@ -61,7 +61,7 @@ namespace Aqua.Scripting {
 
             m_ThinkUpdate = Routine.StartLoop(this, PauseHiddenTracks).SetPhase(RoutinePhase.ThinkUpdate);
 
-            if (Services.State.IsLoadingScene()) {
+            if (Script.IsLoading) {
                 m_WaitHandle = Routine.Start(this, WaitToPlay());
             } else {
                 UpdatePlayingTrack();
@@ -69,7 +69,7 @@ namespace Aqua.Scripting {
         }
 
         private IEnumerator WaitToPlay() {
-            while(Services.State.IsLoadingScene()) {
+            while(Script.IsLoading) {
                 yield return null;
             }
             yield return null;

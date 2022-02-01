@@ -15,7 +15,7 @@ namespace AquaAudio
 
         private void OnEnable()
         {
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
             {
                 m_Playback = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
                 m_WaitRoutine = Routine.Start(this, WaitToPlay());
@@ -28,7 +28,7 @@ namespace AquaAudio
 
         private IEnumerator WaitToPlay()
         {
-            while (Services.State.IsLoadingScene())
+            while (Script.IsLoading)
             {
                 yield return null;
             }

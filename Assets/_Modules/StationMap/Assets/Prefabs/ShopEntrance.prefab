@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 2318103341326100417}
   - component: {fileID: 6123077440833081915}
   - component: {fileID: 3567644665853223703}
-  - component: {fileID: 3013993820969462705}
   - component: {fileID: 3590298230658255339}
+  - component: {fileID: 1045795163759256039}
+  - component: {fileID: 4783189587652951257}
   m_Layer: 0
   m_Name: ShopEntrance
   m_TagString: Untagged
@@ -68,25 +69,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2.57
---- !u!114 &3013993820969462705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2318103341326100418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc315a5a08d19ae459902c6ae46fbabe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Collider: {fileID: 3567644665853223703}
-  m_MapId:
-    m_Source: Shop
-    m_HashValue: 678702281
-  m_EntranceId:
-    m_Source: station
-    m_HashValue: 2933337107
 --- !u!114 &3590298230658255339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,6 +86,56 @@ MonoBehaviour:
   - {fileID: 2318103341326100418}
   m_ToHide: []
   m_ContinuousCheck: 1
+--- !u!114 &1045795163759256039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318103341326100418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EntranceIdOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_LocationOverride: {fileID: 518358416153289918}
+  m_Facing: 2
+--- !u!114 &4783189587652951257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318103341326100418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25531321d178c5a408af76cec4466493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Collider: {fileID: 3567644665853223703}
+  m_RequiredUpgrades: []
+  m_LockMode: 1
+  m_Mode: 1
+  m_TargetMap:
+    m_HashValue: 678702281
+  m_TargetEntrance:
+    m_Source: 
+    m_HashValue: 0
+  m_MapLoadFlags: 4
+  m_StopMusic: 1
+  m_AutoExecute: 0
+  m_IconOverride: {fileID: 0}
+  m_LabelOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_PinLocationOverride: {fileID: 0}
+  m_PinToPlayer: 0
+  m_LocationOffset:
+    Local: {x: 0, y: 0, z: 0}
+    World: {x: 0, y: 2, z: -3}
 --- !u!1 &4637384442270060773
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,7 +261,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 518358416153289918}
-  - component: {fileID: 8617123354912120999}
   m_Layer: 0
   m_Name: PlayerSpawn
   m_TagString: Untagged
@@ -251,22 +282,6 @@ Transform:
   m_Father: {fileID: 2318103341326100417}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8617123354912120999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7360814371744363240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Parent: {fileID: 0}
-  m_Id:
-    m_Source: shop
-    m_HashValue: 2823282857
 --- !u!1 &8444916075140875617
 GameObject:
   m_ObjectHideFlags: 0

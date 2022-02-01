@@ -3,11 +3,15 @@ using BeauUtil;
 using System;
 using Aqua.Scripting;
 using Aqua.Profile;
+using System.Collections;
+using Aqua.Character;
 
 namespace Aqua.StationMap
 {
+    [RequireComponent(typeof(SceneInteractable))]
     public class DiveSite : ScriptComponent
     {
+        static public readonly StringHash32 Event_Dive = "nav:dive";
         static public readonly StringHash32 Trigger_Found = "DiveSiteFound";
 
         #region Inspector
@@ -54,30 +58,30 @@ namespace Aqua.StationMap
                 m_RenderGroup.SetAlpha(0.25f);
             }
 
-            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
+            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, null);
+
+            var interact = GetComponent<SceneInteractable>();
+            interact.OnExecute = Dive;
+            interact.OverrideTargetMap(m_MapId, MapDB.LookupCurrentMap());
         }
 
         private void OnPlayerEnter(Collider2D other)
         {
-            if (Services.Data.CompareExchange(GameVars.InteractObject, null, m_MapId))
+            using(var tempTable = TempVarTable.Alloc())
             {
-                Services.UI.FindPanel<NavigationUI>().DisplayDive(transform, m_MapId);
-                
-                using(var tempTable = TempVarTable.Alloc())
-                {
-                    tempTable.Set("siteId", m_MapId);
-                    tempTable.Set("siteHighlighted", m_Highlighted);
-                    Services.Script.TriggerResponse(Trigger_Found, tempTable);
-                }
+                tempTable.Set("siteId", m_MapId);
+                tempTable.Set("siteHighlighted", m_Highlighted);
+                Services.Script.TriggerResponse(Trigger_Found, tempTable);
             }
         }
 
-        private void OnPlayerExit(Collider2D other)
-        {
-            if (Services.Data && Services.Data.CompareExchange(GameVars.InteractObject, m_MapId, null))
-            {
-                Services.UI?.FindPanel<NavigationUI>()?.Hide();
-            }
+        static private IEnumerator Dive(SceneInteractable inspectable, ScriptThreadHandle thread) {
+            yield return thread.Wait();
+            Services.Events.Dispatch(Event_Dive);
+            Services.UI.ShowLetterbox();
+            Services.Events.Dispatch(GameEvents.BeginDive, Assets.Map(inspectable.TargetMapId()).name);
+            yield return 2;
+            Services.UI.HideLetterbox();
         }
     }
 

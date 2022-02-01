@@ -9,7 +9,6 @@ namespace Aqua.StationMap
     {
         [SerializeField, HideInInspector] private PlayerController m_Player = null;
         [SerializeField, HideInInspector] private DiveSite[] m_DiveSites;
-        [SerializeField, HideInInspector] private SpawnLocationMap m_Spawns;
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
@@ -23,13 +22,6 @@ namespace Aqua.StationMap
                 site.Initialize(mapData, job);
             }
 
-            if (entrance.IsEmpty)
-                entrance = "Ship";
-            
-            SpawnLocation location = m_Spawns.FindLocation(entrance);
-            if (location != null)
-                m_Player.TeleportTo(location);
-
             StringHash32 currentMap = MapDB.LookupCurrentMap();
             mapData.SetCurrentStationId(currentMap);
         }
@@ -42,7 +34,6 @@ namespace Aqua.StationMap
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);
             m_DiveSites = diveSites.ToArray();
             m_Player = FindObjectOfType<PlayerController>();
-            m_Spawns = FindObjectOfType<SpawnLocationMap>();
         }
 
         #endif // UNITY_EDITOR

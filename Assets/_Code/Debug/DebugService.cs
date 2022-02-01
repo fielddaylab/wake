@@ -69,7 +69,7 @@ namespace Aqua.Debugging
                 SetMinimalLayer(!m_MinimalOn);
             }
 
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
             {
                 ClearDebugCamera();
                 if (m_DebugMenu.isActiveAndEnabled)
@@ -268,7 +268,7 @@ namespace Aqua.Debugging
 
         private void SkipCutscene()
         {
-            if (Services.Pause.IsPaused())
+            if (Script.IsPaused)
                 return;
             
             var cutscene = Services.Script.GetCutscene();

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8691902175363982702}
   - component: {fileID: 2377568797325399636}
-  - component: {fileID: 3735772878856229919}
   m_Layer: 0
   m_Name: DockZone
   m_TagString: Untagged
@@ -49,22 +48,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1.542
---- !u!114 &3735772878856229919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1226114955065752887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Parent: {fileID: 0}
-  m_Id:
-    m_Source: Ship
-    m_HashValue: 746798495
 --- !u!1 &4004822121673546896
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,7 +357,8 @@ GameObject:
   - component: {fileID: 4494275847858507279}
   - component: {fileID: 4494275847858507278}
   - component: {fileID: 5570475230701661108}
-  - component: {fileID: 4123209006324795044}
+  - component: {fileID: 1298403952785591217}
+  - component: {fileID: 1694020012001323271}
   m_Layer: 29
   m_Name: Dock
   m_TagString: Untagged
@@ -523,7 +507,7 @@ MonoBehaviour:
   m_Id:
     m_Source: Ship
     m_HashValue: 746798495
---- !u!114 &4123209006324795044
+--- !u!114 &1298403952785591217
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -532,7 +516,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 4494275847858507264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93e21a22c35fa3643b87c2b6d6c3c088, type: 3}
+  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EntranceIdOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_LocationOverride: {fileID: 8691902175363982702}
+  m_Facing: 0
+--- !u!114 &1694020012001323271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4494275847858507264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25531321d178c5a408af76cec4466493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Collider: {fileID: 2377568797325399636}
+  m_RequiredUpgrades: []
+  m_LockMode: 1
+  m_Mode: 1
+  m_TargetMap:
+    m_HashValue: 746798495
+  m_TargetEntrance:
+    m_Source: 
+    m_HashValue: 0
+  m_MapLoadFlags: 4
+  m_StopMusic: 1
+  m_AutoExecute: 0
+  m_IconOverride: {fileID: 0}
+  m_LabelOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_PinLocationOverride: {fileID: 8691902175363982702}
+  m_PinToPlayer: 0
+  m_LocationOffset:
+    Local: {x: 0, y: 0, z: 0}
+    World: {x: 0, y: 0, z: -3}

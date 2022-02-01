@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Aqua.Character
 {
+    [LabeledEnum]
     public enum FacingId : byte {
         Left,
         Right,
@@ -12,7 +13,9 @@ namespace Aqua.Character
         Down,
         Forward,
         Back,
-        Invalid,
+
+        [Label("Do Not Change")]
+        Invalid = 255
     }
     
     static public class Facing {

@@ -58,7 +58,7 @@ namespace Aqua {
 
             while (true) {
                 yield return bigWait;
-                while (Services.State.IsLoadingScene() || Streaming.IsUnloading()) {
+                while (Script.IsLoading || Streaming.IsUnloading()) {
                     yield return smallWait;
                 }
 

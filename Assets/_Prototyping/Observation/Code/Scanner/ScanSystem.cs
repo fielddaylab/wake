@@ -112,7 +112,7 @@ namespace ProtoAqua.Observation
 
         private void LateUpdate()
         {
-            if (Services.Pause.IsPaused() || Services.State.IsLoadingScene())
+            if (Script.IsPaused || Script.IsLoading)
                 return;
 
             if (m_Listener == null || !m_Listener.isActiveAndEnabled)

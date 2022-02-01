@@ -43,12 +43,19 @@ namespace Aqua.StationMap
             }
         }
 
-        public override void TeleportTo(Vector3 inPosition)
+        public override void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
         {
             base.TeleportTo(inPosition);
 
             m_MovementParticles.Stop();
             m_MovementParticles.Play();
+
+            if (inFacing != FacingId.Invalid)
+            {
+                Vector2 look = Facing.Look(inFacing);
+                float angle = Mathf.Atan2(look.y, look.x);
+                m_Transform.SetRotation(angle, Axis.Z, Space.Self);
+            }
         }
     }
 }

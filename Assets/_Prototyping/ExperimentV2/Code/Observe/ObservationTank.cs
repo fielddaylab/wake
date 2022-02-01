@@ -103,7 +103,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void LateUpdate()
         {
-            if ((m_ParentTank.CurrentState & TankState.Running) == 0 || Services.Pause.IsPaused())
+            if ((m_ParentTank.CurrentState & TankState.Running) == 0 || Script.IsPaused)
                 return;
 
             m_ActorBehavior.TickBehaviors(Time.deltaTime);

@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 7312539121612469696}
   - component: {fileID: 3304813112564635210}
   - component: {fileID: 1010058476}
+  - component: {fileID: 7864205028955611702}
+  - component: {fileID: 5994507938621204317}
   m_Layer: 0
   m_Name: Site
   m_TagString: Untagged
@@ -88,6 +90,56 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2.57
+--- !u!114 &7864205028955611702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272653230675361849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EntranceIdOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_LocationOverride: {fileID: 3941570860446204741}
+  m_Facing: 3
+--- !u!114 &5994507938621204317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272653230675361849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25531321d178c5a408af76cec4466493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Collider: {fileID: 1010058476}
+  m_RequiredUpgrades: []
+  m_LockMode: 2
+  m_Mode: 1
+  m_TargetMap:
+    m_HashValue: 0
+  m_TargetEntrance:
+    m_Source: 
+    m_HashValue: 0
+  m_MapLoadFlags: 4
+  m_StopMusic: 1
+  m_AutoExecute: 0
+  m_IconOverride: {fileID: 0}
+  m_LabelOverride:
+    m_Source: 
+    m_HashValue: 0
+  m_PinLocationOverride: {fileID: 0}
+  m_PinToPlayer: 0
+  m_LocationOffset:
+    Local: {x: 0, y: 0, z: 0}
+    World: {x: 0, y: 2, z: -3}
 --- !u!1 &2527276077676948023
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +806,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3941570860446204741}
-  - component: {fileID: 5049940233446590300}
   m_Layer: 0
   m_Name: PlayerSpawn
   m_TagString: Untagged
@@ -776,22 +827,6 @@ Transform:
   m_Father: {fileID: 1272653230675361850}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5049940233446590300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6315186047062005011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0d52a783865a9c41915ce2d0ebb64fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Parent: {fileID: 0}
-  m_Id:
-    m_Source: 
-    m_HashValue: 0
 --- !u!1 &7929905667339137085
 GameObject:
   m_ObjectHideFlags: 0

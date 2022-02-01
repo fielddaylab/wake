@@ -138,7 +138,7 @@ namespace ProtoAqua.Observation
 
         private void LateUpdate()
         {
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
                 return;
             
             ref var velocityHintData = ref Services.Camera.FindHint(m_VelocityHint);

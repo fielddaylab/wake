@@ -171,7 +171,7 @@ namespace Aqua.Cameras
 
         private void LateUpdate()
         {
-            if (m_Paused || Services.State.IsLoadingScene() || Time.timeScale <= 0)
+            if (m_Paused || Script.IsLoading || Time.timeScale <= 0)
                 return;
 
             float deltaTime = Time.deltaTime;

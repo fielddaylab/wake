@@ -15,7 +15,7 @@ namespace Aqua.StationMap
 
         private void OnEnable()
         {
-            Services.Events.Register(NavigationUI.Event_Dive, StartDiving, this);
+            Services.Events.Register(DiveSite.Event_Dive, StartDiving, this);
         }
 
         private void OnDisable()

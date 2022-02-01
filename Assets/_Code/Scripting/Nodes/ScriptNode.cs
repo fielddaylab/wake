@@ -78,6 +78,12 @@ namespace Aqua.Scripting
             return TriggerPriority.Low;
         }
 
+        internal void ApplyDefaults(StringHash32 inTarget)
+        {
+            if (m_Target.IsEmpty)
+                m_Target = inTarget;
+        }
+
         #region Parser
 
         [BlockMeta("cutscene"), Preserve]

@@ -28,7 +28,7 @@ namespace Aqua
                 Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this);
             }
 
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
             {
                 Services.Events.Register(GameEvents.SceneLoaded, Refresh, this);
             }

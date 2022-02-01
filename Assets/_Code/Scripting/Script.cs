@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -7,7 +8,15 @@ using Leaf.Runtime;
 namespace Aqua {
     static public class Script {
         static public ILeafPlugin Plugin {
-            get { return Services.Script; }
+            [MethodImpl(256)] get { return Services.Script; }
+        }
+
+        static public bool IsLoading {
+            [MethodImpl(256)] get { return Services.State.IsLoadingScene(); }
+        }
+
+        static public bool IsPaused {
+            [MethodImpl(256)] get { return Services.Pause.IsPaused(); }
         }
 
         static public T ParseArg<T>(StringSlice inArg, object inContext, T inDefault = default(T)) {

@@ -19,7 +19,7 @@ namespace Aqua.Cameras
 
         private void OnEnable()
         {
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
                 return;
 
             Services.Camera.PushTarget(this);
@@ -30,7 +30,7 @@ namespace Aqua.Cameras
             if (!Services.Valid)
                 return;
             
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
                 return;
 
             Services.Camera.PopTarget(this);
@@ -38,7 +38,7 @@ namespace Aqua.Cameras
 
         public void PushChanges()
         {
-            if (Services.State.IsLoadingScene())
+            if (Script.IsLoading)
                 return;
             
             if (m_TargetHandle != 0)
