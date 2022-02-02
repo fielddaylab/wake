@@ -8,7 +8,7 @@ $branch common.ringPhone
 
 {@profCempaka}	You scanned plastic!? In the Reef? This won't do.
 {@profCempaka}  What will happen if the makes its way to the Reef Edge?
-{@profCempaka}  Read to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
+{@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
 {@player} 	We're on our way!
 
 :: helpLeaveShip
@@ -55,11 +55,8 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @cutscene
 $call ArgueLoad(oceanPlasticArgue)
 {@profCempaka} Why are the {nameof LoggerheadTurtle} so plentiful here?
-$branch .argue.presentFacts
-
-:: argue.presentFacts
-$choice .askModel; There are many food sources for the turtles.
-$choice .argue.giveUp; I'm not sure yet, Let me get back to you.
+	$choice .argue.askModel; There are many food sources for the turtles.
+	$choice .argue.giveUp; I'm not sure yet, Let me get back to you.
 $choose branch
 
 ::argue.askModel
