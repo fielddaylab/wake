@@ -30,7 +30,6 @@ $branch common.ringPhone
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(urchinFarmArgue)
 @cutscene
-
 $call ArgueLoad(urchinFarmArgue)
 {@drKelp} Which type of kelp should I feed?
 	$choice .argue.giantOrBull; Giant Kelp
