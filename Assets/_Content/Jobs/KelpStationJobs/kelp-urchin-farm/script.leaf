@@ -30,6 +30,7 @@ $branch common.ringPhone
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(urchinFarmArgue)
 @cutscene
+
 $call ArgueLoad(urchinFarmArgue)
 {@drKelp} Which type of kelp should I feed?
 	$choice .argue.giantOrBull; Giant Kelp
@@ -51,25 +52,57 @@ $goto .argue.presentFacts
 
 :: argue.presentFacts
 $if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEvidence)
-		// TODO: require the upgraded versions of these facts
-		$call ArgueFactSlot(KelpForest.Urchin.Eats.BullKelp)
-		$call ArgueFactSlot(KelpForest.Urchin.Eats.GiantKelp)
-$endif
-$call ArgueDisplayClaim()
-$if ArgueAllFactsCorrect()
-	// TODO: create separate nodes for each completion dialogue
-	$goto .argue.notMatter
-$else
-	{@drKelp}	Surely you know that's not relevant.
-	$goto .argue.giantOrBull
+		$call ArgueFactSlot(Urchin.Eats.GiantKelp)
+		$call ArgueFactSlot(Urchin.Eats.BullKelp)
 $endif
 
-:: argue.notMatter
-{@drKelp}	Huh, it actually looks like it doesn't matter. The rates are the same.
-			Thank you!
-$goto .argue.done
+$branch .argue.chooseFacts
+
+::argue.chooseFacts
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+	$goto .argue.done
+$else
+	$choice #argueFact; Present facts from AQOS
+		$answer Urchin.Eats.BullKelp, IsFactFullyUpgraded(Urchin.Eats.BullKelp), .argue.bullKelp
+		$answer Urchin.Eats.GiantKelp, IsFactFullyUpgraded(Urchin.Eats.GiantKelp), .argue.giantKelp
+		$answer *, .argue.unrelated
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.bullKelp
+$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
+	$goto .argue.done
+$else
+	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 15g of {pluralnameof BullKelp}. How about the Giant Kelp? 
+	$goto .argue.chooseFacts
+$endif
+
+:: argue.giantKelp
+$if ArgueIsFactSubmitted(Urchin.Eats.BullKelp)
+	$goto .argue.done
+$else
+	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof GiantKelp}. How about the Bull Kelp? 
+	$goto .argue.chooseFacts
+$endif
+
+:: argue.unrelated
+{@drKelp}	Hmmm... I don't think this fact is relevant.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFacts
+
+:: argue.giveUp
+{@drKelp}	Ok, get back to me when you're ready.
 
 :: argue.done
 $call ArgueComplete()
-{@drKelp}	Thanks so much for your help!
+{@drKelp}	Huh, it actually looks like it doesn't matter. It seems like the rates are the same.
 $call CompleteJob()
+
+//DONE
+
+::end
+@trigger	JobCompleted
+@cutscene
+{@drKelp}	Thanks for all your help! 
+{@kevin}	$10. Excellent. One better than $9. Please choose another job for further remuneration.
