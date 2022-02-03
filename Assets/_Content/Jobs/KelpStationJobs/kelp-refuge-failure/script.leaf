@@ -15,7 +15,7 @@ $branch common.ringPhone
 @when 		scene:name == "Ship", !jobs:kelp-refuge-failure.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	We need to check the historical Kelp population data from the refuge site. To the sub!
+{@kevin}	Let's dive into the kelp refuge site and see what's happening.
 
 :: diveSite
 @trigger    SceneStart
@@ -24,8 +24,15 @@ $branch common.ringPhone
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
 {@kevin}	Dr. Kelpurnia was right, this looks awful.
-			Let's see what the population history has been like since the refuge was created.
-{@kevin}   	We'll need to scan the population probe. Do you see it anywhere?
+			Let's see what the population history has been like since the refuge was created. We'll need to scan the population probe.
+{@kevin}   	Do you see it anywhere?
+
+:: helpHistorical
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(histPop)
+@cutscene
+{@player}   Where should I go from here?
+{@kevin}	We'll need the historical population - check the population probe.
 
 
 :: probeCollectionComplete
@@ -42,7 +49,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 
 :: helpToExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true
+@when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true, !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's head to the {h}Measurement Tank{/h} to measure Kelp growth rates.
@@ -58,12 +65,11 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2"
+@when 		scene:name == "ExperimentV2", !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	We need the growth rates of kelp when stressed and unstressed.
-			Growth rate means put in only one species and make sure it's fed and stabilized.
-			Try to replicate conditions sites with different properties to measure the kelp stressed and unstressed.
+			What sites do we know they are stressed in, and which do we know they're not stressed in?
 
 :: experimentEnd
 @trigger    JobTasksUpdated
@@ -73,6 +79,13 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 {@kevin}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
 			Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to grow more slowly.
 			We should head to the Modeling room for that.
+			
+:: helpBeginModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(newModel)
+@cutscene
+{@player} 	What do we need to do now?
+{@kevin}	Now we need to build a model.
 
 // MODELING
 
@@ -89,6 +102,13 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @cutscene
 {@kevin}	We've solved it! Let's tell your Mom the good news.
 
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(getPaid)
+@cutscene
+{@player} 	What do we need to do now?
+{@kevin}	The communications room is where we should go to share your findings.
+
 // ARGUMENTATION
 
 ::argue.chooseClaim
@@ -96,7 +116,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when   !ArgueIsComplete(refugeFailureArgue)
 @cutscene
 $call ArgueLoad(refugeFailureArgue)
-{@drKelp} Please tell me you found some answers! Do you know why the refuge didn't work for the Bull Kelp?
+{@drKelp} So why didn't the Refuge work for the {nameof BullKelp}?
 	$choice .argue.wrongTemp; It's the wrong temperature.
 	$choice .argue.slowGrowth; The Bull Kelp are growing more slowly than expected.
 	$choice .argue.pickyUrchins; The urchins are only eating the Bull Kelp.
@@ -115,7 +135,7 @@ $goto .argue.chooseClaim
 $goto .argue.chooseClaim
 
 ::argue.slowGrowth
-{@drKelp}	Interesting idea. What about your model? Does it explain why the Bull Kelp are growing more slowly?
+{@drKelp}	Show me your model. Does it explain why the {nameof BullKelp} are growing more slowly?
 $if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
 $endif
@@ -134,7 +154,7 @@ $endif
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@drKelp}	Wow. So both were doing fine, but the Giant Kelp started blocking the light, making the Bull Kelp stressed.
+{@drKelp}	Wow. So both were doing fine, but the {nameof GiantKelp} started blocking the light, making the {nameof GiantKelp} stressed.
 {@drKelp}	That does explain it.
 {@drKelp}	I guess it's back to the drawing board for this Refuge idea.
 $call CompleteJob()
