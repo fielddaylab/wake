@@ -1,0 +1,95 @@
+#basePath   job.coral-ocean-plastic
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@profCempaka}	You scanned plastic!? In the Reef? This won't do.
+{@profCempaka}  What will happen if the makes its way to the Reef Edge?
+{@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
+{@player} 	We're on our way!
+
+:: helpLeaveShip
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", !jobs:coral-ocean-plastic.task.speciesReefEdge
+@cutscene
+{@player}   Where should I go from here?
+{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+
+:: navigation
+@trigger    SceneStart
+@when       scene:name == "Station2"
+@once
+@cutscene
+{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+					
+:: helpGoToSiteV
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Station2", !jobs:coral-ocean-plastic.task.speciesReefEdge
+@cutscene
+{@player}   I think I'm lost?
+{@kevin}	Site V should be just East of the ship.
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-2V", !jobs:coral-ocean-plastic.task.speciesReefEdge
+@once
+@cutscene
+$set    	jobs:coral-turtle-population.seen.bottom = true
+{@kevin}   Let's look around for anything a Loggerhead Turtle might eat.
+
+:: navigation.goBackUp
+@trigger    JobTasksUpdated
+@when       !jobs:coral-ocean-plastic.task.speciesReefEdge
+@once
+@cutscene
+{@kevin}   Seems like we've gotten everything we need from here. Head back up to the surface when you're ready to leave.
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(oceanPlasticArgue)
+@cutscene
+$call ArgueLoad(oceanPlasticArgue)
+{@profCempaka} Why are the {nameof LoggerheadTurtle} so plentiful here?
+	$choice .argue.askModel; There are many food sources for the turtles.
+	$choice .argue.giveUp; I'm not sure yet, Let me get back to you.
+$choose branch
+
+::argue.askModel
+$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimEvidence)
+		$call ArgueFactSlot(ReefEdge.Model.Prediction)
+$endif
+{@profCempaka}	That would make sense. A buffet is sure to be a big draw.
+{@profCempaka}	Which species are being consumed by the turtles? Do you have a model of those connections?	
+$goto .argue.chooseFacts
+
+::argue.chooseFacts
+$call ArgueDisplayClaim()
+$if ArgueAllFactsCorrect()
+    $goto .argue.done
+$else
+    $choice #argueFact; Present facts from AQOS
+        $answer ReefEdge.Model.Prediction, .argue.done
+        $answer *, .argue.unrelated
+    $choice .argue.giveUp; Let me get back to you
+$endif
+
+::argue.done
+$call ArgueComplete()
+{@profCempaka} Thanks for building this model! 
+{@profCempaka} Eventualluy we may need more information to complete this food web.
+$call CompleteJob()
+
+::argue.unrelated
+$call ArgueRejectIncorrect()
+{@profCempaka} Ok, that's interesting, but it's not answering my question.
+$goto .argue.chooseFacts
+
+:: argue.giveUp
+{@profCempaka} OK. Get back to me when you're ready.
+
+::end

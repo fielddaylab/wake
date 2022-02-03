@@ -21,17 +21,17 @@ namespace Aqua.Character
             this.CacheComponent(ref m_Transform);
         }
 
-        public void TeleportTo(Transform inTransform)
+        public void TeleportTo(Transform inTransform, FacingId inFacing = FacingId.Invalid)
         {
-            TeleportTo(inTransform.position);
+            TeleportTo(inTransform.position, inFacing);
         }
 
         public void TeleportTo(SpawnLocation inSpawn)
         {
-            TeleportTo(inSpawn.transform.position);
+            TeleportTo(inSpawn.Location.position, inSpawn.Facing);
         }
 
-        public virtual void TeleportTo(Vector3 inPosition)
+        public virtual void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
         {
             m_Transform.position = inPosition;
         }

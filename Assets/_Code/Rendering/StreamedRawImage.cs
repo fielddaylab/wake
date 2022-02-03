@@ -61,7 +61,7 @@ namespace Aqua {
             }
             #endif // UNITY_EDITOR
 
-            if (Services.State.IsLoadingScene()) {
+            if (Script.IsLoading) {
                 return;
             }
             

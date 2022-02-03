@@ -45,5 +45,10 @@ namespace Aqua
 
             return listener;
         }
+    
+        static public bool IsCollidingWithPlayer(Collider2D inCollider)
+        {
+            return PhysicsUtils.IsOverlapping(inCollider, GameLayers.Player_Mask);
+        }
     }
 }

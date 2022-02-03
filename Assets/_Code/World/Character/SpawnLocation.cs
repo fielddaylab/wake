@@ -4,29 +4,14 @@ using UnityEngine;
 
 namespace Aqua.Character
 {
-    public class SpawnLocation : MonoBehaviour, ISceneOptimizable
+    public class SpawnLocation : ScriptComponent
     {
-        [SerializeField, HideInInspector] private ScriptObject m_Parent;
-        [SerializeField] private SerializedHash32 m_Id;
+        [SerializeField] private SerializedHash32 m_EntranceIdOverride = null;
+        [SerializeField] private Transform m_LocationOverride = null;
+        [SerializeField] private FacingId m_Facing = FacingId.Invalid;
 
-        public StringHash32 Id { get { return m_Id; } }
-
-        #if UNITY_EDITOR
-
-        private void Reset()
-        {
-            m_Parent = this.GetComponentInParent<ScriptObject>(true);
-            if (m_Parent != null)
-                m_Id = m_Parent.Id();
-        }
-
-        void ISceneOptimizable.Optimize()
-        {
-            m_Parent = this.GetComponentInParent<ScriptObject>(true);
-            if (m_Parent != null)
-                m_Id = m_Parent.Id();
-        }
-
-        #endif // UNITY_EDITOR
+        public StringHash32 Id { get { return !m_EntranceIdOverride.IsEmpty ? m_EntranceIdOverride.Hash() : Parent.Id(); } }
+        public Transform Location { get { return m_LocationOverride ? m_LocationOverride : transform; } }
+        public FacingId Facing { get { return m_Facing; } }
     }
 }

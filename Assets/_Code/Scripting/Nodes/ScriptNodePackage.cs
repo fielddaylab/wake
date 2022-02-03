@@ -8,6 +8,7 @@ using Leaf;
 using Leaf.Compiler;
 using Leaf.Runtime;
 using BeauUtil.Debugger;
+using BeauUtil.Tags;
 
 namespace Aqua.Scripting
 {
@@ -17,6 +18,7 @@ namespace Aqua.Scripting
         private IHotReloadable m_HotReload;
         private int m_UseCount;
         private bool m_Active;
+        [BlockMeta("defaultWho")] private StringHash32 m_DefaultWho;
 
         public ScriptNodePackage(string inName)
             : base(inName)
@@ -209,6 +211,12 @@ namespace Aqua.Scripting
             protected override ScriptNode CreateNode(string inFullId, StringSlice inExtraData, ScriptNodePackage inPackage)
             {
                 return new ScriptNode(inPackage, inFullId);
+            }
+
+            public override void CompleteBlock(IBlockParserUtil inUtil, ScriptNodePackage inPackage, ScriptNode inBlock, TagData inAdditionalData, bool inbError)
+            {
+                base.CompleteBlock(inUtil, inPackage, inBlock, inAdditionalData, inbError);
+                inBlock.ApplyDefaults(inPackage.m_DefaultWho);
             }
         }
 

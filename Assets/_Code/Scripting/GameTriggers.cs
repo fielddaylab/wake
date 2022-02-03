@@ -8,6 +8,7 @@ namespace Aqua
         
         static public readonly StringHash32 PlayerDream = "PlayerDream";
 
+        static public readonly StringHash32 InteractObject = "InteractObject";
         static public readonly StringHash32 InspectObject = "InspectObject";
         static public readonly StringHash32 SceneStart = "SceneStart";
 
@@ -28,7 +29,6 @@ namespace Aqua
         static public readonly StringHash32 PlayerExpUp = "ExpUp";
         static public readonly StringHash32 PlayerLevelUp = "LevelUp";
 
-        static public readonly StringHash32 TryExitScene = "TryExitScene";
         static public readonly StringHash32 PlayerEnterRegion = "PlayerEnterRegion";
         static public readonly StringHash32 PlayerExitRegion = "PlayerExitRegion";
     }
