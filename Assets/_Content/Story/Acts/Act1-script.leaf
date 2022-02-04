@@ -60,33 +60,16 @@ $call FocusHighlight->Clear()
 
 // exp   
    
-:: after25Exp
+:: after30Exp
 @trigger    ExpUp
-@when       player:exp >= 25
+@when       player:exp >= 30
 @once
 @cutscene
 
 {@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
-
-// if player has already attempted to purchase something where they didn't have enough exp
-$if player:hasAttemptedPurchaseUnderleveled
-    Maybe we should head back to {nameof @merchant}'s shop?
-    
-    // look up exp cost for last attempted item
-    $set local:itemExp = Lookup($player:hasAttemptedPurchaseUnderleveled, "Exp")
-    
-    // player could be able to get it now
-    $if player:exp >= local:itemExp
-        If I remember correctly, they might be willing to sell us the {nameof $player:hasAttemptedPurchaseUnderleveled} now.
-    $else
-        I'm not sure we'll be able to get the {nameof $player:hasAttemptedPurchaseUnderleveled} yet, but perhaps there's something else?
-    $endif 
-$elseif LocationVisited(Shop) // player has at least visited the merchant once
-    Maybe we should head back to {nameof @merchant}'s shop!
-    They might have something new for us to buy!
-$else
-    I hear there's a merchant right off the dock!
-    Maybe we should check them out?
-$endif
+            I hear there's a mechanic right off the dock that can upgrade our ship.
+            Maybe we should check them out?
+$call UnlockRoom("Shop")
+           
 
 
