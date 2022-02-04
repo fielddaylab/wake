@@ -3,18 +3,9 @@
 :: unlockRoomsForUpgrades
 @function   UpgradeAdded
 
-$if local:upgradeId == "VisualModel"
-    $call UnlockRoom("modelingRoom")
-    $call UnlockRoom("Modeling")
+$if local:upgradeId == "PredictionModel"
     $call GiveUpgrade("SyncModel", Silent)
-    $call GiveUpgrade("PredictionModel", Silent)
-    $call GiveUpgrade("InterveneModel", Silent)
     $call GiveUpgrade("WaterModeling", Silent)
-    $return
-$endif
-
-$if local:upgradeId == "ObservationTank"
-    $call UnlockRoom("Experimentation")
     $return
 $endif
 
