@@ -34,6 +34,9 @@ namespace ProtoAqua.ExperimentV2
         [Required] public ColorGroup WaterColor;
         [Required] public ParticleSystem WaterDrainParticles;
         [HideInInspector] public Rect WaterRect;
+        
+        [Header("Emojis")]
+        [SerializeField, Required] public ParticleSystem m_Emojis = null;
 
         [HideInInspector] public ActorAllocator ActorAllocator;
 

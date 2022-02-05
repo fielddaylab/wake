@@ -34,6 +34,7 @@ namespace ProtoAqua.ExperimentV2
                 return;
 
             World = new ActorWorld(m_Tank.ActorAllocator, m_Tank.Bounds, null, OnFree, 16, inTank);
+            World.Tank = m_Tank;
         }
 
         #region Critters
