@@ -411,9 +411,10 @@ namespace ProtoAqua.ExperimentV2
 
         //Xander Grabowski - 02/04/2022
         static public IEnumerator callEmitEmoji(ActorInstance inActor, ActorWorld inWorld){
-            ActorWorld.EmitEmoji(inActor, inWorld);
-            yield return Routine.WaitSeconds(0.75f);
-            yield return callEmitEmoji(inActor, inWorld);
+            while(true){
+                ActorWorld.EmitEmoji(inActor, inWorld);
+                yield return 0.75f;
+            }
         }
 
         #endregion // Animations
