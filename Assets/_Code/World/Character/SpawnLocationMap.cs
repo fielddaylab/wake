@@ -11,10 +11,12 @@ namespace Aqua.Character
 
         public SpawnLocation FindLocation(StringHash32 inId)
         {
+            SpawnLocation location;
             for(int i = 0, count = m_Locations.Length; i < count; i++)
             {
-                if (m_Locations[i].Id == inId)
-                    return m_Locations[i];
+                location = m_Locations[i];
+                if (location.isActiveAndEnabled && location.Id == inId)
+                    return location;
             }
 
             Log.Error("[SpawnLocationMap] No location found for '{0}'", inId);
