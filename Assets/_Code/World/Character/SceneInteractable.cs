@@ -71,9 +71,6 @@ namespace Aqua.Character {
         public StringHash32 TargetMapEntrance() {
             if (!m_TargetEntrance.IsEmpty)
                 return m_TargetEntrance;
-            var spawn = GetComponent<SpawnLocation>();
-            if (spawn && !spawn.Id.IsEmpty)
-                return spawn.Id;
             return MapDB.LookupCurrentMap();
         }
         public bool CanInteract() { return !Locked() || m_LockMode == LockMode.AllowInteract; }

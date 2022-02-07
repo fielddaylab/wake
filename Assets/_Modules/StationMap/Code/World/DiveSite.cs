@@ -33,7 +33,7 @@ namespace Aqua.StationMap
         {
             var interact = GetComponent<SceneInteractable>();
             interact.OnExecute = Dive;
-            interact.OverrideTargetMap(m_MapId, MapDB.LookupCurrentMap());
+            interact.OverrideTargetMap(m_MapId, "Surface");
 
             if (!inMapData.IsSiteUnlocked(m_MapId))
             {
