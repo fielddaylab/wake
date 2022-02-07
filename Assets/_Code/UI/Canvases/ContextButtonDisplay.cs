@@ -5,6 +5,7 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
+using BeauUtil.Debugger;
 
 namespace Aqua {
     public class ContextButtonDisplay : SharedPanel {
@@ -47,6 +48,7 @@ namespace Aqua {
             switch(inObject.Mode()) {
                 case SceneInteractable.InteractionMode.GoToMap: {
                     icon = inObject.Icon(m_MapIcon);
+                    Assert.True(!inObject.TargetMapId().IsEmpty, "Interaction {0} has no assigned map", inObject);
                     label = Loc.Format(inObject.Label(m_MapLabel), Assets.Map(inObject.TargetMapId()).ShortLabelId());
                     break;
                 }

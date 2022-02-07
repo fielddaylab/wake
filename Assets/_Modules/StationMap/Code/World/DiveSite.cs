@@ -31,8 +31,13 @@ namespace Aqua.StationMap
 
         public void Initialize(MapData inMapData, JobDesc inCurrentJob)
         {
+            var interact = GetComponent<SceneInteractable>();
+            interact.OnExecute = Dive;
+            interact.OverrideTargetMap(m_MapId, MapDB.LookupCurrentMap());
+
             if (!inMapData.IsSiteUnlocked(m_MapId))
             {
+                interact.Lock();
                 if (m_HideIfLocked)
                 {
                     gameObject.SetActive(false);
@@ -59,10 +64,6 @@ namespace Aqua.StationMap
             }
 
             WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, null);
-
-            var interact = GetComponent<SceneInteractable>();
-            interact.OnExecute = Dive;
-            interact.OverrideTargetMap(m_MapId, MapDB.LookupCurrentMap());
         }
 
         private void OnPlayerEnter(Collider2D other)
