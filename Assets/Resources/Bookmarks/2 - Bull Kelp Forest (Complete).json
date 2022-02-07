@@ -1,42 +1,44 @@
 {
    "__serializerVersion": 2,
    "__version": 4,
-   "version": 1,
-   "id": "BlessedDahlia",
-   "lastUpdated": 1.32835928324661E+17,
+   "version": 2,
+   "id": "ObsceneCold",
+   "lastUpdated": 1.32887420293258E+17,
    "character": {
       "displayName": null,
       "pronouns": "Neutral"
    },
    "inventory": {
-      "__version": 2,
+      "__version": 3,
       "items": [
          {
             "id": 374439154,
-            "value": 400
+            "value": 300
          },
          {
             "id": 1362257895,
             "value": 25
          },
          {
-            "id": 4214442830,
-            "value": 16
+            "id": 3618342856,
+            "value": 20
          }
       ],
       "scannerIds": [
-         2762403901,
          2732587739,
+         2762403901,
          1681199945,
+         2226734453,
+         996950295,
          633260951
       ],
       "upgradeIds": [
-         3188184158
-      ],
-      "waterProps": 0
+         3188184158,
+         165582993
+      ]
    },
    "script": {
-      "__version": 2,
+      "__version": 3,
       "actIndex": 0,
       "visited": [
          1399218079,
@@ -48,10 +50,10 @@
          1529675983,
          2400894328,
          2674060768,
-         579075560,
+         3006268146,
          4083782211,
-         412068518,
          768945314,
+         3253520986,
          3306536404
       ],
       "globals": {
@@ -60,12 +62,7 @@
             {
                "id": 2462552629,
                "type": "StringHash",
-               "value": 4010725667
-            },
-            {
-               "id": 3071198491,
-               "type": "Int",
-               "value": 1
+               "value": 493975929
             }
          ]
       },
@@ -74,6 +71,11 @@
          "values": [
             {
                "id": 1796845088,
+               "type": "Bool",
+               "value": true
+            },
+            {
+               "id": 696002250,
                "type": "Bool",
                "value": true
             }
@@ -96,11 +98,6 @@
                "id": 2282623795,
                "type": "Bool",
                "value": true
-            },
-            {
-               "id": 2235483104,
-               "type": "Bool",
-               "value": true
             }
          ]
       },
@@ -108,37 +105,36 @@
          "name": 933488787,
          "values": [
          ]
-      },
-      "scheduled": [
-      ]
+      }
    },
    "bestiary": {
       "__version": 4,
       "allEntities": [
          2991222945,
-         3836809010,
          3510470690,
+         3836809010,
          1973276590,
+         1773058804,
+         605356284,
          1295942356,
          3363669640
       ],
       "allFacts": [
          3556196180,
          1212586560,
-         3905127850,
-         4255109252
+         3905127850
       ],
       "factMetas": [
       ]
    },
    "jobs": {
+      "__version": 2,
       "currentJobId": 0,
-      "jobStatuses": [
+      "inProgressJobs": [
       ],
       "completedJobs": [
          2455779112,
-         1586641058,
-         2419845520
+         1586641058
       ],
       "unlockedJobs": [
       ],
@@ -146,7 +142,7 @@
       ]
    },
    "map": {
-      "__version": 5,
+      "__version": 7,
       "stationId": 2724389503,
       "unlockedStations": [
          2724389503,
@@ -170,10 +166,8 @@
          2212350453,
          2178795215
       ],
-      "mapLocationId": 700493732,
-      "time": 768,
-      "timeMode": "FreezeAt12",
-      "randomSeedOffset": 2074690338,
+      "mapLocationId": 269943043,
+      "randomSeedOffset": 313958533,
       "unlockedRooms": [
          700493732,
          493975929,
@@ -182,9 +176,19 @@
          269943043,
          2861480497,
          3192010375,
-         2589678915,
-         2953060845,
-         1022992966
+         2589678915
+      ],
+      "visitedLocations": [
+         746798495,
+         2724389503,
+         493975929,
+         700493732,
+         4010725667,
+         2212350453,
+         269943043,
+         2861480497,
+         2178795215,
+         2589678915
       ]
    },
    "options": {
@@ -223,7 +227,7 @@
       }
    },
    "science": {
-      "__version": 4,
+      "__version": 5,
       "siteSurveys": [
          {
             "__version": 2,
@@ -244,29 +248,14 @@
             ],
             "graphedFacts": [
             ]
-         },
-         {
-            "__version": 2,
-            "mapId": 2991222945,
-            "taggedCritters": [
-            ],
-            "graphedCritters": [
-               1973276590,
-               3510470690,
-               3836809010
-            ],
-            "graphedFacts": [
-               3556196180,
-               1212586560
-            ]
          }
       ],
       "argues": [
       ],
       "completedArgues": [
          4256613003,
-         484385570,
-         886028249
-      ]
+         484385570
+      ],
+      "level": 0
    }
 }

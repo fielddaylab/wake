@@ -17,10 +17,19 @@ namespace Aqua.Character {
             GoToPreviousScene
         }
 
+        [LabeledEnum(false)]
         public enum LockMode {
+            [Order(0)]
             DisableObject,
+
+            [Order(1)]
             DisableInteract,
-            AllowInteract
+            
+            [Order(3)]
+            AllowInteract,
+            
+            [Order(2)]
+            DisableContextPopup
         }
 
         #region Inspector
@@ -28,7 +37,7 @@ namespace Aqua.Character {
         [Header("Basic")]
         [SerializeField, Required] private Collider2D m_Collider = null;
         [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_RequiredUpgrades = null;
-        [SerializeField] private LockMode m_LockMode = LockMode.DisableInteract;
+        [SerializeField, AutoEnum] private LockMode m_LockMode = LockMode.DisableInteract;
 
         [Header("Behavior")]
         [SerializeField] private InteractionMode m_Mode = InteractionMode.GoToMap;
@@ -50,6 +59,7 @@ namespace Aqua.Character {
         [NonSerialized] private Routine m_Routine;
         [NonSerialized] private PlayerBody m_PlayerInside;
         [NonSerialized] private bool m_Locked;
+        [NonSerialized] private bool m_LockOverride;
         [NonSerialized] private bool m_CancelQueued;
 
         public Predicate<SceneInteractable> CheckInteractable;
@@ -61,12 +71,10 @@ namespace Aqua.Character {
         public StringHash32 TargetMapEntrance() {
             if (!m_TargetEntrance.IsEmpty)
                 return m_TargetEntrance;
-            var spawn = GetComponent<SpawnLocation>();
-            if (spawn && !spawn.Id.IsEmpty)
-                return spawn.Id;
             return MapDB.LookupCurrentMap();
         }
-        public bool CanInteract() { return !m_Locked || m_LockMode == LockMode.AllowInteract; }
+        public bool CanInteract() { return !Locked() || m_LockMode == LockMode.AllowInteract; }
+        public bool Locked() { return m_LockOverride || m_Locked; }
 
         public void OverrideTargetMap(StringHash32 newTarget, StringHash32 newEntrance = default) {
             m_TargetMap = newTarget;
@@ -107,7 +115,7 @@ namespace Aqua.Character {
         private void OnPlayerEnter(Collider2D collider) {
             m_PlayerInside = collider.GetComponentInParent<PlayerBody>();
 
-            if (m_Routine)
+            if (m_Routine || !enabled || !m_Collider.isActiveAndEnabled)
                 return;
 
             if (m_AutoExecute) {
@@ -115,7 +123,9 @@ namespace Aqua.Character {
                 return;
             }
 
-            ContextButtonDisplay.Display(this);
+            if (!Locked() || m_LockMode != LockMode.DisableContextPopup) {
+                ContextButtonDisplay.Display(this);
+            }
         }
 
         private void OnPlayerExit(Collider2D collider) {
@@ -126,11 +136,11 @@ namespace Aqua.Character {
         #endregion // Player Callbacks
 
         public void Interact() {
-            if (m_Routine) {
+            if (m_Routine || m_LockOverride || !enabled) {
                 return;
             }
 
-            if (m_Locked && m_LockMode != LockMode.AllowInteract) {
+            if (Locked() && m_LockMode != LockMode.AllowInteract) {
                 return;
             }
 
@@ -140,9 +150,9 @@ namespace Aqua.Character {
         }
 
         private IEnumerator InteractRoutine() {
-            ScriptThreadHandle thread = ScriptObject.Interact(Parent, m_Locked, m_TargetMap);
+            ScriptThreadHandle thread = ScriptObject.Interact(Parent, Locked(), m_TargetMap);
 
-            if (m_Locked) {
+            if (Locked()) {
                 IEnumerator locked = OnLocked?.Invoke(this, thread);
                 if (locked != null)
                     yield return null;
@@ -210,9 +220,25 @@ namespace Aqua.Character {
             m_CancelQueued = true;
         }
 
+        [LeafMember("Lock")]
+        public void Lock() {
+            if (!m_LockOverride) {
+                m_LockOverride = true;
+                UpdateLocked();
+            }
+        }
+
+        [LeafMember("Unlock")]
+        public void Unlock() {
+            if (m_LockOverride) {
+                m_LockOverride = false;
+                UpdateLocked();
+            }
+        }
+
         private void UpdateLocked() {
             m_Locked = !CheckAvailable();
-            if (m_Locked) {
+            if (Locked()) {
                 if (m_LockMode == LockMode.DisableObject) {
                     gameObject.SetActive(false);
                 }
