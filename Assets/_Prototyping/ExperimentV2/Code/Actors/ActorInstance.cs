@@ -113,15 +113,21 @@ namespace ProtoAqua.ExperimentV2
 
         static private void OnBeginStressedState(ActorInstance inInstance, ActorWorld inWorld)
         {
-            if (inInstance.ColorAdjust)
+            //Xander Grabowski - 02/04/2022
+            /*if (inInstance.ColorAdjust)
             {
                 inInstance.ColorAdjust.SetColor(Color.white);
                 inInstance.StateAnimation.Replace(inInstance, Tween.Color(Color.white, Color.red, inInstance.ColorAdjust.SetColor, 0.5f).Wave(Wave.Function.Sin, 1).Loop());
-            }
+            }*/
+
+            TweenEmojiEmitter emojiData = new TweenEmojiEmitter(inInstance, inWorld);
+            inInstance.StateAnimation.Replace(inInstance, Tween.Create(emojiData, 0f).Wave(Wave.Function.Sin, 1).Loop());
         }
+        
 
         static private void OnEndStressedState(ActorInstance inInstance, ActorWorld inWorld)
         {
+            //Xander Grabowski - 02/04/2022
             if (inInstance.ColorAdjust)
                 inInstance.ColorAdjust.SetColor(Color.white);
         }

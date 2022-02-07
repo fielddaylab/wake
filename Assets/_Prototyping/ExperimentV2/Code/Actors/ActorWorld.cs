@@ -17,6 +17,7 @@ namespace ProtoAqua.ExperimentV2
         public bool HasEnvironment;
         public object Tag;
         public float Lifetime;
+        public SelectableTank Tank;
 
         public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, object inTag = null)
         {
@@ -153,6 +154,14 @@ namespace ProtoAqua.ExperimentV2
             {
                 ForceActorStates(inWorld, ActorStateId.Alive, inWorld.Actors);
             }
+        }
+
+        //Xander Grabowski - 02/04/2022
+        static public void EmitEmoji(ActorInstance inActor, ActorWorld inWorld)
+        {
+            ParticleSystem.EmitParams emit = default;
+            emit.position = inActor.CachedCollider.bounds.center;
+            inWorld.Tank.m_Emojis.Emit(emit, 1);
         }
 
         static private void UpdateActorStates(ActorWorld inWorld, ListSlice<ActorInstance> inInstances)

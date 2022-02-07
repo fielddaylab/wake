@@ -86,6 +86,7 @@ namespace ProtoAqua.ExperimentV2
             if (m_World == null)
             {
                 m_World = new ActorWorld(m_ParentTank.ActorAllocator, m_ParentTank.Bounds, null, null, 1, this);
+                m_World.Tank = m_ParentTank;
             }
 
             m_SetupPanelGroup.Hide();
