@@ -2,16 +2,6 @@
 
 // intro scripts
 
-:: generic.visual-model.intro
-@trigger	VisualModelStarted
-@boostScore 1052 // arbitraryily high number
-@when		scene:name == "Modeling", modeling:phase == "visual", HasUpgrade(VisualModel), !jobs:visual-model.saved
-@cutscene
-{@kevin}	So this is the {nameof VisualModel}.
-{@kevin}	From here you'll import any new facts you have about the ecosystem.
-{@kevin}	If you have all the facts you need, you'll see a button to {h}Import Facts{/h}
-{@kevin}	If you don't see the button, you may need to gather more data!
-
 :: generic.visual-model.saved
 @trigger	VisualModelExported
 @boostScore 1052 // arbitraryily high number

@@ -19,26 +19,6 @@ $set    player:noProbeHacker.triedToScan = true
 
 // intro scripts
 
-:: generic.scanner.intro
-@trigger	SceneStart
-@boostScore 1052 // arbitraryily high number
-@when		HasUpgrade(ROVScanner)
-@once
-@cutscene
-{@kevin}	Now that you have the {nameof ROVScanner}, you can use it to ID all the species down here.
-$call Player->SetTool(Scanner)
-{@kevin}	The {nameof ROVScanner} searches for life forms automatically.
-			Click any red targets you find to ID a new plant or animal species!
-$set    jobs:common-dive.seen.scan-intro = true
-$if HasUpgrade(ROVTagger), !jobs:common-dive.seen.tagger-intro
-	{@kevin}	Also...
-	$goto .generic.tagger.intro
-$endif
-$if HasUpgrade(ProbeHacker), !jobs:common-dive.seen.probe-intro
-	{@kevin}	Also...
-	$goto .generic.probe-hacker.intro
-$endif
-
 :: generic.tagger.intro
 @trigger    SceneStart
 @boostScore 1051 // arbitraryily high number

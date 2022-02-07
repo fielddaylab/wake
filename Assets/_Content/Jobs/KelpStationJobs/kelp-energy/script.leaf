@@ -8,12 +8,15 @@
 $branch common.ringPhone
 {@drKelp}	Good to see you again, {player-name}! 
             I need you to create a model of Site A's food web.
-            I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
-            Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
+$if !HasUpgrade(VisualModel)
+	{@drKelp}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+	$call UnlockRoom("modelingRoom")
+	$call UnlockRoom("Modeling")
+	$call GiveUpgrade(VisualModel)
+$endif
+{@drKelp}	Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
             When you are done, check back with me at your {map-name}Office{/map-name}!
-$call UnlockRoom("modelingRoom")
-$call UnlockRoom("Modeling")
-$call GiveUpgrade(VisualModel)
+$set jobs:kelp-energy-visual-model.saved = false
 
 :: helpGoModeling
 @trigger    RequestPartnerHelp
@@ -31,14 +34,22 @@ $call GiveUpgrade(VisualModel)
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
-	// TODO: coordinate this with how Conceptual Modeling works
+:: modelingStart
+@trigger	VisualModelStarted
+@when		!jobs:kelp-energy-visual-model.saved
+@cutscene
+{@kevin}	So this is the {nameof VisualModel}.
+{@kevin}	From here you'll import any new facts you have about the ecosystem.
+{@kevin}	If you have all the facts you need, you'll see a button to {h}Import Facts{/h}
+{@kevin}	If you don't see the button, you may need to gather more data!
 
-:: ModelingComplete
-@trigger    VisualModelExported
+:: modelingComplete
+@trigger    JobTasksUpdated
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
 {@kevin}  Looks like we have our model! Let's bring it back to the {map-name}Office{/map-name}.
+$set jobs:kelp-energy-visual-model.saved = true
 
 
 // report back

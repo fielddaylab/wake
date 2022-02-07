@@ -8,6 +8,7 @@ $branch common.ringPhone
 
 {@profCempaka}	We need to know why the turtles are doing so well here.
 				I need you to scan the species at the reef edge.
+$set jobs:turtle-stability-visual-model.saved = false
 
 // SCAN ALL
 
@@ -31,7 +32,7 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-turtle-stability.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what else is here besides turtles.
+{@kevin}   Looks like we made it! Time to see what species we can find here.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
@@ -148,10 +149,14 @@ $endif
 @once
 @cutscene
 {@kevin}   Nice work! I think we know all the facts about what Turtles eat.
-            Now let's build a visual model of the food web.
-            We can use the {map-name}the Modeling Lab{/map-name} on your ship to do this.
-$call UnlockRoom("modelingRoom")
-$call UnlockRoom("Modeling")
+{@profCempaka}	Oh, are you ready to make the model?
+$if !HasUpgrade(VisualModel)
+	{@profCempaka}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+	$call UnlockRoom("modelingRoom")
+	$call UnlockRoom("Modeling")
+	$call GiveUpgrade(VisualModel)
+$endif
+{@profCempaka}	Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
 
 // TURTLE MODEL
 
@@ -162,15 +167,23 @@ $call UnlockRoom("Modeling")
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
-	// TODO: coordinate this with how Conceptual Modeling works
+:: modelingStart
+@trigger	VisualModelStarted
+@when		!jobs:turtle-stability-visual-model.saved
+@cutscene
+{@kevin}	So this is the {nameof VisualModel}.
+{@kevin}	From here you'll import any new facts you have about the ecosystem.
+{@kevin}	If you have all the facts you need, you'll see a button to {h}Import Facts{/h}
+{@kevin}	If you don't see the button, you may need to gather more data!
 
-:: ModelingComplete
-@trigger    VisualModelExported
-@when 		HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
-@once
+:: modelingComplete
+@trigger    JobTasksUpdated
+@when		JobTaskTop(reportBack)
+@once		
 @cutscene
 {@kevin}	Huh, turns out turtles eat a lot of things.
 {@kevin}	Let's bring our model back to the {map-name}Office{/map-name}.
+$set jobs:turtle-stability-visual-model.saved = true
 
 // report back
 				
