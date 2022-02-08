@@ -105,9 +105,9 @@ var UWTStreamLibraryImpl = {
             mediaSession.setActionHandler('play', emptyFunc);
             mediaSession.setActionHandler('pause', emptyFunc);
             mediaSession.setActionHandler('stop', emptyFunc);
-            mediaSession.setActionHandler('seekbackward', emptyFunc);
-            mediaSession.setActionHandler('seekforward', emptyFunc);
-            mediaSession.setActionHandler('seekto', emptyFunc);
+            // mediaSession.setActionHandler('seekbackward', emptyFunc);
+            // mediaSession.setActionHandler('seekforward', emptyFunc);
+            // mediaSession.setActionHandler('seekto', emptyFunc);
             mediaSession.setActionHandler('previoustrack', emptyFunc);
             mediaSession.setActionHandler('nexttrack', emptyFunc);
             // mediaSession.setActionHandler('skipad', emptyFunc);
