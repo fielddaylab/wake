@@ -26,7 +26,6 @@ namespace Aqua.Scripting
             static public readonly StringHash32 ShowDialog = "show-dialog";
             static public readonly StringHash32 StopBGM = "bgm-stop";
             static public readonly StringHash32 VolumeBGM = "bgm-volume";
-            static public readonly StringHash32 Wait = "wait";
             static public readonly StringHash32 WaitAbsolute = "wait-abs";
         }
 
@@ -35,12 +34,10 @@ namespace Aqua.Scripting
             static public readonly StringHash32 Auto = "auto-continue";
             static public readonly StringHash32 Clear = "clear";
             static public readonly StringHash32 InputContinue = "input-continue";
-            static public readonly StringHash32 Portrait = "set-portrait";
             static public readonly StringHash32 SetTypeSFX = "set-type-sfx";
             static public readonly StringHash32 SetVoiceType = "set-voice-type";
             static public readonly StringHash32 Speaker = "set-speaker";
             static public readonly StringHash32 Speed = "set-speed";
-            static public readonly StringHash32 Target = "set-target";
         }
     }
 }

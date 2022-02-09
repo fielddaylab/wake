@@ -196,9 +196,9 @@ namespace Aqua
                     m_CurrentState.Speed = e.IsClosing ? 1 : e.Argument0.AsFloat();
                     return Routine.WaitSeconds(0.15f);
                 });
-                m_EventHandler.Register(ScriptEvents.Dialog.Target, (e, o) => SetTarget(e.Argument0.AsStringHash(), e.Argument1.AsStringHash(), false));
-                m_EventHandler.Register(ScriptEvents.Dialog.Portrait, (e, o) => SetPortrait(e.Argument0.AsStringHash(), false));
-                m_EventHandler.Register(ScriptEvents.Global.Wait, (e, o) => Wait(e.GetFloat()));
+                m_EventHandler.Register(LeafUtils.Events.Character, (e, o) => SetTarget(e.Argument0.AsStringHash(), e.Argument1.AsStringHash(), false));
+                m_EventHandler.Register(LeafUtils.Events.Pose, (e, o) => SetPortrait(e.Argument0.AsStringHash(), false));
+                m_EventHandler.Register(LeafUtils.Events.Wait, (e, o) => Wait(e.GetFloat()));
             }
 
             return m_EventHandler;

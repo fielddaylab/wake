@@ -57,7 +57,6 @@ namespace Aqua
             m_TagEventParser.AddEvent("hide-dialog", ScriptEvents.Global.HideDialog);
             m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
-            m_TagEventParser.AddEvent("wait", ScriptEvents.Global.Wait).WithFloatData(0.25f);
             m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
             m_TagEventParser.AddEvent("letterbox", ScriptEvents.Global.LetterboxOn).CloseWith(ScriptEvents.Global.LetterboxOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
@@ -75,24 +74,10 @@ namespace Aqua
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
             m_TagEventParser.AddEvent("continue", ScriptEvents.Dialog.InputContinue);
-            m_TagEventParser.AddEvent("#*", ScriptEvents.Dialog.Portrait).ProcessWith(ParsePortraitArgs);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
-            m_TagEventParser.AddEvent("@*", ScriptEvents.Dialog.Target).ProcessWith(ParseTargetArgs);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
             m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
-        }
-
-        static private void ParseTargetArgs(TagData inTag, object inContext, ref TagEventData ioEvent)
-        {
-            ioEvent.Argument0 = inTag.Id.Substring(1).Hash32();
-            if (inTag.Data.StartsWith('#'))
-                ioEvent.Argument1 = inTag.Data.Substring(1).Hash32();
-        }
-
-        static private void ParsePortraitArgs(TagData inTag, object inContext, ref TagEventData ioEvent)
-        {
-            ioEvent.Argument0 = inTag.Id.Substring(1).Hash32();
         }
 
         #endregion // Parser
@@ -293,6 +278,8 @@ namespace Aqua
         {
             m_TagEventHandler = new TagStringEventHandler();
 
+            LeafUtils.ConfigureDefaultHandlers(m_TagEventHandler, this);
+
             m_TagEventHandler
                 .Register(ScriptEvents.Global.HideDialog, EventHideDialog)
                 .Register(ScriptEvents.Global.ShowDialog, EventShowDialog)
@@ -303,7 +290,6 @@ namespace Aqua
                 .Register(ScriptEvents.Global.PlayBGM, EventPlayBGM)
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
-                .Register(ScriptEvents.Global.Wait, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
@@ -320,7 +306,7 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
             m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOff);
             m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
-            m_SkippedEvents.Add(ScriptEvents.Global.Wait);
+            m_SkippedEvents.Add(LeafUtils.Events.Wait);
             m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
             m_SkippedEvents.Add(ScriptEvents.Global.BoxStyle);
             m_SkippedEvents.Add(ScriptEvents.Global.ScreenFlash);
@@ -333,19 +319,19 @@ namespace Aqua
             m_SkippedEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speaker);
             m_SkippedEvents.Add(ScriptEvents.Dialog.Speed);
-            m_SkippedEvents.Add(ScriptEvents.Dialog.Target);
-            m_SkippedEvents.Add(ScriptEvents.Dialog.Portrait);
+            m_SkippedEvents.Add(LeafUtils.Events.Character);
+            m_SkippedEvents.Add(LeafUtils.Events.Pose);
 
             m_DialogOnlyEvents = new HashSet<StringHash32>();
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Auto);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
-            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Portrait);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speaker);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speed);
-            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Target);
+            m_DialogOnlyEvents.Add(LeafUtils.Events.Character);
+            m_DialogOnlyEvents.Add(LeafUtils.Events.Pose);
         }
 
         #endregion // Event Setup
