@@ -73,3 +73,19 @@ $call UnlockRoom("Shop")
            
 
 
+// Coral Station
+
+:: atCoralStation
+@trigger    RoomEnter
+@when       roomId == "helm", player:currentStation == "CoralStation"
+@once
+@boostScore 100
+@cutscene
+
+$branch common.ringPhone
+
+{@profCempaka}  Oh, hello! Have you come from the Kelp Station?
+				Well, welcome to the Coral Station!
+				Hope you like turtles. They are all over the coral reef.
+				I have some jobs listed on the Job Board, let me know if you're interested.
+
