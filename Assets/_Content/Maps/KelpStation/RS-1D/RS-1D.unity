@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScanData:
-  - {fileID: -4270002856181823206, guid: f5aab99224f736a4fbd6c1135a97b29a, type: 3}
+  - {fileID: -4270002856181823206, guid: c1c17058229ee7c4abcb5de755b62a3a, type: 3}
 --- !u!114 &49481876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,7 +317,12 @@ PrefabInstance:
     - target: {fileID: 2003565938470526055, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
       propertyPath: ScanId.m_Source
-      value: RS-1A.probe
+      value: RS-1D.probe
+      objectReference: {fileID: 0}
+    - target: {fileID: 2003565938470526055, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: ScanId.m_HashValue
+      value: 1289858564
       objectReference: {fileID: 0}
     - target: {fileID: 5774820918325110237, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
@@ -851,7 +856,7 @@ PrefabInstance:
     - target: {fileID: 4631399768977527076, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 4631399768977527076, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
