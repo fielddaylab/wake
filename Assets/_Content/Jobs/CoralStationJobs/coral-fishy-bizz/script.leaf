@@ -159,11 +159,17 @@ $call ArgueLoad(coralFishyBizzArgue)
 $branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
-{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
-	$choice .argue.claimSome; We can reduce fishing by 12 fishers.
-	$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
-	$choice .argue.claimNone; We can't fish here at all.
-$choose branch
+$if HasFact(ReefEdge.Model.GrouperFishingRate)
+	{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
+		$choice .argue.claimSome; We can reduce fishing by 12 fishers.
+		$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
+		$choice .argue.claimNone; We can't fish here at all.
+	$choose branch	
+$else
+	{@profCempaka}	Back so soon? I don't think you've had enough time to look into this thoroughly.
+					Come back when you've made a model.
+$endif
+
 
 :: argue.claimNone
 {@profCempaka} Hold on, we've been fishing here for centuries! Please check your data.
