@@ -217,9 +217,20 @@ namespace Aqua {
         }
 
         static private void HandleTextureUWRFinished(StringHash32 id, string url, AssetMeta meta, UnityWebRequest request) {
+            s_LoadCount--;
+
+            if (meta.Status == AssetStatus.Unloaded) {
+                return;
+            }
+
+            if ((meta.Status & AssetStatus.PendingUnload) != 0) {
+                UnloadSingle(id, 0, 0);
+                s_UnloadQueue.FastRemove(id);
+                return;
+            }
+
             if (request.isNetworkError || request.isHttpError) {
                 OnTextureDownloadFail(id, url, meta);
-                request.Dispose();
             } else {
                 OnTextureDownloadCompleted(id, request.downloadHandler.data, url, meta);
             }
@@ -229,30 +240,19 @@ namespace Aqua {
         }
 
         static private void OnTextureDownloadCompleted(StringHash32 id, byte[] source, string url, AssetMeta meta) {
-            if (meta.Status == AssetStatus.Unloaded || (meta.Status & AssetStatus.PendingUnload) != 0) {
-                s_Metas.Remove(id);
-                return;
-            }
-
             Texture2D dest = s_Textures[id];
             dest.LoadImage(source, true);
             dest.filterMode = GetTextureFilterMode(url);
             dest.wrapMode = GetTextureWrapMode(url);
-            s_LoadCount --;
             meta.Status = AssetStatus.Loaded;
             meta.Loader = null;
             Log.Msg("[Streaming] ...finished loading (async) '{0}'", id);
         }
 
         static private void OnTextureDownloadFail(StringHash32 id, string url, AssetMeta meta) {
-            if (meta.Status == AssetStatus.Unloaded || (meta.Status & AssetStatus.PendingUnload) != 0) {
-                return;
-            }
-
             Log.Error("[Streaming] Failed to load texture '{0}' from '{1}", id, url);
             meta.Loader = null;
             meta.Status = AssetStatus.Error;
-            s_LoadCount--;
         }
 
         static private FilterMode GetTextureFilterMode(string url) {
@@ -362,6 +362,14 @@ namespace Aqua {
         /// </summary>
         static public bool IsLoading() {
             return s_LoadCount > 0;
+        }
+
+        /// <summary>
+        /// Returns the number of loads currently executing.
+        /// </summary>
+        /// <returns></returns>
+        static public uint LoadCount() {
+            return s_LoadCount;
         }
 
         /// <summary>
@@ -510,6 +518,14 @@ namespace Aqua {
             }
             #endif // UNITY_EDITOR
 
+            foreach(var meta in s_Metas.Values) {
+                meta.Status = AssetStatus.Unloaded;
+                if (meta.Loader != null) {
+                    meta.Loader.Dispose();
+                    meta.Loader = null;
+                }
+            }
+
             s_ReverseLookup.Clear();
             s_Textures.Clear();
             s_AudioClips.Clear();
@@ -536,10 +552,6 @@ namespace Aqua {
 
             s_Metas.Remove(id);
             if (meta.Loader != null) {
-                if (!meta.Loader.isDone) {
-                    s_LoadCount--;
-                }
-
                 meta.Loader.Dispose();
                 meta.Loader = null;
             }
@@ -551,35 +563,37 @@ namespace Aqua {
             }
             #endif // UNITY_EDITOR
 
-            switch(meta.Type) {
-                case AssetType.Texture: {
-                        resource = s_Textures[id];
-                        s_Textures.Remove(id);
-                        break;
-                    }
+            if ((meta.Status & (AssetStatus.PendingLoad | AssetStatus.Loaded | AssetStatus.Error)) != 0) {
+                switch(meta.Type) {
+                    case AssetType.Texture: {
+                            resource = s_Textures[id];
+                            s_Textures.Remove(id);
+                            break;
+                        }
 
-                case AssetType.Audio: {
-                        resource = s_AudioClips[id];
-                        
-                        s_AudioClips.Remove(id);
-                        break;
-                    }
-            }
+                    case AssetType.Audio: {
+                            resource = s_AudioClips[id];
+                            s_AudioClips.Remove(id);
+                            break;
+                        }
+                }
 
-            s_ReverseLookup.Remove(resource.GetInstanceID());
+                s_ReverseLookup.Remove(resource.GetInstanceID());
             
-            #if UNITY_EDITOR
-            if (Application.isPlaying) {
+                #if UNITY_EDITOR
+                if (Application.isPlaying) {
+                    UnityEngine.Object.Destroy(resource);
+                } else {
+                    UnityEngine.Object.DestroyImmediate(resource);
+                }
+                #else
                 UnityEngine.Object.Destroy(resource);
-            } else {
-                UnityEngine.Object.DestroyImmediate(resource);
+                #endif // UNITY_EDITOR
             }
-            #else
-            UnityEngine.Object.Destroy(resource);
-            #endif // UNITY_EDITOR
 
             Log.Msg("[Streaming] Unloaded streamed asset '{0}'", id);
 
+            meta.Status = AssetStatus.Unloaded;
             resource = null;
 
             return true;
