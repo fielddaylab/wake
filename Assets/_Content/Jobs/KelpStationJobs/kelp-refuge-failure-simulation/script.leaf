@@ -1,0 +1,88 @@
+#basePath   job.kelp-refuge-failure-simulation
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@kevin}	The Predictive Modeling tool should basically handle this for us.
+			Let's go to the {nameof Modeling}.
+
+:: helpGoToModeling
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(createModel)
+@cutscene
+{@player}   Where should I go from here?
+{@kevin}	You purchased the predictive modeling tool just for this kind of job.
+$if scene:name == "Modeling"
+
+$else
+	{@kevin}	Let's head to the {nameof Modeling}
+$endif
+
+// MODELING
+
+:: modelingStart
+@trigger    SceneStart
+@when 		JobTaskTop(createModel), scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	OK, let's let the predictive modeling tool do its thing.
+
+:: modelComplete
+@trigger	SimulationSyncSuccess
+@once
+@cutscene
+{@kevin}	It appears you will be the bearer of bad news.
+			Let's go bear it back to (nameof drKelp}.
+
+:: helpShareModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(shareModel)
+@cutscene
+{@player}   What now?
+{@kevin}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
+
+
+
+
+// ARGUMENTATION
+
+::argue.chooseClaim
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(refugeFailureSimulationArgue)
+@cutscene
+$call ArgueLoad(refugeFailureArgue)
+{@drKelp} So how bad is it going to be?
+$if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabel)
+			$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)
+$endif
+$call ArgueDisplayClaim()
+$goto .argue.defendClaim
+
+::argue.defendClaim
+$if ArgueAllFactsCorrect()
+    $goto .argue.correctFacts
+$else
+	$choice #argueFactSet; Present facts from AQOS
+			$answer correct, .argue.correctFacts
+			$answer incorrect, .argue.incorrectFacts
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.correctFacts
+$call ArgueComplete()
+{@drKelp}	Wow. Looks like there will be no more {nameof BullKelp} sooner than we thought.
+			We've got a Kelp Emergency on our hands. Thanks for figuring it out!
+$call CompleteJob()
+
+:: argue.incorrectFacts
+{@drKelp} That isn't what we're looking for. Did you make a predictive model of the site?
+$call ArgueRejectIncorrect()
+$goto .argue.defendClaim
+
+:: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
+
+::end

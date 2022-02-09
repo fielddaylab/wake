@@ -12,6 +12,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
+using TMPro;
 
 namespace Aqua.Debugging
 {
@@ -38,6 +39,7 @@ namespace Aqua.Debugging
         [SerializeField, Required] private ConsoleCamera m_DebugCamera = null;
         [SerializeField, Required] private DMMenuUI m_DebugMenu = null;
         [SerializeField, Required] private GameObject m_CameraReference = null;
+        [SerializeField, Required] private TMP_Text m_StreamingDebugText = null;
         [Space]
         [SerializeField] private bool m_StartOn = true;
 
@@ -50,6 +52,7 @@ namespace Aqua.Debugging
         [NonSerialized] private float m_TimeScale = 1;
         [NonSerialized] private bool m_VisibilityWhenDebugMenuOpened;
         [NonSerialized] private Vector2 m_CameraCursorPivot;
+        [NonSerialized] private uint m_LastKnownStreaming;
 
         private void LateUpdate()
         {
@@ -57,6 +60,14 @@ namespace Aqua.Debugging
 
             if (m_DebugMenu.isActiveAndEnabled)
                 m_DebugMenu.UpdateElements();
+
+            if (m_MinimalOn)
+            {
+                if (Ref.Replace(ref m_LastKnownStreaming, Streaming.LoadCount()))
+                {
+                    m_StreamingDebugText.SetText(m_LastKnownStreaming.ToString());
+                }
+            }
         }
 
         private void CheckInput()

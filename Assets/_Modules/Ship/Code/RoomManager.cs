@@ -130,6 +130,9 @@ namespace Aqua.Ship
                     table.Set("roomId", m_CurrentRoom.Id());
                     Services.Script.TriggerResponse(Trigger_RoomEnter, table);
                 }
+                while(Streaming.IsLoading()) {
+                    yield return null;
+                }
                 yield return fader.Object.Hide(false);
             }
 
