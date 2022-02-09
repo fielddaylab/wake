@@ -1,4 +1,4 @@
-#basePath   job.kelp-urchin-barren
+#basePath   job.kelp-urchin-barren-predict
 
 // Beginning
 
@@ -317,11 +317,11 @@ $endif
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(urchinBarrenArgue)
+@when   !ArgueIsComplete(urchinBarrenPredictArgue)
 @cutscene
 
-$call ArgueLoad(urchinBarrenArgue)
-	$if ArgueSetClaim(urchinBarrenClaim, jobs.kelp-urchin-barren.argue.claimLabel)
+$call ArgueLoad(urchinBarrenPredictArgue)
+	$if ArgueSetClaim(urchinBarrenPredictClaim, jobs.kelp-urchin-barren-predict.argue.claimLabel)
 			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
 			$call ArgueFactSlot(UrchinBarren.Model.Prediction)
 	$endif
