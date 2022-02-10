@@ -35,20 +35,14 @@ $branch common.ringPhone
 {@drKelp}   Ah, hang on, this isn't the right ecosystem.
             Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
-:: ModelingSetup
-@trigger	VisualModelStarted
+:: ModelingSetupPhase
+@trigger    VisualModelStarted
 @when       modeling:ecosystemSelected == "UrchinBarren"
 @once
 @cutscene
 
-:: ModelingSetupPhase2
-@trigger    VisualModelUpdated
-@when       modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
-@once
-@cutscene
-
 {@drKelp}   Remember how there's a sort of {h}web{/h} that emerges from these facts.
-            Now, we can shoe you how you can do more than just create visual models. We are going to {h}simulate ecosystems{/h}.
+            Now, we can see how you can do more than just create visual models. We are going to {h}simulate ecosystems{/h}.
             Let me just send you the missing data needed for this model...
 
 $branch common.download
@@ -58,19 +52,20 @@ $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
 
-{@drKelp}  The simulator doesn't really work unless you have numbers to go along with your facts.
-            But once you add these, then we should be good to go.
+{@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
+            But once you add these, then we should be good to go. 
+            Be sure to save your new {h}Visual Model{/h} before we move on.
             
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
-:: ModelingSetupPhase3
+:: ModelingSetupPhase2
 @trigger    VisualModelUpdated
 @when       modeling:ecosystemSelected == "UrchinBarren", jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
 
 {@drKelp}   Nice, the simulator should be ready for you now.
-            Just hit the {h}Describe{/h} button on the bottom right to start the simulator up.
+            Just hit the {h}Describe{/h} button up top to start the simulator up.
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
@@ -78,7 +73,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have to add our facts to the {h}Visual Model{/h}.
-            Just use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
+            Use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
             
 ::ModelHelp1.B
 @trigger    RequestPartnerHelp
