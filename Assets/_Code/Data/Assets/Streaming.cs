@@ -367,7 +367,6 @@ namespace Aqua {
         /// <summary>
         /// Returns the number of loads currently executing.
         /// </summary>
-        /// <returns></returns>
         static public uint LoadCount() {
             return s_LoadCount;
         }
@@ -589,12 +588,13 @@ namespace Aqua {
                 #else
                 UnityEngine.Object.Destroy(resource);
                 #endif // UNITY_EDITOR
+                
+                resource = null;
             }
 
             Log.Msg("[Streaming] Unloaded streamed asset '{0}'", id);
 
             meta.Status = AssetStatus.Unloaded;
-            resource = null;
 
             return true;
         }

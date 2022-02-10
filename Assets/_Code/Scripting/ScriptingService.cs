@@ -884,7 +884,7 @@ namespace Aqua
                     {
                         outName = node.Event.StringArgument.ToString();
                     }
-                    else if (node.Event.Type == ScriptEvents.Dialog.Target)
+                    else if (node.Event.Type == LeafUtils.Events.Character)
                     {
                         StringHash32 target = node.Event.Argument0.AsStringHash();
                         outCharacterId = target;

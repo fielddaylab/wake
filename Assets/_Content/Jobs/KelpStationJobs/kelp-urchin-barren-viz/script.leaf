@@ -125,7 +125,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Okay, it's time for you to learn how to put your facts together into a model.
+{@drKelp}  Okay, it's time for you to learn how to put your facts together into a visual model.
 $if RoomUnlocked(Modeling)
     {@kevin}    Oh, the {nameof Modeling}?
     {@drKelp}  Oh, you already know about it!    {hide-dialog}
@@ -135,7 +135,7 @@ $else
     
     $call	UnlockRoom(modelingRoom)
     $call	UnlockRoom(Modeling)
-$endif // RoomUnlocked(Modeling)
+$endif RoomUnlocked(Modeling)
 
 {hide-dialog}
 $call FocusHighlight->Focus("exterior.modeling", 200, 200)
@@ -197,32 +197,11 @@ $branch common.ringPhone
 @cutscene
 
 {@drKelp}   Nice work! So now you can see how there's a sort of {h}web{/h} that emerges from these facts.
-            Now, the tool you're using can do much| much more than just create visual models.
+            The tool you're using can do much much more than just create visual models.
             It can also {h}simulate ecosystems{/h}.
             Oh! But it'll require a bit more data than you have right now.
             You see how some of the connections on your web aren't solid? That means your fact isn't able to be simulated yet.
-            Let me just send you the missing pieces...
-
-$branch common.download
-$call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
-$call UpgradeFact(SeaOtter.Eats.Urchin, Rate)
-$call GiveFact(Urchin.Reproduce, Batch)
-$call GiveFact(GiantKelp.Reproduce, Batch)
-$call GiveFact(SeaOtter.Reproduce)
-
-{@drKelp}  The simulator doesn't really work unless you have numbers to go along with your facts.
-            But once you add these, then we should be good to go.
-            
-$set jobs:kelp-urchin-barren.upgradedFacts = true
-
-:: ModelingSetupPhase3
-@trigger    VisualModelUpdated
-@when       modeling:ecosystemSelected == "UrchinBarren", jobs:kelp-urchin-barren.upgradedFacts
-@once
-@cutscene
-
-{@drKelp}   Nice, the simulator should be ready for you now.
-            Just hit the {h}Describe{/h} button on the bottom right to start the simulator up.
+            I'll explain more about that later. For now, save your model and report back to the {map-name}Office{/map-name}. 
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
@@ -262,39 +241,6 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
             As your virtual organisms eat, and die, and reproduce, their populations will show up on the graph too.
             Your goal is to get those lines to line up with the historical populations!
 
-::ModelHelp2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "sync"
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	Let's try hitting the {h}Simulate{/h} button over there.
-
-:: ModelSynced
-@trigger	SimulationSyncSuccess
-@once
-@cutscene
-{@drKelp}  Perfect! The model's output lines up with actual past population data, so we know we've created a useful model.
-            Now let's see what it predicts will happen next. Hit the {h}Predict{/h} tab.
-
-::ModelHelp3
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "predict"
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	There seems to be a big {h}Run Prediction{/h} button over there...
-            Let's give that a test.
-
-:: ModelingGraphComplete
-@trigger	SimulationPredictSuccess
-@once
-@cutscene
-{@drKelp}  Nice work! You've just made a {h}model{/h}!
-            Now bring that back to the {map-name}Office{/map-name}.
-{hide-dialog}
-{wait 1}
-{@kevin}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
-            That doesn't sound great...
-
 // SUGGEST ARGUMENTATION
 
 :: helpReportBack
@@ -310,29 +256,28 @@ $elseif global:nav.shipRoom == "office"
 $else
     {@player} 	What should we do now?
 	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
-                We should first head back to the {map-name}Office{/map-name}.$endif
+                We should first head back to the {map-name}Office{/map-name}.
 $endif
 
 // ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(urchinBarrenArgue)
+@when   !ArgueIsComplete(urchinBarrenVizArgue)
 @cutscene
 
-$call ArgueLoad(urchinBarrenArgue)
-	$if ArgueSetClaim(urchinBarrenClaim, jobs.kelp-urchin-barren.argue.claimLabel)
-			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
-			$call ArgueFactSlot(UrchinBarren.Model.Prediction)
+$call ArgueLoad(urchinBarrenVizArgue)
+	$if ArgueSetClaim(urchinBarrenVizClaim, jobs.kelp-urchin-barren-viz.argue.claimLabel)
+			$call ArgueFactSlot(UrchinBarren.Model.Visual)
 	$endif
 
 	$branch .argue.hello
-
 	
 ::argue.hello
-{@drKelp}    I see you explored Site B. What's causing the {nameof GiantKelp} population to decrease?
-$goto .argue.chooseFacts
-
+{@drKelp}   I see you explored Site B. So what does the whole web of relationships in this ecosystem look like?
+            Did you find a new species to explain the kelp's disappearance?
+                $choice .argue.chooseFacts; Yes, here you go.
+                $choice .argue.giveUp; Let me get back to you
 
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
@@ -340,47 +285,42 @@ $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-        $answer Urchin.Eats.GiantKelp, .argue.urchinEatsKelp
-        $answer UrchinBarren.Model.Prediction, .argue.barrenModel
+        // $answer Urchin.Eats.GiantKelp, .argue.urchinEatsKelp
+        $answer UrchinBarren.Model.Visual, .argue.barrenModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
 
-::argue.urchinEatsKelp
-$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
-	$goto .argue.done
-$else
-	{@drKelp}    I see. Do you have a model that predicts if they will grow back?
-	$goto .argue.chooseFacts
-$endif
+//::argue.urchinEatsKelp
+//$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
+//	$goto .argue.done
+//$else
+//	{@drKelp}    I see. Do you have a model that predicts if they will grow back?
+//	$goto .argue.chooseFacts
+//$endif
 
 ::argue.barrenModel
-$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
-	$goto .argue.done
+// HasFact(KelpStation.SeaOtter.Eats.Urchin)
+$if HasFact(Urchin.Eats.GiantKelp)
+    $goto .argue.done
 $else
-	{@drKelp}    Hmm. What is causing that decrease in kelp population?
-	$goto .argue.chooseFacts
+{@drKelp}   This doesn't look complete.
+            I think some relationships might be missing. 
+            Hmm... What could be causing that decrease in kelp population?
+            $goto .argue.giveUp
 $endif
 
 ::argue.unrelated
-$if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
-	{@drKelp}    Do you have a model that predicts what's going to happen at Site B?
-$else
-	$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
-		{@drKelp}  Is something eating the {nameof GiantKelp}?
-	$else
-		{@drKelp}  I don't know if that's it.
-	$endif
-$endif
-$call ArgueRejectIncorrect()
+{@drKelp}   Hmmm... I'm not sure this is relevant. Do you have anything else to show me?
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drKelp}    OK get back to me when you're ready.
+{@drKelp}    Be sure to get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Ok then... That is rather bleak.
+{@drKelp}   Hmm...  It looks like you've got a complete picture, but I still don't understand it.
+            I'm going to need to give you another job so we can figure this out.  In the meantime, nice work!
 $call CompleteJob()
 
 // END
@@ -388,9 +328,3 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
-
-$branch common.ringPhone
-
-{@drKelp}  Well then. That's a bit depressing.
-{@player}   Yeah...
-{@drKelp}  But| don't lose hope yet. I have one last job for you.
