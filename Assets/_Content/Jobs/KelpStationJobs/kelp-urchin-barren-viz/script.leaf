@@ -8,15 +8,14 @@
 
 $branch common.ringPhone
 
-{@drKelp}  Okay, this next job is going to be a little different.
+{@drKelp}  Now that you have a probe decoder, I have something new for you.
 {@player}   How so?
-{@drKelp}  First, you are going to help us study Site B. It's... not doing well.
+{@drKelp}  First, you are going to get a current and historical count of the kelp and urchin populations at Site B. It's... not doing well.
             It's become what we refer to as an {h}Urchin Barren{/h}, where there are a whole lot of urchins and not so much kelp as a result.
-            Second, you're going to learn how to build a model and perform simulations of what is likely going to happen in the future.
-{@player}   Ooh, you mean we get to predict the future? Sounds cool.
-{@drKelp}  Agreed. Models and simulations are very powerful tools!
+            Second, you're going to build a model of the food web so we can better think about how the populations relate.
             Now head on over to Site B to get started.
-{@kevin}    Where is Site B exactly?
+{@player}   Sounds great. Let's go.            
+{@player}   Wait, where is Site B exactly?
 {@drKelp}  It should be southwest of your ship.
 
 $call UnlockSite(RS-1B)
@@ -47,13 +46,9 @@ $call UnlockSite(RS-1B)
 
 $branch common.ringPhone
 
-{@drKelp}  This time, I'll also need you to gather some information on the population counts here.
-            And for that, you'll need the {nameof ROVTagger}.
-$if !HasUpgrade(ROVTagger)
-	$call GiveUpgrade(ROVTagger)
-	{@drKelp}  Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
-							Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-$endif
+{@drKelp}  Let's start getting the current populations using the {nameof ROVTagger}.
+{@drKelp}  Once you've {h}scanned{/h} a species, you can switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+				Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
@@ -71,24 +66,13 @@ $else
     {@kevin}    Let's try to find the rest of the {pluralnameof GiantKelp}.
 $endif
 
-:: giveUpgrade2
+:: countedCurrentPopulations
 @trigger	JobTaskCompleted
 @when		taskId == "getTagged"
 @once
 @cutscene
-
 $branch common.ringPhone
-
-{@drKelp}	All right, that's the current population... the urchins are really getting out of hand...
-			Maybe you can try getting some historical population data from the {h}Probe{/h}?
-			There should be a probe around here somewhere.
-            
-$if !HasUpgrade(ProbeHacker)
-	{@drKelp}   Take this {nameof ProbeHacker} - it should let you decode data from the {h}Probes{/h}.
-    $call GiveUpgrade(ProbeHacker)
-$endif
-
-{@drKelp}  Once you've done that, head back to the ship.
+{@kevin}	All right, that's the current population... thats a lot of urchins...
 
 :: helpAtSiteB.B
 @trigger    RequestPartnerHelp
@@ -96,18 +80,14 @@ $endif
 @cutscene
 
 {@player}   What should I do next?
-{@kevin}    We just got the {nameof ProbeHacker} from {nameof @drKelp}.
-            Maybe we should look for the {h}Probe{/h}.
+{@kevin}    Maybe we should look for the {h}Historic Population Probe{/h}.
 
-:: unlockModeling
+:: gotHistoricalPopulations
 @trigger	JobTaskCompleted
 @who		kevin
 @when		taskId == "getProbeData" 
 @once
-@chatter
-
-{@kevin}	Great, we got the historical data.
-            {nameof @drKelp} said we should head back to the ship now.
+{@kevin}	Great, we got the historical data. Looks like the urchins have been taking over for a while now.
 
 // TO MODELING
 
@@ -125,24 +105,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Okay, it's time for you to learn how to put your facts together into a visual model.
-$if RoomUnlocked(Modeling)
-    {@kevin}    Oh, the {nameof Modeling}?
-    {@drKelp}  Oh, you already know about it!    {hide-dialog}
-$else
-    {@kevin}    Ah, is this another room on the ship?
-    {@drKelp}  Yep! Your ship also has a {nameof Modeling}.
-    
-    $call	UnlockRoom(modelingRoom)
-    $call	UnlockRoom(Modeling)
-$endif RoomUnlocked(Modeling)
-
-{hide-dialog}
-$call FocusHighlight->Focus("exterior.modeling", 200, 200)
-{wait 1}
-
-{@drKelp}  Head in there and open up the big whiteboard on the wall.
-$call FocusHighlight->Clear()
+{@drKelp}  Okay, lets put together a food web model.
 
 
 :: helpGoToModeling
@@ -160,86 +123,15 @@ $endif
 
 // IN MODELING
 
-:: ModelingIntro
-@trigger    SceneStart
-@when       scene:name == "Modeling"
-@once
-@cutscene
-
-$branch common.ringPhone
-
-{@drKelp}   Okay, this is the {h}Modeling Whiteboard{/h}.
-            So you observed that {pluralnameof Urchin} eat {critter-name}Kelp{/critter-name}.
-            And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
-            We can take those facts and add them to a {h}Visual Model{/h}. That can help us see how they fit together.
-            Select the {nameof UrchinBarren} ecosystem and click on the {h}Visualize{/h} tab.
-
-:: ModelingSetup-Wrong
-@trigger	VisualModelStarted
-@when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
-@cutscene
-
-{@drKelp}   Ah, hang on, this isn't the right ecosystem.
-            Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
-            
-:: ModelingSetup
-@trigger	VisualModelStarted
-@when       modeling:ecosystemSelected == "UrchinBarren"
-@once
-@cutscene
-
-{@drKelp}  Next, use the {h}Import New Facts{/h} button to add all the facts you have for this site in {item-name}AQOS{/item-name}.
-            
-:: ModelingSetupPhase2
+:: ModelingComplete
 @trigger    VisualModelUpdated
 @when       modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
 
-{@drKelp}   Nice work! So now you can see how there's a sort of {h}web{/h} that emerges from these facts.
-            The tool you're using can do much much more than just create visual models.
-            It can also {h}simulate ecosystems{/h}.
-            Oh! But it'll require a bit more data than you have right now.
-            You see how some of the connections on your web aren't solid? That means your fact isn't able to be simulated yet.
-            I'll explain more about that later. For now, save your model and report back to the {map-name}Office{/map-name}. 
-
-::ModelHelp1.A
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	We have to add our facts to the {h}Visual Model{/h}.
-            Just use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
-            
-::ModelHelp1.B
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:hasPendingImport
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	They just gave us some new facts to add.
-            Let's get those imported!
-
-::ModelHelp1.C
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, !modeling:hasPendingImport
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	We have everything imported. I think we should start up the simulator.
-            Use the {h}Describe{/h} tab on the top to start it.
-
-:: GetSync
-@trigger	SimulationModelStarted
-@once
-@cutscene
-
-{@drKelp}   Welcome to the {h}Simulator{/h}! This is where all your facts get turned into a big simulation.
-            What that practically means is we have a bunch of virtual {pluralnameof Urchin} and {pluralnameof GiantKelp} interacting with each other.
-            And their interactions are driven by the facts you have.
-            So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
-            More than that, though, you've also got the population histories you downloaded from the {h}Probe{/h} back in Site B.
-            Those histories are represented on the graph by those thick faded lines.
-            As your virtual organisms eat, and die, and reproduce, their populations will show up on the graph too.
-            Your goal is to get those lines to line up with the historical populations!
+{@kevin}   That doesn't look right!
+            It looks like the healthy kelp forests, but parts are missing. 
+            Let's go talk to {nameof @drKelp}. 
 
 // SUGGEST ARGUMENTATION
 
@@ -275,7 +167,7 @@ $call ArgueLoad(urchinBarrenVizArgue)
 	
 ::argue.hello
 {@drKelp}   I see you explored Site B. So what does the whole web of relationships in this ecosystem look like?
-            Did you find a new species to explain the kelp's disappearance?
+            Did you build a model of the food web at Site B to explain the kelp's disappearance?
                 $choice .argue.chooseFacts; Yes, here you go.
                 $choice .argue.giveUp; Let me get back to you
 
@@ -285,19 +177,10 @@ $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else
     $choice #argueFact; Present facts from AQOS
-        // $answer Urchin.Eats.GiantKelp, .argue.urchinEatsKelp
         $answer UrchinBarren.Model.Visual, .argue.barrenModel
         $answer *, .argue.unrelated
     $choice .argue.giveUp; Let me get back to you
 $endif
-
-//::argue.urchinEatsKelp
-//$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
-//	$goto .argue.done
-//$else
-//	{@drKelp}    I see. Do you have a model that predicts if they will grow back?
-//	$goto .argue.chooseFacts
-//$endif
 
 ::argue.barrenModel
 // HasFact(KelpStation.SeaOtter.Eats.Urchin)
@@ -319,8 +202,10 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}   Hmm...  It looks like you've got a complete picture, but I still don't understand it.
-            I'm going to need to give you another job so we can figure this out.  In the meantime, nice work!
+{@drKelp}   Hmm. Combined with the population data you gathered, we have a complete picture, 
+            but I still don't understand it.  
+            I'm going to need to give you another job so we can figure this out. 
+            In the meantime, good work.
 $call CompleteJob()
 
 // END
