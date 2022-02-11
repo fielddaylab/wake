@@ -51,6 +51,7 @@ $call ArgueLoad(startRefugeArgue)
 	$choice .argue.site1; Potential Site 1 (Temp 2°C; Light 60%)
 	$choice .argue.site2; Potential Site 2 (Temp 20°C; Light 100%)
 	$choice .argue.site3; Potential Site 3 (Temp 13°C; Light 100%)
+	$choice .argue.giveUp; Let me get back to you
 $choose branch
 
 
@@ -61,7 +62,7 @@ $choose branch
 {@drKelp}	The bull kelp will boil here! Although... There is plenty of light.
 
 ::argue.site3
-{@drKelp}	Wow, this looks ideal! Does it fit the stress ranges?
+{@drKelp}	Wow, this looks promising! What are the relevant stress ranges for the Bull Kelp and Giant Kelp?
 $if ArgueSetClaim(startRefugeArgueClaim, jobs.kelp-start-refuge.argue.claimLabel)
 			$call ArgueFactSlot(GiantKelp.Light.Stressed)
 			$call ArgueFactSlot(GiantKelp.Temperature.Stressed)
