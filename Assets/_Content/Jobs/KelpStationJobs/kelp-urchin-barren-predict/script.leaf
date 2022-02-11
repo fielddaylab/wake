@@ -12,6 +12,12 @@ $branch common.ringPhone
            Now we should be able to enhance our model of the Urchin Barren. 
            Head back to the {h}Modeling Whiteboard{/h} so we can get started.
 
+::WhereToGoHelp
+@trigger    RequestPartnerHelp
+@when 	    scene:name != "Modeling", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
+@cutscene
+{@player} 	What am I doing again?
+{@kevin}	Let's head back to the {h}Modeling Whiteboard{/h} 
 
 // IN MODELING
 
@@ -54,7 +60,7 @@ $call GiveFact(SeaOtter.Reproduce)
 
 {@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
             But once you add these, then we should be good to go. 
-            Be sure to save your new {h}Visual Model{/h} before we move on.
+            Be sure to hit the {h}Import New Facts{/h} button again before moving on.
             
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
@@ -107,7 +113,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "sync"
+@when 		scene:name == "Modeling", modeling:phase == "sync", JobTaskTop("predictSiteB")
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Let's try hitting the {h}Simulate{/h} button over there.
@@ -153,7 +159,7 @@ $elseif global:nav.shipRoom == "office"
 $else
     {@player} 	What should we do now?
 	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
-                We should first head back to the {map-name}Office{/map-name}.$endif
+                We should first head back to the {map-name}Office{/map-name}.
 $endif
 
 // ARGUMENTATION
@@ -172,7 +178,7 @@ $call ArgueLoad(urchinBarrenPredictArgue)
 
 	
 ::argue.hello
-{@drKelp}    Let's review what's causing the {nameof GiantKelp} population to decrease?
+{@drKelp}    Let's review, what's causing the {nameof GiantKelp} population to decrease?
 $goto .argue.chooseFacts
 
 ::argue.chooseFacts
@@ -204,17 +210,12 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Ok then... That is rather bleak.
+{@drKelp}   Ok then... That is rather bleak.
+{@player}   Yeah...
+{@drKelp}   But don't lose hope yet. I have one last job for you.
 $call CompleteJob()
 
 // END
 
 :: end
 @trigger    JobCompleted
-@cutscene
-
-$branch common.ringPhone
-
-{@drKelp}  Well then. That's a bit depressing.
-{@player}  Yeah...
-{@drKelp}  But don't lose hope yet. I have one last job for you.
