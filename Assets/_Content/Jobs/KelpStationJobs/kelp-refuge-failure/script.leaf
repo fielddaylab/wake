@@ -23,7 +23,7 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@kevin}	Dr. Kelpurnia was right, this looks awful.
+{@kevin}	Dr. Kelpurnia was right, there are very few Bull Kelp compared to Giant Kelp.
 			Let's see what the population history has been like since the refuge was created. We'll need to scan the population probe.
 {@kevin}   	Do you see it anywhere?
 
@@ -45,7 +45,8 @@ $set    	jobs:coral-stressed.seen.bottom = true
 {@kevin}	Measuring the growth rates of kelp is our next priority. Let's surface and get to the Experiment Room.
 $set    	jobs:kelp-refuge-failure.collected.probe = true
 
-// MODELING	
+
+// EXPERIMENTS 
 
 :: helpToExperiment
 @trigger    RequestPartnerHelp
@@ -79,6 +80,10 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 {@kevin}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
 			Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to grow more slowly.
 			We should head to the Modeling room for that.
+
+
+// MODELING	
+
 			
 :: helpBeginModel
 @trigger    RequestPartnerHelp
@@ -86,8 +91,6 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @cutscene
 {@player} 	What do we need to do now?
 {@kevin}	Now we need to build a model.
-
-// MODELING
 
 :: modelingStart
 @trigger    SceneStart
