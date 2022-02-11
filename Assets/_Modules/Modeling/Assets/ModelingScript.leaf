@@ -2,13 +2,6 @@
 
 // intro scripts
 
-:: generic.visual-model.saved
-@trigger	VisualModelExported
-@boostScore 1052 // arbitraryily high number
-@when		scene:name == "Modeling", HasUpgrade(VisualModel)
-@cutscene
-$set jobs:visual-model.saved = true
-
 :: generic.sync-model.intro
 @trigger	SyncModelStarted
 @boostScore 1051 // arbitraryily high number
@@ -37,6 +30,7 @@ $set jobs:sync-model.saved = true
 @cutscene
 {@kevin}	Once we have a complete {nameof SyncModel}, we can click the button that says {h}Run Prediction{/h}.
 {@kevin}	This will provide us with a model forecasting what the site will look like in the future!
+{@kevin}	All those dotted lines you see indicated rates you've measured.
 
 :: generic.prediction-model.saved
 @trigger	SimulationPredictSuccess
