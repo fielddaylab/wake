@@ -113,14 +113,21 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", JobTaskTop(predictSiteB)
+@when 		scene:name == "KelpStation", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	We need to head back to the ship.
 
+:: helpToModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Ship", JobTaskTop(visualSiteB)
+@cutscene
+{@player} 	Where should I be going again?
+{@kevin}	We need to go to the {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
+
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskTop(predictSiteB)
+@when       scene:name == "Ship", JobTaskTop(visualSiteB)
 @once
 @cutscene
 $branch common.ringPhone
@@ -182,6 +189,12 @@ $branch common.ringPhone
 {@drKelp}   Ah, hang on, this isn't the right ecosystem.
             Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
+:: ModelingSetup-WrongHelp
+@trigger    RequestPartnerHelp
+@when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+{@player}   What am I doing here again?
+{@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+
 :: ModelingSetup
 @trigger	VisualModelStarted
 @when       modeling:ecosystemSelected == "UrchinBarren"
