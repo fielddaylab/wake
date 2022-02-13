@@ -89,24 +89,9 @@ MonoBehaviour:
       m_HashValue: 523491196
   m_OptimizedTaskList:
   - Id:
-      m_Source: siteV
-      m_HashValue: 2461650888
-    Index: 0
-    LabelId:
-      m_Source: jobs.coral-turtle-population.task.SiteV
-      m_HashValue: 51855077
-    Steps:
-    - Type: 3
-      Target:
-        m_Source: RS-2V
-        m_HashValue: 2162458881
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: scanTurtle
       m_HashValue: 941606826
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.coral-turtle-population.task.scanTurtle
       m_HashValue: 216022589
@@ -117,11 +102,11 @@ MonoBehaviour:
         m_HashValue: 3290936401
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: ffff
   - Id:
       m_Source: turtleModel
       m_HashValue: 523491196
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.coral-turtle-population.task.turtleModel
       m_HashValue: 3883106277
@@ -132,11 +117,11 @@ MonoBehaviour:
         m_HashValue: 1905950827
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.coral-turtle-population.task.reportBack
       m_HashValue: 1159626771
@@ -147,7 +132,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 50
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 9fc37425d4de14b3ab0a9308915f10db,

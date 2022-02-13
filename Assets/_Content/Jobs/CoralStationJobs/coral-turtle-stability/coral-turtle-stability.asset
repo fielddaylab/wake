@@ -139,24 +139,9 @@ MonoBehaviour:
       m_HashValue: 523491196
   m_OptimizedTaskList:
   - Id:
-      m_Source: goToSite
-      m_HashValue: 3741074197
-    Index: 0
-    LabelId:
-      m_Source: jobs.coral-turtle-stability.task.goToSite
-      m_HashValue: 63152894
-    Steps:
-    - Type: 3
-      Target:
-        m_Source: RS-2V
-        m_HashValue: 2162458881
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: scanAll
       m_HashValue: 1784740587
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.SiteV
       m_HashValue: 3770236753
@@ -191,11 +176,11 @@ MonoBehaviour:
         m_HashValue: 2717353052
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: behavior
       m_HashValue: 3488202279
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.scanTurtle
       m_HashValue: 1327499417
@@ -218,11 +203,11 @@ MonoBehaviour:
         m_HashValue: 1033032444
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: turtleModel
       m_HashValue: 523491196
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.turtleModel
       m_HashValue: 503602137
@@ -233,11 +218,11 @@ MonoBehaviour:
         m_HashValue: 4167532367
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 4
+    Index: 3
     LabelId:
       m_Source: jobs.coral-turtle-stability.task.reportBack
       m_HashValue: 3158413991
@@ -248,7 +233,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 50
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 216ac30c37e4647f2ae6f6188c356d26,
