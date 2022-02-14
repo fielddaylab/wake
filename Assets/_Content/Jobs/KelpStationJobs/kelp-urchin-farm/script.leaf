@@ -31,10 +31,10 @@ $branch common.ringPhone
 @when   !ArgueIsComplete(urchinFarmArgue)
 @cutscene
 $call ArgueLoad(urchinFarmArgue)
-{@drKelp} Which type of kelp should I feed?
+{@drKelp} Which type of kelp will the Urchins eat less of?
 	$choice .argue.giantOrBull; Giant Kelp
 	$choice .argue.giantOrBull; Bull Kelp
-	$choice .argue.either; Either one
+	$choice .argue.either; They are the same
     $choice .argue.giveUp; Let me get back to you
 $choose branch
 
@@ -43,14 +43,14 @@ $choose branch
 $goto .argue.presentFacts
 
 :: argue.either
-{@drKelp}	What do you mean?
+{@drKelp}	What were the rates for Urchins eating Bull and Giant Kelp?
 $goto .argue.presentFacts
 
 : argue.giveUp
 {@drKelp} OK. Get back to me when you're ready.
 
 :: argue.presentFacts
-$if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEvidence)
+$if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEitherWorkLabel)
 		$call ArgueFactSlot(Urchin.Eats.GiantKelp)
 		$call ArgueFactSlot(Urchin.Eats.BullKelp)
 $endif
@@ -73,7 +73,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.done
 $else
-	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 15g of {pluralnameof BullKelp}. How about the Giant Kelp? 
+	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof BullKelp}. How about the Giant Kelp? 
 	$goto .argue.chooseFacts
 $endif
 
