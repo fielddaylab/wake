@@ -11,6 +11,7 @@ $branch common.ringPhone
 {@drKelp}  Alright, after reviewing your visual model of Site B, I have consulted with my colleagues and compiled all of the rates.
            Now we should be able to enhance our model of the Urchin Barren. 
            Head back to the {h}Modeling Whiteboard{/h} so we can get started.
+$set jobs:kelp-urchin-barren-predict.received.facts = false
 
 ::WhereToGoHelp
 @trigger    RequestPartnerHelp
@@ -49,7 +50,8 @@ $branch common.ringPhone
 
 {@drKelp}   Remember how there's a sort of {h}web{/h} that emerges from these facts.
             Now, we can see how you can do more than just create visual models. We are going to {h}simulate ecosystems{/h}.
-            Let me just send you the missing data needed for this model...
+$if !jobs:kelp-urchin-barren-predict.received.facts
+			Let me just send you the missing data needed for this model...
 
 $branch common.download
 $call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
@@ -57,10 +59,12 @@ $call UpgradeFact(SeaOtter.Eats.Urchin, Rate)
 $call GiveFact(Urchin.Reproduce, Batch)
 $call GiveFact(GiantKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
+$set jobs:kelp-urchin-barren-predict.received.facts = true
 
 {@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
             But once you add these, then we should be good to go. 
-            Be sure to hit the {h}Import New Facts{/h} button again before moving on.
+$endif
+            Be sure to head hit the {h}Import New Facts{/h} button again before moving on.
             
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
@@ -99,17 +103,23 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 :: GetSync
 @trigger	SimulationModelStarted
+@when 		!jobs:kelp-urchin-barren-predict.received.facts
+@boostScore 1060 // trigger before Kevin's sync intro, which is 1051
 @once
 @cutscene
+{@drKelp}	Hold on! Before you get started in here, let me just send you the missing data needed for this model...
 
-{@drKelp}   Welcome to the {h}Simulator{/h}! This is where all your facts get turned into a big simulation.
-            What that practically means is we have a bunch of virtual {pluralnameof Urchin} and {pluralnameof GiantKelp} interacting with each other.
-            And their interactions are driven by the facts you have.
-            So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
-            More than that, though, you've also got the population histories you downloaded from the {h}Probe{/h} back in Site B.
-            Those histories are represented on the graph by those thick faded lines.
-            As your virtual organisms eat, and die, and reproduce, their populations will show up on the graph too.
-            Your goal is to get those lines to line up with the historical populations!
+$branch common.download
+$call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
+$call UpgradeFact(SeaOtter.Eats.Urchin, Rate)
+$call GiveFact(Urchin.Reproduce, Batch)
+$call GiveFact(GiantKelp.Reproduce, Batch)
+$call GiveFact(SeaOtter.Reproduce)
+$set jobs:kelp-urchin-barren-predict.received.facts = true
+
+{@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
+            But once you add these, then we should be good to go.
+			Head back to the {h}Visualize{/h} tab to {h}Import New Facts{/h}, then return here.
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
