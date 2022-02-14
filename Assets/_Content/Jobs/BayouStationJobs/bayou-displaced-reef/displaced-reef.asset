@@ -120,7 +120,85 @@ MonoBehaviour:
       m_HashValue: 1025619015
     - m_Source: getCounts
       m_HashValue: 2402495047
-  m_OptimizedTaskList: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: visitSiteO
+      m_HashValue: 2940247736
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.visitSiteO
+      m_HashValue: 1545989578
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-3O
+        m_HashValue: 3353522735
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: getScans
+      m_HashValue: 1025619015
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getScans
+      m_HashValue: 997294805
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: getCounts
+      m_HashValue: 2402495047
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getCounts
+      m_HashValue: 774222265
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: O_OilRig
+        m_HashValue: 2591135669
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    Index: 3
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.reportBack
+      m_HashValue: 1790074046
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000200
   m_CashReward: 0
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: b097077d53ecd6b498f8fb57b8dc31b3,
