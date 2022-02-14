@@ -167,7 +167,7 @@ $branch common.ringPhone
 {@drKelp}  Next, use the {h}Import New Facts{/h} button to add all the facts you have for this site in {item-name}AQOS{/item-name}.
             
 :: ModelingSetupPhase2
-@trigger    VisualModelUpdated
+@trigger    VisualModelExported
 @when       modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
