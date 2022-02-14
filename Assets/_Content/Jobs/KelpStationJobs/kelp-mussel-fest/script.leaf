@@ -8,19 +8,12 @@
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name != "RS-1C", !jobs:kelp-mussel-fest.seen.bottom
+@when 		scene:name != "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Get to Site C so we can check out those mussels.
 
 // SCANNING
-
-:: diveSite
-@trigger    SceneStart
-@when       scene:name == "RS-1C"
-@once
-@cutscene
-$set    	jobs:kelp-mussel-fest.seen.bottom = true
 
 :: helpScan
 @trigger    RequestPartnerHelp
@@ -38,6 +31,13 @@ $set    	jobs:kelp-mussel-fest.seen.bottom = true
 
 // EXPERIMENTATION
 
+:: helpExperiment
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(stressParam)
+@cutscene
+{@player}   Any idea of what to do next?
+{@kevin}	Putting a mussel in the stress tank might provide some answers.
+
 :: experimentEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(report)
@@ -45,12 +45,6 @@ $set    	jobs:kelp-mussel-fest.seen.bottom = true
 @cutscene
 {@kevin}	All right -- I think we can answer Dr. Kelpurnia's question about what's disturbing the mussels.
 
-:: helpExperiment
-@trigger    RequestPartnerHelp
-@when 		JobTaskTop(stressParam)
-@cutscene
-{@player}   Any idea of what to do next?
-{@kevin}	Putting a mussel in the stress tank might provide some answers.
 
 // REPORT
 
@@ -72,10 +66,9 @@ $goto .argue.chooseClaim
 @trigger    TryArgumentation
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
-$call ArgueLoad(musselFestArguePopulationTemp)
-{@drKelp}	Have you found out what is happening with the mussels?
-	$choice .argue.lightStress; The Mussels are stressed by the light.
-	$choice .argue.parasite; The Mussels have a parasite.
+{@drKelp}	What is happening with the mussels?
+	$choice .argue.lightOrParasiteStress; The Mussels are stressed by light.
+	$choice .argue.lightOrParasiteStress; The Mussels have a parasite.
 	$choice .argue.tempStress; The Mussels are stressed by the temperature.
 	$choice .argue.notReady; Let me get back to you
 $choose branch
@@ -83,11 +76,7 @@ $choose branch
 :: argue.notReady
 {@drKelp} OK. Get back to me when you're ready.
 
-::argue.lightStress
-{@drKelp}	Do you have any evidence for this?
-$goto .argue.defendClaimIncorrect
-
-::argue.parasite
+::argue.lightOrParasiteStress
 {@drKelp}	Do you have any evidence for this?
 $goto .argue.defendClaimIncorrect
 
@@ -99,25 +88,34 @@ $goto .argue.defendClaimIncorrect
 $goto .argue.chooseClaim
 
 ::argue.tempStress
+$if ArgueIsComplete(musselFestArguePopulationTemp)
+	{@drKelp}	Okay, you've already shown me the temperature range in Site B.
+	$goto .argue.correctFactsPopulationTemp
+$endif
+$call ArgueLoad(musselFestArguePopulationTemp)
 $if ArgueSetClaim(musselFestArguePopulationTempClaim, jobs.kelp-mussel-fest.argue.claimLabelPopulationTemp)
-			$call ArgueFactSlot(KelpForest.Population.Mussel)
+			$call ArgueFactSlot(WarmKelpForest.Temperature.History)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.defendClaimPopulationTemp
 
 ::argue.defendClaimPopulationTemp
+{@drKelp}	What was the temperature range in Site B again?
 $if ArgueAllFactsCorrect()
     $goto .argue.correctFactsPopulationTemp
 $else
 	$choice #argueFactSet; Present facts from AQOS
-			$answer correct, .argue.correctFactsPopulationTemp
+			$answer correct, .argue.completePopulationTempArgue
 			$answer incorrect, .argue.incorrectFactsPopulationTemp
 	$choice .argue.giveUp; Let me get back to you
 $endif
 
-:: argue.correctFactsPopulationTemp
+:: argue.completePopulationTempArgue
 $call ArgueComplete()
 $call ArgueHideClaim()
+$goto .argue.correctFactsPopulationTemp
+
+:: argue.correctFactsPopulationTemp
 $call ArgueLoad(musselFestArgueMusselTemp)
 {@drKelp}	How does that compare to the stress ranges for the mussels?
 $if ArgueSetClaim(musselFestArgueMusselTempClaim, jobs.kelp-mussel-fest.argue.claimLabelMusselTemp)
@@ -127,7 +125,7 @@ $call ArgueDisplayClaim()
 $branch .argue.defendClaimMusselTemp
 
 :: argue.incorrectFactsPopulationTemp
-{@drKelp} That isn't it. Do you have the temperature data from the probe at Site C?
+{@drKelp} That isn't it. Do you have the temperature stress ranges for Mussels?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaimPopulationTemp
 
