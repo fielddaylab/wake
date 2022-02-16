@@ -13,7 +13,7 @@ $branch common.ringPhone
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-ocean-plastic.task.speciesReefEdge
+@when 		scene:name == "Ship", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
@@ -55,40 +55,80 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @cutscene
 $call ArgueLoad(oceanPlasticArgue)
 {@profCempaka} What will be impacted if the plastic enters the Reef Edge?
-	$choice .argue.askModel; There are many food sources for the turtles.
-	$choice .argue.giveUp; I'm not sure yet, Let me get back to you.
+$choice .argue.turtles; Only the turtles will be impacted.
+$choice .argue.all; All species may be impacted.
+//$choice .argue.queen; The conch will be impacted.
+//$choice .argue.staghorn; The coral will be impacted.
+$choice .argue.nan; Nothing should be impacted.
+$choice .argue.giveUp; I'm not sure yet, Let me get back to you.
 $choose branch
 
-::argue.askModel
-$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimEvidence)
-		$call ArgueFactSlot(ReefEdge.Model.Prediction)
+::argue.turtles
+$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
+		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
-{@profCempaka}	That would make sense. A buffet is sure to be a big draw.
-{@profCempaka}	Which species are being consumed by the turtles? Do you have a model of those connections?	
+{@profCempaka}	Not the turtles! Do you have evidence for this claim?	
 $goto .argue.chooseFacts
+
+::argue.all
+$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
+		$call ArgueFactSlot(ReefEdge.Model.Visual)
+$endif
+{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+$goto .argue.chooseFacts
+
+::argue.queen
+$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
+		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+$endif
+{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+$goto .argue.chooseFactsDummy
+
+::argue.nan
+{@profCempaka}	That can't be right, we know there's a change in the environment. 
+                Why don't you double check your observations.	
+
+::argue.staghorn
+$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel2)
+		$call ArgueFactSlot(QueenConch.Light.Stressed)
+$endif
+{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+$goto .argue.chooseFactsDummy
 
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
-$if ArgueAllFactsCorrect()
-    $goto .argue.done
-$else
-    $choice #argueFact; Present facts from AQOS
-        $answer ReefEdge.Model.Prediction, .argue.done
-        $answer *, .argue.unrelated
-    $choice .argue.giveUp; Let me get back to you
-$endif
+$choice #argueFact; Present facts from AQOS
+    $answer ReefEdge.Model.Prediction, .argue.done
+    $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you
+
+::argue.chooseFactsDummy
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you
 
 ::argue.done
 $call ArgueComplete()
-{@profCempaka} Thanks for building this model! 
-{@profCempaka} Eventualluy we may need more information to complete this food web.
+{@profCempaka}  So if the turtles eat the plastic, then the other species will get thrown out of balance?
+                We need to get ahead of this plastic thing.
+                For the turtles!
+{@kevin}   ...
+{@profCempaka}  ...and the other critters too!
+
+$call CompleteJob()
+
+::argue.done2
+$call ArgueComplete()
+{@profCempaka}  Why would someone add litter to the ocean? We need to get ahead of this plastic thing.
+                For the turtles!
 $call CompleteJob()
 
 ::argue.unrelated
 $call ArgueRejectIncorrect()
-{@profCempaka} Ok, that's interesting, but it's not answering my question.
-$call ArgueRejectIncorrect()
-$goto .argue.chooseFacts
+{@profCempaka}  I'm not seeing a clear relationship between that species and the plastic.
+                Can you head back and double check your observations?
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
