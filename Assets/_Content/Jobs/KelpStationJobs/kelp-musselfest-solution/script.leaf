@@ -1,0 +1,178 @@
+#basePath   job.kelp-mussel-fest-solution
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@kevin}	We'll need to measure how Mussels reproduce in stressed and unstressed conditions.
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
+
+// SET VARS
+:: setTankVars1
+@trigger	ExperimentTankViewed
+@when		!JobTaskTop(reportChange), tankType == "Measurement"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = true
+
+:: setTankVars2
+@trigger	ExperimentTankViewed
+@when		!JobTaskTop(reportChange), tankType != "Measurement"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+:: setTankVars3
+@trigger	ExperimentScreenViewed
+@when		!JobTaskTop(reportChange), screenId == "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = true
+
+:: setTankVars4
+@trigger	ExperimentScreenViewed
+@when		!JobTaskTop(reportChange), screenId != "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
+
+
+
+// EXPERIMENTATION
+
+:: helpStartExperiment
+@trigger    RequestPartnerHelp
+@when 		!JobTaskTop(reportChange)
+@cutscene
+{@player}   Hmm, I'm not sure how to approach this job.
+{@kevin}	The {nameof MeasurementTank} in the Experiment room should be your weapon of choice, here.
+
+:: helpSelectEnvironment
+@trigger    RequestPartnerHelp
+@when 		!JobTaskTop(reportChange), scene:name == "ExperimentV2", jobs:kelp-mussel-fest-solution.inMeasurement
+@boostScore 1
+@cutscene
+$if jobs:kelp-mussel-fest-solution.inMeasurementEcosystem
+	{@player}   Which site should we pick?
+	{@kevin}	Do you know which sites the mussels will be stressed in, and which sites they won't be stressed in?
+$else
+	{@player}   How do we do this again?
+	{@kevin}	Select an ecosystem, organism, and additional controls. Then run the experiment.
+$endif
+
+:: helpContinueExperiment
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(stressedRate), !jobs:kelp-mussel-fest-solution.inMeasurement
+@boostScore 2
+@cutscene
+{@player}   Are we ready to report our findings?
+{@kevin}	Not quite. You still have another Mussel reproduction rate to get.
+
+:: experimentEnd
+@trigger    JobTasksUpdated
+@when 		JobTaskTop(reportChange)
+@once
+@cutscene
+{@kevin}	We have all the information -- if you can interpret it, you'll be able to advise Dr. Kelpurnia.
+
+:: helpReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(reportChange)
+@cutscene
+{@player}   What now?
+{@kevin}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
+
+// ARGUMENTATION
+
+::argue.hello
+{@drKelp}	Hi {nameof @player}.
+$goto .argue.chooseClaim
+
+::argue.chooseClaim
+@trigger    TryArgumentation
+@when   	!ArgueIsComplete(musselFestArgueMusselTemp)
+@cutscene
+{@drKelp}	What is happening with the mussels?
+	$choice .argue.lightOrParasiteStress; The Mussels are stressed by light.
+	$choice .argue.lightOrParasiteStress; The Mussels have a parasite.
+	$choice .argue.tempStress; The Mussels are stressed by the temperature.
+	$choice .argue.notReady; Let me get back to you
+$choose branch
+
+:: argue.notReady
+{@drKelp} OK. Get back to me when you're ready.
+
+::argue.lightOrParasiteStress
+{@drKelp}	Do you have any evidence for this?
+$goto .argue.defendClaimIncorrect
+
+::argue.defendClaimIncorrect
+	$choice .argue.notReally; Not really.
+	
+::argue.notReally
+{@drKelp}	Okay. Any other ideas?
+$goto .argue.chooseClaim
+
+::argue.tempStress
+$if ArgueIsComplete(musselFestArguePopulationTemp)
+	{@drKelp}	Okay, you've already shown me the temperature range in Site B.
+	$goto .argue.correctFactsPopulationTemp
+$endif
+$call ArgueLoad(musselFestArguePopulationTemp)
+$if ArgueSetClaim(musselFestArguePopulationTempClaim, jobs.kelp-mussel-fest.argue.claimLabelPopulationTemp)
+			$call ArgueFactSlot(WarmKelpForest.Temperature.History)
+$endif
+$call ArgueDisplayClaim()
+$goto .argue.defendClaimPopulationTemp
+
+::argue.defendClaimPopulationTemp
+{@drKelp}	What was the temperature range in Site B again?
+$if ArgueAllFactsCorrect()
+    $goto .argue.correctFactsPopulationTemp
+$else
+	$choice #argueFactSet; Present facts from AQOS
+			$answer correct, .argue.completePopulationTempArgue
+			$answer incorrect, .argue.incorrectFactsPopulationTemp
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.completePopulationTempArgue
+$call ArgueComplete()
+$call ArgueHideClaim()
+$goto .argue.correctFactsPopulationTemp
+
+:: argue.correctFactsPopulationTemp
+$call ArgueLoad(musselFestArgueMusselTemp)
+{@drKelp}	How does that compare to the stress ranges for the mussels?
+$if ArgueSetClaim(musselFestArgueMusselTempClaim, jobs.kelp-mussel-fest.argue.claimLabelMusselTemp)
+			$call ArgueFactSlot(Mussel.Temperature.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.defendClaimMusselTemp
+
+:: argue.incorrectFactsPopulationTemp
+{@drKelp} That isn't it. Do you have the temperature stress ranges for Mussels?
+$call ArgueRejectIncorrect()
+$goto .argue.defendClaimPopulationTemp
+
+:: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
+
+::argue.defendClaimMusselTemp
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFactsMusselTemp
+		$answer incorrect, .argue.incorrectFactsMusselTemp
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.correctFactsMusselTemp
+$call ArgueComplete()
+{@drKelp}	I see the overlap here. Good to know.
+{@drKelp}	I wonder if the mussels will continue to grow.
+$call CompleteJob()
+
+:: argue.incorrectFactsMusselTemp
+{@drKelp}	That doesn't explain why the mussels would be stressed in Site C's temperatures.
+{@drKelp}	Do you have anything else that explains it?
+$call ArgueRejectIncorrect()
+$goto .argue.defendClaimMusselTemp
+
+// END
+
+::end

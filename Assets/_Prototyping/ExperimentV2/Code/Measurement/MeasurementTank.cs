@@ -235,6 +235,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return m_DrainRoutine;
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
             ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
         }
 
