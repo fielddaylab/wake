@@ -33,6 +33,12 @@ $set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = true
 @cutscene
 $set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
 
+:: setTankVars5
+@trigger	SceneStart
+@when	scene:name != "ExperimentV2"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
 
 
 // EXPERIMENTATION
@@ -114,7 +120,7 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctFacts
 		$answer incorrect, .argue.incorrectFacts
-$choice .argue.giveUp; Let me get back to you
+$choice .argue.notReady; Let me get back to you
 
 :: argue.defendClaimIncorrect
 $call ArgueLoad(musselFestSolutionArgueNoChange)
