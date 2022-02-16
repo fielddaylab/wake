@@ -3,7 +3,7 @@
 // intro scripts
 
 :: generic.sync-model.intro
-@trigger	SyncModelStarted
+@trigger	SimulationModelStarted
 @boostScore 1051 // arbitraryily high number
 @when		scene:name == "Modeling", HasUpgrade(SyncModel), !jobs:sync-model.saved
 @cutscene
