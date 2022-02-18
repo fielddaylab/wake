@@ -1,0 +1,63 @@
+:: basePath job.turtle-danger
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@profHarper}    This is the intro to the turtle-danger job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteOModel)
+@cutscene
+$call ArgueLoad(siteOModel) 
+{@profHarper} What can you tell me about the saftey of the turtles?
+$choice .argue.turtleSafe; The turtles should be safe 
+$choice .argue.turtleNotSafe; The turtles might not be safe 
+$choose branch
+
+:: argue.turtleSafe
+$call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
+{@profHarper} How do you know the turtles are safe?
+$goto argue.showClaim
+
+:: argue.turtleNotSafe
+$call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
+{@profHarper} What makes you say that?
+$goto argue.showClaim
+
+:: argue.showClaim
+$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer ReefEdge.Model.TurtleVisual, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but I'm not sure that's relevant.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@profHarper} Nice work! Do you see how there could be some competition here?
+{@profHarper} We will need to see a descriptive model that looks at historic populations to know for certain.
+
+:: end
+@trigger    JobCompleted
+@cutscene
+
+// write a conclusion to your job
+{@profHarper}    This is the conclusion to the turtle-danger job!
+
+$call CompleteJob()

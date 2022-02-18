@@ -1,4 +1,4 @@
-:: basePath job.[[JOB-NAME]]
+:: basePath job.turtle-danger2
 
 // INTRO
 
@@ -6,25 +6,24 @@
 @trigger    JobStarted
 @cutscene
 
-// write an intro to your job
-{@kevin}    This is the intro to the [[JOB-NAME]] job!
+{@profHarper}    This is the intro to the turtle-danger2 job!
 
 // ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete() // TODO: NAME ME
+@when   !ArgueIsComplete(turtleDanger)
 @cutscene
-$call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
+$call ArgueLoad(turtleDanger)
 // TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-		$call ArgueFactSlot() // TODO: put fact slot info here 
+$if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
+	$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $endif
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+    $answer ReefEdge.Model.TurtleVisual, .argue.complete 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
@@ -48,6 +47,6 @@ $call ArgueComplete()
 @cutscene
 
 // write a conclusion to your job
-{@kevin}    This is the conclusion to the [[JOB-NAME]] job!
+{@kevin}    This is the conclusion to the turtle-danger2 job!
 
 $call CompleteJob()
