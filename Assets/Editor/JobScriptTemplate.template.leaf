@@ -42,12 +42,6 @@ $goto .argue.showClaim
 :: argue.complete
 $call ArgueComplete()
 {@kevin} This looks great!
-
-:: end
-@trigger    JobCompleted
-@cutscene
-
-// write a conclusion to your job
 {@kevin}    This is the conclusion to the [[JOB-NAME]] job!
 
 $call CompleteJob()

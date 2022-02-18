@@ -59,6 +59,16 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
+      m_Source: visualModelO
+      m_HashValue: 1075061939
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.visualModelO
+      m_HashValue: 529884717
+    Steps: []
+    PrerequisiteTaskIds:
+    - m_Source: ModelSiteO
+      m_HashValue: 1813103250
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
@@ -72,8 +82,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: ModelSiteO
-      m_HashValue: 1813103250
+    - m_Source: visualModelO
+      m_HashValue: 1075061939
   m_OptimizedTaskList:
   - Id:
       m_Source: ModelSiteO
@@ -91,9 +101,18 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
+      m_Source: visualModelO
+      m_HashValue: 1075061939
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.visualModelO
+      m_HashValue: 529884717
+    Steps: []
+    PrerequisiteTaskIndices: 0000
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.bayou-turtle-danger.task.reportBack
       m_HashValue: 586683870
@@ -104,7 +123,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 0
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: ce7b39e4973a25243b945325c01c1aef,
