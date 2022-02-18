@@ -39,6 +39,18 @@ $set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
 @cutscene
 $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 
+:: setTankVars6
+@trigger	ExperimentTankExited
+@when		scene:name == "ExperimentV2"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+:: setTankVars7
+@trigger	ExperimentScreenExited
+@when		scene:name == "ExperimentV2", screenId == "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
 
 
 // EXPERIMENTATION
