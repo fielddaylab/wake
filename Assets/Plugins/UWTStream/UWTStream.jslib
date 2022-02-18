@@ -102,15 +102,22 @@ var UWTStreamLibraryImpl = {
         const mediaSession = navigator.mediaSession;
         if (mediaSession) {
             const emptyFunc = function() { }
-            mediaSession.setActionHandler('play', emptyFunc);
-            mediaSession.setActionHandler('pause', emptyFunc);
-            mediaSession.setActionHandler('stop', emptyFunc);
-            // mediaSession.setActionHandler('seekbackward', emptyFunc);
-            // mediaSession.setActionHandler('seekforward', emptyFunc);
-            // mediaSession.setActionHandler('seekto', emptyFunc);
-            mediaSession.setActionHandler('previoustrack', emptyFunc);
-            mediaSession.setActionHandler('nexttrack', emptyFunc);
-            // mediaSession.setActionHandler('skipad', emptyFunc);
+            const tryRegister = function(id) {
+                try {
+                    mediaSession.setActionHandler(id, emptyFunc);
+                } catch(e) {
+                    console.warn("[UWTStream] MediaSession event", id, "not supported on this device");
+                }
+            }
+            tryRegister('play');
+            tryRegister('pause');
+            tryRegister('stop');
+            tryRegister('seekbackward');
+            tryRegister('seekforward');
+            tryRegister('seekto');
+            tryRegister('previoustrack');
+            tryRegister('nexttrack');
+            tryRegister('skipad');
         }
 
         return true;

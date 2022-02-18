@@ -44,6 +44,10 @@ static public class GameLayers
 	public const int CritterTag_Index = 13;
 	public const int CritterTag_Mask = 8192;
 
+	// Layer 14: Microscope
+	public const int Microscope_Index = 14;
+	public const int Microscope_Mask = 16384;
+
 	// Layer 29: Solid
 	public const int Solid_Index = 29;
 	public const int Solid_Mask = 536870912;
