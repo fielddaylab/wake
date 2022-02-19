@@ -1,0 +1,58 @@
+:: basePath job.reef-decision
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@profHarper}    This is the intro to the reef-decision job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteOIntervene)
+@cutscene
+$call ArgueLoad(siteOIntervene) 
+{@profHarper} What should we do about the Oil rig in the reef?
+$choice .argue.removeRig; We should remove the rig
+$choice .argue.leaveRig; We should leave the rig
+$choose branch
+
+:: argue.removeRig
+$call ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1) 
+{@profHarper} What makes you say that?
+$goto argue.showClaim
+
+:: argue.leaveRig
+$call ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
+{@profHarper} What makes you say that?
+$goto argue.showClaim
+
+:: argue.showClaim
+$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer incorrect, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+
+// END
+
+:: argue.complete
+$call ArgueComplete()
+{@profHarper}   Even without the reef, it seems like the populations would be similar. 
+                It really shouldn't matter either way.
+
+$call CompleteJob()

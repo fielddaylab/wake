@@ -1,0 +1,109 @@
+:: basePath job.hide-n-seek
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@profHarper}    This is the intro to the hide-n-seek job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(predictJelly) 
+@cutscene
+$call ArgueLoad(predictJelly) 
+{@profHarper} What should we do about the Oil rig in the reef?
+$choice .argue.stableTurtle; Turtle populations remain stable
+$choice .argue.increaseTurtle; Turtle populations will increase
+$choice .argue.decreaseTurtle; Turtle populations will decrease
+$choose branch
+
+:: argue.stableTurtle
+$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+{@profHarper} Have you increased the accuracy of your model from last time?
+$goto argue.showClaim
+
+:: argue.increaseTurtle
+$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2) 
+{@profHarper} Can I see your model?
+$goto argue.showClaim
+
+:: argue.decreaseTurtle
+$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3) 
+{@profHarper} Can I see your model?
+$goto argue.showClaim
+
+:: argue.showClaim
+$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.whatMissing 
+    $answer incorrect, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.whatMissing
+{@profHarper}   I see. Nicely done! How have you increased the accuracy of your model?
+$goto .argue.chooseFacts
+
+:: argue.chooseFacts
+$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle) 
+$call ArgueFactSlot(LoggerheadTurtle.Eats.QueenConch) 
+$choice #argueFactSet; Present facts from AQOS
+    $answer ReefEdge.Population.LoggerheadTurtle, .argue.jellyPop
+    $answer LoggerheadTurtle.Eats.QueenConch, .argue.turtleEat
+    $answer incorrect, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.jellyPop
+$if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.QueenConch)
+	$goto .argue.complete
+$else
+	{@profHarper}	I see. How is this fact related to the Turtles?
+	$goto .argue.chooseFacts
+$endif
+
+:: argue.turtleEat
+$if ArgueIsFactSubmitted(ReefEdge.Population.LoggerheadTurtle)
+	$goto .argue.complete
+$else
+	{@profHarper}	I see. What is the population of the Jellyfish here?
+	$goto .argue.chooseFacts
+$endif
+
+:: argue.chooseFactsDummy
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer correct, .argue.rejectClaim
+    $answer incorrect, .argue.unrelated2
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.unrelated2
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.chooseFactsDummy
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+
+// END
+:: argue.rejectClaim
+{@profHarper}   Hmmm... I'm not sure the data matches up with your claim.
+                Why don't you double check your observations and revisit your claim.
+
+:: argue.complete
+$call ArgueComplete()
+{@profHarper}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.
+                Keep at it! We're almost done here!
+
+$call CompleteJob()
