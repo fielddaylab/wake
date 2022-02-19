@@ -102,12 +102,14 @@ $choice #argueFact; Present facts from AQOS
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
+$choose branch
 
 ::argue.chooseFactsDummy
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
+$choose branch
 
 ::argue.done
 $call ArgueComplete()
