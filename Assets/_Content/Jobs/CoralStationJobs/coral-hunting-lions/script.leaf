@@ -17,7 +17,7 @@ $else
 	$if !JobTaskCompleted(scanHistory)
 		{@kevin}	Let's make sure we scan the data from the probes while we're down at the site.
 	$else
-		$if !JobTaskCompleted(countPopulations)
+		$if !JobTaskCompleted(countPopulation)
 			{@kevin}	We still need to get accurate population counts of everything at Site S.
 		$else
 			$if !JobTaskCompleted(observeEatRules)
@@ -36,7 +36,7 @@ $else
 								{@kevin}	There might be some species which have an effect on the water or the light around themselves.  We'll need to get some numbers for those.
 							$else
 								$if !JobTaskCompleted(predictModel)
-									{@kevin}	Professor Cempaka wants an intervention model, but first we'll need to make a model that Predicts what would happen without any intervention.
+									{@kevin}	Professor Cempaka wants an intervention model, but first we'll need to make a model that predicts what would happen without any intervention.
 								$endif
 							$endif
 						$endif
@@ -116,22 +116,65 @@ $endif
 
 :: predictModelComplete
 @trigger    JobTasksUpdated
-@when		scene:name == "ExperimentV2", JobTaskCompleted(predictModel)
+@when		scene:name == "Modeling", JobTaskCompleted(predictModel)
 @once
 @cutscene
 {@kevin}	OK now, this is it.  We're ready to make an intervention model of what would happen if we added more fishers to hunt the Lionfish.  Good luck!
 
 :: interveneModelComplete
 @trigger    JobTasksUpdated
-@when		scene:name == "ExperimentV2", JobTaskCompleted(interveneModel)
+@when		scene:name == "Modeling", JobTaskCompleted(interveneModel)
 @once
 @cutscene
 {@kevin}	Alright!  Looks like allowing the hunting of lionfish would seriously benefit the coral and the ecosystem overall.  Time to hand over your findings.
 
 
+
 // ARGUMENTATION
 
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(huntingLionsArgue)
+@cutscene
+$call ArgueLoad(huntingLionsArgue)
+{@profCempaka}	We know I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improved the populations or the diversity of the reef in the future.
+				Have that model yet?
+	$choice .argue.haveModel; Yes! I know how it works!
+	$choice .argue.noModel; No, not yet.
+$choose branch	
 
+:: argue.noModel
+{@profCempaka}	Well, let me know when you do.
+
+:: argue.haveModel
+{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species they impact,
+				And a connection to the Coral.
+$if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
+		$call ArgueFactSlot(ReefEdge.Model.HuntingLionsIntervene)
+		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
+		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.giveUp
+{@profCempaka}	OK. Get back to me when you're ready.
+
+:: argue.incorrectFacts
+{@profCempaka}	Hmm, this isn't quite what I'm looking for.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+
+:: argue.correctFacts
+{@profCempaka}	So, the less Lionfish, the more small fish, less algae, more light, happier coral!
+				Whoa. That is complex, but you did it!
+				I knew those Lionfish were awful from day 1.
+$call ArgueComplete()
+$call CompleteJob()
 
 
 // REQUEST HELP
