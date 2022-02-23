@@ -79,5 +79,9 @@ namespace ProtoAqua.ExperimentV2
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenViewed, table);
             }
         }
+
+        static public void TriggerExperimentScreenExited(SelectableTank inTank, StringHash32 inScreenId) {
+            Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenExited);
+        }
     }
 }

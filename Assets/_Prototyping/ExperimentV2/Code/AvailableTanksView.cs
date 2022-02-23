@@ -133,6 +133,8 @@ namespace ProtoAqua.ExperimentV2
             ActivateTankClickHandlers();
             Routine.Start(this, m_ExitSceneButtonGroup.Show(0.2f, true));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Hide(0.2f, false));
+
+            Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankExited);
         }
 
         private void OnExperimentStart(TankType inTankType) {
