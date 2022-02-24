@@ -5,6 +5,7 @@
 using Aqua.Modeling;
 using Aqua.Portable;
 using Aqua.Scripting;
+using Aqua.Shop;
 using BeauUtil;
 using BeauUtil.Services;
 using BeauUtil.Variants;
@@ -124,7 +125,14 @@ namespace Aqua
         public static extern void FBModelInterveneCompleted(string userCode, int appVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
         public static extern void FBModelingEnd(string userCode, int appVersion, int jobId, string jobName, string phase, string ecosystem);
-        
+
+        // Shop Events
+        [DllImport("__Internal")]
+        public static extern void FBPurchaseUpgrade(string userCode, int appVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        [DllImport("__Internal")]
+        public static extern void FBInsufficientFunds(string userCode, int appVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        [DllImport("__Internal")]
+        public static extern void FBTalkToShopkeep(string userCode, int appVersion, int jobId, string jobName);
 
         #endregion // Firebase JS Functions
 
@@ -176,7 +184,10 @@ namespace Aqua
                 .Register(ModelingConsts.Event_End_Model, LogEndModel, this)
                 .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
-                .Register(GameEvents.PortableClosed, PortableClosed, this);
+                .Register(GameEvents.PortableClosed, PortableClosed, this)
+                .Register<StringHash32>(GameEvents.InventoryUpdated, LogPurchaseUpgrade, this)
+                .Register<StringHash32>(ShopConsts.Event_InsufficientFunds, LogInsufficientFunds, this)
+                .Register(ShopConsts.Event_TalkToShopkeep, LogTalkToShopkeep, this);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
@@ -701,6 +712,43 @@ namespace Aqua
         }
 
         #endregion // Modeling Events
+
+        #region Shop Events
+
+        private void LogPurchaseUpgrade(StringHash32 inUpgradeId)
+        {
+            InvItem item = Services.Assets.Inventory.Get(inUpgradeId);
+            string name = item.name;
+
+            if (name != "Cash" && name != "Exp")
+            {
+                int cost = item.CashCost();
+
+                #if FIREBASE
+                FBPurchaseUpgrade(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
+                #endif
+            }
+        }
+
+        private void LogInsufficientFunds(StringHash32 inUpgradeId)
+        {
+            InvItem item = Services.Assets.Inventory.Get(inUpgradeId);
+            string name = item.name;
+            int cost = item.CashCost();
+
+            #if FIREBASE
+            FBInsufficientFunds(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
+            #endif
+        }
+
+        private void LogTalkToShopkeep()
+        {
+            #if FIREBASE
+            FBTalkToShopkeep(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
+            #endif
+        }
+
+        #endregion // Shop Events
 
         #endregion // Log Events
     }

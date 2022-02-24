@@ -556,6 +556,52 @@ mergeInto(LibraryManager.library, {
             phase: phase,
             ecosystem: ecosystem
         });
+    },
+
+    FBPurchaseUpgrade: function(userCode, appVersion, jobId, jobName, itemId, itemName, cost) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var itemId = Pointer_stringify(itemId);
+        var itemName = Pointer_stringify(itemName);
+
+        analytics.logEvent("purchase_upgrade", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            item_id: itemId,
+            item_name: itemName,
+            cost: cost
+        });
+    },
+
+    FBInsufficientFunds: function(userCode, appVersion, jobId, jobName, itemId, itemName, cost) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var itemId = Pointer_stringify(itemId);
+        var itemName = Pointer_stringify(itemName);
+
+        analytics.logEvent("insufficient_funds", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            item_id: itemId,
+            item_name: itemName,
+            cost: cost
+        });
+    },
+
+    FBTalkToShopkeep: function(userCode, appVersion, jobId, jobName) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+
+        analytics.logEvent("talk_to_shopkeep", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName
+        });
     }
 
 });
