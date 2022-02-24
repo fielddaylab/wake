@@ -8,152 +8,70 @@ $branch common.ringPhone
 
 {@kevin}	Okay -- to prove that the artifical reefs are working, you would need evidence that the artificial reefs are still there,
 			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
+$set jobs:coral-fake-fix.seen.site = false
 
+// SCANNING
 
-
-
-
-
-
-
-:: helpGoOutside
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == false
-@cutscene
-{@player}   Any idea where I should go next?
-{@kevin}	First let's exit the ship and head over to Site V.
-
-
-:: navigation
+:: enterSite
 @trigger    SceneStart
-@when       scene:name == "Station2"
+@when       scene:name == "RS-2S"
 @once
 @cutscene
-{@kevin} 	Site V should be to the east of the ship, let's go!
+$set jobs:coral-fake-fix.seen.site = true
+{@kevin} 	We have three things to do while we're down here. Check the job description to see what they are.
+			Let's get to it!
 
-:: helpGoToSiteV
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == false
+:: helpEnterSite
+@trigger	RequestPartnerHelp
+@when		!jobs:coral-fake-fix.seen.site, !JobTaskTop(argue)
+@once
 @cutscene
-{@player} 	Where should I be going again?
-{@kevin}	Site V should be to the east of the ship.
-{@kevin}	Let's head over there and dive down. 
+{@kevin}	Go to Site S to scan the artificial reef and find the current and historical coral population.
 
-
-:: gotScans
-@trigger    JobTasksUpdated
-@when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), jobs:coral-fishy-bizz.gotScans == false
+:: helpScanPop
+@trigger	RequestPartnerHelp
+@when		!JobTaskCompleted(scanProbes)
 @cutscene
-$set jobs:coral-fishy-bizz.gotScans = true
-{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
+{@kevin}	There's another thing to do before we surface: collect the population probe data.
 
-:: helpAtSiteV
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-2V"
+:: helpCount
+@trigger	RequestPartnerHelp
+@when		!JobTaskCompleted(countPopulation)
 @cutscene
-{@player} 	What should I be looking for here?
-$if HasEntity(Fishers)
-	$if HasFact(RedGrouper.Reproduce)
-		$if HasFact(ReefEdge.PopulationHistory.Fishers)
-			{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
-		$else
-			{@kevin} 	Did you try scanning the population probe yet? Some of the data we need should be in there.
-		$endif
-	$else
-		{@kevin} 	Looks like we still need the Red Grouper.
-		{@kevin} 	Try seeing if you can find any swimming around. 
-	$endif
+{@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and artificial reefs using your Counting tool.
+
+:: siteCompleted
+@trigger	JobTasksUpdated
+@when		JobTaskTop(argue)
+@once
+@cutscene
+{@kevin}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
+
+:: helpSurface
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(argue), scene:name == "RS-2S"
+@cutscene
+{@kevin}	You're ready to present your findings. Surface and get back to the Comms room on the ship.
+
+:: helpReturnArgue
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(argue)
+@cutscene
+$if scene:name != "Ship"
+	{@kevin}	Get back to the ship so you can make your case.
 $else
-	$if HasFact(RedGrouper.Reproduce)
-		{@kevin} 	Looks like we still need some info on the fishers. 
-		{@kevin} 	Try scanning some of those nets near the surface.
-	$else
-		{@kevin} 	First, we need to scan some Red Grouper and the Fisher nets.
-		{@kevin} 	Drive around and see if you can find them!
-	$endif
+	{@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 $endif
 
-:: helpBackToShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == true
-@boostScore 2
-@cutscene
-{@player} 	Where should I be going again?
-{@kevin}	We've got all the scans we need from Site V, so let's head back west to the ship.
+// ARGUMENTATION
 
 
-:: backAtShip
-@trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == true
-@once
-@cutscene
-{@kevin}   	Let's head to the {nameof Modeling} and see if we can understand how the Grouper's population and Fisher population interacts.
-
-:: helpAfterExperiment
-@trigger    RequestPartnerHelp
-@when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(ReefEdge.Model.GrouperFishingRate)
-@cutscene
-{@player} 	What should we be doing next?
-{@kevin}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
 
 
-::ModelHelp1
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(ReefEdge.Model.GrouperFishingRate)
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
 
 
-:: modelGetSync
-@trigger	SimulationModelStarted
-@once
-@cutscene
-{@kevin} 	Time to match up the historical data again.
-
-::ModelHelp2
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(ReefEdge.Model.GrouperFishingRate)
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
 
 
-:: modelSyncedImmediate
-@trigger	SimulationSyncSuccess
-@who        kevin
-@once
-@chatter
-{@kevin} 	Nice!
-
-::ModelHelp3
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == , !HasFact(SargassumCoveredReef.Model.LightPrediction)
-@cutscene
-{@player} 	What should I do next?
-{@kevin}	The graph now shows a prediction of how the Fisher population affects the Grouper population. 
-{@kevin}	Try moving things around until the populations match the target on the right.
-{@kevin}	Then, hit "Save Prediction" to move on.
-
-
-:: modelingGraphComplete
-@trigger	SimulationInterveneSuccess
-@once
-@cutscene
-{@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
-{@kevin}	Let's report this back to Professor Cempaka.
-
-:: helpReportBack
-@trigger    RequestPartnerHelp
-@when 		HasFact(Urchin.Eats.Sargassum)
-@cutscene
-{@player} 	What should we be doing now?
-{@kevin}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
-$if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
-
-//ARGUMENT
 
 :: argue.intro
 @trigger    TryArgumentation

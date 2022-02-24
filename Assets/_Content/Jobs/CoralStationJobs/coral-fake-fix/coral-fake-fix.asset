@@ -48,7 +48,13 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-fake-fix.task.findReef
       m_HashValue: 582871392
-    Steps: []
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: ArtificialReef
+        m_HashValue: 3177283071
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: scanProbes
@@ -59,14 +65,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.Fishers
-        m_HashValue: 3141005769
+        m_Source: LionfishInvasion.PopulationHistory.Lionfish
+        m_HashValue: 1443959053
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_HashValue: 45586372
+        m_Source: LionfishInvasion.PopulationHistory.Fishers
+        m_HashValue: 526148177
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -79,8 +85,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.StaghornCoral
-        m_HashValue: 1420826750
+        m_Source: LionfishInvasion.Population.StaghornCoral
+        m_HashValue: 2930305062
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -112,7 +118,13 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-fake-fix.task.findReef
       m_HashValue: 582871392
-    Steps: []
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: ArtificialReef
+        m_HashValue: 3177283071
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
       m_Source: scanProbes
@@ -124,14 +136,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.Fishers
-        m_HashValue: 3141005769
+        m_Source: LionfishInvasion.PopulationHistory.Lionfish
+        m_HashValue: 1443959053
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_HashValue: 45586372
+        m_Source: LionfishInvasion.PopulationHistory.Fishers
+        m_HashValue: 526148177
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -145,8 +157,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.StaghornCoral
-        m_HashValue: 1420826750
+        m_Source: LionfishInvasion.Population.StaghornCoral
+        m_HashValue: 2930305062
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
