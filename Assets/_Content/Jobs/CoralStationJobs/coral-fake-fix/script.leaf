@@ -8,7 +8,6 @@ $branch common.ringPhone
 
 {@kevin}	Okay -- to prove that the artifical reefs are working, you would need evidence that the artificial reefs are still there,
 			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
-$set jobs:coral-fake-fix.seen.site = false
 
 // SCANNING
 
@@ -17,32 +16,37 @@ $set jobs:coral-fake-fix.seen.site = false
 @when       scene:name == "RS-2S"
 @once
 @cutscene
-$set jobs:coral-fake-fix.seen.site = true
 {@kevin} 	We have three things to do while we're down here. Check the job description to see what they are.
 			Let's get to it!
+			
+:: grantPopulation
+@trigger	BestiaryEntryAdded
+@when		HasEntity(ArtificialReef)
+@once
+@cutscene
+$call GiveFact(LionfishInvasion.Population.ArtificialReef)
 
 :: helpEnterSite
 @trigger	RequestPartnerHelp
-@when		!jobs:coral-fake-fix.seen.site, !JobTaskTop(argue)
-@once
+@when		!HasEntity(ArtificialReef), !JobTaskTop(argue), scene:name != "RS-2S"
 @cutscene
 {@kevin}	Go to Site S to scan the artificial reef and find the current and historical coral population.
 
 :: helpScanPop
 @trigger	RequestPartnerHelp
-@when		!JobTaskCompleted(scanProbes)
+@when		scene:name == "RS-2S", !JobTaskCompleted(scanProbes)
 @cutscene
 {@kevin}	There's another thing to do before we surface: collect the population probe data.
 
 :: helpCount
 @trigger	RequestPartnerHelp
-@when		!JobTaskCompleted(countPopulation)
+@when		scene:name == "RS-2S", !JobTaskCompleted(countPopulation)
 @cutscene
 {@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and artificial reefs using your Counting tool.
 
 :: siteCompleted
 @trigger	JobTasksUpdated
-@when		JobTaskTop(argue)
+@when		scene:name == "RS-2S", JobTaskTop(argue)
 @once
 @cutscene
 {@kevin}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
@@ -55,81 +59,105 @@ $set jobs:coral-fake-fix.seen.site = true
 
 :: helpReturnArgue
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue)
+@when		JobTaskTop(argue), scene:name != "Ship"
 @cutscene
-$if scene:name != "Ship"
-	{@kevin}	Get back to the ship so you can make your case.
-$else
-	{@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
-$endif
+{@kevin}	Get back to the ship so you can make your case.
+
+:: helpReturnArgue2
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(argue), scene:name == "Ship"
+@cutscene
+{@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
+
 
 // ARGUMENTATION
 
-
-
-
-
-
-
-
-
 :: argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralFishyBizzArgue)
+@when   !ArgueIsComplete(coralFakeFixArgue)
 @cutscene
-$call ArgueLoad(coralFishyBizzArgue)
-$branch .argue.chooseEvidence
+$branch .argue.chooseClaim
 
-:: argue.chooseEvidence
-$if HasFact(ReefEdge.Model.GrouperFishingRate)
-	{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
-		$choice .argue.claimSome; We can reduce fishing by 12 fishers.
-		$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
-		$choice .argue.claimNone; We can't fish here at all.
-	$choose branch	
-$else
-	{@profCempaka}	Back so soon? I don't think you've had enough time to look into this thoroughly.
-					Come back when you've made a model.
+:: argue.chooseClaim
+{@profCempaka}	Have the artificial reefs improved coral populations?
+	$choice .argue.claimNoHelp; The artificial reefs have not helped.
+	$choice .argue.claimHelp; The artificial reefs helped!
+$choose branch	
+
+// BRANCH: NO HELP
+
+:: argue.claimNoHelp
+{@profCempaka}	How do you know?
+$call ArgueLoad(coralFakeFixArgue)
+$if ArgueSetClaim(coralFakeFixArgueClaim, jobs.coral-fake-fix.argue.claimLabel)
+		$call ArgueFactSlot(LionfishInvasion.Population.ArtificialReef)
+		$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
 $endif
-
-
-:: argue.claimNone
-{@profCempaka} Hold on, we've been fishing here for centuries! Please check your data.
-
-:: argue.claimTooMany
-{@profCempaka} That doesn't seem like it'd have an impact... Go check your evidence again and come back to me.
-
-:: argue.claimSome
-{@profCempaka} Not too many... seems reasonable. What evidence do you have to show to support that?
-$goto .argue.defendClaim
-
-:: argue.defendClaim
-$if ArgueSetClaim(coralFishyBizzArgueClaim, jobs.coral-fishy-bizz.argue.claimLabel)
-			$call ArgueFactSlot(ReefEdge.Model.GrouperFishingRate)
-$endif
-
 $call ArgueDisplayClaim()
+$goto .argue.chooseFactsNoHelp
+
+:: argue.chooseFactsNoHelp
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFacts
+		$answer correct, .argue.correctFactsAB
 		$answer incorrect, .argue.incorrectFacts
 $choice .argue.giveUp; Let me get back to you
 
-:: argue.correctFacts
+:: argue.correctFactsAB
 $call ArgueComplete()
-{@profCempaka} Excellent! This is exactly what they need to see!
+{@profCempaka}	I see. The artificial reefs really have no effect.
 $call CompleteJob()
 
 :: argue.incorrectFacts
-$if ArgueIsFactSubmitted(Model.TurtleVisual)
-	{@profCempaka} I see how that might be related, but I need a model to show how many fishers we can support.
+$if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.StaghornCoral)
+	// B only
+	{@profCempaka}	The coral seem to be continuing to stay the same.
+					Was the installation successful? Are the artificial reefs still there?
+	$call ArgueClearFacts()
+	$call ArgueSubmitFact(LionfishInvasion.PopulationHistory.StaghornCoral)
+	$goto .argue.chooseFactsNoHelp
 $else
-	{@profCempaka} Hmmm... Got anything else?
+	$if ArgueIsFactSubmitted(LionfishInvasion.Population.ArtificialReef)
+		// A only 
+		{@profCempaka}	I see the installation was successful. How are the coral affected?
+		$call ArgueClearFacts()
+		$call ArgueSubmitFact(LionfishInvasion.Population.ArtificialReef)
+		$goto .argue.chooseFactsNoHelp
+	$else
+		// neither
+		{@profCempaka}	I don't think that is important for answering this question.
+		$call ArgueRejectIncorrect()
+		$call ArgueClearFacts()
+		$call ArgueHideClaim()
+	$endif
 $endif
 
-$call ArgueRejectIncorrect()
-$goto .argue.defendClaim
-
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCempaka}	OK. Get back to me when you're ready.
 
-:: end
+// BRANCH: HELP
+
+:: argue.claimHelp
+{@profCempaka}	Can you show me the historic coral populations?
+$call ArgueLoad(coralFakeFixIncorrectArgue)
+$if ArgueSetClaim(coralFakeFixIncorrectArgueClaim, jobs.coral-fake-fix.argue.claimLabelIncorrect)
+			$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFactsIncorrect
+		$answer incorrect, .argue.incorrectFactsIncorrect
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.correctFactsIncorrect
+{@profCempaka}	This shows the coral populations staying the same. I think you should reconsider your claim.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$call ArgueHideClaim()
+$goto .argue.chooseClaim
+
+:: argue.incorrectFactsIncorrect
+{@profCempaka}	These aren't the historic coral populations. Are you reconsidering your claim?
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$call ArgueHideClaim()
+$goto .argue.chooseClaim
