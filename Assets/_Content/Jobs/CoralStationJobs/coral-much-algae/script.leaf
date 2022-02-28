@@ -113,61 +113,55 @@ $endif
 @cutscene
 {@kevin} 	Return to the Office and describe your results to {nameof profCempaka}.
 
-
-
-
-
-
 :: argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(coralFakeFixArgue)
+@when   !ArgueIsComplete(coralMuchAlgaeArgue)
 @cutscene
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-{@profCempaka}	Have the artificial reefs improved coral populations?
-	$choice .argue.claimNoHelp; The artificial reefs have not helped.
-	$choice .argue.claimHelp; The artificial reefs helped!
-$choose branch	
+{@profCempaka}	Why is there so much algae at Site S?
+	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
+	$choice .argue.claimLionfishQuicken; The lionfish are making it grow faster!
+	$choice .argue.giveUp; Let me get back to you.
+$choose branch
 
-// BRANCH: NO HELP
 
-:: argue.claimNoHelp
-{@profCempaka}	How do you know?
-$call ArgueLoad(coralFakeFixArgue)
-$if ArgueSetClaim(coralFakeFixArgueClaim, jobs.coral-fake-fix.argue.claimLabel)
-		$call ArgueFactSlot(LionfishInvasion.Population.ArtificialReef)
-		$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
+// BRANCH: SPARSE FISH
+
+:: argue.claimSparseFish
+{@profCempaka}	What is supposed to eat the turf algae?
+$call ArgueLoad(coralMuchAlgaeArgue)
+$if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
+		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
+		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
 $endif
 $call ArgueDisplayClaim()
-$goto .argue.chooseFactsNoHelp
+$goto .argue.chooseFactsSparseFish
 
-:: argue.chooseFactsNoHelp
+:: argue.chooseFactsSparseFish
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFactsAB
+		$answer correct, .argue.correctFacts
 		$answer incorrect, .argue.incorrectFacts
 $choice .argue.giveUp; Let me get back to you
 
-:: argue.correctFactsAB
+:: argue.correctFacts
 $call ArgueComplete()
-{@profCempaka}	I see. The artificial reefs really have no effect.
+{@profCempaka}	It looks like the {nameof BlueTang} are not eating enough of the algae. We should look into why.
 $call CompleteJob()
 
 :: argue.incorrectFacts
-$if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.StaghornCoral)
-	// B only
-	{@profCempaka}	The coral seem to be continuing to stay the same.
-					Was the installation successful? Are the artificial reefs still there?
-	$call ArgueClearFacts()
-	$call ArgueSubmitFact(LionfishInvasion.PopulationHistory.StaghornCoral)
-	$goto .argue.chooseFactsNoHelp
+$if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
+	// A only
+	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
+	$goto .argue.correctFacts
 $else
-	$if ArgueIsFactSubmitted(LionfishInvasion.Population.ArtificialReef)
-		// A only 
-		{@profCempaka}	I see the installation was successful. How are the coral affected?
+	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+		// B only 
+		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Did you model this?
 		$call ArgueClearFacts()
-		$call ArgueSubmitFact(LionfishInvasion.Population.ArtificialReef)
-		$goto .argue.chooseFactsNoHelp
+		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae)
+		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither
 		{@profCempaka}	I don't think that is important for answering this question.
@@ -180,29 +174,22 @@ $endif
 :: argue.giveUp
 {@profCempaka}	OK. Get back to me when you're ready.
 
-// BRANCH: HELP
+// BRANCH: LIONFISH QUICKEN
 
-:: argue.claimHelp
-{@profCempaka}	Can you show me the historic coral populations?
-$call ArgueLoad(coralFakeFixIncorrectArgue)
-$if ArgueSetClaim(coralFakeFixIncorrectArgueClaim, jobs.coral-fake-fix.argue.claimLabelIncorrect)
-			$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
+:: argue.claimLionfishQuicken
+{@profCempaka}	Ugh, creepy buggers! Do you have an experiment that shows this?
+$call ArgueLoad(coralMuchAlgaeIncorrectArgue)
+$if ArgueSetClaim(coralMuchAlgaeIncorrectArgueClaim, jobs.coral-much-algae.argue.claimLabelIncorrect)
+			$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFactsIncorrect
+		$answer correct, .argue.incorrectFactsIncorrect
 		$answer incorrect, .argue.incorrectFactsIncorrect
 $choice .argue.giveUp; Let me get back to you
 
-:: argue.correctFactsIncorrect
-{@profCempaka}	This shows the coral populations staying the same. I think you should reconsider your claim.
-$call ArgueRejectIncorrect()
-$call ArgueClearFacts()
-$call ArgueHideClaim()
-$goto .argue.chooseClaim
-
 :: argue.incorrectFactsIncorrect
-{@profCempaka}	These aren't the historic coral populations. Are you reconsidering your claim?
+{@profCempaka}	Hmmmm... Maybe that's not the case.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueHideClaim()
