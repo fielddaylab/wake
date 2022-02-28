@@ -24,6 +24,12 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 {@kevin}	We need to see if we can locate the Linda.
             Why don't you check your AQOS to see her last known location.
 
+:: helpDetritusPop
+@trigger    RequestPartnerHelp
+@when 		HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
+@cutscene
+{@kevin}	Detritus, huh? How much did you scan? A whale amount? 
+            
 :: gotScans
 @trigger    JobTasksUpdated
 @once
@@ -53,7 +59,7 @@ $choose branch
 
 :: argue.showClaim
 $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel) 
-    $call ArgueFactSlot() // TODO: put fact slot info here 
+    $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
@@ -80,6 +86,6 @@ $goto .argue.showClaim
 $call ArgueComplete()
 {@profWhalen}   Oh. With both pieces of evidence... Well, that's unfortunate.
                 I'm sure she will be missed by her pod. I wonder who will take over as leader...
-                Anywho, thanks for letting us know.
+                Anyhow, thanks for letting us know.
 
 $call CompleteJob()

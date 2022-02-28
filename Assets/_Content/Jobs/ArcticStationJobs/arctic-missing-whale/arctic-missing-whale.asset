@@ -33,7 +33,9 @@ MonoBehaviour:
   m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs: []
   m_PrereqConditions: 
-  m_PrereqUpgrades: []
+  m_PrereqUpgrades:
+  - m_HashValue: 3082617054
+  - m_HashValue: 3188184158
   m_StationId:
     m_HashValue: 1297447963
   m_DiveSiteIds:
@@ -54,10 +56,16 @@ MonoBehaviour:
       m_Source: jobs.arctic-missing-whale.task.findWhale
       m_HashValue: 3913478049
     Steps:
-    - Type: 7
+    - Type: 0
       Target:
-        m_Source: RS-4W.deadWhale
-        m_HashValue: 1529514489
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Detritus
+        m_HashValue: 137724124
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -97,10 +105,16 @@ MonoBehaviour:
       m_Source: jobs.arctic-missing-whale.task.findWhale
       m_HashValue: 3913478049
     Steps:
-    - Type: 7
+    - Type: 0
       Target:
-        m_Source: RS-4W.deadWhale
-        m_HashValue: 1529514489
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Detritus
+        m_HashValue: 137724124
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

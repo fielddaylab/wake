@@ -409,7 +409,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 90493120}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -905,7 +905,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664047455}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2091,7 +2091,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 945276206}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2317,6 +2317,29 @@ MonoBehaviour:
   Height: 12
   Zoom: 1
   Properties: 7
+--- !u!1 &1107922419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6424201698546296619, guid: 11e0ac642d80fc341adcb70fdf38b8e4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1561038694}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1107922421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107922419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff09b0b9689b8a743896b388ea3e48e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Conditions: JobCompleted(arctic-missing-whale)
+  m_ToShow:
+  - {fileID: 1107922419}
+  m_ToHide: []
+  m_ContinuousCheck: 1
 --- !u!224 &1140600897 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7110643563213967538, guid: 5ebeb58f9f244d84198594d42df504e0,
@@ -3903,7 +3926,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1831055347}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
