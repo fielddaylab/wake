@@ -49,19 +49,20 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.whatMissing
-$call ArgueUnload()
+$call ArgueComplete()
 $call ArgueLoad(jellyTurtle) 
 {@profHarper}   I see. Nicely done! How have you increased the accuracy of your model?
+$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle) 
+$call ArgueFactSlot(LoggerheadTurtle.Eats.QueenConch) 
 $goto .argue.chooseFacts
 
 :: argue.chooseFacts
-$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle) 
-$call ArgueFactSlot(LoggerheadTurtle.Eats.QueenConch) 
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
+$choice #argueFact; Present facts from AQOS
     $answer ReefEdge.Population.LoggerheadTurtle, .argue.jellyPop
     $answer LoggerheadTurtle.Eats.QueenConch, .argue.turtleEat
-    $answer incorrect, .argue.unrelated
+    $answer *, .argue.unrelated3
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
@@ -100,6 +101,11 @@ $call ArgueRejectIncorrect()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
 $goto .argue.chooseFactsDummy
 
+:: argue.unrelated3
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.chooseFacts
+
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
@@ -107,7 +113,7 @@ $call ArgueCancelClaim()
 // END
 :: argue.rejectClaim
 {@profHarper}   Hmmm... I'm not sure the data matches up with your claim.
-                Why don't you double check your observations and revisit your claim.
+               ?Why don't you double check your observations and revisit your claim.
 $call ArgueRejectIncorrect()
 $call ArgueCancelClaim()
 
