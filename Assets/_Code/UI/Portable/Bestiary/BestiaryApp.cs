@@ -9,6 +9,7 @@ using BeauUtil.Debugger;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using EasyAssetStreaming;
 
 namespace Aqua.Portable {
     public sealed class BestiaryApp : PortableMenuApp {

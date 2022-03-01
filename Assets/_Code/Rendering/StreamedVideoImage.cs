@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections;
 using BeauRoutine;
 using UnityEngine.Video;
+using EasyAssetStreaming;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif // UNITY_EDITOR
@@ -24,7 +25,7 @@ namespace Aqua {
 
         [SerializeField] private RawImage m_RawImage;
         [SerializeField] private VideoPlayer m_VideoPlayer;
-        [SerializeField, StreamingPath("mp4,webm")] private string m_Url;
+        [SerializeField, StreamingVideoPath] private string m_Url;
         [SerializeField, AutoEnum] private AutoSizeMode m_AutoSizeMode = AutoSizeMode.StretchX;
         [SerializeField] private GameObject m_LoadingIndicator = null;
 
@@ -92,7 +93,7 @@ namespace Aqua {
 
             if (!string.IsNullOrEmpty(m_Url)) {
                 m_VideoPlayer.enabled = true;
-                m_VideoPlayer.url = Streaming.RelativeStreamingPathToURL(m_Url);
+                m_VideoPlayer.url = Streaming.ResolvePathToURL(m_Url);
                 m_VideoPlayer.Prepare();
                 if (m_VideoPlayer.isPrepared) {
                     m_LoadingRoutine.Stop();

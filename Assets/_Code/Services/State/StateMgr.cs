@@ -15,6 +15,7 @@ using BeauUtil.Variants;
 using Aqua.Debugging;
 using BeauUtil.Services;
 using Leaf.Runtime;
+using EasyAssetStreaming;
 
 namespace Aqua
 {
@@ -411,7 +412,10 @@ namespace Aqua
             }
             using(Profiling.Time("unload unused assets"))
             {
-                yield return Streaming.UnloadUnusedAsync();
+                Streaming.UnloadUnusedAsync();
+                while(Streaming.IsUnloading()) {
+                    yield return null;
+                }
                 yield return Resources.UnloadUnusedAssets();
             }
         }

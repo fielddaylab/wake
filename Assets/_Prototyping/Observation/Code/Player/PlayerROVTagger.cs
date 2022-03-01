@@ -95,7 +95,7 @@ namespace ProtoAqua.Observation
             return false;
         }
 
-        public Vector3? GetTargetPosition()
+        public Vector3? GetTargetPosition(bool inbOnGamePlane)
         {
             return null;
         }

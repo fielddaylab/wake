@@ -43,7 +43,7 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob, scene:name == "JobBoard", AnyJobsAvailable()
 @repeat     1
 @cutscene
-{@player}   Um.... what was I supposed to do?  
+{@player}   {random Um|Uh}... what was I supposed to do?  
 {@kevin}    Select the job on the left, then accept it on the right!
 
 :: noJob.atJobBoard.someInProgress
@@ -75,7 +75,7 @@ $set    kevin:knowsJobs = true
 @trigger        RequestPartnerHelp
 @cutscene
 @boostScore -500
-{@player}       Uh, Kevin? Any idea what I should be doing?
+{@player}       {random Uh|Hey}, Kevin? Any idea what I should be doing?
 {@kevin #confused}
         Oh, well, uh... I don't have anything specific.
         {#} But I'd look back at what the job-giver had to tell us.

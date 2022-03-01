@@ -127,11 +127,14 @@ namespace ProtoAqua.Observation
             return m_TargetScannable != null;
         }
 
-        public Vector3? GetTargetPosition()
+        public Vector3? GetTargetPosition(bool inbOnGamePlane)
         {
             if (m_TargetScannable != null && m_TargetScannable.isActiveAndEnabled)
             {
-                return m_TargetScannable.Collider.transform.position;
+                if (inbOnGamePlane)
+                    return m_TargetScannable.Collider.transform.position;
+                else
+                    return m_TargetScannable.transform.position;
             }
 
             return null;

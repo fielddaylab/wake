@@ -1,15 +1,7 @@
-using System;
 using UnityEngine;
-using BeauUtil;
-using System.Collections;
 
-namespace Aqua {
-
-    /// <summary>
-    /// Rendering utility methods.
-    /// </summary>
-    static public class RenderUtils {
-
+namespace EasyAssetStreaming {
+    static internal class MeshGeneration {
         #region Quad
 
         static private readonly Vector3[] s_QuadGeneratorVertices = new Vector3[4];
@@ -22,7 +14,7 @@ namespace Aqua {
         /// <summary>
         /// Generates a quad mesh.
         /// </summary>
-        static public Mesh CreateQuad(Vector2 inSize, Vector2 inPivot, Color32 inColor, Mesh ioOverwrite = null) {
+        static public Mesh CreateQuad(Vector2 inSize, Vector2 inPivot, Color32 inColor, Rect uv, Mesh ioOverwrite = null) {
             Mesh mesh = ioOverwrite;
             if (mesh == null) {
                 mesh = new Mesh();
@@ -43,6 +35,14 @@ namespace Aqua {
             s_QuadGeneratorColors[1] = inColor;
             s_QuadGeneratorColors[2] = inColor;
             s_QuadGeneratorColors[3] = inColor;
+
+            float u0 = uv.xMin, u1 = uv.xMax,
+                v0 = uv.yMin, v1 = uv.yMax;
+
+            s_QuadGeneratorUVs[0] = new Vector2(u0, v0);
+            s_QuadGeneratorUVs[1] = new Vector2(u0, v1);
+            s_QuadGeneratorUVs[2] = new Vector2(u1, v0);
+            s_QuadGeneratorUVs[3] = new Vector2(u1, v1);
 
             mesh.SetVertices(s_QuadGeneratorVertices);
             mesh.SetColors(s_QuadGeneratorColors);
