@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using EasyAssetStreaming;
 using Leaf;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Aqua
         [Header("Display")]
         [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private Sprite m_Icon = null;
-        [SerializeField, StreamedImagePath] private string m_HiResIconPath = null;
+        [SerializeField, StreamingImagePath] private string m_HiResIconPath = null;
         [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
 
         [Header("Text")]

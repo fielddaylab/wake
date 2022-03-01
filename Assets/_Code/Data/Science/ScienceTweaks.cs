@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aqua.Profile;
 using BeauData;
 using BeauUtil;
+using EasyAssetStreaming;
 using UnityEngine;
 
 namespace Aqua {
@@ -12,8 +13,8 @@ namespace Aqua {
         #region Inspector
 
         [SerializeField] private Sprite m_LevelIcon = null;
-        [SerializeField, StreamedImagePath] private string m_HiResLevelIconPath = null;
-        [SerializeField, StreamedImagePath] private string m_HiResLevelUpPath = null;
+        [SerializeField, StreamingImagePath] private string m_HiResLevelIconPath = null;
+        [SerializeField, StreamingImagePath] private string m_HiResLevelUpPath = null;
 
         [Header("Experience")]
         [SerializeField] private uint m_BaseExperiencePerLevel = 20;

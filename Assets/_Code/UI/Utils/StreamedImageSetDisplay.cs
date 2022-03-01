@@ -2,13 +2,14 @@ using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using EasyAssetStreaming;
 
 namespace Aqua {
     public class StreamedImageSetDisplay : MonoBehaviour {
         
         [Header("Streamed")]
         [Required] public GameObject StreamedGroup;
-        [Required] public StreamedRawImage Streamed;
+        [Required] public StreamingUGUITexture Streamed;
         
         [Header("Fallback")]
         public GameObject FallbackGroup;
@@ -62,21 +63,21 @@ namespace Aqua {
             group.SetActive(false);
         }
 
-        static private void ShowStreaming(StreamedRawImage image, GameObject group, string url) {
+        static private void ShowStreaming(StreamingUGUITexture image, GameObject group, string url) {
             if (!image) {
                 return;
             }
 
-            image.URL = url;
+            image.Path = url;
             group.SetActive(true);
         }
 
-        static private void HideStreaming(StreamedRawImage image, GameObject group) {
+        static private void HideStreaming(StreamingUGUITexture image, GameObject group) {
             if (!image) {
                 return;
             }
 
-            image.URL = null;
+            image.Path = null;
             group.SetActive(false);
         }
 

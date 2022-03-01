@@ -15,6 +15,7 @@ using BeauUtil.Variants;
 using Aqua.Debugging;
 using BeauUtil.Services;
 using Leaf.Runtime;
+using EasyAssetStreaming;
 
 namespace Aqua
 {
@@ -383,6 +384,19 @@ namespace Aqua
                 }
             }
 
+            using(PooledList<IStreamingComponent> allStreamingComponents = PooledList<IStreamingComponent>.Create())
+            {
+                inScene.Scene.GetAllComponents<IStreamingComponent>(true, allStreamingComponents);
+                if (allStreamingComponents.Count > 0)
+                {
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing streaming steps for scene '{0}'", inScene.Path);
+                    foreach(var stream in allStreamingComponents)
+                    {
+                        stream.Preload();
+                    }
+                }
+            }
+
             while(Streaming.IsLoading()) {
                 yield return null;
             }
@@ -411,7 +425,10 @@ namespace Aqua
             }
             using(Profiling.Time("unload unused assets"))
             {
-                yield return Streaming.UnloadUnusedAsync();
+                Streaming.UnloadUnusedAsync();
+                while(Streaming.IsUnloading()) {
+                    yield return null;
+                }
                 yield return Resources.UnloadUnusedAssets();
             }
         }

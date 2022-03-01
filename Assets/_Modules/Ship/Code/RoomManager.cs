@@ -5,6 +5,7 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using EasyAssetStreaming;
 using UnityEngine;
 
 namespace Aqua.Ship

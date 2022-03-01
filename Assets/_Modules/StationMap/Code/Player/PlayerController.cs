@@ -30,10 +30,10 @@ namespace Aqua.StationMap
             PlayerInput.Input input;
             m_Input.GenerateInput(out input);
 
-            if (input.Move && input.Mouse.NormalizedOffset.sqrMagnitude > 0)
+            if (input.Move && input.MovementVector.sqrMagnitude > 0)
             {
-                m_MoveParams.Apply(input.Mouse.NormalizedOffset, m_Kinematics, inDeltaTime);
-                m_RotateParams.Apply(input.Mouse.NormalizedOffset, m_Transform, inDeltaTime);
+                m_MoveParams.Apply(input.MovementVector, m_Kinematics, inDeltaTime);
+                m_RotateParams.Apply(input.MovementVector, m_Transform, inDeltaTime);
 
                 m_Kinematics.Config.Drag = m_DragEngineOn;
             }

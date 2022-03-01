@@ -19,9 +19,9 @@ namespace Aqua {
             JobDB db = Services.Assets.Jobs;
             ListSlice<JobDesc> stationJobs = default;
             ListSlice<JobDesc> commonJobs = default;
+            StringHash32 stationId = saveData.Map.CurrentStationId();
 
             if (!ignoreLocation) {
-                StringHash32 stationId = saveData.Map.CurrentStationId();
                 stationJobs = db.JobsForStation(stationId);
                 commonJobs = db.CommonJobs();
             } else {
@@ -40,6 +40,14 @@ namespace Aqua {
             foreach(var job in commonJobs) {
                 status = GetJobStatus(job, saveData, true);
                 if ((status.Status & JobStatusFlags.Visible) != 0) {
+                    yield return status;
+                }
+            }
+
+            if (!ignoreLocation) {
+                status = Save.CurrentJob;
+                if (status.IsValid && status.Job.StationId() != stationId) {
+                    status = GetJobStatus(status.Job, saveData, false);
                     yield return status;
                 }
             }
@@ -156,7 +164,7 @@ namespace Aqua {
                 // if not at station, and we're considering location, not visible
                 if (!ignoreLocation) {
                     StringHash32 stationId = job.StationId();
-                    if (!stationId.IsEmpty && saveData.Map.CurrentStationId() != stationId) {
+                    if ((status.Status & JobStatusFlags.Active) == 0 && !stationId.IsEmpty && saveData.Map.CurrentStationId() != stationId) {
                         status.Status &= ~JobStatusFlags.Mask_Available;
                         return status;
                     }
