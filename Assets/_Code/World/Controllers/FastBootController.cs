@@ -12,7 +12,7 @@ namespace Aqua
             int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
             SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
             Async.Invoke(() => {
-                Services.State.LoadScene(nextScene, null, null, SceneLoadFlags.NoLoadingScreen);
+                Services.State.LoadScene(nextScene, null, null);
             });
         }
     }

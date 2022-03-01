@@ -122,6 +122,7 @@ namespace Aqua.Ship
             using(var fader = Services.UI.WorldFaders.AllocWipe())
             {
                 yield return fader.Object.Show();
+                LoadingIcon.Queue();
                 m_CurrentRoom.Exit();
                 m_CurrentRoom = inNextRoom;
                 yield return 0.15f;
@@ -134,6 +135,7 @@ namespace Aqua.Ship
                 while(Streaming.IsLoading()) {
                     yield return null;
                 }
+                LoadingIcon.Cancel();
                 yield return fader.Object.Hide(false);
             }
 

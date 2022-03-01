@@ -54,7 +54,7 @@ namespace AquaAudio
         private AudioPropertyBlock[] m_BusMixes;
 
         private AudioHandle m_BGM;
-        private float m_FadeMultiplier;
+        private float m_FadeMultiplier = 1;
         private Routine m_FadeMultiplierRoutine;
 
         #region IService

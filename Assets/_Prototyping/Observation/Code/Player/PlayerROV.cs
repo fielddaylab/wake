@@ -154,7 +154,7 @@ namespace ProtoAqua.Observation
             velocityHintData.WeightOffset = m_CameraForwardLookWeight;
             velocityHintData.Offset = m_Kinematics.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove);
 
-            if (m_Moving && m_LastInputData.UseHold)
+            if (m_Moving && m_LastInputData.UseHold && !m_LastInputData.Keyboard.KeyDown)
             {
                 float amt = m_LastInputData.Mouse.NormalizedOffset.magnitude;
                 m_WorldUI.ShowMoveArrow(m_LastInputData.Mouse.RawOffset, amt);

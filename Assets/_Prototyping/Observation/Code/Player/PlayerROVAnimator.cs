@@ -82,8 +82,13 @@ namespace ProtoAqua.Observation
             Quaternion target = CalculateDesiredRotation();
             Quaternion now = m_Root.localRotation;
 
-            Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Routine.DeltaTime));
-            m_Root.localRotation = lerp;
+            if (now != target) {
+                Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Routine.DeltaTime));
+                if (lerp == target) {
+                    lerp = target;
+                }
+                m_Root.localRotation = lerp;
+            }
         }
 
         private Quaternion CalculateDesiredRotation() {
@@ -91,6 +96,8 @@ namespace ProtoAqua.Observation
             Vector3 targetLookVec = default;
             if (m_LookTarget.HasValue) {
                 targetLookVec = Vector3.Normalize(m_LookTarget.Value - m_LastInputState.Position);
+                float down = Mathf.Abs(Vector3.Dot(targetLookVec, Vector3.down));
+                targetLookVec = Vector3.Lerp(targetLookVec, targetLookVec.z > 0 ? Vector3.forward : Vector3.back, down * 0.5f);
                 targetLookVec.y = Mathf.Clamp(targetLookVec.y, -m_PitchMultiplier, m_PitchMultiplier);
             } else {
                 targetLookVec.x = Facing.X(m_Facing);

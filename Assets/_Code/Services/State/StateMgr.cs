@@ -240,7 +240,6 @@ namespace Aqua
             RecordCurrentMapAsSeen(active);
 
             m_SceneLock = false;
-            Services.UI.HideLoadingScreen();
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
 
@@ -259,7 +258,6 @@ namespace Aqua
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
-            bool bShowLoading = (inFlags & SceneLoadFlags.NoLoadingScreen) == 0;
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
             if (bShowCutscene)
             {
@@ -268,11 +266,6 @@ namespace Aqua
 
             if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
                 Services.Events.Dispatch(GameEvents.SceneWillUnload);
-
-            if (bShowLoading)
-            {
-                yield return Services.UI.ShowLoadingScreen();
-            }
 
             // if we started from another scene than the boot or title scene
             if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
@@ -333,10 +326,6 @@ namespace Aqua
 
             m_SceneLock = false;
 
-            if (bShowLoading)
-            {
-                Services.UI.HideLoadingScreen();
-            }
             if (bShowCutscene)
             {
                 Services.UI.HideLetterbox();
@@ -688,8 +677,8 @@ namespace Aqua
             m_SceneLoadRoutine.Replace(this, InitialSceneLoad());
             m_SceneLock = true;
 
-            if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
-                Services.UI.ForceLoadingScreen();
+            // if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
+            //     Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
         }
@@ -734,7 +723,8 @@ namespace Aqua
             Services.UI.HideAll();
             Services.Script.KillAllThreads();
             Services.Audio.StopAll();
-            Services.State.LoadScene(inBinding);
+            StateUtil.LoadSceneWithWipe(inBinding.Name);
+            DebugService.Hide();
         }
 
         static private void DebugReloadScene()
@@ -742,7 +732,8 @@ namespace Aqua
             Services.UI.HideAll();
             Services.Script.KillAllThreads();
             Services.Audio.StopAll();
-            Services.State.ReloadCurrentScene();
+            StateUtil.LoadSceneWithWipe(SceneHelper.ActiveScene().Name);
+            DebugService.Hide();
         }
 
         private struct DumpSceneHierarchyRecord
@@ -813,16 +804,6 @@ namespace Aqua
         static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
-            if (inLoadingMode == "no-loading-screen")
-            {
-                flags |= SceneLoadFlags.NoLoadingScreen;
-            }
-            
-            if ((flags & SceneLoadFlags.NoLoadingScreen) != 0)
-            {
-                return Services.State.LoadScene(inSceneName, inEntrance, flags);
-            }
-            
             return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
         }
 
@@ -834,7 +815,7 @@ namespace Aqua
         [Hidden]
         Default = 0,
 
-        NoLoadingScreen = 0x01,
+        // NoLoadingScreen = 0x01,
         DoNotModifyHistory = 0x02,
         Cutscene = 0x04,
         DoNotDispatchPreUnload = 0x08
