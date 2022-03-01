@@ -13,11 +13,11 @@ namespace Aqua
 
         static private readonly TextId[] s_QualitativeWords = new TextId[]
         {
-            default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster"
+            default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster", "words.sameAmount", "words.sameRate"
         };
         static private readonly TextId[] s_QualitativeWordsLower = new TextId[]
         {
-            default, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower"
+            default, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower", "words.sameAmount.lower", "words.sameRate.lower"
         };
 
         public enum QualCompare : byte
@@ -30,11 +30,14 @@ namespace Aqua
 
             Slower,
             Faster,
+
+            SameAmount,
+            SameRate
         }
 
-        static protected QualCompare MapDescriptor(float inDifference, QualCompare inLess, QualCompare inMore)
+        static protected QualCompare MapDescriptor(float inDifference, QualCompare inLess, QualCompare inMore, QualCompare inEquals)
         {
-            return inDifference > 0 ? inMore : inLess;
+            return Mathf.Approximately(inDifference, 0) ? inEquals : (inDifference > 0 ? inMore : inLess);
         }
 
         static public TextId QualitativeId(QualCompare inDescriptor)
