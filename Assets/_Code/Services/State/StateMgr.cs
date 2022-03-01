@@ -384,6 +384,19 @@ namespace Aqua
                 }
             }
 
+            using(PooledList<IStreamingComponent> allStreamingComponents = PooledList<IStreamingComponent>.Create())
+            {
+                inScene.Scene.GetAllComponents<IStreamingComponent>(true, allStreamingComponents);
+                if (allStreamingComponents.Count > 0)
+                {
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Executing streaming steps for scene '{0}'", inScene.Path);
+                    foreach(var stream in allStreamingComponents)
+                    {
+                        stream.Preload();
+                    }
+                }
+            }
+
             while(Streaming.IsLoading()) {
                 yield return null;
             }
