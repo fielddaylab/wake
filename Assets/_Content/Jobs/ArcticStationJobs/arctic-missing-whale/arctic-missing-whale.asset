@@ -62,13 +62,23 @@ MonoBehaviour:
         m_HashValue: 4251495377
       ConditionString: 
       Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: foundDetritus
+      m_HashValue: 3919505315
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.foundDetritus
+      m_HashValue: 441849813
+    Steps:
     - Type: 1
       Target:
         m_Source: W_WhaleFall.Population.Detritus
         m_HashValue: 137724124
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: findWhale
+      m_HashValue: 2388539047
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -87,20 +97,13 @@ MonoBehaviour:
       m_HashValue: 2388539047
     - m_Source: findTracker
       m_HashValue: 2257170306
+    - m_Source: foundDetritus
+      m_HashValue: 3919505315
   m_OptimizedTaskList:
-  - Id:
-      m_Source: findTracker
-      m_HashValue: 2257170306
-    Index: 0
-    LabelId:
-      m_Source: jobs.arctic-missing-whale.task.findTracker
-      m_HashValue: 2212038312
-    Steps: []
-    PrerequisiteTaskIndices: 
   - Id:
       m_Source: findWhale
       m_HashValue: 2388539047
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.findWhale
       m_HashValue: 3913478049
@@ -111,17 +114,35 @@ MonoBehaviour:
         m_HashValue: 4251495377
       ConditionString: 
       Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: findTracker
+      m_HashValue: 2257170306
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.findTracker
+      m_HashValue: 2212038312
+    Steps: []
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: foundDetritus
+      m_HashValue: 3919505315
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-missing-whale.task.foundDetritus
+      m_HashValue: 441849813
+    Steps:
     - Type: 1
       Target:
         m_Source: W_WhaleFall.Population.Detritus
         m_HashValue: 137724124
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.arctic-missing-whale.task.reportBack
       m_HashValue: 3992557886
@@ -132,7 +153,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 01000000
+    PrerequisiteTaskIndices: 000001000200
   m_CashReward: 100
   m_ExpReward: 10
   m_Scripting: {fileID: -1942890987711236906, guid: 23a2037eaf75e6341809358900d488a9,

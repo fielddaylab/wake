@@ -25,7 +25,7 @@ $set jobs:arctic-missing-whale.foundWhale = 0
             Why don't you check your AQOS to see her last known location.
 
 :: helpDetritusPop
-@trigger    RequestPartnerHelp
+@trigger    JobTasksUpdated
 @when 		HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
 {@kevin}	Detritus, huh? How much did you scan? A whale amount? 
@@ -52,21 +52,41 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 @when   !ArgueIsComplete(findLinda)
 @cutscene
 $call ArgueLoad(findLinda) 
+$if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel) 
+    $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
+    $call ArgueFactSlot(W_WhaleFall.PH) 
+$endif
 {@profWhalen}   Have you found Linda?
 $choice .argue.showClaim; Yes
 $choice .argue.cantFind; No
 $choose branch
 
 :: argue.showClaim
-$if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel) 
-    $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
-$endif
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+$choice #argueFact; Present facts from AQOS
+    $answer W_WhaleFall.Population.Detritus, .argue.detritus 
+    $answer W_WhaleFall.PH, .argue.whaleTracker 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
+
+::argue.detritus
+$if ArgueIsFactSubmitted(W_WhaleFall.PH)
+    $goto .argue.complete
+$else
+{@profWhalen}   That's a LOT of detritus. It might be a whale, but did you happen to find our tracker?
+                That would confirm that it's her...
+$endif
+$goto .argue.showClaim
+
+::argue.whaleTracker
+$if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
+    $goto .argue.complete
+$else
+{@profWhalen}   Oh no. Maybe it just fell off? 
+                You didn't happen to see anything that resembled a dead whale, did you?
+$endif
+$goto .argue.showClaim
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
