@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, ISceneOptimizable
+    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBakedComponent
     {
         static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
 
@@ -173,7 +173,7 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);

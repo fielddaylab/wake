@@ -100,7 +100,7 @@ namespace Aqua
             return consume != null && consume.Property == Property;
         }
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {

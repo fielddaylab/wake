@@ -6,7 +6,7 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class TaggableCritter : ScriptComponent, ISceneOptimizable
+    public class TaggableCritter : ScriptComponent, IBakedComponent
     {
         #region Inspector
 
@@ -35,7 +35,7 @@ namespace ProtoAqua.Observation
             TrackTransform = transform;
         }
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             if (!TrackTransform)
                 TrackTransform = transform;

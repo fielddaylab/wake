@@ -70,7 +70,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {

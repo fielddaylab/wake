@@ -137,7 +137,7 @@ namespace Aqua
         //     return BFMode.Player;
         // }
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {

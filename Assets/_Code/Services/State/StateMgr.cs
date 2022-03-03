@@ -228,7 +228,7 @@ namespace Aqua
             }
 
             #if UNITY_EDITOR
-            yield return WaitForOptimize(active, null);
+            yield return WaitForBake(active, null);
             #else
             yield return LoadConditionalSubscenes(active, null);
             #endif // UNITY_EDITOR
@@ -313,7 +313,7 @@ namespace Aqua
             }
 
             #if UNITY_EDITOR
-            yield return WaitForOptimize(inNextScene, inContext);
+            yield return WaitForBake(inNextScene, inContext);
             #else
             yield return LoadConditionalSubscenes(inNextScene, inContext);
             #endif // UNITY_EDITOR
@@ -456,7 +456,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
         
-        private IEnumerator WaitForOptimize(SceneBinding inBinding, object inContext)
+        private IEnumerator WaitForBake(SceneBinding inBinding, object inContext)
         {
             using(PooledList<SubScene> subScenes = PooledList<SubScene>.Create())
             {
@@ -489,17 +489,17 @@ namespace Aqua
                 }
             }
 
-            using(PooledList<ISceneOptimizable> allOptimizable = PooledList<ISceneOptimizable>.Create())
+            using(PooledList<IBakedComponent> allBaked = PooledList<IBakedComponent>.Create())
             {
-                inBinding.Scene.GetAllComponents<ISceneOptimizable>(true, allOptimizable);
-                if (allOptimizable.Count > 0)
+                inBinding.Scene.GetAllComponents<IBakedComponent>(true, allBaked);
+                if (allBaked.Count > 0)
                 {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Optimizing {0} objects...", allOptimizable.Count);
-                    using(Profiling.Time("optimize objects"))
+                    DebugService.Log(LogMask.Loading, "[StateMgr] Baking {0} objects...", allBaked.Count);
+                    using(Profiling.Time("bake objects"))
                     {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allOptimizable, (f) => {
-                            Debug.LogFormat("[StateMgr] ...optimizing {0}", f.ToString());
-                            f.Optimize(); 
+                        yield return Routine.Inline(Routine.ForEachAmortize(allBaked, (f) => {
+                            Debug.LogFormat("[StateMgr] ...baking {0}", f.ToString());
+                            f.Bake(); 
                         }, 5));
                     }
                 }

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace AquaAudio
 {
     [CreateAssetMenu(menuName = "Aqualab/Audio Package")]
-    public class AudioPackage : ScriptableObject, IOptimizableAsset
+    public class AudioPackage : ScriptableObject, IBakedAsset
     {
         #region Inspector
 
@@ -53,9 +53,9 @@ namespace AquaAudio
             UnityEditor.EditorUtility.SetDirty(this);
         }
 
-        int IOptimizableAsset.Order { get { return 0; } }
+        int IBakedAsset.Order { get { return 0; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             FindAllAudioEvents();
             return true;

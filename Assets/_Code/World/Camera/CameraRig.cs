@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Aqua.Cameras
 {
     [DisallowMultipleComponent]
-    public class CameraRig : MonoBehaviour, ISceneOptimizable
+    public class CameraRig : MonoBehaviour, IBakedComponent
     {
         #region Inspector
 
@@ -49,7 +49,7 @@ namespace Aqua.Cameras
                 EffectsTransform = Camera.transform;
         }
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             InitialTarget = null;
 

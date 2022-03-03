@@ -1,10 +1,11 @@
 namespace Aqua
 {
-    public interface ISceneOptimizable
+    public interface IBakedAsset
     {
         #if UNITY_EDITOR
 
-        void Optimize();
+        int Order { get; }
+        bool Bake();
 
         #endif // UNITY_EDITOR
     }

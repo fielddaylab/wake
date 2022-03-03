@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Database", fileName = "WaterPropertyDB")]
-    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>, IOptimizableAsset
+    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>, IBakedAsset
     {
         #region Inspector
 
@@ -59,9 +59,9 @@ namespace Aqua
         
         #if UNITY_EDITOR
 
-        int IOptimizableAsset.Order { get { return -10; } }
+        int IBakedAsset.Order { get { return -10; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             SortObjects((a, b) => a.Index().CompareTo(b.Index()));
             m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];

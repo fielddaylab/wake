@@ -116,7 +116,7 @@ namespace Aqua.Editor
             }
         }
 
-        [MenuItem("Aqualab/Refresh Databases")]
+        [MenuItem("Optimize/Rebuild Databases", false, 50)]
         static public void RefreshAllDBs()
         {
             DBObject.RefreshCollection<MapDesc, MapDB>();

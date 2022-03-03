@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    public abstract class BFBehavior : BFBase, IOptimizableAsset
+    public abstract class BFBehavior : BFBase, IBakedAsset
     {
         #region Consts
 
@@ -74,9 +74,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IOptimizableAsset.Order { get { return 15; } }
+        int IBakedAsset.Order { get { return 15; } }
 
-        public abstract bool Optimize();
+        public abstract bool Bake();
 
         protected T FindPairedFact<T>() where T : BFBehavior
         {

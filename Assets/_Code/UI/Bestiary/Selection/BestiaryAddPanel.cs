@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Aqua
 {
-    public class BestiaryAddPanel : BasePanel, ISceneOptimizable
+    public class BestiaryAddPanel : BasePanel, IBakedComponent
     {
         #region Types
 
@@ -285,7 +285,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             if (m_CurrentDisplay) {
                 m_CurrentDisplay.Display(0);

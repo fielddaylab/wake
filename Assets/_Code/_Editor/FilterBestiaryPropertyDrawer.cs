@@ -15,7 +15,7 @@ namespace Aqua.Editor
             FilterBestiaryAttribute attr = (FilterBestiaryAttribute) attribute;
             BestiaryDescCategory category = attr.Category;
 
-            if (Event.current.type == EventType.Layout && EditorApplication.timeSinceStartup - m_LastUpdated > 1)
+            if (EditorApplication.timeSinceStartup - m_LastUpdated > 20)
             {
                 m_List.Clear();
                 m_List.Add(null, "[Null]", -1);

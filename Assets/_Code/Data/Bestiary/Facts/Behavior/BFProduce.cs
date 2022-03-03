@@ -94,7 +94,7 @@ namespace Aqua
             return produce != null && produce.Property == Property;
         }
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {

@@ -6,7 +6,7 @@ using Aqua.Scripting;
 namespace Aqua.Ship
 {
     [RequireComponent(typeof(CursorInteractionHint))]
-    public class RoomLink : MonoBehaviour, IPointerClickHandler, ISceneOptimizable
+    public class RoomLink : MonoBehaviour, IPointerClickHandler, IBakedComponent
     {
         private enum LinkType
         {
@@ -91,7 +91,7 @@ namespace Aqua.Ship
             return m_LinkType == LinkType.Scene;
         }
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             switch(m_LinkType)
             {
