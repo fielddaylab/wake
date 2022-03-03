@@ -68,12 +68,6 @@ MonoBehaviour:
       Amount: 0
     - Type: 0
       Target:
-        m_Source: ChinookSalmon
-        m_HashValue: 3582091882
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
         m_Source: IceAlgae
         m_HashValue: 2471897816
       ConditionString: 
@@ -100,12 +94,6 @@ MonoBehaviour:
       Target:
         m_Source: SnowCrab
         m_HashValue: 1824142092
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: ZombieWorm
-        m_HashValue: 7668088
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -150,7 +138,9 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: modelInteractions
+      m_HashValue: 331644267
   m_OptimizedTaskList:
   - Id:
       m_Source: scanCritters
@@ -176,12 +166,6 @@ MonoBehaviour:
       Target:
         m_Source: BristleWorm
         m_HashValue: 1315630147
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: ChinookSalmon
-        m_HashValue: 3582091882
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -212,12 +196,6 @@ MonoBehaviour:
       Target:
         m_Source: SnowCrab
         m_HashValue: 1824142092
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: ZombieWorm
-        m_HashValue: 7668088
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -262,7 +240,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 100
   m_ExpReward: 10
   m_Scripting: {fileID: -1942890987711236906, guid: b21ec3a0425af084dada94f4b3a74421,

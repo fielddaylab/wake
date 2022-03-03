@@ -28,86 +28,24 @@ MonoBehaviour:
   m_DescCompletedId:
     m_Source: 
     m_HashValue: 0
-  m_ExperimentDifficulty: 0
+  m_ExperimentDifficulty: 2
   m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 2
+  m_ArgumentationDifficulty: 5
   m_PrerequisiteJobs:
-  - {fileID: 11400000, guid: 54a7e8a4ba1a07d40b9609f70bc34f14, type: 2}
+  - {fileID: 11400000, guid: 8c06a0f78ac4c2949b9e64f791249f41, type: 2}
   m_PrereqConditions: 
-  m_PrereqUpgrades: []
+  m_PrereqUpgrades:
+  - m_HashValue: 3544853027
   m_StationId:
     m_HashValue: 1297447963
-  m_DiveSiteIds:
-  - m_HashValue: 2144695524
+  m_DiveSiteIds: []
   m_Tasks:
   - Id:
-      m_Source: getPopulations
-      m_HashValue: 3601840769
-    LabelId:
-      m_Source: jobs.arctic-time-of-death.task.getPopulations
-      m_HashValue: 1834216557
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ArcticCod
-        m_HashValue: 3424523006
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.BristleWorm
-        m_HashValue: 2075120052
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ChinookSalmon
-        m_HashValue: 1089959629
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.Detritus
-        m_HashValue: 137724124
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.Hagfish
-        m_HashValue: 2737595382
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.NorthAtlanticOctopus
-        m_HashValue: 1921190176
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.SalmonShark
-        m_HashValue: 3156034027
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.SnowCrab
-        m_HashValue: 1317584541
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ZombieWorm
-        m_HashValue: 3951948641
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
-      m_Source: jobs.arctic-time-of-death.task.reportBack
-      m_HashValue: 2675501312
+      m_Source: jobs.arctic-time-of-death.task.report
+      m_HashValue: 2036953559
     Steps:
     - Type: 10
       Target:
@@ -115,78 +53,19 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: getEnviornmentData
+      m_HashValue: 771536522
+    - m_Source: getPopulationData
+      m_HashValue: 1860739920
   m_OptimizedTaskList:
   - Id:
-      m_Source: getPopulations
-      m_HashValue: 3601840769
-    Index: 0
-    LabelId:
-      m_Source: jobs.arctic-time-of-death.task.getPopulations
-      m_HashValue: 1834216557
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ArcticCod
-        m_HashValue: 3424523006
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.BristleWorm
-        m_HashValue: 2075120052
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ChinookSalmon
-        m_HashValue: 1089959629
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.Detritus
-        m_HashValue: 137724124
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.Hagfish
-        m_HashValue: 2737595382
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.NorthAtlanticOctopus
-        m_HashValue: 1921190176
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.SalmonShark
-        m_HashValue: 3156034027
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.SnowCrab
-        m_HashValue: 1317584541
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ZombieWorm
-        m_HashValue: 3951948641
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 1
+    Index: 0
     LabelId:
-      m_Source: jobs.arctic-time-of-death.task.reportBack
-      m_HashValue: 2675501312
+      m_Source: jobs.arctic-time-of-death.task.report
+      m_HashValue: 2036953559
     Steps:
     - Type: 10
       Target:
@@ -194,9 +73,8 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  m_CashReward: 10
-  m_ExpReward: 5
-  m_Scripting: {fileID: -1942890987711236906, guid: d76905f59b51192458660bdda55dd36a,
-    type: 3}
+    PrerequisiteTaskIndices: ffffffff
+  m_CashReward: 100
+  m_ExpReward: 10
+  m_Scripting: {fileID: 0}
   m_ExtraAssets: []

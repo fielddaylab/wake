@@ -1,34 +1,50 @@
-#basePath   job.arctic-time-of-death
+:: basePath job.arctic-time-of-death
+
+// INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@profWhalen}	I'd like to know when she died.
-				You can usually tell by the state of decomposition.
-				I'd like you to take a closer look around the whale fall.
-                I'm uploading some data for you.
-
-$branch common.download
+// write an intro to your job
+{@profWhalen}   We've had whales die in this area before.  It's called a "whalefall".
+                All kinds of creatures use the whale detritus for food.
+                We made a descriptive model of a previous whalefall. Take a look.
 $call GiveFact(W_WhaleFall.Model.Stages)
-{@profWhalen}	This should give you an idea of when different species show up during the decomposition process.
-				Contact me when you've got some evidence.
 
-:: helpFindWhale
-@trigger    RequestPartnerHelp
-@when 		!JobTaskCompleted(getPopulations)
-@cutscene
-{@player} 	What should I be doing again?
-{@kevin}	Let's go investigate the organisms around the whale fall.
-			Maybe there's some clue in how many species there are?
+// ARGUMENTATION
 
-:: helpBackToShip
-@trigger    RequestPartnerHelp
-@when 		JobTaskCompleted(getPopulations)
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(deathTime)
 @cutscene
-{@player} 	Where should I be going again?
-{@kevin}	Well, let's think about what we saw down there.
-			How many different species were there? And how many of each species?
-			Does that line up with anything from the model we got from Professor Whalen earlier?
+$call ArgueLoad(deathTime)
+// TODO: add your claim label to jobs.aqloc
+$if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel) 
+		$call ArgueFactSlot(W_WhaleFall.Model.Stages) // TODO: put fact slot info here 
+$endif
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@kevin} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@kevin} OK. Get back to me when you're ready.
+
+// END
+
+:: argue.complete
+$call ArgueComplete()
+{@kevin}    This looks great!
+{@kevin}    This is the conclusion to the arctic-time-of-death job!
+
+$call CompleteJob()

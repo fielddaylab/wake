@@ -1,30 +1,47 @@
 :: basePath job.arctic-disappearing-act
-
 // INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
+$if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasEntity(IceAlgae), 
+HasEntity(Hagfish), HasEntity(IceAlgae), HasEntity(NorthAtlanticOctopus), HasEntity(SalmonShark), 
+HasEntity(SnowCrab),  HasEntity(ZombieWorm), HasEntity(Detritus)    
+$else
+{@kevin}    If we're going to investigate properly, we'll need to know all the species at Site W.
+$endif
 
-// write an intro to your job
-{@kevin}    This is the intro to the arctic-disappearing-act job!
+::gotAllInfo
+@trigger JobTasksUpdated
+@when JobTaskCompleted(scanCritters)
+@cutscene
+{@kevin}    I'd say we know enough to make a visual model, now.
 
+:: helpObserve
+@trigger    RequestPartnerHelp
+@when   JobTaskTop(modelInteractions)
+@cutscene
+{@player}   What should I do next? 
+{@kevin}    Prof. Whalen is expecting a visual model, so we'll need to know every interaction. 
+            Let's get to the observation tank!
+            
 // ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete() // TODO: NAME ME
+@when   !ArgueIsComplete(whaleModel)
 @cutscene
-$call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
-// TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-		$call ArgueFactSlot() // TODO: put fact slot info here 
+$call ArgueLoad(whaleModel)
+$if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
+		$call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-
+{@profWhalen} Where you able to create that visual model of site W?
+$goto .argue.showClaim
+            
 :: argue.showClaim
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+$choice #argueFact; Present facts from AQOS
+    $answer W_WhaleFall.Model.Stages, .argue.complete 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
@@ -43,5 +60,6 @@ $goto .argue.showClaim
 $call ArgueComplete()
 {@profWhalen}   It looks like quite a few organisms came to feast on her. 
                 I wonder how long she has been down there...
+                Anyways, thanks for your help!
 
 $call CompleteJob()
