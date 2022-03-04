@@ -51,7 +51,7 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBRoomChanged(string userCode, int appVersion, int jobId, string jobName, string roomName);
         [DllImport("__Internal")]
-        public static extern void FBBeginExperiment(string userCode, int appVersion, int jobId, string jobName, string tankType);
+        public static extern void FBBeginExperiment(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critters);
         [DllImport("__Internal")]
         public static extern void FBBeginDive(string userCode, int appVersion, int jobId, string jobName, string siteId);
         [DllImport("__Internal")]
@@ -64,7 +64,8 @@ namespace Aqua
         public static extern void FBAskForHelp(string userCode, int appVersion, int jobId, string jobName, string nodeId);
         [DllImport("__Internal")]
         public static extern void FBTalkWithGuide(string userCode, int appVersion, int jobId, string jobName, string nodeId);
-            //Bestiary Events
+        
+        //Bestiary Events
         [DllImport("__Internal")]
         public static extern void FBOpenBestiary(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
@@ -82,7 +83,7 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBCloseBestiary(string userCode, int appVersion, int jobId, string jobName);
 
-            //Status Events
+        //Status Events
         [DllImport("__Internal")]
         public static extern void FBOpenStatus(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
@@ -134,12 +135,26 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBTalkToShopkeep(string userCode, int appVersion, int jobId, string jobName);
 
+        // Experimentation Events
+        [DllImport("__Internal")]
+        public static extern void FBAddEnvironment(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment);
+        [DllImport("__Internal")]
+        public static extern void FBRemoveEnvironment(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment);
+        [DllImport("__Internal")]
+        public static extern void FBEnvironmentCleared(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment);
+        [DllImport("__Internal")]
+        public static extern void FBAddCritter(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        [DllImport("__Internal")]
+        public static extern void FBRemoveCritter(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        [DllImport("__Internal")]
+        public static extern void FBCrittersCleared(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critters);
+
         #endregion // Firebase JS Functions
 
         #region Logging Variables
 
         private string m_UserCode = string.Empty;
-        private int m_AppVersion = 3;
+        private int m_LogVersion = 4;
         private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
         private string m_PreviousJobName = "no-active-job";
@@ -147,6 +162,9 @@ namespace Aqua
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
         private string m_CurrentModelPhase = string.Empty;
         private string m_CurrentModelEcosystem = string.Empty;
+        private string m_CurrentTankType = string.Empty;
+        private string m_CurrentEnvironment = string.Empty;
+        private List<string> m_CurrentCritters = new List<string>();
 
         #endregion // Logging Variables
 
@@ -187,7 +205,15 @@ namespace Aqua
                 .Register(GameEvents.PortableClosed, PortableClosed, this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, LogPurchaseUpgrade, this)
                 .Register<StringHash32>(ShopConsts.Event_InsufficientFunds, LogInsufficientFunds, this)
-                .Register(ShopConsts.Event_TalkToShopkeep, LogTalkToShopkeep, this);
+                .Register(ShopConsts.Event_TalkToShopkeep, LogTalkToShopkeep, this)
+                .Register<TankType>(ExperimentEvents.ExperimentView, SetCurrentTankType, this)
+                .Register<StringHash32>(ExperimentEvents.ExperimentAddEnvironment, LogAddEnvironment, this)
+                .Register<StringHash32>(ExperimentEvents.ExperimentRemoveEnvironment, LogRemoveEnvironment, this)
+                .Register(ExperimentEvents.ExperimentEnvironmentCleared, LogEnvironmentCleared, this)
+                .Register<StringHash32>(ExperimentEvents.ExperimentAddCritter, LogAddCritter, this)
+                .Register<StringHash32>(ExperimentEvents.ExperimentRemoveCritter, LogRemoveCritter, this)
+                .Register(ExperimentEvents.ExperimentCrittersCleared, LogCrittersCleared, this);
+                
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
@@ -452,15 +478,6 @@ namespace Aqua
 
             #if FIREBASE
             FBCompleteTask(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, taskId);
-            #endif
-        }
-
-        private void LogBeginExperiment(TankType inTankType)
-        {
-            string tankType = inTankType.ToString();
-
-            #if FIREBASE
-            FBBeginExperiment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName,  tankType);
             #endif
         }
 
@@ -749,6 +766,84 @@ namespace Aqua
         }
 
         #endregion // Shop Events
+
+        #region Experimentation Events
+
+        private void SetCurrentTankType(TankType inTankType)
+        {
+            m_CurrentTankType = inTankType.ToString();
+        }
+
+        private void LogAddEnvironment(StringHash32 inEnvironmentId)
+        {
+            string environment = Services.Assets.Bestiary.Get(inEnvironmentId).name;
+            m_CurrentEnvironment = environment;
+
+            #if FIREBASE
+            FBAddEnvironment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, environment);
+            #endif
+        }
+
+        private void LogRemoveEnvironment(StringHash32 inEnvironmentId)
+        {
+            string environment = Services.Assets.Bestiary.Get(inEnvironmentId).ToString();
+            m_CurrentEnvironment = string.Empty;
+
+            #if FIREBASE
+            FBRemoveEnvironment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, environment);
+            #endif
+        }
+
+        private void LogEnvironmentCleared()
+        {
+            m_CurrentEnvironment = string.Empty;
+
+            #if FIREBASE
+            FBEnvironmentCleared(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType);
+            #endif
+        }
+
+        private void LogAddCritter(StringHash32 inCritterId)
+        {
+            string critter = Services.Assets.Bestiary.Get(inCritterId).name;
+            m_CurrentCritters.Add(critter);
+
+            #if FIREBASE
+            FBAddCritter(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
+            #endif
+        }
+
+        private void LogRemoveCritter(StringHash32 inCritterId)
+        {
+            string critter = Services.Assets.Bestiary.Get(inCritterId).name;
+            m_CurrentCritters.Remove(critter);
+
+            #if FIREBASE
+            FBRemoveCritter(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
+            #endif
+        }
+
+        private void LogCrittersCleared()
+        {
+            string critters = String.Join(",", m_CurrentCritters.ToArray());
+            m_CurrentCritters.Clear();
+
+            #if FIREBASE
+            FBCrittersCleared(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critters);
+            #endif
+        }
+
+        private void LogBeginExperiment(TankType inTankType)
+        {
+            string tankType = inTankType.ToString();
+            string critters = String.Join(",", m_CurrentCritters.ToArray());
+
+            #if FIREBASE
+            FBBeginExperiment(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, tankType, m_CurrentEnvironment, critters);
+            #endif
+        }
+
+        #endregion Experimentation Events
 
         #endregion // Log Events
     }

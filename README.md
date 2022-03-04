@@ -35,6 +35,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 5. [Portable Device Interactions](#PortableDeviceInteractions)
 6. [Modeling](#Modeling)
 7. [Shop](#Shop)
+8. [Experimentation](#Experimentation)
 
 <a name="Init"/>
 
@@ -131,7 +132,6 @@ Player completes a task for a given job.
 
 1. [scene_changed](#scene_changed)
 2. [room_changed](#room_changed)
-3. [begin_experiment](#begin_experiment)
 4. [begin_dive](#begin_dive)
 5. [begin_argument](#begin_argument)
 6. [ask_for_help](#ask_for_help)
@@ -163,26 +163,6 @@ Player enters a new room on the ship.
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | scene_name | Name of the room being entered|
-
-<a name="begin_experiment"/>
-
-#### begin_experiment
-
-Player starts an experiment with a given tank type.
-
-| Parameter | Description |
-| --- | --- |
-| user_code | The player's unique save code |
-| app_version | Current logging version |
-| job_id | ID of the current job |
-| job_name | String name of the current job |
-| tank_type | Selected tank type for the experiment |
-
-| tank_type |
-| --- |
-| Observation |
-| Stress |
-| Measurement | 
 
 <a name="begin_dive"/>
 
@@ -717,3 +697,130 @@ Player talks to the shopkeeper.
 | app_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+
+<a name="Experimentation"/>
+
+### Experimentation
+
+1. [add_environment](#add_environment)
+2. [remove_environment](#remove_environment)
+3. [environment_cleared](#environment_cleared)
+4. [add_critter](#add_critter)
+5. [remove_critter](#remove_critter)
+6. [critters_cleared](#critters_cleared)
+7. [begin_experiment](#begin_experiment)
+
+| tank_type |
+| --- |
+| Observation |
+| Stress |
+| Measurement |
+
+<a name="add_environment"/>
+
+#### add_environment
+
+Player selects an environment for running the experiment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the added environment |
+
+<a name="remove_environment"/>
+
+#### remove_environment
+
+Player deselects an environment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the removed environment |
+
+<a name="environment_cleared"/>
+
+#### environment_cleared
+
+Player clears the current environment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the cleared environment |
+
+<a name="add_critter"/>
+
+#### add_critter
+
+Player adds a critter to the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critter | Name of the critter added to the tank |
+
+<a name="remove_critter"/>
+
+#### remove_critter
+
+Player removes a critter from the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critter | Name of the critter removed from the tank |
+
+<a name="critters_cleared"/>
+
+#### critters_cleared
+
+Player clears all critters from the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critters | Comma separated list of all critters cleared from the tank |
+
+<a name="begin_experiment"/>
+
+#### begin_experiment
+
+Player starts an experiment with a given tank type.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critters | Comma separated list of all critters added to the tank |

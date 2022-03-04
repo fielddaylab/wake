@@ -269,6 +269,7 @@ namespace ProtoAqua.ExperimentV2
 
                 m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
+                Services.Events.Dispatch(ExperimentEvents.ExperimentAddCritter, inDesc.Id());
                 Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
                 using (var table = TempVarTable.Alloc())
@@ -289,6 +290,7 @@ namespace ProtoAqua.ExperimentV2
             if (Ref.CompareExchange(ref m_SelectedCritter, inDesc, null))
             {
                 ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveCritter, inDesc.Id());
             }
         }
 
@@ -296,6 +298,7 @@ namespace ProtoAqua.ExperimentV2
         {
             m_SelectedCritter = null;
             ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentCrittersCleared);
         }
 
         #endregion // Critter Callbacks

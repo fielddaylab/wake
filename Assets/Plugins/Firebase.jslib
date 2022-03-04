@@ -100,16 +100,20 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginExperiment: function(userCode, appVersion, jobId, jobName, tankType) {
+    FBBeginExperiment: function(userCode, appVersion, jobId, jobName, tankType, environment, critters) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
+        var environment = Pointer_stringify(environment);
+        var critters = Pointer_stringify(critters);
 
         analytics.logEvent("begin_experiment", {
             user_code: userCode,
             app_version: appVersion,
             job_id: jobId,
             job_name: jobName,
-            tank_type: tankType
+            tank_type: tankType,
+            environment: environment,
+            critters: critters
         });
     },
 
@@ -601,6 +605,108 @@ mergeInto(LibraryManager.library, {
             app_version: appVersion,
             job_id: jobId,
             job_name: jobName
+        });
+    },
+
+    FBAddEnvironment: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+
+        analytics.logEvent("add_environment", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment
+        });
+    },
+
+    FBRemoveEnvironment: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+
+        analytics.logEvent("remove_environment", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment
+        });
+    },
+
+    FBEnvironmentCleared: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+
+        analytics.logEvent("environment_cleared", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment
+        });
+    },
+
+    FBAddCritter: function(userCode, appVersion, jobId, jobName, tankType, environment, critter) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+        var critter = Pointer_stringify(critter);
+
+        analytics.logEvent("add_critter", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment,
+            critter: critter
+        });
+    },
+
+    FBRemoveCritter: function(userCode, appVersion, jobId, jobName, tankType, environment, critter) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+        var critter = Pointer_stringify(critter);
+
+        analytics.logEvent("remove_critter", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment,
+            critter: critter
+        });
+    },
+
+    FBCrittersCleared: function(userCode, appVersion, jobId, jobName, tankType, environment, critters) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+        var critters = Pointer_stringify(critters);
+
+        analytics.logEvent("remove_critter", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment,
+            critters: critters
         });
     }
 

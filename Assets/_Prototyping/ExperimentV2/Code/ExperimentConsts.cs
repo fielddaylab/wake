@@ -11,6 +11,12 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 ExperimentView = "experiment:view"; // TankType type
         static public readonly StringHash32 ExperimentBegin = "experiment:begin"; // TankType type
         static public readonly StringHash32 ExperimentEnded = "experiment:end"; // TankType type
+        static public readonly StringHash32 ExperimentAddCritter = "ExperimentAddCritter"; // StringHash32 critterId
+        static public readonly StringHash32 ExperimentRemoveCritter = "ExperimentRemoveCritter"; // StringHash32 critterId
+        static public readonly StringHash32 ExperimentCrittersCleared = "ExperimentClearCritters";
+        static public readonly StringHash32 ExperimentAddEnvironment = "ExperimentAddEnvironment"; // StringHash32 envId
+        static public readonly StringHash32 ExperimentRemoveEnvironment = "ExperimentRemoveEnvironment"; // StringHash32 envId
+        static public readonly StringHash32 ExperimentEnvironmentCleared = "ExperimentClearEnvironment";
     }
 
     static public class ExperimentTriggers

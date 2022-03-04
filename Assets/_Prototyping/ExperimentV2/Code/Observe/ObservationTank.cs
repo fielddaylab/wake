@@ -161,18 +161,21 @@ namespace ProtoAqua.ExperimentV2
         {
             m_RunButton.interactable = true;
             m_ActorBehavior.Alloc(inDesc.Id());
+            Services.Events.Dispatch(ExperimentEvents.ExperimentAddCritter, inDesc.Id());
         }
 
         private void OnCritterRemoved(BestiaryDesc inDesc)
         {
             m_ActorBehavior.FreeAll(inDesc.Id());
             m_RunButton.interactable = m_World.Actors.Count > 0;
+            Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveCritter, inDesc.Id());
         }
 
         private void OnCrittersCleared()
         {
             m_RunButton.interactable = false;
             m_ActorBehavior.ClearActors();
+            Services.Events.Dispatch(ExperimentEvents.ExperimentCrittersCleared);
         }
 
         #endregion // Critter Callbacks
@@ -185,6 +188,7 @@ namespace ProtoAqua.ExperimentV2
             m_CrittersButton.interactable = true;
             m_ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
+            Services.Events.Dispatch(ExperimentEvents.ExperimentAddEnvironment, inDesc.Id());
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc)
@@ -194,6 +198,7 @@ namespace ProtoAqua.ExperimentV2
                 m_CrittersButton.interactable = false;
                 m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
                 m_ActorBehavior.ClearEnvState();
+                Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveEnvironment, inDesc.Id());
             }
         }
 
@@ -203,9 +208,10 @@ namespace ProtoAqua.ExperimentV2
             m_CrittersButton.interactable = false;
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             m_ActorBehavior.ClearEnvState();
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnvironmentCleared);
         }
 
-        #endregion // Environment Callbacks\
+        #endregion // Environment Callbacks
 
         #region Behavior Capture
 
