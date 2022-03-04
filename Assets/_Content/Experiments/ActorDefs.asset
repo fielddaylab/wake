@@ -75,7 +75,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 3388301900
     Type: {fileID: 11400000, guid: 7583a8085d4a4804dbcaf904252eaf52, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 2164f0f9013537f4ba6ba478ef23e51b,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -120,16 +121,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 193540374
     Type: {fileID: 11400000, guid: 335b0449001ff4ede80b31a304345dcc, type: 2}
@@ -1091,7 +1092,31 @@ MonoBehaviour:
       FactId:
         m_Source: LoggerheadTurtle.Eats.PlasticBag
         m_HashValue: 1831727362
+    - TargetId:
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.AngelFish
+        m_HashValue: 3388871611
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.Cyanobacteria
+        m_HashValue: 3424480027
     StressedEatTargets:
+    - TargetId:
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly.Stressed
+        m_HashValue: 805011374
     - TargetId:
         m_Source: Copepod
         m_HashValue: 1053183451
@@ -1116,6 +1141,18 @@ MonoBehaviour:
       FactId:
         m_Source: LoggerheadTurtle.Eats.PlasticBag
         m_HashValue: 1831727362
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.Cyanobacteria.Stressed
+        m_HashValue: 2153526566
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.AngelFish
+        m_HashValue: 3388871611
     SpawnCount: 4
     IsPlant: 0
     TargetLimit: 1
@@ -1467,8 +1504,68 @@ MonoBehaviour:
         AliveMax: 8.8
         StressedMin: 7.3
         StressedMax: 8.3
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      FactId:
+        m_Source: RedGrouper.Eats.BlueheadWrasse
+        m_HashValue: 299259218
+    - TargetId:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      FactId:
+        m_Source: RedGrouper.Eats.BlueTang
+        m_HashValue: 1688490569
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: RedGrouper.Eats.AngelFish
+        m_HashValue: 2604407488
+    - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: RedGrouper.Eats.WhiteShrimp
+        m_HashValue: 3732071581
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: RedGrouper.Eats.Cyanobacteria
+        m_HashValue: 4014676400
+    StressedEatTargets:
+    - TargetId:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      FactId:
+        m_Source: RedGrouper.Eats.BlueheadWrasse
+        m_HashValue: 299259218
+    - TargetId:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      FactId:
+        m_Source: RedGrouper.Eats.BlueTang
+        m_HashValue: 1688490569
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: RedGrouper.Eats.AngelFish
+        m_HashValue: 2604407488
+    - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: RedGrouper.Eats.WhiteShrimp
+        m_HashValue: 3732071581
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: RedGrouper.Eats.Cyanobacteria
+        m_HashValue: 4014676400
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1488,7 +1585,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 3868886068
     Type: {fileID: 11400000, guid: e8d5f2ae5a756154984e73f3fc10057f, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 063ac9fd20badb749b9e436223b1e24b,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -1533,16 +1631,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 4036767444
     Type: {fileID: 11400000, guid: a7f837e2b6a25ff41bf141677b4c4702, type: 2}
