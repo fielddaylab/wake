@@ -6,31 +6,42 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    We should check out both of <Job Giver>'s theories, one by one, to see which is most plausible.
+{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 
 // ARGUMENTATION
 
-::helpScanProb
-@trigger    RequestPartnerHelp
-@when   !scene:name == "RS-4W", !JobTaskCompleted(getEnviornmentData)
-{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
+//::helpScanProb
+//@trigger    RequestPartnerHelp
+//@when   !scene:name == "RS-4W", !JobTaskCompleted(getEnviornmentData)
+//{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
 
-::helpScanProb
-@trigger    RequestPartnerHelp
-@when   !scene:name == "RS-4W", !JobTaskCompleted(getPopulationData)
-{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
-            I'm not sure what whales eat, so we might just have to count everything.
+//::helpScanProb
+//@trigger    RequestPartnerHelp
+//@when   !scene:name == "RS-4W", !JobTaskCompleted(getPopulationData)
+//{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
+//            I'm not sure what whales eat, so we might just have to count everything.
 
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(causeDeath)
 @cutscene
 $call ArgueLoad(causeDeath)
-// TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.cause-of-death.argue.claimLabel) 
-		$call ArgueFactSlot() // TODO: put fact slot info here 
-$endif
+{@profWhalen} Which hypothesis seems most likely?
+    $choice .argue.stage1; Stage 1
+    $choice .argue.stage2; Stage 2
+    $choice .argue.stage3; Stage 3
+$choose branch
+
+:: argue.stage1
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWormsWrong
+
+:: argue.stage2
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWorms
 
 ::argue.showClaim
 $call ArgueDisplayClaim()
@@ -47,6 +58,8 @@ $goto .argue.showClaim
 
 :: argue.giveUp
 {@kevin} OK. Get back to me when you're ready.
+$call arguecancelclaim()
+$call argueunload()
 
 // END
 
