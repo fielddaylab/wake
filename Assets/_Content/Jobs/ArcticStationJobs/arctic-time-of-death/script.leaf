@@ -6,7 +6,6 @@
 @trigger    JobStarted
 @cutscene
 
-// write an intro to your job
 {@profWhalen}   We've had whales die in this area before.  It's called a "whalefall".
                 All kinds of creatures use the whale detritus for food.
                 We made a descriptive model of a previous whalefall. Take a look.
@@ -19,32 +18,86 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when   !ArgueIsComplete(deathTime)
 @cutscene
 $call ArgueLoad(deathTime)
-// TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel) 
-		$call ArgueFactSlot(W_WhaleFall.Model.Stages) // TODO: put fact slot info here 
-$endif
+{@profWhalen} How long has she been down there?
+    $choice .argue.stage1; Stage 1
+    $choice .argue.stage2; Stage 2
+    $choice .argue.stage3; Stage 3
+$choose branch
 
-:: argue.showClaim
+:: argue.stage1
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWormsWrong
+
+:: argue.stage2
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWorms
+
+:: argue.stage3
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWormsWrong
+
+:: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+    $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
+    $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@kevin} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+{@profWhalen}   Have you seen any zombie worms there?
+                It looks like the worms might be a good marker of the whale fall stage.
+$goto .argue.showZombieWormsWrong
+
+:: argue.unrelatedDetritus
+$call ArgueRejectIncorrect()
+{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
+                how do the species' populations compare with the model i gave you? 
+$goto .argue.showZombieWormsWrong
+
+:: argue.zombieWormsEarly
+$call ArgueRejectIncorrect()
+{@profWhalen}   Interesting, it seems like the zombie worms could have occured earlier.
+                Can you check the species populations against the model I gave you and adjust your claim? 
+$call ArgueCancelClaim()
+$call ArgueUnload()
+
+:: argue.showZombieWorms
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer W_WhaleFall.Population.ZombieWorm, .argue.complete
+    $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus2
+    $answer *, .argue.unrelated2
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
 
 :: argue.giveUp
-{@kevin} OK. Get back to me when you're ready.
+{@profWhalen} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+$call ArgueUnload()
+
+:: argue.unrelated2
+$call ArgueRejectIncorrect()
+{@profWhalen}   Have you seen any zombie worms there?
+                It looks like the worms might be a good marker of the whale fall stage.
+$goto .argue.showZombieWorms
+
+:: argue.unrelatedDetritus2
+$call ArgueRejectIncorrect()
+{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
+                how do the species' populations compare with the model i gave you? 
+$goto .argue.showZombieWorms
 
 // END
 
 :: argue.complete
 $call ArgueComplete()
-{@kevin}    This looks great!
-{@kevin}    This is the conclusion to the arctic-time-of-death job!
+{@profWhalen}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
+                Excellent work {nameof Player}
 
 $call CompleteJob()

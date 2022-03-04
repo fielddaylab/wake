@@ -41,6 +41,68 @@ MonoBehaviour:
   m_DiveSiteIds: []
   m_Tasks:
   - Id:
+      m_Source: getPops
+      m_HashValue: 4138932699
+    LabelId:
+      m_Source: jobs.arctic-time-of-death.task.popData
+      m_HashValue: 2150234396
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.ArcticCod
+        m_HashValue: 3424523006
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.BristleWorm
+        m_HashValue: 2075120052
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Detritus
+        m_HashValue: 137724124
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Hagfish
+        m_HashValue: 2737595382
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.IceAlgae
+        m_HashValue: 1324798965
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.NorthAtlanticOctopus
+        m_HashValue: 1921190176
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.SalmonShark
+        m_HashValue: 3156034027
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.SnowCrab
+        m_HashValue: 1317584541
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.ZombieWorm
+        m_HashValue: 3951948641
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
@@ -54,15 +116,76 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: getEnviornmentData
-      m_HashValue: 771536522
-    - m_Source: getPopulationData
-      m_HashValue: 1860739920
+    - m_Source: getPops
+      m_HashValue: 4138932699
   m_OptimizedTaskList:
+  - Id:
+      m_Source: getPops
+      m_HashValue: 4138932699
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-time-of-death.task.popData
+      m_HashValue: 2150234396
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.ArcticCod
+        m_HashValue: 3424523006
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.BristleWorm
+        m_HashValue: 2075120052
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Detritus
+        m_HashValue: 137724124
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.Hagfish
+        m_HashValue: 2737595382
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.IceAlgae
+        m_HashValue: 1324798965
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.NorthAtlanticOctopus
+        m_HashValue: 1921190176
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.SalmonShark
+        m_HashValue: 3156034027
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.SnowCrab
+        m_HashValue: 1317584541
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Population.ZombieWorm
+        m_HashValue: 3951948641
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 0
+    Index: 1
     LabelId:
       m_Source: jobs.arctic-time-of-death.task.report
       m_HashValue: 2036953559
@@ -73,8 +196,9 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: ffffffff
+    PrerequisiteTaskIndices: 0000
   m_CashReward: 100
   m_ExpReward: 10
-  m_Scripting: {fileID: 0}
+  m_Scripting: {fileID: -1942890987711236906, guid: 58cb5e01cd5ca814fb216f8049cf92ee,
+    type: 3}
   m_ExtraAssets: []
