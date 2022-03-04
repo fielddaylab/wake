@@ -81,15 +81,32 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 {@kevin}	We need the growth rates of kelp when stressed and unstressed.
 			What sites do we know they are stressed in, and which do we know they're not stressed in?
 
-:: experimentEnd
+:: experimentGrowthEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(GiantKelp.Reproduce), HasFact(GiantKelp.Reproduce.Stressed), HasFact(BullKelp.Reproduce), HasFact(BullKelp.Reproduce.Stressed)
+@when 		JobTaskCompleted(growthRates), JobTaskCompleted(growthRatesBull)
+@once
+@cutscene
+{@kevin}	Nice work!
+$if JobTaskCompleted(lightRatesGiant), JobTaskCompleted(lightRatesBull)
+	{@kevin}	And you already measured how {nameof GiantKelp} and {nameof BullKelp} consume light.
+				Way to be proactive!
+	$goto .experimentsCompleted
+$else
+	{@kevin}	We will also need to measure how {nameof GiantKelp} and {nameof BullKelp} affect the light levels.
+				Add them to the Measurement Tank again separately, only this time turn off the Stabilizer Controls and turn the Auto Feeder on.
+$endif
+
+:: experimentConsumeEnd
+@trigger    JobTasksUpdated
+@when 		JobTaskTop(newModel)
 @once
 @cutscene
 {@kevin}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
-			Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to grow more slowly.
-			We should head to the Modeling room for that.
+$goto .experimentsCompleted
 
+:: experimentsCompleted
+{@kevin}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to grow more slowly.
+			We should head to the Modeling room for that.
 
 // MODELING	
 

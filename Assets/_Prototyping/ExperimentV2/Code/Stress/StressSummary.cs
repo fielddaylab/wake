@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class StressSummary : MonoBehaviour, ISceneOptimizable
+    public class StressSummary : MonoBehaviour, IBakedComponent
     {
         #region Inspector
 
@@ -20,7 +20,7 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             StateFacts = GetComponentsInChildren<StateFactDisplay>(true);
         }

@@ -24,7 +24,7 @@ namespace Aqua.Testing {
             Services.UI.HideAll();
             Services.Script.KillAllThreads();
             Services.Audio.StopAll();
-            yield return Services.State.LoadScene(scene, null, null, SceneLoadFlags.NoLoadingScreen);
+            yield return Services.State.LoadScene(scene, null, null);
         }
 
         #endif // DEVELOPMENT

@@ -117,6 +117,9 @@ $set temp:newObservationTimer = 0
 			Then you will select the {h}Organisms{/h} you are trying to measure something about.
 			After that, you can set the {nameof WaterStabilizer} or the {nameof AutoFeeder} if you have them.
 			Click the {h}Add Water{/h} button to get started!
+$if JobInProgress(musselfest-solution)
+	$set jobs:kelp-mussel-fest-solution.inMeasurement = true
+$endif
 			
 :: generic.stabilizer.intro
 @trigger	ExperimentScreenViewed

@@ -9,15 +9,15 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class BestiaryDesc : DBObject, IOptimizableAsset, IEditorOnlyData
+    public partial class BestiaryDesc : DBObject, IBakedAsset, IEditorOnlyData
     {
         #if UNITY_EDITOR
 
         #region Optimize
 
-        int IOptimizableAsset.Order { get { return (int) m_Type; } }
+        int IBakedAsset.Order { get { return (int) m_Type; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             foreach(var fact in m_Facts)
             {

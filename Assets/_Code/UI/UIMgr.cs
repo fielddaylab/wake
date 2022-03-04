@@ -31,7 +31,6 @@ namespace Aqua
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
 
         [Header("Overlays")]
-        [SerializeField, Required] private LoadingDisplay m_Loading = null;
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
         [SerializeField, Required] private ScreenFaderDisplay m_WorldFaders = null;
         [SerializeField, Required] private ScreenFaderDisplay m_ScreenFaders = null;
@@ -63,24 +62,9 @@ namespace Aqua
 
         #region Loading Screen
 
-        public IEnumerator ShowLoadingScreen()
-        {
-            return m_Loading.Show();
-        }
-
-        public IEnumerator HideLoadingScreen()
-        {
-            return m_Loading.Hide();
-        }
-
         public bool IsTransitioning()
         {
-            return m_Loading.IsShowing() || m_Loading.IsTransitioning() || m_ScreenFaders.WipeCount > 0 || m_WorldFaders.WipeCount > 0;
-        }
-
-        public void ForceLoadingScreen()
-        {
-            m_Loading.InstantShow();
+            return  m_ScreenFaders.WipeCount > 0 || m_WorldFaders.WipeCount > 0;
         }
 
         #endregion // Loading Screen

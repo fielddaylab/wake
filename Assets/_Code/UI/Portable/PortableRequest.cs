@@ -62,20 +62,20 @@ namespace Aqua.Portable
             };
         }
 
-        static public PortableRequest FromUpdate(BestiaryUpdateParams inUpdateParams) {
-            switch(inUpdateParams.Type) {
-                case BestiaryUpdateParams.UpdateType.Entity: {
-                    return ShowEntry(inUpdateParams.Id);
-                }
-                case BestiaryUpdateParams.UpdateType.Fact:
-                case BestiaryUpdateParams.UpdateType.UpgradeFact: {
-                    return ShowFact(inUpdateParams.Id);
-                }
-                default: {
-                    return default;
-                }
-            }
-        }
+        // static public PortableRequest FromUpdate(BestiaryUpdateParams inUpdateParams) {
+        //     switch(inUpdateParams.Type) {
+        //         case BestiaryUpdateParams.UpdateType.Entity: {
+        //             return ShowEntry(inUpdateParams.Id);
+        //         }
+        //         case BestiaryUpdateParams.UpdateType.Fact:
+        //         case BestiaryUpdateParams.UpdateType.UpgradeFact: {
+        //             return ShowFact(inUpdateParams.Id);
+        //         }
+        //         default: {
+        //             return default;
+        //         }
+        //     }
+        // }
 
         static private PortableAppId FindAppForFact(StringHash32 inFactId) {
             var fact = Assets.Fact(inFactId);

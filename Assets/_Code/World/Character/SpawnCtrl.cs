@@ -6,7 +6,7 @@ using Aqua.Character;
 namespace Aqua.Character
 {
     [RequireComponent(typeof(SpawnLocationMap))]
-    public class SpawnCtrl : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable
+    public class SpawnCtrl : MonoBehaviour, ISceneLoadHandler, IBakedComponent
     {
         [SerializeField, HideInInspector] private PlayerBody m_Player = null;
         [SerializeField, HideInInspector] private SpawnLocationMap m_Spawns;
@@ -22,7 +22,7 @@ namespace Aqua.Character
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_Player = FindObjectOfType<PlayerBody>();
             m_Spawns = GetComponent<SpawnLocationMap>();

@@ -109,6 +109,16 @@ namespace Aqua
             return handle.GetThread();
         }
 
+        int ILeafPlugin.RandomInt(int inMin, int inMaxExclusive)
+        {
+            return RNG.Instance.Next(inMin, inMaxExclusive);
+        }
+
+        float ILeafPlugin.RandomFloat(float inMin, float inMax)
+        {
+            return RNG.Instance.NextFloat(inMin, inMax);
+        }
+
         #endregion // ILeafPlugin
 
         static private ScriptThread ScriptThread(LeafThreadState<ScriptNode> inThreadState)

@@ -69,22 +69,22 @@ namespace Aqua.Editor
 
             if (IsAutoOptimizeEnabled())
             {
-                OptimizeAllAssets();
+                BakeAllAssets();
             }
         }
 
-        [MenuItem("Aqualab/Optimize Assets")]
-        static private void OptimizeAllAssets()
+        [MenuItem("Optimize/Run %#o", false, 1)]
+        static private void BakeAllAssets()
         {
-            List<IOptimizableAsset> allOptimizable = new List<IOptimizableAsset>(512);
-            using(Profiling.Time("optimize scriptable objects"))
+            List<IBakedAsset> allBaked = new List<IBakedAsset>(512);
+            using(Profiling.Time("bake assets"))
             {
                 foreach(var asset in AssetDBUtils.FindAssets<ScriptableObject>())
                 {
-                    IOptimizableAsset optimizable;
-                    if ((optimizable = asset as IOptimizableAsset) != null)
+                    IBakedAsset baked;
+                    if ((baked = asset as IBakedAsset) != null)
                     {
-                        allOptimizable.Add(optimizable);
+                        allBaked.Add(baked);
                     }
 
                     // ensure ids are reversible from hash
@@ -100,20 +100,20 @@ namespace Aqua.Editor
                     }
                 }
 
-                allOptimizable.Sort((a, b) => a.Order.CompareTo(b.Order));
-                int count = allOptimizable.Count;
+                allBaked.Sort((a, b) => a.Order.CompareTo(b.Order));
+                int count = allBaked.Count;
                 int current = 0;
                 ScriptableObject scriptableAsset;
                 try
                 {
-                    foreach(var optimizable in allOptimizable)
+                    foreach(var baked in allBaked)
                     {
-                        scriptableAsset = (ScriptableObject) optimizable;
-                        EditorUtility.DisplayProgressBar("Optimizing Scriptable Objects", string.Format("{0} ({1}/{2})", scriptableAsset.name, current + 1, count), current / (float) count);
-                        if (optimizable.Optimize())
+                        scriptableAsset = (ScriptableObject) baked;
+                        EditorUtility.DisplayProgressBar("Baking Scriptable Objects", string.Format("{0} ({1}/{2})", scriptableAsset.name, current + 1, count), current / (float) count);
+                        if (baked.Bake())
                         {
                             EditorUtility.SetDirty(scriptableAsset);
-                            Debug.LogFormat("[BuildSettings] Optimized asset '{0}' of type '{1}'", scriptableAsset.name, optimizable.GetType().Name);
+                            Debug.LogFormat("[BuildSettings] Baked asset '{0}' of type '{1}'", scriptableAsset.name, baked.GetType().Name);
                         }
                         current++;
                     }
@@ -127,25 +127,25 @@ namespace Aqua.Editor
             }
         }
 
-        [MenuItem("Aqualab/Enable Automatic Asset Optimization")]
+        [MenuItem("Optimize/Auto Enable", false, 20)]
         static private void EnableAutoOptimization()
         {
             EditorPrefs.SetBool(EditorPrefsAutoOptimizeOnPlayKey, true);
         }
 
-        [MenuItem("Aqualab/Disable Automatic Asset Optimization")]
+        [MenuItem("Optimize/Auto Disable", false, 21)]
         static private void DisableAutoOptimization()
         {
             EditorPrefs.SetBool(EditorPrefsAutoOptimizeOnPlayKey, false);
         }
 
-        [MenuItem("Aqualab/Enable Automatic Asset Optimization", true)]
+        [MenuItem("Optimize/Auto Enable", true)]
         static private bool EnableAutoOptimization_Enabled()
         {
             return !IsAutoOptimizeEnabled();
         }
 
-        [MenuItem("Aqualab/Disable Automatic Asset Optimization", true)]
+        [MenuItem("Optimize/Auto Disable", true)]
         static private bool DisableAutoOptimization_Enabled()
         {
             return IsAutoOptimizeEnabled();
@@ -154,7 +154,7 @@ namespace Aqua.Editor
         static private void StripEditorInfoFromAssets()
         {
             List<IEditorOnlyData> allStrippable = new List<IEditorOnlyData>(512);
-            using(Profiling.Time("optimize scriptable objects"))
+            using(Profiling.Time("strip scriptable objects"))
             {
                 foreach(var asset in AssetDBUtils.FindAssets<ScriptableObject>())
                 {
@@ -205,7 +205,7 @@ namespace Aqua.Editor
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try
                 {
-                    OptimizeAllAssets();
+                    BakeAllAssets();
                     if (bBatch) {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();

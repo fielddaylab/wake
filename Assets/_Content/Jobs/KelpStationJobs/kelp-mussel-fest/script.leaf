@@ -4,104 +4,57 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@drKelp}	Hi {player-name}. We need someone to work out the mussel situation at Site C.
-{@drKelp}	The mussels in the area are becoming funny-shaped, and we don't know why.
-{@drKelp}	First we need you to scan the mussels and collect the historical probe data.
+{@kevin}	The first thing to do is check out these mussels and their environment at Site C.
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:kelp-mussel-fest.seen.bottom
+@when 		scene:name != "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's exit the ship and head to the sub.
+{@kevin}	Get to Site C so we can check out those mussels.
 
 // SCANNING
-	
-:: helpGoToSiteR
+
+:: helpScan
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !HasFact(KelpForest.Population.Mussel)
+@when 		scene:name == "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
-{@player}   Where should we go next?
-{@kevin}	Let's head over to Site C and dive down!
-
-:: diveSite
-@trigger    SceneStart
-@when       scene:name == "RS-1C"
-@once
-@cutscene
-$set    	jobs:kelp-mussel-fest.seen.bottom = true
-$if HasEntity(Mussel)
-	{@kevin}   Looks like we made it! Let's find the probe data.
-$else
-	{@kevin}   Looks like we made it! Keep your eyes out for strange-looking mussels and probe data.
-$endif
-
+{@player}   Hmm. What now?
+{@kevin}	We need to scan a mussel, and also the water chemistry probe here.
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       HasEntity(Mussel), HasFact(KelpForest.Population.Mussel)
+@when       JobTaskTop(stressParam)
 @once
 @cutscene
-{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+{@kevin}    We have enough information to do some experiments, now.
 
-:: helpBackToShip
+// EXPERIMENTATION
+
+:: helpExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", HasFact(KelpForest.Population.Mussel)
+@when 		JobTaskTop(stressParam)
 @cutscene
-{@player} 	Where should we go from here?
-{@kevin}	Let's return to the ship.
-
-:: atShip
-@trigger    SceneStart
-@when       scene:name == "Ship", HasFact(KelpForest.Population.Mussel)
-@once
-@cutscene
-{@player}   We're back. Now what?
-{@kevin}   	Let's head to the Stress Tank and see what's going on with these mussels.
-
-:: helpBackAtShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", HasFact(KelpForest.Population.Mussel)
-@cutscene
-{@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head to the Stress Tank and see what's going on with these mussels. 
-
-:: startExperiment
-@trigger    SceneStart
-@when       scene:name == "ExperimentV2", HasFact(KelpForest.Population.Mussel)
-@once
-@cutscene
-{@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the mussels in the stressor tank and see if that can tell us what's happening them.
-
-:: helpAtExperiment
-@trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", HasFact(KelpForest.Population.Mussel)
-@cutscene
-{@player} 	How should I do this again?
-{@kevin}	First you'll want to select the Stress Tank.
-{@kevin}	Then you add the mussels and see what stresses them out.
+{@player}   Any idea of what to do next?
+{@kevin}	Putting a mussel in the stress tank might provide some answers.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(Mussel.Light.Stressed), HasFact(Mussel.PH.Stressed), HasFact(Mussel.Temperature.Stressed)
+@when 		JobTaskTop(report)
 @once
 @cutscene
-{@kevin}	Great! The {h}Stress Tank{/h} gave us some new clues.
-{@kevin}	Let's report this information back to {nameof @drKelp}!
+{@kevin}	All right -- I think we can answer Dr. Kelpurnia's question about what's disturbing the mussels.
 
-:: helpReportBack
+
+// REPORT
+
+:: helpReport
 @trigger    RequestPartnerHelp
-@when 		HasFact(Mussel.Light.Stressed), HasFact(Mussel.PH.Stressed), HasFact(Mussel.Temperature.Stressed)
-@boostScore 1
+@when 		JobTaskTop(report)
 @cutscene
-{@player} 	What should we be doing now?
-{@kevin}	That should be everything we need for now. Let's report back to {nameof @drKelp}.
-$if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
+{@player}   Any idea of what to do next?
+{@kevin}	It's time to explain our findings in the comms room.
+
 
 // ARGUMENTATION
 
@@ -113,10 +66,9 @@ $goto .argue.chooseClaim
 @trigger    TryArgumentation
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
-$call ArgueLoad(musselFestArguePopulationTemp)
-{@drKelp}	Have you found out what is happening with the mussels?
-	$choice .argue.lightStress; The Mussels are stressed by the light.
-	$choice .argue.parasite; The Mussels have a parasite.
+{@drKelp}	What is happening with the mussels?
+	$choice .argue.lightOrParasiteStress; The Mussels are stressed by light.
+	$choice .argue.lightOrParasiteStress; The Mussels have a parasite.
 	$choice .argue.tempStress; The Mussels are stressed by the temperature.
 	$choice .argue.notReady; Let me get back to you
 $choose branch
@@ -124,11 +76,7 @@ $choose branch
 :: argue.notReady
 {@drKelp} OK. Get back to me when you're ready.
 
-::argue.lightStress
-{@drKelp}	Do you have any evidence for this?
-$goto .argue.defendClaimIncorrect
-
-::argue.parasite
+::argue.lightOrParasiteStress
 {@drKelp}	Do you have any evidence for this?
 $goto .argue.defendClaimIncorrect
 
@@ -140,25 +88,34 @@ $goto .argue.defendClaimIncorrect
 $goto .argue.chooseClaim
 
 ::argue.tempStress
+$if ArgueIsComplete(musselFestArguePopulationTemp)
+	{@drKelp}	Okay, you've already shown me the temperature range in Site B.
+	$goto .argue.correctFactsPopulationTemp
+$endif
+$call ArgueLoad(musselFestArguePopulationTemp)
 $if ArgueSetClaim(musselFestArguePopulationTempClaim, jobs.kelp-mussel-fest.argue.claimLabelPopulationTemp)
-			$call ArgueFactSlot(KelpForest.Population.Mussel)
+			$call ArgueFactSlot(WarmKelpForest.Temperature.History)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.defendClaimPopulationTemp
 
 ::argue.defendClaimPopulationTemp
+{@drKelp}	What was the temperature range in Site B again?
 $if ArgueAllFactsCorrect()
     $goto .argue.correctFactsPopulationTemp
 $else
 	$choice #argueFactSet; Present facts from AQOS
-			$answer correct, .argue.correctFactsPopulationTemp
+			$answer correct, .argue.completePopulationTempArgue
 			$answer incorrect, .argue.incorrectFactsPopulationTemp
 	$choice .argue.giveUp; Let me get back to you
 $endif
 
-:: argue.correctFactsPopulationTemp
+:: argue.completePopulationTempArgue
 $call ArgueComplete()
 $call ArgueHideClaim()
+$goto .argue.correctFactsPopulationTemp
+
+:: argue.correctFactsPopulationTemp
 $call ArgueLoad(musselFestArgueMusselTemp)
 {@drKelp}	How does that compare to the stress ranges for the mussels?
 $if ArgueSetClaim(musselFestArgueMusselTempClaim, jobs.kelp-mussel-fest.argue.claimLabelMusselTemp)
@@ -168,7 +125,7 @@ $call ArgueDisplayClaim()
 $branch .argue.defendClaimMusselTemp
 
 :: argue.incorrectFactsPopulationTemp
-{@drKelp} That isn't it. Do you have the temperature data from the probe at Site C?
+{@drKelp} That isn't it. Do you have the temperature stress ranges for Mussels?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaimPopulationTemp
 

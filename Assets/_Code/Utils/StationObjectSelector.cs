@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class StationObjectSelector : MonoBehaviour, IScenePreloader, ISceneOptimizable
+    public class StationObjectSelector : MonoBehaviour, IScenePreloader, IBakedComponent
     {
         public GameObject KelpStation;
         public GameObject CoralStation;
@@ -30,7 +30,7 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize() {
+        void IBakedComponent.Bake() {
             if (KelpStation)
                 KelpStation.SetActive(false);
             if (CoralStation)

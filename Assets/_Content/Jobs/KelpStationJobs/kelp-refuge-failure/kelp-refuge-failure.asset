@@ -124,6 +124,42 @@ MonoBehaviour:
     - m_Source: visitSite
       m_HashValue: 375978279
   - Id:
+      m_Source: lightRatesGiant
+      m_HashValue: 2451814211
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.lightRatesGiant
+      m_HashValue: 1378242856
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Consume.Light
+        m_HashValue: 2180334128
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: growthRates
+      m_HashValue: 1111871253
+    - m_Source: growthRatesBull
+      m_HashValue: 356089400
+  - Id:
+      m_Source: lightRatesBull
+      m_HashValue: 3416920767
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.lightRatesBull
+      m_HashValue: 3285731570
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Consume.Light
+        m_HashValue: 4085507642
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: growthRates
+      m_HashValue: 1111871253
+    - m_Source: growthRatesBull
+      m_HashValue: 356089400
+  - Id:
       m_Source: newModel
       m_HashValue: 2854125062
     LabelId:
@@ -143,6 +179,10 @@ MonoBehaviour:
       m_HashValue: 1111871253
     - m_Source: growthRatesBull
       m_HashValue: 356089400
+    - m_Source: lightRatesGiant
+      m_HashValue: 2451814211
+    - m_Source: lightRatesBull
+      m_HashValue: 3416920767
   - Id:
       m_Source: getPaid
       m_HashValue: 2143477857
@@ -176,30 +216,9 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: histPop
-      m_HashValue: 1662730776
-    Index: 1
-    LabelId:
-      m_Source: jobs.kelp-refuge-failure.task.histPop
-      m_HashValue: 733026455
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: MixedKelp.PopulationHistory.BullKelp
-        m_HashValue: 2494218494
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: MixedKelp.PopulationHistory.GiantKelp
-        m_HashValue: 1002310368
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
       m_Source: growthRates
       m_HashValue: 1111871253
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.kelp-refuge-failure.task.growthRates
       m_HashValue: 2881083366
@@ -220,7 +239,7 @@ MonoBehaviour:
   - Id:
       m_Source: growthRatesBull
       m_HashValue: 356089400
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.kelp-refuge-failure.task.growthRatesBull
       m_HashValue: 252314555
@@ -239,9 +258,60 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
+      m_Source: histPop
+      m_HashValue: 1662730776
+    Index: 3
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.histPop
+      m_HashValue: 733026455
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: MixedKelp.PopulationHistory.BullKelp
+        m_HashValue: 2494218494
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: MixedKelp.PopulationHistory.GiantKelp
+        m_HashValue: 1002310368
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: lightRatesGiant
+      m_HashValue: 2451814211
+    Index: 4
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.lightRatesGiant
+      m_HashValue: 1378242856
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GiantKelp.Consume.Light
+        m_HashValue: 2180334128
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000200
+  - Id:
+      m_Source: lightRatesBull
+      m_HashValue: 3416920767
+    Index: 5
+    LabelId:
+      m_Source: jobs.kelp-refuge-failure.task.lightRatesBull
+      m_HashValue: 3285731570
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BullKelp.Consume.Light
+        m_HashValue: 4085507642
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000200
+  - Id:
       m_Source: newModel
       m_HashValue: 2854125062
-    Index: 4
+    Index: 6
     LabelId:
       m_Source: jobs.kelp-refuge-failure.task.newModel
       m_HashValue: 2830310567
@@ -252,11 +322,11 @@ MonoBehaviour:
         m_HashValue: 2375835919
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 010002000300
+    PrerequisiteTaskIndices: 03000100020004000500
   - Id:
       m_Source: getPaid
       m_HashValue: 2143477857
-    Index: 5
+    Index: 7
     LabelId:
       m_Source: jobs.kelp-refuge-failure.task.getPaid
       m_HashValue: 3159939990
@@ -267,7 +337,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0400
+    PrerequisiteTaskIndices: 0600
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 82cc87b3bb724ed4ba6699b527ee2470,

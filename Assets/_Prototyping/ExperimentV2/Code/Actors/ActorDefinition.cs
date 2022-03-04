@@ -32,10 +32,38 @@ namespace ProtoAqua.ExperimentV2
         [Serializable]
         public struct SpawnConfiguration
         {
+            [Tooltip("Where the actor's spawn target will be located")]
             [AutoEnum] public SpawnPositionId SpawnLocation;
+
+            [Tooltip("How the actor will animate to its spawn target")]
             [AutoEnum] public SpawnAnimationId SpawnAnimation;
+
+            [Tooltip("Distance to offset the actor from the left and right sides of the tank")]
             public float AvoidTankSidesRadius;
+
+            [Tooltip("Distance to offset the actor from the top and bottom of the tank")]
             public float AvoidTankTopBottomRadius;
+
+            static internal readonly SpawnConfiguration Default = new SpawnConfiguration()
+            {
+                SpawnLocation = SpawnPositionId.Anywhere,
+                SpawnAnimation = SpawnAnimationId.Drop,
+                AvoidTankSidesRadius = 1,
+                AvoidTankTopBottomRadius = 1
+            };
+
+            static internal void ReplaceDefaults(ref SpawnConfiguration configuration) {
+                if (configuration.Equals(default)) {
+                    configuration = Default;
+                }
+            }
+
+            private bool Equals(SpawnConfiguration other) {
+                return SpawnLocation == other.SpawnLocation
+                    && SpawnAnimation == other.SpawnAnimation
+                    && AvoidTankSidesRadius == other.AvoidTankSidesRadius
+                    && AvoidTankTopBottomRadius == other.AvoidTankTopBottomRadius;
+            }
         }
 
         public enum MovementTypeId : byte
@@ -47,12 +75,48 @@ namespace ProtoAqua.ExperimentV2
         [Serializable]
         public struct MovementConfiguration
         {
+            [Tooltip("How the organism moves")]
             [AutoEnum] public MovementTypeId MoveType;
+
+            [Tooltip("Distance the actor will try to move during an idle movement")]
             public float MovementIdleDistance;
+
+            [Tooltip("Speed at which actor will move for an idle movement")]
             public float MovementSpeed;
+
+            [Tooltip("Easing function to use for idle movement")]
             public Curve MovementCurve;
+
+            [Tooltip("Minimum seconds between idle movements")]
             public float MovementInterval;
+
+            [Tooltip("Maximum amount of random additional seconds between idle movements")]
             public float MovementIntervalRandom;
+
+            static internal readonly MovementConfiguration Default = new MovementConfiguration()
+            {
+                MoveType = MovementTypeId.Swim,
+                MovementIdleDistance = 1,
+                MovementSpeed = 1,
+                MovementCurve = Curve.Smooth,
+                MovementInterval = 1.5f,
+                MovementIntervalRandom = 1
+            };
+
+            static internal void ReplaceDefaults(ref MovementConfiguration configuration) {
+                if (configuration.Equals(default)) {
+                    configuration = Default;
+                }
+            }
+
+            private bool Equals(MovementConfiguration other) {
+                return MoveType == other.MoveType
+                    && MovementIdleDistance == other.MovementIdleDistance
+                    && MovementSpeed == other.MovementSpeed
+                    && MovementCurve == other.MovementCurve
+                    && MovementInterval == other.MovementInterval
+                    && MovementIntervalRandom == other.MovementIntervalRandom;
+            }
         }
 
         public enum EatTypeId : byte
@@ -65,16 +129,60 @@ namespace ProtoAqua.ExperimentV2
         [Serializable]
         public struct EatingConfiguration
         {
+            [Tooltip("How the organism eats")]
             [AutoEnum] public EatTypeId EatType;
+
+            [Tooltip("Multiplier on movement speed when moving towards an eat target")]
             public float MovementMultiplier;
+
+            static internal readonly EatingConfiguration Default = new EatingConfiguration()
+            {
+                EatType = EatTypeId.Nibble,
+                MovementMultiplier = 1
+            };
+
+            static internal void ReplaceDefaults(ref EatingConfiguration configuration) {
+                if (configuration.Equals(default)) {
+                    configuration = Default;
+                }
+            }
+
+            private bool Equals(EatingConfiguration other) {
+                return EatType == other.EatType
+                    && MovementMultiplier == other.MovementMultiplier;
+            }
         }
 
         [Serializable]
         public struct StressConfiguration
         {
+            [Tooltip("Multiplier on movement speed when stressed")]
             public float MovementSpeedMultiplier;
+
+            [Tooltip("Multiplier on idle movement interval when stressed")]
             public float MovementIntervalMultiplier;
+
+            [Tooltip("Multiplier on ambient animation speed when stressed")]
             public float AmbientAnimationSpeedMultiplier;
+
+            static internal readonly StressConfiguration Default = new StressConfiguration()
+            {
+                MovementSpeedMultiplier = 0.8f,
+                MovementIntervalMultiplier = 0.9f,
+                AmbientAnimationSpeedMultiplier = 1
+            };
+
+            static internal void ReplaceDefaults(ref StressConfiguration configuration) {
+                if (configuration.Equals(default)) {
+                    configuration = Default;
+                }
+            }
+
+            private bool Equals(StressConfiguration other) {
+                return MovementSpeedMultiplier == other.MovementSpeedMultiplier
+                    && MovementIntervalMultiplier == other.MovementIntervalMultiplier
+                    && AmbientAnimationSpeedMultiplier == other.AmbientAnimationSpeedMultiplier;
+            }
         }
 
         [Serializable]
@@ -94,14 +202,14 @@ namespace ProtoAqua.ExperimentV2
         // TODO: Microscope prefab
 
         [Space]
+        [Tooltip("If greater than 0, this sets the number of actors to spawn directly\nActor spawn counts are normally determined by the organism type's size property")]
         public int SpawnAmountOverride = -1;
-
         [Header("Behavior")]
 
-        public SpawnConfiguration Spawning = default(SpawnConfiguration);
-        public MovementConfiguration Movement = default(MovementConfiguration);
-        public EatingConfiguration Eating = default(EatingConfiguration);
-        public StressConfiguration Stress = default(StressConfiguration);
+        public SpawnConfiguration Spawning = SpawnConfiguration.Default;
+        public MovementConfiguration Movement = MovementConfiguration.Default;
+        public EatingConfiguration Eating = EatingConfiguration.Default;
+        public StressConfiguration Stress = StressConfiguration.Default;
         
         [Header("Derived From Facts")]
 
@@ -326,6 +434,15 @@ namespace ProtoAqua.ExperimentV2
                 inDef.SpawnCount = inDef.SpawnAmountOverride;
             else
                 inDef.SpawnCount = GetDefaultSpawnAmount(inBestiary.Size());
+
+            SpawnConfiguration.ReplaceDefaults(ref inDef.Spawning);
+            MovementConfiguration.ReplaceDefaults(ref inDef.Movement);
+            EatingConfiguration.ReplaceDefaults(ref inDef.Eating);
+            StressConfiguration.ReplaceDefaults(ref inDef.Stress);
+
+            if (inDef.IsPlant) {
+                inDef.Movement.MoveType = MovementTypeId.Stationary;
+            }
 
             if (inPrefab != null) {
                 ProcessPrefab(inDef, inBestiary, inPrefab);

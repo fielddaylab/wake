@@ -18,7 +18,6 @@ $branch common.ringPhone
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
 
-
 :: navigation
 @trigger    SceneStart
 @when       scene:name == "Station2"
@@ -35,24 +34,24 @@ $branch common.ringPhone
 
 :: diveSite
 @trigger    SceneStart
-@when       scene:name == "RS-2V", !HasEntity(LoggerheadTurtle)
+@when       scene:name == "RS-2V"
 @once
 @cutscene
 $set    	jobs:coral-turtle-population.seen.bottom = true
 {@kevin}   Let's look around for that Loggerhead Turtle.
-
-:: countTurtles
-@trigger JobTasksUpdated
-@when    HasEntity(LoggerheadTurtle), !HasFact(ReefEdge.Population.LoggerheadTurtle)
-@cutscene
+$branch common.ringPhone
 $if !HasUpgrade(ROVTagger)
-	{@profCempaka} I see you've scanned a turtle.  I need you to start counting how many are here.
+	{@profCempaka} Once you've scanned a turtle, I'll need you to start counting how many are here.
 	$call GiveUpgrade(ROVTagger)
 	{@profCempaka} You should see the {nameof ROVTagger} at the top of your view.  
 	{@profCempaka} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
 	{@profCempaka} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 	{@kevin} That's really convenient.
 $endif
+
+//:: countTurtles
+//@trigger JobTasksUpdated
+//@when    HasEntity(LoggerheadTurtle), !HasFact(ReefEdge.Population.LoggerheadTurtle)
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp

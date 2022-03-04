@@ -10,12 +10,16 @@ namespace Aqua.StationMap
         public struct Input
         {
             public MouseDistanceInputFilter.Output Mouse;
+            public DirectionKeysInputFilter.Output Keyboard;
+
             public bool Move;
+            public Vector2 MovementVector;
         }
 
         #region Inspector
 
         [SerializeField] private MouseDistanceInputFilter m_Movement = default;
+        [SerializeField] private DirectionKeysInputFilter m_MovementKey = default;
 
         #endregion // Inspector
 
@@ -29,7 +33,9 @@ namespace Aqua.StationMap
         public void GenerateInput(out Input outInput)
         {
             m_Movement.Process(Device, m_Transform, null, out outInput.Mouse);
-            outInput.Move = Device.MouseDown(0) && !Services.Input.IsPointerOverUI();
+            m_MovementKey.Process(Device, out outInput.Keyboard);
+            outInput.Move = (Device.MouseDown(0) && !Services.Input.IsPointerOverUI()) || outInput.Keyboard.KeyDown;
+            outInput.MovementVector = outInput.Keyboard.KeyDown ? outInput.Keyboard.NormalizedOffset : outInput.Mouse.NormalizedOffset;
         }
     }
 }

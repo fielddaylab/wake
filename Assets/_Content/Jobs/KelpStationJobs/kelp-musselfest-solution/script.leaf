@@ -1,0 +1,158 @@
+#basePath   job.kelp-mussel-fest-solution
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@kevin}	We'll need to measure how Mussels reproduce in stressed and unstressed conditions.
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
+
+// SET VARS
+:: setTankVars1
+@trigger	ExperimentTankViewed
+@when		!JobTaskTop(reportChange), tankType == "Measurement"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = true
+
+:: setTankVars2
+@trigger	ExperimentTankViewed
+@when		!JobTaskTop(reportChange), tankType != "Measurement"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+:: setTankVars3
+@trigger	ExperimentScreenViewed
+@when		!JobTaskTop(reportChange), screenId == "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = true
+
+:: setTankVars4
+@trigger	ExperimentScreenViewed
+@when		!JobTaskTop(reportChange), screenId != "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
+
+:: setTankVars5
+@trigger	SceneStart
+@when	scene:name != "ExperimentV2"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+:: setTankVars6
+@trigger	ExperimentTankExited
+@when		scene:name == "ExperimentV2"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+:: setTankVars7
+@trigger	ExperimentScreenExited
+@when		scene:name == "ExperimentV2", screenId == "measurement.ecosystem"
+@cutscene
+$set jobs:kelp-mussel-fest-solution.inMeasurement = false
+
+
+
+// EXPERIMENTATION
+
+:: helpStartExperiment
+@trigger    RequestPartnerHelp
+@when 		!JobTaskTop(reportChange)
+@cutscene
+{@player}   Hmm, I'm not sure how to approach this job.
+{@kevin}	The {nameof MeasurementTank} in the Experiment room should be your weapon of choice, here.
+
+:: helpSelectEnvironment
+@trigger    RequestPartnerHelp
+@when 		!JobTaskTop(reportChange), scene:name == "ExperimentV2", jobs:kelp-mussel-fest-solution.inMeasurement
+@boostScore 1
+@cutscene
+$if jobs:kelp-mussel-fest-solution.inMeasurementEcosystem
+	{@player}   Which site should we pick?
+	{@kevin}	Do you know which sites the mussels will be stressed in, and which sites they won't be stressed in?
+$else
+	{@player}   How do we do this again?
+	{@kevin}	Select an ecosystem, organism, and additional controls. Then run the experiment.
+$endif
+
+:: helpContinueExperiment
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(stressedRate), !jobs:kelp-mussel-fest-solution.inMeasurement
+@boostScore 2
+@cutscene
+{@player}   Are we ready to report our findings?
+{@kevin}	Not quite. You still have another Mussel reproduction rate to get.
+
+:: experimentEnd
+@trigger    JobTasksUpdated
+@when 		JobTaskTop(reportChange)
+@once
+@cutscene
+{@kevin}	We have all the information -- if you can interpret it, you'll be able to advise Dr. Kelpurnia.
+
+:: helpReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskTop(reportChange)
+@cutscene
+{@player}   What now?
+{@kevin}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
+
+// ARGUMENTATION
+
+:: argue.chooseClaim
+@trigger    TryArgumentation
+@when   	!ArgueIsComplete(musselFestSolutionArgueNoChange)
+@cutscene
+{@drKelp}	Are Mussel reproduction rates being impacted by stress?
+	$choice .argue.growSame; Mussel growth should stay the same.
+	$choice .argue.growIncorrect; Mussel growth will slow.
+	$choice .argue.growIncorrect; The Mussels will grow faster!
+	$choice .argue.notReady; Let me get back to you
+$choose branch
+
+:: argue.notReady
+{@drKelp} OK. Get back to me when you're ready.
+
+:: argue.growSame
+{@drKelp}	How do you know?
+$goto .argue.defendClaim
+
+:: argue.growIncorrect
+{@drKelp}	How do you know?
+$goto .argue.defendClaimIncorrect
+
+
+:: argue.defendClaim
+$call ArgueLoad(musselFestSolutionArgueNoChange)
+$if ArgueSetClaim(musselFestSolutionArgueNoChangeClaim, jobs.kelp-mussel-fest-solution.argue.claimLabel)
+			$call ArgueFactSlot(Mussel.Reproduce)
+			$call ArgueFactSlot(Mussel.Reproduce.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.notReady; Let me get back to you
+
+:: argue.defendClaimIncorrect
+$call ArgueLoad(musselFestSolutionArgueNoChange)
+$if ArgueSetClaim(musselFestSolutionArgueNoChangeClaim, jobs.kelp-mussel-fest-solution.argue.claimLabel)
+			$call ArgueFactSlot(Mussel.Reproduce)
+			$call ArgueFactSlot(Mussel.Reproduce.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.incorrectFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.notReady; Let me get back to you
+
+
+:: argue.incorrectFacts
+{@drKelp}	Hmmm... That doesn't seem right.
+$call ArgueClearFacts()
+$call ArgueRejectIncorrect()
+
+:: argue.correctFacts
+$call ArgueComplete()
+{@drKelp}	Oh! They grow at the same rate. Amazing!
+$call CompleteJob()

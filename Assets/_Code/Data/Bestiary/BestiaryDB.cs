@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Bestiary Database", fileName = "BestiaryDB")]
-    public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IOptimizableAsset
+    public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IBakedAsset
     {
         #region Inspector
 
@@ -201,9 +201,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IOptimizableAsset.Order { get { return 10; } }
+        int IBakedAsset.Order { get { return 10; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             SortObjects(SortByCategory);
 

@@ -235,6 +235,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return m_DrainRoutine;
             m_SetupPanelGroup.interactable = true;
             Services.Input.ResumeAll();
+
             ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
         }
 
@@ -310,18 +311,21 @@ namespace ProtoAqua.ExperimentV2 {
                 case SetupPhase.Features: {
                     m_SetupPhase = SetupPhase.Critters;
                     Routine.Start(this, BackToCritters());
+                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.features");
                     break;
                 }
 
                 case SetupPhase.Critters: {
                     m_SetupPhase = SetupPhase.Environment;
                     Routine.Start(this, BackToEnvironment());
+                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.organisms");
                     break;
                 }
 
                 case SetupPhase.Environment: {
                     m_SetupPhase = SetupPhase.Begin;
                     Routine.Start(this, BackToBegin());
+                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.ecosystem");
                     break;
                 }
             }

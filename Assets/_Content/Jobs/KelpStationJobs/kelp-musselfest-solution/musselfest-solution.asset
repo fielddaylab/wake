@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: musselfest-solution
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.kelp-mussel-fest-solution.name
+    m_HashValue: 1685887291
+  m_PosterId:
+    m_HashValue: 46959747
+  m_DescId:
+    m_Source: jobs.kelp-mussel-fest-solution.desc
+    m_HashValue: 1326595209
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 3
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 2
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: f9220df50cac51e41a329b9797ff2599, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades:
+  - m_HashValue: 283353415
+  - m_HashValue: 3844482921
+  m_StationId:
+    m_HashValue: 2724389503
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: unstressedRate
+      m_HashValue: 551110925
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.unstressedRate
+      m_HashValue: 1253920849
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Reproduce
+        m_HashValue: 834841285
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: stressedRate
+      m_HashValue: 819518622
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.stressedRate
+      m_HashValue: 729657490
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Reproduce.Stressed
+        m_HashValue: 1531430168
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: unstressedRate
+      m_HashValue: 551110925
+  - Id:
+      m_Source: reportChange
+      m_HashValue: 1271786095
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.reportChange
+      m_HashValue: 106659395
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: stressedRate
+      m_HashValue: 819518622
+    - m_Source: unstressedRate
+      m_HashValue: 551110925
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: unstressedRate
+      m_HashValue: 551110925
+    Index: 0
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.unstressedRate
+      m_HashValue: 1253920849
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Reproduce
+        m_HashValue: 834841285
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: stressedRate
+      m_HashValue: 819518622
+    Index: 1
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.stressedRate
+      m_HashValue: 729657490
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Mussel.Reproduce.Stressed
+        m_HashValue: 1531430168
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportChange
+      m_HashValue: 1271786095
+    Index: 2
+    LabelId:
+      m_Source: jobs.kelp-mussel-fest-solution.task.reportChange
+      m_HashValue: 106659395
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000000
+  m_CashReward: 10
+  m_ExpReward: 5
+  m_Scripting: {fileID: -1942890987711236906, guid: 4ca84bb81455ded4c94bd1520a69834d,
+    type: 3}
+  m_ExtraAssets: []

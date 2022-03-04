@@ -5,11 +5,12 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using EasyAssetStreaming;
 using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, ISceneOptimizable
+    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBakedComponent
     {
         static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
 
@@ -121,6 +122,7 @@ namespace Aqua.Ship
             using(var fader = Services.UI.WorldFaders.AllocWipe())
             {
                 yield return fader.Object.Show();
+                LoadingIcon.Queue();
                 m_CurrentRoom.Exit();
                 m_CurrentRoom = inNextRoom;
                 yield return 0.15f;
@@ -133,6 +135,7 @@ namespace Aqua.Ship
                 while(Streaming.IsLoading()) {
                     yield return null;
                 }
+                LoadingIcon.Cancel();
                 yield return fader.Object.Hide(false);
             }
 
@@ -170,7 +173,7 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);

@@ -100,7 +100,7 @@ namespace Aqua
             return consume != null && consume.Property == Property;
         }
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {
@@ -108,8 +108,7 @@ namespace Aqua
                 if (pair != null)
                 {
                     long compare = (long) Amount - (long) pair.Amount;
-                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id, pair.Id, Amount);
-                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More));
+                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More, QualCompare.SameAmount));
                 }
             }
 
