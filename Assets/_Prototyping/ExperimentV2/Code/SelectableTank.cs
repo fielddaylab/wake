@@ -37,7 +37,10 @@ namespace ProtoAqua.ExperimentV2
         [HideInInspector] public Rect WaterRect;
         
         [Header("Emojis")]
-        [SerializeField, Required] public ParticleSystem m_Emojis = null;
+        [SerializeField, Required] public ParticleSystem[] EmojiEmitters = Array.Empty<ParticleSystem>();
+
+        [Header("Actors")]
+        [SerializeField] public ActorBehaviorSystem ActorBehavior = null;
 
         [HideInInspector] public ActorAllocator ActorAllocator;
 
@@ -65,6 +68,7 @@ namespace ProtoAqua.ExperimentV2
         bool IBaked.Bake(BakeFlags flags)
         {
             ActorAllocator = FindObjectOfType<ActorAllocator>();
+            ActorBehavior = GetComponentInChildren<ActorBehaviorSystem>(false);
             return true;
         }
 

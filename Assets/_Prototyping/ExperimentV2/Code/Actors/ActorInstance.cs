@@ -412,7 +412,7 @@ namespace ProtoAqua.ExperimentV2
         //Xander Grabowski - 02/04/2022
         static public IEnumerator callEmitEmoji(ActorInstance inActor, ActorWorld inWorld){
             while(true){
-                ActorWorld.EmitEmoji(inActor, inWorld);
+                ActorWorld.EmitEmoji(inWorld, inActor, "Stress");
                 yield return 0.75f;
             }
         }
@@ -446,7 +446,7 @@ namespace ProtoAqua.ExperimentV2
         Hungry, // moving towards food
         Eating, // eating food
         BeingEaten, // being eaten
-        Dying, // dying,
+        Dying, // dying
         
         [Hidden]
         COUNT,

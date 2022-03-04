@@ -10,16 +10,19 @@ namespace ProtoAqua.ExperimentV2
         public readonly ActorAllocator Allocator;
         public readonly Bounds WorldBounds;
         public readonly Transform ActorRoot;
+
         public readonly RingBuffer<ActorInstance> Actors;
         public readonly RingBuffer<ActorCountU32> ActorCounts;
         public readonly ActorInstance.GeneralDelegate OnFree;
+
         public WaterPropertyBlockF32 Water;
         public bool HasEnvironment;
-        public object Tag;
         public float Lifetime;
-        public SelectableTank Tank;
 
-        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, object inTag = null)
+        public SelectableTank Tank;
+        public object Tag;
+
+        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, SelectableTank inTank = null, object inTag = null)
         {
             Allocator = inAllocator;
             WorldBounds = inBounds;
@@ -29,6 +32,7 @@ namespace ProtoAqua.ExperimentV2
             ActorCounts = new RingBuffer<ActorCountU32>(8, RingBufferMode.Expand);
             Water = Services.Assets.WaterProp.DefaultValues();
             Tag = inTag;
+            Tank = inTank;
         }
 
         #region Alloc/Free
@@ -157,11 +161,11 @@ namespace ProtoAqua.ExperimentV2
         }
 
         //Xander Grabowski - 02/04/2022
-        static public void EmitEmoji(ActorInstance inActor, ActorWorld inWorld)
+        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, StringHash32 inId, int inCount = 1)
         {
             ParticleSystem.EmitParams emit = default;
             emit.position = inActor.CachedCollider.bounds.center;
-            inWorld.Tank.m_Emojis.Emit(emit, 1);
+            // inWorld.Tank.StressEmojis.Emit(emit, 1);
         }
 
         static private void UpdateActorStates(ActorWorld inWorld, ListSlice<ActorInstance> inInstances)

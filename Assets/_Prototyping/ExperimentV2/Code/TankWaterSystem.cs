@@ -6,9 +6,7 @@ using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
 
-namespace ProtoAqua.ExperimentV2
-{
-
+namespace ProtoAqua.ExperimentV2 {
     public class TankWaterSystem : MonoBehaviour {
         private const float MaxWaterPitch = 3f;
         private const Curve WaterPitchCurve = Curve.CubeIn;
@@ -56,7 +54,7 @@ namespace ProtoAqua.ExperimentV2
         public void SetActiveTank(SelectableTank inTank) {
             var downParticleTrigger = m_SplashDownParticles.trigger;
             downParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
-            
+
             var uwParticleTrigger = m_UnderwaterParticles.trigger;
             uwParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
 
@@ -68,17 +66,17 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
             actor.InWater = true;
 
-            switch(actor.Definition.Spawning.SpawnAnimation) {
+            switch (actor.Definition.Spawning.SpawnAnimation) {
                 case ActorDefinition.SpawnAnimationId.Drop: {
-                    actor.ActionAnimation.SetTimeScale(0.6f);
-                    SurfaceSplash(inTank, actor, inCreature);
-                    break;
-                }
+                        actor.ActionAnimation.SetTimeScale(0.6f);
+                        SurfaceSplash(inTank, actor, inCreature);
+                        break;
+                    }
 
                 case ActorDefinition.SpawnAnimationId.Sprout: {
-                    UnderwaterPulse(inTank, actor, inCreature);
-                    break;
-                }
+                        UnderwaterPulse(inTank, actor, inCreature);
+                        break;
+                    }
             }
         }
 
@@ -150,7 +148,7 @@ namespace ProtoAqua.ExperimentV2
             float newHeightProportion = Math.Min(inTank.WaterFillProportion + fillAmount, 1);
             SetWaterHeight(inTank, newHeightProportion);
         }
-    
+
         public IEnumerator RequestFill(SelectableTank inTank) {
             m_FillParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
             m_FillParticles.Play(true);
@@ -159,7 +157,7 @@ namespace ProtoAqua.ExperimentV2
 
             inTank.CurrentState |= TankState.Filling;
 
-            while(inTank.WaterFillProportion < 1) {
+            while (inTank.WaterFillProportion < 1) {
                 yield return null;
             }
 
@@ -168,7 +166,7 @@ namespace ProtoAqua.ExperimentV2
 
             pourAudio.Stop(0.1f);
 
-            while(m_FillParticles.particleCount > 0) {
+            while (m_FillParticles.particleCount > 0) {
                 yield return null;
             }
         }
@@ -178,7 +176,7 @@ namespace ProtoAqua.ExperimentV2
 
             Rect originalRect = inTank.WaterRect;
             Vector2 originalCenter = originalRect.center;
-            
+
             Rect newRect = originalRect;
             Curve evalCurve;
             if ((inTank.CurrentState & TankState.Draining) != 0) {
@@ -187,7 +185,7 @@ namespace ProtoAqua.ExperimentV2
                 evalCurve = Curve.QuadOut;
             }
             newRect.height *= TweenUtil.Evaluate(evalCurve, inProportion);
-            
+
             Vector2 newCenter = newRect.center;
             float newHeight = newRect.height;
 
@@ -235,7 +233,7 @@ namespace ProtoAqua.ExperimentV2
             inTank.WaterRenderer.SetPosition(newCenter, Axis.Y, Space.Self);
             inTank.WaterRenderer.SetScale(newHeight, Axis.Y);
         }
-    
+
         public IEnumerator DrainWaterOverTime(SelectableTank inTank, float inDuration) {
             var audio = Services.Audio.PostEvent("tank_water_drain");
             try {
@@ -246,8 +244,7 @@ namespace ProtoAqua.ExperimentV2
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
                 inTank.CurrentState &= ~TankState.Draining;
                 inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            }
-            finally {
+            } finally {
                 inTank.WaterDrainParticles.Stop();
                 audio.Stop(0);
             }

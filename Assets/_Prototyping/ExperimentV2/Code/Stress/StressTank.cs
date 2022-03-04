@@ -33,7 +33,6 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private ActorStateTransitionSet m_CritterTransitions;
 
         [NonSerialized] private ActorInstance m_SelectedCritterInstance;
-        [NonSerialized] private ActorWorld m_World;
 
         [NonSerialized] private Routine m_TransitionAnim;
 
@@ -48,8 +47,6 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] private WaterPropertyMask m_RequiredReveals;
         [NonSerialized] private WaterPropertyMask m_VisiblePropertiesMask;
         [NonSerialized] private ExperimentResult m_ExpResult = null;
-
-        [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
 
         private void Awake()
         {
@@ -79,12 +76,6 @@ namespace ProtoAqua.ExperimentV2
 
         private void Activate()
         {
-            if (m_World == null)
-            {
-                m_World = new ActorWorld(m_ParentTank.ActorAllocator, m_ParentTank.Bounds, null, null, 1, this);
-                m_World.Tank = m_ParentTank;
-            }
-
             m_SetupPanelGroup.Hide();
             m_WaterPropertyGroup.Hide();
 
@@ -253,7 +244,7 @@ namespace ProtoAqua.ExperimentV2
             {
                 if (m_SelectedCritterInstance != null)
                 {
-                    ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
+                    // ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
                 }
 
                 if (m_DialsDirty) {
@@ -262,7 +253,7 @@ namespace ProtoAqua.ExperimentV2
                 m_CritterTransitions = m_SelectedCritter.GetActorStateTransitions();
                 ResetWaterPropertiesForCritter(Save.Bestiary);
 
-                m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
+                // m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
                 Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
@@ -283,14 +274,14 @@ namespace ProtoAqua.ExperimentV2
         {
             if (Ref.CompareExchange(ref m_SelectedCritter, inDesc, null))
             {
-                ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
+                // ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
             }
         }
 
         private void OnCrittersCleared()
         {
             m_SelectedCritter = null;
-            ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
+            // ActorWorld.Free(m_World, ref m_SelectedCritterInstance);
         }
 
         #endregion // Critter Callbacks
@@ -299,7 +290,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void OnPropertyChanged(WaterPropertyId inId, float inValue)
         {
-            m_World.Water[inId] = inValue;
+            // m_World.Water[inId] = inValue;
             ActorStateTransitionRange range = m_CritterTransitions[inId];
             WaterPropertyDesc property = Assets.Property(inId);
             
@@ -315,7 +306,7 @@ namespace ProtoAqua.ExperimentV2
 
                 if (bHasMin)
                 {
-                    ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Stressed, m_World);
+                    // ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Stressed, m_World);
                 }
 
                 if (!m_RevealedLeftMask[inId])
@@ -333,7 +324,7 @@ namespace ProtoAqua.ExperimentV2
 
                 if (bHasMax)
                 {
-                    ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Stressed, m_World);
+                    // ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Stressed, m_World);
                 }
 
                 if (!m_RevealedRightMask[inId])
@@ -346,7 +337,7 @@ namespace ProtoAqua.ExperimentV2
             }
             else
             {
-                ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Alive, m_World);
+                // ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Alive, m_World);
             }
         }
 
@@ -355,19 +346,19 @@ namespace ProtoAqua.ExperimentV2
             if (m_SelectedCritter == null)
                 return;
             
-            float value = m_World.Water[inId];
-            ActorStateTransitionRange range = m_CritterTransitions[inId];
-            if (value < range.AliveMin)
-            {
-                m_World.Water[inId] = range.AliveMin;
-                m_DialMap[(int) inId].SetValue(range.AliveMin);
-            }
-            else if (value > range.AliveMax)
-            {
-                m_World.Water[inId] = range.AliveMax;
-                m_DialMap[(int) inId].SetValue(range.AliveMax);
-            }
-            ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Alive, m_World);
+            // float value = m_World.Water[inId];
+            // ActorStateTransitionRange range = m_CritterTransitions[inId];
+            // if (value < range.AliveMin)
+            // {
+            //     m_World.Water[inId] = range.AliveMin;
+            //     m_DialMap[(int) inId].SetValue(range.AliveMin);
+            // }
+            // else if (value > range.AliveMax)
+            // {
+            //     m_World.Water[inId] = range.AliveMax;
+            //     m_DialMap[(int) inId].SetValue(range.AliveMax);
+            // }
+            // ActorInstance.SetActorState(m_SelectedCritterInstance, ActorStateId.Alive, m_World);
         }
 
         #endregion // Property Callbacks
@@ -429,37 +420,37 @@ namespace ProtoAqua.ExperimentV2
             m_RevealedRightMask = default;
             m_RequiredReveals = default;
 
-            m_World.Water = BestiaryUtils.FindHealthyWaterValues(m_CritterTransitions, Services.Assets.WaterProp.DefaultValues());
-            WaterPropertyDial dial;
-            BFState state;
-            WaterPropertyId propId;
-            for(int i = 0; i < m_DialsUsed; i++)
-            {
-                dial = m_Dials[i];
-                propId = dial.Property.Index();
-                dial.SetValue(m_World.Water[propId]);
+            // m_World.Water = BestiaryUtils.FindHealthyWaterValues(m_CritterTransitions, Services.Assets.WaterProp.DefaultValues());
+            // WaterPropertyDial dial;
+            // BFState state;
+            // WaterPropertyId propId;
+            // for(int i = 0; i < m_DialsUsed; i++)
+            // {
+            //     dial = m_Dials[i];
+            //     propId = dial.Property.Index();
+            //     dial.SetValue(m_World.Water[propId]);
 
-                state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, propId);
-                if (state != null)
-                {
-                    WaterPropertyDial.ConfigureStress(dial, state.Range);
-                    if (inSaveData.HasFact(state.Id))
-                    {
-                        m_RevealedLeftMask[propId] = m_RevealedRightMask[propId] = true;
-                        WaterPropertyDial.DisplayRanges(dial, true, true);
-                    }
-                    else
-                    {
-                        m_RequiredReveals[propId] = true;
-                        WaterPropertyDial.DisplayRanges(dial, false, false);
-                    }
-                }
-                else
-                {
-                    WaterPropertyDial.ConfigureStress(dial, ActorStateTransitionRange.Default);
-                    WaterPropertyDial.DisplayRanges(dial, false, false);
-                }
-            }
+            //     state = BestiaryUtils.FindStateRangeRule(m_SelectedCritter, propId);
+            //     if (state != null)
+            //     {
+            //         WaterPropertyDial.ConfigureStress(dial, state.Range);
+            //         if (inSaveData.HasFact(state.Id))
+            //         {
+            //             m_RevealedLeftMask[propId] = m_RevealedRightMask[propId] = true;
+            //             WaterPropertyDial.DisplayRanges(dial, true, true);
+            //         }
+            //         else
+            //         {
+            //             m_RequiredReveals[propId] = true;
+            //             WaterPropertyDial.DisplayRanges(dial, false, false);
+            //         }
+            //     }
+            //     else
+            //     {
+            //         WaterPropertyDial.ConfigureStress(dial, ActorStateTransitionRange.Default);
+            //         WaterPropertyDial.DisplayRanges(dial, false, false);
+            //     }
+            // }
         }
         
         #endregion // Dials

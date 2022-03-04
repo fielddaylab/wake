@@ -24,6 +24,13 @@ namespace Aqua.Editor
             BuildInfoGenerator.Enabled = true;
             BuildInfoGenerator.IdLength = 8;
 
+            Bake.OnPreBake += (b) => {
+                ScriptableObject scr = b as ScriptableObject;
+                if (scr) {
+                    new StringHash32(scr.name);
+                }
+            };
+
             // TODO: More sophisticated mechanism for controlling development, defines, other flags...
             string branch = BuildUtils.GetSourceControlBranchName();
             bool bDesiredDevBuild = false;

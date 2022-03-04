@@ -5,8 +5,8 @@ using System.IO;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
-using ScriptableBake;
 #endif // UNITY_EDITOR
+using ScriptableBake;
 
 namespace Aqua
 {
@@ -20,6 +20,8 @@ namespace Aqua
 
         bool IBaked.Bake(BakeFlags flags)
         {
+            FindAllFacts();
+
             foreach(var fact in m_Facts)
             {
                 Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);

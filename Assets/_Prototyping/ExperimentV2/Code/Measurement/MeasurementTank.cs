@@ -64,7 +64,6 @@ namespace ProtoAqua.ExperimentV2 {
 
         [NonSerialized] private SetupPhase m_SetupPhase;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
-        [NonSerialized] private ActorWorld m_World;
 
         [NonSerialized] private Routine m_DrainRoutine;
 
@@ -100,10 +99,6 @@ namespace ProtoAqua.ExperimentV2 {
         #region Tank
 
         private void Activate() {
-            if (m_World == null) {
-                m_World = new ActorWorld(m_ParentTank.ActorAllocator, m_ParentTank.Bounds, null, null, 16, this);
-            }
-
             m_SetupPanelGroup.Hide();
 
             m_BeginButton.gameObject.SetActive(true);
@@ -146,18 +141,18 @@ namespace ProtoAqua.ExperimentV2 {
         #region Critter Callbacks
 
         private void OnCritterAdded(BestiaryDesc inDesc) {
-            ActorWorld.AllocWithDefaultCount(m_World, inDesc.Id());
+            // ActorWorld.AllocWithDefaultCount(m_World, inDesc.Id());
             m_NextButton.interactable = true;
         }
 
         private void OnCritterRemoved(BestiaryDesc inDesc) {
-            ActorWorld.FreeAll(m_World, inDesc.Id());
-            m_NextButton.interactable = m_World.Actors.Count > 0;
+            // ActorWorld.FreeAll(m_World, inDesc.Id());
+            // m_NextButton.interactable = m_World.Actors.Count > 0;
         }
 
         private void OnCrittersCleared() {
-            ActorWorld.FreeAll(m_World);
-            m_NextButton.interactable = false;
+            // ActorWorld.FreeAll(m_World);
+            // m_NextButton.interactable = false;
         }
 
         #endregion // Critter Callbacks
@@ -166,7 +161,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void OnEnvironmentAdded(BestiaryDesc inDesc) {
             m_SelectedEnvironment = inDesc;
-            ActorWorld.SetWaterState(m_World, inDesc.GetEnvironment());
+            // ActorWorld.SetWaterState(m_World, inDesc.GetEnvironment());
             m_NextButton.interactable = true;
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
         }
@@ -174,14 +169,14 @@ namespace ProtoAqua.ExperimentV2 {
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null)) {
                 m_NextButton.interactable = false;
-                ActorWorld.SetWaterState(m_World, null);
+                // ActorWorld.SetWaterState(m_World, null);
                 m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             }
         }
 
         private void OnEnvironmentCleared() {
             m_SelectedEnvironment = null;
-            ActorWorld.SetWaterState(m_World, null);
+            // ActorWorld.SetWaterState(m_World, null);
             m_NextButton.interactable = false;
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
         }
