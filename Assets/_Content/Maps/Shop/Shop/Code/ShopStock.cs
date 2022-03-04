@@ -41,6 +41,11 @@ namespace Aqua.Shop {
                 table.Set("cashCost", item.CachedItem.CashCost());
                 table.Set("expCost", item.CachedItem.RequiredExp());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
+
+                if (!CanAfford(Save.Inventory, item.CachedItem))
+                {
+                    Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, item.CachedItem);
+                }
             }
         }
 

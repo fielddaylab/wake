@@ -34,6 +34,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 4. [Game Feedback](#GameFeedback)
 5. [Portable Device Interactions](#PortableDeviceInteractions)
 6. [Modeling](#Modeling)
+7. [Shop](#Shop)
 
 <a name="Init"/>
 
@@ -663,3 +664,56 @@ Player exits the modeling room.
 | job_name | String name of the current job |
 | phase | The selected modeling phase upon leaving |
 | ecosystem | The selected ecosystem upon leaving |
+
+<a name="Shop"/>
+
+### Shop
+
+1. [purchase_upgrade](#purchase_upgrade)
+2. [insufficient_funds](#insufficient_funds)
+3. [talk_to_shopkeep](#talk_to_shopkeep)
+
+<a name="purchase_upgrade"/>
+
+#### purchase_upgrade
+
+Player purchases an upgrade from the shop.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| item_id | ID of the purchased item |
+| item_name | String name of the purchased item |
+| cost | Cost of the purchased item |
+
+<a name="insufficient_funds"/>
+
+#### insufficient_funds
+
+Player attempts to purchase an item but doesn't have enough currency.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| item_id | ID of the item |
+| item_name | String name of the item |
+| cost | Cost of the item |
+
+<a name="talk_to_shopkeep"/>
+
+#### talk_to_shopkeep
+
+Player talks to the shopkeeper.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |

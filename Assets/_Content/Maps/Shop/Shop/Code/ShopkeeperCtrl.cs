@@ -98,5 +98,10 @@ namespace Aqua.Shop {
                 yield return 0.1f;
             }
         }
+
+        public void TalkToShopkeep()
+        {
+            Services.Events.Dispatch(ShopConsts.Event_TalkToShopkeep);
+        }
     }
 }
