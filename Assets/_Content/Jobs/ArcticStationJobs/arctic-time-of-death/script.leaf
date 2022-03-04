@@ -41,7 +41,7 @@ $goto .argue.showZombieWormsWrong
 
 :: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
+$choice #argueFact; Present facts from AQOS
     $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
     $answer *, .argue.unrelated
@@ -69,7 +69,7 @@ $call ArgueUnload()
 
 :: argue.showZombieWorms
 $call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
+$choice #argueFact; Present facts from AQOS
     $answer W_WhaleFall.Population.ZombieWorm, .argue.complete
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus2
     $answer *, .argue.unrelated2
@@ -98,6 +98,6 @@ $goto .argue.showZombieWorms
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
-                Excellent work {nameof Player}
+                Excellent work {nameof @player}
 
 $call CompleteJob()

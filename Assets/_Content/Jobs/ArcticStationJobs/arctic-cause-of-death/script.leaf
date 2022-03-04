@@ -11,16 +11,18 @@
 
 // ARGUMENTATION
 
-//::helpScanProb
-//@trigger    RequestPartnerHelp
-//@when   !scene:name == "RS-4W", !JobTaskCompleted(getEnviornmentData)
-//{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
+::helpScanProbE
+@trigger    RequestPartnerHelp
+@when   scene:name == "RS-4W", JobTaskTop(getEnviornmentData)
+@cutscene
+{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
 
-//::helpScanProb
-//@trigger    RequestPartnerHelp
-//@when   !scene:name == "RS-4W", !JobTaskCompleted(getPopulationData)
-//{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
-//            I'm not sure what whales eat, so we might just have to count everything.
+::helpScanProbP
+@trigger    RequestPartnerHelp
+@when   scene:name == "RS-4W", JobTaskTop(getPopulationData)
+@cutscene
+{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
+            I'm not sure what whales eat, so we might just have to count everything.
 
 ::argue.intro
 @trigger    TryArgumentation
@@ -28,44 +30,89 @@
 @cutscene
 $call ArgueLoad(causeDeath)
 {@profWhalen} Which hypothesis seems most likely?
-    $choice .argue.stage1; Stage 1
-    $choice .argue.stage2; Stage 2
-    $choice .argue.stage3; Stage 3
+    $choice .argue.foodClaim; There was a problem with her food supply
+    $choice .argue.stressClaim; Something in the enviornment harmed her
 $choose branch
 
-:: argue.stage1
-$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
-$goto .argue.showZombieWormsWrong
+:: argue.foodClaim
+{@profWhalen}  What evidence do you have about the whale food supply? 
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+	$call ArgueFactSlot(Urchin.Eats.BullKelp) 
+$goto .argue.showClaim
 
-:: argue.stage2
-$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
-$goto .argue.showZombieWorms
+:: argue.stressClaim
+{@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
+	$call ArgueFactSlot(Urchin.Light.Stressed) 
+	$call ArgueFactSlot(W_WhaleFall.Light) 
+$goto .argue.showClaim2
 
 ::argue.showClaim
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+    $answer correct, .argue.howKnow 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
+::argue.showClaim2
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.transition
+    $answer *, .argue.unrelated2
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+::argue.showClaim3
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete
+    $answer *, .argue.unrelated3
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+::argue.howKnow
+$call ArgueCancelClaim()
+$call ArgueUnload()
+$call ArgueLoad(PopulationHistory)
+{@profWhalen}   How do you know that both populations were low?
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+    $call ArgueFactSlot(UrchinBarren.PopulationHistory.Urchin) 
+    $call ArgueFactSlot(UrchinBarren.PopulationHistory.GiantKelp) 
+$goto .argue.showClaim3
+
+::argue.transition
+$call ArgueCancelClaim()
+$call ArgueUnload()
+$call ArgueLoad(ToFood)
+{@profWhalen}   These seem compatible. It must have been the food supply.
+$goto .argue.foodClaim
+
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@kevin} Ok, that's interesting, but it's not answering my question.
+{@profWhalen} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
+
+:: argue.unrelated2
+$call ArgueRejectIncorrect()
+{@profWhalen} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim2
+
+:: argue.unrelated3
+$call ArgueRejectIncorrect()
+{@profWhalen} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim3
 
 :: argue.giveUp
 {@kevin} OK. Get back to me when you're ready.
-$call arguecancelclaim()
-$call argueunload()
+$call ArgueCancelClaim()
+$call ArgueUnload()
 
 // END
 
 :: argue.complete
 $call ArgueComplete()
-{@kevin} This looks great!
-{@kevin}    This is the conclusion to the arctic-cause-of-death job!
+{@profWhalen}   Ugh, whales sometimes get lured in by ice algae, but it becomes less available as summer comes. 
+                I bet she got stuck when the ice came in and couldn't get back to her pod.
 
 $call CompleteJob()
