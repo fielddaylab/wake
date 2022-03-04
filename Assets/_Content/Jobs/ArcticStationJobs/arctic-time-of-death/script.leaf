@@ -33,6 +33,7 @@ $goto .argue.showZombieWormsWrong
 $call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
 $goto .argue.showZombieWorms
+<<<<<<< HEAD
 
 :: argue.stage3
 $call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3) 
@@ -42,6 +43,17 @@ $goto .argue.showZombieWormsWrong
 :: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
+=======
+
+:: argue.stage3
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWormsWrong
+
+:: argue.showZombieWormsWrong
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+>>>>>>> 535c3c1a8c8cd68b130b621c852ba86967b30ea7
     $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
     $answer *, .argue.unrelated
@@ -69,7 +81,11 @@ $call ArgueUnload()
 
 :: argue.showZombieWorms
 $call ArgueDisplayClaim()
+<<<<<<< HEAD
 $choice #argueFact; Present facts from AQOS
+=======
+$choice #argueFactSet; Present facts from AQOS
+>>>>>>> 535c3c1a8c8cd68b130b621c852ba86967b30ea7
     $answer W_WhaleFall.Population.ZombieWorm, .argue.complete
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus2
     $answer *, .argue.unrelated2
@@ -98,6 +114,10 @@ $goto .argue.showZombieWorms
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
+<<<<<<< HEAD
                 Excellent work {nameof @player}
+=======
+                Excellent work {nameof Player}
+>>>>>>> 535c3c1a8c8cd68b130b621c852ba86967b30ea7
 
 $call CompleteJob()
