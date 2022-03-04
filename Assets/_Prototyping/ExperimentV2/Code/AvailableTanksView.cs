@@ -9,13 +9,14 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using BeauUtil.UI;
 using Leaf.Runtime;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, IBakedComponent, ISceneUnloadHandler
+    public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, IBaked, ISceneUnloadHandler
     {
         static private AvailableTanksView s_Instance;
 
@@ -182,7 +183,9 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
             foreach(var tank in m_Tanks)
@@ -193,6 +196,8 @@ namespace ProtoAqua.ExperimentV2
                 waterBounds.center += tank.WaterTrigger.transform.localPosition;
                 tank.WaterRect = Geom.BoundsToRect(waterBounds);
             }
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

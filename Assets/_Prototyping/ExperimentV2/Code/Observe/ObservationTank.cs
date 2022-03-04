@@ -51,9 +51,6 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private AmbientRenderer m_FinishButtonHighlight = null;
         [SerializeField, Required] private TMP_Text m_UnobservedStateLabel = null;
 
-        [Header("Summary")]
-        [SerializeField, Required] private SummaryPanel m_SummaryPanel = null;
-
         #endregion // Inspector
 
         [NonSerialized] private SetupPhase m_SetupPhase;
@@ -96,7 +93,6 @@ namespace ProtoAqua.ExperimentV2
             m_BackButton.onClick.AddListener(OnBackClick);
             m_RunButton.onClick.AddListener(OnRunClick);
             m_FinishButton.onClick.AddListener(OnFinishClick);
-            m_SummaryPanel.Button.onClick.AddListener(OnSummaryCloseClick);
 
             m_UnobservedStateLabel.gameObject.SetActive(false);
         }
@@ -142,11 +138,6 @@ namespace ProtoAqua.ExperimentV2
             m_BehaviorCircles.Reset();
             m_FactResults.Clear();
             m_PotentialNewFacts.Clear();
-            if (m_SummaryPanel.gameObject.activeSelf)
-            {
-                m_SummaryPanel.gameObject.SetActive(false);
-                m_SummaryPanel.FactPools.FreeAll();
-            }
             if (m_ParentTank.WaterFillProportion > 0) {
                 m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
             }
@@ -632,41 +623,42 @@ namespace ProtoAqua.ExperimentV2
 
         private void InitializeSummaryScreen(ExperimentResult inResult)
         {
-            m_SummaryPanel.gameObject.SetActive(true);
+            // m_SummaryPanel.gameObject.SetActive(true);
 
-            if (inResult.Facts.Length == 0)
-            {
-                m_SummaryPanel.FactGroup.SetActive(false);
-                m_SummaryPanel.HintGroup.SetActive(true);
+            // if (inResult.Facts.Length == 0)
+            // {
+            //     m_SummaryPanel.FactGroup.SetActive(false);
+            //     m_SummaryPanel.HintGroup.SetActive(true);
 
-                m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
-                m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
-                return;
-            }
+            //     m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
+            //     m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
+            //     return;
+            // }
 
-            m_SummaryPanel.HintGroup.SetActive(false);
-            m_SummaryPanel.FactGroup.SetActive(true);
+            // m_SummaryPanel.HintGroup.SetActive(false);
+            // m_SummaryPanel.FactGroup.SetActive(true);
 
-            m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
-            m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
+            // m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
+            // m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
         }
 
         private IEnumerator PopulateSummaryScreen(ExperimentResult inResult)
         {
-            MonoBehaviour newFact;
-            foreach(var fact in inResult.Facts)
-            {
-                newFact = m_SummaryPanel.FactPools.Alloc(Assets.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
-                m_SummaryPanel.FactListLayout.ForceRebuild();
-                yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, 1);
-                yield return 0.2f;
-            }
+            // MonoBehaviour newFact;
+            // foreach(var fact in inResult.Facts)
+            // {
+            //     newFact = m_SummaryPanel.FactPools.Alloc(Assets.Fact(fact.Id), null, 0, m_SummaryPanel.FactListRoot);
+            //     m_SummaryPanel.FactListLayout.ForceRebuild();
+            //     yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, 1);
+            //     yield return 0.2f;
+            // }
+            yield break;
         }
 
         private void OnSummaryCloseClick()
         {
-            m_SummaryPanel.gameObject.SetActive(false);
-            m_SummaryPanel.FactPools.FreeAll();
+            // m_SummaryPanel.gameObject.SetActive(false);
+            // m_SummaryPanel.FactPools.FreeAll();
             m_BeginButton.gameObject.SetActive(true);
         }
 

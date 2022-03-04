@@ -6,6 +6,7 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 using System.IO;
+using ScriptableBake;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -15,7 +16,7 @@ using UnityEditorInternal;
 namespace ProtoAqua.ExperimentV2
 {
     [CreateAssetMenu(menuName = "Aqualab System/Experiment Actor Definitions")]
-    public class ActorDefinitions : ScriptableObject, IBakedAsset
+    public class ActorDefinitions : ScriptableObject, IBaked
     {
         public ActorDefinition[] CritterDefinitions;
 
@@ -43,11 +44,11 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        #region IOptimizableAsset
+        #region IBaked
 
-        int IBakedAsset.Order { get { return 20; } }
+        int IBaked.Order { get { return 20; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             LoadDefinitions();
 
@@ -59,7 +60,7 @@ namespace ProtoAqua.ExperimentV2
             return true;
         }
 
-        #endregion // IOptimizableAsset
+        #endregion // IBaked
 
         private class SerializedDefinitionMap : ISerializedObject
         {

@@ -6,11 +6,12 @@ using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class ObservationBehaviorSystem : MonoBehaviour, IBakedComponent
+    public class ObservationBehaviorSystem : MonoBehaviour, IBaked
     {
         private const float SpeedUpLifetimeThreshold = 60;
 
@@ -544,9 +545,12 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Tank = GetComponentInParent<SelectableTank>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

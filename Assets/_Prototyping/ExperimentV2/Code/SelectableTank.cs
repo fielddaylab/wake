@@ -4,11 +4,12 @@ using Aqua.Cameras;
 using AquaAudio;
 using BeauUtil;
 using BeauUtil.UI;
+using ScriptableBake;
 using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class SelectableTank : MonoBehaviour, IBakedComponent
+    public class SelectableTank : MonoBehaviour, IBaked
     {
         #region Inspector
 
@@ -59,9 +60,12 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             ActorAllocator = FindObjectOfType<ActorAllocator>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

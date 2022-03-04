@@ -16,6 +16,7 @@ using Aqua.Debugging;
 using BeauUtil.Services;
 using Leaf.Runtime;
 using EasyAssetStreaming;
+using ScriptableBake;
 
 namespace Aqua
 {
@@ -475,35 +476,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-
-            using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
-            {
-                inBinding.Scene.GetAllComponents<FlattenHierarchy>(true, allFlatten);
-                if (allFlatten.Count > 0)
-                {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
-                    using(Profiling.Time("flatten scene hierarchy"))
-                    {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allFlatten, (f) => f.Flatten(), 5));
-                    }
-                }
-            }
-
-            using(PooledList<IBakedComponent> allBaked = PooledList<IBakedComponent>.Create())
-            {
-                inBinding.Scene.GetAllComponents<IBakedComponent>(true, allBaked);
-                if (allBaked.Count > 0)
-                {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Baking {0} objects...", allBaked.Count);
-                    using(Profiling.Time("bake objects"))
-                    {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allBaked, (f) => {
-                            Debug.LogFormat("[StateMgr] ...baking {0}", f.ToString());
-                            f.Bake(); 
-                        }, 5));
-                    }
-                }
-            }
+            yield return Routine.Amortize(Bake.SceneAsync(inBinding, BakeFlags.Verbose), 5);
         }
 
         static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)

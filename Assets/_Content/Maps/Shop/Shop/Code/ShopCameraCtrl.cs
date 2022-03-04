@@ -10,9 +10,10 @@ using UnityEngine.UI;
 using Aqua.Scripting;
 using BeauUtil.Debugger;
 using AquaAudio;
+using ScriptableBake;
 
 namespace Aqua.Shop {
-    public class ShopCameraCtrl : MonoBehaviour, IBakedComponent, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
+    public class ShopCameraCtrl : MonoBehaviour, IBaked, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
         static public readonly StringHash32 BelowEntrance = "station";
         static public readonly StringHash32 ShipEntrance = "ship";
         static public readonly StringHash32 ExitEntrance = "shop";
@@ -172,8 +173,11 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake() {
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
             m_Tables = FindObjectsOfType<ShopTable>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

@@ -6,12 +6,13 @@ using Aqua.Profile;
 using BeauPools;
 using BeauRoutine.Extensions;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua
 {
-    public class BestiaryAddPanel : BasePanel, IBakedComponent
+    public class BestiaryAddPanel : BasePanel, IBaked
     {
         #region Types
 
@@ -281,11 +282,13 @@ namespace Aqua
 
         #endregion // Population
 
-        #region ISceneOptimizable
+        #region IBaked
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             if (m_CurrentDisplay) {
                 m_CurrentDisplay.Display(0);
@@ -293,11 +296,13 @@ namespace Aqua
             
             if (m_MaxAllowed > 1)
                 m_ToggleGroup = null;
+
+            return true;
         }
 
         #endif // UNITY_EDITOR
 
-        #endregion // ISceneOptimizable
+        #endregion // IBaked
 
         static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, Predicate<BestiaryDesc> inFilter, ICollection<BestiaryDesc> outCritters)
         {

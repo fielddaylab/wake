@@ -5,10 +5,11 @@ using System;
 using BeauUtil;
 using Aqua.Profile;
 using BeauPools;
+using ScriptableBake;
 
 namespace Aqua.JobBoard
 {
-    public class JobInfo : MonoBehaviour, IBakedComponent
+    public class JobInfo : MonoBehaviour, IBaked
     {
         static private readonly TextId Label_AcceptJob = "ui.jobBoard.start.label";
         static private readonly TextId Label_ActivateJob = "ui.jobBoard.setActive.label";
@@ -152,9 +153,12 @@ namespace Aqua.JobBoard
         
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_UpgradeDisplays = m_HasRequiredUpgradesGroup.gameObject.GetComponentsInChildren<RequiredUpgradeDisplay>(true);
+            return true;
         }
 
         #endif // UNITY_EDITOR

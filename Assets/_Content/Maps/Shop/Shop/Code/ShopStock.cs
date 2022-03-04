@@ -8,9 +8,10 @@ using UnityEngine.EventSystems;
 using System;
 using Aqua.Scripting;
 using Aqua.Profile;
+using ScriptableBake;
 
 namespace Aqua.Shop {
-    public class ShopStock : MonoBehaviour, IBakedComponent, ISceneLoadHandler {
+    public class ShopStock : MonoBehaviour, IBaked, ISceneLoadHandler {
 
         static public readonly StringHash32 Trigger_AttemptBuy = "ShopAttemptBuy";
 
@@ -136,8 +137,11 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake() {
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
             m_Items = FindObjectsOfType<ShopItem>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

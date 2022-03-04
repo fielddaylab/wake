@@ -4,11 +4,12 @@ using System.IO;
 using BeauUtil;
 using Aqua;
 using UnityEngine;
+using ScriptableBake;
 
 namespace AquaAudio
 {
     [CreateAssetMenu(menuName = "Aqualab/Audio Package")]
-    public class AudioPackage : ScriptableObject, IBakedAsset
+    public class AudioPackage : ScriptableObject, IBaked
     {
         #region Inspector
 
@@ -53,9 +54,9 @@ namespace AquaAudio
             UnityEditor.EditorUtility.SetDirty(this);
         }
 
-        int IBakedAsset.Order { get { return 0; } }
+        int IBaked.Order { get { return 0; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             FindAllAudioEvents();
             return true;

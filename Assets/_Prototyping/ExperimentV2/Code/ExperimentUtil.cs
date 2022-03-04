@@ -57,18 +57,6 @@ namespace ProtoAqua.ExperimentV2
             return new ExperimentFactResult(inFactId, ExperimentFactResultType.Known, BFDiscoveredFlags.None);
         }
 
-        static public IEnumerator AnimateFeedbackItemToOn(MonoBehaviour inBehavior, float inAlpha = 1)
-        {
-            RectTransform transform = (RectTransform) inBehavior.transform;
-            CanvasGroup fader = inBehavior.GetComponent<CanvasGroup>();
-            Assert.NotNull(fader);
-            transform.SetScale(1.05f, Axis.XY);
-            fader.alpha = 0;
-            return Routine.Combine(transform.ScaleTo(1, 0.15f, Axis.XY),
-                fader.FadeTo(inAlpha, 0.15f)
-            );
-        }
-
         static public void TriggerExperimentScreenViewed(SelectableTank inTank, StringHash32 inScreenId)
         {
             using(var table = TempVarTable.Alloc())

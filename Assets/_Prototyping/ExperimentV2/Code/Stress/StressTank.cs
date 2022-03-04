@@ -9,10 +9,11 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Aqua.Scripting;
 using System.Collections;
+using ScriptableBake;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class StressTank : MonoBehaviour, IBakedComponent
+    public class StressTank : MonoBehaviour, IBaked
     {
         #region Inspector
 
@@ -23,9 +24,6 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private Button m_BackButton = null;
         [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
         [SerializeField, Required] private CanvasGroup m_WaterPropertyGroup = null;
-
-        [Header("Summary Popup")]
-        [SerializeField] private StressSummary m_Summary = null;
 
         #endregion // Inspector
 
@@ -67,11 +65,9 @@ namespace ProtoAqua.ExperimentV2
             Services.Events.Register(GameEvents.WaterPropertiesUpdated, RebuildPropertyDials, this);
 
             m_BackButton.onClick.AddListener(OnBackClick);
-            m_Summary.ContinueButton.onClick.AddListener(OnDoneClicked);
 
             m_SetupPanelGroup.Hide();
             m_WaterPropertyGroup.Hide();
-            m_Summary.gameObject.SetActive(false);
         }
 
         private void OnDestroy()
@@ -91,7 +87,6 @@ namespace ProtoAqua.ExperimentV2
 
             m_SetupPanelGroup.Hide();
             m_WaterPropertyGroup.Hide();
-            m_Summary.gameObject.SetActive(false);
 
             m_TransitionAnim.Replace(this, TransitionToStart()).TryManuallyUpdate();
         }
@@ -143,35 +138,35 @@ namespace ProtoAqua.ExperimentV2
 
         private void DisplaySummaryPopup(BestiaryDesc inCritter, ExperimentResult inResult)
         {
-            m_Summary.CritterNameText.SetText(inCritter.CommonName());
-            m_Summary.CritterImage.sprite = inCritter.Icon();
+            // m_Summary.CritterNameText.SetText(inCritter.CommonName());
+            // m_Summary.CritterImage.sprite = inCritter.Icon();
 
-            int factCount = 0;
-            for(int i = 0; i < inResult.Facts.Length; i++) {
-                ExperimentFactResult result = inResult.Facts[i];
-                StateFactDisplay display = m_Summary.StateFacts[i];
+            // int factCount = 0;
+            // for(int i = 0; i < inResult.Facts.Length; i++) {
+            //     ExperimentFactResult result = inResult.Facts[i];
+            //     StateFactDisplay display = m_Summary.StateFacts[i];
 
-                BFState fact = Assets.Fact<BFState>(result.Id);
+            //     BFState fact = Assets.Fact<BFState>(result.Id);
 
-                display.gameObject.SetActive(true);
-                display.Populate(fact);
+            //     display.gameObject.SetActive(true);
+            //     display.Populate(fact);
 
-                Transform newChild = display.transform.Find("New");
-                Assert.NotNull(newChild);
+            //     Transform newChild = display.transform.Find("New");
+            //     Assert.NotNull(newChild);
 
-                newChild.gameObject.SetActive(result.Type != ExperimentFactResultType.Known);
-                factCount++;
-            }
+            //     newChild.gameObject.SetActive(result.Type != ExperimentFactResultType.Known);
+            //     factCount++;
+            // }
 
-            for(int i = factCount; i < m_Summary.StateFacts.Length; i++) {
-                m_Summary.StateFacts[i].gameObject.SetActive(false);
-            }
+            // for(int i = factCount; i < m_Summary.StateFacts.Length; i++) {
+            //     m_Summary.StateFacts[i].gameObject.SetActive(false);
+            // }
 
-            m_Summary.gameObject.SetActive(true);
+            // m_Summary.gameObject.SetActive(true);
         }
 
         private void OnDoneClicked() {
-            m_Summary.gameObject.SetActive(false);
+            // m_Summary.gameObject.SetActive(false);
             m_TransitionAnim.Replace(this, TransitionToStart()).TryManuallyUpdate(0);;
         }
 
@@ -471,9 +466,12 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Dials = GetComponentsInChildren<WaterPropertyDial>(true);
+            return true;
         }
 
         #endif // UNITY_EDITOR

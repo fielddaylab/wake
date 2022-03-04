@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua
 {
-    public partial class JobDesc : DBObject, IBakedAsset, IEditorOnlyData
+    public partial class JobDesc : DBObject, IBaked, IEditorOnlyData
     {
         private const int MaxTasks = ushort.MaxValue;
 
@@ -27,9 +28,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IBakedAsset.Order { get { return 1; }}
+        int IBaked.Order { get { return 1; }}
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             if (m_Tasks.Length > MaxTasks)
             {

@@ -3,10 +3,11 @@ using UnityEngine;
 using BeauUtil;
 using Aqua.Scripting;
 using Aqua;
+using ScriptableBake;
 
 namespace ProtoAqua.Observation
 {
-    public class TaggableCritter : ScriptComponent, IBakedComponent
+    public class TaggableCritter : ScriptComponent, IBaked
     {
         #region Inspector
 
@@ -35,12 +36,15 @@ namespace ProtoAqua.Observation
             TrackTransform = transform;
         }
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             if (!TrackTransform)
                 TrackTransform = transform;
 
             ColliderRadius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
+            return true;
         }
 
         #endif // UNITY_EDITOR
