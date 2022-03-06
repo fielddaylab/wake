@@ -2,14 +2,13 @@
 #define FIREBASE
 #endif // UNITY_WEBGL && !UNITY_EDITOR
 
+using Aqua.Argumentation;
 using Aqua.Modeling;
 using Aqua.Portable;
 using Aqua.Scripting;
 using Aqua.Shop;
 using BeauUtil;
 using BeauUtil.Services;
-using BeauUtil.Variants;
-using FieldDay;
 using ProtoAqua.ExperimentV2;
 using System;
 using System.Collections.Generic;
@@ -54,8 +53,6 @@ namespace Aqua
         public static extern void FBBeginExperiment(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critters);
         [DllImport("__Internal")]
         public static extern void FBBeginDive(string userCode, int appVersion, int jobId, string jobName, string siteId);
-        [DllImport("__Internal")]
-        public static extern void FBBeginArgument(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
         public static extern void FBBeginModel(string userCode, int appVersion, int jobId, string jobName);
         [DllImport("__Internal")]
@@ -149,6 +146,16 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBCrittersCleared(string userCode, int appVersion, int jobId, string jobName, string tankType, string environment, string critters);
 
+        // Argumentation Events
+        [DllImport("__Internal")]
+        public static extern void FBBeginArgument(string userCode, int appVersion, int jobId, string jobName);
+        [DllImport("__Internal")]
+        public static extern void FBFactSubmitted(string userCode, int appVersion, int jobId, string jobName, string factId);
+        [DllImport("__Internal")]
+        public static extern void FBFactRejected(string userCode, int appVersion, int jobId, string jobName, string factId);
+        [DllImport("__Internal")]
+        public static extern void FBCompleteArgument(string userCode, int appVersion, int jobId, string jobName);
+
         #endregion // Firebase JS Functions
 
         #region Logging Variables
@@ -181,7 +188,6 @@ namespace Aqua
                 .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
-                .Register(GameEvents.BeginArgument, LogBeginArgument, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
                 .Register(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<string>(GameEvents.ProfileStarting, OnTitleStart, this)
@@ -212,7 +218,11 @@ namespace Aqua
                 .Register(ExperimentEvents.ExperimentEnvironmentCleared, LogEnvironmentCleared, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentAddCritter, LogAddCritter, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentRemoveCritter, LogRemoveCritter, this)
-                .Register(ExperimentEvents.ExperimentCrittersCleared, LogCrittersCleared, this);
+                .Register(ExperimentEvents.ExperimentCrittersCleared, LogCrittersCleared, this)
+                .Register<StringHash32>(ArgueEvents.Loaded, LogBeginArgument, this)
+                .Register<StringHash32>(ArgueEvents.FactSubmitted, LogFactSubmitted, this)
+                .Register<StringHash32>(ArgueEvents.FactRejected, LogFactRejected, this)
+                .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument,this);
                 
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
@@ -485,13 +495,6 @@ namespace Aqua
         {
             #if FIREBASE
             FBBeginDive(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, inTargetScene);
-            #endif
-        }
-
-        private void LogBeginArgument()
-        {
-            #if FIREBASE
-            FBBeginArgument(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
         }
 
@@ -844,6 +847,42 @@ namespace Aqua
         }
 
         #endregion Experimentation Events
+
+        #region Argumentation Events
+
+        private void LogBeginArgument(StringHash32 id)
+        {
+            #if FIREBASE
+            FBBeginArgument(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
+            #endif
+        }
+
+        private void LogFactSubmitted(StringHash32 inFactId)
+        {
+            string factId = Assets.Fact(inFactId).name;
+
+            #if FIREBASE
+            FBFactSubmitted(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, factId);
+            #endif
+        }
+
+        private void LogFactRejected(StringHash32 inFactId)
+        {
+            string factId = Assets.Fact(inFactId).name;
+            
+            #if FIREBASE
+            FBFactRejected(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName, factId);
+            #endif
+        }
+
+        private void LogCompleteArgument(StringHash32 id)
+        {
+            #if FIREBASE
+            FBCompleteArgument(m_UserCode, m_AppVersion, m_CurrentJobId, m_CurrentJobName);
+            #endif
+        }
+
+        #endregion // Argumentation
 
         #endregion // Log Events
     }

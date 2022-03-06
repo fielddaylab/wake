@@ -131,18 +131,6 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginArgument: function(userCode, appVersion, jobId, jobName) {
-        var userCode = Pointer_stringify(userCode);
-        var jobName = Pointer_stringify(jobName);
-
-        analytics.logEvent("begin_argument", {
-            user_code: userCode,
-            app_version: appVersion,
-            job_id: jobId,
-            job_name: jobName
-        });
-    },
-
     FBBeginModel: function(userCode, appVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
@@ -707,6 +695,58 @@ mergeInto(LibraryManager.library, {
             tank_type: tankType,
             environment: environment,
             critters: critters
+        });
+    },
+
+    FBBeginArgument: function(userCode, appVersion, jobId, jobName) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+
+        analytics.logEvent("begin_argument", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName
+        });
+    },
+
+    FBFactSubmitted: function(userCode, appVersion, jobId, jobName, factId) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var factId = Pointer_stringify(factId);
+
+        analytics.logEvent("fact_submitted", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            fact_id: factId
+        });
+    },
+
+    FBFactRejected: function(userCode, appVersion, jobId, jobName, factId) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+        var factId = Pointer_stringify(factId);
+
+        analytics.logEvent("fact_rejected", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName,
+            fact_id: factId
+        });
+    },
+
+    FBCompleteArgument: function(userCode, appVersion, jobId, jobName) {
+        var userCode = Pointer_stringify(userCode);
+        var jobName = Pointer_stringify(jobName);
+
+        analytics.logEvent("complete_argument", {
+            user_code: userCode,
+            app_version: appVersion,
+            job_id: jobId,
+            job_name: jobName
         });
     }
 

@@ -36,6 +36,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 6. [Modeling](#Modeling)
 7. [Shop](#Shop)
 8. [Experimentation](#Experimentation)
+9. [Argumentation](#Argumentation)
 
 <a name="Init"/>
 
@@ -824,3 +825,66 @@ Player starts an experiment with a given tank type.
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
 | critters | Comma separated list of all critters added to the tank |
+
+<a name="Argumentation"/>
+
+### Argumentation
+
+1. [begin_argument](#begin_argument)
+2. [fact_submitted](#fact_submitted)
+3. [fact_rejected](#fact_rejected)
+4. [complete_argument](#complete_argument)
+
+<a name="begin_argument"/>
+
+#### begin_argument
+
+Player begins argumentation for a job.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
+<a name="fact_submitted"/>
+
+#### begin_experiment
+
+Player submits a fact to argumentation.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| fact_id | ID of the submitted fact |
+
+<a name="fact_rejected"/>
+
+#### fact_rejected
+
+Submitted fact is incorrect / rejected by the argumentation script.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| fact_id | ID of the submitted fact |
+
+<a name="complete_argument"/>
+
+#### complete_argument
+
+Player completes argumentation for a job.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
