@@ -14,6 +14,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CritterDefinitions:
   - Id:
+      m_HashValue: 4079225964
+    Type: {fileID: 11400000, guid: 3527d15931bd22746b398ed6368df736, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 9a38c38be6ccd7c4897d71551304493b,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 23
+        AliveMax: 30
+        StressedMin: 20
+        StressedMax: 34
+      Light:
+        AliveMin: 15
+        AliveMax: 100
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 7.6
+        AliveMax: 8.1
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: SeaPearl
+        m_HashValue: 687582608
+      FactId:
+        m_Source: AngelFish.Eats.SeaPearl
+        m_HashValue: 181590260
+    StressedEatTargets:
+    - TargetId:
+        m_Source: SeaPearl
+        m_HashValue: 687582608
+      FactId:
+        m_Source: AngelFish.Eats.SeaPearl
+        m_HashValue: 181590260
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
+  - Id:
       m_HashValue: 2545375201
     Type: {fileID: 11400000, guid: 7e162c5afb9b2804cb123590995feae6, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 5df7deda9d32dbf4b96328771a377015,
@@ -75,7 +146,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 3388301900
     Type: {fileID: 11400000, guid: 7583a8085d4a4804dbcaf904252eaf52, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 2164f0f9013537f4ba6ba478ef23e51b,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -120,16 +192,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 193540374
     Type: {fileID: 11400000, guid: 335b0449001ff4ede80b31a304345dcc, type: 2}
@@ -230,8 +302,32 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+    - TargetId:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      FactId:
+        m_Source: BlueTang.Eats.TurtleGrass
+        m_HashValue: 1443316800
+    StressedEatTargets:
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+    - TargetId:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      FactId:
+        m_Source: BlueTang.Eats.TurtleGrass
+        m_HashValue: 1443316800
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -377,6 +473,64 @@ MonoBehaviour:
       y: -0.004999999
       width: 0.3
       height: 0.099999994
+  - Id:
+      m_HashValue: 2964301269
+    Type: {fileID: 11400000, guid: fe638c897bdc77d40bb7f775a6540d6b, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3363669640
     Type: {fileID: 11400000, guid: b18cc60137e38d44c9001747739e9517, type: 2}
@@ -581,15 +735,15 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 0
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 1
+        AliveMax: 35
+        StressedMin: -1
+        StressedMax: 38
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 50
+        AliveMax: 100
+        StressedMin: 25
+        StressedMax: 110
       PH:
         AliveMin: 7.8
         AliveMax: 8.3
@@ -672,6 +826,65 @@ MonoBehaviour:
       y: -0.05
       width: 0.1
       height: 0.1
+  - Id:
+      m_HashValue: 2875360308
+    Type: {fileID: 11400000, guid: ce0b305287267d242a9eee07c580dd16, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: d111aaa0fbe85c34f9ccdec3075939a5,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 4251495377
     Type: {fileID: 11400000, guid: fd04b1fe77c5ea1469c3a4c9ae437b45, type: 2}
@@ -790,6 +1003,64 @@ MonoBehaviour:
       y: -0.05
       width: 0.1
       height: 0.1
+  - Id:
+      m_HashValue: 409040373
+    Type: {fileID: 11400000, guid: a0bc2ce245d0d614b81579760eef4548, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3510470690
     Type: {fileID: 11400000, guid: d761c458e40ca514ba0a754de165c289, type: 2}
@@ -1063,9 +1334,9 @@ MonoBehaviour:
         StressedMax: Infinity
       PH:
         AliveMin: 7.85
-        AliveMax: 8.16
-        StressedMin: 7.35
-        StressedMax: 8.65
+        AliveMax: 8.17
+        StressedMin: 7.2
+        StressedMax: 8.7
     AliveEatTargets:
     - TargetId:
         m_Source: Copepod
@@ -1085,7 +1356,37 @@ MonoBehaviour:
       FactId:
         m_Source: LoggerheadTurtle.Eats.QueenConch
         m_HashValue: 1192689825
+    - TargetId:
+        m_Source: PlasticBag
+        m_HashValue: 1161043395
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.PlasticBag
+        m_HashValue: 1831727362
+    - TargetId:
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.AngelFish
+        m_HashValue: 3388871611
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.Cyanobacteria
+        m_HashValue: 3424480027
     StressedEatTargets:
+    - TargetId:
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly.Stressed
+        m_HashValue: 805011374
     - TargetId:
         m_Source: Copepod
         m_HashValue: 1053183451
@@ -1104,6 +1405,24 @@ MonoBehaviour:
       FactId:
         m_Source: LoggerheadTurtle.Eats.QueenConch
         m_HashValue: 1192689825
+    - TargetId:
+        m_Source: PlasticBag
+        m_HashValue: 1161043395
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.PlasticBag
+        m_HashValue: 1831727362
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.Cyanobacteria.Stressed
+        m_HashValue: 2153526566
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.AngelFish
+        m_HashValue: 3388871611
     SpawnCount: 4
     IsPlant: 0
     TargetLimit: 1
@@ -1120,6 +1439,217 @@ MonoBehaviour:
       y: -0.33453727
       width: 3
       height: 1.3029547
+  - Id:
+      m_HashValue: 722380343
+    Type: {fileID: 11400000, guid: e9ba57579bd86024dab9af9a665286b6, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - Id:
+      m_HashValue: 3040832533
+    Type: {fileID: 11400000, guid: 950a9982fb1da8e4b857e712c34d05fc, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Methane
+        m_HashValue: 722380343
+      FactId:
+        m_Source: Methanogen.Eats.Methane
+        m_HashValue: 2726244040
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Methane
+        m_HashValue: 722380343
+      FactId:
+        m_Source: Methanogen.Eats.Methane
+        m_HashValue: 2726244040
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - Id:
+      m_HashValue: 4245174184
+    Type: {fileID: 11400000, guid: 01f835774a92d5243a850e1fb6554683, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 1b48693efbefe70458fd8d18acf05ce5,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 15
+        AliveMax: 35
+        StressedMin: 5
+        StressedMax: 38
+      Light:
+        AliveMin: 0
+        AliveMax: 110
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 7.6
+        AliveMax: 8.3
+        StressedMin: 6.5
+        StressedMax: 8.5
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: MoonJelly.Eats.Cyanobacteria
+        m_HashValue: 38188188
+    - TargetId:
+        m_Source: SeaPearl
+        m_HashValue: 687582608
+      FactId:
+        m_Source: MoonJelly.Eats.SeaPearl
+        m_HashValue: 3217668712
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: MoonJelly.Eats.Cyanobacteria
+        m_HashValue: 38188188
+    - TargetId:
+        m_Source: SeaPearl
+        m_HashValue: 687582608
+      FactId:
+        m_Source: MoonJelly.Eats.SeaPearl
+        m_HashValue: 3217668712
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 605356284
     Type: {fileID: 11400000, guid: 755376a44e9184149b2776c3c5e17ec5, type: 2}
@@ -1239,6 +1769,65 @@ MonoBehaviour:
       width: 0
       height: 0
   - Id:
+      m_HashValue: 1161043395
+    Type: {fileID: 11400000, guid: 1c311155169539e4e953923e74855abb, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: a00ef95d26a8d8c4791a5d97648481e3,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 4
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0.6945
+      y: 0.8945
+      width: 1.6110001
+      height: 1.971
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0.605
+      y: 0.78499997
+      width: 1.79
+      height: 2.19
+  - Id:
       m_HashValue: 1470134365
     Type: {fileID: 11400000, guid: 7b32a6c75e46e59489bff06a6a8663d2, type: 2}
     Prefab: {fileID: 0}
@@ -1356,6 +1945,77 @@ MonoBehaviour:
       width: 0.5
       height: 0.5
   - Id:
+      m_HashValue: 1456926888
+    Type: {fileID: 11400000, guid: 64107b6705b01c84fabd187303fbd2b1, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 8ac80c30d670bc749b2267da631954e2,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: RedGorgonian.Eats.Detritus
+        m_HashValue: 3914354569
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: RedGorgonian.Eats.Detritus.Stressed
+        m_HashValue: 3270658668
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
+  - Id:
       m_HashValue: 1605956068
     Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 536b2dab95630d740b8118eae91b9fe7,
@@ -1383,21 +2043,81 @@ MonoBehaviour:
     StateEvaluator:
       Temperature:
         AliveMin: 18.88889
-        AliveMax: 40
+        AliveMax: 27
         StressedMin: 3.8888893
-        StressedMax: 26
+        StressedMax: 36
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 5
+        AliveMax: 110
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
         AliveMin: 7.8
-        AliveMax: 8.8
+        AliveMax: 8.3
         StressedMin: 7.3
-        StressedMax: 8.3
-    AliveEatTargets: []
-    StressedEatTargets: []
+        StressedMax: 8.8
+    AliveEatTargets:
+    - TargetId:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      FactId:
+        m_Source: RedGrouper.Eats.BlueheadWrasse
+        m_HashValue: 299259218
+    - TargetId:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      FactId:
+        m_Source: RedGrouper.Eats.BlueTang
+        m_HashValue: 1688490569
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: RedGrouper.Eats.AngelFish
+        m_HashValue: 2604407488
+    - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: RedGrouper.Eats.WhiteShrimp
+        m_HashValue: 3732071581
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: RedGrouper.Eats.Cyanobacteria
+        m_HashValue: 4014676400
+    StressedEatTargets:
+    - TargetId:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      FactId:
+        m_Source: RedGrouper.Eats.BlueheadWrasse
+        m_HashValue: 299259218
+    - TargetId:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      FactId:
+        m_Source: RedGrouper.Eats.BlueTang
+        m_HashValue: 1688490569
+    - TargetId:
+        m_Source: AngelFish
+        m_HashValue: 4079225964
+      FactId:
+        m_Source: RedGrouper.Eats.AngelFish
+        m_HashValue: 2604407488
+    - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: RedGrouper.Eats.WhiteShrimp
+        m_HashValue: 3732071581
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: RedGrouper.Eats.Cyanobacteria
+        m_HashValue: 4014676400
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1417,7 +2137,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 3868886068
     Type: {fileID: 11400000, guid: e8d5f2ae5a756154984e73f3fc10057f, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 063ac9fd20badb749b9e436223b1e24b,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -1462,16 +2183,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 4036767444
     Type: {fileID: 11400000, guid: a7f837e2b6a25ff41bf141677b4c4702, type: 2}
@@ -1719,6 +2440,65 @@ MonoBehaviour:
       width: 1.4
       height: 1.4
   - Id:
+      m_HashValue: 687582608
+    Type: {fileID: 11400000, guid: 8208281d2a473054fba45598a611f2a8, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: e4764a1604ad85244b093c3b468214fc,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 22
+        AliveMax: 28
+        StressedMin: 15
+        StressedMax: 33
+      Light:
+        AliveMin: 85
+        AliveMax: 100
+        StressedMin: 10
+        StressedMax: 110
+      PH:
+        AliveMin: 7.2
+        AliveMax: 8.5
+        StressedMin: 5
+        StressedMax: 8.7
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 8
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
+  - Id:
       m_HashValue: 1773058804
     Type: {fileID: 11400000, guid: 6af1eb0f7278cf649a3d606adb861e09, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 13ea8f9e8609ed640ad50e1d8277c279,
@@ -1761,7 +2541,7 @@ MonoBehaviour:
         StressedMax: 8.6
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 10
+    SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1777,6 +2557,77 @@ MonoBehaviour:
       y: -0.3
       width: 0.6
       height: 0.6
+  - Id:
+      m_HashValue: 3381793967
+    Type: {fileID: 11400000, guid: f12f82ae797e9cf42b1cb314495d0838, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 0ae8e3ddeb8370449b356f3467b3dded,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 0
+        AliveMax: 0
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: 0
+        AliveMax: 0
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 0
+        AliveMax: 0
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Siphonophore.Eats.Detritus
+        m_HashValue: 1627738578
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Siphonophore.Eats.Detritus.Stressed
+        m_HashValue: 1574933793
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
   - Id:
       m_HashValue: 2920275176
     Type: {fileID: 11400000, guid: 67eee79beff93cb43b970be3df22731a, type: 2}
@@ -1819,7 +2670,7 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 10
+    SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1878,7 +2729,7 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 10
+    SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1954,6 +2805,64 @@ MonoBehaviour:
       width: 0.93000007
       height: 1.52
   - Id:
+      m_HashValue: 1644201784
+    Type: {fileID: 11400000, guid: a0a49f6e8d11ed94fbdda5c43a644dbe, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - Id:
       m_HashValue: 3939929818
     Type: {fileID: 11400000, guid: 3351523b2943bda408829cd4af713193, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 8cec4d6643b658647b1324db7afc4732,
@@ -1996,7 +2905,7 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 10
+    SpawnCount: 4
     IsPlant: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2150,7 +3059,7 @@ MonoBehaviour:
       FactId:
         m_Source: Urchin.Eats.BullKelp
         m_HashValue: 3905127850
-    SpawnCount: 10
+    SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2166,6 +3075,64 @@ MonoBehaviour:
       y: -0.25
       width: 0.5
       height: 0.5
+  - Id:
+      m_HashValue: 2642860014
+    Type: {fileID: 11400000, guid: 7a4f765a2f70d2a4e89e588528e28138, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 8
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3187223953
     Type: {fileID: 11400000, guid: a9192863128be4fe582bfc1163a9a4e1, type: 2}
