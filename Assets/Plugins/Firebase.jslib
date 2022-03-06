@@ -7,64 +7,64 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBAcceptJob: function(userCode, appVersion, jobId, jobName) {
+    FBAcceptJob: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("accept_job", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBSwitchJob: function(userCode, appVersion, jobId, jobName) {
+    FBSwitchJob: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("switch_job", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBReceiveFact: function(userCode, appVersion, jobId, jobName, factId) {
+    FBReceiveFact: function(userCode, logVersion, jobId, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("receive_fact", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             fact_id: factId
         });
     },
 
-    FBCompleteJob: function(userCode, appVersion, jobId, jobName) {
+    FBCompleteJob: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("complete_job", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBCompleteTask: function(userCode, appVersion, jobId, jobName, taskId) {
+    FBCompleteTask: function(userCode, logVersion, jobId, jobName, taskId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var taskId = Pointer_stringify(taskId);
 
         analytics.logEvent("complete_task", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             task_id: taskId
@@ -72,35 +72,35 @@ mergeInto(LibraryManager.library, {
         console.log("task with Id "+taskId.toString()+" completed.");
     },
 
-    FBSceneChanged: function(userCode, appVersion, jobId, jobName, sceneName) {
+    FBSceneChanged: function(userCode, logVersion, jobId, jobName, sceneName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var sceneName = Pointer_stringify(sceneName);
 
         analytics.logEvent("scene_changed", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             scene_name: sceneName
         });
     },
 
-    FBRoomChanged: function(userCode, appVersion, jobId, jobName, roomName) {
+    FBRoomChanged: function(userCode, logVersion, jobId, jobName, roomName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var roomName = Pointer_stringify(roomName);
 
         analytics.logEvent("room_changed", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             room_name: roomName
         });
     },
 
-    FBBeginExperiment: function(userCode, appVersion, jobId, jobName, tankType, environment, critters) {
+    FBBeginExperiment: function(userCode, logVersion, jobId, jobName, tankType, environment, critters) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var environment = Pointer_stringify(environment);
@@ -108,7 +108,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("begin_experiment", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -117,66 +117,66 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginDive: function(userCode, appVersion, jobId, jobName, siteId) {
+    FBBeginDive: function(userCode, logVersion, jobId, jobName, siteId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var siteId = Pointer_stringify(siteId);
 
         analytics.logEvent("begin_dive", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             site_id: siteId
         });
     },
 
-    FBBeginModel: function(userCode, appVersion, jobId, jobName) {
+    FBBeginModel: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_model", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBBeginSimulation: function(userCode, appVersion, jobId, jobName) {
+    FBBeginSimulation: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_simulation", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBAskForHelp: function(userCode, appVersion, jobId, jobName, nodeId) {
+    FBAskForHelp: function(userCode, logVersion, jobId, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("ask_for_help", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             node_id: nodeId
         });
     },
 
-    FBTalkWithGuide: function(userCode, appVersion, jobId, jobName, nodeId) {
+    FBTalkWithGuide: function(userCode, logVersion, jobId, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("talk_with_guide", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             node_id: nodeId
@@ -184,103 +184,103 @@ mergeInto(LibraryManager.library, {
     },
 
 	//Bestiary stuff
-    FBOpenBestiary: function(userCode, appVersion, jobId, jobName) {
+    FBOpenBestiary: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("open_bestiary", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBBestiaryOpenSpeciesTab: function(userCode, appVersion, jobId, jobName) {
+    FBBestiaryOpenSpeciesTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_species_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBBestiaryOpenEnvironmentsTab: function(userCode, appVersion, jobId, jobName) {
+    FBBestiaryOpenEnvironmentsTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_environments_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBBestiaryOpenModelsTab: function(userCode, appVersion, jobId, jobName) {
+    FBBestiaryOpenModelsTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_models_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBBestiarySelectSpecies: function(userCode, appVersion, jobId, jobName, speciesId) {
+    FBBestiarySelectSpecies: function(userCode, logVersion, jobId, jobName, speciesId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var speciesId = Pointer_stringify(speciesId);
 
         analytics.logEvent("bestiary_select_species", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             species_id: speciesId
         });
     },
 
-    FBBestiarySelectEnvironment: function(userCode, appVersion, jobId, jobName, environmentId) {
+    FBBestiarySelectEnvironment: function(userCode, logVersion, jobId, jobName, environmentId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var environmentId = Pointer_stringify(environmentId);
 
         analytics.logEvent("bestiary_select_environment", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             environment_id: environmentId
         });
     },
 	
-	FBBestiarySelectModel: function(userCode, appVersion, jobId, jobName, modelId) {
+	FBBestiarySelectModel: function(userCode, logVersion, jobId, jobName, modelId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var modelId = Pointer_stringify(modelId);
 
         analytics.logEvent("bestiary_select_model", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             model_id: modelId
         });
     },
 
-    FBCloseBestiary: function(userCode, appVersion, jobId, jobName) {
+    FBCloseBestiary: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("close_bestiary", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
@@ -288,86 +288,86 @@ mergeInto(LibraryManager.library, {
 	
 	
 	//Status App 
-	FBOpenStatus: function(userCode, appVersion, jobId, jobName) {
+	FBOpenStatus: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("open_status", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 	
-	FBStatusOpenJobTab: function(userCode, appVersion, jobId, jobName) {
+	FBStatusOpenJobTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_job_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 	
-	FBStatusOpenItemTab: function(userCode, appVersion, jobId, jobName) {
+	FBStatusOpenItemTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_item_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 	
-	FBStatusOpenTechTab: function(userCode, appVersion, jobId, jobName) {
+	FBStatusOpenTechTab: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_tech_tab", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 	
-	FBCloseStatus: function(userCode, appVersion, jobId, jobName) {
+	FBCloseStatus: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("close_status", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBSimulationSyncAchieved: function(userCode, appVersion, jobId, jobName) {
+    FBSimulationSyncAchieved: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("simulation_sync_achieved", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBGuideScriptTriggered: function(userCode, appVersion, jobId, jobName, nodeId) {
+    FBGuideScriptTriggered: function(userCode, logVersion, jobId, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("guide_script_triggered", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             node_id: nodeId
@@ -376,61 +376,61 @@ mergeInto(LibraryManager.library, {
 
     // Modeling Events
 
-    FBModelingStart: function(userCode, appVersion, jobId, jobName) {
+    FBModelingStart: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("model_start", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBModelPhaseChanged: function(userCode, appVersion, jobId, jobName, phase) {
+    FBModelPhaseChanged: function(userCode, logVersion, jobId, jobName, phase) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var phase = Pointer_stringify(phase);
 
         analytics.logEvent("model_phase_changed", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             phase: phase
         });
     }, 
 
-    FBModelEcosystemSelected: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelEcosystemSelected: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_ecosystem_selected", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     }, 
 
-    FBModelConceptStarted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelConceptStarted: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_started", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     }, 
 
-    FBModelConceptUpdated: function(userCode, appVersion, jobId, jobName, ecosystem, status) {
+    FBModelConceptUpdated: function(userCode, logVersion, jobId, jobName, ecosystem, status) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
@@ -438,7 +438,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("model_concept_updated", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem,
@@ -446,28 +446,28 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelConceptExported: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelConceptExported: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_exported", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     }, 
 
-    FBModelSyncError: function(userCode, appVersion, jobId, jobName, ecosystem, sync) {
+    FBModelSyncError: function(userCode, logVersion, jobId, jobName, ecosystem, sync) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_sync_error", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem,
@@ -475,21 +475,21 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelPredictCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelPredictCompleted: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_predict_completed", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     }, 
 
-    FBModelInterveneUpdate: function(userCode, appVersion, jobId, jobName, ecosystem, organism, differenceValue) {
+    FBModelInterveneUpdate: function(userCode, logVersion, jobId, jobName, ecosystem, organism, differenceValue) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
@@ -497,7 +497,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("model_intervene_update", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem,
@@ -506,35 +506,35 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelInterveneError: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelInterveneError: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_error", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     }, 
 
-    FBModelInterveneCompleted: function(userCode, appVersion, jobId, jobName, ecosystem) {
+    FBModelInterveneCompleted: function(userCode, logVersion, jobId, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_completed", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             ecosystem: ecosystem
         });
     },
 
-    FBModelingEnd: function(userCode, appVersion, jobId, jobName, phase, ecosystem) {
+    FBModelingEnd: function(userCode, logVersion, jobId, jobName, phase, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var phase = Pointer_stringify(phase);
@@ -542,7 +542,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("model_end", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             phase: phase,
@@ -550,7 +550,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBPurchaseUpgrade: function(userCode, appVersion, jobId, jobName, itemId, itemName, cost) {
+    FBPurchaseUpgrade: function(userCode, logVersion, jobId, jobName, itemId, itemName, cost) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var itemId = Pointer_stringify(itemId);
@@ -558,7 +558,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("purchase_upgrade", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             item_id: itemId,
@@ -567,7 +567,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBInsufficientFunds: function(userCode, appVersion, jobId, jobName, itemId, itemName, cost) {
+    FBInsufficientFunds: function(userCode, logVersion, jobId, jobName, itemId, itemName, cost) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var itemId = Pointer_stringify(itemId);
@@ -575,7 +575,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("insufficient_funds", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             item_id: itemId,
@@ -584,19 +584,19 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBTalkToShopkeep: function(userCode, appVersion, jobId, jobName) {
+    FBTalkToShopkeep: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("talk_to_shopkeep", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBAddEnvironment: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+    FBAddEnvironment: function(userCode, logVersion, jobId, jobName, tankType, environment) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -604,7 +604,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("add_environment", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -612,7 +612,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBRemoveEnvironment: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+    FBRemoveEnvironment: function(userCode, logVersion, jobId, jobName, tankType, environment) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -620,7 +620,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("remove_environment", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -628,7 +628,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBEnvironmentCleared: function(userCode, appVersion, jobId, jobName, tankType, environment) {
+    FBEnvironmentCleared: function(userCode, logVersion, jobId, jobName, tankType, environment) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -636,7 +636,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("environment_cleared", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -644,7 +644,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBAddCritter: function(userCode, appVersion, jobId, jobName, tankType, environment, critter) {
+    FBAddCritter: function(userCode, logVersion, jobId, jobName, tankType, environment, critter) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -653,7 +653,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("add_critter", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -662,7 +662,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBRemoveCritter: function(userCode, appVersion, jobId, jobName, tankType, environment, critter) {
+    FBRemoveCritter: function(userCode, logVersion, jobId, jobName, tankType, environment, critter) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -671,7 +671,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("remove_critter", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -680,7 +680,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCrittersCleared: function(userCode, appVersion, jobId, jobName, tankType, environment, critters) {
+    FBCrittersCleared: function(userCode, logVersion, jobId, jobName, tankType, environment, critters) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var tankType = Pointer_stringify(tankType);
@@ -689,7 +689,7 @@ mergeInto(LibraryManager.library, {
 
         analytics.logEvent("remove_critter", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             tank_type: tankType,
@@ -698,53 +698,53 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginArgument: function(userCode, appVersion, jobId, jobName) {
+    FBBeginArgument: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_argument", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
     },
 
-    FBFactSubmitted: function(userCode, appVersion, jobId, jobName, factId) {
+    FBFactSubmitted: function(userCode, logVersion, jobId, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("fact_submitted", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             fact_id: factId
         });
     },
 
-    FBFactRejected: function(userCode, appVersion, jobId, jobName, factId) {
+    FBFactRejected: function(userCode, logVersion, jobId, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("fact_rejected", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName,
             fact_id: factId
         });
     },
 
-    FBCompleteArgument: function(userCode, appVersion, jobId, jobName) {
+    FBCompleteArgument: function(userCode, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("complete_argument", {
             user_code: userCode,
-            app_version: appVersion,
+            log_version: logVersion,
             job_id: jobId,
             job_name: jobName
         });
