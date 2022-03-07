@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Aqua.WorldMap
 {
-    public class WorldMapCtrl : MonoBehaviour, IScenePreloader, ISceneOptimizable
+    public class WorldMapCtrl : MonoBehaviour, IScenePreloader, IBakedComponent
     {
         static public readonly StringHash32 Event_RequestChangeStation = "worldmap:request-change-station"; // StringHash32 stationId
 
@@ -110,7 +110,7 @@ namespace Aqua.WorldMap
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             List<StationButton> stations = new List<StationButton>();
             SceneHelper.ActiveScene().Scene.GetAllComponents<StationButton>(stations);

@@ -10,7 +10,7 @@ using Aqua.Scripting;
 using Aqua.Profile;
 
 namespace Aqua.Shop {
-    public class ShopStock : MonoBehaviour, ISceneOptimizable, ISceneLoadHandler {
+    public class ShopStock : MonoBehaviour, IBakedComponent, ISceneLoadHandler {
 
         static public readonly StringHash32 Trigger_AttemptBuy = "ShopAttemptBuy";
 
@@ -136,7 +136,7 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize() {
+        void IBakedComponent.Bake() {
             m_Items = FindObjectsOfType<ShopItem>();
         }
 

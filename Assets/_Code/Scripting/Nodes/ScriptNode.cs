@@ -102,6 +102,9 @@ namespace Aqua.Scripting
         private void SetChatter()
         {
             m_Flags |= ScriptNodeFlags.CornerChatter | ScriptNodeFlags.SuppressDuringCutscene;
+            if (m_Target.IsEmpty) {
+                m_Target = GameConsts.Target_Kevin;
+            }
         }
 
         [BlockMeta("entrypoint"), Preserve]

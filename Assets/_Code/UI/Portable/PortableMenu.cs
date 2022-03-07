@@ -8,6 +8,7 @@ using BeauUtil.UI;
 using BeauUtil.Variants;
 using UnityEngine;
 using UnityEngine.UI;
+using EasyAssetStreaming;
 
 namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {

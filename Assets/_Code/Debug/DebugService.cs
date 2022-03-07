@@ -13,6 +13,7 @@ using Debug = UnityEngine.Debug;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
 using TMPro;
+using EasyAssetStreaming;
 
 namespace Aqua.Debugging
 {
@@ -52,7 +53,9 @@ namespace Aqua.Debugging
         [NonSerialized] private float m_TimeScale = 1;
         [NonSerialized] private bool m_VisibilityWhenDebugMenuOpened;
         [NonSerialized] private Vector2 m_CameraCursorPivot;
-        [NonSerialized] private uint m_LastKnownStreaming;
+
+        [NonSerialized] private uint m_LastKnownStreamingCount;
+        [NonSerialized] private long m_LastKnownStreamingMem;
 
         private void LateUpdate()
         {
@@ -63,9 +66,11 @@ namespace Aqua.Debugging
 
             if (m_MinimalOn)
             {
-                if (Ref.Replace(ref m_LastKnownStreaming, Streaming.LoadCount()))
+                bool bChanged = Ref.Replace(ref m_LastKnownStreamingCount, Streaming.LoadCount());
+                bChanged |= Ref.Replace(ref m_LastKnownStreamingMem, Streaming.TextureMemoryUsage().Current);
+                if (bChanged)
                 {
-                    m_StreamingDebugText.SetText(m_LastKnownStreaming.ToString());
+                    m_StreamingDebugText.SetText(string.Format("{0} / {1:0.00}MB", m_LastKnownStreamingCount, m_LastKnownStreamingMem / (1024f * 1024f)));
                 }
             }
         }

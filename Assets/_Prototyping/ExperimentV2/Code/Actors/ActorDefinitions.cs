@@ -9,12 +9,13 @@ using System.IO;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditorInternal;
 #endif // UNITY_EDITOR
 
 namespace ProtoAqua.ExperimentV2
 {
     [CreateAssetMenu(menuName = "Aqualab System/Experiment Actor Definitions")]
-    public class ActorDefinitions : ScriptableObject, IOptimizableAsset
+    public class ActorDefinitions : ScriptableObject, IBakedAsset
     {
         public ActorDefinition[] CritterDefinitions;
 
@@ -44,10 +45,12 @@ namespace ProtoAqua.ExperimentV2
 
         #region IOptimizableAsset
 
-        int IOptimizableAsset.Order { get { return 20; } }
+        int IBakedAsset.Order { get { return 20; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
+            LoadDefinitions();
+
             foreach(var definition in CritterDefinitions)
             {
                 ActorDefinition.LoadFromBestiary(definition, definition.Type, ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name, "Assets/_Content/Experiments"));
@@ -71,9 +74,20 @@ namespace ProtoAqua.ExperimentV2
         [UnityEditor.CustomEditor(typeof(ActorDefinitions))]
         private class Inspector : UnityEditor.Editor
         {
+            private ReorderableList m_ActorDefList;
+
+            private void OnEnable() {
+                m_ActorDefList = new ReorderableList(serializedObject, serializedObject.FindProperty("CritterDefinitions"));
+                m_ActorDefList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Definitions");
+                m_ActorDefList.drawElementCallback = SearchElementRender(m_ActorDefList, this);
+                m_ActorDefList.elementHeightCallback = SearchElementHeight(m_ActorDefList, this);
+            }
+
             public override void OnInspectorGUI()
             {
-                base.OnInspectorGUI();
+                serializedObject.UpdateIfRequiredOrScript();
+                
+                m_ActorDefList.DoLayoutList();
 
                 UnityEditor.EditorGUILayout.Space();
 
@@ -98,6 +112,30 @@ namespace ProtoAqua.ExperimentV2
                     ActorDefinitions definitions = (ActorDefinitions) target;
                     definitions.ExportDefinitions();
                 }
+
+                serializedObject.ApplyModifiedProperties();
+            }
+        
+            static private ReorderableList.ElementCallbackDelegate SearchElementRender(ReorderableList list, Inspector inspector) {
+                return (Rect rect, int index, bool isActive, bool isFocused) => {
+                    SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
+                    string name = new StringHash32((uint) element.FindPropertyRelative("Id.m_HashValue").longValue).ToDebugString();
+                    rect.x += 12;
+                    rect.width -= 12;
+                    Rect title = rect;
+                    title.height = EditorGUIUtility.singleLineHeight;
+                    element.isExpanded = EditorGUI.Foldout(title, element.isExpanded, name ?? "Unknown");
+                    if (element.isExpanded) {
+                        EditorGUI.PropertyField(rect, element, GUIContent.none, true);
+                    }
+                };
+            }
+
+            static private ReorderableList.ElementHeightCallbackDelegate SearchElementHeight(ReorderableList list, Inspector inspector) {
+                return (int index) => {
+                    SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
+                    return EditorGUI.GetPropertyHeight(element, null, element.isExpanded);
+                };
             }
         }
 

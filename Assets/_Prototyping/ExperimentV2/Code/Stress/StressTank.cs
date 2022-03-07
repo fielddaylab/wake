@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class StressTank : MonoBehaviour, ISceneOptimizable
+    public class StressTank : MonoBehaviour, IBakedComponent
     {
         #region Inspector
 
@@ -471,7 +471,7 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_Dials = GetComponentsInChildren<WaterPropertyDial>(true);
         }

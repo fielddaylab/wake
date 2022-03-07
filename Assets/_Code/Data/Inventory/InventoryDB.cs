@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Inventory Database", fileName = "InventoryDB")]
-    public class InventoryDB : DBObjectCollection<InvItem>, IOptimizableAsset
+    public class InventoryDB : DBObjectCollection<InvItem>, IBakedAsset
     {
         [SerializeField, HideInInspector] private int m_CurrencyCount;
         [SerializeField, HideInInspector] private int m_UpgradeCount;
@@ -59,9 +59,9 @@ namespace Aqua
             return x.Id().CompareTo(y.Id());
         };
 
-        int IOptimizableAsset.Order { get { return 0; } }
+        int IBakedAsset.Order { get { return 0; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             SortObjects(SortByCategory);
 

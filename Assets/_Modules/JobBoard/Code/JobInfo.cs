@@ -8,7 +8,7 @@ using BeauPools;
 
 namespace Aqua.JobBoard
 {
-    public class JobInfo : MonoBehaviour, ISceneOptimizable
+    public class JobInfo : MonoBehaviour, IBakedComponent
     {
         static private readonly TextId Label_AcceptJob = "ui.jobBoard.start.label";
         static private readonly TextId Label_ActivateJob = "ui.jobBoard.setActive.label";
@@ -152,7 +152,7 @@ namespace Aqua.JobBoard
         
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_UpgradeDisplays = m_HasRequiredUpgradesGroup.gameObject.GetComponentsInChildren<RequiredUpgradeDisplay>(true);
         }

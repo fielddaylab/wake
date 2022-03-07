@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/State Change")]
-    public class BFState : BFBase, IOptimizableAsset
+    public class BFState : BFBase, IBakedAsset
     {
         #region Inspector
 
@@ -83,9 +83,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IOptimizableAsset.Order { get { return -9; } }
+        int IBakedAsset.Order { get { return -9; } }
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             ActorStateTransitionRange range = ActorStateTransitionRange.Default;
 

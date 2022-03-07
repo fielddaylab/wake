@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Aqua;
 using BeauUtil;
+using EasyAssetStreaming;
 
 namespace ProtoAqua.Observation
 {

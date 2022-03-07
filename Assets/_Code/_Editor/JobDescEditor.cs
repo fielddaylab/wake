@@ -405,7 +405,7 @@ namespace Aqua.Editor
                         DBObjectIdPropertyDrawer.Render(line, stepProp, TempContent("Item Id"), JobStepTargetFieldInfo, JobStepItemSelector, ref m_JobStepItemSelectorLastUpdate, m_TaskStepItemSelectorList);
                         stepProp.Next(true);
                         string itemName = stepProp.stringValue;
-                        stepProp.Next(false);
+                        stepProp.Next(false);  
                         stepProp.Next(false);
                         stepProp.Next(false);
                         line.y += EditorGUIUtility.singleLineHeight + 2;

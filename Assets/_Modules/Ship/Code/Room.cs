@@ -6,7 +6,7 @@ using Aqua.Cameras;
 
 namespace Aqua.Ship
 {
-    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>, ISceneOptimizable
+    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>, IBakedComponent
     {
         #region Inspector
 
@@ -100,7 +100,7 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_Links = GetComponentsInChildren<RoomLink>(true);
         }

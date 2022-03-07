@@ -12,7 +12,7 @@ using UnityEditor.SceneManagement;
 namespace Aqua
 {
     [ExecuteAlways]
-    public sealed class NoOverridesAllowed : MonoBehaviour, ISceneOptimizable
+    public sealed class NoOverridesAllowed : MonoBehaviour, IBakedComponent
     {
         #if UNITY_EDITOR
 
@@ -74,7 +74,7 @@ namespace Aqua
             }
         }
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             DestroyImmediate(this);
         }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class JobDesc : DBObject, IOptimizableAsset, IEditorOnlyData
+    public partial class JobDesc : DBObject, IBakedAsset, IEditorOnlyData
     {
         private const int MaxTasks = ushort.MaxValue;
 
@@ -27,17 +27,28 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IOptimizableAsset.Order { get { return 1; }}
+        int IBakedAsset.Order { get { return 1; }}
 
-        bool IOptimizableAsset.Optimize()
+        bool IBakedAsset.Bake()
         {
             if (m_Tasks.Length > MaxTasks)
             {
-                Log.Error("Job cannot have more than {0} tasks", MaxTasks);
+                Log.Error("[JobDesc] Job '{0}' has more than {1} tasks", name, MaxTasks);
                 Array.Resize(ref m_Tasks, MaxTasks);
             }
 
             m_OptimizedTaskList = GenerateOptimizedTasks(m_Tasks);
+
+            Assert.NotNull(m_Scripting, "[JobDesc] Job '{0}' has no script assigned", name);
+
+            foreach(var prereq in m_PrerequisiteJobs) {
+                Assert.NotNull(prereq, "[JobDesc] Job '{0}' has a null prerequisite job", name);
+            }
+
+            foreach(var upgrade in m_PrereqUpgrades) {
+                Assert.False(upgrade.IsEmpty, "[JobDesc] Job '{0}' has a null prerequisite upgrade", name);
+            }
+
             ValidationUtils.EnsureUnique(ref m_ExtraAssets);
             return true;
         }
