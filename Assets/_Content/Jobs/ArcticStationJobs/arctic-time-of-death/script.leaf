@@ -42,6 +42,15 @@ $goto .argue.showZombieWormsWrong
 :: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
+
+:: argue.stage3
+$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWormsWrong
+
+:: argue.showZombieWormsWrong
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
     $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
     $answer *, .argue.unrelated
