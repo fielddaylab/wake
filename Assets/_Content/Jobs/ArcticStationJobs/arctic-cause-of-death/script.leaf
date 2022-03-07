@@ -1,0 +1,70 @@
+:: basePath job.arctic-cause-of-death
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
+            Whether it was the water conditions or a lack of food, we'll need some more information.
+
+// ARGUMENTATION
+
+//::helpScanProb
+//@trigger    RequestPartnerHelp
+//@when   !scene:name == "RS-4W", !JobTaskCompleted(getEnviornmentData)
+//{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
+
+//::helpScanProb
+//@trigger    RequestPartnerHelp
+//@when   !scene:name == "RS-4W", !JobTaskCompleted(getPopulationData)
+//{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
+//            I'm not sure what whales eat, so we might just have to count everything.
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(causeDeath)
+@cutscene
+$call ArgueLoad(causeDeath)
+{@profWhalen} Which hypothesis seems most likely?
+    $choice .argue.foodClaim; There was a problem in her food supply.
+    $choice .argue.stressClaim; Something in the enviornment harmed her.
+$choose branch
+
+:: argue.foodClaim
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+		$call ArgueFactSlot() 
+$goto .argue.showZombieWormsWrong
+
+:: argue.stressClaim
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$goto .argue.showZombieWorms
+
+::argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@kevin} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@kevin} OK. Get back to me when you're ready.
+$call arguecancelclaim()
+$call argueunload()
+
+// END
+
+:: argue.complete
+$call ArgueComplete()
+{@kevin} This looks great!
+{@kevin}    This is the conclusion to the arctic-cause-of-death job!
+
+$call CompleteJob()
