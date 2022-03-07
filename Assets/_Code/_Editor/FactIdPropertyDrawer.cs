@@ -40,7 +40,7 @@ namespace Aqua.Editor
                 return;
             }
 
-            if (Event.current.type == EventType.Layout && EditorApplication.timeSinceStartup - lastUpdated > 1) {
+            if (EditorApplication.timeSinceStartup - lastUpdated > 20) {
                 list.Clear();
                 list.Add(null, "[Null]", -1);
                 foreach(var obj in AssetDBUtils.FindAssets(attr.FactType))

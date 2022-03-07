@@ -8,7 +8,7 @@ namespace Aqua
 {
     static public class StateUtil
     {
-        private const SceneLoadFlags LoadFlags = SceneLoadFlags.NoLoadingScreen | SceneLoadFlags.DoNotDispatchPreUnload;
+        private const SceneLoadFlags LoadFlags = SceneLoadFlags.DoNotDispatchPreUnload;
 
         private const float FadeDuration = 0.25f;
         private const float PauseDuration = 0.15f;

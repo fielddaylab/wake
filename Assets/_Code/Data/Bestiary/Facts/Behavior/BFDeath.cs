@@ -38,7 +38,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        public override bool Optimize()
+        public override bool Bake()
         {
             if (OnlyWhenStressed)
             {
@@ -46,8 +46,7 @@ namespace Aqua
                 if (pair != null)
                 {
                     float compare = Proportion - pair.Proportion;
-                    Assert.True(compare != 0, "Facts '{0}' and '{1}' are paired but have the same value {1}", Id, pair.Id, Proportion);
-                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster));
+                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster, QualCompare.SameRate));
                 }
             }
 

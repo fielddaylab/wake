@@ -34,11 +34,19 @@ namespace Aqua.JobBoard
         [SerializeField] private Image m_StationIcon = null;
         [SerializeField] private LocText m_StationName = null;
 
+        [Header("Not Selected")]
+        [SerializeField] private LocText m_NotSelectedLabel = null;
+        [SerializeField] private TextId m_NotSelectedHasJobsText = null;
+        [SerializeField] private TextId m_NotSelectedLockedJobsText = null;
+        [SerializeField] private TextId m_NotSelectedNoJobsText = null;
+
         #endregion
 
         [NonSerialized] private JobButton m_SelectedJobButton = null;
         [NonSerialized] private ListHeader[] m_GroupHeaderMap = new ListHeader[5];
         [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
+        [NonSerialized] private bool m_HasLockedJobs = false;
+        [NonSerialized] private bool m_HasAvailableJobs = false;
 
         #region Unity Events
 
@@ -64,6 +72,7 @@ namespace Aqua.JobBoard
             AllocateButtons();
             UpdateButtonStatuses();
             OrderButtons();
+            UpdateUnselectedLabel();
 
             MapDesc currentStation = Assets.Map(Save.Map.CurrentStationId());
             m_StationIcon.sprite = currentStation.Icon();
@@ -136,6 +145,8 @@ namespace Aqua.JobBoard
             if (UpdateButtonStatuses())
             {
                 OrderButtons();
+                UpdateUnselectedLabel();
+
                 if (m_SelectedJobButton != null)
                     m_Info.UpdateStatus(m_SelectedJobButton.Job, m_SelectedJobButton.Status);
             }
@@ -151,14 +162,27 @@ namespace Aqua.JobBoard
             {
                 job = JobUtils.GetJobStatus(button.Job, Save.Current, true);
                 bUpdated |= button.UpdateStatus(job.Status, m_ButtonAppearance);
+                button.gameObject.SetActive(ShouldShowButton(job));
             }
 
             return bUpdated;
         }
 
+        private bool ShouldShowButton(PlayerJob job)
+        {
+            if ((job.Status & JobStatusFlags.InProgress) != 0 && (job.Status & JobStatusFlags.Active) == 0) {
+                return job.Job.StationId() == Save.Map.CurrentStationId();
+            }
+
+            return true;
+        }
+
         private void OrderButtons()
         {
             JobButton active = null;
+
+            m_HasLockedJobs = false;
+            m_HasAvailableJobs = false;
 
             using(PooledList<JobButton> progress = PooledList<JobButton>.Create())
             using(PooledList<JobButton> completed = PooledList<JobButton>.Create())
@@ -167,10 +191,14 @@ namespace Aqua.JobBoard
             {
                 foreach(var button in m_ButtonPool.ActiveObjects)
                 {
+                    if (!button.gameObject.activeSelf)
+                        continue;
+                    
                     switch(button.Group)
                     {
                         case JobProgressCategory.Active:
                             active = button;
+                            m_HasAvailableJobs = true;
                             break;
 
                         case JobProgressCategory.Completed:
@@ -179,14 +207,17 @@ namespace Aqua.JobBoard
 
                         case JobProgressCategory.InProgress:
                             progress.Add(button);
+                            m_HasAvailableJobs = true;
                             break;
 
                         case JobProgressCategory.Available:
                             available.Add(button);
+                            m_HasAvailableJobs = true;
                             break;
 
                         case JobProgressCategory.Locked:
                             locked.Add(button);
+                            m_HasLockedJobs = false;
                             break;
                     }
                 }
@@ -264,6 +295,16 @@ namespace Aqua.JobBoard
             }
 
             return header;
+        }
+
+        private void UpdateUnselectedLabel() {
+            if (m_HasAvailableJobs) {
+                m_NotSelectedLabel.SetText(m_NotSelectedHasJobsText);
+            } else if (m_HasLockedJobs) {
+                m_NotSelectedLabel.SetText(m_NotSelectedLockedJobsText);
+            } else {
+                m_NotSelectedLabel.SetText(m_NotSelectedNoJobsText);
+            }
         }
 
         #endregion // Job Buttons

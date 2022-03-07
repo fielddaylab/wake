@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class ObservationBehaviorSystem : MonoBehaviour, ISceneOptimizable
+    public class ObservationBehaviorSystem : MonoBehaviour, IBakedComponent
     {
         private const float SpeedUpLifetimeThreshold = 60;
 
@@ -544,7 +544,7 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_Tank = GetComponentInParent<SelectableTank>();
         }

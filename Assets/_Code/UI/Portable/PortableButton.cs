@@ -23,8 +23,6 @@ namespace Aqua.Portable
         [NonSerialized] private bool m_HasNew;
         [NonSerialized] private RectTransformState m_OriginalAnimState;
 
-        [NonSerialized] private PortableRequest m_Request;
-
         public Toggle Toggle { get { return m_Toggle; } }
 
         protected override void Awake()
@@ -87,29 +85,12 @@ namespace Aqua.Portable
             }
 
             m_NewIcon.gameObject.SetActive(true);
-            m_Request = PortableRequest.FromUpdate(inBestiaryUpdate);
         }
-
-        // private void OnJobUpdated()
-        // {
-        //     if (m_Request != null)
-        //         return;
-            
-        //     m_HasNew = true;
-        //     if (!m_NewAnim)
-        //     {
-        //         m_NewAnim.Replace(this, NewAnim());
-        //     }
-
-        //     m_NewIcon.gameObject.SetActive(true);
-        //     m_Request = new StatusApp.OpenToPageRequest(StatusApp.PageId.Job);
-        // }
 
         private void OnPortableOpened(PortableRequest inRequest)
         {
             m_NewAnim.Stop();
             m_HasNew = false;
-            m_Request = default;
             m_OriginalAnimState.Apply(m_AnimationRoot);
             m_NewIcon.gameObject.SetActive(false);
 
@@ -129,7 +110,7 @@ namespace Aqua.Portable
             
             if (inbValue)
             {
-                m_Menu.Open(m_Request);
+                m_Menu.Open(default);
             }
             else
             {

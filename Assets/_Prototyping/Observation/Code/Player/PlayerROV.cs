@@ -33,7 +33,7 @@ namespace ProtoAqua.Observation
             void Disable();
             bool UpdateTool(in PlayerROVInput.InputData inInput);
             bool HasTarget();
-            Vector3? GetTargetPosition();
+            Vector3? GetTargetPosition(bool inbOnGamePlane);
         }
 
         private class NullTool : ITool
@@ -43,7 +43,7 @@ namespace ProtoAqua.Observation
             public void Disable() { }
             public void Enable() { }
 
-            public Vector3? GetTargetPosition() { return null; }
+            public Vector3? GetTargetPosition(bool inbOnGamePlane) { return null; }
             public bool HasTarget() { return false; }
             public bool UpdateTool(in PlayerROVInput.InputData inInput) { return false; }
         }
@@ -56,7 +56,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
         [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
-        [SerializeField, Required] private Transform m_Renderer = null;
+        [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
 
         [Header("Movement Params")]
 
@@ -154,13 +154,10 @@ namespace ProtoAqua.Observation
             velocityHintData.WeightOffset = m_CameraForwardLookWeight;
             velocityHintData.Offset = m_Kinematics.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove);
 
-            if (m_Moving)
+            if (m_Moving && m_LastInputData.UseHold && !m_LastInputData.Keyboard.KeyDown)
             {
                 float amt = m_LastInputData.Mouse.NormalizedOffset.magnitude;
                 m_WorldUI.ShowMoveArrow(m_LastInputData.Mouse.RawOffset, amt);
-
-                float scaleX = Math.Abs(m_Renderer.transform.localScale.x) * Math.Sign(m_LastInputData.Mouse.RawOffset.x);
-                m_Renderer.transform.SetScale(scaleX, Axis.X);
             }
             else if (m_CurrentTool.HasTarget())
             {
@@ -181,11 +178,25 @@ namespace ProtoAqua.Observation
             {
                 mouseHintData.WeightOffset = 0;
             }
+
+            UpdateAnims();
+        }
+
+        private void UpdateAnims() {
+            PlayerROVAnimator.InputState animState;
+            animState.Position = m_Transform.position;
+            animState.Moving = m_Moving;
+            animState.UsingTool = m_CurrentTool.HasTarget();
+            animState.NormalizedLook = m_LastInputData.Mouse.NormalizedOffset;
+            animState.LookTarget = m_CurrentTool.GetTargetPosition(false);
+            animState.NormalizedMove = m_LastInputData.MoveVector;
+            animState.Status = m_StunRoutine ? PlayerBodyStatus.Stunned : PlayerBodyStatus.Normal;
+            m_Animator.Process(animState);
         }
 
         private Vector3? GetLockOn()
         {
-            Vector3? currentScanPos = m_CurrentTool.GetTargetPosition();
+            Vector3? currentScanPos = m_CurrentTool.GetTargetPosition(true);
             if (currentScanPos.HasValue)
             {
                 Vector3 pos = currentScanPos.Value;
@@ -219,14 +230,14 @@ namespace ProtoAqua.Observation
 
         private void UpdateMove(float inDeltaTime)
         {
-            if (m_LastInputData.UseHold)
+            if (m_LastInputData.Move)
             {
-                float dist = m_LastInputData.Mouse.NormalizedOffset.magnitude;
+                float dist = m_LastInputData.MoveVector.magnitude;
                 
                 if (dist > 0)
                 {
                     SetEngineState(true);
-                    m_MovementParams.Apply(m_LastInputData.Mouse.NormalizedOffset, m_Kinematics, inDeltaTime);
+                    m_MovementParams.Apply(m_LastInputData.MoveVector, m_Kinematics, inDeltaTime);
                 }
                 else
                 {
@@ -312,6 +323,13 @@ namespace ProtoAqua.Observation
         // {
             
         // }
+
+        public override void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
+        {
+            base.TeleportTo(inPosition);
+
+            m_Animator.HandleTeleport(inFacing);
+        }
 
         #region Leaf
 

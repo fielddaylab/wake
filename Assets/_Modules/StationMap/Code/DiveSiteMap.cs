@@ -5,7 +5,7 @@ using Aqua.Character;
 
 namespace Aqua.StationMap
 {
-    public class DiveSiteMap : MonoBehaviour, ISceneLoadHandler, ISceneOptimizable
+    public class DiveSiteMap : MonoBehaviour, ISceneLoadHandler, IBakedComponent
     {
         [SerializeField, HideInInspector] private PlayerController m_Player = null;
         [SerializeField, HideInInspector] private DiveSite[] m_DiveSites;
@@ -28,7 +28,7 @@ namespace Aqua.StationMap
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             List<DiveSite> diveSites = new List<DiveSite>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);

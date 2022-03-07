@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class SelectableTank : MonoBehaviour, ISceneOptimizable
+    public class SelectableTank : MonoBehaviour, IBakedComponent
     {
         #region Inspector
 
@@ -59,7 +59,7 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             ActorAllocator = FindObjectOfType<ActorAllocator>();
         }

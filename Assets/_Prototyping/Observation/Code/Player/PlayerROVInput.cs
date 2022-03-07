@@ -10,6 +10,10 @@ namespace ProtoAqua.Observation
         public struct InputData
         {
             public MouseDistanceInputFilter.Output Mouse;
+            public DirectionKeysInputFilter.Output Keyboard;
+
+            public bool Move;
+            public Vector2 MoveVector;
 
             public bool UsePress;
             public bool UseHold;
@@ -18,6 +22,7 @@ namespace ProtoAqua.Observation
         #region Inspector
 
         [SerializeField] private MouseDistanceInputFilter m_MouseFilter = default;
+        [SerializeField] private DirectionKeysInputFilter m_KeyboardFilter = default;
 
         #endregion // Inspector
 
@@ -32,11 +37,16 @@ namespace ProtoAqua.Observation
             }
 
             m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, out outInputData.Mouse);
+            m_KeyboardFilter.Process(Device, out outInputData.Keyboard);
 
-            bool bAllowLeftClick = (inStatus & PlayerBodyStatus.Stunned) == 0 && !Services.Input.IsPointerOverUI();
+            bool bAllowInput = (inStatus & PlayerBodyStatus.Stunned) == 0;
+            bool bAllowMouse = bAllowInput && !Services.Input.IsPointerOverUI();
 
-            outInputData.UseHold = bAllowLeftClick && Device.MouseDown(0);
-            outInputData.UsePress = bAllowLeftClick && Device.MousePressed(0);
+            outInputData.UseHold = bAllowMouse && Device.MouseDown(0);
+            outInputData.UsePress = bAllowMouse && Device.MousePressed(0);
+
+            outInputData.Move = outInputData.UseHold || outInputData.Keyboard.KeyDown;
+            outInputData.MoveVector = outInputData.Keyboard.KeyDown ? outInputData.Keyboard.NormalizedOffset : outInputData.Mouse.NormalizedOffset;
         }
 
         #endregion // Input Generation

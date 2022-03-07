@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Aqua.Character
 {
-    public class SpawnLocationMap : MonoBehaviour, ISceneOptimizable
+    public class SpawnLocationMap : MonoBehaviour, IBakedComponent
     {
         [SerializeField, HideInInspector] private SpawnLocation[] m_Locations;
 
@@ -34,7 +34,7 @@ namespace Aqua.Character
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             List<SpawnLocation> locations = new List<SpawnLocation>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<SpawnLocation>(true, locations);

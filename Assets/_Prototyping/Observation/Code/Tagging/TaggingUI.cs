@@ -6,7 +6,7 @@ using BeauRoutine;
 
 namespace ProtoAqua.Observation
 {
-    public class TaggingUI : SharedPanel, ISceneOptimizable
+    public class TaggingUI : SharedPanel, IBakedComponent
     {
         #region Inspector
 
@@ -42,7 +42,7 @@ namespace ProtoAqua.Observation
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             m_AllMeters = GetComponentsInChildren<TaggingMeter>(true);
         }

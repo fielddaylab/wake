@@ -468,13 +468,13 @@ namespace Aqua
                     delay -= timeThisFrame;
                     UpdateInput();
 
-                    if (m_CurrentState.IsCutsceneSkip)
+                    if (m_CurrentState.IsCutsceneSkip || m_CurrentState.VisibleText == null)
                         yield break;
                 }
 
                 m_TextDisplay.maxVisibleCharacters++;
 
-                if (m_CurrentState.IsCutsceneSkip)
+                if (m_CurrentState.IsCutsceneSkip || m_CurrentState.VisibleText == null)
                     yield break;
 
                 char shownChar = m_CurrentState.VisibleText[m_TextDisplay.maxVisibleCharacters - 1];

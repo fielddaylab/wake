@@ -27,7 +27,7 @@ namespace Aqua.Editor
             RemoveBootstrap(scene);
             RemoveDebug(scene);
             Flatten(scene);
-            Optimize(scene);
+            Bake(scene);
             if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
             {
                 StripEditorInfo(scene);
@@ -106,19 +106,19 @@ namespace Aqua.Editor
             }
         }
 
-        static private void Optimize(Scene scene)
+        static private void Bake(Scene scene)
         {
-            List<ISceneOptimizable> allOptimizable = new List<ISceneOptimizable>();
-            scene.GetAllComponents<ISceneOptimizable>(true, allOptimizable);
-            if (allOptimizable.Count > 0)
+            List<IBakedComponent> allBaked = new List<IBakedComponent>();
+            scene.GetAllComponents<IBakedComponent>(true, allBaked);
+            if (allBaked.Count > 0)
             {
-                Debug.LogFormat("[SceneProcessor] Optimizing {0} objects scene '{1}'...", allOptimizable.Count, scene.name);
-                using(Profiling.Time("optimizing objects"))
+                Debug.LogFormat("[SceneProcessor] Baking {0} objects scene '{1}'...", allBaked.Count, scene.name);
+                using(Profiling.Time("baking objects"))
                 {
-                    foreach(var optimizable in allOptimizable)
+                    foreach(var optimizable in allBaked)
                     {
-                        Debug.LogFormat("[SceneProcessor] ...optimizing {0}", optimizable.ToString());
-                        optimizable.Optimize();
+                        Debug.LogFormat("[SceneProcessor] ...baking {0}", optimizable.ToString());
+                        optimizable.Bake();
                     }
                 }
             }

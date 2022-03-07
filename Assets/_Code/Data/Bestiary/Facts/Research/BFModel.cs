@@ -1,5 +1,6 @@
 using BeauUtil;
 using UnityEngine;
+using EasyAssetStreaming;
 
 namespace Aqua
 {
@@ -14,7 +15,7 @@ namespace Aqua
 
         [Header("Model")]
         public BFModelType ModelType = BFModelType.Visual;
-        [StreamedImagePath] public string HighResImagePath = null;
+        [StreamingImagePath] public string HighResImagePath = null;
         public TextId HeaderId = default;
         public TextId DescriptionId = default;
         public TextId SentenceId = default;

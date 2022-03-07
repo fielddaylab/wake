@@ -2,6 +2,7 @@ using System.Collections;
 using BeauData;
 using BeauRoutine;
 using BeauUtil;
+using EasyAssetStreaming;
 using TMPro;
 using UnityEngine;
 
@@ -62,7 +63,10 @@ namespace Aqua {
                     yield return smallWait;
                 }
 
-                yield return Streaming.UnloadUnusedAsync(30f);
+                Streaming.UnloadUnusedAsync(30f);
+                while(Streaming.IsUnloading()) {
+                    yield return null;
+                }
             }
         }
 

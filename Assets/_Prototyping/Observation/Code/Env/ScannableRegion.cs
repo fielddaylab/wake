@@ -6,7 +6,7 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class ScannableRegion : ScriptComponent, ISceneOptimizable
+    public class ScannableRegion : ScriptComponent, IBakedComponent
     {
         #region Inspector
 
@@ -41,7 +41,7 @@ namespace ProtoAqua.Observation
             TrackTransform = transform;
         }
 
-        void ISceneOptimizable.Optimize()
+        void IBakedComponent.Bake()
         {
             if (!TrackTransform)
                 TrackTransform = transform;

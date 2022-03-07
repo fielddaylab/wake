@@ -12,7 +12,7 @@ using BeauUtil.Debugger;
 using AquaAudio;
 
 namespace Aqua.Shop {
-    public class ShopCameraCtrl : MonoBehaviour, ISceneOptimizable, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
+    public class ShopCameraCtrl : MonoBehaviour, IBakedComponent, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
         static public readonly StringHash32 BelowEntrance = "station";
         static public readonly StringHash32 ShipEntrance = "ship";
         static public readonly StringHash32 ExitEntrance = "shop";
@@ -172,7 +172,7 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void ISceneOptimizable.Optimize() {
+        void IBakedComponent.Bake() {
             m_Tables = FindObjectsOfType<ShopTable>();
         }
 

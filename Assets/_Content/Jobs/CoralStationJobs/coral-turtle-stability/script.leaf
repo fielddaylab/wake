@@ -40,7 +40,7 @@ $set    	jobs:coral-turtle-stability.seen.bottom = true
 @when 		scene:name == "RS-2V"
 @cutscene
 {@player}   What do you think? Have we got everything?
-$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
+$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral),  HasEntity(LoggerheadTurtle) 
 	$set    jobs:coral-turtle-stability.got.scans = true
 	{@kevin}   I think so! Head back up to the surface when you're ready to leave.
 $else
@@ -49,7 +49,7 @@ $endif
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       JobTaskTop(behavior), HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) // , HasEntity(SeaGrass)
+@when       JobTaskTop(behavior), HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral), HasEntity(LoggerheadTurtle)
 @once
 @cutscene
 $set jobs:coral-turtle-stability.gotScans = true
@@ -58,12 +58,11 @@ $set jobs:coral-turtle-stability.gotScans = true
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "CoralStation", jobs:coral-turtle-stability.seen.bottom, jobs:coral-turtle-stability.got.scans == false
-@once
 @cutscene
 {@player}   Hmm, do you think we got everything?
 {@kevin}   Let me check...
-$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral) //, HasEntity(SeaGrass)
-	$set    jobs:coral-stressed.got.scans = true
+$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral), HasEntity(LoggerheadTurtle)
+	$set    jobs:coral-turtle-stability.got.scans = true
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
@@ -143,6 +142,12 @@ $endif
 :: helpDoExperiment.None
 {@kevin}    We have a few new species - let's see which of them the turtle eats.
             We should be able to run an {h}Observation Tank{/h} experiment for that.
+			
+:: helpReturnExperiment
+@trigger	ExperimentTankExited
+@when		JobTaskTop(behavior)
+@cutscene
+{@kevin}	Maybe we should test turtles individually with each species to make sure we got all the eat rules.
 			
 :: completedExperiment
 @trigger    JobTaskCompleted
