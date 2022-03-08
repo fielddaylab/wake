@@ -34,6 +34,9 @@ Firebase automatically logs the following meaningful events, documented [here](h
 4. [Game Feedback](#GameFeedback)
 5. [Portable Device Interactions](#PortableDeviceInteractions)
 6. [Modeling](#Modeling)
+7. [Shop](#Shop)
+8. [Experimentation](#Experimentation)
+9. [Argumentation](#Argumentation)
 
 <a name="Init"/>
 
@@ -66,7 +69,8 @@ Player accepts a job with a given id.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the accepted job |
 | job_name | String name of the accepted job |
 
@@ -79,7 +83,8 @@ Player switches jobs by starting a different one.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the new job |
 | job_name | String name of the new job |
 
@@ -92,7 +97,8 @@ A fact is added to the player's bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | Unique ID for the given fact |
@@ -106,7 +112,8 @@ Player completes a given job.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the completed job |
 | job_name | String name of the completed job |
 
@@ -119,7 +126,8 @@ Player completes a task for a given job.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the new job |
 | job_name | String name of the new job |
 | task_id | ID of the completed task |
@@ -130,7 +138,6 @@ Player completes a task for a given job.
 
 1. [scene_changed](#scene_changed)
 2. [room_changed](#room_changed)
-3. [begin_experiment](#begin_experiment)
 4. [begin_dive](#begin_dive)
 5. [begin_argument](#begin_argument)
 6. [ask_for_help](#ask_for_help)
@@ -144,7 +151,8 @@ Player loads into a new scene (ex. "Ship").
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | scene_name | Name of the loaded scene |
@@ -158,30 +166,11 @@ Player enters a new room on the ship.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | scene_name | Name of the room being entered|
-
-<a name="begin_experiment"/>
-
-#### begin_experiment
-
-Player starts an experiment with a given tank type.
-
-| Parameter | Description |
-| --- | --- |
-| user_code | The player's unique save code |
-| app_version | Current logging version |
-| job_id | ID of the current job |
-| job_name | String name of the current job |
-| tank_type | Selected tank type for the experiment |
-
-| tank_type |
-| --- |
-| Observation |
-| Stress |
-| Measurement | 
 
 <a name="begin_dive"/>
 
@@ -192,7 +181,8 @@ Player enters a given dive site.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | site_id | ID of the dive site |
@@ -206,7 +196,8 @@ Player begins the argumentation process.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -219,7 +210,8 @@ Player clicks the hint button.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | node_id | Scripting ID for the hint response |
@@ -235,7 +227,8 @@ Player triggers conversation with the guide (Kevin).
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | node_id | Scripting ID for guide's response |
@@ -267,7 +260,8 @@ Player opens the bestiary, which defaults to the species tab.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -280,7 +274,8 @@ Player opens the species tab in the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -293,7 +288,8 @@ Player opens the environments tab in the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -306,7 +302,8 @@ Player opens the models tab in the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -319,7 +316,8 @@ Player selects a species from the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | species_id | ID of the selected species |
@@ -333,7 +331,8 @@ Player selects an environment from the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | environment_id | ID of the selected environment |
@@ -347,7 +346,8 @@ Player selects a model from the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | model_id | ID of the selected model |
@@ -361,7 +361,8 @@ Player closes the bestiary.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -374,7 +375,8 @@ Player opens the portable status app, which defaults to the job tab.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -387,7 +389,8 @@ Player opens the job tab in the portable status app.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -400,7 +403,8 @@ Player opens the item tab in the portable status app.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -413,7 +417,8 @@ Player opens the tech tab in the portable status app.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -426,7 +431,8 @@ Player closes the portable status app.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -458,7 +464,8 @@ Player enters the modeling room.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 
@@ -471,7 +478,8 @@ Player selects a given modeling phase.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | phase | The selected modeling phase |
@@ -493,7 +501,8 @@ Player selects an ecosystem for constructing the model.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -507,7 +516,8 @@ Player starts the conceptual modeling phase.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -521,7 +531,8 @@ Player imports new facts / behaviors into the conceptual model.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -543,7 +554,8 @@ Player saves the conceptual model to AQOS.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -557,7 +569,8 @@ Player enters the sync phase of modeling.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -571,7 +584,8 @@ Player attempts to sync the model but fails.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -586,7 +600,8 @@ Player successfully syncs the model.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -600,7 +615,8 @@ Player completes the prediction model.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -614,7 +630,8 @@ Player introduces a new organism or updates an existing organism's population co
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -630,7 +647,8 @@ Player’s intervention model is unsuccessful.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -644,7 +662,8 @@ Player successfully completes the intervention model.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
@@ -658,8 +677,266 @@ Player exits the modeling room.
 | Parameter | Description |
 | --- | --- |
 | user_code | The player's unique save code |
-| app_version | Current logging version |
+| app_version | Current game build version |
+| log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | phase | The selected modeling phase upon leaving |
 | ecosystem | The selected ecosystem upon leaving |
+
+<a name="Shop"/>
+
+### Shop
+
+1. [purchase_upgrade](#purchase_upgrade)
+2. [insufficient_funds](#insufficient_funds)
+3. [talk_to_shopkeep](#talk_to_shopkeep)
+
+<a name="purchase_upgrade"/>
+
+#### purchase_upgrade
+
+Player purchases an upgrade from the shop.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| item_id | ID of the purchased item |
+| item_name | String name of the purchased item |
+| cost | Cost of the purchased item |
+
+<a name="insufficient_funds"/>
+
+#### insufficient_funds
+
+Player attempts to purchase an item but doesn't have enough currency.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| item_id | ID of the item |
+| item_name | String name of the item |
+| cost | Cost of the item |
+
+<a name="talk_to_shopkeep"/>
+
+#### talk_to_shopkeep
+
+Player talks to the shopkeeper.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
+<a name="Experimentation"/>
+
+### Experimentation
+
+1. [add_environment](#add_environment)
+2. [remove_environment](#remove_environment)
+3. [environment_cleared](#environment_cleared)
+4. [add_critter](#add_critter)
+5. [remove_critter](#remove_critter)
+6. [critters_cleared](#critters_cleared)
+7. [begin_experiment](#begin_experiment)
+
+| tank_type |
+| --- |
+| Observation |
+| Stress |
+| Measurement |
+
+<a name="add_environment"/>
+
+#### add_environment
+
+Player selects an environment for running the experiment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the added environment |
+
+<a name="remove_environment"/>
+
+#### remove_environment
+
+Player deselects an environment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the removed environment |
+
+<a name="environment_cleared"/>
+
+#### environment_cleared
+
+Player clears the current environment.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Name of the cleared environment |
+
+<a name="add_critter"/>
+
+#### add_critter
+
+Player adds a critter to the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critter | Name of the critter added to the tank |
+
+<a name="remove_critter"/>
+
+#### remove_critter
+
+Player removes a critter from the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critter | Name of the critter removed from the tank |
+
+<a name="critters_cleared"/>
+
+#### critters_cleared
+
+Player clears all critters from the tank.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critters | Comma separated list of all critters cleared from the tank |
+
+<a name="begin_experiment"/>
+
+#### begin_experiment
+
+Player starts an experiment with a given tank type.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| tank_type | Selected tank type for the experiment |
+| environment | Selected environment for the experiment |
+| critters | Comma separated list of all critters added to the tank |
+
+<a name="Argumentation"/>
+
+### Argumentation
+
+1. [begin_argument](#begin_argument)
+2. [fact_submitted](#fact_submitted)
+3. [fact_rejected](#fact_rejected)
+4. [complete_argument](#complete_argument)
+
+<a name="begin_argument"/>
+
+#### begin_argument
+
+Player begins argumentation for a job.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
+<a name="fact_submitted"/>
+
+#### begin_experiment
+
+Player submits a fact to argumentation.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| fact_id | ID of the submitted fact |
+
+<a name="fact_rejected"/>
+
+#### fact_rejected
+
+Submitted fact is incorrect / rejected by the argumentation script.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| fact_id | ID of the submitted fact |
+
+<a name="complete_argument"/>
+
+#### complete_argument
+
+Player completes argumentation for a job.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
