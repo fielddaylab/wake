@@ -151,16 +151,19 @@ namespace ProtoAqua.ExperimentV2 {
         private void OnCritterAdded(BestiaryDesc inDesc) {
             ActorWorld.AllocWithDefaultCount(m_World, inDesc.Id());
             m_NextButton.interactable = true;
+            Services.Events.Dispatch(ExperimentEvents.ExperimentAddCritter, inDesc.Id());
         }
 
         private void OnCritterRemoved(BestiaryDesc inDesc) {
             ActorWorld.FreeAll(m_World, inDesc.Id());
             m_NextButton.interactable = m_World.Actors.Count > 0;
+            Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveCritter, inDesc.Id());
         }
 
         private void OnCrittersCleared() {
             ActorWorld.FreeAll(m_World);
             m_NextButton.interactable = false;
+            Services.Events.Dispatch(ExperimentEvents.ExperimentCrittersCleared);
         }
 
         #endregion // Critter Callbacks
@@ -172,6 +175,7 @@ namespace ProtoAqua.ExperimentV2 {
             ActorWorld.SetWaterState(m_World, inDesc.GetEnvironment());
             m_NextButton.interactable = true;
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
+            Services.Events.Dispatch(ExperimentEvents.ExperimentAddEnvironment, inDesc.Id());
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {
@@ -179,6 +183,7 @@ namespace ProtoAqua.ExperimentV2 {
                 m_NextButton.interactable = false;
                 ActorWorld.SetWaterState(m_World, null);
                 m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveEnvironment, inDesc.Id());
             }
         }
 
@@ -187,6 +192,7 @@ namespace ProtoAqua.ExperimentV2 {
             ActorWorld.SetWaterState(m_World, null);
             m_NextButton.interactable = false;
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnvironmentCleared);
         }
 
         #endregion // Environment Callbacks
