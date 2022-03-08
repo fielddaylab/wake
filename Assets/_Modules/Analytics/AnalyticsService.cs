@@ -34,127 +34,127 @@ namespace Aqua
 
         //Progression
         [DllImport("__Internal")]
-        public static extern void FBAcceptJob(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBAcceptJob(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBSwitchJob(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBSwitchJob(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBReceiveFact(string userCode, int appVersion, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBReceiveFact(string userCode, string appVersion, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBCompleteJob(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBCompleteJob(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCompleteTask(string userCode, int appVersion, int logVersion, int jobId, string jobName, string taskId);
+        public static extern void FBCompleteTask(string userCode, string appVersion, int logVersion, int jobId, string jobName, string taskId);
 
         //Player Actions
         [DllImport("__Internal")]
-        public static extern void FBSceneChanged(string userCode, int appVersion, int logVersion, int jobId, string jobName,string sceneName);
+        public static extern void FBSceneChanged(string userCode, string appVersion, int logVersion, int jobId, string jobName,string sceneName);
         [DllImport("__Internal")]
-        public static extern void FBRoomChanged(string userCode, int appVersion, int logVersion, int jobId, string jobName, string roomName);
+        public static extern void FBRoomChanged(string userCode, string appVersion, int logVersion, int jobId, string jobName, string roomName);
         [DllImport("__Internal")]
-        public static extern void FBBeginExperiment(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
+        public static extern void FBBeginExperiment(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
         [DllImport("__Internal")]
-        public static extern void FBBeginDive(string userCode, int appVersion, int logVersion, int jobId, string jobName, string siteId);
+        public static extern void FBBeginDive(string userCode, string appVersion, int logVersion, int jobId, string jobName, string siteId);
         [DllImport("__Internal")]
-        public static extern void FBBeginModel(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginModel(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBeginSimulation(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginSimulation(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBAskForHelp(string userCode, int appVersion, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBAskForHelp(string userCode, string appVersion, int logVersion, int jobId, string jobName, string nodeId);
         [DllImport("__Internal")]
-        public static extern void FBTalkWithGuide(string userCode, int appVersion, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBTalkWithGuide(string userCode, string appVersion, int logVersion, int jobId, string jobName, string nodeId);
         
         //Bestiary Events
         [DllImport("__Internal")]
-        public static extern void FBOpenBestiary(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBOpenBestiary(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenSpeciesTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenSpeciesTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenEnvironmentsTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenEnvironmentsTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenModelsTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenModelsTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectSpecies(string userCode, int appVersion, int logVersion, int jobId, string jobName, string speciesId);
+        public static extern void FBBestiarySelectSpecies(string userCode, string appVersion, int logVersion, int jobId, string jobName, string speciesId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectEnvironment(string userCode, int appVersion, int logVersion, int jobId, string jobName, string environmentId);
+        public static extern void FBBestiarySelectEnvironment(string userCode, string appVersion, int logVersion, int jobId, string jobName, string environmentId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectModel(string userCode, int appVersion, int logVersion, int jobId, string jobName, string modelId);
+        public static extern void FBBestiarySelectModel(string userCode, string appVersion, int logVersion, int jobId, string jobName, string modelId);
         [DllImport("__Internal")]
-        public static extern void FBCloseBestiary(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBCloseBestiary(string userCode, string appVersion, int logVersion, int jobId, string jobName);
 
         //Status Events
         [DllImport("__Internal")]
-        public static extern void FBOpenStatus(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBOpenStatus(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenJobTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenJobTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenItemTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenItemTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenTechTab(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenTechTab(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCloseStatus(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBCloseStatus(string userCode, string appVersion, int logVersion, int jobId, string jobName);
 
         //Game Feedback
         [DllImport("__Internal")]
-        public static extern void FBSimulationSyncAchieved(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBSimulationSyncAchieved(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBGuideScriptTriggered(string userCode, int appVersion, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBGuideScriptTriggered(string userCode, string appVersion, int logVersion, int jobId, string jobName, string nodeId);
 
         // Modeling Events
         [DllImport("__Internal")]
-        public static extern void FBModelingStart(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBModelingStart(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBModelPhaseChanged(string userCode, int appVersion, int logVersion, int jobId, string jobName, string phase);
+        public static extern void FBModelPhaseChanged(string userCode, string appVersion, int logVersion, int jobId, string jobName, string phase);
         [DllImport("__Internal")]
-        public static extern void FBModelEcosystemSelected(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelEcosystemSelected(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptStarted(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelConceptStarted(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptUpdated(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem, string status);
+        public static extern void FBModelConceptUpdated(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem, string status);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptExported(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelConceptExported(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelSyncError(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem, int sync);
+        public static extern void FBModelSyncError(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem, int sync);
         [DllImport("__Internal")]
-        public static extern void FBModelPredictCompleted(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelPredictCompleted(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneUpdate(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem, string organism, int differenceValue);
+        public static extern void FBModelInterveneUpdate(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem, string organism, int differenceValue);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneError(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelInterveneError(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneCompleted(string userCode, int appVersion, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelInterveneCompleted(string userCode, string appVersion, int logVersion, int jobId, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelingEnd(string userCode, int appVersion, int logVersion, int jobId, string jobName, string phase, string ecosystem);
+        public static extern void FBModelingEnd(string userCode, string appVersion, int logVersion, int jobId, string jobName, string phase, string ecosystem);
 
         // Shop Events
         [DllImport("__Internal")]
-        public static extern void FBPurchaseUpgrade(string userCode, int appVersion, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        public static extern void FBPurchaseUpgrade(string userCode, string appVersion, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
         [DllImport("__Internal")]
-        public static extern void FBInsufficientFunds(string userCode, int appVersion, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        public static extern void FBInsufficientFunds(string userCode, string appVersion, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
         [DllImport("__Internal")]
-        public static extern void FBTalkToShopkeep(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBTalkToShopkeep(string userCode, string appVersion, int logVersion, int jobId, string jobName);
 
         // Experimentation Events
         [DllImport("__Internal")]
-        public static extern void FBAddEnvironment(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBAddEnvironment(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBRemoveEnvironment(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBRemoveEnvironment(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBEnvironmentCleared(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBEnvironmentCleared(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBAddCritter(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        public static extern void FBAddCritter(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
         [DllImport("__Internal")]
-        public static extern void FBRemoveCritter(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        public static extern void FBRemoveCritter(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
         [DllImport("__Internal")]
-        public static extern void FBCrittersCleared(string userCode, int appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
+        public static extern void FBCrittersCleared(string userCode, string appVersion, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
 
         // Argumentation Events
         [DllImport("__Internal")]
-        public static extern void FBBeginArgument(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginArgument(string userCode, string appVersion, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBFactSubmitted(string userCode, int appVersion, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBFactSubmitted(string userCode, string appVersion, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBFactRejected(string userCode, int appVersion, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBFactRejected(string userCode, string appVersion, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBCompleteArgument(string userCode, int appVersion, int logVersion, int jobId, string jobName);
+        public static extern void FBCompleteArgument(string userCode, string appVersion, int logVersion, int jobId, string jobName);
 
         #endregion // Firebase JS Functions
 
@@ -801,11 +801,11 @@ namespace Aqua
 
         private void LogEnvironmentCleared()
         {
-            m_CurrentEnvironment = string.Empty;
-
             #if FIREBASE
-            FBEnvironmentCleared(m_UserCode, m_AppVersion, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType);
+            FBEnvironmentCleared(m_UserCode, m_AppVersion, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment);
             #endif
+
+            m_CurrentEnvironment = string.Empty;
         }
 
         private void LogAddCritter(StringHash32 inCritterId)
