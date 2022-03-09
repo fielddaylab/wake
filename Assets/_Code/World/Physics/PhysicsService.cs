@@ -188,6 +188,7 @@ namespace Aqua
                 states[objIdx] = obj.State;
                 configs[objIdx] = obj.Config;
                 positions[objIdx] = obj.Body.position;
+                configs[objIdx].Drag += obj.AdditionalDrag;
                 obj.Body.useFullKinematicContacts = true;
                 obj.Contacts.Clear();
                 objIdx++;

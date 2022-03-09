@@ -28,6 +28,7 @@ namespace Aqua
         [NonSerialized] public RingBuffer<PhysicsContact> Contacts = new RingBuffer<PhysicsContact>(16, RingBufferMode.Overwrite);
 
         [NonSerialized] public Vector2 AccumulatedForce;
+        [NonSerialized] public float AdditionalDrag;
 
         #endregion // Inspector
 
