@@ -160,24 +160,23 @@ namespace Aqua
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
         {
-            using(var table = TempVarTable.Alloc())
+            switch(inUpdateParams.Type)
             {
-                switch(inUpdateParams.Type)
-                {
-                    case BestiaryUpdateParams.UpdateType.Entity:
-                        {
-                            table.Set("entryId", inUpdateParams.Id);
-                            Services.Script.TriggerResponse(GameTriggers.BestiaryEntryAdded, table);
-                            break;
-                        }
+                case BestiaryUpdateParams.UpdateType.Entity:
+                    {
+                        var table = TempVarTable.Alloc();
+                        table.Set("entryId", inUpdateParams.Id);
+                        Services.Script.QueueTriggerResponse(GameTriggers.BestiaryEntryAdded, 200, table);
+                        break;
+                    }
 
-                    case BestiaryUpdateParams.UpdateType.Fact:
-                        {
-                            table.Set("factId", inUpdateParams.Id);
-                            Services.Script.TriggerResponse(GameTriggers.BestiaryFactAdded, table);
-                            break;
-                        }
-                }
+                case BestiaryUpdateParams.UpdateType.Fact:
+                    {
+                        var table = TempVarTable.Alloc();
+                        table.Set("factId", inUpdateParams.Id);
+                        Services.Script.QueueTriggerResponse(GameTriggers.BestiaryFactAdded, 200, table);
+                        break;
+                    }
             }
         }
 
