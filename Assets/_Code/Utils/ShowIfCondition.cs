@@ -29,15 +29,8 @@ namespace Aqua
                     .Register(GameEvents.VariableSet, Refresh, this)
                     .Register(GameEvents.CutsceneEnd, Refresh, this);
             }
-            
-            if (Script.IsLoading)
-            {
-                Services.Events.Register(GameEvents.SceneLoaded, Refresh, this);
-            }
-            else
-            {
-                Refresh();
-            }
+
+            Script.OnSceneLoad(Refresh);
         }
 
         private void OnDestroy()

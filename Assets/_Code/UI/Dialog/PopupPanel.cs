@@ -188,6 +188,9 @@ namespace Aqua
         {
             m_FactPools.FreeAll();
 
+            Vector2 gridCellSize = m_GridFactLayout.cellSize;
+            gridCellSize.y = 0;
+
             if (inFacts.IsEmpty)
             {
                 m_VerticalFactLayout.gameObject.SetActive(false);
@@ -195,9 +198,10 @@ namespace Aqua
                 return;
             }
 
-            bool bUsedGrid = false, bUsedVertical = false;
+            bool bUsedGrid = false, bUsedVertical = false, bCurrentIsGrid = false;
 
             Transform target;
+            RectTransform factTransform;
 
             for(int i = 0; i < inFacts.Length; i++)
             {
@@ -212,11 +216,13 @@ namespace Aqua
                         case BFTypeId.PopulationHistory:
                             target = m_GridFactLayout.transform;
                             bUsedGrid = true;
+                            bCurrentIsGrid = true;
                             break;
 
                         default: {
                             target = m_VerticalFactLayout.transform;
                             bUsedVertical = true;
+                            bCurrentIsGrid = false;
                             break;
                         }
                     }
@@ -226,7 +232,12 @@ namespace Aqua
                     target = m_VerticalFactLayout.transform;
                     bUsedVertical = true;
                 }
-                m_FactPools.Alloc(inFacts[i], null, flags, target);
+
+                factTransform = (RectTransform) m_FactPools.Alloc(inFacts[i], null, flags, target).transform;
+                if (bCurrentIsGrid)
+                {
+                    gridCellSize.y = Mathf.Max(gridCellSize.y, factTransform.sizeDelta.y);
+                }
             }
 
             if (bUsedVertical)
@@ -241,6 +252,7 @@ namespace Aqua
 
             if (bUsedGrid)
             {
+                m_GridFactLayout.cellSize = gridCellSize;
                 m_GridFactLayout.gameObject.SetActive(true);
                 m_GridFactLayout.ForceRebuild();
             }

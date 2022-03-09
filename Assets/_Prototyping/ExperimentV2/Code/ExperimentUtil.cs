@@ -6,14 +6,10 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 
-namespace ProtoAqua.ExperimentV2
-{
-    static public class ExperimentUtil
-    {
-        static public ExperimentResult Evaluate(InProgressExperimentData inExperiment)
-        {
-            switch(inExperiment.TankType)
-            {
+namespace ProtoAqua.ExperimentV2 {
+    static public class ExperimentUtil {
+        static public ExperimentResult Evaluate(InProgressExperimentData inExperiment) {
+            switch (inExperiment.TankType) {
                 case InProgressExperimentData.Type.Measurement:
                     return MeasurementTank.Evaluate(inExperiment);
                 default:
@@ -21,12 +17,10 @@ namespace ProtoAqua.ExperimentV2
                     return null;
             }
         }
-        
-        static public bool AnyDead(InProgressExperimentData inExperiment)
-        {
+
+        static public bool AnyDead(InProgressExperimentData inExperiment) {
             WaterPropertyBlockF32 envProperties = Assets.Bestiary(inExperiment.EnvironmentId).GetEnvironment();
-            foreach(var critterType in inExperiment.CritterIds)
-            {
+            foreach (var critterType in inExperiment.CritterIds) {
                 if (Assets.Bestiary(critterType).EvaluateActorState(envProperties, out var _) == ActorStateId.Dead)
                     return true;
             }
@@ -34,21 +28,16 @@ namespace ProtoAqua.ExperimentV2
             return false;
         }
 
-        static public ExperimentFactResult NewFact(StringHash32 inFactId)
-        {
+        static public ExperimentFactResult NewFact(StringHash32 inFactId) {
             var bestiaryData = Save.Bestiary;
-            if (bestiaryData.HasFact(inFactId))
-            {
+            if (bestiaryData.HasFact(inFactId)) {
                 return new ExperimentFactResult(inFactId, ExperimentFactResultType.Known, BFDiscoveredFlags.None);
-            }
-            else
-            {
+            } else {
                 return new ExperimentFactResult(inFactId, ExperimentFactResultType.NewFact, BFDiscoveredFlags.Base);
             }
         }
 
-        static public ExperimentFactResult NewFactFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
-        {
+        static public ExperimentFactResult NewFactFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags) {
             var bestiaryData = Save.Bestiary;
             if (!bestiaryData.HasFact(inFactId))
                 return default(ExperimentFactResult);
@@ -57,10 +46,8 @@ namespace ProtoAqua.ExperimentV2
             return new ExperimentFactResult(inFactId, ExperimentFactResultType.Known, BFDiscoveredFlags.None);
         }
 
-        static public void TriggerExperimentScreenViewed(SelectableTank inTank, StringHash32 inScreenId)
-        {
-            using(var table = TempVarTable.Alloc())
-            {
+        static public void TriggerExperimentScreenViewed(SelectableTank inTank, StringHash32 inScreenId) {
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", inTank.Type.ToString());
                 table.Set("tankId", inTank.Id);
                 table.Set("screenId", inScreenId);
@@ -70,6 +57,11 @@ namespace ProtoAqua.ExperimentV2
 
         static public void TriggerExperimentScreenExited(SelectableTank inTank, StringHash32 inScreenId) {
             Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenExited);
+        }
+
+        static public Future<StringHash32> DisplaySuccessfulSummaryPopup(ExperimentResult result) {
+            // return Services.UI.Popup.Display()
+            return null;
         }
     }
 }

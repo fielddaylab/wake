@@ -40,10 +40,12 @@ namespace Aqua
             Assert.True(m_KinematicObjects.Contains(inObject), "Object '{0}' is not registered to PhysicsService", inObject);
             m_KinematicObjects.Remove(inObject);
             m_RigidbodyMap.Remove(inObject.Body);
+            inObject.Body.simulated = false;
         }
 
         private void SetupRigidbody(Rigidbody2D inBody)
         {
+            inBody.simulated = true;
             inBody.isKinematic = true;
         }
 

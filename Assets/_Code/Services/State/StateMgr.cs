@@ -38,6 +38,8 @@ namespace Aqua
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
 
+        private RingBuffer<Action> m_OnLoadQueue = new RingBuffer<Action>(64, RingBufferMode.Expand);
+
         public StringHash32 LastEntranceId { get { return m_EntranceId; } }
 
         #region Scene Loading
@@ -248,6 +250,7 @@ namespace Aqua
             Services.Input.ResumeAll();
             Services.Physics.Enabled = true;
 
+            ProcessCallbackQueue();
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
@@ -340,6 +343,7 @@ namespace Aqua
                 Services.Physics.Enabled = true;
                 m_SceneLock = false;
 
+                ProcessCallbackQueue();
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
                 Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
@@ -536,6 +540,21 @@ namespace Aqua
             StringHash32 map = MapDB.LookupMap(inBinding);
             if (!map.IsEmpty)
                 Save.Map.RecordVisitedLocation(map);
+        }
+
+        public void OnLoad(Action inAction)
+        {
+            if (m_SceneLock) {
+                m_OnLoadQueue.PushBack(inAction);
+            } else {
+                inAction();
+            }
+        }
+
+        private void ProcessCallbackQueue() {
+            while(m_OnLoadQueue.TryPopFront(out Action action)) {
+                action();
+            }
         }
 
         #endregion // Scene Loading

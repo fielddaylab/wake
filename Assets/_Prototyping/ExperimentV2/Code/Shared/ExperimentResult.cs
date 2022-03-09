@@ -32,6 +32,11 @@ namespace ProtoAqua.ExperimentV2
         UpgradedFact
     }
 
+    public enum ExperimentFactFeedbackType : byte
+    {
+        
+    }
+
     public struct ExperimentFeedback
     {
         static public readonly TextId MoreThanOneSpecies = "experiment.measure.feedback.moreThanOne";

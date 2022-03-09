@@ -26,6 +26,10 @@ namespace ProtoAqua.Observation
 
         private void OnDisable()
         {
+            if (!Services.Valid || !Collider) {
+                return;
+            }
+            
             ScanSystem.Find<TaggingSystem>()?.Deregister(this);
         }
 
