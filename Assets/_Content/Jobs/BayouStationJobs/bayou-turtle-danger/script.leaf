@@ -6,7 +6,9 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}    This is the intro to the turtle-danger job!
+{@profHarper}    People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef.
+                For this job, I need you to develop a food web with the species you found there.
+                We want to learn if there are any new predators of the Turtles. 
 
 // ARGUMENTATION
 
@@ -15,23 +17,40 @@
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
 $call ArgueLoad(siteOModel) 
-{@profHarper} What can you tell me about the saftey of the turtles?
+{@profHarper} What can you tell me about the safety of the turtles?
 $choice .argue.turtleSafe; The turtles should be safe 
 $choice .argue.turtleNotSafe; The turtles might not be safe 
 $choose branch
 
 :: argue.turtleSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
-{@profHarper} How do you know the turtles are safe?
-$goto argue.showClaim
+{@profHarper} Do you have a model that shows the turtles are safe?
+$goto argue.showSafeClaim
 
 :: argue.turtleNotSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
-{@profHarper} What makes you say that?
-$goto argue.showClaim
+{@profHarper} Do you have a model that shows the turtles are not safe?
+$goto argue.showUnsafeClaim
 
-:: argue.showClaim
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
+:: argue.showUnsafeClaim
+$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual) 
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.goodEvidenceWrongClaim 
+    $answer incorrect, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.goodEvidenceWrongClaim
+{@profHarper} That model doesn't indicate any danger to the turtles. 
+    Let's start over.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$call ArgueClearClaim()
+$goto .argue.intro
+
+:: argue.showSafeClaim
+$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual) 
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.complete 
@@ -40,9 +59,11 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-$call ArgueRejectIncorrect()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$call ArgueClearClaim()
+$goto .argue.intro
 
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
@@ -50,7 +71,7 @@ $call ArgueCancelClaim()
 
 :: argue.complete
 $call ArgueComplete()
-{@profHarper} Nice work! Do you see how there could be some competition here?
+{@profHarper} Nice work! It looks like the Turtles are safe from any predators here.
 {@profHarper} We will need to see a descriptive model that looks at historic populations to know for certain.
 $call CompleteJob()
 :: end
