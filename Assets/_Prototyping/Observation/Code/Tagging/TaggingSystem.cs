@@ -350,7 +350,7 @@ namespace ProtoAqua.Observation
                     if (!m_QueueProcessor)
                     {
                         m_QueueProcessor = Routine.Start(this, DisplayModelQueue());
-                        m_QueueProcessor.TryManuallyUpdate(0);
+                        m_QueueProcessor.Tick();
                     }
                 }
 

@@ -189,7 +189,7 @@ namespace Aqua.Modeling {
                     if (alreadyCompleted) {
                         m_SimulateButton.gameObject.SetActive(false);
                         m_HistoricalMissingDisplay.SetActive(false);
-                        m_PhaseRoutine.Replace(this, Sync_AlreadyCompleted()).TryManuallyUpdate(0);
+                        m_PhaseRoutine.Replace(this, Sync_AlreadyCompleted()).Tick();
                     } else if ((missing = m_State.Simulation.EvaluateHistoricalDataMissing()) != 0) {
                         m_SimulateButton.gameObject.SetActive(false);
                         m_HistoricalMissingDisplay.SetActive(true);
@@ -211,7 +211,7 @@ namespace Aqua.Modeling {
                         }
                     } else {
                         m_HistoricalMissingDisplay.SetActive(false);
-                        m_PhaseRoutine.Replace(this, Sync_Boot()).TryManuallyUpdate(0);
+                        m_PhaseRoutine.Replace(this, Sync_Boot()).Tick();
                     }
                     
                     break;
@@ -220,7 +220,7 @@ namespace Aqua.Modeling {
                 case ModelPhases.Predict: {
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
-                        m_PhaseRoutine.Replace(this, Predict_AlreadyCompleted()).TryManuallyUpdate(0);
+                        m_PhaseRoutine.Replace(this, Predict_AlreadyCompleted()).Tick();
                     } else {
                         m_PredictButton.gameObject.SetActive(true);
                         Clear(m_PredictGraph);

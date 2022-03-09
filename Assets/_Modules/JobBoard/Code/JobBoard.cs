@@ -100,7 +100,7 @@ namespace Aqua.JobBoard
                 case JobProgressCategory.InProgress:
                     {
                         profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
-                        Routine.Start(WaitToExit()).TryManuallyUpdate(0);
+                        Routine.Start(WaitToExit()).Tick();
                         break;
                     }
             }

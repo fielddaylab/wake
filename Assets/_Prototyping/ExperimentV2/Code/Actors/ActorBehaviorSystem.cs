@@ -32,6 +32,13 @@ namespace ProtoAqua.ExperimentV2 {
             World = new ActorWorld(m_Tank.ActorAllocator, m_Tank.Bounds, null, OnFree, 16, m_Tank, inTag);
         }
 
+        private void LateUpdate() {
+            if ((m_Tank.CurrentState & TankState.Running) == 0 || Script.IsPaused)
+                return;
+
+            TickBehaviors(Time.deltaTime);
+        }
+
         #region Critters
 
         public void Alloc(StringHash32 inId) {

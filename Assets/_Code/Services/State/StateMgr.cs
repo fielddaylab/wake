@@ -63,7 +63,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -93,7 +93,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -115,7 +115,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -138,7 +138,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -171,7 +171,7 @@ namespace Aqua
             SceneBinding prevScene = m_SceneHistory.PeekBack();
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inEntrance, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inEntrance, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 

@@ -103,7 +103,7 @@ namespace ProtoAqua.ExperimentV2
             if (m_RevealedLeftMask != m_RevealedRightMask || m_RevealedLeftMask != m_RequiredReveals)
                 return;
 
-            m_TransitionAnim.Replace(this, TransitionToDone()).TryManuallyUpdate(0);
+            m_TransitionAnim.Replace(this, TransitionToDone()).Tick();
         }
 
         private ExperimentResult GenerateResult() {
@@ -158,7 +158,7 @@ namespace ProtoAqua.ExperimentV2
 
         private void OnDoneClicked() {
             // m_Summary.gameObject.SetActive(false);
-            m_TransitionAnim.Replace(this, TransitionToStart()).TryManuallyUpdate(0);;
+            m_TransitionAnim.Replace(this, TransitionToStart()).Tick();;
         }
 
         private IEnumerator TransitionToStart() {
@@ -176,7 +176,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private void OnBackClick() {
-            m_TransitionAnim.Replace(this, TransitionBack()).TryManuallyUpdate(0);
+            m_TransitionAnim.Replace(this, TransitionBack()).Tick();
         }
 
         private IEnumerator TransitionBack() {
@@ -266,7 +266,7 @@ namespace ProtoAqua.ExperimentV2
 
                 m_ParentTank.CurrentState |= TankState.Running;
 
-                m_TransitionAnim.Replace(this, TransitionToExperiment()).TryManuallyUpdate(0);
+                m_TransitionAnim.Replace(this, TransitionToExperiment()).Tick();
             }
         }
 

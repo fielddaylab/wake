@@ -46,6 +46,7 @@ namespace Aqua
         public Action<BestiaryDesc> OnAdded;
         public Action<BestiaryDesc> OnRemoved;
         public Action OnCleared;
+        public Action OnUpdated;
 
         #region Unity Events
 
@@ -166,6 +167,7 @@ namespace Aqua
                     m_CurrentDisplay.Display(0);
                 }
                 OnCleared?.Invoke();
+                OnUpdated?.Invoke();
                 return true;
             }
 
@@ -255,6 +257,7 @@ namespace Aqua
                 }
 
                 OnAdded?.Invoke(inCritter);
+                OnUpdated?.Invoke();
             }
             else if (!inbOn && m_SelectedSet.Remove(inCritter))
             {
@@ -269,6 +272,7 @@ namespace Aqua
                 }
 
                 OnRemoved?.Invoke(inCritter);
+                OnUpdated?.Invoke();
             }
         }
 

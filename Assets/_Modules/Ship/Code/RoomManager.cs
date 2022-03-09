@@ -111,7 +111,7 @@ namespace Aqua.Ship
             }
             else
             {
-                m_Transition.Replace(this, RoomTransition(inRoom)).TryManuallyUpdate(0);
+                m_Transition.Replace(this, RoomTransition(inRoom)).Tick();
             }
         }
 

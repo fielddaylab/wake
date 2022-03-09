@@ -411,7 +411,7 @@ namespace ProtoAqua.ExperimentV2 {
                 table.Set("tankType", m_ParentTank.Type.ToString());
                 table.Set("tankId", m_ParentTank.Id);
                 var thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
-                Routine.Start(this, RunExperiment(experimentData, thread)).TryManuallyUpdate(0);
+                Routine.Start(this, RunExperiment(experimentData, thread)).Tick();
                 Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
             }
         }

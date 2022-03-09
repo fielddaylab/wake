@@ -106,21 +106,21 @@ namespace Aqua
         public Future<StringHash32> PresentFact(string inHeader, string inText, StreamedImageSet inImage, BFBase inFact, BFDiscoveredFlags inFlags, PopupFlags inPopupFlags = default)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary, inPopupFlags)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, DefaultAddToBestiary, inPopupFlags)).Tick();
             return future;
         }
 
         public Future<StringHash32> PresentFacts(string inHeader, string inText, StreamedImageSet inImage, ListSlice<BFBase> inFacts, ListSlice<BFDiscoveredFlags> inFlags = default, PopupFlags inPopupFlags = default)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inFlags, DefaultAddToBestiary, inPopupFlags)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inFlags, DefaultAddToBestiary, inPopupFlags)).Tick();
             return future;
         }
 
         public Future<StringHash32> PresentFactDetails(BFDetails inDetails, BFBase inFact, BFDiscoveredFlags inFlags, PopupFlags inPopupFlags, params NamedOption[] inOptions)
         {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inDetails.Header, inDetails.Description, inDetails.Image, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, inOptions, inPopupFlags)).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inDetails.Header, inDetails.Description, inDetails.Image, new BFBase[] { inFact }, new BFDiscoveredFlags[] { inFlags }, inOptions, inPopupFlags)).Tick();
             return future;
         }
 

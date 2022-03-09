@@ -108,7 +108,7 @@ namespace Aqua.Character {
 
         private void OnEnable() {
             if (Script.IsLoading || m_AutoExecute) {
-                m_Routine.Replace(this, WaitToActivate()).TryManuallyUpdate(0);
+                m_Routine.Replace(this, WaitToActivate()).Tick();
             } else {
                 UpdateLocked();
             }
@@ -157,7 +157,7 @@ namespace Aqua.Character {
 
             m_CancelQueued = false;
             m_Routine = Routine.Start(this, InteractRoutine());
-            m_Routine.TryManuallyUpdate(0);
+            m_Routine.Tick();
         }
 
         private IEnumerator InteractRoutine() {

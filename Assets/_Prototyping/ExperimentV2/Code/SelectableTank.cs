@@ -2,6 +2,7 @@ using System;
 using Aqua;
 using Aqua.Cameras;
 using AquaAudio;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.UI;
 using ScriptableBake;
@@ -52,6 +53,8 @@ namespace ProtoAqua.ExperimentV2
         [NonSerialized] public TankWaterSystem WaterSystem;
         [NonSerialized] public float WaterFillProportion;
         [NonSerialized] public AudioHandle WaterAudioLoop;
+        [NonSerialized] public Routine ScreenTransition;
+        [NonSerialized] public Routine WaterTransition;
 
         public StringHash32 Id { get { return m_Id.IsEmpty ? (m_Id = name) : m_Id; } }
 

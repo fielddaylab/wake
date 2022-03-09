@@ -62,6 +62,8 @@ namespace ProtoAqua.ExperimentV2 {
             fillImpactParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
         }
 
+        #region Splash
+
         private void OnWaterEnter(SelectableTank inTank, Collider2D inCreature) {
             ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
             actor.InWater = true;
@@ -139,17 +141,15 @@ namespace ProtoAqua.ExperimentV2 {
             Services.Audio.PostEvent("tank_water_splash_underwater");
         }
 
-        private void OnTankWaterFill(SelectableTank inTank) {
-            if ((inTank.CurrentState & TankState.Filling) != 0 && inTank.WaterFillProportion >= 1) {
-                return;
-            }
+        #endregion // Splash
 
-            float fillAmount = 0.5f * Routine.DeltaTime;
-            float newHeightProportion = Math.Min(inTank.WaterFillProportion + fillAmount, 1);
-            SetWaterHeight(inTank, newHeightProportion);
-        }
+        #region Fill
 
         public IEnumerator RequestFill(SelectableTank inTank) {
+            return inTank.WaterTransition.Replace(inTank, RequestFill_Routine(inTank)).Wait();
+        }
+
+        private IEnumerator RequestFill_Routine(SelectableTank inTank) {
             m_FillParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
             m_FillParticles.Play(true);
 
@@ -171,7 +171,25 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
+        private void OnTankWaterFill(SelectableTank inTank) {
+            if ((inTank.CurrentState & TankState.Filling) != 0 && inTank.WaterFillProportion >= 1) {
+                return;
+            }
+
+            float fillAmount = 0.5f * Routine.DeltaTime;
+            float newHeightProportion = Math.Min(inTank.WaterFillProportion + fillAmount, 1);
+            SetWaterHeightImpl(inTank, newHeightProportion, false);
+        }
+
+        #endregion // Fill
+
+        #region Water Height
+
         static public void SetWaterHeight(SelectableTank inTank, float inProportion) {
+            SetWaterHeightImpl(inTank, inProportion, true);
+        }
+
+        static private void SetWaterHeightImpl(SelectableTank inTank, float inProportion, bool inKillAnimation) {
             inTank.WaterFillProportion = inProportion;
 
             Rect originalRect = inTank.WaterRect;
@@ -232,15 +250,27 @@ namespace ProtoAqua.ExperimentV2 {
 
             inTank.WaterRenderer.SetPosition(newCenter, Axis.Y, Space.Self);
             inTank.WaterRenderer.SetScale(newHeight, Axis.Y);
+
+            if (inKillAnimation) {
+                inTank.WaterTransition.Stop();
+            }
         }
 
+        #endregion // Water Height
+
+        #region Drain
+
         public IEnumerator DrainWaterOverTime(SelectableTank inTank, float inDuration) {
+            return inTank.WaterTransition.Replace(inTank, DrainWaterOverTime_Routine(inTank, inDuration)).Wait();
+        }
+
+        private IEnumerator DrainWaterOverTime_Routine(SelectableTank inTank, float inDuration) {
             var audio = Services.Audio.PostEvent("tank_water_drain");
             try {
                 inTank.CurrentState |= TankState.Draining;
                 inTank.WaterDrainParticles.Play();
                 m_RippleParticles.Clear();
-                yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeight(inTank, f), inDuration * inTank.WaterFillProportion)
+                yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeightImpl(inTank, f, false), inDuration * inTank.WaterFillProportion)
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
                 inTank.CurrentState &= ~TankState.Draining;
                 inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -249,5 +279,7 @@ namespace ProtoAqua.ExperimentV2 {
                 audio.Stop(0);
             }
         }
+    
+        #endregion // Drain
     }
 }

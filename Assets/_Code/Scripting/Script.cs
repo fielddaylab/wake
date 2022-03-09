@@ -90,5 +90,14 @@ namespace Aqua {
         static public void OnSceneLoad(Action action) {
             Services.State.OnLoad(action);
         }
+
+        static public IDisposable DisableInput() {
+            Services.Input.PauseAll();
+            return new CallOnDispose(() => Services.Input?.ResumeAll());
+        }
+
+        static public void Tick(this Routine routine) {
+            routine.TryManuallyUpdate(0);
+        }
     }
 }

@@ -18,7 +18,8 @@ namespace ProtoAqua.ExperimentV2 {
         private enum SetupPhase : byte {
             Begin,
             Environment,
-            Critters
+            Critters,
+            Run
         }
 
         private const float StartingIdleDuration = 30;
@@ -32,13 +33,10 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required(ComponentLookupDirection.Self)] private SelectableTank m_ParentTank = null;
         
         [Header("Setup")]
-        [SerializeField, Required] private Button m_BeginButton = null;
-        [SerializeField, Required] private CanvasGroup m_SetupPanelGroup = null;
-        [SerializeField, Required] private BestiaryAddPanel m_SelectEnvPanel = null;
-        [SerializeField, Required] private Button m_BackButton = null;
-        [SerializeField, Required] private Button m_CrittersButton = null;
-        [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
-        [SerializeField, Required] private Button m_RunButton = null;
+        [SerializeField, Required] private ExperimentHeaderUI m_HeaderUI = null;
+        [SerializeField, Required] private ExperimentScreen m_BeginScreen = null;
+        [SerializeField, Required] private ExperimentScreen m_EnvironmentScreen = null;
+        [SerializeField, Required] private ExperimentScreen m_OrganismScreen = null;
 
         [Header("Running")]
         [SerializeField, Required] private CanvasGroup m_InProgressGroup = null;
@@ -51,6 +49,7 @@ namespace ProtoAqua.ExperimentV2 {
         #endregion // Inspector
 
         [NonSerialized] private SetupPhase m_SetupPhase;
+        [NonSerialized] private ExperimentScreen m_CurrentScreen;
         [NonSerialized] private ActorWorld m_World;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
         [NonSerialized] private HashSet<BFBase> m_PotentialNewFacts = new HashSet<BFBase>();
@@ -58,7 +57,6 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private readonly List<ExperimentFactResult> m_FactResults = new List<ExperimentFactResult>();
         [NonSerialized] private Routine m_IdleRoutine;
         [NonSerialized] private float m_IdleUpdateCounter;
-        [NonSerialized] private Routine m_DrainRoutine;
         [NonSerialized] private bool m_PlayerHadObservationChance;
 
         private void Awake()
@@ -66,40 +64,24 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
             m_ParentTank.CanDeactivate = () => (m_ParentTank.CurrentState & TankState.Running) == 0;
-            m_ParentTank.HasCritter = (s) => m_AddCrittersPanel.IsSelected(Assets.Bestiary(s));
+            m_ParentTank.HasCritter = (s) => m_OrganismScreen.Panel.IsSelected(Assets.Bestiary(s));
             m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
 
-            m_AddCrittersPanel.OnAdded = OnCritterAdded;
-            m_AddCrittersPanel.OnRemoved = OnCritterRemoved;
-            m_AddCrittersPanel.OnCleared = OnCrittersCleared;
-
-            m_SelectEnvPanel.OnAdded = OnEnvironmentAdded;
-            m_SelectEnvPanel.OnRemoved = OnEnvironmentRemoved;
-            m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
-
-            m_CrittersButton.interactable = false;
-            m_RunButton.interactable = false;
+            m_EnvironmentScreen.Panel.OnAdded = OnEnvironmentAdded;
+            m_EnvironmentScreen.Panel.OnRemoved = OnEnvironmentRemoved;
+            m_EnvironmentScreen.Panel.OnCleared = OnEnvironmentCleared;
 
             m_BehaviorCircles.Initialize(null, null, 0);
             m_BehaviorCircles.Config.RegisterOnConstruct(OnCaptureConstructed);
             m_BehaviorCircles.Config.RegisterOnAlloc(OnCaptureAlloc);
             m_BehaviorCircles.Config.RegisterOnFree(OnCaptureFree);
 
-            m_BeginButton.onClick.AddListener(OnBeginClick);
-            m_CrittersButton.onClick.AddListener(OnSelectCrittersClick);
-            m_BackButton.onClick.AddListener(OnBackClick);
-            m_RunButton.onClick.AddListener(OnRunClick);
+            m_BeginScreen.CustomButton.onClick.AddListener(OnNextClick);
+            m_HeaderUI.BackButton.onClick.AddListener(OnBackClick);
+            m_HeaderUI.NextButton.onClick.AddListener(OnNextClick);
             m_FinishButton.onClick.AddListener(OnFinishClick);
 
             m_UnobservedStateLabel.gameObject.SetActive(false);
-        }
-
-        private void LateUpdate()
-        {
-            if ((m_ParentTank.CurrentState & TankState.Running) == 0 || Script.IsPaused)
-                return;
-
-            m_ParentTank.ActorBehavior.TickBehaviors(Time.deltaTime);
         }
 
         #region Tank
@@ -110,15 +92,16 @@ namespace ProtoAqua.ExperimentV2 {
             ActorBehaviorSystem.ConfigureStates();
             m_World = m_ParentTank.ActorBehavior.World;
 
-            m_SetupPanelGroup.Hide();
+            ExperimentScreen.Reset(m_BeginScreen);
+            ExperimentScreen.Reset(m_OrganismScreen);
+            ExperimentScreen.Reset(m_OrganismScreen);
             m_InProgressGroup.Hide();
             m_UnobservedStateLabel.gameObject.SetActive(false);
 
-            m_BeginButton.gameObject.SetActive(true);
-            m_DrainRoutine.Stop();
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
             m_SetupPhase = SetupPhase.Begin;
+            ExperimentScreen.Transition(ref m_CurrentScreen, m_BeginScreen, m_World);
 
             m_FactResults.Clear();
         }
@@ -128,49 +111,26 @@ namespace ProtoAqua.ExperimentV2 {
             m_FinishButtonHighlight.gameObject.SetActive(false);
             m_IdleRoutine.Stop();
             m_ParentTank.ActorBehavior.ClearAll();
-            m_SelectEnvPanel.Hide();
-            m_SelectEnvPanel.ClearSelection();
-            m_AddCrittersPanel.Hide();
-            m_AddCrittersPanel.ClearSelection();
+            ExperimentScreen.Reset(m_BeginScreen);
+            ExperimentScreen.Reset(m_OrganismScreen);
+            ExperimentScreen.Reset(m_EnvironmentScreen);
+            m_CurrentScreen = null;
             m_BehaviorCircles.Reset();
             m_FactResults.Clear();
             m_PotentialNewFacts.Clear();
             if (m_ParentTank.WaterFillProportion > 0) {
-                m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
+                m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
             }
             m_ParentTank.CurrentState = 0;
         }
         
         #endregion // Tank
 
-        #region Critter Callbacks
-
-        private void OnCritterAdded(BestiaryDesc inDesc)
-        {
-            m_RunButton.interactable = true;
-            m_ParentTank.ActorBehavior.Alloc(inDesc.Id());
-        }
-
-        private void OnCritterRemoved(BestiaryDesc inDesc)
-        {
-            m_ParentTank.ActorBehavior.FreeAll(inDesc.Id());
-            m_RunButton.interactable = m_World.Actors.Count > 0;
-        }
-
-        private void OnCrittersCleared()
-        {
-            m_RunButton.interactable = false;
-            m_ParentTank.ActorBehavior.ClearActors();
-        }
-
-        #endregion // Critter Callbacks
-
         #region Environment Callbacks
 
         private void OnEnvironmentAdded(BestiaryDesc inDesc)
         {
             m_SelectedEnvironment = inDesc;
-            m_CrittersButton.interactable = true;
             m_ParentTank.ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
         }
@@ -179,7 +139,6 @@ namespace ProtoAqua.ExperimentV2 {
         {
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null))
             {
-                m_CrittersButton.interactable = false;
                 m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
                 m_ParentTank.ActorBehavior.ClearEnvState();
             }
@@ -188,12 +147,11 @@ namespace ProtoAqua.ExperimentV2 {
         private void OnEnvironmentCleared()
         {
             m_SelectedEnvironment = null;
-            m_CrittersButton.interactable = false;
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             m_ParentTank.ActorBehavior.ClearEnvState();
         }
 
-        #endregion // Environment Callbacks\
+        #endregion // Environment Callbacks
 
         #region Behavior Capture
 
@@ -242,7 +200,7 @@ namespace ProtoAqua.ExperimentV2 {
         {
             BehaviorCaptureCircle circle = m_BehaviorCircles.Alloc();
             circle.FactId = inFactId;
-            circle.Animation.Replace(circle, AnimateCircleOn(circle)).TryManuallyUpdate(0);
+            circle.Animation.Replace(circle, AnimateCircleOn(circle)).Tick();
             circle.transform.localPosition = inLocation;
             return new BehaviorCaptureCircle.TempAlloc(circle);
         }
@@ -258,7 +216,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void OnCaptureDisposed(BehaviorCaptureCircle inCircle)
         {
-            inCircle.Animation.Replace(inCircle, AnimateCircleOff(inCircle)).TryManuallyUpdate(0);
+            inCircle.Animation.Replace(inCircle, AnimateCircleOff(inCircle)).Tick();
         }
 
         private void AttemptCaptureBehavior(StringHash32 inFactId)
@@ -336,135 +294,43 @@ namespace ProtoAqua.ExperimentV2 {
 
         #region Sequence
 
-        private void OnBeginClick() {
-            Services.Input.PauseAll();
-            m_BeginButton.gameObject.SetActive(false);
-            m_RunButton.gameObject.SetActive(false);
-            m_CrittersButton.gameObject.SetActive(true);
-            m_SetupPhase = SetupPhase.Environment;
-            Routine.Start(this, BeginSequence());
-        }
-
-        private IEnumerator BeginSequence() {
-            m_SetupPanelGroup.interactable = false;
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Show(0.2f),
-                m_SelectEnvPanel.Show()
-            );
-            yield return m_DrainRoutine;
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-        }
-
-        private void OnSelectCrittersClick() {
-            Services.Input.PauseAll();
-            m_SetupPanelGroup.interactable = false;
-            m_SetupPhase = SetupPhase.Critters;
-            Routine.Start(this, FillTankSequence());
-        }
-
-        private IEnumerator FillTankSequence() {
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_SelectEnvPanel.Hide()
-            );
-
-            yield return m_DrainRoutine;
-
-            m_CrittersButton.gameObject.SetActive(false);
-            m_RunButton.gameObject.SetActive(true);
-
-            yield return m_ParentTank.WaterSystem.RequestFill(m_ParentTank);
-            yield return 0.2f;
-
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Show(0.2f),
-                m_AddCrittersPanel.Show()
-            );
-
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
+        private void OnNextClick() {
+            m_SetupPhase++;
+            switch(m_SetupPhase) {
+                case SetupPhase.Environment: {
+                    ExperimentScreen.Transition(ref m_CurrentScreen, m_EnvironmentScreen, m_World);
+                    break;
+                }
+                case SetupPhase.Critters: {
+                    ExperimentScreen.Transition(ref m_CurrentScreen, m_OrganismScreen, m_World, FillTankSequence());
+                    break;
+                }
+                case SetupPhase.Run: {
+                    m_ParentTank.CurrentState |= TankState.Running;
+                    ExperimentScreen.Transition(ref m_CurrentScreen, null, m_World, SpawnSequence(), () => {
+                        Routine.Start(this, StartExperiment()).Tick();
+                    });
+                    break;
+                }
+            }
         }
 
         private void OnBackClick() {
-            Services.Input.PauseAll();
-            m_SetupPanelGroup.interactable = false;
 
-            switch(m_SetupPhase) {
-                case SetupPhase.Critters: {
-                    m_SetupPhase = SetupPhase.Environment;
-                    Routine.Start(this, BackToEnvironment());
-                    break;
-                }
-
-                case SetupPhase.Environment: {
-                    m_SetupPhase = SetupPhase.Begin;
-                    Routine.Start(this, BackToBegin());
-                    break;
-                }
-            }
         }
 
-        private IEnumerator BackToEnvironment() {
-            m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
-            m_AddCrittersPanel.ClearSelection();
-            
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_AddCrittersPanel.Hide()
-            );
-
-            m_CrittersButton.gameObject.SetActive(true);
-            m_RunButton.gameObject.SetActive(false);
-
-            yield return m_DrainRoutine;
-
-            yield return Routine.Combine(
-                m_SelectEnvPanel.Show(),
-                m_SetupPanelGroup.Show(0.2f)
-            );
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
+        private IEnumerator FillTankSequence() {
+            yield return m_ParentTank.WaterSystem.RequestFill(m_ParentTank);
+            yield return 0.2f;
         }
 
-        private IEnumerator BackToBegin() {
-            m_SelectEnvPanel.ClearSelection();
-            
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_SelectEnvPanel.Hide()
-            );
-
-            yield return m_DrainRoutine;
-
-            m_BeginButton.gameObject.SetActive(true);
-
-            Services.Input.ResumeAll();
-        }
-
-        private void OnRunClick()
-        {
-            m_ParentTank.CurrentState |= TankState.Running;
-
-            m_AddCrittersPanel.Hide();
-            m_SelectEnvPanel.Hide();
-
-            Services.Input.PauseAll();
-
-            Routine.Start(this, StartExperiment()).TryManuallyUpdate(0);
-        }
-
-        private IEnumerator StartExperiment() {
-            m_SetupPanelGroup.blocksRaycasts = false;
-            m_InProgressGroup.blocksRaycasts = false;
-            m_FinishButton.interactable = false;
-
+        private IEnumerator SpawnSequence() {
             while(!m_ParentTank.ActorBehavior.IsSpawningCompleted()) {
                 yield return null;
             }
+        }
 
-            Services.Input.ResumeAll();
-
+        private IEnumerator StartExperiment() {
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
             using(Profiling.Time("getting potential observations")) {
@@ -495,7 +361,6 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.1f),
                 m_InProgressGroup.Show(0.1f),
                 m_UnobservedStateLabel.FadeTo(1, 0.1f)
             );
@@ -564,7 +429,7 @@ namespace ProtoAqua.ExperimentV2 {
             result.Facts = m_FactResults.ToArray();
             m_FactResults.Clear();
 
-            Routine.Start(this, FinishExperiment(result)).TryManuallyUpdate(0);
+            Routine.Start(this, FinishExperiment(result)).Tick();
         }
 
         private IEnumerator FinishExperiment(ExperimentResult inResult)
@@ -579,7 +444,6 @@ namespace ProtoAqua.ExperimentV2 {
                 yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
                 ClearStateAfterExperiment();
                 yield return 0.5f;
-                InitializeSummaryScreen(inResult);
                 yield return fader.Object.Hide(0.5f, false);
             }
             yield return PopulateSummaryScreen(inResult);
@@ -600,11 +464,9 @@ namespace ProtoAqua.ExperimentV2 {
         {
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
-            m_SelectEnvPanel.Hide();
-            m_SelectEnvPanel.ClearSelection();
+            ExperimentScreen.Reset(m_EnvironmentScreen);
+            ExperimentScreen.Reset(m_OrganismScreen);
 
-            m_AddCrittersPanel.Hide();
-            m_AddCrittersPanel.ClearSelection();
             m_ParentTank.ActorBehavior.ClearActors();
             
             m_BehaviorCircles.Reset();
@@ -616,27 +478,6 @@ namespace ProtoAqua.ExperimentV2 {
             m_UnobservedStateLabel.gameObject.SetActive(false);
             m_PotentialNewFacts.Clear();
             m_MissedFactCount = 0;
-        }
-
-        private void InitializeSummaryScreen(ExperimentResult inResult)
-        {
-            // m_SummaryPanel.gameObject.SetActive(true);
-
-            // if (inResult.Facts.Length == 0)
-            // {
-            //     m_SummaryPanel.FactGroup.SetActive(false);
-            //     m_SummaryPanel.HintGroup.SetActive(true);
-
-            //     m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
-            //     m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
-            //     return;
-            // }
-
-            // m_SummaryPanel.HintGroup.SetActive(false);
-            // m_SummaryPanel.FactGroup.SetActive(true);
-
-            // m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
-            // m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
         }
 
         private IEnumerator PopulateSummaryScreen(ExperimentResult inResult)
@@ -654,9 +495,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void OnSummaryCloseClick()
         {
-            // m_SummaryPanel.gameObject.SetActive(false);
-            // m_SummaryPanel.FactPools.FreeAll();
-            m_BeginButton.gameObject.SetActive(true);
+            ExperimentScreen.Transition(ref m_CurrentScreen, m_BeginScreen, m_World);
         }
 
         #endregion // Sequence

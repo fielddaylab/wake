@@ -49,7 +49,7 @@ namespace Aqua.WorldMap
 
         private void OnShipOutClicked()
         {
-            Routine.Start(this, ShipoutSequence()).TryManuallyUpdate(0);
+            Routine.Start(this, ShipoutSequence()).Tick();
         }
 
         private IEnumerator ShipoutSequence()

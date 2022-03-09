@@ -366,7 +366,7 @@ namespace ProtoAqua.ExperimentV2
             {
                 inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
                 inInstance.CachedTransform.SetScale(0);
-                inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld)).TryManuallyUpdate(0);
+                inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld)).Tick();
             }
             else
             {
@@ -374,7 +374,7 @@ namespace ProtoAqua.ExperimentV2
                 float surfaceDistY = inWorld.WorldBounds.max.y - targetPos.y;
                 offsetPos.y += DropSpawnAnimationDistance + surfaceDistY + def.Spawning.AvoidTankTopBottomRadius;
                 inInstance.CachedTransform.SetPosition(offsetPos, Axis.XYZ, Space.Self);
-                inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).TryManuallyUpdate(0);
+                inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).Tick();
             }
         }
 
