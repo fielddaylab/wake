@@ -57,6 +57,24 @@ mergeInto(LibraryManager.library, {
         });
     },
 
+    FBReceiveEntity: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName, entityId) {
+        var userCode = Pointer_stringify(userCode);
+        var appVersion = Pointer_stringify(appVersion);
+        var appFlavor = Pointer_stringify(appFlavor);
+        var jobName = Pointer_stringify(jobName);
+        var entityId = Pointer_stringify(entityId);
+
+        analytics.logEvent("receive_entity", {
+            user_code: userCode,
+            app_version: appVersion,
+            app_flavor: appFlavor,
+            log_version: logVersion,
+            job_id: jobId,
+            job_name: jobName,
+            entity_id: entityId
+        });
+    },
+
     FBCompleteJob: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);

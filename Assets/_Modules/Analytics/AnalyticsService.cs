@@ -40,6 +40,8 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBReceiveFact(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
+        public static extern void FBReceiveEntity(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string entityId);
+        [DllImport("__Internal")]
         public static extern void FBCompleteJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
         public static extern void FBCompleteTask(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string taskId);
@@ -184,7 +186,7 @@ namespace Aqua
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
-                .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, LogReceiveFact, this)
+                .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
@@ -461,7 +463,7 @@ namespace Aqua
             #endif
         }
 
-        private void LogReceiveFact(BestiaryUpdateParams inParams)
+        private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)
         {
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
@@ -469,6 +471,14 @@ namespace Aqua
 
                 #if FIREBASE
                 FBReceiveFact(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, parsedFactId);
+                #endif
+            }
+            else if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
+            {
+                string parsedEntityId = Assets.Bestiary(inParams.Id).name;
+
+                #if FIREBASE
+                FBReceiveEntity(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, parsedEntityId);
                 #endif
             }
         }

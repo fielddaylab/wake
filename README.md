@@ -57,8 +57,9 @@ Player starts the game by entering their user code.
 1. [accept_job](#accept_job)
 2. [switch_job](#switch_job)
 3. [receive_fact](#receive_fact)
-4. [complete_job](#complete_job)
-5. [complete_task](#complete_task)
+4. [receive_entity](#receive_entity)
+5. [complete_job](#complete_job)
+6. [complete_task](#complete_task)
 
 <a name="accept_job"/>
 
@@ -105,6 +106,22 @@ A fact is added to the player's bestiary.
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | Unique ID for the given fact |
+
+<a name="receive_entity"/>
+
+#### receieve_entity
+
+An entity is added to the player's bestiary (ex. scanning a critter in a dive site).
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| entity_id | Unique ID for the given entity |
 
 <a name="complete_job"/>
 
