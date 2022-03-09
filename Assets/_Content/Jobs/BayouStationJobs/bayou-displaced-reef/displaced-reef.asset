@@ -1,0 +1,182 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: displaced-reef
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-displaced-reef.name
+    m_HashValue: 2427326085
+  m_PosterId:
+    m_HashValue: 6948676
+  m_DescId:
+    m_Source: jobs.bayou-displaced-reef.desc
+    m_HashValue: 2017731239
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_PrereqUpgrades: []
+  m_StationId:
+    m_HashValue: 2992071853
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: visitSiteO
+      m_HashValue: 2940247736
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.visitSiteO
+      m_HashValue: 1545989578
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-3O
+        m_HashValue: 3353522735
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: getScans
+      m_HashValue: 1025619015
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getScans
+      m_HashValue: 997294805
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: visitSiteO
+      m_HashValue: 2940247736
+  - Id:
+      m_Source: getCounts
+      m_HashValue: 2402495047
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getCounts
+      m_HashValue: 774222265
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: visitSiteO
+      m_HashValue: 2940247736
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.reportBack
+      m_HashValue: 1790074046
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: getScans
+      m_HashValue: 1025619015
+    - m_Source: getCounts
+      m_HashValue: 2402495047
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: visitSiteO
+      m_HashValue: 2940247736
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.visitSiteO
+      m_HashValue: 1545989578
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: RS-3O
+        m_HashValue: 3353522735
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: getScans
+      m_HashValue: 1025619015
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getScans
+      m_HashValue: 997294805
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: getCounts
+      m_HashValue: 2402495047
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.getCounts
+      m_HashValue: 774222265
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    Index: 3
+    LabelId:
+      m_Source: jobs.bayou-displaced-reef.task.reportBack
+      m_HashValue: 1790074046
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000200
+  m_CashReward: 0
+  m_ExpReward: 5
+  m_Scripting: {fileID: -1942890987711236906, guid: b097077d53ecd6b498f8fb57b8dc31b3,
+    type: 3}
+  m_ExtraAssets: []

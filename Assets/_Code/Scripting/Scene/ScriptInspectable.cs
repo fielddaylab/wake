@@ -4,12 +4,15 @@ using Leaf.Runtime;
 using UnityEngine.EventSystems;
 using BeauUtil.UI;
 using UnityEngine.Scripting;
+using System;
 
 namespace Aqua.Scripting
 {
     public class ScriptInspectable : ScriptComponent, IPointerClickHandler
     {
         [SerializeField] private PointerListener m_Proxy = null;
+
+        public Action<ScriptInspectable> OnInspect;
 
         [LeafMember, Preserve]
         public void Inspect()
@@ -20,6 +23,7 @@ namespace Aqua.Scripting
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
             ScriptObject.Inspect(m_Parent);
+            OnInspect?.Invoke(this);
         }
 
         #region IScriptComponent

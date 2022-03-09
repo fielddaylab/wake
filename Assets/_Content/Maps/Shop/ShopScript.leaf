@@ -202,6 +202,50 @@ $branch .purchaseAttempt.genericCostLine
             With this plating, your sub will be able to withstand much more pressure!
 $branch .purchaseAttempt.genericCostLine
 
+:: purchaseAttempt.stressTank
+@trigger    ShopAttemptBuy
+@when       itemId == "StressTank"
+@cutscene
+
+{@merchant} Oh, the {nameof $local:itemId} can be used to measure the stress ranges of different creatures.
+
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.measurementTank
+@trigger    ShopAttemptBuy
+@when       itemId == "MeasurementTank"
+@cutscene
+
+{@merchant} Ah, the {nameof $local:itemId} can be used to measure the stress ranges of different creatures.
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.visualModel
+@trigger    ShopAttemptBuy
+@when       itemId == "VisualModel"
+@cutscene
+
+{@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
+            It is used to create visualizations of the different connections between species.
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.predictionModel
+@trigger    ShopAttemptBuy
+@when       itemId == "PredictionModel"
+@cutscene
+
+{@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
+            It is used to create predictions for creatures in different ecosystems.
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.interveneModel
+@trigger    ShopAttemptBuy
+@when       itemId == "InterveneModel"
+@cutscene
+
+{@merchant} Ah, the {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
+            It is used to model the outcomes of potential interventions for different ecosystems.
+$branch .purchaseAttempt.genericCostLine
+
 :: purchaseAttempt.iceBreaker
 @trigger    ShopAttemptBuy
 @when       itemId == "Icebreaker"

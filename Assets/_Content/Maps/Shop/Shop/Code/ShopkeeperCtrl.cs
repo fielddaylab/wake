@@ -1,16 +1,12 @@
-using UnityEngine;
-using BeauUtil;
-using Aqua.Cameras;
-using System.Collections;
-using BeauRoutine;
-using BeauUtil.UI;
-using UnityEngine.EventSystems;
 using System;
-using BeauRoutine.Splines;
+using System.Collections;
+using Aqua.Scripting;
+using BeauRoutine;
+using UnityEngine;
 
 namespace Aqua.Shop {
     public class ShopkeeperCtrl : MonoBehaviour {
-        
+
         #region Inspector
 
         [SerializeField] private SpriteRenderer m_Renderer = null;
@@ -30,6 +26,8 @@ namespace Aqua.Shop {
         private void Awake() {
             m_OriginalPos = transform.position;
             m_OriginalRendererYOffset = m_RendererTransform.localPosition.y;
+
+            GetComponent<ScriptInspectable>().OnInspect = (_) => OnTalkToShopkeep();
         }
 
         public void SetTable(ShopTable table) {
@@ -97,6 +95,10 @@ namespace Aqua.Shop {
                 m_SittingStool = null;
                 yield return 0.1f;
             }
+        }
+
+        private void OnTalkToShopkeep() {
+            Services.Events.Dispatch(ShopConsts.Event_TalkToShopkeep);
         }
     }
 }

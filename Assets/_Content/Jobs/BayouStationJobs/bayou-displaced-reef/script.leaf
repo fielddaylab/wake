@@ -1,0 +1,62 @@
+:: basePath job.bayou-displaced-reef
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of Site O. 
+                Would you be able to go pop over and help us report back on what exactly is growing over there? 
+{@player}   You can count one me!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteOAnalysis)
+@cutscene
+$call ArgueLoad(siteOAnalysis)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
+        // TODO: Change later to match Bayou Pops
+		$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle)
+$endif
+{@profHarper} Have you collected the population data for the critters at {nameof O_OilRig}?
+//{@profHarper} What is the current {nameof LoggerheadTurtle} population at {nameof }?
+$branch .argue.showClaim
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctPopulation
+		$answer incorrect, .argue.incorrectPopulation
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.incorrectPopulation
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+$call ArgueCancelClaim()
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+
+::end
+
+// END
+
+:: argue.correctPopulation
+$call ArgueComplete()
+{@profHarper} That looks great. 
+{@profHarper} It looks like you are getting good at studying populations with your sub.
+$call CompleteJob()
+
+//:: end
+//@trigger    JobCompleted
+//@cutscene
+
+//// write a conclusion to your job
+//{@kevin}    This is the conclusion to the NewJobDesc job!

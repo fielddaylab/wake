@@ -26,8 +26,7 @@ namespace Aqua.Editor
         [MenuItem("Aqualab/Localization/Export String Table")]
         static public void ExportAllStrings()
         {
-            LocEditor.Export(
-            );
+            LocEditor.Export();
         }
     
         [MenuItem("Aqualab/Leaf/Export Leaf Function Outline")]

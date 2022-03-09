@@ -76,7 +76,7 @@ Report back with your prediction
 What is causing the population of Giant Kelp at Site B to decrease?
 
 :: kelp-save-urchin-barren.name
-* Saving the Urchin Barren
+*Saving the Urchin Barren
 
 :: kelp-save-urchin-barren.desc
 Let's use everything you have learned so far to save the Urchin Barren. Use the model you made to try out potential interventions and simulate the long term outcomes. Tell me if you find any potential solutions for restoring Site B.
@@ -85,7 +85,7 @@ Let's use everything you have learned so far to save the Urchin Barren. Use the 
 Build a Model to restore the kelp forest at site B
 
 :: kelp-save-urchin-barren.task.return
-Go to the Office and tell Dr. Kelpurnia what you discovered
+Goto the Office and tell Dr. Kelpurnia what you discovered
 
 :: kelp-save-urchin-barren.argue.claimHopeless
 There is no way to save the Urchin Barren
@@ -346,7 +346,7 @@ Start a Refuge
 
 :: kelp-start-refuge.desc
 We need to figure out what conditions would make a good kelp refuge.
-A refuge is a rescue area. We want to be able to create a stress-free environment where all kinds of kelp can thrive and reproduce.
+We want to be able to create a stress-free environment where all kinds of kelp can thrive and reproduce.
 
 :: kelp-start-refuge.argue.claimLabel
 Potential Site 3 is the most suitable location for a Kelp refuge.
@@ -360,17 +360,11 @@ Our refuge didn't turn out as planned. It seems the Bull Kelp stopped growing. W
 :: kelp-refuge-failure.argue.claimLabel
 The Bull Kelp population is growing slower than expected.
 
-:: kelp-refuge-failure.task.lightRatesGiant
-Measure Giant Kelp's effect on light in the Measurement Tank
-
-:: kelp-refuge-failure.task.lightRatesBull
-Measure Bull Kelp's effect on light in the Measurement Tank
-
 :: kelp-mussel-fest.name
-* Mussel Fest
+Mussel Fest
 
 :: kelp-mussel-fest.desc
-Something's causing the Mussels to be shaped all wonky. We're not sure what's causing it, but the fishers are upset and we're worried the problem will cascade up the food chain.
+People think the mussels are funny shaped. What is happening to them?
 
 :: kelp-mussel-fest.argue.claimLabelPopulationTemp
 Temperatures at Site B have been increasing.
@@ -450,8 +444,8 @@ Measure how fast Urchins eat Giant Kelp
 :: kelp-urchin-farm.task.reportBack
 Report your findings in the Office
 
-:: kelp-urchin-farm.argue.claimEitherWorkLabel
-Argue for the rates at which Kelp are eaten
+:: jobs.kelp-urchin-farm.argue.claimEitherWorkLabel
+Either Kelp are eaten at the same rate
 
 :: coral-ocean-plastics.name
 **Ocean Plastics
@@ -462,8 +456,17 @@ You scanned plastic in the Reef! This can't do. What will happen if it makes its
 :: coral-ocean-plastics.task.whatTurtlesEat
 Use the Observation tank to discover everything turtles eat.
 
-:: coral-ocean-plastic.argue.claimEvidence
-There are multiple food sources for the turtles.
+:: coral-ocean-plastic.argue.claimLabel1
+The Loggerhead turtle will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel2
+The Staghorn coral will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel3
+The Queen conch will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel4
+Everything will be impacted is plastic enters the reef
 
 :: coral-ocean-plastics.task.reportBack
 Report your findings back to Prof. Cempaka.
@@ -493,16 +496,13 @@ We need to know why the turtles are so successful here by creating a food web mo
 An Urchin Barren Visualization
 
 :: kelp-urchin-barren-predict.name
-Predicting the Future of the Urchin Barren
+*Predicting the Future of the Urchin Barren
 
 :: kelp-urchin-barren-viz.desc
 The {h}Urchin Barren{/h} looks like a doomed ecosystem. If the kelp population goes to zero, nothing will be able to survive there. Is there some new species there that's eating up all the kelp? I need a visual model of the ecosystem to understand it.
 
 :: kelp-urchin-barren-predict.desc
 The urchins are taking over Site B, turning it into what we call an {h}Urchin Barren{/h}. I need you to use the modeling tool to determine the likely fate of the ecosystem there.
-
-:: kelp-urchin-barren-predict.argue.claimLabel
-What is causing the population of Giant Kelp at Site B to decrease?
 
 :: kelp-urchin-barren-viz.task.predictSiteB
 Build a visual model of Site B
@@ -546,24 +546,121 @@ Report back with your prediction
 :: kelp-urchin-barren-predict.task.predictSiteB
 Build a Model to Predict the future for Site B
 
-:: kelp-mussel-fest.task.report
-Report to Dr. Kelpurnia
+:: kelp-urchin-barren-predict.argue.claimLabel
+Share your prediction for the future of Site B
 
-:: kelp-mussel-fest-solution.name
-* Mussel Fest Solution
+:: bayou-displaced-reef.name
+**Displaced Reef
 
-:: kelp-mussel-fest-solution.desc
-Other than the weird shape, are the Mussels being affected in any adverse way? We're particularly interested in how their reproduction rate has changed. The local restaurants want to keep serving mussels!
+:: bayou-displaced-reef.desc
+It started small, but the reef keeps growing here. It's in the middle of the ocean. It's just not right. Can you get population counts, so we can report back on this?
 
-:: kelp-mussel-fest-solution.task.stressedRate
-Measure Mussel reproduction rates when stressed
+:: bayou-displaced-reef.task.getScans
+Scan the species of site O
 
-:: kelp-mussel-fest-solution.task.unstressedRate
-Measure Mussel reproduction rates when not stressed
+:: bayou-displaced-reef.task.visitSiteO
+Visit Site O
 
-:: kelp-mussel-fest-solution.task.reportChange
-Report whether Mussel reproduction rates have changed
+:: bayou-displaced-reef.task.getCounts
+Count the populations of site O
 
-:: kelp-mussel-fest-solution.argue.claimLabel
-Explain how Mussel growth rate is affected by stress
+:: bayou-displaced-reef.task.reportBack
+Report back to Prof. Harper with your findings
 
+:: bayou-displaced-reef.argue.claimLabel
+Share your analysis of the Site O populations
+
+:: coral-ocean-plastics.task.speciesReefEdge
+Use the Observation tank to discover everything turtles eat.
+
+:: coral-ocean-plastics.task.scanReefEdge
+Travel to the Reef Edge at Site V and scan the Loggerhead Turtle.
+
+:: bayou-turtle-danger.name
+**Turtle Danger
+
+:: bayou-turtle-danger.desc
+Is the reef dangerous to the loggerhead turtles?  Are there any new predators?
+
+:: bayou-turtle-danger.task.modelSiteO
+Observe the creatures of Site O and record all observations you notice in your Observation Tank to create a food web
+
+:: bayou-turtle-danger.task.reportBack
+Report your findings back to Prof. Harper
+
+:: bayou-turtle-danger.argue.claimLabel1
+The turtle populations are safe.
+
+:: bayou-turtle-danger.argue.claimLabel2
+The turtle populations are not safe.
+
+:: bayou-turtle-danger2.name
+**Turtle Danger (pt 2)
+
+:: bayou-turtle-danger2.desc
+How are loggerhead populations responding to the presence of the reef? "My colleague pointed out that predators aren't the only danger -- competition could also endanger the turtle population."
+
+:: bayou-turtle-danger2.task.reportBack
+Report your findings back to Prof. Harper
+
+:: bayou-turtle-danger2.task.historicalData
+Get historical population data for the creatures of Site O
+
+:: bayou-turtle-danger2.task.measureSiteO
+Use your measurement tank to collect data for a Sync model of Site O
+
+:: bayou-turtle-danger2.task.syncModel
+Use your Measurement Tank to create a Sync model for Site O
+
+:: bayou-turtle-danger.task.visualModelO
+Create a visual model to represent potential dangers to the turtle in Site O.
+
+:: bayou-turtle-danger2.argue.claimLabel
+Turtle populations are stable.
+
+:: bayou-reef-decision.name
+**Reef Decision
+
+:: bayou-reef-decision.desc
+We need to see what would happen if the reef wasn't here.
+
+:: bayou-reef-decision.task.reportBack
+Report your findings back to Prof. Harper
+
+:: bayou-reef-decision.task.intervene
+Create an intervention model you can use to argue whether or not we should remove the rig from the reef.
+
+:: bayou-reef-decision.argue.claimLabel1
+The rig should be removed from the reef.
+
+:: bayou-reef-decision.argue.claimLabel2
+The rig should be left to remain in the reef.
+
+:: bayou-hide-n-seek.task.reportBack
+Report back to Prof. Harper with your findings
+
+:: bayou-hide-n-seek.task.jellyScan
+Our data indicates you might have missed some creatures in site O. Head back anf scan around to find the ellusive jellyfish.
+
+:: bayou-hide-n-seek.task.jellyObservation
+Observe the behavior of the jelly's with the other creatures in the reef.
+
+:: bayou-hide-n-seek.task.jellyRates
+Use your measurement tank to find the rates for the jellyfish.
+
+:: bayou-hide-n-seek.task.jellyPredict
+Create a prediction model of your findings for the jellyfish.
+
+:: bayou-hide-n-seek.name
+**Hide 'n Seek
+
+:: bayou-hide-n-seek.desc
+We want to see what might happen in the future for the turtles, and we need to make sure we're not missing anything.
+
+:: bayou-hide-n-seek.argue.claimLabel1
+The turtle population will remain stable
+:: bayou-hide-n-seek.argue.claimLabel2
+The turtle population will start increasing
+:: bayou-hide-n-seek.argue.claimLabel3
+The turtle population will begin to decrease
+:: bayou-hide-n-seek.argue.claimLabelx
