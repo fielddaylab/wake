@@ -163,7 +163,7 @@ namespace Aqua
         private string m_UserCode = string.Empty;
         private string m_AppVersion = string.Empty;
         private string m_AppFlavor = string.Empty;
-        private int m_LogVersion = 4;
+        private int m_LogVersion = 1;
         private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
         private string m_PreviousJobName = "no-active-job";
