@@ -15,13 +15,15 @@ $branch common.ringPhone
             And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
             We can take those facts and add them to a {h}Visual Model{/h}. That can help us see how they fit together.
             Select the {nameof UrchinBarren} ecosystem and click on the {h}Visualize{/h} tab.
+$set jobs:visual-model.saved = true`
 			
 :: generic.visual-model.saved
 @trigger	VisualModelExported
 @boostScore 1051 // arbitraryily high number
 @when		scene:name == "Modeling"
 @cutscene
-$set jobs:visual-model.saved = true
+// uncomment if we want visual-model intro to repeat until the player successfully saves the model
+//$set jobs:visual-model.saved = true
 
 :: generic.sync-model.intro
 @trigger	SimulationModelStarted
