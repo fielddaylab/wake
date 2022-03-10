@@ -57,8 +57,9 @@ Player starts the game by entering their user code.
 1. [accept_job](#accept_job)
 2. [switch_job](#switch_job)
 3. [receive_fact](#receive_fact)
-4. [complete_job](#complete_job)
-5. [complete_task](#complete_task)
+4. [receive_entity](#receive_entity)
+5. [complete_job](#complete_job)
+6. [complete_task](#complete_task)
 
 <a name="accept_job"/>
 
@@ -70,6 +71,7 @@ Player accepts a job with a given id.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the accepted job |
 | job_name | String name of the accepted job |
@@ -84,6 +86,7 @@ Player switches jobs by starting a different one.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the new job |
 | job_name | String name of the new job |
@@ -98,10 +101,27 @@ A fact is added to the player's bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | Unique ID for the given fact |
+
+<a name="receive_entity"/>
+
+#### receieve_entity
+
+An entity is added to the player's bestiary (ex. scanning a critter in a dive site).
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+| entity_id | Unique ID for the given entity |
 
 <a name="complete_job"/>
 
@@ -113,6 +133,7 @@ Player completes a given job.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the completed job |
 | job_name | String name of the completed job |
@@ -127,6 +148,7 @@ Player completes a task for a given job.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the new job |
 | job_name | String name of the new job |
@@ -152,6 +174,7 @@ Player loads into a new scene (ex. "Ship").
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -167,6 +190,7 @@ Player enters a new room on the ship.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -182,6 +206,7 @@ Player enters a given dive site.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -197,6 +222,7 @@ Player begins the argumentation process.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -211,6 +237,7 @@ Player clicks the hint button.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -228,6 +255,7 @@ Player triggers conversation with the guide (Kevin).
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -261,6 +289,7 @@ Player opens the bestiary, which defaults to the species tab.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -275,6 +304,7 @@ Player opens the species tab in the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -289,6 +319,7 @@ Player opens the environments tab in the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -303,6 +334,7 @@ Player opens the models tab in the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -317,6 +349,7 @@ Player selects a species from the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -332,6 +365,7 @@ Player selects an environment from the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -347,6 +381,7 @@ Player selects a model from the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -362,6 +397,7 @@ Player closes the bestiary.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -376,6 +412,7 @@ Player opens the portable status app, which defaults to the job tab.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -390,6 +427,7 @@ Player opens the job tab in the portable status app.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -404,6 +442,7 @@ Player opens the item tab in the portable status app.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -418,6 +457,7 @@ Player opens the tech tab in the portable status app.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -432,6 +472,7 @@ Player closes the portable status app.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -465,6 +506,7 @@ Player enters the modeling room.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -479,6 +521,7 @@ Player selects a given modeling phase.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -502,6 +545,7 @@ Player selects an ecosystem for constructing the model.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -517,6 +561,7 @@ Player starts the conceptual modeling phase.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -532,6 +577,7 @@ Player imports new facts / behaviors into the conceptual model.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -555,6 +601,7 @@ Player saves the conceptual model to AQOS.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -570,6 +617,7 @@ Player enters the sync phase of modeling.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -585,6 +633,7 @@ Player attempts to sync the model but fails.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -601,6 +650,7 @@ Player successfully syncs the model.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -616,6 +666,7 @@ Player completes the prediction model.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -631,6 +682,7 @@ Player introduces a new organism or updates an existing organism's population co
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -648,6 +700,7 @@ Player’s intervention model is unsuccessful.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -663,6 +716,7 @@ Player successfully completes the intervention model.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -678,6 +732,7 @@ Player exits the modeling room.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -702,6 +757,7 @@ Player purchases an upgrade from the shop.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -719,6 +775,7 @@ Player attempts to purchase an item but doesn't have enough currency.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -736,6 +793,7 @@ Player talks to the shopkeeper.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -768,6 +826,7 @@ Player selects an environment for running the experiment.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -784,6 +843,7 @@ Player deselects an environment.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -800,6 +860,7 @@ Player clears the current environment.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -816,6 +877,7 @@ Player adds a critter to the tank.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -833,6 +895,7 @@ Player removes a critter from the tank.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -850,6 +913,7 @@ Player clears all critters from the tank.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -867,6 +931,7 @@ Player starts an experiment with a given tank type.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -893,6 +958,7 @@ Player begins argumentation for a job.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -907,6 +973,7 @@ Player submits a fact to argumentation.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -922,6 +989,7 @@ Submitted fact is incorrect / rejected by the argumentation script.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
@@ -937,6 +1005,7 @@ Player completes argumentation for a job.
 | --- | --- |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
+| app_flavor | GitHub branch origin for current build |
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |

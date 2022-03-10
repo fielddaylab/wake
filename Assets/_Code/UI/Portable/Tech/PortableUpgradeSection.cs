@@ -6,6 +6,7 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using System;
+using BeauUtil.Debugger;
 
 namespace Aqua
 {
@@ -37,6 +38,8 @@ namespace Aqua
                 Clear();
                 return;
             }
+
+            Assert.True(inUpgrades.Length <= m_UpgradeIcons.Length, "Too few icons ({0}) to handle {1} upgrades", m_UpgradeIcons.Length, inUpgrades.Length);
 
             m_NoUpgradesGroup.SetActive(false);
             m_HasUpgradesGroup.SetActive(true);
