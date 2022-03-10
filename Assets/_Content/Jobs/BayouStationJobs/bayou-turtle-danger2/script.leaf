@@ -1,0 +1,53 @@
+:: basePath job.turtle-danger2
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@profHarper}    This is the intro to the turtle-danger2 job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(turtleDanger)
+@cutscene
+$call ArgueLoad(turtleDanger)
+{@profHarper} How are turtle populations responding?
+$choice .argue.turtlesSafe2; It seems the turtle populations are stable
+$choice .argue.giveUp; Let me get back to you
+$choose branch
+
+:: argue.turtlesSafe2
+$if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
+	$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
+$endif
+{@profHarper} Were you able to obtain a descriptive model showing that?
+$goto .argue.showClaim
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer incorrect, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profHarper} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+
+// END
+
+:: argue.complete
+$call ArgueComplete()
+{@profHarper}   The turtles do seem to be maintaining their populations. 
+                We will need a higher accuracy rating in the future, if we want to predict from this though.
+$call CompleteJob()

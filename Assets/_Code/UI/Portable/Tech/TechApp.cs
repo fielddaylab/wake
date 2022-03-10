@@ -17,9 +17,7 @@ namespace Aqua.Portable
 
         [Header("Tech")]
 
-        [SerializeField, Required] private PortableUpgradeSection m_TechSubmarineSection = null;
-        [SerializeField, Required] private PortableUpgradeSection m_TechExperimentSection = null;
-        [SerializeField, Required] private PortableUpgradeSection m_TechTabletSection = null;
+        [SerializeField, Required] private PortableUpgradeSection m_GlobalSection = null;
 
         #endregion
 
@@ -51,44 +49,8 @@ namespace Aqua.Portable
 
                 upgrades.Sort(InvItem.SortByCategoryAndOrder);
 
-                m_TechSubmarineSection.Clear();
-                m_TechExperimentSection.Clear();
-                m_TechTabletSection.Clear();
-
-                InvItemSubCategory currentCategory = InvItemSubCategory.None;
-                int startIdx = 0;
-                InvItem currentItem;
-
-                for(int i = 0; i < upgrades.Count; i++)
-                {
-                    currentItem = upgrades[i];
-                    if (currentItem.SubCategory() != currentCategory)
-                    {
-                        PopulateTechCategory(currentCategory, new ListSlice<InvItem>(upgrades, startIdx, i - startIdx));
-                        startIdx = i;
-                        currentCategory = currentItem.SubCategory();
-                    }
-                }
-
-                PopulateTechCategory(currentCategory, new ListSlice<InvItem>(upgrades, startIdx, upgrades.Count - startIdx));
-            }
-        }
-
-        private void PopulateTechCategory(InvItemSubCategory inCategory, ListSlice<InvItem> inItems)
-        {
-            switch(inCategory)
-            {
-                case InvItemSubCategory.Experimentation:
-                    m_TechExperimentSection.Load(inItems);
-                    break;
-
-                case InvItemSubCategory.Portable:
-                    m_TechTabletSection.Load(inItems);
-                    break;
-
-                case InvItemSubCategory.Submarine:
-                    m_TechSubmarineSection.Load(inItems);
-                    break;
+                m_GlobalSection.Clear();
+                m_GlobalSection.Load(upgrades);
             }
         }
 

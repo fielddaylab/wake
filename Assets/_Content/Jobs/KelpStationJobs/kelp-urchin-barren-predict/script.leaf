@@ -42,6 +42,13 @@ $branch common.ringPhone
 {@drKelp}   Ah, hang on, this isn't the right ecosystem.
             Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
+:: ModelingSetup-WrongHelp
+@trigger	RequestPartnerHelp
+@when       modeling:ecosystemSelected != "UrchinBarren" 
+@cutscene
+{@player}   What do I need to do here?
+{@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+
 :: ModelingSetupPhase
 @trigger    VisualModelStarted
 @when       modeling:ecosystemSelected == "UrchinBarren"
@@ -79,7 +86,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
+@when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	We have to add our facts to the {h}Visual Model{/h}.
@@ -123,7 +130,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "sync", JobTaskTop("predictSiteB")
+@when 		scene:name == "Modeling", modeling:phase == "sync", JobTaskTop("predictSiteB"), modeling:phase == "describe"
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	Let's try hitting the {h}Simulate{/h} button over there.
@@ -137,7 +144,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "predict"
+@when 		scene:name == "Modeling", modeling:phase == "predict", JobTaskTop("predictSiteB")
 @cutscene
 {@player} 	What should I do next?
 {@kevin}	There seems to be a big {h}Run Prediction{/h} button over there...
@@ -188,7 +195,7 @@ $call ArgueLoad(urchinBarrenPredictArgue)
 
 	
 ::argue.hello
-{@drKelp}    Let's review, what's causing the {nameof GiantKelp} population to decrease?
+{@drKelp}    Let's review, what's our prediction for the {nameof GiantKelp} population?
 $goto .argue.chooseFacts
 
 ::argue.chooseFacts
