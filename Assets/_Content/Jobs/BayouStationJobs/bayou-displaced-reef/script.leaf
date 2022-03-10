@@ -20,11 +20,11 @@ $branch common.ringPhone
 @cutscene
 $call ArgueLoad(siteOAnalysis)
 $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
-        // TODO: Change later to match Bayou Pops
-		$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle)
+		$call ArgueFactSlot(O_OilRig.Population.LoggerheadTurtle)
 $endif
-{@profHarper} Have you collected the population data for the critters at {nameof O_OilRig}?
-//{@profHarper} What is the current {nameof LoggerheadTurtle} population at {nameof }?
+//{@profHarper} Have you collected the population data for the critters at {nameof O_OilRig}?
+{@profHarper} I won't make you show me all the populations you gathered, but
+{@profHarper} What is the current {nameof LoggerheadTurtle} population at {nameof O_OilRig}, for example?
 $branch .argue.showClaim
 
 :: argue.showClaim
@@ -51,7 +51,7 @@ $call ArgueCancelClaim()
 :: argue.correctPopulation
 $call ArgueComplete()
 {@profHarper} That looks great. 
-{@profHarper} It looks like you are getting good at studying populations with your sub.
+{@profHarper} It looks like you are getting good at estimating populations with your sub.
 $call CompleteJob()
 
 //:: end
