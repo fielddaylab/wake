@@ -42,6 +42,10 @@ namespace ProtoAqua.ExperimentV2
         EatCategory = 2 << 3,
         ChemistryCategory = 2 << 4,
         DeadOrganisms = 2 << 5,
-        SingleOrganism = 2 << 6
+        SingleOrganism = 2 << 6,
+        DeadMatter = 2 << 7,
+        DeadMatterEatPair = 2 << 8,
+        NoInteraction = 2 << 9,
+        EatNeedsObserve = 2 << 10,
     }
 }

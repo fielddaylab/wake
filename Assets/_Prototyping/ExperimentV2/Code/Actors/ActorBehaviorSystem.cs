@@ -27,7 +27,6 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         [NonSerialized] public ActorWorld World;
         [NonSerialized] private bool m_AllowTick = false;
-        [NonSerialized] private int m_EnvironmentDeaths = 0;
 
         public void Initialize() {
             if (World != null)
@@ -133,8 +132,13 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        public bool IsSpawningCompleted() {
-            return m_Phase == Phase.Executing;
+        public bool AllSpawned() {
+            foreach(var critter in World.Actors) {
+                if (critter.CurrentAction == ActorActionId.Spawning) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void FinalizeCritterInitialization() {
@@ -494,6 +498,7 @@ namespace ProtoAqua.ExperimentV2 {
         #endregion // Eating
 
         public void ClearAll() {
+            End();
             if (World != null) {
                 ActorWorld.FreeAll(World);
                 ActorWorld.SetWaterState(World, null);

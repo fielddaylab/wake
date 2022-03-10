@@ -4,6 +4,19 @@ using UnityEngine;
 namespace Aqua
 {
     [Serializable]
+    public struct ColorPalette2
+    {
+        public Color32 Background;
+        public Color32 Content;
+        
+        public ColorPalette2(Color32 inContent, Color32 inBackground)
+        {
+            Background = inBackground;
+            Content = inContent;
+        }
+    }
+
+    [Serializable]
     public struct ColorPalette4
     {
         public Color32 Background;

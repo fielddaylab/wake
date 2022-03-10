@@ -88,6 +88,8 @@ namespace ProtoAqua.ExperimentV2 {
                     inTank.InterfaceFader.FadeTo(0, 0.2f)
                 );
                 inTank.Interface.enabled = false;
+                SelectableTank.Reset(inTank);
+                inTank.DeactivateMethod?.Invoke();
             }
         }
 
@@ -103,7 +105,7 @@ namespace ProtoAqua.ExperimentV2 {
             DeactivateTankClickHandlers();
             m_WaterSystem.SetActiveTank(tank);
 
-            SelectableTank.Reset(m_SelectedTank);
+            SelectableTank.Reset(m_SelectedTank, true);
 
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
@@ -127,8 +129,6 @@ namespace ProtoAqua.ExperimentV2 {
             if (m_SelectedTank.CanDeactivate != null && !m_SelectedTank.CanDeactivate())
                 return;
             
-            SelectableTank.Reset(m_SelectedTank);
-            m_SelectedTank.DeactivateMethod?.Invoke();
             m_SelectedTank.CurrentState &= ~TankState.Selected;
 
             m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
@@ -142,7 +142,7 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private void OnExperimentStart(TankType inTankType) {
-            if (inTankType != TankType.Observation) {
+            if (inTankType == TankType.Stress) {
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private void OnExperimentFinish(TankType inTankType) {
-            if (inTankType != TankType.Observation) {
+            if (inTankType == TankType.Stress) {
                 return;
             }
 

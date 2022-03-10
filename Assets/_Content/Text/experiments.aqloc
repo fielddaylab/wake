@@ -54,7 +54,22 @@ Some organisms died as a result of the water settings. Make sure your organisms 
 :: summary.singleOrganism
 New observations are more likely to occur if you place more than one type of organism into the tank.
 
+:: summary.deadMatter
+Non-living matter cannot be tested in isolation.
+
+:: summary.deadMatterPair
+Eating interactions can only occur if one of the organisms in the tank is living.
+
+:: summary.eatNeedsObserveFirst
+Eating interactions must be observed in the {nameof ObservationTank} before they can be measured.
+
 :: summary.noteHeader
+<b>Note:</b><margin-left=1.5em>
+{0}
+
+:: summary.noInteractionHeader
+<b>No Interactions Discovered</b>
+
 <b>Note:</b><margin-left=1.5em>
 {0}
 
@@ -62,7 +77,7 @@ New observations are more likely to occur if you place more than one type of org
 Experiment Results
 
 :: summary.header.fail
-Experiment Unsuccessful
+Experiment Inconclusive
 
 :: summary.measure.repro
 Reproduction Rate Instructions
@@ -81,6 +96,9 @@ Eating Rate Instructions
 - Turn off {nameof AutoFeeder}
 - Turn on {nameof WaterStabilizer}
 - Add two Organism Types
+
+:: button.measure
+Perform Measurements
 
 # basePath experiment.stress
 
@@ -108,4 +126,19 @@ The Auto-Feeder dispenses a nutrient-dense food system to ensure maximum organis
 
 :: autoFeeder.malfunction
 MALFUNCTION: Cannot be activated
+
+:: analyzing
+Analyzing tank configuration...
+
+:: unknownVar
+ERROR: Unable to isolate variable
+
+:: reproVar
+Isolated: Reproduction rates
+
+:: chemVar
+Isolated: Water Chemistry interactions
+
+:: eatVar
+Isolated: Eating rates
 

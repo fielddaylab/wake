@@ -159,7 +159,11 @@ namespace ProtoAqua.ExperimentV2 {
         #endregion // Pool Events
 
         static public BehaviorCaptureCircle.TempAlloc CaptureCircle(StringHash32 inFactId, ActorInstance inLocation, ActorWorld inWorld, bool inbAlreadyHas) {
-            ObservationTank tank = (ObservationTank)inWorld.Tag;
+            if (inWorld.Tank.Type != TankType.Observation) {
+                return default(BehaviorCaptureCircle.TempAlloc);
+            }
+
+            ObservationTank tank = (ObservationTank) inWorld.Tag;
             if (inbAlreadyHas) {
                 return default(BehaviorCaptureCircle.TempAlloc);
             } else {
@@ -253,12 +257,12 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                     }
                 case SetupPhase.Critters: {
-                        ExperimentScreen.Transition(m_OrganismScreen, m_World, FillTankSequence());
+                        ExperimentScreen.Transition(m_OrganismScreen, m_World, SelectableTank.FillTankSequence(m_ParentTank));
                         break;
                     }
                 case SetupPhase.Run: {
                         m_ParentTank.CurrentState |= TankState.Running;
-                        ExperimentScreen.Transition(null, m_World, SpawnSequence(), () => {
+                        ExperimentScreen.Transition(null, m_World, SelectableTank.SpawnSequence(m_ParentTank, m_OrganismScreen.Panel), () => {
                             Routine.Start(this, StartExperiment()).Tick();
                         });
                         break;
@@ -270,34 +274,9 @@ namespace ProtoAqua.ExperimentV2 {
             m_SetupPhase--;
             switch (m_SetupPhase) {
                 case SetupPhase.Environment: {
-                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World, DrainTankSequence());
+                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World, SelectableTank.DrainTankSequence(m_ParentTank));
                         break;
                     }
-            }
-        }
-
-        private IEnumerator DrainTankSequence() {
-            yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
-        }
-
-        private IEnumerator FillTankSequence() {
-            yield return m_ParentTank.WaterSystem.RequestFill(m_ParentTank);
-            yield return 0.2f;
-        }
-
-        private IEnumerator DespawnSequence() {
-            m_ParentTank.ActorBehavior.ClearActors();
-            yield break;
-        }
-
-        private IEnumerator SpawnSequence() {
-            foreach(var species in m_OrganismScreen.Panel.Selected) {
-                m_ParentTank.ActorBehavior.Alloc(species.Id());
-                yield return 0.05f;
-            }
-            m_ParentTank.ActorBehavior.Begin();
-            while (!m_ParentTank.ActorBehavior.IsSpawningCompleted()) {
-                yield return null;
             }
         }
 
@@ -317,6 +296,7 @@ namespace ProtoAqua.ExperimentV2 {
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
             }
 
+            m_ParentTank.ActorBehavior.Begin();
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
             m_UnobservedStateLabel.alpha = 0;

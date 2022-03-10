@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Aqua;
 using Aqua.Cameras;
 using AquaAudio;
@@ -85,6 +86,34 @@ namespace ProtoAqua.ExperimentV2
             tank.CurrentScreen = null;
         }
 
+        #region Sequences
+
+        static public IEnumerator DrainTankSequence(SelectableTank tank) {
+            yield return tank.WaterSystem.DrainWaterOverTime(tank, 1.5f);
+        }
+
+        static public IEnumerator FillTankSequence(SelectableTank tank) {
+            yield return tank.WaterSystem.RequestFill(tank);
+            yield return 0.2f;
+        }
+
+        static public IEnumerator DespawnSequence(SelectableTank tank) {
+            tank.ActorBehavior.ClearActors();
+            yield break;
+        }
+
+        static public IEnumerator SpawnSequence(SelectableTank tank, BestiaryAddPanel organismPanel) {
+            foreach(var species in organismPanel.Selected) {
+                tank.ActorBehavior.Alloc(species.Id());
+                yield return 0.15f;
+            }
+            while (!tank.ActorBehavior.AllSpawned()) {
+                yield return null;
+            }
+        }
+
+        #endregion // Sequences
+
         #if UNITY_EDITOR
 
         int IBaked.Order { get { return 0; } }
@@ -118,9 +147,9 @@ namespace ProtoAqua.ExperimentV2
 
     public enum TankType : byte
     {
-        Observation = InProgressExperimentData.Type.Observation,
-        Stress = InProgressExperimentData.Type.Stress,
-        Measurement = InProgressExperimentData.Type.Measurement,
+        Observation = RunningExperimentData.Type.Observation,
+        Stress = RunningExperimentData.Type.Stress,
+        Measurement = RunningExperimentData.Type.Measurement,
 
         Unknown = 255
     }

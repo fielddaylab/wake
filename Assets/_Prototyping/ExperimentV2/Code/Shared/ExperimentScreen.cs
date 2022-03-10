@@ -28,7 +28,9 @@ namespace ProtoAqua.ExperimentV2 {
 
         [Header("Extra")]
         public BestiaryAddPanel Panel;
+        public LocText CustomLabel;
         public Button CustomButton;
+        public LocText CustomButtonLabel;
 
         #endregion // Inspector
 
@@ -167,6 +169,9 @@ namespace ProtoAqua.ExperimentV2 {
             Header = transform.parent.GetComponentInChildren<ExperimentHeaderUI>();
             Group = GetComponent<CanvasGroup>();
             Panel = GetComponentInChildren<BestiaryAddPanel>(true);
+            if (CustomButton) {
+                CustomButtonLabel = GetComponentInChildren<LocText>(true);
+            }
         }
 
         int IBaked.Order { get { return 0; } }

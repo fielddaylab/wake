@@ -8,24 +8,14 @@ using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2 {
     static public class ExperimentUtil {
-        static public ExperimentResult Evaluate(InProgressExperimentData inExperiment) {
+        static public ExperimentResult Evaluate(RunningExperimentData inExperiment, ActorWorld inWorld) {
             switch (inExperiment.TankType) {
-                case InProgressExperimentData.Type.Measurement:
-                    return MeasurementTank.Evaluate(inExperiment);
+                case RunningExperimentData.Type.Measurement:
+                    return MeasurementTank.Evaluate(inExperiment, inWorld);
                 default:
                     Assert.Fail("Unhandled experiment type {0}", inExperiment.TankType);
                     return null;
             }
-        }
-
-        static public bool AnyDead(InProgressExperimentData inExperiment) {
-            WaterPropertyBlockF32 envProperties = Assets.Bestiary(inExperiment.EnvironmentId).GetEnvironment();
-            foreach (var critterType in inExperiment.CritterIds) {
-                if (Assets.Bestiary(critterType).EvaluateActorState(envProperties, out var _) == ActorStateId.Dead)
-                    return true;
-            }
-
-            return false;
         }
 
         static public ExperimentFactResult NewFact(StringHash32 inFactId) {
@@ -94,10 +84,23 @@ namespace ProtoAqua.ExperimentV2 {
                 if ((result.Feedback & ExperimentFeedbackFlags.SingleOrganism) != 0) {
                     hints.Add("experiment.summary.singleOrganism");
                 }
+                if ((result.Feedback & ExperimentFeedbackFlags.DeadMatter) != 0) {
+                    hints.Add("experiment.summary.deadMatter");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.DeadMatterEatPair) != 0) {
+                    hints.Add("experiment.summary.deadMatterPair");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.EatNeedsObserve) != 0) {
+                    hints.Add("experiment.summary.eatNeedsObserveFirst");
+                }
+                TextId noteBase = "experiment.summary.noteHeader";
+                if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {
+                    noteBase = "experiment.summary.noInteractionHeader";
+                }
                 TextId hint = RNG.Instance.Choose(hints);
                 return Services.UI.Popup.Display(
                     Loc.Find("experiment.summary.header.fail"),
-                    Loc.Format("experiment.summary.noteHeader", hint), null, 0
+                    Loc.Format(noteBase, hint), null, 0
                 );
             }
         }
