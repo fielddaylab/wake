@@ -11,6 +11,7 @@ using UnityEngine;
 
 namespace ProtoAqua.ExperimentV2 {
     public sealed class ActorBehaviorSystem : MonoBehaviour, IBaked {
+        static private bool s_Configured;
         private const float SpeedUpLifetimeThreshold = 60;
 
         public delegate bool HasFactDelegate(StringHash32 inFactId);
@@ -21,19 +22,39 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         [SerializeField] private SelectableTank m_Tank = null;
+        [SerializeField, HideInInspector] private ActorAllocator m_Allocator = null;
 
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         [NonSerialized] public ActorWorld World;
+        [NonSerialized] private bool m_AllowTick = false;
+        [NonSerialized] private int m_EnvironmentDeaths = 0;
 
-        public void Initialize(object inTag = null) {
+        public void Initialize() {
             if (World != null)
                 return;
 
-            World = new ActorWorld(m_Tank.ActorAllocator, m_Tank.Bounds, null, OnFree, 16, m_Tank, inTag);
+            World = new ActorWorld(m_Allocator, m_Tank.Bounds, null, OnFree, 16, m_Tank, m_Tank.Controller);
+
+            ConfigureStates();
+        }
+
+        public void Begin() {
+            if (!m_AllowTick) {
+                m_AllowTick = true;
+            }
+        }
+
+        public void End() {
+            if (m_AllowTick) {
+                m_AllowTick = false;
+                foreach(var actor in World.Actors) {
+                    actor.ActionAnimation.Stop();
+                }
+            }
         }
 
         private void LateUpdate() {
-            if ((m_Tank.CurrentState & TankState.Running) == 0 || Script.IsPaused)
+            if (!m_AllowTick || (m_Tank.CurrentState & TankState.Running) == 0 || Script.IsPaused)
                 return;
 
             TickBehaviors(Time.deltaTime);
@@ -54,6 +75,9 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private void OnFree(ActorInstance inCritter, ActorWorld inWorld) {
+            if (inCritter.CurrentState == ActorStateId.Dead) {
+                inWorld.EnvDeaths++;
+            }
             ActorWorld.ModifyPopulation(inWorld, inCritter.Definition.Id, -1);
             ActorInstance.ReleaseTargetsAndInteractions(inCritter, inWorld);
         }
@@ -75,12 +99,17 @@ namespace ProtoAqua.ExperimentV2 {
         #region Tick
 
         static public void ConfigureStates() {
+            if (s_Configured) {
+                return;
+            }
+
             ActorInstance.ConfigureActionMethods(ActorActionId.Idle, OnActorIdleStart, null, null);
             ActorInstance.ConfigureActionMethods(ActorActionId.Hungry, OnActorHungryStart, null, ActorHungryAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.Eating, OnActorEatStart, null, ActorEatAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.BeingEaten, OnActorBeingEatenStart, OnActorBeingEatenEnd, ActorBeingEatenAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.Dying, OnActorDyingStart, null, ActorDyingAnimation);
             ActorInstance.ConfigureInteractionMethods(OnInteractionAcquired, OnInteractionReleased);
+            s_Configured = true;
         }
 
         public void TickBehaviors(float inDeltaTime) {
@@ -110,6 +139,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void FinalizeCritterInitialization() {
             World.Lifetime = 0;
+            World.EnvDeaths = 0;
 
             ActorInstance critter;
             for (int i = World.Actors.Count - 1; i >= 0; i--) {
@@ -315,7 +345,7 @@ namespace ProtoAqua.ExperimentV2 {
                             int nibbleCount = RNG.Instance.Next(3, 5);
                             while (nibbleCount-- > 0) {
                                 yield return EatPulse(inActor, 0.2f);
-                                ObservationTank.EmitEmoji(eatRule, inActor, inWorld);
+                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
                                 if (nibbleCount > 0)
                                     yield return 0.3f;
                             }
@@ -325,7 +355,7 @@ namespace ProtoAqua.ExperimentV2 {
                     case ActorDefinition.EatTypeId.LargeBite:
                     default: {
                             yield return EatPulse(inActor, 0.3f);
-                            ObservationTank.EmitEmoji(eatRule, inActor, inWorld);
+                            ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
                             yield return 2;
                             break;
                         }
@@ -470,6 +500,7 @@ namespace ProtoAqua.ExperimentV2 {
             }
             m_Phase = Phase.Spawning;
             World.Lifetime = 0;
+            World.EnvDeaths = 0;
         }
 
         public void ClearActors() {
@@ -487,6 +518,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         bool IBaked.Bake(BakeFlags flags) {
             m_Tank = GetComponentInParent<SelectableTank>();
+            m_Allocator = FindObjectOfType<ActorAllocator>();
             return true;
         }
 

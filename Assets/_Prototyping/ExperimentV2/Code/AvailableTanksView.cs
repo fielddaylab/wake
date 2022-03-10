@@ -3,7 +3,6 @@ using System.Collections;
 using Aqua;
 using Aqua.Cameras;
 using Aqua.Scripting;
-using AquaAudio;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -14,8 +13,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2
-{
+namespace ProtoAqua.ExperimentV2 {
     public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, IBaked, ISceneUnloadHandler
     {
         static private AvailableTanksView s_Instance;
@@ -60,6 +58,8 @@ namespace ProtoAqua.ExperimentV2
             inTank.InterfaceFader.alpha = 0;
             inTank.Clickable.UserData = inTank;
             inTank.DefaultWaterColor = inTank.WaterColor.Color;
+
+            inTank.ActorBehavior.Initialize();
         }
 
         static private IEnumerator SelectTankTransition(SelectableTank inTank)
@@ -103,6 +103,8 @@ namespace ProtoAqua.ExperimentV2
             DeactivateTankClickHandlers();
             m_WaterSystem.SetActiveTank(tank);
 
+            SelectableTank.Reset(m_SelectedTank);
+
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
             using(var table = TempVarTable.Alloc())
@@ -125,10 +127,11 @@ namespace ProtoAqua.ExperimentV2
             if (m_SelectedTank.CanDeactivate != null && !m_SelectedTank.CanDeactivate())
                 return;
             
+            SelectableTank.Reset(m_SelectedTank);
             m_SelectedTank.DeactivateMethod?.Invoke();
             m_SelectedTank.CurrentState &= ~TankState.Selected;
+
             m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
-            m_SelectedTank.ScreenTransition.Stop();
             m_SelectedTank = null;
 
             ActivateTankClickHandlers();

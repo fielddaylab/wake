@@ -117,9 +117,9 @@ namespace ProtoAqua.ExperimentV2
             if (inInstance.ColorAdjust)
             {
                 inInstance.ColorAdjust.SetColor(Color.white);
-                //inInstance.StateAnimation.Replace(inInstance, Tween.Color(Color.white, Color.red, inInstance.ColorAdjust.SetColor, 0.5f).Wave(Wave.Function.Sin, 1).Loop());
-                inInstance.StateAnimation.Replace(inInstance, callEmitEmoji(inInstance, inWorld));
             }
+            //inInstance.StateAnimation.Replace(inInstance, Tween.Color(Color.white, Color.red, inInstance.ColorAdjust.SetColor, 0.5f).Wave(Wave.Function.Sin, 1).Loop());
+            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld));
         }
 
         static private void OnEndStressedState(ActorInstance inInstance, ActorWorld inWorld)
@@ -410,10 +410,15 @@ namespace ProtoAqua.ExperimentV2
         #endregion // Spawning
 
         //Xander Grabowski - 02/04/2022
-        static public IEnumerator callEmitEmoji(ActorInstance inActor, ActorWorld inWorld){
-            while(true){
+        static public IEnumerator EmitEmojiLoop(ActorInstance inActor, ActorWorld inWorld){
+            while(inActor.CurrentAction == ActorActionId.Spawning) {
+                yield return null;
+            }
+
+            yield return RNG.Instance.NextFloat(0.1f, 0.3f);
+            while(true) {
                 ActorWorld.EmitEmoji(inWorld, inActor, "Stress");
-                yield return 0.75f;
+                yield return RNG.Instance.NextFloat(0.6f, 0.8f);
             }
         }
 

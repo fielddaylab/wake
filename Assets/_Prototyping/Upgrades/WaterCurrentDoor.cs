@@ -4,7 +4,7 @@ using Aqua.Scripting;
 using Aqua;
 using Aqua.Character;
 
-namespace ProtoAqua.Observation {
+namespace ProtoAqua.Upgrades {
     [RequireComponent(typeof(SceneInteractable))]
     public class WaterCurrentDoor : ScriptComponent
     {

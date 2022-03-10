@@ -56,12 +56,50 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         static public void TriggerExperimentScreenExited(SelectableTank inTank, StringHash32 inScreenId) {
-            Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenExited);
+            using (var table = TempVarTable.Alloc()) {
+                table.Set("tankType", inTank.Type.ToString());
+                table.Set("tankId", inTank.Id);
+                table.Set("screenId", inScreenId);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentScreenExited, table);
+            }
         }
 
-        static public Future<StringHash32> DisplaySuccessfulSummaryPopup(ExperimentResult result) {
-            // return Services.UI.Popup.Display()
-            return null;
+        static public Future<StringHash32> DisplaySummaryPopup(ExperimentResult result) {
+            if (result.Facts.Length > 0) {
+                return Services.UI.Popup.PresentFacts(
+                    Loc.Find("experiment.summary.header"),
+                    null, null,
+                    ArrayUtils.MapFrom(result.Facts, (f) => Assets.Fact(f.Id)), ArrayUtils.MapFrom(result.Facts, (f) => f.Flags), 0
+                );
+            } else {
+                TempList16<TextId> hints = default;
+                if ((result.Feedback & ExperimentFeedbackFlags.NoNewObservations) != 0) {
+                    hints.Add("experiment.summary.noFacts");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.MissedObservations) != 0) {
+                    hints.Add("experiment.summary.missedFacts");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.ChemistryCategory) != 0) {
+                    hints.Add("experiment.summary.measure.water");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.ReproduceCategory) != 0) {
+                    hints.Add("experiment.summary.measure.repro");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.EatCategory) != 0) {
+                    hints.Add("experiment.summary.measure.eat");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.DeadOrganisms) != 0) {
+                    hints.Add("experiment.summary.deadOrganisms");
+                }
+                if ((result.Feedback & ExperimentFeedbackFlags.SingleOrganism) != 0) {
+                    hints.Add("experiment.summary.singleOrganism");
+                }
+                TextId hint = RNG.Instance.Choose(hints);
+                return Services.UI.Popup.Display(
+                    Loc.Find("experiment.summary.header.fail"),
+                    Loc.Format("experiment.summary.noteHeader", hint), null, 0
+                );
+            }
         }
     }
 }

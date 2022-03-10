@@ -96,6 +96,11 @@ namespace Aqua {
             return new CallOnDispose(() => Services.Input?.ResumeAll());
         }
 
+        static public IDisposable Letterbox() {
+            Services.UI.ShowLetterbox();
+            return new CallOnDispose(() => Services.UI?.HideLetterbox());
+        }
+
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);
         }

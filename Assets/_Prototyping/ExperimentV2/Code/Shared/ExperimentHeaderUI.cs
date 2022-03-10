@@ -15,7 +15,6 @@ namespace ProtoAqua.ExperimentV2 {
         [Required] public GameObject NextArrow;
         
         [Required] public Button BackButton;
-        [Required] public LocText BackLabel;
 
         public Routine Transition;
     }

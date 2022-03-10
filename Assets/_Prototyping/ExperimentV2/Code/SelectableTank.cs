@@ -18,6 +18,7 @@ namespace ProtoAqua.ExperimentV2
         [Required] public CameraPose CameraPose = null;
         [Required] public BoxCollider BoundsCollider;
         [HideInInspector] public Bounds Bounds;
+        [Required] public MonoBehaviour Controller;
         
         [Header("Click")]
         [Required(ComponentLookupDirection.Children)] public PointerListener Clickable = null;
@@ -39,20 +40,24 @@ namespace ProtoAqua.ExperimentV2
         
         [Header("Emojis")]
         [SerializeField, Required] public ParticleSystem[] EmojiEmitters = Array.Empty<ParticleSystem>();
+        [SerializeField, HideInInspector] public StringHash32[] EmojiIds = Array.Empty<StringHash32>();
 
         [Header("Actors")]
         [SerializeField] public ActorBehaviorSystem ActorBehavior = null;
 
-        [HideInInspector] public ActorAllocator ActorAllocator;
+        [HideInInspector] public ExperimentScreen[] AllScreens;
 
         #endregion // Inspector
 
         [NonSerialized] private StringHash32 m_Id;
-        [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public TankState CurrentState;
+        
+        [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public TankWaterSystem WaterSystem;
         [NonSerialized] public float WaterFillProportion;
         [NonSerialized] public AudioHandle WaterAudioLoop;
+
+        [NonSerialized] public ExperimentScreen CurrentScreen;
         [NonSerialized] public Routine ScreenTransition;
         [NonSerialized] public Routine WaterTransition;
 
@@ -64,14 +69,36 @@ namespace ProtoAqua.ExperimentV2
         public Func<StringHash32, bool> HasCritter;
         public Func<StringHash32, bool> HasEnvironment;
 
+        static public void Reset(SelectableTank tank, bool full = false) {
+            foreach(var screen in tank.AllScreens) {
+                ExperimentScreen.Reset(screen);
+            }
+            tank.ScreenTransition.Stop();
+            if (full) {
+                tank.ActorBehavior.ClearAll();
+            } else {
+                tank.ActorBehavior.ClearActors();
+            }
+            foreach(var emoji in tank.EmojiEmitters) {
+                emoji.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+            tank.CurrentScreen = null;
+        }
+
         #if UNITY_EDITOR
 
         int IBaked.Order { get { return 0; } }
 
         bool IBaked.Bake(BakeFlags flags)
         {
-            ActorAllocator = FindObjectOfType<ActorAllocator>();
             ActorBehavior = GetComponentInChildren<ActorBehaviorSystem>(false);
+            AllScreens = GetComponentsInChildren<ExperimentScreen>(true);
+
+            EmojiIds = new StringHash32[EmojiEmitters.Length];
+            for(int i = 0; i < EmojiIds.Length; i++) {
+                StringHash32 id = EmojiEmitters[i].name.Replace("Emoji", "").Replace("Emitter", "").Replace("Particles", "");
+                EmojiIds[i] = id;
+            }
             return true;
         }
 

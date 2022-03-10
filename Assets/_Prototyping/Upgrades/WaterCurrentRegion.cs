@@ -4,7 +4,7 @@ using Aqua.Scripting;
 using Aqua;
 using Aqua.Character;
 
-namespace ProtoAqua.Observation {
+namespace ProtoAqua.Upgrades {
     [RequireComponent(typeof(KinematicRepulsor2D))]
     public class WaterCurrentRegion : ScriptComponent
     {

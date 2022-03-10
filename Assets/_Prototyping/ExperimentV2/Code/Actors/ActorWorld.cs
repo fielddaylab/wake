@@ -2,6 +2,7 @@ using BeauUtil;
 using UnityEngine;
 using Aqua;
 using System;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -18,6 +19,7 @@ namespace ProtoAqua.ExperimentV2
         public WaterPropertyBlockF32 Water;
         public bool HasEnvironment;
         public float Lifetime;
+        public int EnvDeaths;
 
         public SelectableTank Tank;
         public object Tag;
@@ -161,11 +163,40 @@ namespace ProtoAqua.ExperimentV2
         }
 
         //Xander Grabowski - 02/04/2022
-        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, StringHash32 inId, int inCount = 1)
+        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1)
         {
+            int emitterIndex = Array.IndexOf(inWorld.Tank.EmojiIds, inId);
+            if (emitterIndex < 0) {
+                Log.Error("[ActorWorld] No emoji emitters with id '{0}' on tank '{1}'", inId, inWorld.Tank.name);
+                return;
+            }
+
+            ParticleSystem system = inWorld.Tank.EmojiEmitters[emitterIndex];
+
             ParticleSystem.EmitParams emit = default;
-            emit.position = inActor.CachedCollider.bounds.center;
-            // inWorld.Tank.StressEmojis.Emit(emit, 1);
+            Bounds bounds;
+            if (inOverrideRegion != null) {
+                bounds = inOverrideRegion.Value;
+            } else {
+                bounds = inActor.CachedCollider.bounds;
+                bounds.extents *= 0.7f;
+            }
+            emit.position = bounds.center;
+
+            ParticleSystem.ShapeModule shape = system.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = bounds.size;
+            shape.position = default;
+            emit.applyShapeToPosition = true;
+
+            system.Emit(emit, inCount);
+        }
+
+        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, BFBase inFact, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1) {
+            if (!Save.Bestiary.HasFact(inFact.Id))
+                return;
+
+            ActorWorld.EmitEmoji(inWorld, inActor, inId, inOverrideRegion, inCount);
         }
 
         static private void UpdateActorStates(ActorWorld inWorld, ListSlice<ActorInstance> inInstances)

@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using BeauUtil;
 using System.Collections;
 using BeauRoutine;
+using ScriptableBake;
 
 namespace ProtoAqua.ExperimentV2 {
-    public sealed class ExperimentScreen : MonoBehaviour {
+    public sealed class ExperimentScreen : MonoBehaviour, IBaked {
         public delegate void Callback(ExperimentScreen screen, ActorWorld world);
         public delegate bool ButtonPredicate(ExperimentScreen screen, ActorWorld world);
 
@@ -42,6 +43,15 @@ namespace ProtoAqua.ExperimentV2 {
         private void Awake() {
             if (Panel) {
                 Panel.OnUpdated += () => EvaluateButtons(this, this.CachedWorld);
+                if (Panel.Category == BestiaryDescCategory.Critter) {
+                    Panel.OnAdded += (b) => Services.Events.Dispatch(ExperimentEvents.ExperimentAddCritter, b.Id());
+                    Panel.OnRemoved += (b) => Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveCritter, b.Id());
+                    Panel.OnCleared += () => Services.Events.Dispatch(ExperimentEvents.ExperimentCrittersCleared);
+                } else {
+                    Panel.OnAdded += (b) => Services.Events.Dispatch(ExperimentEvents.ExperimentAddEnvironment, b.Id());
+                    Panel.OnRemoved += (b) => Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveEnvironment, b.Id());
+                    Panel.OnCleared += () => Services.Events.Dispatch(ExperimentEvents.ExperimentEnvironmentCleared);
+                }
             }
         }
 
@@ -59,12 +69,17 @@ namespace ProtoAqua.ExperimentV2 {
             screen.CachedWorld = world;
             screen.OnOpen?.Invoke(screen, world);
 
+            ExperimentUtil.TriggerExperimentScreenViewed(world.Tank, screen.Id);
+
             using(Script.DisableInput()) {
+                Async.InvokeAsync(() => EvaluateButtons(screen, world));
                 yield return Routine.Combine(
                     screen.Group.FadeTo(1, 0.2f),
-                    screen.Header.Group.Show(0.2f),
+                    screen.BackButton || screen.NextButton || screen.Panel ? screen.Header.Group.Show(0.2f) : null,
                     screen.Panel ? screen.Panel.Show() : null
                 );
+
+                screen.Group.blocksRaycasts = true;
             }
         }
 
@@ -73,7 +88,10 @@ namespace ProtoAqua.ExperimentV2 {
                 yield break;
             
             screen.OnClose?.Invoke(screen, screen.CachedWorld);
+            ExperimentUtil.TriggerExperimentScreenExited(screen.CachedWorld.Tank, screen.Id);
+
             using(Script.DisableInput()) {
+                screen.Group.blocksRaycasts = false;
                 yield return Routine.Combine(
                     screen.Group.FadeTo(0, 0.2f),
                     screen.Header.Group.Hide(0.2f),
@@ -99,27 +117,21 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static public void Reset(params ExperimentScreen[] screens) {
-            foreach(var screen in screens) {
-                Reset(screen);
-            }
-        }
-
-        static public IEnumerator Transition(ref ExperimentScreen current, ExperimentScreen target, ActorWorld world, IEnumerator wait = null, Action onComplete = null) {
-            if (current == target) {
+        static public IEnumerator Transition(ExperimentScreen target, ActorWorld world, IEnumerator wait = null, Action onComplete = null) {
+            if (world.Tank.CurrentScreen == target) {
                 (wait as IDisposable).Dispose();
                 onComplete?.Invoke();
                 return null;
             }
 
-            ExperimentScreen old = current;
-            current = target;
-            Routine transition = world.Tank.ScreenTransition.Replace(world.Tank, Transition(old, target, world, wait));
+            ExperimentScreen old = world.Tank.CurrentScreen;
+            world.Tank.CurrentScreen = target;
+            Routine transition = world.Tank.ScreenTransition.Replace(world.Tank, Transition(old, target, world, wait, onComplete));
             transition.Tick();
             return transition.Wait();
         }
 
-        static private IEnumerator Transition(ExperimentScreen a, ExperimentScreen b, ActorWorld world, IEnumerator wait = null, Action onComplete = null) {
+        static private IEnumerator Transition(ExperimentScreen a, ExperimentScreen b, ActorWorld world, IEnumerator wait, Action onComplete) {
             using(Script.DisableInput()) {
                 if (a != null) {
                     yield return Close(a);
@@ -155,6 +167,13 @@ namespace ProtoAqua.ExperimentV2 {
             Header = transform.parent.GetComponentInChildren<ExperimentHeaderUI>();
             Group = GetComponent<CanvasGroup>();
             Panel = GetComponentInChildren<BestiaryAddPanel>(true);
+        }
+
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
+            Reset();
+            return true;
         }
 
         #endif // UNITY_EDITOR

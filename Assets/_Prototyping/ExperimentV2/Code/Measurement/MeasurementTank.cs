@@ -445,9 +445,9 @@ namespace ProtoAqua.ExperimentV2 {
                 }
             }
 
-            foreach (var feedback in result.Feedback) {
-                Log.Msg("[MeasurementTank] {0}: {1}", feedback.Category, feedback.Id);
-            }
+            // foreach (var feedback in result.Feedback) {
+            //     Log.Msg("[MeasurementTank] {0}: {1}", feedback.Category, feedback.Id);
+            // }
 
             m_ParentTank.CurrentState &= ~TankState.Running;
             yield return PopulateSummaryScreen(result);
@@ -538,154 +538,154 @@ namespace ProtoAqua.ExperimentV2 {
 
         static public ExperimentResult Evaluate(InProgressExperimentData inData) {
             ExperimentResult result = new ExperimentResult();
-            if (ExperimentUtil.AnyDead(inData)) {
-                result.Facts = new ExperimentFactResult[0];
-                result.Feedback = new ExperimentFeedback[] { new ExperimentFeedback(FeedbackCategory_All, ExperimentFeedback.DeadCritters, ExperimentFeedback.FailureFlag) };
-            } else {
-                List<ExperimentFeedback> newFeedback = new List<ExperimentFeedback>();
-                List<ExperimentFactResult> newFacts = new List<ExperimentFactResult>();
-                EvaluateReproductionResult(inData, newFeedback, newFacts);
-                EvaluateEatResult(inData, newFeedback, newFacts);
-                EvaluateWaterChemResult(inData, newFeedback, newFacts);
-                result.Facts = newFacts.ToArray();
-                result.Feedback = newFeedback.ToArray();
-            }
+            // if (ExperimentUtil.AnyDead(inData)) {
+            //     result.Facts = new ExperimentFactResult[0];
+            //     result.Feedback = new ExperimentFeedback[] { new ExperimentFeedback(FeedbackCategory_All, ExperimentFeedback.DeadCritters, ExperimentFeedback.FailureFlag) };
+            // } else {
+            //     List<ExperimentFeedback> newFeedback = new List<ExperimentFeedback>();
+            //     List<ExperimentFactResult> newFacts = new List<ExperimentFactResult>();
+            //     EvaluateReproductionResult(inData, newFeedback, newFacts);
+            //     EvaluateEatResult(inData, newFeedback, newFacts);
+            //     EvaluateWaterChemResult(inData, newFeedback, newFacts);
+            //     result.Facts = newFacts.ToArray();
+            //     result.Feedback = newFeedback.ToArray();
+            // }
             return result;
         }
 
-        static private void EvaluateReproductionResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length > 1) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
+        static private void EvaluateReproductionResult(InProgressExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            // if (inData.CritterIds.Length > 1) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
+            // } else {
+            //     WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            //     BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
 
-                if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
-                }
+            //     if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
+            //         return;
+            //     }
 
-                ActorStateId critterState = critter.EvaluateActorState(env, out var _);
+            //     ActorStateId critterState = critter.EvaluateActorState(env, out var _);
 
-                BFReproduce reproduce = BestiaryUtils.FindReproduceRule(critter, critterState);
-                BFGrow grow = BestiaryUtils.FindGrowRule(critter, critterState);
+            //     BFReproduce reproduce = BestiaryUtils.FindReproduceRule(critter, critterState);
+            //     BFGrow grow = BestiaryUtils.FindGrowRule(critter, critterState);
 
-                bool bFound = false;
+            //     bool bFound = false;
 
-                if (reproduce != null) {
-                    ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id));
-                    bFound = true;
-                }
+            //     if (reproduce != null) {
+            //         ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id));
+            //         bFound = true;
+            //     }
 
-                if (grow != null) {
-                    ioFacts.Add(ExperimentUtil.NewFact(grow.Id));
-                    bFound = true;
-                }
+            //     if (grow != null) {
+            //         ioFacts.Add(ExperimentUtil.NewFact(grow.Id));
+            //         bFound = true;
+            //     }
 
-                if (!bFound) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Repro, ExperimentFeedback.DoesNotReproduce, 0));
-                }
-            }
+            //     if (!bFound) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Repro, ExperimentFeedback.DoesNotReproduce, 0));
+            //     }
+            // }
         }
 
-        static private void EvaluateWaterChemResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length > 1) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) != 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.StabilizerEnabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
-                ActorStateId critterState = critter.EvaluateActorState(env, out var _);
+        static private void EvaluateWaterChemResult(InProgressExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            // if (inData.CritterIds.Length > 1) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) != 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.StabilizerEnabled, ExperimentFeedback.FailureFlag));
+            // } else {
+            //     WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            //     BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
+            //     ActorStateId critterState = critter.EvaluateActorState(env, out var _);
 
-                if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
-                }
+            //     if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
+            //         return;
+            //     }
 
-                bool bAddedFacts = false;
-                bool bHadFacts = false;
-                foreach (var prop in Services.Assets.WaterProp.Sorted()) {
-                    BFConsume consume = BestiaryUtils.FindConsumeRule(critter, prop.Index(), critterState);
-                    BFProduce produce = BestiaryUtils.FindProduceRule(critter, prop.Index(), critterState);
-                    bHadFacts |= (consume || produce);
-                    if (consume != null) {
-                        ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
-                        bAddedFacts = true;
-                    }
-                    if (produce != null) {
-                        ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
-                        bAddedFacts = true;
-                    }
-                }
+            //     bool bAddedFacts = false;
+            //     bool bHadFacts = false;
+            //     foreach (var prop in Services.Assets.WaterProp.Sorted()) {
+            //         BFConsume consume = BestiaryUtils.FindConsumeRule(critter, prop.Index(), critterState);
+            //         BFProduce produce = BestiaryUtils.FindProduceRule(critter, prop.Index(), critterState);
+            //         bHadFacts |= (consume || produce);
+            //         if (consume != null) {
+            //             ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
+            //             bAddedFacts = true;
+            //         }
+            //         if (produce != null) {
+            //             ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
+            //             bAddedFacts = true;
+            //         }
+            //     }
 
-                if (!bHadFacts) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Water, ExperimentFeedback.NoWaterChemistry, 0));
-                } else if (!bAddedFacts) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.CannotMeasureWaterChem, ExperimentFeedback.NotUnlockedFlag));
-                }
-            }
+            //     if (!bHadFacts) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Water, ExperimentFeedback.NoWaterChemistry, 0));
+            //     } else if (!bAddedFacts) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.CannotMeasureWaterChem, ExperimentFeedback.NotUnlockedFlag));
+            //     }
+            // }
         }
 
-        static private void EvaluateEatResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length < 2) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.LessThanTwoSpecies, ExperimentFeedback.FailureFlag));
-            } else if (inData.CritterIds.Length > 2) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.MoreThanTwoSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) != 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.AutoFeederEnabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc leftCritter = Assets.Bestiary(inData.CritterIds[0]);
-                BestiaryDesc rightCritter = Assets.Bestiary(inData.CritterIds[1]);
+        static private void EvaluateEatResult(InProgressExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            // if (inData.CritterIds.Length < 2) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.LessThanTwoSpecies, ExperimentFeedback.FailureFlag));
+            // } else if (inData.CritterIds.Length > 2) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.MoreThanTwoSpecies, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) != 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.AutoFeederEnabled, ExperimentFeedback.FailureFlag));
+            // } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
+            //     ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
+            // } else {
+            //     WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            //     BestiaryDesc leftCritter = Assets.Bestiary(inData.CritterIds[0]);
+            //     BestiaryDesc rightCritter = Assets.Bestiary(inData.CritterIds[1]);
 
-                if (leftCritter.HasFlags(BestiaryDescFlags.IsNotLiving) && rightCritter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
-                }
+            //     if (leftCritter.HasFlags(BestiaryDescFlags.IsNotLiving) && rightCritter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+            //         ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
+            //         return;
+            //     }
 
-                ActorStateId leftState = leftCritter.EvaluateActorState(env, out var _);
-                ActorStateId rightState = rightCritter.EvaluateActorState(env, out var _);
-                BFEat leftEatsRight = BestiaryUtils.FindEatingRule(leftCritter, rightCritter, leftState);
-                BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(rightCritter, leftCritter, rightState);
-                BestiaryData bestiaryData = Save.Bestiary;
+            //     ActorStateId leftState = leftCritter.EvaluateActorState(env, out var _);
+            //     ActorStateId rightState = rightCritter.EvaluateActorState(env, out var _);
+            //     BFEat leftEatsRight = BestiaryUtils.FindEatingRule(leftCritter, rightCritter, leftState);
+            //     BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(rightCritter, leftCritter, rightState);
+            //     BestiaryData bestiaryData = Save.Bestiary;
 
-                bool bHadFact = leftEatsRight || rightEatsLeft;
-                bool bAddedFact = false;
+            //     bool bHadFact = leftEatsRight || rightEatsLeft;
+            //     bool bAddedFact = false;
 
-                if (leftEatsRight != null) {
-                    if (bestiaryData.HasFact(leftEatsRight.Id)) {
-                        bAddedFact = true;
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
-                    } else {
-                        leftEatsRight = null;
-                    }
-                }
-                if (rightEatsLeft != null) {
-                    if (bestiaryData.HasFact(rightEatsLeft.Id)) {
-                        bAddedFact = true;
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
-                    } else {
-                        rightEatsLeft = null;
-                    }
-                }
+            //     if (leftEatsRight != null) {
+            //         if (bestiaryData.HasFact(leftEatsRight.Id)) {
+            //             bAddedFact = true;
+            //             ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
+            //         } else {
+            //             leftEatsRight = null;
+            //         }
+            //     }
+            //     if (rightEatsLeft != null) {
+            //         if (bestiaryData.HasFact(rightEatsLeft.Id)) {
+            //             bAddedFact = true;
+            //             ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
+            //         } else {
+            //             rightEatsLeft = null;
+            //         }
+            //     }
 
-                if (!bAddedFact) {
-                    if (!bHadFact) {
-                        ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.NotUnlockedFlag));
-                    } else {
-                        ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.FailureFlag));
-                    }
-                }
-            }
+            //     if (!bAddedFact) {
+            //         if (!bHadFact) {
+            //             ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.NotUnlockedFlag));
+            //         } else {
+            //             ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.FailureFlag));
+            //         }
+            //     }
+            // }
         }
     
         #endregion // Evaluation

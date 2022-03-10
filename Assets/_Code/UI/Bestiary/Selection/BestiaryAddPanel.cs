@@ -101,6 +101,11 @@ namespace Aqua
 
         #region Selected Set
 
+        public BestiaryDescCategory Category
+        {
+            get { return m_Category; }
+        }
+
         public IReadOnlyCollection<BestiaryDesc> Selected
         {
             get { return m_SelectedSet; }

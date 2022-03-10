@@ -9,7 +9,7 @@ namespace ProtoAqua.ExperimentV2
     public class ExperimentResult
     {
         public ExperimentFactResult[] Facts;
-        public ExperimentFactFeedbackFlags Feedback;
+        public ExperimentFeedbackFlags Feedback;
     }
 
     public struct ExperimentFactResult
@@ -34,11 +34,14 @@ namespace ProtoAqua.ExperimentV2
     }
 
     [Flags]
-    public enum ExperimentFactFeedbackFlags : byte
+    public enum ExperimentFeedbackFlags : ushort
     {
-        MissedObservations = 0x01,
-        ReproduceCategory = 0x02,
-        EatCategory = 0x04,
-        ChemistryCategory = 0x08
+        NoNewObservations = 2 << 0,
+        MissedObservations = 2 << 1,
+        ReproduceCategory = 2 << 2,
+        EatCategory = 2 << 3,
+        ChemistryCategory = 2 << 4,
+        DeadOrganisms = 2 << 5,
+        SingleOrganism = 2 << 6
     }
 }
