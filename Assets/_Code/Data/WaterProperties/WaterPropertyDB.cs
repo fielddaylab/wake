@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Database", fileName = "WaterPropertyDB")]
-    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>, IBakedAsset
+    public class WaterPropertyDB : DBObjectCollection<WaterPropertyDesc>, IBaked
     {
         #region Inspector
 
@@ -55,13 +56,13 @@ namespace Aqua
             return SortingOrder(x).CompareTo(SortingOrder(y));
         };
 
-        #region IOptimizedAsset
+        #region IBaked
         
         #if UNITY_EDITOR
 
-        int IBakedAsset.Order { get { return -10; } }
+        int IBaked.Order { get { return -10; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             SortObjects((a, b) => a.Index().CompareTo(b.Index()));
             m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];
@@ -84,7 +85,7 @@ namespace Aqua
 
         #endif // UNITY_EDITOR
 
-        #endregion // IOptimizedAsset
+        #endregion // IBaked
 
         #if UNITY_EDITOR
 

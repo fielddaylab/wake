@@ -1,17 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Aqua;
 using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Debugger;
 using BeauUtil.UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2
-{
+namespace ProtoAqua.ExperimentV2 {
     public class BehaviorCaptureCircle : MonoBehaviour
     {
         public struct TempAlloc : IDisposable

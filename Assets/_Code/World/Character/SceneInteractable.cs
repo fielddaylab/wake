@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Aqua.Character {
     public class SceneInteractable : ScriptComponent {
 
-        public delegate IEnumerator ExecuteDelegate(SceneInteractable interactable, ScriptThreadHandle thread);
+        public delegate IEnumerator ExecuteDelegate(SceneInteractable interactable, PlayerBody player, ScriptThreadHandle thread);
 
         public enum InteractionMode {
             Inspect,
@@ -81,6 +81,10 @@ namespace Aqua.Character {
             m_TargetEntrance = newEntrance;
         }
 
+        public void OverrideAuto(bool newAuto) {
+            m_AutoExecute = newAuto;
+        }
+
         public Sprite Icon(Sprite defaultIcon) {
             return m_IconOverride != null ? m_IconOverride : defaultIcon;
         }
@@ -93,11 +97,18 @@ namespace Aqua.Character {
 
         private void Awake() {
             WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
+
+            if (m_Mode == InteractionMode.GoToMap) {
+                var spawn = GetComponent<SpawnLocation>();
+                if (spawn && !spawn.HasEntranceOverride()) {
+                    spawn.OverrideEntrance(m_TargetMap);
+                }
+            }
         }
 
         private void OnEnable() {
             if (Script.IsLoading || m_AutoExecute) {
-                m_Routine.Replace(this, WaitToActivate()).TryManuallyUpdate(0);
+                m_Routine.Replace(this, WaitToActivate()).Tick();
             } else {
                 UpdateLocked();
             }
@@ -146,14 +157,14 @@ namespace Aqua.Character {
 
             m_CancelQueued = false;
             m_Routine = Routine.Start(this, InteractRoutine());
-            m_Routine.TryManuallyUpdate(0);
+            m_Routine.Tick();
         }
 
         private IEnumerator InteractRoutine() {
             ScriptThreadHandle thread = ScriptObject.Interact(Parent, Locked(), m_TargetMap);
 
             if (Locked()) {
-                IEnumerator locked = OnLocked?.Invoke(this, thread);
+                IEnumerator locked = OnLocked?.Invoke(this, m_PlayerInside, thread);
                 if (locked != null)
                     yield return null;
                 
@@ -162,7 +173,7 @@ namespace Aqua.Character {
                 yield break;
             }
 
-            IEnumerator execute = OnExecute?.Invoke(this, thread);
+            IEnumerator execute = OnExecute?.Invoke(this, m_PlayerInside, thread);
             if (execute != null)
                 yield return execute;
             if (thread.IsRunning())

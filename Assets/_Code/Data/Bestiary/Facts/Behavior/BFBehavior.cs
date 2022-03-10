@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    public abstract class BFBehavior : BFBase, IBakedAsset
+    public abstract class BFBehavior : BFBase, IBaked
     {
         #region Consts
 
@@ -74,9 +75,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IBakedAsset.Order { get { return 15; } }
+        int IBaked.Order { get { return 15; } }
 
-        public abstract bool Bake();
+        public abstract bool Bake(BakeFlags flags);
 
         protected T FindPairedFact<T>() where T : BFBehavior
         {

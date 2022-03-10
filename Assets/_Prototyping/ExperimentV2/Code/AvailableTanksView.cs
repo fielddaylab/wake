@@ -3,19 +3,18 @@ using System.Collections;
 using Aqua;
 using Aqua.Cameras;
 using Aqua.Scripting;
-using AquaAudio;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using BeauUtil.UI;
 using Leaf.Runtime;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2
-{
-    public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, IBakedComponent, ISceneUnloadHandler
+namespace ProtoAqua.ExperimentV2 {
+    public class AvailableTanksView : MonoBehaviour, ISceneLoadHandler, IBaked, ISceneUnloadHandler
     {
         static private AvailableTanksView s_Instance;
 
@@ -59,6 +58,8 @@ namespace ProtoAqua.ExperimentV2
             inTank.InterfaceFader.alpha = 0;
             inTank.Clickable.UserData = inTank;
             inTank.DefaultWaterColor = inTank.WaterColor.Color;
+
+            inTank.ActorBehavior.Initialize();
         }
 
         static private IEnumerator SelectTankTransition(SelectableTank inTank)
@@ -67,12 +68,12 @@ namespace ProtoAqua.ExperimentV2
             inTank.InterfaceFader.alpha = 0;
             inTank.InterfaceRaycaster.Override = null;
 
-            Services.Input.PauseAll();
-            yield return Routine.Combine(
-                Services.Camera.MoveToPose(inTank.CameraPose, 0.2f, Curve.Smooth),
-                inTank.InterfaceFader.FadeTo(1, 0.2f)
-            );
-            Services.Input.ResumeAll();
+            using(Script.DisableInput()) {
+                yield return Routine.Combine(
+                    Services.Camera.MoveToPose(inTank.CameraPose, 0.2f, Curve.Smooth),
+                    inTank.InterfaceFader.FadeTo(1, 0.2f)
+                );
+            }
         }
 
         static private IEnumerator DeselectTankTransition(SelectableTank inTank, CameraPose inReturningPose)
@@ -81,14 +82,15 @@ namespace ProtoAqua.ExperimentV2
 
             inTank.WaterAudioLoop.Stop();
 
-            Services.Input.PauseAll();
-            yield return Routine.Combine(
-                Services.Camera.MoveToPose(inReturningPose, 0.2f, Curve.Smooth),
-                inTank.InterfaceFader.FadeTo(0, 0.2f)
-            );
-            inTank.Interface.enabled = false;
-
-            Services.Input.ResumeAll();
+            using(Script.DisableInput()) {
+                yield return Routine.Combine(
+                    Services.Camera.MoveToPose(inReturningPose, 0.2f, Curve.Smooth),
+                    inTank.InterfaceFader.FadeTo(0, 0.2f)
+                );
+                inTank.Interface.enabled = false;
+                SelectableTank.Reset(inTank);
+                inTank.DeactivateMethod?.Invoke();
+            }
         }
 
         #endregion // Tank Anims
@@ -103,6 +105,8 @@ namespace ProtoAqua.ExperimentV2
             DeactivateTankClickHandlers();
             m_WaterSystem.SetActiveTank(tank);
 
+            SelectableTank.Reset(m_SelectedTank, true);
+
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
             using(var table = TempVarTable.Alloc())
@@ -116,7 +120,7 @@ namespace ProtoAqua.ExperimentV2
             m_SelectedTank.ActivateMethod?.Invoke();
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Show(0.2f, true));
-            m_TankTransitionAnim.Replace(this, SelectTankTransition(tank)).TryManuallyUpdate(0);
+            m_TankTransitionAnim.Replace(this, SelectTankTransition(tank)).Tick();
         }
 
         private void OnBackClicked()
@@ -125,9 +129,9 @@ namespace ProtoAqua.ExperimentV2
             if (m_SelectedTank.CanDeactivate != null && !m_SelectedTank.CanDeactivate())
                 return;
             
-            m_SelectedTank.DeactivateMethod?.Invoke();
             m_SelectedTank.CurrentState &= ~TankState.Selected;
-            m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).TryManuallyUpdate(0);
+
+            m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
             m_SelectedTank = null;
 
             ActivateTankClickHandlers();
@@ -138,7 +142,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private void OnExperimentStart(TankType inTankType) {
-            if (inTankType != TankType.Observation) {
+            if (inTankType == TankType.Stress) {
                 return;
             }
 
@@ -146,7 +150,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private void OnExperimentFinish(TankType inTankType) {
-            if (inTankType != TankType.Observation) {
+            if (inTankType == TankType.Stress) {
                 return;
             }
 
@@ -182,7 +186,9 @@ namespace ProtoAqua.ExperimentV2
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
             foreach(var tank in m_Tanks)
@@ -193,6 +199,8 @@ namespace ProtoAqua.ExperimentV2
                 waterBounds.center += tank.WaterTrigger.transform.localPosition;
                 tank.WaterRect = Geom.BoundsToRect(waterBounds);
             }
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

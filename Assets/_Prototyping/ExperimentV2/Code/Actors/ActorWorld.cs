@@ -2,6 +2,7 @@ using BeauUtil;
 using UnityEngine;
 using Aqua;
 using System;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.ExperimentV2
 {
@@ -10,16 +11,20 @@ namespace ProtoAqua.ExperimentV2
         public readonly ActorAllocator Allocator;
         public readonly Bounds WorldBounds;
         public readonly Transform ActorRoot;
+
         public readonly RingBuffer<ActorInstance> Actors;
         public readonly RingBuffer<ActorCountU32> ActorCounts;
         public readonly ActorInstance.GeneralDelegate OnFree;
+
         public WaterPropertyBlockF32 Water;
         public bool HasEnvironment;
-        public object Tag;
         public float Lifetime;
-        public SelectableTank Tank;
+        public int EnvDeaths;
 
-        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, object inTag = null)
+        public SelectableTank Tank;
+        public object Tag;
+
+        public ActorWorld(ActorAllocator inAllocator, Bounds inBounds, Transform inActorRoot, ActorInstance.GeneralDelegate inOnFree, int inExpectedSize = 0, SelectableTank inTank = null, object inTag = null)
         {
             Allocator = inAllocator;
             WorldBounds = inBounds;
@@ -29,6 +34,7 @@ namespace ProtoAqua.ExperimentV2
             ActorCounts = new RingBuffer<ActorCountU32>(8, RingBufferMode.Expand);
             Water = Services.Assets.WaterProp.DefaultValues();
             Tag = inTag;
+            Tank = inTank;
         }
 
         #region Alloc/Free
@@ -157,11 +163,40 @@ namespace ProtoAqua.ExperimentV2
         }
 
         //Xander Grabowski - 02/04/2022
-        static public void EmitEmoji(ActorInstance inActor, ActorWorld inWorld)
+        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1)
         {
+            int emitterIndex = Array.IndexOf(inWorld.Tank.EmojiIds, inId);
+            if (emitterIndex < 0) {
+                Log.Error("[ActorWorld] No emoji emitters with id '{0}' on tank '{1}'", inId, inWorld.Tank.name);
+                return;
+            }
+
+            ParticleSystem system = inWorld.Tank.EmojiEmitters[emitterIndex];
+
             ParticleSystem.EmitParams emit = default;
-            emit.position = inActor.CachedCollider.bounds.center;
-            inWorld.Tank.m_Emojis.Emit(emit, 1);
+            Bounds bounds;
+            if (inOverrideRegion != null) {
+                bounds = inOverrideRegion.Value;
+            } else {
+                bounds = inActor.CachedCollider.bounds;
+                bounds.extents *= 0.7f;
+            }
+            emit.position = bounds.center;
+
+            ParticleSystem.ShapeModule shape = system.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = bounds.size;
+            shape.position = default;
+            emit.applyShapeToPosition = true;
+
+            system.Emit(emit, inCount);
+        }
+
+        static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, BFBase inFact, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1) {
+            if (!Save.Bestiary.HasFact(inFact.Id))
+                return;
+
+            ActorWorld.EmitEmoji(inWorld, inActor, inId, inOverrideRegion, inCount);
         }
 
         static private void UpdateActorStates(ActorWorld inWorld, ListSlice<ActorInstance> inInstances)

@@ -5,7 +5,7 @@ using BeauUtil;
 
 namespace ProtoAqua.Upgrades {
     [RequireComponent(typeof(KinematicDrag2D))]
-    public sealed class PropGuardRegion : MonoBehaviour, ISceneLoadHandler {
+    public sealed class PropGuardRegion : MonoBehaviour {
         #region Inspector
 
         [Required] public KinematicDrag2D Drag;
@@ -13,6 +13,10 @@ namespace ProtoAqua.Upgrades {
         public float Multiplier = 0.5f;
 
         #endregion // Inspector
+
+        private void Awake() {
+            Script.OnSceneLoad(Load);
+        }
 
         private void Load() {
             bool bHasUpgrade = Save.Inventory.HasUpgrade(ItemIds.PropGuard);
@@ -22,10 +26,6 @@ namespace ProtoAqua.Upgrades {
                     barrier.enabled = false;
                 }
             }
-        }
-
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
-            Load();
         }
 
         #if UNITY_EDITOR

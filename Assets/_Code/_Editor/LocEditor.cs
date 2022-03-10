@@ -266,6 +266,9 @@ namespace Aqua.Editor {
                     string recordId = currentRecord.Id;
                     if (!string.IsNullOrEmpty(currentBasePath)) {
                         recordId = recordId.Substring(currentBasePath.Length + 1);
+                        if (recordId.Length == 0) {
+                            recordId = ".";
+                        }
                     }
 
                     writer.Write(recordId);

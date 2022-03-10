@@ -3,10 +3,11 @@ using BeauRoutine;
 using BeauUtil;
 using System;
 using Aqua.Cameras;
+using ScriptableBake;
 
 namespace Aqua.Ship
 {
-    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>, IBakedComponent
+    public class Room : MonoBehaviour, IKeyValuePair<StringHash32, Room>, IBaked
     {
         #region Inspector
 
@@ -100,9 +101,12 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 1; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Links = GetComponentsInChildren<RoomLink>(true);
+            return true;
         }
 
         #endif // UNITY_EDITOR

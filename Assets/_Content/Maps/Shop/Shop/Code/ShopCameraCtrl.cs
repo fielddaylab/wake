@@ -10,9 +10,10 @@ using UnityEngine.UI;
 using Aqua.Scripting;
 using BeauUtil.Debugger;
 using AquaAudio;
+using ScriptableBake;
 
 namespace Aqua.Shop {
-    public class ShopCameraCtrl : MonoBehaviour, IBakedComponent, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
+    public class ShopCameraCtrl : MonoBehaviour, IBaked, IScenePreloader, ISceneLoadHandler, ISceneUnloadHandler {
         static public readonly StringHash32 BelowEntrance = "station";
         static public readonly StringHash32 ShipEntrance = "ship";
         static public readonly StringHash32 ExitEntrance = "shop";
@@ -41,24 +42,25 @@ namespace Aqua.Shop {
         #region Routines
 
         private IEnumerator EnterAnimation() {
-            Services.Input.PauseAll();
-            Services.UI.ShowLetterbox();
-            yield return 0.2f;
-            yield return Services.Camera.MoveToPose(m_BasePose, 1.5f, Curve.Smooth);
-            Services.Camera.AddShake(new Vector2(0, 0.1f), new Vector2(0.1f, 0.1f), 0.25f);
-            yield return 0.1f;
-            OnShopReady(false);
-            Services.UI.HideLetterbox();
-            Services.Input.ResumeAll();
+            using(Script.DisableInput()) {
+                Services.UI.ShowLetterbox();
+                yield return 0.2f;
+                yield return Services.Camera.MoveToPose(m_BasePose, 1.5f, Curve.Smooth);
+                Services.Camera.AddShake(new Vector2(0, 0.1f), new Vector2(0.1f, 0.1f), 0.25f);
+                yield return 0.1f;
+                OnShopReady(false);
+                Services.UI.HideLetterbox();
+                Services.Input.ResumeAll();
+            }
             yield return m_CurrencyGroup.Show(0.2f);
         }
 
         private IEnumerator SelectTableAnimation(ShopTable table) {
             Services.Data.SetVariable("shop:table", table.Id);
-            Services.Input.PauseAll();
-            yield return Services.Camera.MoveToPosition(table.CameraPose.transform.position, null, 0.3f, Curve.CubeOut, Axis.X);
-            yield return Services.Camera.MoveToPose(table.CameraPose, 0.2f, Curve.Smooth);
-            Services.Input.ResumeAll();
+            using(Script.DisableInput()) {
+                yield return Services.Camera.MoveToPosition(table.CameraPose.transform.position, null, 0.3f, Curve.CubeOut, Axis.X);
+                yield return Services.Camera.MoveToPose(table.CameraPose, 0.2f, Curve.Smooth);
+            }
             using(var scriptTable = TempVarTable.Alloc()) {
                 scriptTable.Set("tableId", table.Id);
                 Services.Script.TriggerResponse(Trigger_ShopViewTable, scriptTable);
@@ -67,10 +69,10 @@ namespace Aqua.Shop {
 
         private IEnumerator DeselectTableAnimation() {
             Services.Data.SetVariable("shop:table", null);
-            Services.Input.PauseAll();
-            yield return Services.Camera.MoveToPose(m_BasePose, 0.2f, Curve.Smooth, CameraPoseProperties.Position | CameraPoseProperties.Height, Axis.Y);
-            yield return Services.Camera.MoveToPose(m_BasePose, 0.3f, Curve.CubeOut);
-            Services.Input.ResumeAll();
+            using(Script.DisableInput()) {
+                yield return Services.Camera.MoveToPose(m_BasePose, 0.2f, Curve.Smooth, CameraPoseProperties.Position | CameraPoseProperties.Height, Axis.Y);
+                yield return Services.Camera.MoveToPose(m_BasePose, 0.3f, Curve.CubeOut);
+            }
         }
 
         private IEnumerator ExitAnimation(ScriptThreadHandle inCutscene) {
@@ -109,7 +111,7 @@ namespace Aqua.Shop {
             PointerListener.TryGetComponentUserData<ShopTable>(eventData, out ShopTable table);
             m_SelectedTable = table;
             m_Shopkeeper.SetTable(table);
-            Routine.Start(this, SelectTableAnimation(table)).TryManuallyUpdate(0);
+            Routine.Start(this, SelectTableAnimation(table)).Tick();
             SetTablesSelectable(false);
             m_Stock.SetItemsSelectable(true);
         }
@@ -118,7 +120,7 @@ namespace Aqua.Shop {
             if (m_SelectedTable != null) {
                 m_SelectedTable = null;
                 m_Shopkeeper.SetTable(null);
-                Routine.Start(this, DeselectTableAnimation()).TryManuallyUpdate(0);
+                Routine.Start(this, DeselectTableAnimation()).Tick();
                 SetTablesSelectable(true);
                 m_Stock.SetItemsSelectable(false);
             } else {
@@ -158,7 +160,7 @@ namespace Aqua.Shop {
                 Services.Camera.SnapToPose(m_OffscreenPose);
                 m_CurrencyGroup.Hide();
                 m_EnterExitAnim = Routine.Start(this, EnterAnimation());
-                m_EnterExitAnim.TryManuallyUpdate(0);
+                m_EnterExitAnim.Tick();
             } else {
                 OnShopReady(true);
             }
@@ -172,8 +174,11 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake() {
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
             m_Tables = FindObjectsOfType<ShopTable>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

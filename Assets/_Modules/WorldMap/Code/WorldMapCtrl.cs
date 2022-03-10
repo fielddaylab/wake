@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using Aqua.Profile;
 using BeauRoutine;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua.WorldMap
 {
-    public class WorldMapCtrl : MonoBehaviour, IScenePreloader, IBakedComponent
+    public class WorldMapCtrl : MonoBehaviour, IScenePreloader, IBaked
     {
         static public readonly StringHash32 Event_RequestChangeStation = "worldmap:request-change-station"; // StringHash32 stationId
 
@@ -48,7 +49,7 @@ namespace Aqua.WorldMap
 
         private void OnShipOutClicked()
         {
-            Routine.Start(this, ShipoutSequence()).TryManuallyUpdate(0);
+            Routine.Start(this, ShipoutSequence()).Tick();
         }
 
         private IEnumerator ShipoutSequence()
@@ -110,11 +111,14 @@ namespace Aqua.WorldMap
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             List<StationButton> stations = new List<StationButton>();
             SceneHelper.ActiveScene().Scene.GetAllComponents<StationButton>(stations);
             m_AllStations = stations.ToArray();
+            return true;
         }
 
         #endif // UNITY_EDITOR

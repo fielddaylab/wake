@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Character
 {
-    public class SpawnLocationMap : MonoBehaviour, IBakedComponent
+    public class SpawnLocationMap : MonoBehaviour, IBaked
     {
         [SerializeField, HideInInspector] private SpawnLocation[] m_Locations;
 
@@ -34,11 +35,15 @@ namespace Aqua.Character
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             List<SpawnLocation> locations = new List<SpawnLocation>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<SpawnLocation>(true, locations);
             m_Locations = locations.ToArray();
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

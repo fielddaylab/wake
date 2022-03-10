@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using BeauUtil;
 using Aqua.Character;
+using ScriptableBake;
 
 namespace Aqua.StationMap
 {
-    public class DiveSiteMap : MonoBehaviour, ISceneLoadHandler, IBakedComponent
+    public class DiveSiteMap : MonoBehaviour, ISceneLoadHandler, IBaked
     {
-        [SerializeField, HideInInspector] private PlayerController m_Player = null;
         [SerializeField, HideInInspector] private DiveSite[] m_DiveSites;
 
         public void OnSceneLoad(SceneBinding inScene, object inContext)
@@ -28,12 +28,14 @@ namespace Aqua.StationMap
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             List<DiveSite> diveSites = new List<DiveSite>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);
             m_DiveSites = diveSites.ToArray();
-            m_Player = FindObjectOfType<PlayerController>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

@@ -11,6 +11,7 @@ using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
 using UnityEditor.SceneManagement;
 using Aqua.Debugging;
+using ScriptableBake;
 
 namespace Aqua.Editor
 {
@@ -26,8 +27,7 @@ namespace Aqua.Editor
             LoadSubscenes(scene);
             RemoveBootstrap(scene);
             RemoveDebug(scene);
-            Flatten(scene);
-            Bake(scene);
+            BakeScene(scene);
             if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
             {
                 StripEditorInfo(scene);
@@ -88,39 +88,11 @@ namespace Aqua.Editor
             }
         }
 
-        static private void Flatten(Scene scene)
+        static private void BakeScene(Scene scene)
         {
-            List<FlattenHierarchy> allFlatten = new List<FlattenHierarchy>(64);
-            scene.GetAllComponents<FlattenHierarchy>(true, allFlatten);
-            if (allFlatten.Count > 0)
+            using(Profiling.Time("baking objects"))
             {
-                Debug.LogFormat("[SceneProcessor] Flattening {0} transform hierarchies in scene '{1}'...", allFlatten.Count, scene.name);
-                using(Profiling.Time("flatten scene hierarchy"))
-                {
-                    foreach(var flatten in allFlatten)
-                    {
-                        Debug.LogFormat("[SceneProcessor] ...flattening '{0}'", flatten.ToString());
-                        flatten.Flatten();
-                    }
-                }
-            }
-        }
-
-        static private void Bake(Scene scene)
-        {
-            List<IBakedComponent> allBaked = new List<IBakedComponent>();
-            scene.GetAllComponents<IBakedComponent>(true, allBaked);
-            if (allBaked.Count > 0)
-            {
-                Debug.LogFormat("[SceneProcessor] Baking {0} objects scene '{1}'...", allBaked.Count, scene.name);
-                using(Profiling.Time("baking objects"))
-                {
-                    foreach(var optimizable in allBaked)
-                    {
-                        Debug.LogFormat("[SceneProcessor] ...baking {0}", optimizable.ToString());
-                        optimizable.Bake();
-                    }
-                }
+                Bake.Scene(scene, BakeFlags.Verbose);
             }
         }
 

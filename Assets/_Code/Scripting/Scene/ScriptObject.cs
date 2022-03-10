@@ -123,6 +123,16 @@ namespace Aqua
 
         #endregion // IPoolAllocHandler
 
+        #if UNITY_EDITOR
+
+        private void Reset() {
+            if (m_Id.IsEmpty) {
+                m_Id = Guid.NewGuid().ToString();
+            }
+        }
+
+        #endif // UNITY_EDITOR
+
         static public ScriptThreadHandle Inspect(ScriptObject inObject)
         {
             Assert.NotNull(inObject);

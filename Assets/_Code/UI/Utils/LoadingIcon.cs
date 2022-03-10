@@ -50,12 +50,12 @@ namespace Aqua {
             if (active) {
                 m_ActiveCount++;
                 if (m_ActiveCount == 1) {
-                    m_DisplayRoutine.Replace(this, Show()).TryManuallyUpdate(0);
+                    m_DisplayRoutine.Replace(this, Show()).Tick();
                 }
             } else if (m_ActiveCount > 0) {
                 m_ActiveCount--;
                 if (m_ActiveCount == 0) {
-                    m_DisplayRoutine.Replace(this, Complete()).TryManuallyUpdate(0);
+                    m_DisplayRoutine.Replace(this, Complete()).Tick();
                 }
             }
         }

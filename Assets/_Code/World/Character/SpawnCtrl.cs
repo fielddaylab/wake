@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using BeauUtil;
 using Aqua.Character;
+using ScriptableBake;
 
 namespace Aqua.Character
 {
     [RequireComponent(typeof(SpawnLocationMap))]
-    public class SpawnCtrl : MonoBehaviour, ISceneLoadHandler, IBakedComponent
+    public class SpawnCtrl : MonoBehaviour, ISceneLoadHandler, IBaked
     {
         [SerializeField, HideInInspector] private PlayerBody m_Player = null;
         [SerializeField, HideInInspector] private SpawnLocationMap m_Spawns;
@@ -22,10 +23,14 @@ namespace Aqua.Character
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_Player = FindObjectOfType<PlayerBody>();
             m_Spawns = GetComponent<SpawnLocationMap>();
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

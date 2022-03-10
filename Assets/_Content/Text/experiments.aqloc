@@ -45,14 +45,39 @@ Add Organisms
 :: summary.noFacts
 New observations are more likely to occur if you place new combinations of organisms into the tank together.
 
+:: summary.missedFacts
+If you're not careful, an organism will exhaust its food supply before you have a chance to observe it eating.
+
+:: summary.deadOrganisms
+Some organisms died as a result of the water settings. Make sure your organisms can survive before running your experiment.
+
+:: summary.singleOrganism
+New observations are more likely to occur if you place more than one type of organism into the tank.
+
+:: summary.deadMatter
+Non-living matter cannot be tested in isolation.
+
+:: summary.deadMatterPair
+Eating interactions can only occur if one of the organisms in the tank is living.
+
+:: summary.eatNeedsObserveFirst
+Eating interactions must be observed in the {nameof ObservationTank} before they can be measured.
+
+:: summary.noteHeader
+<b>Note:</b><margin-left=1.5em>
+{0}
+
+:: summary.noInteractionHeader
+<b>No Interactions Discovered</b>
+
+<b>Note:</b><margin-left=1.5em>
+{0}
+
 :: summary.header
 Experiment Results
 
-:: summary.hint
-Note:
-
-:: summary.header.noFacts
-No New Information
+:: summary.header.fail
+Experiment Inconclusive
 
 :: summary.measure.repro
 Reproduction Rate Instructions
@@ -72,6 +97,9 @@ Eating Rate Instructions
 - Turn on {nameof WaterStabilizer}
 - Add two Organism Types
 
+:: button.measure
+Perform Measurements
+
 # basePath experiment.stress
 
 # basePath experiment.observation
@@ -80,66 +108,6 @@ Eating Rate Instructions
 New Behavior Discovered!
 
 # basePath experiment.measure
-
-:: feedback.dead
-Dead organisms
-
-:: feedback.isDeadMatter
-Dead matter
-
-:: feedback.header.all
-Results Unavailable
-
-:: feedback.header.repro
-Reproduction Rates
-
-:: feedback.header.reproFail
-Reproduction Rates Unavailable
-
-:: feedback.header.eat
-Eating Rates
-
-:: feedback.header.eatFail
-Eating Rates Unavailable
-
-:: feedback.header.water
-Water Interactions
-
-:: feedback.header.waterFail
-Water Interactions Unavailable
-
-:: feedback.moreThanOne
-More than one species present
-
-:: feedback.moreThanTwo
-More than two species present
-
-:: feedback.lessThanTwo
-Less than two species present
-
-:: feedback.feederOn
-Auto-Feeder enabled
-
-:: feedback.feederOff
-Auto-Feeder disabled
-
-:: feedback.stabilizerOn
-Tank Stabilizer enabled
-
-:: feedback.stabilizerOff
-Tank Stabilizer disabled
-
-:: feedback.noRelationship
-Relationship between species is undocumented
-
-:: feedback.noRepro
-Organism does not reproduce
-
-:: feedback.noWaterChem
-Organism does not affect water chemistry
-
-:: feedback.cannotMeasureWaterChem
-Could not measure water chemistry
 
 :: stabilizer.malfunction
 MALFUNCTION: Cannot be deactivated
@@ -160,4 +128,19 @@ The Auto-Feeder dispenses a nutrient-dense food system to ensure maximum organis
 
 :: autoFeeder.malfunction
 MALFUNCTION: Cannot be activated
+
+:: analyzing
+Analyzing tank configuration...
+
+:: unknownVar
+ERROR: Unable to isolate variable
+
+:: reproVar
+Isolated: Reproduction rates
+
+:: chemVar
+Isolated: Water Chemistry interactions
+
+:: eatVar
+Isolated: Eating rates
 

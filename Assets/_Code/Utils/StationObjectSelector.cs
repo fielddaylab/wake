@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class StationObjectSelector : MonoBehaviour, IScenePreloader, IBakedComponent
+    public class StationObjectSelector : MonoBehaviour, IScenePreloader, IBaked
     {
         public GameObject KelpStation;
         public GameObject CoralStation;
@@ -30,7 +31,9 @@ namespace Aqua.Ship
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake() {
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
             if (KelpStation)
                 KelpStation.SetActive(false);
             if (CoralStation)
@@ -39,6 +42,8 @@ namespace Aqua.Ship
                 BayouStation.SetActive(false);
             if (ArcticStation)
                 ArcticStation.SetActive(false);
+
+            return true;
         }
 
         #endif // UNITY_EDITOR
