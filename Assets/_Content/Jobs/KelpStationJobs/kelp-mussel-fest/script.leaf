@@ -70,19 +70,21 @@ $branch .argue.reasonStress
 $if ArgueIsComplete(musselFestReasonStress)
 	{@drKelp}	So. We've already established the stress ranges for the mussels.
 	$branch .argue.reasonChemistry
+$else
+	$call ArgueLoad(musselFestReasonStress)
+	$if ArgueSetClaim(musselFestReasonStressClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonStress)
+				$call ArgueFactSlot(Mussel.Temperature.Stressed)
+				$call ArgueFactSlot(Mussel.Light.Stressed)
+				$call ArgueFactSlot(Mussel.PH.Stressed)
+	$endif
+	$call ArgueDisplayClaim()
+	{@drKelp}	What were the stress ranges for the mussels?
+		$choice #argueFactSet; Present facts from AQOS
+				$answer correct, .argue.correctFactsReasonStress
+				$answer incorrect, .argue.incorrectFactsReasonStress
+		$choice .argue.giveUp; Let me get back to you
 $endif
-$call ArgueLoad(musselFestReasonStress)
-$if ArgueSetClaim(musselFestReasonStressClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonStress)
-			$call ArgueFactSlot(Mussel.Temperature.Stressed)
-			$call ArgueFactSlot(Mussel.Light.Stressed)
-			$call ArgueFactSlot(Mussel.PH.Stressed)
-$endif
-$call ArgueDisplayClaim()
-{@drKelp}	What were the stress ranges for the mussels?
-	$choice #argueFactSet; Present facts from AQOS
-			$answer correct, .argue.correctFactsReasonStress
-			$answer incorrect, .argue.incorrectFactsReasonStress
-	$choice .argue.giveUp; Let me get back to you
+
 
 :: argue.correctFactsReasonStress
 // how explicit do we want to be here? These numbers may change...
@@ -103,20 +105,21 @@ $branch .argue.reasonStress
 $if ArgueIsComplete(musselFestReasonChemistry)
 	{@drKelp}	We've talked about the temperature, pH, and light at the site.
 	$branch .argue.chooseClaim
+$else
+	$call ArgueLoad(musselFestReasonChemistry)
+	$if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
+				$call ArgueFactSlot(WarmKelpForest.Temperature.History)
+				$call ArgueFactSlot(WarmKelpForest.LightHistory)
+				$call ArgueFactSlot(WarmKelpForest.PH.History)
+	$endif
+	$call ArgueDisplayClaim()
+	{@drKelp}	How about the site?
+	{@drKelp}	What are the temperature, pH, and light conditions there?
+		$choice #argueFactSet; Present facts from AQOS
+				$answer correct, .argue.correctFactsReasonChemistry
+				$answer incorrect, .argue.incorrectFactsReasonChemistry
+		$choice .argue.giveUp; Let me get back to you
 $endif
-$call ArgueLoad(musselFestReasonChemistry)
-$if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
-			$call ArgueFactSlot(WarmKelpForest.Temperature.History)
-			$call ArgueFactSlot(WarmKelpForest.LightHistory)
-			$call ArgueFactSlot(WarmKelpForest.PH.History)
-$endif
-$call ArgueDisplayClaim()
-{@drKelp}	How about the site?
-{@drKelp}	What are the temperature, pH, and light conditions there?
-	$choice #argueFactSet; Present facts from AQOS
-			$answer correct, .argue.correctFactsReasonChemistry
-			$answer incorrect, .argue.incorrectFactsReasonChemistry
-	$choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsReasonChemistry
 {@drKelp}	Okay, so Site C has maintained a temperature of about 21 C, has 100% light, and has a pH of 8.1.
@@ -145,8 +148,6 @@ $choose branch
 
 ::argue.lightOrPHStress
 {@drKelp}	I'm not seeing that connection based on the data we just discussed.
-$call	ArgueRejectIncorrect()
-$call 	ArgueClearFacts()
 $branch .argue.chooseClaim
 
 ::argue.tempStress
@@ -157,7 +158,6 @@ $call CompleteJob()
 
 :: argue.giveUp
 {@drKelp} OK. Get back to me when you're ready.
-$call ArgueClearFacts()
 
 // END
 
