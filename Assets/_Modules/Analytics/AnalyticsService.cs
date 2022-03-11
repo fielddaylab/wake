@@ -657,8 +657,6 @@ namespace Aqua
 
         private void LogScriptFired(string nodeId)
         {
-            Debug.Log($"BEAVER {nodeId}");
-
             #if FIREBASE
             FBScriptFired(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
