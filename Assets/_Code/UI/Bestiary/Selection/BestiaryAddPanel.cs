@@ -6,12 +6,13 @@ using Aqua.Profile;
 using BeauPools;
 using BeauRoutine.Extensions;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua
 {
-    public class BestiaryAddPanel : BasePanel, IBakedComponent
+    public class BestiaryAddPanel : BasePanel, IBaked
     {
         #region Types
 
@@ -45,6 +46,7 @@ namespace Aqua
         public Action<BestiaryDesc> OnAdded;
         public Action<BestiaryDesc> OnRemoved;
         public Action OnCleared;
+        public Action OnUpdated;
 
         #region Unity Events
 
@@ -98,6 +100,11 @@ namespace Aqua
         #endregion // BasePanel
 
         #region Selected Set
+
+        public BestiaryDescCategory Category
+        {
+            get { return m_Category; }
+        }
 
         public IReadOnlyCollection<BestiaryDesc> Selected
         {
@@ -165,6 +172,7 @@ namespace Aqua
                     m_CurrentDisplay.Display(0);
                 }
                 OnCleared?.Invoke();
+                OnUpdated?.Invoke();
                 return true;
             }
 
@@ -254,6 +262,7 @@ namespace Aqua
                 }
 
                 OnAdded?.Invoke(inCritter);
+                OnUpdated?.Invoke();
             }
             else if (!inbOn && m_SelectedSet.Remove(inCritter))
             {
@@ -268,6 +277,7 @@ namespace Aqua
                 }
 
                 OnRemoved?.Invoke(inCritter);
+                OnUpdated?.Invoke();
             }
         }
 
@@ -281,11 +291,13 @@ namespace Aqua
 
         #endregion // Population
 
-        #region ISceneOptimizable
+        #region IBaked
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             if (m_CurrentDisplay) {
                 m_CurrentDisplay.Display(0);
@@ -293,11 +305,13 @@ namespace Aqua
             
             if (m_MaxAllowed > 1)
                 m_ToggleGroup = null;
+
+            return true;
         }
 
         #endif // UNITY_EDITOR
 
-        #endregion // ISceneOptimizable
+        #endregion // IBaked
 
         static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, Predicate<BestiaryDesc> inFilter, ICollection<BestiaryDesc> outCritters)
         {

@@ -148,6 +148,10 @@ namespace Aqua.Portable {
                 m_ListPools.PrewarmEntries(entities.Count);
 
                 foreach (var entry in entities) {
+                    if (entry.HasFlags(BestiaryDescFlags.HideInBestiary)) {
+                        continue;
+                    }
+                    
                     if (mapId != entry.StationId()) {
                         mapId = entry.StationId();
                         PortableStationHeader header = m_ListPools.AllocHeader(m_ListObjectRoot);

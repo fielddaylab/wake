@@ -14,6 +14,7 @@ static public class JobIds
 	static public readonly StringHash32 Kelp_welcome = new StringHash32(0x92603728);
 	static public readonly StringHash32 Kelp_refuge_failure = new StringHash32(0xA9C5D9D3);
 	static public readonly StringHash32 Kelp_mussel_fest = new StringHash32(0xE6B6CBE6);
+	static public readonly StringHash32 Musselfest_solution = new StringHash32(0xF3674C2A);
 	static public readonly StringHash32 Coral_urchin_friends = new StringHash32(0x05B98BBE);
 	static public readonly StringHash32 Coral_turtle_stability = new StringHash32(0x0DCB739D);
 	static public readonly StringHash32 Coral_stressed = new StringHash32(0x2DB0F634);
@@ -22,6 +23,11 @@ static public class JobIds
 	static public readonly StringHash32 Coral_ocean_plastics = new StringHash32(0x95516B0D);
 	static public readonly StringHash32 Coral_casting_shade = new StringHash32(0xC3AFF6BA);
 	static public readonly StringHash32 Coral_turtle_population = new StringHash32(0xEE7D2D39);
+	static public readonly StringHash32 Reef_decision = new StringHash32(0x15510D18);
+	static public readonly StringHash32 Hide_n_seek = new StringHash32(0x43AB9A71);
+	static public readonly StringHash32 Turtle_danger = new StringHash32(0x720AABC5);
+	static public readonly StringHash32 Displaced_reef = new StringHash32(0x72DB0EAF);
+	static public readonly StringHash32 Turtle_danger2 = new StringHash32(0x7DCCB5D5);
 	static public readonly StringHash32 Bayou_oxygen_tracking = new StringHash32(0xADC978AC);
 	static public readonly StringHash32 Bayou_shrimp_tastrophe = new StringHash32(0xDFEDE55E);
 	static public readonly StringHash32 Bayou_save_our_shrimp = new StringHash32(0xED435E90);
@@ -42,6 +48,7 @@ static public class JobIds
 		Kelp_welcome,
 		Kelp_refuge_failure,
 		Kelp_mussel_fest,
+		Musselfest_solution,
 		Coral_urchin_friends,
 		Coral_turtle_stability,
 		Coral_stressed,
@@ -50,6 +57,11 @@ static public class JobIds
 		Coral_ocean_plastics,
 		Coral_casting_shade,
 		Coral_turtle_population,
+		Reef_decision,
+		Hide_n_seek,
+		Turtle_danger,
+		Displaced_reef,
+		Turtle_danger2,
 		Bayou_oxygen_tracking,
 		Bayou_shrimp_tastrophe,
 		Bayou_save_our_shrimp,

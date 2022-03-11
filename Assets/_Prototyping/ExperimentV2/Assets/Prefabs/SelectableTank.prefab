@@ -9747,7 +9747,7 @@ GameObject:
   - component: {fileID: 3298672753179789021}
   - component: {fileID: 1803464575436108733}
   m_Layer: 0
-  m_Name: EmojiEmitter
+  m_Name: StressParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9761,7 +9761,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5197933837821934876}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.4, z: 15}
+  m_LocalPosition: {x: 0, y: 7.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5658402726592250909}
@@ -9781,7 +9781,7 @@ ParticleSystem:
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
@@ -14926,7 +14926,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Recursive: 0
-  DestroyGameObject: 1
+  DestroyGameObject: 0
 --- !u!1 &5658402726392110045
 GameObject:
   m_ObjectHideFlags: 0
@@ -15065,6 +15065,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5658402726592250909}
   - component: {fileID: 5658402726592250882}
+  - component: {fileID: 5480359328617415679}
   m_Layer: 0
   m_Name: SelectableTank
   m_TagString: Untagged
@@ -15118,6 +15119,7 @@ MonoBehaviour:
   Bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  Controller: {fileID: 0}
   Clickable: {fileID: 5658402725423626008}
   InteractionHint: {fileID: 5658402725423626009}
   Interface: {fileID: 9198764345568192979}
@@ -15135,8 +15137,25 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
-  m_Emojis: {fileID: 3298672753179789021}
-  ActorAllocator: {fileID: 0}
+  EmojiEmitters:
+  - {fileID: 3298672753179789021}
+  EmojiIds: []
+  ActorBehavior: {fileID: 5480359328617415679}
+  AllScreens: []
+--- !u!114 &5480359328617415679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5658402726592250908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33f2b421558a1ff449847dfc1a4892ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Tank: {fileID: 5658402726592250882}
+  m_Allocator: {fileID: 0}
 --- !u!1 &5658402726611752036
 GameObject:
   m_ObjectHideFlags: 0
@@ -15436,7 +15455,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7387642083516830211}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalPosition: {x: 0, y: 0, z: -1.6}
   m_LocalScale: {x: 0.008928572, y: 0.008928572, z: 1}
   m_Children: []
   m_Father: {fileID: 5658402726592250909}

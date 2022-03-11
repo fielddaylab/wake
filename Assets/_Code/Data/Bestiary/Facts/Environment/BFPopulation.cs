@@ -46,7 +46,7 @@ namespace Aqua
             TextId format = PopulationSentence;
             if (fact.Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
                 format = PopulationHerdSentence;
-            details.Description = Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Parent, fact.Value), fact.Critter.PluralCommonName(), BestiaryUtils.LocationLabel(fact.Parent));
+            details.Description = Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Critter, fact.Value), fact.Critter.PluralCommonName(), BestiaryUtils.LocationLabel(fact.Parent));
 
             return details;
         }

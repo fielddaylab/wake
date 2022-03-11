@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using BeauUtil;
 using UnityEngine;
+using ScriptableBake;
 
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Inventory Database", fileName = "InventoryDB")]
-    public class InventoryDB : DBObjectCollection<InvItem>, IBakedAsset
+    public class InventoryDB : DBObjectCollection<InvItem>, IBaked
     {
         [SerializeField, HideInInspector] private int m_CurrencyCount;
         [SerializeField, HideInInspector] private int m_UpgradeCount;
@@ -59,9 +60,9 @@ namespace Aqua
             return x.Id().CompareTo(y.Id());
         };
 
-        int IBakedAsset.Order { get { return 0; } }
+        int IBaked.Order { get { return 0; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             SortObjects(SortByCategory);
 

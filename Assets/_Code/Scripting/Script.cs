@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using BeauPools;
 using BeauRoutine;
@@ -38,6 +39,7 @@ namespace Aqua {
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
             using(PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
+                allFacts.Sort(BFType.SortByVisualOrder);
                 if (entity.Category() == BestiaryDescCategory.Critter) {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
@@ -83,6 +85,24 @@ namespace Aqua {
                     details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton, options
                 );
             }
+        }
+
+        static public void OnSceneLoad(Action action) {
+            Services.State.OnLoad(action);
+        }
+
+        static public IDisposable DisableInput() {
+            Services.Input.PauseAll();
+            return new CallOnDispose(() => Services.Input?.ResumeAll());
+        }
+
+        static public IDisposable Letterbox() {
+            Services.UI.ShowLetterbox();
+            return new CallOnDispose(() => Services.UI?.HideLetterbox());
+        }
+
+        static public void Tick(this Routine routine) {
+            routine.TryManuallyUpdate(0);
         }
     }
 }

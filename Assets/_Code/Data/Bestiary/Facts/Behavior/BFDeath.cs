@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -38,7 +39,7 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        public override bool Bake()
+        public override bool Bake(BakeFlags flags)
         {
             if (OnlyWhenStressed)
             {

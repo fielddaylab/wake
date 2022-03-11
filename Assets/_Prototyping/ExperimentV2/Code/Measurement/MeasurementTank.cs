@@ -12,17 +12,6 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2 {
     public class MeasurementTank : MonoBehaviour {
-        static public readonly TextId FeedbackCategory_All = "experiment.measure.feedback.header.all";
-        static public readonly TextId FeedbackCategory_ReproFailure = "experiment.measure.feedback.header.reproFail";
-        static public readonly TextId FeedbackCategory_Repro = "experiment.measure.feedback.header.repro";
-        static public readonly TextId FeedbackCategory_EatFailure = "experiment.measure.feedback.header.eatFail";
-        static public readonly TextId FeedbackCategory_Eat = "experiment.measure.feedback.header.eat";
-        static public readonly TextId FeedbackCategory_WaterFailure = "experiment.measure.feedback.header.waterFail";
-        static public readonly TextId FeedbackCategory_Water = "experiment.measure.feedback.header.water";
-
-        static public readonly TextId NextButton_Critters = "experiment.button.addOrganism";
-        static public readonly TextId NextButton_Features = "experiment.button.features";
-
         [Flags]
         public enum FeatureMask {
             Stabilizer = 0x01,
@@ -35,7 +24,15 @@ namespace ProtoAqua.ExperimentV2 {
             Begin,
             Environment,
             Critters,
-            Features
+            Features,
+            Run
+        }
+
+        public enum IsolatedVariable {
+            Unknown,
+            Eating,
+            Reproduction,
+            Chemistry
         }
 
         #region Inspector
@@ -43,409 +40,251 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required(ComponentLookupDirection.Self)] private SelectableTank m_ParentTank = null;
 
         [Header("Setup")]
-        [SerializeField, Required] private Button m_BeginButton = null;
-        [SerializeField, Required] private CanvasGroup m_SetupPanelGroup = null;
-        [SerializeField, Required] private BestiaryAddPanel m_SelectEnvPanel = null;
-        [SerializeField, Required] private Button m_BackButton = null;
-        [SerializeField, Required] private Button m_NextButton = null;
-        [SerializeField, Required] private LocText m_NextButtonLabel = null;
-        [SerializeField, Required] private BestiaryAddPanel m_AddCrittersPanel = null;
+        [SerializeField, Required] private ExperimentHeaderUI m_HeaderUI = null;
+        [SerializeField, Required] private ExperimentScreen m_BeginScreen = null;
+        [SerializeField, Required] private ExperimentScreen m_EnvironmentScreen = null;
+        [SerializeField, Required] private ExperimentScreen m_OrganismScreen = null;
+        [SerializeField, Required] private ExperimentScreen m_FeatureScreen = null;
         [SerializeField, Required] private MeasurementFeaturePanel m_FeaturePanel = null;
-        [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
-        [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
-        [SerializeField, Required] private Button m_RunButton = null;
+        // [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
+        // [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
 
-        [Header("Summary")]
-        [SerializeField] private SummaryPanel m_SummaryPanel = null;
-        [SerializeField] private TextId m_EatingHintId = default;
-        [SerializeField] private TextId m_ReproHintId = default;
-        [SerializeField] private TextId m_WaterHintId = default;
+        [Header("In Progress")]
+        [SerializeField, Required] private ExperimentScreen m_InProgressScreen = null;
+        [SerializeField, Required] private LocText m_InProgressAnalysisLabel = null;
+        [SerializeField, Required] private Graphic m_InProgressMeter = null;
+        [SerializeField, Required] private Graphic m_InProgressMeterFlash = null;
+        [SerializeField] private ColorPalette2 m_InProgressAnalyzingColors = default;
+        [SerializeField] private ColorPalette2 m_InProgressSuccessColors = default;
+        [SerializeField] private ColorPalette2 m_InProgressFailureColors = default;
 
         #endregion // Inspector
 
+        [NonSerialized] private ActorWorld m_World;
         [NonSerialized] private SetupPhase m_SetupPhase;
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
-        [NonSerialized] private ActorWorld m_World;
 
-        [NonSerialized] private Routine m_DrainRoutine;
+        [NonSerialized] private RunningExperimentData m_ExperimentData;
+        [NonSerialized] private float m_Progress = 0;
 
         private void Awake() {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
-            m_ParentTank.HasCritter = (s) => m_AddCrittersPanel.IsSelected(Assets.Bestiary(s));
+            m_ParentTank.HasCritter = (s) => m_OrganismScreen.Panel.IsSelected(Assets.Bestiary(s));
             m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
 
-            m_AddCrittersPanel.OnAdded = OnCritterAdded;
-            m_AddCrittersPanel.OnRemoved = OnCritterRemoved;
-            m_AddCrittersPanel.OnCleared = OnCrittersCleared;
+            m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
+            m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
+            m_EnvironmentScreen.Panel.OnCleared += OnEnvironmentCleared;
 
-            m_SelectEnvPanel.OnAdded = OnEnvironmentAdded;
-            m_SelectEnvPanel.OnRemoved = OnEnvironmentRemoved;
-            m_SelectEnvPanel.OnCleared = OnEnvironmentCleared;
+            // m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
+            m_FeatureScreen.OnReset += (s, w) => m_FeaturePanel.ClearSelection();
 
-            m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
+            m_BeginScreen.CustomButton.onClick.AddListener(OnNextClick);
+            m_HeaderUI.NextButton.onClick.AddListener(OnNextClick);
+            m_HeaderUI.BackButton.onClick.AddListener(OnBackClick);
+            m_InProgressScreen.CustomButton.onClick.AddListener(OnFinishClick);
 
-            ToggleableTankFeature.Disable(m_StabilizerFeature, true);
-            ToggleableTankFeature.Disable(m_FeederFeature, true);
-
-            m_BeginButton.onClick.AddListener(OnBeginClick);
-            m_NextButton.onClick.AddListener(OnNextClick);
-            m_BackButton.onClick.AddListener(OnBackClick);
-            m_RunButton.onClick.AddListener(OnRunClicked);
-            
-            m_SummaryPanel.Button.onClick.AddListener(OnSummaryCloseClick);
-        }
-
-        private void OnDestroy() {
-            Services.Events?.DeregisterAll(this);
+            m_InProgressScreen.OnOpen = m_InProgressScreen.OnReset = (s, w) => {
+                ApplyProgressMeterStyle("experiment.measure.analyzing", m_InProgressAnalyzingColors);
+                ApplyProgressMeterProgress(0);
+                m_Progress = 0;
+                m_InProgressMeterFlash.gameObject.SetActive(false);
+                s.CustomButton.interactable = false;
+            };
         }
 
         #region Tank
 
         private void Activate() {
-            if (m_World == null) {
-                m_World = new ActorWorld(m_ParentTank.ActorAllocator, m_ParentTank.Bounds, null, null, 16, this);
-            }
-
-            m_SetupPanelGroup.Hide();
-
-            m_BeginButton.gameObject.SetActive(true);
-            m_DrainRoutine.Stop();
+            m_World = m_ParentTank.ActorBehavior.World;
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
-
-            ToggleableTankFeature.Disable(m_StabilizerFeature, true);
-            ToggleableTankFeature.Disable(m_FeederFeature, true);
-
             m_SetupPhase = SetupPhase.Begin;
+            ExperimentScreen.Transition(m_BeginScreen, m_World);
+            m_ExperimentData = null;
         }
 
         private void Deactivate() {
-            m_AddCrittersPanel.Hide();
-            m_AddCrittersPanel.ClearSelection();
-
-            m_SelectEnvPanel.Hide();
-            m_SelectEnvPanel.ClearSelection();
-
-            m_FeaturePanel.Hide();
-            m_FeaturePanel.ClearSelection();
-
-            if (m_SummaryPanel.gameObject.activeSelf) {
-                m_SummaryPanel.gameObject.SetActive(false);
-                m_SummaryPanel.FactPools.FreeAll();
-            }
-
             if (m_ParentTank.WaterFillProportion > 0) {
-                m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
+                m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
             }
-
-            ToggleableTankFeature.Disable(m_StabilizerFeature, true);
-            ToggleableTankFeature.Disable(m_FeederFeature, true);
 
             m_ParentTank.CurrentState = 0;
+            m_ExperimentData = null;
         }
 
         #endregion // Tank
-
-        #region Critter Callbacks
-
-        private void OnCritterAdded(BestiaryDesc inDesc) {
-            ActorWorld.AllocWithDefaultCount(m_World, inDesc.Id());
-            m_NextButton.interactable = true;
-            Services.Events.Dispatch(ExperimentEvents.ExperimentAddCritter, inDesc.Id());
-        }
-
-        private void OnCritterRemoved(BestiaryDesc inDesc) {
-            ActorWorld.FreeAll(m_World, inDesc.Id());
-            m_NextButton.interactable = m_World.Actors.Count > 0;
-            Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveCritter, inDesc.Id());
-        }
-
-        private void OnCrittersCleared() {
-            ActorWorld.FreeAll(m_World);
-            m_NextButton.interactable = false;
-            Services.Events.Dispatch(ExperimentEvents.ExperimentCrittersCleared);
-        }
-
-        #endregion // Critter Callbacks
 
         #region Environment Callbacks
 
         private void OnEnvironmentAdded(BestiaryDesc inDesc) {
             m_SelectedEnvironment = inDesc;
-            ActorWorld.SetWaterState(m_World, inDesc.GetEnvironment());
-            m_NextButton.interactable = true;
+            m_ParentTank.ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
-            Services.Events.Dispatch(ExperimentEvents.ExperimentAddEnvironment, inDesc.Id());
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null)) {
-                m_NextButton.interactable = false;
-                ActorWorld.SetWaterState(m_World, null);
+                m_ParentTank.ActorBehavior.ClearEnvState();
                 m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
-                Services.Events.Dispatch(ExperimentEvents.ExperimentRemoveEnvironment, inDesc.Id());
             }
         }
 
         private void OnEnvironmentCleared() {
             m_SelectedEnvironment = null;
-            ActorWorld.SetWaterState(m_World, null);
-            m_NextButton.interactable = false;
+            m_ParentTank.ActorBehavior.ClearEnvState();
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
-            Services.Events.Dispatch(ExperimentEvents.ExperimentEnvironmentCleared);
         }
 
         #endregion // Environment Callbacks
 
         #region Feature Callbacks
 
-        private void OnFeaturesUpdated(FeatureMask inMask) {
-            if (m_SetupPhase == SetupPhase.Features) {
-                UpdateFeature(inMask, FeatureMask.Stabilizer, m_StabilizerFeature);
-                UpdateFeature(inMask, FeatureMask.AutoFeeder, m_FeederFeature);
-            } else {
-                ToggleableTankFeature.Disable(m_StabilizerFeature);
-                ToggleableTankFeature.Disable(m_FeederFeature);
-            }
-        }
+        // private void OnFeaturesUpdated(FeatureMask inMask) {
+        //     if (m_SetupPhase == SetupPhase.Features) {
+        //         UpdateFeature(inMask, FeatureMask.Stabilizer, m_StabilizerFeature);
+        //         UpdateFeature(inMask, FeatureMask.AutoFeeder, m_FeederFeature);
+        //     } else {
+        //         ToggleableTankFeature.Disable(m_StabilizerFeature);
+        //         ToggleableTankFeature.Disable(m_FeederFeature);
+        //     }
+        // }
 
-        static private void UpdateFeature(FeatureMask inSet, FeatureMask inMask, ToggleableTankFeature inFeature) {
-            if ((inSet & inMask) != 0) {
-                ToggleableTankFeature.Enable(inFeature);
-            } else {
-                ToggleableTankFeature.Disable(inFeature);
-            }
-        }
+        // static private void UpdateFeature(FeatureMask inSet, FeatureMask inMask, ToggleableTankFeature inFeature) {
+        //     if ((inSet & inMask) != 0) {
+        //         ToggleableTankFeature.Enable(inFeature);
+        //     } else {
+        //         ToggleableTankFeature.Disable(inFeature);
+        //     }
+        // }
 
         #endregion // Feature Callbacks
 
         #region Sequence
 
-        private void OnBeginClick() {
-            Services.Input.PauseAll();
-            m_BeginButton.gameObject.SetActive(false);
-            m_RunButton.gameObject.SetActive(false);
-            m_NextButton.gameObject.SetActive(true);
-            m_NextButtonLabel.SetText(NextButton_Critters);
-            m_NextButton.interactable = m_SelectedEnvironment != null;
-            m_SetupPhase = SetupPhase.Environment;
-            Routine.Start(this, BeginSequence());
-        }
-
-        private IEnumerator BeginSequence() {
-            m_SetupPanelGroup.interactable = false;
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Show(0.2f),
-                m_SelectEnvPanel.Show()
-            );
-            yield return m_DrainRoutine;
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-
-            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
-        }
-
         private void OnNextClick() {
-            Services.Input.PauseAll();
-            m_SetupPanelGroup.interactable = false;
-            switch(m_SetupPhase) {
+            m_SetupPhase++;
+            switch (m_SetupPhase) {
                 case SetupPhase.Environment: {
-                    m_SetupPhase = SetupPhase.Critters;
-                    Routine.Start(this, FillTankSequence());
-                    break;
-                }
-
+                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World);
+                        break;
+                    }
                 case SetupPhase.Critters: {
-                    m_SetupPhase = SetupPhase.Features;
-                    Routine.Start(this, ToFeaturesSequence());
-                    break;
-                }
+                        ExperimentScreen.Transition(m_OrganismScreen, m_World, SelectableTank.FillTankSequence(m_ParentTank));
+                        break;
+                    }
+                case SetupPhase.Features: {
+                        ExperimentScreen.Transition(m_FeatureScreen, m_World, SelectableTank.SpawnSequence(m_ParentTank, m_OrganismScreen.Panel));
+                        break;
+                    }
+                case SetupPhase.Run: {
+                        ExperimentScreen.Transition(m_InProgressScreen, m_World, null, () => {
+                            Routine.Start(this, StartExperiment()).Tick();
+                        });
+                        break;
+                    }
             }
-        }
-
-        private IEnumerator FillTankSequence() {
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_SelectEnvPanel.Hide()
-            );
-
-            yield return m_DrainRoutine;
-
-            m_NextButtonLabel.SetText(NextButton_Features);
-
-            yield return m_ParentTank.WaterSystem.RequestFill(m_ParentTank);
-            yield return 0.2f;
-
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Show(0.2f),
-                m_AddCrittersPanel.Show()
-            );
-
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-
-            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.organisms");
-        }
-
-        private IEnumerator ToFeaturesSequence() {
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_AddCrittersPanel.Hide()
-            );
-
-            m_NextButton.gameObject.SetActive(false);
-            m_RunButton.gameObject.SetActive(true);
-
-            OnFeaturesUpdated(m_FeaturePanel.Selected);
-
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Show(0.2f),
-                m_FeaturePanel.Show()
-            );
-
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-
-            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.features");
         }
 
         private void OnBackClick() {
-            Services.Input.PauseAll();
-            m_SetupPanelGroup.interactable = false;
-
-            switch(m_SetupPhase) {
-                case SetupPhase.Features: {
-                    m_SetupPhase = SetupPhase.Critters;
-                    Routine.Start(this, BackToCritters());
-                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.features");
-                    break;
-                }
-
-                case SetupPhase.Critters: {
-                    m_SetupPhase = SetupPhase.Environment;
-                    Routine.Start(this, BackToEnvironment());
-                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.organisms");
-                    break;
-                }
-
+            m_SetupPhase--;
+            switch (m_SetupPhase) {
                 case SetupPhase.Environment: {
-                    m_SetupPhase = SetupPhase.Begin;
-                    Routine.Start(this, BackToBegin());
-                    ExperimentUtil.TriggerExperimentScreenExited(m_ParentTank, "measurement.ecosystem");
-                    break;
-                }
+                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World, SelectableTank.DrainTankSequence(m_ParentTank));
+                        break;
+                    }
+                case SetupPhase.Critters: {
+                        ExperimentScreen.Transition(m_OrganismScreen, m_World, SelectableTank.DespawnSequence(m_ParentTank));
+                        break;
+                    }
             }
-        }
-
-        private IEnumerator BackToCritters() {
-            m_FeaturePanel.ClearSelection();
-
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_FeaturePanel.Hide()
-            );
-
-            OnFeaturesUpdated(0);
-
-            m_RunButton.gameObject.SetActive(false);
-            m_NextButton.gameObject.SetActive(true);
-            m_NextButtonLabel.SetText(NextButton_Features);
-
-            yield return Routine.Combine(
-                m_AddCrittersPanel.Show(),
-                m_SetupPanelGroup.Show(0.2f)
-            );
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-
-            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.organisms");
-        }
-
-        private IEnumerator BackToEnvironment() {
-            m_DrainRoutine.Replace(this, m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f));
-            m_AddCrittersPanel.ClearSelection();
-            
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_AddCrittersPanel.Hide()
-            );
-
-            m_NextButtonLabel.SetText(NextButton_Critters);
-
-            yield return m_DrainRoutine;
-
-            yield return Routine.Combine(
-                m_SelectEnvPanel.Show(),
-                m_SetupPanelGroup.Show(0.2f)
-            );
-            m_SetupPanelGroup.interactable = true;
-            Services.Input.ResumeAll();
-
-            ExperimentUtil.TriggerExperimentScreenViewed(m_ParentTank, "measurement.ecosystem");
-        }
-
-        private IEnumerator BackToBegin() {
-            m_SelectEnvPanel.ClearSelection();
-            
-            yield return Routine.Combine(
-                m_SetupPanelGroup.Hide(0.2f),
-                m_SelectEnvPanel.Hide()
-            );
-
-            yield return m_DrainRoutine;
-
-            m_BeginButton.gameObject.SetActive(true);
-
-            Services.Input.ResumeAll();
         }
 
         #endregion // Sequence
 
         #region Run
 
-        private void OnRunClicked() {
+        private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
 
-            m_AddCrittersPanel.Hide();
-            m_SelectEnvPanel.Hide();
-            m_FeaturePanel.Hide();
-
-            InProgressExperimentData experimentData = new InProgressExperimentData();
-            experimentData.EnvironmentId = m_SelectedEnvironment.Id();
-            experimentData.TankType = InProgressExperimentData.Type.Measurement;
-            experimentData.TankId = m_ParentTank.Id;
-            experimentData.Settings = 0;
-            if (m_StabilizerFeature.State)
-                experimentData.Settings |= InProgressExperimentData.Flags.Stabilizer;
-            if (m_FeederFeature.State)
-                experimentData.Settings |= InProgressExperimentData.Flags.Feeder;
-            experimentData.CritterIds = ArrayUtils.MapFrom<BestiaryDesc, StringHash32>(m_AddCrittersPanel.Selected, (a) => a.Id());
-
-            using(var table = TempVarTable.Alloc()) {
+            m_ExperimentData = GenerateData();
+            
+            ScriptThreadHandle thread;
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", m_ParentTank.Type.ToString());
                 table.Set("tankId", m_ParentTank.Id);
-                var thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
-                Routine.Start(this, RunExperiment(experimentData, thread)).TryManuallyUpdate(0);
-                Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+                thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
+            }
+
+            m_ParentTank.ActorBehavior.Begin();
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+
+            yield return thread.Wait();
+
+            float duration = m_ExperimentData.CustomData > 0 ? 1.5f : 1;
+            while(!AddProgress(Routine.DeltaTime / duration)) {
+                yield return null;
             }
         }
 
-        private IEnumerator RunExperiment(InProgressExperimentData inExperiment, ScriptThreadHandle inThread) {
-            ExperimentResult result = Evaluate(inExperiment);
-            Services.Input.PauseAll();
-            Services.UI.ShowLetterbox();
-            if (inThread.IsRunning())
-                yield return inThread.Wait();
+        private RunningExperimentData GenerateData() {
+            RunningExperimentData experimentData = new RunningExperimentData();
+            experimentData.EnvironmentId = m_SelectedEnvironment.Id();
+            experimentData.TankType = RunningExperimentData.Type.Measurement;
+            experimentData.TankId = m_ParentTank.Id;
+            experimentData.Settings = 0;
+            if (m_FeaturePanel.IsSelected(FeatureMask.Stabilizer))
+                experimentData.Settings |= RunningExperimentData.Flags.Stabilizer;
+            if (m_FeaturePanel.IsSelected(FeatureMask.AutoFeeder))
+                experimentData.Settings |= RunningExperimentData.Flags.Feeder;
+            experimentData.CritterIds = ArrayUtils.MapFrom<BestiaryDesc, StringHash32>(m_OrganismScreen.Panel.Selected, (a) => a.Id());
+            experimentData.CustomData = (int) IsolateVariable(experimentData);
+            return experimentData;
+        }
 
-            using(var fader = Services.UI.WorldFaders.AllocFader()) {
-                yield return fader.Object.Show(Color.black, 0.5f);
-                yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
-                ClearStateAfterExperiment();
-                InitializeSummaryScreen(result);
-                yield return 0.5f;
-                yield return fader.Object.Hide(0.5f, false);
+        private void ApplyProgressMeterStyle(TextId label, ColorPalette2 colors) {
+            m_InProgressAnalysisLabel.SetText(label);
+            m_InProgressAnalysisLabel.Graphic.color = colors.Content;
+            m_InProgressMeter.color = colors.Background;
+        }
+
+        private void ApplyProgressMeterProgress(float progress) {
+            m_InProgressMeter.rectTransform.anchorMax = new Vector2(progress, 1);
+        }
+
+        private bool AddProgress(float percentage) {
+            if (m_Progress < 1) {
+                m_Progress = Math.Min(m_Progress + percentage, 1);
+                ApplyProgressMeterProgress(m_Progress);
+                if (m_Progress >= 1) {
+                    m_InProgressScreen.CustomButton.interactable = true;
+                    IsolatedVariable iso = (IsolatedVariable) m_ExperimentData.CustomData;
+                    ApplyProgressMeterStyle(IsolatedVariableLabels[(int) iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
+                    Services.Audio.PostEvent("Experiment.FinishPrompt");
+                    Routine.Start(this, FlashMeterAnim(m_InProgressMeterFlash)).Tick();
+                    return true;
+                }
             }
 
+            return false;
+        }
+
+        static private IEnumerator FlashMeterAnim(Graphic effect) {
+            effect.gameObject.SetActive(true);
+            effect.SetAlpha(1);
+            yield return effect.FadeTo(0, 0.2f).Ease(Curve.CubeIn);
+            effect.gameObject.SetActive(false);
+        }
+
+        static private readonly TextId[] IsolatedVariableLabels = new TextId[] {
+            "experiment.measure.unknownVar", "experiment.measure.eatVar", "experiment.measure.reproVar", "experiment.measure.chemVar"
+        };
+
+        private void OnFinishClick() {
+            m_ParentTank.CurrentState &= ~TankState.Running;
+            m_ParentTank.ActorBehavior.End();
+
+            ExperimentResult result = Evaluate(m_ExperimentData, m_World);
             foreach (var fact in result.Facts) {
                 switch (fact.Type) {
                     case ExperimentFactResultType.NewFact:
@@ -458,255 +297,215 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                 }
             }
-
-            foreach (var feedback in result.Feedback) {
-                Log.Msg("[MeasurementTank] {0}: {1}", feedback.Category, feedback.Id);
+            if (result.Feedback != 0) {
+                Log.Msg("[MeasurementTank] Feedback: {0}", result.Feedback);
             }
 
-            m_ParentTank.CurrentState &= ~TankState.Running;
-            yield return PopulateSummaryScreen(result);
-            Services.UI.HideLetterbox();
-            Services.Input.ResumeAll();
+            Routine.Start(this, FinishExperiment(result)).Tick();
+        }
 
-            using(var table = TempVarTable.Alloc()) {
-                table.Set("tankType", m_ParentTank.Type.ToString());
-                table.Set("tankId", m_ParentTank.Id);
-                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
+        private IEnumerator FinishExperiment(ExperimentResult inResult) {
+            using(Script.DisableInput())
+            using(Script.Letterbox()) {
+                Services.Script.KillLowPriorityThreads();
+                using (var fader = Services.UI.WorldFaders.AllocFader()) {
+                    yield return fader.Object.Show(Color.black, 1);
+                    yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
+                    ClearStateAfterExperiment();
+                    yield return 0.5f;
+                    yield return fader.Object.Hide(0.5f, false);
+                }
             }
 
-            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+            using(Script.Letterbox()) {
+                yield return ExperimentUtil.DisplaySummaryPopup(inResult);
+
+                using (var table = TempVarTable.Alloc()) {
+                    table.Set("tankType", m_ParentTank.Type.ToString());
+                    table.Set("tankId", m_ParentTank.Id);
+                    Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
+                }
+
+                Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+                ExperimentScreen.Transition(m_BeginScreen, m_World);
+            }
         }
 
         private void ClearStateAfterExperiment() {
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
-            m_AddCrittersPanel.Hide();
-            m_AddCrittersPanel.ClearSelection();
+            SelectableTank.Reset(m_ParentTank, true);
 
-            m_SelectEnvPanel.Hide();
-
-            m_FeaturePanel.Hide();
-            m_FeaturePanel.ClearSelection();
-
-            m_SetupPanelGroup.alpha = 0;
-            m_SetupPanelGroup.blocksRaycasts = false;
-            m_SetupPanelGroup.gameObject.SetActive(false);
-
-            ToggleableTankFeature.Disable(m_StabilizerFeature, true);
-            ToggleableTankFeature.Disable(m_FeederFeature, true);
-
-            m_SummaryPanel.gameObject.SetActive(true);
-        }
-
-        private void InitializeSummaryScreen(ExperimentResult inResult) {
-            if (inResult.Facts.Length == 0)
-            {
-                m_SummaryPanel.FactGroup.SetActive(false);
-                m_SummaryPanel.HintGroup.SetActive(true);
-
-                TempList8<TextId> labels = default;
-                foreach(var feedback in inResult.Feedback) {
-                    if (feedback.Category == FeedbackCategory_ReproFailure) {
-                        labels.Add(m_ReproHintId);
-                    } else if (feedback.Category == FeedbackCategory_EatFailure) {
-                        labels.Add(m_EatingHintId);
-                    } else if (feedback.Category == FeedbackCategory_WaterFailure) {
-                        labels.Add(m_WaterHintId);
-                    }
-                }
-
-                m_SummaryPanel.HintText.SetText(RNG.Instance.Choose(labels));
-
-                m_SummaryPanel.HeaderText.SetText("experiment.summary.header.noFacts");
-                m_SummaryPanel.HeaderText.Graphic.color = AQColors.BrightBlue;
-                return;
-            }
-
-            m_SummaryPanel.HintGroup.SetActive(false);
-            m_SummaryPanel.FactGroup.SetActive(true);
-
-            m_SummaryPanel.HeaderText.SetText("experiment.summary.header");
-            m_SummaryPanel.HeaderText.Graphic.color = AQColors.HighlightYellow;
-        }
-
-        private IEnumerator PopulateSummaryScreen(ExperimentResult inResult) {
-            if (inResult.Facts.Length > 0) {
-                MonoBehaviour newFact;
-                BFBase fact;
-                foreach (var factResult in inResult.Facts) {
-                    fact = Assets.Fact(factResult.Id);
-                    newFact = m_SummaryPanel.FactPools.Alloc(fact, null, Save.Bestiary.GetDiscoveredFlags(fact.Id), m_SummaryPanel.FactListRoot);
-                    newFact.GetComponent<CanvasGroup>().alpha = 0;
-                    yield return null;
-                    m_SummaryPanel.FactListLayout.ForceRebuild();
-                    yield return ExperimentUtil.AnimateFeedbackItemToOn(newFact, factResult.Type == ExperimentFactResultType.Known ? 0.5f : 1);
-                    yield return 0.2f;
-                }
-            }
-        }
-
-        private void OnSummaryCloseClick() {
-            m_SummaryPanel.gameObject.SetActive(false);
-            m_SummaryPanel.FactPools.FreeAll();
-            OnBeginClick();
+            m_ParentTank.CurrentState &= ~TankState.Running;
+            m_SetupPhase = 0;
+            m_ExperimentData = null;
         }
 
         #endregion // Run
 
         #region Evaluation
 
-        static public ExperimentResult Evaluate(InProgressExperimentData inData) {
+        static public IsolatedVariable IsolateVariable(RunningExperimentData inData) {
+            if (inData.CritterIds.Length == 1 && (inData.Settings & RunningExperimentData.Flags.ALL) == RunningExperimentData.Flags.ALL) {
+                return IsolatedVariable.Reproduction;
+            }
+
+            if (inData.CritterIds.Length == 2 && (inData.Settings & RunningExperimentData.Flags.Stabilizer) != 0 && (inData.Settings & RunningExperimentData.Flags.Feeder) == 0) {
+                return IsolatedVariable.Eating;
+            }
+
+            if (inData.CritterIds.Length == 1 && (inData.Settings & RunningExperimentData.Flags.Stabilizer) == 0 && (inData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
+                return IsolatedVariable.Chemistry;
+            }
+
+            return IsolatedVariable.Unknown;
+        }
+
+        static public ExperimentResult Evaluate(RunningExperimentData inData, ActorWorld inWorld) {
             ExperimentResult result = new ExperimentResult();
-            if (ExperimentUtil.AnyDead(inData)) {
-                result.Facts = new ExperimentFactResult[0];
-                result.Feedback = new ExperimentFeedback[] { new ExperimentFeedback(FeedbackCategory_All, ExperimentFeedback.DeadCritters, ExperimentFeedback.FailureFlag) };
+            if (inWorld.EnvDeaths > 0) {
+                result.Feedback |= ExperimentFeedbackFlags.DeadOrganisms;
             } else {
-                List<ExperimentFeedback> newFeedback = new List<ExperimentFeedback>();
+                IsolatedVariable iso = (IsolatedVariable) inData.CustomData;
+                if (iso != IsolatedVariable.Reproduction) {
+                    result.Feedback |= ExperimentFeedbackFlags.ReproduceCategory;
+                }
+                if (iso != IsolatedVariable.Eating) {
+                    result.Feedback |= ExperimentFeedbackFlags.EatCategory;
+                }
+                if (iso != IsolatedVariable.Reproduction) {
+                    result.Feedback |= ExperimentFeedbackFlags.ReproduceCategory;
+                }
+
                 List<ExperimentFactResult> newFacts = new List<ExperimentFactResult>();
-                EvaluateReproductionResult(inData, newFeedback, newFacts);
-                EvaluateEatResult(inData, newFeedback, newFacts);
-                EvaluateWaterChemResult(inData, newFeedback, newFacts);
+
+                switch(iso) {
+                    case IsolatedVariable.Unknown: {
+                        break;
+                    }
+                    case IsolatedVariable.Eating: {
+                        EvaluateEatResult(inData, ref result.Feedback, newFacts);
+                        break;
+                    }
+                    case IsolatedVariable.Reproduction: {
+                        EvaluateReproductionResult(inData, ref result.Feedback, newFacts);
+                        break;
+                    }
+                    case IsolatedVariable.Chemistry: {
+                        EvaluateWaterChemResult(inData, ref result.Feedback, newFacts);
+                        break;
+                    }
+                }
+
                 result.Facts = newFacts.ToArray();
-                result.Feedback = newFeedback.ToArray();
             }
             return result;
         }
 
-        static private void EvaluateReproductionResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length > 1) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
+        static private void EvaluateReproductionResult(RunningExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
 
-                if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_ReproFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
+            if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+                ioFeedback |= ExperimentFeedbackFlags.DeadMatter;
+                return;
+            }
+
+            ActorStateId critterState = critter.EvaluateActorState(env, out var _);
+
+            BFReproduce reproduce = BestiaryUtils.FindReproduceRule(critter, critterState);
+            BFGrow grow = BestiaryUtils.FindGrowRule(critter, critterState);
+
+            bool bFound = false;
+
+            if (reproduce != null) {
+                ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id));
+                bFound = true;
+            }
+
+            if (grow != null) {
+                ioFacts.Add(ExperimentUtil.NewFact(grow.Id));
+                bFound = true;
+            }
+
+            if (!bFound) {
+                ioFeedback |= ExperimentFeedbackFlags.NoInteraction;
+            }
+        }
+
+        static private void EvaluateWaterChemResult(RunningExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
+            ActorStateId critterState = critter.EvaluateActorState(env, out var _);
+
+            if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+                ioFeedback |= ExperimentFeedbackFlags.DeadMatter;
+                return;
+            }
+
+            bool bHadFacts = false;
+            foreach (var prop in Services.Assets.WaterProp.Sorted()) {
+                BFConsume consume = BestiaryUtils.FindConsumeRule(critter, prop.Index(), critterState);
+                BFProduce produce = BestiaryUtils.FindProduceRule(critter, prop.Index(), critterState);
+                bHadFacts |= (consume || produce);
+                if (consume != null) {
+                    ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
                 }
-
-                ActorStateId critterState = critter.EvaluateActorState(env, out var _);
-
-                BFReproduce reproduce = BestiaryUtils.FindReproduceRule(critter, critterState);
-                BFGrow grow = BestiaryUtils.FindGrowRule(critter, critterState);
-
-                bool bFound = false;
-
-                if (reproduce != null) {
-                    ioFacts.Add(ExperimentUtil.NewFact(reproduce.Id));
-                    bFound = true;
+                if (produce != null) {
+                    ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
                 }
+            }
 
-                if (grow != null) {
-                    ioFacts.Add(ExperimentUtil.NewFact(grow.Id));
-                    bFound = true;
+            if (!bHadFacts) {
+                ioFeedback |= ExperimentFeedbackFlags.NoInteraction;
+            }
+        }
+
+        static private void EvaluateEatResult(RunningExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+            WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
+            BestiaryDesc leftCritter = Assets.Bestiary(inData.CritterIds[0]);
+            BestiaryDesc rightCritter = Assets.Bestiary(inData.CritterIds[1]);
+
+            if (leftCritter.HasFlags(BestiaryDescFlags.IsNotLiving) && rightCritter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+                ioFeedback |= ExperimentFeedbackFlags.DeadMatterEatPair;
+                return;
+            }
+
+            ActorStateId leftState = leftCritter.EvaluateActorState(env, out var _);
+            ActorStateId rightState = rightCritter.EvaluateActorState(env, out var _);
+            BFEat leftEatsRight = BestiaryUtils.FindEatingRule(leftCritter, rightCritter, leftState);
+            BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(rightCritter, leftCritter, rightState);
+            BestiaryData bestiaryData = Save.Bestiary;
+
+            bool bHadFact = leftEatsRight || rightEatsLeft;
+            bool bAddedFact = false;
+
+            if (leftEatsRight != null) {
+                if (bestiaryData.HasFact(leftEatsRight.Id)) {
+                    bAddedFact = true;
+                    ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
+                } else {
+                    leftEatsRight = null;
                 }
+            }
+            if (rightEatsLeft != null) {
+                if (bestiaryData.HasFact(rightEatsLeft.Id)) {
+                    bAddedFact = true;
+                    ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
+                } else {
+                    rightEatsLeft = null;
+                }
+            }
 
-                if (!bFound) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Repro, ExperimentFeedback.DoesNotReproduce, 0));
+            if (!bAddedFact) {
+                if (!bHadFact) {
+                    ioFeedback |= ExperimentFeedbackFlags.NoInteraction;
+                } else {
+                    ioFeedback |= ExperimentFeedbackFlags.EatNeedsObserve;
                 }
             }
         }
 
-        static private void EvaluateWaterChemResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length > 1) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.MoreThanOneSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.AutoFeederDisabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) != 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.StabilizerEnabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc critter = Assets.Bestiary(inData.CritterIds[0]);
-                ActorStateId critterState = critter.EvaluateActorState(env, out var _);
-
-                if (critter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
-                }
-
-                bool bAddedFacts = false;
-                bool bHadFacts = false;
-                foreach (var prop in Services.Assets.WaterProp.Sorted()) {
-                    BFConsume consume = BestiaryUtils.FindConsumeRule(critter, prop.Index(), critterState);
-                    BFProduce produce = BestiaryUtils.FindProduceRule(critter, prop.Index(), critterState);
-                    bHadFacts |= (consume || produce);
-                    if (consume != null) {
-                        ioFacts.Add(ExperimentUtil.NewFact(consume.Id));
-                        bAddedFacts = true;
-                    }
-                    if (produce != null) {
-                        ioFacts.Add(ExperimentUtil.NewFact(produce.Id));
-                        bAddedFacts = true;
-                    }
-                }
-
-                if (!bHadFacts) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_Water, ExperimentFeedback.NoWaterChemistry, 0));
-                } else if (!bAddedFacts) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_WaterFailure, ExperimentFeedback.CannotMeasureWaterChem, ExperimentFeedback.NotUnlockedFlag));
-                }
-            }
-        }
-
-        static private void EvaluateEatResult(InProgressExperimentData inData, List<ExperimentFeedback> ioFeedback, List<ExperimentFactResult> ioFacts) {
-            if (inData.CritterIds.Length < 2) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.LessThanTwoSpecies, ExperimentFeedback.FailureFlag));
-            } else if (inData.CritterIds.Length > 2) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.MoreThanTwoSpecies, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Feeder) != 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.AutoFeederEnabled, ExperimentFeedback.FailureFlag));
-            } else if ((inData.Settings & InProgressExperimentData.Flags.Stabilizer) == 0) {
-                ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.StabilizerDisabled, ExperimentFeedback.FailureFlag));
-            } else {
-                WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
-                BestiaryDesc leftCritter = Assets.Bestiary(inData.CritterIds[0]);
-                BestiaryDesc rightCritter = Assets.Bestiary(inData.CritterIds[1]);
-
-                if (leftCritter.HasFlags(BestiaryDescFlags.IsNotLiving) && rightCritter.HasFlags(BestiaryDescFlags.IsNotLiving)) {
-                    ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.IsDeadMatter, ExperimentFeedback.FailureFlag));
-                    return;
-                }
-
-                ActorStateId leftState = leftCritter.EvaluateActorState(env, out var _);
-                ActorStateId rightState = rightCritter.EvaluateActorState(env, out var _);
-                BFEat leftEatsRight = BestiaryUtils.FindEatingRule(leftCritter, rightCritter, leftState);
-                BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(rightCritter, leftCritter, rightState);
-                BestiaryData bestiaryData = Save.Bestiary;
-
-                bool bHadFact = leftEatsRight || rightEatsLeft;
-                bool bAddedFact = false;
-
-                if (leftEatsRight != null) {
-                    if (bestiaryData.HasFact(leftEatsRight.Id)) {
-                        bAddedFact = true;
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
-                    } else {
-                        leftEatsRight = null;
-                    }
-                }
-                if (rightEatsLeft != null) {
-                    if (bestiaryData.HasFact(rightEatsLeft.Id)) {
-                        bAddedFact = true;
-                        ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
-                    } else {
-                        rightEatsLeft = null;
-                    }
-                }
-
-                if (!bAddedFact) {
-                    if (!bHadFact) {
-                        ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.NotUnlockedFlag));
-                    } else {
-                        ioFeedback.Add(new ExperimentFeedback(FeedbackCategory_EatFailure, ExperimentFeedback.NoRelationship, ExperimentFeedback.FailureFlag));
-                    }
-                }
-            }
-        }
-    
         #endregion // Evaluation
     }
 }

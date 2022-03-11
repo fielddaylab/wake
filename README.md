@@ -1009,3 +1009,76 @@ Player completes argumentation for a job.
 | log_version | Current logging version |
 | job_id | ID of the current job |
 | job_name | String name of the current job |
+
+## DBExport.json Schema
+
+### Root
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `jobs` | `JobData[]` | List of all jobs. | 
+
+### JobData
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `id` | `String` | Identifier for job. |
+| `date.added` | `Int64` | UTC timestamp for when job was added |
+| `date.deprecated` | `Int64` | UTC timestamp for when job was no longer in game. This field is excluded if the job is still in the game. |
+| `tasks` | `TaskData[]` | List of tasks for the job. |
+
+### TaskData
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `id` | `String` | Identifier for the task. |
+| `date.added` | `Int64` | UTC timestamp for when the task was added |
+| `date.deprecated` | `Int64` | UTC timestamp for when the task was no longer in game. This field is excluded if the task is still part of the job. |
+
+### Example
+
+```json
+{
+    "jobs": [
+      {
+         "id": "arctic-missing-whale",
+         "date": {
+            "added": 1.32914936623526E+17
+         },
+         "tasks": [
+            {
+               "id": "findWhale",
+               "date": {
+                  "added": 1.32914936623526E+17
+               }
+            },
+            {
+               "id": "reportBack",
+               "date": {
+                  "added": 1.32914936623526E+17
+               }
+            }
+         ]
+      },
+      {
+         "id": "arctic-time-of-death",
+         "date": {
+            "added": 1.32914936623526E+17
+         },
+         "tasks": [
+            {
+               "id": "getPopulations",
+               "date": {
+                  "added": 1.32914936623526E+17
+               }
+            },
+            {
+               "id": "reportBack",
+               "date": {
+                  "added": 1.32914936623526E+17
+               }
+            }
+         ]
+      }
+}
+```

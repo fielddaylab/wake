@@ -16,6 +16,9 @@ namespace Aqua.Character
         [NonSerialized] protected Transform m_Transform;
         [NonSerialized] protected FacingId m_Facing;
 
+        public KinematicObject2D Kinematics { get { return m_Kinematics; } }
+        public FacingId FaceDirection { get { return m_Facing; } }
+
         protected virtual void Awake()
         {
             this.CacheComponent(ref m_Transform);

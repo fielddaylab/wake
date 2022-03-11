@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace ProtoAqua.ExperimentV2
 {
-    public class MeasurementFeaturePanel : BasePanel {
+    public class MeasurementFeaturePanel : MonoBehaviour {
         #region Inspector
 
         [SerializeField] private Toggle m_StabilizerToggle = null;
@@ -21,9 +21,7 @@ namespace ProtoAqua.ExperimentV2
 
         public Action<MeasurementTank.FeatureMask> OnUpdated;
 
-        protected override void Awake() {
-            base.Awake();
-
+        private void Awake() {
             m_StabilizerToggle.onValueChanged.AddListener((b) => OnFeatureChanged(MeasurementTank.FeatureMask.Stabilizer, b));
             m_AutoFeederToggle.onValueChanged.AddListener((b) => OnFeatureChanged(MeasurementTank.FeatureMask.AutoFeeder, b));
 
@@ -32,9 +30,7 @@ namespace ProtoAqua.ExperimentV2
 
         #region BasePanel
 
-        protected override void OnShow(bool inbInstant) {
-            base.OnShow(inbInstant);
-
+        private void OnEnable() {
             bool bHasStabilizer = Save.Inventory.HasUpgrade(ItemIds.WaterStabilizer);
             m_StabilizerToggle.interactable = bHasStabilizer;
             m_StabilizerDisabledObject.SetActive(!bHasStabilizer);
@@ -42,22 +38,6 @@ namespace ProtoAqua.ExperimentV2
             bool bHasFeeder = Save.Inventory.HasUpgrade(ItemIds.AutoFeeder);
             m_AutoFeederToggle.interactable = bHasFeeder;
             m_AutoFeederDisabledObject.SetActive(!bHasFeeder);
-        }
-
-        protected override void InstantTransitionToShow() {
-            CanvasGroup.Show(null);
-        }
-
-        protected override void InstantTransitionToHide() {
-            CanvasGroup.Hide(null);
-        }
-
-        protected override IEnumerator TransitionToShow() {
-            return CanvasGroup.Show(0.2f, null);
-        }
-
-        protected override IEnumerator TransitionToHide() {
-            return CanvasGroup.Hide(0.2f, null);
         }
 
         #endregion // BasePanel
