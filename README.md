@@ -90,6 +90,8 @@ Player switches jobs by starting a different one.
 | log_version | Current logging version |
 | job_id | ID of the new job |
 | job_name | String name of the new job |
+| prev_job_id | ID of the previous job |
+| prev_job_name | String name of the previous job |
 
 <a name="receive_fact"/>
 

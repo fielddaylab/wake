@@ -23,11 +23,12 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBSwitchJob: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName) {
+    FBSwitchJob: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName, prevJobId, prevJobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
+        var prevJobName = Pointer_stringify(prevJobName);
 
         analytics.logEvent("switch_job", {
             user_code: userCode,
@@ -36,6 +37,8 @@ mergeInto(LibraryManager.library, {
             log_version: logVersion,
             job_id: jobId,
             job_name: jobName
+            prev_job_id: prevJobId,
+            prev_job_name: prevJobName
         });
     },
 
