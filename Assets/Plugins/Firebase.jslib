@@ -36,7 +36,7 @@ mergeInto(LibraryManager.library, {
             app_flavor: appFlavor,
             log_version: logVersion,
             job_id: jobId,
-            job_name: jobName
+            job_name: jobName,
             prev_job_id: prevJobId,
             prev_job_name: prevJobName
         });
