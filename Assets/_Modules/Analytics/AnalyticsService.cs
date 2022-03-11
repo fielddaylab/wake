@@ -23,6 +23,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
+        [SerializeField, Required] private string m_AppVersion = "6.2";
         
         #endregion // Inspector
 
@@ -167,7 +168,6 @@ namespace Aqua
         #region Logging Variables
 
         private string m_UserCode = string.Empty;
-        private string m_AppVersion = string.Empty;
         private string m_AppFlavor = string.Empty;
         private int m_LogVersion = 1;
         private StringHash32 m_CurrentJobHash = null;
@@ -245,7 +245,6 @@ namespace Aqua
         private void SetUserCode(string userCode)
         {
             m_UserCode = userCode;
-            m_AppVersion = BuildInfo.Id();
             m_AppFlavor = BuildInfo.Branch();
         }
 
