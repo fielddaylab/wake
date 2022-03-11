@@ -471,7 +471,7 @@ namespace Aqua
             }
 
             #if FIREBASE
-            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, previousJobId, m_PreviousJobName);
+            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_PreviousJobId, m_PreviousJobName);
             #endif
         }
 
