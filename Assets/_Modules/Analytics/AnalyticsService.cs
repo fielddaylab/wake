@@ -23,6 +23,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
+        [SerializeField, Required] private string m_AppVersion = "6.2";
         
         #endregion // Inspector
 
@@ -158,6 +159,8 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBFactRejected(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
+        public static extern void FBLeaveArgument(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        [DllImport("__Internal")]
         public static extern void FBCompleteArgument(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
 
         #endregion // Firebase JS Functions
@@ -165,7 +168,6 @@ namespace Aqua
         #region Logging Variables
 
         private string m_UserCode = string.Empty;
-        private string m_AppVersion = string.Empty;
         private string m_AppFlavor = string.Empty;
         private int m_LogVersion = 1;
         private StringHash32 m_CurrentJobHash = null;
@@ -180,6 +182,7 @@ namespace Aqua
         private string m_CurrentTankType = string.Empty;
         private string m_CurrentEnvironment = string.Empty;
         private List<string> m_CurrentCritters = new List<string>();
+        private StringHash32 m_CurrentArguementId = null;
 
         #endregion // Logging Variables
 
@@ -231,6 +234,7 @@ namespace Aqua
                 .Register<StringHash32>(ArgueEvents.Loaded, LogBeginArgument, this)
                 .Register<StringHash32>(ArgueEvents.FactSubmitted, LogFactSubmitted, this)
                 .Register<StringHash32>(ArgueEvents.FactRejected, LogFactRejected, this)
+                .Register(ArgueEvents.Unloaded, LogLeaveArgument, this)
                 .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument,this);
                 
 
@@ -241,7 +245,6 @@ namespace Aqua
         private void SetUserCode(string userCode)
         {
             m_UserCode = userCode;
-            m_AppVersion = BuildInfo.Id();
             m_AppFlavor = BuildInfo.Branch();
         }
 
@@ -468,7 +471,7 @@ namespace Aqua
             }
 
             #if FIREBASE
-            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, previousJobId, m_PreviousJobName);
+            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_PreviousJobId, m_PreviousJobName);
             #endif
         }
 
@@ -884,6 +887,8 @@ namespace Aqua
 
         private void LogBeginArgument(StringHash32 id)
         {
+            m_CurrentArguementId = id;
+
             #if FIREBASE
             FBBeginArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
@@ -909,7 +914,11 @@ namespace Aqua
 
         private void LogLeaveArgument()
         {
-            Debug.Log($"BEAVER LEAVE ARGUMENT");
+            if (ArgumentationService.LeafIsComplete(m_CurrentArguementId)) return;
+
+            #if FIREBASE
+            FBLeaveArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            #endif
         }
 
         private void LogCompleteArgument(StringHash32 id)
@@ -917,6 +926,8 @@ namespace Aqua
             #if FIREBASE
             FBCompleteArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
             #endif
+
+            m_CurrentArguementId = null;
         }
 
         #endregion // Argumentation
