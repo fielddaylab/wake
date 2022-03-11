@@ -1094,5 +1094,6 @@ Player completes argumentation for a job.
             }
          ]
       }
+    ]
 }
 ```

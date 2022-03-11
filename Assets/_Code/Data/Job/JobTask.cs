@@ -7,6 +7,7 @@ namespace Aqua
     public class JobTask
     {
         public SerializedHash32 Id;
+        public string IdString;
         public ushort Index;
         
         public TextId LabelId;
