@@ -248,6 +248,12 @@ namespace ProtoAqua.Observation
             {
                 SetEngineState(false);
             }
+
+            if (!m_Moving && !m_Input.IsInputEnabled) {
+                m_Kinematics.enabled = false;
+            } else {
+                m_Kinematics.enabled = true;
+            }
         }
 
         private void SetEngineState(bool inbOn, bool inbForce = false)

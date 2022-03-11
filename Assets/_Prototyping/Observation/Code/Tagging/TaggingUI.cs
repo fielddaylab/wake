@@ -3,10 +3,11 @@ using Aqua;
 using UnityEngine.UI;
 using BeauUtil;
 using BeauRoutine;
+using ScriptableBake;
 
 namespace ProtoAqua.Observation
 {
-    public class TaggingUI : SharedPanel, IBakedComponent
+    public class TaggingUI : SharedPanel, IBaked
     {
         #region Inspector
 
@@ -42,9 +43,12 @@ namespace ProtoAqua.Observation
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             m_AllMeters = GetComponentsInChildren<TaggingMeter>(true);
+            return true;
         }
 
         #endif // UNITY_EDITOR

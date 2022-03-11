@@ -23,11 +23,12 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBSwitchJob: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName) {
+    FBSwitchJob: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName, prevJobId, prevJobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
+        var prevJobName = Pointer_stringify(prevJobName);
 
         analytics.logEvent("switch_job", {
             user_code: userCode,
@@ -36,6 +37,8 @@ mergeInto(LibraryManager.library, {
             log_version: logVersion,
             job_id: jobId,
             job_name: jobName
+            prev_job_id: prevJobId,
+            prev_job_name: prevJobName
         });
     },
 
@@ -494,6 +497,24 @@ mergeInto(LibraryManager.library, {
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("guide_script_triggered", {
+            user_code: userCode,
+            app_version: appVersion,
+            app_flavor: appFlavor,
+            log_version: logVersion,
+            job_id: jobId,
+            job_name: jobName,
+            node_id: nodeId
+        });
+    }, 
+
+    FBScriptFired: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName, nodeId) {
+        var userCode = Pointer_stringify(userCode);
+        var appVersion = Pointer_stringify(appVersion);
+        var appFlavor = Pointer_stringify(appFlavor);
+        var jobName = Pointer_stringify(jobName);
+        var nodeId = Pointer_stringify(nodeId);
+
+        analytics.logEvent("script_fired", {
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,

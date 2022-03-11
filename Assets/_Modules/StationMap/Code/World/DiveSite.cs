@@ -76,7 +76,9 @@ namespace Aqua.StationMap
             }
         }
 
-        static private IEnumerator Dive(SceneInteractable inspectable, ScriptThreadHandle thread) {
+        static private IEnumerator Dive(SceneInteractable inspectable, PlayerBody player, ScriptThreadHandle thread) {
+            player.Kinematics.State.Velocity *= 0.4f;
+            player.Kinematics.Config.Drag *= 4;
             yield return thread.Wait();
             Services.Events.Dispatch(Event_Dive);
             Services.UI.ShowLetterbox();

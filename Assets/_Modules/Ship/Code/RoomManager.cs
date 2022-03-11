@@ -6,11 +6,12 @@ using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using EasyAssetStreaming;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBakedComponent
+    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBaked
     {
         static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
 
@@ -110,7 +111,7 @@ namespace Aqua.Ship
             }
             else
             {
-                m_Transition.Replace(this, RoomTransition(inRoom)).TryManuallyUpdate(0);
+                m_Transition.Replace(this, RoomTransition(inRoom)).Tick();
             }
         }
 
@@ -172,13 +173,17 @@ namespace Aqua.Ship
         }
 
         #if UNITY_EDITOR
+        
+        int IBaked.Order { get { return 2; } }
 
-        void IBakedComponent.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);
             m_Rooms = rooms.ToArray();
             m_Links = FindObjectsOfType<RoomLink>();
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

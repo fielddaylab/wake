@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using BeauUtil;
 using System.Collections.Generic;
 using BeauUtil.Debugger;
+using ScriptableBake;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Experimental;
@@ -12,7 +13,7 @@ using UnityEditor.SceneManagement;
 namespace Aqua
 {
     [ExecuteAlways]
-    public sealed class NoOverridesAllowed : MonoBehaviour, IBakedComponent
+    public sealed class NoOverridesAllowed : MonoBehaviour, IBaked
     {
         #if UNITY_EDITOR
 
@@ -74,9 +75,12 @@ namespace Aqua
             }
         }
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             DestroyImmediate(this);
+            return true;
         }
 
         #endif // UNITY_EDITOR

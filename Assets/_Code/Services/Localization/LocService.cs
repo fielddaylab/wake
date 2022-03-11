@@ -175,7 +175,7 @@ namespace Aqua
 
         protected override void Initialize()
         {
-            m_LoadRoutine.Replace(this, InitialLoad()).TryManuallyUpdate(0);
+            m_LoadRoutine.Replace(this, InitialLoad()).Tick();
 
             m_TagStringPool = new DynamicPool<TagString>(4, Pool.DefaultConstructor<TagString>());
             m_TagStringPool.Prewarm();

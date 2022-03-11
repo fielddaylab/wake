@@ -1,0 +1,35 @@
+using UnityEngine;
+
+namespace ScriptableBake {
+
+    /// <summary>
+    /// Flattens a transform hierarchy.
+    /// </summary>
+    [AddComponentMenu("ScriptableBake/Flatten Hierarchy")]
+    public sealed class FlattenHierarchy : MonoBehaviour, IBaked {
+
+        [Tooltip("If true, the full hierarchy beneath this object will be flattened.\nIf false, only the immediate children of this object will be affected")]
+        public bool Recursive = false;
+
+        [Tooltip("Whether or not to destroy the GameObject once flattened")]
+        public bool DestroyGameObject = false;
+
+        #region IBaked
+
+        #if UNITY_EDITOR
+
+        int IBaked.Order {
+            get { return -1000000; }
+        }
+
+        bool IBaked.Bake(BakeFlags flags) {
+            Bake.FlattenHierarchy(transform, Recursive);
+            Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
+            return true;
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // IBaked
+    }
+}

@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/State Change")]
-    public class BFState : BFBase, IBakedAsset
+    public class BFState : BFBase, IBaked
     {
         #region Inspector
 
@@ -83,9 +84,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IBakedAsset.Order { get { return -9; } }
+        int IBaked.Order { get { return -9; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             ActorStateTransitionRange range = ActorStateTransitionRange.Default;
 

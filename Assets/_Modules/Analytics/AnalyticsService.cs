@@ -36,7 +36,7 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBAcceptJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBSwitchJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBSwitchJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, int prevJobId, string prevJobName);
         [DllImport("__Internal")]
         public static extern void FBReceiveFact(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
         [DllImport("__Internal")]
@@ -99,6 +99,8 @@ namespace Aqua
         public static extern void FBSimulationSyncAchieved(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
         public static extern void FBGuideScriptTriggered(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        [DllImport("__Internal")]
+        public static extern void FBScriptFired(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
 
         // Modeling Events
         [DllImport("__Internal")]
@@ -166,8 +168,10 @@ namespace Aqua
         private string m_AppVersion = string.Empty;
         private string m_AppFlavor = string.Empty;
         private int m_LogVersion = 1;
+        private StringHash32 m_CurrentJobHash = null;
         private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
+        private int m_PreviousJobId = -1;
         private string m_PreviousJobName = "no-active-job";
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
@@ -190,6 +194,7 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
+                .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
@@ -414,6 +419,8 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
+            m_CurrentJobHash = jobId;
+            m_PreviousJobId = m_CurrentJobId;
             m_PreviousJobName = m_CurrentJobName;
 
             if (jobId.IsEmpty)
@@ -441,7 +448,9 @@ namespace Aqua
             // ignore case where GameEvents.JobSwitched is dispatched when accepting a new job with no current one selected
             if (m_PreviousJobName.Equals("no-active-job")) return;
 
+            m_CurrentJobHash = jobId;
             m_PreviousJobName = m_CurrentJobName;
+            m_PreviousJobId = m_CurrentJobId;
 
             if (jobId.IsEmpty)
             {
@@ -459,7 +468,7 @@ namespace Aqua
             }
 
             #if FIREBASE
-            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, previousJobId, m_PreviousJobName);
             #endif
         }
 
@@ -492,13 +501,15 @@ namespace Aqua
             #endif
 
             m_PreviousJobName = m_CurrentJobName;
+            m_PreviousJobId = m_CurrentJobId;
+            m_CurrentJobHash = null;
             m_CurrentJobName = "no-active-job";
             m_CurrentJobId = -1;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)
         {
-            string taskId = inTaskId.ToString();
+            string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
 
             #if FIREBASE
             FBCompleteTask(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, taskId);
@@ -649,6 +660,13 @@ namespace Aqua
         {
             #if FIREBASE
             FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            #endif
+        }
+
+        private void LogScriptFired(string nodeId)
+        {
+            #if FIREBASE
+            FBScriptFired(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
 
@@ -887,6 +905,11 @@ namespace Aqua
             #if FIREBASE
             FBFactRejected(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, factId);
             #endif
+        }
+
+        private void LogLeaveArgument()
+        {
+            Debug.Log($"BEAVER LEAVE ARGUMENT");
         }
 
         private void LogCompleteArgument(StringHash32 id)

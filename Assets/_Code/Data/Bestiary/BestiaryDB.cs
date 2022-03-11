@@ -7,11 +7,12 @@ using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
+using ScriptableBake;
 
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Bestiary Database", fileName = "BestiaryDB")]
-    public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IBakedAsset
+    public class BestiaryDB : DBObjectCollection<BestiaryDesc>, IBaked
     {
         #region Inspector
 
@@ -201,9 +202,9 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IBakedAsset.Order { get { return 10; } }
+        int IBaked.Order { get { return 10; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             SortObjects(SortByCategory);
 

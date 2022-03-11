@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace EasyAssetStreaming.Editor {
     [CustomEditor(typeof(StreamingQuadTexture)), CanEditMultipleObjects]
@@ -18,6 +19,21 @@ namespace EasyAssetStreaming.Editor {
         private SerializedProperty m_SortingLayerProperty;
         private SerializedProperty m_SortingOrderProperty;
 
+        static private GUIContent[] s_LayerContent;
+        static private int[] s_LayerIds;
+
+        static private void InitializeLayerNames() {
+            SortingLayer[] layers = SortingLayer.layers;
+            Array.Resize(ref s_LayerContent, layers.Length);
+            Array.Resize(ref s_LayerIds, layers.Length);
+
+            for (int i = 0; i < layers.Length; ++i)
+            {
+                s_LayerContent[i] = new GUIContent(layers[i].name);
+                s_LayerIds[i] = layers[i].id;
+            }
+        }
+
         private void OnEnable() {
             m_PathProperty = serializedObject.FindProperty("m_Path");
             m_MaterialProperty = serializedObject.FindProperty("m_Material");
@@ -31,6 +47,8 @@ namespace EasyAssetStreaming.Editor {
 
             m_SortingLayerProperty = serializedObject.FindProperty("m_SortingLayer");
             m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
+
+            InitializeLayerNames();
         }
 
         public override void OnInspectorGUI() {
@@ -54,7 +72,19 @@ namespace EasyAssetStreaming.Editor {
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(m_SortingLayerProperty);
+            Rect sortingLayerRect = EditorGUILayout.BeginHorizontal();
+            GUIContent sortingLayerLabel = EditorGUI.BeginProperty(sortingLayerRect, new GUIContent(m_SortingLayerProperty.displayName), m_SortingLayerProperty);
+            {
+                int layerIdx = m_SortingLayerProperty.hasMultipleDifferentValues ? -1 : Array.IndexOf(s_LayerIds, m_SortingLayerProperty.intValue);
+
+                UnityEditor.EditorGUI.BeginChangeCheck();
+                int nextLayerIdx = UnityEditor.EditorGUILayout.Popup(sortingLayerLabel, layerIdx, s_LayerContent);
+                if (UnityEditor.EditorGUI.EndChangeCheck())
+                    m_SortingLayerProperty.intValue = nextLayerIdx >= 0 ? s_LayerIds[nextLayerIdx] : -1;
+            }
+            EditorGUI.EndProperty();
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.PropertyField(m_SortingOrderProperty);
 
             serializedObject.ApplyModifiedProperties();

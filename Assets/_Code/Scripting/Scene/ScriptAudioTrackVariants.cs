@@ -36,6 +36,7 @@ namespace Aqua.Scripting {
         [SerializeField] private Layer[] m_Layers = null;
         [SerializeField] private float m_CrossFadeDuration = 5;
         [SerializeField] private float m_FadeOutDuration = 0.5f;
+        [SerializeField] private bool m_SyncLayers = true;
 
         #endregion // Inspector
 
@@ -103,7 +104,9 @@ namespace Aqua.Scripting {
             } else if (!desiredAudio.IsPlaying()) {
                 desiredAudio.Play();
             }
-            AudioHandle.Sync(m_CurrentAudio, desiredAudio);
+            if (m_SyncLayers) {
+                AudioHandle.Sync(m_CurrentAudio, desiredAudio);
+            }
             m_CurrentAudio = desiredAudio;
         }
 

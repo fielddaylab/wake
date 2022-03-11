@@ -8,9 +8,10 @@ using UnityEngine.EventSystems;
 using System;
 using Aqua.Scripting;
 using Aqua.Profile;
+using ScriptableBake;
 
 namespace Aqua.Shop {
-    public class ShopStock : MonoBehaviour, IBakedComponent, ISceneLoadHandler {
+    public class ShopStock : MonoBehaviour, IBaked, ISceneLoadHandler {
 
         static public readonly StringHash32 Trigger_AttemptBuy = "ShopAttemptBuy";
 
@@ -36,14 +37,16 @@ namespace Aqua.Shop {
             PointerListener.TryGetComponentUserData<ShopItem>(eventData, out ShopItem item);
 
             using(var table = TempVarTable.Alloc()) {
+                
+                bool bCanAfford = CanAfford(Save.Inventory, item.CachedItem);
+
                 table.Set("itemId", item.ItemId);
-                table.Set("canAfford", CanAfford(Save.Inventory, item.CachedItem));
+                table.Set("canAfford", bCanAfford);
                 table.Set("cashCost", item.CachedItem.CashCost());
                 table.Set("expCost", item.CachedItem.RequiredExp());
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
 
-                if (!CanAfford(Save.Inventory, item.CachedItem))
-                {
+                if (!bCanAfford) {
                     Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, item.CachedItem);
                 }
             }
@@ -141,8 +144,11 @@ namespace Aqua.Shop {
 
         #if UNITY_EDITOR
 
-        void IBakedComponent.Bake() {
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags) {
             m_Items = FindObjectsOfType<ShopItem>();
+            return true;
         }
 
         #endif // UNITY_EDITOR

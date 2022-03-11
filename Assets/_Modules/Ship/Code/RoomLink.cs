@@ -2,11 +2,12 @@
 using UnityEngine.EventSystems;
 using BeauUtil;
 using Aqua.Scripting;
+using ScriptableBake;
 
 namespace Aqua.Ship
 {
     [RequireComponent(typeof(CursorInteractionHint))]
-    public class RoomLink : MonoBehaviour, IPointerClickHandler, IBakedComponent
+    public class RoomLink : MonoBehaviour, IPointerClickHandler, IBaked
     {
         private enum LinkType
         {
@@ -91,7 +92,9 @@ namespace Aqua.Ship
             return m_LinkType == LinkType.Scene;
         }
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             switch(m_LinkType)
             {
@@ -123,6 +126,8 @@ namespace Aqua.Ship
                         break;
                     }
             }
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

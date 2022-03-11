@@ -24,7 +24,7 @@ namespace Aqua.Cameras
 
         private void Awake()
         {
-            WorldUtils.ListenForPlayer(m_Region, OnTargetExit, OnTargetExit);
+            WorldUtils.ListenForPlayer(m_Region, OnTargetEnter, OnTargetExit);
         }
 
         private void OnTargetEnter(Collider2D inCollider)

@@ -6,19 +6,22 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 #endif // UNITY_EDITOR
+using ScriptableBake;
 
 namespace Aqua
 {
-    public partial class BestiaryDesc : DBObject, IBakedAsset, IEditorOnlyData
+    public partial class BestiaryDesc : DBObject, IBaked, IEditorOnlyData
     {
         #if UNITY_EDITOR
 
         #region Optimize
 
-        int IBakedAsset.Order { get { return (int) m_Type; } }
+        int IBaked.Order { get { return (int) m_Type; } }
 
-        bool IBakedAsset.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
+            FindAllFacts();
+
             foreach(var fact in m_Facts)
             {
                 Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);

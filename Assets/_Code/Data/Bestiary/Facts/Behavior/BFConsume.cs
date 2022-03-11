@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -100,7 +101,7 @@ namespace Aqua
             return consume != null && consume.Property == Property;
         }
 
-        public override bool Bake()
+        public override bool Bake(BakeFlags flags)
         {
             if (OnlyWhenStressed)
             {

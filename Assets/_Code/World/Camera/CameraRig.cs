@@ -1,11 +1,12 @@
 using BeauRoutine;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Cameras
 {
     [DisallowMultipleComponent]
-    public class CameraRig : MonoBehaviour, IBakedComponent
+    public class CameraRig : MonoBehaviour, IBaked
     {
         #region Inspector
 
@@ -49,7 +50,9 @@ namespace Aqua.Cameras
                 EffectsTransform = Camera.transform;
         }
 
-        void IBakedComponent.Bake()
+        int IBaked.Order { get { return 0; } }
+
+        bool IBaked.Bake(BakeFlags flags)
         {
             InitialTarget = null;
 
@@ -64,6 +67,8 @@ namespace Aqua.Cameras
                     break;
                 }
             }
+
+            return true;
         }
 
         [UnityEditor.CustomEditor(typeof(CameraRig))]

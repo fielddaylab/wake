@@ -89,7 +89,7 @@ namespace Aqua.Modeling {
         private void OnImportClicked() {
             m_ImportButton.gameObject.SetActive(false);
             m_ImportRoutine = Routine.Start(this, ImportSequence());
-            m_ImportRoutine.TryManuallyUpdate(0);
+            m_ImportRoutine.Tick();
         }
 
         private void OnExportClicked() {

@@ -48,12 +48,12 @@ namespace Aqua
         private void OnSaveBegin()
         {
             m_DisplayTime = Time.realtimeSinceStartup;
-            m_DisplayRoutine.Replace(this, Show()).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, Show()).Tick();
         }
 
         private void OnSaveComplete()
         {
-            m_DisplayRoutine.Replace(this, Complete()).TryManuallyUpdate(0);
+            m_DisplayRoutine.Replace(this, Complete()).Tick();
         }
 
         private IEnumerator Show()

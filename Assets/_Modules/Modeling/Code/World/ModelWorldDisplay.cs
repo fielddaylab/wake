@@ -105,8 +105,6 @@ namespace Aqua.Modeling {
             InitFixedPositions();
 
             m_OriginalCanvasState = TransformState.LocalState(m_Canvas.transform);
-
-            Services.Events.Register(GameEvents.WaterPropertiesUpdated, UpdateWaterPropertiesUnlocked, this);
         }
 
         private unsafe void InitFixedPositions() {
@@ -115,10 +113,6 @@ namespace Aqua.Modeling {
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.PH] = GetPositionInv(m_PHProperty);
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.Oxygen] = GetPositionInv(m_OxygenProperty);
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.CarbonDioxide] = GetPositionInv(m_CarbonDioxideProperty);
-        }
-
-        private void OnDestroy() {
-            Services.Events?.DeregisterAll(this);
         }
 
         public void SetData(ModelState state) {

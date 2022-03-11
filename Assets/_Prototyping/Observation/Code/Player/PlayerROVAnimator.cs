@@ -83,8 +83,8 @@ namespace ProtoAqua.Observation
             Quaternion now = m_Root.localRotation;
 
             if (now != target) {
-                Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Routine.DeltaTime));
-                if (lerp == target) {
+                Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime * Time.timeScale));
+                if (lerp == target) { // quaternion equals operator is fuzzy, so this is an "approximately equals"
                     lerp = target;
                 }
                 m_Root.localRotation = lerp;
