@@ -181,6 +181,7 @@ namespace Aqua
                     {
                         ScriptNode node = RNG.Instance.Choose(nodes);
                         DebugService.Log(LogMask.Scripting, "[ScriptingService] Trigger '{0}' -> Running node '{1}'", inTriggerId, node.Id());
+                        Services.Events.Dispatch(GameEvents.ScriptFired, node.FullName());
                         handle = StartThreadInternalNode(inContext, node, inContextTable, inOnComplete);
                     }
                 }

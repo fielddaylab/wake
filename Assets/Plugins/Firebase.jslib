@@ -504,6 +504,24 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
+    FBScriptFired: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName, nodeId) {
+        var userCode = Pointer_stringify(userCode);
+        var appVersion = Pointer_stringify(appVersion);
+        var appFlavor = Pointer_stringify(appFlavor);
+        var jobName = Pointer_stringify(jobName);
+        var nodeId = Pointer_stringify(nodeId);
+
+        analytics.logEvent("script_fired", {
+            user_code: userCode,
+            app_version: appVersion,
+            app_flavor: appFlavor,
+            log_version: logVersion,
+            job_id: jobId,
+            job_name: jobName,
+            node_id: nodeId
+        });
+    }, 
+
     // Modeling Events
 
     FBModelingStart: function(userCode, appVersion, appFlavor, logVersion, jobId, jobName) {

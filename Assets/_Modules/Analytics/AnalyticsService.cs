@@ -99,6 +99,8 @@ namespace Aqua
         public static extern void FBSimulationSyncAchieved(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
         [DllImport("__Internal")]
         public static extern void FBGuideScriptTriggered(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        [DllImport("__Internal")]
+        public static extern void FBScriptFired(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
 
         // Modeling Events
         [DllImport("__Internal")]
@@ -190,6 +192,7 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
+                .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
@@ -649,6 +652,13 @@ namespace Aqua
         {
             #if FIREBASE
             FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            #endif
+        }
+
+        private void LogScriptFired(string nodeId)
+        {
+            #if FIREBASE
+            FBScriptFired(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
             #endif
         }
 
