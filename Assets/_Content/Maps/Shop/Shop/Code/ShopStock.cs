@@ -47,7 +47,7 @@ namespace Aqua.Shop {
                 Services.Script.TriggerResponse(Trigger_AttemptBuy, table);
 
                 if (!bCanAfford) {
-                    Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, item.CachedItem);
+                    Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, item.CachedItem.Id());
                 }
             }
         }

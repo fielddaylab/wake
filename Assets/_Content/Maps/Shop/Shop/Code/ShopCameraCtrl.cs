@@ -50,7 +50,6 @@ namespace Aqua.Shop {
                 yield return 0.1f;
                 OnShopReady(false);
                 Services.UI.HideLetterbox();
-                Services.Input.ResumeAll();
             }
             yield return m_CurrencyGroup.Show(0.2f);
         }
