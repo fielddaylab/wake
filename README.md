@@ -1011,6 +1011,21 @@ Submitted fact is incorrect / rejected by the argumentation script.
 | job_name | String name of the current job |
 | fact_id | ID of the submitted fact |
 
+<a name="leave_argument"/>
+
+#### leave_argument
+
+Player clicks "Let me get back to you" during argumentation.
+
+| Parameter | Description |
+| --- | --- |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | Git branch origin for current build |
+| log_version | Current logging version |
+| job_id | ID of the current job |
+| job_name | String name of the current job |
+
 <a name="complete_argument"/>
 
 #### complete_argument
