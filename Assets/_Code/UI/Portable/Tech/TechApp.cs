@@ -44,7 +44,9 @@ namespace Aqua.Portable
             {
                 foreach(var upgrade in Save.Inventory.GetItems(InvItemCategory.Upgrade))
                 {
-                    upgrades.Add(Assets.Item(upgrade.ItemId));
+                    if (upgrade.Item.HasFlags(InvItemFlags.Hidden))
+                        continue;
+                    upgrades.Add(upgrade.Item);
                 }
 
                 upgrades.Sort(InvItem.SortByCategoryAndOrder);

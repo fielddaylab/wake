@@ -206,6 +206,8 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
 
             m_ExperimentData = GenerateData();
             
@@ -216,7 +218,6 @@ namespace ProtoAqua.ExperimentV2 {
                 thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
             }
 
-            m_ParentTank.ActorBehavior.Begin();
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
             yield return thread.Wait();
