@@ -28,6 +28,10 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        public string[] EditorTaskIds() {
+            return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
+        }
+
         int IBaked.Order { get { return 1; }}
 
         bool IBaked.Bake(BakeFlags flags)
