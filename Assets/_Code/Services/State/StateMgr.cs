@@ -203,9 +203,9 @@ namespace Aqua
 
         private IEnumerator InitialSceneLoad()
         {
+            Services.Input.PauseAll();
             yield return WaitForServiceLoading();
             
-            Services.Input.PauseAll();
             yield return WaitForPreload(m_InitialPreloadRoot, null);
 
             foreach(var obj in m_InitialPreloadRoot.GetComponentsInChildren<ISceneLoadHandler>(true))

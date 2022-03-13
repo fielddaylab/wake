@@ -160,6 +160,12 @@ namespace Aqua
             return m_StateTransitions.Evaluate(inEnvironment, out outAffected);
         }
 
+        public bool HasOrganism(StringHash32 inOrganismId)
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
+            return ArrayUtils.Contains(m_InhabitingOrganisms, inOrganismId);
+        }
+
         #endregion // Checks
 
         #region Sorting

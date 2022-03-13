@@ -13,6 +13,7 @@ namespace Aqua
         public Image Icon;
         public LocText Label;
         public CursorInteractionHint Tooltip;
+        public GameObject Highlight;
 
         [NonSerialized] public BestiaryDesc Critter;
         [NonSerialized] public ToggleDelegate OnToggle;

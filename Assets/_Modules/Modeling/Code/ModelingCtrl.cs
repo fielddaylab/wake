@@ -39,9 +39,11 @@ namespace Aqua.Modeling {
 
         private void Start() {
             m_Header.OnPhaseChanged = OnPhaseChanged;
+
             m_EcosystemSelect.OnAdded = OnEcosystemSelected;
             m_EcosystemSelect.OnRemoved = OnEcosystemRemoved;
             m_EcosystemSelect.OnCleared = OnEcosystemCleared;
+            m_EcosystemSelect.HighlightFilter = EcosystemHighlightPredicate;
 
             m_ConceptualUI.OnRequestImport = OnRequestConceptualImport;
             m_ConceptualUI.OnRequestExport = OnRequestConceptualExport;
@@ -95,7 +97,7 @@ namespace Aqua.Modeling {
             } else {
                 m_EcosystemSelect.Hide();
                 if (prevPhase == ModelPhases.Ecosystem) {
-                    m_EcosystemHeader.Show(m_State.Environment, m_ProgressInfo.Scope);
+                    m_EcosystemHeader.Show(m_State.Environment, m_ProgressInfo.Scope, !Save.CurrentJobId.IsEmpty);
                     m_World.Show();
                 }
             }
@@ -227,6 +229,10 @@ namespace Aqua.Modeling {
             Services.Data.SetVariable(ModelingConsts.Var_HasJob, false);
             
             RefreshPhaseHeader();
+        }
+
+        private bool EcosystemHighlightPredicate(BestiaryDesc ecosystem) {
+            return Save.CurrentJob.Job?.FindAsset<JobModelScope>()?.EnvironmentId == ecosystem.Id();
         }
 
         private void OnBestiaryUpdated() {

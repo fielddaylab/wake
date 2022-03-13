@@ -77,6 +77,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
             m_EnvironmentScreen.Panel.OnCleared += OnEnvironmentCleared;
 
+            m_OrganismScreen.Panel.HighlightFilter = EvaluateOrganismHighlight;
+
             // m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
             m_FeatureScreen.OnReset += (s, w) => m_FeaturePanel.ClearSelection();
 
@@ -134,6 +136,10 @@ namespace ProtoAqua.ExperimentV2 {
             m_SelectedEnvironment = null;
             m_ParentTank.ActorBehavior.ClearEnvState();
             m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
+        }
+
+        private bool EvaluateOrganismHighlight(BestiaryDesc organism) {
+            return m_SelectedEnvironment?.HasOrganism(organism.Id()) ?? false;
         }
 
         #endregion // Environment Callbacks
