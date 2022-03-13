@@ -35,133 +35,133 @@ namespace Aqua
 
         //Progression
         [DllImport("__Internal")]
-        public static extern void FBAcceptJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBAcceptJob(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBSwitchJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, int prevJobId, string prevJobName);
+        public static extern void FBSwitchJob(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string prevJobName);
         [DllImport("__Internal")]
-        public static extern void FBReceiveFact(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBReceiveFact(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBReceiveEntity(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string entityId);
+        public static extern void FBReceiveEntity(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string entityId);
         [DllImport("__Internal")]
-        public static extern void FBCompleteJob(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBCompleteJob(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCompleteTask(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string taskId);
+        public static extern void FBCompleteTask(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string taskId);
 
         //Player Actions
         [DllImport("__Internal")]
-        public static extern void FBSceneChanged(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName,string sceneName);
+        public static extern void FBSceneChanged(string userCode, string appVersion, string appFlavor, int logVersion, string jobName,string sceneName);
         [DllImport("__Internal")]
-        public static extern void FBRoomChanged(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string roomName);
+        public static extern void FBRoomChanged(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string roomName);
         [DllImport("__Internal")]
-        public static extern void FBBeginExperiment(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
+        public static extern void FBBeginExperiment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters);
         [DllImport("__Internal")]
-        public static extern void FBBeginDive(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string siteId);
+        public static extern void FBBeginDive(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string siteId);
         [DllImport("__Internal")]
-        public static extern void FBBeginModel(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginModel(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBeginSimulation(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginSimulation(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBAskForHelp(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBAskForHelp(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string nodeId);
         [DllImport("__Internal")]
-        public static extern void FBTalkWithGuide(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBTalkWithGuide(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string nodeId);
         
         //Bestiary Events
         [DllImport("__Internal")]
-        public static extern void FBOpenBestiary(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBOpenBestiary(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenSpeciesTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenSpeciesTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenEnvironmentsTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenEnvironmentsTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiaryOpenModelsTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBestiaryOpenModelsTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectSpecies(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string speciesId);
+        public static extern void FBBestiarySelectSpecies(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string speciesId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string environmentId);
+        public static extern void FBBestiarySelectEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string environmentId);
         [DllImport("__Internal")]
-        public static extern void FBBestiarySelectModel(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string modelId);
+        public static extern void FBBestiarySelectModel(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string modelId);
         [DllImport("__Internal")]
-        public static extern void FBCloseBestiary(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBCloseBestiary(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
 
         //Status Events
         [DllImport("__Internal")]
-        public static extern void FBOpenStatus(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBOpenStatus(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenJobTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenJobTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenItemTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenItemTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBStatusOpenTechTab(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBStatusOpenTechTab(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCloseStatus(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBCloseStatus(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
 
         //Game Feedback
         [DllImport("__Internal")]
-        public static extern void FBSimulationSyncAchieved(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBSimulationSyncAchieved(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBGuideScriptTriggered(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBGuideScriptTriggered(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string nodeId);
         [DllImport("__Internal")]
-        public static extern void FBScriptFired(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string nodeId);
+        public static extern void FBScriptFired(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string nodeId);
 
         // Modeling Events
         [DllImport("__Internal")]
-        public static extern void FBModelingStart(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBModelingStart(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBModelPhaseChanged(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string phase);
+        public static extern void FBModelPhaseChanged(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string phase);
         [DllImport("__Internal")]
-        public static extern void FBModelEcosystemSelected(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelEcosystemSelected(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptStarted(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelConceptStarted(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptUpdated(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem, string status);
+        public static extern void FBModelConceptUpdated(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem, string status);
         [DllImport("__Internal")]
-        public static extern void FBModelConceptExported(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelConceptExported(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelSyncError(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem, int sync);
+        public static extern void FBModelSyncError(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem, int sync);
         [DllImport("__Internal")]
-        public static extern void FBModelPredictCompleted(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelPredictCompleted(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneUpdate(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem, string organism, int differenceValue);
+        public static extern void FBModelInterveneUpdate(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem, string organism, int differenceValue);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneError(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelInterveneError(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelInterveneCompleted(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string ecosystem);
+        public static extern void FBModelInterveneCompleted(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string ecosystem);
         [DllImport("__Internal")]
-        public static extern void FBModelingEnd(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string phase, string ecosystem);
+        public static extern void FBModelingEnd(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string phase, string ecosystem);
 
         // Shop Events
         [DllImport("__Internal")]
-        public static extern void FBPurchaseUpgrade(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        public static extern void FBPurchaseUpgrade(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string itemId, string itemName, int cost);
         [DllImport("__Internal")]
-        public static extern void FBInsufficientFunds(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string itemId, string itemName, int cost);
+        public static extern void FBInsufficientFunds(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string itemId, string itemName, int cost);
         [DllImport("__Internal")]
-        public static extern void FBTalkToShopkeep(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBTalkToShopkeep(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
 
         // Experimentation Events
         [DllImport("__Internal")]
-        public static extern void FBAddEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBAddEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBRemoveEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBRemoveEnvironment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBEnvironmentCleared(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment);
+        public static extern void FBEnvironmentCleared(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment);
         [DllImport("__Internal")]
-        public static extern void FBAddCritter(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        public static extern void FBAddCritter(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critter);
         [DllImport("__Internal")]
-        public static extern void FBRemoveCritter(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment, string critter);
+        public static extern void FBRemoveCritter(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critter);
         [DllImport("__Internal")]
-        public static extern void FBCrittersCleared(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string tankType, string environment, string critters);
+        public static extern void FBCrittersCleared(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters);
 
         // Argumentation Events
         [DllImport("__Internal")]
-        public static extern void FBBeginArgument(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBBeginArgument(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBFactSubmitted(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBFactSubmitted(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBFactRejected(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName, string factId);
+        public static extern void FBFactRejected(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string factId);
         [DllImport("__Internal")]
-        public static extern void FBLeaveArgument(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBLeaveArgument(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
         [DllImport("__Internal")]
-        public static extern void FBCompleteArgument(string userCode, string appVersion, string appFlavor, int logVersion, int jobId, string jobName);
+        public static extern void FBCompleteArgument(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
 
         #endregion // Firebase JS Functions
 
@@ -171,9 +171,7 @@ namespace Aqua
         private string m_AppFlavor = string.Empty;
         private int m_LogVersion = 1;
         private StringHash32 m_CurrentJobHash = null;
-        private int m_CurrentJobId = -1;
         private string m_CurrentJobName = "no-active-job";
-        private int m_PreviousJobId = -1;
         private string m_PreviousJobName = "no-active-job";
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
@@ -295,14 +293,14 @@ namespace Aqua
             string sceneName = scene.Name;
 
             #if FIREBASE
-            FBSceneChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, sceneName);
+            FBSceneChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, sceneName);
             #endif
         }
 
         private void LogRoomChanged(string roomName)
         {
             #if FIREBASE
-            FBRoomChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, roomName);
+            FBRoomChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, roomName);
             #endif
         }
 
@@ -424,39 +422,31 @@ namespace Aqua
         {
             
             m_CurrentJobHash = jobId;
-            m_PreviousJobId = m_CurrentJobId;
             m_PreviousJobName = m_CurrentJobName;
 
             if (jobId.IsEmpty)
             {
                 m_CurrentJobName = "no-active-job";
-                m_CurrentJobId = -1;
             }
             else
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
-                m_CurrentJobId = JobIds.IndexOf(jobId);
-                Debug.Log($"BEAVER ACCEPT PREV {m_PreviousJobName} CURR {m_CurrentJobName}");
 
                 if (m_PreviousJobName != "no-active-job")
                 {
                     LogSwitchJob();
                 }
-
-                if (m_CurrentJobId == -1) {
-                    Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
-                }
             }
 
             #if FIREBASE
-            FBAcceptJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBAcceptJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogSwitchJob()
         {
             #if FIREBASE
-            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_PreviousJobId, m_PreviousJobName);
+            FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_PreviousJobName);
             #endif
         }
 
@@ -467,7 +457,7 @@ namespace Aqua
                 string parsedFactId = Assets.Fact(inParams.Id).name;
 
                 #if FIREBASE
-                FBReceiveFact(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, parsedFactId);
+                FBReceiveFact(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, parsedFactId);
                 #endif
             }
             else if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
@@ -475,7 +465,7 @@ namespace Aqua
                 string parsedEntityId = Assets.Bestiary(inParams.Id).name;
 
                 #if FIREBASE
-                FBReceiveEntity(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, parsedEntityId);
+                FBReceiveEntity(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, parsedEntityId);
                 #endif
             }
         }
@@ -485,14 +475,12 @@ namespace Aqua
             string parsedJobName = Assets.Job(jobId).name;
 
             #if FIREBASE
-            FBCompleteJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, parsedJobName);
+            FBCompleteJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, parsedJobName);
             #endif
 
             m_PreviousJobName = m_CurrentJobName;
-            m_PreviousJobId = m_CurrentJobId;
             m_CurrentJobHash = null;
             m_CurrentJobName = "no-active-job";
-            m_CurrentJobId = -1;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)
@@ -500,42 +488,42 @@ namespace Aqua
             string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
 
             #if FIREBASE
-            FBCompleteTask(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, taskId);
+            FBCompleteTask(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, taskId);
             #endif
         }
 
         private void LogBeginDive(string inTargetScene)
         {
             #if FIREBASE
-            FBBeginDive(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, inTargetScene);
+            FBBeginDive(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, inTargetScene);
             #endif
         }
 
         private void LogBeginModel()
         {
             #if FIREBASE
-            FBBeginModel(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBeginModel(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogBeginSimulation()
         {
             #if FIREBASE
-            FBBeginSimulation(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBeginSimulation(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogAskForHelp(string nodeId)
         {
             #if FIREBASE
-            FBAskForHelp(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            FBAskForHelp(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, nodeId);
             #endif
         }
 
         private void LogTalkWithGuide(string nodeId)
         {
             #if FIREBASE
-            FBTalkWithGuide(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            FBTalkWithGuide(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, nodeId);
             #endif
         }
 
@@ -545,7 +533,7 @@ namespace Aqua
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
             #if FIREBASE
-            FBOpenBestiary(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBOpenBestiary(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
 
             LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
@@ -554,44 +542,44 @@ namespace Aqua
         private void LogBestiaryOpenSpeciesTab()
         {
             #if FIREBASE
-            FBBestiaryOpenSpeciesTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBestiaryOpenSpeciesTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
         private void LogBestiaryOpenEnvironmentsTab()
         {
             #if FIREBASE
-            FBBestiaryOpenEnvironmentsTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBestiaryOpenEnvironmentsTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
         private void LogBestiaryOpenModelsTab()
         {
             #if FIREBASE
-            FBBestiaryOpenModelsTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBestiaryOpenModelsTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogBestiarySelectSpecies(string speciesId)
         {
             #if FIREBASE
-            FBBestiarySelectSpecies(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, speciesId);
+            FBBestiarySelectSpecies(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, speciesId);
             #endif
         }
         private void LogBestiarySelectEnvironment(string environmentId)
         {
             #if FIREBASE
-            FBBestiarySelectEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, environmentId);
+            FBBestiarySelectEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, environmentId);
             #endif
         }
         private void LogBestiarySelectModel(string modelId)
         {
             #if FIREBASE
-            FBBestiarySelectModel(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, modelId);
+            FBBestiarySelectModel(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, modelId);
             #endif
         }
         private void LogCloseBestiary()
         {
             #if FIREBASE
-            FBCloseBestiary(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBCloseBestiary(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
         #endregion
@@ -602,7 +590,7 @@ namespace Aqua
             //m_CurrentPortableStatusTabId = StatusApp.PageId.Job;
 
             #if FIREBASE
-            FBOpenStatus(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBOpenStatus(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
 
             LogStatusOpenJobTab(); //Status starts by opening tasks tab
@@ -611,28 +599,28 @@ namespace Aqua
         private void LogStatusOpenJobTab()
         {
             #if FIREBASE
-            FBStatusOpenJobTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBStatusOpenJobTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogStatusOpenItemTab()
         {
             #if FIREBASE
-            FBStatusOpenItemTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBStatusOpenItemTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogStatusOpenTechTab()
         {
             #if FIREBASE
-            FBStatusOpenTechTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBStatusOpenTechTab(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogCloseStatus()
         {
             #if FIREBASE
-            FBCloseStatus(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBCloseStatus(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
         #endregion
@@ -640,21 +628,21 @@ namespace Aqua
         private void LogSimulationSyncAchieved()
         {
             #if FIREBASE
-            FBSimulationSyncAchieved(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBSimulationSyncAchieved(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogGuideScriptTriggered(string nodeId)
         {
             #if FIREBASE
-            FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            FBGuideScriptTriggered(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, nodeId);
             #endif
         }
 
         private void LogScriptFired(string nodeId)
         {
             #if FIREBASE
-            FBScriptFired(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, nodeId);
+            FBScriptFired(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, nodeId);
             #endif
         }
 
@@ -663,7 +651,7 @@ namespace Aqua
         private void LogStartModel()
         {
             #if FIREBASE
-            FBModelingStart(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBModelingStart(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
@@ -672,7 +660,7 @@ namespace Aqua
             m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
             #if FIREBASE
-            FBModelPhaseChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase);
+            FBModelPhaseChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelPhase);
             #endif
         }
 
@@ -681,70 +669,70 @@ namespace Aqua
             m_CurrentModelEcosystem = ecosystem;
 
             #if FIREBASE
-            FBModelEcosystemSelected(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelEcosystemSelected(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelConceptStarted()
         {
             #if FIREBASE
-            FBModelConceptStarted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelConceptStarted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelConceptUpdated(ConceptualModelState.StatusId status)
         {
             #if FIREBASE
-            FBModelConceptUpdated(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, status.ToString());
+            FBModelConceptUpdated(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem, status.ToString());
             #endif
         }
 
         private void LogModelConceptExported()
         {
             #if FIREBASE
-            FBModelConceptExported(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelConceptExported(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelSyncError(int sync)
         {
             #if FIREBASE
-            FBModelSyncError(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, sync);
+            FBModelSyncError(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem, sync);
             #endif
         }
 
         private void LogModelPredictCompleted()
         {
             #if FIREBASE
-            FBModelPredictCompleted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelPredictCompleted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelInterveneUpdate(InterveneUpdateData data)
         {
             #if FIREBASE
-            FBModelInterveneUpdate(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem, data.Organism, data.DifferenceValue);
+            FBModelInterveneUpdate(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem, data.Organism, data.DifferenceValue);
             #endif
         }
 
         private void LogModelInterveneError()
         {
             #if FIREBASE
-            FBModelInterveneError(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelInterveneError(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogModelInterveneCompleted()
         {
             #if FIREBASE
-            FBModelInterveneCompleted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelEcosystem);
+            FBModelInterveneCompleted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelEcosystem);
             #endif
         }
 
         private void LogEndModel()
         {
             #if FIREBASE
-            FBModelingEnd(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentModelPhase, m_CurrentModelEcosystem);
+            FBModelingEnd(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentModelPhase, m_CurrentModelEcosystem);
             #endif
 
             m_CurrentModelPhase = string.Empty;
@@ -765,7 +753,7 @@ namespace Aqua
                 int cost = item.CashCost();
 
                 #if FIREBASE
-                FBPurchaseUpgrade(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
+                FBPurchaseUpgrade(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
                 #endif
             }
         }
@@ -777,14 +765,14 @@ namespace Aqua
             int cost = item.CashCost();
 
             #if FIREBASE
-            FBInsufficientFunds(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
+            FBInsufficientFunds(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, inUpgradeId.ToString(), name, cost);
             #endif
         }
 
         private void LogTalkToShopkeep()
         {
             #if FIREBASE
-            FBTalkToShopkeep(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBTalkToShopkeep(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
@@ -803,7 +791,7 @@ namespace Aqua
             m_CurrentEnvironment = environment;
 
             #if FIREBASE
-            FBAddEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, environment);
+            FBAddEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, environment);
             #endif
         }
 
@@ -813,14 +801,14 @@ namespace Aqua
             m_CurrentEnvironment = string.Empty;
 
             #if FIREBASE
-            FBRemoveEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, environment);
+            FBRemoveEnvironment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, environment);
             #endif
         }
 
         private void LogEnvironmentCleared()
         {
             #if FIREBASE
-            FBEnvironmentCleared(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment);
+            FBEnvironmentCleared(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment);
             #endif
 
             m_CurrentEnvironment = string.Empty;
@@ -832,7 +820,7 @@ namespace Aqua
             m_CurrentCritters.Add(critter);
 
             #if FIREBASE
-            FBAddCritter(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
+            FBAddCritter(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
             #endif
         }
 
@@ -842,7 +830,7 @@ namespace Aqua
             m_CurrentCritters.Remove(critter);
 
             #if FIREBASE
-            FBRemoveCritter(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
+            FBRemoveCritter(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critter);
             #endif
         }
 
@@ -852,7 +840,7 @@ namespace Aqua
             m_CurrentCritters.Clear();
 
             #if FIREBASE
-            FBCrittersCleared(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critters);
+            FBCrittersCleared(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_CurrentTankType, m_CurrentEnvironment, critters);
             #endif
         }
 
@@ -862,7 +850,7 @@ namespace Aqua
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
             #if FIREBASE
-            FBBeginExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, tankType, m_CurrentEnvironment, critters);
+            FBBeginExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, tankType, m_CurrentEnvironment, critters);
             #endif
         }
 
@@ -875,7 +863,7 @@ namespace Aqua
             m_CurrentArguementId = id;
 
             #if FIREBASE
-            FBBeginArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBBeginArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
@@ -884,7 +872,7 @@ namespace Aqua
             string factId = Assets.Fact(inFactId).name;
 
             #if FIREBASE
-            FBFactSubmitted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, factId);
+            FBFactSubmitted(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, factId);
             #endif
         }
 
@@ -893,7 +881,7 @@ namespace Aqua
             string factId = Assets.Fact(inFactId).name;
             
             #if FIREBASE
-            FBFactRejected(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, factId);
+            FBFactRejected(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, factId);
             #endif
         }
 
@@ -902,14 +890,14 @@ namespace Aqua
             if (ArgumentationService.LeafIsComplete(m_CurrentArguementId)) return;
 
             #if FIREBASE
-            FBLeaveArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBLeaveArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
         }
 
         private void LogCompleteArgument(StringHash32 id)
         {
             #if FIREBASE
-            FBCompleteArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName);
+            FBCompleteArgument(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
             #endif
 
             m_CurrentArguementId = null;

@@ -73,7 +73,6 @@ Player accepts a job with a given id.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the accepted job |
 | job_name | String name of the accepted job |
 
 <a name="switch_job"/>
@@ -88,9 +87,7 @@ Player switches jobs by starting a different one.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the new job |
 | job_name | String name of the new job |
-| prev_job_id | ID of the previous job |
 | prev_job_name | String name of the previous job |
 
 <a name="receive_fact"/>
@@ -105,7 +102,6 @@ A fact is added to the player's bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | Unique ID for the given fact |
 
@@ -121,7 +117,6 @@ An entity is added to the player's bestiary (ex. scanning a critter in a dive si
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | entity_id | Unique ID for the given entity |
 
@@ -137,7 +132,6 @@ Player completes a given job.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the completed job |
 | job_name | String name of the completed job |
 
 <a name="complete_task"/>
@@ -152,7 +146,6 @@ Player completes a task for a given job.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the new job |
 | job_name | String name of the new job |
 | task_id | ID of the completed task |
 
@@ -178,7 +171,6 @@ Player loads into a new scene (ex. "Ship").
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | scene_name | Name of the loaded scene |
 
@@ -194,7 +186,6 @@ Player enters a new room on the ship.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | scene_name | Name of the room being entered|
 
@@ -210,7 +201,6 @@ Player enters a given dive site.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | site_id | ID of the dive site |
 
@@ -226,7 +216,6 @@ Player begins the argumentation process.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="ask_for_help"/>
@@ -241,7 +230,6 @@ Player clicks the hint button.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | node_id | Scripting ID for the hint response |
 
@@ -259,7 +247,6 @@ Player triggers conversation with the guide (Kevin).
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | node_id | Scripting ID for guide's response |
 
@@ -273,7 +260,6 @@ Player triggers a given script node through dialogue or interactions.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | node_id | ID of a given script node |
 
@@ -307,7 +293,6 @@ Player opens the bestiary, which defaults to the species tab.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="bestiary_open_species_tab"/>
@@ -322,7 +307,6 @@ Player opens the species tab in the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="bestiary_open_environments_tab"/>
@@ -337,7 +321,6 @@ Player opens the environments tab in the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="bestiary_open_models_tab"/>
@@ -352,7 +335,6 @@ Player opens the models tab in the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="bestiary_select_species"/>
@@ -367,7 +349,6 @@ Player selects a species from the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | species_id | ID of the selected species |
 
@@ -383,7 +364,6 @@ Player selects an environment from the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | environment_id | ID of the selected environment |
 
@@ -399,7 +379,6 @@ Player selects a model from the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | model_id | ID of the selected model |
 
@@ -415,7 +394,6 @@ Player closes the bestiary.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="open_status"/>
@@ -430,7 +408,6 @@ Player opens the portable status app, which defaults to the job tab.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="status_open_job_tab"/>
@@ -445,7 +422,6 @@ Player opens the job tab in the portable status app.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="status_open_item_tab"/>
@@ -460,7 +436,6 @@ Player opens the item tab in the portable status app.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="status_open_tech_tab"/>
@@ -475,7 +450,6 @@ Player opens the tech tab in the portable status app.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="close_status"/>
@@ -490,7 +464,6 @@ Player closes the portable status app.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="Modeling"/>
@@ -524,7 +497,6 @@ Player enters the modeling room.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="model_phase_changed"/>
@@ -539,7 +511,6 @@ Player selects a given modeling phase.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | phase | The selected modeling phase |
 
@@ -563,7 +534,6 @@ Player selects an ecosystem for constructing the model.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -579,7 +549,6 @@ Player starts the conceptual modeling phase.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -595,7 +564,6 @@ Player imports new facts / behaviors into the conceptual model.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 | status | Updated status of the concept model |
@@ -619,7 +587,6 @@ Player saves the conceptual model to AQOS.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -635,7 +602,6 @@ Player enters the sync phase of modeling.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -651,7 +617,6 @@ Player attempts to sync the model but fails.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 | sync | Sync % achieved with the current model |
@@ -668,7 +633,6 @@ Player successfully syncs the model.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -684,7 +648,6 @@ Player completes the prediction model.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -700,7 +663,6 @@ Player introduces a new organism or updates an existing organism's population co
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 | organism | The organism having its population modified by the player |
@@ -718,7 +680,6 @@ Player’s intervention model is unsuccessful.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -734,7 +695,6 @@ Player successfully completes the intervention model.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
 
@@ -750,7 +710,6 @@ Player exits the modeling room.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | phase | The selected modeling phase upon leaving |
 | ecosystem | The selected ecosystem upon leaving |
@@ -775,7 +734,6 @@ Player purchases an upgrade from the shop.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | item_id | ID of the purchased item |
 | item_name | String name of the purchased item |
@@ -793,7 +751,6 @@ Player attempts to purchase an item but doesn't have enough currency.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | item_id | ID of the item |
 | item_name | String name of the item |
@@ -811,7 +768,6 @@ Player talks to the shopkeeper.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="Experimentation"/>
@@ -844,7 +800,6 @@ Player selects an environment for running the experiment.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Name of the added environment |
@@ -861,7 +816,6 @@ Player deselects an environment.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Name of the removed environment |
@@ -878,7 +832,6 @@ Player clears the current environment.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Name of the cleared environment |
@@ -895,7 +848,6 @@ Player adds a critter to the tank.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
@@ -913,7 +865,6 @@ Player removes a critter from the tank.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
@@ -931,7 +882,6 @@ Player clears all critters from the tank.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
@@ -949,7 +899,6 @@ Player starts an experiment with a given tank type.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
@@ -976,7 +925,6 @@ Player begins argumentation for a job.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="fact_submitted"/>
@@ -991,7 +939,6 @@ Player submits a fact to argumentation.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | ID of the submitted fact |
 
@@ -1007,7 +954,6 @@ Submitted fact is incorrect / rejected by the argumentation script.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 | fact_id | ID of the submitted fact |
 
@@ -1023,7 +969,6 @@ Player clicks "Let me get back to you" during argumentation.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 <a name="complete_argument"/>
@@ -1038,7 +983,6 @@ Player completes argumentation for a job.
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
-| job_id | ID of the current job |
 | job_name | String name of the current job |
 
 ## DBExport.json Schema
