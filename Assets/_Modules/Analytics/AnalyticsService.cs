@@ -192,7 +192,7 @@ namespace Aqua
         {
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
-                .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
+                //.Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
@@ -422,6 +422,7 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
+            
             m_CurrentJobHash = jobId;
             m_PreviousJobId = m_CurrentJobId;
             m_PreviousJobName = m_CurrentJobName;
@@ -435,6 +436,12 @@ namespace Aqua
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
                 m_CurrentJobId = JobIds.IndexOf(jobId);
+                Debug.Log($"BEAVER ACCEPT PREV {m_PreviousJobName} CURR {m_CurrentJobName}");
+
+                if (m_PreviousJobName != "no-active-job")
+                {
+                    LogSwitchJob();
+                }
 
                 if (m_CurrentJobId == -1) {
                     Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
@@ -446,30 +453,8 @@ namespace Aqua
             #endif
         }
 
-        private void LogSwitchJob(StringHash32 jobId)
+        private void LogSwitchJob()
         {
-            // ignore case where GameEvents.JobSwitched is dispatched when accepting a new job with no current one selected
-            if (m_PreviousJobName.Equals("no-active-job")) return;
-
-            m_CurrentJobHash = jobId;
-            m_PreviousJobName = m_CurrentJobName;
-            m_PreviousJobId = m_CurrentJobId;
-
-            if (jobId.IsEmpty)
-            {
-                m_CurrentJobName = "no-active-job";
-                m_CurrentJobId = -1;
-            }
-            else
-            {
-                m_CurrentJobName = Assets.Job(jobId).name;
-                m_CurrentJobId = JobIds.IndexOf(jobId);
-
-                if (m_CurrentJobId == -1) {
-                    Debug.Log(String.Format("Analytics: Job {0} is not mapped to an id, sent id = -1 with log event.", m_CurrentJobName));
-                }
-            }
-
             #if FIREBASE
             FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobId, m_CurrentJobName, m_PreviousJobId, m_PreviousJobName);
             #endif
