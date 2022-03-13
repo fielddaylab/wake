@@ -4,7 +4,7 @@
 
 :: generic.visual-model.intro
 @trigger    SceneStart
-@when       scene:name == "Modeling", !jobs:visual-model.saved
+@when       scene:name == "Modeling"
 @boostScore 1052 // arbitraryily high number
 @cutscene
 
@@ -16,7 +16,17 @@ $branch common.ringPhone
             We can combine those facts into {h}Visual Model{/h}. That can help us see how they fit together.
             Since this job is interested in the {h}Warm Kelp Forest{/h} ecosystem, make sure to select that ecosystem and click on the {h}Visualize{/h} tab to get started. 
 $set jobs:visual-model.saved = true
-			
+
+:: generic.visual-model.opened
+@trigger	VisualModelStarted
+@boostScore 1051 // arbitraryily high number
+@when		scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	This is a visual of all the species that exist at the site.
+			Arrows show any relationships you've discovered from experiments. They point toward the thing doing the consuming
+			If you are in a job, and the Visual Model meets all the requirements, you will be able to save the model.
+	
 :: generic.visual-model.saved
 @trigger	VisualModelExported
 @boostScore 1051 // arbitraryily high number
