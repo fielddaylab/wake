@@ -19,7 +19,7 @@ jobs:
     name: Build Unity Project
     runs-on: ubuntu-18.04
     concurrency:
-      group: ${{ env.GITHUB_WORKFLOW }}-${{ env.GITHUB_REF }}
+      group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
 
     # Setup Steps
