@@ -7,14 +7,14 @@
 @cutscene
 $branch common.ringPhone
 {@drKelp}	Good to see you again, {player-name}! 
-            I need you to create a model of Site A's food web.
+            I need you to create a model of Site C - Warm Kelp Forest's food web.
 $if !HasUpgrade(VisualModel)
 	{@drKelp}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
 	$call UnlockRoom("modelingRoom")
 	$call UnlockRoom("Modeling")
 	$call GiveUpgrade(VisualModel)
 $endif
-{@drKelp}	Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
+{@drKelp}	Use the {map-name}Modeling Lab{/map-name} to visualize Site C's food web.
             When you are done, check back with me at your {map-name}Office{/map-name}!
 $set jobs:kelp-energy-visual-model.saved = false
 
@@ -34,13 +34,14 @@ $set jobs:kelp-energy-visual-model.saved = false
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
+
 :: modelingComplete
 @trigger    JobTasksUpdated
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@kevin}    Looks like you've successfully created a conceptual model of the warm kelp forest!
-            Let's bring it back to the {map-name}Office{/map-name}, where we can discuss our model with {nameof drKelp}.
+{@kevin}    Looks like you've successfully created a visual model of the warm kelp forest!
+            Let's bring it back to the {map-name}Office{/map-name}, where we can discuss it with {nameof drKelp}.
 $set jobs:kelp-energy-visual-model.saved = true
 
 
@@ -91,7 +92,8 @@ $call ArgueLoad(energyArgue)
 
 	
 :: argue.hello
-{@drKelp}    Where does energy come from in the food web?
+{@drKelp}   I heard you made a model of the Warm Kelp food web. Fantastic!
+			So what did it show as the source of the energy? To say it another way, What is the thing that is consumed but doesn't consume anything else?
 $goto .argue.chooseEnergy
 
 
@@ -109,7 +111,7 @@ $endif
 $if ArgueIsFactSubmitted(WarmKelpForest.Model.Conceptual)
 	$goto .argue.done
 $else
-	{@drKelp}    Can I see your model?
+	{@drKelp}    Can I see your Warm Kelp Forest model?
 	$goto .argue.chooseFacts
 $endif
 

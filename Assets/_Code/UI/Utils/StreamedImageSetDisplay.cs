@@ -7,6 +7,8 @@ using EasyAssetStreaming;
 namespace Aqua {
     public class StreamedImageSetDisplay : MonoBehaviour {
         
+        public LayoutElement Layout;
+
         [Header("Streamed")]
         [Required] public GameObject StreamedGroup;
         [Required] public StreamingUGUITexture Streamed;

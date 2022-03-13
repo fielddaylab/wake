@@ -34,7 +34,7 @@ namespace Aqua
         [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32[] m_DiveSiteIds = Array.Empty<StringHash32>();
 
         [SerializeField] internal EditorJobTask[] m_Tasks = Array.Empty<EditorJobTask>();
-        [SerializeField, HideInInspector] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
+        [SerializeField] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
 
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_ExpReward = 5;

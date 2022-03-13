@@ -499,7 +499,8 @@ namespace Aqua
                 return Services.UI.Popup.Display(
                     Loc.Format("ui.popup.newItem.header", itemDesc.NameTextId()),
                     Loc.Find(itemDesc.DescriptionTextId()),
-                    itemDesc.ImageSet()
+                    itemDesc.ImageSet(),
+                    PopupFlags.TallImage
                 ).Wait();
             }
 
@@ -545,7 +546,8 @@ namespace Aqua
                     return Services.UI.Popup.Display(
                         Loc.Format("ui.popup.newUpgrade.header", item.NameTextId()),
                         Loc.Find(item.DescriptionTextId()),
-                        item.ImageSet()
+                        item.ImageSet(),
+                        PopupFlags.TallImage
                     ).Wait();
                 }
 

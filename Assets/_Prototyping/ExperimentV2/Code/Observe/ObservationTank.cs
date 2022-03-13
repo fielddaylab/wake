@@ -281,6 +281,9 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private IEnumerator StartExperiment() {
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
+            
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
             using (Profiling.Time("getting potential observations")) {
@@ -296,7 +299,6 @@ namespace ProtoAqua.ExperimentV2 {
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
             }
 
-            m_ParentTank.ActorBehavior.Begin();
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
             m_UnobservedStateLabel.alpha = 0;

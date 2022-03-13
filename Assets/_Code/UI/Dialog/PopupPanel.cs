@@ -155,10 +155,18 @@ namespace Aqua
             else
             {
                 m_ImageDisplay.gameObject.SetActive(true);
+                if ((inPopupFlags & PopupFlags.TallImage) != 0) {
+                    m_ImageDisplay.Layout.preferredHeight = 260;
+                } else {
+                    m_ImageDisplay.Layout.preferredHeight = 160;
+                }
                 m_ImageDisplay.Display(inImage);
             }
 
             m_OptionCount = inOptions.Length;
+            if (m_OptionCount == 0) {
+                inPopupFlags |= PopupFlags.ShowCloseButton;
+            }
             for(int i = 0; i < m_Buttons.Length; ++i)
             {
                 ref ButtonConfig config = ref m_Buttons[i];
@@ -508,5 +516,6 @@ namespace Aqua
     [Flags]
     public enum PopupFlags {
         ShowCloseButton = 0x01,
+        TallImage = 0x02
     }
 }
