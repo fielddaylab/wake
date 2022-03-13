@@ -4,7 +4,7 @@
 
 :: generic.visual-model.intro
 @trigger    SceneStart
-@when       scene:name == "Modeling", !jobs:visual-model.saved
+@when       scene:name == "Modeling"
 @boostScore 1052 // arbitraryily high number
 @cutscene
 
@@ -15,8 +15,19 @@ $branch common.ringPhone
             And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
             We can take those facts and add them to a {h}Visual Model{/h}. That can help us see how they fit together.
             Select the {nameof UrchinBarren} ecosystem and click on the {h}Visualize{/h} tab.
+// comment if we want visual-model intro to repeat until the player successfully saves the model
 $set jobs:visual-model.saved = true
-			
+
+:: generic.visual-model.opened
+@trigger	VisualModelStarted
+@boostScore 1051 // arbitraryily high number
+@when		scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	This is a visual of all the species that exist at the site.
+			Arrows show any relationships you've discovered from experiments. They point toward the thing doing the consuming
+			If you are in a job, and the Visual Model meets all the requirements, you will be able to save the model.
+	
 :: generic.visual-model.saved
 @trigger	VisualModelExported
 @boostScore 1051 // arbitraryily high number
