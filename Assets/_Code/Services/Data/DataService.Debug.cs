@@ -32,7 +32,7 @@ namespace Aqua
 
             SaveData saveData = CreateNewProfile(DebugSaveId);
             DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
-            DeclareProfile(saveData, false);
+            DeclareProfile(saveData, false, false);
         }
 
         private void LoadBookmark(string inBookmarkName)
@@ -48,7 +48,7 @@ namespace Aqua
 
                 DebugService.Log(LogMask.DataService, "[DataService] Loaded profile from bookmark '{0}'", inBookmarkName);
 
-                DeclareProfile(bookmark, false);
+                DeclareProfile(bookmark, false, false);
                 m_LastBookmarkName = inBookmarkName;
                 StartPlaying(null, true);
             }
