@@ -145,6 +145,7 @@ mergeInto(LibraryManager.library, {
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
         var environment = Pointer_stringify(environment);
         var critters = Pointer_stringify(critters);
 
@@ -799,25 +800,6 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBEnvironmentCleared: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment) {
-        var userCode = Pointer_stringify(userCode);
-        var appVersion = Pointer_stringify(appVersion);
-        var appFlavor = Pointer_stringify(appFlavor);
-        var jobName = Pointer_stringify(jobName);
-        var tankType = Pointer_stringify(tankType);
-        var environment = Pointer_stringify(environment);
-
-        analytics.logEvent("environment_cleared", {
-            user_code: userCode,
-            app_version: appVersion,
-            app_flavor: appFlavor,
-            log_version: logVersion,
-            job_name: jobName,
-            tank_type: tankType,
-            environment: environment
-        });
-    },
-
     FBAddCritter: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critter) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
@@ -860,7 +842,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCrittersCleared: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters) {
+    FBEndExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -869,7 +851,7 @@ mergeInto(LibraryManager.library, {
         var environment = Pointer_stringify(environment);
         var critters = Pointer_stringify(critters);
 
-        analytics.logEvent("remove_critter", {
+        analytics.logEvent("end_experiment", {
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,

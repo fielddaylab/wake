@@ -776,11 +776,10 @@ Player talks to the shopkeeper.
 
 1. [add_environment](#add_environment)
 2. [remove_environment](#remove_environment)
-3. [environment_cleared](#environment_cleared)
-4. [add_critter](#add_critter)
-5. [remove_critter](#remove_critter)
-6. [critters_cleared](#critters_cleared)
-7. [begin_experiment](#begin_experiment)
+3. [add_critter](#add_critter)
+4. [remove_critter](#remove_critter)
+5. [begin_experiment](#begin_experiment)
+6. [end_experiment](#end_experiment)
 
 | tank_type |
 | --- |
@@ -820,22 +819,6 @@ Player deselects an environment.
 | tank_type | Selected tank type for the experiment |
 | environment | Name of the removed environment |
 
-<a name="environment_cleared"/>
-
-#### environment_cleared
-
-Player clears the current environment.
-
-| Parameter | Description |
-| --- | --- |
-| user_code | The player's unique save code |
-| app_version | Current game build version |
-| app_flavor | Git branch origin for current build |
-| log_version | Current logging version |
-| job_name | String name of the current job |
-| tank_type | Selected tank type for the experiment |
-| environment | Name of the cleared environment |
-
 <a name="add_critter"/>
 
 #### add_critter
@@ -870,11 +853,11 @@ Player removes a critter from the tank.
 | environment | Selected environment for the experiment |
 | critter | Name of the critter removed from the tank |
 
-<a name="critters_cleared"/>
+<a name="begin_experiment"/>
 
-#### critters_cleared
+#### begin_experiment
 
-Player clears all critters from the tank.
+Player starts an experiment with a given tank type.
 
 | Parameter | Description |
 | --- | --- |
@@ -885,13 +868,13 @@ Player clears all critters from the tank.
 | job_name | String name of the current job |
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
-| critters | Comma separated list of all critters cleared from the tank |
+| critters | Comma separated list of all critters added to the tank |
 
-<a name="begin_experiment"/>
+<a name="end_experiment"/>
 
-#### begin_experiment
+#### end_experiment
 
-Player starts an experiment with a given tank type.
+Player ends the current experiment.
 
 | Parameter | Description |
 | --- | --- |
