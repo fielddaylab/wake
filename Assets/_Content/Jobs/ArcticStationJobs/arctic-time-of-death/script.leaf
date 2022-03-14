@@ -10,6 +10,16 @@
                 All kinds of creatures use the whale detritus for food.
                 We made a descriptive model of a previous whalefall. Take a look.
 $call GiveFact(W_WhaleFall.Model.Stages)
+{@kevin}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
+            If we collect population data for all the specices in {h}site W{/h} we should be able to match something up with our model.
+            Then we'll be able to roughly determine how long ago Linda met her end.
+
+:: helpMe
+@trigger RequestPartnerHelp
+@cutscene
+{@kevin}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
+            If we collect population data for all the specices in {h}site W{/h} we should be able to match something up with our model.
+            Then we'll be able to roughly determine how long ago Linda met her end.
 
 // ARGUMENTATION
 
@@ -42,10 +52,6 @@ $goto .argue.showZombieWormsWrong
 :: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-
-:: argue.showZombieWormsWrong
-$call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
     $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
     $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
     $answer *, .argue.unrelated
@@ -61,7 +67,7 @@ $goto .argue.showZombieWormsWrong
 :: argue.unrelatedDetritus
 $call ArgueRejectIncorrect()
 {@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
-                how do the species' populations compare with the model i gave you? 
+                How do the species' populations compare with the model I gave you? 
 $goto .argue.showZombieWormsWrong
 
 :: argue.zombieWormsEarly
