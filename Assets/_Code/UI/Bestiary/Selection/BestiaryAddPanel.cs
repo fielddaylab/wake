@@ -48,6 +48,8 @@ namespace Aqua
         public Action OnCleared;
         public Action OnUpdated;
 
+        public Predicate<BestiaryDesc> HighlightFilter;
+
         #region Unity Events
 
         protected override void Awake()
@@ -55,7 +57,8 @@ namespace Aqua
             base.Awake();
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, InvalidateListFromBestiaryUpdate, this)
-                .Register(GameEvents.ProfileRefresh, InvalidateListAndClearSet, this);
+                .Register(GameEvents.ProfileRefresh, InvalidateListAndClearSet, this)
+                .Register(GameEvents.JobSwitched, InvalidateList, this);
         }
 
         private void OnDestroy()
@@ -183,6 +186,11 @@ namespace Aqua
 
         #region Population
 
+        public void Refresh()
+        {
+            InvalidateList();
+        }
+
         private void PopulateCritters()
         {
             using(PooledList<BestiaryDesc> availableCritters = PooledList<BestiaryDesc>.Create())
@@ -239,6 +247,7 @@ namespace Aqua
                 button.Label.SetTextFromString(name);
                 button.Critter = critter;
                 button.OnToggle = m_ToggleDelegate ?? (m_ToggleDelegate = OnToggleSelected);
+                button.Highlight.SetActive(HighlightFilter != null && HighlightFilter(critter));
             }
 
             while(emptyCount-- > 0)

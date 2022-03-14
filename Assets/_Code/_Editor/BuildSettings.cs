@@ -86,7 +86,13 @@ namespace Aqua.Editor
         {
             using(Profiling.Time("bake assets"))
             {
-                Bake.Assets(BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                using(Log.DisableMsgStackTrace())
+                {
+                    Bake.Assets(BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                }
+            }
+            using(Profiling.Time("post-bake save assets"))
+            {
                 AssetDatabase.SaveAssets();
             }
         }
@@ -165,11 +171,17 @@ namespace Aqua.Editor
                 {
                     PlayerSettings.SplashScreen.show = false;
                     PlayerSettings.SplashScreen.showUnityLogo = false;
+                    PlayerSettings.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
                 }
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try
                 {
-                    BakeAllAssets();
+                    using(Profiling.Time("bake assets"))
+                    using(Log.DisableMsgStackTrace())
+                    {
+                        Bake.Assets(bBatch ? 0 : BakeFlags.Verbose);
+                    }
+                    AssetDatabase.SaveAssets();
                     if (bBatch) {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();

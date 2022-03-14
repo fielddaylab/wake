@@ -78,13 +78,22 @@ namespace Aqua {
 
             if (showFact) {
                 return Services.UI.Popup.PresentFactDetails(
-                    details, fact, flags, PopupFlags.ShowCloseButton, options
+                    details, fact, flags, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options
                 );
             } else {
                 return Services.UI.Popup.Present(
-                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton, options
+                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options
                 );
             }
+        }
+
+        static public Future<StringHash32> PopupItemDetails(InvItem item, params NamedOption[] options) {
+            return Services.UI.Popup.Present(
+                Loc.Find(item.NameTextId()),
+                Loc.Find(item.DescriptionTextId()),
+                item.ImageSet(),
+                PopupFlags.TallImage | PopupFlags.ShowCloseButton,
+                options);
         }
 
         static public void OnSceneLoad(Action action) {

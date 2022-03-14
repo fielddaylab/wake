@@ -11,7 +11,7 @@ namespace Aqua.Modeling {
 
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private LocText m_EnvironmentLabel = null;
-        [SerializeField] private GameObject m_JobModeGroup = null;
+        [SerializeField] private LocText m_JobModelLabel = null;
 
         #endregion // Inspector
 
@@ -21,10 +21,16 @@ namespace Aqua.Modeling {
             m_Group.Hide();
         }
 
-        public void Show(BestiaryDesc environment, JobModelScope scope) {
+        public void Show(BestiaryDesc environment, JobModelScope scope, bool hasJob) {
             m_ShowHideRoutine.Replace(this, m_Group.Show(0.2f)).ExecuteWhileDisabled();
             m_EnvironmentLabel.SetText(environment.CommonName());
-            m_JobModeGroup.SetActive(scope);
+            if (scope) {
+                m_JobModelLabel.SetText("modeling.jobMode.label");
+            } else if (hasJob) {
+                m_JobModelLabel.SetText("modeling.wrongJobMode.label");
+            } else {
+                m_JobModelLabel.SetText("modeling.noJobMode.label");
+            }
         }
 
         public void Hide() {
