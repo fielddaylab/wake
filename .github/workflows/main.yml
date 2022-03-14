@@ -18,6 +18,9 @@ jobs:
   build:
     name: Build Unity Project
     runs-on: ubuntu-18.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
 
     # Setup Steps
 

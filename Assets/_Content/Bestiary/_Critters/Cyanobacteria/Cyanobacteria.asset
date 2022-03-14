@@ -35,23 +35,41 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d503736d7a05674590d0a158ea9c60f, type: 2}
   - {fileID: 11400000, guid: e457e5e72df42d745b6f531170746143, type: 2}
   - {fileID: 11400000, guid: c29d568c19502484ea0dd1bf7994872e, type: 2}
+  - {fileID: 11400000, guid: 0b219e8846f6a9341b82b11205d56a95, type: 2}
+  - {fileID: 11400000, guid: ee464678140f3bc41b449ea75561d999, type: 2}
+  - {fileID: 11400000, guid: 776edd70017eeb847b5981add5167f7c, type: 2}
+  - {fileID: 11400000, guid: beb8a295bfed7904189228125d0b7ffe, type: 2}
+  - {fileID: 11400000, guid: 707b7f3a3d9ac864c90203f2644f0be8, type: 2}
+  - {fileID: 11400000, guid: aaf7d117246759e4e9c3841c987023a2, type: 2}
+  - {fileID: 11400000, guid: 15f50b85ef865574fadd80cc49f46f1f, type: 2}
   m_WaterColor: {r: 0, g: 0, b: 1, a: 1}
-  m_Icon: {fileID: 21300000, guid: 1f52291126e511346b04bec462cf7d4f, type: 3}
+  m_Icon: {fileID: 21300000, guid: a157e049072dc4ae2abfb11ec7519ccf, type: 3}
   m_SketchPath: 
-  m_Color: {r: 0.23529413, g: 0.19215688, b: 0.7490196, a: 1}
+  m_Color: {r: 0.27100393, g: 0.8207547, b: 0.458108, a: 1}
   m_ListenAudioEvent:
     m_Source: 
     m_HashValue: 0
   m_SortingOrder: 0
   m_AllFacts:
+  - {fileID: 11400000, guid: 5f42ae5b8c015b1408074ae0bb9b8cdc, type: 2}
+  - {fileID: 11400000, guid: 15f50b85ef865574fadd80cc49f46f1f, type: 2}
+  - {fileID: 11400000, guid: beb8a295bfed7904189228125d0b7ffe, type: 2}
   - {fileID: 11400000, guid: a3ad705de346dc2478907d444d6e5acf, type: 2}
   - {fileID: 11400000, guid: 6d503736d7a05674590d0a158ea9c60f, type: 2}
   - {fileID: 11400000, guid: c29d568c19502484ea0dd1bf7994872e, type: 2}
+  - {fileID: 11400000, guid: 707b7f3a3d9ac864c90203f2644f0be8, type: 2}
   - {fileID: 11400000, guid: e457e5e72df42d745b6f531170746143, type: 2}
+  - {fileID: 11400000, guid: 0a786200a2c6d0c4a9747632fc5e3d13, type: 2}
+  - {fileID: 11400000, guid: 776edd70017eeb847b5981add5167f7c, type: 2}
+  - {fileID: 11400000, guid: aaf7d117246759e4e9c3841c987023a2, type: 2}
+  - {fileID: 11400000, guid: 0b219e8846f6a9341b82b11205d56a95, type: 2}
+  - {fileID: 11400000, guid: b3ef17528766a1b4eae7c60049420882, type: 2}
+  - {fileID: 11400000, guid: ee464678140f3bc41b449ea75561d999, type: 2}
+  - {fileID: 11400000, guid: c3517e65d1028ec45b06ba6b090f17e9, type: 2}
   - {fileID: 11400000, guid: 0bc52f8caa24228419e669c55dd03aad, type: 2}
-  m_PlayerFactCount: 4
+  m_PlayerFactCount: 15
   m_AlwaysFactCount: 0
-  m_InternalFactOffset: 4
+  m_InternalFactOffset: 15
   m_InternalFactCount: 1
   m_StationSortingOrder: 2
   m_EnvState:
@@ -64,15 +82,15 @@ MonoBehaviour:
   m_HistoricalRecordDuration: 2
   m_StateTransitions:
     Temperature:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: 1
+      AliveMax: 35
+      StressedMin: -1
+      StressedMax: 38
     Light:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: 50
+      AliveMax: 100
+      StressedMin: 25
+      StressedMax: 110
     PH:
       AliveMin: 7.8
       AliveMax: 8.3

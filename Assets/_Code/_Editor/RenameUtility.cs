@@ -224,7 +224,7 @@ namespace EditorScripts
                             foreach(var pair in batch) {
                                 writer.WriteLine();
                                 writer.Write(pair.src);
-                                writer.Write("");
+                                writer.Write(": ");
                                 writer.Write(pair.dest);
                             }
                         }
@@ -262,7 +262,7 @@ namespace EditorScripts
                 string oldNamePattern = EscapeRegex(rename.src);
                 
                 regexes[4 * i + 0] = new RegexPair() {
-                    find = new Regex(string.Format("\\b{0}\\b", oldNamePattern)),
+                    find = new Regex(string.Format("(?<!\\.)\\b{0}\\b(?!:)", oldNamePattern)),
                     replace = rename.dest,
                 };
                 regexes[4 * i + 1] = new RegexPair() {

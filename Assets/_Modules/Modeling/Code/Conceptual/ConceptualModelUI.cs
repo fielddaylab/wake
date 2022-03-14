@@ -1,9 +1,9 @@
-using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using BeauRoutine;
 using BeauRoutine.Extensions;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua.Modeling {
@@ -89,7 +89,7 @@ namespace Aqua.Modeling {
         private void OnImportClicked() {
             m_ImportButton.gameObject.SetActive(false);
             m_ImportRoutine = Routine.Start(this, ImportSequence());
-            m_ImportRoutine.TryManuallyUpdate(0);
+            m_ImportRoutine.Tick();
         }
 
         private void OnExportClicked() {
@@ -102,59 +102,59 @@ namespace Aqua.Modeling {
         #region Sequences
 
         private IEnumerator ImportSequence() {
-            Services.Input.PauseAll();
-            m_ImportFader.SetActive(true);
-            m_ImportTolerancesText.SetActive(false);
-            m_ImportOrganismsText.SetActive(false);
-            m_ImportBehaviorsText.SetActive(false);
-            m_ImportHistoricalText.SetActive(false);
-            m_ImportCompletedText.SetActive(false);
-            m_ImportGroup.SetActive(true);
-            yield return null;
+            using (Script.DisableInput()) {
+                m_ImportFader.SetActive(true);
+                m_ImportTolerancesText.SetActive(false);
+                m_ImportOrganismsText.SetActive(false);
+                m_ImportBehaviorsText.SetActive(false);
+                m_ImportHistoricalText.SetActive(false);
+                m_ImportCompletedText.SetActive(false);
+                m_ImportGroup.SetActive(true);
+                yield return null;
 
-            bool hadOrganisms = m_State.Conceptual.PendingEntities.Count > 0;
-            bool hadTolerances = false;
-            bool hadBehaviors = false;
-            bool hadHistorical = false;
+                bool hadOrganisms = m_State.Conceptual.PendingEntities.Count > 0;
+                bool hadTolerances = false;
+                bool hadBehaviors = false;
+                bool hadHistorical = false;
 
-            foreach(var fact in m_State.Conceptual.PendingFacts) {
-                switch(fact.Type) {
-                    case BFTypeId.State: {
-                        hadTolerances = true;
-                        break;
-                    }
+                foreach (var fact in m_State.Conceptual.PendingFacts) {
+                    switch (fact.Type) {
+                        case BFTypeId.State: {
+                                hadTolerances = true;
+                                break;
+                            }
 
-                    case BFTypeId.Population:
-                    case BFTypeId.PopulationHistory:
-                    case BFTypeId.WaterPropertyHistory: {
-                        hadHistorical = true;
-                        break;
-                    }
+                        case BFTypeId.Population:
+                        case BFTypeId.PopulationHistory:
+                        case BFTypeId.WaterPropertyHistory: {
+                                hadHistorical = true;
+                                break;
+                            }
 
-                    default: {
-                        hadBehaviors = true;
-                        break;
+                        default: {
+                                hadBehaviors = true;
+                                break;
+                            }
                     }
                 }
+
+                yield return 1f;
+
+                IEnumerator requestProcess = OnRequestImport?.Invoke();
+                yield return Routine.Combine(
+                    requestProcess, ImportTextSequence(hadOrganisms, hadTolerances, hadBehaviors, hadHistorical)
+                );
+
+                yield return 0.2f;
+                m_ImportCompletedText.SetActive(true);
+                yield return 1f;
+
+                m_ImportGroup.SetActive(false);
+                m_ImportFader.SetActive(false);
+                UpdateButtons();
+                Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, m_State.Conceptual.Status);
+                Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
             }
-
-            yield return 1f;
-
-            IEnumerator requestProcess = OnRequestImport?.Invoke();
-            yield return Routine.Combine(
-                requestProcess, ImportTextSequence(hadOrganisms, hadTolerances, hadBehaviors, hadHistorical)
-            );
-
-            yield return 0.2f;
-            m_ImportCompletedText.SetActive(true);
-            yield return 1f;
-
-            m_ImportGroup.SetActive(false);
-            m_ImportFader.SetActive(false);
-            UpdateButtons();
-            Services.Input.ResumeAll();
-            Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, m_State.Conceptual.Status);
-            Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
         }
 
         private IEnumerator ImportTextSequence(bool hadOrganisms, bool hadTolerances, bool hadBehaviors, bool hadHistorical) {
@@ -192,19 +192,19 @@ namespace Aqua.Modeling {
             m_MissingData.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.MissingData);
             m_ImportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport);
 
-            switch(m_State.Conceptual.MissingReasons) {
+            switch (m_State.Conceptual.MissingReasons) {
                 case ModelMissingReasons.Organisms: {
-                    m_MissingDataText.SetText(m_MissingOrganismsLabel);
-                    break;
-                }
+                        m_MissingDataText.SetText(m_MissingOrganismsLabel);
+                        break;
+                    }
                 case ModelMissingReasons.Behaviors: {
-                    m_MissingDataText.SetText(m_MissingBehaviorsLabel);
-                    break;
-                }
+                        m_MissingDataText.SetText(m_MissingBehaviorsLabel);
+                        break;
+                    }
                 case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
-                    m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
-                    break;
-                }
+                        m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
+                        break;
+                    }
             }
         }
 

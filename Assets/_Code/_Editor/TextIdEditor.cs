@@ -101,11 +101,14 @@ namespace Aqua.Editor
             }
 
             int nextControlId = GUIUtility.GetControlID(FocusType.Keyboard) + 1;
-            EditorGUI.PropertyField(propRect, stringProp, label);
+            EditorGUI.showMixedValue = stringProp.hasMultipleDifferentValues;
+            string newString = EditorGUI.TextField(propRect, label, stringProp.stringValue);
+            EditorGUI.showMixedValue = false;
             bool bSelected = GUIUtility.keyboardControl == nextControlId;
 
             if (UnityEditor.EditorGUI.EndChangeCheck())
             {
+                stringProp.stringValue = newString;
                 m_Overwrite = true;
                 m_LastKnownKey = stringProp.stringValue;
                 hashProp.longValue = new StringHash32(stringProp.stringValue).HashValue;

@@ -60,7 +60,7 @@ $branch common.ringPhone
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "intervene"
+@when 		scene:name == "Modeling", modeling:phase == "intervene", JobTaskTop("makeAPlan")
 @cutscene
 {@player} 	I'm a bit stuck here - got any tips for me, Kevin?
 {@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
@@ -194,7 +194,8 @@ $goto .argue.chooseFactsOtters
 {@drKelp}    Okay, so because {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
 Adding some {pluralnameof SeaOtter} will ultimately let the {critter-name}Kelp{/critter-name} repopulate!
 Now... where to find some otters..
-You know what, I'll work on that.
+You know what, I'll work on that. Absolutely fantastic work, you two.
+{@player}   Thanks. It was nice being able to use some science to help.
 $call CompleteJob()
 
 
@@ -205,6 +206,3 @@ $call CompleteJob()
 @cutscene
 
 $branch common.ringPhone
-
-{@drKelp}  Absolutely fantastic work, you two.
-{@player}   Thanks. It was nice being able to use some science to help.

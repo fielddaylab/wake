@@ -31,13 +31,13 @@ namespace Aqua
         static public readonly StringHash32 CutsceneSkip = "cutscene:skip"; // no args
         static public readonly StringHash32 ScriptNodeSeen = "script:node-seen"; // StringHash32 nodeId
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
+        static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
 
         static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start"; // no args
         static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end"; // no args
 
         static public readonly StringHash32 BestiaryUpdated = "bestiary:updated"; // BestiaryUpdateParams bestiaryParams
         static public readonly StringHash32 InventoryUpdated = "inventory:updated"; // StringHash32 itemId
-        static public readonly StringHash32 WaterPropertiesUpdated = "inventory:waterPropertiesUpdated"; // WaterPropertyId property
         static public readonly StringHash32 ScanLogUpdated = "scan-log:updated"; // StringHash32 scanId
         static public readonly StringHash32 SiteDataUpdated = "site-data:updated"; // StringHash32 siteId
         static public readonly StringHash32 ArgueDataUpdated = "argue:updated"; // StringHash32 argumentationId

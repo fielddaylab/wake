@@ -1,0 +1,111 @@
+#basePath   job.coral-lionfish-conspiracy
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@kevin}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
+			First we need to make sure we have all the pieces.
+$if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
+	{@kevin}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
+$else
+	{@kevin}	Go down to Site S and scan everything you can find, especially the Lionfish.
+$endif
+
+
+// SCANNING
+
+:: helpEnterSite
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(scanNew)
+@cutscene
+$if scene:name == "RS-2S"
+	{@kevin}	There are some key species you haven't found yet. Keep searching.
+$else
+	{@kevin}	Go to Site S and scan as many species there as you can.
+$endif
+
+:: enterSite
+@trigger    SceneStart
+@when       scene:name == "RS-2S", JobTaskTop(scanNew)
+@cutscene
+{@kevin}	No one is sure how the Lionfish interact with other species here, so you'd better scan everything you can find.
+
+:: scansComplete
+@trigger    JobTasksUpdated
+@when       scene:name = "RS-2S", JobTaskTop(observeInteractions)
+@cutscene
+{@kevin}	Okay, that should be enough to get an idea of how the Lionfish fits into the exosystem. 
+			Let's try to observe some interactions in the observation tank.
+
+:: helpReturnExperiment
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeInteractions), scene:name != "ExperimentV2"
+@cutscene
+{@kevin}	Get to the Experimentation Room and see how the Lionfish interacts with other species you've found.
+
+
+// EXPERIMENTATION
+
+:: helpBeginExperiment
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeInteractions), scene:name == "ExperimentV2"
+@cutscene
+{@kevin}	Use the Observation Tank to see how the Lionfish interacts with other species you found.
+
+:: beginExperiment
+@trigger	SceneStart
+@when		scene:name == "ExperimentV2", JobTaskTop(observeInteractions)
+@once
+@cutscene
+{@kevin}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfsh with as many other species as you can.
+			Especially with the coral.
+			
+:: experimentComplete
+@trigger JobTasksUpdated
+@when	JobTaskTop(arguePredator)
+@cutscene
+{@kevin}	It doesn't seem like the Lionfish interact directly with the coral at all.
+			We know enough to discuss this with {nameof profCempaka}, now. I'm sure they'll be relieved to get some answers.
+
+:: helpReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(arguePredator)
+@cutscene
+{@kevin}	Report back to Professor Cempaka.
+
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(lionfishConspiracyArgue)
+@cutscene
+$call ArgueLoad(lionfishConspiracyArgue)
+{@profCempaka} I know these things are vicious predators. What do they eat?!
+$if ArgueSetClaim(lionfish-conspiracyClaim, jobs.coral-lionfish-conspiracy.argue.claimEvidence)
+		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFood
+		$answer incorrect, .argue.incorrectFood
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.giveUp
+{@profCempaka}	OK. Get back to me when you're ready.
+
+:: argue.incorrectFood
+{@profCempaka}	No, no, this doesn't tell me everything Lionfish eat.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$goto .argue.intro
+
+:: argue.correctFood
+{@profCempaka}	I knew it. That doesn't explain what's happening with the coral though.
+				But maybe it's connected.
+$call ArgueComplete()
+$call CompleteJob()

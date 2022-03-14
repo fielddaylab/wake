@@ -44,6 +44,8 @@ namespace Aqua.Argumentation {
 
             UnloadArgue(false);
 
+            Services.UI.ShowLetterbox();
+
             ScienceData profile = Save.Science;
             m_CurrentId = id;
             m_CurrentStatus = profile.GetArgue(id, out created);
@@ -64,6 +66,8 @@ namespace Aqua.Argumentation {
             m_CurrentCompleted = false;
             m_ClaimSetup = false;
             Services.Data.UnbindTable(ArgumentTableId);
+
+            Services.UI.HideLetterbox();
 
             if (dispatchEvent) {
                 Services.Events.QueueForDispatch(ArgueEvents.Unloaded);

@@ -44,7 +44,7 @@ namespace ProtoAqua.Observation
             {
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.m_RootPath);
-                if (!inPackage.m_RootPath.EndsWith("."))
+                if (!inPackage.m_RootPath.EndsWith(".") && !inId.Id.StartsWith('.'))
                     inUtil.TempBuilder.Append('.');
                 inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();

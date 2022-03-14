@@ -1,0 +1,1202 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: coral-hunting-lions
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.coral-hunting-lions.name
+    m_HashValue: 3813691779
+  m_PosterId:
+    m_HashValue: 2064399686
+  m_DescId:
+    m_Source: jobs.coral-hunting-lions.desc
+    m_HashValue: 1678258417
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 5
+  m_ModelingDifficulty: 5
+  m_ArgumentationDifficulty: 4
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: a93bac5aba8ab424ab21ba4069eac2ea, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades:
+  - m_HashValue: 2834804279
+  - m_HashValue: 1109988049
+  - m_HashValue: 2866492762
+  - m_HashValue: 283353415
+  m_StationId:
+    m_HashValue: 707943182
+  m_DiveSiteIds:
+  - m_HashValue: 2212791738
+  m_Tasks:
+  - Id:
+      m_Source: scanSpear
+      m_HashValue: 710485473
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanSpear
+      m_HashValue: 3773130645
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: SpearedLionfish
+        m_HashValue: 3238591471
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: scanCritters
+      m_HashValue: 1495220036
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanCritters
+      m_HashValue: 1635544448
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Fishers
+        m_HashValue: 4257683625
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Ick
+        m_HashValue: 3815586090
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Lionfish
+        m_HashValue: 586288757
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: QueenConch
+        m_HashValue: 2098174204
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanSpear
+      m_HashValue: 710485473
+  - Id:
+      m_Source: scanHistory
+      m_HashValue: 1869113232
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanHistory
+      m_HashValue: 32716956
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.PopulationHistory.RedGrouper
+        m_HashValue: 45586372
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Temperature.History
+        m_HashValue: 3506157252
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanCritters
+      m_HashValue: 1495220036
+  - Id:
+      m_Source: countPopulation
+      m_HashValue: 1635493235
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.countPopulation
+      m_HashValue: 3885012231
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.BlueheadWrasse
+        m_HashValue: 3741002680
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.BlueTang
+        m_HashValue: 3279348391
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.Copepod
+        m_HashValue: 724598145
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.Fishers
+        m_HashValue: 2317396323
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.LoggerheadTurtle
+        m_HashValue: 1905950827
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.QueenConch
+        m_HashValue: 1140962470
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.RedGrouper
+        m_HashValue: 3853181742
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.StaghornCoral
+        m_HashValue: 1420826750
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.TurtleGrass
+        m_HashValue: 1300666817
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.WhiteShrimp
+        m_HashValue: 2142731063
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanHistory
+      m_HashValue: 1869113232
+  - Id:
+      m_Source: observeEatRules
+      m_HashValue: 4279728306
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.observeEatRules
+      m_HashValue: 826814686
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Fishers.Eats.RedGrouper
+        m_HashValue: 316344893
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Eats.BlueheadWrasse
+        m_HashValue: 3761093643
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Eats.BlueTang
+        m_HashValue: 2564734920
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.Copepod
+        m_HashValue: 1033032444
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.QueenConch
+        m_HashValue: 1192689825
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
+        m_HashValue: 1090187846
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countPopulation
+      m_HashValue: 1635493235
+  - Id:
+      m_Source: obtainStressRules
+      m_HashValue: 3804672883
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.obtainStressRules
+      m_HashValue: 1076555463
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Light.Stressed
+        m_HashValue: 1808471315
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.PH.Stressed
+        m_HashValue: 2435994359
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Temperature.Stressed
+        m_HashValue: 2317534481
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Light.Stressed
+        m_HashValue: 2500240358
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.PH.Stressed
+        m_HashValue: 2835399300
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Temperature.Stressed
+        m_HashValue: 2457174900
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.Light.Stressed
+        m_HashValue: 2175018604
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.PH.Stressed
+        m_HashValue: 2667186410
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.Temperature.Stressed
+        m_HashValue: 173681814
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Light.Stressed
+        m_HashValue: 3157010818
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.PH.Stressed
+        m_HashValue: 1698172432
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Temperature.Stressed
+        m_HashValue: 697395632
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.Light.Stressed
+        m_HashValue: 1492346793
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.PH.Stressed
+        m_HashValue: 2032083389
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.Temperature.Stressed
+        m_HashValue: 1956177219
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Light.Stressed
+        m_HashValue: 561544465
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.PH.Stressed
+        m_HashValue: 3909879605
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Temperature.Stressed
+        m_HashValue: 3538760043
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Light.Stressed
+        m_HashValue: 440250722
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.PH.Stressed
+        m_HashValue: 735918640
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Temperature.Stressed
+        m_HashValue: 3629512720
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Light.Stressed
+        m_HashValue: 3171531273
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.PH.Stressed
+        m_HashValue: 2256567517
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Temperature.Stressed
+        m_HashValue: 2663229859
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Light.Stressed
+        m_HashValue: 1285514551
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Temperature.Stressed
+        m_HashValue: 2244697653
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.Light.Stressed
+        m_HashValue: 1637117484
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.PH.Stressed
+        m_HashValue: 3582260906
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.Temperature.Stressed
+        m_HashValue: 2114994518
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Light.Stressed
+        m_HashValue: 200199106
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.PH.Stressed
+        m_HashValue: 675110224
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Temperature.Stressed
+        m_HashValue: 607318256
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: observeEatRules
+      m_HashValue: 4279728306
+  - Id:
+      m_Source: measureStressEatRates
+      m_HashValue: 1131728766
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressEatRates
+      m_HashValue: 35235442
+    Steps: []
+    PrerequisiteTaskIds:
+    - m_Source: obtainStressRules
+      m_HashValue: 3804672883
+  - Id:
+      m_Source: measureStressReproduceRates
+      m_HashValue: 795492441
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
+      m_HashValue: 651488821
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Grow.Stressed
+        m_HashValue: 2544394604
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: measureStressEatRates
+      m_HashValue: 1131728766
+  - Id:
+      m_Source: obtainChemistry
+      m_HashValue: 1751383414
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.obtainChemistry
+      m_HashValue: 2308555914
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Consume.Oxygen
+        m_HashValue: 3115336262
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Produce.CO2
+        m_HashValue: 975850868
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Consume.CO2
+        m_HashValue: 3060596047
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Consume.Light
+        m_HashValue: 2760913775
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Produce.Oxygen
+        m_HashValue: 3093528107
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.CO2
+        m_HashValue: 1327411962
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Produce.Oxygen
+        m_HashValue: 4003606908
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Consume.Oxygen
+        m_HashValue: 1860796753
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: measureStressReproduceRates
+      m_HashValue: 795492441
+  - Id:
+      m_Source: predictModel
+      m_HashValue: 2555559815
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.predictModel
+      m_HashValue: 4179720499
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.HuntingLionsPrediction
+        m_HashValue: 500261546
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: obtainChemistry
+      m_HashValue: 1751383414
+  - Id:
+      m_Source: interveneModel
+      m_HashValue: 2249891962
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.interveneModel
+      m_HashValue: 113021158
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.HuntingLionsIntervene
+        m_HashValue: 3852437751
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: predictModel
+      m_HashValue: 2555559815
+  - Id:
+      m_Source: argueIncentive
+      m_HashValue: 2428336910
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.argueIncentive
+      m_HashValue: 1939686082
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: interveneModel
+      m_HashValue: 2249891962
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanSpear
+      m_HashValue: 710485473
+    IdString: scanSpear
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanSpear
+      m_HashValue: 3773130645
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: SpearedLionfish
+        m_HashValue: 3238591471
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: scanCritters
+      m_HashValue: 1495220036
+    IdString: scanCritters
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanCritters
+      m_HashValue: 1635544448
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Fishers
+        m_HashValue: 4257683625
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Ick
+        m_HashValue: 3815586090
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Lionfish
+        m_HashValue: 586288757
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: LoggerheadTurtle
+        m_HashValue: 3290936401
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: QueenConch
+        m_HashValue: 2098174204
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: scanHistory
+      m_HashValue: 1869113232
+    IdString: scanHistory
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanHistory
+      m_HashValue: 32716956
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.PopulationHistory.RedGrouper
+        m_HashValue: 45586372
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Temperature.History
+        m_HashValue: 3506157252
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: countPopulation
+      m_HashValue: 1635493235
+    IdString: countPopulation
+    Index: 3
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.countPopulation
+      m_HashValue: 3885012231
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.BlueheadWrasse
+        m_HashValue: 3741002680
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.BlueTang
+        m_HashValue: 3279348391
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.Copepod
+        m_HashValue: 724598145
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.Fishers
+        m_HashValue: 2317396323
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.LoggerheadTurtle
+        m_HashValue: 1905950827
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.QueenConch
+        m_HashValue: 1140962470
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.RedGrouper
+        m_HashValue: 3853181742
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.StaghornCoral
+        m_HashValue: 1420826750
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.TurtleGrass
+        m_HashValue: 1300666817
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Population.WhiteShrimp
+        m_HashValue: 2142731063
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  - Id:
+      m_Source: observeEatRules
+      m_HashValue: 4279728306
+    IdString: observeEatRules
+    Index: 4
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.observeEatRules
+      m_HashValue: 826814686
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Fishers.Eats.RedGrouper
+        m_HashValue: 316344893
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Eats.BlueheadWrasse
+        m_HashValue: 3761093643
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Eats.BlueTang
+        m_HashValue: 2564734920
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.Copepod
+        m_HashValue: 1033032444
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.QueenConch
+        m_HashValue: 1192689825
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
+        m_HashValue: 1090187846
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0300
+  - Id:
+      m_Source: obtainStressRules
+      m_HashValue: 3804672883
+    IdString: obtainStressRules
+    Index: 5
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.obtainStressRules
+      m_HashValue: 1076555463
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Light.Stressed
+        m_HashValue: 1808471315
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.PH.Stressed
+        m_HashValue: 2435994359
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Temperature.Stressed
+        m_HashValue: 2317534481
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Light.Stressed
+        m_HashValue: 2500240358
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.PH.Stressed
+        m_HashValue: 2835399300
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Temperature.Stressed
+        m_HashValue: 2457174900
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.Light.Stressed
+        m_HashValue: 2175018604
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.PH.Stressed
+        m_HashValue: 2667186410
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Copepod.Temperature.Stressed
+        m_HashValue: 173681814
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Light.Stressed
+        m_HashValue: 3157010818
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.PH.Stressed
+        m_HashValue: 1698172432
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Temperature.Stressed
+        m_HashValue: 697395632
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.Light.Stressed
+        m_HashValue: 1492346793
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.PH.Stressed
+        m_HashValue: 2032083389
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: QueenConch.Temperature.Stressed
+        m_HashValue: 1956177219
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Light.Stressed
+        m_HashValue: 561544465
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.PH.Stressed
+        m_HashValue: 3909879605
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Temperature.Stressed
+        m_HashValue: 3538760043
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Light.Stressed
+        m_HashValue: 440250722
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.PH.Stressed
+        m_HashValue: 735918640
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Temperature.Stressed
+        m_HashValue: 3629512720
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Light.Stressed
+        m_HashValue: 3171531273
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.PH.Stressed
+        m_HashValue: 2256567517
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Temperature.Stressed
+        m_HashValue: 2663229859
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Light.Stressed
+        m_HashValue: 1285514551
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Temperature.Stressed
+        m_HashValue: 2244697653
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.Light.Stressed
+        m_HashValue: 1637117484
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.PH.Stressed
+        m_HashValue: 3582260906
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurtleGrass.Temperature.Stressed
+        m_HashValue: 2114994518
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Light.Stressed
+        m_HashValue: 200199106
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.PH.Stressed
+        m_HashValue: 675110224
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Temperature.Stressed
+        m_HashValue: 607318256
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0400
+  - Id:
+      m_Source: measureStressEatRates
+      m_HashValue: 1131728766
+    IdString: measureStressEatRates
+    Index: 6
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressEatRates
+      m_HashValue: 35235442
+    Steps: []
+    PrerequisiteTaskIndices: 0500
+  - Id:
+      m_Source: measureStressReproduceRates
+      m_HashValue: 795492441
+    IdString: measureStressReproduceRates
+    Index: 7
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
+      m_HashValue: 651488821
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Grow.Stressed
+        m_HashValue: 2544394604
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0600
+  - Id:
+      m_Source: obtainChemistry
+      m_HashValue: 1751383414
+    IdString: obtainChemistry
+    Index: 8
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.obtainChemistry
+      m_HashValue: 2308555914
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Consume.Oxygen
+        m_HashValue: 3115336262
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Produce.CO2
+        m_HashValue: 975850868
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Consume.CO2
+        m_HashValue: 3060596047
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Consume.Light
+        m_HashValue: 2760913775
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Produce.Oxygen
+        m_HashValue: 3093528107
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.CO2
+        m_HashValue: 1327411962
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Produce.Oxygen
+        m_HashValue: 4003606908
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Consume.Oxygen
+        m_HashValue: 1860796753
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0700
+  - Id:
+      m_Source: predictModel
+      m_HashValue: 2555559815
+    IdString: predictModel
+    Index: 9
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.predictModel
+      m_HashValue: 4179720499
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.HuntingLionsPrediction
+        m_HashValue: 500261546
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0800
+  - Id:
+      m_Source: interveneModel
+      m_HashValue: 2249891962
+    IdString: interveneModel
+    Index: 10
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.interveneModel
+      m_HashValue: 113021158
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.HuntingLionsIntervene
+        m_HashValue: 3852437751
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0900
+  - Id:
+      m_Source: argueIncentive
+      m_HashValue: 2428336910
+    IdString: argueIncentive
+    Index: 11
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.argueIncentive
+      m_HashValue: 1939686082
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0a00
+  m_CashReward: 0
+  m_ExpReward: 30
+  m_Scripting: {fileID: -1942890987711236906, guid: 5fb1824027eae134d8b1ae839078a7f0,
+    type: 3}
+  m_ExtraAssets: []

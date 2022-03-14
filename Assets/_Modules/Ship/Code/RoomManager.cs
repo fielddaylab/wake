@@ -6,11 +6,12 @@ using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using EasyAssetStreaming;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Ship
 {
-    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBakedComponent
+    public class RoomManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBaked
     {
         static public readonly StringHash32 Trigger_RoomEnter = "RoomEnter";
 
@@ -110,37 +111,37 @@ namespace Aqua.Ship
             }
             else
             {
-                m_Transition.Replace(this, RoomTransition(inRoom)).TryManuallyUpdate(0);
+                m_Transition.Replace(this, RoomTransition(inRoom)).Tick();
             }
         }
 
         private IEnumerator RoomTransition(Room inNextRoom)
         {
-            Services.Input.PauseAll();
-            Services.Script.KillLowPriorityThreads();
+            using(Script.DisableInput()) {
+                Services.Script.KillLowPriorityThreads();
 
-            using(var fader = Services.UI.WorldFaders.AllocWipe())
-            {
-                yield return fader.Object.Show();
-                LoadingIcon.Queue();
-                m_CurrentRoom.Exit();
-                m_CurrentRoom = inNextRoom;
-                yield return 0.15f;
-                m_CurrentRoom.Enter();
-                using(var table = TempVarTable.Alloc())
+                using(var fader = Services.UI.WorldFaders.AllocWipe())
                 {
-                    table.Set("roomId", m_CurrentRoom.Id());
-                    Services.Script.TriggerResponse(Trigger_RoomEnter, table);
+                    yield return fader.Object.Show();
+                    LoadingIcon.Queue();
+                    m_CurrentRoom.Exit();
+                    m_CurrentRoom = inNextRoom;
+                    yield return 0.15f;
+                    m_CurrentRoom.Enter();
+                    using(var table = TempVarTable.Alloc())
+                    {
+                        table.Set("roomId", m_CurrentRoom.Id());
+                        Services.Script.TriggerResponse(Trigger_RoomEnter, table);
+                    }
+                    while(Streaming.IsLoading()) {
+                        yield return null;
+                    }
+                    LoadingIcon.Cancel();
+                    yield return fader.Object.Hide(false);
                 }
-                while(Streaming.IsLoading()) {
-                    yield return null;
-                }
-                LoadingIcon.Cancel();
-                yield return fader.Object.Hide(false);
-            }
 
-            AutoSave.Hint();
-            Services.Input.ResumeAll();
+                AutoSave.Hint();
+            }
         }
 
         #endregion // Room Transitions
@@ -172,13 +173,17 @@ namespace Aqua.Ship
         }
 
         #if UNITY_EDITOR
+        
+        int IBaked.Order { get { return 2; } }
 
-        void IBakedComponent.Bake()
+        bool IBaked.Bake(BakeFlags flags)
         {
             List<Room> rooms = new List<Room>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<Room>(true, rooms);
             m_Rooms = rooms.ToArray();
             m_Links = FindObjectsOfType<RoomLink>();
+
+            return true;
         }
 
         #endif // UNITY_EDITOR

@@ -235,7 +235,7 @@ namespace Aqua.Argumentation {
                 return;
             }
 
-            m_DialogAnim.Replace(this, ShowDialog()).TryManuallyUpdate(0);
+            m_DialogAnim.Replace(this, ShowDialog()).Tick();
         }
 
         private void OnPortableClosed() {
@@ -243,7 +243,7 @@ namespace Aqua.Argumentation {
                 return;
             }
 
-            m_DialogAnim.Replace(this, HideDialog()).TryManuallyUpdate(0);
+            m_DialogAnim.Replace(this, HideDialog()).Tick();
         }
 
         #endregion // Event Handlers

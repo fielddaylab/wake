@@ -16,6 +16,7 @@ using Aqua.Debugging;
 using BeauUtil.Services;
 using Leaf.Runtime;
 using EasyAssetStreaming;
+using ScriptableBake;
 
 namespace Aqua
 {
@@ -36,6 +37,8 @@ namespace Aqua
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
+
+        private RingBuffer<Action> m_OnLoadQueue = new RingBuffer<Action>(64, RingBufferMode.Expand);
 
         public StringHash32 LastEntranceId { get { return m_EntranceId; } }
 
@@ -60,7 +63,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -90,7 +93,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -112,7 +115,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(inScene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -135,7 +138,7 @@ namespace Aqua
             }
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(scene, inEntrance, inContext, inFlags)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -168,7 +171,7 @@ namespace Aqua
             SceneBinding prevScene = m_SceneHistory.PeekBack();
 
             m_SceneLock = true;
-            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inEntrance, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).TryManuallyUpdate(0);
+            m_SceneLoadRoutine.Replace(this, SceneSwap(prevScene, inEntrance, inContext, inFlags | SceneLoadFlags.DoNotModifyHistory)).Tick();
             return m_SceneLoadRoutine.Wait();
         }
 
@@ -200,9 +203,9 @@ namespace Aqua
 
         private IEnumerator InitialSceneLoad()
         {
+            Services.Input.PauseAll();
             yield return WaitForServiceLoading();
             
-            Services.Input.PauseAll();
             yield return WaitForPreload(m_InitialPreloadRoot, null);
 
             foreach(var obj in m_InitialPreloadRoot.GetComponentsInChildren<ISceneLoadHandler>(true))
@@ -247,6 +250,7 @@ namespace Aqua
             Services.Input.ResumeAll();
             Services.Physics.Enabled = true;
 
+            ProcessCallbackQueue();
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
@@ -339,6 +343,7 @@ namespace Aqua
                 Services.Physics.Enabled = true;
                 m_SceneLock = false;
 
+                ProcessCallbackQueue();
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
                 Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
@@ -475,35 +480,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-
-            using(PooledList<FlattenHierarchy> allFlatten = PooledList<FlattenHierarchy>.Create())
-            {
-                inBinding.Scene.GetAllComponents<FlattenHierarchy>(true, allFlatten);
-                if (allFlatten.Count > 0)
-                {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Flattening {0} transform hierarchies...", allFlatten.Count);
-                    using(Profiling.Time("flatten scene hierarchy"))
-                    {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allFlatten, (f) => f.Flatten(), 5));
-                    }
-                }
-            }
-
-            using(PooledList<IBakedComponent> allBaked = PooledList<IBakedComponent>.Create())
-            {
-                inBinding.Scene.GetAllComponents<IBakedComponent>(true, allBaked);
-                if (allBaked.Count > 0)
-                {
-                    DebugService.Log(LogMask.Loading, "[StateMgr] Baking {0} objects...", allBaked.Count);
-                    using(Profiling.Time("bake objects"))
-                    {
-                        yield return Routine.Inline(Routine.ForEachAmortize(allBaked, (f) => {
-                            Debug.LogFormat("[StateMgr] ...baking {0}", f.ToString());
-                            f.Bake(); 
-                        }, 5));
-                    }
-                }
-            }
+            yield return Routine.Amortize(Bake.SceneAsync(inBinding, BakeFlags.Verbose), 5);
         }
 
         static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
@@ -563,6 +540,21 @@ namespace Aqua
             StringHash32 map = MapDB.LookupMap(inBinding);
             if (!map.IsEmpty)
                 Save.Map.RecordVisitedLocation(map);
+        }
+
+        public void OnLoad(Action inAction)
+        {
+            if (m_SceneLock) {
+                m_OnLoadQueue.PushBack(inAction);
+            } else {
+                inAction();
+            }
+        }
+
+        private void ProcessCallbackQueue() {
+            while(m_OnLoadQueue.TryPopFront(out Action action)) {
+                action();
+            }
         }
 
         #endregion // Scene Loading

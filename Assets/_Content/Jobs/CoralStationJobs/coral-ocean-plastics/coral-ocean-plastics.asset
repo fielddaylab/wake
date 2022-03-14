@@ -31,24 +31,22 @@ MonoBehaviour:
   m_ExperimentDifficulty: 0
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 0
-  m_PrerequisiteJobs:
-  - {fileID: 11400000}
-  m_PrereqConditions: 
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: HasEntity("PlasticBag")
   m_PrereqUpgrades:
   - m_HashValue: 3188184158
-  - m_HashValue: 283353415
-  - m_HashValue: 1109988049
+  - m_HashValue: 1203385870
   m_StationId:
     m_HashValue: 707943182
   m_DiveSiteIds:
   - m_HashValue: 2162458881
   m_Tasks:
   - Id:
-      m_Source: turtleReefEdge
-      m_HashValue: 502370004
+      m_Source: scanReefEdge
+      m_HashValue: 1118130279
     LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.turtleReefEdge
-      m_HashValue: 2913577323
+      m_Source: jobs.coral-ocean-plastics.task.scanReefEdge
+      m_HashValue: 246783840
     Steps:
     - Type: 0
       Target:
@@ -56,70 +54,24 @@ MonoBehaviour:
         m_HashValue: 3290936401
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: copepodReefEdge
-      m_HashValue: 3736107928
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.copepodReefEdge
-      m_HashValue: 3909432649
-    Steps:
     - Type: 0
       Target:
         m_Source: Copepod
         m_HashValue: 1053183451
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: grassReefEdge
-      m_HashValue: 1559297326
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.grassReefEdge
-      m_HashValue: 130569099
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: queenReefEdge
-      m_HashValue: 1745385010
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.queenReefEdge
-      m_HashValue: 2999819167
-    Steps:
     - Type: 0
       Target:
         m_Source: QueenConch
         m_HashValue: 2098174204
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: shrimpReefEdge
-      m_HashValue: 2173998101
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.shrimpReefEdge
-      m_HashValue: 3120258810
-    Steps:
     - Type: 0
       Target:
         m_Source: WhiteShrimp
         m_HashValue: 3187223953
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
-      m_Source: coralReefEdge
-      m_HashValue: 861786445
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.speciesReefEdge
-      m_HashValue: 3450012067
-    Steps:
     - Type: 0
       Target:
         m_Source: StaghornCoral
@@ -152,7 +104,15 @@ MonoBehaviour:
         m_HashValue: 1033032444
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.PlasticBag
+        m_HashValue: 1831727362
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanReefEdge
+      m_HashValue: 1118130279
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -161,28 +121,17 @@ MonoBehaviour:
       m_HashValue: 4040639279
     Steps: []
     PrerequisiteTaskIds:
-    - m_Source: turtleReefEdge
-      m_HashValue: 502370004
-    - m_Source: copepodReefEdge
-      m_HashValue: 3736107928
-    - m_Source: grassReefEdge
-      m_HashValue: 1559297326
-    - m_Source: queenReefEdge
-      m_HashValue: 1745385010
-    - m_Source: shrimpReefEdge
-      m_HashValue: 2173998101
-    - m_Source: coralReefEdge
-      m_HashValue: 861786445
     - m_Source: whatTurtlesEat
       m_HashValue: 1168730728
   m_OptimizedTaskList:
   - Id:
-      m_Source: turtleReefEdge
-      m_HashValue: 502370004
+      m_Source: scanReefEdge
+      m_HashValue: 1118130279
+    IdString: scanReefEdge
     Index: 0
     LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.turtleReefEdge
-      m_HashValue: 2913577323
+      m_Source: jobs.coral-ocean-plastics.task.scanReefEdge
+      m_HashValue: 246783840
     Steps:
     - Type: 0
       Target:
@@ -190,75 +139,24 @@ MonoBehaviour:
         m_HashValue: 3290936401
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: copepodReefEdge
-      m_HashValue: 3736107928
-    Index: 1
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.copepodReefEdge
-      m_HashValue: 3909432649
-    Steps:
     - Type: 0
       Target:
         m_Source: Copepod
         m_HashValue: 1053183451
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: grassReefEdge
-      m_HashValue: 1559297326
-    Index: 2
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.grassReefEdge
-      m_HashValue: 130569099
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: queenReefEdge
-      m_HashValue: 1745385010
-    Index: 3
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.queenReefEdge
-      m_HashValue: 2999819167
-    Steps:
     - Type: 0
       Target:
         m_Source: QueenConch
         m_HashValue: 2098174204
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: shrimpReefEdge
-      m_HashValue: 2173998101
-    Index: 4
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.shrimpReefEdge
-      m_HashValue: 3120258810
-    Steps:
     - Type: 0
       Target:
         m_Source: WhiteShrimp
         m_HashValue: 3187223953
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: coralReefEdge
-      m_HashValue: 861786445
-    Index: 5
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.speciesReefEdge
-      m_HashValue: 3450012067
-    Steps:
     - Type: 0
       Target:
         m_Source: StaghornCoral
@@ -269,7 +167,8 @@ MonoBehaviour:
   - Id:
       m_Source: whatTurtlesEat
       m_HashValue: 1168730728
-    Index: 6
+    IdString: whatTurtlesEat
+    Index: 1
     LabelId:
       m_Source: jobs.coral-ocean-plastics.task.whatTurtlesEat
       m_HashValue: 823957611
@@ -292,16 +191,23 @@ MonoBehaviour:
         m_HashValue: 1033032444
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.PlasticBag
+        m_HashValue: 1831727362
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
-    Index: 7
+    IdString: reportBack
+    Index: 2
     LabelId:
       m_Source: jobs.coral-ocean-plastics.task.reportBack
       m_HashValue: 4040639279
     Steps: []
-    PrerequisiteTaskIndices: 0000010002000300040005000600
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: db28d95ee7dceb245a059dac9b1b13d7,

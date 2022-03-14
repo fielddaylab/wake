@@ -152,7 +152,7 @@ namespace ProtoAqua.Observation
                 m_TargetScannable = inRegion;
                 m_TargetScanData = m_ScanSystem.RefreshData(inRegion);
 
-                m_ScanRoutine.Replace(this, ScanRoutine()).TryManuallyUpdate(0);
+                m_ScanRoutine.Replace(this, ScanRoutine()).Tick();
 
                 Services.Audio.PostEvent("scan_start");
             }
@@ -345,7 +345,7 @@ namespace ProtoAqua.Observation
             }
 
             inToolView.Root.gameObject.SetActive(true);
-            inToolView.Animation.Replace(inToolView, ShowToolAnimation(inToolView)).TryManuallyUpdate(0);
+            inToolView.Animation.Replace(inToolView, ShowToolAnimation(inToolView)).Tick();
         }
 
         static private IEnumerator ShowToolAnimation(ToolView inTool)
@@ -358,7 +358,7 @@ namespace ProtoAqua.Observation
         {
             if (inToolView.Root.gameObject.activeSelf)
             {
-                inToolView.Animation.Replace(inToolView, HideToolAnimation(inToolView)).TryManuallyUpdate(0);
+                inToolView.Animation.Replace(inToolView, HideToolAnimation(inToolView)).Tick();
             }
         }
 

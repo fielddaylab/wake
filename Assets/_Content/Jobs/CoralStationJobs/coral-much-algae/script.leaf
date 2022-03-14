@@ -1,0 +1,196 @@
+#basePath   job.coral-much-algae
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@kevin}	 We need to develop a sense of why the {nameof TurfAlgae} population has gotten big enough to cover the coral.
+$if !JobTaskCompleted(scanAll)
+	// BRANCH A
+	{@kevin}	We need to know the species at Site S that could be affecting the Turf Algae. Let's dive!
+$else
+	$if !JobTaskCompleted(observeEatAlgae)
+		// BRANCH B
+		{@kevin}	In a balanced ecosystem, something would be eating the Turf Algae and reducing its population.
+					Have you used a tank to Observe what species from Site S eats Turf Algae?
+	$else
+		$if !JobTaskCompleted(measureEatRate)
+			// BRANCH C
+			{@kevin}	We'll need to use the measurement tank to figure out how much Turf Algae the Blue Tang eat.
+		$else
+			$if !JobTaskCompleted(modelPopulations)
+				//BRANCH D
+				{@kevin}	We've got numbers, but we won't know if that number makes sense until we build a Descriptive Model.
+			$endif
+		$endif
+	$endif
+$endif
+
+
+// SCANNING
+
+:: enterSite
+@trigger    SceneStart
+@when       scene:name == "RS-2S", !JobTaskCompleted(scanAll) // BRANCH A
+@once
+@cutscene
+{@kevin} 	You should probably scan absolutely everything. Go crazy.
+
+:: continueSite
+@trigger    JobTasksUpdated
+@when       scene:name == "RS-2S", JobTaskTop(observeEatAlgae) // BRANCH A
+@once
+@cutscene
+{@kevin} 	That's pretty much everything that lives in this area.
+
+:: helpEnterSite
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(scanAll) // BRANCH A
+@cutscene
+{@kevin} 	Go to Site S and scan all species.
+
+
+// EXPERIMENT
+	
+
+:: helpExperiment
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(observeEatAlgae) // BRANCH B
+@cutscene
+{@kevin} 	Use the Observation Tank to determine what eats {nameof TurfAlgae} and is native to Site S.
+
+:: rateMeasured
+@trigger    JobTasksUpdated
+@when       JobTaskTop(measureEatRate) // BRANCH B
+@once
+@cutscene
+{@kevin} 	All right, so it's the {nameof BlueTang} that eat {nameof TurfAlgae}.
+
+:: helpMeasure
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(measureEatRate) // BRANCH C
+@cutscene
+{@kevin} 	Use the Measurement Tank to get the rate that {nameof BlueTang} eat {TurfAlgae}.
+
+// MODELING
+
+:: buildModel
+@trigger	JobTasksUpdated
+@when		JobTaskTop(modelPopulations)
+@once
+@cutscene
+{@kevin}	We've got numbers, but we won't know if that number makes sense until we build a Descriptive Model.
+
+:: helpBuildModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(modelPopulations) // BRANCH D
+@cutscene
+{@kevin} 	Build a Descriptive Model of the Site S ecosystem, focusing on the {nameof BlueTang} and {nameof TurfAlgae}.
+
+:: inModeling
+@trigger	SceneStart
+@when		scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	You'll need to build a Visual Model first, if you haven't done that yet. Then make a Descriptive Model so we can compare it to the empirical data.
+
+:: modelingComplete
+@trigger	JobTasksUpdated
+@when		scene:name == "Modeling", JobTaskTop(reportBack)
+@once
+@cutscene
+{@kevin}	We have a model, but for some reason it doesn't match what we've observed. The {nameof BlueTang} aren't eating as much as we'd expect.
+			Let's talk through it with {nameof profCempaka}.
+
+
+// ARGUMENTATION
+
+:: helpReport
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(reportBack) // BRANCH D
+@cutscene
+{@kevin} 	Return to the Office and describe your results to {nameof profCempaka}.
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(coralMuchAlgaeArgue)
+@cutscene
+$branch .argue.chooseClaim
+
+:: argue.chooseClaim
+{@profCempaka}	Why is there so much algae at Site S?
+	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
+	$choice .argue.claimLionfishQuicken; The lionfish are making it grow faster!
+	$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+
+// BRANCH: SPARSE FISH
+
+:: argue.claimSparseFish
+{@profCempaka}	What is supposed to eat the turf algae?
+$call ArgueLoad(coralMuchAlgaeArgue)
+$if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
+		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
+		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
+$endif
+$call ArgueDisplayClaim()
+$goto .argue.chooseFactsSparseFish
+
+:: argue.chooseFactsSparseFish
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.correctFacts
+$call ArgueComplete()
+{@profCempaka}	It looks like the {nameof BlueTang} are not eating enough of the algae. We should look into why.
+$call CompleteJob()
+
+:: argue.incorrectFacts
+$if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
+	// A only
+	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
+	$goto .argue.correctFacts
+$else
+	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+		// B only 
+		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Did you model this?
+		$call ArgueClearFacts()
+		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae)
+		$goto .argue.chooseFactsSparseFish
+	$else
+		// neither
+		{@profCempaka}	I don't think that is important for answering this question.
+		$call ArgueRejectIncorrect()
+		$call ArgueClearFacts()
+		$call ArgueHideClaim()
+	$endif
+$endif
+
+:: argue.giveUp
+{@profCempaka}	OK. Get back to me when you're ready.
+
+// BRANCH: LIONFISH QUICKEN
+
+:: argue.claimLionfishQuicken
+{@profCempaka}	Ugh, creepy buggers! Do you have an experiment that shows this?
+$call ArgueLoad(coralMuchAlgaeIncorrectArgue)
+$if ArgueSetClaim(coralMuchAlgaeIncorrectArgueClaim, jobs.coral-much-algae.argue.claimLabelIncorrect)
+			$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.incorrectFactsIncorrect
+		$answer incorrect, .argue.incorrectFactsIncorrect
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.incorrectFactsIncorrect
+{@profCempaka}	Hmmmm... Maybe that's not the case.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$call ArgueHideClaim()
+$goto .argue.chooseClaim

@@ -53,7 +53,7 @@ namespace EasyAssetStreaming {
         [SerializeField] private Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
         [SerializeField] private AutoSizeMode m_AutoSize = AutoSizeMode.Disabled;
         
-        [SerializeField, SortingLayer] private int m_SortingLayer = 0;
+        [SerializeField] private int m_SortingLayer = 0;
         [SerializeField] private int m_SortingOrder = 0;
 
         #endregion // Inspector

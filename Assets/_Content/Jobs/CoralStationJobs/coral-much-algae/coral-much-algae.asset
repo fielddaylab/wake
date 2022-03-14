@@ -1,0 +1,282 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: coral-much-algae
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.coral-much-algae.name
+    m_HashValue: 2241567754
+  m_PosterId:
+    m_HashValue: 2064399686
+  m_DescId:
+    m_Source: jobs.coral-much-algae.desc
+    m_HashValue: 716631484
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 3
+  m_ModelingDifficulty: 1
+  m_ArgumentationDifficulty: 2
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 5d8f8baced4915149bccfdddf87e8fdb, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades:
+  - m_HashValue: 3082617054
+  - m_HashValue: 2834804279
+  - m_HashValue: 283353415
+  m_StationId:
+    m_HashValue: 707943182
+  m_DiveSiteIds:
+  - m_HashValue: 2212791738
+  m_Tasks:
+  - Id:
+      m_Source: scanAll
+      m_HashValue: 1784740587
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.scanAll
+      m_HashValue: 4177088458
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Lionfish
+        m_HashValue: 586288757
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: observeEatAlgae
+      m_HashValue: 1284980985
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.observeEatAlgae
+      m_HashValue: 2455171404
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanAll
+      m_HashValue: 1784740587
+  - Id:
+      m_Source: measureEatRate
+      m_HashValue: 1471217201
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.measureEatRate
+      m_HashValue: 3402110470
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: observeEatAlgae
+      m_HashValue: 1284980985
+  - Id:
+      m_Source: modelPopulations
+      m_HashValue: 3782958866
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.modelPopulations
+      m_HashValue: 833603665
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Model.MuchAlgaeDescriptive
+        m_HashValue: 2301013810
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: measureEatRate
+      m_HashValue: 1471217201
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.reportBack
+      m_HashValue: 2999981227
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: modelPopulations
+      m_HashValue: 3782958866
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanAll
+      m_HashValue: 1784740587
+    IdString: scanAll
+    Index: 0
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.scanAll
+      m_HashValue: 4177088458
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Lionfish
+        m_HashValue: 586288757
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: observeEatAlgae
+      m_HashValue: 1284980985
+    IdString: observeEatAlgae
+    Index: 1
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.observeEatAlgae
+      m_HashValue: 2455171404
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: measureEatRate
+      m_HashValue: 1471217201
+    IdString: measureEatRate
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.measureEatRate
+      m_HashValue: 3402110470
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: modelPopulations
+      m_HashValue: 3782958866
+    IdString: modelPopulations
+    Index: 3
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.modelPopulations
+      m_HashValue: 833603665
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Model.MuchAlgaeDescriptive
+        m_HashValue: 2301013810
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 4
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.reportBack
+      m_HashValue: 2999981227
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0300
+  m_CashReward: 0
+  m_ExpReward: 50
+  m_Scripting: {fileID: -1942890987711236906, guid: 1772688e0315deb459e335a998c495a3,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: dd0809cc88e026645bbd67cc1e111697, type: 2}

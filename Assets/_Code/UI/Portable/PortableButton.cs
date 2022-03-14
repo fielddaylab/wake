@@ -20,7 +20,6 @@ namespace Aqua.Portable
 
         [NonSerialized] private PortableMenu m_Menu;
         [NonSerialized] private Routine m_NewAnim;
-        [NonSerialized] private bool m_HasNew;
         [NonSerialized] private RectTransformState m_OriginalAnimState;
 
         public Toggle Toggle { get { return m_Toggle; } }
@@ -53,10 +52,6 @@ namespace Aqua.Portable
             base.OnEnable();
 
             m_OriginalAnimState = RectTransformState.Create(m_AnimationRoot);
-            if (m_HasNew)
-            {
-                m_NewAnim.Replace(this, NewAnim());
-            }
         }
 
         protected override void OnDisable()
@@ -78,7 +73,6 @@ namespace Aqua.Portable
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inBestiaryUpdate)
         {
-            m_HasNew = true;
             if (!m_NewAnim)
             {
                 m_NewAnim.Replace(this, NewAnim());
@@ -90,7 +84,6 @@ namespace Aqua.Portable
         private void OnPortableOpened(PortableRequest inRequest)
         {
             m_NewAnim.Stop();
-            m_HasNew = false;
             m_OriginalAnimState.Apply(m_AnimationRoot);
             m_NewIcon.gameObject.SetActive(false);
 
@@ -128,12 +121,9 @@ namespace Aqua.Portable
                 yield return null;
             
             Services.Audio.PostEvent("portable.ping.new");
-            while(true)
-            {
-                yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);
-                yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
-                yield return 2f;
-            }
+            yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);
+            yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
+            m_NewIcon.gameObject.SetActive(false);
         }
 
         #endregion // Animation

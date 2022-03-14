@@ -10,6 +10,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
 using System;
+using ScriptableBake;
 
 namespace Aqua.Editor
 {
@@ -22,6 +23,13 @@ namespace Aqua.Editor
         {
             BuildInfoGenerator.Enabled = true;
             BuildInfoGenerator.IdLength = 8;
+
+            Bake.OnPreBake += (b) => {
+                ScriptableObject scr = b as ScriptableObject;
+                if (scr) {
+                    new StringHash32(scr.name);
+                }
+            };
 
             // TODO: More sophisticated mechanism for controlling development, defines, other flags...
             string branch = BuildUtils.GetSourceControlBranchName();
@@ -76,54 +84,16 @@ namespace Aqua.Editor
         [MenuItem("Optimize/Run %#o", false, 1)]
         static private void BakeAllAssets()
         {
-            List<IBakedAsset> allBaked = new List<IBakedAsset>(512);
             using(Profiling.Time("bake assets"))
             {
-                foreach(var asset in AssetDBUtils.FindAssets<ScriptableObject>())
+                using(Log.DisableMsgStackTrace())
                 {
-                    IBakedAsset baked;
-                    if ((baked = asset as IBakedAsset) != null)
-                    {
-                        allBaked.Add(baked);
-                    }
-
-                    // ensure ids are reversible from hash
-                    DBObject dbObj;
-                    BFBase fact;
-                    if ((dbObj = asset as DBObject) != null)
-                    {
-                        dbObj.Id();
-                    }
-                    if ((fact = asset as BFBase) != null)
-                    {
-                        new StringHash32(fact.name);
-                    }
+                    Bake.Assets(BakeFlags.Verbose | BakeFlags.ShowProgressBar);
                 }
-
-                allBaked.Sort((a, b) => a.Order.CompareTo(b.Order));
-                int count = allBaked.Count;
-                int current = 0;
-                ScriptableObject scriptableAsset;
-                try
-                {
-                    foreach(var baked in allBaked)
-                    {
-                        scriptableAsset = (ScriptableObject) baked;
-                        EditorUtility.DisplayProgressBar("Baking Scriptable Objects", string.Format("{0} ({1}/{2})", scriptableAsset.name, current + 1, count), current / (float) count);
-                        if (baked.Bake())
-                        {
-                            EditorUtility.SetDirty(scriptableAsset);
-                            Debug.LogFormat("[BuildSettings] Baked asset '{0}' of type '{1}'", scriptableAsset.name, baked.GetType().Name);
-                        }
-                        current++;
-                    }
-
-                    AssetDatabase.SaveAssets();
-                }
-                finally
-                {
-                    EditorUtility.ClearProgressBar();
-                }
+            }
+            using(Profiling.Time("post-bake save assets"))
+            {
+                AssetDatabase.SaveAssets();
             }
         }
 
@@ -201,11 +171,17 @@ namespace Aqua.Editor
                 {
                     PlayerSettings.SplashScreen.show = false;
                     PlayerSettings.SplashScreen.showUnityLogo = false;
+                    PlayerSettings.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
                 }
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try
                 {
-                    BakeAllAssets();
+                    using(Profiling.Time("bake assets"))
+                    using(Log.DisableMsgStackTrace())
+                    {
+                        Bake.Assets(bBatch ? 0 : BakeFlags.Verbose);
+                    }
+                    AssetDatabase.SaveAssets();
                     if (bBatch) {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();

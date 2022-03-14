@@ -10,6 +10,8 @@ namespace Aqua.Option
     /// </summary>
     public struct OptionsAccessibility : ISerializedObject, ISerializedVersion
     {
+        // TODO: Add accessibility option for things that require timing?
+
         public enum TTSMode : byte
         {
             Off,

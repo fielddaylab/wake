@@ -76,7 +76,7 @@ Report back with your prediction
 What is causing the population of Giant Kelp at Site B to decrease?
 
 :: kelp-save-urchin-barren.name
-* Saving the Urchin Barren
+*Saving the Urchin Barren
 
 :: kelp-save-urchin-barren.desc
 Let's use everything you have learned so far to save the Urchin Barren. Use the model you made to try out potential interventions and simulate the long term outcomes. Tell me if you find any potential solutions for restoring Site B.
@@ -85,7 +85,7 @@ Let's use everything you have learned so far to save the Urchin Barren. Use the 
 Build a Model to restore the kelp forest at site B
 
 :: kelp-save-urchin-barren.task.return
-Go to the Office and tell Dr. Kelpurnia what you discovered
+Goto the Office and tell Dr. Kelpurnia what you discovered
 
 :: kelp-save-urchin-barren.argue.claimHopeless
 There is no way to save the Urchin Barren
@@ -346,7 +346,7 @@ Start a Refuge
 
 :: kelp-start-refuge.desc
 We need to figure out what conditions would make a good kelp refuge.
-A refuge is a rescue area. We want to be able to create a stress-free environment where all kinds of kelp can thrive and reproduce.
+We want to be able to create a stress-free environment where all kinds of kelp can thrive and reproduce.
 
 :: kelp-start-refuge.argue.claimLabel
 Potential Site 3 is the most suitable location for a Kelp refuge.
@@ -360,23 +360,20 @@ Our refuge didn't turn out as planned. It seems the Bull Kelp stopped growing. W
 :: kelp-refuge-failure.argue.claimLabel
 The Bull Kelp population is growing slower than expected.
 
-:: kelp-refuge-failure.task.lightRatesGiant
-Measure Giant Kelp's effect on light in the Measurement Tank
-
-:: kelp-refuge-failure.task.lightRatesBull
-Measure Bull Kelp's effect on light in the Measurement Tank
-
 :: kelp-mussel-fest.name
-* Mussel Fest
+Mussel Fest
 
 :: kelp-mussel-fest.desc
-Something's causing the Mussels to be shaped all wonky. We're not sure what's causing it, but the fishers are upset and we're worried the problem will cascade up the food chain.
+People think the mussels are funny shaped. What is happening to them?
 
-:: kelp-mussel-fest.argue.claimLabelPopulationTemp
-Temperatures at Site B have been increasing.
+:: kelp-mussel-fest.argue.claimLabelReasonStress
+Provide information about the mussel stress ranges
 
-:: kelp-mussel-fest.argue.claimLabelMusselTemp
-High temperatures stress the mussels.
+:: kelp-mussel-fest.argue.claimLabelReasonChemistry
+Provide information about the temperature, PH, and light levels at the site
+
+:: kelp-mussel-fest.task.report
+Talk with Dr. Kelpurnia to figure out what is happening with the mussels
 
 :: kelp-start-refuge.task.getBullKelpStress
 Determine stress ranges for bull kelp.
@@ -450,8 +447,8 @@ Measure how fast Urchins eat Giant Kelp
 :: kelp-urchin-farm.task.reportBack
 Report your findings in the Office
 
-:: kelp-urchin-farm.argue.claimEitherWorkLabel
-Argue for the rates at which Kelp are eaten
+:: jobs.kelp-urchin-farm.argue.claimEitherWorkLabel
+Either Kelp are eaten at the same rate
 
 :: coral-ocean-plastics.name
 **Ocean Plastics
@@ -462,8 +459,17 @@ You scanned plastic in the Reef! This can't do. What will happen if it makes its
 :: coral-ocean-plastics.task.whatTurtlesEat
 Use the Observation tank to discover everything turtles eat.
 
-:: coral-ocean-plastic.argue.claimEvidence
-There are multiple food sources for the turtles.
+:: coral-ocean-plastic.argue.claimLabel1
+The Loggerhead turtle will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel2
+The Staghorn coral will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel3
+The Queen conch will be impacted is plastic enters the reef
+
+:: coral-ocean-plastic.argue.claimLabel4
+Everything will be impacted is plastic enters the reef
 
 :: coral-ocean-plastics.task.reportBack
 Report your findings back to Prof. Cempaka.
@@ -493,16 +499,13 @@ We need to know why the turtles are so successful here by creating a food web mo
 An Urchin Barren Visualization
 
 :: kelp-urchin-barren-predict.name
-Predicting the Future of the Urchin Barren
+*Predicting the Future of the Urchin Barren
 
 :: kelp-urchin-barren-viz.desc
 The {h}Urchin Barren{/h} looks like a doomed ecosystem. If the kelp population goes to zero, nothing will be able to survive there. Is there some new species there that's eating up all the kelp? I need a visual model of the ecosystem to understand it.
 
 :: kelp-urchin-barren-predict.desc
 The urchins are taking over Site B, turning it into what we call an {h}Urchin Barren{/h}. I need you to use the modeling tool to determine the likely fate of the ecosystem there.
-
-:: kelp-urchin-barren-predict.argue.claimLabel
-What is causing the population of Giant Kelp at Site B to decrease?
 
 :: kelp-urchin-barren-viz.task.predictSiteB
 Build a visual model of Site B
@@ -546,26 +549,242 @@ Report back with your prediction
 :: kelp-urchin-barren-predict.task.predictSiteB
 Build a Model to Predict the future for Site B
 
-:: kelp-mussel-fest.task.report
-Report to Dr. Kelpurnia
+:: kelp-urchin-barren-predict.argue.claimLabel
+Share your prediction for the future of Site B
 
-:: kelp-mussel-fest-solution.name
-* Mussel Fest Solution
+:: bayou-displaced-reef.name
+**Displaced Reef
 
-:: kelp-mussel-fest-solution.desc
-Other than the weird shape, are the Mussels being affected in any adverse way? We're particularly interested in how their reproduction rate has changed. The local restaurants want to keep serving mussels!
+:: bayou-displaced-reef.desc
+It started small, but the reef keeps growing here. It's in the middle of the ocean. It's just not right. Can you get population counts, so we can report back on this?
 
-:: kelp-mussel-fest-solution.task.stressedRate
-Measure Mussel reproduction rates when stressed
+:: bayou-displaced-reef.task.getScans
+Scan the species of Site O
 
-:: kelp-mussel-fest-solution.task.unstressedRate
-Measure Mussel reproduction rates when not stressed
+:: bayou-displaced-reef.task.visitSiteO
+Visit Site O
 
-:: kelp-mussel-fest-solution.task.reportChange
-Report whether Mussel reproduction rates have changed
+:: bayou-displaced-reef.task.getCounts
+Count the populations at Site O
 
-:: kelp-mussel-fest-solution.argue.claimLabel
-Explain how Mussel growth rate is affected by stress
+:: bayou-displaced-reef.task.reportBack
+Report back to Prof. Harper with your findings
+
+:: bayou-displaced-reef.argue.claimLabel
+Share your population estimate of Loggerhead Turtles at Site O
+
+:: coral-ocean-plastics.task.speciesReefEdge
+Use the Observation tank to discover everything turtles eat.
+
+:: coral-ocean-plastics.task.scanReefEdge
+Travel to the Reef Edge at Site V and scan the Loggerhead Turtle.
+
+:: bayou-turtle-danger.name
+Turtle Danger
+
+:: bayou-turtle-danger.desc
+Is the reef dangerous to the Loggerhead turtles?  Are there any new predators?
+
+:: bayou-turtle-danger.task.modelSiteO
+Detemrine the Site O species that interact with Loggerhead Turtles
+
+:: bayou-turtle-danger.task.reportBack
+Report your findings back to Prof. Harper
+
+:: bayou-turtle-danger.argue.claimLabel1
+The turtle populations are safe.
+
+:: bayou-turtle-danger.argue.claimLabel2
+The turtle populations are not safe.
+
+:: bayou-turtle-danger2.name
+**Turtle Danger (pt 2)
+
+:: bayou-turtle-danger2.desc
+How are loggerhead populations responding to the presence of the reef? "My colleague pointed out that predators aren't the only danger -- competition could also endanger the turtle population."
+
+:: bayou-turtle-danger2.task.reportBack
+Bring your validated model back to Prof. Harper
+
+:: bayou-turtle-danger2.task.historicalData
+Get historical population data for the species at Site O
+
+:: bayou-turtle-danger2.task.measureSiteO
+Use your measurement tank to collect data for a Sync model of Site O
+
+:: bayou-turtle-danger2.task.syncModel
+Use Experiements and the Modeling Tool to create a model that matches Site O's populaiton data
+
+:: bayou-turtle-danger.task.visualModelO
+Create a visual model of the Loggerhead Turtle's food web at Site O
+
+:: bayou-turtle-danger2.argue.claimLabel
+Turtle populations are stable.
+
+:: bayou-reef-decision.name
+**Reef Decision
+
+:: bayou-reef-decision.desc
+We need to see what would happen if the reef wasn't here.
+
+:: bayou-reef-decision.task.reportBack
+Report your findings back to Prof. Harper
+
+:: bayou-reef-decision.task.intervene
+Create an intervention model you can use to argue whether or not we should remove the rig from the reef.
+
+:: bayou-reef-decision.argue.claimLabel1
+The rig should be removed from the reef.
+
+:: bayou-reef-decision.argue.claimLabel2
+The rig should be left to remain in the reef.
+
+:: bayou-hide-n-seek.task.reportBack
+Report back to Prof. Harper with your findings
+
+:: bayou-hide-n-seek.task.jellyScan
+Our data indicates you might have missed some creatures in site O. Head back anf scan around to find the ellusive jellyfish.
+
+:: bayou-hide-n-seek.task.jellyObservation
+Observe the behavior of the jelly's with the other creatures in the reef.
+
+:: bayou-hide-n-seek.task.jellyRates
+Use your measurement tank to find the rates for the jellyfish.
+
+:: bayou-hide-n-seek.task.jellyPredict
+Create a prediction model of your findings for the jellyfish.
+
+:: bayou-hide-n-seek.name
+**Hide 'n Seek
+
+:: bayou-hide-n-seek.desc
+We want to see what might happen in the future for the turtles, and we need to make sure we're not missing anything.
+
+:: bayou-hide-n-seek.argue.claimLabel1
+The turtle population will remain stable
+
+:: bayou-hide-n-seek.argue.claimLabel2
+The turtle population will start increasing
+
+:: bayou-hide-n-seek.argue.claimLabel3
+The turtle population will begin to decrease
+
+:: bayou-hide-n-seek.argue.claimLabelx
+
+
+:: coral-lionfish-conspiracy.name
+* Lionfish Conspiracy
+
+:: coral-lionfish-conspiracy.desc
+Why is no one talking about the lionfish? There's a reason they prefer the reef ecosystem.  They must be interacting with the coral. What do they do?!
+
+:: lionfish-conspiracy.task.scanNew
+Scan any new organisms at Site S
+
+:: lionfish-conspiracy.task.observeInteractions
+Observe how Lionfish interact with their environment
+
+:: lionfish-conspiracy.task.arguePredator
+Argue that Lionfish are predators of other fish
+
+:: coral-lionfish-conspiracy.argue.claimEvidence
+Lionfish are predators that eat other fish
+
+:: coral-hunting-lions.name
+** Hunting Lions
+
+:: coral-hunting-lions.desc
+Interested in hunting, eh? We need to model how hunting might work so we can figure out whether to allow it -- or perhaps even advocate for it
+
+:: coral-hunting-lions.task.scanSpear
+Identify how hunters hunt Lionfish
+
+:: coral-hunting-lions.task.argueIncentive
+Argue for a hunting incentive
+
+:: coral-hunting-lions.task.scanHistory
+Scan the historical populations and water chemistry data of Site S
+
+:: coral-hunting-lions.task.scanCritters
+Scan any unscanned organisms at Site S
+
+:: coral-hunting-lions.task.countPopulation
+Count the organism populations at Site S
+
+:: coral-hunting-lions.task.observeEatRules
+Obtain all rules regarding what eats what at Site S
+
+:: coral-hunting-lions.task.obtainStressRules
+Obtain all stress rules for organisms at Site S
+
+:: coral-hunting-lions.task.measureStressEatRates
+Measure the eating rates of all organisms at Site S when stressed
+
+:: coral-hunting-lions.task.measureStressReproduceRates
+Measure the reproduction rates of all organisms at Site S when stressed
+
+:: coral-hunting-lions.task.obtainChemistry
+Measure the effects of organisms on their environment
+
+:: coral-hunting-lions.task.predictModel
+Model the site's future according to existing trends
+
+:: coral-hunting-lions.task.interveneModel
+Model the site's future if hunters are allowed to hunt Lionfish
+
+:: coral-hunting-lions.argue.claimEvidence
+Decreasing the lionfish population would improve the site
+
+:: coral-fake-fix.name
+* Fake Reef Fix
+
+:: coral-fake-fix.desc
+Scientists have been trying to determine why this reef is struggling for a long time. They installed these artificial reefs in an effort to fix it. Can you report back on the success of the reefs?
+
+:: coral-fake-fix.task.findReef
+Find the artificial reef
+
+:: coral-fake-fix.task.scanProbes
+Collect population probe data
+
+:: coral-fake-fix.task.countPopulation
+Check current populations
+
+:: coral-fake-fix.task.argue
+Argue that the Fake Reef did not impact coral populations
+
+:: coral-fake-fix.argue.claimLabel
+The artificial reef has not helped coral populations
+
+:: coral-fake-fix.argue.claimLabelIncorrect
+The artificial reef has helped coral populations
+
+:: coral-much-algae.name
+So Much Algae
+
+:: coral-much-algae.desc
+Another researcher reported that the coral is covered in turf algae. Those lionfish scare me, so I avoid that area as much as possible... Can you double check and see if you can figure out why there is so much algae?
+
+:: coral-much-algae.task.scanAll
+Scan all species at Site S
+
+:: coral-much-algae.task.observeEatAlgae
+Find what eats Turf Algae
+
+:: coral-much-algae.task.measureEatRate
+Measure the rate at which Blue Tang eats Turf Algae
+
+:: coral-much-algae.task.modelPopulations
+Model Blue Tang and Turf Algae populations
+
+:: coral-much-algae.task.reportBack
+Argue why there is so much Turf Algae
+
+:: coral-much-algae.argue.claimLabel
+There are not enough fish to the Turf Algae
+
+:: coral-much-algae.argue.claimLabelIncorrect
+The Lionfish are making the Turf Algae grow faster
 
 :: arctic-missing-whale.task.findTracker
 Search site W to find the missing whale tracker

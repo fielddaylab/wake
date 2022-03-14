@@ -6,6 +6,8 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using System;
+using BeauUtil.Debugger;
+using EasyAssetStreaming;
 
 namespace Aqua
 {
@@ -22,6 +24,15 @@ namespace Aqua
         private void Awake()
         {
             m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeIcon>(true);
+            foreach(var icon in m_UpgradeIcons) {
+                PortableUpgradeIcon cached = icon;
+                icon.Button.onClick.AddListener(() => OnClickUpgrade(cached));
+            }
+        }
+
+        static private void OnClickUpgrade(PortableUpgradeIcon icon) {
+            Streaming.UnloadUnusedAsync(15);
+            Script.PopupItemDetails(icon.Item);
         }
 
         public void Clear()
@@ -37,6 +48,8 @@ namespace Aqua
                 Clear();
                 return;
             }
+
+            Assert.True(inUpgrades.Length <= m_UpgradeIcons.Length, "Too few icons ({0}) to handle {1} upgrades", m_UpgradeIcons.Length, inUpgrades.Length);
 
             m_NoUpgradesGroup.SetActive(false);
             m_HasUpgradesGroup.SetActive(true);
@@ -58,6 +71,7 @@ namespace Aqua
             ioIcon.Text.SetText(inInv.NameTextId());
             ioIcon.Icon.sprite = inInv.Icon();
             ioIcon.gameObject.SetActive(true);
+            ioIcon.Item = inInv;
         }
     }
 }

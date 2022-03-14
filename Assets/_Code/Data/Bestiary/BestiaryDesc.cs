@@ -160,6 +160,12 @@ namespace Aqua
             return m_StateTransitions.Evaluate(inEnvironment, out outAffected);
         }
 
+        public bool HasOrganism(StringHash32 inOrganismId)
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Environment, "{0} is not an environment", name);
+            return ArrayUtils.Contains(m_InhabitingOrganisms, inOrganismId);
+        }
+
         #endregion // Checks
 
         #region Sorting
@@ -212,7 +218,8 @@ namespace Aqua
         IsMicroscopic = 0x40,
         TreatAsPlant = 0x80,
         DoNotUseInStressTank = 0x100,
-        IsNotLiving = 0x200
+        IsNotLiving = 0x200,
+        HideInBestiary = 0x400
     }
 
     public enum BestiaryDescSize

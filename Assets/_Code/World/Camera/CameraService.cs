@@ -116,6 +116,7 @@ namespace Aqua.Cameras
         [NonSerialized] private uint m_NextId;
         [NonSerialized] private CameraMode m_Mode = CameraMode.Scripted;
         [NonSerialized] private bool m_Paused;
+        [NonSerialized] private bool m_CacheDirty;
 
         [NonSerialized] private Plane m_LastGameplayPlane;
         [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
@@ -288,10 +289,11 @@ namespace Aqua.Cameras
             int frameCount = Time.frameCount % (int) (m_CacheFrameSkip + 1);
 
             // update points and bounds on alternating frames if specified
-            if (m_CacheFrameSkip == 0)
+            if (m_CacheFrameSkip == 0 || m_CacheDirty)
             {
                 CachePoints(m_Hints, inTargetPosition);
                 CacheBounds(m_Bounds);
+                m_CacheDirty = false;
             }
             else if (frameCount == 0)
             {
@@ -795,6 +797,7 @@ namespace Aqua.Cameras
             newBounds.SoftEdges = inSoftEdges;
             newBounds.HardEdges = inHardEdges;
             m_Bounds.PushBack(newBounds);
+            m_CacheDirty = true;
             return ref m_Bounds[m_Bounds.Count - 1];
         }
 
@@ -810,6 +813,7 @@ namespace Aqua.Cameras
             newBounds.SoftEdges = inSoftEdges;
             newBounds.HardEdges = inHardEdges;
             m_Bounds.PushBack(newBounds);
+            m_CacheDirty = true;
             return ref m_Bounds[m_Bounds.Count - 1];
         }
     
@@ -865,6 +869,7 @@ namespace Aqua.Cameras
             newHint.Zoom = inZoom;
             newHint.Lerp = inLerp;
             m_Hints.PushBack(newHint);
+            m_CacheDirty = true;
             return ref m_Hints[m_Hints.Count - 1];
         }
 
@@ -882,6 +887,7 @@ namespace Aqua.Cameras
             newHint.Zoom = inZoom;
             newHint.Lerp = inLerp;
             m_Hints.PushBack(newHint);
+            m_CacheDirty = true;
             return ref m_Hints[m_Hints.Count - 1];
         }
     

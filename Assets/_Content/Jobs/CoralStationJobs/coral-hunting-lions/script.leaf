@@ -1,0 +1,240 @@
+#basePath   job.coral-hunting-lions
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+$branch common.ringPhone
+
+{@kevin}	This job calls for a complete model of all living things in this ecosystem.  Maybe we should come back to it later?
+			If you want to keep going, we'll need to make sure all species are scanned and counted,
+			make sure we've observed every interaction between every pair of species, get data on what causes each species too be stressed,
+			and then measure the effect on water chemistry and the rates of predation and reproduction under stressed and unstressed conditions for each species. 
+			But don't worry, we'll take it one step at a time.
+$if !JobTaskCompleted(scanCritters)
+	{@kevin}	Looks like we still have a few species to scan. Let's head to Site S.
+$else
+	$if !JobTaskCompleted(scanHistory)
+		{@kevin}	Let's make sure we scan the data from the probes while we're down at the site.
+	$else
+		$if !JobTaskCompleted(countPopulation)
+			{@kevin}	We still need to get accurate population counts of everything at Site S.
+		$else
+			$if !JobTaskCompleted(observeEatRules)
+				{@kevin}	We should try to use the observation tank to understand what eats what.
+			$else
+				$if !JobTaskCompleted(obtainStressRules)
+					{@kevin}	We don't know what triggers stress reactions in each species from Site S. Looks like a job for the stress tank.
+				$else
+					$if !JobTaskCompleted(measureStressEatRates)
+						{@kevin}	We don't know how fast or how much these species eat each other.  To the measurement tank!
+					$else
+						$if !JobTaskCompleted(measureStressReproduceRates)
+							{@kevin}	We know every species reproduces, but we'll need to determine how fast.
+						$else
+							$if !JobTaskCompleted(obtainChemistry)
+								{@kevin}	There might be some species which have an effect on the water or the light around themselves.  We'll need to get some numbers for those.
+							$else
+								$if !JobTaskCompleted(predictModel)
+									{@kevin}	Professor Cempaka wants an intervention model, but first we'll need to make a model that predicts what would happen without any intervention.
+								$endif
+							$endif
+						$endif
+					$endif
+				$endif
+			$endif
+		$endif
+	$endif
+$endif
+
+
+// SCANNING
+
+:: scanSpeciesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "RS-2S", JobTaskCompleted(scanCritters)
+@once
+@cutscene
+{@kevin}	Alright, looks like we know about every species living here.
+
+
+:: scanProbesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "RS-2S", JobTaskCompleted(scanHistory)
+@once
+@cutscene
+{@kevin}	Great, we've got the historic populations and water chemistry data here.
+
+
+:: countPopulationsComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "RS-2S", JobTaskCompleted(countPopulations)
+@once
+@cutscene
+{@kevin}	Perfect, these population counts really form the base of any accurate model.
+
+
+// EXPERIMENTATION
+
+:: observeEatRulesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "ExperimentV2", JobTaskCompleted(observeEatRules)
+@once
+@cutscene
+{@kevin}	OK, we have enough to make a visual model of the ecosystem, but we're going to need a lot more for an intervention model.
+
+:: obtainStressRulesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "ExperimentV2", JobTaskCompleted(obtainStressRules)
+@once
+@cutscene
+{@kevin}	We now know what causes every species to be stressed but not necessarily how they behave under stress.
+
+:: measureStressEatRatesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressEatRates)
+@once
+@cutscene
+{@kevin}	Great!  Now we know not only what eats what, but how much!
+
+:: measureStressReproduceRatesComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressReproduceRates)
+@once
+@cutscene
+{@kevin}	Wow!  Reproduction rates for every species at Site S can now be found in your AQOS tablet.
+
+:: obtainChemistryComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "ExperimentV2", JobTaskCompleted(obtainChemistry)
+@once
+@cutscene
+{@kevin}	That was the last piece of the puzzle!
+
+
+// MODELING
+
+:: predictModelComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "Modeling", JobTaskCompleted(predictModel)
+@once
+@cutscene
+{@kevin}	OK now, this is it.  We're ready to make an intervention model of what would happen if we added more fishers to hunt the Lionfish.  Good luck!
+
+:: interveneModelComplete
+@trigger    JobTasksUpdated
+@when		scene:name == "Modeling", JobTaskCompleted(interveneModel)
+@once
+@cutscene
+{@kevin}	Alright!  Looks like allowing the hunting of lionfish would seriously benefit the coral and the ecosystem overall.  Time to hand over your findings.
+
+
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(huntingLionsArgue)
+@cutscene
+$call ArgueLoad(huntingLionsArgue)
+{@profCempaka}	We know I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improved the populations or the diversity of the reef in the future.
+				Have that model yet?
+	$choice .argue.haveModel; Yes! I know how it works!
+	$choice .argue.noModel; No, not yet.
+$choose branch	
+
+:: argue.noModel
+{@profCempaka}	Well, let me know when you do.
+
+:: argue.haveModel
+{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species they impact,
+				And a connection to the Coral.
+$if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
+		$call ArgueFactSlot(ReefEdge.Model.HuntingLionsIntervene)
+		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
+		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFacts
+		$answer incorrect, .argue.incorrectFacts
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.giveUp
+{@profCempaka}	OK. Get back to me when you're ready.
+
+:: argue.incorrectFacts
+{@profCempaka}	Hmm, this isn't quite what I'm looking for.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+
+:: argue.correctFacts
+{@profCempaka}	So, the less Lionfish, the more small fish, less algae, more light, happier coral!
+				Whoa. That is complex, but you did it!
+				I knew those Lionfish were awful from day 1.
+$call ArgueComplete()
+$call CompleteJob()
+
+
+// REQUEST HELP
+
+:: requestHelpScans
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(scanCritters)
+@cutscene
+{@kevin}	Make sure you've scanned everything at Site S.
+
+:: requestHelpProbes
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(scanHistory)
+@cutscene
+{@kevin}	Scan the probes at Site S.
+
+:: requestHelpCounts
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(countPopulations)
+@cutscene
+{@kevin}	Use your counting tool to count the populations of each species at Site S.
+
+:: requestHelpEatRules
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(observeEatRules)
+@cutscene
+{@kevin}	Use the observation tank to find what eats what.  Check AQOS to see which species you haven't covered yet.
+
+:: requestHelpStressRules
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(obtainStressRules)
+@cutscene
+{@kevin}	Get the stress ranges for each  Site S species using the stress tank. Check AQOS to see which species you haven't covered yet.
+
+:: requestHelpStressEatRates
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(measureStressEatRates)
+@cutscene
+{@kevin}	Get the rate that each predator at Site S eats its prey using the Measurement Tank.  Check AQOS to see which "eats" rules are not quantified yet.
+
+:: requestHelpStressReproduceRates
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(measureStressReproduceRates)
+@cutscene
+{@kevin}	Use the measurement tank to get each Site S species' rate of reproduction.  Check AQOS to see which species you haven't covered yet.
+
+:: requestHelpObtainChemistry
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(obtainChemistry)
+@cutscene
+{@kevin}	Get the amount each species at Site S affects the water around it using the Measurement Tank.
+
+:: requestHelpPredictModel
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(predictModel)
+@cutscene
+{@kevin}	Start making a model of Site S using the Modeling tool, and take it as far as you can.
+
+:: requestHelpArgueIncentive
+@trigger    RequestPartnerHelp
+@when		JobTaskTop(argueIncentive)
+@cutscene
+{@kevin}	It's time to go to the comms room and show off the model you created.

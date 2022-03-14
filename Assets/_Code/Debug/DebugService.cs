@@ -53,6 +53,7 @@ namespace Aqua.Debugging
         [NonSerialized] private float m_TimeScale = 1;
         [NonSerialized] private bool m_VisibilityWhenDebugMenuOpened;
         [NonSerialized] private Vector2 m_CameraCursorPivot;
+        [NonSerialized] private bool m_CameraLock;
 
         [NonSerialized] private uint m_LastKnownStreamingCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
@@ -195,34 +196,42 @@ namespace Aqua.Debugging
                 Vector3 move = default;
                 bool bHadInput = false;
 
-                if (m_Input.KeyDown(KeyCode.LeftArrow) || m_Input.KeyDown(KeyCode.A))
+                if (!m_CameraLock)
                 {
-                    move.x -= 1;
-                    bHadInput = true;
+                    if (m_Input.KeyDown(KeyCode.LeftArrow) || m_Input.KeyDown(KeyCode.A))
+                    {
+                        move.x -= 1;
+                        bHadInput = true;
+                    }
+                    if (m_Input.KeyDown(KeyCode.RightArrow) || m_Input.KeyDown(KeyCode.D))
+                    {
+                        move.x += 1;
+                        bHadInput = true;
+                    }
+                    if (m_Input.KeyDown(KeyCode.UpArrow) || m_Input.KeyDown(KeyCode.W))
+                    {
+                        move.z += 1;
+                        bHadInput = true;
+                    }
+                    if (m_Input.KeyDown(KeyCode.DownArrow) || m_Input.KeyDown(KeyCode.S))
+                    {
+                        move.z -= 1;
+                        bHadInput = true;
+                    }
+                    if (m_Input.KeyDown(KeyCode.Q))
+                    {
+                        move.y -= 1;
+                        bHadInput = true;
+                    }
+                    if (m_Input.KeyDown(KeyCode.E))
+                    {
+                        move.y += 1;
+                        bHadInput = true;
+                    }
                 }
-                if (m_Input.KeyDown(KeyCode.RightArrow) || m_Input.KeyDown(KeyCode.D))
+                if (m_Input.KeyPressed(KeyCode.F))
                 {
-                    move.x += 1;
-                    bHadInput = true;
-                }
-                if (m_Input.KeyDown(KeyCode.UpArrow) || m_Input.KeyDown(KeyCode.W))
-                {
-                    move.z += 1;
-                    bHadInput = true;
-                }
-                if (m_Input.KeyDown(KeyCode.DownArrow) || m_Input.KeyDown(KeyCode.S))
-                {
-                    move.z -= 1;
-                    bHadInput = true;
-                }
-                if (m_Input.KeyDown(KeyCode.Q))
-                {
-                    move.y -= 1;
-                    bHadInput = true;
-                }
-                if (m_Input.KeyDown(KeyCode.E))
-                {
-                    move.y += 1;
+                    m_CameraLock = !m_CameraLock;
                     bHadInput = true;
                 }
 
@@ -319,6 +328,7 @@ namespace Aqua.Debugging
             {
                 Services.Camera.DebugResetToLastState();
                 m_CameraReference.SetActive(false);
+                m_CameraLock = false;
 
                 #if UNITY_EDITOR
                 UnityEditor.EditorGUIUtility.SetWantsMouseJumping(0);

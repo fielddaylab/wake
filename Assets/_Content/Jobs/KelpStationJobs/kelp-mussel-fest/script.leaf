@@ -43,7 +43,7 @@
 @when 		JobTaskTop(report)
 @once
 @cutscene
-{@kevin}	All right -- I think we can answer Dr. Kelpurnia's question about what's disturbing the mussels.
+{@kevin}	All right -- let's untangle what's disturbing the mussels by talking it through with Dr. Kelpurnia.
 
 
 // REPORT
@@ -59,96 +59,105 @@
 // ARGUMENTATION
 
 ::argue.hello
-{@drKelp}	Hi {nameof @player}.
-$goto .argue.chooseClaim
-
-::argue.chooseClaim
 @trigger    TryArgumentation
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
-{@drKelp}	What is happening with the mussels?
-	$choice .argue.lightOrParasiteStress; The Mussels are stressed by light.
-	$choice .argue.lightOrParasiteStress; The Mussels have a parasite.
-	$choice .argue.tempStress; The Mussels are stressed by the temperature.
-	$choice .argue.notReady; Let me get back to you
-$choose branch
+{@drKelp}	Hi {nameof @player}. Have questions about what you've found? Let's talk this over.
+$branch .argue.reasonStress
 
-:: argue.notReady
-{@drKelp} OK. Get back to me when you're ready.
-
-::argue.lightOrParasiteStress
-{@drKelp}	Do you have any evidence for this?
-$goto .argue.defendClaimIncorrect
-
-::argue.defendClaimIncorrect
-	$choice .argue.notReally; Not really.
-	
-::argue.notReally
-{@drKelp}	Okay. Any other ideas?
-$goto .argue.chooseClaim
-
-::argue.tempStress
-$if ArgueIsComplete(musselFestArguePopulationTemp)
-	{@drKelp}	Okay, you've already shown me the temperature range in Site B.
-	$goto .argue.correctFactsPopulationTemp
-$endif
-$call ArgueLoad(musselFestArguePopulationTemp)
-$if ArgueSetClaim(musselFestArguePopulationTempClaim, jobs.kelp-mussel-fest.argue.claimLabelPopulationTemp)
-			$call ArgueFactSlot(WarmKelpForest.Temperature.History)
-$endif
-$call ArgueDisplayClaim()
-$goto .argue.defendClaimPopulationTemp
-
-::argue.defendClaimPopulationTemp
-{@drKelp}	What was the temperature range in Site B again?
-$if ArgueAllFactsCorrect()
-    $goto .argue.correctFactsPopulationTemp
+// Walk player through stress
+:: argue.reasonStress
+$if ArgueIsComplete(musselFestReasonStress)
+	{@drKelp}	So. We've already established the stress ranges for the mussels.
+	$branch .argue.reasonChemistry
 $else
-	$choice #argueFactSet; Present facts from AQOS
-			$answer correct, .argue.completePopulationTempArgue
-			$answer incorrect, .argue.incorrectFactsPopulationTemp
-	$choice .argue.giveUp; Let me get back to you
+	$call ArgueLoad(musselFestReasonStress)
+	$if ArgueSetClaim(musselFestReasonStressClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonStress)
+				$call ArgueFactSlot(Mussel.Temperature.Stressed)
+				$call ArgueFactSlot(Mussel.Light.Stressed)
+				$call ArgueFactSlot(Mussel.PH.Stressed)
+	$endif
+	$call ArgueDisplayClaim()
+	{@drKelp}	What were the stress ranges for the mussels?
+		$choice #argueFactSet; Present facts from AQOS
+				$answer correct, .argue.correctFactsReasonStress
+				$answer incorrect, .argue.incorrectFactsReasonStress
+		$choice .argue.giveUp; Let me get back to you
 $endif
 
-:: argue.completePopulationTempArgue
+
+:: argue.correctFactsReasonStress
+// how explicit do we want to be here? These numbers may change...
+{@drKelp}	Okay, so the mussels are stressed when the temperature is below -13.3 C or above 25 C, or when PH levels are below 7.5 or above 8.9. And light levels do not make a difference on their stress levels.
 $call ArgueComplete()
 $call ArgueHideClaim()
-$goto .argue.correctFactsPopulationTemp
+$branch .argue.reasonChemistry
 
-:: argue.correctFactsPopulationTemp
-$call ArgueLoad(musselFestArgueMusselTemp)
-{@drKelp}	How does that compare to the stress ranges for the mussels?
-$if ArgueSetClaim(musselFestArgueMusselTempClaim, jobs.kelp-mussel-fest.argue.claimLabelMusselTemp)
-			$call ArgueFactSlot(Mussel.Temperature.Stressed)
-$endif
-$call ArgueDisplayClaim()
-$branch .argue.defendClaimMusselTemp
-
-:: argue.incorrectFactsPopulationTemp
-{@drKelp} That isn't it. Do you have the temperature stress ranges for Mussels?
+:: argue.incorrectFactsReasonStress
+{@drKelp}	Hmmm... that's not really leading us to an answer.
 $call ArgueRejectIncorrect()
-$goto .argue.defendClaimPopulationTemp
+$call ArgueClearFacts()
+$branch .argue.reasonStress
 
-:: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
 
-::argue.defendClaimMusselTemp
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFactsMusselTemp
-		$answer incorrect, .argue.incorrectFactsMusselTemp
-$choice .argue.giveUp; Let me get back to you
+// Walk player through water chemistry
+:: argue.reasonChemistry
+$if ArgueIsComplete(musselFestReasonChemistry)
+	{@drKelp}	We've talked about the temperature, pH, and light at the site.
+	$branch .argue.chooseClaim
+$else
+	$call ArgueLoad(musselFestReasonChemistry)
+	$if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
+				$call ArgueFactSlot(WarmKelpForest.Temperature.History)
+				$call ArgueFactSlot(WarmKelpForest.LightHistory)
+				$call ArgueFactSlot(WarmKelpForest.PH.History)
+	$endif
+	$call ArgueDisplayClaim()
+	{@drKelp}	How about the site?
+	{@drKelp}	What are the temperature, pH, and light conditions there?
+		$choice #argueFactSet; Present facts from AQOS
+				$answer correct, .argue.correctFactsReasonChemistry
+				$answer incorrect, .argue.incorrectFactsReasonChemistry
+		$choice .argue.giveUp; Let me get back to you
+$endif
 
-:: argue.correctFactsMusselTemp
+:: argue.correctFactsReasonChemistry
+{@drKelp}	Okay, so Site C has maintained a temperature of about 21 C, has 100% light, and has a pH of 8.1.
+{@drKelp}	Ohhh... those values look promising!
 $call ArgueComplete()
-{@drKelp}	I see the overlap here. Good to know.
+$call ArgueHideClaim()
+$branch .argue.chooseClaim
+
+:: argue.incorrectFactsReasonChemistry
+{@drKelp}	Hmmm... that's not really helping us understand the conditions at the site.
+$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
+$branch .argue.reasonChemistry
+
+
+// Allow player to make a claim
+::argue.chooseClaim
+@cutscene
+$call ArgueLoad(musselFestArgueMusselTemp)
+{@drKelp}	What do you think this data means?
+	$choice .argue.lightOrPHStress; It's the light!
+	$choice .argue.tempStress; It's the temperature!
+	$choice .argue.lightOrPHStress; It's the pH!
+	$choice .argue.giveUp; Let me get back to you
+$choose branch
+
+::argue.lightOrPHStress
+{@drKelp}	I'm not seeing that connection based on the data we just discussed.
+$branch .argue.chooseClaim
+
+::argue.tempStress
+$call ArgueComplete()
+{@drKelp}	I think you are right. I see the overlap here. Good to know.
 {@drKelp}	I wonder if the mussels will continue to grow.
 $call CompleteJob()
 
-:: argue.incorrectFactsMusselTemp
-{@drKelp}	That doesn't explain why the mussels would be stressed in Site C's temperatures.
-{@drKelp}	Do you have anything else that explains it?
-$call ArgueRejectIncorrect()
-$goto .argue.defendClaimMusselTemp
+:: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
 
 // END
 
