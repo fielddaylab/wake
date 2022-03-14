@@ -16467,13 +16467,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 1690822833}
   m_MeshRenderer: {fileID: 1690822832}
-  m_Url: Textures/Observation/UnderwaterBG01.png
+  m_ColorGroup: {fileID: 0}
+  m_Path: Textures/Observation/UnderwaterBG01.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
-  m_Size: {x: 20.48, y: 10.24}
-  m_Pivot: {x: 0.5, y: 0.5}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 20.48, y: 10.24}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: -1434789061
   m_SortingOrder: 0
 --- !u!4 &1690822831
@@ -16508,7 +16517,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -21160,6 +21169,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d8e6946a57284a9d898bed8bb8d0f89, type: 3}
+--- !u!1 &2544153032371939425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2544153033370963544, guid: 7d8e6946a57284a9d898bed8bb8d0f89,
+    type: 3}
+  m_PrefabInstance: {fileID: 2544153032371939424}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2544153032371939426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2544153032371939425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &4824212763202216173
 PrefabInstance:
   m_ObjectHideFlags: 0
