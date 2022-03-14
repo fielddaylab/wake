@@ -93,7 +93,7 @@ $call ArgueLoad(energyArgue)
 	
 :: argue.hello
 {@drKelp}   I heard you made a model of the Warm Kelp food web. Fantastic!
-			So what did it show as the source of the energy? To say it another way, What is the thing that is consumed but doesn't consume anything else?
+			So what did it show as the source of the energy? To say it another way, what is the thing that is consumed but doesn't consume anything else?
 $goto .argue.chooseEnergy
 
 
@@ -111,7 +111,7 @@ $endif
 $if ArgueIsFactSubmitted(WarmKelpForest.Model.Conceptual)
 	$goto .argue.done
 $else
-	{@drKelp}    Can I see your Warm Kelp Forest model?
+	{@drKelp}    Can I see your Warm Kelp Forest model? It should be in the {h}Sites Tab{/h} of AQOS. 
 	$goto .argue.chooseFacts
 $endif
 
