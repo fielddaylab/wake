@@ -115,6 +115,7 @@ namespace Aqua.Argumentation {
             int factIdx = GetDataSlot(id);
             m_CurrentlyDisplayed[factIdx] = id;
             m_FactDisplays[factIdx].Populate(Assets.Fact(id), flags);
+            m_Layout.ForceRebuild();
             return factIdx;
         }
 
@@ -194,6 +195,7 @@ namespace Aqua.Argumentation {
             int idx = GetDisplayedSlot(id);
             if (idx >= 0) {
                 m_FactDisplays[idx].Clear();
+                m_Layout.ForceRebuild();
             }
         }
 
@@ -213,12 +215,16 @@ namespace Aqua.Argumentation {
                     factDisplay.Clear();
                 }
             }
+
+            m_Layout.ForceRebuild();
         }
 
         private void OnFactsCleared() {
             for(int i = 0; i < m_TotalFactSlots; i++) {
                 m_FactDisplays[i].Clear();
             }
+
+            m_Layout.ForceRebuild();
         }
 
         private void OnCompleted() {

@@ -148,6 +148,8 @@ namespace Aqua.Profile {
                 m_InProgressJobs.Remove(inJobId);
                 m_CompletedTasks.RemoveWhere((t) => t.JobId == inJobId);
 
+                Services.Events.FlushQueue();
+                Services.Events.Dispatch(GameEvents.JobPreComplete, inJobId);
                 Services.Events.Dispatch(GameEvents.JobCompleted, inJobId);
 
                 if (bIsCurrent) {

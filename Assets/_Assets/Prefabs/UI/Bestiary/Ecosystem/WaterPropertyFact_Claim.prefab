@@ -17,11 +17,12 @@ MonoBehaviour:
   m_InnerToDisable: []
   m_InnerToDeactivate:
   - {fileID: 6302959589520525473}
+  - {fileID: 3085880277287340334}
   m_LayoutTexts: []
   m_EmptyClaim:
   - {fileID: 8285549034965991500}
   m_Sentence: {fileID: 0}
-  m_EmptyHeight: 48
+  m_EmptyHeight: 36
 --- !u!1 &8285549034965991500
 GameObject:
   m_ObjectHideFlags: 0
@@ -53,13 +54,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6065683347455442007}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -10}
-  m_SizeDelta: {x: 0, y: -20}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 4}
+  m_SizeDelta: {x: -8, y: 28}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7037189506827799051
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -96,7 +97,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3
+  m_PixelsPerUnitMultiplier: 3.5
 --- !u!114 &8708699891056364267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,6 +205,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4136018540849879262, guid: 90d1ff9d388fe8c468a25cd6a2742833,
         type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4136018540849879262, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -295,7 +301,7 @@ PrefabInstance:
     - target: {fileID: 7606915101616540240, guid: 90d1ff9d388fe8c468a25cd6a2742833,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7606915101616540240, guid: 90d1ff9d388fe8c468a25cd6a2742833,
         type: 3}
@@ -306,6 +312,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WaterPropertyFact_Claim
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455520172544631897, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455520172544631897, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455520172544631897, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180951886585293888, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90d1ff9d388fe8c468a25cd6a2742833, type: 3}
@@ -336,6 +362,12 @@ MonoBehaviour:
 --- !u!1 &6302959589520525473 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4193740160415788072, guid: 90d1ff9d388fe8c468a25cd6a2742833,
+    type: 3}
+  m_PrefabInstance: {fileID: 7875586487257670793}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3085880277287340334 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5159027226561523111, guid: 90d1ff9d388fe8c468a25cd6a2742833,
     type: 3}
   m_PrefabInstance: {fileID: 7875586487257670793}
   m_PrefabAsset: {fileID: 0}

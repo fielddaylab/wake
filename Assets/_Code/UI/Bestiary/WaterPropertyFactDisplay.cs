@@ -48,6 +48,8 @@ namespace Aqua
                 valueTransform.SetAnchorPos(-Math.Abs(valueTransform.anchoredPosition.x), Axis.X);
                 valueText.alignment = TextAlignmentOptions.Right;
             }
+
+            ((RectTransform) transform).SetSizeDelta(56, Axis.Y);
         }
     }
 }
