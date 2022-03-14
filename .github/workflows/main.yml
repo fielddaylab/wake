@@ -18,6 +18,9 @@ jobs:
   build:
     name: Build Unity Project
     runs-on: ubuntu-18.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
 
     # Setup Steps
 
@@ -74,14 +77,12 @@ jobs:
     
     - name: Upload build as artifact
       uses: actions/upload-artifact@v2
-      concurrency: upload-local-${{ github.workflow }}-${{ github.ref }}
       with:
         name: aqualab-webgl_${{ env.VERSION }}
         path: build/WebGL/WebGL
     
     - name: Upload to web server via rsync
       uses: burnett01/rsync-deployments@4.1
-      concurrency: upload-remote-${{ github.workflow }}-${{ github.ref }}
       with:
         switches: -avzr --delete
         path: build/WebGL/WebGL/*
