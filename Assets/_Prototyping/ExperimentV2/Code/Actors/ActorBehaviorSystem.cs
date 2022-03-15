@@ -74,9 +74,6 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private void OnFree(ActorInstance inCritter, ActorWorld inWorld) {
-            if (inCritter.CurrentState == ActorStateId.Dead) {
-                inWorld.EnvDeaths++;
-            }
             ActorWorld.ModifyPopulation(inWorld, inCritter.Definition.Id, -1);
             ActorInstance.ReleaseTargetsAndInteractions(inCritter, inWorld);
         }
@@ -206,6 +203,9 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private void OnActorDyingStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev) {
             ActorInstance.ReleaseTargetsAndInteractions(inActor, inWorld);
+            if (inActor.CurrentState == ActorStateId.Dead) {
+                inWorld.EnvDeaths++;
+            }
         }
 
         static private IEnumerator ActorDyingAnimation(ActorInstance inActor, ActorWorld inWorld) {
