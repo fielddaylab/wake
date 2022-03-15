@@ -88,6 +88,16 @@ namespace Aqua
 
         bool IBaked.Bake(BakeFlags flags)
         {
+            if (HasStressed && HasDeath)
+            {
+                // check for swapped values
+                if (m_MinSafe < m_MinStressed)
+                    Ref.Swap(ref m_MinSafe, ref m_MinStressed);
+                
+                if (m_MaxSafe > m_MaxStressed) 
+                    Ref.Swap(ref m_MaxSafe, ref m_MaxStressed);
+            }
+
             ActorStateTransitionRange range = ActorStateTransitionRange.Default;
 
             if (HasStressed)
