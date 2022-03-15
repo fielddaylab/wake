@@ -50,10 +50,12 @@ namespace Aqua
                 Assert.False(upgrade.IsEmpty, "[JobDesc] Job '{0}' has a null prerequisite upgrade", name);
             }
 
-            ValidateTaskIds(this);
-
             ValidationUtils.EnsureUnique(ref m_PrerequisiteJobs);
             ValidationUtils.EnsureUnique(ref m_ExtraAssets);
+
+            bool validated = ValidateTaskIds(this);
+            if (!validated)
+                throw new BakeException("Tasks on {0} were invalid", name);
             return true;
         }
 
@@ -157,10 +159,12 @@ namespace Aqua
             m_Tasks = null;
         }
 
-        static internal void ValidateTaskIds(JobDesc inItem)
+        static internal bool ValidateTaskIds(JobDesc inItem)
         {
             if (inItem.m_OptimizedTaskList.Length == 0)
-                return;
+                return true;
+
+            bool bFailed = false;
 
             using(PooledSet<StringHash32> taskIds = PooledSet<StringHash32>.Create())
             {
@@ -172,13 +176,15 @@ namespace Aqua
                     
                     if (!taskIds.Add(task.Id))
                     {
-                        Assert.Fail("Duplicate task id '{0}' on job '{1}'", task.Id, inItem.Id());
+                        bFailed = true;
+                        Log.Error("Duplicate task id '{0}' on job '{1}'", task.Id.Source(), inItem.Id());
                     }
                 }
 
                 if (rootCount == 0)
                 {
-                    Assert.Fail("No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
+                    bFailed = true;
+                    Log.Error("No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
                 }
 
                 foreach(var task in inItem.m_OptimizedTaskList)
@@ -187,7 +193,8 @@ namespace Aqua
                     {
                         if (prereq == ushort.MaxValue)
                         {
-                            Assert.Fail("Task '{0}' on job '{1}' has reference to unknown task", task.Id, inItem.Id());
+                            bFailed = true;
+                            Log.Error("Task '{0}' on job '{1}' has reference to unknown task", task.Id, inItem.Id());
                         }
                     }
 
@@ -196,35 +203,52 @@ namespace Aqua
                         switch(step.Type)
                         {
                             case JobStepType.AcquireBestiaryEntry: {
-                                Assert.NotNull(ValidationUtils.FindAsset<BestiaryDesc>(step.Target), "Task '{0}' on job '{1}' references bestiary entry '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                if (!ValidationUtils.FindAsset<BestiaryDesc>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references bestiary entry '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
                                 break;
                             }
 
                             case JobStepType.AcquireFact:
                             case JobStepType.AddFactToModel:
                             case JobStepType.UpgradeFact: {
-                                Assert.NotNull(ValidationUtils.FindAsset<BFBase>(step.Target), "Task '{0}' on job '{1}' references bestiary fact '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                if (!ValidationUtils.FindAsset<BFBase>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references bestiary fact '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
                                 break;
                             }
 
                             case JobStepType.GetItem: {
-                                Assert.NotNull(ValidationUtils.FindAsset<InvItem>(step.Target), "Task '{0}' on job '{1}' references item '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                if (!ValidationUtils.FindAsset<InvItem>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references item '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
                                 break;
                             }
 
                             case JobStepType.GotoScene: {
-                                Assert.NotNull(ValidationUtils.FindScene(step.Target.ToDebugString()), "Task '{0}' on job '{1}' references scene '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                if (!ValidationUtils.FindScene(step.Target.ToDebugString())) {
+                                    Log.Error("Task '{0}' on job '{1}' references scene '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
                                 break;
                             }
 
                             case JobStepType.GotoStation: {
-                                Assert.NotNull(ValidationUtils.FindAsset<MapDesc>(step.Target), "Task '{0}' on job '{1}' references station '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                if (!ValidationUtils.FindAsset<MapDesc>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references station '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
                                 break;
                             }
                         }
                     }
                 }
             }
+
+            return !bFailed;
         }
 
         #endif // UNITY_EDITOR
