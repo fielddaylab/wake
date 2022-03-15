@@ -2,6 +2,7 @@
 using BeauUtil;
 using UnityEngine.UI;
 using BeauPools;
+using BeauRoutine;
 
 namespace Aqua
 {
@@ -57,6 +58,8 @@ namespace Aqua
             }
 
             m_AliveRange.Display(range.AliveMin, range.AliveMax, propData.MinValue(), propData.MaxValue(), !inFact.HasStressed);
+
+            ((RectTransform) transform).SetSizeDelta(56, Axis.Y);
 
             SetEnvironment(inEnvironment);
         }

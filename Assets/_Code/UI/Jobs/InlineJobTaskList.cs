@@ -175,6 +175,12 @@ namespace Aqua
 
             if (!m_ProcessOperationsJob)
             {
+                if (m_CurrentJob == null)
+                {
+                    m_OperationQueue.Clear();
+                    return;
+                }
+                
                 m_LastAnimatingJob = m_CurrentJob;
                 m_ProcessOperationsJob = Routine.Start(this, ProcessOperations());
             }
@@ -310,6 +316,7 @@ namespace Aqua
         {
             m_TaskDisplays.Reset();
             m_AllocatedTasks.Clear();
+            m_OperationQueue.Clear();
             m_LastAnimatingJob = null;
         }
 

@@ -111,13 +111,14 @@ namespace Aqua
             ClearOldProfile();
             DeleteLocalSave(inUserCode);
 
-            DeclareProfile(CreateNewProfile(inUserCode), true);
+            DeclareProfile(CreateNewProfile(inUserCode), true, false);
             if (!IsDebugProfile())
             {
                 return Future.CreateLinked<bool>(DeclareProfileToServer, this);
             }
             else
             {
+                SetLastKnownProfile(m_CurrentSaveData);
                 return Future.Completed(true);
             }
         }
@@ -139,7 +140,7 @@ namespace Aqua
 
                     DebugService.Log(LogMask.DataService, "[DataService] Loaded debug profile with user id '{0}'", inUserCode);
 
-                    DeclareProfile(debugSave, true);
+                    DeclareProfile(debugSave, true, false);
                     return Future.Completed(true);
                 }
                 else
@@ -188,7 +189,7 @@ namespace Aqua
 
             DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
 
-            DeclareProfile(authoritativeSave, true);
+            DeclareProfile(authoritativeSave, true, true);
             ioFuture.Complete(true);
         }
 
@@ -318,7 +319,7 @@ namespace Aqua
             return bSuccess;
         }
 
-        private void DeclareProfile(SaveData inProfile, bool inbAutoSave)
+        private void DeclareProfile(SaveData inProfile, bool inbAutoSave, bool inbSetLastKnown)
         {
             m_CurrentSaveData = inProfile;
             Save.DeclareProfile(inProfile);
@@ -336,11 +337,9 @@ namespace Aqua
                 Log.Msg("[DataService] Patched save data from version {0} to {1}", oldVersion, SavePatcher.CurrentVersion);
             }
 
-            if (!IsDebugProfile())
+            if (!IsDebugProfile() && inbSetLastKnown)
             {
-                m_LastKnownProfile = inProfile.Id;
-                PlayerPrefs.SetString(LastUserNameKey, m_LastKnownProfile ?? string.Empty);
-                PlayerPrefs.Save();
+                SetLastKnownProfile(m_CurrentSaveData);
             }
 
             OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
@@ -350,6 +349,14 @@ namespace Aqua
             
             SetAutosaveEnabled(inbAutoSave);
             m_PostLoadQueued = true;
+        }
+
+        private void SetLastKnownProfile(SaveData inProfile)
+        {
+            m_LastKnownProfile = inProfile.Id;
+            DebugService.Log(LogMask.DataService, "[DataService] Profile name {0} set as last known name", m_LastKnownProfile);
+            PlayerPrefs.SetString(LastUserNameKey, m_LastKnownProfile ?? string.Empty);
+            PlayerPrefs.Save();
         }
 
         private StringHash32 FindMapId(SaveData inSaveData)
@@ -409,6 +416,7 @@ namespace Aqua
                 if (future.IsComplete())
                 {
                     DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
+                    SetLastKnownProfile(m_CurrentSaveData);
                     ioFuture.Complete(true);
                 }
                 else

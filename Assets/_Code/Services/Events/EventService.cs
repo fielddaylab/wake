@@ -498,6 +498,11 @@ namespace Aqua
 
         private void LateUpdate()
         {
+            FlushQueue();
+        }
+
+        public void FlushQueue()
+        {
             QueuedEvent evt;
             while(m_QueuedEvents.TryPopFront(out evt))
             {

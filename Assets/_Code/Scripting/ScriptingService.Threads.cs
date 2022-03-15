@@ -176,7 +176,7 @@ namespace Aqua
                                 if (inThread.Dialog != dialogPanel)
                                 {
                                     dialogPanel = inThread.Dialog;
-                                    eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents);
+                                    eventHandler = dialogPanel?.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents) ?? m_TagEventHandler;
                                 }
 
                                 inThread.Dialog?.UpdateInput();

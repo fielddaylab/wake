@@ -7,10 +7,9 @@
 $branch common.ringPhone
 
 {@profCempaka}	We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka} It just seems... well, stressed.
-{@profCempaka}	I need you to head over to Site R to observe to Coral.
-{@profCempaka}	Then we can run some experiments to see if something about the environment is stressing it.
-{@player} 	Ok. I'm on my way to site R!
+{@profCempaka} It just seems... well, stressed.  You'll need to go to Site R and see for yourself.
+{@profCempaka}	You can run some experiments to see if something about the environment is stressing it.
+{@player} 	Ok. I'm on it!
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
@@ -60,7 +59,6 @@ $else
 	$endif
 $endif
 
-
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
 @when       HasEntity(StaghornCoral), HasEntity(SargassumCoveredReef)
@@ -85,21 +83,19 @@ $set jobs:coral-stressed.gotScans = true
 @cutscene
 {@player}   We're back. Now what?
 {@kevin}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
-{@kevin}   	I'm upgrading your Experimentation Lab with a new kind of experiment to determine stress.
 {@player}   On it!
-$call GiveUpgrade(StressTank)
-
+	
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Ship", JobTaskActive(stressCoral)
 @cutscene
-{@player} 	We're back at the ship, but what should we be doing now?
+{@player} 	What should we be doing now?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
 
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
+@when       scene:name == "ExperimentV2", JobTaskActive(stressCoral)
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
@@ -117,14 +113,13 @@ $call GiveUpgrade(StressTank)
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
 @cutscene
-{@player} 	How should I do this again?
-{@kevin}	This time, select the stressor tank instead of an observation one.
+{@kevin}	Select the stressor tank instead of an observation one.
 {@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
 
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@when 		HasFact(StaghornCoral.Light.Stressed), HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene
 {@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
@@ -153,15 +148,18 @@ $endif
 
 // ARGUMENTATION
 
-::argue.chooseClaim
+::argue.startArgue
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(coralstressedArgue)
 @cutscene
-
 $call ArgueLoad(coralstressedArgue)
+$goto .argue.chooseClaim
+
+::argue.chooseClaim
 {@profCempaka} So, what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
-	$choice .argue.coralIsOldIntro; The coral is old.
+	$choice .argue.waterIsAcidicIntro; The water is too acidic.
+	$choice .argue.waterIsHotIntro; The temperature of the water is too hot for the coral.
 $call ArgueCancelClaim()
 $choose branch
 
@@ -194,23 +192,53 @@ $goto .argue.coralNeedsLight
 {@profCempaka} OK. Get back to me when you're ready.
 
 
-:: argue.coralIsOldIntro
-{@profCempaka} What evidence do you have about that, and how it affected the coral?
-$goto .argue.coralIsOld
+:: argue.waterIsAcidicIntro
+{@profCempaka} What evidence do you have about pH at Site R, and how it affected the coral?
+$goto .argue.waterIsAcidic
 
-::argue.coralIsOld
-$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.coralIsOldClaim)
-		$call ArgueFactSlot(SargassumCoveredReef.Light) // arbitrary slot, since there is no correct answer
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed) // arbitrary slot, since there is no correct answer
+::argue.waterIsAcidic
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.waterIsAcidicClaim)
+		$call ArgueFactSlot(SargassumCoveredReef.PH) // arbitrary slot, since there is no correct answer
+		$call ArgueFactSlot(StaghornCoral.PH.Stressed) // arbitrary slot, since there is no correct answer
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.incorrectAge
-		$answer incorrect, .argue.incorrectAge
+		$answer correct, .argue.correctAcid
+		$answer incorrect, .argue.incorrectAcid
 $choice .argue.giveUp; Let me get back to you
 
-:: argue.incorrectAge
-{@profCempaka} I don't think we have any way to measure coral Age yet. Any other ideas?
+::argue.correctAcid
+{@profCempaka} OK, these are the right facts for this claim.
+{@profCempaka} However, it looks like the pH of the water is within the comfort levels of the coral.
+$goto .argue.chooseClaim
+
+:: argue.incorrectAcid
+{@profCempaka} This evidence doesn't match this claim.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseClaim
+
+::argue.waterIsHotIntro
+{@profCempaka} What evidence do you have about temperature at Site R, and how it affected the coral?
+$goto .argue.waterIsHot
+
+::argue.waterIsHot
+$if ArgueSetClaim(coralstressedClaim, jobs.coral-stressed.argue.waterIsHotClaim)
+		$call ArgueFactSlot(SargassumCoveredReef.Temperature) // arbitrary slot, since there is no correct answer
+		$call ArgueFactSlot(StaghornCoral.Temperature.Stressed) // arbitrary slot, since there is no correct answer
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctHot
+		$answer incorrect, .argue.incorrectHot
+$choice .argue.giveUp; Let me get back to you
+
+::argue.correctHot
+{@profCempaka} OK, these are the right facts for this claim.
+{@profCempaka} However, it looks like the temperature of the water is within the comfort levels of the coral.
+$goto .argue.chooseClaim
+
+:: argue.incorrectHot
+{@profCempaka} This evidence doesn't match this claim.
 $call ArgueRejectIncorrect()
 $goto .argue.chooseClaim
 

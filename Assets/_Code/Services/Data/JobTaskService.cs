@@ -45,6 +45,7 @@ namespace Aqua
             EventService events = Services.Events;
             events.Register<StringHash32>(GameEvents.JobPreload, OnJobPreload, this)
                 .Register<StringHash32>(GameEvents.JobUnload, OnJobUnload, this)
+                .Register<StringHash32>(GameEvents.JobPreComplete, OnJobPreComplete, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
                 .Register(GameEvents.PopupClosed, OnCutsceneEnd, this);
@@ -113,6 +114,14 @@ namespace Aqua
             ProcessUpdates(0);
 
             m_JobLoading = false;
+        }
+
+        private void OnJobPreComplete(StringHash32 inJobId)
+        {
+            if (m_LoadedJobId != inJobId)
+                return;
+
+            ProcessUpdateQueue(Save.Jobs);
         }
 
         private void OnJobUnload(StringHash32 inJobId)
