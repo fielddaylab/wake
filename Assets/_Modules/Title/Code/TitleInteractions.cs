@@ -119,7 +119,7 @@ namespace Aqua.Title
                 Services.Input.ResumeAll();
                 Services.UI.Popup.DisplayWithClose(
                     Loc.Find("ui.title.saveError.header"),
-                    Loc.Format("ui.title.saveError.description"));
+                    Loc.Format("ui.title.saveError.description", DataService.ErrorMessage(newProfile)));
             }
             else
             {
@@ -142,9 +142,22 @@ namespace Aqua.Title
             if (!load.IsComplete())
             {
                 Services.Input.ResumeAll();
-                Services.UI.Popup.DisplayWithClose(
-                    Loc.Find("ui.title.fileMissing.header"),
-                    Loc.Format("ui.title.fileMissing.description", profileName));
+
+                switch(DataService.ReturnStatus(load)) {
+                    case OGD.Core.ReturnStatus.Error_Request: {
+                        Services.UI.Popup.DisplayWithClose(
+                            Loc.Find("ui.title.fileMissing.header"),
+                            Loc.Format("ui.title.fileMissing.description", profileName));
+                        break;
+                    }
+
+                    default: {
+                        Services.UI.Popup.DisplayWithClose(
+                            Loc.Find("ui.title.loadError.header"),
+                            Loc.Format("ui.title.loadError.description", DataService.ErrorMessage(load)));
+                        break;
+                    }
+                }
             }
             else
             {
@@ -204,14 +217,14 @@ namespace Aqua.Title
             m_NameLoadingSpinner.SetActive(false);
         }
 
-        private void OnNewNameFail(OGD.Core.ReturnStatus status, string msg)
+        private void OnNewNameFail(OGD.Core.Error error)
         {
-            Log.Error("[TitleInteractions] Generating new player id failed: {0}", msg);
+            Log.Error("[TitleInteractions] Generating new player id failed: {0}", error.Msg);
             Services.Input.ResumeAll();
             m_NameLoadingSpinner.SetActive(false);
             Services.UI.Popup.DisplayWithClose(
                 Loc.Find("ui.title.idGenerationError.header"),
-                Loc.Format("ui.title.idGenerationError.description"))
+                Loc.Format("ui.title.idGenerationError.description", error.Msg))
                 .OnComplete((e) => LoadPage(Page.Title));
         }
 

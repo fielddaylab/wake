@@ -157,21 +157,36 @@ Enter your Player Code
 Server Error
 
 :: idGenerationError.description
-There was an error on the server when retrieving your save name.
+There was an error on the server when generating your save name:
+<margin=2em>{0}</margin>
+
 Please try again later.
 
 :: saveError.header
 Server Error
 
 :: saveError.description
-There was an error on the server when creating your save.
+There was an error on the server when creating your save:
+<margin=2em>{0}</margin>
+
+Please try again later.
+
+:: loadError.header
+Server Error
+
+:: loadError.description
+There was an error on the server when loading your save:
+<margin=2em>{0}</margin>
+
 Please try again later.
 
 :: fileMissing.header
 Save Not Found
 
 :: fileMissing.description
-A save with the name "{0}" does not exist.
+A save with the name {h}{0}{/h} does not exist.
+
+Check that you entered your save name correctly and try again.
 
 # basePath ui.ship
 

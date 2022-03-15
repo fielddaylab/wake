@@ -276,7 +276,7 @@ namespace Aqua
         private IEnumerator TryLoadProfileFromServerRoutine(Future<SaveData> ioFuture, string inUserCode)
         {
             using(var future = Future.Create<string>())
-            using(var request = OGD.GameState.RequestLatestState(inUserCode, future.Complete, (r, s) => future.Fail(r)))
+            using(var request = OGD.GameState.RequestLatestState(inUserCode, future.Complete, (r) => future.Fail(r)))
             {
                 yield return future;
 
@@ -385,7 +385,7 @@ namespace Aqua
             var profileName = m_ProfileName;
 
             using(var future = Future.Create())
-            using(var request = OGD.Player.ClaimId(m_ProfileName, null, future.Complete, (r, s) => future.Fail(r)))
+            using(var request = OGD.Player.ClaimId(m_ProfileName, null, future.Complete, (r) => future.Fail(r)))
             {
                 yield return future;
 
@@ -409,7 +409,7 @@ namespace Aqua
             }
 
             using(var future = Future.Create())
-            using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r, s) => future.Fail(r)))
+            using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
             {
                 yield return future;
 
@@ -532,7 +532,7 @@ namespace Aqua
             if (!IsDebugProfile())
             {
                 using(var future = Future.Create())
-                using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r, s) => future.Fail(r)))
+                using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
                 {
                     yield return future;
 
@@ -675,5 +675,35 @@ namespace Aqua
         }
 
         #endregion // ILoadable
+
+        #region Utils
+
+        static public string ErrorMessage(IFuture future, string defaultValue = "Unknown Error") {
+            if (future.TryGetFailure(out Future.Failure failure)) {
+                object obj = failure.Object;
+                if (obj is string) {
+                    return (string) obj;
+                } else if (obj is OGD.Core.Error) {
+                    return ((OGD.Core.Error) obj).Msg;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        static public OGD.Core.ReturnStatus ReturnStatus(IFuture future, OGD.Core.ReturnStatus defaultValue = OGD.Core.ReturnStatus.Unknown) {
+            if (future.TryGetFailure(out Future.Failure failure)) {
+                object obj = failure.Object;
+                if (obj is OGD.Core.ReturnStatus) {
+                    return (OGD.Core.ReturnStatus) obj;
+                } else if (obj is OGD.Core.Error) {
+                    return ((OGD.Core.Error) obj).Status;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        #endregion // Utils
     }
 }

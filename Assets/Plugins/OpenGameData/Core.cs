@@ -19,7 +19,28 @@ namespace OGD {
             Error_Request,
             Error_Server,
 
+            Error_Network,
+            Error_Exception,
             Unknown
+        }
+
+        public struct Error {
+            public readonly ReturnStatus Status;
+            public readonly string Msg;
+
+            public Error(ReturnStatus status, string msg) {
+                Status = status;
+                Msg = msg;
+            }
+
+            public Error(string msg) {
+                Status = ReturnStatus.Unknown;
+                Msg = msg;
+            }
+
+            public override string ToString() {
+                return string.Format("{0}({1})", Status, Msg);
+            }
         }
 
         static internal ReturnStatus ParseStatus(string status) {
@@ -51,10 +72,10 @@ namespace OGD {
             public string status;
         }
 
-        public delegate void DefaultErrorHandlerDelegate(ReturnStatus status, string msg);
+        public delegate void DefaultErrorHandlerDelegate(Error err);
         
         internal delegate void ResponseProcessorDelegate<TResponse>(TResponse response, object userData);
-        internal delegate void RequestErrorHandlerDelegate(string error, object userData);
+        internal delegate void RequestErrorHandlerDelegate(Error err, object userData);
 
         static private string s_ServerAddress = string.Empty;
         static private string s_GameId = string.Empty;
@@ -228,7 +249,7 @@ namespace OGD {
             {
                 if (uwr.isHttpError || uwr.isNetworkError) {
                     if (errorHandler != null)
-                        errorHandler(uwr.error, userData);
+                        errorHandler(new Error(ReturnStatus.Error_Network, uwr.error), userData);
                 } else {
                     try {
                         T response = JsonUtility.FromJson<T>(uwr.downloadHandler.text);
@@ -237,7 +258,7 @@ namespace OGD {
                     }
                     catch(Exception e) {
                         if (errorHandler != null)
-                            errorHandler(e.ToString(), userData);
+                            errorHandler(new Error(ReturnStatus.Error_Exception, e.ToString()), userData);
                     }
                 }
             }

@@ -32,7 +32,7 @@ namespace Aqua
             return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
         }
 
-        int IBaked.Order { get { return 1; }}
+        int IBaked.Order { get { return 16; }}
 
         bool IBaked.Bake(BakeFlags flags)
         {
@@ -49,6 +49,8 @@ namespace Aqua
             foreach(var upgrade in m_PrereqUpgrades) {
                 Assert.False(upgrade.IsEmpty, "[JobDesc] Job '{0}' has a null prerequisite upgrade", name);
             }
+
+            ValidateTaskIds(this);
 
             ValidationUtils.EnsureUnique(ref m_PrerequisiteJobs);
             ValidationUtils.EnsureUnique(ref m_ExtraAssets);
@@ -155,49 +157,76 @@ namespace Aqua
             m_Tasks = null;
         }
 
-        #endif // UNITY_EDITOR
-
-        #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-
         static internal void ValidateTaskIds(JobDesc inItem)
         {
-            if (inItem.m_Tasks.Length == 0)
+            if (inItem.m_OptimizedTaskList.Length == 0)
                 return;
 
             using(PooledSet<StringHash32> taskIds = PooledSet<StringHash32>.Create())
             {
                 int rootCount = 0;
-                foreach(var task in inItem.m_Tasks)
+                foreach(var task in inItem.m_OptimizedTaskList)
                 {
-                    if (task.PrerequisiteTaskIds.Length == 0)
+                    if (task.PrerequisiteTaskIndices.Length == 0)
                         rootCount++;
                     
                     if (!taskIds.Add(task.Id))
                     {
-                        Log.Error("[JobDB] Duplicate task id '{0}' on job '{1}'",
-                            task.Id.Hash(), inItem.Id());
+                        Assert.Fail("Duplicate task id '{0}' on job '{1}'", task.Id, inItem.Id());
                     }
                 }
 
                 if (rootCount == 0)
                 {
-                    Log.Error("[JobDB] No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
+                    Assert.Fail("No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
                 }
 
-                foreach(var task in inItem.m_Tasks)
+                foreach(var task in inItem.m_OptimizedTaskList)
                 {
-                    foreach(var prereq in task.PrerequisiteTaskIds)
+                    foreach(var prereq in task.PrerequisiteTaskIndices)
                     {
-                        if (!taskIds.Contains(prereq))
+                        if (prereq == ushort.MaxValue)
                         {
-                            Log.Error("[JobDB] Task '{0}' on job '{1}' contains reference to unknown task '{2}'",
-                                task.Id.Hash(), inItem.Id(), prereq.Hash());
+                            Assert.Fail("Task '{0}' on job '{1}' has reference to unknown task", task.Id, inItem.Id());
+                        }
+                    }
+
+                    foreach(var step in task.Steps)
+                    {
+                        switch(step.Type)
+                        {
+                            case JobStepType.AcquireBestiaryEntry: {
+                                Assert.NotNull(ValidationUtils.FindAsset<BestiaryDesc>(step.Target), "Task '{0}' on job '{1}' references bestiary entry '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                break;
+                            }
+
+                            case JobStepType.AcquireFact:
+                            case JobStepType.AddFactToModel:
+                            case JobStepType.UpgradeFact: {
+                                Assert.NotNull(ValidationUtils.FindAsset<BFBase>(step.Target), "Task '{0}' on job '{1}' references bestiary fact '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                break;
+                            }
+
+                            case JobStepType.GetItem: {
+                                Assert.NotNull(ValidationUtils.FindAsset<InvItem>(step.Target), "Task '{0}' on job '{1}' references item '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                break;
+                            }
+
+                            case JobStepType.GotoScene: {
+                                Assert.NotNull(ValidationUtils.FindScene(step.Target.ToDebugString()), "Task '{0}' on job '{1}' references scene '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                break;
+                            }
+
+                            case JobStepType.GotoStation: {
+                                Assert.NotNull(ValidationUtils.FindAsset<MapDesc>(step.Target), "Task '{0}' on job '{1}' references station '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
 
-        #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+        #endif // UNITY_EDITOR
     }
 }

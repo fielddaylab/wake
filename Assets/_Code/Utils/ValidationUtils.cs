@@ -117,6 +117,24 @@ namespace Aqua
             return null;
         }
 
+        static public SceneAsset FindScene(string inName)
+        {
+            string[] assetGuids = AssetDatabase.FindAssets("t:SceneAsset");
+            if (assetGuids == null)
+                return null;
+            
+            for (int i = 0; i < assetGuids.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                var obj = AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
+                if (obj.name != inName)
+                    continue;
+                return obj;
+            }
+
+            return null;
+        }
+
         static public T FindPrefab<T>(string inName) where T : Component
         {
             string[] assetGuids = AssetDatabase.FindAssets("t:GameObject");

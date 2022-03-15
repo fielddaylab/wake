@@ -316,7 +316,6 @@ namespace Aqua
         {
             m_TaskDisplays.Reset();
             m_AllocatedTasks.Clear();
-            m_OperationQueue.Clear();
             m_LastAnimatingJob = null;
         }
 

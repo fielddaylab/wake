@@ -59,10 +59,6 @@ namespace Aqua {
             if (inItem.HasFlags(JobDescFlags.Hidden))
                 m_HiddenJobs.Add(inItem.Id());
 
-            #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            JobDesc.ValidateTaskIds(inItem);
-            #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-
             List<JobDesc> bucket;
             StringHash32 stationId = inItem.StationId();
             if (stationId.IsEmpty) {
