@@ -119,7 +119,7 @@ namespace ProtoAqua.ExperimentV2
                 inInstance.ColorAdjust.SetColor(Color.white);
             }
             //inInstance.StateAnimation.Replace(inInstance, Tween.Color(Color.white, Color.red, inInstance.ColorAdjust.SetColor, 0.5f).Wave(Wave.Function.Sin, 1).Loop());
-            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld));
+            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, "Stress", 0.7f));
         }
 
         static private void OnEndStressedState(ActorInstance inInstance, ActorWorld inWorld)
@@ -133,6 +133,8 @@ namespace ProtoAqua.ExperimentV2
         {
             if (inInstance.ColorAdjust)
                 inInstance.ColorAdjust.SetColor(Color.gray);
+            
+            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, "Dead", 1));
         }
 
         static private void OnEndDeadState(ActorInstance inInstance, ActorWorld inWorld)
@@ -410,16 +412,25 @@ namespace ProtoAqua.ExperimentV2
         #endregion // Spawning
 
         //Xander Grabowski - 02/04/2022
-        static public IEnumerator EmitEmojiLoop(ActorInstance inActor, ActorWorld inWorld){
+        static public IEnumerator EmitEmojiLoop(ActorInstance inActor, ActorWorld inWorld, StringHash32 inId, float inInterval){
             while(inActor.CurrentAction == ActorActionId.Spawning) {
                 yield return null;
             }
 
             yield return RNG.Instance.NextFloat(0.1f, 0.3f);
             while(true) {
-                ActorWorld.EmitEmoji(inWorld, inActor, "Stress");
-                yield return RNG.Instance.NextFloat(0.6f, 0.8f);
+                ActorWorld.EmitEmoji(inWorld, inActor, inId);
+                yield return RNG.Instance.NextFloat(0.8f, 1.2f) * inInterval;
             }
+        }
+
+        static public IEnumerator ShakeLoop(ActorInstance inActor, ActorWorld inWorld) {
+            while(inActor.CurrentAction == ActorActionId.Spawning) {
+                yield return null;
+            }
+
+            yield return inActor.AnimationTransform.MoveTo(inActor.AnimationTransform.localPosition.x + 0.2f, 0.3f, Axis.X, Space.Self)
+                .Randomize().Loop().Wave(Wave.Function.Sin, 1).RevertOnCancel(false);
         }
 
         #endregion // Animations

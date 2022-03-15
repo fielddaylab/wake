@@ -210,7 +210,9 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private IEnumerator ActorDyingAnimation(ActorInstance inActor, ActorWorld inWorld) {
             yield return Tween.Color(inActor.ColorAdjust.Color, Color.black, inActor.ColorAdjust.SetColor, 1);
+            ActorWorld.EmitEmoji(inWorld, inActor, "Dead", null, 5);
             yield return Tween.Float(1, 0, inActor.ColorAdjust.SetAlpha, 0.5f);
+            ActorWorld.EmitEmoji(inWorld, inActor, "Dead", null, 12);
             ActorWorld.Free(inWorld, inActor);
         }
 
