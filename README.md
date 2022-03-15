@@ -23,9 +23,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 * user_engagement
 
 ### Change Log
-1. Initial version
-2. Add app version to all events
-3. New modeling events (1/19/22)
+1. Initial version (3/14/22)
 
 ### Event Categories
 1. [Init](#Init)
@@ -155,9 +153,8 @@ Player completes a task for a given job.
 
 1. [scene_changed](#scene_changed)
 2. [room_changed](#room_changed)
-4. [begin_dive](#begin_dive)
-5. [begin_argument](#begin_argument)
-6. [ask_for_help](#ask_for_help)
+3. [begin_dive](#begin_dive)
+4. [ask_for_help](#ask_for_help)
 
 <a name="scene_changed"/>
 
@@ -187,7 +184,7 @@ Player enters a new room on the ship.
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
 | job_name | String name of the current job |
-| scene_name | Name of the room being entered|
+| room_name | Name of the room being entered|
 
 <a name="begin_dive"/>
 
@@ -203,20 +200,6 @@ Player enters a given dive site.
 | log_version | Current logging version |
 | job_name | String name of the current job |
 | site_id | ID of the dive site |
-
-<a name="begin_argument"/>
-
-#### begin_argument
-
-Player begins the argumentation process.
-
-| Parameter | Description |
-| --- | --- |
-| user_code | The player's unique save code |
-| app_version | Current game build version |
-| app_flavor | Git branch origin for current build |
-| log_version | Current logging version |
-| job_name | String name of the current job |
 
 <a name="ask_for_help"/>
 
@@ -912,7 +895,7 @@ Player begins argumentation for a job.
 
 <a name="fact_submitted"/>
 
-#### begin_experiment
+#### fact_submitted
 
 Player submits a fact to argumentation.
 
@@ -938,7 +921,7 @@ Submitted fact is incorrect / rejected by the argumentation script.
 | app_flavor | Git branch origin for current build |
 | log_version | Current logging version |
 | job_name | String name of the current job |
-| fact_id | ID of the submitted fact |
+| fact_id | ID of the rejected fact |
 
 <a name="leave_argument"/>
 
