@@ -1,0 +1,48 @@
+:: basePath job.arctic-underneath
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@kevin}    This is the intro to the arctic-underneath job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete() // TODO: NAME ME
+@cutscene
+$call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
+// TODO: add your claim label to jobs.aqloc
+$call ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
+		$call ArgueFactSlot() // TODO: put fact slot info here 
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@kevin} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@kevin} OK. Get back to me when you're ready.
+$call ArgueUnload
+$call ArgueCancelClaim
+
+// END
+
+:: argue.complete
+$call ArgueComplete()
+{@kevin} This looks great!
+{@kevin}    This is the conclusion to the arctic-underneath job!
+
+$call CompleteJob()

@@ -50,10 +50,11 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 @cutscene
 {@kevin}	Detritus, huh? How much did you scan? A whale amount? 
             
+
 :: gotScans
 @trigger    JobTasksUpdated
 @once
-@when 		HasEntity(WhaleTracker), HasFact(W_WhaleFall.Population.WhaleTracker) HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
+@when 		HasEntity(WhaleTracker), HasFact(W_WhaleFall.Population.WhaleTracker), HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
 {@kevin} Looks like we were able to find her...
 {@kevin} Let's head back and let Professor Whalen know.
