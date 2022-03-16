@@ -315,6 +315,7 @@ namespace ProtoAqua.Observation
                 Services.Audio.PostEvent("dive.critterTagged");
 
                 int idx = IndexOfCategory(inCritter.CritterId);
+                Assert.True(idx >= 0, "Critter Id '{0}' is not being tracked for some reason", inCritter.CritterId);
                 ref var category = ref m_CritterTypes[idx];
                 category.Tagged++;
                 
