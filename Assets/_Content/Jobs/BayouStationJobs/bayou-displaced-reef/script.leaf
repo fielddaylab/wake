@@ -12,6 +12,21 @@ $branch common.ringPhone
                 Would you be able to go pop over and help us report back on what exactly is growing over there? 
 {@player}   You can count one me!
 
+
+:: diveSite
+@trigger    JobTasksUpdated
+@when       JobTaskActive(getCounts)
+@once
+@cutscene
+$if !HasUpgrade(ROVTagger)
+	{@profHarper} When you took this job I had the tech install a population counter tool on your sub.
+	$call GiveUpgrade(ROVTagger)
+	{@profHarper} You should see the {nameof ROVTagger} at the top of your view.  
+	{@profHarper} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+	{@profHarper} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+	{@profHarper} Go ahead and give it a try!
+$endif
+
 // ARGUMENTATION
 
 ::argue.intro
