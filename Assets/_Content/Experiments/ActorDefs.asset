@@ -820,8 +820,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: DecomposingBacteria.Eats.Detritus.Stressed
+        m_HashValue: 153382526
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -3270,8 +3282,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.5
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: WhiteShrimp.Eats.Cyanobacteria
+        m_HashValue: 924975195
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: WhiteShrimp.Eats.Cyanobacteria
+        m_HashValue: 924975195
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
