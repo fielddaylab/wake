@@ -5,6 +5,7 @@
 using Aqua.Argumentation;
 using Aqua.Modeling;
 using Aqua.Portable;
+using Aqua.Profile;
 using Aqua.Scripting;
 using Aqua.Shop;
 using BeauUtil;
@@ -20,6 +21,8 @@ namespace Aqua
     [ServiceDependency(typeof(EventService), typeof(ScriptingService))]
     public partial class AnalyticsService : ServiceBehaviour
     {
+        private const string NoActiveJobId = "no-active-job";
+
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
@@ -169,8 +172,8 @@ namespace Aqua
         private string m_AppFlavor = string.Empty;
         private int m_LogVersion = 1;
         private StringHash32 m_CurrentJobHash = null;
-        private string m_CurrentJobName = "no-active-job";
-        private string m_PreviousJobName = "no-active-job";
+        private string m_CurrentJobName = NoActiveJobId;
+        private string m_PreviousJobName = NoActiveJobId;
         private PortableAppId m_CurrentPortableAppId = PortableAppId.NULL;
         private BestiaryDescCategory? m_CurrentPortableBestiaryTabId = null;
         private string m_CurrentModelPhase = string.Empty;
@@ -188,7 +191,8 @@ namespace Aqua
         {
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
-                //.Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
+                .Register(GameEvents.ProfileStarted, OnProfileStarted)
+                .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
@@ -415,24 +419,39 @@ namespace Aqua
         }
         #endregion
 
-        private void LogAcceptJob(StringHash32 jobId)
+        private void OnProfileStarted() {
+            m_PreviousJobName = NoActiveJobId;
+            SetCurrentJob(Save.CurrentJobId);
+        }
+
+        private bool SetCurrentJob(StringHash32 jobId)
         {
-            
             m_CurrentJobHash = jobId;
             m_PreviousJobName = m_CurrentJobName;
 
             if (jobId.IsEmpty)
             {
-                m_CurrentJobName = "no-active-job";
+                m_CurrentJobName = NoActiveJobId;
             }
             else
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
-
-                if (m_PreviousJobName != "no-active-job")
+                if (m_PreviousJobName != NoActiveJobId)
                 {
-                    LogSwitchJob();
+                    return true;
                 }
+            }
+
+            return false;
+        }
+
+        private void LogAcceptJob(StringHash32 jobId)
+        {
+            if (SetCurrentJob(jobId))
+            {
+                #if FIREBASE
+                FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_PreviousJobName);
+                #endif
             }
 
             #if FIREBASE
@@ -440,8 +459,10 @@ namespace Aqua
             #endif
         }
 
-        private void LogSwitchJob()
+        private void LogSwitchJob(StringHash32 jobId)
         {
+            SetCurrentJob(jobId);
+
             #if FIREBASE
             FBSwitchJob(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, m_PreviousJobName);
             #endif
@@ -477,7 +498,7 @@ namespace Aqua
 
             m_PreviousJobName = m_CurrentJobName;
             m_CurrentJobHash = null;
-            m_CurrentJobName = "no-active-job";
+            m_CurrentJobName = NoActiveJobId;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)

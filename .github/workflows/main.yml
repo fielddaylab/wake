@@ -76,13 +76,13 @@ jobs:
     # Deploy Steps
     
     - name: Upload build as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: aqualab-webgl_${{ env.VERSION }}
         path: build/WebGL/WebGL
     
     - name: Upload to web server via rsync
-      uses: burnett01/rsync-deployments@4.1
+      uses: burnett01/rsync-deployments@5.2
       with:
         switches: -avzr --delete
         path: build/WebGL/WebGL/*

@@ -18,7 +18,6 @@ $branch common.ringPhone
 {@player}   Wait, where is Site B exactly?
 {@drKelp}  It should be southwest of your ship.
 
-$set jobs:visual-model.saved = false
 $call UnlockSite(RS-1B)
 
 :: helpGoOutside
@@ -144,14 +143,6 @@ $endif
 @when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 {@player}   What am I doing here again?
 {@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
-
-:: ModelingSetup
-@trigger	VisualModelStarted
-@when       modeling:ecosystemSelected == "UrchinBarren"
-@once
-@cutscene
-
-{@kevin}  Next, use the {h}Import New Facts{/h} button to add all the facts you have for this site in {item-name}AQOS{/item-name}.
             
 :: ModelingSetupPhase2
 @trigger    VisualModelExported

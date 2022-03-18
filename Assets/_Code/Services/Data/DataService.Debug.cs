@@ -279,6 +279,36 @@ namespace Aqua
             saveMenu.AddButton("Clear Local Saves", () => ClearLocalSaves());
 
             yield return saveMenu;
+
+            // defaults
+
+            DMInfo defaultsMenu = new DMInfo("Defaults");
+
+            defaultsMenu.AddButton("Unlock Full Map", () => {
+                UnlockAllRooms();
+                UnlockAllSites();
+                UnlockAllStations();
+            });
+
+            defaultsMenu.AddButton("Unlock Full Inventory", () => {
+                UnlockAllUpgrades();
+            });
+
+            defaultsMenu.AddButton("Unlock Bestiary Entries", () => {
+                UnlockAllBestiaryEntries(false);
+            });
+
+            defaultsMenu.AddDivider();
+
+            defaultsMenu.AddButton("Unlock Map, Inventory, Bestiary", () => {
+                UnlockAllRooms();
+                UnlockAllSites();
+                UnlockAllStations();
+                UnlockAllUpgrades();
+                UnlockAllBestiaryEntries(false);
+            });
+
+            yield return defaultsMenu;
         }
 
         static private void RegenerateBookmarks(DMInfo inMenu)

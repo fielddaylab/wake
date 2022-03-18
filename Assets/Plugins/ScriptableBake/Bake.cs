@@ -204,6 +204,9 @@ namespace ScriptableBake {
 
         #endregion // Hierarchy
 
+        /// <summary>
+        /// Destroys an object.
+        /// </summary>
         static public void Destroy(UnityEngine.Object obj) {
             if (!Application.isPlaying) {
                 GameObject.DestroyImmediate(obj);
@@ -215,6 +218,7 @@ namespace ScriptableBake {
         static private IEnumerator Process(List<IBaked> baked, string source, BakeFlags flags, Action<UnityEngine.Object> onModify) {
             bool bVerbose = (flags & BakeFlags.Verbose) != 0;
             bool bProgress = (flags & BakeFlags.ShowProgressBar) != 0;
+            bool bError = false;
 
             baked.Sort((a, b) => a.Order.CompareTo(b.Order));
 
@@ -248,13 +252,19 @@ namespace ScriptableBake {
                             Debug.LogFormat("[Bake] ...baking '{0}'", bakedObj.ToString());
                         }
 
-                        if (bakedObj.Bake(flags)) {
-                            if (unityObj) {
-                                EditorUtility.SetDirty(unityObj);
-                                onModify?.Invoke(unityObj);
-                            } else {
-                                baked.RemoveAt(i--);
+                        try {
+                            if (bakedObj.Bake(flags)) {
+                                if (unityObj) {
+                                    EditorUtility.SetDirty(unityObj);
+                                    onModify?.Invoke(unityObj);
+                                } else {
+                                    baked.RemoveAt(i--);
+                                }
                             }
+                        }
+                        catch(Exception e) {
+                            Debug.LogException(e);
+                            bError = true;
                         }
                         yield return null;
                     }
@@ -276,9 +286,30 @@ namespace ScriptableBake {
                     EditorUtility.ClearProgressBar();
                 }
             }
+
+            if (bError) {
+                throw new BakeException("Baking failed");
+            }
         }
 
         #endif // UNITY_EDITOR
+    }
+
+    /// <summary>
+    /// Exception indicating that baking failed at some point.
+    /// </summary>
+    public class BakeException : Exception {
+        public BakeException(Exception inner)
+            : base("Baking failed", inner)
+        { }
+
+        public BakeException(string msg)
+            : base(msg)
+        { }
+
+        public BakeException(string msg, params object[] args)
+            : base(string.Format(msg, args))
+        { }
     }
 
     /// <summary>

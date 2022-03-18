@@ -20,12 +20,12 @@ namespace OGD {
                 if (status == Core.ReturnStatus.Success) {
                     onNewId?.Invoke(response.val[0]);
                 } else {
-                    onError?.Invoke(status, response.msg);
+                    onError?.Invoke(new Core.Error(status, response.msg));
                 }
             }, (error, data) => {
                 s_CurrentNewIdRequest = null;
 
-                onError?.Invoke(Core.ReturnStatus.Unknown, error);
+                onError?.Invoke(error);
             }, null);
         }
 
@@ -46,12 +46,12 @@ namespace OGD {
                 if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
                 } else {
-                    onError?.Invoke(status, response.msg);
+                    onError?.Invoke(new Core.Error(status, response.msg));
                 }
             }, (error, data) => {
                 s_CurrentClaimIdRequest = null;
 
-                onError?.Invoke(Core.ReturnStatus.Unknown, error);
+                onError?.Invoke(error);
             }, null);
         }
     }

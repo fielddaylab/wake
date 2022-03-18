@@ -123,6 +123,7 @@ namespace ProtoAqua.ExperimentV2 {
             m_SelectedEnvironment = inDesc;
             m_ParentTank.ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
             m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
+            m_OrganismScreen.Panel.Refresh();
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {

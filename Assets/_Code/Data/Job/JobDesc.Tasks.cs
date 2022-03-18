@@ -32,7 +32,7 @@ namespace Aqua
             return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
         }
 
-        int IBaked.Order { get { return 1; }}
+        int IBaked.Order { get { return 16; }}
 
         bool IBaked.Bake(BakeFlags flags)
         {
@@ -52,6 +52,10 @@ namespace Aqua
 
             ValidationUtils.EnsureUnique(ref m_PrerequisiteJobs);
             ValidationUtils.EnsureUnique(ref m_ExtraAssets);
+
+            bool validated = ValidateTaskIds(this);
+            if (!validated)
+                throw new BakeException("Tasks on {0} were invalid", name);
             return true;
         }
 
@@ -155,49 +159,98 @@ namespace Aqua
             m_Tasks = null;
         }
 
-        #endif // UNITY_EDITOR
-
-        #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-
-        static internal void ValidateTaskIds(JobDesc inItem)
+        static internal bool ValidateTaskIds(JobDesc inItem)
         {
-            if (inItem.m_Tasks.Length == 0)
-                return;
+            if (inItem.m_OptimizedTaskList.Length == 0)
+                return true;
+
+            bool bFailed = false;
 
             using(PooledSet<StringHash32> taskIds = PooledSet<StringHash32>.Create())
             {
                 int rootCount = 0;
-                foreach(var task in inItem.m_Tasks)
+                foreach(var task in inItem.m_OptimizedTaskList)
                 {
-                    if (task.PrerequisiteTaskIds.Length == 0)
+                    if (task.PrerequisiteTaskIndices.Length == 0)
                         rootCount++;
                     
                     if (!taskIds.Add(task.Id))
                     {
-                        Log.Error("[JobDB] Duplicate task id '{0}' on job '{1}'",
-                            task.Id.Hash(), inItem.Id());
+                        bFailed = true;
+                        Log.Error("Duplicate task id '{0}' on job '{1}'", task.Id.Source(), inItem.Id());
                     }
                 }
 
                 if (rootCount == 0)
                 {
-                    Log.Error("[JobDB] No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
+                    bFailed = true;
+                    Log.Error("No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
                 }
 
-                foreach(var task in inItem.m_Tasks)
+                foreach(var task in inItem.m_OptimizedTaskList)
                 {
-                    foreach(var prereq in task.PrerequisiteTaskIds)
+                    foreach(var prereq in task.PrerequisiteTaskIndices)
                     {
-                        if (!taskIds.Contains(prereq))
+                        if (prereq == ushort.MaxValue)
                         {
-                            Log.Error("[JobDB] Task '{0}' on job '{1}' contains reference to unknown task '{2}'",
-                                task.Id.Hash(), inItem.Id(), prereq.Hash());
+                            bFailed = true;
+                            Log.Error("Task '{0}' on job '{1}' has reference to unknown task", task.Id, inItem.Id());
+                        }
+                    }
+
+                    foreach(var step in task.Steps)
+                    {
+                        switch(step.Type)
+                        {
+                            case JobStepType.AcquireBestiaryEntry: {
+                                if (!ValidationUtils.FindAsset<BestiaryDesc>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references bestiary entry '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
+                                break;
+                            }
+
+                            case JobStepType.AcquireFact:
+                            case JobStepType.AddFactToModel:
+                            case JobStepType.UpgradeFact: {
+                                if (!ValidationUtils.FindAsset<BFBase>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references bestiary fact '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
+                                break;
+                            }
+
+                            case JobStepType.GetItem: {
+                                if (!ValidationUtils.FindAsset<InvItem>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references item '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
+                                break;
+                            }
+
+                            case JobStepType.GotoScene: {
+                                if (!ValidationUtils.FindScene(step.Target.ToDebugString())) {
+                                    Log.Error("Task '{0}' on job '{1}' references scene '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
+                                break;
+                            }
+
+                            case JobStepType.GotoStation: {
+                                if (!ValidationUtils.FindAsset<MapDesc>(step.Target)) {
+                                    Log.Error("Task '{0}' on job '{1}' references station '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
+                                    bFailed = true;
+                                }
+                                break;
+                            }
                         }
                     }
                 }
             }
+
+            return !bFailed;
         }
 
-        #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+        #endif // UNITY_EDITOR
     }
 }
