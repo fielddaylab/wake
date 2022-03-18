@@ -525,8 +525,20 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Methanogen
+        m_HashValue: 3040832533
+      FactId:
+        m_Source: BrooksiMussel.Eats.Methanogen
+        m_HashValue: 1337839348
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Methanogen
+        m_HashValue: 3040832533
+      FactId:
+        m_Source: BrooksiMussel.Eats.Methanogen
+        m_HashValue: 1337839348
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -891,8 +903,20 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: VentStar
+        m_HashValue: 2642860014
+      FactId:
+        m_Source: DeepSeaSkate.Eats.VentStar
+        m_HashValue: 2658689946
+    StressedEatTargets:
+    - TargetId:
+        m_Source: VentStar
+        m_HashValue: 2642860014
+      FactId:
+        m_Source: DeepSeaSkate.Eats.VentStar.Stressed
+        m_HashValue: 1502579593
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1740,8 +1764,8 @@ MonoBehaviour:
         m_Source: SeaPearl
         m_HashValue: 687582608
       FactId:
-        m_Source: MoonJelly.Eats.SeaPearl
-        m_HashValue: 3217668712
+        m_Source: MoonJelly.Eats.SeaPearl.Stressed
+        m_HashValue: 2400146783
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2952,8 +2976,20 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Methanogen
+        m_HashValue: 3040832533
+      FactId:
+        m_Source: Tubeworm.Eats.Methanogen
+        m_HashValue: 80947965
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Methanogen
+        m_HashValue: 3040832533
+      FactId:
+        m_Source: Tubeworm.Eats.Methanogen
+        m_HashValue: 80947965
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -3223,8 +3259,38 @@ MonoBehaviour:
         AliveMax: Infinity
         StressedMin: -Infinity
         StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: VentStar.Eats.Detritus
+        m_HashValue: 577085843
+    - TargetId:
+        m_Source: BrooksiMussel
+        m_HashValue: 1133299125
+      FactId:
+        m_Source: VentStar.Eats.BrooksiMussel
+        m_HashValue: 1413322363
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: VentStar.Eats.Detritus
+        m_HashValue: 577085843
+    - TargetId:
+        m_Source: BrooksiMussel
+        m_HashValue: 1133299125
+      FactId:
+        m_Source: VentStar.Eats.BrooksiMussel
+        m_HashValue: 1413322363
+    - TargetId:
+        m_Source: BrooksiMussel
+        m_HashValue: 1133299125
+      FactId:
+        m_Source: VentStar.Eats.BrooksiMussel.Stressed
+        m_HashValue: 3453160902
     SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
