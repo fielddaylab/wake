@@ -184,8 +184,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: AstarteBorealis.Eats.Detritus
+        m_HashValue: 242008181
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: AstarteBorealis.Eats.Detritus
+        m_HashValue: 242008181
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -662,6 +674,65 @@ MonoBehaviour:
       width: 1.4
       height: 0.5
   - Id:
+      m_HashValue: 1162365859
+    Type: {fileID: 11400000, guid: f955b2eb1c992c94eb5ffca228685e97, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: e16885578976e2840932450ae4f4ebfc,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.09717175
+      y: -0.14076558
+      width: 0.28153116
+      height: 0.28153116
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -0.11281237
+      y: -0.1564062
+      width: 0.3128124
+      height: 0.3128124
+  - Id:
       m_HashValue: 1053183451
     Type: {fileID: 11400000, guid: e57fea154bc6644f9a52e6aceb46d096, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 95c8a45298c7e144a9767ed8f67e11e5,
@@ -1133,6 +1204,77 @@ MonoBehaviour:
       y: 0.20000005
       width: 0.8664155
       height: 3.9999998
+  - Id:
+      m_HashValue: 304378836
+    Type: {fileID: 11400000, guid: d98a8496acdc1ab45a2cfb0aa363afa9, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 6a76798fd0b438b4ea7de0e7a163fe5d,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: GlacialAmphipod.Eats.IceAlgae
+        m_HashValue: 2371836348
+    StressedEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: GlacialAmphipod.Eats.IceAlgae
+        m_HashValue: 2371836348
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.09717175
+      y: -0.14076558
+      width: 0.28153116
+      height: 0.28153116
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -0.11281237
+      y: -0.1564062
+      width: 0.3128124
+      height: 0.3128124
   - Id:
       m_HashValue: 3492975621
     Type: {fileID: 11400000, guid: d39b2fc39dd8c114797020e8250f2f95, type: 2}
@@ -1936,6 +2078,77 @@ MonoBehaviour:
       width: 0
       height: 0
   - Id:
+      m_HashValue: 2289026052
+    Type: {fileID: 11400000, guid: 3c27c303baa8b2e4bb32c53fb6020ba7, type: 2}
+    Prefab: {fileID: 1264615091982000645, guid: 8951e0e426c8c4a4fba1841c75720ace,
+      type: 3}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: NorthernSeaNettle.Eats.Detritus
+        m_HashValue: 2589851901
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: NorthernSeaNettle.Eats.Detritus
+        m_HashValue: 2589851901
+    SpawnCount: 8
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 1.110113
+      y: 0.08000004
+      width: 0.77977395
+      height: 3.6
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 1.0667922
+      y: -0.120000005
+      width: 0.8664155
+      height: 4
+  - Id:
       m_HashValue: 1161043395
     Type: {fileID: 11400000, guid: 1c311155169539e4e953923e74855abb, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: a00ef95d26a8d8c4791a5d97648481e3,
@@ -2342,8 +2555,56 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: NorthernSeaNettle
+        m_HashValue: 2289026052
+      FactId:
+        m_Source: RibbonSeal.Eats.NorthernSeaNettle
+        m_HashValue: 70886112
+    - TargetId:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      FactId:
+        m_Source: RibbonSeal.Eats.ChinookSalmon
+        m_HashValue: 1874829230
+    - TargetId:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      FactId:
+        m_Source: RibbonSeal.Eats.ArcticCod
+        m_HashValue: 1939753477
+    - TargetId:
+        m_Source: NorthAtlanticOctopus
+        m_HashValue: 2040916345
+      FactId:
+        m_Source: RibbonSeal.Eats.NorthAtlanticOctopus
+        m_HashValue: 3868973061
+    StressedEatTargets:
+    - TargetId:
+        m_Source: NorthernSeaNettle
+        m_HashValue: 2289026052
+      FactId:
+        m_Source: RibbonSeal.Eats.NorthernSeaNettle
+        m_HashValue: 70886112
+    - TargetId:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      FactId:
+        m_Source: RibbonSeal.Eats.ChinookSalmon
+        m_HashValue: 1874829230
+    - TargetId:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      FactId:
+        m_Source: RibbonSeal.Eats.ArcticCod
+        m_HashValue: 1939753477
+    - TargetId:
+        m_Source: NorthAtlanticOctopus
+        m_HashValue: 2040916345
+      FactId:
+        m_Source: RibbonSeal.Eats.NorthAtlanticOctopus
+        m_HashValue: 3868973061
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
