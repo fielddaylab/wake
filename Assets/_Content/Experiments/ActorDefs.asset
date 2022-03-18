@@ -321,12 +321,6 @@ MonoBehaviour:
       FactId:
         m_Source: BlueTang.Eats.TurfAlgae
         m_HashValue: 115798069
-    - TargetId:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      FactId:
-        m_Source: BlueTang.Eats.TurtleGrass
-        m_HashValue: 1443316800
     StressedEatTargets:
     - TargetId:
         m_Source: TurfAlgae
@@ -334,12 +328,6 @@ MonoBehaviour:
       FactId:
         m_Source: BlueTang.Eats.TurfAlgae
         m_HashValue: 115798069
-    - TargetId:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      FactId:
-        m_Source: BlueTang.Eats.TurtleGrass
-        m_HashValue: 1443316800
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -486,7 +474,7 @@ MonoBehaviour:
       width: 0.3
       height: 0.099999994
   - Id:
-      m_HashValue: 2964301269
+      m_HashValue: 1133299125
     Type: {fileID: 11400000, guid: fe638c897bdc77d40bb7f775a6540d6b, type: 2}
     Prefab: {fileID: 0}
     SpawnAmountOverride: -1
@@ -714,8 +702,32 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: Copepod.Eats.Diatoms
+        m_HashValue: 1712894733
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: Copepod.Eats.TurfAlgae
+        m_HashValue: 3663510991
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: Copepod.Eats.Diatoms.Stressed
+        m_HashValue: 874806016
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: Copepod.Eats.TurfAlgae.Stressed
+        m_HashValue: 1787206650
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1404,14 +1416,14 @@ MonoBehaviour:
         m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
-        m_Source: Lionfish.Eats.BlueTang
-        m_HashValue: 2564734920
+        m_Source: Lionfish.Eats.BlueTang.Stressed
+        m_HashValue: 1027242879
     - TargetId:
         m_Source: BlueheadWrasse
         m_HashValue: 193540374
       FactId:
-        m_Source: Lionfish.Eats.BlueheadWrasse
-        m_HashValue: 3761093643
+        m_Source: Lionfish.Eats.BlueheadWrasse.Stressed
+        m_HashValue: 1767076566
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1514,11 +1526,23 @@ MonoBehaviour:
         m_HashValue: 3424480027
     StressedEatTargets:
     - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.WhiteShrimp.Stressed
+        m_HashValue: 294606069
+    - TargetId:
         m_Source: MoonJelly
         m_HashValue: 4245174184
       FactId:
         m_Source: LoggerheadTurtle.Eats.MoonJelly.Stressed
         m_HashValue: 805011374
+    - TargetId:
+        m_Source: QueenConch
+        m_HashValue: 2098174204
+      FactId:
+        m_Source: LoggerheadTurtle.Eats.QueenConch.Stressed
+        m_HashValue: 919123812
     - TargetId:
         m_Source: Copepod
         m_HashValue: 1053183451
@@ -1526,17 +1550,11 @@ MonoBehaviour:
         m_Source: LoggerheadTurtle.Eats.Copepod
         m_HashValue: 1033032444
     - TargetId:
-        m_Source: WhiteShrimp
-        m_HashValue: 3187223953
+        m_Source: AngelFish
+        m_HashValue: 4079225964
       FactId:
-        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
-        m_HashValue: 1090187846
-    - TargetId:
-        m_Source: QueenConch
-        m_HashValue: 2098174204
-      FactId:
-        m_Source: LoggerheadTurtle.Eats.QueenConch
-        m_HashValue: 1192689825
+        m_Source: LoggerheadTurtle.Eats.AngelFish.Stressed
+        m_HashValue: 1788765062
     - TargetId:
         m_Source: PlasticBag
         m_HashValue: 1161043395
@@ -1549,12 +1567,6 @@ MonoBehaviour:
       FactId:
         m_Source: LoggerheadTurtle.Eats.Cyanobacteria.Stressed
         m_HashValue: 2153526566
-    - TargetId:
-        m_Source: AngelFish
-        m_HashValue: 4079225964
-      FactId:
-        m_Source: LoggerheadTurtle.Eats.AngelFish
-        m_HashValue: 3388871611
     SpawnCount: 4
     IsPlant: 0
     TargetLimit: 1
@@ -2058,8 +2070,44 @@ MonoBehaviour:
         AliveMax: 8.2
         StressedMin: 7.4
         StressedMax: 8.6
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: QueenConch.Eats.TurfAlgae
+        m_HashValue: 1323373694
+    - TargetId:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      FactId:
+        m_Source: QueenConch.Eats.Sargassum
+        m_HashValue: 1750674813
+    - TargetId:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      FactId:
+        m_Source: QueenConch.Eats.TurtleGrass
+        m_HashValue: 3056799951
+    StressedEatTargets:
+    - TargetId:
+        m_Source: TurtleGrass
+        m_HashValue: 793706139
+      FactId:
+        m_Source: QueenConch.Eats.TurtleGrass.Stressed
+        m_HashValue: 758605050
+    - TargetId:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      FactId:
+        m_Source: QueenConch.Eats.TurfAlgae.Stressed
+        m_HashValue: 807630445
+    - TargetId:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      FactId:
+        m_Source: QueenConch.Eats.Sargassum.Stressed
+        m_HashValue: 1374756848
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2227,29 +2275,29 @@ MonoBehaviour:
         m_Source: RedGrouper.Eats.BlueheadWrasse
         m_HashValue: 299259218
     - TargetId:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      FactId:
+        m_Source: RedGrouper.Eats.Cyanobacteria.Stressed
+        m_HashValue: 755115847
+    - TargetId:
         m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
         m_Source: RedGrouper.Eats.BlueTang
         m_HashValue: 1688490569
     - TargetId:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      FactId:
+        m_Source: RedGrouper.Eats.WhiteShrimp.Stressed
+        m_HashValue: 2015819088
+    - TargetId:
         m_Source: AngelFish
         m_HashValue: 4079225964
       FactId:
         m_Source: RedGrouper.Eats.AngelFish
         m_HashValue: 2604407488
-    - TargetId:
-        m_Source: WhiteShrimp
-        m_HashValue: 3187223953
-      FactId:
-        m_Source: RedGrouper.Eats.WhiteShrimp
-        m_HashValue: 3732071581
-    - TargetId:
-        m_Source: Cyanobacteria
-        m_HashValue: 3623197764
-      FactId:
-        m_Source: RedGrouper.Eats.Cyanobacteria
-        m_HashValue: 4014676400
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -3285,12 +3333,6 @@ MonoBehaviour:
       FactId:
         m_Source: VentStar.Eats.BrooksiMussel
         m_HashValue: 1413322363
-    - TargetId:
-        m_Source: BrooksiMussel
-        m_HashValue: 1133299125
-      FactId:
-        m_Source: VentStar.Eats.BrooksiMussel.Stressed
-        m_HashValue: 3453160902
     SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
