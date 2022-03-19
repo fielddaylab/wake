@@ -169,12 +169,7 @@ namespace Aqua
 
         internal void RefreshCollection()
         {
-            m_Objects = ValidationUtils.FindAllAssets<T>(IgnoreTemplates);
-        }
-
-        static private bool IgnoreTemplates(T inAsset)
-        {
-            return char.IsLetterOrDigit(inAsset.name[0]);
+            m_Objects = ValidationUtils.FindAllAssets<T>(ValidationUtils.IgnoreTemplates);
         }
 
         #endif // UNITY_EDITOR

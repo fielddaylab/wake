@@ -9,26 +9,61 @@ using Aqua.Scripting;
 using Aqua.Character;
 using Leaf.Runtime;
 using System.Collections;
+using BeauUtil.Variants;
 
 namespace ProtoAqua.Observation
 {
     public class PlayerROV : PlayerBody, ISceneLoadHandler
     {
-        static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch";
-        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched";
+        static public readonly TableKeyPair Var_LastToolId = TableKeyPair.Parse("player:lastToolId");
+        static public readonly TableKeyPair Var_LastFlashlightState = TableKeyPair.Parse("player:lastFlashlightState");
+
+        static public readonly StringHash32 Event_RequestToolToggle = "PlayerROV::RequestToolToggle"; // ToolState
+        static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch"; // tool id
+        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // tool id
 
         #region Types
+
+        public struct ToolState
+        {
+            public readonly ToolId Id;
+            public readonly bool Active;
+
+            public ToolState(ToolId id, bool active) {
+                Id = id;
+                Active = active;
+            }
+        }
 
         public enum ToolId
         {
             Scanner,
             Tagger,
+            Flashlight,
+            Microscope,
 
             NONE
         }
 
+        static public StringHash32 ToolIdToItemId(ToolId id) {
+            switch(id) {
+                case ToolId.Scanner:
+                    return ItemIds.ROVScanner;
+                case ToolId.Tagger:
+                    return ItemIds.ROVTagger;
+                case ToolId.Flashlight:
+                    return ItemIds.Flashlight;
+                case ToolId.Microscope:
+                    return ItemIds.Microscope;
+                
+                default:
+                    return null;
+            }
+        }
+
         public interface ITool
         {
+            bool IsEnabled();
             void Enable();
             void Disable();
             bool UpdateTool(in PlayerROVInput.InputData inInput);
@@ -40,6 +75,7 @@ namespace ProtoAqua.Observation
         {
             static public readonly NullTool Instance = new NullTool();
 
+            public bool IsEnabled() { return true; }
             public void Disable() { }
             public void Enable() { }
 
@@ -56,6 +92,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
         [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
+        [SerializeField, Required] private PlayerROVFlashlight m_Flashlight = null;
         [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
 
         [Header("Movement Params")]
@@ -88,7 +125,8 @@ namespace ProtoAqua.Observation
         {
             this.CacheComponent(ref m_Transform);
 
-            Services.Events.Register<ToolId>(Event_RequestToolSwitch, (toolId) => SetTool(toolId, false), this)
+            Services.Events.Register<ToolId>(Event_RequestToolSwitch, (toolId) => SwitchTool(toolId, false), this)
+                .Register<ToolState>(Event_RequestToolToggle, (s) => SetToolState(s.Id, s.Active, false), this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryUpdated, this);
 
             SetEngineState(false, true);
@@ -106,14 +144,14 @@ namespace ProtoAqua.Observation
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner))
-            {
-                SetTool(ToolId.Scanner, true);
+            ToolId lastToolId = (ToolId) Script.ReadVariable(Var_LastToolId, (int) ToolId.NONE).AsInt();
+            if (lastToolId != ToolId.NONE && !Save.Inventory.HasUpgrade(ToolIdToItemId(lastToolId))) {
+                lastToolId = ToolId.NONE;
             }
-            else
-            {
-                SetTool(ToolId.NONE, true);
-            }
+
+            SwitchTool(lastToolId, true);
+
+            SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
 
             if (m_Input.IsInputEnabled)
                 OnInputEnabled();
@@ -269,7 +307,6 @@ namespace ProtoAqua.Observation
 
                 m_Kinematics.Config.Drag = m_DragEngineOn;
                 Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
-                m_Scanner.HideCurrentToolView();
             }
             else
             {
@@ -279,7 +316,7 @@ namespace ProtoAqua.Observation
             }
         }
     
-        private bool SetTool(ToolId inTool, bool inbForce)
+        private bool SwitchTool(ToolId inTool, bool inbForce)
         {
             if (!inbForce && m_CurrentToolId == inTool)
                 return false;
@@ -293,7 +330,29 @@ namespace ProtoAqua.Observation
             if (m_CurrentTool != null && m_Input.IsInputEnabled)
                 m_CurrentTool.Enable();
 
-            Services.Events.Dispatch(Event_ToolSwitched, inTool);
+            Script.WriteVariable(Var_LastToolId, (int) inTool);
+
+            Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, true));
+            return true;
+        }
+
+        private bool SetToolState(ToolId inTool, bool state, bool inbForce)
+        {
+            var tool = GetTool(inTool);
+            if (!inbForce && tool.IsEnabled() == state) {
+                return false;
+            }
+
+            if (state)
+                tool.Enable();
+            else
+                tool.Disable();
+
+            if (inTool == ToolId.Flashlight) {
+                Script.WriteVariable(Var_LastFlashlightState, state);
+            }
+
+            Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, state));
             return true;
         }
 
@@ -305,6 +364,8 @@ namespace ProtoAqua.Observation
                     return m_Scanner;
                 case ToolId.Tagger:
                     return m_Tagger;
+                case ToolId.Flashlight:
+                    return m_Flashlight;
                 case ToolId.NONE:
                     return NullTool.Instance;
                 default:
@@ -319,9 +380,12 @@ namespace ProtoAqua.Observation
                 return;
 
             if (inItemId == ItemIds.ROVScanner)
-                SetTool(ToolId.Scanner, false);
+                SwitchTool(ToolId.Scanner, false);
             else if (inItemId == ItemIds.ROVTagger)
-                SetTool(ToolId.Tagger, false);
+                SwitchTool(ToolId.Tagger, false);
+            else if (inItemId == ItemIds.Flashlight)
+                SetToolState(ToolId.Flashlight, true, false);
+
         }
 
         // TODO: Implement
@@ -342,7 +406,7 @@ namespace ProtoAqua.Observation
         [LeafMember("SetTool"), UnityEngine.Scripting.Preserve]
         private void LeafSetTool(ToolId inToolId)
         {
-            SetTool(inToolId, false);
+            SwitchTool(inToolId, false);
         }
 
         #endregion // Leaf

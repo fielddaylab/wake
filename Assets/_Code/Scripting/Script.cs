@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
 
@@ -112,6 +113,26 @@ namespace Aqua {
 
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);
+        }
+
+        [MethodImpl(256)]
+        static public Variant ReadVariable(TableKeyPair id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(id, null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public Variant ReadVariable(StringSlice id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(id, null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteVariable(TableKeyPair id, Variant value) {
+            Services.Data?.SetVariable(id, value, null);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteVariable(StringSlice id, Variant value) {
+            Services.Data?.SetVariable(id, value, null);
         }
     }
 }

@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8820810592241032338}
-  - component: {fileID: 1078735046838558849}
   - component: {fileID: 1430428353578588591}
+  - component: {fileID: 3255676346533621941}
   m_Layer: 8
   m_Name: RenderRig
   m_TagString: Untagged
@@ -36,25 +36,6 @@ Transform:
   m_Father: {fileID: 7135260869252477138}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1078735046838558849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2313807704680549956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: Flashlight
-    m_HashValue: 3515152947
-  m_ToShow:
-  - {fileID: 2391827629590134813}
-  m_ToHide: []
-  m_ContinuousCheck: 1
 --- !u!114 &1430428353578588591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +53,20 @@ MonoBehaviour:
   m_PitchMultiplier: 0.2
   m_NormalRotationLerp: 4
   m_RotationAdjust: {x: 0, y: -90, z: 0}
+--- !u!114 &3255676346533621941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2313807704680549956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba3a5d40ed9c5c439005de6c2cc0704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FlashlightRoot: {fileID: 2391827629590134813}
+  m_Collider: {fileID: 3201066833471339370}
 --- !u!1 &7135260869252477139
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,6 +125,7 @@ MonoBehaviour:
   m_Input: {fileID: 1809099619024997122}
   m_Scanner: {fileID: 6264295734664298428}
   m_Tagger: {fileID: 7258612451503921016}
+  m_Flashlight: {fileID: 3255676346533621941}
   m_Animator: {fileID: 1430428353578588591}
   m_MovementParams:
     MaxSpeed: 5.5
@@ -10200,6 +10196,12 @@ GameObject:
 --- !u!4 &6468290792392338647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 589212136959593431, guid: 7f78dc1d9fa3a49aba25937427c58ea5,
+    type: 3}
+  m_PrefabInstance: {fileID: 5903851211306231552}
+  m_PrefabAsset: {fileID: 0}
+--- !u!60 &3201066833471339370 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 9044011138785549418, guid: 7f78dc1d9fa3a49aba25937427c58ea5,
     type: 3}
   m_PrefabInstance: {fileID: 5903851211306231552}
   m_PrefabAsset: {fileID: 0}

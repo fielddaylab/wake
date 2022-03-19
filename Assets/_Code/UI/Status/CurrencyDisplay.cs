@@ -14,21 +14,25 @@ namespace Aqua {
 
         #endregion // Inspector
 
+        private readonly Action<StringHash32> OnInventoryUpdated;
+
+        private CurrencyDisplay() {
+            OnInventoryUpdated = (StringHash32 itemId) => {
+                if (itemId == ItemIds.Cash) {
+                    Refresh();
+                }
+            };
+        }
+
         private void OnEnable() {
-            Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged);
+            Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryUpdated);
             if (!Script.IsLoading) {
                 Refresh();
             }
         }
 
         private void OnDisable() {
-            Services.Events?.Deregister<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged);
-        }
-
-        private void OnInventoryChanged(StringHash32 itemId) {
-            if (itemId == ItemIds.Cash) {
-                Refresh();
-            }
+            Services.Events?.Deregister<StringHash32>(GameEvents.InventoryUpdated, OnInventoryUpdated);
         }
 
         private void Refresh() {

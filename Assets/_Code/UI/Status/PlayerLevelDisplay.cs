@@ -18,9 +18,22 @@ namespace Aqua {
 
         #endregion // Inspector
 
+        private readonly Action<StringHash32> OnInventoryChanged;
+        private readonly Action OnScienceLevelUpdated;
+
+        private PlayerLevelDisplay() {
+            OnInventoryChanged = (StringHash32 itemId) => {
+                if (itemId == ItemIds.Exp) {
+                    Refresh();
+                }
+            };
+
+            OnScienceLevelUpdated = Refresh;
+        }
+
         private void OnEnable() {
             Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
-                .Register(GameEvents.ScienceLevelUpdated, Refresh);
+                .Register(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
             if (!Script.IsLoading) {
                 Refresh();
             }
@@ -28,13 +41,7 @@ namespace Aqua {
 
         private void OnDisable() {
             Services.Events?.Deregister<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
-                .Deregister(GameEvents.ScienceLevelUpdated, Refresh);
-        }
-
-        private void OnInventoryChanged(StringHash32 itemId) {
-            if (itemId == ItemIds.Exp) {
-                Refresh();
-            }
+                .Deregister(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
         }
 
         private void Refresh() {

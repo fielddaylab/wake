@@ -39,6 +39,11 @@ namespace ProtoAqua.Observation
 
         #region State
 
+        public bool IsEnabled()
+        {
+            return m_On;
+        }
+
         public void Enable()
         {
             if (m_On)

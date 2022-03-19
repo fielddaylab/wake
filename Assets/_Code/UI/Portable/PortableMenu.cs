@@ -129,7 +129,7 @@ namespace Aqua.Portable {
         }
 
         protected override void OnHide(bool inbInstant) {
-            Services.Data?.SetVariable("portable:open", false);
+            Script.WriteVariable("portable:open", false);
 
             m_Input.PopPriority();
             if (m_InputOverrideSetting.HasValue) {

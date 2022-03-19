@@ -25,7 +25,6 @@ namespace ProtoAqua.Observation
         [NonSerialized] private ScanSystem m_ScanSystem;
         [NonSerialized] private bool m_ScannerOn = false;
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
-        [NonSerialized] private ToolView m_CurrentToolView = null;
         [NonSerialized] private ScanData m_TargetScanData = null;
         [NonSerialized] private float m_CurrentRange;
 
@@ -47,6 +46,11 @@ namespace ProtoAqua.Observation
 
         #region State
 
+        public bool IsEnabled()
+        {
+            return m_ScannerOn;
+        }
+
         public void Enable()
         {
             if (m_ScannerOn)
@@ -62,7 +66,6 @@ namespace ProtoAqua.Observation
                 return;
 
             CancelScan();
-            HideCurrentToolView();
             Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             m_ScannerOn = false;
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
@@ -80,10 +83,9 @@ namespace ProtoAqua.Observation
                 {
                     CancelScan();
                 }
-                else if (!m_TargetScannable || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanData != m_TargetScanData || !m_TargetScannable.InRange)
+                else if (!m_TargetScannable || !m_TargetScannable.isActiveAndEnabled || m_TargetScannable.ScanData != m_TargetScanData || !m_TargetScannable.CanScan)
                 {
                     CancelScan();
-                    HideCurrentToolView();
                     return false;
                 }
 
@@ -105,7 +107,7 @@ namespace ProtoAqua.Observation
                     if (closest != null)
                     {
                         ScannableRegion scannable = closest.GetComponentInParent<ScannableRegion>();
-                        if (scannable != null && scannable.isActiveAndEnabled && scannable.InRange)
+                        if (scannable != null && scannable.isActiveAndEnabled && scannable.CanScan)
                         {
                             bFound = true;
                             StartScan(scannable, inInput.Mouse.Target.Value);
@@ -146,9 +148,6 @@ namespace ProtoAqua.Observation
 
             if (inRegion != null)
             {
-                if (!inRegion.InsideToolView && inRegion.ToolView != m_CurrentToolView)
-                    HideCurrentToolView();
-
                 m_TargetScannable = inRegion;
                 m_TargetScanData = m_ScanSystem.RefreshData(inRegion);
 
@@ -189,7 +188,7 @@ namespace ProtoAqua.Observation
 
             m_TargetScannable.CurrentIcon.SetSpinning(true);
 
-            while(progress < 1 && m_TargetScannable.InRange)
+            while(progress < 1 && m_TargetScannable.CanScan)
             {
                 progress += increment * Routine.DeltaTime;
                 if (progress > 1)
@@ -199,7 +198,7 @@ namespace ProtoAqua.Observation
                 yield return null;
             }
 
-            if (!m_TargetScannable.InRange)
+            if (!m_TargetScannable.CanScan)
                 yield break;
 
             m_TargetScannable.CurrentIcon.SetSpinning(false);
@@ -239,13 +238,6 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            ScanDataFlags flags = data.Flags();
-            if ((flags & ScanDataFlags.ActivateTool) != 0)
-            {
-                m_CurrentToolView = m_TargetScannable.ToolView;
-                ShowTool(transform.parent.position, m_TargetScannable.transform.position, m_CurrentToolView);
-            }
-
             if ((result & PopupResultMask) == 0)
             {
                 scanUI.ShowScan(data, result);
@@ -253,15 +245,6 @@ namespace ProtoAqua.Observation
             else
             {
                 scanUI.Hide();
-            }
-        }
-
-        public void HideCurrentToolView()
-        {
-            if (m_CurrentToolView != null)
-            {
-                HideTool(m_CurrentToolView);
-                m_CurrentToolView = null;
             }
         }
 
@@ -318,59 +301,5 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Animation
-    
-        #region Tools
-
-        static private void ShowTool(Vector3 inPlayerPos, Vector3 inScannablePosition, ToolView inToolView)
-        {
-            switch(inToolView.Placement)
-            {
-                case ToolView.PlacementMode.Fixed:
-                    {
-                        break;
-                    }
-
-                case ToolView.PlacementMode.AwayFromPlayer:
-                    {
-                        Vector3 delta = inScannablePosition - inPlayerPos;
-                        delta.z = 0;
-                        delta.Normalize();
-
-                        if (delta.x == 0 && delta.y == 0)
-                            delta.x = 1;
-
-                        inToolView.Root.position = inScannablePosition + delta * inToolView.DistanceAway;
-                        break;
-                    }
-            }
-
-            inToolView.Root.gameObject.SetActive(true);
-            inToolView.Animation.Replace(inToolView, ShowToolAnimation(inToolView)).Tick();
-        }
-
-        static private IEnumerator ShowToolAnimation(ToolView inTool)
-        {
-            inTool.Root.SetScale(0);
-            yield return inTool.Root.ScaleTo(1, 0.2f).Ease(Curve.BackOut);
-        }
-
-        static private void HideTool(ToolView inToolView)
-        {
-            if (inToolView.Root.gameObject.activeSelf)
-            {
-                inToolView.Animation.Replace(inToolView, HideToolAnimation(inToolView)).Tick();
-            }
-        }
-
-        static private IEnumerator HideToolAnimation(ToolView inTool)
-        {
-            if (inTool.Root.gameObject.activeSelf)
-            {
-                yield return inTool.Root.ScaleTo(0, 0.2f).Ease(Curve.BackIn);
-                inTool.Root.gameObject.SetActive(false);
-            }
-        }
-
-        #endregion // Tools
     }
 }

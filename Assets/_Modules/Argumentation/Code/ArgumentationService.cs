@@ -553,7 +553,7 @@ namespace Aqua.Argumentation {
         [LeafMember("ArgueSubmitFact"), Preserve]
         static private bool LeafSubmitFact(StringHash32 id = default) {
             if (id.IsEmpty) {
-                id = Services.Data.GetVariable("portable:lastSelectedFactId").AsStringHash();
+                id = Script.ReadVariable("portable:lastSelectedFactId").AsStringHash();
             }
             return s_Instance.SubmitFact(id);
         }
@@ -561,7 +561,7 @@ namespace Aqua.Argumentation {
         [LeafMember("ArgueRejectFact"), Preserve]
         static private bool LeafRejectFact(StringHash32 id = default) {
             if (id.IsEmpty) {
-                id = Services.Data.GetVariable("portable:lastSelectedFactId").AsStringHash();
+                id = Script.ReadVariable("portable:lastSelectedFactId").AsStringHash();
             }
             return s_Instance.RejectFact(id);
         }

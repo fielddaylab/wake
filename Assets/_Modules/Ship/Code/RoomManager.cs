@@ -72,7 +72,7 @@ namespace Aqua.Ship
             StringHash32 currentStationId = Save.Map.CurrentStationId();
             Save.Map.RecordVisitedLocation(currentStationId);
 
-            StringHash32 currentSceneId = Services.Data.GetVariable(GameVars.ShipRoom).AsStringHash();
+            StringHash32 currentSceneId = Script.ReadVariable(GameVars.ShipRoom).AsStringHash();
             Room room = GetRoom(currentSceneId);
             LoadRoom(room);
         }

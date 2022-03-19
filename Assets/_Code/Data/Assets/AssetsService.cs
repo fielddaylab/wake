@@ -24,6 +24,10 @@ namespace Aqua {
         [SerializeField, Required] private TMP_FontAsset m_SemiBoldFont = null;
         [SerializeField, Required] private TMP_FontAsset m_BoldFont = null;
 
+        [Header("Streaming")]
+        [SerializeField, Range(1, 32)] private float m_StreamedTextureMem = 8;
+        [SerializeField, Range(1, 32)] private float m_StreamedAudioMem = 8;
+
         #endregion // Inspector
 
         public ActDB Acts { get { return m_Acts; } }
@@ -49,12 +53,15 @@ namespace Aqua {
             m_WaterProperties.Initialize();
             m_ScriptCharacters.Initialize();
 
+            Streaming.TextureMemoryBudget = (long) (m_StreamedTextureMem * 1024 * 1024);
+            Streaming.AudioMemoryBudget = (long) (m_StreamedAudioMem * 1024 * 1024);
+
             Assets.Assign(this);
             Routine.Start(this, StreamingManagementRoutine());
         }
 
         private IEnumerator StreamingManagementRoutine() {
-            object bigWait = 30f;
+            object bigWait = 60f;
             object smallWait = 5f;
 
             while (true) {
@@ -63,7 +70,7 @@ namespace Aqua {
                     yield return smallWait;
                 }
 
-                Streaming.UnloadUnusedAsync(30f);
+                Streaming.UnloadUnusedAsync(60f);
                 while(Streaming.IsUnloading()) {
                     yield return null;
                 }

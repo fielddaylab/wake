@@ -43,8 +43,10 @@ namespace Aqua {
             Vector2 forceNormal = force.normalized;
             Vector2 myCenter = Collider.bounds.center;
 
-            foreach (var obj in m_Listener.Occupants()) {
-                KinematicObject2D k2d = obj.Rigidbody.GetComponent<KinematicObject2D>();
+            var occupants = m_Listener.Occupants();
+            for(int i = 0, count = occupants.Count; i < count; i++) {
+                var rb = occupants[i].Rigidbody;
+                KinematicObject2D k2d = rb.GetComponent<KinematicObject2D>();
                 if (!k2d || !k2d.enabled)
                     continue;
 
@@ -60,7 +62,7 @@ namespace Aqua {
                         }
 
                     case DirectionMode.Away: {
-                            Vector2 kCenter = obj.Rigidbody.position;
+                            Vector2 kCenter = rb.position;
                             Vector2 vec = kCenter - myCenter;
                             vec.Normalize();
                             vec *= mult * ForceMagnitude * Time.fixedDeltaTime;

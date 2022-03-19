@@ -18,6 +18,18 @@ namespace Aqua
 
         private Routine m_Anim;
 
+        private readonly Action OnCutsceneStart;
+        private readonly Action OnCutsceneEnd;
+
+        private HideOnCutscene() {
+            OnCutsceneStart = () => {
+                m_Anim.Replace(this, Fade(0, false));
+            };
+            OnCutsceneEnd = () => {
+                m_Anim.Replace(this, Fade(1, true));
+            };
+        }
+
         private void OnEnable()
         {
             Services.Events.Register(GameEvents.CutsceneStart, OnCutsceneStart, this)
@@ -41,16 +53,6 @@ namespace Aqua
 
             Services.Events?.Deregister(GameEvents.CutsceneStart, OnCutsceneStart)
                 .Deregister(GameEvents.CutsceneEnd, OnCutsceneEnd);
-        }
-
-        private void OnCutsceneStart()
-        {
-            m_Anim.Replace(this, Fade(0, false));
-        }
-
-        private void OnCutsceneEnd()
-        {
-            m_Anim.Replace(this, Fade(1, true));
         }
 
         private IEnumerator Fade(float inAlpha, bool inbRaycasts)

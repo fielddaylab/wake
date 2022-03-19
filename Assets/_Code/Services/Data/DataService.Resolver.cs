@@ -18,13 +18,14 @@ namespace Aqua
         /// <summary>
         /// Retrieves a variable with the given identifier and an optional context.
         /// </summary>
-        public Variant GetVariable(StringSlice inId, object inContext = null)
+        public Variant GetVariable(StringSlice inId, object inContext = null, Variant inDefaultValue = default)
         {
             TableKeyPair keyPair;
             Variant result = default(Variant);
             if (TableKeyPair.TryParse(inId, out keyPair))
             {
-                VariableResolver.TryResolve(inContext, keyPair, out result);
+                if (!VariableResolver.TryResolve(inContext, keyPair, out result))
+                    result = inDefaultValue;
             }
             return result;
         }
@@ -32,19 +33,20 @@ namespace Aqua
         /// <summary>
         /// Retrieves a variable with the given identifier and an optional context.
         /// </summary>
-        public Variant GetVariable(TableKeyPair inId, object inContext = null)
+        public Variant GetVariable(TableKeyPair inId, object inContext = null, Variant inDefaultValue = default)
         {
             Variant result = default(Variant);
-            VariableResolver.TryResolve(inContext, inId, out result);
+            if (!VariableResolver.TryResolve(inContext, inId, out result))
+                result = inDefaultValue;
             return result;
         }
 
         /// <summary>
         /// Pops a variable with the given identifier.
         /// </summary>
-        public Variant PopVariable(TableKeyPair inId, object inContext = null)
+        public Variant PopVariable(TableKeyPair inId, object inContext = null, Variant inDefaultValue = default)
         {
-            Variant result = GetVariable(inId, inContext);
+            Variant result = GetVariable(inId, inContext, inDefaultValue);
             SetVariable(inId, null, inContext);
             return result;
         }
@@ -186,6 +188,21 @@ namespace Aqua
         public bool CheckConditions(StringSlice inConditions, object inContext = null)
         {
             return VariableResolver.TryEvaluate(inContext, inConditions, Services.Script.LeafInvoker);
+        }
+
+        /// <summary>
+        /// Checks if the given conditions are true.
+        /// If empty, will also return true.
+        /// </summary>
+        public bool CheckConditions(ListSlice<VariantComparison> inConditions, object inContext = null)
+        {
+            for(int i = 0; i < inConditions.Length; i++)
+            {
+                if (!inConditions[i].Evaluate(VariableResolver, inContext, Services.Script.LeafInvoker))
+                    return false;
+            }
+            
+            return true;
         }
 
         #endregion // Conditions

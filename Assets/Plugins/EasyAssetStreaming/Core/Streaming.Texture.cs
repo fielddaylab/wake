@@ -94,6 +94,15 @@ namespace EasyAssetStreaming {
             return Textures.MemoryUsage;
         }
 
+        /// <summary>
+        /// Returns the budgeted number of streamed texture bytes tolerated.
+        /// If not 0, this will attempt to unload unreferenced textures when this is exceeded.
+        /// </summary>
+        static public long TextureMemoryBudget {
+            get { return Textures.MemoryBudget; }
+            set { Textures.MemoryBudget = value; }
+        }
+
         #endregion // Public API
 
         /// <summary>
@@ -177,6 +186,7 @@ namespace EasyAssetStreaming {
 
             static public readonly Dictionary<StreamingAssetId, Texture2D> TextureMap = new Dictionary<StreamingAssetId, Texture2D>();
             static public MemoryStat MemoryUsage = default;
+            static public long MemoryBudget = 0;
 
             #endregion // State
 
@@ -513,6 +523,33 @@ namespace EasyAssetStreaming {
 
             #endregion // Formats
         
+            #region Budget
+
+            static private bool s_OverBudgetFlag;
+
+            static public void CheckBudget(long now) {
+                if (MemoryBudget <= 0) {
+                    return;
+                }
+
+                long over = MemoryUsage.Current - MemoryBudget;
+                if (over > 0) {
+                    if (!s_OverBudgetFlag) {
+                        UnityEngine.Debug.LogFormat("[Streaming] Texture memory is over budget by {0:0.00} Kb", over / 1024f);
+                        s_OverBudgetFlag = true;
+                    }
+                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetType.Texture, now, over);
+                    if (asset) {
+                        UnloadSingle(asset, now);
+                        s_OverBudgetFlag = false;
+                    }
+                } else {
+                    s_OverBudgetFlag = false;
+                }
+            }
+
+            #endregion // Budget
+
             #region Manifest
 
             static public TextureSettings ParseTextureSettings(JSON data) {
@@ -531,17 +568,12 @@ namespace EasyAssetStreaming {
 
             #if UNITY_EDITOR
 
-            static public JSON SerializeTextureSettings(TextureSettings settings) {
+            static public JSON SerializeTextureSettings(TextureSettings settings, Texture2D texture) {
                 JSON json = JSON.CreateObject();
-                if (settings.Width != 0) {
-                    json["Width"].AsInt = settings.Width;
-                }
-                if (settings.Height != 0) {
-                    json["Height"].AsInt = settings.Height;
-                }
-                if (!settings.Alpha) {
-                    json["Alpha"].AsBool = false;
-                }
+                json["Width"].AsInt = texture.width;
+                json["Height"].AsInt = texture.height;
+                json["Alpha"].AsBool = HasAlpha(texture);
+
                 WriteEnum(json, "Compression", settings.CompressionLevel, LoadedTextureCompression.Inherit);
                 WriteEnum(json, "Filter", settings.Filter, LoadedFilterMode.Inherit);
                 WriteEnum(json, "Wrap", settings.Wrap, LoadedTextureWrapMode.Inherit);
@@ -549,6 +581,16 @@ namespace EasyAssetStreaming {
                 WriteEnum(json, "WrapV", settings.WrapV, LoadedTextureWrapMode.Inherit);
                 WriteEnum(json, "WrapW", settings.WrapW, LoadedTextureWrapMode.Inherit);
                 return json;
+            }
+
+            static private bool HasAlpha(Texture2D texture) {
+                foreach(var pixel in texture.GetPixels32()) {
+                    if (pixel.a < 255) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             #endif // UNITY_EDITOR
