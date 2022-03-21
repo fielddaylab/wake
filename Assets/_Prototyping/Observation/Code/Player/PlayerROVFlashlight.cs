@@ -36,7 +36,7 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput) {
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity) {
             return false;
         }
 

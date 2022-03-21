@@ -66,7 +66,7 @@ namespace ProtoAqua.Observation
             bool IsEnabled();
             void Enable();
             void Disable();
-            bool UpdateTool(in PlayerROVInput.InputData inInput);
+            bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity);
             bool HasTarget();
             Vector3? GetTargetPosition(bool inbOnGamePlane);
         }
@@ -81,7 +81,7 @@ namespace ProtoAqua.Observation
 
             public Vector3? GetTargetPosition(bool inbOnGamePlane) { return null; }
             public bool HasTarget() { return false; }
-            public bool UpdateTool(in PlayerROVInput.InputData inInput) { return false; }
+            public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity) { return false; }
         }
 
         #endregion // Types
@@ -247,7 +247,7 @@ namespace ProtoAqua.Observation
 
         private bool UpdateTool()
         {
-            if (m_CurrentTool.UpdateTool(m_LastInputData))
+            if (m_CurrentTool.UpdateTool(m_LastInputData, m_Kinematics.State.Velocity))
             {
                 SetEngineState(false);
                 return true;

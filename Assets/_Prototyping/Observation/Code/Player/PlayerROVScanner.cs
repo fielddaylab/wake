@@ -20,6 +20,10 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_MaxRange = 8;
         [SerializeField] private float m_ScanRange = 0.5f;
 
+        [Header("Movement Scaling")]
+        [SerializeField] private float m_ScanReduceMovementSpeedThreshold = 3;
+        [SerializeField] private float m_ScanReduceMovementSpeedMaxMultiplier = 0.6f;
+
         #endregion // Inspector
 
         [NonSerialized] private ScanSystem m_ScanSystem;
@@ -27,6 +31,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
         [NonSerialized] private ScanData m_TargetScanData = null;
         [NonSerialized] private float m_CurrentRange;
+        [NonSerialized] private float m_LastKnownSpeed;
 
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
@@ -75,8 +80,10 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity)
         {
+            m_LastKnownSpeed = inVelocity.magnitude;
+
             if (!m_TargetScannable.IsReferenceNull())
             {
                 if (!inInput.UseHold)
@@ -190,7 +197,7 @@ namespace ProtoAqua.Observation
 
             while(progress < 1 && m_TargetScannable.CanScan)
             {
-                progress += increment * Routine.DeltaTime;
+                progress += increment * Routine.DeltaTime * (1 - Mathf.Min(m_LastKnownSpeed / m_ScanReduceMovementSpeedThreshold, m_ScanReduceMovementSpeedMaxMultiplier));
                 if (progress > 1)
                     progress = 1;
                 scanUI.ShowProgress(progress);

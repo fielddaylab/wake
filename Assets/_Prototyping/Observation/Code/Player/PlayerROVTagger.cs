@@ -64,7 +64,7 @@ namespace ProtoAqua.Observation
             Services.UI?.FindPanel<TaggingUI>()?.Hide();
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity)
         {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;

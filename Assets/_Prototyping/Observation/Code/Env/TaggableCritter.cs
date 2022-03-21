@@ -17,6 +17,8 @@ namespace ProtoAqua.Observation
 
         public float ColliderRadius;
 
+        [HideInInspector] public ScannableRegion Scannable;
+
         #endregion // Inspector
 
         private void OnEnable()
@@ -48,6 +50,7 @@ namespace ProtoAqua.Observation
                 TrackTransform = transform;
 
             ColliderRadius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
+            Scannable = GetComponent<ScannableRegion>();
             return true;
         }
 
