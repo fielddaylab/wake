@@ -16,6 +16,13 @@ $endif
 @cutscene
 {@kevin}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @merchant} if he has something that can help us.
 
+:: gotPops
+@trigger    JobTasksUpdated
+@when 		JobTaskTop(reportBack)
+@cutscene
+{@kevin}	It looks like you've got a good sample of the life to be found under the ice.
+            Lets report back to {nameof profWhalen} with everything you've found.
+
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
@@ -27,6 +34,7 @@ $call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel)
     $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
     $call ArgueFactSlot(X_UnderTheIce.Population.GlassSponge)  
     $call ArgueFactSlot(X_UnderTheIce.Population.NorthernSeaNettle)  
+$goto argue.showClaim
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
@@ -42,9 +50,7 @@ $call ArgueRejectIncorrect()
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
-$call ArgueUnload()
-$call ArgueCancelClaim()
+{@profWhalen}   Make sure you get a complete picture of all the populations down there.
 
 // END
 :: argue.complete
