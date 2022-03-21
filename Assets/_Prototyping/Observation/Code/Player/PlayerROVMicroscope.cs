@@ -11,7 +11,7 @@ namespace ProtoAqua.Observation {
         #endregion // Inspector
 
         private void Awake() {
-            WorldUtils.TrackLayerMask(m_Collider, GameLayers.Scannable_Mask, OnScannableEnterFlashlight, OnScannableExitFlashlight);
+            WorldUtils.TrackLayerMask(m_Collider, GameLayers.Scannable_Mask, HandleEnter, HandleExit);
         }
 
         #region ITool
@@ -42,20 +42,20 @@ namespace ProtoAqua.Observation {
 
         #endregion // ITool
 
-        private void OnScannableEnterFlashlight(Collider2D inCollider) {
+        private void HandleEnter(Collider2D inCollider) {
             ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
             if (region != null) {
-                region.Current |= ScannableStatusFlags.Flashlight;
+                region.Current |= ScannableStatusFlags.Microscope;
             }
         }
 
-        private void OnScannableExitFlashlight(Collider2D inCollider) {
+        private void HandleExit(Collider2D inCollider) {
             if (!inCollider)
                 return;
 
             ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
             if (region != null) {
-                region.Current &= ~ScannableStatusFlags.Flashlight;
+                region.Current &= ~ScannableStatusFlags.Microscope;
             }
         }
     }

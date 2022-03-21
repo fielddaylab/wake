@@ -21,6 +21,8 @@ namespace ProtoAqua.Observation {
 
         #region Types
 
+        public delegate Vector3 TransformToMicroscopeScapeDelegate(Vector3 inPosition);
+
         [Serializable] private class ScanIconPool : SerializablePool<ScanIcon> { }
 
         [Serializable]
@@ -77,6 +79,8 @@ namespace ProtoAqua.Observation {
         [NonSerialized] private TriggerListener2D m_Listener;
         [NonSerialized] private float m_DeactivateRangeSq;
         [NonSerialized] private bool m_ActiveState = false;
+        
+        private TransformToMicroscopeScapeDelegate m_TransformToMicroscope;
 
         #region Events
 
@@ -135,6 +139,7 @@ namespace ProtoAqua.Observation {
                     region.Collider.transform.position = gameplayPlanePos;
                 } else {
                     region.Collider.enabled = false;
+                    region.ClickCollider.enabled = false;
                 }
             }
 
@@ -142,8 +147,19 @@ namespace ProtoAqua.Observation {
                 region = m_RegionsInRange[i];
                 UpdateInRange(region);
                 if (region.CurrentIcon) {
-                    region.CurrentIcon.transform.position = region.TrackTransform.position;
+                    UpdateIconAndClickPosition(region);
                 }
+            }
+        }
+
+        private void UpdateIconAndClickPosition(ScannableRegion region) {
+            if ((region.Current & ScannableStatusFlags.Microscope) != 0) {
+                Vector3 remap = m_TransformToMicroscope(region.TrackTransform.position);
+                region.ClickCollider.transform.position = remap;
+                region.CurrentIcon.transform.position = remap;
+            } else {
+                region.ClickCollider.transform.position = region.Collider.transform.position;
+                region.CurrentIcon.transform.position = region.TrackTransform.position;
             }
         }
 
@@ -370,12 +386,14 @@ namespace ProtoAqua.Observation {
 
             inRegion.CanScan = ready;
             if (inRegion.CanScan) {
+                inRegion.ClickCollider.enabled = true;
                 inRegion.CurrentIcon = m_IconPool.Alloc();
                 inRegion.CurrentIcon.Show();
                 RefreshIcon(inRegion);
             } else if (inRegion.CurrentIcon != null) {
                 inRegion.CurrentIcon.Hide();
                 inRegion.CurrentIcon = null;
+                inRegion.ClickCollider.enabled = false;
             }
         }
 

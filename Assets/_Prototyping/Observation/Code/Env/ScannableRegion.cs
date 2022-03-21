@@ -13,6 +13,7 @@ namespace ProtoAqua.Observation
 
         public SerializedHash32 ScanId;
         [Required] public Collider2D Collider;
+        [Required] public Collider2D ClickCollider;
         public Transform TrackTransform;
         [AutoEnum] public ScannableStatusFlags Required;
 
@@ -22,6 +23,8 @@ namespace ProtoAqua.Observation
         [NonSerialized] public ScannableStatusFlags Current;
         [NonSerialized] public ScanIcon CurrentIcon;
         [NonSerialized] public bool CanScan;
+
+        [NonSerialized] public int FlashlightCollisionTracker = 0;
 
         private void OnEnable()
         {
