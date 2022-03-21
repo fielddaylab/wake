@@ -49,7 +49,7 @@ namespace ProtoAqua.Observation
             m_DefaultHeaderColor = m_HeaderText.Graphic.color;
             m_DefaultTextColor = m_DescriptionText.Graphic.color;
             m_DefaultTextMargins = m_DescriptionText.Graphic.margin;
-            m_RectTransform = (RectTransform)transform;
+            m_RectTransform = (RectTransform) transform;
             m_AnchorOffsetX = m_RectTransform.anchoredPosition.x;
         }
 
@@ -239,8 +239,6 @@ namespace ProtoAqua.Observation
             m_HeaderText.SetTextFromString(string.Empty);
             m_DescriptionText.SetTextFromString(string.Empty);
             m_ImageDisplay.Clear();
-
-            Streaming.UnloadUnusedAsync(20);
         }
 
         #endregion // Callbacks

@@ -572,7 +572,7 @@ namespace Aqua
     
         static public void RequestDisplayOnSceneLoad()
         {
-            Services.Data.SetVariable(Var_NewJobRequest, true);
+            Script.WriteVariable(Var_NewJobRequest, true);
         }
     }
 }

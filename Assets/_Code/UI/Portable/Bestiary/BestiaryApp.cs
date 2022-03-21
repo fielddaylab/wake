@@ -57,7 +57,6 @@ namespace Aqua.Portable {
         [NonSerialized] private List<BestiaryFactButton> m_InstantiatedButtons = new List<BestiaryFactButton>();
         [NonSerialized] private Action<BFBase> m_CachedSelectFactDelegate;
         [NonSerialized] private PortableRequest m_Request;
-        [NonSerialized] private int m_SelectCounter;
 
         #region Panel
 
@@ -69,7 +68,7 @@ namespace Aqua.Portable {
         }
 
         protected override void OnHide(bool inbInstant) {
-            Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
+            Script.WriteVariable("portable:bestiary.currentEntry", null);
 
             m_InfoPage.Sketch.Clear();
             m_InfoPage.FactPools.FreeAll();
@@ -82,8 +81,6 @@ namespace Aqua.Portable {
             m_InfoPage.gameObject.SetActive(false);
 
             m_CurrentEntry = null;
-            m_SelectCounter = 0;
-
             base.OnHide(inbInstant);
         }
 
@@ -183,12 +180,11 @@ namespace Aqua.Portable {
                 m_NoSelectionGroup.SetActive(true);
                 LoadEntryFacts(null);
                 m_EntryToggleGroup.SetAllTogglesOff();
-                Services.Data?.SetVariable("portable:bestiary.currentEntry", null);
+                Script.WriteVariable("portable:bestiary.currentEntry", null);
                 return;
             }
 
             Services.Data.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
-            m_SelectCounter++;
 
             m_NoSelectionGroup.SetActive(false);
             m_InfoPage.gameObject.SetActive(true);
@@ -205,12 +201,6 @@ namespace Aqua.Portable {
 
             Handler.PopulatePage(m_InfoPage, inEntry);
             LoadEntryFacts(inEntry);
-
-            // periodically unload unused sketches in memory
-            if (m_SelectCounter >= 10) {
-                m_SelectCounter = 0;
-                Streaming.UnloadUnusedAsync(10);
-            }
         }
 
         /// <summary>

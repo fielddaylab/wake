@@ -227,6 +227,10 @@ namespace Aqua
             return arr;
         }
 
+        static public readonly Predicate<UnityEngine.Object> IgnoreTemplates = (o) => {
+            return char.IsLetterOrDigit(o.name[0]);
+        };
+
         [InitializeOnLoadMethod]
         static private void HashAllIds() {
             using(Profiling.Time("hashing all DBObject names")) {

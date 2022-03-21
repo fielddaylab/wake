@@ -142,7 +142,15 @@ namespace EasyAssetStreaming {
                     WriteEnum(entryJSON, "Type", entry.Type);
 
                     if (entry.Type == AssetType.Texture) {
-                        entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture);
+                        Texture2D texture = null;
+                        try {
+                            texture = new Texture2D(1, 1);
+                            texture.LoadImage(File.ReadAllBytes(fullPath), false);
+                            entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture, texture);
+                        }
+                        finally {
+                            StreamingHelper.DestroyResource(texture);
+                        }
                     }
 
                     Current.Map[id] = entry;

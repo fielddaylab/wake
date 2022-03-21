@@ -37,7 +37,7 @@ namespace EasyAssetStreaming {
 
             StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetType.Audio);
             AudioClip loadedClip;
-            AssetMeta meta = Audios.GetMeta(id, pathOrUrl, out loadedClip);
+            AssetMeta meta = AudioClips.GetMeta(id, pathOrUrl, out loadedClip);
 
             if (assetId != id) {
                 Dereference(assetId, callback);
@@ -64,7 +64,7 @@ namespace EasyAssetStreaming {
 
             StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetType.Texture);
             AudioClip loadedClip;
-            AssetMeta meta = Audios.GetMeta(id, pathOrUrl, out loadedClip);
+            AssetMeta meta = AudioClips.GetMeta(id, pathOrUrl, out loadedClip);
 
             meta.RefCount++;
             meta.LastModifiedTS = CurrentTimestamp();
@@ -91,20 +91,34 @@ namespace EasyAssetStreaming {
         /// Returns the total number of streamed audio bytes.
         /// </summary>
         static public MemoryStat AudioMemoryUsage() {
-            return Audios.MemoryUsage;
+            return AudioClips.MemoryUsage;
+        }
+
+        /// <summary>
+        /// Returns the budgeted number of streamed audio bytes tolerated.
+        /// If not 0, this will attempt to unload unreferenced audio clips when this is exceeded.
+        /// </summary>
+        static public long AudioMemoryBudget {
+            get { return AudioClips.MemoryBudget; }
+            set { AudioClips.MemoryBudget = value; }
         }
 
         #endregion // Public API
 
         /// <summary>
-        /// Internal Texture api
+        /// Internal AudioClip api
         /// </summary>
-        static internal class Audios {
+        static internal class AudioClips {
+
+            #region Types
+
+            #endregion // Types
 
             #region State
 
             static public readonly Dictionary<StreamingAssetId, AudioClip> ClipMap = new Dictionary<StreamingAssetId, AudioClip>();
             static public MemoryStat MemoryUsage = default;
+            static public long MemoryBudget;
 
             #endregion // State
 
@@ -132,6 +146,7 @@ namespace EasyAssetStreaming {
             }
 
             static public void StartLoading(StreamingAssetId id, AssetMeta meta) {
+                DownloadHandlerAudioClip audioDownload = (DownloadHandlerAudioClip) meta.Loader.downloadHandler;
                 var sent = meta.Loader.SendWebRequest();
                 sent.completed += (_) => {
                     HandleAudioUWRFinished(id, meta.Path, meta, meta.Loader);
@@ -218,6 +233,33 @@ namespace EasyAssetStreaming {
             }
 
             #endregion // Load
+
+            #region Budget
+
+            static private bool s_OverBudgetFlag;
+
+            static public void CheckBudget(long now) {
+                if (MemoryBudget <= 0) {
+                    return;
+                }
+
+                long over = MemoryUsage.Current - MemoryBudget;
+                if (over > 0) {
+                    if (!s_OverBudgetFlag) {
+                        UnityEngine.Debug.LogFormat("[Streaming] Audio memory is over budget by {0:0.00} Kb", over / 1024f);
+                        s_OverBudgetFlag = true;
+                    }
+                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetType.Audio, now, over);
+                    if (asset) {
+                        UnloadSingle(asset, now);
+                        s_OverBudgetFlag = false;
+                    }
+                } else {
+                    s_OverBudgetFlag = false;
+                }
+            }
+
+            #endregion // Budget
         
             #region Manifest
 

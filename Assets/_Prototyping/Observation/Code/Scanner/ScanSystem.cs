@@ -1,23 +1,21 @@
 using System;
-using UnityEngine;
-using BeauRoutine;
 using System.Collections;
-using UnityEngine.UI;
-using Aqua;
-using BeauUtil;
-using BeauPools;
 using System.Collections.Generic;
-using Aqua.Debugging;
+using Aqua;
 using Aqua.Cameras;
-using Leaf.Runtime;
-using BeauUtil.Debugger;
+using Aqua.Debugging;
 using Aqua.Scripting;
+using BeauPools;
+using BeauRoutine;
+using BeauUtil;
+using BeauUtil.Debugger;
+using Leaf.Runtime;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace ProtoAqua.Observation
-{
+namespace ProtoAqua.Observation {
     [DefaultExecutionOrder(-100)]
-    public class ScanSystem : SharedManager
-    {
+    public class ScanSystem : SharedManager {
         static public readonly StringHash32 Trigger_NewScan = "ScannedNewObject";
         static public readonly StringHash32 Trigger_Scan = "ScannedObject";
 
@@ -26,8 +24,7 @@ namespace ProtoAqua.Observation
         [Serializable] private class ScanIconPool : SerializablePool<ScanIcon> { }
 
         [Serializable]
-        public class ScanTypeConfig
-        {
+        public class ScanTypeConfig {
             public Color BackgroundColor = ColorBank.White;
             public Color HeaderColor = ColorBank.Yellow;
             public Color TextColor = ColorBank.White;
@@ -38,8 +35,7 @@ namespace ProtoAqua.Observation
         }
 
         [Serializable]
-        public class ScanNodeConfig
-        {
+        public class ScanNodeConfig {
             public Color UnscannedLineColor;
             public Color UnscannedFillColor;
             [Space]
@@ -65,6 +61,9 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_BaseScanDuration = 0.75f;
         [SerializeField] private float m_CompletedScanDuration = 0.2f;
 
+        [Header("Special Conditions")]
+        [SerializeField] private bool m_IsDark = false;
+
         #endregion // Inspector
 
         private readonly HashSet<ScanDataPackage> m_LoadedPackages = new HashSet<ScanDataPackage>();
@@ -81,27 +80,24 @@ namespace ProtoAqua.Observation
 
         #region Events
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
 
-            foreach(var asset in m_DefaultScanAssets)
-            {
+            foreach (var asset in m_DefaultScanAssets) {
                 Load(asset);
             }
 
-            Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
-                .Register(GameEvents.BestiaryUpdated, AttemptRefreshAllData, this)
+            Script.OnSceneLoad(OnSceneLoaded);
+
+            Services.Events.Register(GameEvents.BestiaryUpdated, AttemptRefreshAllData, this)
                 .Register(GameEvents.InventoryUpdated, AttemptRefreshAllData, this)
                 .Register(GameEvents.VariableSet, AttemptRefreshAllData, this);
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             Services.Events?.DeregisterAll(this);
 
-            foreach(var package in m_LoadedPackages)
-            {
+            foreach (var package in m_LoadedPackages) {
                 package.Clear();
             }
             m_LoadedPackages.Clear();
@@ -110,21 +106,18 @@ namespace ProtoAqua.Observation
             base.OnDestroy();
         }
 
-        private void LateUpdate()
-        {
+        private void LateUpdate() {
             if (Script.IsPaused || Script.IsLoading)
                 return;
 
-            if (m_Listener == null || !m_Listener.isActiveAndEnabled)
-            {
-                if (m_ActiveState)
-                {
+            if (m_Listener == null || !m_Listener.isActiveAndEnabled) {
+                if (m_ActiveState) {
                     m_ActiveState = false;
                     DeactivateAllColliders();
                 }
                 return;
             }
-            
+
             m_ActiveState = true;
             m_Listener.ProcessOccupants();
 
@@ -133,11 +126,10 @@ namespace ProtoAqua.Observation
             Vector3 gameplayPlanePos;
             Vector3 gameplayPlaneDist;
             Vector2 listenerPos = m_Range.transform.position;
-            for(int i = m_AllRegions.Count - 1; i >= 0; i--)
-            {
+            for (int i = m_AllRegions.Count - 1; i >= 0; i--) {
                 region = m_AllRegions[i];
                 gameplayPlanePos = positionHelper.CastToPlane(region.TrackTransform);
-                gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
+                gameplayPlaneDist = (Vector2)gameplayPlanePos - listenerPos;
                 if (gameplayPlaneDist.sqrMagnitude < m_DeactivateRangeSq) {
                     region.Collider.enabled = true;
                     region.Collider.transform.position = gameplayPlanePos;
@@ -146,10 +138,12 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            for(int i = m_RegionsInRange.Count - 1; i >= 0; i--)
-            {
+            for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
                 region = m_RegionsInRange[i];
-                region.CurrentIcon.transform.position = region.TrackTransform.position;
+                UpdateInRange(region);
+                if (region.CurrentIcon) {
+                    region.CurrentIcon.transform.position = region.TrackTransform.position;
+                }
             }
         }
 
@@ -157,68 +151,54 @@ namespace ProtoAqua.Observation
 
         #region Scan Data Packages
 
-        public void Load(ScanDataPackage inPackage)
-        {
-            if (m_LoadedPackages.Add(inPackage))
-            {
+        public void Load(ScanDataPackage inPackage) {
+            if (m_LoadedPackages.Add(inPackage)) {
                 inPackage.Parse(ScanDataPackage.Generator.Instance);
                 AddPackage(inPackage);
             }
         }
 
-        public void Unload(ScanDataPackage inPackage)
-        {
-            if (m_LoadedPackages.Remove(inPackage))
-            {
+        public void Unload(ScanDataPackage inPackage) {
+            if (m_LoadedPackages.Remove(inPackage)) {
                 RemovePackage(inPackage);
                 inPackage.Clear();
             }
         }
 
-        private void AddPackage(ScanDataPackage inPackage)
-        {
-            foreach(var node in inPackage)
-            {
+        private void AddPackage(ScanDataPackage inPackage) {
+            foreach (var node in inPackage) {
                 m_ScanDataMap.Add(node.Id(), node);
             }
 
             DebugService.Log(LogMask.Observation | LogMask.Loading, "[ScanSystem] Loaded scan data package '{0}' with {1} nodes", inPackage.name, inPackage.Count);
         }
 
-        private void RemovePackage(ScanDataPackage inPackage)
-        {
-            foreach(var node in inPackage)
-            {
+        private void RemovePackage(ScanDataPackage inPackage) {
+            foreach (var node in inPackage) {
                 m_ScanDataMap.Remove(node.Id());
             }
-            
+
             DebugService.Log(LogMask.Observation | LogMask.Loading, "[ScanSystem] Unloaded scan data package '{0}'", inPackage.name);
         }
 
         #endregion // Scan Data Packages
 
         #region ScanData
-        
-        public bool TryGetScanDataWithFallbacks(StringHash32 inId, out ScanData outData)
-        {
+
+        public bool TryGetScanDataWithFallbacks(StringHash32 inId, out ScanData outData) {
             StringHash32 id = inId;
             bool bFound = false;
             outData = null;
-            
-            while(!bFound)
-            {
+
+            while (!bFound) {
                 bFound = m_ScanDataMap.TryGetValue(id, out outData);
-                if (outData != null)
-                {
-                    StringSlice requirement = outData.Requirements();
-                    if (!requirement.IsEmpty && !Services.Data.CheckConditions(requirement))
-                    {
+                if (outData != null) {
+                    var requirement = outData.Requirements();
+                    if (!requirement.IsEmpty && !Services.Data.CheckConditions(requirement)) {
                         id = outData.FallbackId();
                         bFound = false;
                     }
-                }
-                else
-                {
+                } else {
                     Log.Error("[ScanSystem] Missing Scan with Id '{0}'", id);
                     outData = ScanData.Error;
                     break;
@@ -230,53 +210,42 @@ namespace ProtoAqua.Observation
 
         public bool WasScanned(StringHash32 inId) { return Save.Inventory.WasScanned(inId); }
 
-        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts)
-        {
+        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts) {
             ScriptThreadHandle responseHandle = default;
             ScanResult result = ScanResult.NoChange;
 
-            using(var table = TempVarTable.Alloc())
-            {
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("scanId", inData.Id());
 
-                if (Save.Inventory.RegisterScanned(inData.Id()))
-                {
+                if (Save.Inventory.RegisterScanned(inData.Id())) {
                     result |= ScanResult.NewScan;
 
                     StringHash32 bestiaryId = inData.BestiaryId();
-                    if (!bestiaryId.IsEmpty && Save.Bestiary.RegisterEntity(bestiaryId))
-                    {
+                    if (!bestiaryId.IsEmpty && Save.Bestiary.RegisterEntity(bestiaryId)) {
                         result |= ScanResult.NewBestiary;
                     }
 
                     // TODO: Logbook
 
-                    if (!bestiaryId.IsEmpty && (inData.Flags() & ScanDataFlags.DynamicFactType) != 0)
-                    {
-                        foreach(var fact in Assets.Bestiary(bestiaryId).FactsOfType(inData.DynamicFactType()))
-                        {
-                            if (Save.Bestiary.RegisterFact(fact.Id, false))
-                            {
+                    if (!bestiaryId.IsEmpty && (inData.Flags() & ScanDataFlags.DynamicFactType) != 0) {
+                        foreach (var fact in Assets.Bestiary(bestiaryId).FactsOfType(inData.DynamicFactType())) {
+                            if (Save.Bestiary.RegisterFact(fact.Id, false)) {
                                 result |= ScanResult.NewFacts;
                                 outNewFacts.Add(fact.Id);
                             }
                         }
                     }
 
-                    foreach(var factId in inData.FactIds())
-                    {
-                        if (Save.Bestiary.RegisterFact(factId, false))
-                        {
+                    foreach (var factId in inData.FactIds()) {
+                        if (Save.Bestiary.RegisterFact(factId, false)) {
                             result |= ScanResult.NewFacts;
                             outNewFacts.Add(factId);
                         }
                     }
 
                     var config = GetConfig(inData.Flags());
-                    foreach(var scannable in m_RegionsInRange)
-                    {
-                        if (scannable.ScanId == inData.Id())
-                        {
+                    foreach (var scannable in m_RegionsInRange) {
+                        if (scannable.ScanId == inData.Id() && scannable.CurrentIcon) {
                             scannable.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
                         }
                     }
@@ -284,8 +253,7 @@ namespace ProtoAqua.Observation
                     responseHandle = Services.Script.TriggerResponse(Trigger_NewScan, table);
                 }
 
-                if (!responseHandle.IsRunning())
-                {
+                if (!responseHandle.IsRunning()) {
                     responseHandle = Services.Script.TriggerResponse(Trigger_Scan, table);
                 }
             }
@@ -293,8 +261,7 @@ namespace ProtoAqua.Observation
             return result;
         }
 
-        public ScanTypeConfig GetConfig(ScanDataFlags inFlags)
-        {
+        public ScanTypeConfig GetConfig(ScanDataFlags inFlags) {
             if ((inFlags & ScanDataFlags.Important) != 0)
                 return m_ImportantScanConfig;
             if ((inFlags & ScanDataFlags.Tool) != 0)
@@ -302,14 +269,13 @@ namespace ProtoAqua.Observation
             return m_DefaultScanConfig;
         }
 
-        public float GetScanDuration(ScanData inData)
-        {
+        public float GetScanDuration(ScanData inData) {
             if (inData == null)
                 return m_BaseScanDuration;
 
             if (WasScanned(inData.Id()))
                 return m_CompletedScanDuration;
-            
+
             return m_BaseScanDuration * inData.ScanDuration();
         }
 
@@ -317,69 +283,54 @@ namespace ProtoAqua.Observation
 
         #region Scannable Regions
 
-        public void Register(ScannableRegion inRegion)
-        {
+        public void Register(ScannableRegion inRegion) {
             m_AllRegions.PushBack(inRegion);
-            if (m_Loaded)
-            {
+            if (m_Loaded) {
                 RefreshData(inRegion);
-                if (inRegion.ToolView != null)
-                    inRegion.ToolView.gameObject.SetActive(false);
-
-                if (inRegion.InsideToolView)
-                    EnterRange(inRegion);
-            }
-            else
-            {
+            } else {
                 inRegion.Collider.enabled = false;
             }
         }
 
-        public void Deregister(ScannableRegion inRegion)
-        {
+        public void Deregister(ScannableRegion inRegion) {
             m_AllRegions.FastRemove(inRegion);
             ExitRange(inRegion);
         }
 
-        public ScanData RefreshData(ScannableRegion inRegion)
-        {
+        public ScanData RefreshData(ScannableRegion inRegion) {
+            if (m_IsDark)
+                inRegion.Required |= ScannableStatusFlags.Flashlight;
             TryGetScanDataWithFallbacks(inRegion.ScanId, out inRegion.ScanData);
-            if (inRegion.CurrentIcon != null)
-            {
+            if (inRegion.CurrentIcon != null) {
                 RefreshIcon(inRegion);
             }
             return inRegion.ScanData;
         }
 
-        private void DeactivateAllColliders()
-        {
+        private void DeactivateAllColliders() {
             ScannableRegion region;
-            for(int i = 0, len = m_AllRegions.Count; i < len; i++)
-            {
+            for (int i = 0, len = m_AllRegions.Count; i < len; i++) {
                 region = m_AllRegions[i];
                 region.Collider.enabled = false;
             }
         }
 
         #endregion // Scannable Regions
-    
+
         #region Scan Range
 
-        public void SetDetector(Collider2D inCollider)
-        {
+        public void SetDetector(Collider2D inCollider) {
             if (m_Range == inCollider)
                 return;
 
-            if (m_Listener != null)
-            {
+            if (m_Listener != null) {
                 m_Listener.onTriggerEnter.RemoveListener(OnScannableEnterRegion);
                 m_Listener.onTriggerExit.RemoveListener(OnScannableExitRegion);
             }
 
             m_Range = inCollider;
 
-            if (inCollider != null)
-            {
+            if (inCollider != null) {
                 m_Listener = inCollider.EnsureComponent<TriggerListener2D>();
                 m_Listener.LayerFilter = GameLayers.Scannable_Mask;
                 m_Listener.SetOccupantTracking(true);
@@ -389,30 +340,42 @@ namespace ProtoAqua.Observation
 
                 m_DeactivateRangeSq = PhysicsUtils.GetRadius(inCollider) + 1;
                 m_DeactivateRangeSq *= m_DeactivateRangeSq;
-            }
-            else
-            {
+            } else {
                 m_Listener = null;
             }
         }
 
-        private void EnterRange(ScannableRegion inRegion)
-        {
+        private void EnterRange(ScannableRegion inRegion) {
             m_RegionsInRange.PushBack(inRegion);
-            inRegion.CurrentIcon = m_IconPool.Alloc();
-            inRegion.CurrentIcon.Show();
-            inRegion.InRange = true;
+            inRegion.Current |= ScannableStatusFlags.InRange;
 
-            RefreshIcon(inRegion);
+            UpdateInRange(inRegion);
         }
 
-        private void ExitRange(ScannableRegion inRegion)
-        {
-            if (m_RegionsInRange.FastRemove(inRegion))
-            {
+        private void ExitRange(ScannableRegion inRegion) {
+            if (m_RegionsInRange.FastRemove(inRegion)) {
+                if (inRegion.CurrentIcon != null) {
+                    inRegion.CurrentIcon.Hide();
+                    inRegion.CurrentIcon = null;
+                }
+                inRegion.Current &= ~ScannableStatusFlags.InRange;
+                inRegion.CanScan = false;
+            }
+        }
+
+        private void UpdateInRange(ScannableRegion inRegion) {
+            bool ready = (inRegion.Current & inRegion.Required) == inRegion.Required && (inRegion.Current & ScannableStatusFlags.InRange) != 0;
+            if (ready == inRegion.CanScan)
+                return;
+
+            inRegion.CanScan = ready;
+            if (inRegion.CanScan) {
+                inRegion.CurrentIcon = m_IconPool.Alloc();
+                inRegion.CurrentIcon.Show();
+                RefreshIcon(inRegion);
+            } else if (inRegion.CurrentIcon != null) {
                 inRegion.CurrentIcon.Hide();
                 inRegion.CurrentIcon = null;
-                inRegion.InRange = false;
             }
         }
 
@@ -420,70 +383,45 @@ namespace ProtoAqua.Observation
 
         #region Callbacks
 
-        private void OnScannableEnterRegion(Collider2D inCollider)
-        {
+        private void OnScannableEnterRegion(Collider2D inCollider) {
             ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
-            if (region != null && !region.InsideToolView)
-            {
+            if (region != null) {
                 EnterRange(region);
             }
         }
 
-        private void OnScannableExitRegion(Collider2D inCollider)
-        {
+        private void OnScannableExitRegion(Collider2D inCollider) {
             if (!inCollider)
                 return;
-            
+
             ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
-            if (region != null && !region.InsideToolView)
-            {
+            if (region != null) {
                 ExitRange(region);
             }
         }
 
-        private void OnSceneLoaded()
-        {
+        private void OnSceneLoaded() {
             m_Loaded = true;
-
-            using(PooledList<ToolView> toolViews = PooledList<ToolView>.Create())
-            {
-                ScannableRegion region;
-                for(int i = m_AllRegions.Count - 1; i >= 0; i--)
-                {
-                    region = m_AllRegions[i];
-                    if (region.ToolView)
-                        toolViews.Add(region.ToolView);
-                }
-
-                foreach(var toolView in toolViews)
-                    toolView.gameObject.SetActive(false);
-            }
 
             RefreshAllData();
         }
 
-        private void RefreshAllData()
-        {
-            for(int i = m_AllRegions.Count - 1; i >= 0; i--)
+        private void RefreshAllData() {
+            for (int i = m_AllRegions.Count - 1; i >= 0; i--)
                 RefreshData(m_AllRegions[i]);
         }
 
-        private void AttemptRefreshAllData()
-        {
+        private void AttemptRefreshAllData() {
             if (m_Loaded)
                 RefreshAllData();
         }
 
-        private void RefreshIcon(ScannableRegion inRegion)
-        {
+        private void RefreshIcon(ScannableRegion inRegion) {
             var config = GetConfig(inRegion.ScanData.Flags());
             inRegion.CurrentIcon.SetIcon(config.Icon);
-            if (WasScanned(inRegion.ScanData.Id()))
-            {
+            if (WasScanned(inRegion.ScanData.Id())) {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
-            }
-            else
-            {
+            } else {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.UnscannedLineColor, config.NodeConfig.UnscannedFillColor);
             }
         }
@@ -493,18 +431,15 @@ namespace ProtoAqua.Observation
         #region Leaf
 
         [LeafMember("SetScanId"), UnityEngine.Scripting.Preserve]
-        static public void SetScanId(ScriptObject inObject, StringHash32 inScanId)
-        {
+        static public void SetScanId(ScriptObject inObject, StringHash32 inScanId) {
             ScanSystem scanSystem = ScanSystem.Find<ScanSystem>();
-            if (scanSystem != null)
-            {
+            if (scanSystem != null) {
                 Log.Error("[ScanSystem] No ScanSystem present in scene");
                 return;
             }
 
             ScannableRegion region = inObject.GetComponent<ScannableRegion>();
-            if (region != null && Ref.Replace(ref region.ScanId, inScanId))
-            {
+            if (region != null && Ref.Replace(ref region.ScanId, inScanId)) {
                 scanSystem.RefreshData(region);
             }
         }
@@ -513,10 +448,9 @@ namespace ProtoAqua.Observation
     }
 
     [Flags]
-    public enum ScanResult : byte
-    {
-        NoChange =  0x0,
-        NewScan =   0x1,
+    public enum ScanResult : byte {
+        NoChange = 0x0,
+        NewScan = 0x1,
         NewLogbook = 0x2,
         NewBestiary = 0x4,
         NewFacts = 0x08

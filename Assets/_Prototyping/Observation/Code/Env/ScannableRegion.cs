@@ -14,16 +14,14 @@ namespace ProtoAqua.Observation
         public SerializedHash32 ScanId;
         [Required] public Collider2D Collider;
         public Transform TrackTransform;
-        [Space]
-        public ToolView ToolView;
-        [SerializeField, HideInInspector] public bool InsideToolView;
-        [Space]
+        [AutoEnum] public ScannableStatusFlags Required;
 
         #endregion // Inspector
 
         public ScanData ScanData;
+        [NonSerialized] public ScannableStatusFlags Current;
         [NonSerialized] public ScanIcon CurrentIcon;
-        [NonSerialized] public bool InRange;
+        [NonSerialized] public bool CanScan;
 
         private void OnEnable()
         {
@@ -47,12 +45,21 @@ namespace ProtoAqua.Observation
         bool IBaked.Bake(BakeFlags flags)
         {
             if (!TrackTransform)
+            {
                 TrackTransform = transform;
+                return true;
+            }
 
-            InsideToolView = this.GetComponentInParent<ToolView>(true);
-            return true;
+            return false;
         }
 
         #endif // UNITY_EDITOR
+    }
+
+    [Flags]
+    public enum ScannableStatusFlags {
+        [Hidden] InRange = 0x01,
+        Flashlight = 0x02,
+        Microscope = 0x04
     }
 }

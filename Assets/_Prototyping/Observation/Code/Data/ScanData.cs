@@ -4,6 +4,8 @@ using BeauUtil.Blocks;
 using UnityEngine.Scripting;
 using Aqua;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
+using Leaf;
 
 namespace ProtoAqua.Observation
 {
@@ -30,7 +32,7 @@ namespace ProtoAqua.Observation
         private StringHash32[] m_BestiaryFactIds = null;
 
         // Requirements
-        [BlockMeta("requires"), UnityEngine.Scripting.Preserve] private string m_Requirements = null;
+        private VariantComparison[] m_Requirements = null;
         [BlockMeta("fallback"), UnityEngine.Scripting.Preserve] private StringHash32 m_Fallback = null;
 
         #endregion // Serialized
@@ -55,7 +57,7 @@ namespace ProtoAqua.Observation
         public ListSlice<StringHash32> FactIds() { return m_BestiaryFactIds; }
         public BFTypeId DynamicFactType() { return m_DynamicFactType; }
 
-        public StringSlice Requirements() { return m_Requirements; }
+        public ListSlice<VariantComparison> Requirements() { return m_Requirements; }
         public StringHash32 FallbackId() { return m_Fallback; }
 
 
@@ -93,6 +95,12 @@ namespace ProtoAqua.Observation
         {
             m_Flags |= ScanDataFlags.DynamicFactType;
             m_DynamicFactType = inTypeId;
+        }
+
+        [BlockMeta("requires"), UnityEngine.Scripting.Preserve]
+        private void SetRequirements(StringSlice inRequirements)
+        {
+            m_Requirements = LeafUtils.ParseConditionsList(inRequirements);
         }
 
         void IValidatable.Validate()

@@ -40,7 +40,7 @@ namespace Aqua {
 
         public void DisplayInteract(SceneInteractable inObject) {
             m_TargetInteract = inObject;
-            Services.Data.SetVariable(GameVars.InteractObject, inObject.Parent.Id());
+            Script.WriteVariable(GameVars.InteractObject, inObject.Parent.Id());
 
             Sprite icon = null;
             string label = null;
@@ -84,7 +84,7 @@ namespace Aqua {
             }
 
             m_TargetInteract = null;
-            Services.Data?.SetVariable(GameVars.InteractObject, null);
+            Script.WriteVariable(GameVars.InteractObject, null);
             Hide();
         }
 

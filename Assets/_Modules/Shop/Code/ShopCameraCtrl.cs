@@ -55,7 +55,7 @@ namespace Aqua.Shop {
         }
 
         private IEnumerator SelectTableAnimation(ShopTable table) {
-            Services.Data.SetVariable("shop:table", table.Id);
+            Script.WriteVariable("shop:table", table.Id);
             using(Script.DisableInput()) {
                 yield return Services.Camera.MoveToPosition(table.CameraPose.transform.position, null, 0.3f, Curve.CubeOut, Axis.X);
                 yield return Services.Camera.MoveToPose(table.CameraPose, 0.2f, Curve.Smooth);
@@ -67,7 +67,7 @@ namespace Aqua.Shop {
         }
 
         private IEnumerator DeselectTableAnimation() {
-            Services.Data.SetVariable("shop:table", null);
+            Script.WriteVariable("shop:table", null);
             using(Script.DisableInput()) {
                 yield return Services.Camera.MoveToPose(m_BasePose, 0.2f, Curve.Smooth, CameraPoseProperties.Position | CameraPoseProperties.Height, Axis.Y);
                 yield return Services.Camera.MoveToPose(m_BasePose, 0.3f, Curve.CubeOut);

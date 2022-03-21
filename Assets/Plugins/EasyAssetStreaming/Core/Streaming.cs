@@ -300,7 +300,7 @@ namespace EasyAssetStreaming {
                     return Textures.TextureMap[id];
                 }
                 case AssetType.Audio: {
-                    return Audios.ClipMap[id];
+                    return AudioClips.ClipMap[id];
                 }
                 default: {
                     return null;
@@ -443,7 +443,7 @@ namespace EasyAssetStreaming {
         /// </summary>
         static public void UnloadAll() {
             Textures.DestroyAllTextures();
-            Audios.DestroyAllClips();
+            AudioClips.DestroyAllClips();
 
             foreach(var meta in s_Metas.Values) {
                 meta.Status = AssetStatus.Unloaded;
@@ -476,6 +476,29 @@ namespace EasyAssetStreaming {
             }
         }
 
+        static private StreamingAssetId IdentifyOverBudgetToDelete(AssetType type, long now, long over) {
+            AssetMeta meta;
+            StreamingAssetId best = default;
+            long bestScore = 0;
+
+            long score;
+            foreach(var metaKv in s_Metas) {
+                meta = metaKv.Value;
+                if (meta.RefCount > 0 || (meta.Status & AssetStatus.PendingUnload) == 0 || meta.Type != type) {
+                    continue;
+                }
+
+                // closest to over, largest, oldest
+                score = (1 + Math.Abs(meta.Size - over)) * meta.Size * (now - meta.LastModifiedTS) / 8;
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = metaKv.Key;
+                }
+            }
+
+            return best;
+        }
+
         static private bool UnloadSingle(StreamingAssetId id, long now, long deleteThreshold = 0) {
             AssetMeta meta;
             if (!s_Metas.TryGetValue(id, out meta)) {
@@ -489,8 +512,6 @@ namespace EasyAssetStreaming {
             if (deleteThreshold > 0 && (now - meta.LastModifiedTS) < deleteThreshold) {
                 return false;
             }
-
-            UnityEngine.Object resource = null;
 
             s_Metas.Remove(id);
             if (meta.Loader != null) {
@@ -509,6 +530,8 @@ namespace EasyAssetStreaming {
             }
 
             if ((meta.Status & (AssetStatus.PendingLoad | AssetStatus.Loaded | AssetStatus.Error)) != 0) {
+                UnityEngine.Object resource = null;
+                
                 switch(meta.Type) {
                     case AssetType.Texture: {
                         resource = Textures.DestroyTexture(id, meta);
@@ -516,7 +539,7 @@ namespace EasyAssetStreaming {
                     }
 
                     case AssetType.Audio: {
-                        resource = Audios.DestroyClip(id, meta);
+                        resource = AudioClips.DestroyClip(id, meta);
                         break;
                     }
                 }
@@ -627,7 +650,9 @@ namespace EasyAssetStreaming {
                 return;
             }
 
-            // TODO: Check for loading manifest
+            long now = CurrentTimestamp();
+            Textures.CheckBudget(now);
+            AudioClips.CheckBudget(now);
 
             int loadFrame = s_LoadState.MaxPerFrame;
             while(s_LoadState.Queue.Count > 0 && loadFrame > 0) {
@@ -642,6 +667,7 @@ namespace EasyAssetStreaming {
                 }
 
                 if ((meta.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
+                    UnloadSingle(id, now, 0);
                     s_LoadState.Count--;
                     continue;
                 }
@@ -654,7 +680,7 @@ namespace EasyAssetStreaming {
                         break;
                     }
                     case AssetType.Audio: {
-                        Audios.StartLoading(id, meta);
+                        AudioClips.StartLoading(id, meta);
                         break;
                     }
                 }

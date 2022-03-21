@@ -18,6 +18,18 @@ namespace Aqua
 
         private Routine m_Anim;
 
+        private readonly Action OnLoadStart;
+        private readonly Action OnLoadEnd;
+
+        private HideOnSceneLoad() {
+            OnLoadStart = () => {
+                m_Anim.Replace(this, Fade(0, false));
+            };
+            OnLoadEnd = () => {
+                m_Anim.Replace(this, Fade(1, true));
+            };
+        }
+
         private void OnEnable()
         {
             Services.Events.Register(GameEvents.SceneWillUnload, OnLoadStart, this)
@@ -41,16 +53,6 @@ namespace Aqua
 
             Services.Events?.Deregister(GameEvents.SceneWillUnload, OnLoadStart)
                 .Deregister(GameEvents.SceneLoaded, OnLoadEnd);
-        }
-
-        private void OnLoadStart()
-        {
-            m_Anim.Replace(this, Fade(0, false));
-        }
-
-        private void OnLoadEnd()
-        {
-            m_Anim.Replace(this, Fade(1, true));
         }
 
         private IEnumerator Fade(float inAlpha, bool inbRaycasts)

@@ -40,7 +40,7 @@ namespace Aqua.Portable
         {
             base.OnShow(inbInstant);
 
-            Services.Data.SetVariable("portable:app", m_Id.ToString());
+            Script.WriteVariable("portable:app", m_Id.ToString());
             Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id);
         }
 

@@ -31,7 +31,6 @@ namespace Aqua
         }
 
         static private void OnClickUpgrade(PortableUpgradeIcon icon) {
-            Streaming.UnloadUnusedAsync(15);
             Script.PopupItemDetails(icon.Item);
         }
 
