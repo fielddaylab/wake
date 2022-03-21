@@ -35,11 +35,10 @@ $goto .argue.showClaim
 
 :: argue.giveUp
 {@kevin} OK. Get back to me when you're ready.
-$call ArgueUnload
-$call ArgueCancelClaim
+$call ArgueUnload()
+$call ArgueCancelClaim()
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
 {@kevin} This looks great!
