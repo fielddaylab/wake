@@ -1,24 +1,32 @@
 :: basePath job.arctic-underneath
 
 // INTRO
-
 :: start
 @trigger    JobStarted
 @cutscene
+$if HasUpgrade("Engine")
+{@kevin}    Get to {h}Site X{/h}, perhaps through {h}Site W{/h}, and count the species you find there.
+$else
+{@kevin}    If you want to stick around in {h}Site X{/h} long enough to scan the species there, you'll need an upgraded engine for the Sub.  
+$endif
 
-// write an intro to your job
-{@kevin}    This is the intro to the arctic-underneath job!
+:: getTheEngine
+@trigger    RequestPartnerHelp
+@when 		!HasUpgrade("Engine")
+@cutscene
+{@kevin}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @merchant} if he has something that can help us.
 
 // ARGUMENTATION
-
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete() // TODO: NAME ME
+@when   !ArgueIsComplete(siteXAnalysis) 
 @cutscene
-$call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
-// TODO: add your claim label to jobs.aqloc
-$call ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-		$call ArgueFactSlot() // TODO: put fact slot info here 
+{@profWhalen}   What have you found beneath the ice?
+$call ArgueLoad(siteXAnalysis) 
+$call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
+    $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
+    $call ArgueFactSlot(X_UnderTheIce.Population.GlassSponge)  
+    $call ArgueFactSlot(X_UnderTheIce.Population.NorthernSeaNettle)  
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
@@ -30,19 +38,18 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@kevin} Ok, that's interesting, but it's not answering my question.
+{@profWhalen} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@kevin} OK. Get back to me when you're ready.
-$call ArgueUnload
-$call ArgueCancelClaim
+{@profWhalen} OK. Get back to me when you're ready.
+$call ArgueUnload()
+$call ArgueCancelClaim()
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
-{@kevin} This looks great!
-{@kevin}    This is the conclusion to the arctic-underneath job!
+{@profWhalen}   Whoa! That's amazing! I wonder what they are doing down there! 
+                How are they living? What do they eat? Is there light? We need to get more information, stat!
 
 $call CompleteJob()
