@@ -9,8 +9,6 @@
 {@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 
-// ARGUMENTATION
-
 ::helpScanProbE
 @trigger    RequestPartnerHelp
 @when   scene:name == "RS-4W", JobTaskTop(getEnviornmentData)
@@ -24,6 +22,24 @@
 {@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
             I'm not sure what whales eat, so we might just have to count everything.
 
+::giveWhaleStress
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getEnviornmentData)
+@cutscene
+{@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
+$call GiveFact(BowheadWhale.Light.Stressed)
+$call GiveFact(BowheadWhale.PH.Stressed)
+$call GiveFact(BowheadWhale.Temperature.Stressed)
+
+::giveWhaleEat
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getPopulationData)
+@cutscene
+{@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
+$call GiveFact(BowheadWhale.Eats.Diatoms)
+$call GiveFact(BowheadWhale.Eats.IceAlgae)
+
+// ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(causeDeath)
@@ -37,13 +53,14 @@ $choose branch
 :: argue.foodClaim
 {@profWhalen}  What evidence do you have about the whale food supply? 
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
-	$call ArgueFactSlot(Urchin.Eats.BullKelp) 
+	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
+	$call ArgueFactSlot(BowheadWhale.Eats.Diatoms) 
 $goto .argue.showClaim
 
 :: argue.stressClaim
 {@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
-	$call ArgueFactSlot(Urchin.Light.Stressed) 
+	$call ArgueFactSlot(BowheadWhale.Light.Stressed) 
 	$call ArgueFactSlot(W_WhaleFall.Light) 
 $goto .argue.showClaim2
 
@@ -77,8 +94,10 @@ $call ArgueUnload()
 $call ArgueLoad(PopulationHistory)
 {@profWhalen}   How do you know that both populations were low?
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
-    $call ArgueFactSlot(UrchinBarren.PopulationHistory.Urchin) 
-    $call ArgueFactSlot(UrchinBarren.PopulationHistory.GiantKelp) 
+    $call ArgueFactSlot(W_WhaleFall.PopulationHistory.IceAlgae) 
+    $call ArgueFactSlot(W_WhaleFall.PopulationHistory.Diatoms) 
+    $call ArgueFactSlot(W_WhaleFall.Population.IceAlgae) 
+    $call ArgueFactSlot(W_WhaleFall.Population.Diatoms) 
 $goto .argue.showClaim3
 
 ::argue.transition
@@ -90,21 +109,24 @@ $goto .argue.foodClaim
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What facts might relate to Linda's {h}food supply{/h}?
 $goto .argue.showClaim
 
 :: argue.unrelated2
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What facts might relate to {h}stressors{/h} Linda's enviornment?
 $goto .argue.showClaim2
 
 :: argue.unrelated3
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What can you tell me about the populations of the creatures in Linda's diet?
 $goto .argue.showClaim3
 
 :: argue.giveUp
-{@kevin} OK. Get back to me when you're ready.
+{@profWhalen} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -114,5 +136,7 @@ $call ArgueUnload()
 $call ArgueComplete()
 {@profWhalen}   Ugh, whales sometimes get lured in by ice algae, but it becomes less available as summer comes. 
                 I bet she got stuck when the ice came in and couldn't get back to her pod.
+                I think this seems like a reasonable argument to explain Linda's death.
+                Thanks for all your hard work {nameof @player}!
 
 $call CompleteJob()
