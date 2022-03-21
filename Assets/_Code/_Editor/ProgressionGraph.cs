@@ -8,11 +8,9 @@ using System.Text.RegularExpressions;
 
 namespace Aqua.Editor {
     static public class ProgressionGraph {
-        private enum UnlockType {
-            Manual,
-            Visible
-        }
 
+        public const int ExpForShop = 35;
+        
         [MenuItem("Aqualab/Analysis/Generate Nodes File")]
         static private void GenerateProgressionSource() {
             JSON js = JSON.CreateObject();
@@ -60,9 +58,14 @@ namespace Aqua.Editor {
                 } else if (isAtNonDefaultStation) {
                     mapJSON["requires"].Add(GenerateAssetRef(obj.Parent().name));
                 } else if (obj.HasFlags(MapFlags.UnlockedByDefault)) {
-                    mapJSON["startWith"].AsBool = true;
+                    starting[obj.name].AsBool = true;
                 } else {
                     mapJSON["unlockType"].AsString = "manual";
+                }
+
+                if (obj.name == "Shop") {
+                    mapJSON["unlockType"].AsString = "auto";
+                    mapJSON["requires"].Add(GenerateAssetRef("Exp", ExpForShop));
                 }
 
                 root.Add(obj.name, mapJSON);
