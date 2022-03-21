@@ -1835,8 +1835,20 @@ MonoBehaviour:
         AliveMax: 8.4
         StressedMin: 7.5
         StressedMax: 8.9
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Mussel.Eats.Detritus
+        m_HashValue: 2190786629
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Mussel.Eats.Detritus.Stressed
+        m_HashValue: 785526168
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2719,8 +2731,32 @@ MonoBehaviour:
         AliveMax: 8.1
         StressedMin: 7.1
         StressedMax: 8.6
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Mussel
+        m_HashValue: 605356284
+      FactId:
+        m_Source: SeaStar.Eats.Mussel
+        m_HashValue: 1417120896
+    - TargetId:
+        m_Source: Urchin
+        m_HashValue: 1973276590
+      FactId:
+        m_Source: SeaStar.Eats.Urchin
+        m_HashValue: 2781245218
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Mussel
+        m_HashValue: 605356284
+      FactId:
+        m_Source: SeaStar.Eats.Mussel.Stressed
+        m_HashValue: 196855895
+    - TargetId:
+        m_Source: Urchin
+        m_HashValue: 1973276590
+      FactId:
+        m_Source: SeaStar.Eats.Urchin.Stressed
+        m_HashValue: 2579327025
     SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
@@ -3243,14 +3279,14 @@ MonoBehaviour:
         m_Source: GiantKelp
         m_HashValue: 3510470690
       FactId:
-        m_Source: Urchin.Eats.GiantKelp
-        m_HashValue: 3556196180
+        m_Source: Urchin.Eats.GiantKelp.Stressed
+        m_HashValue: 457965739
     - TargetId:
         m_Source: BullKelp
         m_HashValue: 3363669640
       FactId:
-        m_Source: Urchin.Eats.BullKelp
-        m_HashValue: 3905127850
+        m_Source: Urchin.Eats.BullKelp.Stressed
+        m_HashValue: 612834841
     SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
