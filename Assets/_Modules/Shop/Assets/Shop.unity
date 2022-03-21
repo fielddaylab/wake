@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2376,7 +2376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff09b0b9689b8a743896b388ea3e48e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Conditions: JobCompleted(arctic-missing-whale)
+  m_Conditions: HasEntity(X_UnderTheIce)
   m_ToShow:
   - {fileID: 1107922419}
   m_ToHide: []

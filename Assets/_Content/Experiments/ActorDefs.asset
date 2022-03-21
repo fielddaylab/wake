@@ -125,8 +125,56 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: ArcticCod.Eats.Diatoms
+        m_HashValue: 655963987
+    - TargetId:
+        m_Source: Copepod
+        m_HashValue: 1053183451
+      FactId:
+        m_Source: ArcticCod.Eats.Copepod
+        m_HashValue: 1119966444
+    - TargetId:
+        m_Source: GlacialAmphipod
+        m_HashValue: 304378836
+      FactId:
+        m_Source: ArcticCod.Eats.GlacialAmphipod
+        m_HashValue: 1674262179
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: ArcticCod.Eats.Diatoms
+        m_HashValue: 655963987
+    - TargetId:
+        m_Source: Copepod
+        m_HashValue: 1053183451
+      FactId:
+        m_Source: ArcticCod.Eats.Copepod
+        m_HashValue: 1119966444
+    - TargetId:
+        m_Source: GlacialAmphipod
+        m_HashValue: 304378836
+      FactId:
+        m_Source: ArcticCod.Eats.GlacialAmphipod
+        m_HashValue: 1674262179
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -143,6 +191,88 @@ MonoBehaviour:
       y: -0.115
       width: 0.5
       height: 0.2
+  - Id:
+      m_HashValue: 856578931
+    Type: {fileID: 11400000, guid: 7335fcbc595ea7e48831fa38eefec9bf, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 4.4444447
+        AliveMax: 27.777779
+        StressedMin: -10.555555
+        StressedMax: 42.77778
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 7.8
+        AliveMax: 8.3
+        StressedMin: 7.3
+        StressedMax: 8.8
+    AliveEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ArcticCopepod.Eats.IceAlgae
+        m_HashValue: 607461815
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: ArcticCopepod.Eats.Diatoms
+        m_HashValue: 2922309349
+    StressedEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ArcticCopepod.Eats.IceAlgae
+        m_HashValue: 607461815
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: ArcticCopepod.Eats.Diatoms
+        m_HashValue: 2922309349
+    SpawnCount: 10
+    IsPlant: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 3388301900
     Type: {fileID: 11400000, guid: 7583a8085d4a4804dbcaf904252eaf52, type: 2}
@@ -369,76 +499,6 @@ MonoBehaviour:
       width: 1.4787596
       height: 1.0185709
   - Id:
-      m_HashValue: 2063388242
-    Type: {fileID: 11400000, guid: 2dacf62c77b0d8d4c999c2240109088b, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnLocation: 0
-      SpawnAnimation: 0
-      AvoidTankSidesRadius: 1
-      AvoidTankTopBottomRadius: 1
-    Movement:
-      MoveType: 1
-      MovementIdleDistance: 1
-      MovementSpeed: 1
-      MovementCurve: 1
-      MovementInterval: 1.5
-      MovementIntervalRandom: 1
-    Eating:
-      EatType: 1
-      MovementMultiplier: 1
-    Stress:
-      MovementSpeedMultiplier: 0.8
-      MovementIntervalMultiplier: 0.9
-      AmbientAnimationSpeedMultiplier: 1
-    StateEvaluator:
-      Temperature:
-        AliveMin: 0.5555556
-        AliveMax: 4.4444447
-        StressedMin: -14.444445
-        StressedMax: 19.444445
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: 7.8
-        AliveMax: 8.3
-        StressedMin: 7.3
-        StressedMax: 8.8
-    AliveEatTargets:
-    - TargetId:
-        m_Source: Diatoms
-        m_HashValue: 1229737088
-      FactId:
-        m_Source: BowheadWhale.Eats.Diatoms
-        m_HashValue: 2996010258
-    StressedEatTargets:
-    - TargetId:
-        m_Source: Diatoms
-        m_HashValue: 1229737088
-      FactId:
-        m_Source: BowheadWhale.Eats.Diatoms
-        m_HashValue: 2996010258
-    SpawnCount: 10
-    IsPlant: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
-    EatOffsetRange:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-    LocalBoundsRect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-  - Id:
       m_HashValue: 1315630147
     Type: {fileID: 11400000, guid: 30885595da21ef14ea35cb2f0f2bb8ba, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 94ef4961ff022ee4b87112c87464b2d3,
@@ -479,8 +539,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: BristleWorm.Eats.Detritus
+        m_HashValue: 3224749134
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: BristleWorm.Eats.Detritus
+        m_HashValue: 3224749134
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -655,8 +727,32 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ChinookSalmon.Eats.IceAlgae
+        m_HashValue: 664895430
+    - TargetId:
+        m_Source: Clione
+        m_HashValue: 1162365859
+      FactId:
+        m_Source: ChinookSalmon.Eats.Clione
+        m_HashValue: 1154228141
+    StressedEatTargets:
+    - TargetId:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      FactId:
+        m_Source: ChinookSalmon.Eats.IceAlgae
+        m_HashValue: 664895430
+    - TargetId:
+        m_Source: Clione
+        m_HashValue: 1162365859
+      FactId:
+        m_Source: ChinookSalmon.Eats.Clione
+        m_HashValue: 1154228141
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -773,8 +869,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: Copepod.Eats.Diatoms
+        m_HashValue: 1712894733
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: Copepod.Eats.Diatoms
+        m_HashValue: 1712894733
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -1387,8 +1495,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Hagfish.Eats.Detritus
+        m_HashValue: 626193164
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: Hagfish.Eats.Detritus
+        m_HashValue: 626193164
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2059,8 +2179,44 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: AstarteBorealis
+        m_HashValue: 3388301900
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.AstarteBorealis
+        m_HashValue: 1670148971
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.Detritus
+        m_HashValue: 2213585512
+    - TargetId:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.SnowCrab
+        m_HashValue: 3968036041
+    StressedEatTargets:
+    - TargetId:
+        m_Source: AstarteBorealis
+        m_HashValue: 3388301900
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.AstarteBorealis
+        m_HashValue: 1670148971
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.Detritus
+        m_HashValue: 2213585512
+    - TargetId:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      FactId:
+        m_Source: NorthAtlanticOctopus.Eats.SnowCrab
+        m_HashValue: 3968036041
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2661,8 +2817,32 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      FactId:
+        m_Source: SalmonShark.Eats.ArcticCod
+        m_HashValue: 656276837
+    - TargetId:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      FactId:
+        m_Source: SalmonShark.Eats.ChinookSalmon
+        m_HashValue: 3447061902
+    StressedEatTargets:
+    - TargetId:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      FactId:
+        m_Source: SalmonShark.Eats.ArcticCod
+        m_HashValue: 656276837
+    - TargetId:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      FactId:
+        m_Source: SalmonShark.Eats.ChinookSalmon
+        m_HashValue: 3447061902
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -3155,8 +3335,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: SnowCrab.Eats.Detritus
+        m_HashValue: 847979829
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: SnowCrab.Eats.Detritus
+        m_HashValue: 847979829
     SpawnCount: 8
     IsPlant: 0
     TargetLimit: 1
@@ -3661,8 +3853,20 @@ MonoBehaviour:
         AliveMax: 8.35
         StressedMin: 7.5
         StressedMax: 8.85
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: ZombieWorm.Eats.Detritus
+        m_HashValue: 24994937
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      FactId:
+        m_Source: ZombieWorm.Eats.Detritus
+        m_HashValue: 24994937
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
