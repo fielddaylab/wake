@@ -75,7 +75,7 @@ namespace ProtoAqua.Observation
             if (bHasFlashlight)
                 itemCount++;
 
-            if (itemCount < 2)
+            if (itemCount < 2 && !bHasSecondary)
             {
                 Hide();
                 return;

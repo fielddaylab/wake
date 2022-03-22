@@ -107,7 +107,9 @@ namespace ProtoAqua.Observation {
             ScannableRegion region;
             for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
                 region = m_RegionsInRange[i];
-                region.CurrentIcon.transform.position = region.TrackTransform.position;
+                if (region.CurrentIcon) {
+                    region.CurrentIcon.transform.position = region.TrackTransform.position;
+                }
             }
         }
 
@@ -316,7 +318,7 @@ namespace ProtoAqua.Observation {
             if (!inCollider)
                 return;
 
-            ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
+            ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>(true);
             if (region != null) {
                 ExitRange(region);
             }

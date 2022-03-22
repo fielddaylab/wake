@@ -26,6 +26,7 @@ namespace ProtoAqua.Observation {
 
         public void Enable() {
             m_FlashlightRoot.SetActive(true);
+            
         }
 
         public Vector3? GetTargetPosition(bool inbOnGamePlane) {

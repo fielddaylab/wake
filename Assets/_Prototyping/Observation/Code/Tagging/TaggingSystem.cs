@@ -385,9 +385,9 @@ namespace ProtoAqua.Observation {
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
 
             RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();
-            foreach (var critter in FindObjectsOfType<TaggableCritter>()) {
+            SceneHelper.ActiveScene().Scene.ForEachComponent<TaggableCritter>(true, (scn, critter) => {
                 FindManifest(entries, critter.CritterId).TotalInScene++;
-            }
+            });
             for(int i = 0; i < entries.Count; i++) {
                 ref TaggingManifest manifest = ref entries[i];
                 manifest.Required = (ushort) (manifest.TotalInScene * FindProportion(manifest.Id, m_DefaultTagProportion, m_CritterProportionOverrides));

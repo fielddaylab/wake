@@ -1,61 +1,61 @@
+using System;
 using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua {
-    public sealed class ActiveGroup : MonoBehaviour {
-        public GameObject[] GameObjects;
-        public Behaviour[] Behaviours;
+    [Serializable]
+    public sealed class ActiveGroup {
+        public GameObject[] GameObjects = Array.Empty<GameObject>();
+        public Behaviour[] Behaviours = Array.Empty<Behaviour>();
 
-        public bool SetActive(bool active) {
-            if (gameObject.activeSelf == active) {
+        [NonSerialized] public bool Active;
+
+        public bool Activate() {
+            if (Active) {
                 return false;
             }
 
-            gameObject.SetActive(active);
-            return true;
-        }
+            Active = true;
 
-        private void OnEnable() {
             foreach(var go in GameObjects) {
                 go.SetActive(true);
             }
             foreach(var b in Behaviours) {
                 b.enabled = true;
             }
+
+            return true;
         }
 
-        private void OnDisable() {
-            foreach(var b in Behaviours) {
-                b.enabled = false;
+        public bool Deactivate() {
+            if (!Active) {
+                return false;
             }
+
+            Active = false;
+
             foreach(var go in GameObjects) {
                 go.SetActive(false);
             }
-        }
-
-        #if UNITY_EDITOR
-
-        private void OnValidate() {
-            for(int i = Behaviours.Length - 1; i >= 0; i--) {
-                if (Behaviours[i] == this) {
-                    Log.Warn("[ActiveGroup] Cannot include this behaviour or a parent transform in group");
-                    ArrayUtils.RemoveAt(ref Behaviours, i);
-                }
+            foreach(var b in Behaviours) {
+                b.enabled = false;
             }
 
-            for(int i = GameObjects.Length - 1; i >= 0; i--) {
-                if (GameObjects[i] == gameObject || IsSelfOrParent(GameObjects[i].transform, transform)) {
-                    Log.Warn("[ActiveGroup] Cannot include this gameObject or a parent GameObject in group");
-                    ArrayUtils.RemoveAt(ref GameObjects, i);
-                }
+            return true;
+        }
+
+        public bool SetActive(bool active) {
+            return active ? Activate() : Deactivate();
+        }
+
+        public void ForceActive(bool active) {
+            Active = !active;
+            if (active) {
+                Activate();
+            } else {
+                Deactivate();
             }
         }
-
-        static private bool IsSelfOrParent(Transform parent, Transform here) {
-            return parent == here || here.IsChildOf(parent);
-        }
-
-        #endif // UNITY_EDITOR
     }
 }
