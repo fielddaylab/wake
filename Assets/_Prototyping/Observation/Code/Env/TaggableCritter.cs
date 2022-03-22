@@ -1,59 +1,59 @@
 using System;
-using UnityEngine;
-using BeauUtil;
-using Aqua.Scripting;
 using Aqua;
+using Aqua.Entity;
+using Aqua.Scripting;
+using BeauUtil;
 using ScriptableBake;
+using UnityEngine;
 
-namespace ProtoAqua.Observation
-{
-    public class TaggableCritter : ScriptComponent, IBaked
-    {
+namespace ProtoAqua.Observation {
+    public class TaggableCritter : ScriptComponent, IBaked {
+
         #region Inspector
 
         [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 CritterId;
         [Required] public Collider2D Collider;
+        [Required] public Visual2DTransform ColliderPosition;
         public Transform TrackTransform;
-
-        public float ColliderRadius;
-
-        [HideInInspector] public ScannableRegion Scannable;
 
         #endregion // Inspector
 
-        private void OnEnable()
-        {
+        [NonSerialized] public bool WasTagged;
+
+        private void Awake() {
+            ColliderPosition.Source = TrackTransform ? TrackTransform : transform;
+        }
+
+        private void OnEnable() {
             ScanSystem.Find<TaggingSystem>().Register(this);
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             if (!Services.Valid || !Collider) {
                 return;
             }
-            
             ScanSystem.Find<TaggingSystem>()?.Deregister(this);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
-        private void Reset()
-        {
+        private void Reset() {
             TrackTransform = transform;
+        }
+
+        private void OnValidate() {
+            ColliderPosition = Collider.GetComponent<Visual2DTransform>();
         }
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
-        {
+        bool IBaked.Bake(BakeFlags flags) {
             if (!TrackTransform)
                 TrackTransform = transform;
 
-            ColliderRadius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
-            Scannable = GetComponent<ScannableRegion>();
             return true;
         }
 
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
     }
 }

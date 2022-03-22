@@ -5,6 +5,7 @@ using BeauRoutine;
 using System.Collections;
 using Aqua;
 using BeauPools;
+using Aqua.Entity;
 
 namespace ProtoAqua.Observation
 {
@@ -63,6 +64,7 @@ namespace ProtoAqua.Observation
 
             m_ScannerOn = true;
             m_ScanEnableRoutine.Replace(this, TurnOnAnim());
+            Visual2DSystem.Activate(GameLayers.Scannable_Mask);
         }
 
         public void Disable()
@@ -74,6 +76,7 @@ namespace ProtoAqua.Observation
             Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             m_ScannerOn = false;
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
+            Visual2DSystem.Deactivate(GameLayers.Scannable_Mask);
         }
 
         #endregion // State
@@ -103,7 +106,7 @@ namespace ProtoAqua.Observation
                 if (inInput.UseHold && inInput.Mouse.Target.HasValue)
                 {
                     Vector2 mousePos = inInput.Mouse.Target.Value;
-                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.ScannableClick_Mask);
+                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
                     Collider2D closest = ScoringUtils.GetMinElement(m_ColliderBuffer, 0, overlappingColliders, (c) => {
                         Vector3 pos = c.transform.position;
                         return Vector2.SqrMagnitude((Vector2) pos - mousePos) + pos.z;

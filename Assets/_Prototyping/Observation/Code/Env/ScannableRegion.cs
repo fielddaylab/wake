@@ -1,54 +1,44 @@
 using System;
-using UnityEngine;
-using BeauUtil;
-using Aqua.Scripting;
 using Aqua;
+using Aqua.Entity;
+using Aqua.Scripting;
+using BeauUtil;
 using ScriptableBake;
+using UnityEngine;
 
-namespace ProtoAqua.Observation
-{
-    public class ScannableRegion : ScriptComponent, IBaked
-    {
+namespace ProtoAqua.Observation {
+    public class ScannableRegion : ScriptComponent, IBaked {
         #region Inspector
 
         public SerializedHash32 ScanId;
         [Required] public Collider2D Collider;
-        [Required] public Collider2D ClickCollider;
+        [Required] public Visual2DTransform ColliderPosition;
         public Transform TrackTransform;
-        [AutoEnum] public ScannableStatusFlags Required;
 
         #endregion // Inspector
 
         public ScanData ScanData;
-        [NonSerialized] public ScannableStatusFlags Current;
         [NonSerialized] public ScanIcon CurrentIcon;
         [NonSerialized] public bool CanScan;
 
-        [NonSerialized] public int FlashlightCollisionTracker = 0;
-
-        private void OnEnable()
-        {
-            ScanSystem.Find<ScanSystem>().Register(this);
-        }
-
-        private void OnDisable()
-        {
-            ScanSystem.Find<ScanSystem>()?.Deregister(this);
+        private void Awake() {
+            ColliderPosition.Source = TrackTransform ? TrackTransform : transform;
         }
 
         #if UNITY_EDITOR
 
-        private void Reset()
-        {
+        private void Reset() {
             TrackTransform = transform;
+        }
+
+        private void OnValidate() {
+            ColliderPosition = Collider.GetComponent<Visual2DTransform>();
         }
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
-        {
-            if (!TrackTransform)
-            {
+        bool IBaked.Bake(BakeFlags flags) {
+            if (!TrackTransform) {
                 TrackTransform = transform;
                 return true;
             }
@@ -57,12 +47,5 @@ namespace ProtoAqua.Observation
         }
 
         #endif // UNITY_EDITOR
-    }
-
-    [Flags]
-    public enum ScannableStatusFlags {
-        [Hidden] InRange = 0x01,
-        Flashlight = 0x02,
-        Microscope = 0x04
     }
 }

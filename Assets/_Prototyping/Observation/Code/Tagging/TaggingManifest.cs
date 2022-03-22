@@ -13,11 +13,11 @@ using Aqua.Profile;
 
 namespace ProtoAqua.Observation
 {
-    public struct TaggingProgress
+    [Serializable]
+    public struct TaggingManifest
     {
         public StringHash32 Id;
         public ushort TotalInScene;
-        public ushort Tagged;
-        public Fraction16 Proportion;
+        public ushort Required;
     }
 }

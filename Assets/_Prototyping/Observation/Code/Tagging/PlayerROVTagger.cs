@@ -4,6 +4,7 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using Aqua;
+using Aqua.Entity;
 
 namespace ProtoAqua.Observation
 {
@@ -52,6 +53,7 @@ namespace ProtoAqua.Observation
             m_On = true;
             m_EnableRoutine.Replace(this, TurnOnAnim());
             Services.UI.FindPanel<TaggingUI>().Show();
+            Visual2DSystem.Activate(GameLayers.CritterTag_Mask);
         }
 
         public void Disable()
@@ -62,6 +64,7 @@ namespace ProtoAqua.Observation
             m_On = false;
             m_EnableRoutine.Replace(this, TurnOffAnim());
             Services.UI?.FindPanel<TaggingUI>()?.Hide();
+            Visual2DSystem.Deactivate(GameLayers.CritterTag_Mask);
         }
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity)

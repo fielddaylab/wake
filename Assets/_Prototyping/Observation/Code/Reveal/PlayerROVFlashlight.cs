@@ -2,7 +2,7 @@ using Aqua;
 using UnityEngine;
 
 namespace ProtoAqua.Observation {
-    public sealed class PlayerROVMicroscope : MonoBehaviour, PlayerROV.ITool {
+    public sealed class PlayerROVFlashlight : MonoBehaviour, PlayerROV.ITool {
         #region Inspector
 
         [SerializeField] private GameObject m_FlashlightRoot = null;
@@ -43,20 +43,23 @@ namespace ProtoAqua.Observation {
         #endregion // ITool
 
         private void HandleEnter(Collider2D inCollider) {
-            ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
-            if (region != null) {
-                region.Current |= ScannableStatusFlags.Microscope;
-            }
+            // ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
+            // if (region != null) {
+            //     region.FlashlightCollisionTracker++;
+            //     region.Current |= ScannableStatusFlags.Flashlight;
+            // }
         }
 
         private void HandleExit(Collider2D inCollider) {
             if (!inCollider)
                 return;
 
-            ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
-            if (region != null) {
-                region.Current &= ~ScannableStatusFlags.Microscope;
-            }
+            // ScannableRegion region = inCollider.GetComponentInParent<ScannableRegion>();
+            // if (region != null) {
+            //     if (--region.FlashlightCollisionTracker == 0) {
+            //         region.Current &= ~ScannableStatusFlags.Flashlight;
+            //     }
+            // }
         }
     }
 }

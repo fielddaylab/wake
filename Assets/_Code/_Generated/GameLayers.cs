@@ -52,10 +52,6 @@ static public class GameLayers
 	public const int Flashlight_Index = 15;
 	public const int Flashlight_Mask = 32768;
 
-	// Layer 16: ScannableClick
-	public const int ScannableClick_Index = 16;
-	public const int ScannableClick_Mask = 65536;
-
 	// Layer 29: Solid
 	public const int Solid_Index = 29;
 	public const int Solid_Mask = 536870912;
