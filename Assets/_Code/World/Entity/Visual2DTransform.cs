@@ -12,6 +12,7 @@ namespace Aqua.Entity {
         [Required] public Transform Source;
         public Collider2D Collider;
         public LayerMask UpdateMask;
+        public float Radius;
 
         #endregion // Inspector
 
@@ -107,7 +108,12 @@ namespace Aqua.Entity {
                 return false;
             }
 
-            return Ref.Replace(ref Collider, GetComponent<Collider2D>());
+            if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {
+                Radius = PhysicsUtils.GetRadius(Collider);
+                return true;
+            }
+
+            return false;
         }
 
         #endif // UNITY_EDITOR
@@ -116,5 +122,5 @@ namespace Aqua.Entity {
     }
 
     public delegate void Visual2DActivateDeactivateDelegate(Visual2DTransform transform);
-    public delegate Vector3 Visual2DPositionDelegate(Visual2DTransform transform, Vector3 position);
+    public delegate Vector3 Visual2DPositionDelegate(Visual2DTransform transform, Vector3 position, in CameraService.PlanePositionHelper positionHelper, out float scale);
 }

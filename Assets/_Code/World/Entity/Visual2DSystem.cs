@@ -38,14 +38,18 @@ namespace Aqua.Entity {
         }
 
         private bool UpdateTransform(Visual2DTransform transform, UpdateArgs updateArgs) {
-            Vector3 position = updateArgs.PositionCast.CastToPlane(transform.Source, out float scale);
+            Vector3 position;
+            float scale;
             if (transform.CustomPosition != null) {
-                position = transform.CustomPosition(transform, position);
+                position = transform.CustomPosition(transform, transform.LastKnownPosition, updateArgs.PositionCast, out scale);
+            } else {
+                position = updateArgs.PositionCast.CastToPlane(transform.Source, out scale);
             }
+            
             transform.WritePosition(updateArgs.FrameIndex, position, scale);
 
             Vector2 dist = (Vector2) position - updateArgs.CenterPos;
-            return dist.sqrMagnitude < m_RadiusSq;
+            return dist.sqrMagnitude < (m_RadiusSq + (transform.Radius * transform.Radius));
         }
 
         static private void UpdateActive(Visual2DTransform transform, UpdateArgs updateArgs) {

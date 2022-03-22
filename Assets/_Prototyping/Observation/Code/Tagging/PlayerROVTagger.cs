@@ -5,6 +5,7 @@ using BeauRoutine;
 using System.Collections;
 using Aqua;
 using Aqua.Entity;
+using Aqua.Character;
 
 namespace ProtoAqua.Observation
 {
@@ -45,7 +46,7 @@ namespace ProtoAqua.Observation
             return m_On;
         }
 
-        public void Enable()
+        public void Enable(PlayerBody inBody)
         {
             if (m_On)
                 return;
@@ -67,7 +68,7 @@ namespace ProtoAqua.Observation
             Visual2DSystem.Deactivate(GameLayers.CritterTag_Mask);
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;
@@ -103,9 +104,8 @@ namespace ProtoAqua.Observation
             return false;
         }
 
-        public Vector3? GetTargetPosition(bool inbOnGamePlane)
-        {
-            return null;
+        public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
+            outWorld = outCursor = null;
         }
 
         #endregion // State

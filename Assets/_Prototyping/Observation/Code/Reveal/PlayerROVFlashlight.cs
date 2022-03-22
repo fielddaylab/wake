@@ -1,4 +1,5 @@
 using Aqua;
+using Aqua.Character;
 using Aqua.Entity;
 using BeauUtil;
 using UnityEngine;
@@ -27,20 +28,20 @@ namespace ProtoAqua.Observation {
             Visual2DSystem.Deactivate(GameLayers.Flashlight_Mask);
         }
 
-        public void Enable() {
+        public void Enable(PlayerBody inBody) {
             m_FlashlightRoot.SetActive(true);
             Visual2DSystem.Activate(GameLayers.Flashlight_Mask);
         }
 
-        public Vector3? GetTargetPosition(bool inbOnGamePlane) {
-            return null;
+        public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
+            outWorld = outCursor = null;
         }
 
         public bool HasTarget() {
             return false;
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity) {
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
         }
 
@@ -58,7 +59,7 @@ namespace ProtoAqua.Observation {
         }
 
         private void HandleExit(Collider2D inCollider) {
-            if (!inCollider)
+            if (!inCollider || !Services.Valid)
                 return;
 
             FlashlightRegion region = inCollider.GetComponentInParent<FlashlightRegion>(true);

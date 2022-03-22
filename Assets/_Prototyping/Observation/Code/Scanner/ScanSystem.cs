@@ -108,7 +108,10 @@ namespace ProtoAqua.Observation {
             for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
                 region = m_RegionsInRange[i];
                 if (region.CurrentIcon) {
-                    region.CurrentIcon.transform.position = region.TrackTransform.position;
+                    Transform iconRoot = region.IconRootOverride;
+                    if (!iconRoot)
+                        iconRoot = region.TrackTransform;
+                    region.CurrentIcon.transform.position = iconRoot.position;
                 }
             }
         }
@@ -342,6 +345,8 @@ namespace ProtoAqua.Observation {
             } else {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.UnscannedLineColor, config.NodeConfig.UnscannedFillColor);
             }
+
+            inRegion.CurrentIcon.SetMicroscope(inRegion.InMicroscope);
         }
 
         #endregion // Callbacks

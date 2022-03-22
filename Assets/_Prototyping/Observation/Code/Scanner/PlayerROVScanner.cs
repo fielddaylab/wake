@@ -6,6 +6,7 @@ using System.Collections;
 using Aqua;
 using BeauPools;
 using Aqua.Entity;
+using Aqua.Character;
 
 namespace ProtoAqua.Observation
 {
@@ -37,7 +38,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
 
-        [NonSerialized] private Collider2D[] m_ColliderBuffer = new Collider2D[8];
+        [NonSerialized] private readonly Collider2D[] m_ColliderBuffer = new Collider2D[16];
 
         #region Unity Events
 
@@ -57,7 +58,7 @@ namespace ProtoAqua.Observation
             return m_ScannerOn;
         }
 
-        public void Enable()
+        public void Enable(PlayerBody inBody)
         {
             if (m_ScannerOn)
                 return;
@@ -83,7 +84,7 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity)
+        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
             m_LastKnownSpeed = inVelocity.magnitude;
 
@@ -106,28 +107,40 @@ namespace ProtoAqua.Observation
                 if (inInput.UseHold && inInput.Mouse.Target.HasValue)
                 {
                     Vector2 mousePos = inInput.Mouse.Target.Value;
-                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.Scannable_Mask);
-                    Collider2D closest = ScoringUtils.GetMinElement(m_ColliderBuffer, 0, overlappingColliders, (c) => {
-                        Vector3 pos = c.transform.position;
-                        return Vector2.SqrMagnitude((Vector2) pos - mousePos) + pos.z;
-                    });
-                    Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
+                    Collider2D microscope = Physics2D.OverlapCircle(mousePos, m_ScanRange, GameLayers.ScanClickBlock_Mask);
+                    bool inMicroscope = microscope;
+                    int overlappingColliders = Physics2D.OverlapCircleNonAlloc(mousePos, m_ScanRange, m_ColliderBuffer, GameLayers.ScanClick_Mask);
 
-                    bool bFound = false;
-                    if (closest != null)
-                    {
-                        ScannableRegion scannable = closest.GetComponentInParent<ScannableRegion>();
-                        if (scannable != null && scannable.isActiveAndEnabled && scannable.CanScan)
-                        {
-                            bFound = true;
-                            StartScan(scannable, inInput.Mouse.Target.Value);
-                            return true;
+                    ScannableRegion closestScan = null, scan;
+                    float minScore = float.MaxValue, score;
+                    Vector3 pos;
+                    bool blockedByMicroscope;
+                    for(int i = 0; i < overlappingColliders; i++) {
+                        scan = m_ColliderBuffer[i].GetComponentInParent<ScannableRegion>();
+
+                        blockedByMicroscope = scan && inMicroscope && !scan.InMicroscope;
+                        if (!scan || !scan.isActiveAndEnabled || !scan.CanScan || blockedByMicroscope)  {
+                            continue;
+                        }
+
+                        pos = m_ColliderBuffer[i].transform.position;
+                        score = Vector2.SqrMagnitude((Vector2) pos - mousePos) + pos.z;
+
+                        if (score < minScore) {
+                            minScore = score;
+                            closestScan = scan;
                         }
                     }
-                    if (!bFound)
+
+                    Array.Clear(m_ColliderBuffer, 0, overlappingColliders);
+
+                    if (closestScan != null)
                     {
-                        Services.UI.FindPanel<ScannerDisplay>().Hide();
+                        StartScan(closestScan, inInput.Mouse.Target.Value);
+                        return true;
                     }
+
+                    Services.UI.FindPanel<ScannerDisplay>().Hide();
                 }
 
                 return false;
@@ -139,17 +152,17 @@ namespace ProtoAqua.Observation
             return m_TargetScannable != null;
         }
 
-        public Vector3? GetTargetPosition(bool inbOnGamePlane)
-        {
-            if (m_TargetScannable != null && m_TargetScannable.isActiveAndEnabled)
-            {
-                if (inbOnGamePlane)
-                    return m_TargetScannable.Collider.transform.position;
-                else
-                    return m_TargetScannable.transform.position;
-            }
+        public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
+            outWorld = outCursor = null;
 
-            return null;
+            if (m_TargetScannable != null && m_TargetScannable.isActiveAndEnabled) {
+                if (inbOnGamePlane)
+                    outWorld = m_TargetScannable.Collider.transform.position;
+                else
+                    outWorld = m_TargetScannable.transform.position;
+
+                outCursor = m_TargetScannable.Click.transform.position;
+            }
         }
 
         private void StartScan(ScannableRegion inRegion, Vector2 inStartPos)

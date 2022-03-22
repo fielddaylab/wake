@@ -12,12 +12,14 @@ namespace ProtoAqua.Observation
         [SerializeField] private ToolButton m_TaggerButton = null;
         [SerializeField] private GameObject m_Divider = null;
         [SerializeField] private ToolButton m_FlashlightButton = null;
+        [SerializeField] private ToolButton m_MicroscopeButton = null;
 
         protected override void Awake()
         {
             m_ScannerButton.Toggle.onValueChanged.AddListener((b) => { if (b) OnToolSelected(PlayerROV.ToolId.Scanner); });
             m_TaggerButton.Toggle.onValueChanged.AddListener((b) => { if (b) OnToolSelected(PlayerROV.ToolId.Tagger); });
             m_FlashlightButton.Toggle.onValueChanged.AddListener((b) => { OnToolToggled(PlayerROV.ToolId.Flashlight, b); });
+            m_MicroscopeButton.Toggle.onValueChanged.AddListener((b) => { OnToolToggled(PlayerROV.ToolId.Microscope, b); });
 
             Services.Events.Register<PlayerROV.ToolState>(PlayerROV.Event_ToolSwitched, OnToolSwitched, this);
             Services.Events.Register(GameEvents.InventoryUpdated, RefreshItemList, this);
@@ -55,6 +57,10 @@ namespace ProtoAqua.Observation
                 case PlayerROV.ToolId.Flashlight:
                     m_FlashlightButton.Toggle.SetIsOnWithoutNotify(state.Active);
                     break;
+
+                case PlayerROV.ToolId.Microscope:
+                    m_MicroscopeButton.Toggle.SetIsOnWithoutNotify(state.Active);
+                    break;
             }
         }
 
@@ -63,9 +69,10 @@ namespace ProtoAqua.Observation
             bool bHasScanner = Save.Inventory.HasUpgrade(ItemIds.ROVScanner);
             bool bHasTagger = Save.Inventory.HasUpgrade(ItemIds.ROVTagger);
             bool bHasFlashlight = Save.Inventory.HasUpgrade(ItemIds.Flashlight);
+            bool bHasMicroscope = Save.Inventory.HasUpgrade(ItemIds.Microscope);
 
             bool bHasPrimary = bHasScanner || bHasTagger;
-            bool bHasSecondary = bHasFlashlight;
+            bool bHasSecondary = bHasFlashlight || bHasMicroscope;
             
             int itemCount = 0;
             if (bHasScanner)
@@ -73,6 +80,8 @@ namespace ProtoAqua.Observation
             if (bHasTagger)
                 itemCount++;
             if (bHasFlashlight)
+                itemCount++;
+            if (bHasMicroscope)
                 itemCount++;
 
             if (itemCount < 2 && !bHasSecondary)
@@ -85,6 +94,7 @@ namespace ProtoAqua.Observation
             m_ScannerButton.gameObject.SetActive(bHasScanner);
             m_TaggerButton.gameObject.SetActive(bHasTagger);
             m_FlashlightButton.gameObject.SetActive(bHasFlashlight);
+            m_MicroscopeButton.gameObject.SetActive(bHasMicroscope);
 
             m_Divider.SetActive(bHasPrimary && bHasSecondary);
         }

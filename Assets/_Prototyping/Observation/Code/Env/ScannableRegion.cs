@@ -12,11 +12,14 @@ namespace ProtoAqua.Observation {
 
         [Header("Scannable")]
         public SerializedHash32 ScanId;
+        public Visual2DTransform Click;
+        public Transform IconRootOverride;
 
         #endregion // Inspector
 
         public ScanData ScanData;
         [NonSerialized] public ScanIcon CurrentIcon;
         [NonSerialized] public bool CanScan;
+        [NonSerialized] public bool InMicroscope;
     }
 }
