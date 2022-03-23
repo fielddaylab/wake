@@ -253,67 +253,8 @@ namespace ProtoAqua.Observation {
 
             DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}/{3}", manifest.Id, m_TagCounts[idx], manifest.Required, manifest.TotalInScene);
 
-<<<<<<< HEAD
-        private bool AttemptTag(TaggableCritter inCritter)
-        {
-            if (IsUnfinished(inCritter.CritterId) && m_TaggedCritterObjects.Add(inCritter))
-            {
-                inCritter.Collider.enabled = false;
-                m_RemainingCrittersReady.FastRemove(inCritter);
-
-                VFX effect = m_EffectPool.Alloc(inCritter.transform.position, Quaternion.identity, false);
-                effect.Sprite.SetAlpha(1);
-                effect.Transform.SetScale(0, Axis.XY);
-                effect.Animation = Routine.Start(effect, PlayEffect(effect));
-
-                Services.Audio.PostEvent("dive.critterTagged");
-
-                int idx = IndexOfCategory(inCritter.CritterId);
-                Assert.True(idx >= 0, "Critter Id '{0}' is not being tracked for some reason", inCritter.CritterId);
-                ref var category = ref m_CritterTypes[idx];
-                category.Tagged++;
-                
-                DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
-
-                ushort required = (ushort) (category.TotalInScene * category.Proportion);
-                if (category.Tagged >= required)
-                {
-                    var cachedCategory = category;
-
-                    m_SiteData.TaggedCritters.Add(inCritter.CritterId);
-                    m_CritterTypes.FastRemoveAt(idx);
-                    m_SiteData.OnChanged();
-                    Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
-
-                    DeregisterAll(inCritter.CritterId, true);
-
-                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id);
-
-                    #if UNITY_EDITOR
-                    Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
-                    #elif DEVELOPMENT
-                    if (!population)
-                    {
-                        Log.Error("[TaggingSystem] No population fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
-                        Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
-                        return true;
-                    }
-                    #endif // UNITY_EDITOR
-
-                    m_BestiaryData.RegisterFact(population.Id);
-                    m_FactDisplayQueue.PushBack(population.Id);
-                    if (!m_QueueProcessor)
-                    {
-                        m_QueueProcessor = Routine.Start(this, DisplayModelQueue());
-                        m_QueueProcessor.Tick();
-                    }
-                }
-
-                Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
-=======
             if (m_TagCounts[idx] < manifest.Required) {
                 Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
->>>>>>> 142848f364be11b444f69f9562d6f14bd7e267b1
                 return true;
             }
 

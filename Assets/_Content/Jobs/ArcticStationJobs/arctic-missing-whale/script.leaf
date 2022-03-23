@@ -26,7 +26,7 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 
 :: enterScene
 @trigger    SceneStart
-@when       scene:name == "RS-4W"
+@when       scene:name == "RS-4W", JobStartedOrComplete(arctic-missing-whale)
 @once
 @cutscene
 {@kevin}	Look's like we're picking up a faint signal. The tracker is definitley here.
@@ -54,10 +54,11 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 :: gotScans
 @trigger    JobTasksUpdated
 @once
-@when 		HasEntity(WhaleTracker), HasFact(W_WhaleFall.Population.WhaleTracker), HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
+@when 		HasEntity(WhaleTracker), HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
+$set jobs:arctic-missing-whale.foundWhale = 1
 {@kevin} Looks like we were able to find her...
-{@kevin} Let's head back and let Professor Whalen know.
+         Let's head back and let Professor Whalen know.
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
