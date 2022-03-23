@@ -852,6 +852,8 @@ Player starts an experiment with a given tank type.
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
 | critters | Comma separated list of all critters added to the tank |
+| stabilizer_enabled | Bit value for stabilizer enabled in measurement tank (0 = false, 1 = true, default to 1) |
+| stabilizer_enabled | Bit value for auto feeder enabled in measurement tank (0 = false, 1 = true, default to 0) |
 
 <a name="end_experiment"/>
 
@@ -869,6 +871,8 @@ Player ends the current experiment.
 | tank_type | Selected tank type for the experiment |
 | environment | Selected environment for the experiment |
 | critters | Comma separated list of all critters added to the tank |
+| stabilizer_enabled | Bit value for stabilizer enabled in measurement tank (0 = false, 1 = true, default to 1) |
+| stabilizer_enabled | Bit value for auto feeder enabled in measurement tank (0 = false, 1 = true, default to 0) |
 
 <a name="Argumentation"/>
 
