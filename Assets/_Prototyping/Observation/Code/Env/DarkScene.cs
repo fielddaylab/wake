@@ -15,10 +15,12 @@ namespace ProtoAqua.Observation {
 
         public bool Bake(BakeFlags flags) {
             SceneHelper.ActiveScene().Scene.ForEachComponent<ScannableRegion>(true, (scn, scan) => {
-                var existing = scan.transform.parent.GetComponentInChildren<FlashlightRegion>(true);
-                if (existing) {
-                    if (!ArrayUtils.Contains(existing.Reveal.GameObjects, scan.gameObject)) {
-                        ArrayUtils.Add(ref existing.Reveal.GameObjects, scan.gameObject);
+                var existingMicroscope = scan.transform.parent.GetComponentInChildren<MicroscopeRegion>(true);
+                var existingFlashlight = scan.transform.parent.GetComponentInChildren<FlashlightRegion>(true); 
+
+                if (existingFlashlight) {
+                    if (!ArrayUtils.Contains(existingFlashlight.Reveal.GameObjects, scan.gameObject)) {
+                        ArrayUtils.Add(ref existingFlashlight.Reveal.GameObjects, scan.gameObject);
                     }
                     return;
                 }

@@ -37,6 +37,8 @@ namespace Aqua.Scripting {
         [SerializeField] private float m_CrossFadeDuration = 5;
         [SerializeField] private float m_FadeOutDuration = 0.5f;
         [SerializeField] private bool m_SyncLayers = true;
+        [SerializeField] private Curve m_FadeOutCurve = Curve.CubeOut;
+        [SerializeField] private Curve m_FadeInCurve = Curve.CubeIn;
 
         #endregion // Inspector
 
@@ -97,8 +99,8 @@ namespace Aqua.Scripting {
 
             Log.Msg("[ScriptAudioTrackVariants] Switching tracks to {0}", desiredAudioId);
 
-            m_CurrentAudio.SetVolume(0, m_CrossFadeDuration, Curve.CubeOut);
-            desiredAudio.SetVolume(1, m_CrossFadeDuration, Curve.CubeIn);
+            m_CurrentAudio.SetVolume(0, m_CrossFadeDuration, m_FadeOutCurve);
+            desiredAudio.SetVolume(1, m_CrossFadeDuration, m_FadeInCurve);
             if (desiredAudio.IsPaused()) {
                 desiredAudio.Resume();
             } else if (!desiredAudio.IsPlaying()) {

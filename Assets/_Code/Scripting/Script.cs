@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Aqua.Character;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -25,6 +26,25 @@ namespace Aqua {
             [MethodImpl(256)] get { return Services.State.IsLoadingScene() || Services.Pause.IsPaused(); }
         }
 
+        static public bool ShouldBlock() {
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
+        }
+
+        static public bool ShouldBlockIgnoreLetterbox() {
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.State.IsLoadingScene();
+        }
+
+        [MethodImpl(256)]
+        static public void OnSceneLoad(Action action) {
+            Services.State.OnLoad(action);
+        }
+
+        static public PlayerBody CurrentPlayer {
+            [MethodImpl(256)] get { return Services.State.Player; }
+        }
+
+        #region Argument Parsing
+
         static public T ParseArg<T>(StringSlice inArg, object inContext, T inDefault = default(T)) {
             return LeafUtils.ParseArgument<T>(LeafEvalContext.FromObject(inContext, Services.Script), inArg, inDefault);
         }
@@ -33,13 +53,9 @@ namespace Aqua {
             return LeafUtils.ParseArgument<T>(LeafEvalContext.FromPlugin(Services.Script), inArg, inDefault);
         }
 
-        static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
-        }
+        #endregion // Argument Parsing
 
-        static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.State.IsLoadingScene();
-        }
+        #region Popups
 
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
             using(PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
@@ -101,9 +117,9 @@ namespace Aqua {
                 options);
         }
 
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
-        }
+        #endregion // Popups
+
+        #region Regions
 
         static public IDisposable DisableInput() {
             Services.Input.PauseAll();
@@ -115,9 +131,9 @@ namespace Aqua {
             return new CallOnDispose(() => Services.UI?.HideLetterbox());
         }
 
-        static public void Tick(this Routine routine) {
-            routine.TryManuallyUpdate(0);
-        }
+        #endregion // Regions
+
+        #region Variables
 
         [MethodImpl(256)]
         static public Variant ReadVariable(TableKeyPair id, Variant defaultVal = default) {
@@ -137,6 +153,12 @@ namespace Aqua {
         [MethodImpl(256)]
         static public void WriteVariable(StringSlice id, Variant value) {
             Services.Data?.SetVariable(id, value, null);
+        }
+
+        #endregion // Variables
+
+        static public void Tick(this Routine routine) {
+            routine.TryManuallyUpdate(0);
         }
     }
 }
