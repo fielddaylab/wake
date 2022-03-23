@@ -1410,18 +1410,18 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -100
-        AliveMax: 200
+        AliveMin: 0
+        AliveMax: 20
         StressedMin: -Infinity
         StressedMax: Infinity
       Light:
-        AliveMin: -100
-        AliveMax: 200
+        AliveMin: 1
+        AliveMax: 5
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -100
-        AliveMax: 200
+        AliveMin: 6.5
+        AliveMax: 8.1
         StressedMin: -Infinity
         StressedMax: Infinity
     AliveEatTargets:
@@ -2366,7 +2366,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 1470134365
     Type: {fileID: 11400000, guid: 7b32a6c75e46e59489bff06a6a8663d2, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: a077a17239bb34e499093c3cb3870bb3,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -2423,16 +2424,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: -0.27
+      y: -0.27
+      width: 0.54
+      height: 0.54
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: -0.3
+      y: -0.3
+      width: 0.6
+      height: 0.6
   - Id:
       m_HashValue: 2098174204
     Type: {fileID: 11400000, guid: 6a167075954de4f098981ff3de4bac04, type: 2}
