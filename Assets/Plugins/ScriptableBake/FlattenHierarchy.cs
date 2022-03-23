@@ -8,6 +8,8 @@ namespace ScriptableBake {
     [AddComponentMenu("ScriptableBake/Flatten Hierarchy")]
     public sealed class FlattenHierarchy : MonoBehaviour, IBaked {
 
+        public const int Order = -1000000;
+
         [Tooltip("If true, the full hierarchy beneath this object will be flattened.\nIf false, only the immediate children of this object will be affected")]
         public bool Recursive = false;
 
@@ -19,7 +21,7 @@ namespace ScriptableBake {
         #if UNITY_EDITOR
 
         int IBaked.Order {
-            get { return -1000000; }
+            get { return Order; }
         }
 
         bool IBaked.Bake(BakeFlags flags) {

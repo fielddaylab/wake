@@ -56,8 +56,6 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBRoomChanged(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string roomName);
         [DllImport("__Internal")]
-        public static extern void FBBeginExperiment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters);
-        [DllImport("__Internal")]
         public static extern void FBBeginDive(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string siteId);
         [DllImport("__Internal")]
         public static extern void FBBeginModel(string userCode, string appVersion, string appFlavor, int logVersion, string jobName);
@@ -150,7 +148,9 @@ namespace Aqua
         [DllImport("__Internal")]
         public static extern void FBRemoveCritter(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critter);
         [DllImport("__Internal")]
-        public static extern void FBEndExperiment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters);
+        public static extern void FBBeginExperiment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters, bool stabilizerEnabled, bool autofeederEnabled);
+        [DllImport("__Internal")]
+        public static extern void FBEndExperiment(string userCode, string appVersion, string appFlavor, int logVersion, string jobName, string tankType, string environment, string critters, bool stabilizerEnabled, bool autofeederEnabled);
 
         // Argumentation Events
         [DllImport("__Internal")]
@@ -170,7 +170,7 @@ namespace Aqua
 
         private string m_UserCode = string.Empty;
         private string m_AppFlavor = string.Empty;
-        private int m_LogVersion = 1;
+        private int m_LogVersion = 2;
         private StringHash32 m_CurrentJobHash = null;
         private string m_CurrentJobName = NoActiveJobId;
         private string m_PreviousJobName = NoActiveJobId;
@@ -181,6 +181,8 @@ namespace Aqua
         private string m_CurrentTankType = string.Empty;
         private string m_CurrentEnvironment = string.Empty;
         private List<string> m_CurrentCritters = new List<string>();
+        private bool m_StabilizerEnabled = true;
+        private bool m_AutoFeederEnabled = false;
         private StringHash32 m_CurrentArguementId = null;
 
         #endregion // Logging Variables
@@ -225,6 +227,8 @@ namespace Aqua
                 .Register<StringHash32>(ShopConsts.Event_InsufficientFunds, LogInsufficientFunds, this)
                 .Register(ShopConsts.Event_TalkToShopkeep, LogTalkToShopkeep, this)
                 .Register<TankType>(ExperimentEvents.ExperimentView, SetCurrentTankType, this)
+                .Register<MeasurementTank.FeatureMask>(ExperimentEvents.ExperimentEnableFeature, SetTankFeatureEnabled, this)
+                .Register<MeasurementTank.FeatureMask>(ExperimentEvents.ExperimentDisableFeature, SetTankFeatureDisabled, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentAddEnvironment, LogAddEnvironment, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentRemoveEnvironment, LogRemoveEnvironment, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentAddCritter, LogAddCritter, this)
@@ -293,9 +297,12 @@ namespace Aqua
         {
             string sceneName = scene.Name;
 
-            #if FIREBASE
-            FBSceneChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, sceneName);
-            #endif
+            if (sceneName != "Boot" && sceneName != "Title")
+            {
+                #if FIREBASE
+                FBSceneChanged(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, sceneName);
+                #endif
+            }
         }
 
         private void LogRoomChanged(string roomName)
@@ -803,6 +810,30 @@ namespace Aqua
             m_CurrentTankType = inTankType.ToString();
         }
 
+        private void SetTankFeatureEnabled(MeasurementTank.FeatureMask feature)
+        {
+            if (feature == MeasurementTank.FeatureMask.Stabilizer)
+            {
+                m_StabilizerEnabled = true;
+            }
+            else
+            {
+                m_AutoFeederEnabled = true;
+            }
+        }
+
+        private void SetTankFeatureDisabled(MeasurementTank.FeatureMask feature)
+        {
+            if (feature == MeasurementTank.FeatureMask.Stabilizer)
+            {
+                m_StabilizerEnabled = false;
+            }
+            else
+            {
+                m_AutoFeederEnabled = false;
+            }
+        }
+
         private void LogAddEnvironment(StringHash32 inEnvironmentId)
         {
             string environment = Services.Assets.Bestiary.Get(inEnvironmentId).name;
@@ -849,7 +880,7 @@ namespace Aqua
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
             #if FIREBASE
-            FBBeginExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, tankType, m_CurrentEnvironment, critters);
+            FBBeginExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, tankType, m_CurrentEnvironment, critters, m_StabilizerEnabled, m_AutoFeederEnabled);
             #endif
         }
 
@@ -859,12 +890,14 @@ namespace Aqua
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
             #if FIREBASE
-            FBEndExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, tankType, m_CurrentEnvironment, critters);
+            FBEndExperiment(m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName, tankType, m_CurrentEnvironment, critters, m_StabilizerEnabled, m_AutoFeederEnabled);
             #endif
 
             m_CurrentTankType = string.Empty;
             m_CurrentEnvironment = string.Empty;
             m_CurrentCritters = new List<string>();
+            m_StabilizerEnabled = true;
+            m_AutoFeederEnabled = false;
         }
 
         #endregion Experimentation Events

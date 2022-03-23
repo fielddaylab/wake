@@ -51,6 +51,13 @@ namespace Aqua.Portable {
 
             Services.UI.Popup.OnShowEvent.AddListener((s) => OnPopupOpened());
             Services.UI.Popup.OnHideCompleteEvent.AddListener((s) => OnPopupClosed());
+
+            Services.Events.Register(GameEvents.SceneWillUnload, () => Hide(), this);
+        }
+
+        protected override void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
+            base.OnDestroy();
         }
 
         #endregion // Unity Events

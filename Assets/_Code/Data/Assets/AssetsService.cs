@@ -24,6 +24,10 @@ namespace Aqua {
         [SerializeField, Required] private TMP_FontAsset m_SemiBoldFont = null;
         [SerializeField, Required] private TMP_FontAsset m_BoldFont = null;
 
+        [Header("Shaders")]
+        [SerializeField, Required] private Material m_DefaultSpriteMaterial = null;
+        [SerializeField, Required] private Material m_OverlaySpriteMaterial = null;
+
         [Header("Streaming")]
         [SerializeField, Range(1, 32)] private float m_StreamedTextureMem = 8;
         [SerializeField, Range(1, 32)] private float m_StreamedAudioMem = 8;
@@ -41,6 +45,9 @@ namespace Aqua {
         public TMP_FontAsset RegularFont { get { return m_RegularFont; } }
         public TMP_FontAsset SemiBoldFont { get { return m_SemiBoldFont; } }
         public TMP_FontAsset BoldFont { get { return m_BoldFont; } }
+
+        public Material DefaultSpriteMaterial { get { return m_DefaultSpriteMaterial; } }
+        public Material OverlaySpriteMaterial { get { return m_OverlaySpriteMaterial; } }
 
         protected override void Initialize() {
             base.Initialize();

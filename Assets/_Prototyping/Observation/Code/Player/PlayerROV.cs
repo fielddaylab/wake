@@ -64,11 +64,11 @@ namespace ProtoAqua.Observation
         public interface ITool
         {
             bool IsEnabled();
-            void Enable();
+            void Enable(PlayerBody inBody);
             void Disable();
-            bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity);
+            bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
-            Vector3? GetTargetPosition(bool inbOnGamePlane);
+            void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition);
         }
 
         private class NullTool : ITool
@@ -77,11 +77,13 @@ namespace ProtoAqua.Observation
 
             public bool IsEnabled() { return true; }
             public void Disable() { }
-            public void Enable() { }
+            public void Enable(PlayerBody inBody) { }
 
-            public Vector3? GetTargetPosition(bool inbOnGamePlane) { return null; }
+            public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition) {
+                outWorldPosition = outCursorPosition = null;
+            }
             public bool HasTarget() { return false; }
-            public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity) { return false; }
+            public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
         }
 
         #endregion // Types
@@ -93,6 +95,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
         [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
         [SerializeField, Required] private PlayerROVFlashlight m_Flashlight = null;
+        [SerializeField, Required] private PlayerROVMicroscope m_Microscope = null;
         [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
 
         [Header("Movement Params")]
@@ -152,6 +155,7 @@ namespace ProtoAqua.Observation
             SwitchTool(lastToolId, true);
 
             SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
+            SetToolState(ToolId.Microscope, false, true);
 
             if (m_Input.IsInputEnabled)
                 OnInputEnabled();
@@ -226,7 +230,7 @@ namespace ProtoAqua.Observation
             animState.Moving = m_Moving;
             animState.UsingTool = m_CurrentTool.HasTarget();
             animState.NormalizedLook = m_LastInputData.Mouse.NormalizedOffset;
-            animState.LookTarget = m_CurrentTool.GetTargetPosition(false);
+            m_CurrentTool.GetTargetPosition(false, out animState.LookTarget, out var _);
             animState.NormalizedMove = m_LastInputData.MoveVector;
             animState.Status = m_StunRoutine ? PlayerBodyStatus.Stunned : PlayerBodyStatus.Normal;
             m_Animator.Process(animState);
@@ -234,7 +238,7 @@ namespace ProtoAqua.Observation
 
         private Vector3? GetLockOn()
         {
-            Vector3? currentScanPos = m_CurrentTool.GetTargetPosition(true);
+            m_CurrentTool.GetTargetPosition(true, out var _, out Vector3? currentScanPos);
             if (currentScanPos.HasValue)
             {
                 Vector3 pos = currentScanPos.Value;
@@ -247,7 +251,7 @@ namespace ProtoAqua.Observation
 
         private bool UpdateTool()
         {
-            if (m_CurrentTool.UpdateTool(m_LastInputData, m_Kinematics.State.Velocity))
+            if (m_CurrentTool.UpdateTool(m_LastInputData, m_Kinematics.State.Velocity, this))
             {
                 SetEngineState(false);
                 return true;
@@ -258,7 +262,7 @@ namespace ProtoAqua.Observation
 
         private void OnInputEnabled()
         {
-            m_CurrentTool.Enable();
+            m_CurrentTool.Enable(this);
         }
 
         private void OnInputDisabled()
@@ -328,7 +332,7 @@ namespace ProtoAqua.Observation
             m_CurrentTool = GetTool(inTool);
 
             if (m_CurrentTool != null && m_Input.IsInputEnabled)
-                m_CurrentTool.Enable();
+                m_CurrentTool.Enable(this);
 
             Script.WriteVariable(Var_LastToolId, (int) inTool);
 
@@ -344,7 +348,7 @@ namespace ProtoAqua.Observation
             }
 
             if (state)
-                tool.Enable();
+                tool.Enable(this);
             else
                 tool.Disable();
 
@@ -366,6 +370,8 @@ namespace ProtoAqua.Observation
                     return m_Tagger;
                 case ToolId.Flashlight:
                     return m_Flashlight;
+                case ToolId.Microscope:
+                    return m_Microscope;
                 case ToolId.NONE:
                     return NullTool.Instance;
                 default:

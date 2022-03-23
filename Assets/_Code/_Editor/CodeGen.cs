@@ -58,6 +58,34 @@ namespace Aqua.Editor
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
         }
 
+        [MenuItem("Aqualab/CodeGen/Regen Tags")]
+        static private void GenerateTagsConsts()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            builder.Append("static public class GameTags")
+                .Append("\n{");
+
+            int count = 0;
+
+            foreach(var tagName in UnityEditorInternal.InternalEditorUtility.tags) {
+                string safeName = ObjectNames.NicifyVariableName(tagName).Replace("-", "_").Replace(" ", "");
+
+                if (count++ > 0)
+                {
+                    builder.Append('\n');
+                }
+
+                builder.Append("\n\t// Tag ").Append(tagName);
+                builder.Append("\n\tpublic const string ").Append(safeName).Append(" = \"").Append(tagName).Append("\";");
+            }
+
+            builder.Append("\n}");
+
+            string outputPath = Path.Combine(TargetFolder, "GameTags.cs");
+            File.WriteAllText(outputPath, builder.Flush());
+            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceUpdate);
+        }
+
         [MenuItem("Aqualab/CodeGen/Regen Scenes")]
         static private void GenerateSceneConsts()
         {

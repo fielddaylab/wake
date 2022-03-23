@@ -3,6 +3,8 @@ using UnityEngine;
 using BeauRoutine;
 using System.Collections;
 using BeauPools;
+using UnityEngine.Rendering;
+using Aqua;
 
 namespace ProtoAqua.Observation
 {
@@ -11,9 +13,11 @@ namespace ProtoAqua.Observation
         #region Inspector
 
         [SerializeField] private Transform m_Root = null;
+        [SerializeField] private Transform m_Scale = null;
         [SerializeField] private SpriteRenderer m_Fill = null;
         [SerializeField] private SpriteRenderer m_Border = null;
         [SerializeField] private SpriteRenderer m_Icon = null;
+        [SerializeField] private SortingGroup m_Sort = null;
 
         #endregion // Inspector
 
@@ -59,6 +63,7 @@ namespace ProtoAqua.Observation
         {
             m_FillTransform.SetScale(inFill * m_FillSize, Axis.XY);
             SetSpinning(inFill > 0 && inFill < 1);
+            m_Fill.enabled = inFill > 0;
         }
 
         public void SetSpinning(bool inbSpinning)
@@ -77,6 +82,24 @@ namespace ProtoAqua.Observation
                     m_SpinRoutine.Stop();
                     m_IconTransform.SetRotation(0, Axis.Y, Space.Self);
                 }
+            }
+        }
+
+        public void SetMicroscope(bool microscope) {
+            if (microscope) {
+                m_Sort.sortingOrder = 0;
+                m_Scale.SetScale(1.5f);
+                m_Fill.sharedMaterial = m_Border.sharedMaterial = m_Icon.sharedMaterial = Services.Assets.OverlaySpriteMaterial;
+                m_Fill.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                m_Border.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                m_Icon.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            } else {
+                m_Sort.sortingOrder = -5;
+                m_Scale.SetScale(1);
+                m_Fill.sharedMaterial = m_Border.sharedMaterial = m_Icon.sharedMaterial = Services.Assets.DefaultSpriteMaterial;
+                m_Fill.maskInteraction = SpriteMaskInteraction.None;
+                m_Border.maskInteraction = SpriteMaskInteraction.None;
+                m_Icon.maskInteraction = SpriteMaskInteraction.None;
             }
         }
 
