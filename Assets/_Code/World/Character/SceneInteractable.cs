@@ -51,6 +51,7 @@ namespace Aqua.Character {
         [SerializeField] private Sprite m_IconOverride = null;
         [SerializeField] private TextId m_LabelOverride = null;
         [SerializeField] private Transform m_PinLocationOverride = null;
+        [SerializeField] private TextId m_LockMessageOverride = null;
         [SerializeField] private bool m_PinToPlayer = false;
         [SerializeField] private TransformOffset m_LocationOffset = default;
 
@@ -91,6 +92,10 @@ namespace Aqua.Character {
 
         public TextId Label(TextId defaultLabel) {
             return !m_LabelOverride.IsEmpty ? m_LabelOverride : defaultLabel;
+        }
+
+        public TextId LockedLabel(TextId defaultLabel) {
+            return !m_LockMessageOverride.IsEmpty ? m_LockMessageOverride : defaultLabel;
         }
 
         #region Unity Events
@@ -164,6 +169,7 @@ namespace Aqua.Character {
             ScriptThreadHandle thread = ScriptObject.Interact(Parent, Locked(), m_TargetMap);
 
             if (Locked()) {
+                ContextButtonDisplay.Locked(this);
                 IEnumerator locked = OnLocked?.Invoke(this, m_PlayerInside, thread);
                 if (locked != null)
                     yield return null;

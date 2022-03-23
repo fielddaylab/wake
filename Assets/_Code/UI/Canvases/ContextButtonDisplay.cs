@@ -27,10 +27,12 @@ namespace Aqua {
         [SerializeField] private TextId m_InspectLabel = null;
         [SerializeField] private Sprite m_BackIcon = null;
         [SerializeField] private TextId m_BackLabel = null;
+        [SerializeField] private TextId m_LockedLabel = null;
 
         #endregion // Inspector
 
         [NonSerialized] private SceneInteractable m_TargetInteract;
+        private Routine m_BumpAnimation;
 
         protected override void Start() {
             base.Start();
@@ -67,6 +69,7 @@ namespace Aqua {
             }
 
             m_InteractButtonIcon.sprite = icon;
+            m_InteractButtonIcon.gameObject.SetActive(icon);
             m_InteractButton.interactable = inObject.CanInteract();
             m_HoverHint.TooltipOverride = label;
             m_HoverHint.TooltipId = null;
@@ -76,6 +79,22 @@ namespace Aqua {
 
             Show();
             SetInputState(true);
+        }
+
+        public void DisplayLocked(SceneInteractable inObject) {
+            if (m_TargetInteract != inObject)
+                return;
+
+            string label = Loc.Find(inObject.LockedLabel(m_LockedLabel));
+
+            m_InteractButtonIcon.gameObject.SetActive(false);
+            m_InteractButton.interactable = false;
+            m_HoverHint.TooltipOverride = label;
+            m_InteractLabel.SetTextFromString(label);
+
+            if (!IsTransitioning()) {
+                m_BumpAnimation.Replace(this, BumpAnimation());
+            }
         }
 
         public void ClearInteract(SceneInteractable inObject) {
@@ -98,14 +117,25 @@ namespace Aqua {
 
         #region Panel
 
+        protected override void OnHide(bool inbInstant) {
+            base.OnHide(inbInstant);
+            m_BumpAnimation.Stop();
+        }
+
         protected override void OnHideComplete(bool inbInstant) {
             m_TargetInteract = null;
 
             m_PinGroup.Unpin();
             m_AdjustGroup.SetAnchorPos(-16, Axis.Y);
             m_RootGroup.alpha = 0;
+            m_InteractButtonIcon.sprite = null;
 
             base.OnHideComplete(inbInstant);
+        }
+
+        protected override void OnShow(bool inbInstant) {
+            base.OnShow(inbInstant);
+            m_BumpAnimation.Stop();
         }
 
         protected override IEnumerator TransitionToShow() {
@@ -126,10 +156,25 @@ namespace Aqua {
             m_RootTransform.gameObject.SetActive(false);
         }
 
+        private IEnumerator BumpAnimation() {
+            m_RootTransform.gameObject.SetActive(true);
+            m_AdjustGroup.SetAnchorPos(-8, Axis.Y);
+            m_RootGroup.alpha = 0.5f;
+
+            yield return Routine.Combine(
+                m_RootGroup.FadeTo(1, 0.2f).Ease(Curve.QuadOut),
+                m_AdjustGroup.AnchorPosTo(0, 0.2f, Axis.Y).Ease(Curve.QuadOut)
+            );
+        }
+
         #endregion // Panel
     
         static public void Display(SceneInteractable inObject) {
             Services.UI.FindPanel<ContextButtonDisplay>()?.DisplayInteract(inObject);
+        }
+
+        static public void Locked(SceneInteractable inObject) {
+            Services.UI.FindPanel<ContextButtonDisplay>()?.DisplayLocked(inObject);
         }
 
         static public void Clear(SceneInteractable inObject) {

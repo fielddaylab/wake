@@ -1,0 +1,23 @@
+# basePath RS-4W
+
+:: FirstSeeWhaleFall
+@trigger    PlayerEnterRegion
+@when       regionId == "NearWhaleFall"
+@chatter
+@triggerPriority   High
+@once
+{@kevin}    Whoa. That's a big skeleton.
+            I am both fascinated| and horrified.
+            Why| does it look so hairy?
+
+:: WhaleFallPulledAlong
+@trigger    PlayerEnterRegion
+@when       regionId == "ReallyInCurrent", !HasUpgrade("Engine")
+@chatter
+@triggerPriority   High
+@once
+{@kevin}    Do you| get the sense we're getting pulled in?
+{hide-dialog} {wait 2}
+{@kevin}    {slow}Uhhhhhhh{/slow} any thoughts?? Maybe try steering us back?!
+{hide-dialog} {wait 3}
+{@kevin}    {slow}Oh no no no no no no{/slow}
