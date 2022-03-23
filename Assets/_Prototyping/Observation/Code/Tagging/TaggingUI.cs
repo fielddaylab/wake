@@ -1,12 +1,9 @@
 using UnityEngine;
 using Aqua;
-using UnityEngine.UI;
 using BeauUtil;
-using BeauRoutine;
 using ScriptableBake;
 
-namespace ProtoAqua.Observation
-{
+namespace ProtoAqua.Observation {
     public class TaggingUI : SharedPanel, IBaked
     {
         #region Inspector
@@ -16,9 +13,10 @@ namespace ProtoAqua.Observation
 
         #endregion // Inspector
 
-        public void Populate(ListSlice<TaggingProgress> inProgressEntries)
+        public void Populate(ListSlice<TaggingManifest> inManifest, ListSlice<ushort> inProgressEntries)
         {
-            TaggingProgress progress;
+            ushort progress;
+            TaggingManifest manifest;
             TaggingMeter meter;
 
             int used = 0;
@@ -26,13 +24,14 @@ namespace ProtoAqua.Observation
             for(int i = 0; i < inProgressEntries.Length; i++)
             {
                 progress = inProgressEntries[i];
-                if (progress.Tagged == 0)
+                manifest = inManifest[i];
+                if (progress == 0 || progress >= manifest.Required)
                     continue;
                 
                 meter = m_AllMeters[used++];
                 meter.gameObject.SetActive(true);
-                meter.Icon.sprite = Assets.Bestiary(progress.Id).Icon();
-                meter.Meter.fillAmount = progress.Tagged / (float) (progress.TotalInScene * progress.Proportion);
+                meter.Icon.sprite = Assets.Bestiary(manifest.Id).Icon();
+                meter.Meter.fillAmount = progress / (float) manifest.Required;
             }
 
             for(int i = used; i < m_AllMeters.Length; i++)

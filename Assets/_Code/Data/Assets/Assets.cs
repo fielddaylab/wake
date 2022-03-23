@@ -120,6 +120,11 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public MapDesc Map(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return ValidationUtils.FindAsset<MapDesc>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return MapDB.Get(inId);
         }
 

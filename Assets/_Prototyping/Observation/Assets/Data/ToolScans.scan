@@ -1,17 +1,19 @@
 #basePath   tools
 
 :: microscope
-@tool true
 @requires HasUpgrade("Microscope")
 @fallback tools.microscope.disabled
-@header	Opening Microscope
-Microscopic view engaged.
+@header	Microscopic Entity
+Contents too small to be viewed without magnification.
+
+Recommend viewing with {item-name}Microscope{/item-name}.
 
 :: microscope.disabled
-@tool false
-@header Unknown Deposit
-Contents unable to be viewed with current equipment.
+@header Unknown Entity
+Contents too small to be viewed without magnification.
+
+Unable to be viewed with current equipment.
 
 :: probeHacker.disabled
 @header Unknown Data Source
-Contents Unable to be decoded with current equipment
+Contents unable to be decoded with current equipment.

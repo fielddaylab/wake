@@ -17,6 +17,8 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 ExperimentAddEnvironment = "ExperimentAddEnvironment"; // StringHash32 envId
         static public readonly StringHash32 ExperimentRemoveEnvironment = "ExperimentRemoveEnvironment"; // StringHash32 envId
         static public readonly StringHash32 ExperimentEnvironmentCleared = "ExperimentClearEnvironment";
+        static public readonly StringHash32 ExperimentEnableFeature = "ExperimentEnableFeature"; // MeasurementTank.FeatureMask feature
+        static public readonly StringHash32 ExperimentDisableFeature = "ExperimentDisableFeature"; // MeasurementTank.FeatureMask feature
     }
 
     static public class ExperimentTriggers
