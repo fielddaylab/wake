@@ -34,7 +34,22 @@ $set jobs:kelp-energy-visual-model.saved = false
 {@player}   Any idea what to do here?
 {@kevin}	When we make a food web, the first step is to import our facts into the model.
 
+:: ModelingSetup-Wrong
+@trigger	VisualModelStarted
+@when       modeling:ecosystemSelected != "WarmKelpForest", !HasFact(WarmKelpForest.Model.Conceptual)
+@cutscene
+{@kevin}	Ah, hang on, this isn't the right ecosystem.
+            Head back to the {h}Ecosystem{/h} tab and select the {nameof WarmKelpForest}.
 
+:: generic.visual-model.opened
+@trigger	VisualModelStarted
+@when		scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	This is a visual of all the species that exist at the site.
+			Arrows show any relationships you've discovered from experiments. They point toward the thing doing the consuming
+			If you are in a job, and the Visual Model meets all the requirements, you will be able to save the model.
+	
 :: modelingComplete
 @trigger    JobTasksUpdated
 @when       JobTaskTop(reportBack)
@@ -43,7 +58,6 @@ $set jobs:kelp-energy-visual-model.saved = false
 {@kevin}    Looks like you've successfully created a visual model of the warm kelp forest!
             Let's bring it back to the {map-name}Office{/map-name}, where we can discuss it with {nameof drKelp}.
 $set jobs:kelp-energy-visual-model.saved = true
-
 
 // report back
 
