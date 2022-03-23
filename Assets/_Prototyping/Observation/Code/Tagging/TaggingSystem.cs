@@ -1,23 +1,18 @@
 using System;
-using UnityEngine;
-using BeauRoutine;
 using System.Collections;
-using UnityEngine.UI;
 using Aqua;
-using BeauUtil;
-using BeauPools;
-using System.Collections.Generic;
 using Aqua.Debugging;
-using Aqua.Cameras;
 using Aqua.Profile;
+using BeauRoutine;
+using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
+using ScriptableBake;
+using UnityEngine;
 
-namespace ProtoAqua.Observation
-{
+namespace ProtoAqua.Observation {
     [DefaultExecutionOrder(-100)]
-    public class TaggingSystem : SharedManager, IScenePreloader
-    {
+    public class TaggingSystem : SharedManager, IScenePreloader, IBaked {
         static private TaggingSystem s_Instance;
 
         [Serializable]
@@ -33,86 +28,64 @@ namespace ProtoAqua.Observation
         [SerializeField] private Fraction16 m_DefaultTagProportion = new Fraction16(0.8f);
         [SerializeField] private CritterProportion[] m_CritterProportionOverrides = null;
 
+        [SerializeField, HideInInspector] private TaggingManifest[] m_SceneManifest;
+        [SerializeField, HideInInspector] private BestiaryDesc m_EnvironmentType;
+        [SerializeField, HideInInspector] private StringHash32 m_MapId;
+
         #endregion // Inspector
 
-        private readonly RingBuffer<TaggingProgress> m_CritterTypes = new RingBuffer<TaggingProgress>();
-        private readonly RingBuffer<TaggableCritter> m_RemainingCrittersReady = new RingBuffer<TaggableCritter>(64, RingBufferMode.Expand);
-        private readonly RingBuffer<TaggableCritter> m_RemainingCrittersNotReady = new RingBuffer<TaggableCritter>(16, RingBufferMode.Expand);
-        private readonly HashSet<TaggableCritter> m_TaggedCritterObjects = new HashSet<TaggableCritter>();
+        [NonSerialized] private ushort[] m_TagCounts;
+        private readonly RingBuffer<TaggableCritter> m_RemainingCritters = new RingBuffer<TaggableCritter>(64, RingBufferMode.Expand);
 
         private SiteSurveyData m_SiteData;
         private BestiaryData m_BestiaryData;
-        [NonSerialized] private BestiaryDesc m_EnvironmentType;
 
         [NonSerialized] private Collider2D m_Range;
         [NonSerialized] private TriggerListener2D m_Listener;
-        [NonSerialized] private float m_DeactivateRangeSq;
-        [NonSerialized] private bool m_ActiveState = false;
-        [NonSerialized] private Vector3 m_ClosestInRange;
-        private RingBuffer<StringHash32> m_FactDisplayQueue = new RingBuffer<StringHash32>(16, RingBufferMode.Expand);
-        private Routine m_QueueProcessor;
+        [NonSerialized] private Vector2? m_ClosestInRange;
 
         #region Events
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
             Assert.True(s_Instance == null);
             s_Instance = this;
 
-            Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated);
+            Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdate, this);
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             s_Instance = null;
-            Services.Events?.DeregisterAll(this);
+            Services.Events?.Deregister<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdate);
 
             base.OnDestroy();
         }
 
-        private void LateUpdate()
-        {
-            if (Script.IsPaused || Script.IsLoading)
+        private void LateUpdate() {
+            if (Script.IsPausedOrLoading)
                 return;
 
-            if (m_Listener == null || !m_Listener.isActiveAndEnabled)
-            {
-                if (m_ActiveState)
-                {
-                    m_ActiveState = false;
-                    DeactivateAllColliders();
-                }
-                return;
-            }
-            
-            m_ActiveState = true;
             m_Listener.ProcessOccupants();
 
-            CameraService.PlanePositionHelper positionHelper = Services.Camera.GetPositionHelper();
-            TaggableCritter critter;
             Vector3 gameplayPlanePos;
-            Vector3 gameplayPlaneDist;
+            Vector2 gameplayPlaneDist;
             Vector2 listenerPos = m_Range.transform.position;
             float dist;
             float closestDist = float.MaxValue;
-            Vector3 closestGameplayPlanePos = default;
-            for(int i = m_RemainingCrittersReady.Count - 1; i >= 0; i--)
-            {
-                critter = m_RemainingCrittersReady[i];
-                gameplayPlanePos = positionHelper.CastToPlane(critter.TrackTransform);
+            Vector3? closestGameplayPlanePos = null;
+            TaggableCritter critter;
 
-                gameplayPlaneDist = (Vector2) gameplayPlanePos - listenerPos;
-                dist = gameplayPlaneDist.magnitude;
-                if (dist - critter.ColliderRadius < m_DeactivateRangeSq) {
-                    critter.Collider.enabled = true;
-                    critter.Collider.transform.position = gameplayPlanePos;
-                } else {
-                    critter.Collider.enabled = false;
+            for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCritters[i];
+                if (critter.WasTagged || !critter.ColliderPosition.enabled) {
+                    continue;
                 }
 
-                if (dist < closestDist)
-                {
+                gameplayPlanePos = critter.ColliderPosition.LastKnownPosition;
+                gameplayPlaneDist = (Vector2)gameplayPlanePos - listenerPos;
+                dist = gameplayPlaneDist.magnitude;
+
+                if (dist < closestDist) {
                     closestGameplayPlanePos = gameplayPlanePos;
                     closestDist = dist;
                 }
@@ -121,264 +94,203 @@ namespace ProtoAqua.Observation
             m_ClosestInRange = closestGameplayPlanePos;
         }
 
-        IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
-        {
-            StringHash32 mapId = MapDB.LookupCurrentMap();
-            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", inScene.Name);
-            
-            m_SiteData = Save.Science.GetSiteData(mapId);
-            m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
+        IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext) {
+            m_SiteData = Save.Science.GetSiteData(m_MapId);
             m_BestiaryData = Save.Bestiary;
-            
+
+            m_TagCounts = new ushort[m_SceneManifest.Length];
+
             TaggableCritter critter;
-            for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--)
-            {
-                critter = m_RemainingCrittersNotReady[i];
-                if (!TrackCritterType(critter.CritterId))
-                {
+            for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCritters[i];
+                if (IsFinished(critter.CritterId)) {
                     critter.Collider.enabled = false;
-                    m_RemainingCrittersNotReady.FastRemoveAt(i);
-                }
-                else if (m_BestiaryData.HasEntity(critter.CritterId))
-                {
-                    m_RemainingCrittersNotReady.FastRemoveAt(i);
-                    m_RemainingCrittersReady.PushBack(critter);
+                    critter.WasTagged = true;
+                    m_RemainingCritters.FastRemoveAt(i);
+                } else if (IsReady(critter.CritterId)) {
+                    critter.Collider.enabled = true;
                 }
             }
 
-            Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
+            Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
             return null;
+        }
+
+        private void OnBestiaryUpdate(BestiaryUpdateParams updateParams) {
+            if (updateParams.Type != BestiaryUpdateParams.UpdateType.Entity) {
+                return;
+            }
+
+            MarkAllAsAvailable(updateParams.Id);
         }
 
         #endregion // Events
 
         #region Taggable Critters
 
-        public void Register(TaggableCritter inCritter)
-        {
-            inCritter.Collider.enabled = false;
+        public void Register(TaggableCritter inCritter) {
+            if (m_SiteData == null) {
+                m_RemainingCritters.PushBack(inCritter);
+                inCritter.ColliderPosition.enabled = false;
+                return;
+            }
 
-            if (m_SiteData != null)
-            {
-                if (TrackCritterType(inCritter.CritterId))
-                {
-                    if (!WasTagged(inCritter))
-                    {
-                        if (m_BestiaryData.HasEntity(inCritter.CritterId))
-                        {
-                            m_RemainingCrittersReady.PushBack(inCritter);
-                        }
-                        else
-                        {
-                            m_RemainingCrittersNotReady.PushBack(inCritter);
-                        }
-                    }
-                }
+            if (inCritter.WasTagged) {
+                inCritter.ColliderPosition.enabled = false;
+                return;
             }
-            else
-            {
-                m_RemainingCrittersNotReady.PushBack(inCritter);
+
+            if (IsFinished(inCritter.CritterId)) {
+                inCritter.WasTagged = true;
+                inCritter.ColliderPosition.enabled = false;
+                return;
             }
+
+            if (IsReady(inCritter.CritterId)) {
+                inCritter.ColliderPosition.enabled = true;
+                m_RemainingCritters.PushBack(inCritter);
+                return;
+            }
+
+            inCritter.ColliderPosition.enabled = false;
+            m_RemainingCritters.PushBack(inCritter);
         }
 
-        public void Deregister(TaggableCritter inCritter)
-        {
-            inCritter.Collider.enabled = false;
-
-            m_RemainingCrittersReady.FastRemove(inCritter);
-            m_RemainingCrittersNotReady.FastRemove(inCritter);
-
-            if (m_SiteData != null)
-            {
-                UntrackCritterType(inCritter.CritterId);
-            }
+        public void Deregister(TaggableCritter inCritter) {
+            inCritter.ColliderPosition.enabled = false;
+            m_RemainingCritters.FastRemove(inCritter);
         }
 
-        private void DeregisterAll(StringHash32 inCritterId, bool inbUntrack) {
+        private void MarkAllAsAvailable(StringHash32 inCritterId) {
             TaggableCritter critter;
-            for(int i = m_RemainingCrittersReady.Count - 1; i >= 0; i--) {
-                critter = m_RemainingCrittersReady[i];
-                if (critter.CritterId == inCritterId) {
-                    critter.Collider.enabled = false;
-                    m_RemainingCrittersReady.FastRemoveAt(i);
-                    if (inbUntrack) {
-                        UntrackCritterType(inCritterId);
-                    }
-                }
-            }
-
-            for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--) {
-                critter = m_RemainingCrittersNotReady[i];
-                if (critter.CritterId == inCritterId) {
-                    critter.Collider.enabled = false;
-                    m_RemainingCrittersNotReady.FastRemoveAt(i);
-                    if (inbUntrack) {
-                        UntrackCritterType(inCritterId);
-                    }
+            for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCritters[i];
+                if (critter.CritterId == inCritterId && !critter.WasTagged) {
+                    critter.ColliderPosition.enabled = true;
                 }
             }
         }
 
-        private bool TrackCritterType(StringHash32 inCritterId)
-        {
-            if (!IsUnfinished(inCritterId))
-                return false;
+        private void MarkAllAsTagged(StringHash32 inCritterId) {
+            TaggableCritter critter;
+            for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCritters[i];
+                if (critter.CritterId == inCritterId) {
+                    critter.WasTagged = true;
+                    critter.ColliderPosition.enabled = false;
+                    m_RemainingCritters.FastRemoveAt(i);
+                }
+            }
+        }
 
-            Category(inCritterId).TotalInScene++;
+        public bool TryGetClosestCritterGameplayPlane(out Vector2 outPosition) {
+            if (m_RemainingCritters.Count <= 0 || m_ClosestInRange == null) {
+                outPosition = default;
+                return false;
+            }
+
+            outPosition = m_ClosestInRange.Value;
             return true;
         }
 
-        private void UntrackCritterType(StringHash32 inCritterId)
-        {
-            if (!IsUnfinished(inCritterId))
-                return;
+        #endregion // Taggable Critters
 
-            int idx = IndexOfCategory(inCritterId);
-            if (idx >= 0)
-            {
-                m_CritterTypes[idx].TotalInScene--;
-            }
+        #region State
+
+        // Returns if the player is ready to start tagging this critter
+        private bool IsReady(StringHash32 id) {
+            return m_BestiaryData.HasEntity(id);
         }
 
-        private int IndexOfCategory(StringHash32 inId)
-        {
-            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
-            {
-                ref TaggingProgress category = ref m_CritterTypes[i];
-                if (category.Id == inId)
+        // Returns if the player has started tagging this critter
+        private bool IsStarted(StringHash32 inId) {
+            for (int i = 0, length = m_SceneManifest.Length; i < length; i++) {
+                if (m_SceneManifest[i].Id == inId)
+                    return m_TagCounts[i] > 0;
+            }
+
+            return false;
+        }
+
+        // Returns if the player has finished tagging this critter
+        private bool IsFinished(StringHash32 inId) {
+            return m_SiteData.TaggedCritters.Contains(inId);
+        }
+
+        // Returns the index of the critter, for both manifest and count
+        private int IndexOf(StringHash32 inId) {
+            for (int i = 0, length = m_SceneManifest.Length; i < length; i++) {
+                if (m_SceneManifest[i].Id == inId)
                     return i;
             }
 
             return -1;
         }
 
-        private ref TaggingProgress Category(StringHash32 inId)
-        {
-            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
-            {
-                ref TaggingProgress category = ref m_CritterTypes[i];
-                if (category.Id == inId)
-                    return ref category;
+        #endregion // State
+
+        #region Tagging
+
+        private bool AttemptTag(TaggableCritter inCritter) {
+            if (IsFinished(inCritter.CritterId) || inCritter.WasTagged) {
+                return false;
             }
 
-            TaggingProgress newCategory;
-            newCategory.Id = inId;
-            newCategory.Tagged = 0;
-            newCategory.TotalInScene = 0;
-            newCategory.Proportion = m_DefaultTagProportion;
-            if (m_CritterProportionOverrides != null) {
-                for(int i = 0; i < m_CritterProportionOverrides.Length; i++) {
-                    if (m_CritterProportionOverrides[i].CritterId == inId) {
-                        newCategory.Proportion = m_CritterProportionOverrides[i].Proportion;
-                        break;
-                    }
-                }
-            }
-            m_CritterTypes.PushBack(newCategory);
-            return ref m_CritterTypes[m_CritterTypes.Count - 1];
-        }
+            inCritter.WasTagged = true;
+            inCritter.ColliderPosition.enabled = false;
+            m_RemainingCritters.FastRemove(inCritter);
 
-        private bool IsUnfinished(StringHash32 inId)
-        {
-            return !m_SiteData.TaggedCritters.Contains(inId);
-        }
+            VFX effect = m_EffectPool.Alloc(inCritter.TrackTransform.position, Quaternion.identity, false);
+            effect.Sprite.SetAlpha(1);
+            effect.Transform.SetScale(0, Axis.XY);
+            effect.Animation = Routine.Start(effect, PlayEffect(effect));
 
-        private bool IsStarted(StringHash32 inId)
-        {
-            for(int i = 0, length = m_CritterTypes.Count; i < length; i++)
-            {
-                ref TaggingProgress category = ref m_CritterTypes[i];
-                if (category.Id == inId)
-                    return category.Tagged > 0;
-            }
+            Services.Audio.PostEvent("dive.critterTagged");
 
-            return false;
-        }
+            int idx = IndexOf(inCritter.CritterId);
+            TaggingManifest manifest = m_SceneManifest[idx];
+            m_TagCounts[idx]++;
 
-        private bool WasTagged(TaggableCritter inCritter)
-        {
-            return m_TaggedCritterObjects.Contains(inCritter) || !IsUnfinished(inCritter.CritterId);
-        }
+            DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}/{3}", manifest.Id, m_TagCounts[idx], manifest.Required, manifest.TotalInScene);
 
-        private bool AttemptTag(TaggableCritter inCritter)
-        {
-            if (IsUnfinished(inCritter.CritterId) && m_TaggedCritterObjects.Add(inCritter))
-            {
-                inCritter.Collider.enabled = false;
-                m_RemainingCrittersReady.FastRemove(inCritter);
-
-                VFX effect = m_EffectPool.Alloc(inCritter.transform.position, Quaternion.identity, false);
-                effect.Sprite.SetAlpha(1);
-                effect.Transform.SetScale(0, Axis.XY);
-                effect.Animation = Routine.Start(effect, PlayEffect(effect));
-
-                Services.Audio.PostEvent("dive.critterTagged");
-
-                int idx = IndexOfCategory(inCritter.CritterId);
-                ref var category = ref m_CritterTypes[idx];
-                category.Tagged++;
-                
-                DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}", category.Id, category.Tagged, category.TotalInScene);
-
-                ushort required = (ushort) (category.TotalInScene * category.Proportion);
-                if (category.Tagged >= required)
-                {
-                    var cachedCategory = category;
-
-                    m_SiteData.TaggedCritters.Add(inCritter.CritterId);
-                    m_CritterTypes.FastRemoveAt(idx);
-                    m_SiteData.OnChanged();
-                    Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
-
-                    DeregisterAll(inCritter.CritterId, true);
-
-                    BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, cachedCategory.Id);
-
-                    #if UNITY_EDITOR
-                    Assert.NotNull(population, "No Population Fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
-                    #elif DEVELOPMENT
-                    if (!population)
-                    {
-                        Log.Error("[TaggingSystem] No population fact for '{0}' found for environment '{1}'", cachedCategory.Id, m_EnvironmentType.Id());
-                        Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
-                        return true;
-                    }
-                    #endif // UNITY_EDITOR
-
-                    m_BestiaryData.RegisterFact(population.Id);
-                    m_FactDisplayQueue.PushBack(population.Id);
-                    if (!m_QueueProcessor)
-                    {
-                        m_QueueProcessor = Routine.Start(this, DisplayModelQueue());
-                        m_QueueProcessor.Tick();
-                    }
-                }
-
-                Services.UI.FindPanel<TaggingUI>().Populate(m_CritterTypes);
+            if (m_TagCounts[idx] < manifest.Required) {
+                Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
                 return true;
             }
 
-            return false;
-        }
+            m_SiteData.TaggedCritters.Add(manifest.Id);
+            m_SiteData.OnChanged();
 
-        private IEnumerator DisplayModelQueue()
-        {
-            StringHash32 factId;
-            while(m_FactDisplayQueue.Count > 0)
-            {
-                factId = m_FactDisplayQueue.PopFront();
-                yield return Services.UI.Popup.PresentFact(
-                    Loc.Find("ui.popup.newPopulationFact.header"),
-                    null,
-                    null,
-                    Assets.Fact(factId),
-                    Save.Bestiary.GetDiscoveredFlags(factId)
-                ).Wait();
+            Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
+            MarkAllAsTagged(manifest.Id);
+
+            Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
+
+            BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, manifest.Id);
+            if (population != null) {
+                m_BestiaryData.RegisterFact(population.Id);
+                    Services.Script.QueueInvoke(() => {
+                    Services.UI.Popup.PresentFact(
+                        Loc.Find("ui.popup.newPopulationFact.header"),
+                        null,
+                        null,
+                        Assets.Fact(population.Id),
+                        Save.Bestiary.GetDiscoveredFlags(population.Id)
+                    );
+                }, -5);
+            } else {
+                Services.Script.QueueInvoke(() => {
+                    Services.UI.Popup.DisplayWithClose(
+                        "ERROR",
+                        Loc.FormatFromString("Site '{0}' has no population data for critter id '{1}'", m_EnvironmentType.CommonName(), Assets.Bestiary(manifest.Id).CommonName())
+                    );
+                }, -5);
             }
+
+            return true;
         }
 
-        static private IEnumerator PlayEffect(VFX inEffect)
-        {
+        static private IEnumerator PlayEffect(VFX inEffect) {
             yield return Routine.Combine(
                 inEffect.Transform.ScaleTo(2, 0.5f, Axis.XY).Ease(Curve.CubeOut),
                 inEffect.Sprite.FadeTo(0, 0.25f).DelayBy(0.25f)
@@ -386,87 +298,38 @@ namespace ProtoAqua.Observation
             inEffect.Free();
         }
 
-        private void DeactivateAllColliders()
-        {
-            TaggableCritter critter;
-            for(int i = 0, len = m_RemainingCrittersReady.Count; i < len; i++)
-            {
-                critter = m_RemainingCrittersReady[i];
-                critter.Collider.enabled = false;
-            }
-        }
+        #endregion // Tagging
 
-        public bool TryGetClosestCritterGameplayPlane(out Vector2 outPosition)
-        {
-            if (!m_ActiveState || m_RemainingCrittersReady.Count <= 0)
-            {
-                outPosition = default;
-                return false;
-            }
+        #region Range
 
-            outPosition = m_ClosestInRange;
-            return true;
-        }
-
-        #endregion // Taggable Critters
-    
-        #region Scan Range
-
-        public void SetDetector(Collider2D inCollider)
-        {
+        public void SetDetector(Collider2D inCollider) {
             if (m_Range == inCollider)
                 return;
 
-            if (m_Listener != null)
-            {
+            if (m_Listener != null) {
                 m_Listener.onTriggerEnter.RemoveListener(OnTaggableEnterRegion);
             }
 
             m_Range = inCollider;
 
-            if (m_Range != null)
-            {
+            if (m_Range != null) {
                 m_Listener = inCollider.EnsureComponent<TriggerListener2D>();
                 m_Listener.LayerFilter = GameLayers.CritterTag_Mask;
                 m_Listener.SetOccupantTracking(true);
 
                 m_Listener.onTriggerEnter.AddListener(OnTaggableEnterRegion);
-
-                m_DeactivateRangeSq = PhysicsUtils.GetRadius(inCollider) + 1;
-                m_DeactivateRangeSq *= m_DeactivateRangeSq;
-            }
-            else
-            {
+            } else {
                 m_Listener = null;
             }
         }
 
-        #endregion // Scan Range
+        #endregion // Range
 
         #region Callbacks
 
-        private void OnBestiaryUpdated(BestiaryUpdateParams inParams)
-        {
-            if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
-            {
-                TaggableCritter critter;
-                for(int i = m_RemainingCrittersNotReady.Count - 1; i >= 0; i--)
-                {
-                    critter = m_RemainingCrittersNotReady[i];
-                    if (critter.CritterId == inParams.Id)
-                    {
-                        m_RemainingCrittersNotReady.RemoveAt(i);
-                        m_RemainingCrittersReady.PushBack(critter);
-                    }
-                }
-            }
-        }
-
-        private void OnTaggableEnterRegion(Collider2D inCollider)
-        {
+        private void OnTaggableEnterRegion(Collider2D inCollider) {
             TaggableCritter critter = inCollider.GetComponentInParent<TaggableCritter>();
-            if (critter != null && !WasTagged(critter))
-            {
+            if (critter != null && !critter.WasTagged) {
                 AttemptTag(critter);
             }
         }
@@ -476,19 +339,69 @@ namespace ProtoAqua.Observation
         #region Leaf
 
         [LeafMember("TaggingHasStarted"), UnityEngine.Scripting.Preserve]
-        static private bool LeafHasStartedTagging(StringHash32 inCritterId)
-        {
+        static private bool LeafHasStartedTagging(StringHash32 inCritterId) {
             Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");
             return s_Instance.IsStarted(inCritterId);
         }
 
         [LeafMember("TaggingHasFinished"), UnityEngine.Scripting.Preserve]
-        static private bool LeafHasFinishedTagging(StringHash32 inCritterId)
-        {
+        static private bool LeafHasFinishedTagging(StringHash32 inCritterId) {
             Assert.NotNull(s_Instance, "Cannot call tagging functions if not in dive scene");
-            return !s_Instance.IsUnfinished(inCritterId);
+            return !s_Instance.IsFinished(inCritterId);
         }
 
         #endregion // Leaf
+
+        #region IBaked
+
+        #if UNITY_EDITOR
+
+        static private ref TaggingManifest FindManifest(RingBuffer<TaggingManifest> manifest, StringHash32 id) {
+            for (int i = 0; i < manifest.Count; i++) {
+                if (manifest[i].Id == id) {
+                    return ref manifest[i];
+                }
+            }
+
+            manifest.PushBack(new TaggingManifest() { Id = id });
+            return ref manifest[manifest.Count - 1];
+        }
+
+        static private Fraction16 FindProportion(StringHash32 id, Fraction16 defaultProportion, CritterProportion[] overrides) {
+            for(int i = 0; i < overrides.Length; i++) {
+                if (overrides[i].CritterId == id) {
+                    return overrides[i].Proportion;
+                }
+            }
+
+            return defaultProportion;
+        }
+
+        bool IBaked.Bake(ScriptableBake.BakeFlags flags) {
+            StringHash32 mapId = MapDB.LookupCurrentMap();
+            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", SceneHelper.ActiveScene().Name);
+
+            m_MapId = mapId;
+            m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
+
+            RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();
+            SceneHelper.ActiveScene().Scene.ForEachComponent<TaggableCritter>(true, (scn, critter) => {
+                FindManifest(entries, critter.CritterId).TotalInScene++;
+            });
+            for(int i = 0; i < entries.Count; i++) {
+                ref TaggingManifest manifest = ref entries[i];
+                manifest.Required = (ushort) (manifest.TotalInScene * FindProportion(manifest.Id, m_DefaultTagProportion, m_CritterProportionOverrides));
+            }
+            m_SceneManifest = entries.ToArray();
+            return true;
+        }
+
+        int IBaked.Order {
+            get { return 0; }
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // IBaked
     }
 }

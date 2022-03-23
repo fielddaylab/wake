@@ -17,6 +17,7 @@ using BeauUtil.Services;
 using Leaf.Runtime;
 using EasyAssetStreaming;
 using ScriptableBake;
+using Aqua.Character;
 
 namespace Aqua
 {
@@ -32,6 +33,7 @@ namespace Aqua
         private Routine m_SceneLoadRoutine;
         [NonSerialized] private StringHash32 m_EntranceId;
         [NonSerialized] private bool m_SceneLock;
+        [NonSerialized] private PlayerBody m_Body;
 
         private VariantTable m_TempSceneTable;
 
@@ -589,11 +591,17 @@ namespace Aqua
             // locate camera
             Services.Camera.LocateCameraRig();
             Services.UI.BindCamera(Services.Camera.Current);
+
+            m_Body = FindObjectOfType<PlayerBody>();
         }
 
         #endregion // Scripting
 
         #region Additional Managers
+
+        public PlayerBody Player {
+            get { return m_Body; }
+        }
 
         public void RegisterManager(SharedManager inManager)
         {

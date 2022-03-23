@@ -1,59 +1,32 @@
 using System;
-using UnityEngine;
-using BeauUtil;
-using Aqua.Scripting;
 using Aqua;
+using Aqua.Entity;
+using Aqua.Scripting;
+using BeauUtil;
 using ScriptableBake;
+using UnityEngine;
 
-namespace ProtoAqua.Observation
-{
-    public class TaggableCritter : ScriptComponent, IBaked
-    {
+namespace ProtoAqua.Observation {
+    public class TaggableCritter : ToolRegion {
+
         #region Inspector
 
+        [Header("Taggable")]
         [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 CritterId;
-        [Required] public Collider2D Collider;
-        public Transform TrackTransform;
-
-        public float ColliderRadius;
-
-        [HideInInspector] public ScannableRegion Scannable;
 
         #endregion // Inspector
 
-        private void OnEnable()
-        {
+        [NonSerialized] public bool WasTagged;
+
+        private void OnEnable() {
             ScanSystem.Find<TaggingSystem>().Register(this);
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             if (!Services.Valid || !Collider) {
                 return;
             }
-            
             ScanSystem.Find<TaggingSystem>()?.Deregister(this);
         }
-
-        #if UNITY_EDITOR
-
-        private void Reset()
-        {
-            TrackTransform = transform;
-        }
-
-        int IBaked.Order { get { return 0; } }
-
-        bool IBaked.Bake(BakeFlags flags)
-        {
-            if (!TrackTransform)
-                TrackTransform = transform;
-
-            ColliderRadius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
-            Scannable = GetComponent<ScannableRegion>();
-            return true;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

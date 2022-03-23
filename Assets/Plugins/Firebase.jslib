@@ -140,27 +140,6 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters) {
-        var userCode = Pointer_stringify(userCode);
-        var appVersion = Pointer_stringify(appVersion);
-        var appFlavor = Pointer_stringify(appFlavor);
-        var jobName = Pointer_stringify(jobName);
-        var tankType = Pointer_stringify(tankType);
-        var environment = Pointer_stringify(environment);
-        var critters = Pointer_stringify(critters);
-
-        analytics.logEvent("begin_experiment", {
-            user_code: userCode,
-            app_version: appVersion,
-            app_flavor: appFlavor,
-            log_version: logVersion,
-            job_name: jobName,
-            tank_type: tankType,
-            environment: environment,
-            critters: critters
-        });
-    },
-
     FBBeginDive: function(userCode, appVersion, appFlavor, logVersion, jobName, siteId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
@@ -842,7 +821,30 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBEndExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters) {
+    FBBeginExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
+        var userCode = Pointer_stringify(userCode);
+        var appVersion = Pointer_stringify(appVersion);
+        var appFlavor = Pointer_stringify(appFlavor);
+        var jobName = Pointer_stringify(jobName);
+        var tankType = Pointer_stringify(tankType);
+        var environment = Pointer_stringify(environment);
+        var critters = Pointer_stringify(critters);
+
+        analytics.logEvent("begin_experiment", {
+            user_code: userCode,
+            app_version: appVersion,
+            app_flavor: appFlavor,
+            log_version: logVersion,
+            job_name: jobName,
+            tank_type: tankType,
+            environment: environment,
+            critters: critters,
+            stabilizer_enabled: stabilizerEnabled,
+            autofeeder_enabled: autofeederEnabled
+        });
+    },
+
+    FBEndExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -859,7 +861,9 @@ mergeInto(LibraryManager.library, {
             job_name: jobName,
             tank_type: tankType,
             environment: environment,
-            critters: critters
+            critters: critters,
+            stabilizer_enabled: stabilizerEnabled,
+            autofeeder_enabled: autofeederEnabled
         });
     },
 

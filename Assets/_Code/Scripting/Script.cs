@@ -21,6 +21,10 @@ namespace Aqua {
             [MethodImpl(256)] get { return Services.Pause.IsPaused(); }
         }
 
+        static public bool IsPausedOrLoading {
+            [MethodImpl(256)] get { return Services.State.IsLoadingScene() || Services.Pause.IsPaused(); }
+        }
+
         static public T ParseArg<T>(StringSlice inArg, object inContext, T inDefault = default(T)) {
             return LeafUtils.ParseArgument<T>(LeafEvalContext.FromObject(inContext, Services.Script), inArg, inDefault);
         }

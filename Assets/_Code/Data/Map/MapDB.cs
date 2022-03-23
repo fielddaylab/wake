@@ -59,6 +59,8 @@ namespace Aqua
         private class Inspector : BaseInspector
         {}
 
+        static private Dictionary<string, StringHash32> s_EditorSceneMap;
+
         #endif // UNITY_EDITOR
 
         static public string LookupScene(StringHash32 inMapId)
@@ -69,6 +71,18 @@ namespace Aqua
         static public StringHash32 LookupMap(SceneBinding inScene)
         {
             StringHash32 mapId;
+            #if UNITY_EDITOR
+            if (!Application.isPlaying) {
+                if (s_EditorSceneMap == null) {
+                    s_EditorSceneMap = new Dictionary<string, StringHash32>();
+                    foreach(var map in ValidationUtils.FindAllAssets<MapDesc>()) {
+                        s_EditorSceneMap.Add(map.SceneName(), map.Id());
+                    }
+                }
+                s_EditorSceneMap.TryGetValue(inScene.Name, out mapId);
+                return mapId;
+            }
+            #endif // UNITY_EDITOR
             Services.Assets.Map.m_SceneMapping.TryGetValue(inScene.Name, out mapId);
             return mapId;
         }
