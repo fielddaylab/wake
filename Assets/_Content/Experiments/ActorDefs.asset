@@ -1410,18 +1410,18 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: -100
+        AliveMax: 200
         StressedMin: -Infinity
         StressedMax: Infinity
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: -100
+        AliveMax: 200
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: -100
+        AliveMax: 200
         StressedMin: -Infinity
         StressedMax: Infinity
     AliveEatTargets:
@@ -2403,8 +2403,20 @@ MonoBehaviour:
         AliveMax: 8.3
         StressedMin: 7.3
         StressedMax: 8.8
-    AliveEatTargets: []
-    StressedEatTargets: []
+    AliveEatTargets:
+    - TargetId:
+        m_Source: GlassSponge
+        m_HashValue: 3492975621
+      FactId:
+        m_Source: PterasterObscurus.Eats.GlassSponge
+        m_HashValue: 497967974
+    StressedEatTargets:
+    - TargetId:
+        m_Source: GlassSponge
+        m_HashValue: 3492975621
+      FactId:
+        m_Source: PterasterObscurus.Eats.GlassSponge
+        m_HashValue: 497967974
     SpawnCount: 10
     IsPlant: 0
     TargetLimit: 1
@@ -2780,7 +2792,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 4036767444
     Type: {fileID: 11400000, guid: a7f837e2b6a25ff41bf141677b4c4702, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: d9be9f449d6a3f54fa4e100a6cfd58df,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0
@@ -2849,16 +2862,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: -0.29245853
+      y: -0.26128155
+      width: 0.53637624
+      height: 0.5587822
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
+      x: -0.32225722
+      y: -0.29232502
+      width: 0.5959736
+      height: 0.62086916
   - Id:
       m_HashValue: 444981425
     Type: {fileID: 11400000, guid: c3bd9a227336a470ab889aaef6144136, type: 2}
@@ -3239,7 +3252,8 @@ MonoBehaviour:
   - Id:
       m_HashValue: 2920275176
     Type: {fileID: 11400000, guid: 67eee79beff93cb43b970be3df22731a, type: 2}
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1264615091982000645, guid: 054c4a8cb2fd1e841bb277c73d729d22,
+      type: 3}
     SpawnAmountOverride: -1
     Spawning:
       SpawnLocation: 0

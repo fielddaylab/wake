@@ -254,45 +254,6 @@ Model your findings to see who might've had the biggest effect over the oxygen l
 :: bayou-oxygen-tracking.task.reportBack
 Report back with the model.
 
-:: arctic-missing-whale.name
-**Missing Whale!
-
-:: arctic-missing-whale.desc
-Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
-
-:: arctic-missing-whale.task.findWhale
-Search {h}site W{/h} for signs of Linda the missing whale
-
-:: arctic-missing-whale.task.reportBack
-Report back with your findings
-
-:: arctic-whale-csi.name
-***Whale CSI
-
-:: arctic-whale-csi.desc
-Find out what happened to the whale. I'll give you some info on whales and a microscope if you accept this.
-
-:: arctic-whale-csi.task.scanAndTag
-Scan and Count Salmon, Shark, and Cod
-
-:: arctic-whale-csi.task.scanIceAlgae
-Search the ice for signs of microscopic life
-
-:: arctic-whale-csi.task.reportBack
-Report back with your findings
-
-:: arctic-time-of-death.name
-**Time Of Death
-
-:: arctic-time-of-death.desc
-How long ago did the missing whale die? We can use the decomposition model to determine her time of death.
-
-:: arctic-time-of-death.task.getPopulations
-Scan and Count all organisms at Site W
-
-:: arctic-time-of-death.task.reportBack
-Report back with your findings
-
 :: coral-turtle-population.name
 Turtle Population
 
@@ -793,6 +754,69 @@ There are not enough fish to the Turf Algae
 :: coral-much-algae.argue.claimLabelIncorrect
 The Lionfish are making the Turf Algae grow faster
 
+:: kelp-mussel-fest-solution.name
+* Mussel Fest Solution
+
+:: kelp-mussel-fest-solution.desc
+Other than the weird shape, are the Mussels being affected in any adverse way? We're particularly interested in how their reproduction rate has changed. The local restaurants want to keep serving mussels!
+
+:: kelp-mussel-fest-solution.task.stressedRate
+Measure Mussel reproduction rates when stressed
+
+:: kelp-mussel-fest-solution.task.unstressedRate
+Measure Mussel reproduction rates when not stressed
+
+:: kelp-mussel-fest-solution.task.reportChange
+Report whether Mussel reproduction rates have changed
+
+:: kelp-mussel-fest-solution.argue.claimLabel
+Explain how Mussel growth rate is affected by stress
+
+:: kelp-refuge-failure.task.lightRatesGiant
+Measure the rate at which Giant Kelp consume light.
+
+:: kelp-refuge-failure.task.lightRatesBull
+Measure the rate at which Bull Kelp consume light.
+
+:: arctic-missing-whale.name
+**Missing Whale!
+
+:: arctic-missing-whale.desc
+Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
+
+:: arctic-missing-whale.task.findWhale
+Search {h}site W{/h} for signs of Linda the missing whale
+
+:: arctic-missing-whale.task.reportBack
+Report back with your findings
+
+:: arctic-whale-csi.name
+***Whale CSI
+
+:: arctic-whale-csi.desc
+Find out what happened to the whale. I'll give you some info on whales and a microscope if you accept this.
+
+:: arctic-whale-csi.task.scanAndTag
+Scan and Count Salmon, Shark, and Cod
+
+:: arctic-whale-csi.task.scanIceAlgae
+Search the ice for signs of microscopic life
+
+:: arctic-whale-csi.task.reportBack
+Report back with your findings
+
+:: arctic-time-of-death.name
+**Time Of Death
+
+:: arctic-time-of-death.desc
+How long ago did the missing whale die? We can use the decomposition model to determine her time of death.
+
+:: arctic-time-of-death.task.getPopulations
+Scan and Count all organisms at Site W
+
+:: arctic-time-of-death.task.reportBack
+Report back with your findings
+
 :: arctic-missing-whale.task.findTracker
 Search {h}site W{/h} to find the missing whale tracker
 
@@ -868,30 +892,6 @@ Looks like you found a new site when you were carried by the currents under the 
 :: arctic-underneath.task.report
 Report your findings back to Prof. Whalen
 
-:: kelp-mussel-fest-solution.name
-* Mussel Fest Solution
-
-:: kelp-mussel-fest-solution.desc
-Other than the weird shape, are the Mussels being affected in any adverse way? We're particularly interested in how their reproduction rate has changed. The local restaurants want to keep serving mussels!
-
-:: kelp-mussel-fest-solution.task.stressedRate
-Measure Mussel reproduction rates when stressed
-
-:: kelp-mussel-fest-solution.task.unstressedRate
-Measure Mussel reproduction rates when not stressed
-
-:: kelp-mussel-fest-solution.task.reportChange
-Report whether Mussel reproduction rates have changed
-
-:: kelp-mussel-fest-solution.argue.claimLabel
-Explain how Mussel growth rate is affected by stress
-
-:: kelp-refuge-failure.task.lightRatesGiant
-Measure the rate at which Giant Kelp consume light.
-
-:: kelp-refuge-failure.task.lightRatesBull
-Measure the rate at which Bull Kelp consume light.
-
 :: arctic-underneath.task.explore
 Explore all populations under the ice.
 
@@ -912,3 +912,40 @@ Construct a {h}visual model{/h} of how the species at {h}site X{/h} survive.
 
 :: arctic-stationary-survival.argue.claimLabel
 How do the creatues of site X survive beneath the ice?
+
+:: arctic-isolated-instance.name
+* Isolated Instance
+
+:: arctic-isolated-instance.desc
+Is this the only place these sponges can live? What is preventing them from living at Site Z?
+
+:: arctic-isolated-instance.argue.claimLabelStress
+The Sponges are stressed by the light levels.
+
+:: arctic-isolated-instance.argue.claimLabelPredator
+A predator is eating the Sponges.
+
+:: arctic-isolated-instance.argue.claimLabelFinal
+Present evidence explaining why Sea Sponges are not found in Site Z.
+
+:: arctic-isolated-instance.task.scanAll
+Scan any new species at Site Z
+
+:: arctic-isolated-instance.task.experimentPredatorAll
+Try to observe predators from nearby sites eating Sea Sponges
+
+:: arctic-isolated-instance.task.experimentPredatorZ
+Observe which organisms Site Z predators eat
+
+:: arctic-isolated-instance.task.discussFindings
+Discuss your findings with Professor Whalen
+
+:: arctic-isolated-instance.task.determineStress
+Determine Sea Sponge stress levels
+
+:: arctic-isolated-instance.task.findPredator
+Search sites near Site Z for predators of Sea Sponges
+
+:: arctic-isolated-instance.task.scanSponge
+Scan a Sea Sponge at Site X
+

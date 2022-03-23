@@ -1,0 +1,391 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: arctic-isolated-instance
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.arctic-isolated-instance.name
+    m_HashValue: 3694663786
+  m_PosterId:
+    m_HashValue: 2307648171
+  m_DescId:
+    m_Source: jobs.arctic-isolated-instance.desc
+    m_HashValue: 2169727516
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 3
+  m_ModelingDifficulty: 2
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 1139799787ac7b24b8828528fd942c6a, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades: []
+  m_StationId:
+    m_HashValue: 1297447963
+  m_DiveSiteIds:
+  - m_HashValue: 1976919334
+  - m_HashValue: 1960141715
+  m_Tasks:
+  - Id:
+      m_Source: scanSponge
+      m_HashValue: 3773120186
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.scanSponge
+      m_HashValue: 1884410105
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GlassSponge
+        m_HashValue: 3492975621
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: scanAll
+      m_HashValue: 1784740587
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.scanAll
+      m_HashValue: 899018090
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Smelt
+        m_HashValue: 2920275176
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RibbonSeal
+        m_HashValue: 3868886068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SalmonShark
+        m_HashValue: 4036767444
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BowheadWhale
+        m_HashValue: 2063388242
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SeaAnemone
+        m_HashValue: 3323473791
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanSponge
+      m_HashValue: 3773120186
+  - Id:
+      m_Source: experimentPredatorZ
+      m_HashValue: 1559618709
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorZ
+      m_HashValue: 3635701664
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SalmonShark.Eats.ChinookSalmon
+        m_HashValue: 3447061902
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RibbonSeal.Eats.ChinookSalmon
+        m_HashValue: 1874829230
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanAll
+      m_HashValue: 1784740587
+  - Id:
+      m_Source: findPredator
+      m_HashValue: 427489029
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.findPredator
+      m_HashValue: 3034372890
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: PterasterObscurus
+        m_HashValue: 1470134365
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: experimentPredatorZ
+      m_HashValue: 1559618709
+  - Id:
+      m_Source: experimentPredatorAll
+      m_HashValue: 4140043772
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorAll
+      m_HashValue: 3110267969
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: PterasterObscurus.Eats.GlassSponge
+        m_HashValue: 497967974
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: findPredator
+      m_HashValue: 427489029
+  - Id:
+      m_Source: determineStress
+      m_HashValue: 2715794674
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.determineStress
+      m_HashValue: 4061817563
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.Light.Stressed
+        m_HashValue: 2672459526
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.PH.Stressed
+        m_HashValue: 663908708
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.Temperature.Stressed
+        m_HashValue: 764023188
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: discussFindings
+      m_HashValue: 1442478067
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.discussFindings
+      m_HashValue: 1161848886
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: experimentPredatorAll
+      m_HashValue: 4140043772
+    - m_Source: determineStress
+      m_HashValue: 2715794674
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanSponge
+      m_HashValue: 3773120186
+    IdString: scanSponge
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.scanSponge
+      m_HashValue: 1884410105
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: GlassSponge
+        m_HashValue: 3492975621
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: scanAll
+      m_HashValue: 1784740587
+    IdString: scanAll
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.scanAll
+      m_HashValue: 899018090
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Smelt
+        m_HashValue: 2920275176
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RibbonSeal
+        m_HashValue: 3868886068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SalmonShark
+        m_HashValue: 4036767444
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ChinookSalmon
+        m_HashValue: 3582091882
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BowheadWhale
+        m_HashValue: 2063388242
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SeaAnemone
+        m_HashValue: 3323473791
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: experimentPredatorZ
+      m_HashValue: 1559618709
+    IdString: experimentPredatorZ
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorZ
+      m_HashValue: 3635701664
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: SalmonShark.Eats.ChinookSalmon
+        m_HashValue: 3447061902
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RibbonSeal.Eats.ChinookSalmon
+        m_HashValue: 1874829230
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: findPredator
+      m_HashValue: 427489029
+    IdString: findPredator
+    Index: 3
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.findPredator
+      m_HashValue: 3034372890
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: PterasterObscurus
+        m_HashValue: 1470134365
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  - Id:
+      m_Source: experimentPredatorAll
+      m_HashValue: 4140043772
+    IdString: experimentPredatorAll
+    Index: 4
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorAll
+      m_HashValue: 3110267969
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: PterasterObscurus.Eats.GlassSponge
+        m_HashValue: 497967974
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0300
+  - Id:
+      m_Source: determineStress
+      m_HashValue: 2715794674
+    IdString: determineStress
+    Index: 5
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.determineStress
+      m_HashValue: 4061817563
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.Light.Stressed
+        m_HashValue: 2672459526
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.PH.Stressed
+        m_HashValue: 663908708
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: GlassSponge.Temperature.Stressed
+        m_HashValue: 764023188
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: discussFindings
+      m_HashValue: 1442478067
+    IdString: discussFindings
+    Index: 6
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.discussFindings
+      m_HashValue: 1161848886
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 04000500
+  m_CashReward: 100
+  m_ExpReward: 10
+  m_Scripting: {fileID: -1942890987711236906, guid: 124b6ee976f99274fa100ab046bbab73,
+    type: 3}
+  m_ExtraAssets: []
