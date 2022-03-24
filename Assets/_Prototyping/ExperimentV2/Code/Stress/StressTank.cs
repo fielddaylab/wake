@@ -48,6 +48,15 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.DeactivateMethod = Deactivate;
             m_ParentTank.HasCritter = (s) => m_OrganismScreen.Panel.IsSelected(Assets.Bestiary(s));
             m_ParentTank.HasEnvironment = (s) => false;
+            m_ParentTank.IsActionAvailable = (a) => {
+                switch(a) {
+                    case ActorActionId.Spawning:
+                    case ActorActionId.Idle:
+                    case ActorActionId.Waiting: 
+                        return true;
+                    default: return false;
+                }
+            };
 
             m_OrganismScreen.Panel.OnAdded = OnCritterAdded;
             m_OrganismScreen.Panel.OnCleared = OnCrittersCleared;

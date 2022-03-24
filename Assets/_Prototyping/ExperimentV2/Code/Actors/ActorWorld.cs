@@ -171,6 +171,10 @@ namespace ProtoAqua.ExperimentV2
                 return;
             }
 
+            if (inWorld.Tank.CanEmitEmoji != null && !inWorld.Tank.CanEmitEmoji(inId)) {
+                return;
+            }
+
             ParticleSystem system = inWorld.Tank.EmojiEmitters[emitterIndex];
 
             ParticleSystem.EmitParams emit = default;
@@ -179,7 +183,7 @@ namespace ProtoAqua.ExperimentV2
                 bounds = inOverrideRegion.Value;
             } else {
                 bounds = inActor.CachedCollider.bounds;
-                bounds.extents *= 0.7f;
+                bounds.extents *= 0.6f;
             }
             emit.position = bounds.center;
 
@@ -190,6 +194,8 @@ namespace ProtoAqua.ExperimentV2
             emit.applyShapeToPosition = true;
 
             system.Emit(emit, inCount);
+
+            inWorld.Tank.OnEmitEmoji?.Invoke(inId);
         }
 
         static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, BFBase inFact, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1) {

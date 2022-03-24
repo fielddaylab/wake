@@ -153,6 +153,10 @@ namespace ProtoAqua.ExperimentV2
         static public bool SetActorAction(ActorInstance ioInstance, ActorActionId inActionId, ActorWorld inWorld)
         {
             ActorActionId prev = ioInstance.CurrentAction;
+
+            if (inWorld.Tank.IsActionAvailable != null && !inWorld.Tank.IsActionAvailable(inActionId))
+                return false;
+
             if (!Ref.Replace(ref ioInstance.CurrentAction, inActionId))   
                 return false;
 
@@ -429,7 +433,7 @@ namespace ProtoAqua.ExperimentV2
                 yield return null;
             }
 
-            yield return inActor.AnimationTransform.MoveTo(inActor.AnimationTransform.localPosition.x + 0.2f, 0.3f, Axis.X, Space.Self)
+            yield return inActor.AnimationTransform.MoveTo(inActor.AnimationTransform.localPosition.x + 0.4f, 0.3f, Axis.X, Space.Self)
                 .Randomize().Loop().Wave(Wave.Function.Sin, 1).RevertOnCancel(false);
         }
 
@@ -463,6 +467,7 @@ namespace ProtoAqua.ExperimentV2
         Eating, // eating food
         BeingEaten, // being eaten
         Dying, // dying
+        Reproducing, // reproducing
         
         [Hidden]
         COUNT,

@@ -77,6 +77,42 @@ MonoBehaviour:
   CustomLabel: {fileID: 0}
   CustomButton: {fileID: 0}
   CustomButtonLabel: {fileID: 0}
+--- !u!114 &2111137375775946529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8823439948226219172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e551443bdf0f3ab43bbcb80ba5097894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParentTank: {fileID: 8823439948226219194}
+  m_HeaderUI: {fileID: 3036010744746289061}
+  m_OrganismScreen: {fileID: 1590969030501605203}
+  m_PropertiesScreen: {fileID: 6913513427313234889}
+  m_Dials: []
+--- !u!114 &8051985788298602405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8823439948226219172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: StressTank
+    m_HashValue: 3844482921
+  m_ToShow:
+  - {fileID: 8823439948226219172}
+  m_ToHide: []
+  m_ContinuousCheck: 1
 --- !u!1 &6094020891600407454
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,42 +340,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
---- !u!114 &2111137375775946529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8823439948226219172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e551443bdf0f3ab43bbcb80ba5097894, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ParentTank: {fileID: 8823439948226219194}
-  m_HeaderUI: {fileID: 3036010744746289061}
-  m_OrganismScreen: {fileID: 1590969030501605203}
-  m_PropertiesScreen: {fileID: 6913513427313234889}
-  m_Dials: []
---- !u!114 &8051985788298602405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8823439948226219172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: StressTank
-    m_HashValue: 3844482921
-  m_ToShow:
-  - {fileID: 8823439948226219172}
-  m_ToHide: []
-  m_ContinuousCheck: 1
 --- !u!1 &9205292493895812879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1728,12 +1728,12 @@ PrefabInstance:
     - target: {fileID: 1810087248299425458, guid: 6e250300908277045b8ef54f70ce6bcc,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1810087248299425458, guid: 6e250300908277045b8ef54f70ce6bcc,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1810087248299425458, guid: 6e250300908277045b8ef54f70ce6bcc,
         type: 3}
@@ -1748,7 +1748,7 @@ PrefabInstance:
     - target: {fileID: 1810087248299425458, guid: 6e250300908277045b8ef54f70ce6bcc,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3013318517464031507, guid: 6e250300908277045b8ef54f70ce6bcc,
         type: 3}

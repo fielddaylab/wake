@@ -231,6 +231,7 @@ namespace ProtoAqua.ExperimentV2 {
         static private IEnumerator ActorIdleAnimation(ActorInstance inActor, ActorWorld inWorld) {
             ActorDefinition def = inActor.Definition;
             bool bLimitMovement = ActorDefinition.GetEatTargets(def, inActor.CurrentState).Length > 0;
+            bool bAllowHungry = inWorld.Tank.IsActionAvailable == null || inWorld.Tank.IsActionAvailable(ActorActionId.Hungry);
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
@@ -250,7 +251,7 @@ namespace ProtoAqua.ExperimentV2 {
             float interval = intervalMultiplier * RNG.Instance.NextFloat() * (def.Movement.MovementInterval + def.Movement.MovementIntervalRandom);
             yield return interval;
 
-            while (!bLimitMovement || moveCount-- > 0) {
+            while (!bLimitMovement || !bAllowHungry || moveCount-- > 0) {
                 current = inActor.CachedTransform.localPosition;
                 target = ActorDefinition.FindRandomTankLocationInRange(RNG.Instance, inWorld.WorldBounds, inActor.CachedTransform.localPosition, def.Movement.MovementIdleDistance, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
                 duration = Vector3.Distance(current, target) / movementSpeed;
@@ -421,6 +422,12 @@ namespace ProtoAqua.ExperimentV2 {
 
         #endregion // Being Eaten
 
+        #region Reproducing
+
+        
+
+        #endregion // Reproducing
+
         static private void OnInteractionAcquired(ActorInstance inActor, ActorWorld inWorld) {
             ActorInstance.SetActorAction(inActor, ActorActionId.BeingEaten, inWorld);
         }
@@ -466,19 +473,6 @@ namespace ProtoAqua.ExperimentV2 {
                 eatBuffer.Clear();
                 return actor;
             }
-        }
-
-        static public bool HasPotentialEatTarget(ActorInstance inInstance, ActorWorld inWorld) {
-            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
-
-            foreach (var critter in inWorld.Actors) {
-                if (!IsValidEatTarget(validTargets, critter))
-                    continue;
-
-                return true;
-            }
-
-            return false;
         }
 
         static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget) {
