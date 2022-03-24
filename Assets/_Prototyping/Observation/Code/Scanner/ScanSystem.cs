@@ -290,6 +290,7 @@ namespace ProtoAqua.Observation {
         private void EnterRange(ScannableRegion inRegion) {
             m_RegionsInRange.PushBack(inRegion);
             RefreshData(inRegion);
+            inRegion.Click.Source = inRegion.ColliderPosition.Source;
             inRegion.CanScan = true;
             inRegion.CurrentIcon = m_IconPool.Alloc();
             inRegion.CurrentIcon.Show();
