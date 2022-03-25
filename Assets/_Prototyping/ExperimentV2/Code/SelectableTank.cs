@@ -13,6 +13,16 @@ namespace ProtoAqua.ExperimentV2
 {
     public class SelectableTank : MonoBehaviour, IBaked
     {
+        #region Consts
+
+        static public readonly StringHash32 Emoji_Stressed = "Stress";
+        static public readonly StringHash32 Emoji_Death = "Dead";
+        static public readonly StringHash32 Emoji_Eat = "Eat";
+        static public readonly StringHash32 Emoji_Reproduce = "Reproduce";
+        static public readonly StringHash32 Emoji_Breath = "Breath";
+
+        #endregion // Consts
+
         #region Inspector
 
         public TankType Type = TankType.Observation;

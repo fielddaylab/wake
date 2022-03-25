@@ -165,35 +165,34 @@ namespace ProtoAqua.ExperimentV2
         //Xander Grabowski - 02/04/2022
         static public void EmitEmoji(ActorWorld inWorld, ActorInstance inActor, StringHash32 inId, Bounds? inOverrideRegion = null, int inCount = 1)
         {
-            int emitterIndex = Array.IndexOf(inWorld.Tank.EmojiIds, inId);
-            if (emitterIndex < 0) {
-                Log.Error("[ActorWorld] No emoji emitters with id '{0}' on tank '{1}'", inId, inWorld.Tank.name);
-                return;
-            }
-
             if (inWorld.Tank.CanEmitEmoji != null && !inWorld.Tank.CanEmitEmoji(inId)) {
                 return;
             }
 
-            ParticleSystem system = inWorld.Tank.EmojiEmitters[emitterIndex];
-
-            ParticleSystem.EmitParams emit = default;
-            Bounds bounds;
-            if (inOverrideRegion != null) {
-                bounds = inOverrideRegion.Value;
+            int emitterIndex = Array.IndexOf(inWorld.Tank.EmojiIds, inId);
+            if (emitterIndex < 0) {
+                Log.Error("[ActorWorld] No emoji emitters with id '{0}' on tank '{1}'", inId, inWorld.Tank.name);
             } else {
-                bounds = inActor.CachedCollider.bounds;
-                bounds.extents *= 0.6f;
+                ParticleSystem system = inWorld.Tank.EmojiEmitters[emitterIndex];
+
+                ParticleSystem.EmitParams emit = default;
+                Bounds bounds;
+                if (inOverrideRegion != null) {
+                    bounds = inOverrideRegion.Value;
+                } else {
+                    bounds = inActor.CachedCollider.bounds;
+                    bounds.extents *= 0.6f;
+                }
+                emit.position = bounds.center;
+
+                ParticleSystem.ShapeModule shape = system.shape;
+                shape.shapeType = ParticleSystemShapeType.Box;
+                shape.scale = bounds.size;
+                shape.position = default;
+                emit.applyShapeToPosition = true;
+
+                system.Emit(emit, inCount);
             }
-            emit.position = bounds.center;
-
-            ParticleSystem.ShapeModule shape = system.shape;
-            shape.shapeType = ParticleSystemShapeType.Box;
-            shape.scale = bounds.size;
-            shape.position = default;
-            emit.applyShapeToPosition = true;
-
-            system.Emit(emit, inCount);
 
             inWorld.Tank.OnEmitEmoji?.Invoke(inId);
         }

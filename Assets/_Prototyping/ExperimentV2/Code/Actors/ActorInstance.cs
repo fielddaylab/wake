@@ -45,6 +45,8 @@ namespace ProtoAqua.ExperimentV2
         
         [NonSerialized] public TempAlloc<VFX> StateEffect;
         [NonSerialized] public Routine StateAnimation;
+
+        [NonSerialized] public Routine BreathAnimation;
         
         [NonSerialized] public bool InWater;
 
@@ -82,6 +84,7 @@ namespace ProtoAqua.ExperimentV2
             m_ActionVersion = 0;
             StateAnimation.Stop();
             ActionAnimation.Stop();
+            BreathAnimation.Stop();
             CachedCollider.enabled = true;
             Ref.Dispose(ref StateEffect);
             InWater = false;
@@ -119,7 +122,7 @@ namespace ProtoAqua.ExperimentV2
                 inInstance.ColorAdjust.SetColor(Color.white);
             }
             //inInstance.StateAnimation.Replace(inInstance, Tween.Color(Color.white, Color.red, inInstance.ColorAdjust.SetColor, 0.5f).Wave(Wave.Function.Sin, 1).Loop());
-            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, "Stress", 0.7f));
+            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, SelectableTank.Emoji_Stressed, 0.7f));
         }
 
         static private void OnEndStressedState(ActorInstance inInstance, ActorWorld inWorld)
@@ -134,7 +137,7 @@ namespace ProtoAqua.ExperimentV2
             if (inInstance.ColorAdjust)
                 inInstance.ColorAdjust.SetColor(Color.gray);
             
-            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, "Dead", 1));
+            inInstance.StateAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, SelectableTank.Emoji_Death, 1));
         }
 
         static private void OnEndDeadState(ActorInstance inInstance, ActorWorld inWorld)
@@ -345,8 +348,8 @@ namespace ProtoAqua.ExperimentV2
 
         static public void ReleaseTargetsAndInteractions(ActorInstance ioActor, ActorWorld inWorld)
         {
-            ReleaseTarget(ref ioActor.CurrentTargetActor, null);
-            ReleaseInteraction(ref ioActor.CurrentInteractionActor, null);
+            ReleaseTarget(ref ioActor.CurrentTargetActor, inWorld);
+            ReleaseInteraction(ref ioActor.CurrentInteractionActor, inWorld);
         }
     
         #region Animations
@@ -359,6 +362,12 @@ namespace ProtoAqua.ExperimentV2
         }
 
         #region Spawning
+
+        static public void StartBreathing(ActorInstance inInstance, ActorWorld inWorld) {
+            if (inInstance.Definition.IsAlive && !inInstance.BreathAnimation) {
+                inInstance.BreathAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, SelectableTank.Emoji_Breath, 3f));
+            }
+        }
 
         static public void StartSpawning(ActorInstance inInstance, ActorWorld inWorld, ActorActionId inPrev)
         {
@@ -411,6 +420,8 @@ namespace ProtoAqua.ExperimentV2
         {
             if (inInstance.IdleAnimation)
                 inInstance.IdleAnimation.AnimationScale = 1;
+
+            StartBreathing(inInstance, inWorld);
         }
 
         #endregion // Spawning
@@ -468,6 +479,7 @@ namespace ProtoAqua.ExperimentV2
         BeingEaten, // being eaten
         Dying, // dying
         Reproducing, // reproducing
+        BeingBorn, // being born
         
         [Hidden]
         COUNT,

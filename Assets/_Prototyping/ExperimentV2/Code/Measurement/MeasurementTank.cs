@@ -58,6 +58,11 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField] private ColorPalette2 m_InProgressSuccessColors = default;
         [SerializeField] private ColorPalette2 m_InProgressFailureColors = default;
 
+        [Header("Requirements")]
+        [SerializeField] private int m_EatEventMeasureRequirement = 8;
+        [SerializeField] private int m_ChemistryEventMeasureRequirement = 8;
+        [SerializeField] private int m_ReproduceEventMeasureRequirement = 4;
+
         #endregion // Inspector
 
         [NonSerialized] private ActorWorld m_World;
@@ -65,13 +70,16 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
 
         [NonSerialized] private RunningExperimentData m_ExperimentData;
+        [NonSerialized] private IsolatedVariable m_IsolatedVar;
         [NonSerialized] private float m_Progress = 0;
+        [NonSerialized] private bool m_CollectingMeasurements;
 
         private void Awake() {
             m_ParentTank.ActivateMethod = Activate;
             m_ParentTank.DeactivateMethod = Deactivate;
             m_ParentTank.HasCritter = (s) => m_OrganismScreen.Panel.IsSelected(Assets.Bestiary(s));
             m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
+            m_ParentTank.OnEmitEmoji = (e) => OnEmojiEmit(e);
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
@@ -93,6 +101,7 @@ namespace ProtoAqua.ExperimentV2 {
                 m_Progress = 0;
                 m_InProgressMeterFlash.gameObject.SetActive(false);
                 s.CustomButton.interactable = false;
+                m_CollectingMeasurements = false;
             };
         }
 
@@ -217,6 +226,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return null;
 
             m_ExperimentData = GenerateData();
+            m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
             
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {
@@ -229,9 +239,15 @@ namespace ProtoAqua.ExperimentV2 {
 
             yield return thread.Wait();
 
-            float duration = m_ExperimentData.CustomData > 0 ? 1.5f : 1;
-            while(!AddProgress(Routine.DeltaTime / duration)) {
+            float duration = m_IsolatedVar > 0 ? 1.5f : 1;
+            while(!AddProgressFirstPhase(Routine.DeltaTime / duration)) {
                 yield return null;
+            }
+
+            if (m_CollectingMeasurements) {
+                while(!AddProgressCollection(Routine.DeltaTime / 30f)) {
+                    yield return null;
+                }
             }
         }
 
@@ -260,21 +276,74 @@ namespace ProtoAqua.ExperimentV2 {
             m_InProgressMeter.rectTransform.anchorMax = new Vector2(progress, 1);
         }
 
-        private bool AddProgress(float percentage) {
+        private bool AddProgressFirstPhase(float percentage) {
             if (m_Progress < 1) {
                 m_Progress = Math.Min(m_Progress + percentage, 1);
                 ApplyProgressMeterProgress(m_Progress);
                 if (m_Progress >= 1) {
-                    m_InProgressScreen.CustomButton.interactable = true;
-                    IsolatedVariable iso = (IsolatedVariable) m_ExperimentData.CustomData;
+                    IsolatedVariable iso = m_IsolatedVar;
                     ApplyProgressMeterStyle(IsolatedVariableLabels[(int) iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
-                    Services.Audio.PostEvent("Experiment.FinishPrompt");
                     Routine.Start(this, FlashMeterAnim(m_InProgressMeterFlash)).Tick();
+                    if (iso == 0) {
+                        m_InProgressScreen.CustomButton.interactable = true;
+                        Services.Audio.PostEvent("Experiment.FinishPrompt");
+                    } else {
+                        m_Progress = 0;
+                        m_CollectingMeasurements = true;
+                        ApplyProgressMeterProgress(m_Progress);
+                        m_InProgressScreen.CustomButton.interactable = false;
+                    }
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private bool AddProgressCollection(float percentage) {
+            if (m_Progress < 1) {
+                m_Progress = Math.Min(m_Progress + percentage, 1);
+                ApplyProgressMeterProgress(m_Progress);
+                if (m_Progress >= 1) {
+                    Routine.Start(this, FlashMeterAnim(m_InProgressMeterFlash)).Tick();
+                    if (m_IsolatedVar != 0) {
+                        m_InProgressScreen.CustomButton.interactable = true;
+                        Services.Audio.PostEvent("Experiment.FinishPrompt");
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void OnEmojiEmit(StringHash32 id) {
+            if (!m_CollectingMeasurements) {
+                return;
+            }
+
+            switch(m_IsolatedVar) {
+                case IsolatedVariable.Eating: {
+                    if (id == SelectableTank.Emoji_Eat) {
+                        AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement);
+                    }
+                    break;
+                }
+
+                case IsolatedVariable.Chemistry: {
+                    if (id == SelectableTank.Emoji_Breath) {
+                        AddProgressCollection(0.01f + 1f / m_ChemistryEventMeasureRequirement);
+                    }
+                    break;
+                }
+
+                case IsolatedVariable.Reproduction: {
+                    if (id == SelectableTank.Emoji_Reproduce) {
+                        AddProgressCollection(0.01f + 1f / m_ReproduceEventMeasureRequirement);
+                    }
+                    break;
+                }
+            }
         }
 
         static private IEnumerator FlashMeterAnim(Graphic effect) {
