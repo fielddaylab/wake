@@ -89,14 +89,14 @@ namespace ProtoAqua.Observation {
         private void HandleEnter(Collider2D inCollider) {
             MicroscopeRegion region = inCollider.GetComponentInParent<MicroscopeRegion>();
             if (region != null) {
+                if (region.Scannable) {
+                    region.Scannable.InMicroscope = true;
+                }
                 region.Hidden.SetActive(false);
                 region.Reveal.SetActive(true);
                 foreach(var v2d in region.ProjectedTransforms) {
                     v2d.CustomPosition = ProjectPosition;
                     v2d.Radius += 3;
-                }
-                if (region.Scannable) {
-                    region.Scannable.InMicroscope = true;
                 }
                 region.OnViewed?.Invoke(region);
             }

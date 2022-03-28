@@ -13,6 +13,16 @@ namespace ProtoAqua.ExperimentV2
 {
     public class SelectableTank : MonoBehaviour, IBaked
     {
+        #region Consts
+
+        static public readonly StringHash32 Emoji_Stressed = "Stress";
+        static public readonly StringHash32 Emoji_Death = "Dead";
+        static public readonly StringHash32 Emoji_Eat = "Eat";
+        static public readonly StringHash32 Emoji_Reproduce = "Reproduce";
+        static public readonly StringHash32 Emoji_Breath = "Breath";
+
+        #endregion // Consts
+
         #region Inspector
 
         public TankType Type = TankType.Observation;
@@ -37,6 +47,7 @@ namespace ProtoAqua.ExperimentV2
         [Required] public BoxCollider WaterCollider3D;
         [Required] public ColorGroup WaterColor;
         [Required] public ParticleSystem WaterDrainParticles;
+        public float StartingWaterHeight = 1;
         [HideInInspector] public Rect WaterRect;
         
         [Header("Emojis")]
@@ -67,8 +78,14 @@ namespace ProtoAqua.ExperimentV2
         public Action ActivateMethod;
         public Func<bool> CanDeactivate;
         public Action DeactivateMethod;
-        public Func<StringHash32, bool> HasCritter;
-        public Func<StringHash32, bool> HasEnvironment;
+        
+        public Predicate<StringHash32> HasCritter;
+        public Predicate<StringHash32> HasEnvironment;
+
+        public Predicate<StringHash32> CanEmitEmoji;
+        public Action<StringHash32> OnEmitEmoji;
+
+        public Predicate<ActorActionId> IsActionAvailable;
 
         static public void Reset(SelectableTank tank, bool full = false) {
             foreach(var screen in tank.AllScreens) {

@@ -203,6 +203,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private void OnActorDyingStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev) {
             ActorInstance.ReleaseTargetsAndInteractions(inActor, inWorld);
+            inActor.BreathAnimation.Stop();
             if (inActor.CurrentState == ActorStateId.Dead) {
                 inWorld.EnvDeaths++;
             }
@@ -210,9 +211,9 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private IEnumerator ActorDyingAnimation(ActorInstance inActor, ActorWorld inWorld) {
             yield return Tween.Color(inActor.ColorAdjust.Color, Color.black, inActor.ColorAdjust.SetColor, 1);
-            ActorWorld.EmitEmoji(inWorld, inActor, "Dead", null, 5);
+            ActorWorld.EmitEmoji(inWorld, inActor, SelectableTank.Emoji_Death, null, 5);
             yield return Tween.Float(1, 0, inActor.ColorAdjust.SetAlpha, 0.5f);
-            ActorWorld.EmitEmoji(inWorld, inActor, "Dead", null, 12);
+            ActorWorld.EmitEmoji(inWorld, inActor, SelectableTank.Emoji_Death, null, 12);
             ActorWorld.Free(inWorld, inActor);
         }
 
@@ -226,11 +227,14 @@ namespace ProtoAqua.ExperimentV2 {
 
             if (!inActor.Definition.IsPlant && inActor.Definition.Movement.MoveType != ActorDefinition.MovementTypeId.Stationary)
                 inActor.ActionAnimation.Replace(inActor, ActorIdleAnimation(inActor, inWorld));
+
+            ActorInstance.StartBreathing(inActor, inWorld);
         }
 
         static private IEnumerator ActorIdleAnimation(ActorInstance inActor, ActorWorld inWorld) {
             ActorDefinition def = inActor.Definition;
             bool bLimitMovement = ActorDefinition.GetEatTargets(def, inActor.CurrentState).Length > 0;
+            bool bAllowHungry = inWorld.Tank.IsActionAvailable == null || inWorld.Tank.IsActionAvailable(ActorActionId.Hungry);
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
@@ -250,7 +254,7 @@ namespace ProtoAqua.ExperimentV2 {
             float interval = intervalMultiplier * RNG.Instance.NextFloat() * (def.Movement.MovementInterval + def.Movement.MovementIntervalRandom);
             yield return interval;
 
-            while (!bLimitMovement || moveCount-- > 0) {
+            while (!bLimitMovement || !bAllowHungry || moveCount-- > 0) {
                 current = inActor.CachedTransform.localPosition;
                 target = ActorDefinition.FindRandomTankLocationInRange(RNG.Instance, inWorld.WorldBounds, inActor.CachedTransform.localPosition, def.Movement.MovementIdleDistance, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
                 duration = Vector3.Distance(current, target) / movementSpeed;
@@ -421,6 +425,12 @@ namespace ProtoAqua.ExperimentV2 {
 
         #endregion // Being Eaten
 
+        #region Reproducing
+
+        
+
+        #endregion // Reproducing
+
         static private void OnInteractionAcquired(ActorInstance inActor, ActorWorld inWorld) {
             ActorInstance.SetActorAction(inActor, ActorActionId.BeingEaten, inWorld);
         }
@@ -466,19 +476,6 @@ namespace ProtoAqua.ExperimentV2 {
                 eatBuffer.Clear();
                 return actor;
             }
-        }
-
-        static public bool HasPotentialEatTarget(ActorInstance inInstance, ActorWorld inWorld) {
-            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
-
-            foreach (var critter in inWorld.Actors) {
-                if (!IsValidEatTarget(validTargets, critter))
-                    continue;
-
-                return true;
-            }
-
-            return false;
         }
 
         static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget) {

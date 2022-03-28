@@ -218,6 +218,7 @@ namespace ProtoAqua.ExperimentV2
         public ValidEatTarget[] StressedEatTargets;
         public int SpawnCount;
         public bool IsPlant;
+        public bool IsAlive;
         public int TargetLimit;
         public bool FreeOnEaten;
         public Rect EatOffsetRange;
@@ -405,6 +406,7 @@ namespace ProtoAqua.ExperimentV2
             inDef.Type = inBestiary;
             inDef.StateEvaluator = inBestiary.GetActorStateTransitions();
             inDef.IsPlant = inBestiary.HasFlags(BestiaryDescFlags.TreatAsPlant);
+            inDef.IsAlive = !inBestiary.HasFlags(BestiaryDescFlags.IsNotLiving);
             inDef.FreeOnEaten = !inDef.IsPlant && !inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
             inDef.TargetLimit = inDef.IsPlant ? 4 : 1;
 

@@ -38,11 +38,7 @@ namespace ProtoAqua.ExperimentV2 {
         public void InitializeTank(SelectableTank inTank) {
             WorldUtils.ListenForLayerMask(inTank.WaterTrigger, GameLayers.Critter_Mask, (c) => OnWaterEnter(inTank, c), null);
 
-            if (inTank.Type == TankType.Stress) {
-                SetWaterHeight(inTank, 1);
-            } else {
-                SetWaterHeight(inTank, 0);
-            }
+            SetWaterHeight(inTank, inTank.StartingWaterHeight);
 
             inTank.WaterSystem = this;
 

@@ -70,6 +70,7 @@ MonoBehaviour:
         m_HashValue: 181590260
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -177,6 +178,7 @@ MonoBehaviour:
         m_HashValue: 3673181089
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -330,6 +332,7 @@ MonoBehaviour:
         m_HashValue: 242008181
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -401,6 +404,7 @@ MonoBehaviour:
         m_HashValue: 170722032
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -484,6 +488,7 @@ MonoBehaviour:
         m_HashValue: 1443316800
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -498,6 +503,77 @@ MonoBehaviour:
       y: -0.43298697
       width: 1.4787596
       height: 1.0185709
+  - Id:
+      m_HashValue: 2063388242
+    Type: {fileID: 11400000, guid: 2dacf62c77b0d8d4c999c2240109088b, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 0.5555556
+        AliveMax: 4.4444447
+        StressedMin: -14.444445
+        StressedMax: 19.444445
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 7.8
+        AliveMax: 8.3
+        StressedMin: 7.3
+        StressedMax: 8.8
+    AliveEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: BowheadWhale.Eats.Diatoms
+        m_HashValue: 2996010258
+    StressedEatTargets:
+    - TargetId:
+        m_Source: Diatoms
+        m_HashValue: 1229737088
+      FactId:
+        m_Source: BowheadWhale.Eats.Diatoms
+        m_HashValue: 2996010258
+    SpawnCount: 10
+    IsPlant: 0
+    IsAlive: 1
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1315630147
     Type: {fileID: 11400000, guid: 30885595da21ef14ea35cb2f0f2bb8ba, type: 2}
@@ -555,6 +631,7 @@ MonoBehaviour:
         m_HashValue: 3224749134
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -613,6 +690,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -672,6 +750,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 4
     IsPlant: 1
+    IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
     EatOffsetRange:
@@ -755,6 +834,7 @@ MonoBehaviour:
         m_HashValue: 1154228141
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -885,6 +965,7 @@ MonoBehaviour:
         m_HashValue: 1712894733
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -944,6 +1025,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1003,6 +1085,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1062,6 +1145,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1121,6 +1205,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 4
     IsPlant: 0
+    IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1180,6 +1265,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1239,6 +1325,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1298,6 +1385,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 3
     IsPlant: 1
+    IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
     EatOffsetRange:
@@ -1511,6 +1599,7 @@ MonoBehaviour:
         m_HashValue: 626193164
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1569,6 +1658,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1628,6 +1718,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1711,6 +1802,7 @@ MonoBehaviour:
         m_HashValue: 3761093643
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1854,6 +1946,7 @@ MonoBehaviour:
         m_HashValue: 3388871611
     SpawnCount: 4
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1912,6 +2005,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -1982,6 +2076,7 @@ MonoBehaviour:
         m_HashValue: 2726244040
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2065,6 +2160,7 @@ MonoBehaviour:
         m_HashValue: 3217668712
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2124,6 +2220,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2219,6 +2316,7 @@ MonoBehaviour:
         m_HashValue: 3968036041
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2349,6 +2447,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 4
     IsPlant: 0
+    IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2420,6 +2519,7 @@ MonoBehaviour:
         m_HashValue: 497967974
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2479,6 +2579,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2550,6 +2651,7 @@ MonoBehaviour:
         m_HashValue: 3270658668
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2669,6 +2771,7 @@ MonoBehaviour:
         m_HashValue: 4014676400
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2776,6 +2879,7 @@ MonoBehaviour:
         m_HashValue: 3868973061
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2859,6 +2963,7 @@ MonoBehaviour:
         m_HashValue: 3447061902
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -2918,6 +3023,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 4
     IsPlant: 1
+    IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
     EatOffsetRange:
@@ -2976,6 +3082,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3047,6 +3154,7 @@ MonoBehaviour:
         m_HashValue: 1212586560
     SpawnCount: 2
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3106,6 +3214,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3165,6 +3274,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3236,6 +3346,7 @@ MonoBehaviour:
         m_HashValue: 1574933793
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3295,6 +3406,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3366,6 +3478,7 @@ MonoBehaviour:
         m_HashValue: 847979829
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3425,6 +3538,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 3
     IsPlant: 1
+    IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
     EatOffsetRange:
@@ -3483,6 +3597,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3542,6 +3657,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 4
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3601,6 +3717,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 3
     IsPlant: 1
+    IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
     EatOffsetRange:
@@ -3696,6 +3813,7 @@ MonoBehaviour:
         m_HashValue: 3905127850
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3754,6 +3872,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 8
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3813,6 +3932,7 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
@@ -3884,6 +4004,7 @@ MonoBehaviour:
         m_HashValue: 24994937
     SpawnCount: 10
     IsPlant: 0
+    IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
     EatOffsetRange:
