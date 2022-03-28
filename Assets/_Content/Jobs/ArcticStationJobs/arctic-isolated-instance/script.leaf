@@ -61,7 +61,21 @@ $endif
 @once
 @cutscene
 {@kevin}	Okay! We've finally found something that eats Glass Sponges.
+$if HasFact(Y_IceCrevice.Population.PterasterObscurus)
+	{@kevin}	And we've already proactively counted the population of Pteraster Obscurus at Site Y.
+	$branch .predatorComplete
+$else
+	{@kevin}	Let's get a count of the population so we have evidence there are Pteraster Obscuri at Site Z.
+$endif
+
+:: populationComplete
+@trigger	JobTaskCompleted
+@when		taskId == "countPopulations", scene:name != "ExperimentV2"
+@once
+@cutscene
+{@kevin}	That just about wraps up the predator business!
 $branch .predatorComplete
+
 
 :: predatorComplete
 $if !JobTaskCompleted(determineStress)
@@ -138,9 +152,9 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profWhalen}	Why don't we see Glass Sponges in the open ocean?
+{@profWhalen}	Why don't we see Glass Sponges in the Open Ocean?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
-$choice .argue.groundwork.predatorClaim; There is a predator.
+$choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
 $choice .argue.groundwork.foodClaim; The food source is too low there.
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
@@ -154,8 +168,10 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 $else
 	{@profWhalen}	Oh! That would make sense. Do you have evidence?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
-	$call ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress) 
-		$call ArgueFactSlot()// TODO: Stressed rules and environmental data
+	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress) 
+		$call ArgueFactSlot(GlassSponge.Light.Stressed)
+		//$call ArgueFactSlot(Z_OpenOcean.Light) // need probes?
+	$endif
 	$call ArgueDisplayClaim()
 	$choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.groundwork.lightComplete 
@@ -182,8 +198,9 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
 $else
 	{@profWhalen}	Have you observed this?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkPredator)
-	$call ArgueSetClaim(IsolatedInstanceGroundworkPredatorClaim, jobs.arctic-isolated-instance.argue.claimLabelPredator) 
+	$if ArgueSetClaim(IsolatedInstanceGroundworkPredatorClaim, jobs.arctic-isolated-instance.argue.claimLabelPredator) 
 		$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)
+	$endif
 	$call ArgueDisplayClaim()
 	$choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.groundwork.predatorComplete 
@@ -211,6 +228,7 @@ $branch argue.groundwork.main-question
 	
 :: argue.groundwork.unrelated
 $call ArgueRejectIncorrect()
+$call ArgueHideClaim()
 {@profWhalen}    Hmmmm, this doesn't really show what you think it does.
 $branch .argue.groundwork.main-question
 
@@ -232,10 +250,11 @@ $branch argue.final.main-question
 $branch .argue.final.main-question
 
 :: argue.final.main-question
-{@profWhalen}	Have you worked out the missing piece explaining why Glass Sponges are not found in the Open Ocean?
+{@profWhalen}	Do you think you've found the missing piece explaining why Glass Sponges are not found in the Open Ocean?
 $call ArgueLoad(argueIsolatedInstanceFinal)
-$call ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal) 
-	$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)
+$if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal) 
+	$call ArgueFactSlot(Y_IceCrevice.Population.PterasterObscurus)
+$endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 	$answer correct, .argue.final.complete
@@ -245,6 +264,7 @@ $choose branch
 
 :: argue.final.unrelated
 $call ArgueRejectIncorrect()
+$call ArgueHideClaim()
 {@profWhalen}	Hmmmm. I don't see how that is relevant.
 				But you know...
 				I wonder if the fact that Site Y is between Site X and Site Z means anything... 
