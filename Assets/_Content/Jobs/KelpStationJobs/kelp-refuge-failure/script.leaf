@@ -14,7 +14,7 @@ $branch common.ringPhone
 {@drKelp}	Sometimes it is!
 			So first we need to learn more by using your new predictive modeling tool.
 			You will start by getting all numerical data the tool needs, 
-			like the historical population and the kelp growth rates.
+			like the historical population and the kelp reproduction rates.
 			Once we have all those numbers, the tool will run a simulations
 			and help us describe what's happening down there.
 			Let's start by going to the kelp refuge site to count those populations.
@@ -51,7 +51,7 @@ $set    	jobs:coral-stressed.seen.bottom = true
 @once
 @chatter
 
-{@kevin}	Measuring the growth rates of kelp is our next priority. Let's surface and get to the Experiment Room.
+{@kevin}	Measuring the reproduction rates of kelp is our next priority. Let's surface and get to the Experiment Room.
 $set    	jobs:kelp-refuge-failure.collected.probe = true
 
 
@@ -62,15 +62,15 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true, !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's head to the {h}Measurement Tank{/h} to measure Kelp growth rates.
+{@kevin}	Let's head to the {h}Measurement Tank{/h} to measure Kelp reproduction rates.
 
 :: startExperiment
 @trigger	ExperimentTankViewed
 @when		tankType == "Measurement"
 @once
 @cutscene
-{@kevin}	We need the growth rates of kelp when stressed and unstressed.
-			Growth rate means put in only one species and make sure it's fed and stabilized.
+{@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
+			Reproduction rate means put in only one species and make sure it's fed and stabilized.
 			What site should we replicate?
 
 :: helpAtExperiment
@@ -78,7 +78,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		scene:name == "ExperimentV2", !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player} 	How should I do this again?
-{@kevin}	We need the growth rates of kelp when stressed and unstressed.
+{@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
 			What sites do we know they are stressed in, and which do we know they're not stressed in?
 
 :: experimentGrowthEnd
@@ -105,7 +105,7 @@ $endif
 $goto .experimentsCompleted
 
 :: experimentsCompleted
-{@kevin}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to grow more slowly.
+{@kevin}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to reproduce more slowly.
 			We should head to the Modeling room for that.
 
 // MODELING	
@@ -147,7 +147,7 @@ $goto .experimentsCompleted
 $call ArgueLoad(refugeFailureArgue)
 {@drKelp} So why didn't the Refuge work for the {nameof BullKelp}?
 	$choice .argue.wrongTemp; It's the wrong temperature.
-	$choice .argue.slowGrowth; The Bull Kelp are growing more slowly than expected.
+	$choice .argue.slowGrowth; The Bull Kelp are reproducing at a slower rate than expected.
 	$choice .argue.pickyUrchins; The urchins are only eating the Bull Kelp.
 	$choice .argue.notReady; Let me get back to you
 $choose branch
@@ -164,7 +164,7 @@ $goto .argue.chooseClaim
 $goto .argue.chooseClaim
 
 ::argue.slowGrowth
-{@drKelp}	Show me your model. Does it explain why the {nameof BullKelp} are growing more slowly?
+{@drKelp}	Show me your model. Does it explain why the {nameof BullKelp} are reproducing more slowly?
 $if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
 $endif
