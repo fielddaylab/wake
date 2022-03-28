@@ -58,7 +58,7 @@ namespace ProtoAqua.ExperimentV2
                 pool = new ActorInstancePool();
                 ActorDefinition definition = m_Definitions.FindDefinition(inId);
                 
-                Assert.NotNull(definition.Prefab, "No prefab for ActorDefinition {0}", definition.Id);
+                Assert.True(definition.Prefab, "No prefab for ActorDefinition {0}", definition.Id);
                 pool.Prefab = definition.Prefab;
                 pool.ConfigureTransforms(m_Pool, null, true);
                 pool.ConfigureCapacity(16, 1, false);
