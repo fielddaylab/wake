@@ -1410,18 +1410,18 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: 0
-        AliveMax: 20
+        AliveMin: -100
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       Light:
-        AliveMin: 1
-        AliveMax: 5
+        AliveMin: 0
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: 6.5
-        AliveMax: 8.1
+        AliveMin: -4
+        AliveMax: 9
         StressedMin: -Infinity
         StressedMax: Infinity
     AliveEatTargets:
