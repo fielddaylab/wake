@@ -148,11 +148,11 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(argueIsolatedInstanceGroundwork)
 @cutscene
-{@profWhalen}	What are your main theories?
+{@profWhalen}	How is it coming along?
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profWhalen}	Why don't we see Glass Sponges in the Open Ocean?
+{@profWhalen}	What are your main theories for why we don't see Glass Sponges in the Open Ocean?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
 $choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
 $choice .argue.groundwork.foodClaim; The food source is too low there.
@@ -236,7 +236,7 @@ $branch .argue.groundwork.main-question
 $call ArgueLoad(argueIsolatedInstanceGroundwork)
 $call ArgueComplete()
 {@profWhalen}	I can see you've done your research, but neither theory fully solves the issue.
-				What do you think?
+				What are your thoughts?
 $branch argue.final.main-question
 
 
