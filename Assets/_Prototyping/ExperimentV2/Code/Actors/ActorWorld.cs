@@ -20,6 +20,7 @@ namespace ProtoAqua.ExperimentV2
         public bool HasEnvironment;
         public float Lifetime;
         public int EnvDeaths;
+        public bool IsExecuting;
 
         public SelectableTank Tank;
         public object Tag;
@@ -39,17 +40,17 @@ namespace ProtoAqua.ExperimentV2
 
         #region Alloc/Free
 
-        static public ActorInstance Alloc(ActorWorld inWorld, StringHash32 inActorId)
+        static public ActorInstance Alloc(ActorWorld inWorld, StringHash32 inActorId, ActorActionId inAction = ActorActionId.Spawning)
         {
             ActorInstance actor = inWorld.Allocator.Alloc(inActorId, inWorld.ActorRoot);
             inWorld.Actors.PushBack(actor);
 
-            ActorInstance.ForceActorAction(actor, ActorActionId.Spawning, inWorld);
+            ActorInstance.ForceActorAction(actor, inAction, inWorld);
             ActorInstance.SetActorState(actor, inWorld.HasEnvironment ? actor.Definition.StateEvaluator.Evaluate(inWorld.Water) : ActorStateId.Alive, inWorld);
             return actor;
         }
 
-        static public void Alloc(ActorWorld inWorld, StringHash32 inActorId, int inCount)
+        static public void Alloc(ActorWorld inWorld, StringHash32 inActorId, int inCount, ActorActionId inAction = ActorActionId.Spawning)
         {
             int startingSize = inWorld.Actors.Count;
             int length = inCount;
@@ -65,7 +66,7 @@ namespace ProtoAqua.ExperimentV2
 
             for(int i = 0; i < newActors.Length; i++)
             {
-                ActorInstance.ForceActorAction(newActors[i], ActorActionId.Spawning, inWorld);
+                ActorInstance.ForceActorAction(newActors[i], inAction, inWorld);
             }
 
             if (inWorld.HasEnvironment)
@@ -76,6 +77,9 @@ namespace ProtoAqua.ExperimentV2
             {
                 ForceActorStates(inWorld, ActorStateId.Alive, newActors);
             }
+
+            Log.Msg("[ActorBehaviorSystem] Spawned {0} instances of {1}", length, inActorId);
+            ActorWorld.ModifyPopulation(inWorld, inActorId, length);
         }
 
         static public void AllocWithDefaultCount(ActorWorld inWorld, StringHash32 inActorId)
@@ -225,6 +229,12 @@ namespace ProtoAqua.ExperimentV2
                 instance = inInstances[i];
                 ActorInstance.SetActorState(instance, inState, inWorld);
             }
+        }
+
+        static public bool IsActionAvailable(ActorActionId inId, ActorWorld inWorld)
+        {
+            var predicate = inWorld.Tank.ActorBehavior.ActionAvailable;
+            return predicate == null || predicate(inId);
         }
 
         #endregion // Update States

@@ -133,6 +133,10 @@ namespace Aqua
         }
 
         internal bool TryAdd(T inObj) {
+            if (Application.isPlaying) {
+                return false;
+            }
+
             if (Array.IndexOf(m_Objects, inObj) < 0) {
                 ArrayUtils.Add(ref m_Objects, inObj);
                 return true;

@@ -64,17 +64,21 @@ namespace ProtoAqua.ExperimentV2 {
             ActorInstance actor = inCreature.GetComponentInParent<ActorInstance>();
             actor.InWater = true;
 
-            switch (actor.Definition.Spawning.SpawnAnimation) {
-                case ActorDefinition.SpawnAnimationId.Drop: {
-                        actor.ActionAnimation.SetTimeScale(0.6f);
-                        SurfaceSplash(inTank, actor, inCreature);
-                        break;
-                    }
+            if (actor.CurrentAction == ActorActionId.BeingBorn) {
+                UnderwaterPulse(inTank, actor, inCreature);
+            } else {
+                switch (actor.Definition.Spawning.SpawnAnimation) {
+                    case ActorDefinition.SpawnAnimationId.Drop: {
+                            actor.ActionAnimation.SetTimeScale(0.6f);
+                            SurfaceSplash(inTank, actor, inCreature);
+                            break;
+                        }
 
-                case ActorDefinition.SpawnAnimationId.Sprout: {
-                        UnderwaterPulse(inTank, actor, inCreature);
-                        break;
-                    }
+                    case ActorDefinition.SpawnAnimationId.Sprout: {
+                            UnderwaterPulse(inTank, actor, inCreature);
+                            break;
+                        }
+                }
             }
         }
 

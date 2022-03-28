@@ -46,6 +46,7 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required] private ExperimentScreen m_OrganismScreen = null;
         [SerializeField, Required] private ExperimentScreen m_FeatureScreen = null;
         [SerializeField, Required] private MeasurementFeaturePanel m_FeaturePanel = null;
+        [SerializeField, Required] private ParticleSystem m_AutoFeederParticles = null;
         // [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
         // [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
 
@@ -62,6 +63,7 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField] private int m_EatEventMeasureRequirement = 8;
         [SerializeField] private int m_ChemistryEventMeasureRequirement = 8;
         [SerializeField] private int m_ReproduceEventMeasureRequirement = 4;
+        [SerializeField] private int m_BackgroundMeasureTimeRequirement = 30;
 
         #endregion // Inspector
 
@@ -73,6 +75,7 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private IsolatedVariable m_IsolatedVar;
         [NonSerialized] private float m_Progress = 0;
         [NonSerialized] private bool m_CollectingMeasurements;
+        private Routine m_MeterFlashAnim;
 
         private void Awake() {
             m_ParentTank.ActivateMethod = Activate;
@@ -80,6 +83,17 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.HasCritter = (s) => m_OrganismScreen.Panel.IsSelected(Assets.Bestiary(s));
             m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
             m_ParentTank.OnEmitEmoji = (e) => OnEmojiEmit(e);
+            m_ParentTank.ActorBehavior.ActionAvailable = (e) => {
+                switch(e) {
+                    case ActorActionId.Hungry: {
+                            return (m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) == 0;
+                        }
+
+                    default: {
+                        return true;
+                    }
+                }
+            };
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
@@ -119,6 +133,8 @@ namespace ProtoAqua.ExperimentV2 {
             if (m_ParentTank.WaterFillProportion > 0) {
                 m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
             }
+
+            m_AutoFeederParticles.Stop();
 
             m_ParentTank.CurrentState = 0;
             m_ExperimentData = null;
@@ -227,7 +243,11 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
-            
+
+            if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
+                m_AutoFeederParticles.Play();
+            }
+
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", m_ParentTank.Type.ToString());
@@ -245,7 +265,7 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             if (m_CollectingMeasurements) {
-                while(!AddProgressCollection(Routine.DeltaTime / 30f)) {
+                while(!AddProgressCollection(Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
                     yield return null;
                 }
             }
@@ -277,41 +297,45 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private bool AddProgressFirstPhase(float percentage) {
-            if (m_Progress < 1) {
-                m_Progress = Math.Min(m_Progress + percentage, 1);
-                ApplyProgressMeterProgress(m_Progress);
-                if (m_Progress >= 1) {
-                    IsolatedVariable iso = m_IsolatedVar;
-                    ApplyProgressMeterStyle(IsolatedVariableLabels[(int) iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
-                    Routine.Start(this, FlashMeterAnim(m_InProgressMeterFlash)).Tick();
-                    if (iso == 0) {
-                        m_InProgressScreen.CustomButton.interactable = true;
-                        Services.Audio.PostEvent("Experiment.FinishPrompt");
-                    } else {
-                        m_Progress = 0;
-                        m_CollectingMeasurements = true;
-                        ApplyProgressMeterProgress(m_Progress);
-                        m_InProgressScreen.CustomButton.interactable = false;
-                    }
-                    return true;
+            m_Progress = Math.Min(m_Progress + percentage, 1);
+            ApplyProgressMeterProgress(m_Progress);
+            if (m_Progress >= 1) {
+                IsolatedVariable iso = m_IsolatedVar;
+                ApplyProgressMeterStyle(IsolatedVariableLabels[(int) iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
+                if (iso == 0) {
+                    FlashMeter(ColorBank.Black);
+                    m_InProgressScreen.CustomButton.interactable = true;
+                    m_CollectingMeasurements = false;
+                    Services.Audio.PostEvent("Experiment.FinishPrompt");
+                } else {
+                    FlashMeter(ColorBank.White);
+                    m_Progress = 0;
+                    m_CollectingMeasurements = true;
+                    ApplyProgressMeterProgress(m_Progress);
+                    m_InProgressScreen.CustomButton.interactable = false;
+                    Services.Audio.PostEvent("Experiment.HasNewBehaviors");
                 }
+                return true;
             }
 
             return false;
         }
 
-        private bool AddProgressCollection(float percentage) {
-            if (m_Progress < 1) {
-                m_Progress = Math.Min(m_Progress + percentage, 1);
-                ApplyProgressMeterProgress(m_Progress);
-                if (m_Progress >= 1) {
-                    Routine.Start(this, FlashMeterAnim(m_InProgressMeterFlash)).Tick();
-                    if (m_IsolatedVar != 0) {
-                        m_InProgressScreen.CustomButton.interactable = true;
-                        Services.Audio.PostEvent("Experiment.FinishPrompt");
-                    }
-                    return true;
+        private bool AddProgressCollection(float percentage, bool playFeedback) {
+            m_Progress = Math.Min(m_Progress + percentage, 1);
+            ApplyProgressMeterProgress(m_Progress);
+            if (m_Progress >= 1) {
+                FlashMeter(ColorBank.White);
+                if (m_IsolatedVar != 0) {
+                    m_InProgressScreen.CustomButton.interactable = true;
+                    Services.Audio.PostEvent("Experiment.FinishPrompt");
                 }
+                return true;
+            }
+
+            if (playFeedback) {
+                Services.Audio.PostEvent("Experiment.Accumulate");
+                FlashMeter(ColorBank.White.WithAlpha(0.5f));
             }
 
             return false;
@@ -325,30 +349,35 @@ namespace ProtoAqua.ExperimentV2 {
             switch(m_IsolatedVar) {
                 case IsolatedVariable.Eating: {
                     if (id == SelectableTank.Emoji_Eat) {
-                        AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement);
+                        AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement, true);
                     }
                     break;
                 }
 
                 case IsolatedVariable.Chemistry: {
                     if (id == SelectableTank.Emoji_Breath) {
-                        AddProgressCollection(0.01f + 1f / m_ChemistryEventMeasureRequirement);
+                        AddProgressCollection(0.01f + 1f / m_ChemistryEventMeasureRequirement, true);
                     }
                     break;
                 }
 
                 case IsolatedVariable.Reproduction: {
                     if (id == SelectableTank.Emoji_Reproduce) {
-                        AddProgressCollection(0.01f + 1f / m_ReproduceEventMeasureRequirement);
+                        AddProgressCollection(0.01f + 1f / m_ReproduceEventMeasureRequirement, true);
                     }
                     break;
                 }
             }
         }
 
-        static private IEnumerator FlashMeterAnim(Graphic effect) {
+        private void FlashMeter(Color color) {
+            m_MeterFlashAnim.Replace(this, FlashMeterAnim(m_InProgressMeterFlash, color)).Tick();
+        }
+
+        static private IEnumerator FlashMeterAnim(Graphic effect, Color color) {
             effect.gameObject.SetActive(true);
-            effect.SetAlpha(1);
+            effect.color = color;
+            yield return null;
             yield return effect.FadeTo(0, 0.2f).Ease(Curve.CubeIn);
             effect.gameObject.SetActive(false);
         }
@@ -413,6 +442,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             SelectableTank.Reset(m_ParentTank, true);
 
+            m_AutoFeederParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             m_ParentTank.CurrentState &= ~TankState.Running;
             m_SetupPhase = 0;
             m_ExperimentData = null;

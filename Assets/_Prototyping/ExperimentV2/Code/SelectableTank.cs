@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Cameras;
 using AquaAudio;
@@ -18,7 +19,7 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 Emoji_Stressed = "Stress";
         static public readonly StringHash32 Emoji_Death = "Dead";
         static public readonly StringHash32 Emoji_Eat = "Eat";
-        static public readonly StringHash32 Emoji_Reproduce = "Reproduce";
+        static public readonly StringHash32 Emoji_Reproduce = "Repro";
         static public readonly StringHash32 Emoji_Breath = "Breath";
 
         #endregion // Consts
@@ -51,7 +52,7 @@ namespace ProtoAqua.ExperimentV2
         [HideInInspector] public Rect WaterRect;
         
         [Header("Emojis")]
-        [SerializeField, Required] public ParticleSystem[] EmojiEmitters = Array.Empty<ParticleSystem>();
+        [SerializeField, HideInInspector] public ParticleSystem[] EmojiEmitters = Array.Empty<ParticleSystem>();
         [SerializeField, HideInInspector] public StringHash32[] EmojiIds = Array.Empty<StringHash32>();
 
         [Header("Actors")]
@@ -84,8 +85,6 @@ namespace ProtoAqua.ExperimentV2
 
         public Predicate<StringHash32> CanEmitEmoji;
         public Action<StringHash32> OnEmitEmoji;
-
-        public Predicate<ActorActionId> IsActionAvailable;
 
         static public void Reset(SelectableTank tank, bool full = false) {
             foreach(var screen in tank.AllScreens) {
@@ -140,6 +139,16 @@ namespace ProtoAqua.ExperimentV2
             ActorBehavior = GetComponentInChildren<ActorBehaviorSystem>(false);
             AllScreens = GetComponentsInChildren<ExperimentScreen>(true);
 
+            List<ParticleSystem> emitters = new List<ParticleSystem>();
+            foreach(var particle in GetComponentsInChildren<ParticleSystem>()) {
+                if (particle.main.loop) {
+                    continue;
+                }
+
+                emitters.Add(particle);
+            }
+
+            EmojiEmitters = emitters.ToArray();
             EmojiIds = new StringHash32[EmojiEmitters.Length];
             for(int i = 0; i < EmojiIds.Length; i++) {
                 StringHash32 id = EmojiEmitters[i].name.Replace("Emoji", "").Replace("Emitter", "").Replace("Particles", "");

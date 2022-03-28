@@ -28,7 +28,8 @@ namespace Aqua
 
         [SerializeField] private JobDesc[] m_PrerequisiteJobs = Array.Empty<JobDesc>();
         [SerializeField] private string m_PrereqConditions = null;
-        [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_PrereqUpgrades = Array.Empty<StringHash32>(); 
+        [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_PrereqUpgrades = Array.Empty<StringHash32>();
+        [SerializeField] private int m_PrereqExp = 0;
 
         [SerializeField, MapId(MapCategory.Station)] private StringHash32 m_StationId = null;
         [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32[] m_DiveSiteIds = Array.Empty<StringHash32>();
@@ -77,6 +78,7 @@ namespace Aqua
         public ListSlice<JobDesc> RequiredJobs() { return m_PrerequisiteJobs; } 
         public ListSlice<StringHash32> RequiredUpgrades() { return m_PrereqUpgrades; }
         public StringSlice RequiredConditions() { return m_PrereqConditions; }
+        public int RequiredExp() { return m_PrereqExp; }
 
         public ListSlice<JobTask> Tasks() { return m_OptimizedTaskList; }
         
