@@ -326,10 +326,9 @@ namespace ProtoAqua.ExperimentV2 {
             ApplyProgressMeterProgress(m_Progress);
             if (m_Progress >= 1) {
                 FlashMeter(ColorBank.White);
-                if (m_IsolatedVar != 0) {
-                    m_InProgressScreen.CustomButton.interactable = true;
-                    Services.Audio.PostEvent("Experiment.FinishPrompt");
-                }
+                m_CollectingMeasurements = false;
+                m_InProgressScreen.CustomButton.interactable = true;
+                Services.Audio.PostEvent("Experiment.FinishPrompt");
                 return true;
             }
 

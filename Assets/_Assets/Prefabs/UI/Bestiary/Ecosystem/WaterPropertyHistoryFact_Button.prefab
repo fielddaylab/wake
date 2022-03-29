@@ -64,18 +64,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!225 &-6118173804220184119
-CanvasGroup:
+--- !u!222 &2647394001355969947
+CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8475926782215026252}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  m_CullTransparentMesh: 0
 --- !u!114 &-9064409205413339332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,7 +86,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   TooltipOverride: 
   Cursor: 1
 --- !u!114 &2395732260495776969
@@ -105,8 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093e95e0f219fd846a22da3104d0aea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Group: {fileID: -6118173804220184119}
+  m_Group: {fileID: 4150997884446839440}
   m_Button: {fileID: 5116712890881836998}
+  Fact: {fileID: 0}
 --- !u!114 &5116712890881836998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,14 +166,6 @@ MonoBehaviour:
   m_DownEvent: 
   m_UpEvent: 
   m_ClickEvent: ui_click
---- !u!222 &2647394001355969947
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8475926782215026252}
-  m_CullTransparentMesh: 0
 --- !u!114 &9018052299920351930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,6 +299,12 @@ GameObject:
 --- !u!224 &2812820977910885713 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4136018540849879262, guid: b892af80f43709645974a36a436da9d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 2193027849549280655}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &4150997884446839440 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 2879064192226584351, guid: b892af80f43709645974a36a436da9d0,
     type: 3}
   m_PrefabInstance: {fileID: 2193027849549280655}
   m_PrefabAsset: {fileID: 0}
