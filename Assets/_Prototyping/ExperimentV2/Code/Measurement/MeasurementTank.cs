@@ -53,6 +53,7 @@ namespace ProtoAqua.ExperimentV2 {
         [Header("In Progress")]
         [SerializeField, Required] private ExperimentScreen m_InProgressScreen = null;
         [SerializeField, Required] private LocText m_InProgressAnalysisLabel = null;
+        [SerializeField, Required] private Graphic m_InProgressMeterBG = null;
         [SerializeField, Required] private Graphic m_InProgressMeter = null;
         [SerializeField, Required] private Graphic m_InProgressMeterFlash = null;
         [SerializeField] private ColorPalette2 m_InProgressAnalyzingColors = default;
@@ -290,6 +291,7 @@ namespace ProtoAqua.ExperimentV2 {
             m_InProgressAnalysisLabel.SetText(label);
             m_InProgressAnalysisLabel.Graphic.color = colors.Content;
             m_InProgressMeter.color = colors.Background;
+            m_InProgressMeterBG.SetColor(colors.Background, ColorUpdate.PreserveAlpha);
         }
 
         private void ApplyProgressMeterProgress(float progress) {
