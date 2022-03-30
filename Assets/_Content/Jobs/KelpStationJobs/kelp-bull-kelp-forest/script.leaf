@@ -109,6 +109,29 @@ $else
 	{@kevin}	Just like last time, you can report your findings using the {h}Computer{/h}.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchSiteA
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(siteA)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site A to discover any new species.
+
+:: catchFoodWeb
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(foodWeb)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to see how Bull Kelp fits into the food web at Site A.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
+
 //ARGUMENTATION
 
 ::argue.intro
