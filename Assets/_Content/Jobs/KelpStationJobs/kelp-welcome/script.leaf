@@ -258,6 +258,57 @@ $endif
 {@player} 	What now?
 {@kevin}	Let's tell {nameof @drKelp} what we found out.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGoToSiteC
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(gotoSiteC)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site C.
+
+:: catchScanGiantKelp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanGiantKelp)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
+
+:: catchScanUrchin
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanUrchin)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
+
+:: catchScanOtter
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanOtter)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
+
+:: catchReturnToShip
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(returnToShip)
+@boostScore -5
+@cutscene
+{@kevin}    Time to head back to the ship!
+
+:: catchRunExperiment
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(runExperiment)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Observation Tank to find what eats what.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Dr. Kelpurnia in the Office.
+
 //ARGUMENTATION
 
 ::argue.intro
