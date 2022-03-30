@@ -12,7 +12,15 @@ $if !HasEntity(GlassSponge)
 	{@kevin}	But first, make sure to scan the Glass Sponge at Site X so we know what we're dealing with.
 $endif
 
+:: scanSpongeComplete
+@trigger	JobTaskCompleted
+@when		JobTaskTop(scanAll)
+@once
+@cutscene
+{@kevin}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Open Ocean, at Site Z.
+
 // PREDATOR THEORY
+
 
 :: scansComplete
 @trigger	JobTaskCompleted
