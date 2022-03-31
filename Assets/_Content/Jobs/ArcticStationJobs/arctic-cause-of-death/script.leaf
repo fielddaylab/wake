@@ -9,11 +9,20 @@
 {@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 
+::helpLost
+@trigger    RequestPartnerHelp
+@when   scene:name != "RS-4W", JobTaskTop(getEnviornmentData)
+@cutscene
+{@player}   Hmmm, what are we doing again? 
+{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
+            Whether it was the water conditions or a lack of food, we'll need some more information.
+            Why don't you check your {h}AQOS{/h} to see where we should go next.
+
 ::helpScanProbE
 @trigger    RequestPartnerHelp
 @when   scene:name == "RS-4W", JobTaskTop(getEnviornmentData)
 @cutscene
-{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
+{@kevin} If the water conditions proved deadly for Linda, we'd better scan the {h}water chemistry probe{/h} for more information.
 
 ::helpScanProbP
 @trigger    RequestPartnerHelp
@@ -22,22 +31,36 @@
 {@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
             I'm not sure what whales eat, so we might just have to count everything.
 
-::giveWhaleStress
-@trigger    JobTasksUpdated
-@when   JobTaskCompleted(getEnviornmentData)
+::helpReport
+@trigger    RequestPartnerHelp
+@when   JobTaskTop(reportBack)
 @cutscene
-{@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
-$call GiveFact(BowheadWhale.Light.Stressed)
-$call GiveFact(BowheadWhale.PH.Stressed)
-$call GiveFact(BowheadWhale.Temperature.Stressed)
+{@player}   Hmmm, what should I do now? 
+{@kevin}    Let's report back to Prof. Whalen. 
 
 ::giveWhaleEat
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(getPopulationData)
 @cutscene
 {@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
+$if !HasEntity(BowheadWhale)
+    $call GiveEntity(BowheadWhale)
+$endif
 $call GiveFact(BowheadWhale.Eats.Diatoms)
 $call GiveFact(BowheadWhale.Eats.IceAlgae)
+
+::giveWhaleStress
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getEnviornmentData)
+@cutscene
+{@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
+$if !HasEntity(BowheadWhale)
+    $call GiveEntity(BowheadWhale)
+$endif
+$call GiveFact(BowheadWhale.Light.Stressed)
+$call GiveFact(BowheadWhale.PH.Stressed)
+$call GiveFact(BowheadWhale.Temperature.Stressed)
+
 
 // ARGUMENTATION
 ::argue.intro
