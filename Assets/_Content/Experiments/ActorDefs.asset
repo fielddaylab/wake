@@ -112,10 +112,10 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -2.777778
-        AliveMax: 2.777778
-        StressedMin: -17.777779
-        StressedMax: 17.777779
+        AliveMin: -3
+        AliveMax: 5
+        StressedMin: -5
+        StressedMax: 18
       Light:
         AliveMin: -Infinity
         AliveMax: Infinity
@@ -128,53 +128,37 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: ArcticCod.Eats.Diatoms
         m_HashValue: 655963987
     - TargetId:
-        m_Source: Copepod
         m_HashValue: 1053183451
       FactId:
-        m_Source: ArcticCod.Eats.Copepod
         m_HashValue: 1119966444
     - TargetId:
-        m_Source: GlacialAmphipod
         m_HashValue: 304378836
       FactId:
-        m_Source: ArcticCod.Eats.GlacialAmphipod
         m_HashValue: 1674262179
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ArcticCod.Eats.IceAlgae
         m_HashValue: 3673181089
     StressedEatTargets:
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: ArcticCod.Eats.Diatoms
         m_HashValue: 655963987
     - TargetId:
-        m_Source: Copepod
         m_HashValue: 1053183451
       FactId:
-        m_Source: ArcticCod.Eats.Copepod
         m_HashValue: 1119966444
     - TargetId:
-        m_Source: GlacialAmphipod
         m_HashValue: 304378836
       FactId:
-        m_Source: ArcticCod.Eats.GlacialAmphipod
         m_HashValue: 1674262179
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ArcticCod.Eats.IceAlgae
         m_HashValue: 3673181089
     SpawnCount: 10
     SpawnMax: 30
@@ -223,10 +207,10 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: 4.4444447
-        AliveMax: 27.777779
-        StressedMin: -10.555555
-        StressedMax: 42.77778
+        AliveMin: 0
+        AliveMax: 10
+        StressedMin: -6
+        StressedMax: 25
       Light:
         AliveMin: -Infinity
         AliveMax: Infinity
@@ -239,32 +223,28 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ArcticCopepod.Eats.IceAlgae
         m_HashValue: 607461815
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: ArcticCopepod.Eats.Diatoms
         m_HashValue: 2922309349
     StressedEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ArcticCopepod.Eats.IceAlgae
         m_HashValue: 607461815
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: ArcticCopepod.Eats.Diatoms
         m_HashValue: 2922309349
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -307,10 +287,10 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -2.777778
-        AliveMax: 20
-        StressedMin: -17.777779
-        StressedMax: 35
+        AliveMin: -3
+        AliveMax: 15
+        StressedMin: -5
+        StressedMax: 25
       Light:
         AliveMin: -Infinity
         AliveMax: Infinity
@@ -323,22 +303,18 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: AstarteBorealis.Eats.Detritus
         m_HashValue: 242008181
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: AstarteBorealis.Eats.Detritus
         m_HashValue: 242008181
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -509,77 +485,6 @@ MonoBehaviour:
       width: 1.4787596
       height: 1.0185709
   - Id:
-      m_HashValue: 2063388242
-    Type: {fileID: 11400000, guid: 2dacf62c77b0d8d4c999c2240109088b, type: 2}
-    Prefab: {fileID: 0}
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnLocation: 0
-      SpawnAnimation: 0
-      AvoidTankSidesRadius: 1
-      AvoidTankTopBottomRadius: 1
-    Movement:
-      MoveType: 1
-      MovementIdleDistance: 1
-      MovementSpeed: 1
-      MovementCurve: 1
-      MovementInterval: 1.5
-      MovementIntervalRandom: 1
-    Eating:
-      EatType: 1
-      MovementMultiplier: 1
-    Stress:
-      MovementSpeedMultiplier: 0.8
-      MovementIntervalMultiplier: 0.9
-      AmbientAnimationSpeedMultiplier: 1
-    StateEvaluator:
-      Temperature:
-        AliveMin: 0.5555556
-        AliveMax: 4.4444447
-        StressedMin: -14.444445
-        StressedMax: 19.444445
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: 7.8
-        AliveMax: 8.3
-        StressedMin: 7.3
-        StressedMax: 8.8
-    AliveEatTargets:
-    - TargetId:
-        m_HashValue: 1229737088
-      FactId:
-        m_HashValue: 2996010258
-    StressedEatTargets:
-    - TargetId:
-        m_HashValue: 1229737088
-      FactId:
-        m_HashValue: 2996010258
-    SpawnCount: 10
-    SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
-    IsPlant: 0
-    IsHerd: 0
-    IsAlive: 1
-    TargetLimit: 1
-    FreeOnEaten: 1
-    EatOffsetRange:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-    LocalBoundsRect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-  - Id:
       m_HashValue: 1315630147
     Type: {fileID: 11400000, guid: 30885595da21ef14ea35cb2f0f2bb8ba, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: 94ef4961ff022ee4b87112c87464b2d3,
@@ -622,17 +527,13 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: BristleWorm.Eats.Detritus
         m_HashValue: 3224749134
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: BristleWorm.Eats.Detritus
         m_HashValue: 3224749134
     SpawnCount: 10
     SpawnMax: 30
@@ -809,13 +710,13 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: 4.4444447
-        AliveMax: 16.666668
-        StressedMin: -10.555555
-        StressedMax: 31.666668
+        AliveMin: 2
+        AliveMax: 17
+        StressedMin: -2
+        StressedMax: 32
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 15
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
@@ -825,29 +726,21 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ChinookSalmon.Eats.IceAlgae
         m_HashValue: 664895430
     - TargetId:
-        m_Source: Clione
         m_HashValue: 1162365859
       FactId:
-        m_Source: ChinookSalmon.Eats.Clione
         m_HashValue: 1154228141
     StressedEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: ChinookSalmon.Eats.IceAlgae
         m_HashValue: 664895430
     - TargetId:
-        m_Source: Clione
         m_HashValue: 1162365859
       FactId:
-        m_Source: ChinookSalmon.Eats.Clione
         m_HashValue: 1154228141
     SpawnCount: 10
     SpawnMax: 30
@@ -914,7 +807,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -973,22 +870,18 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: Copepod.Eats.Diatoms
         m_HashValue: 1712894733
     StressedEatTargets:
     - TargetId:
-        m_Source: Diatoms
         m_HashValue: 1229737088
       FactId:
-        m_Source: Copepod.Eats.Diatoms
         m_HashValue: 1712894733
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -1289,15 +1182,15 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 0
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: -2
+        AliveMax: 35
+        StressedMin: -5
+        StressedMax: 60
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 50
+        AliveMax: 100
+        StressedMin: 10
+        StressedMax: 110
       PH:
         AliveMin: 7.8
         AliveMax: 8.3
@@ -1497,20 +1390,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: GlacialAmphipod.Eats.IceAlgae
         m_HashValue: 2371836348
     StressedEatTargets:
     - TargetId:
-        m_Source: IceAlgae
         m_HashValue: 2471897816
       FactId:
-        m_Source: GlacialAmphipod.Eats.IceAlgae
         m_HashValue: 2371836348
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1569,20 +1462,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: GlassSponge.Eats.Detritus
         m_HashValue: 2059469564
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: GlassSponge.Eats.Detritus
         m_HashValue: 2059469564
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1641,17 +1534,13 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: Hagfish.Eats.Detritus
         m_HashValue: 626193164
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: Hagfish.Eats.Detritus
         m_HashValue: 626193164
     SpawnCount: 10
     SpawnMax: 30
@@ -1718,8 +1607,8 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -2322,41 +2211,29 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: AstarteBorealis
         m_HashValue: 3388301900
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.AstarteBorealis
         m_HashValue: 1670148971
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.Detritus
         m_HashValue: 2213585512
     - TargetId:
-        m_Source: SnowCrab
         m_HashValue: 1824142092
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.SnowCrab
         m_HashValue: 3968036041
     StressedEatTargets:
     - TargetId:
-        m_Source: AstarteBorealis
         m_HashValue: 3388301900
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.AstarteBorealis
         m_HashValue: 1670148971
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.Detritus
         m_HashValue: 2213585512
     - TargetId:
-        m_Source: SnowCrab
         m_HashValue: 1824142092
       FactId:
-        m_Source: NorthAtlanticOctopus.Eats.SnowCrab
         m_HashValue: 3968036041
     SpawnCount: 10
     SpawnMax: 30
@@ -2406,36 +2283,36 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: -2
+        AliveMax: 5
+        StressedMin: -10
+        StressedMax: 15
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 0
+        AliveMax: 95
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 7.3
+        AliveMax: 8.1
+        StressedMin: 7.2
+        StressedMax: 8.25
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: NorthernSeaNettle.Eats.Detritus
         m_HashValue: 2589851901
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: NorthernSeaNettle.Eats.Detritus
         m_HashValue: 2589851901
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2558,22 +2435,18 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: GlassSponge
         m_HashValue: 3492975621
       FactId:
-        m_Source: PterasterObscurus.Eats.GlassSponge
         m_HashValue: 497967974
     StressedEatTargets:
     - TargetId:
-        m_Source: GlassSponge
         m_HashValue: 3492975621
       FactId:
-        m_Source: PterasterObscurus.Eats.GlassSponge
         m_HashValue: 497967974
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -2874,58 +2747,42 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: NorthernSeaNettle
         m_HashValue: 2289026052
       FactId:
-        m_Source: RibbonSeal.Eats.NorthernSeaNettle
         m_HashValue: 70886112
     - TargetId:
-        m_Source: ChinookSalmon
         m_HashValue: 3582091882
       FactId:
-        m_Source: RibbonSeal.Eats.ChinookSalmon
         m_HashValue: 1874829230
     - TargetId:
-        m_Source: ArcticCod
         m_HashValue: 2545375201
       FactId:
-        m_Source: RibbonSeal.Eats.ArcticCod
         m_HashValue: 1939753477
     - TargetId:
-        m_Source: NorthAtlanticOctopus
         m_HashValue: 2040916345
       FactId:
-        m_Source: RibbonSeal.Eats.NorthAtlanticOctopus
         m_HashValue: 3868973061
     StressedEatTargets:
     - TargetId:
-        m_Source: NorthernSeaNettle
         m_HashValue: 2289026052
       FactId:
-        m_Source: RibbonSeal.Eats.NorthernSeaNettle
         m_HashValue: 70886112
     - TargetId:
-        m_Source: ChinookSalmon
         m_HashValue: 3582091882
       FactId:
-        m_Source: RibbonSeal.Eats.ChinookSalmon
         m_HashValue: 1874829230
     - TargetId:
-        m_Source: ArcticCod
         m_HashValue: 2545375201
       FactId:
-        m_Source: RibbonSeal.Eats.ArcticCod
         m_HashValue: 1939753477
     - TargetId:
-        m_Source: NorthAtlanticOctopus
         m_HashValue: 2040916345
       FactId:
-        m_Source: RibbonSeal.Eats.NorthAtlanticOctopus
         m_HashValue: 3868973061
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -2986,29 +2843,21 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: ArcticCod
         m_HashValue: 2545375201
       FactId:
-        m_Source: SalmonShark.Eats.ArcticCod
         m_HashValue: 656276837
     - TargetId:
-        m_Source: ChinookSalmon
         m_HashValue: 3582091882
       FactId:
-        m_Source: SalmonShark.Eats.ChinookSalmon
         m_HashValue: 3447061902
     StressedEatTargets:
     - TargetId:
-        m_Source: ArcticCod
         m_HashValue: 2545375201
       FactId:
-        m_Source: SalmonShark.Eats.ArcticCod
         m_HashValue: 656276837
     - TargetId:
-        m_Source: ChinookSalmon
         m_HashValue: 3582091882
       FactId:
-        m_Source: SalmonShark.Eats.ChinookSalmon
         m_HashValue: 3447061902
     SpawnCount: 10
     SpawnMax: 30
@@ -3475,8 +3324,8 @@ MonoBehaviour:
     StressedEatTargets: []
     SpawnCount: 8
     SpawnMax: 24
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsHerd: 0
     IsAlive: 1
@@ -3537,17 +3386,13 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: SnowCrab.Eats.Detritus
         m_HashValue: 847979829
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: SnowCrab.Eats.Detritus
         m_HashValue: 847979829
     SpawnCount: 8
     SpawnMax: 24
@@ -4083,17 +3928,13 @@ MonoBehaviour:
         StressedMax: 8.85
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: ZombieWorm.Eats.Detritus
         m_HashValue: 24994937
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: ZombieWorm.Eats.Detritus
         m_HashValue: 24994937
     SpawnCount: 10
     SpawnMax: 30
