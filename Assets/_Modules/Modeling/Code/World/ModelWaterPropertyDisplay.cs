@@ -16,6 +16,8 @@ namespace Aqua.Modeling {
         [NonSerialized] public WaterPropertyDesc Property;
         [NonSerialized] public float Value;
 
+        [NonSerialized] public int Index;
+
         public void Initialize(WaterPropertyDesc prop) {
             Property = prop;
 

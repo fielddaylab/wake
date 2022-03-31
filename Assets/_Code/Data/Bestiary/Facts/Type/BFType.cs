@@ -60,6 +60,22 @@ namespace Aqua
             return (s_Flags[(int) inFact.Type] & BFFlags.IsBehavior) != 0;
         }
 
+        static public bool IsEnvironment(BFTypeId inTypeId) {
+            return (s_Flags[(int) inTypeId] & BFFlags.EnvironmentFact) != 0;
+        }
+
+        static public bool IsEnvironment(BFBase inFact) {
+            return (s_Flags[(int) inFact.Type] & BFFlags.EnvironmentFact) != 0;
+        }
+
+        static public bool IsOrganism(BFTypeId inTypeId) {
+            return (s_Flags[(int) inTypeId] & BFFlags.EnvironmentFact) == 0;
+        }
+
+        static public bool IsOrganism(BFBase inFact) {
+            return (s_Flags[(int) inFact.Type] & BFFlags.EnvironmentFact) == 0;
+        }
+
         #region Attributes
 
         static public BFShapeId Shape(BFBase inFact)
@@ -110,6 +126,14 @@ namespace Aqua
                 return custom(inFact);
             
             return WaterPropertyId.NONE;
+        }
+
+        static public bool OnlyWhenStressed(BFBase inFact)
+        {
+            if (IsBehavior(inFact)) {
+                return ((BFBehavior) inFact).OnlyWhenStressed;
+            }
+            return false;
         }
 
         #endregion // Attributes
