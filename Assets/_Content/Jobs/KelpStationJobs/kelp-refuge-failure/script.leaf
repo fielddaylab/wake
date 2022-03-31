@@ -138,6 +138,64 @@ $goto .experimentsCompleted
 {@player} 	What do we need to do now?
 {@kevin}	The communications room is where we should go to share your findings.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchVisitSite
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visitSite)
+@boostScore -5
+@cutscene
+{@kevin}   	Head to Site D. We need to take a look around.
+
+:: catchHistPop
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(histPop)
+@boostScore -5
+@cutscene
+{@kevin}	There should be a population probe we can collect data from at Site D.
+
+:: catchGrowthRates
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(growthRates)
+@boostScore -5
+@cutscene
+{@kevin}    Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproductive rates.
+
+:: catchGrowthRatesBull
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(growthRatesBull)
+@boostScore -5
+@cutscene
+{@kevin}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproduction rates.
+
+:: catchLightRatesGiant
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(lightRatesGiant)
+@boostScore -5
+@cutscene
+{@kevin}	Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+
+:: catchLightRatesBull
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(lightRatesBull)
+@boostScore -5
+@cutscene
+{@kevin}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+
+:: catchNewModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(newModel)
+@boostScore -5
+@cutscene
+{@kevin}	Create a Sync Model of {nameof GiantKelp} and {nameof BullKelp} at the site.
+
+:: catchGetPaid
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getPaid)
+@boostScore -5
+@cutscene
+{@kevin}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
+
 // ARGUMENTATION
 
 ::argue.chooseClaim

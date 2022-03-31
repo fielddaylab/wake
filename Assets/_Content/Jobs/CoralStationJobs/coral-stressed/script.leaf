@@ -146,6 +146,29 @@ $else
 	$endif
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchSiteR
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(siteR)
+@boostScore -5
+@cutscene
+{@kevin}    Find the coral at Site R.
+
+:: catchStressCoral
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(stressCoral)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
+
 // ARGUMENTATION
 
 ::argue.startArgue
