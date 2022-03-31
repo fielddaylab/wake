@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
+  m_Name: W_WhaleFall.Sim
+  m_EditorClassIdentifier: 
+  Id:
+    m_HashValue: 0
+  Parent: {fileID: 11400000, guid: a70ba94c3584a654d8102ac4a0645b76, type: 2}
+  Icon: {fileID: 0}
+  Mode: 0
+  m_IconOverride: {fileID: 0}
+  InitialActors:
+  - Id:
+      m_Source: Detritus
+      m_HashValue: 4251495377
+    Population: 10000
+  - Id:
+      m_Source: SnowCrab
+      m_HashValue: 1824142092
+    Population: 25
+  - Id:
+      m_Source: BristleWorm
+      m_HashValue: 1315630147
+    Population: 100
+  - Id:
+      m_Source: ZombieWorm
+      m_HashValue: 7668088
+    Population: 1000
+  - Id:
+      m_Source: Hagfish
+      m_HashValue: 339695989
+    Population: 50
+  - Id:
+      m_Source: NorthAtlanticOctopus
+      m_HashValue: 2040916345
+    Population: 15
+  - Id:
+      m_Source: ArcticCod
+      m_HashValue: 2545375201
+    Population: 75
+  - Id:
+      m_Source: IceAlgae
+      m_HashValue: 2471897816
+    Population: 7500
+  - Id:
+      m_Source: SalmonShark
+      m_HashValue: 4036767444
+    Population: 2
+  InitialWater:
+    Oxygen: 6
+    Temperature: -1
+    Light: 100
+    PH: 8.15
+    CarbonDioxide: 2
+  SyncTickCount: 10
+  PredictTickCount: 10
+  OxygenPerTick: 4
+  CarbonDioxidePerTick: 4
+  EatRateMultiplier: 1
+  ReproductionRateMultiplier: 1
+  DeathRateMultiplier: 1

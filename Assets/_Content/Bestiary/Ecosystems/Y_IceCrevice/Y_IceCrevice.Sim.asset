@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
+  m_Name: Y_IceCrevice.Sim
+  m_EditorClassIdentifier: 
+  Id:
+    m_HashValue: 0
+  Parent: {fileID: 11400000, guid: 2f81de6b3f03cef49bea4e9eb33ef4ae, type: 2}
+  Icon: {fileID: 0}
+  Mode: 0
+  m_IconOverride: {fileID: 0}
+  InitialActors:
+  - Id:
+      m_Source: SeaAnemone
+      m_HashValue: 3323473791
+    Population: 15
+  - Id:
+      m_Source: IceAlgae
+      m_HashValue: 2471897816
+    Population: 10000
+  - Id:
+      m_Source: ArcticCopepod
+      m_HashValue: 856578931
+    Population: 3000
+  - Id:
+      m_Source: Clione
+      m_HashValue: 1162365859
+    Population: 1000
+  - Id:
+      m_Source: GlacialAmphipod
+      m_HashValue: 304378836
+    Population: 2000
+  - Id:
+      m_Source: RibbonSeal
+      m_HashValue: 3868886068
+    Population: 3
+  - Id:
+      m_Source: ArcticCod
+      m_HashValue: 2545375201
+    Population: 500
+  - Id:
+      m_Source: AstarteBorealis
+      m_HashValue: 3388301900
+    Population: 25
+  - Id:
+      m_Source: PterasterObscurus
+      m_HashValue: 1470134365
+    Population: 5
+  - Id:
+      m_Source: SnowCrab
+      m_HashValue: 1824142092
+    Population: 10
+  InitialWater:
+    Oxygen: 7
+    Temperature: -1
+    Light: 0
+    PH: 8.25
+    CarbonDioxide: 1
+  SyncTickCount: 10
+  PredictTickCount: 10
+  OxygenPerTick: 4
+  CarbonDioxidePerTick: 4
+  EatRateMultiplier: 1
+  ReproductionRateMultiplier: 1
+  DeathRateMultiplier: 1
