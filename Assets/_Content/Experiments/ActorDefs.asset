@@ -56,20 +56,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: SeaPearl
         m_HashValue: 687582608
       FactId:
-        m_Source: AngelFish.Eats.SeaPearl
         m_HashValue: 181590260
     StressedEatTargets:
     - TargetId:
-        m_Source: SeaPearl
         m_HashValue: 687582608
       FactId:
-        m_Source: AngelFish.Eats.SeaPearl
         m_HashValue: 181590260
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0.47
+    StressedReproduceRate: 0.29
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -177,7 +177,11 @@ MonoBehaviour:
         m_Source: ArcticCod.Eats.IceAlgae
         m_HashValue: 3673181089
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -332,7 +336,11 @@ MonoBehaviour:
         m_Source: AstarteBorealis.Eats.Detritus
         m_HashValue: 242008181
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -391,20 +399,20 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Ick
         m_HashValue: 3815586090
       FactId:
-        m_Source: BlueheadWrasse.Eats.Ick
         m_HashValue: 170722032
     StressedEatTargets:
     - TargetId:
-        m_Source: Ick
         m_HashValue: 3815586090
       FactId:
-        m_Source: BlueheadWrasse.Eats.Ick
         m_HashValue: 170722032
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -463,32 +471,28 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: TurfAlgae
         m_HashValue: 3939929818
       FactId:
-        m_Source: BlueTang.Eats.TurfAlgae
         m_HashValue: 115798069
     - TargetId:
-        m_Source: TurtleGrass
         m_HashValue: 793706139
       FactId:
-        m_Source: BlueTang.Eats.TurtleGrass
         m_HashValue: 1443316800
     StressedEatTargets:
     - TargetId:
-        m_Source: TurfAlgae
         m_HashValue: 3939929818
       FactId:
-        m_Source: BlueTang.Eats.TurfAlgae
         m_HashValue: 115798069
     - TargetId:
-        m_Source: TurtleGrass
         m_HashValue: 793706139
       FactId:
-        m_Source: BlueTang.Eats.TurtleGrass
         m_HashValue: 1443316800
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0.74
+    StressedReproduceRate: 0.6
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -504,6 +508,77 @@ MonoBehaviour:
       y: -0.43298697
       width: 1.4787596
       height: 1.0185709
+  - Id:
+      m_HashValue: 2063388242
+    Type: {fileID: 11400000, guid: 2dacf62c77b0d8d4c999c2240109088b, type: 2}
+    Prefab: {fileID: 0}
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 1
+      AvoidTankTopBottomRadius: 1
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 1
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 0.5555556
+        AliveMax: 4.4444447
+        StressedMin: -14.444445
+        StressedMax: 19.444445
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 7.8
+        AliveMax: 8.3
+        StressedMin: 7.3
+        StressedMax: 8.8
+    AliveEatTargets:
+    - TargetId:
+        m_HashValue: 1229737088
+      FactId:
+        m_HashValue: 2996010258
+    StressedEatTargets:
+    - TargetId:
+        m_HashValue: 1229737088
+      FactId:
+        m_HashValue: 2996010258
+    SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsHerd: 0
+    IsAlive: 1
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - Id:
       m_HashValue: 1315630147
     Type: {fileID: 11400000, guid: 30885595da21ef14ea35cb2f0f2bb8ba, type: 2}
@@ -560,7 +635,11 @@ MonoBehaviour:
         m_Source: BristleWorm.Eats.Detritus
         m_HashValue: 3224749134
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -619,7 +698,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -679,7 +762,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 0.7
+    StressedReproduceRate: 0.11
     IsPlant: 1
+    IsHerd: 1
     IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
@@ -763,7 +850,11 @@ MonoBehaviour:
         m_Source: ChinookSalmon.Eats.Clione
         m_HashValue: 1154228141
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -895,7 +986,11 @@ MonoBehaviour:
         m_Source: Copepod.Eats.Diatoms
         m_HashValue: 1712894733
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -955,7 +1050,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 2
+    StressedReproduceRate: 0.8
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1015,7 +1114,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1075,7 +1178,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1135,7 +1242,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1195,7 +1306,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1255,7 +1370,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 2.03
+    StressedReproduceRate: 0.14
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1315,7 +1434,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 3
+    SpawnMax: 9
+    AliveReproduceRate: 1.1
+    StressedReproduceRate: 0.31
     IsPlant: 1
+    IsHerd: 1
     IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
@@ -1531,7 +1654,11 @@ MonoBehaviour:
         m_Source: Hagfish.Eats.Detritus
         m_HashValue: 626193164
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1590,7 +1717,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1650,7 +1781,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1709,32 +1844,28 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
-        m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
     - TargetId:
-        m_Source: BlueheadWrasse
         m_HashValue: 193540374
       FactId:
-        m_Source: Lionfish.Eats.BlueheadWrasse
         m_HashValue: 3761093643
     StressedEatTargets:
     - TargetId:
-        m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
-        m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
     - TargetId:
-        m_Source: BlueheadWrasse
         m_HashValue: 193540374
       FactId:
-        m_Source: Lionfish.Eats.BlueheadWrasse
         m_HashValue: 3761093643
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1793,92 +1924,68 @@ MonoBehaviour:
         StressedMax: 8.7
     AliveEatTargets:
     - TargetId:
-        m_Source: Copepod
         m_HashValue: 1053183451
       FactId:
-        m_Source: LoggerheadTurtle.Eats.Copepod
         m_HashValue: 1033032444
     - TargetId:
-        m_Source: WhiteShrimp
         m_HashValue: 3187223953
       FactId:
-        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
         m_HashValue: 1090187846
     - TargetId:
-        m_Source: QueenConch
         m_HashValue: 2098174204
       FactId:
-        m_Source: LoggerheadTurtle.Eats.QueenConch
         m_HashValue: 1192689825
     - TargetId:
-        m_Source: PlasticBag
         m_HashValue: 1161043395
       FactId:
-        m_Source: LoggerheadTurtle.Eats.PlasticBag
         m_HashValue: 1831727362
     - TargetId:
-        m_Source: MoonJelly
         m_HashValue: 4245174184
       FactId:
-        m_Source: LoggerheadTurtle.Eats.MoonJelly
         m_HashValue: 2702106243
     - TargetId:
-        m_Source: AngelFish
         m_HashValue: 4079225964
       FactId:
-        m_Source: LoggerheadTurtle.Eats.AngelFish
         m_HashValue: 3388871611
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: LoggerheadTurtle.Eats.Cyanobacteria
         m_HashValue: 3424480027
     StressedEatTargets:
     - TargetId:
-        m_Source: MoonJelly
         m_HashValue: 4245174184
       FactId:
-        m_Source: LoggerheadTurtle.Eats.MoonJelly.Stressed
         m_HashValue: 805011374
     - TargetId:
-        m_Source: Copepod
         m_HashValue: 1053183451
       FactId:
-        m_Source: LoggerheadTurtle.Eats.Copepod
         m_HashValue: 1033032444
     - TargetId:
-        m_Source: WhiteShrimp
         m_HashValue: 3187223953
       FactId:
-        m_Source: LoggerheadTurtle.Eats.WhiteShrimp
         m_HashValue: 1090187846
     - TargetId:
-        m_Source: QueenConch
         m_HashValue: 2098174204
       FactId:
-        m_Source: LoggerheadTurtle.Eats.QueenConch
         m_HashValue: 1192689825
     - TargetId:
-        m_Source: PlasticBag
         m_HashValue: 1161043395
       FactId:
-        m_Source: LoggerheadTurtle.Eats.PlasticBag
         m_HashValue: 1831727362
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: LoggerheadTurtle.Eats.Cyanobacteria.Stressed
         m_HashValue: 2153526566
     - TargetId:
-        m_Source: AngelFish
         m_HashValue: 4079225964
       FactId:
-        m_Source: LoggerheadTurtle.Eats.AngelFish
         m_HashValue: 3388871611
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 0.76
+    StressedReproduceRate: 0.76
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1937,7 +2044,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -1995,20 +2106,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: Methane
         m_HashValue: 722380343
       FactId:
-        m_Source: Methanogen.Eats.Methane
         m_HashValue: 2726244040
     StressedEatTargets:
     - TargetId:
-        m_Source: Methane
         m_HashValue: 722380343
       FactId:
-        m_Source: Methanogen.Eats.Methane
         m_HashValue: 2726244040
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2067,32 +2178,28 @@ MonoBehaviour:
         StressedMax: 8.5
     AliveEatTargets:
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: MoonJelly.Eats.Cyanobacteria
         m_HashValue: 38188188
     - TargetId:
-        m_Source: SeaPearl
         m_HashValue: 687582608
       FactId:
-        m_Source: MoonJelly.Eats.SeaPearl
         m_HashValue: 3217668712
     StressedEatTargets:
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: MoonJelly.Eats.Cyanobacteria
         m_HashValue: 38188188
     - TargetId:
-        m_Source: SeaPearl
         m_HashValue: 687582608
       FactId:
-        m_Source: MoonJelly.Eats.SeaPearl
         m_HashValue: 3217668712
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0.47
+    StressedReproduceRate: 0.9
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2152,7 +2259,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.75
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2248,7 +2359,11 @@ MonoBehaviour:
         m_Source: NorthAtlanticOctopus.Eats.SnowCrab
         m_HashValue: 3968036041
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2380,7 +2495,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 0
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2452,7 +2571,11 @@ MonoBehaviour:
         m_Source: PterasterObscurus.Eats.GlassSponge
         m_HashValue: 497967974
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2512,7 +2635,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2571,20 +2698,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: RedGorgonian.Eats.Detritus
         m_HashValue: 3914354569
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: RedGorgonian.Eats.Detritus.Stressed
         m_HashValue: 3270658668
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 2.5
+    StressedReproduceRate: 1
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2643,68 +2770,52 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: BlueheadWrasse
         m_HashValue: 193540374
       FactId:
-        m_Source: RedGrouper.Eats.BlueheadWrasse
         m_HashValue: 299259218
     - TargetId:
-        m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
-        m_Source: RedGrouper.Eats.BlueTang
         m_HashValue: 1688490569
     - TargetId:
-        m_Source: AngelFish
         m_HashValue: 4079225964
       FactId:
-        m_Source: RedGrouper.Eats.AngelFish
         m_HashValue: 2604407488
     - TargetId:
-        m_Source: WhiteShrimp
         m_HashValue: 3187223953
       FactId:
-        m_Source: RedGrouper.Eats.WhiteShrimp
         m_HashValue: 3732071581
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: RedGrouper.Eats.Cyanobacteria
         m_HashValue: 4014676400
     StressedEatTargets:
     - TargetId:
-        m_Source: BlueheadWrasse
         m_HashValue: 193540374
       FactId:
-        m_Source: RedGrouper.Eats.BlueheadWrasse
         m_HashValue: 299259218
     - TargetId:
-        m_Source: BlueTang
         m_HashValue: 1734724709
       FactId:
-        m_Source: RedGrouper.Eats.BlueTang
         m_HashValue: 1688490569
     - TargetId:
-        m_Source: AngelFish
         m_HashValue: 4079225964
       FactId:
-        m_Source: RedGrouper.Eats.AngelFish
         m_HashValue: 2604407488
     - TargetId:
-        m_Source: WhiteShrimp
         m_HashValue: 3187223953
       FactId:
-        m_Source: RedGrouper.Eats.WhiteShrimp
         m_HashValue: 3732071581
     - TargetId:
-        m_Source: Cyanobacteria
         m_HashValue: 3623197764
       FactId:
-        m_Source: RedGrouper.Eats.Cyanobacteria
         m_HashValue: 4014676400
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0.38
+    StressedReproduceRate: 0.38
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2812,7 +2923,11 @@ MonoBehaviour:
         m_Source: RibbonSeal.Eats.NorthAtlanticOctopus
         m_HashValue: 3868973061
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2896,7 +3011,11 @@ MonoBehaviour:
         m_Source: SalmonShark.Eats.ChinookSalmon
         m_HashValue: 3447061902
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -2956,7 +3075,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 0.15
+    StressedReproduceRate: 0.15
     IsPlant: 1
+    IsHerd: 1
     IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
@@ -3015,7 +3138,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3074,20 +3201,20 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Urchin
         m_HashValue: 1973276590
       FactId:
-        m_Source: SeaOtter.Eats.Urchin
         m_HashValue: 1212586560
     StressedEatTargets:
     - TargetId:
-        m_Source: Urchin
         m_HashValue: 1973276590
       FactId:
-        m_Source: SeaOtter.Eats.Urchin
         m_HashValue: 1212586560
     SpawnCount: 2
+    SpawnMax: 6
+    AliveReproduceRate: 0.88
+    StressedReproduceRate: 0.88
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3147,7 +3274,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 2.01
+    StressedReproduceRate: 1.69
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3207,7 +3338,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3266,20 +3401,20 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: Siphonophore.Eats.Detritus
         m_HashValue: 1627738578
     StressedEatTargets:
     - TargetId:
-        m_Source: Detritus
         m_HashValue: 4251495377
       FactId:
-        m_Source: Siphonophore.Eats.Detritus.Stressed
         m_HashValue: 1574933793
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3339,7 +3474,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3411,7 +3550,11 @@ MonoBehaviour:
         m_Source: SnowCrab.Eats.Detritus
         m_HashValue: 847979829
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3471,7 +3614,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 3
+    SpawnMax: 9
+    AliveReproduceRate: 150
+    StressedReproduceRate: 75
     IsPlant: 1
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
@@ -3530,7 +3677,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3590,7 +3741,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 4
+    SpawnMax: 12
+    AliveReproduceRate: 2.5
+    StressedReproduceRate: 1.8
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3650,7 +3805,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 3
+    SpawnMax: 9
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 1
+    IsHerd: 1
     IsAlive: 1
     TargetLimit: 4
     FreeOnEaten: 0
@@ -3709,44 +3868,36 @@ MonoBehaviour:
         StressedMax: 8.8
     AliveEatTargets:
     - TargetId:
-        m_Source: Sargassum
         m_HashValue: 444981425
       FactId:
-        m_Source: Urchin.Eats.Sargassum
         m_HashValue: 430969211
     - TargetId:
-        m_Source: GiantKelp
         m_HashValue: 3510470690
       FactId:
-        m_Source: Urchin.Eats.GiantKelp
         m_HashValue: 3556196180
     - TargetId:
-        m_Source: BullKelp
         m_HashValue: 3363669640
       FactId:
-        m_Source: Urchin.Eats.BullKelp
         m_HashValue: 3905127850
     StressedEatTargets:
     - TargetId:
-        m_Source: Sargassum
         m_HashValue: 444981425
       FactId:
-        m_Source: Urchin.Eats.Sargassum
         m_HashValue: 430969211
     - TargetId:
-        m_Source: GiantKelp
         m_HashValue: 3510470690
       FactId:
-        m_Source: Urchin.Eats.GiantKelp
         m_HashValue: 3556196180
     - TargetId:
-        m_Source: BullKelp
         m_HashValue: 3363669640
       FactId:
-        m_Source: Urchin.Eats.BullKelp
         m_HashValue: 3905127850
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 1.58
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3805,7 +3956,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3865,7 +4020,11 @@ MonoBehaviour:
     AliveEatTargets: []
     StressedEatTargets: []
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1
@@ -3937,7 +4096,11 @@ MonoBehaviour:
         m_Source: ZombieWorm.Eats.Detritus
         m_HashValue: 24994937
     SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
     IsPlant: 0
+    IsHerd: 0
     IsAlive: 1
     TargetLimit: 1
     FreeOnEaten: 1

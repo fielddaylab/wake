@@ -24,9 +24,16 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField] private SelectableTank m_Tank = null;
         [SerializeField, HideInInspector] private ActorAllocator m_Allocator = null;
 
+        [Header("Reproduction Rules")]
+        [SerializeField] private float m_ReproPeriod = 0f;
+
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         [NonSerialized] public ActorWorld World;
         [NonSerialized] private bool m_AllowTick = false;
+
+        private readonly float[] m_ReproductionSchedule = new float[8];
+
+        public Predicate<ActorActionId> ActionAvailable;
 
         public void Initialize() {
             if (World != null)
@@ -46,7 +53,8 @@ namespace ProtoAqua.ExperimentV2 {
         public void End() {
             if (m_AllowTick) {
                 m_AllowTick = false;
-                foreach(var actor in World.Actors) {
+                World.IsExecuting = false;
+                foreach (var actor in World.Actors) {
                     actor.ActionAnimation.Stop();
                 }
             }
@@ -109,8 +117,21 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         public void TickBehaviors(float inDeltaTime) {
-            if (IsSpawningComplete()) {
-                World.Lifetime += inDeltaTime;
+            if (!IsSpawningComplete()) {
+                return;
+            }
+
+            World.Lifetime += inDeltaTime;
+            if (m_ReproPeriod > 0) {
+                int count = World.ActorCounts.Count;
+                for(int i = 0; i < count; i++) {
+                    ref float repro = ref m_ReproductionSchedule[i];
+                    if (repro <= World.Lifetime) {
+                        PerformReproduction(World, World.ActorCounts[i].Id);
+                        repro += m_ReproPeriod * RNG.Instance.NextFloat(0.8f, 1.2f);
+                        break;
+                    }
+                }
             }
         }
 
@@ -123,6 +144,7 @@ namespace ProtoAqua.ExperimentV2 {
 
                 FinalizeCritterInitialization();
                 m_Phase = Phase.Executing;
+                World.IsExecuting = true;
                 return true;
             } else {
                 return true;
@@ -130,7 +152,7 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         public bool AllSpawned() {
-            foreach(var critter in World.Actors) {
+            foreach (var critter in World.Actors) {
                 if (critter.CurrentAction == ActorActionId.Spawning) {
                     return false;
                 }
@@ -153,6 +175,45 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             ActorWorld.RegenerateActorCounts(World);
+
+            Array.Clear(m_ReproductionSchedule, 0, m_ReproductionSchedule.Length);
+            if (m_ReproPeriod > 0) {
+                int count = World.ActorCounts.Count;
+                for(int i = 0; i < count; i++) {
+                    m_ReproductionSchedule[i] = RNG.Instance.NextFloat(0.3f, 0.7f) * m_ReproPeriod;
+                }
+            }
+        }
+
+        static private void PerformReproduction(ActorWorld inWorld, StringHash32 inId) {
+            var definition = inWorld.Allocator.Define(inId);
+            int pop = (int) ActorWorld.GetPopulation(inWorld, inId);
+            if (pop <= 0) {
+                return;
+            }
+
+            int aliveCount = 0, stressCount = 0;
+            foreach(var actor in inWorld.Actors) {
+                if (actor.Definition.Id != inId)
+                    continue;
+                
+                switch(actor.CurrentState) {
+                    case ActorStateId.Alive: {
+                        aliveCount++;
+                        break;
+                    }
+                    case ActorStateId.Stressed: {
+                        stressCount++;
+                        break;
+                    }
+                }
+            }
+
+            int desired = Math.Min(definition.SpawnMax, pop + (int) Math.Ceiling(aliveCount * definition.AliveReproduceRate + stressCount * definition.StressedReproduceRate));
+            int newSpawn = desired - pop;
+            if (newSpawn > 0) {
+                ActorWorld.Alloc(inWorld, inId, newSpawn, ActorActionId.BeingBorn);
+            }
         }
 
         static public int GetPotentialNewObservations(ActorWorld inWorld, HasFactDelegate inDelegate, ICollection<BFBase> outFactIds) {
@@ -234,7 +295,7 @@ namespace ProtoAqua.ExperimentV2 {
         static private IEnumerator ActorIdleAnimation(ActorInstance inActor, ActorWorld inWorld) {
             ActorDefinition def = inActor.Definition;
             bool bLimitMovement = ActorDefinition.GetEatTargets(def, inActor.CurrentState).Length > 0;
-            bool bAllowHungry = inWorld.Tank.IsActionAvailable == null || inWorld.Tank.IsActionAvailable(ActorActionId.Hungry);
+            bool bAllowHungry = ActorWorld.IsActionAvailable(ActorActionId.Hungry, inWorld);
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
@@ -284,7 +345,8 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private IEnumerator ActorHungryAnimation(ActorInstance inActor, ActorWorld inWorld) {
             ActorDefinition def = inActor.Definition;
-            ActorInstance target = inActor.CurrentTargetActor;
+            ActorHandle target = inActor.CurrentTargetActor;
+            ActorInstance targetInstance = target.Get();
 
             if (!ActorInstance.IsValidTarget(target)) {
                 ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
@@ -295,17 +357,17 @@ namespace ProtoAqua.ExperimentV2 {
 
             Vector3 currentPos;
             Vector3 targetPos;
-            Vector3 targetPosOffset = FindGoodEatPositionOffset(target);
+            Vector3 targetPosOffset = FindGoodEatPositionOffset(targetInstance);
             Vector3 distanceVector;
             while (ActorInstance.IsValidTarget(target)) {
                 currentPos = inActor.CachedTransform.localPosition;
-                targetPos = target.CachedTransform.localPosition + targetPosOffset;
+                targetPos = targetInstance.CachedTransform.localPosition + targetPosOffset;
                 targetPos.z = currentPos.z;
                 targetPos = ActorDefinition.ClampToTank(inWorld.WorldBounds, targetPos, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
 
                 distanceVector = targetPos - currentPos;
                 if (distanceVector.sqrMagnitude < 0.05f) {
-                    if (ActorInstance.AcquireInteraction(inActor, target, inWorld)) {
+                    if (ActorInstance.AcquireInteraction(inActor, targetInstance, inWorld)) {
                         ActorInstance.SetActorAction(inActor, ActorActionId.Eating, inWorld);
                         yield break;
                     } else {
@@ -339,8 +401,11 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         static private IEnumerator ActorEatAnimation(ActorInstance inActor, ActorWorld inWorld) {
-            ActorInstance target = inActor.CurrentInteractionActor;
-            BFEat eatRule = Assets.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, target.Definition.Id, inActor.CurrentState).FactId);
+            ActorHandle target = inActor.CurrentInteractionActor;
+            ActorInstance targetInstance = target.Get();
+            var targetDefinition = targetInstance.Definition;
+
+            BFEat eatRule = Assets.Fact<BFEat>(ActorDefinition.GetEatTarget(inActor.Definition, targetDefinition.Id, inActor.CurrentState).FactId);
 
             bool bHas = Save.Bestiary.HasFact(eatRule.Id);
             using (var table = TempVarTable.Alloc()) {
@@ -371,8 +436,11 @@ namespace ProtoAqua.ExperimentV2 {
                         }
                 }
 
-                if (target.Definition.FreeOnEaten)
-                    ActorWorld.Free(inWorld, target);
+                if (target.Valid) {
+                    if (targetDefinition.FreeOnEaten) {
+                        ActorWorld.Free(inWorld, targetInstance);
+                    }
+                }
 
                 yield return 1;
 
@@ -424,12 +492,6 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         #endregion // Being Eaten
-
-        #region Reproducing
-
-        
-
-        #endregion // Reproducing
 
         static private void OnInteractionAcquired(ActorInstance inActor, ActorWorld inWorld) {
             ActorInstance.SetActorAction(inActor, ActorActionId.BeingEaten, inWorld);
@@ -505,6 +567,7 @@ namespace ProtoAqua.ExperimentV2 {
             m_Phase = Phase.Spawning;
             World.Lifetime = 0;
             World.EnvDeaths = 0;
+            World.IsExecuting = false;
         }
 
         public void ClearActors() {
@@ -516,7 +579,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         #region IBaked
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         int IBaked.Order { get { return 0; } }
 
@@ -526,7 +589,7 @@ namespace ProtoAqua.ExperimentV2 {
             return true;
         }
 
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
         #endregion // IBaked
     }

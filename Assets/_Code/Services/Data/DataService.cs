@@ -222,11 +222,11 @@ namespace Aqua
             if (string.IsNullOrEmpty(inSceneOverride))
             {
                 StringHash32 mapId = FindMapId(m_CurrentSaveData);
-                StateUtil.LoadMapWithWipe(mapId, m_CurrentSaveData.Map.SavedSceneLocationId());
+                StateUtil.LoadMapWithWipe(mapId, m_CurrentSaveData.Map.SavedSceneLocationId(), null, SceneLoadFlags.Default | SceneLoadFlags.DoNotOverrideEntrance);
             }
             else
             {
-                StateUtil.LoadSceneWithWipe(inSceneOverride);
+                StateUtil.LoadSceneWithWipe(inSceneOverride, null, null, SceneLoadFlags.Default | SceneLoadFlags.DoNotOverrideEntrance);
             }
 
             AutoSave.Suppress();

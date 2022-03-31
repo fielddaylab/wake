@@ -818,6 +818,7 @@ namespace Aqua
         // NoLoadingScreen = 0x01,
         DoNotModifyHistory = 0x02,
         Cutscene = 0x04,
-        DoNotDispatchPreUnload = 0x08
+        DoNotDispatchPreUnload = 0x08,
+        DoNotOverrideEntrance = 0x10
     }
 }

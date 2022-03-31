@@ -54,55 +54,98 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
+        static public bool IsNew(ExperimentResult result, StringHash32 factId) {
+            for(int i = 0; i < result.Facts.Length; i++) {
+                if (result.Facts[i].Id == factId) {
+                    return result.Facts[i].Type != ExperimentFactResultType.Known;
+                }
+            }
+
+            return false;
+        }
+
+        static public bool IsAnyNew(ExperimentResult result) {
+            for(int i = 0; i < result.Facts.Length; i++) {
+                if (result.Facts[i].Type != ExperimentFactResultType.Known) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         static public Future<StringHash32> DisplaySummaryPopup(ExperimentResult result) {
-            if (result.Facts.Length > 0) {
+
+            bool bHasNew = IsAnyNew(result);
+            bool bHasFacts = result.Facts.Length > 0;
+            string hintText = null;
+
+            if (!bHasNew || !bHasFacts) {
+                var hints = GetHints(result, bHasFacts && !bHasNew, out TextId hintBase);
+                hintText = Loc.Format(hintBase, RNG.Instance.Choose(hints));
+            }
+
+            if (bHasFacts) {
+                PopupFacts factSet = new PopupFacts(ArrayUtils.MapFrom(result.Facts, (f) => Assets.Fact(f.Id)),
+                    ArrayUtils.MapFrom(result.Facts, (f) => f.Flags));
+                factSet.ShowNew = (b) => IsNew(result, b.Id);
+                NamedOption[] options = null;
+                if (!IsAnyNew(result)) {
+                    options = PopupPanel.DefaultDismiss;
+                }
                 return Services.UI.Popup.PresentFacts(
                     Loc.Find("experiment.summary.header"),
-                    null, null,
-                    ArrayUtils.MapFrom(result.Facts, (f) => Assets.Fact(f.Id)), ArrayUtils.MapFrom(result.Facts, (f) => f.Flags), 0
+                    hintText, null, factSet, 0, options
                 );
             } else {
-                TempList16<TextId> hints = default;
-                if ((result.Feedback & ExperimentFeedbackFlags.NoNewObservations) != 0) {
-                    hints.Add("experiment.summary.noFacts");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.MissedObservations) != 0) {
-                    hints.Add("experiment.summary.missedFacts");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.ChemistryCategory) != 0) {
-                    hints.Add("experiment.summary.measure.water");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.ReproduceCategory) != 0) {
-                    hints.Add("experiment.summary.measure.repro");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.EatCategory) != 0) {
-                    hints.Add("experiment.summary.measure.eat");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.DeadOrganisms) != 0) {
-                    hints.Add("experiment.summary.deadOrganisms");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.SingleOrganism) != 0) {
-                    hints.Add("experiment.summary.singleOrganism");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.DeadMatter) != 0) {
-                    hints.Add("experiment.summary.deadMatter");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.DeadMatterEatPair) != 0) {
-                    hints.Add("experiment.summary.deadMatterPair");
-                }
-                if ((result.Feedback & ExperimentFeedbackFlags.EatNeedsObserve) != 0) {
-                    hints.Add("experiment.summary.eatNeedsObserveFirst");
-                }
-                TextId noteBase = "experiment.summary.noteHeader";
-                if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {
-                    noteBase = "experiment.summary.noInteractionHeader";
-                }
-                TextId hint = RNG.Instance.Choose(hints);
                 return Services.UI.Popup.Display(
                     Loc.Find("experiment.summary.header.fail"),
-                    Loc.Format(noteBase, hint), null, 0
+                    hintText, null, 0
                 );
             }
+        }
+
+        static private TempList16<TextId> GetHints(ExperimentResult result, bool noNewFacts, out TextId outHintBase) {
+            TempList16<TextId> hints = default;
+            if (noNewFacts) {
+                hints.Add("experiment.summary.noNewFacts");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.NoNewObservations) != 0) {
+                hints.Add("experiment.summary.noFacts");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.MissedObservations) != 0) {
+                hints.Add("experiment.summary.missedFacts");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.ChemistryCategory) != 0) {
+                hints.Add("experiment.summary.measure.water");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.ReproduceCategory) != 0) {
+                hints.Add("experiment.summary.measure.repro");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.EatCategory) != 0) {
+                hints.Add("experiment.summary.measure.eat");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.DeadOrganisms) != 0) {
+                hints.Add("experiment.summary.deadOrganisms");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.SingleOrganism) != 0) {
+                hints.Add("experiment.summary.singleOrganism");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.DeadMatter) != 0) {
+                hints.Add("experiment.summary.deadMatter");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.DeadMatterEatPair) != 0) {
+                hints.Add("experiment.summary.deadMatterPair");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.EatNeedsObserve) != 0) {
+                hints.Add("experiment.summary.eatNeedsObserveFirst");
+            }
+            TextId noteBase = "experiment.summary.noteHeader";
+            if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {
+                noteBase = "experiment.summary.noInteractionHeader";
+            }
+            outHintBase = noteBase;
+            return hints;
         }
     }
 }

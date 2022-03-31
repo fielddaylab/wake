@@ -46,7 +46,7 @@ namespace Aqua
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
             if (!currentMapId.IsEmpty)
             {
-                if (inEntrance.IsEmpty)
+                if (inEntrance.IsEmpty && (inFlags & SceneLoadFlags.DoNotOverrideEntrance) == 0)
                     inEntrance = currentMapId;
             }
             
@@ -71,7 +71,7 @@ namespace Aqua
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
             if (!currentMapId.IsEmpty)
             {
-                if (inEntrance.IsEmpty)
+                if (inEntrance.IsEmpty && (inFlags & SceneLoadFlags.DoNotOverrideEntrance) == 0)
                     inEntrance = currentMapId;
                 sceneToLoad = Assets.Map(currentMapId).Parent()?.SceneName();
             }
