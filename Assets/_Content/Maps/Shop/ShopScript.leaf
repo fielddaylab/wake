@@ -99,19 +99,19 @@ $if player:exp < local:expCost
     $set    shop:lastFailureReason = "exp"
     $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-    {@merchant} Oh, you want the {nameof $local:itemId}?
-                I'm sorry|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    {@merchant} Oh, {random you want|you're interested in} the {nameof $local:itemId}?
+                {random I'm sorry|My apologies}|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} Ah, you want the {nameof $local:itemId}?\
+    {@merchant} Ah, {random you want|you're interested in} the {nameof $local:itemId}?\
     That'll be {cash}{$local:cashCost}{/cash}!
 
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}I'll take it! (Purchase){/h}
     $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} Ah, you want the {nameof $local:itemId}?
+    {@merchant} Ah, {random you want|you're interested in} the {nameof $local:itemId}?
 
     $choice .purchaseAttempt.generic.success; {h}I'll take it! (Install){/h}
 $endif
@@ -157,7 +157,7 @@ $set    shop:lastFailureReason = "cash"
 $set    player:hasAttemptedPurchaseNoCash = local:itemId
 
 $set    shop:notEnoughCount + 1
-{@merchant} I'm sorry|, but you seem to be light in the wallet.
+{@merchant} {random I'm sorry|So sorry}|, but you seem to be light in the wallet.
             Come back when you have enough!
 
 :: purchaseAttempt.generic.refused
@@ -271,18 +271,18 @@ $if player:exp < local:expCost
     $set    shop:lastFailureReason = "exp"
     $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-    {@merchant} Oh, I'm sorry... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    {@merchant} Oh, {random I'm sorry|my apologies}... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} So, do you want the {nameof $local:itemId}\
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}\
     It'll be {cash}{$local:cashCost}{/cash}!
     
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
     $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} So, do you want the {nameof $local:itemId}?
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}?
     
     $choice .purchaseAttempt.generic.success; {h}Yes! (Install){/h}
 $endif
@@ -317,7 +317,7 @@ $else
         Don't ever ask me again.
 $endif
 
-$set player:shopFreeCoolDown = 3
+$set player:shopFreeCoolDown = 0
 $set player:shopFreeCount + 1
 
 :: giveCash
