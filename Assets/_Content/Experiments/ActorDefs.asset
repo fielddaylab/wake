@@ -272,7 +272,7 @@ MonoBehaviour:
       AvoidTankSidesRadius: 1
       AvoidTankTopBottomRadius: 1
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 1
       MovementSpeed: 1
       MovementCurve: 1
@@ -486,7 +486,7 @@ MonoBehaviour:
       SpawnLocation: 1
       SpawnAnimation: 0
       AvoidTankSidesRadius: 0.25
-      AvoidTankTopBottomRadius: 0.03
+      AvoidTankTopBottomRadius: 0.05
     Movement:
       MoveType: 1
       MovementIdleDistance: 1
@@ -498,8 +498,8 @@ MonoBehaviour:
       EatType: 1
       MovementMultiplier: 1
     Stress:
-      MovementSpeedMultiplier: 0
-      MovementIntervalMultiplier: 0
+      MovementSpeedMultiplier: 0.9
+      MovementIntervalMultiplier: 1.1
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
@@ -1120,14 +1120,14 @@ MonoBehaviour:
     Type: {fileID: 11400000, guid: fd04b1fe77c5ea1469c3a4c9ae437b45, type: 2}
     Prefab: {fileID: 1264615091982000645, guid: dd7733ba7bc42da4395f5be46cc356a4,
       type: 3}
-    SpawnAmountOverride: -1
+    SpawnAmountOverride: 15
     Spawning:
       SpawnLocation: 0
       SpawnAnimation: 0
       AvoidTankSidesRadius: 0.5
       AvoidTankTopBottomRadius: 0.6
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 1
       MovementSpeed: 1
       MovementCurve: 1
@@ -1158,8 +1158,8 @@ MonoBehaviour:
         StressedMax: Infinity
     AliveEatTargets: []
     StressedEatTargets: []
-    SpawnCount: 4
-    SpawnMax: 12
+    SpawnCount: 15
+    SpawnMax: 20
     AliveReproduceRate: 0
     StressedReproduceRate: 0
     IsPlant: 0
@@ -1455,7 +1455,7 @@ MonoBehaviour:
       AvoidTankSidesRadius: 1
       AvoidTankTopBottomRadius: 1
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 1
       MovementSpeed: 1
       MovementCurve: 1
@@ -2210,8 +2210,8 @@ MonoBehaviour:
     Spawning:
       SpawnLocation: 1
       SpawnAnimation: 0
-      AvoidTankSidesRadius: 0.35
-      AvoidTankTopBottomRadius: 0
+      AvoidTankSidesRadius: 0.6
+      AvoidTankTopBottomRadius: 0.35
     Movement:
       MoveType: 1
       MovementIdleDistance: 1
@@ -2373,7 +2373,7 @@ MonoBehaviour:
       AvoidTankSidesRadius: 1
       AvoidTankTopBottomRadius: 1
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 1
       MovementSpeed: 1
       MovementCurve: 1
@@ -3571,7 +3571,7 @@ MonoBehaviour:
       AvoidTankSidesRadius: 1
       AvoidTankTopBottomRadius: 1
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 1
       MovementSpeed: 1
       MovementCurve: 1

@@ -222,7 +222,7 @@ namespace ProtoAqua.ExperimentV2 {
         #region Targets
 
         static public bool IsValidTarget(ActorInstance inActor) {
-            return inActor.m_IsInstantiated && inActor.IncomingInteractionCount <= inActor.Definition.TargetLimit && inActor.CurrentState != ActorStateId.Dead && inActor.CurrentAction != ActorActionId.BeingBorn;
+            return inActor.m_IsInstantiated && inActor.IncomingTargetCount <= inActor.Definition.TargetLimit && inActor.CurrentState != ActorStateId.Dead && inActor.CurrentAction != ActorActionId.BeingBorn;
         }
 
         static public bool IsValidTarget(ActorHandle inActorHandle) {
