@@ -557,7 +557,11 @@ namespace ProtoAqua.ExperimentV2
             for(int i = 0, length = ioTargets.Count; i < length; i++)
             {
                 if (ioTargets[i].TargetId == id)
+                {
+                    ref ValidEatTarget target = ref ioTargets[i];
+                    target.FactId = inRule.name;
                     return;
+                }
             }
 
             ValidEatTarget newTarget = new ValidEatTarget();
