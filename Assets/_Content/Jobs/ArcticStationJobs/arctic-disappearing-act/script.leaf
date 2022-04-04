@@ -13,6 +13,7 @@ $endif
 ::gotAllInfo
 @trigger JobTasksUpdated
 @when JobTaskCompleted(scanCritters)
+@once
 @cutscene
 {@kevin}    I'd say we know enough to make a {h}visual model{/h} now.
 
@@ -31,9 +32,14 @@ $endif
 {@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interatctions of the species at {h}site W{/h}.
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
+
+::reportBack
+@trigger    RequestPartnerHelp
+@when JobTaskTop(reportBack)
+@cutscene
+{@kevin}    Let's report back to {nameof profWhalen} with our model.
             
 // ARGUMENTATION
-
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(whaleModel)

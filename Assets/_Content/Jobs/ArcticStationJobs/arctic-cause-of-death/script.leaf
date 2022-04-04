@@ -43,9 +43,6 @@
 @when   JobTaskCompleted(getPopulationData)
 @cutscene
 {@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
-$if !HasEntity(BowheadWhale)
-    $call GiveEntity(BowheadWhale)
-$endif
 $call GiveFact(BowheadWhale.Eats.Diatoms)
 $call GiveFact(BowheadWhale.Eats.IceAlgae)
 
@@ -54,9 +51,6 @@ $call GiveFact(BowheadWhale.Eats.IceAlgae)
 @when   JobTaskCompleted(getEnviornmentData)
 @cutscene
 {@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
-$if !HasEntity(BowheadWhale)
-    $call GiveEntity(BowheadWhale)
-$endif
 $call GiveFact(BowheadWhale.Light.Stressed)
 $call GiveFact(BowheadWhale.PH.Stressed)
 $call GiveFact(BowheadWhale.Temperature.Stressed)
@@ -83,8 +77,8 @@ $goto .argue.showClaim
 :: argue.stressClaim
 {@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
-	$call ArgueFactSlot(BowheadWhale.Light.Stressed) 
-	$call ArgueFactSlot(W_WhaleFall.Light) 
+	$call ArgueFactSlot(BowheadWhale.Temperature.Stressed) 
+	$call ArgueFactSlot(W_WhaleFall.Temperature) 
 $goto .argue.showClaim2
 
 ::argue.showClaim
