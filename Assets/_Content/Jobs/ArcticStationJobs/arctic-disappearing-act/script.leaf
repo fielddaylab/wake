@@ -1,29 +1,36 @@
 :: basePath job.arctic-disappearing-act
-// INTRO
 
+// INTRO
 :: start
 @trigger    JobStarted
 @cutscene
-$if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasEntity(IceAlgae), 
-HasEntity(Hagfish), HasEntity(IceAlgae), HasEntity(NorthAtlanticOctopus), HasEntity(SalmonShark), 
-HasEntity(SnowCrab),  HasEntity(ZombieWorm), HasEntity(Detritus)    
+$if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasEntity(Diatoms), HasEntity(IceAlgae), HasEntity(Hagfish), HasEntity(IceAlgae), HasEntity(NorthAtlanticOctopus), HasEntity(SalmonShark), HasEntity(SnowCrab), HasEntity(ZombieWorm), HasEntity(Detritus)    
+// Blah
 $else
-{@kevin}    If we're going to investigate properly, we'll need to know all the species at Site W.
+{@kevin}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
 $endif
 
 ::gotAllInfo
 @trigger JobTasksUpdated
 @when JobTaskCompleted(scanCritters)
 @cutscene
-{@kevin}    I'd say we know enough to make a visual model, now.
+{@kevin}    I'd say we know enough to make a {h}visual model{/h} now.
+
+:: helpScan
+@trigger    RequestPartnerHelp
+@when   JobTaskTop(scanCritters)
+@cutscene
+{@player}   What should I do next?
+{@kevin}    Remember, you can use your {h}AQOS tablet{/h} to check your next task.     
 
 :: helpObserve
 @trigger    RequestPartnerHelp
 @when   JobTaskTop(modelInteractions)
 @cutscene
 {@player}   What should I do next? 
-{@kevin}    Prof. Whalen is expecting a visual model, so we'll need to know every interaction. 
-            Let's get to the observation tank!
+{@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interatctions of the species at {h}site W{/h}.
+            These can be discovered using your {h}Observation Tank{/h}. 
+            Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
             
 // ARGUMENTATION
 
@@ -33,7 +40,7 @@ $endif
 @cutscene
 $call ArgueLoad(whaleModel)
 $if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
-		$call ArgueFactSlot(W_WhaleFall.Model.Stages)
+		$call ArgueFactSlot(W_WhaleFall.Model.WhaleFallVisual)
 $endif
 {@profWhalen} Where you able to create that visual model of site W?
 $goto .argue.showClaim
@@ -41,7 +48,7 @@ $goto .argue.showClaim
 :: argue.showClaim
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer W_WhaleFall.Model.Stages, .argue.complete 
+    $answer W_WhaleFall.Model.WhaleFallVisual, .argue.complete 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
