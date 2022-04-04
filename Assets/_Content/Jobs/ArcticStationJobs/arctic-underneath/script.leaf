@@ -1,27 +1,45 @@
 :: basePath job.arctic-underneath
 
 // INTRO
-:: start
-@trigger    JobStarted
-@cutscene
-$if HasUpgrade("Engine")
-{@kevin}    Get to {h}Site X{/h}, perhaps through {h}Site W{/h}, and count the species you find there.
-$else
-{@kevin}    If you want to stick around in {h}Site X{/h} long enough to scan the species there, you'll need an upgraded engine for the Sub.  
-$endif
-
 :: getTheEngine
 @trigger    RequestPartnerHelp
 @when 		!HasUpgrade("Engine")
 @cutscene
 {@kevin}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @merchant} if he has something that can help us.
 
-:: gotPops
+:: toSiteX
+@trigger    RequestPartnerHelp
+@when   !JobTaskTop(reportBack), HasUpgrade("Engine"), scene:name != "RS-4X"
+@cutscene
+{@kevin}    Lets return {h}beneath the ice{/h}, perhaps through {h}Site W{/h}. Check your AQOS for more Site information.
+             
+:: getFlashlight
+@trigger    RequestPartnerHelp
+@when   HasUpgrade("Engine"), !HasUpgrade("Flashlight"), scene:name == "RS-4X"
+@cutscene
+{@kevin}    Goodness it's dark. We might need another tool here to scan the lifeforms here.
+
+:: report
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@kevin}	It looks like you've got a good sample of the life to be found under the ice.
             Lets report back to {nameof profWhalen} with everything you've found.
+
+:: LookAround
+@trigger    RequestPartnerHelp
+@when   !JobTaskTop(reportBack), HasUpgrade("Engine"), HasUpgrade("Flashlight"), scene:name == "RS-4X"
+@cutscene
+{@kevin}    I wonder what kinds of creatures might be living here.
+            Be sure to check your {h}AQOS{/h} for job specifics.
+
+:: reportBack
+@trigger    RequestPartnerHelp 
+@when 	    JobTaskTop(reportBack)
+@cutscene
+{@kevin}	It looks like you've got a good sample of the life to be found under the ice.
+            Lets report back to {nameof profWhalen} with everything you've found.
+
 
 // ARGUMENTATION
 ::argue.intro

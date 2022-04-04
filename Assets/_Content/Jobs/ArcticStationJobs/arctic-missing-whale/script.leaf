@@ -18,7 +18,7 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp
-@when 		jobs:arctic-missing-whale.foundWhale == 0
+@when 		scene:name != "RS-4W"
 @cutscene
 {@player} 	What should I be doing again?
 {@kevin}	We need to see if we can locate the Linda.
@@ -34,22 +34,15 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 			
 :: LookAround
 @trigger    RequestPartnerHelp
-@when       scene:name == "RS-4W", !HasEntity(WhaleTracker)
+@when       scene:name == "RS-4W"
 @cutscene
+$if !HasEntity(WhaleTracker)
 {@kevin}    Let's start by seeing if we can find that tracker.	
-
-:: LookAround2
-@trigger    RequestPartnerHelp
-@when       scene:name == "RS-4W", !HasEntity(Detritus), HasEntity(WhaleTracker)
-@cutscene
+$elseif !HasEntity(Detritus)
 {@kevin}    Have you found any evidence of Linda herself?	
-
-:: helpDetritusPop
-@trigger    JobTasksUpdated
-@when 		HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
-@cutscene
+$elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 {@kevin}	Detritus, huh? How much did you scan? A whale amount? 
-            
+$endif            
 
 :: gotScans
 @trigger    JobTasksUpdated
