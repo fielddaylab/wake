@@ -47,7 +47,7 @@ $set    	jobs:coral-stressed.seen.bottom = true
 :: probeCollectionComplete
 @trigger	JobTaskCompleted
 @who		kevin
-@when		HasFact(MixedKelp.PopulationHistory.BullKelp), HasFact(MixedKelp.PopulationHistory.GiantKelp)
+@when		HasFact(MixedKelp.PopulationHistory.BullKelp), HasFact(MixedKelp.PopulationHistory.GiantKelp), HasFact(MixedKelp.Light.History)
 @once
 @chatter
 
