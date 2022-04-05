@@ -123,7 +123,8 @@ namespace Aqua
     {
         IsGraphable = 0x01,
         IsBehavior = 0x02,
-        HideFactInDetails = 0x04
+        HideFactInDetails = 0x04,
+        EnvironmentFact = 0x08
     }
 
     public struct BFDetails

@@ -1,6 +1,7 @@
 using System;
 using Aqua;
 using BeauUtil;
+using UnityEngine;
 
 namespace ProtoAqua.Observation {
     public class FlashlightRegion : ToolRegion {
@@ -37,6 +38,33 @@ namespace ProtoAqua.Observation {
                 ArrayUtils.Add(ref Reveal.GameObjects, scanRegion.gameObject);
                 TrackTransform = scanRegion.SafeTrackedTransform;
             }
+        }
+
+        [ContextMenu("Auto Configure")]
+        internal void AutoConfigure() {
+            var scanRegions = transform.parent.GetComponentsInChildren<ScannableRegion>();
+            var scanRegion = Array.Find(scanRegions, (t) => !t.name.Contains("MicroscopeHint"));
+            var microscopeRegion = transform.parent.GetComponentInChildren<MicroscopeRegion>();
+            UnityEditor.Undo.RecordObject(this, "Auto configure FlashlightRegion");
+            if (scanRegion) {
+                TrackTransform = scanRegion.SafeTrackedTransform;
+            }
+
+            if (microscopeRegion) {
+                microscopeRegion.TrackTransform = TrackTransform;
+                if (!ArrayUtils.Contains(Reveal.GameObjects, microscopeRegion.gameObject)) {
+                    ArrayUtils.Add(ref Reveal.GameObjects, microscopeRegion.gameObject);
+                }
+                if (scanRegion) {
+                    ArrayUtils.Remove(ref Reveal.GameObjects, scanRegion.gameObject);
+                }
+                microscopeRegion.AutoConfigure();
+            } else if (scanRegion) {
+                if (!ArrayUtils.Contains(Reveal.GameObjects, scanRegion.gameObject)) {
+                    ArrayUtils.Add(ref Reveal.GameObjects, scanRegion.gameObject);
+                }
+            }
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 
         #endif // UNITY_EDITOR

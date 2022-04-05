@@ -43,10 +43,10 @@ Now that you know the basics of scanning for species and observing their behavio
 Find any new Species at Site A
 
 :: kelp-bull-kelp-forest.task.foodweb
-Use the Experiment Lab to determine  the Bull Kelp food web
+Use the Experiment Lab to determine the Bull Kelp food web
 
 :: kelp-bull-kelp-forest.task.reportBack
-Report back to me at the Office
+Report back to Dr. Kelpurnia at the Office
 
 :: kelp-bull-kelp-forest.argue.claimLabel
 What eats Bull Kelp?
@@ -103,7 +103,7 @@ Site R is in trouble. We need you to figure out why the Coral are stressed?
 Visit Site R and observe the Coral
 
 :: coral-stressed.task.stressCoral
-Use a Stress Tank Experiment to determine what's affecting the Staghorn Coral
+Use a Stress Tank to determine what's affecting the Staghorn Coral
 
 :: coral-stressed.task.coralLight
 Collect historical light data from Site R
@@ -133,7 +133,7 @@ We need your help figuring out exactly how the Sargassum is hurting the coral at
 Acquire Historic Population Data from Probe at Site R
 
 :: coral-casting-shade.task.sargLight
-Conduct a Measurement Experiment to determine  Sargassum's effect on its environment
+Conduct a Measurement Experiment to determine Sargassum's effect on its environment
 
 :: coral-casting-shade.task.sargModel
 Model Sargassum's impact on the Staghorn Coral
@@ -198,10 +198,10 @@ It's fine to add Urchins to Site R
 Fishy Business
 
 :: coral-fishy-bizz.desc
-Site V is a very popular fishing spot for Grouper. We need to set some guidelines for how much Red Grouper can be fished without harming the Grouper. How many fishermen can we allow to fish there at one time?
+{h}Site V{/h} is a very popular fishing spot for Grouper. We need to set some guidelines for how much Red Grouper can be fished without harming the Grouper. How many fishermen can we allow to fish there at one time?
 
 :: coral-fishy-bizz.task.getScans
-Scan Fishers and Grouper at Site V
+Scan Fishers and Grouper at {h}site V{/h}
 
 :: coral-fishy-bizz.task.getModel
 Build a model to determine how many boats can be licensed to fish at one time.
@@ -253,45 +253,6 @@ Model your findings to see who might've had the biggest effect over the oxygen l
 
 :: bayou-oxygen-tracking.task.reportBack
 Report back with the model.
-
-:: arctic-missing-whale.name
-Missing Whale!
-
-:: arctic-missing-whale.desc
-Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
-
-:: arctic-missing-whale.task.findWhale
-Search Sites Z and W for signs of the missing whale
-
-:: arctic-missing-whale.task.reportBack
-Report back with your findings
-
-:: arctic-whale-csi.name
-Whale CSI
-
-:: arctic-whale-csi.desc
-Find out what happened to the whale. I'll give you some info on whales and a microscope if you accept this.
-
-:: arctic-whale-csi.task.scanAndTag
-Scan and Count Salmon, Shark, and Cod
-
-:: arctic-whale-csi.task.scanIceAlgae
-Search the ice for signs of microscopic life
-
-:: arctic-whale-csi.task.reportBack
-Report back with your findings
-
-:: arctic-time-of-death.name
-Time Of Death
-
-:: arctic-time-of-death.desc
-How long ago did the missing whale die?
-
-:: arctic-time-of-death.task.getPopulations
-Scan and Count all organisms at Site W
-
-:: arctic-time-of-death.task.reportBack
-Report back with your findings
 
 :: coral-turtle-population.name
 Turtle Population
@@ -437,7 +398,7 @@ Perform an Experiment to Measure Coral's Reproduction Rate
 Perform an Experiment to Measure Coral's Reproduction when Stressed
 
 :: coral-fishy-bizz.task.rhistoricalPopulations
-Collect Historical Populations from Probe at Site V
+Collect Historical Populations from Probe at {h}site V{/h}
 
 :: kelp-urchin-farm.name
 Urchin Farm
@@ -497,7 +458,7 @@ Travel to the Reef Edge at Site V and scan the Queen Conch.
 Travel to the Reef Edge at Site V and scan the White Shrimp.
 
 :: kelp-refuge-failure.task.getPaid
-Report back to Mom
+Report back to Dr. Kelpurnia
 
 :: coral-turtle-stability.desc
 We need to know why the turtles are so successful here by creating a food web model of everything they eat.
@@ -593,7 +554,7 @@ Turtle Danger
 Is the reef dangerous to the Loggerhead turtles?  Are there any new predators?
 
 :: bayou-turtle-danger.task.modelSiteO
-Determine the Site O species that interact with Loggerhead Turtles
+Observe which Site O species Loggerhead Turtles eat
 
 :: bayou-turtle-danger.task.reportBack
 Report your findings back to Prof. Harper
@@ -816,4 +777,178 @@ Measure the rate at which Giant Kelp consume light.
 
 :: kelp-refuge-failure.task.lightRatesBull
 Measure the rate at which Bull Kelp consume light.
+
+:: arctic-missing-whale.name
+*Missing Whale!
+
+:: arctic-missing-whale.desc
+Some researchers down south counted the pod on arrival and one is missing. They think she got lost up here.
+
+:: arctic-missing-whale.task.findWhale
+Search {h}site W{/h} for signs of Linda the missing whale
+
+:: arctic-missing-whale.task.reportBack
+Report back with your findings
+
+:: arctic-whale-csi.name
+***Whale CSI
+
+:: arctic-whale-csi.desc
+Find out what happened to the whale. I'll give you some info on whales and a microscope if you accept this.
+
+:: arctic-whale-csi.task.scanAndTag
+Scan and Count Salmon, Shark, and Cod
+
+:: arctic-whale-csi.task.scanIceAlgae
+Search the ice for signs of microscopic life
+
+:: arctic-whale-csi.task.reportBack
+Report back with your findings
+
+:: arctic-time-of-death.name
+**Time Of Death
+
+:: arctic-time-of-death.desc
+How long ago did the missing whale die? We can use the decomposition model to determine her time of death.
+
+:: arctic-time-of-death.task.getPopulations
+Scan and Count all organisms at Site W
+
+:: arctic-time-of-death.task.reportBack
+Report back with your findings
+
+:: arctic-missing-whale.task.findTracker
+Search {h}site W{/h} to find the missing whale tracker
+
+:: arctic-missing-whale.argue.claimLabel
+Finding Linda
+
+:: arctic-disappearing-act.name
+* Disappearing Act
+
+:: arctic-disappearing-act.desc
+Whale falls are rare! We should use this opportunity to learn more about how organisms interact with them. What is causing the whale's decay?
+
+:: arctic-disappearing-act.task.reportBack
+Report your findings back to Prof. Whalen
+
+:: arctic-disappearing-act.task.scanCritters
+Scan all critters feasting on the whale fall {h}site W{/h}
+
+:: arctic-missing-whale.task.foundDetritus
+Measure the amount of detritus found on the whale carcass
+
+:: arctic-disappearing-act.argue.claimLabel
+Present your model of the critters at site W
+
+:: arctic-cause-of-death.desc
+What killed her? We have two hypotheses. It was either something about the water, or lack of a food source, since whales have no natural predators.
+
+:: arctic-cause-of-death.name
+**Cause of Death
+
+:: arctic-cause-of-death.task.enviornmentData
+Collect enviornmental data at site W
+
+:: arctic-cause-of-death.task.popData
+Collect the current and historic population data at site W
+
+:: arctic-cause-of-death.task.report
+Report your findings back to Prof. Whalen
+
+:: arctic-time-of-death.task.report
+Report your findings back to Prof. Whalen when you're ready.
+
+:: arctic-time-of-death.task.getPops
+Report your findings back to Prof. Whalen
+
+:: arctic-time-of-death.task.popData
+Collect the current and historic population data at site W
+
+:: arctic-time-of-death.argue.claimLabel1
+The whale fall is in stage 1
+
+:: arctic-time-of-death.argue.claimLabel2
+The whale fall is in stage 2
+
+:: arctic-time-of-death.argue.claimLabel3
+The whale fall is in stage 3
+
+:: arctic-cause-of-death.argue.claimLabel1
+There was a problem in the food supply.
+
+:: arctic-cause-of-death.argue.claimLabel2
+Something in Linda's enviornment harmed her.
+
+:: arctic-underneath.name
+* Under the Ice?
+
+:: arctic-underneath.desc
+Looks like you found a new site when you were carried by the currents under the ice. What sorts of creatures lie under the ice in {h}Site X{/h}?
+
+:: arctic-underneath.task.report
+Report your findings back to Prof. Whalen
+
+:: arctic-underneath.task.explore
+Explore all populations under the ice.
+
+:: arctic-underneath.argue.claimLabel
+What sorts of creatures live beneath the ice?
+
+:: arctic-stationary-survival.name
+**Stationary Survival
+
+:: arctic-stationary-survival.desc
+We didn't think an ecosystem would be able to survive permanently in these conditions, and yet some species are thriving.  How is this possible?
+
+:: arctic-stationary-survival.task.report
+Report back with your findings
+
+:: arctic-stationary-survival.task.visualModel
+Construct a {h}visual model{/h} of how the species at {h}site X{/h} survive.
+
+:: arctic-stationary-survival.argue.claimLabel
+How do the creatues of site X survive beneath the ice?
+
+:: arctic-isolated-instance.name
+* Isolated Instance
+
+:: arctic-isolated-instance.desc
+Is this the only place these sponges can live? What is preventing them from living at Site Z?
+
+:: arctic-isolated-instance.argue.claimLabelStress
+The Sponges are stressed by the light levels.
+
+:: arctic-isolated-instance.argue.claimLabelPredator
+A predator is eating the Sponges.
+
+:: arctic-isolated-instance.argue.claimLabelFinal
+Present evidence explaining why Sea Sponges are not found in Site Z.
+
+:: arctic-isolated-instance.task.scanAll
+Scan any new species at Site Z
+
+:: arctic-isolated-instance.task.experimentPredatorAll
+See if predators from nearby sites eat Glass Sponges
+
+:: arctic-isolated-instance.task.experimentPredatorZ
+Observe which organisms Site Z predators eat
+
+:: arctic-isolated-instance.task.discussFindings
+Discuss your findings with Professor Whalen
+
+:: arctic-isolated-instance.task.determineStress
+Determine Glass Sponge stress levels
+
+:: arctic-isolated-instance.task.findPredator
+Search sites near Site Z for predators of Glass Sponges
+
+:: arctic-isolated-instance.task.scanSponge
+Scan a Glass Sponge at Site X
+
+:: arctic-isolated-instance.task.countPopulations
+Count the Pteraster Obscurus population at Site Y
+
+:: arctic-disappearing-act.task.modelInteractions
+Model all species interactions
 

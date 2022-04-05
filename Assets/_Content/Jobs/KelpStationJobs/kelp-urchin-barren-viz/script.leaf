@@ -181,7 +181,7 @@ $endif
 
 $call ArgueLoad(urchinBarrenVizArgue)
 	$if ArgueSetClaim(urchinBarrenVizClaim, jobs.kelp-urchin-barren-viz.argue.claimLabel)
-			$call ArgueFactSlot(UrchinBarren.Model.Visual)
+		$call ArgueFactSlot(UrchinBarren.Model.Visual)
 	$endif
 
 	$branch .argue.hello

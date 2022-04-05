@@ -1,5 +1,6 @@
 using System;
 using BeauPools;
+using BeauRoutine;
 using BeauUtil;
 using TMPro;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Aqua.Modeling {
         public RectTransform Transform;
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private LocText m_Label = null;
-        [SerializeField] private Graphic m_Outline = null;
+        [SerializeField] private Graphic m_Background = null;
 
         [Header("Intervention")]
         [SerializeField] private CanvasGroup m_InterveneGroup = null;
@@ -61,7 +62,7 @@ namespace Aqua.Modeling {
             m_Label.SetText(organism.CommonName());
             Index = index;
             m_OnAddRemove = onAddRemove;
-            m_Outline.color = organism.Color();
+            m_Background.SetColor(organism.Color() * 0.5f);
         }
 
         public void EnableIntervention(AddRemoveResult result) {

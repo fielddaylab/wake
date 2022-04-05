@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BowheadWhale
   m_EditorClassIdentifier: 
   m_Type: 0
-  m_Flags: 0
-  m_Size: 0
+  m_Flags: 260
+  m_Size: 3
   m_StationId:
     m_HashValue: 1297447963
   m_DiveSiteId:
@@ -34,7 +34,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3eff8c3233ab9404b8859b3f263800b5, type: 2}
   - {fileID: 11400000, guid: a9ae3a0a5534a764eb985a9c351789d0, type: 2}
   - {fileID: 11400000, guid: 7e14ab2eba3bb01448acc76e5e78c805, type: 2}
+  - {fileID: 11400000, guid: a93cc0d14e9e64f48a66e99d3f37cee4, type: 2}
+  - {fileID: 11400000, guid: d736ef24019c1984a9a24bc8ba2d0e19, type: 2}
+  - {fileID: 11400000, guid: cde2c7861cd847e4aa61208aa42ac786, type: 2}
   - {fileID: 11400000, guid: 93cbaa30aae47914ebc8db4a910f6b73, type: 2}
+  - {fileID: 11400000, guid: 173da380b0733d94e93bbfeb79a9fc23, type: 2}
   - {fileID: 11400000, guid: 1cbf56e2bb9da744a80aa6a9175311c8, type: 2}
   - {fileID: 11400000, guid: 637c311bd9c9c1149882e88c01bb236d, type: 2}
   m_WaterColor: {r: 0, g: 0, b: 1, a: 1}
@@ -46,16 +50,20 @@ MonoBehaviour:
     m_HashValue: 0
   m_SortingOrder: 0
   m_AllFacts:
+  - {fileID: 11400000, guid: 173da380b0733d94e93bbfeb79a9fc23, type: 2}
   - {fileID: 11400000, guid: 637c311bd9c9c1149882e88c01bb236d, type: 2}
+  - {fileID: 11400000, guid: cde2c7861cd847e4aa61208aa42ac786, type: 2}
   - {fileID: 11400000, guid: 1cbf56e2bb9da744a80aa6a9175311c8, type: 2}
   - {fileID: 11400000, guid: 93cbaa30aae47914ebc8db4a910f6b73, type: 2}
   - {fileID: 11400000, guid: 3eff8c3233ab9404b8859b3f263800b5, type: 2}
   - {fileID: 11400000, guid: a9ae3a0a5534a764eb985a9c351789d0, type: 2}
+  - {fileID: 11400000, guid: a93cc0d14e9e64f48a66e99d3f37cee4, type: 2}
   - {fileID: 11400000, guid: 7e14ab2eba3bb01448acc76e5e78c805, type: 2}
+  - {fileID: 11400000, guid: d736ef24019c1984a9a24bc8ba2d0e19, type: 2}
   - {fileID: 11400000, guid: 8de09625d4a11c84197e9be980caa4b1, type: 2}
-  m_PlayerFactCount: 6
+  m_PlayerFactCount: 10
   m_AlwaysFactCount: 0
-  m_InternalFactOffset: 6
+  m_InternalFactOffset: 10
   m_InternalFactCount: 1
   m_StationSortingOrder: 3
   m_EnvState:
@@ -68,13 +76,13 @@ MonoBehaviour:
   m_HistoricalRecordDuration: 2
   m_StateTransitions:
     Temperature:
-      AliveMin: 0.5555556
-      AliveMax: 4.4444447
-      StressedMin: -14.444445
-      StressedMax: 19.444445
+      AliveMin: -2
+      AliveMax: 29
+      StressedMin: -10
+      StressedMax: 40
     Light:
-      AliveMin: -Infinity
-      AliveMax: Infinity
+      AliveMin: 10
+      AliveMax: 100
       StressedMin: -Infinity
       StressedMax: Infinity
     PH:

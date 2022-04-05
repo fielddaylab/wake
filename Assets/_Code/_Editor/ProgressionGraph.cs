@@ -5,6 +5,7 @@ using Leaf;
 using BeauUtil;
 using BeauData;
 using System.Text.RegularExpressions;
+using BeauUtil.Debugger;
 
 namespace Aqua.Editor {
     static public class ProgressionGraph {
@@ -39,6 +40,8 @@ namespace Aqua.Editor {
                     mapJSON["unlockType"].AsString = "manual";
                 }
 
+                mapJSON["disableTraversal"].AsBool = true;
+
                 root.Add(room.Source(), mapJSON);
             }
 
@@ -53,10 +56,14 @@ namespace Aqua.Editor {
                 bool isDefault = obj.Id() == db.DefaultStationId();
                 bool isAtNonDefaultStation = obj.Category() == MapCategory.DiveSite && obj.Parent().Id() != db.DefaultStationId();
 
+                if (obj.Category() == MapCategory.DiveSite) {
+                    mapJSON["disableTraversal"].AsBool = true;
+                }
+
                 if (isDefault) {
                     starting[obj.name].AsBool = true;
                 } else if (isAtNonDefaultStation) {
-                    mapJSON["requires"].Add(GenerateAssetRef(obj.Parent().name));
+                    AddRequirement(mapJSON, obj.Parent().name);
                 } else if (obj.HasFlags(MapFlags.UnlockedByDefault)) {
                     starting[obj.name].AsBool = true;
                 } else {
@@ -65,8 +72,10 @@ namespace Aqua.Editor {
 
                 if (obj.name == "Shop") {
                     mapJSON["unlockType"].AsString = "auto";
-                    mapJSON["requires"].Add(GenerateAssetRef("Exp", ExpForShop));
+                    AddRequirement(mapJSON, "Exp", ExpForShop);
                 }
+
+                HandleSpecialMapRequirements(obj.name, mapJSON);
 
                 root.Add(obj.name, mapJSON);
             }
@@ -81,22 +90,26 @@ namespace Aqua.Editor {
                     starting[obj.name].AsUInt = obj.DefaultAmount();
                 }
 
+                if (obj.HasFlags(InvItemFlags.Hidden)) {
+                    itemJSON["unlockType"].AsString = "manual";
+                }
+
                 if (obj.Category() != InvItemCategory.Currency || obj.CashCost() > 0 || obj.RequiredExp() > 0) {
                     itemJSON["type"].AsString = "item";
-                    itemJSON["requires"].Add(GenerateAssetRef("Shop"));
+                    AddRequirement(itemJSON, "Shop");
                 } else {
                     itemJSON["type"].AsString = "currency";
                     itemJSON["isToken"].AsBool = true;
                 }
 
                 if (obj.CashCost() > 0) {
-                    itemJSON["requires"].Add(GenerateAssetRef(ItemIds.Cash.ToDebugString(), obj.CashCost(), true));
+                    AddRequirement(itemJSON, ItemIds.Cash, obj.CashCost(), true);
                 }
                 if (obj.RequiredExp() > 0) {
-                    itemJSON["requires"].Add(GenerateAssetRef(ItemIds.Exp.ToDebugString(), obj.RequiredExp()));
+                    AddRequirement(itemJSON, ItemIds.Exp, obj.RequiredExp());
                 }
                 if (obj.Prerequisite()) {
-                    itemJSON["requires"].Add(GenerateAssetRef(obj.Prerequisite().name));
+                    AddRequirement(itemJSON, obj.Prerequisite().name);
                 }
 
                 HandleSpecialItemUnlocks(obj.Id(), itemJSON);
@@ -114,26 +127,34 @@ namespace Aqua.Editor {
                 jobJSON["type"].AsString = "job";
 
                 if (!obj.StationId().IsEmpty) {
-                    jobJSON["requires"].Add(GenerateAssetRef(obj.StationId().ToDebugString()));
+                    AddRequirement(jobJSON, obj.StationId());
                 }
 
                 foreach(var prereq in obj.RequiredJobs()) {
-                    jobJSON["requires"].Add(GenerateAssetRef(prereq.name));
+                    AddRequirement(jobJSON, prereq.name);
                 }
                 foreach(var upgrade in obj.RequiredUpgrades()) {
-                    jobJSON["requires"].Add(GenerateAssetRef(upgrade.ToDebugString()));
+                    AddRequirement(jobJSON, upgrade);
+                }
+
+                if (obj.RequiredExp() > 0) {
+                    AddRequirement(jobJSON, ItemIds.Exp, obj.RequiredExp());
                 }
 
                 if (obj.CashReward() > 0) {
-                    jobJSON["results"].Add(GenerateAssetRef(ItemIds.Cash.ToDebugString(), obj.CashReward()));
+                    AddResult(jobJSON, ItemIds.Cash, obj.CashReward());
                 }
 
                 if (obj.ExpReward() > 0) {
-                    jobJSON["results"].Add(GenerateAssetRef(ItemIds.Exp.ToDebugString(), obj.ExpReward()));
+                    AddResult(jobJSON, ItemIds.Exp, obj.ExpReward());
                 }
 
                 foreach(var site in obj.DiveSiteIds()) {
-                    jobJSON["results"].Add(GenerateAssetRef(site.ToDebugString()));
+                    AddResult(jobJSON, site);
+                }
+
+                if (obj.HasFlags(JobDescFlags.Hidden)) {
+                    jobJSON["unlockType"].AsString = "manual";
                 }
 
                 AnalyzeJobScript(obj.Scripting(), jobJSON);
@@ -141,6 +162,58 @@ namespace Aqua.Editor {
                 root.Add(obj.name, jobJSON);
             }
         }
+    
+        static private void AnalyzeJobScript(LeafAsset asset, JSON jobJSON) {
+            if (asset == null) {
+                Log.Error("No job script found for job '{0}'", jobJSON["id"].AsString);
+                return;
+            }
+
+            string contents = asset.Source();
+            if (contents.Length == 0) {
+                Log.Error("Job script for job '{0}' was empty", jobJSON["id"].AsString);
+                return;
+            }
+
+            HashSet<StringHash32> assets = new HashSet<StringHash32>();
+            foreach(Match match in GiveUpgradeRegex.Matches(contents)) {
+                if (assets.Add(match.Groups[1].Value)) {
+                    AddResult(jobJSON, match.Groups[1].Value);
+                }
+            }
+
+            foreach(Match match in UnlockMapRegex.Matches(contents)) {
+                if (assets.Add(match.Groups[1].Value)) {
+                    AddResult(jobJSON, match.Groups[1].Value);
+                }
+            }
+        }
+
+        static private void HandleSpecialItemUnlocks(StringHash32 id, JSON itemJSON) {
+            if (id == ItemIds.MeasurementTank) {
+                AddResult(itemJSON, ItemIds.WaterStabilizer);
+                AddResult(itemJSON, ItemIds.AutoFeeder);
+            } else if (id == ItemIds.PredictionModel) {
+                AddResult(itemJSON, ItemIds.SyncModel);
+                AddResult(itemJSON, ItemIds.WaterModeling);
+            } else if (id == ItemIds.WaterModeling || id == ItemIds.SyncModel || id == ItemIds.WaterStabilizer || id == ItemIds.AutoFeeder) {
+                itemJSON["unlockType"].AsString = "manual";
+            }
+        }
+
+        static private void HandleSpecialMapRequirements(StringHash32 id, JSON mapJSON) {
+            if (id == MapIds.RS_2R) {
+                AddRequirement(mapJSON, ItemIds.PropGuard);
+            } else if (id == MapIds.RS_3N) {
+                AddRequirement(mapJSON, ItemIds.Hull);
+                AddRequirement(mapJSON, ItemIds.Flashlight);
+            } else if (id == MapIds.RS_4X) {
+                AddRequirement(mapJSON, ItemIds.Flashlight);
+                AddRequirement(mapJSON, ItemIds.Engine);
+            }
+        }
+
+        #region Generic
 
         static private JSON GenerateAssetRef(string name) {
             JSON obj = JSON.CreateObject();
@@ -157,37 +230,40 @@ namespace Aqua.Editor {
             }
             return obj;
         }
-    
-        static private void AnalyzeJobScript(LeafAsset asset, JSON jobJSON) {
-            if (asset == null) {
-                return;
-            }
 
-            string contents = asset.Source();
-
-            HashSet<StringHash32> assets = new HashSet<StringHash32>();
-            foreach(Match match in GiveUpgradeRegex.Matches(contents)) {
-                if (assets.Add(match.Groups[1].Value)) {
-                    jobJSON["results"].Add(GenerateAssetRef(match.Groups[1].Value));
-                }
-            }
-
-            foreach(Match match in UnlockMapRegex.Matches(contents)) {
-                if (assets.Add(match.Groups[1].Value)) {
-                    jobJSON["results"].Add(GenerateAssetRef(match.Groups[1].Value));
-                }
-            }
+        static private void AddRequirement(JSON nodeJSON, string name) {
+            nodeJSON["requires"].Add(GenerateAssetRef(name));
         }
 
-        static private void HandleSpecialItemUnlocks(StringHash32 id, JSON itemJSON) {
-            if (id == ItemIds.MeasurementTank) {
-                itemJSON["results"].Add(GenerateAssetRef(ItemIds.WaterStabilizer.ToDebugString()));
-                itemJSON["results"].Add(GenerateAssetRef(ItemIds.AutoFeeder.ToDebugString()));
-            } else if (id == ItemIds.PredictionModel) {
-                itemJSON["results"].Add(GenerateAssetRef(ItemIds.SyncModel.ToDebugString()));
-                itemJSON["results"].Add(GenerateAssetRef(ItemIds.WaterModeling.ToDebugString()));
-            }
+        static private void AddRequirement(JSON nodeJSON, StringHash32 id) {
+            nodeJSON["requires"].Add(GenerateAssetRef(id.ToDebugString()));
         }
+
+        static private void AddRequirement(JSON nodeJSON, string name, int amount, bool spend = false) {
+            nodeJSON["requires"].Add(GenerateAssetRef(name, amount, spend));
+        }
+
+        static private void AddRequirement(JSON nodeJSON, StringHash32 id, int amount, bool spend = false) {
+            nodeJSON["requires"].Add(GenerateAssetRef(id.ToDebugString(), amount, spend));
+        }
+
+        static private void AddResult(JSON nodeJSON, string name) {
+            nodeJSON["results"].Add(GenerateAssetRef(name));
+        }
+
+        static private void AddResult(JSON nodeJSON, StringHash32 id) {
+            nodeJSON["results"].Add(GenerateAssetRef(id.ToDebugString()));
+        }
+
+        static private void AddResult(JSON nodeJSON, string name, int amount, bool spend = false) {
+            nodeJSON["results"].Add(GenerateAssetRef(name, amount, spend));
+        }
+
+        static private void AddResult(JSON nodeJSON, StringHash32 id, int amount, bool spend = false) {
+            nodeJSON["results"].Add(GenerateAssetRef(id.ToDebugString(), amount, spend));
+        }
+
+        #endregion // Generic
 
         static private Regex GiveUpgradeRegex = new Regex("(?<!\\/\\/\\s?)\\$call\\s+GiveUpgrade\\(\"?(.*?)\"?(?:,.*?)?\\)");
         static private Regex UnlockMapRegex = new Regex("(?<!\\/\\/\\s?)\\$call\\s+Unlock(?:Site|Room|Station)\\(\"?(.*?)\"?(?:,.*?)?\\)");

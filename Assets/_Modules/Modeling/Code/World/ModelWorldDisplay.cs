@@ -22,6 +22,7 @@ namespace Aqua.Modeling {
             public uint* ConnectionMasks;
             public uint MovedOutputMask;
             public Vector2* FixedPropertyPositions;
+            public Vector2* MinimumIntersectionResult;
         }
 
         #endregion // Types
@@ -29,10 +30,12 @@ namespace Aqua.Modeling {
         #region Consts
 
         private const int MaxOrganismNodes = 16;
+        private const int PropertyIndexOffset = 16;
         private const int MaxPropertyNodes = (int) WaterProperties.TrackedMax + 1;
         private const int MaxGraphNodes = MaxOrganismNodes + MaxPropertyNodes;
         private const int MaxSolverIterations = 64;
         private const float SolverVelocityThresholdSq = .2f * .2f;
+        private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
         #endregion // Consts
 
@@ -62,11 +65,15 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_IdealSpringLength = 256;
         [SerializeField] private float m_GravityForce = 10;
         [SerializeField] private float m_ConnectionOffsetFactor = 1.25f;
+        [SerializeField] private float m_ConnectionArrowOffsetFactor = 1.25f;
         // [SerializeField] private float m_BoundaryForce = 2;
 
         [Header("Textures")]
         [SerializeField] private Texture2D m_PartialLineTexture = null;
         [SerializeField] private Texture2D m_FullLineTexture = null;
+        [SerializeField] private Texture2D m_DottedLineTexture = null;
+        [SerializeField] private Color m_StressedLineColor = ColorBank.Red;
+        [SerializeField] private Color m_NormalLineColor = ColorBank.Aqua;
 
         #endregion // Inspector
 
@@ -84,11 +91,6 @@ namespace Aqua.Modeling {
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
         private unsafe ModelWorldDisplay() {
-            m_SolverState.Allocator = Unsafe.CreateArena(1024);
-            m_SolverState.Positions = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxGraphNodes);
-            m_SolverState.Forces = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxGraphNodes);
-            m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(m_SolverState.Allocator, MaxGraphNodes);
-            m_SolverState.FixedPropertyPositions = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxPropertyNodes);
             m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
         }
 
@@ -102,9 +104,20 @@ namespace Aqua.Modeling {
             m_WaterChemMap[(int) WaterPropertyId.PH] = m_PHProperty;
             m_WaterChemMap[(int) WaterPropertyId.Oxygen] = m_OxygenProperty;
             m_WaterChemMap[(int) WaterPropertyId.CarbonDioxide] = m_CarbonDioxideProperty;
+
+            InitMemoryArena();
             InitFixedPositions();
 
             m_OriginalCanvasState = TransformState.LocalState(m_Canvas.transform);
+        }
+
+        private unsafe void InitMemoryArena() {
+            m_SolverState.Allocator = Unsafe.CreateArena(1024);
+            m_SolverState.Positions = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxGraphNodes);
+            m_SolverState.Forces = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, ConnectionMaskSize);
+            m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(m_SolverState.Allocator, ConnectionMaskSize);
+            m_SolverState.FixedPropertyPositions = m_SolverState.Positions + MaxOrganismNodes;
+            m_SolverState.MinimumIntersectionResult = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxOrganismNodes);
         }
 
         private unsafe void InitFixedPositions() {
@@ -222,7 +235,7 @@ namespace Aqua.Modeling {
 
             m_SolverState.MovedOutputMask = (1u << organismCount) - 1;
             foreach(var fact in m_State.Conceptual.GraphedFacts) {
-                if (!BFType.IsBehavior(fact)) {
+                if (!CanGenerateConnection(fact)) {
                     continue;
                 }
 
@@ -230,11 +243,17 @@ namespace Aqua.Modeling {
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
                 }
+
+                WaterPropertyId property = BFType.WaterProperty(fact);
+                if (property != WaterPropertyId.NONE) {
+                    GenerateConnection(fact, fact.Parent, property, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                }
+
                 yield return null;
             }
 
             foreach(var fact in intervention.AdditionalFacts) {
-                if (m_State.Conceptual.GraphedFacts.Contains(fact) || !BFType.IsBehavior(fact)) {
+                if (m_State.Conceptual.GraphedFacts.Contains(fact) || !CanGenerateConnection(fact)) {
                     continue;
                 }
 
@@ -242,6 +261,12 @@ namespace Aqua.Modeling {
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
                 }
+
+                WaterPropertyId property = BFType.WaterProperty(fact);
+                if (property != WaterPropertyId.NONE) {
+                    GenerateConnection(fact, fact.Parent, property, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                }
+
                 yield return null;
             }
 
@@ -282,8 +307,8 @@ namespace Aqua.Modeling {
         }
 
         private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, BestiaryDesc target, BFDiscoveredFlags flags) {
-            int indexA = m_OrganismMap[target.Id()].Index;
-            int indexB = m_OrganismMap[owner.Id()].Index;
+            int indexA = GetIndex(target);
+            int indexB = GetIndex(owner);
             m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
             m_SolverState.ConnectionMasks[indexB] |= (1u << indexA);
 
@@ -292,6 +317,34 @@ namespace Aqua.Modeling {
             connection.IndexA = indexA;
             connection.IndexB = indexB;
             connection.Texture.texture = flags == BFDiscoveredFlags.All ? m_FullLineTexture : m_PartialLineTexture;
+            connection.Texture.color = connection.Arrow.color = BFType.OnlyWhenStressed(fact) ? m_StressedLineColor : m_NormalLineColor;
+            connection.Arrow.gameObject.SetActive(true);
+            connection.Fader.SetActive(false);
+            connection.Scroll.enabled = false;
+            connection.Order = 1;
+        }
+
+        private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, WaterPropertyId property, BFDiscoveredFlags flags) {
+            int indexA = GetIndex(property);
+            int indexB = GetIndex(owner);
+
+            if (fact.Type == BFTypeId.Produce) {
+                Ref.Swap(ref indexA, ref indexB);
+            }
+
+            m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
+            m_SolverState.ConnectionMasks[indexB] |= (1u << indexA);
+
+            ModelConnectionDisplay connection = m_ConnectionPool.Alloc();
+            connection.Fact = fact;
+            connection.IndexA = indexA;
+            connection.IndexB = indexB;
+            connection.Texture.texture = m_DottedLineTexture;
+            connection.Texture.color = Assets.Property(property).Color();
+            connection.Arrow.gameObject.SetActive(false);
+            connection.Fader.SetActive(true);
+            connection.Scroll.enabled = true;
+            connection.Order = 0;
         }
 
         private void UpdateOrganismPositions(int count) {
@@ -302,24 +355,30 @@ namespace Aqua.Modeling {
         }
 
         private void UpdateConnectionPositions() {
-            var allocatedConnections = m_ConnectionPool.ActiveObjects;
-            var allocatedOrganisms = m_OrganismPool.ActiveObjects;
-            int count = allocatedConnections.Count;
-            Vector2 a, b, vecAB, centerAB;
-            float distAB;
-            ModelConnectionDisplay display;
-            for(int i = 0; i < count; i++) {
-                display = allocatedConnections[i];
-                a = allocatedOrganisms[display.IndexA].Transform.anchoredPosition;
-                b = allocatedOrganisms[display.IndexB].Transform.anchoredPosition;
-                vecAB = b - a;
-                centerAB = (a + b) * 0.5f;
-                distAB = vecAB.magnitude;
-                distAB -= m_PositionScale * m_ConnectionOffsetFactor;
-                display.Transform.SetSizeDelta(distAB, Axis.X);
-                display.Transform.SetAnchorPos(centerAB);
-                display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
-                display.Transform.SetAsFirstSibling();
+            using(PooledList<ModelConnectionDisplay> allocatedConnections = PooledList<ModelConnectionDisplay>.Create(m_ConnectionPool.ActiveObjects)) {
+                allocatedConnections.Sort((x, y) => y.Order - x.Order);
+                int count = allocatedConnections.Count;
+                Vector2 a, b, vecAB, centerAB;
+                float distAB;
+                ModelConnectionDisplay display;
+                for(int i = 0; i < count; i++) {
+                    display = allocatedConnections[i];
+                    a = GetTransform(display.IndexA).anchoredPosition;
+                    b = GetTransform(display.IndexB).anchoredPosition;
+                    vecAB = b - a;
+                    centerAB = (a + b) * 0.5f;
+                    distAB = vecAB.magnitude;
+                    vecAB.Normalize();
+                    distAB -= m_PositionScale * m_ConnectionOffsetFactor;
+                    if (display.Arrow.isActiveAndEnabled) {
+                        distAB -= m_PositionScale * m_ConnectionArrowOffsetFactor;
+                        centerAB -= vecAB * m_PositionScale * m_ConnectionArrowOffsetFactor * 0.5f;
+                    }
+                    display.Transform.SetSizeDelta(distAB, Axis.X);
+                    display.Transform.SetAnchorPos(centerAB);
+                    display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
+                    display.Transform.SetAsFirstSibling();
+                }
             }
         }
 
@@ -329,6 +388,32 @@ namespace Aqua.Modeling {
 
         private Vector2 GetPositionInv(ModelWaterPropertyDisplay display) {
             return display.GetComponent<RectTransform>().anchoredPosition / m_PositionScale;
+        }
+
+        private RectTransform GetTransform(int index) {
+            if (index >= PropertyIndexOffset) {
+                return (RectTransform) m_WaterChemMap[index - PropertyIndexOffset].transform;
+            } else if (index >= 0) {
+                return m_OrganismPool.ActiveObjects[index].Transform;
+            } else {
+                return null;
+            }
+        }
+
+        private int GetIndex(BestiaryDesc organism) {
+            return m_OrganismMap[organism.Id()].Index;
+        }
+
+        private int GetIndex(WaterPropertyId property) {
+            return PropertyIndexOffset + (int) property;
+        }
+    
+        static private bool CanGenerateConnection(BFBase fact) {
+            if (!BFType.IsOrganism(fact)) {
+                return false;
+            }
+
+            return BFType.IsBehavior(fact);
         }
 
         private unsafe void SolveStep(ref GraphSolverState solverState, int count) {
@@ -394,6 +479,11 @@ namespace Aqua.Modeling {
             m_PHProperty.Initialize(Assets.Property(WaterPropertyId.PH));
             m_OxygenProperty.Initialize(Assets.Property(WaterPropertyId.Oxygen));
             m_CarbonDioxideProperty.Initialize(Assets.Property(WaterPropertyId.CarbonDioxide));
+
+            foreach(var prop in m_WaterChemMap) {
+                prop.Index = PropertyIndexOffset + (int) prop.Property.Index();
+            }
+
             yield return null;
             m_Canvas.enabled = false;
             m_Group.alpha = 0;

@@ -93,7 +93,7 @@ namespace Aqua.Scripting
             if (!m_InstantAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
-                m_InstantAutosave = Routine.Start(this, NearInstantSave(null));
+                m_InstantAutosave = Routine.Start(this, NearInstantSave(Services.State.LastEntranceId));
             }
         }
 

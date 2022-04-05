@@ -282,6 +282,73 @@ $endif
 {@player} 	What should we be doing next?
 {@kevin}	Let's report back to the {map-name}Office{/map-name} with our findings!
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanSarg
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanSarg)
+@boostScore -5
+@cutscene
+{@kevin}    Go to Site R and scan the Sargassum.
+
+:: catchPopProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(popProbe)
+@boostScore -5
+@cutscene
+{@kevin}    Find the population probe at Site R and scan it.
+
+:: catchChemHistory
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(chemHistory)
+@boostScore -5
+@cutscene
+{@kevin}    Find the water chemistry probe at Site R and scan it.
+
+:: catchSargGrowthRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargGrowthRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof Sargassum} in the Measurement Tank and find its reproduction rate.
+			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+
+:: catchSargLight
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargLight)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof Sargassum} in the Measurement Tank and find how much light it consumes.
+			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+
+:: catchCoralGrowthRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(coralGrowthRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that does not stress it.
+
+:: catchCoralGrowthStressed
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(coralGrowthStressed)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that stresses it.
+
+:: catchSargModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargModel)
+@boostScore -5
+@cutscene
+{@kevin}    Create a prediction model using the Modeling Lab based on the {nameof Sargassum}.
+
+:: catchSargArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargArgue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
+
 // ARGUMENTATION
 
 :: argue.intro

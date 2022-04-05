@@ -53,7 +53,7 @@ $choose branch
     Let's start over.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
-$call ArgueClearClaim()
+$call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.showSafeClaim
@@ -69,7 +69,7 @@ $choose branch
 {@profHarper} Ok, that's interesting, but it's not answering my question.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
-$call ArgueClearClaim()
+$call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.giveUp

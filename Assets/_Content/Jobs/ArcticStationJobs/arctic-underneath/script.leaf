@@ -1,0 +1,79 @@
+:: basePath job.arctic-underneath
+
+// INTRO
+:: getTheEngine
+@trigger    RequestPartnerHelp
+@when 		!HasUpgrade("Engine")
+@cutscene
+{@kevin}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @merchant} if he has something that can help us.
+
+:: toSiteX
+@trigger    RequestPartnerHelp
+@when   !JobTaskTop(reportBack), HasUpgrade("Engine"), scene:name != "RS-4X"
+@cutscene
+{@kevin}    Lets return {h}beneath the ice{/h}, perhaps through {h}Site W{/h}. Check your AQOS for more Site information.
+             
+:: getFlashlight
+@trigger    RequestPartnerHelp
+@when   HasUpgrade("Engine"), !HasUpgrade("Flashlight"), scene:name == "RS-4X"
+@cutscene
+{@kevin}    Goodness it's dark. We might need another tool here to scan the lifeforms here.
+
+:: report
+@trigger    JobTasksUpdated
+@when 		JobTaskTop(reportBack)
+@cutscene
+{@kevin}	It looks like you've got a good sample of the life to be found under the ice.
+            Lets report back to {nameof profWhalen} with everything you've found.
+
+:: LookAround
+@trigger    RequestPartnerHelp
+@when   !JobTaskTop(reportBack), HasUpgrade("Engine"), HasUpgrade("Flashlight"), scene:name == "RS-4X"
+@cutscene
+{@kevin}    I wonder what kinds of creatures might be living here.
+            Be sure to check your {h}AQOS{/h} for job specifics.
+
+:: reportBack
+@trigger    RequestPartnerHelp 
+@when 	    JobTaskTop(reportBack)
+@cutscene
+{@kevin}	It looks like you've got a good sample of the life to be found under the ice.
+            Lets report back to {nameof profWhalen} with everything you've found.
+
+
+// ARGUMENTATION
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteXAnalysis) 
+@cutscene
+{@profWhalen}   What have you found beneath the ice?
+$call ArgueLoad(siteXAnalysis) 
+$call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
+    $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
+    $call ArgueFactSlot(X_UnderTheIce.Population.GlassSponge)  
+    $call ArgueFactSlot(X_UnderTheIce.Population.NorthernSeaNettle)  
+$goto argue.showClaim
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profWhalen} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@profWhalen}   Make sure you get a complete picture of all the populations down there.
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@profWhalen}   Whoa! That's amazing! I wonder what they are doing down there! 
+                How are they living? What do they eat? Is there light? We need to get more information, stat!
+
+$call CompleteJob()

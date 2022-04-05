@@ -149,6 +149,36 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGetScans
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getScans)
+@boostScore -5
+@cutscene
+{@kevin}    Site V has Fishers and Grouper we need to scan.
+
+:: catchHistoricalPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site V and get the population probe data.
+
+:: catchGetModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Modeling Lab. We need to determine how many boats should be able to fish at the same time.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Take your prediction to Professor Cempaka in the Office.
+
 //ARGUMENT
 
 :: argue.intro

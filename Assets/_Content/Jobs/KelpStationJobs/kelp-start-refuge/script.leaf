@@ -40,6 +40,29 @@ $branch common.ringPhone
 @cutscene
 {@kevin}	Fantastic! Head to the communications room, where you can advise {nameof drKelp} about a suitable environment for a kelp refuge.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGetBullKelpStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getBullKelpStress)
+@boostScore -5
+@cutscene
+{@kevin}   	Drop some {nameof BullKelp} into the Stress Tank and fiddle with the dials.
+
+:: catchGetGiantKelpStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getGiantKelpStress)
+@boostScore -5
+@cutscene
+{@kevin}	Drop some {nameof GiantKelp} into the Stress Tank and fiddle with the dials.
+
+:: catchArgueSite
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argueSite)
+@boostScore -5
+@cutscene
+{@kevin}    Make a decision about which site to use as a refuge and tell {@drKelp}.
+
 // ARGUMENTATION
 
 ::argue.chooseClaim

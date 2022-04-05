@@ -184,12 +184,12 @@ namespace ProtoAqua.ExperimentV2
                     && AmbientAnimationSpeedMultiplier == other.AmbientAnimationSpeedMultiplier;
             }
         }
-
+        
         [Serializable]
         public struct ValidEatTarget
         {
-            [FilterBestiaryId(BestiaryDescCategory.Critter)] public SerializedHash32 TargetId;
-            [FactId(typeof(BFEat))] public SerializedHash32 FactId;
+            [FilterBestiaryId(BestiaryDescCategory.Critter)] public StringHash32 TargetId;
+            [FactId(typeof(BFEat))] public StringHash32 FactId;
         }
 
         #endregion // Types
@@ -217,7 +217,11 @@ namespace ProtoAqua.ExperimentV2
         public ValidEatTarget[] AliveEatTargets;
         public ValidEatTarget[] StressedEatTargets;
         public int SpawnCount;
+        public int SpawnMax;
+        public float AliveReproduceRate;
+        public float StressedReproduceRate;
         public bool IsPlant;
+        public bool IsHerd;
         public bool IsAlive;
         public int TargetLimit;
         public bool FreeOnEaten;
@@ -365,6 +369,20 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
+        static public float GetReproductionRate(ActorDefinition inDefinition, ActorStateId inStateId)
+        {
+            switch(inStateId)
+            {
+                case ActorStateId.Alive:
+                    return inDefinition.AliveReproduceRate;
+                case ActorStateId.Stressed:
+                    return inDefinition.StressedReproduceRate;
+                case ActorStateId.Dead:
+                default:
+                    return 0;
+            }
+        }
+
         #endregion // Utility
 
         #region Editor
@@ -407,8 +425,16 @@ namespace ProtoAqua.ExperimentV2
             inDef.StateEvaluator = inBestiary.GetActorStateTransitions();
             inDef.IsPlant = inBestiary.HasFlags(BestiaryDescFlags.TreatAsPlant);
             inDef.IsAlive = !inBestiary.HasFlags(BestiaryDescFlags.IsNotLiving);
+            inDef.IsHerd = inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
             inDef.FreeOnEaten = !inDef.IsPlant && !inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
             inDef.TargetLimit = inDef.IsPlant ? 4 : 1;
+
+            if (inDef.SpawnAmountOverride > 0)
+                inDef.SpawnCount = inDef.SpawnAmountOverride;
+            else
+                inDef.SpawnCount = GetDefaultSpawnAmount(inBestiary.Size());
+
+            inDef.SpawnMax = Math.Min(inDef.SpawnCount * 3, GetDefaultSpawnMax(inBestiary.Size()));
 
             RingBuffer<ValidEatTarget> aliveEatTargets = new RingBuffer<ValidEatTarget>();
             RingBuffer<ValidEatTarget> stressedEatTargets = new RingBuffer<ValidEatTarget>();
@@ -432,10 +458,33 @@ namespace ProtoAqua.ExperimentV2
             inDef.AliveEatTargets = aliveEatTargets.ToArray();
             inDef.StressedEatTargets = stressedEatTargets.ToArray();
 
-            if (inDef.SpawnAmountOverride > 0)
-                inDef.SpawnCount = inDef.SpawnAmountOverride;
-            else
-                inDef.SpawnCount = GetDefaultSpawnAmount(inBestiary.Size());
+            BFBody body = inBestiary.FactOfType<BFBody>();
+
+            float aliveRepro = 0,
+                stressedRepro = 0;
+
+            BFReproduce repro = BestiaryUtils.FindReproduceRule(inBestiary, ActorStateId.Alive);
+            BFGrow grow = BestiaryUtils.FindGrowRule(inBestiary, ActorStateId.Alive);
+
+            if (repro) {
+                aliveRepro += repro.Amount;
+            }
+            if (grow) {
+                aliveRepro += (float) grow.Amount / body.MassPerPopulation; 
+            }
+
+            BFReproduce reproStress = BestiaryUtils.FindReproduceRule(inBestiary, ActorStateId.Stressed);
+            BFGrow growStress = BestiaryUtils.FindGrowRule(inBestiary, ActorStateId.Stressed);
+
+            if (reproStress) {
+                stressedRepro += reproStress.Amount;
+            }
+            if (growStress) {
+                stressedRepro += (float) growStress.Amount / body.MassPerPopulation; 
+            }
+
+            inDef.AliveReproduceRate = aliveRepro;
+            inDef.StressedReproduceRate = stressedRepro;
 
             SpawnConfiguration.ReplaceDefaults(ref inDef.Spawning);
             MovementConfiguration.ReplaceDefaults(ref inDef.Movement);
@@ -484,13 +533,35 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
+        static private int GetDefaultSpawnMax(BestiaryDescSize inSize)
+        {
+            switch(inSize)
+            {
+                case BestiaryDescSize.Tiny:
+                    return 40;
+                case BestiaryDescSize.Small:
+                    return 30;
+                case BestiaryDescSize.Medium:
+                    return 20;
+                case BestiaryDescSize.Large:
+                    return 10;
+                default:
+                    Assert.Fail("Invalid critter size {0}", inSize);
+                    return 0;
+            }
+        }
+
         static private void CreateOrOverwriteTarget(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule)
         {
             StringHash32 id = inTarget.Id();
             for(int i = 0, length = ioTargets.Count; i < length; i++)
             {
                 if (ioTargets[i].TargetId == id)
+                {
+                    ref ValidEatTarget target = ref ioTargets[i];
+                    target.FactId = inRule.name;
                     return;
+                }
             }
 
             ValidEatTarget newTarget = new ValidEatTarget();

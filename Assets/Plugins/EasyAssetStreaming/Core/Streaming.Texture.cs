@@ -289,7 +289,7 @@ namespace EasyAssetStreaming {
                     byte[] bytes = File.ReadAllBytes(correctedPath);
                     Texture2D texture = new Texture2D(1, 1);
                     texture.name = pathOrUrl;
-                    texture.hideFlags = HideFlags.DontSave;
+                    texture.hideFlags = HideFlags.DontSaveInEditor;
                     var settings = ApplySettings(id, texture);
                     TextureCompression compression = ResolveCompression(settings.CompressionLevel);
                     texture.LoadImage(bytes, false);

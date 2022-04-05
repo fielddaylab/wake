@@ -158,8 +158,17 @@ namespace Aqua {
             status.Job = job;
             status.Status = saveData.Jobs.GetBaseStatus(status.JobId);
 
+            int exp = (int) saveData.Inventory.ItemCount(ItemIds.Exp);
+
             // if no progress at all, and we're still listed as visible, let's check
             if ((status.Status & JobStatusFlags.Mask_Progress) == 0 && (status.Status & JobStatusFlags.Mask_Available) != 0) {
+
+                // if not required experience, not visible
+                int requiredExp = job.RequiredExp();
+                if (exp < requiredExp) {
+                    status.Status &= ~JobStatusFlags.Mask_Available;
+                    return status;
+                }
 
                 // if not at station, and we're considering location, not visible
                 if (!ignoreLocation) {

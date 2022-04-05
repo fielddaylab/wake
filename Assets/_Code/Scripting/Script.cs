@@ -66,13 +66,13 @@ namespace Aqua {
                         Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
                         entity.ImageSet(),
-                        allFacts);
+                        new PopupFacts(allFacts));
                 } else {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.env.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
                         entity.ImageSet(),
-                        allFacts);
+                        new PopupFacts(allFacts));
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace Aqua {
         }
 
         static public Future<StringHash32> PopupNewFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, facts, flags);
+            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
         }
 
         static public Future<StringHash32> PopupUpgradedFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
@@ -90,7 +90,7 @@ namespace Aqua {
         }
 
         static public Future<StringHash32> PopupUpgradedFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, facts, flags);
+            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
         }
 
         static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, params NamedOption[] options) {

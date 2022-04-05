@@ -53,6 +53,22 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchUrchinSarg
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(urchinSarg)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
+
+:: catchUrchinSargArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(urchinSargArgue)
+@boostScore -5
+@cutscene
+{@kevin}    Head back to the Office to talk to Professor Cempaka.
+
 // ARGUMENTATION
 
 :: argue.setup
