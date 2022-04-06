@@ -1,0 +1,11 @@
+# basePath RS-4Y
+
+:: emergeFromTheIce
+@trigger    PlayerEnterRegion
+@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X"
+@triggerPriority   High
+@once
+@cutscene
+{@player}   What| just happened!?
+{@kevin}    It seems like our ship's {h}engine{/h} isn't strong enough to resist the pull of the current!
+            Perhaps we should go consult {nameof @merchant} to upgrade our ship if we're going to continue exploring here.
