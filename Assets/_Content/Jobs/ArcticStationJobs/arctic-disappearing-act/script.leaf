@@ -9,6 +9,13 @@ $if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasE
 $else
 {@kevin}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
 $endif
+$if !HasUpgrade(VisualModel)
+	{@profWhalen}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+	{@profWhalen}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
+	$call UnlockRoom("modelingRoom")
+	$call UnlockRoom("Modeling")
+	$call GiveUpgrade(VisualModel)
+$endif
 
 ::gotAllInfo
 @trigger JobTasksUpdated

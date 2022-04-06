@@ -15,6 +15,14 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 {@profWhalen}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
 {@player}   When then, I reckon we ought to saddle-up and mosey on over.
 {@kevin}    Oh, brother...
+$if !HasUpgrade(ROVTagger)
+	{@profWhalen} Take this too. I often find it comes in handy with the research I do.
+	$call GiveUpgrade(ROVTagger)
+	{@profWhalen} You should see the {nameof ROVTagger} at the top of your view.  
+	{@profWhalen} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+	{@profWhalen} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+	{@kevin} That's really convenient.
+$endif
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp
@@ -42,7 +50,7 @@ $elseif !HasEntity(Detritus)
 {@kevin}    Have you found any evidence of Linda herself?	
 $elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 {@kevin}	Detritus, huh? How much did you scan? A whale amount? 
-$endif            
+$endif        
 
 :: gotDetritus
 @trigger    JobTasksUpdated
