@@ -9,8 +9,12 @@
 $branch common.ringPhone
 
 {@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of Site O. 
-                Would you be able to go pop over and help us report back on what exactly is growing over there? 
+                Would you be able to go pop over and help us report back on what exactly is growing over there?
 {@player}   You can count one me!
+$if !HasUpgrade(Microscope)
+	{@profHarper}	Oh, take this {nameof Microscope} with you too. I think there may be some really small critters over there, you'll need this to scan them.
+	$call GiveUpgrade(Microscope)
+$endif
 
 
 :: diveSite

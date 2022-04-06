@@ -206,6 +206,35 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanAll
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanAll)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site V and scan the species there.
+
+:: catchBehavior
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(behavior)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to find what the turtles eat.
+
+:: catchTurtleModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(turtleModel)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Modeling lab and make a Visual Model.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Take your Visual Model to {nameof profCempaka}.
 
 // ARGUMENTATION
 
