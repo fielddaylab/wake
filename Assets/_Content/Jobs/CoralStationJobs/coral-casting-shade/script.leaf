@@ -41,6 +41,7 @@ $call GiveUpgrade(ProbeHacker)
 :: scannedSargassum
 @trigger    JobTasksUpdated
 @when 		HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@once
 @cutscene
 {@player} OK, I can see the Sargassum, but how do we get the population history?
 {@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
