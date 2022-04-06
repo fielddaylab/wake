@@ -46,7 +46,7 @@
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteXAnalysis) 
 @cutscene
-{@profWhalen}   What have you found beneath the ice?
+{@profWhalen}   What populations did you count beneath the ice?
 $call ArgueLoad(siteXAnalysis) 
 $call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
     $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
