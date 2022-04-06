@@ -13,11 +13,13 @@
 @cutscene
 {@kevin}    Lets return {h}beneath the ice{/h}, perhaps through {h}Site W{/h}. Check your AQOS for more Site information.
              
-:: getFlashlight
-@trigger    RequestPartnerHelp
-@when   HasUpgrade("Engine"), !HasUpgrade("Flashlight"), scene:name == "RS-4X"
+:: useFlashlight
+@trigger    SceneStart
+@when   scene:name == "RS-4X"
+@once
 @cutscene
-{@kevin}    Goodness it's dark. We might need another tool here to scan the lifeforms here.
+{@kevin}    Goodness it's dark. We might need to use your {nameof Flashlight} tool to be able to scan critters here.
+            If you can visualize a what might be called a "[3] button" on your "keyboard", pressing that should also activate your {nameof Flashlight}
 
 :: report
 @trigger    JobTasksUpdated
