@@ -155,7 +155,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: experimentEndOtherCoralGrowStressed
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Grow.Stressed), !jobs:coral-casting-shade.gotMeasurement
+@when 		HasFact(StaghornCoral.Reproduce.Stressed), !jobs:coral-casting-shade.gotMeasurement
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
@@ -166,7 +166,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: experimentEndOtherCoralGrow
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Grow), !jobs:coral-casting-shade.gotMeasurement
+@when 		HasFact(StaghornCoral.Reproduce), !jobs:coral-casting-shade.gotMeasurement
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
@@ -189,12 +189,12 @@ $else
 		{@kevin}	We'll need more information to build a model.
 		{@kevin}	Try measuring the Sargassum with the tank stabilizer turned off and auto-feeder on.
 	$else
-		$if !HasFact(StaghornCoral.Grow.Stressed)
+		$if !HasFact(StaghornCoral.Reproduce.Stressed)
 			{@kevin}	Looks like you still need to try more experiments.
 			{@kevin}	We'll need more information to build a model.
 			{@kevin}	Try measuring the Coral with both the tank stabilizer and auto feeder on.
 		$else
-			$if !HasFact(StaghornCoral.Grow)
+			$if !HasFact(StaghornCoral.Reproduce)
 				{@kevin}	Looks like you still need to try more experiments.
 				{@kevin}	We'll need more information to build a model.
 				{@kevin}	Try measuring the Coral in a different Environment.
@@ -212,14 +212,14 @@ $endif
 
 :: allExperimentsDone
 @trigger    JobTasksUpdated
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 @once
 {@kevin}	I think we're finally ready to build a model!
 
 :: helpAllExperimentsDone
 @trigger    RequestPartnerHelp
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 {@kevin}	Head over to the Modeling Lab.
 {@kevin}	We need to build a descriptive model of how Sargassum affects Coral.
