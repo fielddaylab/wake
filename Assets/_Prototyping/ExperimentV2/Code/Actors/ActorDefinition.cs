@@ -6,32 +6,28 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using UnityEngine;
 
-namespace ProtoAqua.ExperimentV2
-{
+namespace ProtoAqua.ExperimentV2 {
     [Serializable]
     public class ActorDefinition
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         : ISerializedObject
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
     {
         #region Types
 
-        public enum SpawnPositionId : byte
-        {
+        public enum SpawnPositionId : byte {
             Anywhere, // actor spawns anywhere
             Bottom, // actor spawns on the bottom of the tank
             Top // actor spawns on the water surface of the tank
         }
 
-        public enum SpawnAnimationId : byte
-        {
+        public enum SpawnAnimationId : byte {
             Drop,
             Sprout
         }
 
         [Serializable]
-        public struct SpawnConfiguration
-        {
+        public struct SpawnConfiguration {
             [Tooltip("Where the actor's spawn target will be located")]
             [AutoEnum] public SpawnPositionId SpawnLocation;
 
@@ -44,17 +40,16 @@ namespace ProtoAqua.ExperimentV2
             [Tooltip("Distance to offset the actor from the top and bottom of the tank")]
             public float AvoidTankTopBottomRadius;
 
-            static internal readonly SpawnConfiguration Default = new SpawnConfiguration()
-            {
+            static internal readonly SpawnConfiguration Default = new SpawnConfiguration() {
                 SpawnLocation = SpawnPositionId.Anywhere,
                 SpawnAnimation = SpawnAnimationId.Drop,
                 AvoidTankSidesRadius = 1,
                 AvoidTankTopBottomRadius = 1
             };
 
-            static internal void ReplaceDefaults(ref SpawnConfiguration configuration) {
-                if (configuration.Equals(default)) {
-                    configuration = Default;
+            static internal void ReplaceDefaults(ref SpawnConfiguration config) {
+                if (config.Equals(default)) {
+                    config = Default;
                 }
             }
 
@@ -66,15 +61,13 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        public enum MovementTypeId : byte
-        {
+        public enum MovementTypeId : byte {
             Stationary, // actor does not move
             Swim, // actor swims
         }
 
         [Serializable]
-        public struct MovementConfiguration
-        {
+        public struct MovementConfiguration {
             [Tooltip("How the organism moves")]
             [AutoEnum] public MovementTypeId MoveType;
 
@@ -93,8 +86,7 @@ namespace ProtoAqua.ExperimentV2
             [Tooltip("Maximum amount of random additional seconds between idle movements")]
             public float MovementIntervalRandom;
 
-            static internal readonly MovementConfiguration Default = new MovementConfiguration()
-            {
+            static internal readonly MovementConfiguration Default = new MovementConfiguration() {
                 MoveType = MovementTypeId.Swim,
                 MovementIdleDistance = 1,
                 MovementSpeed = 1,
@@ -103,9 +95,9 @@ namespace ProtoAqua.ExperimentV2
                 MovementIntervalRandom = 1
             };
 
-            static internal void ReplaceDefaults(ref MovementConfiguration configuration) {
-                if (configuration.Equals(default)) {
-                    configuration = Default;
+            static internal void ReplaceDefaults(ref MovementConfiguration config) {
+                if (config.Equals(default)) {
+                    config = Default;
                 }
             }
 
@@ -119,31 +111,33 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        public enum EatTypeId : byte
-        {
+        public enum EatTypeId : byte {
             None, // no eating
             Nibble, // several small bites
-            LargeBite, // large bite
+            LargeBite, // large bite,
+            Filter, // filters
         }
 
         [Serializable]
-        public struct EatingConfiguration
-        {
+        public struct EatingConfiguration {
             [Tooltip("How the organism eats")]
             [AutoEnum] public EatTypeId EatType;
 
             [Tooltip("Multiplier on movement speed when moving towards an eat target")]
             public float MovementMultiplier;
 
-            static internal readonly EatingConfiguration Default = new EatingConfiguration()
-            {
+            static internal readonly EatingConfiguration Default = new EatingConfiguration() {
                 EatType = EatTypeId.Nibble,
                 MovementMultiplier = 1
             };
 
-            static internal void ReplaceDefaults(ref EatingConfiguration configuration) {
-                if (configuration.Equals(default)) {
-                    configuration = Default;
+            static internal void ReplaceDefaults(ref EatingConfiguration config) {
+                if (config.Equals(default)) {
+                    config = Default;
+                }
+
+                if (config.MovementMultiplier == 0) {
+                    config.MovementMultiplier = 1;
                 }
             }
 
@@ -154,8 +148,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         [Serializable]
-        public struct StressConfiguration
-        {
+        public struct StressConfiguration {
             [Tooltip("Multiplier on movement speed when stressed")]
             public float MovementSpeedMultiplier;
 
@@ -165,16 +158,23 @@ namespace ProtoAqua.ExperimentV2
             [Tooltip("Multiplier on ambient animation speed when stressed")]
             public float AmbientAnimationSpeedMultiplier;
 
-            static internal readonly StressConfiguration Default = new StressConfiguration()
-            {
+            static internal readonly StressConfiguration Default = new StressConfiguration() {
                 MovementSpeedMultiplier = 0.8f,
                 MovementIntervalMultiplier = 0.9f,
                 AmbientAnimationSpeedMultiplier = 1
             };
 
-            static internal void ReplaceDefaults(ref StressConfiguration configuration) {
-                if (configuration.Equals(default)) {
-                    configuration = Default;
+            static internal void ReplaceDefaults(ref StressConfiguration config) {
+                if (config.Equals(default)) {
+                    config = Default;
+                }
+
+                if (config.MovementSpeedMultiplier == 0) {
+                    config.MovementSpeedMultiplier = Default.MovementSpeedMultiplier;
+                }
+
+                if (config.MovementIntervalMultiplier == 0) {
+                    config.MovementIntervalMultiplier = Default.MovementIntervalMultiplier;
                 }
             }
 
@@ -184,10 +184,9 @@ namespace ProtoAqua.ExperimentV2
                     && AmbientAnimationSpeedMultiplier == other.AmbientAnimationSpeedMultiplier;
             }
         }
-        
+
         [Serializable]
-        public struct ValidEatTarget
-        {
+        public struct ValidEatTarget {
             [FilterBestiaryId(BestiaryDescCategory.Critter)] public StringHash32 TargetId;
             [FactId(typeof(BFEat))] public StringHash32 FactId;
         }
@@ -196,10 +195,9 @@ namespace ProtoAqua.ExperimentV2
 
         [HideInInspector] public StringHash32 Id;
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Type;
-        
+
         [Header("Prefabs")]
-        public ActorInstance Prefab;
-        // TODO: Microscope prefab
+        public string PrefabName;
 
         [Space]
         [Tooltip("If greater than 0, this sets the number of actors to spawn directly\nActor spawn counts are normally determined by the organism type's size property")]
@@ -210,7 +208,7 @@ namespace ProtoAqua.ExperimentV2
         public MovementConfiguration Movement = MovementConfiguration.Default;
         public EatingConfiguration Eating = EatingConfiguration.Default;
         public StressConfiguration Stress = StressConfiguration.Default;
-        
+
         [Header("Derived From Facts")]
 
         public ActorStateTransitionSet StateEvaluator;
@@ -221,17 +219,18 @@ namespace ProtoAqua.ExperimentV2
         public float AliveReproduceRate;
         public float StressedReproduceRate;
         public bool IsPlant;
-        public bool IsHerd;
-        public bool IsAlive;
+        public bool IsLivingOrganism;
+        public bool IsDistributed;
         public int TargetLimit;
         public bool FreeOnEaten;
         public Rect EatOffsetRange;
         public Rect LocalBoundsRect;
 
+        [NonSerialized] public ActorInstance Prefab;
+
         #region Utility
 
-        static public Vector3 FindRandomLocationOnBottom(System.Random inRandom, in Bounds inBounds, float inBottomOffset, float inSidesOffset)
-        {
+        static public Vector3 FindRandomLocationOnBottom(System.Random inRandom, in Bounds inBounds, float inBottomOffset, float inSidesOffset) {
             Vector3 center = inBounds.center;
             Vector3 extents = inBounds.extents;
             float bottomY = center.y - extents.y + inBottomOffset;
@@ -239,8 +238,7 @@ namespace ProtoAqua.ExperimentV2
             return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), bottomY, center.z);
         }
 
-        static public Vector3 FindRandomLocationOnTop(System.Random inRandom, in Bounds inBounds, float inTopOffset, float inSidesOffset)
-        {
+        static public Vector3 FindRandomLocationOnTop(System.Random inRandom, in Bounds inBounds, float inTopOffset, float inSidesOffset) {
             Vector3 center = inBounds.center;
             Vector3 extents = inBounds.extents;
             float topY = center.y + extents.y - inTopOffset;
@@ -248,8 +246,7 @@ namespace ProtoAqua.ExperimentV2
             return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), topY, center.z);
         }
 
-        static public Vector3 FindRandomLocationInTank(System.Random inRandom, in Bounds inBounds, float inTopBottomOffset, float inSidesOffset)
-        {
+        static public Vector3 FindRandomLocationInTank(System.Random inRandom, in Bounds inBounds, float inTopBottomOffset, float inSidesOffset) {
             Vector3 center = inBounds.center;
             Vector3 extents = inBounds.extents;
             float limitX = extents.x - inSidesOffset;
@@ -257,10 +254,8 @@ namespace ProtoAqua.ExperimentV2
             return new Vector3(center.x + inRandom.NextFloat(-limitX, limitX), center.y + inRandom.NextFloat(-limitY, limitY), center.z);
         }
 
-        static public Vector3 FindRandomSpawnLocation(System.Random inRandom, in Bounds inBounds, in SpawnConfiguration inConfiguration)
-        {
-            switch(inConfiguration.SpawnLocation)
-            {
+        static public Vector3 FindRandomSpawnLocation(System.Random inRandom, in Bounds inBounds, in SpawnConfiguration inConfiguration) {
+            switch (inConfiguration.SpawnLocation) {
                 case SpawnPositionId.Bottom:
                     return FindRandomLocationOnBottom(inRandom, inBounds, inConfiguration.AvoidTankTopBottomRadius, inConfiguration.AvoidTankSidesRadius);
 
@@ -276,8 +271,7 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static public Vector3 FindRandomTankLocationInRange(System.Random inRandom, in Bounds inBounds, Vector3 inCurrentPosition, float inDistance, float inTopBottomOffset, float inSidesOffset)
-        {
+        static public Vector3 FindRandomTankLocationInRange(System.Random inRandom, in Bounds inBounds, Vector3 inCurrentPosition, float inDistance, float inTopBottomOffset, float inSidesOffset) {
             Vector3 center = inBounds.center;
             Vector3 extents = inBounds.extents;
             float limitX = extents.x - inSidesOffset;
@@ -302,8 +296,7 @@ namespace ProtoAqua.ExperimentV2
             return inCurrentPosition;
         }
 
-        static public Vector3 ClampToTank(in Bounds inBounds, Vector3 inCurrentPosition, float inTopBottomOffset, float inSidesOffset)
-        {
+        static public Vector3 ClampToTank(in Bounds inBounds, Vector3 inCurrentPosition, float inTopBottomOffset, float inSidesOffset) {
             Vector3 center = inBounds.center;
             Vector3 extents = inBounds.extents;
             float limitX = extents.x - inSidesOffset;
@@ -315,10 +308,8 @@ namespace ProtoAqua.ExperimentV2
             return currentOffset;
         }
 
-        static public ValidEatTarget[] GetEatTargets(ActorDefinition inDefinition, ActorStateId inStateId)
-        {
-            switch(inStateId)
-            {
+        static public ValidEatTarget[] GetEatTargets(ActorDefinition inDefinition, ActorStateId inStateId) {
+            switch (inStateId) {
                 case ActorStateId.Dead:
                 default:
                     return Array.Empty<ValidEatTarget>();
@@ -329,11 +320,9 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static public ValidEatTarget GetEatTarget(ActorDefinition inDefinition, StringHash32 inTargetId, ActorStateId inStateId)
-        {
+        static public ValidEatTarget GetEatTarget(ActorDefinition inDefinition, StringHash32 inTargetId, ActorStateId inStateId) {
             var targets = GetEatTargets(inDefinition, inStateId);
-            for(int i = 0; i < targets.Length; i++)
-            {
+            for (int i = 0; i < targets.Length; i++) {
                 if (targets[i].TargetId == inTargetId)
                     return targets[i];
             }
@@ -341,10 +330,8 @@ namespace ProtoAqua.ExperimentV2
             return default(ValidEatTarget);
         }
 
-        static public float GetMovementSpeedMultiplier(ActorDefinition inDefinition, ActorStateId inStateId)
-        {
-            switch(inStateId)
-            {
+        static public float GetMovementSpeedMultiplier(ActorDefinition inDefinition, ActorStateId inStateId) {
+            switch (inStateId) {
                 case ActorStateId.Alive:
                     return 1;
                 case ActorStateId.Stressed:
@@ -355,10 +342,8 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static public float GetMovementIntervalMultiplier(ActorDefinition inDefinition, ActorStateId inStateId)
-        {
-            switch(inStateId)
-            {
+        static public float GetMovementIntervalMultiplier(ActorDefinition inDefinition, ActorStateId inStateId) {
+            switch (inStateId) {
                 case ActorStateId.Alive:
                     return 1;
                 case ActorStateId.Stressed:
@@ -369,10 +354,8 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static public float GetReproductionRate(ActorDefinition inDefinition, ActorStateId inStateId)
-        {
-            switch(inStateId)
-            {
+        static public float GetReproductionRate(ActorDefinition inDefinition, ActorStateId inStateId) {
+            switch (inStateId) {
                 case ActorStateId.Alive:
                     return inDefinition.AliveReproduceRate;
                 case ActorStateId.Stressed:
@@ -387,17 +370,16 @@ namespace ProtoAqua.ExperimentV2
 
         #region Editor
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
-        static internal void OverwriteFromSerialized(ActorDefinition inSource, ActorDefinition inTarget)
-        {
+        static internal void OverwriteFromSerialized(ActorDefinition inSource, ActorDefinition inTarget) {
             inTarget.SpawnAmountOverride = inSource.SpawnAmountOverride;
 
             inTarget.Spawning.SpawnLocation = inSource.Spawning.SpawnLocation;
             inTarget.Spawning.SpawnAnimation = inSource.Spawning.SpawnAnimation;
             inTarget.Spawning.AvoidTankSidesRadius = inSource.Spawning.AvoidTankSidesRadius;
             inTarget.Spawning.AvoidTankTopBottomRadius = inSource.Spawning.AvoidTankTopBottomRadius;
-            
+
             inTarget.Movement.MoveType = inSource.Movement.MoveType;
             inTarget.Movement.MovementIdleDistance = inSource.Movement.MovementIdleDistance;
             inTarget.Movement.MovementSpeed = inSource.Movement.MovementSpeed;
@@ -413,8 +395,7 @@ namespace ProtoAqua.ExperimentV2
             inTarget.Stress.AmbientAnimationSpeedMultiplier = inSource.Stress.AmbientAnimationSpeedMultiplier;
         }
 
-        static internal void LoadFromBestiary(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab)
-        {
+        static internal void LoadFromBestiary(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab) {
             Assert.NotNull(inDef);
             Assert.NotNull(inBestiary);
             Assert.True(inBestiary.Category() == BestiaryDescCategory.Critter, "Provided entry is not for a critter");
@@ -424,32 +405,31 @@ namespace ProtoAqua.ExperimentV2
             inDef.Type = inBestiary;
             inDef.StateEvaluator = inBestiary.GetActorStateTransitions();
             inDef.IsPlant = inBestiary.HasFlags(BestiaryDescFlags.TreatAsPlant);
-            inDef.IsAlive = !inBestiary.HasFlags(BestiaryDescFlags.IsNotLiving);
-            inDef.IsHerd = inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
-            inDef.FreeOnEaten = !inDef.IsPlant && !inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
-            inDef.TargetLimit = inDef.IsPlant ? 4 : 1;
+            inDef.IsLivingOrganism = !inBestiary.HasFlags(BestiaryDescFlags.IsNotLiving);
+            inDef.IsDistributed = inBestiary.HasFlags(BestiaryDescFlags.IsMicroscopic);
+            inDef.FreeOnEaten = !inDef.IsDistributed && !inDef.IsPlant && !inBestiary.HasFlags(BestiaryDescFlags.TreatAsHerd);
+            inDef.TargetLimit = inDef.IsDistributed ? 8 : (inDef.IsPlant ? 4 : 1);
 
-            if (inDef.SpawnAmountOverride > 0)
+            if (inDef.IsDistributed) {
+                inDef.SpawnCount = 1;
+            } else if (inDef.SpawnAmountOverride > 0) {
                 inDef.SpawnCount = inDef.SpawnAmountOverride;
-            else
+            } else {
                 inDef.SpawnCount = GetDefaultSpawnAmount(inBestiary.Size());
+            }
 
             inDef.SpawnMax = Math.Min(inDef.SpawnCount * 3, GetDefaultSpawnMax(inBestiary.Size()));
 
             RingBuffer<ValidEatTarget> aliveEatTargets = new RingBuffer<ValidEatTarget>();
             RingBuffer<ValidEatTarget> stressedEatTargets = new RingBuffer<ValidEatTarget>();
 
-            foreach(var eat in inBestiary.FactsOfType<BFEat>())
-            {
+            foreach (var eat in inBestiary.FactsOfType<BFEat>()) {
                 if (eat.Critter == inBestiary)
                     continue;
 
-                if (eat.OnlyWhenStressed)
-                {
+                if (eat.OnlyWhenStressed) {
                     CreateOrOverwriteTarget(stressedEatTargets, eat.Critter, eat);
-                }
-                else
-                {
+                } else {
                     CreateOrOverwriteTarget(aliveEatTargets, eat.Critter, eat);
                     CreateTargetOnly(stressedEatTargets, eat.Critter, eat);
                 }
@@ -470,7 +450,7 @@ namespace ProtoAqua.ExperimentV2
                 aliveRepro += repro.Amount;
             }
             if (grow) {
-                aliveRepro += (float) grow.Amount / body.MassPerPopulation; 
+                aliveRepro += (float)grow.Amount / body.MassPerPopulation;
             }
 
             BFReproduce reproStress = BestiaryUtils.FindReproduceRule(inBestiary, ActorStateId.Stressed);
@@ -480,7 +460,7 @@ namespace ProtoAqua.ExperimentV2
                 stressedRepro += reproStress.Amount;
             }
             if (growStress) {
-                stressedRepro += (float) growStress.Amount / body.MassPerPopulation; 
+                stressedRepro += (float) growStress.Amount / body.MassPerPopulation;
             }
 
             inDef.AliveReproduceRate = aliveRepro;
@@ -495,15 +475,19 @@ namespace ProtoAqua.ExperimentV2
                 inDef.Movement.MoveType = MovementTypeId.Stationary;
             }
 
+            if (inDef.Movement.MoveType == MovementTypeId.Stationary && (aliveEatTargets.Count > 0 || stressedEatTargets.Count > 0)) {
+                inDef.Eating.EatType = EatTypeId.Filter;
+            }
+
             if (inPrefab != null) {
                 ProcessPrefab(inDef, inBestiary, inPrefab);
-            } else if (!inDef.Prefab) {
+            } else if (string.IsNullOrEmpty(inDef.PrefabName)) {
                 Log.Warn("[ActorDefinition] Experiment-able organism '{0}' lacks a prefab", inDef.Id);
             }
         }
 
-        static private void ProcessPrefab(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab)
-        {
+        static private void ProcessPrefab(ActorDefinition inDef, BestiaryDesc inBestiary, ActorInstance inPrefab) {
+            inDef.PrefabName = inPrefab.name;
             inDef.Prefab = inPrefab;
 
             Vector3 offsetPos = inPrefab.CachedTransform.position;
@@ -515,10 +499,8 @@ namespace ProtoAqua.ExperimentV2
             inDef.EatOffsetRange = Geom.BoundsToRect(bounds);
         }
 
-        static private int GetDefaultSpawnAmount(BestiaryDescSize inSize)
-        {
-            switch(inSize)
-            {
+        static private int GetDefaultSpawnAmount(BestiaryDescSize inSize) {
+            switch (inSize) {
                 case BestiaryDescSize.Tiny:
                     return 10;
                 case BestiaryDescSize.Small:
@@ -533,10 +515,8 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static private int GetDefaultSpawnMax(BestiaryDescSize inSize)
-        {
-            switch(inSize)
-            {
+        static private int GetDefaultSpawnMax(BestiaryDescSize inSize) {
+            switch (inSize) {
                 case BestiaryDescSize.Tiny:
                     return 40;
                 case BestiaryDescSize.Small:
@@ -551,13 +531,10 @@ namespace ProtoAqua.ExperimentV2
             }
         }
 
-        static private void CreateOrOverwriteTarget(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule)
-        {
+        static private void CreateOrOverwriteTarget(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
             StringHash32 id = inTarget.Id();
-            for(int i = 0, length = ioTargets.Count; i < length; i++)
-            {
-                if (ioTargets[i].TargetId == id)
-                {
+            for (int i = 0, length = ioTargets.Count; i < length; i++) {
+                if (ioTargets[i].TargetId == id) {
                     ref ValidEatTarget target = ref ioTargets[i];
                     target.FactId = inRule.name;
                     return;
@@ -570,11 +547,9 @@ namespace ProtoAqua.ExperimentV2
             ioTargets.PushBack(newTarget);
         }
 
-        static private bool CreateTargetOnly(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule)
-        {
+        static private bool CreateTargetOnly(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
             StringHash32 id = inTarget.Id();
-            for(int i = 0, length = ioTargets.Count; i < length; i++)
-            {
+            for (int i = 0, length = ioTargets.Count; i < length; i++) {
                 if (ioTargets[i].TargetId == id)
                     return false;
             }
@@ -588,18 +563,16 @@ namespace ProtoAqua.ExperimentV2
 
         #region ISerializedObject
 
-        public void Serialize(Serializer ioSerializer)
-        {
+        public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("spawnAmountOverride", ref SpawnAmountOverride, -1);
 
             ioSerializer.Enum("spawnLocation", ref Spawning.SpawnLocation, SpawnPositionId.Anywhere);
             ioSerializer.Enum("spawnAnimation", ref Spawning.SpawnAnimation, SpawnAnimationId.Drop);
             ioSerializer.Serialize("sidesRadius", ref Spawning.AvoidTankSidesRadius, 0.5f);
             ioSerializer.Serialize("topBottomRadius", ref Spawning.AvoidTankTopBottomRadius, 0.5f);
-            
+
             ioSerializer.Enum("moveType", ref Movement.MoveType, MovementTypeId.Swim);
-            if (Movement.MoveType != MovementTypeId.Stationary)
-            {
+            if (Movement.MoveType != MovementTypeId.Stationary) {
                 ioSerializer.Serialize("moveDistance", ref Movement.MovementIdleDistance, 1);
                 ioSerializer.Serialize("moveSpeed", ref Movement.MovementSpeed, 1);
                 ioSerializer.Enum("moveCurve", ref Movement.MovementCurve, Curve.Smooth);
@@ -608,13 +581,11 @@ namespace ProtoAqua.ExperimentV2
             }
 
             ioSerializer.Enum("eatType", ref Eating.EatType, EatTypeId.Nibble);
-            if (Eating.EatType != EatTypeId.None)
-            {
+            if (Eating.EatType != EatTypeId.None) {
                 ioSerializer.Serialize("eatSpeedMultiplier", ref Eating.MovementMultiplier, 1.5f);
             }
 
-            if (Movement.MoveType != MovementTypeId.Stationary)
-            {
+            if (Movement.MoveType != MovementTypeId.Stationary) {
                 ioSerializer.Serialize("stressSpeedMultiplier", ref Stress.MovementSpeedMultiplier, 0.8f);
                 ioSerializer.Serialize("stressMoveIntervalMultiplier", ref Stress.MovementIntervalMultiplier, 0.9f);
             }
@@ -624,7 +595,7 @@ namespace ProtoAqua.ExperimentV2
 
         #endregion // ISerializedObject
 
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
         #endregion // Editor
     }

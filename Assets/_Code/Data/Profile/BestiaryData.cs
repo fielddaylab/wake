@@ -336,6 +336,12 @@ namespace Aqua.Profile
                 return;
             }
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             var bestiary = Services.Assets.Bestiary;
 
             SavePatcher.PatchIds(m_ObservedEntities);

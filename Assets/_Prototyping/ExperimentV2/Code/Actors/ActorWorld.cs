@@ -55,6 +55,8 @@ namespace ProtoAqua.ExperimentV2
             int startingSize = inWorld.Actors.Count;
             int length = inCount;
 
+            inWorld.Allocator.Prepare(inActorId, inCount);
+
             ActorInstance actor;
             while(inCount-- > 0)
             {

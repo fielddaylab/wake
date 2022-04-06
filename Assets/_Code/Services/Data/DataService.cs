@@ -62,6 +62,7 @@ namespace Aqua
         [NonSerialized] private Future<bool> m_SaveResult;
         [NonSerialized] private bool m_AutoSaveEnabled;
         [NonSerialized] private string m_LastKnownProfile;
+        [NonSerialized] private bool m_ForceSavingDisabled;
         
         #if DEVELOPMENT
         [NonSerialized] private bool m_IsDebugProfile;
@@ -563,7 +564,7 @@ namespace Aqua
 
         public bool AutosaveEnabled()
         {
-            return m_AutoSaveEnabled;
+            return m_AutoSaveEnabled && !m_ForceSavingDisabled;
         }
 
         public void SetAutosaveEnabled(bool inbEnabled)
@@ -574,6 +575,11 @@ namespace Aqua
                 if (inbEnabled)
                     AutoSave.Force();
             }
+        }
+
+        internal void ForceNoSaving(bool inbNoSave)
+        {
+            m_ForceSavingDisabled = inbNoSave;
         }
 
         static private string GetPrefsKeyForCode(string inUserCode)

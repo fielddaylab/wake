@@ -347,7 +347,7 @@ namespace ProtoAqua.ExperimentV2 {
         #region Spawning
 
         static public void StartBreathing(ActorInstance inInstance, ActorWorld inWorld) {
-            if (inInstance.Definition.IsAlive && !inInstance.BreathAnimation) {
+            if (inInstance.Definition.IsLivingOrganism && !inInstance.BreathAnimation) {
                 inInstance.BreathAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, SelectableTank.Emoji_Breath, 3f));
             }
         }
