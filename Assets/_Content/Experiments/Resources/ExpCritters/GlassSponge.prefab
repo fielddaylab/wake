@@ -33,6 +33,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6575159783238018771}
+  - {fileID: 8355347795391247250}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -51,8 +52,10 @@ MonoBehaviour:
   CachedTransform: {fileID: 1264615091982000664}
   CachedCollider: {fileID: 820683191330873434}
   ColorAdjust: {fileID: 1264615091982000646}
+  EatCollider: {fileID: 5626438685575243878}
   IdleAnimation: {fileID: 0}
   AnimationTransform: {fileID: 0}
+  Mouth: {fileID: 0}
 --- !u!114 &1264615091982000646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,7 +102,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.020396471, y: 0.92206717}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -110,7 +113,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 0.2}
+  m_Size: {x: 1.1634119, y: 2.0441341}
   m_EdgeRadius: 0
 --- !u!50 &3575451011794035817
 Rigidbody2D:
@@ -144,6 +147,63 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &2384964769600894108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8355347795391247250}
+  - component: {fileID: 5626438685575243878}
+  m_Layer: 12
+  m_Name: EatRange
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8355347795391247250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384964769600894108}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1264615091982000664}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &5626438685575243878
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384964769600894108}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.014892012, y: 0.76768017}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.5370422, y: 1.7353601}
+  m_EdgeRadius: 0
 --- !u!1001 &6680264868222419256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159,27 +219,27 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 232.92993
+      value: 182.9299
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 232.92993
+      value: 182.9299
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 232.92992
+      value: 182.9299
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.122
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.013
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e7e5b9e71c3d2a64cb9e9284a39ea728,
         type: 3}

@@ -239,15 +239,16 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
-            m_ParentTank.ActorBehavior.Begin();
-            yield return null;
-
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
 
             if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
                 m_AutoFeederParticles.Play();
             }
+            yield return null;
+
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
 
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {

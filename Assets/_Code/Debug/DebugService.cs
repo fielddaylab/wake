@@ -133,6 +133,10 @@ namespace Aqua.Debugging
                 {
                     SkipCutscene();
                 }
+                else if (m_Input.KeyPressed(KeyCode.Equals))
+                {
+                    DataService.UnlockAllDefaults();
+                }
             }
         }
 

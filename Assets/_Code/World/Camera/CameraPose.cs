@@ -1,6 +1,7 @@
 using BeauUtil;
 using UnityEngine;
 using System;
+using Aqua.Debugging;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -50,28 +51,10 @@ namespace Aqua.Cameras
             if (Target != null)
                 center.z = Target.position.z;
             
-            Vector3 size;
+            Vector2 size;
             size.y = Height / Zoom;
             size.x = Height * main.aspect / Zoom;
-            size.z = 0.01f;
-            Gizmos.color = ColorBank.Teal.WithAlpha(0.25f * inAlpha);
-            Gizmos.matrix = Matrix4x4.Rotate(plane.transform.rotation);
-            
-            Gizmos.DrawCube(center, size);
-
-            Gizmos.color = ColorBank.White.WithAlpha(0.8f * inAlpha);
-
-            Vector3 topRight = center + size / 2;
-            Vector3 bottomLeft = center - size / 2;
-            Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
-            Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
-
-            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 0.0001f;
-
-            Gizmos.DrawLine(bottomLeft, topLeft);
-            Gizmos.DrawLine(bottomRight, topRight);
-            Gizmos.DrawLine(topLeft, topRight);
-            Gizmos.DrawLine(bottomLeft, bottomRight);
+            GizmoViz.Box(center, size, plane.transform.rotation, ColorBank.Teal, ColorBank.White, RectEdges.All, inAlpha);
         }
 
         #endif // UNITY_EDITOR

@@ -18,6 +18,7 @@ using UnityEditor.SceneManagement;
 using BeauUtil.Debugger;
 using BeauData;
 using Aqua.Profile;
+using ScriptableBake;
 
 namespace Aqua.Editor
 {
@@ -128,6 +129,22 @@ namespace Aqua.Editor
             DBObject.RefreshCollection<WaterPropertyDesc, WaterPropertyDB>();
             DBObject.RefreshCollection<ScriptCharacterDef, ScriptCharacterDB>();
             DBObject.RefreshCollection<InvItem, InventoryDB>();
+        }
+
+        [MenuItem("Optimize/Bake Selection", false, 51)]
+        static private void BakeAllAssets()
+        {
+            using(Profiling.Time("bake assets"))
+            {
+                using(Log.DisableMsgStackTrace())
+                {
+                    Bake.Objects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                }
+            }
+            using(Profiling.Time("post-bake save assets"))
+            {
+                AssetDatabase.SaveAssets();
+            }
         }
 
         static public void ConvertToBeauDataBinary<T>(TextAsset asset, bool rename) where T : ISerializedObject
