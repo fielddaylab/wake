@@ -8,7 +8,11 @@
 
 {@profHarper}	People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef.
 				For this job, I need you to develop a food web with the species you found there.
-                We want to learn if there are any new predators of the Turtles. 
+                We want to learn if there are any new predators of the Turtles.
+$if !HasEntity(Cyanobacteria)
+	{@profHarper}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
+                    Be sure to scan it and count the population like you did for the other species.
+$endif
 $if !HasUpgrade(VisualModel)
 	{@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
 	{@profHarper}	Head there when you need to model the food web.
@@ -23,7 +27,7 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
-$call ArgueLoad(siteOModel) 
+$call ArgueLoad(siteOModel)
 {@profHarper} What can you tell me about the safety of the turtles?
 $choice .argue.turtleSafe; The turtles should be safe 
 $choice .argue.turtleNotSafe; The turtles might not be safe 
