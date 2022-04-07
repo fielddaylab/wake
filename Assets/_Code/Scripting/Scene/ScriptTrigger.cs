@@ -1,3 +1,4 @@
+using Aqua.Debugging;
 using BeauUtil;
 using UnityEngine;
 
@@ -36,5 +37,39 @@ namespace Aqua.Scripting
                 Services.Script.TriggerResponse(GameTriggers.PlayerExitRegion, table);
             }
         }
+
+        #if UNITY_EDITOR
+
+        private void OnDrawGizmos()
+        {
+            if (m_Collider == null)
+                return;
+
+            if (UnityEditor.Selection.Contains(this))
+                return;
+            
+            RenderBox(0.25f);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (m_Collider == null)
+                return;
+            
+            RenderBox(1);
+        }
+
+        private void RenderBox(float inAlpha)
+        {
+            Vector3 center = m_Collider.transform.position;
+            Vector2 size = m_Collider.bounds.size;
+            Vector2 offset = m_Collider.offset;
+            center.x += offset.x;
+            center.y += offset.y;
+
+            GizmoViz.Box(center, size, m_Collider.transform.rotation, ColorBank.DarkGoldenrod, ColorBank.White, RectEdges.All, inAlpha);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

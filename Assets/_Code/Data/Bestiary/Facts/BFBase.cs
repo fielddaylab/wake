@@ -13,7 +13,7 @@ namespace Aqua
         [SerializeField, HideInInspector] public StringHash32 Id;
         public readonly BFTypeId Type;
         
-        [SerializeField, HideInInspector] public BestiaryDesc Parent;
+        [SerializeField, HideInEditor] public BestiaryDesc Parent;
         [SerializeField, HideInInspector] public Sprite Icon;
         [SerializeField, HideInInspector] public BFMode Mode;
 

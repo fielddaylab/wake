@@ -102,6 +102,8 @@ namespace Aqua
             }
 
             #endif // DEVELOPMENT
+
+            LoadBootParamsSecondPass();
         }
 
         private void OnDestroy()
@@ -160,6 +162,16 @@ namespace Aqua
                     Log.Msg("[BootParams] Activating debug categories '{0}'", extraCategories);
                     DebugService.AllowLogs(extraCategories);
                 }
+            }
+        }
+        
+        static private void LoadBootParamsSecondPass()
+        {
+            QueryParams p = s_Args;
+
+            if (p.Contains("disableSaving"))
+            {
+                Services.Data.ForceNoSaving(true);
             }
         }
 

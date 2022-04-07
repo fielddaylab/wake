@@ -11,6 +11,7 @@ using UnityEditor.Build.Reporting;
 using BeauUtil.Debugger;
 using System;
 using ScriptableBake;
+using Aqua.Profile;
 
 namespace Aqua.Editor
 {
@@ -121,6 +122,15 @@ namespace Aqua.Editor
             return IsAutoOptimizeEnabled();
         }
 
+        [MenuItem("Aqualab/DEBUG/Compress Bookmarks")]
+        static private void CompressBookmarks()
+        {
+            foreach(TextAsset asset in AssetDBUtils.FindAssets<TextAsset>(null, new string[] { "Assets/Resources/Bookmarks" }))
+            {
+                PrefabTools.ConvertToBeauDataBinary<SaveData>(asset, true);
+            }
+        }
+
         static private void StripEditorInfoFromAssets()
         {
             List<IEditorOnlyData> allStrippable = new List<IEditorOnlyData>(512);
@@ -186,6 +196,7 @@ namespace Aqua.Editor
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();
+                        CompressBookmarks();
                     }
                 }
                 catch(Exception e)

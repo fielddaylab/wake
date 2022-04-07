@@ -23,12 +23,18 @@ namespace ProtoAqua.ExperimentV2 {
         [Required(ComponentLookupDirection.Self)] public Transform CachedTransform;
         [Required(ComponentLookupDirection.Self)] public Collider2D CachedCollider;
         [Required(ComponentLookupDirection.Self)] public ColorGroup ColorAdjust;
+        public Collider2D EatCollider;
+
+        [Header("Optional")]
         public AmbientTransform IdleAnimation;
         public Transform AnimationTransform;
+        public ActorMouth Mouth;
+        public ParticleSystem DistributedParticles;
 
         #endregion // Inspector
 
         [NonSerialized] public ActorDefinition Definition;
+        [NonSerialized] public Bounds TankBounds;
 
         [NonSerialized] public ActorActionId CurrentAction;
         [NonSerialized] public ActorStateId CurrentState;
@@ -347,28 +353,40 @@ namespace ProtoAqua.ExperimentV2 {
         #region Spawning
 
         static public void StartBreathing(ActorInstance inInstance, ActorWorld inWorld) {
-            if (inInstance.Definition.IsAlive && !inInstance.BreathAnimation) {
+            if (inInstance.Definition.IsLivingOrganism && !inInstance.BreathAnimation) {
                 inInstance.BreathAnimation.Replace(inInstance, EmitEmojiLoop(inInstance, inWorld, SelectableTank.Emoji_Breath, 3f));
             }
         }
 
         static public void StartSpawning(ActorInstance inInstance, ActorWorld inWorld, ActorActionId inPrev) {
             ActorDefinition def = inInstance.Definition;
-            Vector3 targetPos = ActorDefinition.FindRandomSpawnLocation(RNG.Instance, inWorld.WorldBounds, def.Spawning);
+            Vector3 targetPos = ActorDefinition.FindRandomSpawnLocation(RNG.Instance, inInstance.TankBounds, def.Spawning);
 
             if (inInstance.IdleAnimation)
                 inInstance.IdleAnimation.AnimationScale = 0;
 
-            if (def.Spawning.SpawnAnimation == ActorDefinition.SpawnAnimationId.Sprout) {
-                inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
-                inInstance.CachedTransform.SetScale(0);
-                inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld)).Tick();
-            } else {
-                Vector3 offsetPos = targetPos;
-                float surfaceDistY = inWorld.WorldBounds.max.y - targetPos.y;
-                offsetPos.y += DropSpawnAnimationDistance + surfaceDistY + def.Spawning.AvoidTankTopBottomRadius;
-                inInstance.CachedTransform.SetPosition(offsetPos, Axis.XYZ, Space.Self);
-                inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).Tick();
+            switch(def.Spawning.SpawnAnimation) {
+                case ActorDefinition.SpawnAnimationId.Sprout: {
+                    inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
+                    inInstance.CachedTransform.SetScale(0);
+                    inInstance.ActionAnimation.Replace(inInstance, SproutFromBottom(inInstance, inWorld)).Tick();
+                    break;
+                }
+
+                case ActorDefinition.SpawnAnimationId.Drop: {
+                    Vector3 offsetPos = targetPos;
+                    float surfaceDistY = inWorld.WorldBounds.max.y - targetPos.y;
+                    offsetPos.y += DropSpawnAnimationDistance + surfaceDistY + def.Spawning.AvoidTankTopBottomRadius;
+                    inInstance.CachedTransform.SetPosition(offsetPos, Axis.XYZ, Space.Self);
+                    inInstance.ActionAnimation.Replace(inInstance, FallToPosition(inInstance, targetPos, inWorld)).Tick();
+                    break;
+                }
+
+                case ActorDefinition.SpawnAnimationId.Expand: {
+                    inInstance.CachedTransform.SetPosition(targetPos, Axis.XYZ, Space.Self);
+                    inInstance.ActionAnimation.Replace(inInstance, ExpandIntoPosition(inInstance, inWorld)).Tick();
+                    break;
+                }
             }
         }
 
@@ -393,6 +411,15 @@ namespace ProtoAqua.ExperimentV2 {
             SetActorAction(inInstance, ActorActionId.Waiting, inWorld);
         }
 
+        static private IEnumerator ExpandIntoPosition(ActorInstance inInstance, ActorWorld inWorld) {
+            inInstance.DistributedParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            inInstance.CachedCollider.enabled = false;
+            yield return RNG.Instance.NextFloat(0, 0.3f);
+            inInstance.CachedCollider.enabled = true;
+            inInstance.DistributedParticles.Play();
+            SetActorAction(inInstance, ActorActionId.Waiting, inWorld);
+        }
+
         static private void OnEnterWaiting(ActorInstance inInstance, ActorWorld inWorld, ActorActionId inPrev) {
             if (inInstance.IdleAnimation)
                 inInstance.IdleAnimation.AnimationScale = 1;
@@ -410,7 +437,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         static public void StartBeingBorn(ActorInstance inInstance, ActorWorld inWorld, ActorActionId inPrev) {
             ActorDefinition def = inInstance.Definition;
-            Vector3 targetPos = ActorDefinition.FindRandomSpawnLocation(RNG.Instance, inWorld.WorldBounds, def.Spawning);
+            Vector3 targetPos = ActorDefinition.FindRandomSpawnLocation(RNG.Instance, inInstance.TankBounds, def.Spawning);
 
             if (inInstance.IdleAnimation)
                 inInstance.IdleAnimation.AnimationScale = 0;
@@ -425,7 +452,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return RNG.Instance.NextFloat(0.1f, 0.5f);
             inInstance.CachedCollider.enabled = true;
 
-            ActorWorld.EmitEmoji(inWorld, inInstance, SelectableTank.Emoji_Reproduce, null, 2);
+            ActorWorld.EmitEmoji(inWorld, inInstance, SelectableTank.Emoji_Reproduce, null, 1);
             yield return inInstance.CachedTransform.ScaleTo(1, 0.3f).Ease(Curve.CubeOut);
             if (inInstance.IdleAnimation) {
                 yield return Tween.ZeroToOne((f) => inInstance.IdleAnimation.AnimationScale = f, 0.2f);
@@ -474,6 +501,14 @@ namespace ProtoAqua.ExperimentV2 {
             ConfigureActionMethods(ActorActionId.Spawning, ActorInstance.StartSpawning, null, null);
             ConfigureActionMethods(ActorActionId.Waiting, ActorInstance.OnEnterWaiting, null, null);
             ConfigureActionMethods(ActorActionId.BeingBorn, ActorInstance.StartBeingBorn, null, null);
+        }
+
+        static public void PrepareWorld(ActorInstance inInstance, ActorWorld inWorld) {
+            if (inInstance.Definition.IsDistributed) {
+                inInstance.TankBounds = inWorld.Tank.Bounds;
+            } else {
+                inInstance.TankBounds = ActorDefinition.GenerateTankBounds(inWorld.Tank.Bounds, inInstance.Definition.LocalBoundsRect, inInstance.Definition.Spawning.AvoidTankTopBottomRadius, inInstance.Definition.Spawning.AvoidTankSidesRadius);
+            }
         }
     }
 

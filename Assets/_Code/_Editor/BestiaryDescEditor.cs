@@ -1,18 +1,17 @@
-using UnityEngine;
-using UnityEditor;
-using BeauUtil.Editor;
-using UnityEditorInternal;
-using BeauUtil;
 using System;
-using System.Reflection;
-using Leaf;
-using System.IO;
-using BeauUtil.Debugger;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
+using BeauUtil;
+using BeauUtil.Debugger;
+using BeauUtil.Editor;
+using Leaf;
+using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
 
-namespace Aqua.Editor
-{
+namespace Aqua.Editor {
     [CustomEditor(typeof(BestiaryDesc)), CanEditMultipleObjects]
     public class BestiaryDescEditor : UnityEditor.Editor {
         private SerializedProperty m_TypeProperty;
@@ -72,7 +71,7 @@ namespace Aqua.Editor
             m_FactList.headerHeight = 0;
             m_FactList.drawHeaderCallback = (r) => { };
             m_FactList.showDefaultBackground = false;
-            m_FactList.drawElementCallback = RenderFactListElement;
+            m_FactList.drawElementCallback = this.RenderFactListElement;
             m_FactList.footerHeight = 0;
             m_FactList.drawFooterCallback = (r) => { };
         }
@@ -91,23 +90,23 @@ namespace Aqua.Editor
             EditorGUILayout.PropertyField(m_FlagsProperty);
             EditorGUILayout.PropertyField(m_StationIdProperty);
 
-            BestiaryDescCategory category = m_TypeProperty.hasMultipleDifferentValues ? BestiaryDescCategory.ALL : (BestiaryDescCategory) m_TypeProperty.intValue;
+            BestiaryDescCategory category = m_TypeProperty.hasMultipleDifferentValues ? BestiaryDescCategory.ALL : (BestiaryDescCategory)m_TypeProperty.intValue;
 
-            switch(category) {
+            switch (category) {
                 case BestiaryDescCategory.Critter: {
-                    RenderCritterSettings();
-                    break;
-                }
+                        RenderCritterSettings();
+                        break;
+                    }
 
                 case BestiaryDescCategory.Environment: {
-                    RenderEnvironmentSettings();
-                    break;
-                }
+                        RenderEnvironmentSettings();
+                        break;
+                    }
 
                 default: {
-                    EditorGUILayout.HelpBox("Cannot simultaneously edit multiple bestiary entries with different types", MessageType.Warning);
-                    break;
-                }
+                        EditorGUILayout.HelpBox("Cannot simultaneously edit multiple bestiary entries with different types", MessageType.Warning);
+                        break;
+                    }
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -138,17 +137,17 @@ namespace Aqua.Editor
 
             if (targets.Length == 1) {
                 if (Section("Quick Entry", ref m_ShortcutsExpanded)) {
-                    BestiaryDesc desc = (BestiaryDesc) target;
+                    BestiaryDesc desc = (BestiaryDesc)target;
 
                     Header("Stress Thresholds");
 
                     WaterPropertyBlock<BFState> stateFacts = default;
-                    foreach(var fact in GetFacts<BFState>(desc)) {
+                    foreach (var fact in GetFacts<BFState>(desc)) {
                         stateFacts[fact.Property] = fact;
                     }
 
-                    using(new GUIScopes.LabelWidthScope(40)) {
-                        using(new EditorGUILayout.HorizontalScope()) {
+                    using (new GUIScopes.LabelWidthScope(40)) {
+                        using (new EditorGUILayout.HorizontalScope()) {
                             GUILayout.FlexibleSpace();
                             RenderStressStateWizard(stateFacts, WaterPropertyId.Temperature, DefaultTemperatureDeathRange);
                             RenderStressStateWizard(stateFacts, WaterPropertyId.Light, null);
@@ -164,7 +163,7 @@ namespace Aqua.Editor
             EditorGUILayout.PropertyField(m_SortingOrderProperty, TempContent("Sorting Order", "Visual sorting order within the station"));
 
             if (Section("Environment", ref m_CategoryExpanded)) {
-                m_SizeProperty.intValue = (int) BestiaryDescSize.Ecosystem;
+                m_SizeProperty.intValue = (int)BestiaryDescSize.Ecosystem;
                 EditorGUILayout.PropertyField(m_DiveSiteIdProperty);
             }
 
@@ -185,16 +184,16 @@ namespace Aqua.Editor
 
             if (targets.Length == 1) {
                 if (Section("Quick Entry", ref m_ShortcutsExpanded)) {
-                    BestiaryDesc desc = (BestiaryDesc) target;
+                    BestiaryDesc desc = (BestiaryDesc)target;
 
                     Header("Water Properties");
 
                     WaterPropertyBlock<BFWaterProperty> propertyFacts = default;
-                    foreach(var fact in GetFacts<BFWaterProperty>(desc)) {
+                    foreach (var fact in GetFacts<BFWaterProperty>(desc)) {
                         propertyFacts[fact.Property] = fact;
                     }
 
-                    using(new EditorGUILayout.HorizontalScope()) {
+                    using (new EditorGUILayout.HorizontalScope()) {
                         GUILayout.FlexibleSpace();
                         RenderWaterPropertyWizard(propertyFacts, WaterPropertyId.Oxygen);
                         RenderWaterPropertyWizard(propertyFacts, WaterPropertyId.Temperature);
@@ -202,7 +201,7 @@ namespace Aqua.Editor
                         GUILayout.FlexibleSpace();
                     }
 
-                    using(new EditorGUILayout.HorizontalScope()) {
+                    using (new EditorGUILayout.HorizontalScope()) {
                         GUILayout.FlexibleSpace();
                         RenderWaterPropertyWizard(propertyFacts, WaterPropertyId.PH);
                         RenderWaterPropertyWizard(propertyFacts, WaterPropertyId.CarbonDioxide);
@@ -212,11 +211,11 @@ namespace Aqua.Editor
                     Header("Water Property History");
 
                     WaterPropertyBlock<BFWaterPropertyHistory> historyFacts = default;
-                    foreach(var fact in GetFacts<BFWaterPropertyHistory>(desc)) {
+                    foreach (var fact in GetFacts<BFWaterPropertyHistory>(desc)) {
                         historyFacts[fact.Property] = fact;
                     }
 
-                    using(new EditorGUILayout.HorizontalScope()) {
+                    using (new EditorGUILayout.HorizontalScope()) {
                         GUILayout.FlexibleSpace();
                         RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.Temperature);
                         RenderWaterPropertyHistoryWizard(historyFacts, WaterPropertyId.Light);
@@ -232,66 +231,68 @@ namespace Aqua.Editor
                 if (targets.Length > 1) {
                     EditorGUILayout.HelpBox("Facts cannot be edited while multiple bestiary entries are selected", MessageType.Warning);
                     if (GUILayout.Button("Refresh Lists")) {
-                        foreach(BestiaryDesc desc in targets) {
+                        foreach (BestiaryDesc desc in targets) {
                             desc.FindAllFacts();
                         }
                     }
                 } else {
-                    BestiaryDesc desc = (BestiaryDesc) targets[0];
-                    EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(320));
-                    
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(250));
-                    m_FactListScroll = EditorGUILayout.BeginScrollView(m_FactListScroll, GUILayout.ExpandHeight(true));
-                    m_SelectedFactIdx = RenderFactList(desc, m_SelectedFactIdx);
-                    EditorGUILayout.EndScrollView();
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Create")) {
-                        OpenCreateFactContextMenu(desc, inCategory);
-                    }
-                    using(new EditorGUI.DisabledScope(m_SelectedFactIdx < 0 || m_FactsProperty.arraySize == 0)) {
-                        if (GUILayout.Button("Delete")) {
-                            SerializedProperty toDeleteProp = m_FactsProperty.GetArrayElementAtIndex(m_SelectedFactIdx);
-                            BFBase fact = (BFBase) toDeleteProp.objectReferenceValue;
-                            if (fact == null) {
-                                m_FactsProperty.DeleteArrayElementAtIndex(m_SelectedFactIdx);
-                            } else {
-                                if (EditorUtility.DisplayDialog(
-                                    string.Format("Delete '{0}'?", fact.name),
-                                    string.Format("Are you sure you want to delete '{0}'? This cannot be undone.", fact.name),
-                                    "Yes!", "Nope")) {
-                                    toDeleteProp.objectReferenceValue = null;
-                                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(fact));
-                                    m_FactsProperty.DeleteArrayElementAtIndex(m_SelectedFactIdx);
+                    BestiaryDesc desc = (BestiaryDesc)targets[0];
+                    using (new EditorGUILayout.HorizontalScope(GUILayout.MinHeight(320))) {
+
+                        using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox, GUILayout.Width(250))) {
+
+                            m_FactListScroll = EditorGUILayout.BeginScrollView(m_FactListScroll, GUILayout.ExpandHeight(true));
+                            m_SelectedFactIdx = RenderFactList(desc, m_SelectedFactIdx);
+                            EditorGUILayout.EndScrollView();
+
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Create")) {
+                                OpenCreateFactContextMenu(desc, inCategory);
+                            }
+                            using (new EditorGUI.DisabledScope(m_SelectedFactIdx < 0 || m_FactsProperty.arraySize == 0)) {
+                                if (GUILayout.Button("Delete")) {
+                                    SerializedProperty toDeleteProp = m_FactsProperty.GetArrayElementAtIndex(m_SelectedFactIdx);
+                                    BFBase fact = (BFBase)toDeleteProp.objectReferenceValue;
+                                    if (fact == null) {
+                                        m_FactsProperty.DeleteArrayElementAtIndex(m_SelectedFactIdx);
+                                    } else {
+                                        if (EditorUtility.DisplayDialog(
+                                            string.Format("Delete '{0}'?", fact.name),
+                                            string.Format("Are you sure you want to delete '{0}'? This cannot be undone.", fact.name),
+                                            "Yes!", "Nope")) {
+                                            toDeleteProp.objectReferenceValue = null;
+                                            AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(fact));
+                                            m_FactsProperty.DeleteArrayElementAtIndex(m_SelectedFactIdx);
+                                        }
+                                    }
+                                    if (m_SelectedFactIdx >= m_FactsProperty.arraySize - 1) {
+                                        m_SelectedFactIdx = m_FactsProperty.arraySize - 1;
+                                    }
+                                    serializedObject.ApplyModifiedProperties();
                                 }
                             }
-                            if (m_SelectedFactIdx >= m_FactsProperty.arraySize - 1) {
-                                m_SelectedFactIdx = m_FactsProperty.arraySize - 1;
-                            }
-                            serializedObject.ApplyModifiedProperties();
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Refresh List")) {
-                        desc.FindAllFacts();
-                        m_SelectedFactIdx = -1;
-                    }
-                    if (GUILayout.Button("Auto Name")) {
-                        if (EditorUtility.DisplayDialog("Update all fact names?", "You will have to update all fact name references manually", "Sure!", "Yikes, no thanks")) {
-                            foreach(var fact in desc.m_Facts) {
-                                TryRenameFact(fact, BFType.AutoNameFact(fact), true);
-                            }
-                            m_SelectedFactIdx = -1;
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.EndVertical();
+                            EditorGUILayout.EndHorizontal();
 
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.ExpandHeight(true));
-                    RenderFactEditor(desc, m_SelectedFactIdx);
-                    EditorGUILayout.EndVertical();
-                    
-                    EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Refresh List")) {
+                                desc.FindAllFacts();
+                                m_SelectedFactIdx = -1;
+                            }
+                            if (GUILayout.Button("Auto Name")) {
+                                if (EditorUtility.DisplayDialog("Update all fact names?", "You will have to update all fact name references manually", "Sure!", "Yikes, no thanks")) {
+                                    foreach (var fact in desc.m_Facts) {
+                                        TryRenameFact(fact, BFType.AutoNameFact(fact), true);
+                                    }
+                                    m_SelectedFactIdx = -1;
+                                }
+                            }
+                            EditorGUILayout.EndHorizontal();
+                        }
+
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.ExpandHeight(true));
+                        RenderFactEditor(desc, m_SelectedFactIdx);
+                        EditorGUILayout.EndVertical();
+                    }
                 }
             }
         }
@@ -303,9 +304,9 @@ namespace Aqua.Editor
         }
 
         private void RenderFactListElement(Rect rect, int index, bool isActive, bool isFocused) {
-            BFBase fact = (BFBase) m_FactsProperty.GetArrayElementAtIndex(index).objectReferenceValue;
+            BFBase fact = (BFBase)m_FactsProperty.GetArrayElementAtIndex(index).objectReferenceValue;
             if (fact == null) {
-                EditorGUI.LabelField(rect, "-- NULL -- ");
+                GUI.Label(rect, "-- NULL -- ");
             } else {
                 BestiaryDesc desc = (BestiaryDesc) target;
                 string factName = fact.name;
@@ -316,7 +317,7 @@ namespace Aqua.Editor
                 Type type = fact.GetType();
                 string typeName = type.Name.Substring(2);
                 factName = string.Format("{0} ({1})", factName, typeName);
-                EditorGUI.LabelField(rect, factName);
+                GUI.Label(rect, factName);
             }
         }
 
@@ -338,16 +339,21 @@ namespace Aqua.Editor
                         if (trueName != fact.name) {
                             Log.Error("Fact name was weird: {0} when it should have been {1}", fact.name, trueName);
                             fact.name = trueName;
-                            EditorUtility.SetDirty(fact); 
+                            EditorUtility.SetDirty(fact);
+                        }
+                        if (fact.Parent != inEntry) {
+                            Log.Error("Fact parent was weird: {0} when it should have been {1}", fact.Parent, inEntry);
+                            fact.Parent = inEntry;
+                            EditorUtility.SetDirty(fact);
                         }
                         m_RenameFactName = fact.name;
                         m_AutoNameFact = BFType.AutoNameFact(fact);
                     }
 
-                    using(new GUIScopes.LabelWidthScope(150)) {
-                        using(new EditorGUILayout.HorizontalScope()) {
+                    using (new GUIScopes.LabelWidthScope(150)) {
+                        using (new EditorGUILayout.HorizontalScope()) {
                             m_RenameFactName = EditorGUILayout.TextField("Id", m_RenameFactName);
-                            using(new EditorGUI.DisabledScope(m_RenameFactName == fact.name)) {
+                            using (new EditorGUI.DisabledScope(m_RenameFactName == fact.name)) {
                                 if (GUILayout.Button("Rename", GUILayout.Width(60))) {
                                     TryRenameFact(fact, m_RenameFactName, false);
                                 }
@@ -356,7 +362,7 @@ namespace Aqua.Editor
                             if (Event.current.type == EventType.Layout) {
                                 m_AutoNameFact = BFType.AutoNameFact(fact);
                             }
-                            using(new EditorGUI.DisabledScope(m_AutoNameFact == null || m_AutoNameFact == fact.name)) {
+                            using (new EditorGUI.DisabledScope(m_AutoNameFact == null || m_AutoNameFact == fact.name)) {
                                 if (GUILayout.Button("Auto", GUILayout.Width(40))) {
                                     TryRenameFact(fact, m_AutoNameFact, false);
                                     m_RenameFactName = fact.name;
@@ -373,7 +379,7 @@ namespace Aqua.Editor
         }
 
         private void RenderWaterPropertyWizard(in WaterPropertyBlock<BFWaterProperty> inProperties, WaterPropertyId inId) {
-            using(new EditorGUILayout.VerticalScope(GUILayout.Width(130))) {
+            using (new EditorGUILayout.VerticalScope(GUILayout.Width(130))) {
                 BFWaterProperty fact = inProperties[inId];
                 GUILayout.Label(ObjectNames.NicifyVariableName(inId.ToString()));
                 if (fact == null) {
@@ -393,7 +399,7 @@ namespace Aqua.Editor
         }
 
         private void RenderWaterPropertyHistoryWizard(in WaterPropertyBlock<BFWaterPropertyHistory> inProperties, WaterPropertyId inId) {
-            using(new EditorGUILayout.VerticalScope(GUILayout.Width(130))) {
+            using (new EditorGUILayout.VerticalScope(GUILayout.Width(130))) {
                 BFWaterPropertyHistory fact = inProperties[inId];
                 GUILayout.Label(ObjectNames.NicifyVariableName(inId.ToString()));
                 if (fact == null) {
@@ -401,7 +407,7 @@ namespace Aqua.Editor
                         CreateAndAddFact(new FactCreateParams(BFTypeId.WaterPropertyHistory, inId));
                     }
                 } else {
-                    BFGraphType newValue = (BFGraphType) EnumGUILayout.EnumField(fact.Graph, GUILayout.Width(120));
+                    BFGraphType newValue = (BFGraphType)EnumGUILayout.EnumField(fact.Graph, GUILayout.Width(120));
                     if (newValue != fact.Graph) {
                         Undo.RecordObject(fact, "Changing water property history values");
                         fact.Graph = newValue;
@@ -412,7 +418,7 @@ namespace Aqua.Editor
         }
 
         private void RenderStressStateWizard(in WaterPropertyBlock<BFState> inProperties, WaterPropertyId inId, Action<BFState> inAutoFill) {
-            using(new EditorGUILayout.VerticalScope(GUILayout.Width(200))) {
+            using (new EditorGUILayout.VerticalScope(GUILayout.Width(200))) {
                 BFState fact = inProperties[inId];
                 GUILayout.Label(ObjectNames.NicifyVariableName(inId.ToString()));
                 if (fact == null) {
@@ -421,7 +427,7 @@ namespace Aqua.Editor
                     }
                 } else {
                     WaterPropertyDesc waterProp = Assets.Property(inId);
-                    using(new EditorGUILayout.HorizontalScope()) {
+                    using (new EditorGUILayout.HorizontalScope()) {
                         bool hasStress = fact.HasStressed;
                         bool newStress = EditorGUILayout.Toggle("Stress", hasStress, GUILayout.Width(60));
                         if (hasStress != newStress) {
@@ -430,7 +436,7 @@ namespace Aqua.Editor
                             EditorUtility.SetDirty(fact);
                         }
 
-                        using(new EditorGUI.DisabledScope(!newStress)) {
+                        using (new EditorGUI.DisabledScope(!newStress)) {
                             EditorGUI.BeginChangeCheck();
                             float min = fact.m_MinSafe;
                             float max = fact.m_MaxSafe;
@@ -447,7 +453,7 @@ namespace Aqua.Editor
                         }
                     }
 
-                    using(new EditorGUILayout.HorizontalScope()) {
+                    using (new EditorGUILayout.HorizontalScope()) {
                         bool hasDeath = fact.HasDeath;
                         bool newDeath = EditorGUILayout.Toggle("Death", hasDeath, GUILayout.Width(60));
                         if (newDeath != hasDeath) {
@@ -456,7 +462,7 @@ namespace Aqua.Editor
                             EditorUtility.SetDirty(fact);
                         }
 
-                        using(new EditorGUI.DisabledScope(!newDeath)) {
+                        using (new EditorGUI.DisabledScope(!newDeath)) {
                             EditorGUI.BeginChangeCheck();
                             float min = fact.m_MinStressed;
                             float max = fact.m_MaxStressed;
@@ -473,7 +479,7 @@ namespace Aqua.Editor
                         }
                     }
 
-                    using(new EditorGUI.DisabledScope(inAutoFill == null || !fact.HasStressed)) {
+                    using (new EditorGUI.DisabledScope(inAutoFill == null || !fact.HasStressed)) {
                         if (GUILayout.Button("Auto-Generate Remaining Values")) {
                             Undo.RecordObject(fact, "Changing stress state");
                             inAutoFill(fact);
@@ -519,152 +525,152 @@ namespace Aqua.Editor
         private void OpenCreateFactContextMenu(BestiaryDesc inDesc, BestiaryDescCategory inCategory) {
             GenericMenu menu = new GenericMenu();
 
-            switch(inCategory) {
+            switch (inCategory) {
                 case BestiaryDescCategory.Critter: {
 
-                    // body
+                        // body
 
-                    if (HasFact<BFBody>(inDesc)) {
-                        menu.AddDisabledItem(new GUIContent("Body"), true);
-                    } else {
-                        menu.AddItem(new GUIContent("Body"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Body));
-                    }
-
-                    menu.AddSeparator("");
-
-                    // states
-
-                    WaterPropertyMask stateMask = default;
-                    foreach(var state in GetFacts<BFState>(inDesc)) {
-                        stateMask[state.Property] = true;
-                    }
-
-                    AddStateFactCreator(menu, WaterPropertyId.Temperature, stateMask);
-                    AddStateFactCreator(menu, WaterPropertyId.Light, stateMask);
-                    AddStateFactCreator(menu, WaterPropertyId.PH, stateMask);
-
-                    menu.AddSeparator("");
-
-                    // eat
-
-                    menu.AddItem(new GUIContent("Eat (Default)"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Eat));
-                    menu.AddItem(new GUIContent("Eat (When Stressed)"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Eat, true));
-
-                    menu.AddSeparator("");
-
-                    // grow and reproduce
-
-                    AddSingleBehaviorCreator<BFGrow>(inDesc, menu, "Grow (Default)", false);
-                    AddSingleBehaviorCreator<BFGrow>(inDesc, menu, "Grow (When Stressed)", true);
-
-                    AddSingleBehaviorCreator<BFReproduce>(inDesc, menu, "Reproduce (Default)", false);
-                    AddSingleBehaviorCreator<BFReproduce>(inDesc, menu, "Reproduce (When Stressed)", true);
-
-                    menu.AddSeparator("");
-
-                    // produce and consume
-
-                    WaterPropertyMask produceMaskDefault = default;
-                    WaterPropertyMask produceMaskStressed = default;
-                    foreach(var produce in GetFacts<BFProduce>(inDesc)) {
-                        if (produce.OnlyWhenStressed) {
-                            produceMaskStressed[produce.Property] = true;
+                        if (HasFact<BFBody>(inDesc)) {
+                            menu.AddDisabledItem(new GUIContent("Body"), true);
                         } else {
-                            produceMaskDefault[produce.Property] = true;
+                            menu.AddItem(new GUIContent("Body"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Body));
                         }
-                    }
 
-                    AddProduceConsumeCreator<BFProduce>(menu, "Produce/Oxygen (Default)", WaterPropertyId.Oxygen, produceMaskDefault, false);
-                    AddProduceConsumeCreator<BFProduce>(menu, "Produce/Oxygen (When Stressed)", WaterPropertyId.Oxygen, produceMaskStressed, true);
+                        menu.AddSeparator("");
 
-                    AddProduceConsumeCreator<BFProduce>(menu, "Produce/Carbon Dioxide (Default)", WaterPropertyId.CarbonDioxide, produceMaskDefault, false);
-                    AddProduceConsumeCreator<BFProduce>(menu, "Produce/Carbon Dioxide (When Stressed)", WaterPropertyId.CarbonDioxide, produceMaskStressed, true);
+                        // states
 
-                    WaterPropertyMask consumeMaskDefault = default;
-                    WaterPropertyMask consumeMaskStressed = default;
-                    foreach(var consume in GetFacts<BFConsume>(inDesc)) {
-                        if (consume.OnlyWhenStressed) {
-                            consumeMaskStressed[consume.Property] = true;
-                        } else {
-                            consumeMaskDefault[consume.Property] = true;
+                        WaterPropertyMask stateMask = default;
+                        foreach (var state in GetFacts<BFState>(inDesc)) {
+                            stateMask[state.Property] = true;
                         }
+
+                        AddStateFactCreator(menu, WaterPropertyId.Temperature, stateMask);
+                        AddStateFactCreator(menu, WaterPropertyId.Light, stateMask);
+                        AddStateFactCreator(menu, WaterPropertyId.PH, stateMask);
+
+                        menu.AddSeparator("");
+
+                        // eat
+
+                        menu.AddItem(new GUIContent("Eat (Default)"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Eat));
+                        menu.AddItem(new GUIContent("Eat (When Stressed)"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Eat, true));
+
+                        menu.AddSeparator("");
+
+                        // grow and reproduce
+
+                        AddSingleBehaviorCreator<BFGrow>(inDesc, menu, "Grow (Default)", false);
+                        AddSingleBehaviorCreator<BFGrow>(inDesc, menu, "Grow (When Stressed)", true);
+
+                        AddSingleBehaviorCreator<BFReproduce>(inDesc, menu, "Reproduce (Default)", false);
+                        AddSingleBehaviorCreator<BFReproduce>(inDesc, menu, "Reproduce (When Stressed)", true);
+
+                        menu.AddSeparator("");
+
+                        // produce and consume
+
+                        WaterPropertyMask produceMaskDefault = default;
+                        WaterPropertyMask produceMaskStressed = default;
+                        foreach (var produce in GetFacts<BFProduce>(inDesc)) {
+                            if (produce.OnlyWhenStressed) {
+                                produceMaskStressed[produce.Property] = true;
+                            } else {
+                                produceMaskDefault[produce.Property] = true;
+                            }
+                        }
+
+                        AddProduceConsumeCreator<BFProduce>(menu, "Produce/Oxygen (Default)", WaterPropertyId.Oxygen, produceMaskDefault, false);
+                        AddProduceConsumeCreator<BFProduce>(menu, "Produce/Oxygen (When Stressed)", WaterPropertyId.Oxygen, produceMaskStressed, true);
+
+                        AddProduceConsumeCreator<BFProduce>(menu, "Produce/Carbon Dioxide (Default)", WaterPropertyId.CarbonDioxide, produceMaskDefault, false);
+                        AddProduceConsumeCreator<BFProduce>(menu, "Produce/Carbon Dioxide (When Stressed)", WaterPropertyId.CarbonDioxide, produceMaskStressed, true);
+
+                        WaterPropertyMask consumeMaskDefault = default;
+                        WaterPropertyMask consumeMaskStressed = default;
+                        foreach (var consume in GetFacts<BFConsume>(inDesc)) {
+                            if (consume.OnlyWhenStressed) {
+                                consumeMaskStressed[consume.Property] = true;
+                            } else {
+                                consumeMaskDefault[consume.Property] = true;
+                            }
+                        }
+
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Oxygen (Default)", WaterPropertyId.Oxygen, consumeMaskDefault, false);
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Oxygen (When Stressed)", WaterPropertyId.Oxygen, consumeMaskStressed, true);
+
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Carbon Dioxide (Default)", WaterPropertyId.CarbonDioxide, consumeMaskDefault, false);
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Carbon Dioxide (When Stressed)", WaterPropertyId.CarbonDioxide, consumeMaskStressed, true);
+
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Light (Default)", WaterPropertyId.Light, consumeMaskDefault, false);
+                        AddProduceConsumeCreator<BFConsume>(menu, "Consume/Light (When Stressed)", WaterPropertyId.Light, consumeMaskStressed, true);
+
+                        break;
                     }
-
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Oxygen (Default)", WaterPropertyId.Oxygen, consumeMaskDefault, false);
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Oxygen (When Stressed)", WaterPropertyId.Oxygen, consumeMaskStressed, true);
-
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Carbon Dioxide (Default)", WaterPropertyId.CarbonDioxide, consumeMaskDefault, false);
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Carbon Dioxide (When Stressed)", WaterPropertyId.CarbonDioxide, consumeMaskStressed, true);
-
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Light (Default)", WaterPropertyId.Light, consumeMaskDefault, false);
-                    AddProduceConsumeCreator<BFConsume>(menu, "Consume/Light (When Stressed)", WaterPropertyId.Light, consumeMaskStressed, true);
-
-                    break;
-                }
 
                 case BestiaryDescCategory.Environment: {
 
-                    // water properties
+                        // water properties
 
-                    WaterPropertyMask currentValMask = default;
-                    foreach(var state in GetFacts<BFWaterProperty>(inDesc)) {
-                        currentValMask[state.Property] = true;
+                        WaterPropertyMask currentValMask = default;
+                        foreach (var state in GetFacts<BFWaterProperty>(inDesc)) {
+                            currentValMask[state.Property] = true;
+                        }
+
+                        AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Oxygen, currentValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Temperature, currentValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Light, currentValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.PH, currentValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.CarbonDioxide, currentValMask);
+
+                        menu.AddSeparator("");
+
+                        // water history
+
+                        WaterPropertyMask historyValMask = default;
+                        foreach (var state in GetFacts<BFWaterPropertyHistory>(inDesc)) {
+                            historyValMask[state.Property] = true;
+                        }
+
+                        AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Oxygen, historyValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Temperature, historyValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Light, historyValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.PH, historyValMask);
+                        AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.CarbonDioxide, historyValMask);
+
+                        menu.AddSeparator("");
+
+                        // population
+
+                        menu.AddItem(new GUIContent("Population"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Population));
+                        menu.AddItem(new GUIContent("Population History"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.PopulationHistory));
+
+                        menu.AddSeparator("");
+
+                        // model
+
+                        menu.AddItem(new GUIContent("Model"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Model));
+
+                        menu.AddSeparator("");
+
+                        // sim
+
+                        AddSingleFactCreator<BFSim>(inDesc, menu, "Sim");
+
+                        break;
                     }
-
-                    AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Oxygen, currentValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Temperature, currentValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.Light, currentValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.PH, currentValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterProperty, "{0}", WaterPropertyId.CarbonDioxide, currentValMask);
-
-                    menu.AddSeparator("");
-
-                    // water history
-
-                    WaterPropertyMask historyValMask = default;
-                    foreach(var state in GetFacts<BFWaterPropertyHistory>(inDesc)) {
-                        historyValMask[state.Property] = true;
-                    }
-
-                    AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Oxygen, historyValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Temperature, historyValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.Light, historyValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.PH, historyValMask);
-                    AddWaterFactCreator(menu, BFTypeId.WaterPropertyHistory, "{0} History", WaterPropertyId.CarbonDioxide, historyValMask);
-
-                    menu.AddSeparator("");
-
-                    // population
-
-                    menu.AddItem(new GUIContent("Population"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Population));
-                    menu.AddItem(new GUIContent("Population History"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.PopulationHistory));
-
-                    menu.AddSeparator("");
-
-                    // model
-
-                    menu.AddItem(new GUIContent("Model"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Model));
-
-                    menu.AddSeparator("");
-
-                    // sim
-
-                    AddSingleFactCreator<BFSim>(inDesc, menu, "Sim");
-
-                    break;
-                }
             }
 
             menu.ShowAsContext();
         }
 
         private void CreateAndAddFactCallback(object inParams) {
-            FactCreateParams factParams = (FactCreateParams) inParams;
+            FactCreateParams factParams = (FactCreateParams)inParams;
             CreateAndAddFact(factParams);
         }
 
         private void CreateAndAddFact(FactCreateParams inParams) {
-            BestiaryDesc desc = (BestiaryDesc) target;
+            BestiaryDesc desc = (BestiaryDesc)target;
 
             BFBase createdFact = CreateFact(desc, BFType.ResolveSystemType(inParams.Type));
 
@@ -673,43 +679,43 @@ namespace Aqua.Editor
                 createdBehavior.OnlyWhenStressed = inParams.Stressed;
             }
 
-            switch(inParams.Type) {
+            switch (inParams.Type) {
                 case BFTypeId.State: {
-                    BFState fact = (BFState) createdFact;
-                    fact.Property = inParams.PropertyId;
-                    break;
-                }
+                        BFState fact = (BFState)createdFact;
+                        fact.Property = inParams.PropertyId;
+                        break;
+                    }
 
                 case BFTypeId.WaterProperty: {
-                    BFWaterProperty fact = (BFWaterProperty) createdFact;
-                    fact.Property = inParams.PropertyId;
-                    fact.Value = Assets.Property(inParams.PropertyId).DefaultValue();
-                    break;
-                }
+                        BFWaterProperty fact = (BFWaterProperty)createdFact;
+                        fact.Property = inParams.PropertyId;
+                        fact.Value = Assets.Property(inParams.PropertyId).DefaultValue();
+                        break;
+                    }
 
                 case BFTypeId.WaterPropertyHistory: {
-                    BFWaterPropertyHistory fact = (BFWaterPropertyHistory) createdFact;
-                    fact.Property = inParams.PropertyId;
-                    break;
-                }
+                        BFWaterPropertyHistory fact = (BFWaterPropertyHistory)createdFact;
+                        fact.Property = inParams.PropertyId;
+                        break;
+                    }
 
                 case BFTypeId.Produce: {
-                    BFProduce fact = (BFProduce) createdFact;
-                    fact.Property = inParams.PropertyId;
-                    break;
-                }
+                        BFProduce fact = (BFProduce)createdFact;
+                        fact.Property = inParams.PropertyId;
+                        break;
+                    }
 
                 case BFTypeId.Consume: {
-                    BFConsume fact = (BFConsume) createdFact;
-                    fact.Property = inParams.PropertyId;
-                    break;
-                }
+                        BFConsume fact = (BFConsume)createdFact;
+                        fact.Property = inParams.PropertyId;
+                        break;
+                    }
 
                 case BFTypeId.Sim: {
-                    BFSim sim = (BFSim) createdFact;
-                    sim.InitialWater = desc.GetEnvironment();
-                    break;
-                }
+                        BFSim sim = (BFSim)createdFact;
+                        sim.InitialWater = desc.GetEnvironment();
+                        break;
+                    }
             }
 
             FinalizeFact(desc, createdFact);
@@ -725,7 +731,7 @@ namespace Aqua.Editor
             }
         }
 
-        private void AddWaterFactCreator(GenericMenu inMenu, BFTypeId inType, string inName,  WaterPropertyId inWaterPropertyId, WaterPropertyMask inMask) {
+        private void AddWaterFactCreator(GenericMenu inMenu, BFTypeId inType, string inName, WaterPropertyId inWaterPropertyId, WaterPropertyMask inMask) {
             GUIContent name = new GUIContent(string.Format(inName, ObjectNames.NicifyVariableName(inWaterPropertyId.ToString())));
             if (inMask[inWaterPropertyId]) {
                 inMenu.AddDisabledItem(name, true);
@@ -759,7 +765,7 @@ namespace Aqua.Editor
         }
 
         static private BFBase CreateFact(BestiaryDesc inParent, Type inFactType) {
-            BFBase fact = (BFBase) ScriptableObject.CreateInstance(inFactType);
+            BFBase fact = (BFBase)ScriptableObject.CreateInstance(inFactType);
             fact.name = inParent.name + "." + inFactType.Name.Substring(2);
             fact.Parent = inParent;
 
@@ -795,7 +801,7 @@ namespace Aqua.Editor
                         "File Conflict",
                         string.Format("Cannot rename '{0}' to '{1}'.\nThis would conflict with an existing file.", inFact.name, inNewName),
                         "Whoops", null);
-                    }
+                }
                 return false;
             } else {
                 if (inbBatch || EditorUtility.DisplayDialog(
@@ -821,7 +827,7 @@ namespace Aqua.Editor
         #region Fact Access
 
         static private bool HasFact<T>(BestiaryDesc inParent) where T : BFBase {
-            foreach(var fact in inParent.m_Facts) {
+            foreach (var fact in inParent.m_Facts) {
                 if (fact is T) {
                     return true;
                 }
@@ -831,7 +837,7 @@ namespace Aqua.Editor
         }
 
         static private bool HasBehavior<T>(BestiaryDesc inParent, bool inbStressed) where T : BFBehavior {
-            foreach(var fact in inParent.m_Facts) {
+            foreach (var fact in inParent.m_Facts) {
                 T casted;
                 if ((casted = fact as T) && casted.OnlyWhenStressed == inbStressed) {
                     return true;
@@ -843,7 +849,7 @@ namespace Aqua.Editor
 
         static private T GetFact<T>(BestiaryDesc inParent) where T : BFBase {
             T casted;
-            foreach(var fact in inParent.m_Facts) {
+            foreach (var fact in inParent.m_Facts) {
                 if (casted = fact as T) {
                     return casted;
                 }
@@ -854,7 +860,7 @@ namespace Aqua.Editor
 
         static private IEnumerable<T> GetFacts<T>(BestiaryDesc inParent) where T : BFBase {
             T casted;
-            foreach(var fact in inParent.m_Facts) {
+            foreach (var fact in inParent.m_Facts) {
                 if (casted = fact as T) {
                     yield return casted;
                 }
@@ -863,7 +869,7 @@ namespace Aqua.Editor
 
         static private T GetFact<T>(BestiaryDesc inParent, Predicate<T> inPredicate) where T : BFBase {
             T casted;
-            foreach(var fact in inParent.m_Facts) {
+            foreach (var fact in inParent.m_Facts) {
                 if ((casted = fact as T) && inPredicate(casted)) {
                     return casted;
                 }
@@ -899,12 +905,12 @@ namespace Aqua.Editor
         static private void AnalyzeCritterStates() {
             var allBestiaryEntries = AssetDBUtils.FindAssets<BestiaryDesc>();
             List<BestiaryDesc> ecosystems = new List<BestiaryDesc>();
-            foreach(var entry in allBestiaryEntries) {
-                switch(entry.Category()) {
+            foreach (var entry in allBestiaryEntries) {
+                switch (entry.Category()) {
                     case BestiaryDescCategory.Environment: {
-                        ecosystems.Add(entry);
-                        break;
-                    }
+                            ecosystems.Add(entry);
+                            break;
+                        }
                 }
             }
 
@@ -918,24 +924,24 @@ namespace Aqua.Editor
             HashSet<StringHash32> checkedCritterIds = new HashSet<StringHash32>();
             int stressedCount = 0;
             int deadCount = 0;
-            foreach(var entry in ecosystems) {
+            foreach (var entry in ecosystems) {
                 checkedCritterIds.Clear();
                 envWater = entry.GetEnvironment();
                 report.Append("\n\t").Append(entry.name);
-                foreach(var fact in entry.m_Facts) {
-                    switch(fact.Type) {
+                foreach (var fact in entry.m_Facts) {
+                    switch (fact.Type) {
                         case BFTypeId.Population: {
-                            critter = ((BFPopulation) fact).Critter;
-                            break;
-                        }
+                                critter = ((BFPopulation)fact).Critter;
+                                break;
+                            }
                         case BFTypeId.PopulationHistory: {
-                            critter = ((BFPopulationHistory) fact).Critter;
-                            break;
-                        }
+                                critter = ((BFPopulationHistory)fact).Critter;
+                                break;
+                            }
                         default: {
-                            critter = null;
-                            break;
-                        }
+                                critter = null;
+                                break;
+                            }
                     }
 
                     if (critter && checkedCritterIds.Add(critter.name)) {
@@ -955,7 +961,7 @@ namespace Aqua.Editor
 
             void AppendStressReason(StringBuilder builder, WaterPropertyMask mask) {
                 builder.Append('(');
-                foreach(var reason in mask) {
+                foreach (var reason in mask) {
                     builder.Append(reason.ToString()).Append(", ");
                 }
                 builder.Length -= 2;
@@ -1003,7 +1009,7 @@ namespace Aqua.Editor
         //         Log.Msg("[BestiaryDescEditor] Converting {0} from fahrenheit to celsius", waterProp.name);
 
         //         waterProp.Value = FtoC(waterProp.Value);
-                
+
         //         UnityEditor.EditorUtility.SetDirty(waterProp);
         //     }
         // }

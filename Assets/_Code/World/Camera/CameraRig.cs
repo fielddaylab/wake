@@ -1,3 +1,4 @@
+using Aqua.Debugging;
 using BeauRoutine;
 using BeauUtil;
 using ScriptableBake;
@@ -107,27 +108,11 @@ namespace Aqua.Cameras
             if (plane.Target != null)
                 center.z = plane.Target.position.z;
             
-            Vector3 size;
+            Vector2 size;
             size.y = plane.Height / plane.Zoom;
             size.x = plane.Height * Camera.aspect / plane.Zoom;
-            size.z = 0.01f;
-            Gizmos.color = ColorBank.Green.WithAlpha(0.25f);
-            Gizmos.matrix = Matrix4x4.Rotate(plane.transform.rotation);
-            Gizmos.DrawCube(center, size);
 
-            Gizmos.color = ColorBank.White.WithAlpha(0.8f);
-
-            Vector3 topRight = center + size / 2;
-            Vector3 bottomLeft = center - size / 2;
-            Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
-            Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
-
-            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 0.0001f;
-
-            Gizmos.DrawLine(bottomLeft, topLeft);
-            Gizmos.DrawLine(bottomRight, topRight);
-            Gizmos.DrawLine(topLeft, topRight);
-            Gizmos.DrawLine(bottomLeft, bottomRight);
+            GizmoViz.Box(center, size, plane.transform.rotation, ColorBank.Green, ColorBank.White, RectEdges.All, 1);
         }
 
         #endif // UNITY_EDITOR

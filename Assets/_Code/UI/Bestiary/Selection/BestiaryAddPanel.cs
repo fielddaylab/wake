@@ -23,7 +23,7 @@ namespace Aqua
         #region Inspector
 
         [Header("Capacity")]
-        [SerializeField, Range(1, 8)] private int m_MaxAllowed = 1;
+        [SerializeField, Range(1, 32)] private int m_MaxAllowed = 1;
         [SerializeField] private TickDisplay m_CurrentDisplay = null;
 
         [Header("List")]

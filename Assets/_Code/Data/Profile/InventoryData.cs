@@ -328,6 +328,12 @@ namespace Aqua.Profile
                 return;
             }
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             SavePatcher.PatchIds(m_UpgradeIds);
 
             var invDB = Services.Assets.Inventory;

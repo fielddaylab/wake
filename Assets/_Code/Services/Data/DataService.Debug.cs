@@ -516,6 +516,14 @@ namespace Aqua
             Log.Warn("[DataService] All local save data has been cleared");
         }
 
+        static internal void UnlockAllDefaults() {
+            UnlockAllRooms();
+            UnlockAllSites();
+            UnlockAllStations();
+            UnlockAllUpgrades();
+            UnlockAllBestiaryEntries(false);
+        }
+
         #endregion // IDebuggable
 
         #endif // DEVELOPMENT

@@ -193,9 +193,14 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             int aliveCount = 0, stressCount = 0;
+            ActorInstance firstInstance = null;
             foreach(var actor in inWorld.Actors) {
                 if (actor.Definition.Id != inId)
                     continue;
+
+                if (!firstInstance) {
+                    firstInstance = actor;
+                }
                 
                 switch(actor.CurrentState) {
                     case ActorStateId.Alive: {
@@ -212,7 +217,12 @@ namespace ProtoAqua.ExperimentV2 {
             int desired = Math.Min(definition.SpawnMax, pop + (int) Math.Ceiling(aliveCount * definition.AliveReproduceRate + stressCount * definition.StressedReproduceRate));
             int newSpawn = desired - pop;
             if (newSpawn > 0) {
-                ActorWorld.Alloc(inWorld, inId, newSpawn, ActorActionId.BeingBorn);
+                if (definition.IsDistributed) {
+                    firstInstance.DistributedParticles.Emit(newSpawn * 32);
+                    ActorWorld.EmitEmoji(inWorld, firstInstance, SelectableTank.Emoji_Reproduce, null, newSpawn * 32);
+                } else {
+                    ActorWorld.Alloc(inWorld, inId, newSpawn, ActorActionId.BeingBorn);
+                }
             }
         }
 
@@ -286,16 +296,18 @@ namespace ProtoAqua.ExperimentV2 {
             ActorInstance.ReleaseInteraction(inActor, inWorld);
             ActorInstance.ReleaseTarget(inActor, inWorld);
 
-            if (!inActor.Definition.IsPlant && inActor.Definition.Movement.MoveType != ActorDefinition.MovementTypeId.Stationary)
+            if (inActor.Definition.Movement.MoveType != ActorDefinition.MovementTypeId.Stationary) {
                 inActor.ActionAnimation.Replace(inActor, ActorIdleAnimation(inActor, inWorld));
+            } else if (ActorWorld.IsActionAvailable(ActorActionId.Hungry, inWorld) && inActor.Definition.Eating.EatType != ActorDefinition.EatTypeId.None) {
+                inActor.ActionAnimation.Replace(inActor, ActorIdleStatic(inActor, inWorld));
+            }
 
             ActorInstance.StartBreathing(inActor, inWorld);
         }
 
         static private IEnumerator ActorIdleAnimation(ActorInstance inActor, ActorWorld inWorld) {
             ActorDefinition def = inActor.Definition;
-            bool bLimitMovement = ActorDefinition.GetEatTargets(def, inActor.CurrentState).Length > 0;
-            bool bAllowHungry = ActorWorld.IsActionAvailable(ActorActionId.Hungry, inWorld);
+            bool bLimitMovement = ActorWorld.IsActionAvailable(ActorActionId.Hungry, inWorld) && inActor.Definition.Eating.EatType != ActorDefinition.EatTypeId.None;
 
             float intervalMultiplier = ActorDefinition.GetMovementIntervalMultiplier(def, inActor.CurrentState);
             float movementSpeed = def.Movement.MovementSpeed * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
@@ -315,9 +327,9 @@ namespace ProtoAqua.ExperimentV2 {
             float interval = intervalMultiplier * RNG.Instance.NextFloat() * (def.Movement.MovementInterval + def.Movement.MovementIntervalRandom);
             yield return interval;
 
-            while (!bLimitMovement || !bAllowHungry || moveCount-- > 0) {
+            while (!bLimitMovement || moveCount-- > 0) {
                 current = inActor.CachedTransform.localPosition;
-                target = ActorDefinition.FindRandomTankLocationInRange(RNG.Instance, inWorld.WorldBounds, inActor.CachedTransform.localPosition, def.Movement.MovementIdleDistance, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
+                target = ActorDefinition.FindRandomTankLocationInRange(RNG.Instance, inActor.TankBounds, inActor.CachedTransform.localPosition, def.Movement.MovementIdleDistance);
                 duration = Vector3.Distance(current, target) / movementSpeed;
                 interval = intervalMultiplier * (def.Movement.MovementInterval + RNG.Instance.NextFloat(def.Movement.MovementIntervalRandom));
 
@@ -329,6 +341,11 @@ namespace ProtoAqua.ExperimentV2 {
                 }
             }
 
+            ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
+        }
+
+        static private IEnumerator ActorIdleStatic(ActorInstance inActor, ActorWorld inWorld) {
+            yield return RNG.Instance.Next(3, 10);
             ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
         }
 
@@ -353,7 +370,18 @@ namespace ProtoAqua.ExperimentV2 {
                 yield break;
             }
 
-            float movementSpeed = def.Movement.MovementSpeed * def.Eating.MovementMultiplier * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
+            if (inActor.Definition.Eating.EatType == ActorDefinition.EatTypeId.Filter) {
+                if (ActorInstance.AcquireInteraction(inActor, targetInstance, inWorld)) {
+                    ActorInstance.SetActorAction(inActor, ActorActionId.Eating, inWorld);
+                    yield break;
+                } else {
+                    ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+                    yield break;
+                }
+            }
+
+            float movementSpeed = def.Movement.MovementSpeed * def.Eating.MovementMultiplier
+                * ActorDefinition.GetMovementSpeedMultiplier(def, inActor.CurrentState);
 
             Vector3 currentPos;
             Vector3 targetPos;
@@ -363,16 +391,16 @@ namespace ProtoAqua.ExperimentV2 {
                 currentPos = inActor.CachedTransform.localPosition;
                 targetPos = targetInstance.CachedTransform.localPosition + targetPosOffset;
                 targetPos.z = currentPos.z;
-                targetPos = ActorDefinition.ClampToTank(inWorld.WorldBounds, targetPos, def.Spawning.AvoidTankTopBottomRadius, def.Spawning.AvoidTankSidesRadius);
+                targetPos = ActorDefinition.ClampToTank(inActor.TankBounds, targetPos);
 
                 distanceVector = targetPos - currentPos;
                 if (distanceVector.sqrMagnitude < 0.05f) {
                     if (ActorInstance.AcquireInteraction(inActor, targetInstance, inWorld)) {
                         ActorInstance.SetActorAction(inActor, ActorActionId.Eating, inWorld);
-                        yield break;
                     } else {
                         ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
                     }
+                    yield break;
                 } else {
                     float distanceToMove = movementSpeed * Routine.DeltaTime;
                     float distanceScalar = distanceVector.magnitude;
@@ -420,6 +448,16 @@ namespace ProtoAqua.ExperimentV2 {
                             int nibbleCount = RNG.Instance.Next(3, 5);
                             while (nibbleCount-- > 0) {
                                 yield return EatPulse(inActor, 0.2f);
+                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
+                                if (nibbleCount > 0)
+                                    yield return 0.3f;
+                            }
+                            break;
+                        }
+
+                    case ActorDefinition.EatTypeId.Filter: {
+                            int nibbleCount = RNG.Instance.Next(3, 5);
+                            while (nibbleCount-- > 0) {
                                 ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
                                 if (nibbleCount > 0)
                                     yield return 0.3f;
@@ -480,8 +518,10 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         static private IEnumerator ActorBeingEatenAnimation(ActorInstance inActor, ActorWorld inWorld) {
-            yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.01f, 0.15f, Axis.X, Space.Self)
-                .Wave(Wave.Function.Sin, 1).Loop().RevertOnCancel();
+            if (!inActor.Definition.IsDistributed) {
+                yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.01f, 0.15f, Axis.X, Space.Self)
+                    .Wave(Wave.Function.Sin, 1).Loop().RevertOnCancel();
+            }
         }
 
         static private void OnActorBeingEatenEnd(ActorInstance inActor, ActorWorld inWorld, ActorActionId inNext) {
@@ -532,6 +572,10 @@ namespace ProtoAqua.ExperimentV2 {
                 return null;
             } else if (eatBuffer.Count == 1) {
                 return eatBuffer.PopFront();
+            } else if (inInstance.Definition.Eating.EatType == ActorDefinition.EatTypeId.Filter) {
+                ActorInstance actor = RNG.Instance.Choose(eatBuffer);
+                eatBuffer.Clear();
+                return actor;
             } else {
                 eatBuffer.Sort();
                 ActorInstance actor = eatBuffer.PopFront().Value;

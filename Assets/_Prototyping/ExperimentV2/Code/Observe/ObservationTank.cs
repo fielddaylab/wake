@@ -388,6 +388,8 @@ namespace ProtoAqua.ExperimentV2 {
             } else if (result.Facts.Length == 0) {
                 if (m_World.EnvDeaths > 0) {
                     result.Feedback |= ExperimentFeedbackFlags.DeadOrganisms;
+                } else if (m_PotentialNewFacts.Count > 0) {
+                    result.Feedback |= ExperimentFeedbackFlags.HadObservationsRemaining;
                 } else if (m_OrganismScreen.Panel.Selected.Count > 1) {
                     result.Feedback |= ExperimentFeedbackFlags.NoNewObservations;
                 } else {
