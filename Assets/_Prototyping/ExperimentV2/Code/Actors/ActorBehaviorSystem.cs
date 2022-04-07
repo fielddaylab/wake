@@ -385,7 +385,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             Vector3 currentPos;
             Vector3 targetPos;
-            Vector3 targetPosOffset = FindGoodEatPositionOffset(targetInstance);
+            Vector3 targetPosOffset = FindGoodEatPositionOffset(targetInstance, inActor.CachedTransform.localPosition);
             Vector3 distanceVector;
             while (ActorInstance.IsValidTarget(target)) {
                 currentPos = inActor.CachedTransform.localPosition;
@@ -584,8 +584,12 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget) {
-            return RNG.Instance.NextVector2(inEatTarget.Definition.EatOffsetRange);
+        static private Vector3 FindGoodEatPositionOffset(ActorInstance inEatTarget, Vector3 inCurrentPosition) {
+            if (inEatTarget.Definition.IsDistributed) {
+                return inCurrentPosition;
+            } else {
+                return RNG.Instance.NextVector2(inEatTarget.Definition.EatOffsetRange);
+            }
         }
 
         static private bool IsValidEatTarget(ActorDefinition.ValidEatTarget[] inTargets, ActorInstance inPossibleTarget) {
