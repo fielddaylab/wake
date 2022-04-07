@@ -147,6 +147,9 @@ namespace ProtoAqua.Observation
             }
         }
 
+        public void UpdateActive() {
+        }
+
         public bool HasTarget()
         {
             return m_TargetScannable != null;

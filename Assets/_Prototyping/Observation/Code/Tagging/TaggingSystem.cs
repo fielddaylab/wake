@@ -77,7 +77,7 @@ namespace ProtoAqua.Observation {
 
             for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
                 critter = m_RemainingCritters[i];
-                if (critter.WasTagged || !critter.ColliderPosition.enabled) {
+                if (critter.WasTagged) {
                     continue;
                 }
 
@@ -105,10 +105,12 @@ namespace ProtoAqua.Observation {
                 critter = m_RemainingCritters[i];
                 if (IsFinished(critter.CritterId)) {
                     critter.Collider.enabled = false;
+                    critter.ColliderPosition.enabled = false;
                     critter.WasTagged = true;
                     m_RemainingCritters.FastRemoveAt(i);
                 } else if (IsReady(critter.CritterId)) {
                     critter.Collider.enabled = true;
+                    critter.ColliderPosition.enabled = true;
                 }
             }
 
@@ -131,7 +133,7 @@ namespace ProtoAqua.Observation {
         public void Register(TaggableCritter inCritter) {
             if (m_SiteData == null) {
                 m_RemainingCritters.PushBack(inCritter);
-                inCritter.ColliderPosition.enabled = false;
+                inCritter.Collider.enabled = false;
                 return;
             }
 
@@ -152,7 +154,7 @@ namespace ProtoAqua.Observation {
                 return;
             }
 
-            inCritter.ColliderPosition.enabled = false;
+            inCritter.Collider.enabled = false;
             m_RemainingCritters.PushBack(inCritter);
         }
 

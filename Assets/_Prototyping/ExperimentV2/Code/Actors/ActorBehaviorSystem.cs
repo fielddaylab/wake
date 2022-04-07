@@ -30,10 +30,12 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private Phase m_Phase = Phase.Spawning;
         [NonSerialized] public ActorWorld World;
         [NonSerialized] private bool m_AllowTick = false;
+        [NonSerialized] private bool m_AllowRepro = false;
 
         private readonly float[] m_ReproductionSchedule = new float[8];
 
         public Predicate<ActorActionId> ActionAvailable;
+        public Func<bool> ReproAvailable;
 
         public void Initialize() {
             if (World != null)
@@ -122,7 +124,7 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             World.Lifetime += inDeltaTime;
-            if (m_ReproPeriod > 0) {
+            if (m_AllowRepro) {
                 int count = World.ActorCounts.Count;
                 for(int i = 0; i < count; i++) {
                     ref float repro = ref m_ReproductionSchedule[i];
@@ -177,7 +179,9 @@ namespace ProtoAqua.ExperimentV2 {
             ActorWorld.RegenerateActorCounts(World);
 
             Array.Clear(m_ReproductionSchedule, 0, m_ReproductionSchedule.Length);
-            if (m_ReproPeriod > 0) {
+
+            m_AllowRepro = m_ReproPeriod > 0 && (ReproAvailable == null || ReproAvailable());
+            if (m_AllowRepro) {
                 int count = World.ActorCounts.Count;
                 for(int i = 0; i < count; i++) {
                     m_ReproductionSchedule[i] = RNG.Instance.NextFloat(0.3f, 0.7f) * m_ReproPeriod;
