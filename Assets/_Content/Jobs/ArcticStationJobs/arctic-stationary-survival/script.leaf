@@ -22,6 +22,22 @@
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchVisualModel
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(visualModel)
+@boostScore -5
+@cutscene
+{@kevin}    Make a Visual Model of organism interactions at Site W.
+
+:: catchReport
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(report)
+@boostScore -5
+@cutscene
+{@kevin}	Talk to Professor Whalen in the Office.
+
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation

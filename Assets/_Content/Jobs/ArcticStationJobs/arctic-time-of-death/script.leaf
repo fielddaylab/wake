@@ -21,6 +21,22 @@ $call GiveFact(W_WhaleFall.Model.Stages)
             If we collect population data for all the specices in {h}site W{/h} we should be able to match something up with our model.
             Then we'll be able to roughly determine how long ago Linda met her end.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGetPops
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(getPops)
+@boostScore -5
+@cutscene
+{@kevin}    Scan the population Probe at Site W and count the current organism populations at the site.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}	Talk to Professor Whalen in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro

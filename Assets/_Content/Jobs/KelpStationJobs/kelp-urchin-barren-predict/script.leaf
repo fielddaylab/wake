@@ -181,6 +181,22 @@ $else
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchPredictSiteB
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictSiteB)
+@boostScore -5
+@cutscene
+{@kevin}   	Head to the Modeling Lab and generate a Prediction Model.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
+
 // ARGUMENTATION
 
 ::argue.intro

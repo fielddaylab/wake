@@ -15,6 +15,30 @@
 {@player}       Got it. So the model is tested against the world?
 {@profHarper}   Exactly!  
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchHistoricalData
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalData)
+@boostScore -5
+@cutscene
+{@kevin}    Gather historical population data from a probe at Site O.
+
+:: catchSyncModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(interventionDecision)
+@boostScore -5
+@cutscene
+{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Sync Model.
+            The model should match the population history you collected.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profHarper}.
+
 // ARGUMENTATION
 
 ::argue.intro

@@ -93,6 +93,21 @@ $else
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchFoodWeb
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(foodWeb)
+@boostScore -5
+@cutscene
+{@kevin}    Create a Visual Model of the Warm Kelp Forest.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 

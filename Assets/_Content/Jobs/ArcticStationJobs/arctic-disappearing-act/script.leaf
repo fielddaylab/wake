@@ -45,7 +45,30 @@ $endif
 @when JobTaskTop(reportBack)
 @cutscene
 {@kevin}    Let's report back to {nameof profWhalen} with our model.
-            
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanCritters
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCritters)
+@boostScore -5
+@cutscene
+{@kevin}    Scan everything at Site W.
+
+:: catchModelInteractions
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelInteractions)
+@boostScore -5
+@cutscene
+{@kevin}    Observe Site W species interactions and make a Visual Model from them.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to Professor Whalen.
+
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation

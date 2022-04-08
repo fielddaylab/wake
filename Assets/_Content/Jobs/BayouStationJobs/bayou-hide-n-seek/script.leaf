@@ -9,6 +9,43 @@
 // write an intro to your job
 {@profHarper}    This is the intro to the hide-n-seek job!
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchJellyScan
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyScan)
+@boostScore -5
+@cutscene
+{@kevin}    Revisit Site O, this time keeping an eye out for jellyfish.
+
+:: catchJellyObservation
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyObservation)
+@boostScore -5
+@cutscene
+{@kevin}    Put the Moon Jellies in the Observation Tank and see what happens.
+
+:: catchJellyRates
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyRates)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Measurement Tank to find the rates of Moon Jelly behaviors.
+
+:: catchJellyPrediction
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyPrediction)
+@boostScore -5
+@cutscene
+{@kevin}    Create a Prediction Model using your information about Moon Jellies.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profHarper}.
+
 // ARGUMENTATION
 
 ::argue.intro

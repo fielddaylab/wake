@@ -76,6 +76,28 @@ $endif
 @cutscene
 {@kevin}	Report back to Professor Cempaka.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanNew
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanNew)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site S and scan any new species.
+
+:: catchObserveInteractions
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeInteractions)
+@boostScore -5
+@cutscene
+{@kevin}    Throw some Lionfish in the Observation Tank with other Site S organisms and see what happens.
+
+:: catchArguePredator
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(arguePredator)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profCempaka}.
 
 // ARGUMENTATION
 

@@ -69,6 +69,35 @@ $call GiveFact(LionfishInvasion.Population.ArtificialReef)
 @cutscene
 {@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findReef)
+@boostScore -5
+@cutscene
+{@kevin}    Look for an artificial reef at Site S.
+
+:: catchScanProbes
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbes)
+@boostScore -5
+@cutscene
+{@kevin}    There should be a population probe at Site S. Scan it.
+
+:: catchCountPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Count how much coral and artificial reef is at Site S.
+
+:: catchArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 

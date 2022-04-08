@@ -97,6 +97,29 @@ $endif
 {@player}   What now?
 {@kevin}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchUnstressedRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(unstressedRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put Mussels in the Measurement Tank in an environment that does not stress them.
+
+:: catchStressedRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(stressedRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put Mussels in the Measurement Tank in an environment that stresses them.
+
+:: catchReportChange
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportChange)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
+
 // ARGUMENTATION
 
 :: argue.chooseClaim
