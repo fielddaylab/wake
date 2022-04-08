@@ -128,7 +128,91 @@ $endif
 @cutscene
 {@kevin}	Alright!  Looks like allowing the hunting of lionfish would seriously benefit the coral and the ecosystem overall.  Time to hand over your findings.
 
+// CATCH-ALL GUIDE TEXT
 
+:: catchScanSpear
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanSpear)
+@boostScore -5
+@cutscene
+{@kevin}    Can we find any physical evidence of how hunters hunt Lionfish?
+
+:: catchScanCritters
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCritters)
+@boostScore -5
+@cutscene
+{@kevin}    Scan anything you haven't yet at Site S.
+
+:: catchScanHistory
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanHistory)
+@boostScore -5
+@cutscene
+{@kevin}    Obtain population and water chemistry data from the probes at Site S.
+
+:: catchCountPopulation
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countPopulation)
+@boostScore -5
+@cutscene
+{@kevin}    Count all the organisms at Site S.
+
+:: catchObserveEatRules
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeEatRules)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to make a complete list of what eats what at Site S.
+
+:: catchObtainStressRules
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(obtainStressRules)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Stress Tank to see what each critter in Site S is stressed by.
+
+:: catchMeasureStressEatRates
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureStressEatRates)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S eats other things when stressed.
+
+:: catchMeasureStressReproduceRates
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureStressReproduceRates)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S reproduces when stressed.
+
+:: catchObtainChemistry
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(obtainChemistry)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Measurement Tank to find out how everything at Site S affects their environment.
+
+:: catchPredictModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictModel)
+@boostScore -5
+@cutscene
+{@kevin}    Make a Prediction Model at the Modeling Lab.
+
+:: catchInterveneModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(interveneModel)
+@boostScore -5
+@cutscene
+{@kevin}   Make an Intervene Model at the Modeling Lab.
+
+:: catchArgueIncentive
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argueIncentive)
+@boostScore -5
+@cutscene
+{@kevin}    Make your case to {nameof profCempaka}.
 
 // ARGUMENTATION
 

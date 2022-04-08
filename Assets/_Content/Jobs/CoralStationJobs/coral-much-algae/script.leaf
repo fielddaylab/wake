@@ -104,6 +104,43 @@ $endif
 {@kevin}	We have a model, but for some reason it doesn't match what we've observed. The {nameof BlueTang} aren't eating as much as we'd expect.
 			Let's talk through it with {nameof profCempaka}.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanAll
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanAll)
+@boostScore -5
+@cutscene
+{@kevin}    Scan all the species at Site S.
+
+:: catchObserveEatAlgae
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeEatAlgae)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank and see if anything eats TurfAlgae.
+
+:: catchMeasureEatRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureEatRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put Blue Tang and Turf Algae in the Measurement Tank and see how quickly Blue Tang eats the algae.
+
+:: catchModelPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Create a Sync Model at the Modeling Lab.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargArgue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
+
 
 // ARGUMENTATION
 

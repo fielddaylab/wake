@@ -147,53 +147,61 @@ $branch .stressDeterminedFirst
 			So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
-// GUIDE TEXT
+// CATCH-ALL GUIDE TEXT
 
-:: helpScanSponge
+:: catchScanSponge
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(scanSponge)
+@boostScore -5
 @cutscene
 {@kevin}	Go to Site X and scan a {nameof GlassSponge}.
 
-:: helpScanAll
+:: catchScanAll
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(scanAll)
+@boostScore -5
 @cutscene
 {@kevin}	Go to Site Z and scan all the new species.
 
-:: helpExperimentPredatorZ
+:: catchExperimentPredatorZ
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(experimentPredatorZ)
+@boostScore -5
 @cutscene
 {@kevin}	Place the predators from Site Z in the Observation Tank with other organisms from the same site and see what they eat.
 
-:: helpFindPredator
+:: catchFindPredator
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(findPredator)
+@boostScore -5
 @cutscene
 {@kevin}	Scan Sites X and Y for potential predators of Glass Sponges.
 
-:: helpExperimentPredatorAll
+:: catchExperimentPredatorAll
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(experimentPredatorAll)
+@boostScore -5
 @cutscene
 {@kevin}	Use the Observation tank to see if the {nameof PterasterObscurus} eats Glass Sponges.
 
-:: helpCountPopulations
+:: catchCountPopulations
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(experimentPredatorAll)
+@boostScore -5
 @cutscene
 {@kevin}	Head back to Site Y and count how many {pluralnameof PterasterObscurus} there are.
 
-:: helpDetermineStress
+:: catchDetermineStress
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(determineStress)
+@boostScore -5
 @cutscene
 {@kevin}	Find the Glass Sponge's stress levels using the Stress Tank.
 
-:: helpDiscuss
+:: catchDiscussFindings
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(discussFindings)
+@boostScore -5
 @cutscene
 {@kevin}	Talk to Professor Whalen in the Office.
 

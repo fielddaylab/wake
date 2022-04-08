@@ -42,6 +42,21 @@
 {@kevin}	It looks like you've got a good sample of the life to be found under the ice.
             Lets report back to {nameof profWhalen} with everything you've found.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchExplore
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(explore)
+@boostScore -5
+@cutscene
+{@kevin}    Count the species populations at Site X. That's the region under the ice.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 ::argue.intro

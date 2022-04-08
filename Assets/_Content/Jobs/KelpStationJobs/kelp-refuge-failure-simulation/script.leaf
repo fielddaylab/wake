@@ -44,8 +44,21 @@ $endif
 {@player}   What now?
 {@kevin}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
 
+// CATCH-ALL GUIDE TEXT
 
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel)
+@boostScore -5
+@cutscene
+{@kevin}   	Create a Prediction Model at the Modeling Lab.
 
+:: catchShareModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(shareModel)
+@boostScore -5
+@cutscene
+{@kevin}	Show your model to {nameof drKelp}!
 
 // ARGUMENTATION
 

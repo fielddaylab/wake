@@ -76,6 +76,36 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 {@player} 	Where should I be going again?
 {@kevin}	We located the whale, so let's report back to Professor Whalen.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindTracker
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(findTracker)
+@boostScore -5
+@cutscene
+{@kevin}    Look around Site W. There's a missing tracker somewhere.	
+
+:: catchFindWhale
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(findWhale)
+@boostScore -5
+@cutscene
+{@kevin}	Search Site W for signs of the whale named Linda.
+
+:: catchFoundDetritus
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(foundDetritus)
+@boostScore -5
+@cutscene
+{@kevin}	Count how much detritus is on the whale remains.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}	Talk to Professor Whalen in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro

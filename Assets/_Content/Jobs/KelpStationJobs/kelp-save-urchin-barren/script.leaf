@@ -89,6 +89,22 @@ $else
 	{@kevin}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchMakeAPlan
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeAPlan)
+@boostScore -5
+@cutscene
+{@kevin}    Build an Intervention Model in the Modeling Lab.
+
+:: catchReturn
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(return)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro
