@@ -55,6 +55,35 @@
 {@player}   Any idea of what to do next?
 {@kevin}	It's time to explain our findings in the comms room.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanMussels
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanMussels)
+@boostScore -5
+@cutscene
+{@kevin}    Look for Mussels at Site C and scan one.
+
+:: catchWaterData
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(waterData)
+@boostScore -5
+@cutscene
+{@kevin}    There should be an environment probe at Site C that you can scan.
+
+:: catchStressParam
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(stressParam)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Stress Tank to determine what is stressing the Mussels.
+
+:: catchReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(report)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 

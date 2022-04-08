@@ -47,6 +47,29 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @cutscene
 {@kevin}   Seems like we've gotten everything we need from here. Head back up to the surface when you're ready to leave.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanReef)
+@boostScore -5
+@cutscene
+{@kevin}    Scan the Organisms at Site V.
+
+:: catchWhatTurtlesEat
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(whatTurtlesEat)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Observation Tank, figure out what Turtles eat.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro

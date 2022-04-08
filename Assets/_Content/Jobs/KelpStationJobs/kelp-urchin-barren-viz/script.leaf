@@ -172,6 +172,43 @@ $else
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGoToSiteB
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(goToSiteB)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site B to discover any new species.
+
+:: catchGetProbeData
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getProbeData)
+@boostScore -5
+@cutscene
+{@kevin}    Find the populations probe and scan it.
+
+:: catchGetTagged
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getTagged)
+@boostScore -5
+@cutscene
+{@kevin}    Count all the populations at Site B.
+
+:: catchVisualSiteB
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visualSiteB)
+@boostScore -5
+@cutscene
+{@kevin}    Create a Visual Model of Site B.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro

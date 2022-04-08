@@ -113,8 +113,30 @@ $set jobs:coral-turtle-population.got.pop = true
 @when 		scene:name == "Ship", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's get to the Office so we can report over the Comms. 
-//TODO: {nameof CaptainsOffice}?
+{@kevin}	Let's get to the Office so we can report over the Comms.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanTurtle
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanTurtle)
+@boostScore -5
+@cutscene
+{@kevin}    Look for a turtle and scan it.
+
+:: catchTurtleModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(turtleModel)
+@boostScore -5
+@cutscene
+{@kevin}    Count the turtle population at the Reef Edge.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 
