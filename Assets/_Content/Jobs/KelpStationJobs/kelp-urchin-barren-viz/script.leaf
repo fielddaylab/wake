@@ -119,7 +119,7 @@ $branch common.ringPhone
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Ship", JobTaskTop(predictSiteB)
 @cutscene
-$if global:nav.shipRoom != "modeling"
+$if global:nav.shipRoom != "Modeling"
 	{@player} 	I'm back on the ship, what should I do next?
 	{@kevin}	Let's first head to the {nameof Modeling}.
 $else

@@ -19,7 +19,7 @@
 
 :: catchHistoricalData
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(interventionDecision)
+@when 		JobTaskActive(historicalData)
 @boostScore -5
 @cutscene
 {@kevin}    Gather historical population data from a probe at Site O.
