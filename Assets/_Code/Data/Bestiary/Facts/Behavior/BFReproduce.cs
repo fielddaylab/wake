@@ -25,8 +25,11 @@ namespace Aqua
         #region Behavior
 
         static public readonly TextId ReproduceVerb = "words.reproduce";
+        static public readonly TextId ReproduceDisabledVerb = "words.reproduce.disabled";
         static private readonly TextId ReproduceSentence = "factFormat.reproduce";
+        static private readonly TextId ReproduceDisabledSentence = "factFormat.reproduce.disabled";
         static private readonly TextId ReproduceSentenceStressed = "factFormat.reproduce.stressed";
+        static private readonly TextId ReproduceDisabledSentenceStressed = "factFormat.reproduce.stressed.disabled";
 
         static public void Configure()
         {
@@ -40,8 +43,8 @@ namespace Aqua
             BFReproduce fact = (BFReproduce) inFact;
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
-            yield return BFFragment.CreateLocVerb(ReproduceVerb);
-            if (fact.OnlyWhenStressed)
+            yield return BFFragment.CreateLocVerb(fact.Amount == 0 ? ReproduceDisabledVerb : ReproduceVerb);
+            if (fact.OnlyWhenStressed && fact.Amount > 0)
             {
                 yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
             }
@@ -57,11 +60,19 @@ namespace Aqua
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative));
+                if (fact.Amount == 0) {
+                    details.Description = Loc.Format(ReproduceDisabledSentenceStressed, inFact.Parent.CommonName());
+                } else {
+                    details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative));
+                }
             }
             else
             {
-                details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName());
+                if (fact.Amount == 0) {
+                    details.Description = Loc.Format(ReproduceDisabledSentence, inFact.Parent.CommonName());
+                } else {
+                    details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName());
+                }
             }
 
             return details;

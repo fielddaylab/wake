@@ -45,6 +45,9 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
+        public void UpdateActive() {
+        }
+
         #endregion // ITool
 
         private void HandleEnter(Collider2D inCollider) {

@@ -70,6 +70,10 @@ namespace ProtoAqua.Observation
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
+            return false;
+        }
+
+        public void UpdateActive() {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;
             if (m_System.TryGetClosestCritterGameplayPlane(out closestPos))
@@ -90,13 +94,17 @@ namespace ProtoAqua.Observation
                 {
                     m_HintParticleSystem.Play();
                 }
+                else
+                {
+                    // HACK: Force this to update even when moving?
+                    shape.enabled = false;
+                    shape.enabled = true;
+                }
             }
             else
             {
                 m_HintParticleSystem.Stop();
             }
-
-            return false;
         }
 
         public bool HasTarget()

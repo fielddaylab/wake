@@ -95,6 +95,9 @@ namespace ProtoAqua.ExperimentV2 {
                     }
                 }
             };
+            m_ParentTank.ActorBehavior.ReproAvailable = () => {
+                return m_IsolatedVar == IsolatedVariable.Reproduction || m_IsolatedVar == IsolatedVariable.Unknown;
+            };
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
