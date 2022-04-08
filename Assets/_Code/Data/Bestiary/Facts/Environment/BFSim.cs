@@ -40,7 +40,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Sim, BFShapeId.None, 0, BFDiscoveredFlags.All, null);
+            BFType.DefineAttributes(BFTypeId.Sim, BFShapeId.None, BFFlags.EnvironmentFact, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Sim, null, null, null, null, null);
             BFType.DefineEditor(BFTypeId.Sim, null, BFMode.Internal);
         }

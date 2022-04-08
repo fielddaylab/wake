@@ -36,6 +36,9 @@ MonoBehaviour:
   m_PrereqUpgrades:
   - m_HashValue: 3544853027
   - m_HashValue: 2866492762
+  - m_HashValue: 1203385870
+  - m_HashValue: 3082617054
+  m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
   m_DiveSiteIds:
@@ -94,7 +97,11 @@ MonoBehaviour:
         m_HashValue: 3905184225
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: getScans
+      m_HashValue: 1025619015
+    - m_Source: historicalPopulations
+      m_HashValue: 3787514863
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -108,7 +115,9 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: getModel
+      m_HashValue: 48080564
   m_OptimizedTaskList:
   - Id:
       m_Source: getScans
@@ -169,7 +178,7 @@ MonoBehaviour:
         m_HashValue: 3905184225
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 00000100
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -185,7 +194,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: fece8285761bc4edba724ad7e4a71b94,

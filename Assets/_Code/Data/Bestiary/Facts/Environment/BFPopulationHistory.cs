@@ -25,7 +25,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.PopulationHistory, BFShapeId.PopulationHistory, BFFlags.HideFactInDetails, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.PopulationHistory, BFShapeId.PopulationHistory, BFFlags.HideFactInDetails | BFFlags.EnvironmentFact, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.PopulationHistory, null, GenerateDetails, null, (f) => ((BFPopulationHistory) f).Critter, null);
             BFType.DefineEditor(BFTypeId.PopulationHistory, DefaultIcon, BFMode.Player);
         }

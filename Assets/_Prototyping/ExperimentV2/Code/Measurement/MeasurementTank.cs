@@ -95,6 +95,9 @@ namespace ProtoAqua.ExperimentV2 {
                     }
                 }
             };
+            m_ParentTank.ActorBehavior.ReproAvailable = () => {
+                return m_IsolatedVar == IsolatedVariable.Reproduction || m_IsolatedVar == IsolatedVariable.Unknown;
+            };
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
@@ -239,15 +242,16 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
-            m_ParentTank.ActorBehavior.Begin();
-            yield return null;
-
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
 
             if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
                 m_AutoFeederParticles.Play();
             }
+            yield return null;
+
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
 
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {

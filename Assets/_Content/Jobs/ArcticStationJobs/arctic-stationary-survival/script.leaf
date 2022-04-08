@@ -1,0 +1,64 @@
+:: basePath job.arctic-stationary-survival
+
+// INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@kevin}    The only thing that will clear up this mystery is a {h}visual model{/h}.
+            We'll need to observe the relationships between the species we've discovered at {h}site X{/h}.
+
+::weDidIt
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(visualModel)
+@cutscene
+{@kevin}    I think we're ready to show this to {nameof @profWhalen}.
+
+::helpMe
+@trigger RequestPartnerHelp
+@cutscene 
+{@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interatctions of the species at {h}site X{/h}.
+            These can be discovered using your {h}Observation Tank{/h}. 
+            Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
+
+// ARGUMENTATION
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteXVisual) 
+@cutscene
+{@profWhalen} Did you determine how they survive?
+$call ArgueLoad(siteXVisual)
+$call ArgueSetClaim(Claim, jobs.arctic-stationary-survival.argue.claimLabel) 
+	$call ArgueFactSlot(X_UnderTheIce.Model.StationaryViz)
+$goto argue.showClaim
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profWhalen}    Hmmmm, this doesn't really show what you think it does.
+            Do you have a model that might demonstrate how these creatures survive?
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@profWhalen}    No worries, I'm sure you'll figure it out!
+$call ArgueUnload()
+$call ArgueCancelClaim()
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@profWhalen}   Detritus... Of course!
+                No plants could grow down there to feed the other species,
+                but instead, they all eat the Detritus that is pulled in by that current.
+                It seems old Linda's death gives energy to a whole ecosystem!
+                Your discoveries never cease to amaze {nameof @player}!
+
+$call CompleteJob()

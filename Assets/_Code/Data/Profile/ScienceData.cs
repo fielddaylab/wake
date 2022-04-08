@@ -183,6 +183,12 @@ namespace Aqua.Profile
                 return;
             }
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             foreach(var data in m_SiteData)
             {
                 SavePatcher.PatchId(ref data.MapId);

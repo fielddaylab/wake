@@ -341,6 +341,12 @@ namespace Aqua.Profile {
                 return;
             }
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             SavePatcher.PatchId(ref m_CurrentJobId);
             SavePatcher.PatchIds(m_CompletedJobs);
             SavePatcher.PatchIds(m_InProgressJobs);

@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
+  m_Name: Z_OpenOcean.Sim
+  m_EditorClassIdentifier: 
+  Id:
+    m_HashValue: 903029909
+  Parent: {fileID: 11400000, guid: 331b4caa3296e2c479a6f5bc33ef4013, type: 2}
+  Icon: {fileID: 0}
+  Mode: 2
+  m_IconOverride: {fileID: 0}
+  InitialActors:
+  - Id:
+      m_Source: Smelt
+      m_HashValue: 2920275176
+    Population: 5000
+  - Id:
+      m_Source: ChinookSalmon
+      m_HashValue: 3582091882
+    Population: 300
+  - Id:
+      m_Source: ArcticCod
+      m_HashValue: 2545375201
+    Population: 4000
+  - Id:
+      m_Source: SalmonShark
+      m_HashValue: 4036767444
+    Population: 50
+  - Id:
+      m_Source: Diatoms
+      m_HashValue: 1229737088
+    Population: 100000
+  - Id:
+      m_Source: RibbonSeal
+      m_HashValue: 3868886068
+    Population: 22
+  - Id:
+      m_Source: BowheadWhale
+      m_HashValue: 2063388242
+    Population: 2
+  - Id:
+      m_Source: SnowCrab
+      m_HashValue: 1824142092
+    Population: 50
+  - Id:
+      m_Source: AstarteBorealis
+      m_HashValue: 3388301900
+    Population: 250
+  - Id:
+      m_Source: SeaAnemone
+      m_HashValue: 3323473791
+    Population: 150
+  - Id:
+      m_Source: Detritus
+      m_HashValue: 4251495377
+    Population: 5000
+  InitialWater:
+    Oxygen: 6
+    Temperature: 0
+    Light: 100
+    PH: 8.15
+    CarbonDioxide: 7
+  SyncTickCount: 10
+  PredictTickCount: 10
+  OxygenPerTick: 4
+  CarbonDioxidePerTick: 4
+  EatRateMultiplier: 1
+  ReproductionRateMultiplier: 1
+  DeathRateMultiplier: 1

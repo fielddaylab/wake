@@ -1,0 +1,6 @@
+# basePath RS-4W
+
+:: OnScanFishers
+@trigger BestiaryEntryAdded
+@when   entryId == "WhaleTracker"
+$call GiveFact(W_WhaleFall.Population.WhaleTracker)

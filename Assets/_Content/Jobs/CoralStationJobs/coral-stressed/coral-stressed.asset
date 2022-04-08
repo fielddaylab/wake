@@ -36,6 +36,9 @@ MonoBehaviour:
   m_PrereqUpgrades:
   - m_HashValue: 3844482921
   - m_HashValue: 3940469741
+  - m_HashValue: 1203385870
+  - m_HashValue: 3082617054
+  m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
   m_DiveSiteIds:
@@ -74,7 +77,9 @@ MonoBehaviour:
         m_HashValue: 3171531273
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: siteR
+      m_HashValue: 2528761364
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -88,7 +93,9 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: stressCoral
+      m_HashValue: 470518738
   m_OptimizedTaskList:
   - Id:
       m_Source: siteR
@@ -127,7 +134,7 @@ MonoBehaviour:
         m_HashValue: 3171531273
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -143,7 +150,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 5a0af15e31dc444f4b4acdda64065bf7,

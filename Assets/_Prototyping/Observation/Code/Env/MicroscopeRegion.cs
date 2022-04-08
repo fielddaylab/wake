@@ -2,6 +2,7 @@ using System;
 using Aqua;
 using Aqua.Entity;
 using BeauUtil;
+using ScriptableBake;
 using UnityEngine;
 
 namespace ProtoAqua.Observation {
@@ -41,6 +42,32 @@ namespace ProtoAqua.Observation {
                 ArrayUtils.Add(ref Reveal.GameObjects, scanRegion.gameObject);
                 TrackTransform = scanRegion.SafeTrackedTransform;
             }
+        }
+
+        [ContextMenu("Auto Configure")]
+        internal void AutoConfigure() {
+            var scanRegions = transform.parent.GetComponentsInChildren<ScannableRegion>();
+            var scanRegion = Array.Find(scanRegions, (t) => !t.name.Contains("MicroscopeHint"));
+            var hintRegion = Array.Find(scanRegions, (t) => t != scanRegion);
+            UnityEditor.Undo.RecordObject(this, "Auto configure MicroscopeRegion");
+            if (scanRegion) {
+                Scannable = scanRegion;
+                if (!ArrayUtils.Contains(Reveal.GameObjects, scanRegion.gameObject)) {
+                    ArrayUtils.Add(ref Reveal.GameObjects, scanRegion.gameObject);
+                }
+                if (!ArrayUtils.Contains(ProjectedTransforms, scanRegion.Click)) {
+                    ArrayUtils.Add(ref ProjectedTransforms, scanRegion.Click);
+                }
+                scanRegion.IconRootOverride = scanRegion.Click.transform;
+                TrackTransform = scanRegion.SafeTrackedTransform;
+            }
+            if (hintRegion) {
+                hintRegion.TrackTransform = TrackTransform;
+                if (!ArrayUtils.Contains(Hidden.GameObjects, hintRegion.gameObject)) {
+                    ArrayUtils.Add(ref Hidden.GameObjects, hintRegion.gameObject);
+                }
+            }
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 
         #endif // UNITY_EDITOR

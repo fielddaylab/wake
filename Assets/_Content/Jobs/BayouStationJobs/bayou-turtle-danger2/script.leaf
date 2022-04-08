@@ -6,17 +6,12 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}   We want to figure out how the turtles are responding to the 
-                reef that has grown all around the oil rig.
-                Specifically, we want you to collect the historic population data
-                and develop a model using what you know about the food web.
-{@player}       I'm happy to help, but why build a model if we can easily get the 
-                historic population date? Can we just look at the trend?
-{@profHarper}   We need a model so we can understand why the populaitons are changing
-                the way they are.                
+{@profHarper}   We want to figure out how the turtles are responding to the reef that has grown all around the oil rig.
+                Specifically, we want you to collect the historic population data and develop a model using what you know about the food web.
+{@player}       I'm happy to help, but why build a model if we can easily get the historic population date? Can we just look at the trend?
+{@profHarper}   We need a model so we can understand why the populations are changing the way they are.
                 If you can build a model that outputs populations that match the historic data,
-                then we can start to assume that our model is describing how
-                the ecosystem works. 
+                then we can start to assume that our model is describing how the ecosystem works. 
 {@player}       Got it. So the model is tested against the world?
 {@profHarper}   Exactly!  
 
@@ -60,7 +55,7 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
 	$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Describe)
 $endif
-{@profHarper} Were you able to obtain a descriptive model showing that?
+{@profHarper} Were you able to obtain a numerical model that describes the populaitons?
 $goto .argue.showClaim
 
 :: argue.showClaim

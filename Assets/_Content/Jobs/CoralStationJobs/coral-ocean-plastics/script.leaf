@@ -95,7 +95,7 @@ $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-		$call ArgueFactSlot(ReefEdge.Model.Visual)
+		$call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
@@ -121,7 +121,7 @@ $goto .argue.chooseFactsDummy
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.Prediction, .argue.done
+    $answer ReefEdge.Model.TurtleVisual, .argue.done
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
@@ -154,8 +154,10 @@ $call CompleteJob()
 $call ArgueRejectIncorrect()
 {@profCempaka}  I'm not seeing a clear relationship between that species and the plastic.
                 Can you head back and double check your observations?
+$call ArgueCancelClaim()
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
 
 ::end

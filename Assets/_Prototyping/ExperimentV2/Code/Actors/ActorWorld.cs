@@ -45,6 +45,7 @@ namespace ProtoAqua.ExperimentV2
             ActorInstance actor = inWorld.Allocator.Alloc(inActorId, inWorld.ActorRoot);
             inWorld.Actors.PushBack(actor);
 
+            ActorInstance.PrepareWorld(actor, inWorld);
             ActorInstance.ForceActorAction(actor, inAction, inWorld);
             ActorInstance.SetActorState(actor, inWorld.HasEnvironment ? actor.Definition.StateEvaluator.Evaluate(inWorld.Water) : ActorStateId.Alive, inWorld);
             return actor;
@@ -55,6 +56,8 @@ namespace ProtoAqua.ExperimentV2
             int startingSize = inWorld.Actors.Count;
             int length = inCount;
 
+            inWorld.Allocator.Prepare(inActorId, inCount);
+
             ActorInstance actor;
             while(inCount-- > 0)
             {
@@ -64,8 +67,9 @@ namespace ProtoAqua.ExperimentV2
 
             var newActors = new ListSlice<ActorInstance>(inWorld.Actors, startingSize, length);
 
-            for(int i = 0; i < newActors.Length; i++)
+            for(int i = 0; i < length; i++)
             {
+                ActorInstance.PrepareWorld(newActors[i], inWorld);
                 ActorInstance.ForceActorAction(newActors[i], inAction, inWorld);
             }
 

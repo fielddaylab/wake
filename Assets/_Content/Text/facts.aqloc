@@ -24,6 +24,9 @@ reduces
 :: reproduce
 reproduces
 
+:: reproduce.disabled
+stops reproducing
+
 :: death
 dies
 
@@ -166,8 +169,14 @@ Intervention Model Report
 :: reproduce
 {critter-name}{0}{/critter-name} reproduces.
 
+:: reproduce.disabled
+{critter-name}{0}{/critter-name} does not reproduce.
+
 :: reproduce.stressed
 {critter-name}{0}{/critter-name} reproduces {1} when stressed.
+
+:: reproduce.stressed.disabled
+{critter-name}{0}{/critter-name} stops reproducing when stressed.
 
 :: grow
 {critter-name}{0}{/critter-name} grows.

@@ -9,8 +9,8 @@
 $branch common.ringPhone
 
 {@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of Site O. 
-                Would you be able to go pop over and help us report back on what exactly is growing over there? 
-{@player}   You can count one me!
+                Would you be able to go pop over and help us report back on what exactly is growing over there?
+{@player}   You can count on me!
 
 
 :: diveSite
@@ -19,6 +19,7 @@ $branch common.ringPhone
 @once
 @cutscene
 $if !HasUpgrade(ROVTagger)
+	$branch common.ringPhone
 	{@profHarper} When you took this job I had the tech install a population counter tool on your sub.
 	$call GiveUpgrade(ROVTagger)
 	{@profHarper} You should see the {nameof ROVTagger} at the top of your view.  

@@ -15,19 +15,19 @@ namespace ProtoAqua.Observation {
 
         public bool Bake(BakeFlags flags) {
             SceneHelper.ActiveScene().Scene.ForEachComponent<ScannableRegion>(true, (scn, scan) => {
-                var existingMicroscope = scan.transform.parent.GetComponentInChildren<MicroscopeRegion>(true);
-                var existingFlashlight = scan.transform.parent.GetComponentInChildren<FlashlightRegion>(true); 
-
-                if (existingFlashlight) {
-                    if (!ArrayUtils.Contains(existingFlashlight.Reveal.GameObjects, scan.gameObject)) {
-                        ArrayUtils.Add(ref existingFlashlight.Reveal.GameObjects, scan.gameObject);
-                    }
+                if (scan.gameObject.name == "MicroscopeHint") {
                     return;
                 }
-                FlashlightRegion region = Instantiate(RegionPrefab, scan.transform.parent);
-                region.TrackTransform = scan.SafeTrackedTransform;
-                region.ColliderPosition.Source = region.TrackTransform;
-                ArrayUtils.Add(ref region.Reveal.GameObjects, scan.gameObject);
+
+                var region = scan.transform.parent.GetComponent<FlashlightRegion>(); 
+                
+                if (!region) {
+                    region = Instantiate(RegionPrefab, scan.transform.parent);
+                    region.TrackTransform = scan.SafeTrackedTransform;
+                    region.ColliderPosition.Source = region.TrackTransform;
+                }
+
+                region.AutoConfigure();
             });
 
             ScriptableBake.Bake.Destroy(this);

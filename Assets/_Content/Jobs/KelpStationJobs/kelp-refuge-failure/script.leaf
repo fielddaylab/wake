@@ -47,7 +47,7 @@ $set    	jobs:coral-stressed.seen.bottom = true
 :: probeCollectionComplete
 @trigger	JobTaskCompleted
 @who		kevin
-@when		HasFact(MixedKelp.PopulationHistory.BullKelp), HasFact(MixedKelp.PopulationHistory.GiantKelp)
+@when		HasFact(MixedKelp.PopulationHistory.BullKelp), HasFact(MixedKelp.PopulationHistory.GiantKelp), HasFact(MixedKelp.Light.History)
 @once
 @chatter
 
@@ -71,7 +71,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @cutscene
 {@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
 			Reproduction rate means put in only one species and make sure it's fed and stabilized.
-			What site should we replicate?
+			You will need to put the kelp in multiple ecosystems to obtain both stressed and unstressed rules. 
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
@@ -79,6 +79,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @cutscene
 {@player} 	How should I do this again?
 {@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
+			You will need to put the kelp in multiple ecosystems to obtain both types of rules.
 			What sites do we know they are stressed in, and which do we know they're not stressed in?
 
 :: experimentGrowthEnd

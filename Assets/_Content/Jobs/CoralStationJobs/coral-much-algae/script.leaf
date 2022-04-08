@@ -171,7 +171,7 @@ $choose branch
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
-		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
+		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae.Stressed)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.chooseFactsSparseFish
@@ -193,11 +193,11 @@ $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
 	$goto .argue.correctFacts
 $else
-	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
 		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Did you model this?
 		$call ArgueClearFacts()
-		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae)
+		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
 		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither

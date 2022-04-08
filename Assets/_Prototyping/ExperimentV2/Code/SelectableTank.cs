@@ -93,6 +93,7 @@ namespace ProtoAqua.ExperimentV2
             tank.ScreenTransition.Stop();
             if (full) {
                 tank.ActorBehavior.ClearAll();
+                tank.ActorBehavior.World.Allocator.Cleanup(60);
             } else {
                 tank.ActorBehavior.ClearActors();
             }

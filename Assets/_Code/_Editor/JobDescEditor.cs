@@ -176,9 +176,11 @@ namespace Aqua.Editor
                     EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(300));
                     
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(250));
+                    
                     m_TaskListScroll = EditorGUILayout.BeginScrollView(m_TaskListScroll, GUILayout.ExpandHeight(true));
                     m_SelectedTaskIdx = RenderTaskList(desc, m_SelectedTaskIdx);
                     EditorGUILayout.EndScrollView();
+
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Create Task")) {
                         m_TasksProperty.arraySize++;
@@ -195,6 +197,7 @@ namespace Aqua.Editor
                         }
                     }
                     EditorGUILayout.EndHorizontal();
+                    
                     EditorGUILayout.EndVertical();
 
                     m_TaskSettingsScroll = EditorGUILayout.BeginScrollView(m_TaskSettingsScroll, EditorStyles.helpBox);

@@ -8,63 +8,163 @@
 
 {@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
+$if JobTaskCompleted(getPopulationData)
+{@profWhalen}    We know for a fact that these whales eat both diatoms and ice algae.
+$call GiveFact(BowheadWhale.Eats.Diatoms)
+$call GiveFact(BowheadWhale.Eats.IceAlgae)
+$endif
+$if JobTaskCompleted(getEnviornmentData)
+{@profWhalen}    These should be the water conditions that stress the whales. You can compare this to the water conditions at {h}site W{/h}.
+$call GiveFact(BowheadWhale.Light.Stressed)
+$call GiveFact(BowheadWhale.PH.Stressed)
+$call GiveFact(BowheadWhale.Temperature.Stressed)
+$endif
+
+::helpLost
+@trigger    RequestPartnerHelp
+@when   scene:name != "RS-4W", JobTaskTop(getEnviornmentData)
+@cutscene
+{@player}   Hmmm, what are we doing again? 
+{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
+            Whether it was the water conditions or a lack of food, we'll need some more information.
+            Why don't you check your {h}AQOS{/h} to see where we should go next.
+
+::helpScanProbE
+@trigger    RequestPartnerHelp
+@when   scene:name == "RS-4W", JobTaskTop(getEnviornmentData)
+@cutscene
+{@kevin} If the water conditions proved deadly for Linda, we'd better scan the {h}water chemistry probe{/h} for more information.
+
+::helpScanProbP
+@trigger    RequestPartnerHelp
+@when   scene:name == "RS-4W", JobTaskTop(getPopulationData)
+@cutscene
+{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
+            I'm not sure what whales eat, so we might just have to count everything.
+
+::helpReport
+@trigger    RequestPartnerHelp
+@when   JobTaskTop(reportBack)
+@cutscene
+{@player}   Hmmm, what should I do now? 
+{@kevin}    Let's report back to Prof. Whalen. 
+
+::giveWhaleEat
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getPopulationData)
+@cutscene
+{@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
+$call GiveFact(BowheadWhale.Eats.Diatoms)
+$call GiveFact(BowheadWhale.Eats.IceAlgae)
+
+::giveWhaleStress
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getEnviornmentData)
+@cutscene
+{@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
+$call GiveFact(BowheadWhale.Light.Stressed)
+$call GiveFact(BowheadWhale.PH.Stressed)
+$call GiveFact(BowheadWhale.Temperature.Stressed)
+
 
 // ARGUMENTATION
-
-//::helpScanProb
-//@trigger    RequestPartnerHelp
-//@when   !scene:name == "RS-4W", !JobTaskCompleted(getEnviornmentData)
-//{@kevin} If the water conditions proved deadly for Linda, we'd better scan the water chemistry probe for more information.
-
-//::helpScanProb
-//@trigger    RequestPartnerHelp
-//@when   !scene:name == "RS-4W", !JobTaskCompleted(getPopulationData)
-//{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
-//            I'm not sure what whales eat, so we might just have to count everything.
-
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(causeDeath)
 @cutscene
 $call ArgueLoad(causeDeath)
 {@profWhalen} Which hypothesis seems most likely?
-    $choice .argue.foodClaim; There was a problem in her food supply.
-    $choice .argue.stressClaim; Something in the enviornment harmed her.
+    $choice .argue.foodClaim; There was a problem with her food supply
+    $choice .argue.stressClaim; Something in the enviornment harmed her
+    $choice .argue.giveUp; Let me check my notes and get back to you.
 $choose branch
 
 :: argue.foodClaim
+{@profWhalen}  What do these whales eat? 
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
-		$call ArgueFactSlot() 
-$goto .argue.showZombieWormsWrong
+	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
+	$call ArgueFactSlot(BowheadWhale.Eats.Diatoms) 
+$goto .argue.showClaim
 
 :: argue.stressClaim
+{@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
-$goto .argue.showZombieWorms
+	$call ArgueFactSlot(BowheadWhale.Temperature.Stressed) 
+	$call ArgueFactSlot(W_WhaleFall.Temperature) 
+$goto .argue.showClaim2
 
 ::argue.showClaim
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
+    $answer correct, .argue.howKnow 
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
+::argue.showClaim2
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.transition
+    $answer *, .argue.unrelated2
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+::argue.showClaim3
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete
+    $answer *, .argue.unrelated3
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+::argue.howKnow
+$call ArgueCancelClaim()
+$call ArgueUnload()
+$call ArgueLoad(PopulationHistory)
+{@profWhalen}   What do you know about the populations for Diatoms and Ice Algae?
+$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+    $call ArgueFactSlot(W_WhaleFall.PopulationHistory.IceAlgae) 
+    $call ArgueFactSlot(W_WhaleFall.PopulationHistory.Diatoms) 
+    $call ArgueFactSlot(W_WhaleFall.Population.IceAlgae) 
+    $call ArgueFactSlot(W_WhaleFall.Population.Diatoms) 
+$goto .argue.showClaim3
+
+::argue.transition
+$call ArgueCancelClaim()
+$call ArgueUnload()
+$call ArgueLoad(ToFood)
+{@profWhalen}   These seem compatible. It must have been the food supply.
+$goto .argue.foodClaim
+
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@kevin} Ok, that's interesting, but it's not answering my question.
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What facts might relate to Linda's {h}food supply{/h}?
 $goto .argue.showClaim
 
+:: argue.unrelated2
+$call ArgueRejectIncorrect()
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What facts might relate to {h}stressors{/h} Linda's enviornment?
+$goto .argue.showClaim2
+
+:: argue.unrelated3
+$call ArgueRejectIncorrect()
+{@profWhalen}   Ok, that's interesting, but it's not answering my question.
+                What can you tell me about the populations of the creatures in Linda's diet?
+$goto .argue.showClaim3
+
 :: argue.giveUp
-{@kevin} OK. Get back to me when you're ready.
-$call arguecancelclaim()
-$call argueunload()
+{@profWhalen} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+$call ArgueUnload()
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
-{@kevin} This looks great!
-{@kevin}    This is the conclusion to the arctic-cause-of-death job!
+{@profWhalen}   Ugh, whales sometimes get lured in by ice algae, but it becomes less available as summer comes. 
+                I bet she got stuck when the ice came in and couldn't get back to her pod.
+                I think this seems like a reasonable argument to explain Linda's death.
+                Thanks for all your hard work {nameof @player}!
 
 $call CompleteJob()

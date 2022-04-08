@@ -54,7 +54,9 @@ namespace ProtoAqua.ExperimentV2
 
             foreach(var definition in CritterDefinitions)
             {
-                ActorDefinition.LoadFromBestiary(definition, definition.Type, ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name, "Assets/_Content/Experiments"));
+                ActorDefinition.LoadFromBestiary(definition, definition.Type,
+                    ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name, "Assets/_Content/Experiments/Resources/ExpCritters")
+                );
             }
 
             return true;
@@ -75,30 +77,11 @@ namespace ProtoAqua.ExperimentV2
         [UnityEditor.CustomEditor(typeof(ActorDefinitions))]
         private class Inspector : UnityEditor.Editor
         {
-            private ReorderableList m_ActorDefList;
-
-            private void OnEnable() {
-                m_ActorDefList = new ReorderableList(serializedObject, serializedObject.FindProperty("CritterDefinitions"));
-                m_ActorDefList.drawHeaderCallback = (r) => EditorGUI.LabelField(r, "Definitions");
-                m_ActorDefList.drawElementCallback = SearchElementRender(m_ActorDefList, this);
-                m_ActorDefList.elementHeightCallback = SearchElementHeight(m_ActorDefList, this);
-            }
-
             public override void OnInspectorGUI()
             {
                 serializedObject.UpdateIfRequiredOrScript();
                 
-                m_ActorDefList.DoLayoutList();
-
-                UnityEditor.EditorGUILayout.Space();
-
-                if (GUILayout.Button("Create All For Experimentation"))
-                {
-                    ActorDefinitions definitions = (ActorDefinitions) target;
-                    UnityEditor.Undo.RecordObject(definitions, "Loading Definitions");
-                    definitions.LoadDefinitions();
-                    EditorUtility.SetDirty(definitions);
-                }
+                DrawDefaultInspector();
 
                 EditorGUILayout.Space();
 
@@ -115,28 +98,6 @@ namespace ProtoAqua.ExperimentV2
                 }
 
                 serializedObject.ApplyModifiedProperties();
-            }
-        
-            static private ReorderableList.ElementCallbackDelegate SearchElementRender(ReorderableList list, Inspector inspector) {
-                return (Rect rect, int index, bool isActive, bool isFocused) => {
-                    SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
-                    string name = new StringHash32((uint) element.FindPropertyRelative("Id.m_HashValue").longValue).ToDebugString();
-                    rect.x += 12;
-                    rect.width -= 12;
-                    Rect title = rect;
-                    title.height = EditorGUIUtility.singleLineHeight;
-                    element.isExpanded = EditorGUI.Foldout(title, element.isExpanded, name ?? "Unknown");
-                    if (element.isExpanded) {
-                        EditorGUI.PropertyField(rect, element, GUIContent.none, true);
-                    }
-                };
-            }
-
-            static private ReorderableList.ElementHeightCallbackDelegate SearchElementHeight(ReorderableList list, Inspector inspector) {
-                return (int index) => {
-                    SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
-                    return EditorGUI.GetPropertyHeight(element, null, element.isExpanded);
-                };
             }
         }
 
@@ -194,7 +155,10 @@ namespace ProtoAqua.ExperimentV2
                     continue;
                 
                 if (critter.Type == inCritter)
+                {
+                    critter.Type = inCritter;
                     return critter;
+                }
             }
 
             ActorDefinition newDef = new ActorDefinition();
