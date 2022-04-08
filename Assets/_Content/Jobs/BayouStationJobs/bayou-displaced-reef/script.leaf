@@ -27,6 +27,36 @@ $if !HasUpgrade(ROVTagger)
 	{@profHarper} Go ahead and give it a try!
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchVisitSiteO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visitSiteO)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site O.
+
+:: catchGetScans
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getScans)
+@boostScore -5
+@cutscene
+{@kevin}    Scan and count the species at Site O.
+
+:: catchGetCounts
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getCounts)
+@boostScore -5
+@cutscene
+{@kevin}    Count the species at Site O.
+
+:: catchReportback
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profHarper}.
+
 // ARGUMENTATION
 
 ::argue.intro

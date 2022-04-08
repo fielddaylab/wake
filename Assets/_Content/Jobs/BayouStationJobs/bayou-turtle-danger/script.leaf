@@ -17,6 +17,43 @@ $if !HasUpgrade(VisualModel)
 	$call GiveUpgrade(VisualModel)
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCyano)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site O and scan the Cyanobacteria. Make sure you have your Microscope pulled out!
+
+:: catchCountCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countCyano)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site O and count the Cyanobacteria population. Make sure you have your Microscope pulled out!
+
+:: catchExperimentsForSiteO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(experimentsForSiteO)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to find what Loggerhead Turtles eat at Site O.
+
+:: catchVisualModelO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visualModelO)
+@boostScore -5
+@cutscene
+{@kevin}    Make a Visual Model of what you found out from the Observation Tank.
+
+:: catchReportback
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profHarper}.
+
 // ARGUMENTATION
 
 ::argue.intro
