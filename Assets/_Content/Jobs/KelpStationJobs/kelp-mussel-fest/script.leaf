@@ -4,14 +4,14 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	The first thing to do is check out these mussels and their environment at Site C.
+{@kevin}	The first thing to do is check out these mussels and their environment at {h}site C{/h}.
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
 @when 		scene:name != "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Get to Site C so we can check out those mussels.
+{@kevin}	Get to {h}site C{/h} so we can check out those mussels.
 
 // SCANNING
 
@@ -63,34 +63,38 @@
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
 {@drKelp}	Hi {nameof @player}. Have questions about what you've found? Let's talk this over.
-$branch .argue.reasonStress
-
-// Walk player through stress
-:: argue.reasonStress
+$if ArgueIsComplete(musselFestReasonChemistry)
+	{@drKelp}	We've talked about the temperature, pH, and light at the site.
+	$branch .argue.chooseClaim
+$endif
 $if ArgueIsComplete(musselFestReasonStress)
 	{@drKelp}	So. We've already established the stress ranges for the mussels.
 	$branch .argue.reasonChemistry
 $else
-	$call ArgueLoad(musselFestReasonStress)
-	$if ArgueSetClaim(musselFestReasonStressClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonStress)
-				$call ArgueFactSlot(Mussel.Temperature.Stressed)
-				$call ArgueFactSlot(Mussel.Light.Stressed)
-				$call ArgueFactSlot(Mussel.PH.Stressed)
-	$endif
-	$call ArgueDisplayClaim()
-	{@drKelp}	What were the stress ranges for the mussels?
-		$choice #argueFactSet; Present facts from AQOS
-				$answer correct, .argue.correctFactsReasonStress
-				$answer incorrect, .argue.incorrectFactsReasonStress
-		$choice .argue.giveUp; Let me get back to you
+    {@drKelp}	What were the stress ranges for the mussels?
+    $branch .argue.reasonStress
 $endif
 
+// Walk player through stress
+:: argue.reasonStress
+$call ArgueLoad(musselFestReasonStress)
+$call ArgueSetClaim(musselFestReasonStressClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonStress)
+    $call ArgueFactSlot(Mussel.Temperature.Stressed)
+    $call ArgueFactSlot(Mussel.Light.Stressed)
+    $call ArgueFactSlot(Mussel.PH.Stressed)
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctFactsReasonStress
+    $answer incorrect, .argue.incorrectFactsReasonStress
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsReasonStress
-// how explicit do we want to be here? These numbers may change...
-{@drKelp}	Okay, so the mussels are stressed when the temperature is below -13.3 C or above 25 C, or when PH levels are below 7.5 or above 8.9. And light levels do not make a difference on their stress levels.
 $call ArgueComplete()
-$call ArgueHideClaim()
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+// $call ArgueUnload()
+{@drKelp}	Okay, so the mussels are stressed when the temperature is below -13.3 C or above 25 C, or when PH levels are below 7.5 or above 8.9. 
+            And light levels do not make a difference on their stress levels.
 $branch .argue.reasonChemistry
 
 :: argue.incorrectFactsReasonStress
@@ -99,33 +103,28 @@ $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $branch .argue.reasonStress
 
-
 // Walk player through water chemistry
 :: argue.reasonChemistry
-$if ArgueIsComplete(musselFestReasonChemistry)
-	{@drKelp}	We've talked about the temperature, pH, and light at the site.
-	$branch .argue.chooseClaim
-$else
-	$call ArgueLoad(musselFestReasonChemistry)
-	$if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
-				$call ArgueFactSlot(WarmKelpForest.Temperature.History)
-				$call ArgueFactSlot(WarmKelpForest.LightHistory)
-				$call ArgueFactSlot(WarmKelpForest.PH.History)
-	$endif
-	$call ArgueDisplayClaim()
-	{@drKelp}	How about the site?
-	{@drKelp}	What are the temperature, pH, and light conditions there?
-		$choice #argueFactSet; Present facts from AQOS
-				$answer correct, .argue.correctFactsReasonChemistry
-				$answer incorrect, .argue.incorrectFactsReasonChemistry
-		$choice .argue.giveUp; Let me get back to you
-$endif
+$call ArgueLoad(musselFestReasonChemistry)
+$call ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
+    $call ArgueFactSlot(WarmKelpForest.Temperature.History)
+    $call ArgueFactSlot(WarmKelpForest.LightHistory)
+    $call ArgueFactSlot(WarmKelpForest.PH.History)
+$call ArgueDisplayClaim()
+{@drKelp}	How about the site?
+{@drKelp}	What are the temperature, pH, and light conditions there?
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctFactsReasonChemistry
+    $answer incorrect, .argue.incorrectFactsReasonChemistry
+$choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsReasonChemistry
+$call ArgueComplete()
 {@drKelp}	Okay, so Site C has maintained a temperature of about 21 C, has 100% light, and has a pH of 8.1.
 {@drKelp}	Ohhh... those values look promising!
-$call ArgueComplete()
-$call ArgueHideClaim()
+// $call ArgueUnload()
+$call ArgueCancelClaim()
+$call ArgueLoad(musselFestArgueMusselTemp)
 $branch .argue.chooseClaim
 
 :: argue.incorrectFactsReasonChemistry
@@ -134,10 +133,8 @@ $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $branch .argue.reasonChemistry
 
-
 // Allow player to make a claim
 ::argue.chooseClaim
-@cutscene
 $call ArgueLoad(musselFestArgueMusselTemp)
 {@drKelp}	What do you think this data means?
 	$choice .argue.lightOrPHStress; It's the light!
@@ -150,15 +147,13 @@ $choose branch
 {@drKelp}	I'm not seeing that connection based on the data we just discussed.
 $branch .argue.chooseClaim
 
+:: argue.giveUp
+{@drKelp} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+$call ArgueClearFacts()
+
 ::argue.tempStress
 $call ArgueComplete()
 {@drKelp}	I think you are right. I see the overlap here. Good to know.
 {@drKelp}	I wonder if the mussels will continue to reproduce.
 $call CompleteJob()
-
-:: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
-
-// END
-
-::end
