@@ -136,12 +136,12 @@ $branch .argue.reasonStress
 :: argue.reasonChemistry
 $call ArgueLoad(musselFestReasonChemistry)
 $call ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.claimLabelReasonChemistry)
-    $call ArgueFactSlot(WarmKelpForest.Temperature.History)
-    $call ArgueFactSlot(WarmKelpForest.LightHistory)
-    $call ArgueFactSlot(WarmKelpForest.PH.History)
+    $call ArgueFactSlot(WarmKelpForest.Temperature)
+    $call ArgueFactSlot(WarmKelpForest.Light)
+    $call ArgueFactSlot(WarmKelpForest.PH)
 $call ArgueDisplayClaim()
 {@drKelp}	How about the site?
-{@drKelp}	What are the temperature, pH, and light conditions there?
+{@drKelp}	What are the current temperature, pH, and light conditions there?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctFactsReasonChemistry
     $answer incorrect, .argue.incorrectFactsReasonChemistry
@@ -151,7 +151,7 @@ $choice .argue.giveUp; Let me get back to you
 $call ArgueComplete()
 {@drKelp}	Okay, so Site C has maintained a temperature of about 21 C, has 100% light, and has a pH of 8.1.
 {@drKelp}	Ohhh... those values look promising!
-// $call ArgueUnload()
+$call ArgueUnload()
 $call ArgueCancelClaim()
 $call ArgueLoad(musselFestArgueMusselTemp)
 $branch .argue.chooseClaim
@@ -186,3 +186,7 @@ $call ArgueComplete()
 {@drKelp}	I think you are right. I see the overlap here. Good to know.
 {@drKelp}	I wonder if the mussels will continue to reproduce.
 $call CompleteJob()
+$call ArgueUnload()
+$call ArgueCancelClaim()
+
+::end
