@@ -84,7 +84,7 @@ $set temp:newObservationTimer = 0
 
 :: generic.observation-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1052 // arbitraryily high number
+@boostScore 1052 // arbitrarily high number
 @when		tankType == "Observation"
 @once
 @cutscene
@@ -96,7 +96,7 @@ $set temp:newObservationTimer = 0
 
 :: generic.stress-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1051 // arbitraryily high number
+@boostScore 1051 // arbitrarily high number
 @when		tankType == "Stress"
 @once
 @cutscene
@@ -107,12 +107,12 @@ $set temp:newObservationTimer = 0
 
 :: generic.measurement-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1050 // arbitraryily high number
+@boostScore 1050 // arbitrarily high number
 @when		tankType == "Measurement"
 @once
 @cutscene
 {@kevin}	This is the {h}{nameof MeasurementTank}{/h}.
-			We can use it to gather numberical facts that we'll need to run simulations in the Modeling Lab.
+			We can use it to gather numerical facts that we'll need to run simulations in the Modeling Lab.
 			First you will select an {h}Environment{/h}.
 			Some environments will stress organisms, others will not. Don't be afraid to select ecosystems outside of your current job!
 			Then you will select the {h}Organisms{/h} you are trying to measure something about.
@@ -124,7 +124,7 @@ $endif
 			
 :: generic.stabilizer.intro
 @trigger	ExperimentScreenViewed
-@boostScore 1049 // arbitraryily high number
+@boostScore 1049 // arbitrarily high number
 @when		screenId == "measurement.features", HasUpgrade(WaterStabilizer)
 @once
 @cutscene
@@ -138,7 +138,7 @@ $endif
 
 :: generic.auto-feeder.intro
 @trigger	ExperimentScreenViewed
-@boostScore 1048 // arbitraryily high number
+@boostScore 1048 // arbitrarily high number
 @when		screenId == "measurement.features", HasUpgrade(AutoFeeder)
 @once
 @cutscene

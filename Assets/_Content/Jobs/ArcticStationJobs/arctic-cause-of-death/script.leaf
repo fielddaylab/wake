@@ -97,7 +97,7 @@ $call GiveFact(BowheadWhale.Temperature.Stressed)
 $call ArgueLoad(causeDeath)
 {@profWhalen} Which hypothesis seems most likely?
     $choice .argue.foodClaim; There was a problem with her food supply
-    $choice .argue.stressClaim; Something in the enviornment harmed her
+    $choice .argue.stressClaim; Something in the environment harmed her
     $choice .argue.giveUp; Let me check my notes and get back to you.
 $choose branch
 
@@ -167,7 +167,7 @@ $goto .argue.showClaim
 :: argue.unrelated2
 $call ArgueRejectIncorrect()
 {@profWhalen}   Ok, that's interesting, but it's not answering my question.
-                What facts might relate to {h}stressors{/h} Linda's enviornment?
+                What facts might relate to {h}stressors{/h} Linda's environment?
 $goto .argue.showClaim2
 
 :: argue.unrelated3
