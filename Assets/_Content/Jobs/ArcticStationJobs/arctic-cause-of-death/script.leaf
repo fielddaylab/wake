@@ -5,7 +5,6 @@
 :: start
 @trigger    JobStarted
 @cutscene
-
 {@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 $if JobTaskCompleted(getPopulationData)
@@ -92,17 +91,26 @@ $call GiveFact(BowheadWhale.Temperature.Stressed)
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(causeDeath)
+@when   !ArgueIsComplete(PopulationHistory)
 @cutscene
-$call ArgueLoad(causeDeath)
+$if ArgueIsComplete(foodCauseDeath)
+    {@profWhalen} Okay, so we've determined that some change in Linda's food supply seems to have lead to her death.
+    What can we determine about the populations for Diatoms and Ice Algae?
+    $goto .argue.populationHistory
+$endif
 {@profWhalen} Which hypothesis seems most likely?
-    $choice .argue.foodClaim; There was a problem with her food supply
-    $choice .argue.stressClaim; Something in the environment harmed her
+    $if !ArgueIsComplete(foodCauseDeath)
+        $choice .argue.foodClaim; There was a problem with her food supply
+    $endif
+    $if !ArgueIsComplete(lightCauseDeath)
+        $choice .argue.stressClaim; Something in the environment harmed her
+    $endif
     $choice .argue.giveUp; Let me check my notes and get back to you.
 $choose branch
 
 :: argue.foodClaim
 {@profWhalen}  What do these whales eat? 
+$call ArgueLoad(foodCauseDeath)
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
 	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
 	$call ArgueFactSlot(BowheadWhale.Eats.Diatoms) 
@@ -110,6 +118,7 @@ $goto .argue.showClaim
 
 :: argue.stressClaim
 {@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
+$call ArgueLoad(lightCauseDeath)
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
 	$call ArgueFactSlot(BowheadWhale.Temperature.Stressed) 
 	$call ArgueFactSlot(W_WhaleFall.Temperature) 
@@ -141,9 +150,12 @@ $choose branch
 
 ::argue.howKnow
 $call ArgueCancelClaim()
-$call ArgueUnload()
-$call ArgueLoad(PopulationHistory)
+$call ArgueComplete()
 {@profWhalen}   What do you know about the populations for Diatoms and Ice Algae?
+$goto argue.populationHistory
+
+::argue.populationHistory
+$call ArgueLoad(PopulationHistory)
 $call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
     $call ArgueFactSlot(W_WhaleFall.PopulationHistory.IceAlgae) 
     $call ArgueFactSlot(W_WhaleFall.PopulationHistory.Diatoms) 
@@ -153,8 +165,8 @@ $goto .argue.showClaim3
 
 ::argue.transition
 $call ArgueCancelClaim()
-$call ArgueUnload()
-$call ArgueLoad(ToFood)
+$call ArgueComplete()
+$call ArgueLoad(foodCauseDeath)
 {@profWhalen}   These seem compatible. It must have been the food supply.
 $goto .argue.foodClaim
 
@@ -178,8 +190,8 @@ $goto .argue.showClaim3
 
 :: argue.giveUp
 {@profWhalen} OK. Get back to me when you're ready.
-$call ArgueCancelClaim()
-$call ArgueUnload()
+// $call ArgueCancelClaim()
+$call ArgueClearFacts()
 
 // END
 :: argue.complete

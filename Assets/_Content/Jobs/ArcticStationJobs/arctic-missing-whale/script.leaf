@@ -107,7 +107,6 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 {@kevin}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
-
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(findLinda)
@@ -162,7 +161,6 @@ $goto .argue.showClaim
                 Don't come back until you've found some evidence of her. 
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   Oh. With both pieces of evidence... Well, that's unfortunate.

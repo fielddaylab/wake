@@ -22,7 +22,7 @@ $endif
 @when JobTaskCompleted(scanCritters)
 @once
 @cutscene
-{@kevin}    I'd say we know enough to make a {h}visual model{/h} now.
+{@kevin}    I'd say we know enough to start making a {h}visual model{/h} now.
 
 :: helpScan
 @trigger    RequestPartnerHelp
@@ -98,7 +98,6 @@ $goto .argue.showClaim
 {@profWhalen} OK. Get back to me when you're ready.
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   It looks like quite a few organisms came to feast on her. 
