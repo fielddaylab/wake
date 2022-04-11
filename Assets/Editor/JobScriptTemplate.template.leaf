@@ -17,8 +17,9 @@
 @cutscene
 $call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
 // TODO: add your claim label to jobs.aqloc
-$call ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-		$call ArgueFactSlot() // TODO: put fact slot info here 
+$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
+    $call ArgueFactSlot() // TODO: put fact slot info here 
+$endif
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
