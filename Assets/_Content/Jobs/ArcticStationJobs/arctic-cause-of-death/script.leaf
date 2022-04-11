@@ -111,17 +111,19 @@ $choose branch
 :: argue.foodClaim
 {@profWhalen}  What do these whales eat? 
 $call ArgueLoad(foodCauseDeath)
-$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+$if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
 	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
 	$call ArgueFactSlot(BowheadWhale.Eats.Diatoms) 
+$endif
 $goto .argue.showClaim
 
 :: argue.stressClaim
 {@profWhalen}   Really? How does the environment compare to the stressed ranges I gave you?
 $call ArgueLoad(lightCauseDeath)
-$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
+$if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel2) 
 	$call ArgueFactSlot(BowheadWhale.Temperature.Stressed) 
 	$call ArgueFactSlot(W_WhaleFall.Temperature) 
+$endif
 $goto .argue.showClaim2
 
 ::argue.showClaim
@@ -156,11 +158,12 @@ $goto argue.populationHistory
 
 ::argue.populationHistory
 $call ArgueLoad(PopulationHistory)
-$call ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
+$if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
     $call ArgueFactSlot(W_WhaleFall.PopulationHistory.IceAlgae) 
     $call ArgueFactSlot(W_WhaleFall.PopulationHistory.Diatoms) 
     $call ArgueFactSlot(W_WhaleFall.Population.IceAlgae) 
     $call ArgueFactSlot(W_WhaleFall.Population.Diatoms) 
+$endif
 $goto .argue.showClaim3
 
 ::argue.transition
