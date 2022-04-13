@@ -184,6 +184,14 @@ $branch .purchaseAttempt.genericCostLine
             The ocean can get pretty dark out there, and who knows what's hiding in it?
 $branch .purchaseAttempt.genericCostLine
 
+:: purchaseAttempt.probeHacker
+@trigger    ShopAttemptBuy
+@when       itemId == "ProbeHacker"
+@cutscene
+{@merchant} I see you're looking at the {nameof ProbeHacker}!
+            This little gizmo will allow you to read data from any probes you find at the dive sites.
+$branch .purchaseAttempt.genericCostLine
+
 :: purchaseAttempt.engine
 @trigger    ShopAttemptBuy
 @when       itemId == "Engine"
