@@ -8,8 +8,8 @@
 
 $branch common.ringPhone
 
-{@drKelp}	Oh, welcome back, {player-name}! 
-            I need you to head over to Site A and see if anything is different there. 
+{@drKelp}	Oh, welcome back, {@player}! 
+            I need you to head over to {h}site A{/h} and see if anything is different there. 
             When you're done, check in with me at your {map-name}Office{/map-name}!
 
 $call UnlockSite(RS-1A)
@@ -25,16 +25,16 @@ $call UnlockSite(RS-1A)
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C", JobTaskTop(siteA)
 @cutscene
-{player}    Is this where we should be?
+{@player}    Is this where we should be?
 {@kevin}    No, I don't think so...
-            Let's surface and head over to Site A.
+            Let's surface and head over to {h}Site A{/h}.
 
 :: helpGoToSiteA
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskTop(siteA)
 @cutscene
 {@player} 	Where should we be going again?
-{@kevin}	Site A should be just west of the ship.
+{@kevin}	{h}Site A{/h} should be just west of the ship.
             Let's head over!
 
 // at the site
@@ -44,7 +44,7 @@ $call UnlockSite(RS-1A)
 @when 		scene:name == "RS-1A", JobTaskTop(siteA)
 @cutscene
 {@player} 	So... what now?
-{@kevin}	We need to look around for new species. 
+{@kevin}	We need to look around for this so called... Bull Kelp. 
 
 // to experimentation
 
@@ -178,8 +178,6 @@ $call ArgueComplete()
 {@drKelp} Aha! So just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
-
-
 
 // END
 

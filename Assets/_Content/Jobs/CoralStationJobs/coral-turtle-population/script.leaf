@@ -6,8 +6,8 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at Site V.
-{@profCempaka}  Drop in at Site V and use your Scanner to locate a Turtle.
+{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at {h}site V{/h}.
+{@profCempaka}  Drop in at {h}site V{/h} and use your Scanner to locate a Turtle.
 {@profCempaka}  Then switch to Counting mode and navigate the site to get a representative sample.
 {@player} 	We're on our way!
 
@@ -23,14 +23,14 @@ $branch common.ringPhone
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin} You're gonna want to Dive at Site V.  Should be around here somewhere.
+{@kevin} You're gonna want to Dive at {h}site V{/h}.  Should be around here somewhere.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Station2", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   I think I'm lost?
-{@kevin}	Site V should be just East of the ship.
+{@kevin}	{h}Site V{/h} should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
@@ -140,7 +140,7 @@ $set jobs:coral-turtle-population.got.pop = true
 {@kevin}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
-
+// 
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(turtlePopulationArgue)

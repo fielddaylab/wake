@@ -1,21 +1,18 @@
 :: basePath job.bayou-displaced-reef
 
-// INTRO
-
 :: start
 @trigger    JobStarted
 @cutscene
 
 $branch common.ringPhone
 
-{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of Site O. 
+{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
                 Would you be able to go pop over and help us report back on what exactly is growing over there?
 {@player}   You can count on me!
 
-
-:: diveSite
-@trigger    JobTasksUpdated
-@when       JobTaskActive(getCounts)
+:: giveROVTagger
+@trigger    SceneStart
+@when       scene:name == "BayouStation"
 @once
 @cutscene
 $if !HasUpgrade(ROVTagger)
@@ -36,21 +33,21 @@ $endif
 @when 		JobTaskActive(visitSiteO)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site O.
+{@kevin}    Head to {h}site O{/h}, it's just South of us!
 
 :: catchGetScans
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getScans)
 @boostScore -5
 @cutscene
-{@kevin}    Scan and count the species at Site O.
+{@kevin}    Scan and count the species at {h}site O{/h}.
 
 :: catchGetCounts
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getCounts)
 @boostScore -5
 @cutscene
-{@kevin}    Count the species at Site O.
+{@kevin}    Count the species at {h}site O{/h}.
 
 :: catchReportback
 @trigger    RequestPartnerHelp
@@ -93,17 +90,8 @@ $call ArgueCancelClaim()
 
 ::end
 
-// END
-
 :: argue.correctPopulation
 $call ArgueComplete()
 {@profHarper} That looks great. 
 {@profHarper} It looks like you are getting good at estimating populations with your sub.
 $call CompleteJob()
-
-//:: end
-//@trigger    JobCompleted
-//@cutscene
-
-//// write a conclusion to your job
-//{@kevin}    This is the conclusion to the NewJobDesc job!
