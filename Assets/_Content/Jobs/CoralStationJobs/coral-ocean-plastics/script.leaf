@@ -88,21 +88,21 @@ $choose branch
 
 ::argue.turtles
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Not the turtles! Do you have evidence for this claim?	
 $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-		$call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
+    $call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
 
 ::argue.queen
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFactsDummy

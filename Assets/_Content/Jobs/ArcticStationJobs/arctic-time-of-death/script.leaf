@@ -18,7 +18,7 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @trigger RequestPartnerHelp
 @cutscene
 {@kevin}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
-            If we collect population data for all the specices in {h}site W{/h} we should be able to match something up with our model.
+            If we collect population data for all the species in {h}site W{/h} we should be able to match something up with our model.
             Then we'll be able to roughly determine how long ago Linda met her end.
 
 // CATCH-ALL GUIDE TEXT
@@ -89,7 +89,7 @@ $goto .argue.showZombieWormsWrong
 
 :: argue.zombieWormsEarly
 $call ArgueRejectIncorrect()
-{@profWhalen}   Interesting, it seems like the zombie worms could have occured earlier.
+{@profWhalen}   Interesting, it seems like the zombie worms could have occurred earlier.
                 Can you check the species populations against the model I gave you and adjust your claim? 
 $call ArgueCancelClaim()
 $call ArgueUnload()
