@@ -58,19 +58,6 @@ $call FocusHighlight->Clear()
 {@kevin}    Hey, Kel gave us coordinates to some new stations!
             We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
 
-// exp   
-   
-:: after30Exp
-@trigger    ExpUp
-@when       player:exp >= 35
-@once
-@cutscene
-
-{@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
-            I hear there's a mechanic right off the dock that can upgrade our ship.
-            Maybe we should check them out?
-$call UnlockRoom("Shop")
-
 // Coral Station
 
 :: atCoralStation

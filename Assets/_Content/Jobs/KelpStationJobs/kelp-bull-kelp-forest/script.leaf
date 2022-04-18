@@ -180,7 +180,6 @@ And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
 
 // END
-
 :: end
 @trigger    JobCompleted
 @cutscene
@@ -190,20 +189,14 @@ $call CompleteJob()
 {@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
 {@drKelp}   Indeed! Finding those parallels can be quite rewarding.
             You're doing some excellent work for us! I have some colleagues in other parts of the ocean that would love some help.
-{@kevin}	Oh, the extra cash would be great.
+{@kevin}	Oh, the extra cash would be great!
 {@drKelp}	Yep! Maybe they'll have work for you too!
-			I'll mark their stations on your map.
+            I'll reach out to them and get back to you soon with the coordinates of their stations.
+{hide-dialog}
+{wait 1.5}
 
-$branch common.download
-
-$call UnlockStation(CoralStation)
-$call UnlockStation(ArcticStation)
-$call UnlockStation(BayouStation)
-
-$call UnlockRoom(WorldMap)
-$call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
-$call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
-
-{@player}   Thanks, Kel!
-{@drKelp}   No problem! Now if you head back to the {map-name}Job Board{/map-name} I have some more work for you!
-            But don't be afraid to pay my colleagues a visit first!
+{@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
+            Before we head out, we might wanna upgrade our ship with some of our earnings.
+            I hear there's a mechanic right off the dock that can upgrade our ship. Maybe we should check them out?
+$call UnlockRoom("Shop")
+$call SetJob(kelp-shop-welcome)
