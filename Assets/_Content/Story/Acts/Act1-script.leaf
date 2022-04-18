@@ -55,21 +55,8 @@ $call FocusHighlight->Clear()
 @cutscene
 @boostScore 100
 
-{@kevin}    Hey, Kel gave us coordinates to a new station!
-            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and head over there instead!
-
-// exp   
-   
-:: after30Exp
-@trigger    ExpUp
-@when       player:exp >= 35
-@once
-@cutscene
-
-{@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
-            I hear there's a mechanic right off the dock that can upgrade our ship.
-            Maybe we should check them out?
-$call UnlockRoom("Shop")
+{@kevin}    Hey, Kel gave us coordinates to some new stations!
+            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
 
 // Coral Station
 
@@ -87,16 +74,27 @@ $branch common.ringPhone
 				Hope you like turtles. They are all over the coral reef.
 				I have some jobs listed on the Job Board, let me know if you're interested.
 
+:: atBayouStation
+@trigger    RoomEnter
+@when       roomId == "helm", player:currentStation == "BayouStation"
+@boostScore 100
+@once
+@cutscene
+$branch common.ringPhone
+{@player}   Well this is new.
+{@profHarper}   Oh, hello! Welcome to the Bayou Station!
+                This is an exciting time to be a Bayou researcher!
+{@player}   Oh yeah?
+{@profHarper}   I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
+                I'm looking forward to working with you!
 
 :: atArcticStation
 @trigger    RoomEnter
 @when       roomId == "helm", player:currentStation == "ArcticStation"
-@once
 @boostScore 100
+@once
 @cutscene
-
 $branch common.ringPhone
-
 {@player}   {slow}Brrrrrrr{/slow}{auto}{wait 0.5}
 {@profWhalen}   Oh,| hello!| You're not a whale...
 				Well...| welcome to the Arctic Station!

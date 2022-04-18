@@ -40,6 +40,13 @@ $endif
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
 
+:: helpTanks
+@trigger    RequestPartnerHelp
+@when   JobTaskTop(modelInteractions)
+$if !HasFact(ZombieWorm.Eats.Detritus)
+    I wonder what {h}ZombieWorms{/h} are eating...
+$endif
+
 ::reportBack
 @trigger    RequestPartnerHelp
 @when JobTaskTop(reportBack)
