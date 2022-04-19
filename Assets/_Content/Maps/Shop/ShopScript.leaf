@@ -165,6 +165,17 @@ $set    shop:notEnoughCount + 1
 {@merchant} Okay! Well if you find something you want, let me know.
 
 // specialized purchase dialog
+:: purchaseAttempt.ROVTagger
+@trigger    ShopAttemptBuy
+@when       itemId == "ROVTagger"
+@cutscene
+{@merchant} Ahh the {nameof ROVTagger},| A wise choice!
+{@merchant} You should see the {nameof ROVTagger} at the top of your view.  
+{@merchant} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+{@merchant} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+{@kevin} That's super convenient! We should definitely get this!
+$set    jobs:common-dive.seen.tagger-intro = true
+$branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.propGuard
 @trigger    ShopAttemptBuy
@@ -182,6 +193,14 @@ $branch .purchaseAttempt.genericCostLine
 
 {@merchant} Nice, I see you're looking at the {nameof Flashlight}!
             The ocean can get pretty dark out there, and who knows what's hiding in it?
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.probeHacker
+@trigger    ShopAttemptBuy
+@when       itemId == "ProbeHacker"
+@cutscene
+{@merchant} I see you're looking at the {nameof ProbeHacker}!
+            This little gizmo will allow you to read data from any probes you find at the dive sites.
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.engine
@@ -226,6 +245,8 @@ $branch .purchaseAttempt.genericCostLine
 
 {@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to create visualizations of the different connections between species.
+{@kevin}    Hmmm. I feel like this could come in handy later...
+            I think we should purchase this item.
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.predictionModel

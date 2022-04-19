@@ -1,0 +1,41 @@
+:: basePath job.kelp-shop-welcome
+
+:: helpGoShop
+@trigger    RequestPartnerHelp
+@when 		scene:name != "Shop"
+@cutscene
+{@player} 	Where should we be going again?
+{@kevin}    Before we head out, we might wanna upgrade our ship with some of our earnings.
+            I hear there's a mechanic right off the dock that can upgrade our ship. Let's check them out!
+
+:: helpAtShop
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Shop"
+@cutscene
+{@player} 	What are we doing here?
+{@kevin}    We're looking to upgrade our ship with some of our earnings.
+            Why don't you check out some of the instruments {nameof @merchant} has for sale.
+
+// END
+:: end
+@trigger    SceneStart
+@when       scene:name == "Ship"
+@cutscene
+$if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
+    {@drKelp}   Hey guys! Just got back from my colleagues and they're excitited to meet you guys.
+                Feel free to pay my colleagues a visit first!
+
+    $branch common.download
+    $call UnlockStation(CoralStation)
+    $call UnlockStation(ArcticStation)
+    $call UnlockStation(BayouStation)
+
+    $call UnlockRoom(WorldMap)
+    $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
+    $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
+
+    {@player}   Thanks, Kel!
+    {@drKelp}   No problem!
+                If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
+    $call CompleteJob()
+$endif

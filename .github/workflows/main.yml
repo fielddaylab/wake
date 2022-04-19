@@ -40,7 +40,14 @@ jobs:
     - name: Checkout submodules
       uses: srt32/git-actions@v0.0.3
       with:
-        args: git submodule update --init --recursive
+        args:  |
+          git config --global --add safe.directory "/github/workspace"
+          git config --global --add safe.directory /github/workspace/Submodules/BeauUtil
+          git config --global --add safe.directory /github/workspace/Submodules/Leaf
+          git config --global --add safe.directory /github/workspace/Submodules/Leaf/Submodules/BeauUtil
+          git config --global --add safe.directory /github/workspace/Submodules/opengamedata-unity
+          git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
+          git submodule update --init --recursive
 
     # Extracts branch name into BRANCH environment variable
     - name: Extract branch name
