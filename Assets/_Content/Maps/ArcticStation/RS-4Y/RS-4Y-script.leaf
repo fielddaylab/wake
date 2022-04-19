@@ -4,6 +4,7 @@
 @trigger    PlayerEnterRegion
 @when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X"
 @triggerPriority   High
+@boostScore 1060 // higher than intro scripts
 @once
 @cutscene
 {@player}   What| just happened!?
