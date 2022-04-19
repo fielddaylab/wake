@@ -31,16 +31,16 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 @cutscene
 {@kevin}	Look's like we're picking up a faint signal. The tracker is definitely here.
             Either Linda's here somewhere, or her tracker fell off. 
-$if !HasUpgrade(ROVTagger)
-    $branch common.ringPhone
-	{@profWhalen} I forgot to mention, I attached this tool to your ship before you left. I often find it comes in handy with the work I do.
-	$call GiveUpgrade(ROVTagger)
-	{@profWhalen} You should see the {nameof ROVTagger} at the top of your view.  
-	{@profWhalen} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-	{@profWhalen} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-	{@kevin} That's really convenient.
-    $set    jobs:common-dive.seen.tagger-intro = true
-$endif
+// $if !HasUpgrade(ROVTagger)
+//     $branch common.ringPhone
+// 	{@profWhalen} I forgot to mention, I attached this tool to your ship before you left. I often find it comes in handy with the work I do.
+// 	$call GiveUpgrade(ROVTagger)
+// 	{@profWhalen} You should see the {nameof ROVTagger} at the top of your view.  
+// 	{@profWhalen} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+// 	{@profWhalen} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+// 	{@kevin} That's really convenient.
+//     $set    jobs:common-dive.seen.tagger-intro = true
+// $endif
 			
 :: LookAround
 @trigger    RequestPartnerHelp

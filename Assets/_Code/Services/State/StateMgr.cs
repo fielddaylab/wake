@@ -248,11 +248,11 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
 
+            ProcessCallbackQueue();
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
             Services.Physics.Enabled = true;
 
-            ProcessCallbackQueue();
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
@@ -338,6 +338,7 @@ namespace Aqua
             }
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+            ProcessCallbackQueue();
             inNextScene.BroadcastLoaded(inContext);
             if (!m_SceneLock)
             {
@@ -345,7 +346,6 @@ namespace Aqua
                 Services.Physics.Enabled = true;
                 m_SceneLock = false;
 
-                ProcessCallbackQueue();
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
                 Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
