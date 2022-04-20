@@ -78,6 +78,7 @@ namespace Aqua
             BFProduce.Configure();
             BFGrow.Configure();
             BFEat.Configure();
+            BFParasite.Configure();
             BFDeath.Configure();
             BFConsume.Configure();
             BFBody.Configure();

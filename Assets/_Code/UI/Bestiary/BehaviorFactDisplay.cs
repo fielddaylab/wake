@@ -18,18 +18,18 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public void Populate(BFBehavior inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        public void Populate(BFBehavior inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             Sprite icon = inFact.Icon;
-            if (inFact.Type == BFTypeId.Eat && (inReference != null && inReference != inFact.Parent)) {
-                icon = Services.Assets.Bestiary.DefaultIsEatenIcon();
+            if (BFType.IsBorrowed(inFact, inReference)) {
+                icon = Services.Assets.Bestiary.DefaultBorrowedIcon(inFact);
             }
 
             m_Icon.sprite = icon;
             m_Icon.gameObject.SetActive(icon);
             m_Background.color = Services.Assets.Bestiary.BehaviorColor(inFact, inFlags);
             
-            m_Sentence.Populate(inFact, inReference, inFlags);
+            m_Sentence.Populate(inFact, inFlags, inReference);
 
             if (inFact.OnlyWhenStressed) {
                 m_StressedBadge.gameObject.SetActive(true);

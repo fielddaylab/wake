@@ -345,6 +345,14 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a mass amount.
+        /// </summary>
+        static public string FormatMass(float inAmount)
+        {
+            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(inAmount);
+        }
+
+        /// <summary>
         /// Formats population for a given critter type.
         /// </summary>
         static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation)

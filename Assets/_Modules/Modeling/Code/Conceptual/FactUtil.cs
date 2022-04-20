@@ -31,7 +31,7 @@ namespace Aqua.Modeling {
                 foreach(var fact in potentialFacts) { 
                     switch(fact.Type) {
                         case BFTypeId.Eat:
-                        case BFTypeId.Parasites: {
+                        case BFTypeId.Parasite: {
                             if (critters.Contains(BFType.Target(fact))) {
                                 importableFacts.PushBack(fact);
                             }

@@ -81,9 +81,9 @@ namespace Aqua.Portable {
                     bBehavior = true;
                 }
 
-                MonoBehaviour factDisplay = page.FactPools.Alloc(fact, entry,
+                MonoBehaviour factDisplay = page.FactPools.Alloc(fact,
                     Save.Bestiary.GetDiscoveredFlags(fact.Id),
-                    page.FactLayout.transform);
+                    entry, page.FactLayout.transform);
 
                 finalizeCallback(fact, factDisplay);
             }

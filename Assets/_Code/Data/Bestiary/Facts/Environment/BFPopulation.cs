@@ -1,11 +1,6 @@
-using System.Collections.Generic;
-using BeauPools;
-using BeauUtil;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Population")]
     public class BFPopulation : BFBase
     {
@@ -36,7 +31,7 @@ namespace Aqua
             return BestiaryDesc.SortById(((BFPopulation) x).Critter, ((BFPopulation) y).Critter);
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFPopulation fact = (BFPopulation) inFact;
             BFDetails details;

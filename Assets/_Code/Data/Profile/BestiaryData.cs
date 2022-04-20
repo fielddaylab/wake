@@ -222,15 +222,21 @@ namespace Aqua.Profile
             if (!HasFact(inFactId))
                 return BFDiscoveredFlags.None;
 
-            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Assets.Fact(inFactId));
+            BFBase fact = Assets.Fact(inFactId);
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(fact);
+            StringHash32 pair = BFType.PairId(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
+            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
+                flags |= BFDiscoveredFlags.HasPair;
             return flags;
         }
 
         public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
+            inFlags &= ~BFDiscoveredFlags.TempMask;
+
             if (inFlags <= 0)
                 return false;
             
@@ -269,6 +275,8 @@ namespace Aqua.Profile
 
         public bool RemoveDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
+            inFlags &= ~BFDiscoveredFlags.TempMask;
+
             if (inFlags <= 0)
                 return false;
             
@@ -304,7 +312,7 @@ namespace Aqua.Profile
 
         public bool IsFactFullyUpgraded(StringHash32 inFactId)
         {
-            return GetDiscoveredFlags(inFactId) == BFDiscoveredFlags.All;
+            return (GetDiscoveredFlags(inFactId) & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
 
         #endregion // Facts

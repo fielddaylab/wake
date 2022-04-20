@@ -233,7 +233,7 @@ namespace Aqua {
                     bUsedVertical = true;
                 }
 
-                factView = m_FactPools.Alloc(factList[i], null, flags, target);
+                factView = m_FactPools.Alloc(factList[i], flags, inFacts.Reference, target);
                 factTransform = (RectTransform)factView.transform;
                 if (bCurrentIsGrid) {
                     gridCellSize.y = Mathf.Max(gridCellSize.y, factTransform.sizeDelta.y);
@@ -476,17 +476,20 @@ namespace Aqua {
         public ListSlice<BFBase> Facts;
         public ListSlice<BFDiscoveredFlags> Flags;
         public Predicate<BFBase> ShowNew;
+        public BestiaryDesc Reference;
 
         public PopupFacts(ListSlice<BFBase> facts) {
             Facts = facts;
             Flags = default;
             ShowNew = null;
+            Reference = null;
         }
 
         public PopupFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags) {
             Facts = facts;
             Flags = flags;
             ShowNew = null;
+            Reference = null;
         }
     }
 

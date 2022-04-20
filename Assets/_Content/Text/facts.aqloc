@@ -12,6 +12,12 @@ catches
 :: isCaughtBy
 is caught by
 
+:: stresses
+stresses
+
+:: isStressedBy
+is stressed by
+
 :: produce
 produces
 
@@ -36,47 +42,53 @@ grows
 :: whenStressed
 when stressed
 
-:: less
-Less
+:: uncertainQuantity
+some
 
-:: less.lower
+:: uncertainQuantity.cap
+Some
+
+:: less
 less
 
-:: fewer
-Fewer
+:: less.cap
+Less
 
-:: fewer.lower
+:: fewer
 fewer
 
-:: more
-More
+:: fewer.cap
+Fewer
 
-:: more.lower
+:: more
 more
 
-:: slower
-Slower
+:: more.cap
+More
 
-:: slower.lower
+:: slower
 slower
 
-:: faster
-Faster
+:: slower.cap
+Slower
 
-:: faster.lower
+:: faster
 faster
 
-:: sameAmount
-The Same Amount
+:: faster.cap
+Faster
 
-:: sameAmount.lower
+:: sameAmount
 the same amount
 
-:: sameRate
-At The Same Rate
+:: sameAmount.cap
+The same amount
 
-:: sameRate.lower
+:: sameRate
 at the same rate
+
+:: sameRate.cap
+At the same rate
 
 :: flatGraph.label
 Stable
@@ -142,29 +154,38 @@ Intervention Model Report
 :: eat
 {critter-name}{0}{/critter-name} eats {critter-name}{1}{/critter-name}.
 
-:: catch
-{critter-name}{0}{/critter-name} catches {critter-name}{1}{/critter-name}.
+:: eat.rate
+{critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name}.
 
 :: eat.stressed
+{critter-name}{0}{/critter-name} eats {critter-name}{1}{/critter-name} when stressed.
+
+:: eat.stressed.rate
 {critter-name}{0}{/critter-name} eats {1} {critter-name}{2}{/critter-name} when stressed.
+
+:: catch
+{critter-name}{0}{/critter-name} catches {1} {critter-name}{2}{/critter-name}.
+
+:: stresses
+{critter-name}{0}{/critter-name} stresses {1} {critter-name}{2}{critter-name}.
 
 :: produce
 {critter-name}{0}{/critter-name} produces {property-name}{1}{/property-name}.
 
 :: produce.stressed
-{critter-name}{0}{/critter-name} produces {1} {property-name}{2}{/property-name} when stressed.
+{critter-name}{0}{/critter-name} produces {property-name}{2}{/property-name} {1} when stressed.
 
 :: consume
 {critter-name}{0}{/critter-name} consumes {property-name}{1}{/property-name}.
 
 :: consume.stressed
-{critter-name}{0}{/critter-name} consumes {1} {property-name}{2}{/property-name} when stressed.
+{critter-name}{0}{/critter-name} consumes {property-name}{2}{/property-name} {1} when stressed.
 
 :: reduce
 {critter-name}{0}{/critter-name} reduces {property-name}{1}{/property-name}.
 
 :: reduces.stressed
-{critter-name}{0}{/critter-name} reduces {1} {property-name}{2}{/property-name} when stressed.
+{critter-name}{0}{/critter-name} reduces {property-name}{2}{/property-name} {1} when stressed.
 
 :: reproduce
 {critter-name}{0}{/critter-name} reproduces.
@@ -183,12 +204,6 @@ Intervention Model Report
 
 :: grow.stressed
 {critter-name}{0}{/critter-name} grows {1} when stressed.
-
-:: death
-{critter-name}{0}{/critter-name} dies.
-
-:: death.stressed
-{critter-name}{0}{/critter-name} dies {1} when stressed.
 
 :: population
 There are {0} {critter-name}{1}{/critter-name} at {env-name}{2}{/env-name}.
