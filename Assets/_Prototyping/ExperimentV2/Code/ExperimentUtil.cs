@@ -143,6 +143,9 @@ namespace ProtoAqua.ExperimentV2 {
             if ((result.Feedback & ExperimentFeedbackFlags.HadObservationsRemaining) != 0) {
                 hints.Add("experiment.summary.hadRemainingObservations");
             }
+            if ((result.Feedback & ExperimentFeedbackFlags.ParasiteNeedsObserve) != 0) {
+                hints.Add("experiment.summary.parasiteNeedsObserveFirst");
+            }
             TextId noteBase = "experiment.summary.noteHeader";
             if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {
                 noteBase = "experiment.summary.noInteractionHeader";
