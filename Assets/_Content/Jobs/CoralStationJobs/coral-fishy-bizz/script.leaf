@@ -149,6 +149,36 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchGetScans
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getScans)
+@boostScore -5
+@cutscene
+{@kevin}    Site V has Fishers and Grouper we need to scan.
+
+:: catchHistoricalPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site V and get the population probe data.
+
+:: catchGetModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Modeling Lab. We need to determine how many boats should be able to fish at the same time.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Take your prediction to Professor Cempaka in the Office.
+
 //ARGUMENT
 
 :: argue.intro
@@ -160,9 +190,9 @@ $branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
 $if HasFact(ReefEdge.Model.GrouperFishingRate)
-	{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
-		$choice .argue.claimSome; We can reduce fishing by 12 fishers.
-		$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
+	{@profCempaka} So, how can we make the Grouper population sustainable for fishing?
+		$choice .argue.claimSome; We must reducing fishing significanly.
+		$choice .argue.claimTooMany; We must reduce fishing only by a small mount.
 		$choice .argue.claimNone; We can't fish here at all.
 	$choose branch	
 $else

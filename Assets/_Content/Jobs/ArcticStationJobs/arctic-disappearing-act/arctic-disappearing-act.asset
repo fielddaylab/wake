@@ -1,0 +1,218 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: arctic-disappearing-act
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.arctic-disappearing-act.name
+    m_HashValue: 3144363191
+  m_PosterId:
+    m_HashValue: 2307648171
+  m_DescId:
+    m_Source: jobs.arctic-disappearing-act.desc
+    m_HashValue: 3541391133
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 2
+  m_ModelingDifficulty: 2
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 6a9a29df2b3f3734f9e46b26f6734ad6, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades:
+  - m_HashValue: 165582993
+  - m_HashValue: 3082617054
+  - m_HashValue: 3188184158
+  m_PrereqExp: 0
+  m_StationId:
+    m_HashValue: 1297447963
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: scanCritters
+      m_HashValue: 1495220036
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.scanCritters
+      m_HashValue: 3082152420
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: W_WhaleFall
+        m_HashValue: 924743861
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BristleWorm
+        m_HashValue: 1315630147
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Hagfish
+        m_HashValue: 339695989
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: NorthAtlanticOctopus
+        m_HashValue: 2040916345
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ZombieWorm
+        m_HashValue: 7668088
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: modelInteractions
+      m_HashValue: 331644267
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.modelInteractions
+      m_HashValue: 462683659
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Model.WhaleFallVisual
+        m_HashValue: 617339164
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanCritters
+      m_HashValue: 1495220036
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.reportBack
+      m_HashValue: 1337745444
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: modelInteractions
+      m_HashValue: 331644267
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanCritters
+      m_HashValue: 1495220036
+    IdString: scanCritters
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.scanCritters
+      m_HashValue: 3082152420
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: W_WhaleFall
+        m_HashValue: 924743861
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BristleWorm
+        m_HashValue: 1315630147
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Hagfish
+        m_HashValue: 339695989
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: NorthAtlanticOctopus
+        m_HashValue: 2040916345
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ZombieWorm
+        m_HashValue: 7668088
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: modelInteractions
+      m_HashValue: 331644267
+    IdString: modelInteractions
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.modelInteractions
+      m_HashValue: 462683659
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: W_WhaleFall.Model.WhaleFallVisual
+        m_HashValue: 617339164
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-disappearing-act.task.reportBack
+      m_HashValue: 1337745444
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  m_CashReward: 100
+  m_ExpReward: 10
+  m_Scripting: {fileID: -1942890987711236906, guid: b21ec3a0425af084dada94f4b3a74421,
+    type: 3}
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: 8439855a941991444a603d79db0fede0, type: 2}

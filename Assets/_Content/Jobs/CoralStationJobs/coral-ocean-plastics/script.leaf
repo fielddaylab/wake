@@ -47,6 +47,29 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @cutscene
 {@kevin}   Seems like we've gotten everything we need from here. Head back up to the surface when you're ready to leave.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanReef)
+@boostScore -5
+@cutscene
+{@kevin}    Scan the Organisms at Site V.
+
+:: catchWhatTurtlesEat
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(whatTurtlesEat)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Observation Tank, figure out what Turtles eat.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
+
 // ARGUMENTATION
 
 ::argue.intro
@@ -65,21 +88,21 @@ $choose branch
 
 ::argue.turtles
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Not the turtles! Do you have evidence for this claim?	
 $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-		$call ArgueFactSlot(ReefEdge.Model.Visual)
+    $call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
 
 ::argue.queen
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFactsDummy
@@ -98,7 +121,7 @@ $goto .argue.chooseFactsDummy
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.Prediction, .argue.done
+    $answer ReefEdge.Model.TurtleVisual, .argue.done
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
@@ -131,8 +154,10 @@ $call CompleteJob()
 $call ArgueRejectIncorrect()
 {@profCempaka}  I'm not seeing a clear relationship between that species and the plastic.
                 Can you head back and double check your observations?
+$call ArgueCancelClaim()
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
 
 ::end

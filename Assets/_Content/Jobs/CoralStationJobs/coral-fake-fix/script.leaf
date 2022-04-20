@@ -6,7 +6,7 @@
 
 $branch common.ringPhone
 
-{@kevin}	Okay -- to prove that the artifical reefs are working, you would need evidence that the artificial reefs are still there,
+{@kevin}	Okay -- to prove that the artificial reefs are working, you would need evidence that the artificial reefs are still there,
 			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
 
 // SCANNING
@@ -69,6 +69,35 @@ $call GiveFact(LionfishInvasion.Population.ArtificialReef)
 @cutscene
 {@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findReef)
+@boostScore -5
+@cutscene
+{@kevin}    Look for an artificial reef at Site S.
+
+:: catchScanProbes
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbes)
+@boostScore -5
+@cutscene
+{@kevin}    There should be a population probe at Site S. Scan it.
+
+:: catchCountPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Count how much coral and artificial reef is at Site S.
+
+:: catchArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 
@@ -79,9 +108,10 @@ $call GiveFact(LionfishInvasion.Population.ArtificialReef)
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-{@profCempaka}	Have the artificial reefs improved coral populations?
+{@profCempaka}	Have the artificial reefs increased coral populations?
 	$choice .argue.claimNoHelp; The artificial reefs have not helped.
 	$choice .argue.claimHelp; The artificial reefs helped!
+	$choice .argue.giveUp; Let me check my notes and get back to you
 $choose branch	
 
 // BRANCH: NO HELP

@@ -141,6 +141,36 @@ namespace ScriptableBake {
 
         #endregion // Assets
 
+        #region Manual Selection
+
+        /// <summary>
+        /// Bakes a list of objects.
+        /// </summary>
+        static public void Objects(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+            IEnumerator iter = ObjectsAsync(objects, flags);
+            using (iter as IDisposable) {
+                while (iter.MoveNext()) ;
+            }
+        }
+
+        /// <summary>
+        /// Bakes a list of objects asynchronously.
+        /// Use this in a coroutine.
+        /// </summary>
+        static public IEnumerator ObjectsAsync(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+            List<IBaked> bakeAssets = new List<IBaked>(objects.Count);
+            for (int i = 0; i < objects.Count; i++) {
+                IBaked baked = objects[i] as IBaked;
+                if (baked != null) {
+                    bakeAssets.Add(baked);
+                }
+            }
+
+            return Process(bakeAssets, "Objects", flags, null);
+        }
+
+        #endregion // Manual Selection
+
         #region Prefabs
 
         // static public IEnumerator PrefabsAsync(string[] directories, BakeFlags flags = 0) {
@@ -257,6 +287,9 @@ namespace ScriptableBake {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);
                                     onModify?.Invoke(unityObj);
+                                    if (bVerbose) {
+                                        Debug.LogFormat("[Bake] baked changes to '{0}'", bakedObj.ToString());
+                                    }
                                 } else {
                                     baked.RemoveAt(i--);
                                 }

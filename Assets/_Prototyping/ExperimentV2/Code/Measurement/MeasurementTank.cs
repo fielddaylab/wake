@@ -95,6 +95,9 @@ namespace ProtoAqua.ExperimentV2 {
                     }
                 }
             };
+            m_ParentTank.ActorBehavior.ReproAvailable = () => {
+                return m_IsolatedVar == IsolatedVariable.Reproduction || m_IsolatedVar == IsolatedVariable.Unknown;
+            };
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
             m_EnvironmentScreen.Panel.OnRemoved += OnEnvironmentRemoved;
@@ -239,15 +242,16 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
-            m_ParentTank.ActorBehavior.Begin();
-            yield return null;
-
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
 
             if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
                 m_AutoFeederParticles.Play();
             }
+            yield return null;
+
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
 
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {
@@ -266,7 +270,8 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             if (m_CollectingMeasurements) {
-                while(!AddProgressCollection(Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
+                float mult = m_World.EnvDeaths > 0 ? 8 : 1;
+                while(!AddProgressCollection(mult * Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
                     yield return null;
                 }
             }
@@ -392,16 +397,18 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.ActorBehavior.End();
 
             ExperimentResult result = Evaluate(m_ExperimentData, m_World);
-            foreach (var fact in result.Facts) {
-                switch (fact.Type) {
-                    case ExperimentFactResultType.NewFact:
-                        Log.Msg("[MeasurementTank] Adding Fact {0}", fact.Id);
-                        Save.Bestiary.RegisterFact(fact.Id);
-                        break;
-                    case ExperimentFactResultType.UpgradedFact:
-                        Log.Msg("[MeasurementTank] Upgrading Fact {0}", fact.Id);
-                        Save.Bestiary.AddDiscoveredFlags(fact.Id, fact.Flags);
-                        break;
+            if (result.Facts != null) {
+                foreach (var fact in result.Facts) {
+                    switch (fact.Type) {
+                        case ExperimentFactResultType.NewFact:
+                            Log.Msg("[MeasurementTank] Adding Fact {0}", fact.Id);
+                            Save.Bestiary.RegisterFact(fact.Id);
+                            break;
+                        case ExperimentFactResultType.UpgradedFact:
+                            Log.Msg("[MeasurementTank] Upgrading Fact {0}", fact.Id);
+                            Save.Bestiary.AddDiscoveredFlags(fact.Id, fact.Flags);
+                            break;
+                    }
                 }
             }
             if (result.Feedback != 0) {

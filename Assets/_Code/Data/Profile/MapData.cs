@@ -309,6 +309,12 @@ namespace Aqua.Profile
             if (inMode != Serializer.Mode.Read)
                 return;
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             SavePatcher.PatchId(ref m_CurrentStationId);
             SavePatcher.PatchId(ref m_CurrentMapEntranceId);
             SavePatcher.PatchId(ref m_CurrentMapId);

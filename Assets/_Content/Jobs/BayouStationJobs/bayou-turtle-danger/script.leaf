@@ -8,7 +8,11 @@
 
 {@profHarper}	People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef.
 				For this job, I need you to develop a food web with the species you found there.
-                We want to learn if there are any new predators of the Turtles. 
+                We want to learn if there are any new predators of the Turtles.
+$if !HasEntity(Cyanobacteria)
+	{@profHarper}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
+                    Be sure to scan it and count the population like you did for the other species.
+$endif
 $if !HasUpgrade(VisualModel)
 	{@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
 	{@profHarper}	Head there when you need to model the food web.
@@ -17,13 +21,50 @@ $if !HasUpgrade(VisualModel)
 	$call GiveUpgrade(VisualModel)
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCyano)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site O and scan the Cyanobacteria. Make sure you have your Microscope pulled out!
+
+:: catchCountCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countCyano)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site O and count the Cyanobacteria population. Make sure you have your Microscope pulled out!
+
+:: catchExperimentsForSiteO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(experimentsForSiteO)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to find what Loggerhead Turtles eat at Site O.
+
+:: catchVisualModelO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visualModelO)
+@boostScore -5
+@cutscene
+{@kevin}    Make a Visual Model of what you found out from the Observation Tank.
+
+:: catchReportback
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Report back to {nameof profHarper}.
+
 // ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
-$call ArgueLoad(siteOModel) 
+$call ArgueLoad(siteOModel)
 {@profHarper} What can you tell me about the safety of the turtles?
 $choice .argue.turtleSafe; The turtles should be safe 
 $choice .argue.turtleNotSafe; The turtles might not be safe 
@@ -53,7 +94,7 @@ $choose branch
     Let's start over.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
-$call ArgueClearClaim()
+$call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.showSafeClaim
@@ -69,7 +110,7 @@ $choose branch
 {@profHarper} Ok, that's interesting, but it's not answering my question.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
-$call ArgueClearClaim()
+$call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.giveUp

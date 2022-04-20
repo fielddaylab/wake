@@ -81,7 +81,7 @@ namespace Aqua
             m_PoolSources.Clear();
         }
 
-        public MonoBehaviour Alloc(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags, Transform inParent)
+        public MonoBehaviour Alloc(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference, Transform inParent)
         {
             ConfigurePoolTransforms();
 
@@ -131,7 +131,7 @@ namespace Aqua
                 case BFShapeId.Behavior: {
                     BFBehavior behavior = (BFBehavior) inFact;
                     BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                    display.Populate(behavior, inReference, inFlags);
+                    display.Populate(behavior, inFlags, inReference);
                     m_PoolSources.Add(display, BFShapeId.Behavior);
                     return display;
                 }
@@ -255,7 +255,7 @@ namespace Aqua
             inPool.Free(asType);
         }
 
-        static public void Populate(MonoBehaviour inBehavior, BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags) {
+        static public void Populate(MonoBehaviour inBehavior, BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference) {
             switch(BFType.Shape(inFact)){
                 case BFShapeId.Model: {
                     ((ModelFactDisplay) inBehavior).Populate((BFModel) inFact);
@@ -289,7 +289,7 @@ namespace Aqua
 
                 default: {
                     if (BFType.IsBehavior(inFact.Type)) {
-                        ((BehaviorFactDisplay) inBehavior).Populate((BFBehavior) inFact, inReference, inFlags);
+                        ((BehaviorFactDisplay) inBehavior).Populate((BFBehavior) inFact, inFlags, inReference);
                         return;
                     }
 

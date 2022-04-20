@@ -18,11 +18,33 @@ $branch common.ringPhone
 			
 :: measurementChooseKelp
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.ecosystem"
+@when		screenId == "measurement.organisms"
 @once 
 @cutscene
 {@kevin}	Pick {nameof Urchin} and something we know the {nameof Urchin} eats.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchUrchinEatBull
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(urchinEatBull)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Measurement Tank, measure how quickly Urchins eat Bull Kelp.
+
+:: catchUrchinEatKelp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(urchinEatKelp)
+@boostScore -5
+@cutscene
+{@kevin}    Using the Measurement Tank, measure how quickly Urchins eat Giant Kelp.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 

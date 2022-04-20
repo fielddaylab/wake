@@ -115,9 +115,9 @@ namespace Aqua.Portable {
                     }
                 }
 
-                MonoBehaviour factDisplay = page.FactPools.Alloc(fact, entry,
+                MonoBehaviour factDisplay = page.FactPools.Alloc(fact,
                     Save.Bestiary.GetDiscoveredFlags(fact.Id),
-                    target);
+                    entry, target);
 
                 finalizeCallback(fact, factDisplay);
             }

@@ -12,8 +12,8 @@ namespace ProtoAqua.Observation {
         #region Inspector
 
         [Header("Position")]
-        [PrefabModeOnly] public Collider2D Collider;
-        [PrefabModeOnly] public Visual2DTransform ColliderPosition;
+        public Collider2D Collider;
+        public Visual2DTransform ColliderPosition;
         public Transform TrackTransform;
 
         #endregion // Inspector

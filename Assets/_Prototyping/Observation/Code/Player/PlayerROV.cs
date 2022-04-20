@@ -67,6 +67,7 @@ namespace ProtoAqua.Observation
             void Enable(PlayerBody inBody);
             void Disable();
             bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
+            void UpdateActive();
             bool HasTarget();
             void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition);
         }
@@ -84,6 +85,7 @@ namespace ProtoAqua.Observation
             }
             public bool HasTarget() { return false; }
             public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
+            public void UpdateActive() { }
         }
 
         #endregion // Types
@@ -176,6 +178,8 @@ namespace ProtoAqua.Observation
             {
                 UpdateMove(inDeltaTime);
             }
+
+            m_CurrentTool.UpdateActive();
         }
 
         private void LateUpdate()

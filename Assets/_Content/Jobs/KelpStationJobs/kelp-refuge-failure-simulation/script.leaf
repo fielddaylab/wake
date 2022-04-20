@@ -35,7 +35,7 @@ $endif
 @once
 @cutscene
 {@kevin}	It appears you will be the bearer of bad news.
-			Let's go bear it back to (nameof drKelp}.
+			Let's go bear it back to {nameof drKelp}.
 
 :: helpShareModel
 @trigger    RequestPartnerHelp
@@ -44,8 +44,21 @@ $endif
 {@player}   What now?
 {@kevin}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
 
+// CATCH-ALL GUIDE TEXT
 
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel)
+@boostScore -5
+@cutscene
+{@kevin}   	Create a Prediction Model at the Modeling Lab.
 
+:: catchShareModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(shareModel)
+@boostScore -5
+@cutscene
+{@kevin}	Show your model to {nameof drKelp}!
 
 // ARGUMENTATION
 
@@ -53,7 +66,7 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(refugeFailureSimulationArgue)
 @cutscene
-$call ArgueLoad(refugeFailureArgue)
+$call ArgueLoad(refugeFailureSimulationArgue)
 {@drKelp} So how bad is it going to be?
 $if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)

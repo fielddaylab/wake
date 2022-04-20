@@ -109,7 +109,7 @@ namespace Aqua.Portable {
                 options = Array.Empty<NamedOption>();
             }
 
-            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), options);
+            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), m_CurrentEntry, options);
             request.OnComplete((o) => {
                 if (!o.IsEmpty) {
                     Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);

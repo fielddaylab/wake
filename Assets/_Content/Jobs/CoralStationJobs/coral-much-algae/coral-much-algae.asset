@@ -36,8 +36,9 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades:
   - m_HashValue: 3082617054
-  - m_HashValue: 2834804279
   - m_HashValue: 283353415
+  - m_HashValue: 2834804279
+  m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
   m_DiveSiteIds:
@@ -94,6 +95,34 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
+      m_Source: histPop
+      m_HashValue: 1662730776
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.histPop
+      m_HashValue: 490860265
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.Lionfish
+        m_HashValue: 1443959053
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.StaghornCoral
+        m_HashValue: 2916868116
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.Fishers
+        m_HashValue: 526148177
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanAll
+      m_HashValue: 1784740587
+  - Id:
       m_Source: observeEatAlgae
       m_HashValue: 1284980985
     LabelId:
@@ -102,8 +131,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
+        m_Source: BlueTang.Eats.TurfAlgae.Stressed
+        m_HashValue: 3290904200
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -118,8 +147,8 @@ MonoBehaviour:
     Steps:
     - Type: 2
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
+        m_Source: BlueTang.Eats.TurfAlgae.Stressed
+        m_HashValue: 3290904200
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -221,8 +250,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
+        m_Source: BlueTang.Eats.TurfAlgae.Stressed
+        m_HashValue: 3290904200
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0000
@@ -237,8 +266,8 @@ MonoBehaviour:
     Steps:
     - Type: 2
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
+        m_Source: BlueTang.Eats.TurfAlgae.Stressed
+        m_HashValue: 3290904200
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0100
@@ -259,10 +288,38 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
+      m_Source: histPop
+      m_HashValue: 1662730776
+    IdString: histPop
+    Index: 4
+    LabelId:
+      m_Source: jobs.coral-much-algae.task.histPop
+      m_HashValue: 490860265
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.Lionfish
+        m_HashValue: 1443959053
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.StaghornCoral
+        m_HashValue: 2916868116
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.Fishers
+        m_HashValue: 526148177
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 4
+    Index: 5
     LabelId:
       m_Source: jobs.coral-much-algae.task.reportBack
       m_HashValue: 2999981227

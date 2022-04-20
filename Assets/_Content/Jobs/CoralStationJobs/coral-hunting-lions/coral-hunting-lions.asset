@@ -32,13 +32,16 @@ MonoBehaviour:
   m_ModelingDifficulty: 5
   m_ArgumentationDifficulty: 4
   m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: a93bac5aba8ab424ab21ba4069eac2ea, type: 2}
   - {fileID: 11400000}
   m_PrereqConditions: 
   m_PrereqUpgrades:
-  - m_HashValue: 2834804279
   - m_HashValue: 1109988049
   - m_HashValue: 2866492762
   - m_HashValue: 283353415
+  - m_HashValue: 1203385870
+  - m_HashValue: 3082617054
+  m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
   m_DiveSiteIds:
@@ -79,32 +82,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 0
       Target:
-        m_Source: Fishers
-        m_HashValue: 4257683625
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: Ick
-        m_HashValue: 3815586090
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
         m_Source: Lionfish
         m_HashValue: 586288757
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: LoggerheadTurtle
-        m_HashValue: 3290936401
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: QueenConch
-        m_HashValue: 2098174204
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -131,18 +110,6 @@ MonoBehaviour:
         m_HashValue: 3939929818
       ConditionString: 
       Amount: 0
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: WhiteShrimp
-        m_HashValue: 3187223953
-      ConditionString: 
-      Amount: 0
     PrerequisiteTaskIds:
     - m_Source: scanSpear
       m_HashValue: 710485473
@@ -155,14 +122,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_HashValue: 45586372
+        m_Source: LionfishInvasion.PopulationHistory.ArtificialReef
+        m_HashValue: 1357081751
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Temperature.History
-        m_HashValue: 3506157252
+        m_Source: LionfishInvasion.Temperature.History
+        m_HashValue: 2795423660
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -189,30 +156,6 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.Copepod
-        m_HashValue: 724598145
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.Fishers
-        m_HashValue: 2317396323
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.LoggerheadTurtle
-        m_HashValue: 1905950827
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.QueenConch
-        m_HashValue: 1140962470
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: ReefEdge.Population.RedGrouper
         m_HashValue: 3853181742
       ConditionString: 
@@ -225,14 +168,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.TurtleGrass
-        m_HashValue: 1300666817
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.WhiteShrimp
-        m_HashValue: 2142731063
+        m_Source: LionfishInvasion.Population.Lionfish
+        m_HashValue: 2758078659
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -505,8 +442,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Grow.Stressed
-        m_HashValue: 2544394604
+        m_Source: StaghornCoral.Reproduce.Stressed
+        m_HashValue: 2550962424
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -658,32 +595,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 0
       Target:
-        m_Source: Fishers
-        m_HashValue: 4257683625
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: Ick
-        m_HashValue: 3815586090
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
         m_Source: Lionfish
         m_HashValue: 586288757
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: LoggerheadTurtle
-        m_HashValue: 3290936401
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: QueenConch
-        m_HashValue: 2098174204
       ConditionString: 
       Amount: 0
     - Type: 0
@@ -710,18 +623,6 @@ MonoBehaviour:
         m_HashValue: 3939929818
       ConditionString: 
       Amount: 0
-    - Type: 0
-      Target:
-        m_Source: TurtleGrass
-        m_HashValue: 793706139
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: WhiteShrimp
-        m_HashValue: 3187223953
-      ConditionString: 
-      Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: scanHistory
@@ -734,14 +635,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.PopulationHistory.RedGrouper
-        m_HashValue: 45586372
+        m_Source: LionfishInvasion.PopulationHistory.ArtificialReef
+        m_HashValue: 1357081751
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Temperature.History
-        m_HashValue: 3506157252
+        m_Source: LionfishInvasion.Temperature.History
+        m_HashValue: 2795423660
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0100
@@ -768,30 +669,6 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.Copepod
-        m_HashValue: 724598145
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.Fishers
-        m_HashValue: 2317396323
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.LoggerheadTurtle
-        m_HashValue: 1905950827
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.QueenConch
-        m_HashValue: 1140962470
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: ReefEdge.Population.RedGrouper
         m_HashValue: 3853181742
       ConditionString: 
@@ -804,14 +681,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: ReefEdge.Population.TurtleGrass
-        m_HashValue: 1300666817
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Population.WhiteShrimp
-        m_HashValue: 2142731063
+        m_Source: LionfishInvasion.Population.Lionfish
+        m_HashValue: 2758078659
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0200
@@ -1084,8 +955,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Grow.Stressed
-        m_HashValue: 2544394604
+        m_Source: StaghornCoral.Reproduce.Stressed
+        m_HashValue: 2550962424
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0600

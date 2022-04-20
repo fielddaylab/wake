@@ -7,8 +7,7 @@
 $branch common.ringPhone
 
 {@drKelp}	Hello again, {player-name}!
-{@drKelp}	We need to figure out what conditions would make a good site for both 
-			Bull Kelp and Giant Kelp.
+{@drKelp}	We need to figure out what conditions would make a good site for both Bull Kelp and Giant Kelp.
 			Your new {nameof StressTank} should be able to tell us what environments the different types of kelp can handle. 
 
 :: helpToExperiment
@@ -39,6 +38,29 @@ $branch common.ringPhone
 @once
 @cutscene
 {@kevin}	Fantastic! Head to the communications room, where you can advise {nameof drKelp} about a suitable environment for a kelp refuge.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchGetBullKelpStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getBullKelpStress)
+@boostScore -5
+@cutscene
+{@kevin}   	Drop some {nameof BullKelp} into the Stress Tank and fiddle with the dials.
+
+:: catchGetGiantKelpStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getGiantKelpStress)
+@boostScore -5
+@cutscene
+{@kevin}	Drop some {nameof GiantKelp} into the Stress Tank and fiddle with the dials.
+
+:: catchArgueSite
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argueSite)
+@boostScore -5
+@cutscene
+{@kevin}    Make a decision about which site to use as a refuge and tell {@drKelp}.
 
 // ARGUMENTATION
 

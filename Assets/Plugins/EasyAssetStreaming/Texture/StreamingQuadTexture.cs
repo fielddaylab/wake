@@ -19,6 +19,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,7 +34,7 @@ namespace EasyAssetStreaming {
     #endif // USE_ALWAYS
     [AddComponentMenu("Streaming Assets/Streaming Quad Texture")]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    public sealed class StreamingQuadTexture : MonoBehaviour, IStreamingTextureComponent {
+    public sealed class StreamingQuadTexture : MonoBehaviour, IStreamingTextureComponent, ILayoutSelfController {
         
         #region Inspector
 
@@ -252,17 +253,11 @@ namespace EasyAssetStreaming {
             }
 
             Vector2 size = m_Size;
+            Vector2 appliedPivot = m_Pivot;
 
-            if (StreamingHelper.AutoSize(sizeMode, m_LoadedTexture, m_UVRect, transform.localPosition, m_Pivot, ref size, ref m_ClippedUVs, StreamingHelper.GetParentSize(transform)) == 0) {
+            if (StreamingHelper.AutoSize(sizeMode, m_LoadedTexture, m_UVRect, transform.localPosition, m_Pivot, ref size, ref m_ClippedUVs, ref appliedPivot, StreamingHelper.GetParentSize(transform)) == 0) {
                 return;
             }
-
-            #if UNITY_EDITOR
-            if (!Application.IsPlaying(this)) {
-                UnityEditor.Undo.RecordObject(this, "Changing size");
-                UnityEditor.EditorUtility.SetDirty(this);
-            }
-            #endif // UNITY_EDITOR
 
             m_Size = size;
 
@@ -465,13 +460,29 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.Unload(ref m_LoadedTexture)) {
+            if (Streaming.Unload(ref m_LoadedTexture, OnAssetUpdated)) {
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }
             StreamingHelper.DestroyResource(ref m_MeshInstance);
         }
 
         #endregion // Resources
+
+        #region ILayoutSelfController
+
+        void ILayoutController.SetLayoutHorizontal() {
+            if (StreamingHelper.IsAutoSizeHorizontal(m_AutoSize)) {
+                Resize(m_AutoSize);
+            }
+        }
+
+        void ILayoutController.SetLayoutVertical() {
+            if (StreamingHelper.IsAutoSizeVertical(m_AutoSize)) {
+                Resize(m_AutoSize);
+            }
+        }
+
+        #endregion // ILayoutSelfController
 
         #region Editor
 

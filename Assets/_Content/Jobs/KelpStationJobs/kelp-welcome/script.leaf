@@ -12,7 +12,7 @@ $branch common.ringPhone
 
 $set    player:seen.drJules = true
 {@drKelp}	Lovely! Thanks for the help.
-            Drive your sub over to site C to get started. 
+            Drive your sub over to {h}site C{/h} to get started. 
 {@player}	Ok, great! The sub, which is located...um... 
 {@kevin}	Right outside the door. 
 {@player}	Oh, yeah. I knew that. 
@@ -49,7 +49,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}	Head over to Site C and get to work!
+{@drKelp}	Head over to {h}site C{/h} and get to work!
 			
 
 // player does not have anything from site C yet, tell them to go there
@@ -59,7 +59,7 @@ $branch common.ringPhone
 @when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter)
 @boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
 @cutscene
-{@kevin}	You need to find Site C, then dive. 
+{@kevin}	You need to find {h}site C{/h}, then dive. 
             Unless you'd rather just float here forever.  
 
 // IN DIVE SITE
@@ -124,7 +124,7 @@ $branch common.ringPhone
 
 {@player}   Is that it? 
 {@drKelp}  Oh dear. I'm afraid you missed something. 
-            Why don't you head back to Site C and try again?
+            Why don't you head back to {h}site C{/h} and try again?
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
@@ -235,7 +235,6 @@ $branch common.ringPhone
             There we'll discuss your findings using argumentation with the facts you've collected.
 
 $call   UnlockRoom("office")
-$call   UnlockRoom("Argumentation")
 
 // REPORT BACK
 
@@ -257,6 +256,57 @@ $endif
 @cutscene
 {@player} 	What now?
 {@kevin}	Let's tell {nameof @drKelp} what we found out.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchGoToSiteC
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(gotoSiteC)
+@boostScore -5
+@cutscene
+{@kevin}    Head to {h}site C{/h}.
+
+:: catchScanGiantKelp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanGiantKelp)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
+
+:: catchScanUrchin
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanUrchin)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
+
+:: catchScanOtter
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanOtter)
+@boostScore -5
+@cutscene
+{@kevin}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
+
+:: catchReturnToShip
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(returnToShip)
+@boostScore -5
+@cutscene
+{@kevin}    Time to head back to the ship!
+
+:: catchRunExperiment
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(runExperiment)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Observation Tank to find what eats what.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof drKelp} in the Office.
 
 //ARGUMENTATION
 

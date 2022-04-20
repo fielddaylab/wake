@@ -41,6 +41,7 @@ $call GiveUpgrade(ProbeHacker)
 :: scannedSargassum
 @trigger    JobTasksUpdated
 @when 		HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
+@once
 @cutscene
 {@player} OK, I can see the Sargassum, but how do we get the population history?
 {@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
@@ -86,7 +87,7 @@ $call GiveUpgrade(ProbeHacker)
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
+@when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light), JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @cutscene
 {@player} 	How should this go again?
 {@kevin}	We want to determine if Sargassum is really to blame for the low light at Site R.
@@ -94,7 +95,7 @@ $call GiveUpgrade(ProbeHacker)
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
+@when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light), JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once
 @cutscene
 $if HasUpgrade(MeasurementTank)
@@ -112,7 +113,7 @@ $endif
 
 ::measurementTankSelectWater
 @trigger	ExperimentTankViewed
-@when		tankType == "Measurement"
+@when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Let's start by figuring out the Sargassum reproduction rate.
@@ -121,14 +122,14 @@ $endif
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.organisms"
+@when		screenId == "measurement.organisms", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Now add only the Sargassum. We don't want the species interacting with each other.
 
 ::measurementTankSelectFeatures
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.features"
+@when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Since we want to measure the reproduction rate, turn on the tank stabilizer and auto feeder.
@@ -154,7 +155,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: experimentEndOtherCoralGrowStressed
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Grow.Stressed), !jobs:coral-casting-shade.gotMeasurement
+@when 		HasFact(StaghornCoral.Reproduce.Stressed), !jobs:coral-casting-shade.gotMeasurement
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
@@ -165,7 +166,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: experimentEndOtherCoralGrow
 @trigger    JobTasksUpdated
-@when 		HasFact(StaghornCoral.Grow), !jobs:coral-casting-shade.gotMeasurement
+@when 		HasFact(StaghornCoral.Reproduce), !jobs:coral-casting-shade.gotMeasurement
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
@@ -188,12 +189,12 @@ $else
 		{@kevin}	We'll need more information to build a model.
 		{@kevin}	Try measuring the Sargassum with the tank stabilizer turned off and auto-feeder on.
 	$else
-		$if !HasFact(StaghornCoral.Grow.Stressed)
+		$if !HasFact(StaghornCoral.Reproduce.Stressed)
 			{@kevin}	Looks like you still need to try more experiments.
 			{@kevin}	We'll need more information to build a model.
 			{@kevin}	Try measuring the Coral with both the tank stabilizer and auto feeder on.
 		$else
-			$if !HasFact(StaghornCoral.Grow)
+			$if !HasFact(StaghornCoral.Reproduce)
 				{@kevin}	Looks like you still need to try more experiments.
 				{@kevin}	We'll need more information to build a model.
 				{@kevin}	Try measuring the Coral in a different Environment.
@@ -211,14 +212,14 @@ $endif
 
 :: allExperimentsDone
 @trigger    JobTasksUpdated
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 @once
 {@kevin}	I think we're finally ready to build a model!
 
 :: helpAllExperimentsDone
 @trigger    RequestPartnerHelp
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Grow.Stressed), HasFact(StaghornCoral.Grow)
+@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 {@kevin}	Head over to the Modeling Lab.
 {@kevin}	We need to build a descriptive model of how Sargassum affects Coral.
@@ -281,6 +282,73 @@ $endif
 @cutscene
 {@player} 	What should we be doing next?
 {@kevin}	Let's report back to the {map-name}Office{/map-name} with our findings!
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanSarg
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanSarg)
+@boostScore -5
+@cutscene
+{@kevin}    Go to Site R and scan the Sargassum.
+
+:: catchPopProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(popProbe)
+@boostScore -5
+@cutscene
+{@kevin}    Find the population probe at Site R and scan it.
+
+:: catchChemHistory
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(chemHistory)
+@boostScore -5
+@cutscene
+{@kevin}    Find the water chemistry probe at Site R and scan it.
+
+:: catchSargGrowthRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargGrowthRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof Sargassum} in the Measurement Tank and find its reproduction rate.
+			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+
+:: catchSargLight
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargLight)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof Sargassum} in the Measurement Tank and find how much light it consumes.
+			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+
+:: catchCoralGrowthRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(coralGrowthRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that does not stress it.
+
+:: catchCoralGrowthStressed
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(coralGrowthStressed)
+@boostScore -5
+@cutscene
+{@kevin}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that stresses it.
+
+:: catchSargModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargModel)
+@boostScore -5
+@cutscene
+{@kevin}    Create a prediction model using the Modeling Lab based on the {nameof Sargassum}.
+
+:: catchSargArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargArgue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
 
 // ARGUMENTATION
 

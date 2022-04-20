@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Population History")]
     public class BFPopulationHistory : BFBase
     {
@@ -25,7 +21,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.PopulationHistory, BFShapeId.PopulationHistory, BFFlags.HideFactInDetails, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.PopulationHistory, BFShapeId.PopulationHistory, BFFlags.HideFactInDetails | BFFlags.EnvironmentFact, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.PopulationHistory, null, GenerateDetails, null, (f) => ((BFPopulationHistory) f).Critter, null);
             BFType.DefineEditor(BFTypeId.PopulationHistory, DefaultIcon, BFMode.Player);
         }
@@ -35,7 +31,7 @@ namespace Aqua
             return BestiaryDesc.SortById(((BFPopulationHistory) x).Critter, ((BFPopulationHistory) y).Critter);
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFPopulationHistory fact = (BFPopulationHistory) inFact;
             BFDetails details;

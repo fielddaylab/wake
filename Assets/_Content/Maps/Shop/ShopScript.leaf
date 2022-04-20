@@ -12,7 +12,7 @@
 @once
 
 {@merchant} Oh, welcome! Haven't seen your face before!
-            Ezra at your service!
+            {nameof @merchant} at your service!
             Feel free to browse at your leisure!
             
 // inspect shopkeeper
@@ -99,19 +99,19 @@ $if player:exp < local:expCost
     $set    shop:lastFailureReason = "exp"
     $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-    {@merchant} Oh, you want the {nameof $local:itemId}?
-                I'm sorry|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    {@merchant} Oh, {random you want|you're interested in} the {nameof $local:itemId}?
+                {random I'm sorry|My apologies}|, but you'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} Ah, you want the {nameof $local:itemId}?\
+    {@merchant} Ah, {random you want|you're interested in} the {nameof $local:itemId}?\
     That'll be {cash}{$local:cashCost}{/cash}!
 
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}I'll take it! (Purchase){/h}
     $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} Ah, you want the {nameof $local:itemId}?
+    {@merchant} Ah, {random you want|you're interested in} the {nameof $local:itemId}?
 
     $choice .purchaseAttempt.generic.success; {h}I'll take it! (Install){/h}
 $endif
@@ -157,7 +157,7 @@ $set    shop:lastFailureReason = "cash"
 $set    player:hasAttemptedPurchaseNoCash = local:itemId
 
 $set    shop:notEnoughCount + 1
-{@merchant} I'm sorry|, but you seem to be light in the wallet.
+{@merchant} {random I'm sorry|So sorry}|, but you seem to be light in the wallet.
             Come back when you have enough!
 
 :: purchaseAttempt.generic.refused
@@ -165,6 +165,17 @@ $set    shop:notEnoughCount + 1
 {@merchant} Okay! Well if you find something you want, let me know.
 
 // specialized purchase dialog
+:: purchaseAttempt.ROVTagger
+@trigger    ShopAttemptBuy
+@when       itemId == "ROVTagger"
+@cutscene
+{@merchant} Ahh the {nameof ROVTagger},| A wise choice!
+{@merchant} You should see the {nameof ROVTagger} at the top of your view.  
+{@merchant} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+{@merchant} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+{@kevin} That's super convenient! We should definitely get this!
+$set    jobs:common-dive.seen.tagger-intro = true
+$branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.propGuard
 @trigger    ShopAttemptBuy
@@ -182,6 +193,14 @@ $branch .purchaseAttempt.genericCostLine
 
 {@merchant} Nice, I see you're looking at the {nameof Flashlight}!
             The ocean can get pretty dark out there, and who knows what's hiding in it?
+$branch .purchaseAttempt.genericCostLine
+
+:: purchaseAttempt.probeHacker
+@trigger    ShopAttemptBuy
+@when       itemId == "ProbeHacker"
+@cutscene
+{@merchant} I see you're looking at the {nameof ProbeHacker}!
+            This little gizmo will allow you to read data from any probes you find at the dive sites.
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.engine
@@ -216,7 +235,7 @@ $branch .purchaseAttempt.genericCostLine
 @when       itemId == "MeasurementTank"
 @cutscene
 
-{@merchant} Ah, the {nameof $local:itemId} can be used to measure the stress ranges of different creatures.
+{@merchant} Ah, the {nameof $local:itemId} can be used to measure the eating and reproduction rates of different creatures.
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.visualModel
@@ -226,6 +245,8 @@ $branch .purchaseAttempt.genericCostLine
 
 {@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to create visualizations of the different connections between species.
+{@kevin}    Hmmm. I feel like this could come in handy later...
+            I think we should purchase this item.
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.predictionModel
@@ -271,18 +292,18 @@ $if player:exp < local:expCost
     $set    shop:lastFailureReason = "exp"
     $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-    {@merchant} Oh, I'm sorry... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
+    {@merchant} Oh, {random I'm sorry|my apologies}... You'll need {exp}{$local:needExp}{/exp} more before I'll sell that to you.
     $stop
 $endif
 
 $if local:cashCost > 0
-    {@merchant} So, do you want the {nameof $local:itemId}\
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}\
     It'll be {cash}{$local:cashCost}{/cash}!
     
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
     $choice .purchaseAttempt.generic.cantAfford, !CanAffordItem($local:itemId); ...Yes?
 $else
-    {@merchant} So, do you want the {nameof $local:itemId}?
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}?
     
     $choice .purchaseAttempt.generic.success; {h}Yes! (Install){/h}
 $endif
@@ -317,7 +338,7 @@ $else
         Don't ever ask me again.
 $endif
 
-$set player:shopFreeCoolDown = 3
+$set player:shopFreeCoolDown = 0
 $set player:shopFreeCount + 1
 
 :: giveCash

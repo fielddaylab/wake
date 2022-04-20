@@ -6,8 +6,8 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at Site V.
-{@profCempaka}  Drop in at Site V and use your Scanner to locate a Turtle.
+{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at {h}site V{/h}.
+{@profCempaka}  Drop in at {h}site V{/h} and use your Scanner to locate a Turtle.
 {@profCempaka}  Then switch to Counting mode and navigate the site to get a representative sample.
 {@player} 	We're on our way!
 
@@ -23,14 +23,14 @@ $branch common.ringPhone
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin} You're gonna want to Dive at Site V.  Should be around here somewhere.
+{@kevin} You're gonna want to Dive at {h}site V{/h}.  Should be around here somewhere.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Station2", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   I think I'm lost?
-{@kevin}	Site V should be just East of the ship.
+{@kevin}	{h}Site V{/h} should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
@@ -47,6 +47,7 @@ $if !HasUpgrade(ROVTagger)
 	{@profCempaka} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
 	{@profCempaka} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 	{@kevin} That's really convenient.
+	$set    jobs:common-dive.seen.tagger-intro = true
 $endif
 
 //:: countTurtles
@@ -113,11 +114,33 @@ $set jobs:coral-turtle-population.got.pop = true
 @when 		scene:name == "Ship", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's get to the Office so we can report over the Comms. 
-//TODO: {nameof CaptainsOffice}?
+{@kevin}	Let's get to the Office so we can report over the Comms.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanTurtle
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanTurtle)
+@boostScore -5
+@cutscene
+{@kevin}    Look for a turtle and scan it.
+
+:: catchTurtleModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(turtleModel)
+@boostScore -5
+@cutscene
+{@kevin}    Count the turtle population at the Reef Edge.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
-
+// 
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(turtlePopulationArgue)

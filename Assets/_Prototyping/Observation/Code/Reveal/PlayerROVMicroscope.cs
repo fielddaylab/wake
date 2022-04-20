@@ -22,6 +22,7 @@ namespace ProtoAqua.Observation {
         [SerializeField] private Transform m_ProjectionCenter = null;
         [SerializeField] private Camera m_ProjectionCamera = null;
         [SerializeField] private float m_ProjectionRadius = 1;
+        [SerializeField] private float m_ProjectionMultiplier = 0.5f;
 
         #endregion // Inspector
 
@@ -31,8 +32,8 @@ namespace ProtoAqua.Observation {
         private PlayerROVMicroscope() {
             ProjectPosition = (Visual2DTransform transform, Vector3 position, in CameraService.PlanePositionHelper positionHelper, out float scale) => {
                 Vector2 viewport = m_ProjectionCamera.WorldToViewportPoint(transform.Source.position, Camera.MonoOrStereoscopicEye.Mono);
-                viewport.x = (viewport.x - 0.5f) * 2;
-                viewport.y = (viewport.y - 0.5f) * 2;
+                viewport.x = (viewport.x - 0.5f) * 2 * m_ProjectionMultiplier;
+                viewport.y = (viewport.y - 0.5f) * 2 * m_ProjectionMultiplier;
                 if (viewport.sqrMagnitude > 1) {
                     viewport.Normalize();
                 }
@@ -82,6 +83,9 @@ namespace ProtoAqua.Observation {
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
+        }
+
+        public void UpdateActive() {
         }
 
         #endregion // ITool

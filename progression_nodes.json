@@ -1,9 +1,9 @@
 {
     "nodes": {
         "FancyStatue": {
+            "unlockType": "manual",
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
                 }
             ]
@@ -18,60 +18,50 @@
         },
         "AutoFeeder": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "MeasurementTank": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 200,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 35
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "WaterStabilizer"
-                },
-                {
+                }, {
                     "id": "AutoFeeder"
                 }
             ]
         },
         "ObservationTank": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
                 }
             ]
         },
         "StressTank": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 200,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 35
                 }
@@ -79,80 +69,51 @@
         },
         "WaterStabilizer": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
-            ]
-        },
-        "AutoTagger": {
-            "type": "item",
-            "requires": [
-                {
-                    "id": "Shop"
-                },
-                {
-                    "id": "ROVTagger"
-                }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "Engine": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
-                    "amount": 2500,
+                    "amount": 450,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
-                    "amount": 500
+                    "amount": 50
                 }
             ]
         },
         "Flashlight": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
-                    "amount": 2500,
+                    "amount": 450,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
-                    "amount": 500
-                }
-            ]
-        },
-        "HoneyPot": {
-            "type": "item",
-            "requires": [
-                {
-                    "id": "Shop"
+                    "amount": 50
                 }
             ]
         },
         "Hull": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 2500,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 500
                 }
@@ -160,16 +121,13 @@
         },
         "Icebreaker": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 2500,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 500
                 }
@@ -177,64 +135,43 @@
         },
         "Microscope": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 2500,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 500
                 }
             ]
         },
-        "PopulationProbe": {
-            "type": "item",
-            "requires": [
-                {
-                    "id": "Shop"
-                },
-                {
-                    "id": "ROVScanner"
-                }
-            ]
-        },
         "ProbeHacker": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 50,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 35
-                },
-                {
+                }, {
                     "id": "ROVScanner"
                 }
             ]
         },
         "PropGuard": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 2500,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 500
                 }
@@ -242,44 +179,36 @@
         },
         "ROVScanner": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
                 }
             ]
         },
         "ROVTagger": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 100,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "ROVScanner"
                 }
             ]
         },
         "InterveneModel": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 200,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 60
                 }
@@ -287,171 +216,249 @@
         },
         "PredictionModel": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "Cash",
                     "amount": 200,
                     "consume": true
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 35
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "SyncModel"
-                },
-                {
+                }, {
                     "id": "WaterModeling"
                 }
             ]
         },
         "SyncModel": {
+            "unlockType": "manual",
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
                 }
             ]
         },
         "VisualModel": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
                 }
             ]
         },
         "WaterModeling": {
             "type": "item",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Shop"
-                },
-                {
+                }, {
                     "id": "VisualModel"
+                }
+            ],
+            "unlockType": "manual"
+        },
+        "arctic-cause-of-death": {
+            "type": "job",
+            "requires": [{
+                    "id": "ArcticStation"
+                }, {
+                    "id": "arctic-disappearing-act"
+                }, {
+                    "id": "SyncModel"
+                }, {
+                    "id": "VisualModel"
+                }
+            ],
+            "results": [{
+                    "id": "Cash",
+                    "amount": 100
+                }, {
+                    "id": "Exp",
+                    "amount": 10
+                }
+            ]
+        },
+        "arctic-disappearing-act": {
+            "type": "job",
+            "requires": [{
+                    "id": "ArcticStation"
+                }, {
+                    "id": "arctic-missing-whale"
+                }, {
+                    "id": "VisualModel"
+                }, {
+                    "id": "ObservationTank"
+                }
+            ],
+            "results": [{
+                    "id": "Cash",
+                    "amount": 100
+                }, {
+                    "id": "Exp",
+                    "amount": 10
+                }
+            ]
+        },
+        "arctic-isolated-instance": {
+            "type": "job",
+            "requires": [{
+                    "id": "ArcticStation"
+                }, {
+                    "id": "arctic-stationary-survival"
+                }, {
+                    "id": "StressTank"
+                }, {
+                    "id": "Flashlight"
+                }
+            ],
+            "results": [{
+                    "id": "Cash",
+                    "amount": 100
+                }, {
+                    "id": "Exp",
+                    "amount": 10
+                }, {
+                    "id": "RS-4Y"
+                }, {
+                    "id": "RS-4Z"
                 }
             ]
         },
         "arctic-missing-whale": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "ArcticStation"
+                }, {
+                    "id": "ROVTagger"
+                }, {
+                    "id": "ROVScanner"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
-                    "amount": 5
-                },
-                {
+                    "amount": 10
+                }, {
                     "id": "RS-4W"
+                }
+            ]
+        },
+        "arctic-stationary-survival": {
+            "type": "job",
+            "requires": [{
+                    "id": "ArcticStation"
+                }, {
+                    "id": "arctic-underneath"
+                }, {
+                    "id": "VisualModel"
+                }, {
+                    "id": "ObservationTank"
+                }, {
+                    "id": "ROVScanner"
+                }
+            ],
+            "results": [{
+                    "id": "Cash",
+                    "amount": 100
+                }, {
+                    "id": "Exp",
+                    "amount": 10
+                }, {
+                    "id": "RS-4X"
                 }
             ]
         },
         "arctic-time-of-death": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "ArcticStation"
-                },
-                {
-                    "id": "arctic-whale-csi"
+                }, {
+                    "id": "arctic-disappearing-act"
+                }, {
+                    "id": "ProbeHacker"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-4W"
+                    "amount": 10
+                }
+            ]
+        },
+        "arctic-underneath": {
+            "type": "job",
+            "requires": [{
+                    "id": "ArcticStation"
+                }
+            ],
+            "results": [{
+                    "id": "Cash",
+                    "amount": 100
+                }, {
+                    "id": "Exp",
+                    "amount": 10
                 }
             ]
         },
         "arctic-whale-csi": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "ArcticStation"
-                },
-                {
-                    "id": "arctic-missing-whale"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-4W"
-                },
-                {
+                }, {
                     "id": "Microscope"
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "displaced-reef": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "ROVTagger"
                 }
             ]
         },
         "hide-n-seek": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "turtle-danger2"
-                },
-                {
+                }, {
                     "id": "Flashlight"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -459,47 +466,37 @@
         },
         "bayou-oxygen-tracking": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "bayou-shrimp-tastrophe"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-3P"
                 }
             ]
         },
         "reef-decision": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "turtle-danger2"
-                },
-                {
+                }, {
                     "id": "InterveneModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -507,113 +504,87 @@
         },
         "bayou-save-our-shrimp": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "bayou-save-our-shrimp"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-3P"
                 }
             ]
         },
         "bayou-shrimp-tastrophe": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "bayou-save-our-shrimp"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-3P"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
             ]
         },
         "turtle-danger": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "displaced-reef"
-                },
-                {
+                }, {
                     "id": "ObservationTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "VisualModel"
-                },
-                {
+                }, {
                     "id": "modelingRoom"
-                },
-                {
+                }, {
                     "id": "Modeling"
                 }
             ]
         },
         "turtle-danger2": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "turtle-danger"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
-                },
-                {
+                }, {
                     "id": "PredictionModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -621,467 +592,362 @@
         },
         "coral-casting-shade": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-stressed"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
-                },
-                {
+                }, {
                     "id": "StressTank"
-                },
-                {
+                }, {
                     "id": "PropGuard"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2R"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
-                },
-                {
+                }, {
                     "id": "WaterStabilizer"
                 }
             ]
         },
         "coral-eat-seaweed": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-casting-shade"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2R"
                 }
             ]
         },
         "coral-fake-fix": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-turtle-population"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "ROVTagger"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2S"
                 }
             ]
         },
         "coral-fishy-bizz": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "InterveneModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2V"
                 }
             ]
         },
         "coral-hunting-lions": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-hunting-lions"
-                },
-                {
+                }, {
                     "id": "SyncModel"
-                },
-                {
+                }, {
                     "id": "PredictionModel"
-                },
-                {
+                }, {
                     "id": "InterveneModel"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2S"
                 }
             ]
         },
         "coral-lionfish-conspiracy": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-fake-fix"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2S"
                 }
             ]
         },
         "coral-much-algae": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-fake-fix"
-                },
-                {
+                }, {
                     "id": "ROVTagger"
-                },
-                {
+                }, {
                     "id": "SyncModel"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "RS-2S"
                 }
             ]
         },
         "coral-ocean-plastics": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "VisualModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2V"
                 }
             ]
         },
         "coral-stressed": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "StressTank"
-                },
-                {
+                }, {
                     "id": "PropGuard"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2R"
                 }
             ]
         },
         "coral-turtle-population": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2V"
-                },
-                {
+                }, {
                     "id": "ROVTagger"
                 }
             ]
         },
         "coral-turtle-stability": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2V"
-                },
-                {
+                }, {
                     "id": "VisualModel"
-                },
-                {
+                }, {
                     "id": "modelingRoom"
-                },
-                {
+                }, {
                     "id": "Modeling"
                 }
             ]
         },
         "coral-urchin-friends": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "CoralStation"
-                },
-                {
+                }, {
                     "id": "coral-urchin-friends"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-2R"
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "kelp-bull-kelp-forest": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-welcome"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1A"
-                },
-                {
+                }, {
                     "id": "RS-1A"
-                },
-                {
+                }, {
                     "id": "CoralStation"
-                },
-                {
+                }, {
+                    "id": "ArcticStation"
+                }, {
                     "id": "BayouStation"
-                },
-                {
+                }, {
                     "id": "WorldMap"
                 }
             ]
         },
         "kelp-energy": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-bull-kelp-forest"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "VisualModel"
-                },
-                {
+                }, {
                     "id": "modelingRoom"
-                },
-                {
+                }, {
                     "id": "Modeling"
                 }
             ]
         },
         "kelp-mussel-fest": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "StressTank"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1C"
                 }
             ]
         },
         "kelp-musselfest-solution": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-mussel-fest"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
-                },
-                {
+                }, {
                     "id": "StressTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -1089,56 +955,43 @@
         },
         "kelp-refuge-failure": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-start-refuge"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
-                },
-                {
+                }, {
                     "id": "PredictionModel"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1D"
                 }
             ]
         },
         "kelp-refuge-failure-simulation": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-refuge-failure"
-                },
-                {
+                }, {
                     "id": "PredictionModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -1146,131 +999,102 @@
         },
         "kelp-save-urchin-barren": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-urchin-barren-predict"
-                },
-                {
+                }, {
                     "id": "InterveneModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1B"
                 }
             ]
         },
         "kelp-start-refuge": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "StressTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1D"
                 }
             ]
         },
         "kelp-urchin-barren-predict": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "kelp-urchin-barren-viz"
-                },
-                {
+                }, {
                     "id": "PredictionModel"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1B"
                 }
             ]
         },
         "kelp-urchin-barren-viz": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "ProbeHacker"
-                },
-                {
+                }, {
                     "id": "VisualModel"
-                },
-                {
+                }, {
                     "id": "ROVTagger"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1B"
-                },
-                {
+                }, {
                     "id": "RS-1B"
                 }
             ]
         },
         "kelp-urchin-farm": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
-                },
-                {
+                }, {
                     "id": "MeasurementTank"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 100
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
                 }
@@ -1278,88 +1102,82 @@
         },
         "kelp-welcome": {
             "type": "job",
-            "requires": [
-                {
+            "requires": [{
                     "id": "KelpStation"
                 }
             ],
-            "results": [
-                {
+            "results": [{
                     "id": "Cash",
                     "amount": 50
-                },
-                {
+                }, {
                     "id": "Exp",
                     "amount": 5
-                },
-                {
+                }, {
                     "id": "RS-1C"
-                },
-                {
+                }, {
                     "id": "ROVScanner"
-                },
-                {
+                }, {
                     "id": "ObservationTank"
-                },
-                {
+                }, {
                     "id": "RS-1C"
-                },
-                {
+                }, {
                     "id": "nav"
-                },
-                {
+                }, {
                     "id": "exterior"
-                },
-                {
+                }, {
                     "id": "Experimentation"
-                },
-                {
+                }, {
                     "id": "office"
-                },
-                {
-                    "id": "Argumentation"
                 }
             ]
         },
         "Experimentation": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "Modeling": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "nav": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "office": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "helm": {
-            "type": "map"
+            "type": "map",
+            "disableTraversal": true
         },
         "modelingRoom": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "exterior": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "WorldMap": {
             "type": "map",
-            "unlockType": "manual"
+            "unlockType": "manual",
+            "disableTraversal": true
         },
         "JobBoard": {
-            "type": "map"
+            "type": "map",
+            "disableTraversal": true
         },
         "Shop": {
             "type": "map",
             "unlockType": "auto",
-            "requires": [
-                {
+            "requires": [{
                     "id": "Exp",
                     "amount": 35
                 }
@@ -1367,40 +1185,44 @@
         },
         "RS-4W": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "ArcticStation"
                 }
             ]
         },
         "RS-4X": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "ArcticStation"
+                }, {
+                    "id": "Flashlight"
+                }, {
+                    "id": "Engine"
                 }
             ]
         },
         "RS-4Y-Ice River": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "ArcticStation"
                 }
             ]
         },
         "RS-4Y": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "ArcticStation"
                 }
             ]
         },
         "RS-4Z": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "ArcticStation"
                 }
             ]
@@ -1411,24 +1233,28 @@
         },
         "RS-3N": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "BayouStation"
+                }, {
+                    "id": "Hull"
+                }, {
+                    "id": "Flashlight"
                 }
             ]
         },
         "RS-3O": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "BayouStation"
                 }
             ]
         },
         "RS-3P": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "BayouStation"
                 }
             ]
@@ -1439,40 +1265,42 @@
         },
         "RS-2R": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "CoralStation"
+                }, {
+                    "id": "PropGuard"
                 }
             ]
         },
         "RS-2R-2": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "CoralStation"
                 }
             ]
         },
         "RS-2S": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "CoralStation"
                 }
             ]
         },
         "RS-2T": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "CoralStation"
                 }
             ]
         },
         "RS-2V": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "CoralStation"
                 }
             ]
@@ -1487,26 +1315,30 @@
         },
         "RS-0": {
             "type": "map",
-            "requires": [
-                {
+            "disableTraversal": true,
+            "requires": [{
                     "id": "FinalStation"
                 }
             ]
         },
         "RS-1A": {
             "type": "map",
+            "disableTraversal": true,
             "unlockType": "manual"
         },
         "RS-1B": {
             "type": "map",
+            "disableTraversal": true,
             "unlockType": "manual"
         },
         "RS-1C": {
             "type": "map",
+            "disableTraversal": true,
             "unlockType": "manual"
         },
         "RS-1D": {
             "type": "map",
+            "disableTraversal": true,
             "unlockType": "manual"
         },
         "KelpStation": {

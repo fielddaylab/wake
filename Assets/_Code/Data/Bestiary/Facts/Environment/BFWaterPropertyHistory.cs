@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Water Property History")]
     public class BFWaterPropertyHistory : BFBase
     {
@@ -23,7 +19,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFShapeId.WaterPropertyHistory, BFFlags.HideFactInDetails, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.WaterPropertyHistory, BFShapeId.WaterPropertyHistory, BFFlags.HideFactInDetails | BFFlags.EnvironmentFact, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.WaterPropertyHistory, null, GenerateDetails, null, null, (f) => ((BFWaterPropertyHistory) f).Property);
             BFType.DefineEditor(BFTypeId.WaterPropertyHistory, DefaultIcon, BFMode.Player);
         }
@@ -33,7 +29,7 @@ namespace Aqua
             return WaterPropertyDB.SortByVisualOrder(((BFWaterPropertyHistory) x).Property, ((BFWaterPropertyHistory) y).Property);
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFWaterPropertyHistory fact = (BFWaterPropertyHistory) inFact;
             WaterPropertyDesc desc = BestiaryUtils.Property(fact.Property);

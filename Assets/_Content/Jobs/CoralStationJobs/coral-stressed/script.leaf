@@ -48,15 +48,11 @@ $set    	jobs:coral-stressed.seen.bottom = true
 @when 		scene:name == "RS-2R"
 @cutscene
 {@player}   What should I be doing here?
-$if !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@kevin}   Did you remember to scan the population probe?
+$if HasEntity(StaghornCoral)
+	$set    jobs:coral-stressed.got.scans = true
+	{@kevin}   I think we've gotten everything we need from here, head back up to the surface when you're ready to leave.
 $else
-	$if HasEntity(Sargassum), HasEntity(StaghornCoral) // all scans?
-		$set    jobs:coral-stressed.got.scans = true
-		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
-	$else
 	{@kevin}   Make sure to scan the coral.
-	$endif
 $endif
 
 :: navigation.goBackUp
@@ -118,7 +114,7 @@ $set jobs:coral-stressed.gotScans = true
 
 
 :: experimentEnd
-@trigger    JobTasksUpdated
+@trigger    ExperimentFinished
 @when 		HasFact(StaghornCoral.Light.Stressed), HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene
@@ -138,13 +134,36 @@ $set jobs:coral-stressed.gotScans = true
 @cutscene
 {@player} 	What should we be doing now?
 $if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
-	{@kevin} We need to get the historical eviornmental data of Site R. Let's head back and scan the water chemistry probe. 
+	{@kevin} We need to get the historical environmental data of Site R. Let's head back and scan the water chemistry probe. 
 $else
 	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
 	$if global:nav.shipRoom == "office"
 		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 	$endif
 $endif
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchSiteR
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(siteR)
+@boostScore -5
+@cutscene
+{@kevin}    Find the coral at Site R.
+
+:: catchStressCoral
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(stressCoral)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
 
 // ARGUMENTATION
 

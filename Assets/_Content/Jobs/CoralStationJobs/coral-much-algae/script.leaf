@@ -96,6 +96,16 @@ $endif
 @cutscene
 {@kevin}	You'll need to build a Visual Model first, if you haven't done that yet. Then make a Descriptive Model so we can compare it to the empirical data.
 
+:: insufficientData
+@trigger	SimulationModelStarted
+@boostScore 1060 // higher than generic script
+@when		scene:name == "Modeling", !JobTaskCompleted(histPop)
+@cutscene
+{@kevin}	I think we're missing some critical population data. When making a Sync model, the program needs historical population data to check against. 
+			We should head back to Site S and scan the population data before we try to do anything here.
+
+//modeling needs historical data for all the species to validate against
+
 :: modelingComplete
 @trigger	JobTasksUpdated
 @when		scene:name == "Modeling", JobTaskTop(reportBack)
@@ -103,6 +113,50 @@ $endif
 @cutscene
 {@kevin}	We have a model, but for some reason it doesn't match what we've observed. The {nameof BlueTang} aren't eating as much as we'd expect.
 			Let's talk through it with {nameof profCempaka}.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanAll
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanAll)
+@boostScore -5
+@cutscene
+{@kevin}    Scan all the species at Site S.
+
+:: catchHistPop
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(histPop)
+@boostScore -5
+@cutscene
+{@kevin}    Find the population probe at Site S and scan it.
+
+:: catchObserveEatAlgae
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeEatAlgae)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank and see if anything eats TurfAlgae.
+
+:: catchMeasureEatRate
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureEatRate)
+@boostScore -5
+@cutscene
+{@kevin}    Put Blue Tang and Turf Algae in the Measurement Tank and see how quickly Blue Tang eats the algae.
+
+:: catchModelPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPopulations)
+@boostScore -5
+@cutscene
+{@kevin}    Create a Sync Model at the Modeling Lab.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(sargArgue)
+@boostScore -5
+@cutscene
+{@kevin}    Talk to Professor Cempaka in the Office.
 
 
 // ARGUMENTATION
@@ -134,7 +188,7 @@ $choose branch
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
-		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
+		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae.Stressed)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.chooseFactsSparseFish
@@ -156,11 +210,11 @@ $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
 	$goto .argue.correctFacts
 $else
-	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
 		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Did you model this?
 		$call ArgueClearFacts()
-		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae)
+		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
 		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither

@@ -22,7 +22,7 @@ $set    player:noProbeHacker.triedToScan = true
 :: generic.tagger.intro
 @trigger    SceneStart
 @boostScore 1051 // arbitraryily high number
-@when		HasUpgrade(ROVTagger)
+@when		HasUpgrade(ROVTagger), !jobs:common-dive.seen.tagger-intro
 @once
 @cutscene
 

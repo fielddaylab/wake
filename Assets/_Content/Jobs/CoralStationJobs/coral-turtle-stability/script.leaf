@@ -8,7 +8,7 @@ $branch common.ringPhone
 
 {@profCempaka}	We need to know why the turtles are doing so well here.
 				I need you to scan all the species at the reef edge, 
-				then run some experiements to see what the turtles eat.
+				then run some experiments to see what the turtles eat.
 $set jobs:turtle-stability-visual-model.saved = false
 
 // SCAN ALL
@@ -44,7 +44,7 @@ $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity
 	$set    jobs:coral-turtle-stability.got.scans = true
 	{@kevin}   I think so! Head back up to the surface when you're ready to leave.
 $else
-	{@kevin}   Make sure to get all those little things swimming around, and the coral too.
+	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: navigation.goBackUp
@@ -66,7 +66,7 @@ $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Make sure to get all those little things that were swimming around, and the coral too.
+	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: helpBackToShip
@@ -162,7 +162,7 @@ $if !HasUpgrade(VisualModel)
 	$call UnlockRoom("Modeling")
 	$call GiveUpgrade(VisualModel)
 $endif
-{@profCempaka}	Use the {map-name}Modeling Lab{/map-name} to visualize Site A's food web.
+{@profCempaka}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
 
 // TURTLE MODEL
 
@@ -206,6 +206,35 @@ $if global:nav.shipRoom == "office"
 	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanAll
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanAll)
+@boostScore -5
+@cutscene
+{@kevin}    Head to Site V and scan the species there.
+
+:: catchBehavior
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(behavior)
+@boostScore -5
+@cutscene
+{@kevin}    Use the Observation Tank to find what the turtles eat.
+
+:: catchTurtleModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(turtleModel)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Modeling lab and make a Visual Model.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}    Take your Visual Model to {nameof profCempaka}.
 
 // ARGUMENTATION
 
