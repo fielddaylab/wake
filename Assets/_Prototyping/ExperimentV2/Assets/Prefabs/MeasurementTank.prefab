@@ -4753,6 +4753,75 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &1573535057151019819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725311754210964872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: MeasurementTank
+    m_HashValue: 283353415
+  m_ToShow:
+  - {fileID: 725311754210964872}
+  m_ToHide: []
+  m_ContinuousCheck: 1
+--- !u!114 &7704810211327578248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725311754210964872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0957334d9264d244ebadb9b574e429e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParentTank: {fileID: 725311754210964886}
+  m_HeaderUI: {fileID: 6295405382246222982}
+  m_BeginScreen: {fileID: 3625613065733595875}
+  m_EnvironmentScreen: {fileID: 3931502588691327009}
+  m_OrganismScreen: {fileID: 307115966425287528}
+  m_FeatureScreen: {fileID: 6218398597693521843}
+  m_FeaturePanel: {fileID: 4954406905508993236}
+  m_AutoFeederParticles: {fileID: 5551764178524007235}
+  m_InProgressScreen: {fileID: 6588238036375448929}
+  m_InProgressAnalysisLabel: {fileID: 225103366248743862}
+  m_InProgressMeterBG: {fileID: 7029467649972538955}
+  m_InProgressMeter: {fileID: 2393023227961508946}
+  m_InProgressMeterFlash: {fileID: 928264444493676208}
+  m_InProgressAnalyzingColors:
+    Background:
+      serializedVersion: 2
+      rgba: 4283784198
+    Content:
+      serializedVersion: 2
+      rgba: 4292467876
+  m_InProgressSuccessColors:
+    Background:
+      serializedVersion: 2
+      rgba: 4278440421
+    Content:
+      serializedVersion: 2
+      rgba: 4281678080
+  m_InProgressFailureColors:
+    Background:
+      serializedVersion: 2
+      rgba: 4285239039
+    Content:
+      serializedVersion: 2
+      rgba: 4281678080
+  m_EatEventMeasureRequirement: 50
+  m_ChemistryEventMeasureRequirement: 50
+  m_ReproduceEventMeasureRequirement: 50
+  m_BackgroundMeasureTimeRequirement: 30
 --- !u!1 &734690966186839256
 GameObject:
   m_ObjectHideFlags: 0
@@ -9682,75 +9751,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Layer: 0
   m_Order: 1
---- !u!114 &1573535057151019819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725311754210964872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: MeasurementTank
-    m_HashValue: 283353415
-  m_ToShow:
-  - {fileID: 725311754210964872}
-  m_ToHide: []
-  m_ContinuousCheck: 1
---- !u!114 &7704810211327578248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725311754210964872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0957334d9264d244ebadb9b574e429e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ParentTank: {fileID: 725311754210964886}
-  m_HeaderUI: {fileID: 6295405382246222982}
-  m_BeginScreen: {fileID: 3625613065733595875}
-  m_EnvironmentScreen: {fileID: 3931502588691327009}
-  m_OrganismScreen: {fileID: 307115966425287528}
-  m_FeatureScreen: {fileID: 6218398597693521843}
-  m_FeaturePanel: {fileID: 4954406905508993236}
-  m_AutoFeederParticles: {fileID: 5551764178524007235}
-  m_InProgressScreen: {fileID: 6588238036375448929}
-  m_InProgressAnalysisLabel: {fileID: 225103366248743862}
-  m_InProgressMeterBG: {fileID: 7029467649972538955}
-  m_InProgressMeter: {fileID: 2393023227961508946}
-  m_InProgressMeterFlash: {fileID: 928264444493676208}
-  m_InProgressAnalyzingColors:
-    Background:
-      serializedVersion: 2
-      rgba: 4283784198
-    Content:
-      serializedVersion: 2
-      rgba: 4292467876
-  m_InProgressSuccessColors:
-    Background:
-      serializedVersion: 2
-      rgba: 4278440421
-    Content:
-      serializedVersion: 2
-      rgba: 4281678080
-  m_InProgressFailureColors:
-    Background:
-      serializedVersion: 2
-      rgba: 4285239039
-    Content:
-      serializedVersion: 2
-      rgba: 4281678080
-  m_EatEventMeasureRequirement: 50
-  m_ChemistryEventMeasureRequirement: 50
-  m_ReproduceEventMeasureRequirement: 50
-  m_BackgroundMeasureTimeRequirement: 30
 --- !u!1 &5270861344323115049
 GameObject:
   m_ObjectHideFlags: 0
@@ -15846,7 +15846,7 @@ PrefabInstance:
     - target: {fileID: 823918816774941475, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
       propertyPath: m_RootOrder
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1152402298199092826, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
@@ -15868,10 +15868,15 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 4646759103199898309, guid: 59c27c40f78a67748ae9ca1645906789,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4751334147822607138, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
       propertyPath: m_RootOrder
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5480359328617415679, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
@@ -15883,6 +15888,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.x
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 5658402725423626010, guid: 59c27c40f78a67748ae9ca1645906789,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5658402725710578387, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
       propertyPath: m_text
@@ -15892,6 +15902,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5658402726313057513, guid: 59c27c40f78a67748ae9ca1645906789,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5658402726313057513, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
@@ -16001,7 +16016,7 @@ PrefabInstance:
     - target: {fileID: 5658402726783145456, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
       propertyPath: m_RootOrder
-      value: 20
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 6243046996257878711, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
@@ -16013,10 +16028,20 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 17
       objectReference: {fileID: 0}
+    - target: {fileID: 7587579143278337337, guid: 59c27c40f78a67748ae9ca1645906789,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7926738282107021164, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
       propertyPath: m_RootOrder
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134085013830692104, guid: 59c27c40f78a67748ae9ca1645906789,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9103606839237519058, guid: 59c27c40f78a67748ae9ca1645906789,
         type: 3}
