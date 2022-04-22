@@ -131,7 +131,7 @@ namespace Aqua.Character {
         private void OnPlayerEnter(Collider2D collider) {
             m_PlayerInside = collider.GetComponentInParent<PlayerBody>();
 
-            if (m_Routine || !enabled || !m_Collider.isActiveAndEnabled)
+            if (Script.IsLoading || m_Routine || !enabled || !m_Collider.isActiveAndEnabled)
                 return;
 
             if (m_AutoExecute) {

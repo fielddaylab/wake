@@ -123,6 +123,7 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private bool m_Moving;
         [NonSerialized] private AudioHandle m_EngineSound;
+        [NonSerialized] private AudioHandle m_PowerEngineSound;
         [NonSerialized] private PlayerROVInput.InputData m_LastInputData;
 
         [NonSerialized] private uint m_VelocityHint;
@@ -178,6 +179,8 @@ namespace ProtoAqua.Observation
 
         private void OnDestroy()
         {
+            m_EngineSound.Stop();
+            m_PowerEngineSound.Stop();
             Services.Events?.DeregisterAll(this);
         }
 
