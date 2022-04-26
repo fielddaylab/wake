@@ -21,9 +21,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: stationDeckInterior00_mat
-  m_Shader: {fileID: -6465566751694194690, guid: e73e88aefef60401f9ba33d8697ddea0,
+  m_Shader: {fileID: -6465566751694194690, guid: 520628eca05704464b9f5a21d64534c5,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: ADDITIONAL_LIGHTS_ON BOOLEAN_F2687B00_ON BOOLEAN_F9B33B64_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -34,11 +34,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_5DE09B45:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a46e3ca43d4214711a96c3fb0f70d9bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_935E6DCB:
         m_Texture: {fileID: 2800000, guid: 9f70cc551b1bd6d4b9e593646ce5f094, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_FBEE0DA0:
+        m_Texture: {fileID: 2800000, guid: f30c02bc7019148c59ab077009c4b2a5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -70,10 +74,26 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - ADDITIONAL_LIGHTS: 0
+    - ADDITIONAL_LIGHTS: 1
+    - BOOLEAN_F2687B00: 1
+    - BOOLEAN_F9B33B64: 1
+    - Vector1_2B2E84DE: 0.04
+    - Vector1_56244183: 1
+    - Vector1_58381F1B: 30
+    - Vector1_5E368682: 35
+    - Vector1_65A4C893: 3.2
+    - Vector1_7AF72821: 0.68
     - Vector1_7E7482E9: -0.1
     - Vector1_80065FF8: 0
-    - Vector1_D19AED14: -0.02
+    - Vector1_A12A6BCB: 100
+    - Vector1_B7FF63AC: 0.3
+    - Vector1_C100C93: 50
+    - Vector1_D19AED14: 1
+    - Vector1_E79ADAF2: -0.12
+    - Vector1_E8F90C0E: 0.3
+    - Vector1_EE807789: 1
+    - Vector1_F707F636: -0.29
+    - Vector1_FD42AC6: 0.05
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -98,7 +118,12 @@ Material:
     m_Colors:
     - Color_9B385EE5: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0}
     - Color_9DA79BB3: {r: 1, g: 1, b: 1, a: 1}
+    - Color_A03C9CFB: {r: 0.039215688, g: 0.5294118, b: 0.60784316, a: 1}
+    - Vector2_2E947A2: {r: 0, g: 0.02, b: 0, a: 0}
     - Vector2_41448CF0: {r: 0, g: 0, b: 0, a: 0}
+    - Vector2_6BC43CFF: {r: -0.02, g: 0, b: 0, a: 0}
+    - Vector2_9D150B9: {r: 2, g: 2, b: 0, a: 0}
+    - Vector2_A261ABA5: {r: 2, g: 2, b: 0, a: 0}
     - Vector2_C6B84FD1: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
