@@ -13,6 +13,7 @@ namespace ProtoAqua.Observation {
 
         public ActiveGroup Reveal = new ActiveGroup();
         public ActiveGroup Hidden = new ActiveGroup();
+        public ActiveGroup Visuals = new ActiveGroup();
         public Visual2DTransform[] ProjectedTransforms = Array.Empty<Visual2DTransform>();
         public ScannableRegion Scannable = null;
 

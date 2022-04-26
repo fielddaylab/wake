@@ -11,10 +11,18 @@ namespace ProtoAqua.Observation
         #region Inspector
 
         [SerializeField] private Transform m_Root = null;
-        [SerializeField] private ParticleSystem m_MovementParticles = null;
+        [SerializeField] private ParticleSystem m_AmbientParticles = null;
         [SerializeField] private float m_PitchMultiplier = 0.5f;
         [SerializeField] private float m_NormalRotationLerp = 4;
         [SerializeField] private Vector3 m_RotationAdjust = new Vector3(0, -90, 0);
+
+        [Header("Propeller")]
+        [SerializeField] private Transform m_Propeller = null;
+        [SerializeField] private ParticleSystem m_MovementParticles = null;
+        [SerializeField] private ParticleSystem m_BoostParticles = null;
+        [SerializeField] private float m_AmbientPropellerSpeed = 0;
+        [SerializeField] private float m_FullPropellerSpeedBoost = 0;
+        [SerializeField] private float m_EnginePropellerSpeedBoost = 0;
 
         #endregion // Inspector
 
@@ -22,6 +30,8 @@ namespace ProtoAqua.Observation
         [NonSerialized] private FacingId m_Facing = FacingId.Right;
         [NonSerialized] private float m_Pitch = 0;
         [NonSerialized] private Vector3? m_LookTarget = null;
+        [NonSerialized] private float m_PropellerSpeed;
+        [NonSerialized] private float m_TargetPropellerSpeed;
 
         public struct InputState {
             public PlayerBodyStatus Status;
@@ -32,6 +42,10 @@ namespace ProtoAqua.Observation
             public Vector2 NormalizedMove;
             public Vector2 NormalizedLook;
             public Vector3? LookTarget;
+        }
+
+        private void Awake() {
+            m_PropellerSpeed = m_AmbientPropellerSpeed;
         }
 
         public void Process(InputState state) {
@@ -59,11 +73,30 @@ namespace ProtoAqua.Observation
                 m_Pitch = 0;
                 m_LookTarget = null;
             }
+
+            m_TargetPropellerSpeed = m_AmbientPropellerSpeed;
+
+            if ((state.Status & PlayerBodyStatus.PowerEngineEngaged) != 0) {
+                m_TargetPropellerSpeed += m_EnginePropellerSpeedBoost;
+            }
+
+            if ((state.Status & PlayerBodyStatus.Slowed) != 0) {
+                m_TargetPropellerSpeed *= 0.6f;
+            }
+
+            if (state.Moving) {
+                m_TargetPropellerSpeed += state.NormalizedMove.magnitude * m_FullPropellerSpeedBoost;
+            }
         }
 
         public void HandleTeleport(FacingId inFacing) {
-            m_MovementParticles.Stop();
+            m_AmbientParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            m_AmbientParticles.Play();
+
+            m_MovementParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             m_MovementParticles.Play();
+
+            m_BoostParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
             if (Facing.X(inFacing) != 0) {
                 m_Facing = inFacing;
@@ -89,6 +122,15 @@ namespace ProtoAqua.Observation
                 }
                 m_Root.localRotation = lerp;
             }
+
+            if ((m_LastInputState.Status & PlayerBodyStatus.PowerEngineEngaged) != 0) {
+                m_BoostParticles.Play();
+            } else {
+                m_BoostParticles.Stop();
+            }
+
+            m_PropellerSpeed = Mathf.Lerp(m_PropellerSpeed, m_TargetPropellerSpeed, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime * Time.timeScale));
+            m_Propeller.Rotate(m_PropellerSpeed * Time.deltaTime * Time.timeScale, 0, 0, Space.Self);
         }
 
         private Quaternion CalculateDesiredRotation() {

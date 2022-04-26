@@ -15,7 +15,6 @@ namespace ProtoAqua.Observation
 {
     public class PlayerROV : PlayerBody, ISceneLoadHandler
     {
-        static public readonly TableKeyPair Var_LastToolId = TableKeyPair.Parse("player:lastToolId");
         static public readonly TableKeyPair Var_LastFlashlightState = TableKeyPair.Parse("player:lastFlashlightState");
 
         static public readonly StringHash32 Event_RequestToolToggle = "PlayerROV::RequestToolToggle"; // ToolState
@@ -43,6 +42,12 @@ namespace ProtoAqua.Observation
             Microscope,
 
             NONE
+        }
+
+        [Flags]
+        private enum PassiveUpgradeMask {
+            Engine = 0x01,
+            PropGuard = 0x02
         }
 
         static public StringHash32 ToolIdToItemId(ToolId id) {
@@ -99,6 +104,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVFlashlight m_Flashlight = null;
         [SerializeField, Required] private PlayerROVMicroscope m_Microscope = null;
         [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
+        [SerializeField, Required] private Collider2D m_TriggerCollider = null;
 
         [Header("Movement Params")]
 
@@ -117,6 +123,7 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private bool m_Moving;
         [NonSerialized] private AudioHandle m_EngineSound;
+        [NonSerialized] private AudioHandle m_PowerEngineSound;
         [NonSerialized] private PlayerROVInput.InputData m_LastInputData;
 
         [NonSerialized] private uint m_VelocityHint;
@@ -124,7 +131,10 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_CameraDriftHint;
         [NonSerialized] private ITool m_CurrentTool;
         [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
+        [NonSerialized] private PassiveUpgradeMask m_UpgradeMask = 0;
         [NonSerialized] private Routine m_StunRoutine;
+        [NonSerialized] private int m_EngineRegionCount;
+        [NonSerialized] private int m_SlowRegionCount;
 
         private void Start()
         {
@@ -145,14 +155,18 @@ namespace ProtoAqua.Observation
             m_Input.OnInputEnabled.AddListener(OnInputEnabled);
 
             m_CurrentTool = NullTool.Instance;
+
+            WorldUtils.ListenForLayerMask(m_TriggerCollider, GameLayers.PlayerTrigger_Mask, OnEnterTrigger, OnExitTrigger);
         }
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
-            ToolId lastToolId = (ToolId) Script.ReadVariable(Var_LastToolId, (int) ToolId.NONE).AsInt();
-            if (lastToolId != ToolId.NONE && !Save.Inventory.HasUpgrade(ToolIdToItemId(lastToolId))) {
-                lastToolId = ToolId.NONE;
+            ToolId lastToolId = ToolId.NONE;
+            if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner)) {
+                lastToolId = ToolId.Scanner;
             }
+
+            UpdateUpgradeMask();
 
             SwitchTool(lastToolId, true);
 
@@ -165,6 +179,8 @@ namespace ProtoAqua.Observation
 
         private void OnDestroy()
         {
+            m_EngineSound.Stop();
+            m_PowerEngineSound.Stop();
             Services.Events?.DeregisterAll(this);
         }
 
@@ -172,7 +188,20 @@ namespace ProtoAqua.Observation
         {
             Vector3? lockOn = GetLockOn();
 
-            m_Input.GenerateInput(m_Transform, lockOn, m_StunRoutine ? PlayerBodyStatus.Stunned : PlayerBodyStatus.Normal, out m_LastInputData);
+            PlayerBodyStatus status = PlayerBodyStatus.Normal;
+            if (m_StunRoutine) {
+                status |= PlayerBodyStatus.Stunned;
+            }
+            if (m_EngineRegionCount > 0 && (m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+                status |= PlayerBodyStatus.PowerEngineEngaged;
+            }
+            if (m_SlowRegionCount > 0) {
+                status |= PlayerBodyStatus.Slowed;
+            }
+
+            m_BodyStatus = status;
+
+            m_Input.GenerateInput(m_Transform, lockOn, status, out m_LastInputData);
 
             if (m_Moving || !UpdateTool())
             {
@@ -236,7 +265,7 @@ namespace ProtoAqua.Observation
             animState.NormalizedLook = m_LastInputData.Mouse.NormalizedOffset;
             m_CurrentTool.GetTargetPosition(false, out animState.LookTarget, out var _);
             animState.NormalizedMove = m_LastInputData.MoveVector;
-            animState.Status = m_StunRoutine ? PlayerBodyStatus.Stunned : PlayerBodyStatus.Normal;
+            animState.Status = m_BodyStatus;
             m_Animator.Process(animState);
         }
 
@@ -338,8 +367,6 @@ namespace ProtoAqua.Observation
             if (m_CurrentTool != null && m_Input.IsInputEnabled)
                 m_CurrentTool.Enable(this);
 
-            Script.WriteVariable(Var_LastToolId, (int) inTool);
-
             Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, true));
             return true;
         }
@@ -386,6 +413,8 @@ namespace ProtoAqua.Observation
 
         private void OnInventoryUpdated(StringHash32 inItemId)
         {
+            UpdateUpgradeMask();
+
             if (m_CurrentToolId != ToolId.NONE)
                 return;
 
@@ -395,7 +424,17 @@ namespace ProtoAqua.Observation
                 SwitchTool(ToolId.Tagger, false);
             else if (inItemId == ItemIds.Flashlight)
                 SetToolState(ToolId.Flashlight, true, false);
+        }
 
+        private void UpdateUpgradeMask() {
+            PassiveUpgradeMask upgrades = 0;
+            if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
+                upgrades |= PassiveUpgradeMask.Engine;
+            }
+            if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
+                upgrades |= PassiveUpgradeMask.PropGuard;
+            }
+            m_UpgradeMask = upgrades;
         }
 
         // TODO: Implement
@@ -403,6 +442,22 @@ namespace ProtoAqua.Observation
         // {
             
         // }
+
+        private void OnEnterTrigger(Collider2D other) {
+            if (other.CompareTag(GameTags.WaterCurrent)) {
+                m_EngineRegionCount++;
+            } else if (other.CompareTag(GameTags.ThickVegetation)) {
+                m_SlowRegionCount++;
+            }
+        }
+
+        private void OnExitTrigger(Collider2D other) {
+            if (other.CompareTag(GameTags.WaterCurrent)) {
+                m_EngineRegionCount--;
+            } else if (other.CompareTag(GameTags.ThickVegetation)) {
+                m_SlowRegionCount--;
+            }
+        }
 
         public override void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
         {

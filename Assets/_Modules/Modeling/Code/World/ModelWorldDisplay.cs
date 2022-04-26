@@ -66,6 +66,7 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_GravityForce = 10;
         [SerializeField] private float m_ConnectionOffsetFactor = 1.25f;
         [SerializeField] private float m_ConnectionArrowOffsetFactor = 1.25f;
+        [SerializeField] private float m_ConnectionOverlapOffset = 0.2f;
         // [SerializeField] private float m_BoundaryForce = 2;
 
         [Header("Textures")]
@@ -87,6 +88,7 @@ namespace Aqua.Modeling {
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
         private readonly ModelWaterPropertyDisplay[] m_WaterChemMap = new ModelWaterPropertyDisplay[(int) WaterPropertyId.TRACKED_COUNT];
         private GraphSolverState m_SolverState;
+        private readonly Dictionary<int, int> m_OverlappingConnectionCount = new Dictionary<int, int>(32);
 
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
@@ -109,6 +111,10 @@ namespace Aqua.Modeling {
             InitFixedPositions();
 
             m_OriginalCanvasState = TransformState.LocalState(m_Canvas.transform);
+        }
+
+        private void OnDestroy() {
+            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
         }
 
         private unsafe void InitMemoryArena() {
@@ -207,6 +213,7 @@ namespace Aqua.Modeling {
             m_OrganismPool.Reset();
             m_ConnectionPool.Reset();
             m_OrganismMap.Clear();
+            m_OverlappingConnectionCount.Clear();
             m_Input.Override = false;
             yield return null;
 
@@ -314,8 +321,10 @@ namespace Aqua.Modeling {
 
             ModelConnectionDisplay connection = m_ConnectionPool.Alloc();
             connection.Fact = fact;
-            connection.IndexA = indexA;
-            connection.IndexB = indexB;
+            connection.Key = GenerateConnectionKey(indexA, indexB);
+            connection.IndexA = (ushort) indexA;
+            connection.IndexB = (ushort) indexB;
+            connection.OverlapIndex = IncrementOverlapCount(connection.Key);
             connection.Texture.texture = flags == BFDiscoveredFlags.All ? m_FullLineTexture : m_PartialLineTexture;
             connection.Texture.color = connection.Arrow.color = BFType.OnlyWhenStressed(fact) ? m_StressedLineColor : m_NormalLineColor;
             connection.Arrow.gameObject.SetActive(true);
@@ -332,13 +341,20 @@ namespace Aqua.Modeling {
                 Ref.Swap(ref indexA, ref indexB);
             }
 
+            int key = GenerateConnectionKey(indexA, indexB);
+            if (m_OverlappingConnectionCount.ContainsKey(key)) {
+                return;
+            }
+
             m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
             m_SolverState.ConnectionMasks[indexB] |= (1u << indexA);
 
             ModelConnectionDisplay connection = m_ConnectionPool.Alloc();
             connection.Fact = fact;
-            connection.IndexA = indexA;
-            connection.IndexB = indexB;
+            connection.Key = key;
+            connection.IndexA = (ushort) indexA;
+            connection.IndexB = (ushort) indexB;
+            connection.OverlapIndex = IncrementOverlapCount(key);
             connection.Texture.texture = m_DottedLineTexture;
             connection.Texture.color = Assets.Property(property).Color();
             connection.Arrow.gameObject.SetActive(false);
@@ -358,8 +374,10 @@ namespace Aqua.Modeling {
             using(PooledList<ModelConnectionDisplay> allocatedConnections = PooledList<ModelConnectionDisplay>.Create(m_ConnectionPool.ActiveObjects)) {
                 allocatedConnections.Sort((x, y) => y.Order - x.Order);
                 int count = allocatedConnections.Count;
-                Vector2 a, b, vecAB, centerAB;
+                Vector2 a, b, vecAB, centerAB, cross;
                 float distAB;
+                int overlapCount;
+                float overlapOffset;
                 ModelConnectionDisplay display;
                 for(int i = 0; i < count; i++) {
                     display = allocatedConnections[i];
@@ -369,10 +387,17 @@ namespace Aqua.Modeling {
                     centerAB = (a + b) * 0.5f;
                     distAB = vecAB.magnitude;
                     vecAB.Normalize();
+                    cross = new Vector2(-vecAB.y, vecAB.x);
                     distAB -= m_PositionScale * m_ConnectionOffsetFactor;
                     if (display.Arrow.isActiveAndEnabled) {
                         distAB -= m_PositionScale * m_ConnectionArrowOffsetFactor;
                         centerAB -= vecAB * m_PositionScale * m_ConnectionArrowOffsetFactor * 0.5f;
+                    }
+                    m_OverlappingConnectionCount.TryGetValue(display.Key, out overlapCount);
+                    if (overlapCount > 1) {
+                        overlapOffset = -(overlapCount - 1) * 0.5f;
+                        centerAB.x += cross.x * m_PositionScale * m_ConnectionOverlapOffset * (overlapOffset + display.OverlapIndex);
+                        centerAB.y += cross.y * m_PositionScale * m_ConnectionOverlapOffset * (overlapOffset + display.OverlapIndex);
                     }
                     display.Transform.SetSizeDelta(distAB, Axis.X);
                     display.Transform.SetAnchorPos(centerAB);
@@ -407,6 +432,13 @@ namespace Aqua.Modeling {
         private int GetIndex(WaterPropertyId property) {
             return PropertyIndexOffset + (int) property;
         }
+
+        private int IncrementOverlapCount(int key) {
+            int current;
+            m_OverlappingConnectionCount.TryGetValue(key, out current);
+            m_OverlappingConnectionCount[key] = current + 1;
+            return current;
+        }
     
         static private bool CanGenerateConnection(BFBase fact) {
             if (!BFType.IsOrganism(fact)) {
@@ -414,6 +446,10 @@ namespace Aqua.Modeling {
             }
 
             return BFType.IsBehavior(fact);
+        }
+
+        static private int GenerateConnectionKey(int a, int b) {
+            return (a << 16) | (b);
         }
 
         private unsafe void SolveStep(ref GraphSolverState solverState, int count) {
