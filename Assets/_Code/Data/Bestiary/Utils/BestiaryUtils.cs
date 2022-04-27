@@ -94,6 +94,29 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Returns the parasite rule associated with this pair of creatures.
+        /// </summary>
+        static public BFParasite FindParasiteRule(BestiaryDesc inParent, BestiaryDesc inTarget)
+        {
+            if (inParent == null)
+                throw new ArgumentNullException("inParent");
+
+            foreach (var fact in inParent.Facts)
+            {
+                BFParasite parasite = fact as BFParasite;
+                if (parasite == null)
+                    continue;
+
+                if (parasite.Critter != inTarget)
+                    continue;
+
+                return parasite;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Locates produce rule associated with the given creature and water property.
         /// </summary>
         static public BFProduce FindProduceRule(BestiaryDesc inParent, WaterPropertyId inPropertyId, ActorStateId inState = ActorStateId.Alive)
@@ -342,6 +365,14 @@ namespace Aqua
             {
                 return inPopulation.ToString();
             }
+        }
+
+        /// <summary>
+        /// Formats a mass amount.
+        /// </summary>
+        static public string FormatMass(float inAmount)
+        {
+            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(inAmount);
         }
 
         /// <summary>

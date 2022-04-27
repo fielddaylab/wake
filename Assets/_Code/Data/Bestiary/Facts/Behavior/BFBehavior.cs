@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BeauUtil;
 using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
@@ -16,10 +17,14 @@ namespace Aqua
         {
             default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster", "words.sameAmount", "words.sameRate"
         };
-        static private readonly TextId[] s_QualitativeWordsLower = new TextId[]
+
+        static private readonly TextId[] s_QualitativeWordsCaps = new TextId[]
         {
-            default, "words.less.lower", "words.fewer.lower", "words.more.lower", "words.slower.lower", "words.faster.lower", "words.sameAmount.lower", "words.sameRate.lower"
+            default, "words.less.cap", "words.fewer.cap", "words.more.cap", "words.slower.cap", "words.faster.cap", "words.sameAmount.cap", "words.sameRate.cap"
         };
+
+        static protected readonly TextId UncertainLabel = "words.uncertainQuantity";
+        static protected readonly TextId UncertainLabelCap = "words.uncertainQuantity.cap";
 
         public enum QualCompare : byte
         {
@@ -46,9 +51,9 @@ namespace Aqua
             return s_QualitativeWords[(int) inDescriptor];
         }
 
-        static public TextId QualitativeLowerId(QualCompare inDescriptor)
+        static public TextId QualitativeIdCap(QualCompare inDescriptor)
         {
-            return s_QualitativeWordsLower[(int) inDescriptor];
+            return s_QualitativeWordsCaps[(int) inDescriptor];
         }
 
         #endregion // Consts
@@ -56,7 +61,8 @@ namespace Aqua
         #region Inspector
 
         [Header("Behavior")]
-        public bool OnlyWhenStressed = false;
+        [ShowIfField("DisplayStressed")] public bool OnlyWhenStressed = false;
+        [HideInEditor] public StringHash32 PairId = null;
         internal bool AutoGive = false;
 
         #endregion // Inspector
@@ -100,6 +106,11 @@ namespace Aqua
         protected virtual bool IsPair(BFBehavior inOther)
         {
             return inOther.Type == Type;
+        }
+
+        private bool DisplayStressed()
+        {
+            return Type != BFTypeId.Parasite;
         }
 
         #endif // UNITY_EDITOR

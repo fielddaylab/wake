@@ -558,6 +558,10 @@ namespace Aqua.Editor {
 
                         menu.AddSeparator("");
 
+                        menu.AddItem(new GUIContent("Parasites"), false, CreateAndAddFactCallback, new FactCreateParams(BFTypeId.Parasite));
+
+                        menu.AddSeparator("");
+
                         // grow and reproduce
 
                         AddSingleBehaviorCreator<BFGrow>(inDesc, menu, "Grow (Default)", false);

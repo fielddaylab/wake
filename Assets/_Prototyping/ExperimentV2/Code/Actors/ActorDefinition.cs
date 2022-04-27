@@ -188,9 +188,9 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         [Serializable]
-        public struct ValidEatTarget {
+        public struct ValidInteractionTarget {
             [FilterBestiaryId(BestiaryDescCategory.Critter)] public StringHash32 TargetId;
-            [FactId(typeof(BFEat))] public StringHash32 FactId;
+            [FactId] public StringHash32 FactId;
         }
 
         #endregion // Types
@@ -212,8 +212,9 @@ namespace ProtoAqua.ExperimentV2 {
         [Header("Derived From Facts")]
 
         public ActorStateTransitionSet StateEvaluator;
-        public ValidEatTarget[] AliveEatTargets;
-        public ValidEatTarget[] StressedEatTargets;
+        public ValidInteractionTarget[] AliveEatTargets;
+        public ValidInteractionTarget[] StressedEatTargets;
+        public ValidInteractionTarget[] ParasiteTargets;
         public int SpawnCount;
         public int SpawnMax;
         public float AliveReproduceRate;
@@ -328,11 +329,11 @@ namespace ProtoAqua.ExperimentV2 {
             return currentOffset;
         }
 
-        static public ValidEatTarget[] GetEatTargets(ActorDefinition inDefinition, ActorStateId inStateId) {
+        static public ValidInteractionTarget[] GetEatTargets(ActorDefinition inDefinition, ActorStateId inStateId) {
             switch (inStateId) {
                 case ActorStateId.Dead:
                 default:
-                    return Array.Empty<ValidEatTarget>();
+                    return Array.Empty<ValidInteractionTarget>();
                 case ActorStateId.Alive:
                     return inDefinition.AliveEatTargets;
                 case ActorStateId.Stressed:
@@ -340,14 +341,24 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static public ValidEatTarget GetEatTarget(ActorDefinition inDefinition, StringHash32 inTargetId, ActorStateId inStateId) {
+        static public ValidInteractionTarget GetEatTarget(ActorDefinition inDefinition, StringHash32 inTargetId, ActorStateId inStateId) {
             var targets = GetEatTargets(inDefinition, inStateId);
             for (int i = 0; i < targets.Length; i++) {
                 if (targets[i].TargetId == inTargetId)
                     return targets[i];
             }
 
-            return default(ValidEatTarget);
+            return default(ValidInteractionTarget);
+        }
+
+        static public ValidInteractionTarget GetParasiteTarget(ActorDefinition inDefinition, StringHash32 inTargetId) {
+            var targets = inDefinition.ParasiteTargets;
+            for (int i = 0; i < targets.Length; i++) {
+                if (targets[i].TargetId == inTargetId)
+                    return targets[i];
+            }
+
+            return default(ValidInteractionTarget);
         }
 
         static public float GetMovementSpeedMultiplier(ActorDefinition inDefinition, ActorStateId inStateId) {
@@ -440,8 +451,9 @@ namespace ProtoAqua.ExperimentV2 {
 
             inDef.SpawnMax = Math.Min(inDef.SpawnCount * 3, GetDefaultSpawnMax(inBestiary.Size()));
 
-            RingBuffer<ValidEatTarget> aliveEatTargets = new RingBuffer<ValidEatTarget>();
-            RingBuffer<ValidEatTarget> stressedEatTargets = new RingBuffer<ValidEatTarget>();
+            RingBuffer<ValidInteractionTarget> aliveEatTargets = new RingBuffer<ValidInteractionTarget>();
+            RingBuffer<ValidInteractionTarget> stressedEatTargets = new RingBuffer<ValidInteractionTarget>();
+            RingBuffer<ValidInteractionTarget> parasiteTargets = new RingBuffer<ValidInteractionTarget>();
 
             foreach (var eat in inBestiary.FactsOfType<BFEat>()) {
                 if (eat.Critter == inBestiary)
@@ -455,10 +467,29 @@ namespace ProtoAqua.ExperimentV2 {
                 }
             }
 
+            foreach(var parasite in inBestiary.FactsOfType<BFParasite>()) {
+                if (parasite.Critter == inBestiary) {
+                    continue;
+                }
+
+                parasiteTargets.PushBack(new ValidInteractionTarget() {
+                    TargetId = parasite.Critter.Id(),
+                    FactId = parasite.Id
+                });
+            }
+
             inDef.AliveEatTargets = aliveEatTargets.ToArray();
             inDef.StressedEatTargets = stressedEatTargets.ToArray();
+            inDef.ParasiteTargets = parasiteTargets.ToArray();
 
-            bool hasEat = aliveEatTargets.Count + stressedEatTargets.Count > 0;
+            bool hasEat = (aliveEatTargets.Count + stressedEatTargets.Count) > 0;
+            bool hasParasite = parasiteTargets.Count > 0;
+
+            if (hasParasite && !inDef.IsDistributed) {
+                Log.Error("[ActorDefinition] Actor '{0}' has parasite interactions but is not a distributed organism. Parasite interactions should only be present for distributed/microscopic");
+                inDef.ParasiteTargets = Array.Empty<ValidInteractionTarget>();
+                hasParasite = false;
+            }
 
             BFBody body = inBestiary.FactOfType<BFBody>();
 
@@ -483,6 +514,10 @@ namespace ProtoAqua.ExperimentV2 {
             }
             if (growStress) {
                 stressedRepro += (float) growStress.Amount / body.MassPerPopulation;
+            }
+
+            if (!reproStress && !growStress) {
+                stressedRepro += aliveRepro;
             }
 
             inDef.AliveReproduceRate = aliveRepro;
@@ -572,30 +607,30 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static private void CreateOrOverwriteTarget(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
+        static private void CreateOrOverwriteTarget(RingBuffer<ValidInteractionTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
             StringHash32 id = inTarget.Id();
             for (int i = 0, length = ioTargets.Count; i < length; i++) {
                 if (ioTargets[i].TargetId == id) {
-                    ref ValidEatTarget target = ref ioTargets[i];
+                    ref ValidInteractionTarget target = ref ioTargets[i];
                     target.FactId = inRule.name;
                     return;
                 }
             }
 
-            ValidEatTarget newTarget = new ValidEatTarget();
+            ValidInteractionTarget newTarget = new ValidInteractionTarget();
             newTarget.TargetId = inTarget.name;
             newTarget.FactId = inRule.name;
             ioTargets.PushBack(newTarget);
         }
 
-        static private bool CreateTargetOnly(RingBuffer<ValidEatTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
+        static private bool CreateTargetOnly(RingBuffer<ValidInteractionTarget> ioTargets, BestiaryDesc inTarget, BFEat inRule) {
             StringHash32 id = inTarget.Id();
             for (int i = 0, length = ioTargets.Count; i < length; i++) {
                 if (ioTargets[i].TargetId == id)
                     return false;
             }
 
-            ValidEatTarget newTarget = new ValidEatTarget();
+            ValidInteractionTarget newTarget = new ValidInteractionTarget();
             newTarget.TargetId = inTarget.name;
             newTarget.FactId = inRule.name;
             ioTargets.PushBack(newTarget);

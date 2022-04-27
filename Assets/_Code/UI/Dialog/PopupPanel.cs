@@ -47,6 +47,7 @@ namespace Aqua {
         [SerializeField] private RectTransformPool m_KnownFactBadgePool = null;
         [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
+        [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private GameObject m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -63,6 +64,9 @@ namespace Aqua {
 
         [NonSerialized] private BFBase[] m_CachedFactsSet = new BFBase[1];
         [NonSerialized] private BFDiscoveredFlags[] m_CachedFlagsSet = new BFDiscoveredFlags[1];
+
+        [NonSerialized] private RectTransform m_CurrentCustomModule;
+        [NonSerialized] private Transform m_OldCustomModuleParent;
 
         #region Initialization
 
@@ -95,7 +99,13 @@ namespace Aqua {
 
         public Future<StringHash32> Present(string inHeader, string inText, StreamedImageSet inImage, PopupFlags inPopupFlags, params NamedOption[] inOptions) {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inHeader, inText, inImage, inOptions, inPopupFlags));
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, TempContent(inHeader, inText, inImage, default, inOptions), inPopupFlags));
+            return future;
+        }
+
+        public Future<StringHash32> Present(PopupContent inContent, PopupFlags inPopupFlags) {
+            Future<StringHash32> future = new Future<StringHash32>();
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, inContent, inPopupFlags));
             return future;
         }
 
@@ -104,7 +114,7 @@ namespace Aqua {
             if (inOptions == null || inOptions.Length == 0) {
                 inOptions = DefaultAddToBestiary;
             }
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, TempFacts(inFact, inFlags), inOptions, inPopupFlags)).Tick();
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, TempContent(inHeader, inText, inImage, TempFacts(inFact, inFlags), inOptions), inPopupFlags)).Tick();
             return future;
         }
 
@@ -113,13 +123,13 @@ namespace Aqua {
             if (inOptions == null || inOptions.Length == 0) {
                 inOptions = DefaultAddToBestiary;
             }
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inHeader, inText, inImage, inFacts, inOptions, inPopupFlags)).Tick();
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, TempContent(inHeader, inText, inImage, inFacts, inOptions), inPopupFlags)).Tick();
             return future;
         }
 
         public Future<StringHash32> PresentFactDetails(BFDetails inDetails, BFBase inFact, BFDiscoveredFlags inFlags, PopupFlags inPopupFlags, params NamedOption[] inOptions) {
             Future<StringHash32> future = new Future<StringHash32>();
-            m_DisplayRoutine.Replace(this, PresentFactRoutine(future, inDetails.Header, inDetails.Description, inDetails.Image, TempFacts(inFact, inFlags), inOptions, inPopupFlags)).Tick();
+            m_DisplayRoutine.Replace(this, PresentMessageRoutine(future, TempContent(inDetails.Header, inDetails.Description, inDetails.Image, TempFacts(inFact, inFlags), inOptions), inPopupFlags)).Tick();
             return future;
         }
 
@@ -132,44 +142,55 @@ namespace Aqua {
             };
         }
 
-        private void Configure(string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags) {
-            if (!string.IsNullOrEmpty(inHeader)) {
-                m_HeaderText.SetTextFromString(inHeader);
+        static private PopupContent TempContent(string inHeader, string inText, StreamedImageSet inImage, PopupFacts inFacts, NamedOption[] inOptions) {
+            PopupContent content = new PopupContent() {
+                Text = inText,
+                Header = inHeader,
+                Image = inImage,
+                Facts = inFacts,
+                Options = inOptions
+            };
+            return content;
+        }
+
+        private void Configure(PopupContent inContent, ref PopupFlags ioPopupFlags) {
+            if (!string.IsNullOrEmpty(inContent.Header)) {
+                m_HeaderText.SetTextFromString(inContent.Header);
                 m_HeaderText.gameObject.SetActive(true);
             } else {
                 m_HeaderText.gameObject.SetActive(false);
                 m_HeaderText.SetTextFromString(string.Empty);
             }
 
-            if (!string.IsNullOrEmpty(inText)) {
-                m_ContentsText.SetTextFromString(inText);
+            if (!string.IsNullOrEmpty(inContent.Text)) {
+                m_ContentsText.SetTextFromString(inContent.Text);
                 m_ContentsText.gameObject.SetActive(true);
             } else {
                 m_ContentsText.gameObject.SetActive(false);
                 m_ContentsText.SetTextFromString(string.Empty);
             }
 
-            if (inImage.IsEmpty) {
+            if (inContent.Image.IsEmpty) {
                 m_ImageDisplay.gameObject.SetActive(false);
             } else {
                 m_ImageDisplay.gameObject.SetActive(true);
-                if ((inPopupFlags & PopupFlags.TallImage) != 0) {
+                if ((ioPopupFlags & PopupFlags.TallImage) != 0) {
                     m_ImageDisplay.Layout.preferredHeight = 260;
                 } else {
                     m_ImageDisplay.Layout.preferredHeight = 160;
                 }
-                m_ImageDisplay.Display(inImage);
+                m_ImageDisplay.Display(inContent.Image);
             }
 
-            m_OptionCount = inOptions.Length;
+            m_OptionCount = inContent.Options.Length;
             if (m_OptionCount == 0) {
-                inPopupFlags |= PopupFlags.ShowCloseButton;
+                ioPopupFlags |= PopupFlags.ShowCloseButton;
             }
             for (int i = 0; i < m_Buttons.Length; ++i) {
                 ref ButtonConfig config = ref m_Buttons[i];
 
                 if (i < m_OptionCount) {
-                    NamedOption option = inOptions[i];
+                    NamedOption option = inContent.Options[i];
                     config.Text.SetText(Loc.Find(option.TextId));
                     config.OptionId = option.Id;
                     config.Root.gameObject.SetActive(true);
@@ -183,7 +204,7 @@ namespace Aqua {
             }
 
             m_DividerGroup.SetActive(m_OptionCount > 0);
-            m_CloseButton.gameObject.SetActive((inPopupFlags & PopupFlags.ShowCloseButton) != 0);
+            m_CloseButton.gameObject.SetActive((ioPopupFlags & PopupFlags.ShowCloseButton) != 0);
         }
 
         private void ConfigureFacts(PopupFacts inFacts) {
@@ -233,7 +254,7 @@ namespace Aqua {
                     bUsedVertical = true;
                 }
 
-                factView = m_FactPools.Alloc(factList[i], null, flags, target);
+                factView = m_FactPools.Alloc(factList[i], flags, inFacts.Reference, target);
                 factTransform = (RectTransform)factView.transform;
                 if (bCurrentIsGrid) {
                     gridCellSize.y = Mathf.Max(gridCellSize.y, factTransform.sizeDelta.y);
@@ -271,25 +292,31 @@ namespace Aqua {
             }
         }
 
-        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags) {
+        private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, PopupContent inContent, PopupFlags inPopupFlags) {
             using (ioFuture) {
-                Configure(inHeader, inText, inImage, inOptions, inPopupFlags);
-                ConfigureFacts(default);
+                Configure(inContent, ref inPopupFlags);
+                ConfigureFacts(inContent.Facts);
+                SetCustomModule(inContent.CustomModule);
 
                 Services.Events.QueueForDispatch(GameEvents.PopupOpened);
 
                 ShowOrBounce();
 
                 SetInputState(true);
-                AttemptTTS(inHeader, inText, inImage);
+                AttemptTTS(inContent);
 
                 m_SelectedOption = StringHash32.Null;
                 m_OptionWasSelected = false;
+
+                var options = inContent.Options;
                 while (!m_OptionWasSelected) {
-                    if (inOptions.Length <= 1 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Space)) {
+                    if (options.Length <= 1 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Space)) {
                         m_OptionWasSelected = true;
-                        if (inOptions.Length == 1)
-                            m_SelectedOption = inOptions[0].Id;
+                        if (options.Length == 1)
+                            m_SelectedOption = options[0].Id;
+                        break;
+                    } else if ((inPopupFlags & PopupFlags.ShowCloseButton) != 0 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Escape)) {
+                        m_OptionWasSelected = true;
                         break;
                     }
 
@@ -311,59 +338,21 @@ namespace Aqua {
             }
         }
 
-        private IEnumerator PresentFactRoutine(Future<StringHash32> ioFuture, string inHeader, string inText, StreamedImageSet inImage, PopupFacts inFacts, ListSlice<NamedOption> inOptions, PopupFlags inPopupFlags) {
-            using (ioFuture) {
-                Configure(inHeader, inText, inImage, inOptions, inPopupFlags);
-                ConfigureFacts(inFacts);
-
-                Services.Events.QueueForDispatch(GameEvents.PopupOpened);
-
-                ShowOrBounce();
-
-                SetInputState(true);
-                AttemptTTS(inHeader, inText, inImage);
-
-                m_SelectedOption = StringHash32.Null;
-                m_OptionWasSelected = false;
-                while (!m_OptionWasSelected) {
-                    if (inOptions.Length <= 1 && m_RaycastBlocker.Device.KeyPressed(KeyCode.Space)) {
-                        m_OptionWasSelected = true;
-                        if (inOptions.Length == 1)
-                            m_SelectedOption = inOptions[0].Id;
-                        break;
-                    }
-
-                    yield return null;
-                }
-
-                Services.TTS.Cancel();
-                SetInputState(false);
-
-                ioFuture.Complete(m_SelectedOption);
-                m_SelectedOption = StringHash32.Null;
-
-                yield return null;
-
-                if (m_AutoCloseDelay > 0)
-                    yield return m_AutoCloseDelay;
-
-                Hide();
-            }
-        }
-
-        private void AttemptTTS(string inHeader, string inText, StreamedImageSet inImage) {
+        static private void AttemptTTS(PopupContent inContent) {
             if (Accessibility.TTSFull) {
                 using (PooledStringBuilder psb = PooledStringBuilder.Create()) {
-                    if (!string.IsNullOrEmpty(inHeader)) {
-                        psb.Builder.Append(inHeader).Append("\n\n");
+                    if (!string.IsNullOrEmpty(inContent.Header)) {
+                        psb.Builder.Append(inContent.Header).Append("\n\n");
                     }
-                    if (!inImage.IsEmpty && !string.IsNullOrEmpty(inImage.Tooltip)) {
-                        psb.Builder.Append(inImage.Tooltip).Append("\n\n");
+                    if (!inContent.Image.IsEmpty && !string.IsNullOrEmpty(inContent.Image.Tooltip)) {
+                        psb.Builder.Append(inContent.Image.Tooltip).Append("\n\n");
                     }
-                    if (!string.IsNullOrEmpty(inText)) {
-                        psb.Builder.Append(inText);
+                    if (!string.IsNullOrEmpty(inContent.Text)) {
+                        psb.Builder.Append(inContent.Text);
                     }
-                    Services.TTS.Text(psb.Builder.Flush());
+                    if (psb.Builder.Length > 0) {
+                        Services.TTS.Text(psb.Builder.Flush());
+                    }
                 }
             }
         }
@@ -412,6 +401,30 @@ namespace Aqua {
         }
 
         #endregion // Animation
+
+        #region Custom Modules
+
+        private void SetCustomModule(RectTransform inCustomModule) {
+            if (m_CurrentCustomModule == inCustomModule) {
+                return;
+            }
+
+            if (m_CurrentCustomModule) {
+                m_CurrentCustomModule.SetParent(m_OldCustomModuleParent);
+                m_CurrentCustomModule.gameObject.SetActive(false);
+            }
+
+            m_CurrentCustomModule = inCustomModule;
+
+            if (inCustomModule) {
+                m_OldCustomModuleParent = inCustomModule.parent;
+                inCustomModule.SetParent(m_Layout.transform);
+                inCustomModule.SetSiblingIndex(m_CustomModuleSiblingIndex);
+                inCustomModule.gameObject.SetActive(true);
+            }
+        }
+
+        #endregion // Custom Modules
 
         #region Callbacks
 
@@ -462,6 +475,7 @@ namespace Aqua {
             m_FactPools.FreeAll();
             m_ImageDisplay.Clear();
             m_RootGroup.alpha = 0;
+            SetCustomModule(null);
 
             m_CachedFactsSet[0] = default;
             m_CachedFlagsSet[0] = default;
@@ -472,21 +486,33 @@ namespace Aqua {
         #endregion // BasePanel
     }
 
+    public struct PopupContent {
+        public string Header;
+        public string Text;
+        public StreamedImageSet Image;
+        public RectTransform CustomModule;
+        public PopupFacts Facts;
+        public ListSlice<NamedOption> Options;
+    }
+
     public struct PopupFacts {
         public ListSlice<BFBase> Facts;
         public ListSlice<BFDiscoveredFlags> Flags;
         public Predicate<BFBase> ShowNew;
+        public BestiaryDesc Reference;
 
         public PopupFacts(ListSlice<BFBase> facts) {
             Facts = facts;
             Flags = default;
             ShowNew = null;
+            Reference = null;
         }
 
         public PopupFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags) {
             Facts = facts;
             Flags = flags;
             ShowNew = null;
+            Reference = null;
         }
     }
 

@@ -77,7 +77,7 @@ namespace ProtoAqua.Observation {
 
             for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
                 critter = m_RemainingCritters[i];
-                if (critter.WasTagged) {
+                if (critter.WasTagged || !critter.ColliderPosition.enabled) {
                     continue;
                 }
 
@@ -134,6 +134,7 @@ namespace ProtoAqua.Observation {
             if (m_SiteData == null) {
                 m_RemainingCritters.PushBack(inCritter);
                 inCritter.Collider.enabled = false;
+                inCritter.ColliderPosition.enabled = false;
                 return;
             }
 

@@ -10,6 +10,7 @@ namespace Aqua.Modeling {
         #region Inspector
 
         public RectTransform Transform;
+        public CanvasGroup CanvasGroup;
         public RawImage Texture;
         public ScrollTiledRawImage Scroll;
         public Graphic Arrow;
@@ -18,9 +19,12 @@ namespace Aqua.Modeling {
         #endregion // Inspector
 
         [NonSerialized] public BFBase Fact;
-        [NonSerialized] public int IndexA;
-        [NonSerialized] public int IndexB;
+        [NonSerialized] public int Key;
+        [NonSerialized] public ushort IndexA;
+        [NonSerialized] public ushort IndexB;
         [NonSerialized] public int Order;
+        [NonSerialized] public int ConnectionIndex;
+        [NonSerialized] public WorldFilterMask Mask;
 
         void IPoolAllocHandler.OnAlloc() {
         }

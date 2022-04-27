@@ -266,6 +266,14 @@ namespace Aqua.Modeling {
 
         #endregion // Eating
 
+        #region Parasite
+
+        private ParasiteInfo* NewParasite() {
+            return &Parasites[ParasiteCount++];
+        }
+
+        #endregion // Parasite
+
         #region Importing
 
         public void ImportSim(BFSim sim) {
@@ -332,7 +340,7 @@ namespace Aqua.Modeling {
 
                 case BFTypeId.Eat: {
                     // only import if the player has the rate
-                    if ((flags & BFDiscoveredFlags.Rate) != 0) {
+                    if (BFType.HasRate(flags)) {
                         BFEat eat = (BFEat) fact;
                         int targetIdx = IndexOfActorType(eat.Critter.Id());
                         if (targetIdx >= 0) {
@@ -381,8 +389,18 @@ namespace Aqua.Modeling {
                     break;
                 }
             
-                case BFTypeId.Parasites: {
-                    // TODO: add parasite relationship
+                case BFTypeId.Parasite: {
+                    // only import if the player has the rate
+                    if (BFType.HasRate(flags)) {
+                        BFParasite ps = (BFParasite) fact;
+                        int targetIdx = IndexOfActorType(ps.Critter.Id());
+                        if (targetIdx >= 0) {
+                            ParasiteInfo* parasiteInfo = NewParasite();
+                            parasiteInfo->Index = (byte) index;
+                            parasiteInfo->Target = (byte) targetIdx;
+                            parasiteInfo->Affected = ps.Ratio;
+                        }
+                    }
                     break;
                 }
             }

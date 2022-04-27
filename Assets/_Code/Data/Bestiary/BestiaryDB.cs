@@ -20,6 +20,8 @@ namespace Aqua
         [SerializeField] private Sprite m_DefaultEatSprite = null;
         [SerializeField] private Sprite m_DefaultHumanCatchSprite = null;
         [SerializeField] private Sprite m_DefaultIsEatenSprite = null;
+        [SerializeField] private Sprite m_DefaultParasiteSprite = null;
+        [SerializeField] private Sprite m_DefaultIsParasitedBySprite = null;
         [SerializeField] private Sprite m_DefaultProduceSprite = null;
         [SerializeField] private Sprite m_DefaultConsumeSprite = null;
         [SerializeField] private Sprite m_DefaultReproduceSprite = null;
@@ -59,6 +61,8 @@ namespace Aqua
                     if (m_DefaultHumanCatchSprite != null && inFact.Parent.HasFlags(BestiaryDescFlags.Human))
                         return m_DefaultHumanCatchSprite;
                     return m_DefaultEatSprite;
+                case BFTypeId.Parasite:
+                    return m_DefaultParasiteSprite;
                 case BFTypeId.Produce:
                     return m_DefaultProduceSprite;
                 case BFTypeId.Consume:
@@ -89,8 +93,17 @@ namespace Aqua
             }
         }
 
-        public Sprite DefaultIsEatenIcon() {
-            return m_DefaultIsEatenSprite;
+        public Sprite DefaultBorrowedIcon(BFBase inFact) {
+            switch(inFact.Type)
+            {
+                case BFTypeId.Eat:
+                    return m_DefaultIsEatenSprite;
+                case BFTypeId.Parasite:
+                    return m_DefaultIsParasitedBySprite;
+                
+                default:
+                    return null;
+            }
         }
 
         public Sprite GraphTypeToImage(BFGraphType inGraphType)
@@ -216,7 +229,6 @@ namespace Aqua
 
             BestiaryDesc entry;
             StringHash32 envId;
-            BFEat eat;
             for(int i = 0; i < m_Objects.Length; i++)
             {
                 entry = m_Objects[i];
@@ -235,10 +247,14 @@ namespace Aqua
 
                             foreach(var fact in entry.OwnedFacts)
                             {
-                                eat = fact as BFEat;
-                                if (eat != null)
+                                switch(fact.Type)
                                 {
-                                    AddToListMap(critterReciprocalFactLists, eat.Critter, eat);
+                                    case BFTypeId.Eat:
+                                    case BFTypeId.Parasite:
+                                        {
+                                            AddToListMap(critterReciprocalFactLists, BFType.Target(fact), fact);
+                                            break;
+                                        }
                                 }
                             }
                             break;

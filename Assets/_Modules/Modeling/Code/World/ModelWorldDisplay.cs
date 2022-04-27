@@ -14,6 +14,7 @@ namespace Aqua.Modeling {
 
         [Serializable] private class OrganismPool : SerializablePool<ModelOrganismDisplay> { }
         [Serializable] private class ConnectionPool : SerializablePool<ModelConnectionDisplay> { }
+        [Serializable] private class AttachmentPool : SerializablePool<ModelAttachmentDisplay> { }
 
         private unsafe struct GraphSolverState {
             public Unsafe.ArenaHandle Allocator;
@@ -34,7 +35,7 @@ namespace Aqua.Modeling {
         private const int MaxPropertyNodes = (int) WaterProperties.TrackedMax + 1;
         private const int MaxGraphNodes = MaxOrganismNodes + MaxPropertyNodes;
         private const int MaxSolverIterations = 64;
-        private const float SolverVelocityThresholdSq = .2f * .2f;
+        private const float SolverVelocityThresholdSq = .1f * .1f;
         private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
         #endregion // Consts
@@ -56,6 +57,7 @@ namespace Aqua.Modeling {
         [Header("Organisms")]
         [SerializeField] private OrganismPool m_OrganismPool = null;
         [SerializeField] private ConnectionPool m_ConnectionPool = null;
+        [SerializeField] private AttachmentPool m_AttachmentPool = null;
 
         [Header("Constants")]
         [SerializeField] private float m_PositionScale = 96;
@@ -66,14 +68,31 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_GravityForce = 10;
         [SerializeField] private float m_ConnectionOffsetFactor = 1.25f;
         [SerializeField] private float m_ConnectionArrowOffsetFactor = 1.25f;
+        [SerializeField] private float m_ConnectionOverlapOffset = 0.2f;
+        [SerializeField] private float m_AttachmentOverlapOffset = 24;
+        [SerializeField] private float m_OrganismRadius = 48;
+        [SerializeField] private float m_WaterPropertyRadius = 36;
         // [SerializeField] private float m_BoundaryForce = 2;
 
         [Header("Textures")]
         [SerializeField] private Texture2D m_PartialLineTexture = null;
         [SerializeField] private Texture2D m_FullLineTexture = null;
         [SerializeField] private Texture2D m_DottedLineTexture = null;
+
+        [Header("Colors")]
         [SerializeField] private Color m_StressedLineColor = ColorBank.Red;
         [SerializeField] private Color m_NormalLineColor = ColorBank.Aqua;
+        [SerializeField] private Color m_ReproLineColor = ColorBank.Purple;
+
+        [Header("Sprites")]
+        [SerializeField] private Sprite m_MissingReproIcon = null;
+        [SerializeField] private Sprite m_MissingReproStressedIcon = null;
+        [SerializeField] private Sprite m_MissingEatIcon = null;
+        [SerializeField] private Sprite m_MissingEatStressedIcon = null;
+        [SerializeField] private Sprite m_MissingChemIcon = null;
+        [SerializeField] private Sprite m_MissingChemStressedIcon = null;
+        [SerializeField] private Sprite m_MissingParasiteIcon = null;
+        [SerializeField] private Sprite m_MissingHistoryIcon = null;
 
         #endregion // Inspector
 
@@ -87,6 +106,7 @@ namespace Aqua.Modeling {
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
         private readonly ModelWaterPropertyDisplay[] m_WaterChemMap = new ModelWaterPropertyDisplay[(int) WaterPropertyId.TRACKED_COUNT];
         private GraphSolverState m_SolverState;
+        private readonly Dictionary<int, int> m_ConnectionCount = new Dictionary<int, int>(32);
 
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
@@ -109,6 +129,10 @@ namespace Aqua.Modeling {
             InitFixedPositions();
 
             m_OriginalCanvasState = TransformState.LocalState(m_Canvas.transform);
+        }
+
+        private void OnDestroy() {
+            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
         }
 
         private unsafe void InitMemoryArena() {
@@ -155,6 +179,7 @@ namespace Aqua.Modeling {
                 m_ReconstructHandle.Cancel();
                 m_OrganismPool.Reset();
                 m_ConnectionPool.Reset();
+                m_AttachmentPool.Reset();
                 m_LastConstructedId = null;
             }
         }
@@ -206,7 +231,9 @@ namespace Aqua.Modeling {
         private IEnumerator ReconstructProcess() {
             m_OrganismPool.Reset();
             m_ConnectionPool.Reset();
+            m_AttachmentPool.Reset();
             m_OrganismMap.Clear();
+            m_ConnectionCount.Clear();
             m_Input.Override = false;
             yield return null;
 
@@ -239,6 +266,10 @@ namespace Aqua.Modeling {
                     continue;
                 }
 
+                if (BFType.IsSelfTargeting(fact)) {
+                    GenerateAttachment(fact, fact.Parent, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                }
+
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
@@ -257,6 +288,10 @@ namespace Aqua.Modeling {
                     continue;
                 }
 
+                if (BFType.IsSelfTargeting(fact)) {
+                    GenerateAttachment(fact, fact.Parent, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                }
+
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
                     GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
@@ -268,6 +303,24 @@ namespace Aqua.Modeling {
                 }
 
                 yield return null;
+            }
+
+            foreach(var missing in m_State.Conceptual.MissingFacts) {
+                BestiaryDesc ownerBestiary = missing.OrganismId.IsEmpty ? null : Assets.Bestiary(missing.OrganismId);
+                WaterPropertyId ownerProperty = missing.PropertyId;
+
+                MissingFactTypes mask;
+                for(int i = 0; i < 9; i++) {
+                    mask = (MissingFactTypes) (1 << i);
+                    if ((missing.FactTypes & mask) == mask) {
+                        if (ownerProperty != WaterPropertyId.NONE) {
+                            GenerateAttachment(mask, ownerProperty);
+                        } else {
+                            GenerateAttachment(mask, ownerBestiary);
+                        }
+                        yield return null;
+                    }
+                }
             }
 
             yield return 1;
@@ -290,6 +343,8 @@ namespace Aqua.Modeling {
             yield return null;
             UpdateConnectionPositions();
             yield return null;
+            UpdateAttachmentPositions();
+            yield return null;
             UpdateInterventionControls();
             yield return null;
 
@@ -298,11 +353,16 @@ namespace Aqua.Modeling {
 
         private unsafe ModelOrganismDisplay AllocOrganism(BestiaryDesc desc, int index) {
             ModelOrganismDisplay display = m_OrganismPool.Alloc();
-            display.Initialize(desc, index, m_OrganismInterventionDelegate);
+            display.Initialize(desc, index, m_OrganismInterventionDelegate, m_State.Simulation.IsOrganismRelevant(desc.Id()) ? WorldFilterMask.Relevant : 0);
             m_OrganismMap.Add(desc.Id(), display);
             m_SolverState.Positions[index] = new Vector2(RNG.Instance.NextFloat(-2, 2), RNG.Instance.NextFloat(-2, 2));
             m_SolverState.Forces[index] = default;
             m_SolverState.ConnectionMasks[index] = 0;
+
+            #if UNITY_EDITOR
+            display.gameObject.name = desc.name;
+            #endif // UNITY_EDITOR
+
             return display;
         }
 
@@ -314,14 +374,44 @@ namespace Aqua.Modeling {
 
             ModelConnectionDisplay connection = m_ConnectionPool.Alloc();
             connection.Fact = fact;
-            connection.IndexA = indexA;
-            connection.IndexB = indexB;
-            connection.Texture.texture = flags == BFDiscoveredFlags.All ? m_FullLineTexture : m_PartialLineTexture;
+            connection.Key = GenerateConnectionKey(indexA, indexB);
+            connection.IndexA = (ushort) indexA;
+            connection.IndexB = (ushort) indexB;
+            connection.ConnectionIndex = IncrementConnectionCount(connection.Key);
+            connection.Texture.texture = BFType.HasAll(flags) ? m_FullLineTexture : m_PartialLineTexture;
             connection.Texture.color = connection.Arrow.color = BFType.OnlyWhenStressed(fact) ? m_StressedLineColor : m_NormalLineColor;
             connection.Arrow.gameObject.SetActive(true);
             connection.Fader.SetActive(false);
             connection.Scroll.enabled = false;
             connection.Order = 1;
+
+            #if UNITY_EDITOR
+            connection.gameObject.name = fact.name;
+            #endif // UNITY_EDITOR
+
+            if (m_State.Simulation.IsOrganismRelevant(owner.Id()) && m_State.Simulation.IsOrganismRelevant(target.Id())) {
+                connection.Mask = WorldFilterMask.Relevant;
+            } else {
+                connection.Mask = 0;
+            }
+
+            switch(fact.Type) {
+                case BFTypeId.Eat: {
+                    connection.Mask |= WorldFilterMask.Eats;
+                    break;
+                }
+
+                case BFTypeId.Parasite: {
+                    connection.Mask |= WorldFilterMask.Parasites;
+                    break;
+                }
+
+                case BFTypeId.Reproduce:
+                case BFTypeId.Grow:  {
+                    connection.Mask |= WorldFilterMask.Repro;
+                    break;
+                }
+            }
         }
 
         private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, WaterPropertyId property, BFDiscoveredFlags flags) {
@@ -332,19 +422,180 @@ namespace Aqua.Modeling {
                 Ref.Swap(ref indexA, ref indexB);
             }
 
+            int key = GenerateConnectionKey(indexA, indexB);
+            if (m_ConnectionCount.ContainsKey(key)) {
+                return;
+            }
+
             m_SolverState.ConnectionMasks[indexA] |= (1u << indexB);
             m_SolverState.ConnectionMasks[indexB] |= (1u << indexA);
 
             ModelConnectionDisplay connection = m_ConnectionPool.Alloc();
             connection.Fact = fact;
-            connection.IndexA = indexA;
-            connection.IndexB = indexB;
+            connection.Key = key;
+            connection.IndexA = (ushort) indexA;
+            connection.IndexB = (ushort) indexB;
+            connection.ConnectionIndex = IncrementConnectionCount(key);
             connection.Texture.texture = m_DottedLineTexture;
             connection.Texture.color = Assets.Property(property).Color();
             connection.Arrow.gameObject.SetActive(false);
             connection.Fader.SetActive(true);
             connection.Scroll.enabled = true;
             connection.Order = 0;
+
+            #if UNITY_EDITOR
+            connection.gameObject.name = fact.name;
+            #endif // UNITY_EDITOR
+
+            if (m_State.Simulation.IsOrganismRelevant(owner.Id()) && m_State.Simulation.IsWaterPropertyRelevant(property)) {
+                connection.Mask = WorldFilterMask.Relevant;
+            } else {
+                connection.Mask = 0;
+            }
+
+            switch(property) {
+                case WaterPropertyId.Oxygen:
+                case WaterPropertyId.CarbonDioxide: {
+                    connection.Mask |= WorldFilterMask.OxygenAndCarbonDioxide;
+                    break;
+                }
+
+                case WaterPropertyId.Light: {
+                    connection.Mask |= WorldFilterMask.Light;
+                    break;
+                }
+            }
+        }
+
+        private unsafe void GenerateAttachment(BFBase fact, BestiaryDesc owner, BFDiscoveredFlags flags) {
+            int index = GetIndex(owner);
+            bool onlyStressed = BFType.OnlyWhenStressed(fact);
+
+            ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
+            attachment.Fact = fact;
+            attachment.Key = GenerateConnectionKey(index, index);
+            attachment.Index = (ushort) index;
+            attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
+            attachment.Arrow.color = onlyStressed ? m_StressedLineColor : m_ReproLineColor;
+            attachment.Arrow.gameObject.SetActive(true);
+            attachment.Stressed.SetActive(onlyStressed);
+            attachment.Icon.sprite = fact.Icon;
+
+            #if UNITY_EDITOR
+            attachment.gameObject.name = fact.name;
+            #endif // UNITY_EDITOR
+
+            if (m_State.Simulation.IsOrganismRelevant(owner.Id())) {
+                attachment.Mask = WorldFilterMask.Relevant;
+            } else {
+                attachment.Mask = 0;
+            }
+
+            switch(fact.Type) {
+                case BFTypeId.Reproduce:
+                case BFTypeId.Grow:  {
+                    attachment.Mask |= WorldFilterMask.Repro;
+                    break;
+                }
+            }
+        }
+
+        private unsafe void GenerateAttachment(MissingFactTypes missingType, BestiaryDesc owner) {
+            int index = GetIndex(owner);
+
+            ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
+            attachment.Key = GenerateConnectionKey(index, index);
+            attachment.Index = (ushort) index;
+            attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
+            attachment.Arrow.gameObject.SetActive(false);
+
+            #if UNITY_EDITOR
+            attachment.gameObject.name = string.Format("{0}.Missing.{1}", owner.name, missingType.ToString());
+            #endif // UNITY_EDITOR
+
+            if (m_State.Simulation.IsOrganismRelevant(owner.Id())) {
+                attachment.Mask = WorldFilterMask.Relevant;
+            } else {
+                attachment.Mask = 0;
+            }
+
+            switch(missingType) {
+                case MissingFactTypes.Repro: {
+                    attachment.Mask |= WorldFilterMask.Repro;
+                    attachment.Icon.sprite = m_MissingReproIcon;
+                    break;
+                }
+
+                case MissingFactTypes.Repro_Stressed: {
+                    attachment.Mask |= WorldFilterMask.Repro;
+                    attachment.Icon.sprite = m_MissingReproStressedIcon;
+                    break;
+                }
+
+                case MissingFactTypes.Eat: {
+                    attachment.Mask |= WorldFilterMask.Eats;
+                    attachment.Icon.sprite = m_MissingEatIcon;
+                    break;
+                }
+
+                case MissingFactTypes.Eat_Stressed: {
+                    attachment.Mask |= WorldFilterMask.Eats;
+                    attachment.Icon.sprite = m_MissingEatStressedIcon;
+                    break;
+                }
+
+                case MissingFactTypes.WaterChem: {
+                    attachment.Mask |= WorldFilterMask.AllWaterChem;
+                    attachment.Icon.sprite = m_MissingChemIcon;
+                    break;
+                }
+
+                case MissingFactTypes.WaterChem_Stressed: {
+                    attachment.Mask |= WorldFilterMask.AllWaterChem;
+                    attachment.Icon.sprite = m_MissingChemStressedIcon;
+                    break;
+                }
+
+                case MissingFactTypes.Parasite: {
+                    attachment.Mask |= WorldFilterMask.Parasites;
+                    attachment.Icon.sprite = m_MissingParasiteIcon;
+                    break;
+                }
+
+                case MissingFactTypes.PopulationHistory: {
+                    attachment.Mask |= WorldFilterMask.History;
+                    attachment.Icon.sprite = m_MissingHistoryIcon;
+                    break;
+                }
+            }
+        }
+
+        private unsafe void GenerateAttachment(MissingFactTypes missingType, WaterPropertyId propertyId) {
+            int index = GetIndex(propertyId);
+
+            ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
+            attachment.Key = GenerateConnectionKey(index, index);
+            attachment.Index = (ushort) index;
+            attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
+            attachment.Arrow.gameObject.SetActive(false);
+
+            #if UNITY_EDITOR
+            attachment.gameObject.name = string.Format("{0}.Missing.{1}", propertyId.ToString(), missingType.ToString());
+            #endif // UNITY_EDITOR
+
+            if (m_State.Simulation.IsWaterPropertyRelevant(propertyId)) {
+                attachment.Mask = WorldFilterMask.Relevant;
+            } else {
+                attachment.Mask = 0;
+            }
+
+            switch(missingType) {
+                case MissingFactTypes.WaterChemHistory: {
+                    attachment.Mask |= WorldFilterMask.History;
+                    attachment.Icon.sprite = m_MissingHistoryIcon;
+                    break;
+                }
+            }
         }
 
         private void UpdateOrganismPositions(int count) {
@@ -358,8 +609,10 @@ namespace Aqua.Modeling {
             using(PooledList<ModelConnectionDisplay> allocatedConnections = PooledList<ModelConnectionDisplay>.Create(m_ConnectionPool.ActiveObjects)) {
                 allocatedConnections.Sort((x, y) => y.Order - x.Order);
                 int count = allocatedConnections.Count;
-                Vector2 a, b, vecAB, centerAB;
+                Vector2 a, b, vecAB, centerAB, cross;
                 float distAB;
+                int connectionCount;
+                float connectionStart, connectionOffset;
                 ModelConnectionDisplay display;
                 for(int i = 0; i < count; i++) {
                     display = allocatedConnections[i];
@@ -369,15 +622,58 @@ namespace Aqua.Modeling {
                     centerAB = (a + b) * 0.5f;
                     distAB = vecAB.magnitude;
                     vecAB.Normalize();
+                    cross = new Vector2(-vecAB.y, vecAB.x);
                     distAB -= m_PositionScale * m_ConnectionOffsetFactor;
                     if (display.Arrow.isActiveAndEnabled) {
                         distAB -= m_PositionScale * m_ConnectionArrowOffsetFactor;
                         centerAB -= vecAB * m_PositionScale * m_ConnectionArrowOffsetFactor * 0.5f;
                     }
+                    m_ConnectionCount.TryGetValue(display.Key, out connectionCount);
+                    if (connectionCount > 1) {
+                        connectionStart = -(connectionCount - 1) * 0.5f;
+                        connectionOffset = m_PositionScale * m_ConnectionOverlapOffset * (connectionStart + display.ConnectionIndex);
+                        centerAB.x += cross.x * connectionOffset;
+                        centerAB.y += cross.y * connectionOffset;
+                    }
                     display.Transform.SetSizeDelta(distAB, Axis.X);
                     display.Transform.SetAnchorPos(centerAB);
                     display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
                     display.Transform.SetAsFirstSibling();
+                }
+            }
+        }
+
+        private void UpdateAttachmentPositions() {
+            using(PooledList<ModelAttachmentDisplay> allocatedAttachments = PooledList<ModelAttachmentDisplay>.Create(m_AttachmentPool.ActiveObjects)) {
+                int count = allocatedAttachments.Count;
+                RectTransform aTrans;
+                Vector2 a, offset;
+                float radius;
+                int attachmentCount;
+                float attachmentStart, attachmentOffset;
+                ModelAttachmentDisplay display;
+                for(int i = 0; i < count; i++) {
+                    display = allocatedAttachments[i];
+                    aTrans = GetTransform(display.Index);
+                    a = aTrans.anchoredPosition;
+                    radius = display.Index >= PropertyIndexOffset ? m_WaterPropertyRadius : m_OrganismRadius;
+
+                    m_ConnectionCount.TryGetValue(display.Key, out attachmentCount);
+                    attachmentCount = Mathf.Max(attachmentCount, 3);
+                    attachmentStart = (attachmentCount - 1) * 0.5f;
+                    attachmentOffset = Mathf.PI / 2 + (m_AttachmentOverlapOffset / radius) * (attachmentStart - display.AttachmentIndex);
+                    offset.x = Mathf.Cos(attachmentOffset) * radius;
+                    offset.y = Mathf.Sin(attachmentOffset) * radius;
+
+                    display.Transform.SetAnchorPos(a + offset);
+                    if (display.Arrow.isActiveAndEnabled) {
+                        display.Icon.rectTransform.SetSizeDelta(24, Axis.XY);
+                        display.Transform.SetSiblingIndex(aTrans.GetSiblingIndex());
+                        display.Arrow.rectTransform.SetRotation(Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
+                    } else {
+                        display.Icon.rectTransform.SetSizeDelta(48, Axis.XY);
+                        display.Transform.SetSiblingIndex(aTrans.GetSiblingIndex() + 1);
+                    }
                 }
             }
         }
@@ -407,6 +703,13 @@ namespace Aqua.Modeling {
         private int GetIndex(WaterPropertyId property) {
             return PropertyIndexOffset + (int) property;
         }
+
+        private int IncrementConnectionCount(int key) {
+            int current;
+            m_ConnectionCount.TryGetValue(key, out current);
+            m_ConnectionCount[key] = current + 1;
+            return current;
+        }
     
         static private bool CanGenerateConnection(BFBase fact) {
             if (!BFType.IsOrganism(fact)) {
@@ -414,6 +717,10 @@ namespace Aqua.Modeling {
             }
 
             return BFType.IsBehavior(fact);
+        }
+
+        static private int GenerateConnectionKey(int a, int b) {
+            return (a << 16) | (b);
         }
 
         private unsafe void SolveStep(ref GraphSolverState solverState, int count) {
@@ -491,6 +798,7 @@ namespace Aqua.Modeling {
             yield return null;
             m_ConnectionPool.Initialize();
             m_OrganismPool.Initialize();
+            m_AttachmentPool.Initialize();
         }
 
         private void UpdateWaterPropertiesUnlocked() {
@@ -505,10 +813,19 @@ namespace Aqua.Modeling {
 
         private void SyncEnvironmentChemistry(WaterPropertyBlockF32 environment) {
             m_LightProperty.SetValue(environment.Light);
+            m_LightProperty.Mask = m_State.Simulation.IsWaterPropertyRelevant(WaterPropertyId.Light) ? WorldFilterMask.Relevant : 0;
+
             m_TemperatureProperty.SetValue(environment.Temperature);
+            m_TemperatureProperty.Mask = m_State.Simulation.IsWaterPropertyRelevant(WaterPropertyId.Temperature) ? WorldFilterMask.Relevant : 0;
+
             m_PHProperty.SetValue(environment.PH);
+            m_PHProperty.Mask = m_State.Simulation.IsWaterPropertyRelevant(WaterPropertyId.PH) ? WorldFilterMask.Relevant : 0;
+
             m_OxygenProperty.SetValue(environment.Oxygen);
+            m_OxygenProperty.Mask = m_State.Simulation.IsWaterPropertyRelevant(WaterPropertyId.Oxygen) ? WorldFilterMask.Relevant : 0;
+
             m_CarbonDioxideProperty.SetValue(environment.CarbonDioxide);
+            m_CarbonDioxideProperty.Mask = m_State.Simulation.IsWaterPropertyRelevant(WaterPropertyId.CarbonDioxide) ? WorldFilterMask.Relevant : 0;
         }
 
         private ModelOrganismDisplay.AddRemoveResult OnOrganismRequestAddRemove(BestiaryDesc organism, int sign) {
@@ -610,5 +927,20 @@ namespace Aqua.Modeling {
     {
         public string Organism;
         public int DifferenceValue;
+    }
+
+    public enum WorldFilterMask : uint {
+        Relevant = 0x01,
+
+        Eats = 0x02,
+        Parasites = 0x04,
+        Repro = 0x08,
+        OxygenAndCarbonDioxide = 0x10,
+        Light = 0x20,
+
+        History = 0x40,
+
+        AllBehaviors = Eats | Parasites | Repro,
+        AllWaterChem = OxygenAndCarbonDioxide | Light
     }
 }

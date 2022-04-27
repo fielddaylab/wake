@@ -87,7 +87,7 @@ $call GiveUpgrade(ProbeHacker)
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
+@when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light), JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @cutscene
 {@player} 	How should this go again?
 {@kevin}	We want to determine if Sargassum is really to blame for the low light at Site R.
@@ -95,7 +95,7 @@ $call GiveUpgrade(ProbeHacker)
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light)
+@when       scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light), JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once
 @cutscene
 $if HasUpgrade(MeasurementTank)
@@ -113,7 +113,7 @@ $endif
 
 ::measurementTankSelectWater
 @trigger	ExperimentTankViewed
-@when		tankType == "Measurement"
+@when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Let's start by figuring out the Sargassum reproduction rate.
@@ -122,14 +122,14 @@ $endif
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.organisms"
+@when		screenId == "measurement.organisms", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Now add only the Sargassum. We don't want the species interacting with each other.
 
 ::measurementTankSelectFeatures
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.features"
+@when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
 {@profCempaka} Since we want to measure the reproduction rate, turn on the tank stabilizer and auto feeder.

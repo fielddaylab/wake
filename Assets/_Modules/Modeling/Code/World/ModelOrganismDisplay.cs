@@ -20,6 +20,8 @@ namespace Aqua.Modeling {
         #region Inspector
 
         public RectTransform Transform;
+        public CanvasGroup CanvasGroup;
+
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private Graphic m_Background = null;
@@ -38,6 +40,7 @@ namespace Aqua.Modeling {
         [NonSerialized] public ActorStateId State;
 
         [NonSerialized] public int Index;
+        [NonSerialized] public WorldFilterMask Mask;
 
         private OnAddRemoveDelegate m_OnAddRemove;
 
@@ -55,12 +58,13 @@ namespace Aqua.Modeling {
             });
         }
 
-        public void Initialize(BestiaryDesc organism, int index, OnAddRemoveDelegate onAddRemove) {
+        public void Initialize(BestiaryDesc organism, int index, OnAddRemoveDelegate onAddRemove, WorldFilterMask mask) {
             Organism = organism;
             State = ActorStateId.Alive;
             m_Icon.sprite = organism.Icon();
             m_Label.SetText(organism.CommonName());
             Index = index;
+            Mask = mask;
             m_OnAddRemove = onAddRemove;
             m_Background.SetColor(organism.Color() * 0.5f);
         }

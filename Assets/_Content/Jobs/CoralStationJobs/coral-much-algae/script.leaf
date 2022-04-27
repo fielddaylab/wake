@@ -96,6 +96,16 @@ $endif
 @cutscene
 {@kevin}	You'll need to build a Visual Model first, if you haven't done that yet. Then make a Descriptive Model so we can compare it to the empirical data.
 
+:: insufficientData
+@trigger	SimulationModelStarted
+@boostScore 1060 // higher than generic script
+@when		scene:name == "Modeling", !JobTaskCompleted(histPop)
+@cutscene
+{@kevin}	I think we're missing some critical population data. When making a Sync model, the program needs historical population data to check against. 
+			We should head back to Site S and scan the population data before we try to do anything here.
+
+//modeling needs historical data for all the species to validate against
+
 :: modelingComplete
 @trigger	JobTasksUpdated
 @when		scene:name == "Modeling", JobTaskTop(reportBack)
@@ -112,6 +122,13 @@ $endif
 @boostScore -5
 @cutscene
 {@kevin}    Scan all the species at Site S.
+
+:: catchHistPop
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(histPop)
+@boostScore -5
+@cutscene
+{@kevin}    Find the population probe at Site S and scan it.
 
 :: catchObserveEatAlgae
 @trigger    RequestPartnerHelp
