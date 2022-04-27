@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
-  m_Name: hide-n-seek
+  m_Name: bayou-hide-n-seek
   m_EditorClassIdentifier: 
   m_Category: 0
   m_Flags: 0
@@ -33,7 +33,6 @@ MonoBehaviour:
   m_ArgumentationDifficulty: 1
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: 03241b9f52f725845ad36c282bdb41ad, type: 2}
-  - {fileID: 11400000}
   m_PrereqConditions: 
   m_PrereqUpgrades:
   - m_HashValue: 3515152947
@@ -52,8 +51,8 @@ MonoBehaviour:
     Steps:
     - Type: 0
       Target:
-        m_Source: LoggerheadTurtle
-        m_HashValue: 3290936401
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -63,7 +62,13 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.bayou-hide-n-seek.task.jellyObservation
       m_HashValue: 305936581
-    Steps: []
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
     - m_Source: jellyScan
       m_HashValue: 4200401802
@@ -73,10 +78,16 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.bayou-hide-n-seek.task.jellyRates
       m_HashValue: 3222764180
-    Steps: []
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: jellyScan
-      m_HashValue: 4200401802
+    - m_Source: jellyObservation
+      m_HashValue: 3526612107
   - Id:
       m_Source: jellyPrediction
       m_HashValue: 712240770
@@ -86,8 +97,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.Model.TurtleVisual
-        m_HashValue: 4167532367
+        m_Source: O_OilRig.turtleDangerJellies.Model.Predict
+        m_HashValue: 3479564624
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -123,8 +134,8 @@ MonoBehaviour:
     Steps:
     - Type: 0
       Target:
-        m_Source: LoggerheadTurtle
-        m_HashValue: 3290936401
+        m_Source: MoonJelly
+        m_HashValue: 4245174184
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -136,7 +147,13 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.bayou-hide-n-seek.task.jellyObservation
       m_HashValue: 305936581
-    Steps: []
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: jellyRates
@@ -146,8 +163,14 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.bayou-hide-n-seek.task.jellyRates
       m_HashValue: 3222764180
-    Steps: []
-    PrerequisiteTaskIndices: 0000
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: LoggerheadTurtle.Eats.MoonJelly
+        m_HashValue: 2702106243
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: jellyPrediction
       m_HashValue: 712240770
@@ -159,8 +182,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ReefEdge.Model.TurtleVisual
-        m_HashValue: 4167532367
+        m_Source: O_OilRig.turtleDangerJellies.Model.Predict
+        m_HashValue: 3479564624
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 01000200
@@ -184,4 +207,5 @@ MonoBehaviour:
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: a9d0febc410381349ada4a5f50961024,
     type: 3}
-  m_ExtraAssets: []
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: a087dbd099545a64bb8a8abf1c422d53, type: 2}
