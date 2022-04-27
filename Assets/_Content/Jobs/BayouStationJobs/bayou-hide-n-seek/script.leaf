@@ -7,7 +7,9 @@
 @cutscene
 
 // write an intro to your job
-{@profHarper}    This is the intro to the hide-n-seek job!
+{@profHarper}   We are working on generating a model to predict the future health of turtles at {h}Site O{/h}.
+                However, the models based on our current information are not accurate enough.
+                We need to gather more organism data from the site before we proceed.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -30,7 +32,7 @@
 @when 		JobTaskActive(jellyRates)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Measurement Tank to find the rates of Moon Jelly behaviors.
+{@kevin}    Use the Measurement Tank to find how quickly turtles eat the jellyfish.
 
 :: catchJellyPrediction
 @trigger    RequestPartnerHelp
@@ -90,15 +92,13 @@ $call ArgueComplete()
 $call ArgueLoad(jellyTurtle) 
 {@profHarper}   I see. Nicely done! How have you increased the accuracy of your model?
 $call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
-$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle) 
-$call ArgueFactSlot(LoggerheadTurtle.Eats.QueenConch) 
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $goto .argue.chooseFacts
 
 :: argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Population.LoggerheadTurtle, .argue.jellyPop
-    $answer LoggerheadTurtle.Eats.QueenConch, .argue.turtleEat
+    $answer O_OilRig.turtleDangerJellies.Model.Predict, .argue.jellyPop
     $answer *, .argue.unrelated3
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
