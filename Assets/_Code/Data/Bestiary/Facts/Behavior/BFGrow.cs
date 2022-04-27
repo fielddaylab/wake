@@ -25,7 +25,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, CompareStressedPair);
+            BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget, BFDiscoveredFlags.All, CompareStressedPair);
             BFType.DefineMethods(BFTypeId.Grow, null, GenerateDetails, GenerateFragments, null, null);
             BFType.DefineEditor(BFTypeId.Grow, null, BFMode.Player);
         }

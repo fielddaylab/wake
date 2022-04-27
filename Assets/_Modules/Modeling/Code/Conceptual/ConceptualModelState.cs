@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Aqua.Profile;
+using BeauUtil;
 
 namespace Aqua.Modeling {
     public class ConceptualModelState {
@@ -14,6 +15,7 @@ namespace Aqua.Modeling {
 
         public StatusId Status;
         public ModelMissingReasons MissingReasons;
+        public readonly RingBuffer<MissingFactRecord> MissingFacts = new RingBuffer<MissingFactRecord>(24);
 
         public readonly HashSet<BestiaryDesc> GraphedEntities = new HashSet<BestiaryDesc>();
         public readonly HashSet<BFBase> GraphedFacts = new HashSet<BFBase>();

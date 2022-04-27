@@ -22,7 +22,6 @@ namespace Aqua.Modeling {
         [SerializeField] private ConceptualModelUI m_ConceptualUI = null;
         [SerializeField] private SimulationUI m_SimulationUI = null;
         [SerializeField] private CameraPose m_ConceptualCamera = null;
-        [SerializeField] private CameraPose m_SimulationCamera = null;
 
         [Header("-- DEBUG --")]
 
@@ -115,13 +114,11 @@ namespace Aqua.Modeling {
             if (phase >= ModelPhases.Sync) {
                 if (prevPhase < ModelPhases.Sync) {
                     m_SimDataCtrl.LoadConceptualModel();
-                    Services.Camera.MoveToPose(m_SimulationCamera, 0.3f, Curve.CubeOut);
                 }
                 m_SimulationUI.Show();
                 m_SimulationUI.SetPhase(phase);
             } else {
                 if (prevPhase >= ModelPhases.Sync) {
-                    Services.Camera.MoveToPose(m_ConceptualCamera, 0.3f, Curve.CubeOut);
                     m_SimDataCtrl.ClearSimulatedData();
                 }
                 m_SimulationUI.Hide();
@@ -506,6 +503,8 @@ namespace Aqua.Modeling {
             m_Header.SetInputActive(true);
             m_Header.UpdateAllowedMask(ModelPhases.Ecosystem);
             m_Header.SetSelected(ModelPhases.Ecosystem, true);
+
+            Services.Camera.SnapToPose(m_ConceptualCamera);
         }
 
         #endregion // ISceneLoadHandler
@@ -539,5 +538,23 @@ namespace Aqua.Modeling {
         Behaviors = 0x02,
         HistoricalPopulations = 0x04,
         HistoricalWaterChem = 0x08,
+    }
+
+    public struct MissingFactRecord {
+        public StringHash32 OrganismId;
+        public WaterPropertyId PropertyId;
+        public MissingFactTypes FactTypes;
+    }
+
+    public enum MissingFactTypes : ushort {
+        Repro = 0x001,
+        Repro_Stressed = 0x002,
+        Eat = 0x004,
+        Eat_Stressed = 0x008,
+        WaterChem = 0x010,
+        WaterChem_Stressed = 0x020,
+        Parasite = 0x040,
+        PopulationHistory = 0x080,
+        WaterChemHistory = 0x100
     }
 }

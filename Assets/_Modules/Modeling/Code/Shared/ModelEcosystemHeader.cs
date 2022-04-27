@@ -11,6 +11,7 @@ namespace Aqua.Modeling {
 
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private LocText m_EnvironmentLabel = null;
+        [SerializeField] private Image m_EnvironmentIcon = null;
         [SerializeField] private LocText m_JobModelLabel = null;
 
         #endregion // Inspector
@@ -24,6 +25,7 @@ namespace Aqua.Modeling {
         public void Show(BestiaryDesc environment, JobModelScope scope, bool hasJob) {
             m_ShowHideRoutine.Replace(this, m_Group.Show(0.2f)).ExecuteWhileDisabled();
             m_EnvironmentLabel.SetText(environment.CommonName());
+            m_EnvironmentIcon.sprite = environment.Icon();
             if (scope) {
                 m_JobModelLabel.SetText("modeling.jobMode.label");
             } else if (hasJob) {
