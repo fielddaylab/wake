@@ -120,5 +120,97 @@ namespace Aqua.Modeling {
                 }
             }
         }
+
+        static public void GatherMissingFacts(BestiaryDesc environment, Predicate<StringHash32> organismFilter, Predicate<WaterPropertyId> propertyFilter, RingBuffer<BFBase> requiredFacts, HashSet<BestiaryDesc> graphedEntities, HashSet<BFBase> graphedFacts, RingBuffer<MissingFactRecord> missingRecords) {
+            // check facts directly
+            foreach(var fact in requiredFacts) {
+                if (!graphedFacts.Contains(fact)) {
+                    if (!fact.Parent.HasCategory(BestiaryDescCategory.Critter) || graphedEntities.Contains(fact.Parent)) {
+                        RecordMissingFact(missingRecords, fact);
+                    }
+                }
+            }
+
+            // check for missing population history
+            foreach(var propHistory in environment.FactsOfType<BFPopulationHistory>()) {
+                if (organismFilter(propHistory.Critter.Id()) && graphedEntities.Contains(propHistory.Critter) && !graphedFacts.Contains(propHistory)) {
+                    RecordMissingFact(missingRecords, propHistory);
+                }
+            }
+
+            // check for missing water chem history
+            foreach(var chemHistory in environment.FactsOfType<BFWaterPropertyHistory>()) {
+                if (propertyFilter(chemHistory.Property) && !graphedFacts.Contains(chemHistory)) {
+                    RecordMissingFact(missingRecords, chemHistory);
+                }
+            }
+        }
+
+        static private void RecordMissingFact(RingBuffer<MissingFactRecord> missingRecords, BFBase fact) {
+            bool onlyStressed = BFType.OnlyWhenStressed(fact);
+            switch(fact.Type) {
+                case BFTypeId.WaterPropertyHistory: {
+                    FindMissingRecord(missingRecords, BFType.WaterProperty(fact)).FactTypes |= MissingFactTypes.WaterChemHistory;
+                    break;
+                }
+
+                case BFTypeId.Eat: {
+                    FindMissingRecord(missingRecords, fact.Parent.Id()).FactTypes |= onlyStressed ? MissingFactTypes.Eat_Stressed : MissingFactTypes.Eat;
+                    break;
+                }
+
+                case BFTypeId.Grow:
+                case BFTypeId.Reproduce: {
+                    FindMissingRecord(missingRecords, fact.Parent.Id()).FactTypes |= onlyStressed ? MissingFactTypes.Repro_Stressed : MissingFactTypes.Repro;
+                    break;
+                }
+
+                case BFTypeId.Parasite: {
+                    FindMissingRecord(missingRecords, fact.Parent.Id()).FactTypes |= MissingFactTypes.Parasite;
+                    break;
+                }
+
+                case BFTypeId.Produce:
+                case BFTypeId.Consume: {
+                    FindMissingRecord(missingRecords, BFType.WaterProperty(fact)).FactTypes |= onlyStressed ? MissingFactTypes.WaterChem_Stressed : MissingFactTypes.WaterChem;
+                    break;
+                }
+
+                case BFTypeId.PopulationHistory: {
+                    FindMissingRecord(missingRecords, BFType.Target(fact).Id()).FactTypes |= MissingFactTypes.PopulationHistory;
+                    break;
+                }
+            }
+        }
+
+        static private ref MissingFactRecord FindMissingRecord(RingBuffer<MissingFactRecord> records, StringHash32 organismId) {
+            for(int i = 0; i < records.Count; i++) {
+                if (records[i].OrganismId == organismId) {
+                    return ref records[i];
+                }
+            }
+
+            MissingFactRecord record = new MissingFactRecord() {
+                OrganismId = organismId,
+                PropertyId = WaterPropertyId.NONE
+            };
+            records.PushBack(record);
+            return ref records[records.Count - 1];
+        }
+
+        static private ref MissingFactRecord FindMissingRecord(RingBuffer<MissingFactRecord> records, WaterPropertyId propertyId) {
+            for(int i = 0; i < records.Count; i++) {
+                if (records[i].PropertyId == propertyId) {
+                    return ref records[i];
+                }
+            }
+
+            MissingFactRecord record = new MissingFactRecord() {
+                OrganismId = default(StringHash32),
+                PropertyId = propertyId
+            };
+            records.PushBack(record);
+            return ref records[records.Count - 1];
+        }
     }
 }
