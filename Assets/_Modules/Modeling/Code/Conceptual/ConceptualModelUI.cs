@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using BeauRoutine;
 using BeauRoutine.Extensions;
+using BeauUtil.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace Aqua.Modeling {
     public class ConceptualModelUI : BasePanel {
@@ -13,10 +15,9 @@ namespace Aqua.Modeling {
 
         #region Inspector
 
-        [SerializeField] private GameObject m_MissingData = null;
-        [SerializeField] private LocText m_MissingDataText = null;
         [SerializeField] private Button m_ImportButton = null;
         [SerializeField] private Button m_ExportButton = null;
+        [SerializeField] private PointerListener m_InspectRegion = null;
 
         [Header("Import")]
         [SerializeField] private GameObject m_ImportGroup = null;
@@ -30,7 +31,8 @@ namespace Aqua.Modeling {
         [Header("Settings")]
         [SerializeField] private TextId m_MissingOrganismsLabel = null;
         [SerializeField] private TextId m_MissingBehaviorsLabel = null;
-        [SerializeField] private TextId m_MissingOrganismsBehaviorsLabel = null;
+        [SerializeField] private TextId m_ImportReadyLabel = null;
+        [SerializeField] private TextId m_ExportReadyLabel = null;
 
         #endregion // Inspector
 
@@ -50,6 +52,7 @@ namespace Aqua.Modeling {
             base.Awake();
             m_ImportButton.onClick.AddListener(OnImportClicked);
             m_ExportButton.onClick.AddListener(OnExportClicked);
+            m_InspectRegion.onClick.AddListener(OnInspectClicked);
 
             m_ImportFader.SetActive(false);
             m_ImportGroup.SetActive(false);
@@ -97,6 +100,68 @@ namespace Aqua.Modeling {
             UpdateButtons();
         }
 
+        private void OnInspectClicked(PointerEventData evt) {
+            GameObject press = evt.pointerPressRaycast.gameObject;
+            if (press.TryGetComponent(out ModelConnectionDisplay connection)) {
+                if (connection.Fact) {
+                    if (connection.Fact2) {
+                        m_State.PopupFacts(new BFBase[] { connection.Fact, connection.Fact2 });
+                    } else {
+                        m_State.PopupFacts(new BFBase[] { connection.Fact });
+                    }
+                }
+            } else if (press.TryGetComponent(out ModelOrganismDisplay organism)) {
+                m_State.PopupText(organism.Organism.CommonName());
+            } else if (press.TryGetComponent(out ModelAttachmentDisplay attachment)) {
+                if (attachment.Fact) {
+                    m_State.PopupFacts(new BFBase[] { attachment.Fact });
+                } else {
+                    switch(attachment.Missing) {
+                        case MissingFactTypes.Repro: {
+                            m_State.PopupText("modeling.missing.reproduction", AQColors.Red);
+                            break;
+                        }
+                        case MissingFactTypes.Repro_Stressed: {
+                            m_State.PopupText("modeling.missing.reproduction.stressed", AQColors.Red);
+                            break;
+                        }
+
+                        case MissingFactTypes.Eat: {
+                            m_State.PopupText("modeling.missing.eat", AQColors.Red);
+                            break;
+                        }
+                        case MissingFactTypes.Eat_Stressed: {
+                            m_State.PopupText("modeling.missing.eat.stressed", AQColors.Red);
+                            break;
+                        }
+
+                        case MissingFactTypes.WaterChem: {
+                            m_State.PopupText("modeling.missing.chem", AQColors.Red);
+                            break;
+                        }
+                        case MissingFactTypes.WaterChem_Stressed: {
+                            m_State.PopupText("modeling.missing.chem.stressed", AQColors.Red);
+                            break;
+                        }
+
+                        case MissingFactTypes.Parasite: {
+                            m_State.PopupText("modeling.missing.parasite", AQColors.Red);
+                            break;
+                        }
+
+                        case MissingFactTypes.PopulationHistory: {
+                            m_State.PopupText("modeling.missing.populationHistory", AQColors.Red);
+                            break;
+                        }
+                        case MissingFactTypes.WaterChemHistory: {
+                            m_State.PopupText("modeling.missing.waterChemHistory", AQColors.Red);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion // Callbacks
 
         #region Sequences
@@ -110,6 +175,7 @@ namespace Aqua.Modeling {
                 m_ImportHistoricalText.SetActive(false);
                 m_ImportCompletedText.SetActive(false);
                 m_ImportGroup.SetActive(true);
+                m_State.UpdateStatus(default);
                 yield return null;
 
                 bool hadOrganisms = m_State.Conceptual.PendingEntities.Count > 0;
@@ -187,24 +253,50 @@ namespace Aqua.Modeling {
             Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptStarted);
         }
 
+        protected override void OnHide(bool inbInstant) {
+            if (Services.Valid) {
+                m_InspectRegion.enabled = false;
+            }
+        }
+
         private void UpdateButtons() {
             m_ExportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady);
-            m_MissingData.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.MissingData);
             m_ImportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport);
 
-            switch (m_State.Conceptual.MissingReasons) {
-                case ModelMissingReasons.Organisms: {
-                        m_MissingDataText.SetText(m_MissingOrganismsLabel);
-                        break;
+            switch(m_State.Conceptual.Status) {
+                case ConceptualModelState.StatusId.ExportReady: {
+                    m_State.UpdateStatus(m_ExportReadyLabel);
+                    m_InspectRegion.enabled = false;
+                    break;
+                }
+
+                case ConceptualModelState.StatusId.PendingImport: {
+                    m_State.UpdateStatus(m_ImportReadyLabel);
+                    m_InspectRegion.enabled = false;
+                    break;
+                }
+
+                case ConceptualModelState.StatusId.UpToDate: {
+                    m_State.UpdateStatus(default);
+                    m_InspectRegion.enabled = true;
+                    break;
+                }
+
+                case ConceptualModelState.StatusId.MissingData: {
+                    switch (m_State.Conceptual.MissingReasons) {
+                        case ModelMissingReasons.Organisms:
+                        case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
+                                m_State.UpdateStatus(m_MissingOrganismsLabel, AQColors.Red);
+                                break;
+                            }
+                        case ModelMissingReasons.Behaviors: {
+                                m_State.UpdateStatus(m_MissingBehaviorsLabel, AQColors.Red);
+                                break;
+                            }
                     }
-                case ModelMissingReasons.Behaviors: {
-                        m_MissingDataText.SetText(m_MissingBehaviorsLabel);
-                        break;
-                    }
-                case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
-                        m_MissingDataText.SetText(m_MissingOrganismsBehaviorsLabel);
-                        break;
-                    }
+                    m_InspectRegion.enabled = true;
+                    break;
+                }
             }
         }
 

@@ -5,6 +5,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.UI;
 using UnityEngine;
 
 namespace Aqua.Modeling {
@@ -46,6 +47,7 @@ namespace Aqua.Modeling {
         [SerializeField] private Canvas m_Canvas = null;
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private InputRaycasterLayer m_Input = null;
+        [SerializeField] private PointerListener m_Click = null;
 
         [Header("Water Properties")]
         [SerializeField] private ModelWaterPropertyDisplay m_LightProperty = null;
@@ -110,11 +112,11 @@ namespace Aqua.Modeling {
 
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
-        private unsafe ModelWorldDisplay() {
+        private ModelWorldDisplay() {
             m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
         }
 
-        unsafe ~ModelWorldDisplay() {
+        ~ModelWorldDisplay() {
             Unsafe.TryFreeArena(ref m_SolverState.Allocator);
         }
 
@@ -424,6 +426,7 @@ namespace Aqua.Modeling {
 
             int key = GenerateConnectionKey(indexA, indexB);
             if (m_ConnectionCount.ContainsKey(key)) {
+                GetFirstConnectionForKey(key).Fact2 = fact;
                 return;
             }
 
@@ -506,6 +509,7 @@ namespace Aqua.Modeling {
             ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
             attachment.Key = GenerateConnectionKey(index, index);
             attachment.Index = (ushort) index;
+            attachment.Missing = missingType;
             attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
             attachment.Arrow.gameObject.SetActive(false);
 
@@ -518,6 +522,8 @@ namespace Aqua.Modeling {
             } else {
                 attachment.Mask = 0;
             }
+
+            attachment.Mask |= WorldFilterMask.Missing;
 
             switch(missingType) {
                 case MissingFactTypes.Repro: {
@@ -576,6 +582,7 @@ namespace Aqua.Modeling {
             ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
             attachment.Key = GenerateConnectionKey(index, index);
             attachment.Index = (ushort) index;
+            attachment.Missing = missingType;
             attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
             attachment.Arrow.gameObject.SetActive(false);
 
@@ -588,6 +595,8 @@ namespace Aqua.Modeling {
             } else {
                 attachment.Mask = 0;
             }
+
+            attachment.Mask |= WorldFilterMask.Missing;
 
             switch(missingType) {
                 case MissingFactTypes.WaterChemHistory: {
@@ -702,6 +711,16 @@ namespace Aqua.Modeling {
 
         private int GetIndex(WaterPropertyId property) {
             return PropertyIndexOffset + (int) property;
+        }
+
+        private ModelConnectionDisplay GetFirstConnectionForKey(int key) {
+            foreach(var connection in m_ConnectionPool.ActiveObjects) {
+                if (connection.Key == key) {
+                    return connection;
+                }
+            }
+
+            return null;
         }
 
         private int IncrementConnectionCount(int key) {
@@ -939,6 +958,8 @@ namespace Aqua.Modeling {
         Light = 0x20,
 
         History = 0x40,
+        
+        Missing = 0x80,
 
         AllBehaviors = Eats | Parasites | Repro,
         AllWaterChem = OxygenAndCarbonDioxide | Light

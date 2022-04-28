@@ -34,8 +34,6 @@ namespace Aqua.Modeling {
 
         [Header("Sync")]
         [SerializeField] private Button m_SimulateButton = null;
-        [SerializeField] private GameObject m_HistoricalMissingDisplay = null;
-        [SerializeField] private LocText m_HistoricalMissingText = null;
         [SerializeField] private GameObject m_AccuracyDisplay = null;
         [SerializeField] private RectTransform m_AccuracyMeter = null;
         [SerializeField] private RectTransform m_AccuracyGoal = null;
@@ -171,7 +169,6 @@ namespace Aqua.Modeling {
             m_PredictButton.gameObject.SetActive(phase == ModelPhases.Predict);
             m_InterveneButtonGroup.gameObject.SetActive(phase == ModelPhases.Intervene);
             m_InterveneResetButton.gameObject.SetActive(phase == ModelPhases.Intervene);
-            m_HistoricalMissingDisplay.gameObject.SetActive(false);
 
             if (phase != ModelPhases.Predict) {
                 m_InterveneAddPanel.ClearSelection();
@@ -188,29 +185,28 @@ namespace Aqua.Modeling {
                     
                     if (alreadyCompleted) {
                         m_SimulateButton.gameObject.SetActive(false);
-                        m_HistoricalMissingDisplay.SetActive(false);
                         m_PhaseRoutine.Replace(this, Sync_AlreadyCompleted()).Tick();
                     } else if ((missing = m_State.Simulation.EvaluateHistoricalDataMissing()) != 0) {
                         m_SimulateButton.gameObject.SetActive(false);
-                        m_HistoricalMissingDisplay.SetActive(true);
                         ClearLines();
 
                         switch(missing) {
                             case ModelMissingReasons.HistoricalPopulations: {
-                                m_HistoricalMissingText.SetText(m_MissingPopulationsLabel);
+                                m_State.UpdateStatus(m_MissingPopulationsLabel, AQColors.Red);
                                 break;
                             }
                             case ModelMissingReasons.HistoricalWaterChem: {
-                                m_HistoricalMissingText.SetText(m_MissingWaterChemistryLabel);
+                                m_State.UpdateStatus(m_MissingWaterChemistryLabel, AQColors.Red);
                                 break;
                             }
                             case ModelMissingReasons.HistoricalWaterChem | ModelMissingReasons.HistoricalPopulations: {
-                                m_HistoricalMissingText.SetText(m_MissingPopulationsWaterChemistryLabel);
+                                m_State.UpdateStatus(m_MissingPopulationsWaterChemistryLabel, AQColors.Red);
                                 break;
                             }
                         }
+                        InstantHide();
                     } else {
-                        m_HistoricalMissingDisplay.SetActive(false);
+                        m_State.UpdateStatus(default);
                         m_PhaseRoutine.Replace(this, Sync_Boot()).Tick();
                     }
                     
@@ -502,7 +498,6 @@ namespace Aqua.Modeling {
             }
 
             ((RectTransform) m_SimulateButton.transform).SetAnchorX(left);
-            ((RectTransform) m_HistoricalMissingDisplay.transform).SetAnchorX(left);
             ((RectTransform) m_PredictButton.transform).SetAnchorX(right);
             m_InterveneButtonGroup.SetAnchorX(right);
         }

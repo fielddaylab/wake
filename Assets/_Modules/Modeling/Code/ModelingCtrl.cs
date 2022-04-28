@@ -16,6 +16,7 @@ namespace Aqua.Modeling {
 
         [SerializeField] private ModelActivityHeader m_Header = null;
         [SerializeField] private ModelEcosystemHeader m_EcosystemHeader = null;
+        [SerializeField] private InlinePopupPanel m_InlinePopup = null;
         [SerializeField] private BestiaryAddPanel m_EcosystemSelect = null;
         [SerializeField] private ModelWorldDisplay m_World = null;
         [SerializeField] private SimulationDataCtrl m_SimDataCtrl = null;
@@ -59,6 +60,30 @@ namespace Aqua.Modeling {
 
             m_State.Simulation = m_SimDataCtrl;
 
+            m_State.UpdateStatus = m_EcosystemHeader.SetStatusText;
+            m_State.PopupText = (t, c) => {
+                PopupContent content = default;
+                content.Text = Loc.Find(t);
+                content.TextColorOverride = c;
+                m_InlinePopup.Present(content, 0);
+            };
+            m_State.PopupFacts = (f) => {
+                BFDiscoveredFlags[] flags = new BFDiscoveredFlags[f.Length];
+                for(int i = 0; i < flags.Length; i++) {
+                    flags[i] = Save.Bestiary.GetDiscoveredFlags(f[i].Id);
+                }
+
+                PopupFacts facts = default;
+                facts.Facts = f;
+                facts.Flags = flags;
+
+                PopupContent content = default;
+                content.Facts = facts;
+
+                m_InlinePopup.Present(content, 0);
+            };
+            m_State.ClearPopup = () => m_InlinePopup.Hide();
+
             m_ConceptualUI.SetData(m_State, m_ProgressInfo);
             m_SimulationUI.SetData(m_State, m_ProgressInfo);
             m_SimDataCtrl.SetData(m_State, m_ProgressInfo);
@@ -85,6 +110,7 @@ namespace Aqua.Modeling {
             m_State.Phase = phase;
 
             UpdatePhaseVariable(phase);
+            m_InlinePopup.Hide();
 
             // basic state
             if (phase == ModelPhases.Ecosystem) {
@@ -238,6 +264,7 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator OnRequestConceptualImport() {
+            m_InlinePopup.Hide();
             return Routine.Start(this, ImportProcess()).Wait();
         }
 
@@ -278,6 +305,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
                     Services.Events.Dispatch(ModelingConsts.Event_Concept_Exported);
                 });
+                m_InlinePopup.Hide();
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("modelSynced");

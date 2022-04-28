@@ -1,12 +1,16 @@
 using System;
 using Aqua.Profile;
 using BeauUtil;
+using UnityEngine;
 
 namespace Aqua.Modeling
 {
     public class ModelState {
 
         public delegate void PhaseChangedDelegate(ModelPhases prev, ModelPhases current);
+        public delegate void UpdateStatusInfoDelegate(TextId text, Color? color = null);
+        public delegate void DisplayInlinePopupDelegate(TextId text, Color? color = null);
+        public delegate void DisplayInlineFactsDelegate(BFBase[] facts);
 
         public ModelPhases Phase;
         public ModelPhases AllowedPhases;
@@ -21,5 +25,10 @@ namespace Aqua.Modeling
         public SimulationDataCtrl Simulation;
 
         public PhaseChangedDelegate OnPhaseChanged;
+
+        public UpdateStatusInfoDelegate UpdateStatus;
+        public DisplayInlinePopupDelegate PopupText;
+        public DisplayInlineFactsDelegate PopupFacts;
+        public Action ClearPopup;
     }
 }
