@@ -52,34 +52,49 @@
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(predictJelly) 
+@when   !ArgueIsComplete(jellyTurtle)
 @cutscene
 $call ArgueCancelClaim()
 $call ArgueClearFacts()
-$call ArgueLoad(predictJelly) 
-{@profHarper} What should we do about the Oil rig in the reef?
-$choice .argue.stableTurtle; Turtle populations remain stable
-$choice .argue.increaseTurtle; Turtle populations will increase
-$choice .argue.decreaseTurtle; Turtle populations will decrease
-$choose branch
+$if !ArgueIsComplete(predictJelly)
+    $call ArgueLoad(predictJelly)
+    {@profHarper} What will happen to turtle populations in the future?
+    $choice .argue.stableTurtle; Turtle populations remain stable
+    $choice .argue.increaseTurtle; Turtle populations will increase
+    $choice .argue.decreaseTurtle; Turtle populations will decrease
+    $choose branch
+$else
+    $call ArgueLoad(jellyTurtle)
+    {@profHarper}   We've already established that the turtle populations will remain stable.
+    $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+        $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+    $endif
+    $branch .argue.chooseFacts
+$endif
+
 
 :: argue.stableTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Have you increased the accuracy of your model from last time?
-$goto argue.showClaim
+$branch argue.showClaim
 
 :: argue.increaseTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Can I see your model?
-$goto argue.chooseFactsDummy
+$branch argue.chooseFactsDummy
 
 :: argue.decreaseTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Can I see your model?
-$goto argue.chooseFactsDummy
+$branch argue.chooseFactsDummy
 
 :: argue.showClaim
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.whatMissing 
@@ -89,71 +104,80 @@ $choose branch
 
 :: argue.whatMissing
 $call ArgueComplete()
-$call ArgueLoad(jellyTurtle) 
-{@profHarper}   I see. Nicely done! How have you increased the accuracy of your model?
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
-    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
-$goto .argue.chooseFacts
+$call ArgueLoad(jellyTurtle)
+{@profHarper}   I see. Nicely done!
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+$endif
+$branch .argue.chooseFacts
 
 :: argue.chooseFacts
+How did you increase the accuracy of your model? What was missing?
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer O_OilRig.turtleDangerJellies.Model.Predict, .argue.jellyPop
+    $answer O_OilRig.PopulationHistory.MoonJelly, .argue.jellyPop
+    $answer LoggerheadTurtle.Eats.MoonJelly, .argue.complete
     $answer *, .argue.unrelated3
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.jellyPop
-$if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.QueenConch)
-	$goto .argue.complete
+$if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.MoonJelly)
+	$branch .argue.complete
 $else
 	{@profHarper}	I see. How is this fact related to the Turtles?
-	$goto .argue.chooseFacts
+    $call ArgueClearFacts()
+	$branch .argue.chooseFacts
 $endif
 
 :: argue.turtleEat
 $if ArgueIsFactSubmitted(ReefEdge.Population.LoggerheadTurtle)
-	$goto .argue.complete
+	$branch .argue.complete
 $else
 	{@profHarper}	I see. What is the population of the Jellyfish here?
-	$goto .argue.chooseFacts
+	$branch .argue.chooseFacts
 $endif
 
 :: argue.chooseFactsDummy
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.TurtleVisual, .argue.rejectClaim
-    $answer incorrect, .argue.unrelated2
+    $answer O_OilRig.turtleDangerJellies.Model.Predict, .argue.clarifyClaim
+    $answer *, .argue.unrelated2
 $choice .argue.giveUp; Let me get back to you
 $choose branch
 
 :: argue.unrelated
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+$branch .argue.showClaim
 
 :: argue.unrelated2
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.chooseFactsDummy
+$branch .argue.chooseFactsDummy
 
 :: argue.unrelated3
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.chooseFacts
+$branch .argue.chooseFacts
+
+:: argue.clarifyClaim
+$call ArgueComplete()
+$call ArgueLoad(jellyTurtle) 
+{@profHarper}   In your model, the turtle population stays within a normal range. They are not in jeopardy.
+                I do see that you increased your accuracy. What did you add to the model?
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+$endif
+$branch .argue.chooseFacts
 
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
+$call ArgueClearFacts()
 $call ArgueCancelClaim()
+$call ArgueUnload()
 
 // END
-:: argue.rejectClaim
-{@profHarper}   Hmmm... I'm not sure the data matches up with your claim.
-               ?Why don't you double check your observations and revisit your claim.
-$call ArgueRejectIncorrect()
-$call ArgueCancelClaim()
-
 :: argue.complete
 $call ArgueComplete()
 {@profHarper}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.
