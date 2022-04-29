@@ -181,7 +181,7 @@ namespace Aqua.Modeling {
                     m_State.LastKnownAccuracy = 0;
                     RenderAccuracy();
 
-                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing, WorldFilterMask.Relevant, true);
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
 
                     ModelMissingReasons missing;
                     
@@ -216,7 +216,7 @@ namespace Aqua.Modeling {
                 }
 
                 case ModelPhases.Predict: {
-                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing, WorldFilterMask.Relevant, true);
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
 
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);

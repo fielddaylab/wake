@@ -29,11 +29,13 @@ namespace Aqua.Modeling {
 
         private struct MaskableEntry {
             public CanvasGroup Group;
+            public PolyRaycastFilter RaycastFilter;
             public WorldFilterMask Mask;
             public WorldFilterMask Valid;
 
             public MaskableEntry(CanvasGroup group, WorldFilterMask mask, WorldFilterMask valid) {
                 Group = group;
+                RaycastFilter = group.GetComponent<PolyRaycastFilter>();
                 Mask = mask;
                 Valid = valid;
             }
@@ -881,9 +883,15 @@ namespace Aqua.Modeling {
                 if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, element.Valid)) {
                     element.Group.alpha = 1;
                     element.Group.blocksRaycasts = true;
+                    if (element.RaycastFilter) {
+                        element.RaycastFilter.enabled = m_State.Phase == ModelPhases.Concept;
+                    }
                 } else {
                     element.Group.alpha = hiddenAlpha;
                     element.Group.blocksRaycasts = false;
+                    if (element.RaycastFilter) {
+                        element.RaycastFilter.enabled = false;
+                    }
                 }
             }
         }

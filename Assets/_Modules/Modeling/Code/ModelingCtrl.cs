@@ -24,6 +24,7 @@ namespace Aqua.Modeling {
         [SerializeField] private ConceptualModelUI m_ConceptualUI = null;
         [SerializeField] private SimulationUI m_SimulationUI = null;
         [SerializeField] private CameraPose m_ConceptualCamera = null;
+        [SerializeField] private CameraPose m_SimulationCamera = null;
 
         [Header("-- DEBUG --")]
 
@@ -148,9 +149,13 @@ namespace Aqua.Modeling {
                 }
                 m_SimulationUI.Show();
                 m_SimulationUI.SetPhase(phase);
+                if (prevPhase < ModelPhases.Sync && m_SimulationUI.IsShowing()) {
+                    Services.Camera.MoveToPose(m_SimulationCamera, 0.3f, Curve.CubeOut);
+                }
             } else {
                 if (prevPhase >= ModelPhases.Sync) {
                     m_SimDataCtrl.ClearSimulatedData();
+                    Services.Camera.MoveToPose(m_ConceptualCamera, 0.3f, Curve.CubeOut);
                 }
                 m_SimulationUI.Hide();
             }
