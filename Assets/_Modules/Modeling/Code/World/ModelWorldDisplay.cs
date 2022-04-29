@@ -123,6 +123,7 @@ namespace Aqua.Modeling {
 
         [NonSerialized] private WorldFilterMask m_FilterAll;
         [NonSerialized] private WorldFilterMask m_FilterAny  = WorldFilterMask.Any;
+        [NonSerialized] private WorldFilterMask m_MaskInUse = 0;
 
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
         private readonly ModelWaterPropertyDisplay[] m_WaterChemMap = new ModelWaterPropertyDisplay[(int) WaterPropertyId.TRACKED_COUNT];
@@ -203,6 +204,7 @@ namespace Aqua.Modeling {
                 m_ConnectionPool.Reset();
                 m_AttachmentPool.Reset();
                 m_MaskableElements.Clear();
+                m_MaskInUse = 0;
                 m_LastConstructedId = null;
             }
         }
@@ -258,6 +260,7 @@ namespace Aqua.Modeling {
             m_OrganismMap.Clear();
             m_ConnectionCount.Clear();
             m_MaskableElements.Clear();
+            m_MaskInUse = 0;
             m_Input.Override = false;
             yield return null;
 
@@ -371,9 +374,11 @@ namespace Aqua.Modeling {
             yield return null;
             UpdateInterventionControls();
             yield return null;
+            m_State.Conceptual.GraphedMask = m_MaskInUse;
             ReevaluateMaskedElements();
             yield return null;
 
+            m_State.OnGraphChanged?.Invoke(m_MaskInUse);
             m_Input.Override = null;
         }
 
@@ -389,7 +394,7 @@ namespace Aqua.Modeling {
             display.gameObject.name = desc.name;
             #endif // UNITY_EDITOR
 
-            m_MaskableElements.PushBack(new MaskableEntry(display.CanvasGroup, display.Mask, OrganismValidMask));
+            AddMaskable(display.CanvasGroup, display.Mask, OrganismValidMask);
 
             return display;
         }
@@ -412,6 +417,8 @@ namespace Aqua.Modeling {
             connection.Fader.SetActive(false);
             connection.Scroll.enabled = false;
             connection.Order = 1;
+            connection.Icon.gameObject.SetActive(true);
+            connection.Icon.sprite = fact.Icon;
 
             #if UNITY_EDITOR
             connection.gameObject.name = fact.name;
@@ -445,7 +452,7 @@ namespace Aqua.Modeling {
                 connection.Mask |= WorldFilterMask.HasRate;
             }
 
-            m_MaskableElements.PushBack(new MaskableEntry(connection.CanvasGroup, connection.Mask, ConnectionValidMask));
+            AddMaskable(connection.CanvasGroup, connection.Mask, ConnectionValidMask);
         }
 
         private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, WaterPropertyId property, BFDiscoveredFlags flags) {
@@ -477,6 +484,7 @@ namespace Aqua.Modeling {
             connection.Fader.SetActive(true);
             connection.Scroll.enabled = true;
             connection.Order = 0;
+            connection.Icon.gameObject.SetActive(false);
 
             #if UNITY_EDITOR
             connection.gameObject.name = fact.name;
@@ -505,7 +513,7 @@ namespace Aqua.Modeling {
                 connection.Mask |= WorldFilterMask.HasRate;
             }
 
-            m_MaskableElements.PushBack(new MaskableEntry(connection.CanvasGroup, connection.Mask, ConnectionValidMask));
+            AddMaskable(connection.CanvasGroup, connection.Mask, ConnectionValidMask);
         }
 
         private unsafe void GenerateAttachment(BFBase fact, BestiaryDesc owner, BFDiscoveredFlags flags) {
@@ -540,7 +548,11 @@ namespace Aqua.Modeling {
                 }
             }
 
-            m_MaskableElements.PushBack(new MaskableEntry(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask));
+            if (BFType.HasRate(flags)) {
+                attachment.Mask |= WorldFilterMask.HasRate;
+            }
+
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private unsafe void GenerateAttachment(MissingFactTypes missingType, BestiaryDesc owner) {
@@ -615,7 +627,7 @@ namespace Aqua.Modeling {
                 }
             }
 
-            m_MaskableElements.PushBack(new MaskableEntry(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask));
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private unsafe void GenerateAttachment(MissingFactTypes missingType, WaterPropertyId propertyId) {
@@ -648,7 +660,7 @@ namespace Aqua.Modeling {
                 }
             }
 
-            m_MaskableElements.PushBack(new MaskableEntry(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask));
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private void UpdateOrganismPositions(int count) {
@@ -663,7 +675,7 @@ namespace Aqua.Modeling {
                 allocatedConnections.Sort((x, y) => y.Order - x.Order);
                 int count = allocatedConnections.Count;
                 Vector2 a, b, vecAB, centerAB, cross;
-                float distAB;
+                float distAB, rotZ;
                 int connectionCount;
                 float connectionStart, connectionOffset;
                 ModelConnectionDisplay display;
@@ -688,10 +700,13 @@ namespace Aqua.Modeling {
                         centerAB.x += cross.x * connectionOffset;
                         centerAB.y += cross.y * connectionOffset;
                     }
+
+                    rotZ = Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg;
                     display.Transform.SetSizeDelta(distAB, Axis.X);
                     display.Transform.SetAnchorPos(centerAB);
-                    display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
+                    display.Transform.SetRotation(rotZ, Axis.Z, Space.Self);
                     display.Transform.SetAsFirstSibling();
+                    display.Icon.transform.SetRotation(-rotZ, Axis.Z, Space.Self);
                 }
             }
         }
@@ -844,8 +859,8 @@ namespace Aqua.Modeling {
 
         #region Filters
 
-        public void SetFilters(WorldFilterMask all, WorldFilterMask any) {
-            if (all != m_FilterAll || any != m_FilterAny) {
+        public void SetFilters(WorldFilterMask any, WorldFilterMask all, bool force = false) {
+            if (force || all != m_FilterAll || any != m_FilterAny) {
                 m_FilterAll = all;
                 m_FilterAny = any;
                 if (!m_ReconstructHandle.IsRunning()) {
@@ -854,20 +869,27 @@ namespace Aqua.Modeling {
             }
         }
 
+        private void AddMaskable(CanvasGroup group, WorldFilterMask mask, WorldFilterMask valid) {
+            m_MaskableElements.PushBack(new MaskableEntry(group, mask, valid));
+            m_MaskInUse |= mask;
+        }
+
         private void ReevaluateMaskedElements() {
-            float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0.15f : 0.5f;
-            for(int i = 0; i < m_MaskableElements.Count; i++) {
+            float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0f : 0.1f;
+            for(int i = 0, len = m_MaskableElements.Count; i < len; i++) {
                 ref var element = ref m_MaskableElements[i];
-                if (CheckMasks(element.Mask, m_FilterAll & element.Valid, m_FilterAny & element.Valid)) {
+                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, element.Valid)) {
                     element.Group.alpha = 1;
+                    element.Group.blocksRaycasts = true;
                 } else {
                     element.Group.alpha = hiddenAlpha;
+                    element.Group.blocksRaycasts = false;
                 }
             }
         }
 
-        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask all, WorldFilterMask any) {
-            return (src & all) == all && (any == 0 || (src & any) != 0);
+        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask valid) {
+            return (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
         }
 
         #endregion // Filters
@@ -1021,6 +1043,7 @@ namespace Aqua.Modeling {
         public int DifferenceValue;
     }
 
+    [Flags]
     public enum WorldFilterMask : uint {
         Relevant        = 2 << 0,
         HasRate         = 2 << 1,
