@@ -156,8 +156,9 @@ $else
 		// neither
 		{@profCempaka}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
-		$call ArgueClearFacts()
-		$call ArgueHideClaim()
+        $goto argue.chooseFactsNoHelp
+		// $call ArgueClearFacts()
+		// $call ArgueHideClaim()
 	$endif
 $endif
 
