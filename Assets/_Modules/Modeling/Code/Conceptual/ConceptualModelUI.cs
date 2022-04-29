@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using BeauRoutine;
 using BeauRoutine.Extensions;
+using BeauUtil;
 using BeauUtil.UI;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Aqua.Modeling {
-    public class ConceptualModelUI : BasePanel {
+    public class ConceptualModelUI : BasePanel, ISceneLoadHandler {
+
+        private const WorldFilterMask DefaultFilterMask = WorldFilterMask.Organism | WorldFilterMask.Missing | WorldFilterMask.AnyBehavior | WorldFilterMask.AnyWaterChem;
 
         public delegate IEnumerator ImportDelegate();
 
@@ -18,6 +21,7 @@ namespace Aqua.Modeling {
         [SerializeField] private Button m_ImportButton = null;
         [SerializeField] private Button m_ExportButton = null;
         [SerializeField] private PointerListener m_InspectRegion = null;
+        [SerializeField] private ConceptualFilterBox m_FilterBox = null;
 
         [Header("Import")]
         [SerializeField] private GameObject m_ImportGroup = null;
@@ -43,9 +47,13 @@ namespace Aqua.Modeling {
         public ImportDelegate OnRequestImport;
         public Action OnRequestExport;
 
+        [NonSerialized] private WorldFilterMask m_CurrentFilter = DefaultFilterMask;
+
         public void SetData(ModelState state, ModelProgressInfo info) {
             m_State = state;
             m_ProgressionInfo = info;
+
+            m_State.OnGraphChanged += OnGraphChanged;
         }
 
         protected override void Awake() {
@@ -105,60 +113,68 @@ namespace Aqua.Modeling {
             if (press.TryGetComponent(out ModelConnectionDisplay connection)) {
                 if (connection.Fact) {
                     if (connection.Fact2) {
-                        m_State.PopupFacts(new BFBase[] { connection.Fact, connection.Fact2 });
+                        m_State.Display.FactsPopup(new BFBase[] { connection.Fact, connection.Fact2 });
                     } else {
-                        m_State.PopupFacts(new BFBase[] { connection.Fact });
+                        m_State.Display.FactsPopup(new BFBase[] { connection.Fact });
                     }
                 }
             } else if (press.TryGetComponent(out ModelOrganismDisplay organism)) {
-                m_State.PopupText(organism.Organism.CommonName());
+                m_State.Display.TextPopup(organism.Organism.CommonName());
+            } else if (press.TryGetComponent(out ModelWaterPropertyDisplay property)) {
+                m_State.Display.TextPopup(property.Property.LabelId(), property.Property.Color());
             } else if (press.TryGetComponent(out ModelAttachmentDisplay attachment)) {
                 if (attachment.Fact) {
-                    m_State.PopupFacts(new BFBase[] { attachment.Fact });
+                    m_State.Display.FactsPopup(new BFBase[] { attachment.Fact });
                 } else {
-                    switch(attachment.Missing) {
+                    switch (attachment.Missing) {
                         case MissingFactTypes.Repro: {
-                            m_State.PopupText("modeling.missing.reproduction", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.reproduction", AQColors.Red);
+                                break;
+                            }
                         case MissingFactTypes.Repro_Stressed: {
-                            m_State.PopupText("modeling.missing.reproduction.stressed", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.reproduction.stressed", AQColors.Red);
+                                break;
+                            }
 
                         case MissingFactTypes.Eat: {
-                            m_State.PopupText("modeling.missing.eat", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.eat", AQColors.Red);
+                                break;
+                            }
                         case MissingFactTypes.Eat_Stressed: {
-                            m_State.PopupText("modeling.missing.eat.stressed", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.eat.stressed", AQColors.Red);
+                                break;
+                            }
 
                         case MissingFactTypes.WaterChem: {
-                            m_State.PopupText("modeling.missing.chem", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.chem", AQColors.Red);
+                                break;
+                            }
                         case MissingFactTypes.WaterChem_Stressed: {
-                            m_State.PopupText("modeling.missing.chem.stressed", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.chem.stressed", AQColors.Red);
+                                break;
+                            }
 
                         case MissingFactTypes.Parasite: {
-                            m_State.PopupText("modeling.missing.parasite", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.parasite", AQColors.Red);
+                                break;
+                            }
 
                         case MissingFactTypes.PopulationHistory: {
-                            m_State.PopupText("modeling.missing.populationHistory", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.populationHistory", AQColors.Red);
+                                break;
+                            }
                         case MissingFactTypes.WaterChemHistory: {
-                            m_State.PopupText("modeling.missing.waterChemHistory", AQColors.Red);
-                            break;
-                        }
+                                m_State.Display.TextPopup("modeling.missing.waterChemHistory", AQColors.Red);
+                                break;
+                            }
                     }
                 }
+            }
+        }
+
+        private void OnGraphChanged(WorldFilterMask graphed) {
+            if (m_FilterBox.Toggle.isOn) {
+                UpdateFilterEnabled(m_State.Conceptual.GraphedMask, m_FilterBox);
             }
         }
 
@@ -175,7 +191,7 @@ namespace Aqua.Modeling {
                 m_ImportHistoricalText.SetActive(false);
                 m_ImportCompletedText.SetActive(false);
                 m_ImportGroup.SetActive(true);
-                m_State.UpdateStatus(default);
+                m_State.Display.Status(null);
                 yield return null;
 
                 bool hadOrganisms = m_State.Conceptual.PendingEntities.Count > 0;
@@ -247,14 +263,56 @@ namespace Aqua.Modeling {
 
         #endregion // Sequences
 
+        #region Filters
+
+        private void OnFilterExpandContract(bool expanded) {
+            UpdateFilterEnabled(expanded ? m_State.Conceptual.GraphedMask : 0, m_FilterBox);
+            m_FilterBox.Close.gameObject.SetActive(expanded);
+        }
+
+        private void OnFilterStateChanged(ConceptualFilterLine line, bool state) {
+            if (state) {
+                m_CurrentFilter |= line.Mask;
+            } else {
+                m_CurrentFilter &= ~line.Mask;
+            }
+
+            UpdateFilterToggle(m_CurrentFilter, m_State.Conceptual.GraphedMask, m_FilterBox);
+            m_State.Display.FilterNodes(m_CurrentFilter);
+        }
+
+        static private void UpdateFilterToggle(WorldFilterMask current, WorldFilterMask valid, ConceptualFilterBox box) {
+            WorldFilterMask a, m;
+            ConceptualFilterLine line;
+            for (int i = 0; i < box.Lines.Length; i++) {
+                line = box.Lines[i];
+                a = current & (m = line.Mask) & valid;
+                line.Sync(a != 0);
+            }
+        }
+
+        static private void UpdateFilterEnabled(WorldFilterMask current, ConceptualFilterBox box) {
+            WorldFilterMask a;
+            ConceptualFilterLine line;
+            for (int i = 0; i < box.Lines.Length; i++) {
+                line = box.Lines[i];
+                a = current & line.Mask;
+                line.gameObject.SetActive(a != 0);
+            }
+        }
+
+        #endregion // Filters
+
         protected override void OnShow(bool inbInstant) {
             UpdateButtons();
             Services.Events.QueueForDispatch(ModelingConsts.Event_Concept_Started);
             Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptStarted);
+
+            m_State.Display.FilterNodes(m_CurrentFilter);
         }
 
         protected override void OnHide(bool inbInstant) {
-            if (Services.Valid) {
+            if (m_InspectRegion) {
                 m_InspectRegion.enabled = false;
             }
         }
@@ -263,40 +321,44 @@ namespace Aqua.Modeling {
             m_ExportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.ExportReady);
             m_ImportButton.gameObject.SetActive(m_State.Conceptual.Status == ConceptualModelState.StatusId.PendingImport);
 
-            switch(m_State.Conceptual.Status) {
+            switch (m_State.Conceptual.Status) {
                 case ConceptualModelState.StatusId.ExportReady: {
-                    m_State.UpdateStatus(m_ExportReadyLabel);
-                    m_InspectRegion.enabled = false;
-                    break;
-                }
+                        m_State.Display.Status(m_ExportReadyLabel);
+                        m_InspectRegion.enabled = false;
+                        m_FilterBox.gameObject.SetActive(false);
+                        break;
+                    }
 
                 case ConceptualModelState.StatusId.PendingImport: {
-                    m_State.UpdateStatus(m_ImportReadyLabel);
-                    m_InspectRegion.enabled = false;
-                    break;
-                }
+                        m_State.Display.Status(m_ImportReadyLabel);
+                        m_InspectRegion.enabled = false;
+                        m_FilterBox.gameObject.SetActive(false);
+                        break;
+                    }
 
                 case ConceptualModelState.StatusId.UpToDate: {
-                    m_State.UpdateStatus(default);
-                    m_InspectRegion.enabled = true;
-                    break;
-                }
+                        m_State.Display.Status(default);
+                        m_InspectRegion.enabled = true;
+                        m_FilterBox.gameObject.SetActive((m_FilterBox.RepresentedMask & m_State.Conceptual.GraphedMask) != 0);
+                        break;
+                    }
 
                 case ConceptualModelState.StatusId.MissingData: {
-                    switch (m_State.Conceptual.MissingReasons) {
-                        case ModelMissingReasons.Organisms:
-                        case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
-                                m_State.UpdateStatus(m_MissingOrganismsLabel, AQColors.Red);
-                                break;
-                            }
-                        case ModelMissingReasons.Behaviors: {
-                                m_State.UpdateStatus(m_MissingBehaviorsLabel, AQColors.Red);
-                                break;
-                            }
+                        switch (m_State.Conceptual.MissingReasons) {
+                            case ModelMissingReasons.Organisms:
+                            case ModelMissingReasons.Behaviors | ModelMissingReasons.Organisms: {
+                                    m_State.Display.Status(m_MissingOrganismsLabel, AQColors.Red);
+                                    break;
+                                }
+                            case ModelMissingReasons.Behaviors: {
+                                    m_State.Display.Status(m_MissingBehaviorsLabel, AQColors.Red);
+                                    break;
+                                }
+                        }
+                        m_InspectRegion.enabled = true;
+                        m_FilterBox.gameObject.SetActive((m_FilterBox.RepresentedMask & m_State.Conceptual.GraphedMask) != 0);
+                        break;
                     }
-                    m_InspectRegion.enabled = true;
-                    break;
-                }
             }
         }
 
@@ -304,6 +366,20 @@ namespace Aqua.Modeling {
             if (IsShowing() && !m_ImportRoutine) {
                 UpdateButtons();
             }
+        }
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
+            for (int i = 0; i < m_FilterBox.Lines.Length; i++) {
+                ConceptualFilterLine line = m_FilterBox.Lines[i];
+                line.Toggle.onValueChanged.AddListener((b) => OnFilterStateChanged(line, b));
+            }
+
+            m_FilterBox.Toggle.onValueChanged.AddListener(OnFilterExpandContract);
+            m_FilterBox.Close.onClick.AddListener(() => m_FilterBox.Toggle.isOn = false);
+
+            UpdateFilterEnabled(0, m_FilterBox);
+            m_FilterBox.Toggle.SetIsOnWithoutNotify(false);
+            m_FilterBox.Close.gameObject.SetActive(false);
         }
     }
 }

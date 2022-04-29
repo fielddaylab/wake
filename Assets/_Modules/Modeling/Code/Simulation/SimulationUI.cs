@@ -181,6 +181,8 @@ namespace Aqua.Modeling {
                     m_State.LastKnownAccuracy = 0;
                     RenderAccuracy();
 
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
+
                     ModelMissingReasons missing;
                     
                     if (alreadyCompleted) {
@@ -192,21 +194,21 @@ namespace Aqua.Modeling {
 
                         switch(missing) {
                             case ModelMissingReasons.HistoricalPopulations: {
-                                m_State.UpdateStatus(m_MissingPopulationsLabel, AQColors.Red);
+                                m_State.Display.Status(m_MissingPopulationsLabel, AQColors.Red);
                                 break;
                             }
                             case ModelMissingReasons.HistoricalWaterChem: {
-                                m_State.UpdateStatus(m_MissingWaterChemistryLabel, AQColors.Red);
+                                m_State.Display.Status(m_MissingWaterChemistryLabel, AQColors.Red);
                                 break;
                             }
                             case ModelMissingReasons.HistoricalWaterChem | ModelMissingReasons.HistoricalPopulations: {
-                                m_State.UpdateStatus(m_MissingPopulationsWaterChemistryLabel, AQColors.Red);
+                                m_State.Display.Status(m_MissingPopulationsWaterChemistryLabel, AQColors.Red);
                                 break;
                             }
                         }
                         InstantHide();
                     } else {
-                        m_State.UpdateStatus(default);
+                        m_State.Display.Status(null);
                         m_PhaseRoutine.Replace(this, Sync_Boot()).Tick();
                     }
                     
@@ -214,6 +216,8 @@ namespace Aqua.Modeling {
                 }
 
                 case ModelPhases.Predict: {
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
+
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
                         m_PhaseRoutine.Replace(this, Predict_AlreadyCompleted()).Tick();
@@ -225,6 +229,8 @@ namespace Aqua.Modeling {
                 }
             
                 case ModelPhases.Intervene: {
+                    m_State.Display.FilterNodes(WorldFilterMask.Any, 0, true);
+
                     m_InterveneButtonGroup.gameObject.SetActive(true);
                     Clear(m_PredictGraph);
                     m_State.Simulation.ClearIntervention();

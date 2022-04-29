@@ -15,6 +15,7 @@ namespace Aqua.Modeling {
         public ScrollTiledRawImage Scroll;
         public Graphic Arrow;
         public GameObject Fader;
+        public Image Icon;
 
         #endregion // Inspector
 

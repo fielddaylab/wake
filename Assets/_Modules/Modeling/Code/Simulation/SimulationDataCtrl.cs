@@ -803,7 +803,7 @@ namespace Aqua.Modeling {
         }
 
         /// <summary>
-        /// Initializes the prediction snapshot..
+        /// Initializes the prediction snapshot.
         /// </summary>
         private SimSnapshot InitializePredictSnapshot(ResultWrapper output, ResultWrapper input, int inputOffset, InterventionData intervention) {
             SimSnapshot* src = input.Ptr + inputOffset;

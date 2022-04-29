@@ -169,6 +169,8 @@ namespace Aqua
                     submenu = new DMInfo(submenuKey.ToDebugString());
                     factSubmenus.Add(submenuKey, submenu);
                     factMenu.AddSubmenu(submenu);
+
+                    RegisterFactGroupButton(submenu, submenuKey);
                 }
 
                 RegisterFactToggle(submenu, fact.Id, BFType.DefaultDiscoveredFlags(fact));
@@ -361,6 +363,19 @@ namespace Aqua
                         Save.Bestiary.DeregisterEntity(inEntityId);
                 }
             );
+        }
+
+        static private void RegisterFactGroupButton(DMInfo inMenu, StringHash32 inGroupId)
+        {
+            inMenu.AddButton("Unlock All", 
+                () => { 
+                    BestiaryDesc entry = Assets.Bestiary(inGroupId);
+                    foreach(var fact in entry.PlayerFacts) {
+                        Save.Bestiary.RegisterFact(fact.Id, true);
+                        Save.Bestiary.AddDiscoveredFlags(fact.Id, BFDiscoveredFlags.Rate);
+                    }
+                });
+            inMenu.AddDivider();
         }
 
         static private void RegisterFactToggle(DMInfo inMenu, StringHash32 inFactId, BFDiscoveredFlags inDefaultFlags)
