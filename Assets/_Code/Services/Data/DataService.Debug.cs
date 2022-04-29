@@ -537,6 +537,10 @@ namespace Aqua
             UnlockAllStations();
             UnlockAllUpgrades();
             UnlockAllBestiaryEntries(false);
+
+            foreach(var map in Services.Assets.Map.Stations()) {
+                Save.Map.RecordVisitedLocation(map.Id());
+            }
         }
 
         #endregion // IDebuggable
