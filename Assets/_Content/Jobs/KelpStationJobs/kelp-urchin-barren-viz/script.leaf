@@ -1,7 +1,6 @@
 #basePath   job.kelp-urchin-barren
 
 // Beginning
-
 :: start
 @trigger    JobStarted
 @cutscene
@@ -30,25 +29,11 @@ $call UnlockSite(RS-1B)
             
 :: helpGoToSiteB
 @trigger    RequestPartnerHelp
-@when 		scene:name == "KelpStation", JobTaskTop(gotoSiteB)
+@when 		scene:name != "RS-1B", JobTaskTop(gotoSiteB)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	Site B should be southwest of the ship.
+{@kevin}	{h}Site B{/h} should be southwest of the ship.
             Let's head over there and dive down.
-
-// In Site B
-
-:: giveUpgrade1
-@trigger	SceneStart
-@when		scene:name == "RS-1B"
-@once
-@cutscene
-
-$branch common.ringPhone
-
-{@drKelp}  Let's start getting the current populations using the {nameof ROVTagger}.
-{@drKelp}  Once you've {h}scanned{/h} a species, you can switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
-				Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
@@ -87,6 +72,7 @@ $branch common.ringPhone
 @who		kevin
 @when		taskId == "getProbeData" 
 @once
+@cutscene
 {@kevin}	Great, we got the historical data. Looks like the urchins have been taking over for a while now.
 
 // TO MODELING
@@ -132,7 +118,7 @@ $endif
 
 :: ModelingSetup-Wrong
 @trigger	VisualModelStarted
-@when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@when       JobTaskTop(predictSiteB), modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 
 {@drKelp}   Ah, hang on, this isn't the right ecosystem.
@@ -140,13 +126,14 @@ $endif
             
 :: ModelingSetup-WrongHelp
 @trigger    RequestPartnerHelp
-@when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@when       JobTaskTop(predictSiteB), modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@cutscene
 {@player}   What am I doing here again?
 {@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
             
 :: ModelingSetupPhase2
 @trigger    VisualModelExported
-@when       modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
+@when       JobTaskTop(predictSiteB), modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @once
 @cutscene
 
@@ -210,7 +197,6 @@ $endif
 {@kevin}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
-
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(urchinBarrenVizArgue)
