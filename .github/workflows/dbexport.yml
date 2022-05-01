@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'DBExport.json'
+  workflow_dispatch:
 
 jobs:
   deploy-export:
@@ -18,7 +19,7 @@ jobs:
         API_TOKEN_GITHUB: ${{ secrets.OGD_ACCESS_TOKEN }}
       with:
         source_file: 'DBExport.json'
-        destination_repo: 'opengamedata/opengamedata-backend'
+        destination_repo: 'opengamedata/opengamedata-core'
         destination_folder: 'games/AQUALAB'
         user_email: 'nspevacek@wisc.edu'
         user_name: 'nspevacek'
