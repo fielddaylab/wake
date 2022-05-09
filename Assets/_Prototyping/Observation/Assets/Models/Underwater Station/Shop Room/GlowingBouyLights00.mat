@@ -7,25 +7,25 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FoamEdge01
-  m_Shader: {fileID: -6465566751694194690, guid: 113d71550b3fa4798969f28007d68fc7,
+  m_Name: GlowingBouyLights00
+  m_Shader: {fileID: -6465566751694194690, guid: e73e88aefef60401f9ba33d8697ddea0,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - Cubemap_53CA646:
-        m_Texture: {fileID: 8900000, guid: 51449f53ae572491aa69575fb86067fb, type: 3}
+    - Texture2D_5DE09B45:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - Skybox:
-        m_Texture: {fileID: 0}
+    - Texture2D_935E6DCB:
+        m_Texture: {fileID: 2800000, guid: 573d218c15ccd4e1f91620ea114b678d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -57,22 +57,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_182B48F0: 5.64
-    - Vector1_29F5C00B: 8.33
-    - Vector1_3ED8E20E: 4
-    - Vector1_53E4A0C3: 0.7
-    - Vector1_57D32A9D: 0.07
-    - Vector1_668687BF: 0.18
-    - Vector1_7D06EFEB: 2.99
-    - Vector1_8268D207: 7.55
-    - Vector1_87C928D4: 1
-    - Vector1_8F4AD83: 4
-    - Vector1_A3F0987E: 4
-    - Vector1_EC75F315: 2
-    - Vector1_F0AE3328: 0.9
-    - Vector1_FC358220: 1.11
+    - ADDITIONAL_LIGHTS: 0
+    - Vector1_7E7482E9: 0
+    - Vector1_80065FF8: 0
+    - Vector1_D19AED14: 1
     - _AlphaClip: 0
-    - _Blend: 0
+    - _Blend: 2
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
@@ -85,6 +75,7 @@ Material:
     - _OcclusionStrength: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _SampleGI: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -92,18 +83,16 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - moveSpeedMultiplier: 1
     m_Colors:
-    - Color_40800F7F: {r: 0.04705884, g: 0.5337744, b: 0.5764706, a: 1}
-    - Color_4442CE42: {r: 1, g: 1, b: 1, a: 1}
-    - Color_F03292D2: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
-    - Vector2_3EB1AF25: {r: 0.1, g: 0, b: 0, a: 0}
-    - Vector2_9EC61DD5: {r: 10, g: 10, b: 0, a: 0}
+    - Color_9B385EE5: {r: 1, g: 1, b: 1, a: 0}
+    - Color_9DA79BB3: {r: 1, g: 1, b: 1, a: 1}
+    - Vector2_41448CF0: {r: 0, g: 0, b: 0, a: 0}
+    - Vector2_C6B84FD1: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
---- !u!114 &4268175689968893117
+--- !u!114 &214902007074509000
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
