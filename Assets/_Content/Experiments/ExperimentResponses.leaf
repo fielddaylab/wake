@@ -141,27 +141,13 @@ $endif
 @cutscene
 $set jobs:generic.measurementCompleted = true
 			
-:: generic.stabilizer.intro
+:: generic.features.intro
 @trigger	ExperimentScreenViewed
 @boostScore 1049 // arbitrarily high number
-@when		screenId == "measurement.features", HasUpgrade(WaterStabilizer)
+@when		screenId == "measurement.features"//, HasUpgrade(WaterStabilizer)
 @once
 @cutscene
-{@kevin}	You have {h}{nameof WaterStabilizer}{/h} now! That's cool.
-			When it's activated, {h}{nameof WaterStabilizer}{/h} will keep the tank conditions stable.
-			You can deactivate it if you want to see how an organism affects its environment.
-$if HasUpgrade(AutoFeeder), !jobs:experiment-responses.seen.auto-feeder-intro
-	{@kevin}	Also...
-	$goto .generic.auto-feeder.intro
-$endif
-
-:: generic.auto-feeder.intro
-@trigger	ExperimentScreenViewed
-@boostScore 1048 // arbitrarily high number
-@when		screenId == "measurement.features", HasUpgrade(AutoFeeder)
-@once
-@cutscene
-{@kevin}	Now that you have the {nameof AutoFeeder}, you can control how organisms are fed.
-{@kevin}	With the {nameof AutoFeeder} on, organisms will leave each other alone.
-{@kevin}	Turn off the {nameof AutoFeeder} to find out the rate at which one organism eats another.
-$set	jobs:experiment-responses.seen.auto-feeder-intro = true
+{@kevin}	Here is where you can modify tank features to measure different types of facts.
+			Deactivate the {h}{nameof WaterStabilizer}{/h} if you want to see how an organism affects its environment,
+			or turn off the {nameof AutoFeeder} if you want to measure eating rates.
+			Leaving both active will allow you to measure reproduction rates.
