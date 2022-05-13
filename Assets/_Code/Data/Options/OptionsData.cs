@@ -27,7 +27,7 @@ namespace Aqua.Option
             if ((inAuthority & Authority.Local) != 0)
             {
                 Audio.SetDefaults();
-                Performance.SetDefaults();
+                Performance = Perf.GenerateDefaultPerformanceSettings();
             }
 
             if ((inAuthority & Authority.Profile) != 0)

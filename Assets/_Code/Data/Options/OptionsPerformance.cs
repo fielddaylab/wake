@@ -2,6 +2,7 @@ using System;
 using AquaAudio;
 using BeauData;
 using BeauUtil;
+using UnityEngine;
 
 namespace Aqua.Option
 {
@@ -10,24 +11,43 @@ namespace Aqua.Option
     /// </summary>
     public struct OptionsPerformance : ISerializedObject, ISerializedVersion
     {
-        public enum FramerateMode : byte
+        private enum FramerateMode_Deprecated : byte
         {
             Stable,
             High
         }
 
-        public FramerateMode Framerate;
+        public enum QualityMode : byte
+        {
+            Low,
+            Medium,
+            High
+        }
 
-        public ushort Version { get { return 1; } }
+        public QualityMode Resolution;
+
+        public ushort Version { get { return 3; } }
 
         public void Serialize(Serializer ioSerializer)
         {
-            ioSerializer.Enum("framerate", ref Framerate);
+            if (ioSerializer.ObjectVersion < 3)
+            {
+                FramerateMode_Deprecated fr = default;
+                ioSerializer.Enum("framerate", ref fr);
+            }
+            if (ioSerializer.ObjectVersion >= 2)
+            {
+                ioSerializer.Enum("resolution", ref Resolution);
+            }
+            else if (ioSerializer.IsReading)
+            {
+                Resolution = QualityMode.High;
+            }
         }
 
         public void SetDefaults()
         {
-            Framerate = FramerateMode.Stable;
+            Resolution = QualityMode.Medium;
         }
     }
 }

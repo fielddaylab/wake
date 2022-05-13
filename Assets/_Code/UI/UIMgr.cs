@@ -277,6 +277,8 @@ namespace Aqua
             m_CursorHintMgr.Process(m_TooltipHoverTime);
             Vector2 cursorPos = m_Cursor.Process();
             m_Tooltip.Process(cursorPos);
+
+            Services.Camera.UpdateRenderScale();
         }
 
         public void BindCamera(Camera inCamera)

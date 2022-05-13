@@ -57,6 +57,7 @@ namespace ProtoAqua.Observation {
         protected override void OnDestroy() {
             s_Instance = null;
             Services.Events?.Deregister<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdate);
+            m_RemainingCritters.Clear();
 
             base.OnDestroy();
         }

@@ -8,28 +8,44 @@ namespace Aqua.Option
         #region Inspector
 
         [SerializeField] private ToggleOptionBar m_QualityLevel = null;
+        [SerializeField] private ButtonOption m_AutoDetectButton = null;
 
         #endregion // Inspector
 
         protected override void Init()
         {
-            m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("options.quality.level.label",
-                "options.quality.level.tooltip", OnQualityLevelChanged)
-                .AddOption("options.quality.level.stable.label", "options.quality.level.stable.tooltip", OptionsPerformance.FramerateMode.Stable)
-                .AddOption("options.quality.level.high.label", "options.quality.level.high.tooltip", OptionsPerformance.FramerateMode.High)
+            m_QualityLevel.Initialize<OptionsPerformance.QualityMode>("options.quality.res.label",
+                "options.quality.res.tooltip", OnResolutionLevelChanged)
+                .AddOption("options.quality.res.low.label", "options.quality.res.low.tooltip", OptionsPerformance.QualityMode.Low)
+                .AddOption("options.quality.res.medium.label", "options.quality.res.medium.tooltip", OptionsPerformance.QualityMode.Medium)
+                .AddOption("options.quality.res.high.label", "options.quality.res.high.tooltip", OptionsPerformance.QualityMode.High)
                 .Build();
+
+            m_AutoDetectButton.Initialize("options.quality.autodetect.label", "options.quality.autodetect.tooltip", OnAutoDetectClick);
         }
 
         public override void Load(OptionsData inOptions)
         {
             base.Load(inOptions);
             
-            m_QualityLevel.Sync(inOptions.Performance.Framerate);
+            m_QualityLevel.Sync(inOptions.Performance.Resolution);
         }
 
-        private void OnQualityLevelChanged(OptionsPerformance.FramerateMode inFramerate)
+        private void OnResolutionLevelChanged(OptionsPerformance.QualityMode inResolution)
         {
-            Data.Performance.Framerate = inFramerate;
+            Data.Performance.Resolution = inResolution;
+        }
+
+        private void OnAutoDetectClick()
+        {
+            Data.Performance = Perf.GenerateDefaultPerformanceSettings();
+
+            OptionsData options = Save.Options;
+            options.SetDirty();
+            
+            Services.Events.QueueForDispatch(GameEvents.OptionsUpdated, options);
+
+            Load(Data);
         }
     }
 }

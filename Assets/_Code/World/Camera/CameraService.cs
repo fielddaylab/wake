@@ -10,6 +10,7 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Aqua.Cameras
 {
@@ -107,6 +108,7 @@ namespace Aqua.Cameras
         #endregion // Inspector
 
         [NonSerialized] private Camera m_Camera;
+        [NonSerialized] private CameraRenderScale m_RenderScale;
         [NonSerialized] private CameraRig m_Rig;
         [NonSerialized] private CameraFOVPlane m_FOVPlane;
         [NonSerialized] private float m_LastCameraDistance;
@@ -169,6 +171,14 @@ namespace Aqua.Cameras
         #endregion // Mode
 
         #region Update
+
+        public void UpdateRenderScale()
+        {
+            if (m_RenderScale)
+            {
+                m_RenderScale.Scale = Perf.DesiredWorldRenderScale;
+            }
+        }
 
         private void LateUpdate()
         {
@@ -607,6 +617,7 @@ namespace Aqua.Cameras
             Assert.NotNull(m_Camera, "No main camera located for scene");
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
+            m_RenderScale = m_Camera.EnsureComponent<CameraRenderScale>();
         }
 
         #endregion // Handlers

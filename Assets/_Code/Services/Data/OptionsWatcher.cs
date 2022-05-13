@@ -2,15 +2,22 @@ using System;
 using Aqua.Option;
 using AquaAudio;
 using BeauUtil;
+using BeauUtil.Debugger;
 using BeauUtil.Services;
 using Leaf;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(EventService), typeof(AudioMgr))]
     internal partial class OptionsWatcher : ServiceBehaviour
     {
+        public float LowCameraResHeight = 660f;
+        
+        private PerformanceTracker m_PerfTracker;
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -19,6 +26,8 @@ namespace Aqua
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this);
 
             ApplyOptions(Save.Options);
+
+            m_PerfTracker = new PerformanceTracker(256);
         }
 
         protected override void Shutdown()
@@ -26,6 +35,11 @@ namespace Aqua
             Services.Events?.DeregisterAll(this);
 
             base.Shutdown();
+        }
+
+        private void LateUpdate()
+        {
+
         }
 
         private void OnProfileLoaded()
@@ -50,22 +64,9 @@ namespace Aqua
             //     AudioSettings.Reset(audioConfig);
             // }
 
-            Application.targetFrameRate = GetFramerate(inOptions.Performance.Framerate);
-        }
-
-        static private int GetFramerate(OptionsPerformance.FramerateMode inFramerate)
-        {
-            switch(inFramerate)
-            {
-                case OptionsPerformance.FramerateMode.Stable:
-                    return 30;
-
-                case OptionsPerformance.FramerateMode.High:
-                    return 60;
-
-                default:
-                    return -1;
-            }
+            // if (inOptions.Performance.Resolution == OptionsPerformance.ResolutionMode.Low) {
+            //     QualitySettings.resolutionScalingFixedDPIFactor
+            // }
         }
     }
 }

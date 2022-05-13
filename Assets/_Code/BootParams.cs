@@ -73,6 +73,8 @@ namespace Aqua
             s_Args = new QueryParams();
             s_Args.TryParse(url);
 
+            Perf.LogSystemInfo();
+
             LoadBootParamsFirstPass();
             Services.AutoSetup(gameObject);
 

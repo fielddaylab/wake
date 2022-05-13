@@ -25,7 +25,7 @@ namespace Aqua.Option
         [NonSerialized] private int m_UsedItemCount;
         [NonSerialized] private bool m_Syncing;
 
-        public CastableAction<object> OnChanged;
+        public CastableAction<object>? OnChanged;
 
         private void InitItemList()
         {
@@ -46,7 +46,10 @@ namespace Aqua.Option
 
             m_Label.SetText(inLabel);
             m_Hint.TooltipId = inDescription;
-            OnChanged = CastableAction<object>.Create(inSetter);
+            if (inSetter != null)
+            {
+                OnChanged = CastableAction<object>.Create(inSetter);
+            }
 
             InitItemList();
             m_UsedItemCount = 0;
@@ -111,7 +114,7 @@ namespace Aqua.Option
                 return;
             }
 
-            OnChanged.Invoke(inValue);
+            OnChanged?.Invoke(inValue);
 
             OptionsData options = Save.Options;
             options.SetDirty();
