@@ -11,7 +11,6 @@ namespace Aqua {
 
         [Header("Reproduction")]
         [Range(0, 5)] public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -45,13 +44,7 @@ namespace Aqua {
             else
             {
                 yield return BFFragment.CreateLocVerb(ReproduceVerb);
-                if (fact.OnlyWhenStressed)
-                {
-                    if (BFType.HasPair(inFlags))
-                    {
-                        yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
-                    }
-                }
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatPercentage(fact.Amount));
             }
         }
 
@@ -71,7 +64,7 @@ namespace Aqua {
                 }
                 else
                 {
-                    details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), QualitativeId(fact.m_Relative));
+                    details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentage(fact.Amount));
                 }
             }
             else
@@ -82,7 +75,7 @@ namespace Aqua {
                 }
                 else
                 {
-                    details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName());
+                    details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentage(fact.Amount));
                 }
             }
 
@@ -102,13 +95,11 @@ namespace Aqua {
                 if (pair != null)
                 {
                     float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster, QualCompare.SameRate));
                     bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
             else
             {
-                bChanged |= Ref.Replace(ref m_Relative, QualCompare.Null);
                 bChanged |= Ref.Replace(ref PairId, null);
             }
             return bChanged;

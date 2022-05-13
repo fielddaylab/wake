@@ -11,7 +11,6 @@ namespace Aqua {
 
         [Header("Growth")]
         public uint Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -36,10 +35,7 @@ namespace Aqua {
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(GrowVerb);
-            if (fact.OnlyWhenStressed)
-            {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
-            }
+            yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
         }
 
         static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
@@ -52,11 +48,11 @@ namespace Aqua {
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(GrowSentenceStressed, inFact.Parent.CommonName(), QualitativeId(fact.m_Relative));
+                details.Description = Loc.Format(GrowSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatMass(fact.Amount));
             }
             else
             {
-                details.Description = Loc.Format(GrowSentence, inFact.Parent.CommonName());
+                details.Description = Loc.Format(GrowSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatMass(fact.Amount));
             }
 
             return details;
@@ -75,13 +71,11 @@ namespace Aqua {
                 if (pair != null)
                 {
                     float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster, QualCompare.SameRate));
                     bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
             else
             {
-                bChanged |= Ref.Replace(ref m_Relative, QualCompare.Null);
                 bChanged |= Ref.Replace(ref PairId, null);
             }
             return bChanged;

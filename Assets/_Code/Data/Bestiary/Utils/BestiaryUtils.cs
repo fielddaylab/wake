@@ -393,6 +393,22 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a property amount.
+        /// </summary>
+        static public string FormatProperty(float inAmount, WaterPropertyId inPropertyId)
+        {
+            return BestiaryUtils.Property(inPropertyId).FormatValue(inAmount);
+        }
+
+        /// <summary>
+        /// Formats a percentage.
+        /// </summary>
+        static public string FormatPercentage(float inAmount)
+        {
+            return string.Format("{0}%", (int) (inAmount * 100));
+        }
+
+        /// <summary>
         /// Calculates the mass for a given population.
         /// </summary>
         static public float PopulationToMass(StringHash32 inCritterId, uint inPopulation)

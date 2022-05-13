@@ -12,7 +12,6 @@ namespace Aqua {
         [Header("Eating")]
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -21,14 +20,17 @@ namespace Aqua {
         #region Behavior
 
         static public readonly TextId EatVerb = "words.eat";
-        static private readonly TextId IsEatenByVerb = "words.isEatenBy";
+        static public readonly TextId IsEatenByVerb = "words.isEatenBy";
         static public readonly TextId CatchVerb = "words.catch";
-        static private readonly TextId IsCaughtByVerb = "words.isCaughtBy";
-        static private readonly TextId EatSentence = "factFormat.eat";
-        static private readonly TextId EatRateSentence = "factFormat.eat.rate";
-        static private readonly TextId CatchSentence = "factFormat.catch";
-        static private readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
-        static private readonly TextId EatRateSentenceStressed = "factFormat.eat.stressed.rate";
+        static public readonly TextId CatchDisabledVerb = "words.catch.disabled";
+        static public readonly TextId IsCaughtByVerb = "words.isCaughtBy";
+        static public readonly TextId IsCaughtByDisabledVerb = "words.isCaughtBy.disabled";
+        static public readonly TextId EatSentence = "factFormat.eat";
+        static public readonly TextId EatRateSentence = "factFormat.eat.rate";
+        static public readonly TextId CatchSentence = "factFormat.catch";
+        static public readonly TextId CatchDisabledSentence = "factFormat.catch.disabled";
+        static public readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
+        static public readonly TextId EatRateSentenceStressed = "factFormat.eat.stressed.rate";
 
         static public void Configure()
         {
@@ -147,13 +149,11 @@ namespace Aqua {
                 if (pair != null)
                 {
                     float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More, QualCompare.SameRate));
                     bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
             else
             {
-                bChanged |= Ref.Replace(ref m_Relative, QualCompare.Null);
                 bChanged |= Ref.Replace(ref PairId, null);
             }
             return bChanged;

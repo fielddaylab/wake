@@ -19,6 +19,7 @@ namespace Aqua.Cameras
 
         [Header("Settings")]
         public CameraMode DefaultMode = CameraMode.Scripted;
+        public bool ThreeDMode = false;
 
         [SerializeField, HideInInspector] public CameraTarget InitialTarget;
 
