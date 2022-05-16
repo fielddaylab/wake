@@ -44,7 +44,7 @@ $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity
 	$set    jobs:coral-turtle-stability.got.scans = true
 	{@kevin}   I think so! Head back up to the surface when you're ready to leave.
 $else
-	{@kevin}   Make sure to get all those little things swimming around, and the coral too.
+	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: navigation.goBackUp
@@ -66,7 +66,7 @@ $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity
 	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Make sure to get all those little things that were swimming around, and the coral too.
+	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: helpBackToShip
@@ -156,11 +156,11 @@ $endif
 @cutscene
 {@kevin}   Nice work! I think we know all the facts about what Turtles eat.
 {@profCempaka}	Oh, are you ready to make the model?
-$if !HasUpgrade(VisualModel)
-	{@profCempaka}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
-	$call UnlockRoom("modelingRoom")
-	$call UnlockRoom("Modeling")
-	$call GiveUpgrade(VisualModel)
+$if !RoomUnlocked("modelingRoom")
+    {@profCempaka}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("Modeling")
+    $call GiveUpgrade(VisualModel)
 $endif
 {@profCempaka}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
 

@@ -131,7 +131,7 @@ namespace Aqua.Character {
         private void OnPlayerEnter(Collider2D collider) {
             m_PlayerInside = collider.GetComponentInParent<PlayerBody>();
 
-            if (m_Routine || !enabled || !m_Collider.isActiveAndEnabled)
+            if (Script.IsLoading || m_Routine || !enabled || !m_Collider.isActiveAndEnabled)
                 return;
 
             if (m_AutoExecute) {
@@ -284,7 +284,7 @@ namespace Aqua.Character {
 
         public void ConfigurePin(RectTransformPinned pinned) {
             Transform pin = null;
-            if (m_PinToPlayer)
+            if (m_PinToPlayer && m_PlayerInside)
                 pin = m_PlayerInside.transform;
             if (!pin)
                 pin = m_PinLocationOverride;

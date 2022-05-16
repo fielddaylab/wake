@@ -13,12 +13,12 @@ $if !HasEntity(Cyanobacteria)
 	{@profHarper}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
                     Be sure to scan it and count the population like you did for the other species.
 $endif
-$if !HasUpgrade(VisualModel)
-	{@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
-	{@profHarper}	Head there when you need to model the food web.
-	$call UnlockRoom("modelingRoom")
-	$call UnlockRoom("Modeling")
-	$call GiveUpgrade(VisualModel)
+$if !RoomUnlocked("modelingRoom")
+    {@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+    {@profHarper}	Head there when you need to model the food web.
+    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("Modeling")
+    $call GiveUpgrade(VisualModel)
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -66,8 +66,8 @@ $endif
 @cutscene
 $call ArgueLoad(siteOModel)
 {@profHarper} What can you tell me about the safety of the turtles?
-$choice .argue.turtleSafe; The turtles should be safe 
-$choice .argue.turtleNotSafe; The turtles might not be safe 
+$choice .argue.turtleSafe; The turtles should be safe from predators
+$choice .argue.turtleNotSafe; The turtles might not be safe from predators
 $choose branch
 
 :: argue.turtleSafe

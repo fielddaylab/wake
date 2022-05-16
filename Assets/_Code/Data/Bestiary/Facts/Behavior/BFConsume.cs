@@ -17,7 +17,6 @@ namespace Aqua
         [Header("Consume")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Oxygen;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -40,21 +39,25 @@ namespace Aqua
             BFType.DefineEditor(BFTypeId.Consume, DefaultIcon, BFMode.Player);
         }
 
-        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFConsume fact = (BFConsume) inFact;
             bool bIsLight = fact.Property == WaterPropertyId.Light;
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
-            if (fact.OnlyWhenStressed)
+            if (!bIsLight)
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
             }
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
+            if (bIsLight)
+            {
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
+            }
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFConsume fact = (BFConsume) inFact;
             bool bIsLight = fact.Property == WaterPropertyId.Light;
@@ -66,11 +69,11 @@ namespace Aqua
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
             }
             else
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
             }
 
             return details;
@@ -103,17 +106,21 @@ namespace Aqua
 
         public override bool Bake(BakeFlags flags)
         {
+            bool bChanged = false;
             if (OnlyWhenStressed)
             {
                 var pair = FindPairedFact<BFConsume>();
                 if (pair != null)
                 {
-                    long compare = (long) Amount - (long) pair.Amount;
-                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More, QualCompare.SameAmount));
+                    float compare = Amount - pair.Amount;
+                    bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
-
-            return Ref.Replace(ref m_Relative, QualCompare.Null);
+            else
+            {
+                bChanged |= Ref.Replace(ref PairId, null);
+            }
+            return bChanged;
         }
 
         #endif // UNITY_EDITOR

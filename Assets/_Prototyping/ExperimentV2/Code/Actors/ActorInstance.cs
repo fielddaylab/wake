@@ -30,6 +30,7 @@ namespace ProtoAqua.ExperimentV2 {
         public Transform AnimationTransform;
         public ActorMouth Mouth;
         public ParticleSystem DistributedParticles;
+        public GameObject ParasiteMarker;
 
         #endregion // Inspector
 
@@ -68,6 +69,8 @@ namespace ProtoAqua.ExperimentV2 {
 
             if (AnimationTransform)
                 m_OriginalAnimTransformState = TransformState.LocalState(AnimationTransform);
+            if (ParasiteMarker)
+                ParasiteMarker.SetActive(false);
 
             m_IsInstantiated = true;
             IncomingTargetCount = 0;
@@ -96,6 +99,8 @@ namespace ProtoAqua.ExperimentV2 {
                 ColorAdjust.SetColor(Color.white);
             if (IdleAnimation)
                 IdleAnimation.AnimationScale = 1;
+            if (ParasiteMarker)
+                ParasiteMarker.SetActive(false);
         }
 
         #endregion // IPoolAllocHandler
@@ -579,6 +584,7 @@ namespace ProtoAqua.ExperimentV2 {
         BeingEaten, // being eaten
         Dying, // dying
         BeingBorn, // being born
+        Parasiting, // stressing out another organism
 
         [Hidden]
         COUNT,

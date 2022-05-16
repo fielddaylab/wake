@@ -46,7 +46,7 @@ namespace Aqua
             return WaterPropertyDB.SortByVisualOrder(((BFState) x).Property, ((BFState) y).Property);
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFState stateFact = (BFState) inFact;
             WaterPropertyDesc desc = BestiaryUtils.Property(stateFact.Property);

@@ -88,7 +88,7 @@ namespace ProtoAqua.ExperimentV2 {
             if (bHasFacts) {
                 PopupFacts factSet = new PopupFacts(ArrayUtils.MapFrom(result.Facts, (f) => Assets.Fact(f.Id)),
                     ArrayUtils.MapFrom(result.Facts, (f) => f.Flags));
-                factSet.ShowNew = (b) => IsNew(result, b.Id);
+                factSet.IsNew = (b) => IsNew(result, b.Id);
                 NamedOption[] options = null;
                 if (!IsAnyNew(result)) {
                     options = PopupPanel.DefaultDismiss;
@@ -142,6 +142,9 @@ namespace ProtoAqua.ExperimentV2 {
             }
             if ((result.Feedback & ExperimentFeedbackFlags.HadObservationsRemaining) != 0) {
                 hints.Add("experiment.summary.hadRemainingObservations");
+            }
+            if ((result.Feedback & ExperimentFeedbackFlags.ParasiteNeedsObserve) != 0) {
+                hints.Add("experiment.summary.parasiteNeedsObserveFirst");
             }
             TextId noteBase = "experiment.summary.noteHeader";
             if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {

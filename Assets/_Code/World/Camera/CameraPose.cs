@@ -18,7 +18,7 @@ namespace Aqua.Cameras
         public float Height = 10;
         public float Zoom = 1;
 
-        [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.All;
+        [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
 
         #endregion // Inspector
 
@@ -48,13 +48,14 @@ namespace Aqua.Cameras
             CameraFOVPlane plane = main.GetComponent<CameraFOVPlane>();
             
             Vector3 center = transform.position;
+            Quaternion rot = transform.rotation;
             if (Target != null)
                 center.z = Target.position.z;
             
             Vector2 size;
             size.y = Height / Zoom;
             size.x = Height * main.aspect / Zoom;
-            GizmoViz.Box(center, size, plane.transform.rotation, ColorBank.Teal, ColorBank.White, RectEdges.All, inAlpha);
+            GizmoViz.Box(center, size, rot, ColorBank.Teal, ColorBank.White, RectEdges.All, inAlpha);
         }
 
         #endif // UNITY_EDITOR
@@ -68,9 +69,11 @@ namespace Aqua.Cameras
         Position = 0x01,
         Height = 0x02,
         Zoom = 0x04,
+        Rotation = 0x8,
 
         [Hidden] PosAndZoom = Position | Zoom,
         [Hidden] HeightAndZoom = Height | Zoom,
-        [Hidden] All = Position | Height | Zoom
+        [Hidden] Default = Position | Height | Zoom,
+        [Hidden] All = Default | Rotation
     }
 }

@@ -287,6 +287,9 @@ namespace ScriptableBake {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);
                                     onModify?.Invoke(unityObj);
+                                    if (bVerbose) {
+                                        Debug.LogFormat("[Bake] baked changes to '{0}'", bakedObj.ToString());
+                                    }
                                 } else {
                                     baked.RemoveAt(i--);
                                 }

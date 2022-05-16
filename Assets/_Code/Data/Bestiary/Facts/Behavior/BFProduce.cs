@@ -1,14 +1,9 @@
-using System;
 using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
-using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Produce")]
     public class BFProduce : BFBehavior
     {
@@ -17,7 +12,6 @@ namespace Aqua
         [Header("Produce")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Oxygen;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -36,20 +30,16 @@ namespace Aqua
             BFType.DefineEditor(BFTypeId.Produce, DefaultIcon, BFMode.Player);
         }
 
-        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFProduce fact = (BFProduce) inFact;
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(ProduceVerb);
-            if (fact.OnlyWhenStressed)
-            {
-                yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
-            }
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFProduce fact = (BFProduce) inFact;
             WaterPropertyDesc property = BestiaryUtils.Property(fact.Property);
@@ -60,11 +50,11 @@ namespace Aqua
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
             else
             {
-                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
 
             return details;
@@ -97,17 +87,21 @@ namespace Aqua
 
         public override bool Bake(BakeFlags flags)
         {
+            bool bChanged = false;
             if (OnlyWhenStressed)
             {
                 var pair = FindPairedFact<BFProduce>();
                 if (pair != null)
                 {
-                    long compare = (long) Amount - (long) pair.Amount;
-                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More, QualCompare.SameAmount));
+                    float compare = Amount - pair.Amount;
+                    bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
-
-            return Ref.Replace(ref m_Relative, QualCompare.Null);
+            else
+            {
+                bChanged |= Ref.Replace(ref PairId, null);
+            }
+            return bChanged;
         }
 
         #endif // UNITY_EDITOR

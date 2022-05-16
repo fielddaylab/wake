@@ -1,14 +1,9 @@
-using System;
 using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
-using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Eats")]
     public class BFEat : BFBehavior
     {
@@ -17,7 +12,6 @@ namespace Aqua
         [Header("Eating")]
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -26,12 +20,17 @@ namespace Aqua
         #region Behavior
 
         static public readonly TextId EatVerb = "words.eat";
-        static private readonly TextId IsEatenByVerb = "words.isEatenBy";
+        static public readonly TextId IsEatenByVerb = "words.isEatenBy";
         static public readonly TextId CatchVerb = "words.catch";
-        static private readonly TextId IsCaughtByVerb = "words.isCaughtBy";
-        static private readonly TextId EatSentence = "factFormat.eat";
-        static private readonly TextId CatchSentence = "factFormat.catch";
-        static private readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
+        static public readonly TextId CatchDisabledVerb = "words.catch.disabled";
+        static public readonly TextId IsCaughtByVerb = "words.isCaughtBy";
+        static public readonly TextId IsCaughtByDisabledVerb = "words.isCaughtBy.disabled";
+        static public readonly TextId EatSentence = "factFormat.eat";
+        static public readonly TextId EatRateSentence = "factFormat.eat.rate";
+        static public readonly TextId CatchSentence = "factFormat.catch";
+        static public readonly TextId CatchDisabledSentence = "factFormat.catch.disabled";
+        static public readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
+        static public readonly TextId EatRateSentenceStressed = "factFormat.eat.stressed.rate";
 
         static public void Configure()
         {
@@ -46,42 +45,34 @@ namespace Aqua
             outCritters.Add(fact.Critter.Id());
         }
 
-        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BestiaryDesc inReference, BFDiscoveredFlags inFlags)
+        static private IEnumerable<BFFragment> GenerateFragments(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFEat fact = (BFEat) inFact;
             bool bIsHuman = inFact.Parent.HasFlags(BestiaryDescFlags.Human);
 
-            if (inReference == null || inReference == fact.Parent)
+            if (BFType.IsBorrowed(inFact, inReference))
             {
-                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
-                yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
-                if (fact.OnlyWhenStressed)
+                if (BFType.HasRate(inFlags))
                 {
-                    yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
-                }
-                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
-                {
-                    yield return BFFragment.CreateAmount(BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount));
-                }
-                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
-            }
-            else
-            {
-                if ((inFlags & BFDiscoveredFlags.Rate) != 0)
-                {
-                    yield return BFFragment.CreateAmount(BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(fact.Amount));
+                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
                 }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
                 yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
-                if (fact.OnlyWhenStressed)
+            }
+            else
+            {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
+                if (BFType.HasRate(inFlags))
                 {
-                    yield return BFFragment.CreateLocAdjective(QualitativeLowerId(fact.m_Relative));
+                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
                 }
+                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
             }
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFEat fact = (BFEat) inFact;
             bool bIsHuman = inFact.Parent.HasFlags(BestiaryDescFlags.Human);
@@ -92,15 +83,39 @@ namespace Aqua
 
             if (bIsHuman)
             {
-                details.Description = Loc.Format(CatchSentence, fact.Parent.CommonName(), fact.Critter.CommonName());
+                details.Description = Loc.Format(CatchSentence,
+                    fact.Parent.CommonName(),
+                    BestiaryUtils.FormatMass(fact.Amount),
+                    fact.Critter.CommonName());
             }
             else if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(EatSentenceStressed, inFact.Parent.CommonName(), QualitativeLowerId(fact.m_Relative), fact.Critter.CommonName());
+                if (BFType.HasRate(inFlags))
+                {
+                    details.Description = Loc.Format(EatRateSentenceStressed,
+                        inFact.Parent.CommonName(),
+                        BestiaryUtils.FormatMass(fact.Amount),
+                        fact.Critter.CommonName());
+                }
+                else
+                {
+                    details.Description = Loc.Format(EatSentenceStressed,
+                        inFact.Parent.CommonName(),
+                        fact.Critter.CommonName());
+                }
+            }
+            else if (BFType.HasRate(inFlags))
+            {
+                details.Description = Loc.Format(EatRateSentence,
+                    inFact.Parent.CommonName(),
+                    BestiaryUtils.FormatMass(fact.Amount),
+                    fact.Critter.CommonName());
             }
             else
             {
-                details.Description = Loc.Format(EatSentence, inFact.Parent.CommonName(), fact.Critter.CommonName());
+                details.Description = Loc.Format(EatSentence,
+                    inFact.Parent.CommonName(),
+                    fact.Critter.CommonName());
             }
 
             return details;
@@ -115,12 +130,6 @@ namespace Aqua
             return CompareStressedPair(x, y);
         }
 
-        // static private Sprite DefaultIcon(BFBase inFact)
-        // {
-        //     BFEat fact = (BFEat) inFact;
-        //     return fact.Critter.Icon();
-        // }
-
         #endregion // Behavior
 
         #if UNITY_EDITOR
@@ -131,26 +140,23 @@ namespace Aqua
             return eat != null && eat.Critter == Critter;
         }
 
-        // static private BFMode TypeMode(BFBase inFact)
-        // {
-        //     if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
-        //         return BFMode.Always;
-        //     return BFMode.Player;
-        // }
-
         public override bool Bake(BakeFlags flags)
         {
+            bool bChanged = false;
             if (OnlyWhenStressed)
             {
                 var pair = FindPairedFact<BFEat>();
                 if (pair != null)
                 {
-                    long compare = (long) Amount - (long) pair.Amount;
-                    return Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Less, QualCompare.More, QualCompare.SameAmount));
+                    float compare = Amount - pair.Amount;
+                    bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
-
-            return Ref.Replace(ref m_Relative, QualCompare.Null);
+            else
+            {
+                bChanged |= Ref.Replace(ref PairId, null);
+            }
+            return bChanged;
         }
 
         #endif // UNITY_EDITOR

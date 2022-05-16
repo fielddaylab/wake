@@ -232,6 +232,25 @@ namespace Aqua
         Ecosystem = 8
     }
 
+    [Serializable]
+    public struct TaggedBestiaryDesc
+    {
+        public BestiaryDesc Entity;
+        public StringHash32 Tag;
+
+        public TaggedBestiaryDesc(BestiaryDesc inEntity)
+        {
+            Entity = inEntity;
+            Tag = inEntity.StationId();
+        }
+
+        public TaggedBestiaryDesc(BestiaryDesc inEntity, StringHash32 inStationId)
+        {
+            Entity = inEntity;
+            Tag = inStationId;
+        }
+    }
+
     public class FilterBestiaryIdAttribute : DBObjectIdAttribute {
 
         public BestiaryDescCategory Category;

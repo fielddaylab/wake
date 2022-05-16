@@ -111,9 +111,10 @@ namespace ProtoAqua.ExperimentV2 {
 
             ActorInstance.ConfigureActionMethods(ActorActionId.Idle, OnActorIdleStart, null, null);
             ActorInstance.ConfigureActionMethods(ActorActionId.Hungry, OnActorHungryStart, null, ActorHungryAnimation);
-            ActorInstance.ConfigureActionMethods(ActorActionId.Eating, OnActorEatStart, null, ActorEatAnimation);
+            ActorInstance.ConfigureActionMethods(ActorActionId.Eating, OnActorEatStart, OnActorEatEnd, ActorEatAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.BeingEaten, OnActorBeingEatenStart, OnActorBeingEatenEnd, ActorBeingEatenAnimation);
             ActorInstance.ConfigureActionMethods(ActorActionId.Dying, OnActorDyingStart, null, ActorDyingAnimation);
+            ActorInstance.ConfigureActionMethods(ActorActionId.Parasiting, OnActorParasiteStart, null, ActorParasiteAnimation);
             ActorInstance.ConfigureInteractionMethods(OnInteractionAcquired, OnInteractionReleased);
             s_Configured = true;
         }
@@ -236,7 +237,8 @@ namespace ProtoAqua.ExperimentV2 {
             int factCount = 0;
             ActorDefinition def;
             ActorStateId state;
-            ActorDefinition.ValidEatTarget[] possibleEats;
+            ActorDefinition.ValidInteractionTarget[] possibleEats;
+            HashSet<StringHash32> reevaluate = null;
             foreach (var critterCount in inWorld.ActorCounts) {
                 if (critterCount.Population == 0)
                     continue;
@@ -252,6 +254,50 @@ namespace ProtoAqua.ExperimentV2 {
                     factCount++;
                     if (outFactIds != null) {
                         outFactIds.Add(Assets.Fact(eat.FactId));
+                    }
+                }
+
+                foreach(var fact in def.ParasiteTargets) {
+                    if (inDelegate(fact.FactId) || ActorWorld.GetPopulation(inWorld, fact.TargetId) == 0)
+                        continue;
+
+                    factCount++;
+                    if (outFactIds != null) {
+                        outFactIds.Add(Assets.Fact(fact.FactId));
+                    }
+
+                    // we may need to reevaluate our set if the parasite target
+                    // is alive now but can become stressed mid-experiment
+
+                    if (reevaluate == null) {
+                        reevaluate = new HashSet<StringHash32>();
+                    }
+
+                    reevaluate.Add(fact.TargetId);
+                }
+            }
+
+            if (reevaluate != null) {
+                foreach(var id in reevaluate) {
+                    def = inWorld.Allocator.Define(id);
+                    state = def.StateEvaluator.Evaluate(inWorld.Water);
+
+                    // if we're already stressed, then the
+                    // stressed versions of our facts have already been accounted for
+                    if (state == ActorStateId.Stressed) {
+                        continue;
+                    }
+
+                    possibleEats = ActorDefinition.GetEatTargets(def, ActorStateId.Stressed);
+
+                    foreach (var eat in possibleEats) {
+                        if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(inWorld, eat.TargetId) == 0)
+                            continue;
+
+                        factCount++;
+                        if (outFactIds != null) {
+                            outFactIds.Add(Assets.Fact(eat.FactId));
+                        }
                     }
                 }
             }
@@ -303,7 +349,9 @@ namespace ProtoAqua.ExperimentV2 {
             if (inActor.Definition.Movement.MoveType != ActorDefinition.MovementTypeId.Stationary) {
                 inActor.ActionAnimation.Replace(inActor, ActorIdleAnimation(inActor, inWorld));
             } else if (ActorWorld.IsActionAvailable(ActorActionId.Hungry, inWorld) && inActor.Definition.Eating.EatType != ActorDefinition.EatTypeId.None) {
-                inActor.ActionAnimation.Replace(inActor, ActorIdleStatic(inActor, inWorld));
+                inActor.ActionAnimation.Replace(inActor, ActorIdleStatic(inActor, inWorld, ActorActionId.Hungry));
+            } else if (ActorWorld.IsActionAvailable(ActorActionId.Parasiting, inWorld) && inActor.Definition.ParasiteTargets.Length > 0) {
+                inActor.ActionAnimation.Replace(inActor, ActorIdleStatic(inActor, inWorld, ActorActionId.Parasiting));
             }
 
             ActorInstance.StartBreathing(inActor, inWorld);
@@ -348,9 +396,9 @@ namespace ProtoAqua.ExperimentV2 {
             ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
         }
 
-        static private IEnumerator ActorIdleStatic(ActorInstance inActor, ActorWorld inWorld) {
+        static private IEnumerator ActorIdleStatic(ActorInstance inActor, ActorWorld inWorld, ActorActionId inAction) {
             yield return RNG.Instance.Next(3, 10);
-            ActorInstance.SetActorAction(inActor, ActorActionId.Hungry, inWorld);
+            ActorInstance.SetActorAction(inActor, inAction, inWorld);
         }
 
         #endregion // Idle
@@ -374,7 +422,7 @@ namespace ProtoAqua.ExperimentV2 {
                 yield break;
             }
 
-            if (inActor.Definition.Eating.EatType == ActorDefinition.EatTypeId.Filter) {
+            if (inActor.Definition.Eating.EatType == ActorDefinition.EatTypeId.Filter || targetInstance.Definition.IsDistributed) {
                 if (ActorInstance.AcquireInteraction(inActor, targetInstance, inWorld)) {
                     ActorInstance.SetActorAction(inActor, ActorActionId.Eating, inWorld);
                     yield break;
@@ -452,9 +500,9 @@ namespace ProtoAqua.ExperimentV2 {
                             int nibbleCount = RNG.Instance.Next(3, 5);
                             while (nibbleCount-- > 0) {
                                 yield return EatPulse(inActor, 0.2f);
-                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
+                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, SelectableTank.Emoji_Eat);
                                 if (nibbleCount > 0)
-                                    yield return 0.3f;
+                                    yield return RNG.Instance.NextFloat(0.3f, 0.5f);
                             }
                             break;
                         }
@@ -462,9 +510,9 @@ namespace ProtoAqua.ExperimentV2 {
                     case ActorDefinition.EatTypeId.Filter: {
                             int nibbleCount = RNG.Instance.Next(3, 5);
                             while (nibbleCount-- > 0) {
-                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
+                                ActorWorld.EmitEmoji(inWorld, inActor, eatRule, SelectableTank.Emoji_Eat);
                                 if (nibbleCount > 0)
-                                    yield return 0.3f;
+                                    yield return RNG.Instance.NextFloat(0.6f, 1.5f);
                             }
                             break;
                         }
@@ -472,7 +520,7 @@ namespace ProtoAqua.ExperimentV2 {
                     case ActorDefinition.EatTypeId.LargeBite:
                     default: {
                             yield return EatPulse(inActor, 0.3f);
-                            ActorWorld.EmitEmoji(inWorld, inActor, eatRule, "Eat");
+                            ActorWorld.EmitEmoji(inWorld, inActor, eatRule, SelectableTank.Emoji_Eat);
                             yield return 2;
                             break;
                         }
@@ -511,6 +559,62 @@ namespace ProtoAqua.ExperimentV2 {
 
         #endregion // Eat
 
+        #region Parasite
+
+        static private void OnActorParasiteStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev) {
+            ActorInstance.ResetAnimationTransform(inActor);
+
+            ActorInstance parasiteTarget = FindGoodParasiteTarget(inActor, inWorld);
+            if (parasiteTarget == null || !ActorInstance.AcquireTarget(inActor, parasiteTarget, inWorld) || !ActorInstance.AcquireInteraction(inActor, parasiteTarget, inWorld)) {
+                ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+            }
+        }
+
+        static private IEnumerator ActorParasiteAnimation(ActorInstance inActor, ActorWorld inWorld) {
+            ActorHandle target = inActor.CurrentInteractionActor;
+            ActorInstance targetInstance = target.Get();
+            var targetDefinition = targetInstance.Definition;
+
+            BFParasite parasiteRule = Assets.Fact<BFParasite>(ActorDefinition.GetParasiteTarget(inActor.Definition, targetDefinition.Id).FactId);
+
+            bool bHas = Save.Bestiary.HasFact(parasiteRule.Id);
+            using (var table = TempVarTable.Alloc()) {
+                table.Set("factId", parasiteRule.Id);
+                table.Set("newFact", !bHas);
+                Services.Script.TriggerResponse(ExperimentTriggers.CaptureCircleVisible, table);
+            }
+
+            using (var capture = ObservationTank.CaptureCircle(parasiteRule.Id, targetInstance, inWorld, bHas)) {
+                int nibbleCount = RNG.Instance.Next(3, 5);
+                while (nibbleCount-- > 0 && target.Valid) {
+                    Services.Audio.PostEvent("Experiment.Parasite");
+                    ActorInstance.SetActorState(targetInstance, ActorStateId.Stressed, inWorld);
+                    ActorWorld.EmitEmoji(inWorld, targetInstance, parasiteRule, SelectableTank.Emoji_Parasite);
+                    if (nibbleCount > 0)
+                        yield return RNG.Instance.NextFloat(0.6f, 1.2f);
+                }
+
+                if (targetInstance.ParasiteMarker) {
+                    targetInstance.ParasiteMarker.SetActive(true);
+                }
+
+                yield return 1;
+
+                if (capture.IsValid()) {
+                    bHas = Save.Bestiary.HasFact(parasiteRule.Id);
+                    using (var table = TempVarTable.Alloc()) {
+                        table.Set("factId", parasiteRule.Id);
+                        table.Set("newFact", !bHas);
+                        Services.Script.TriggerResponse(ExperimentTriggers.CaptureCircleExpired, table);
+                    }
+                }
+            }
+
+            ActorInstance.SetActorAction(inActor, ActorActionId.Idle, inWorld);
+        }
+
+        #endregion // Parasite
+
         #region Being Eaten
 
         static private void OnActorBeingEatenStart(ActorInstance inActor, ActorWorld inWorld, ActorActionId inPrev) {
@@ -538,6 +642,10 @@ namespace ProtoAqua.ExperimentV2 {
         #endregion // Being Eaten
 
         static private void OnInteractionAcquired(ActorInstance inActor, ActorWorld inWorld) {
+            if (inActor.Definition.IsDistributed) {
+                return;
+            }
+
             ActorInstance.SetActorAction(inActor, ActorActionId.BeingEaten, inWorld);
         }
 
@@ -552,38 +660,38 @@ namespace ProtoAqua.ExperimentV2 {
 
         #region Eating
 
-        static private RingBuffer<PriorityValue<ActorInstance>> s_EatTargetBuffer;
+        static private RingBuffer<PriorityValue<ActorInstance>> s_TempTargetBuffer;
 
         static private ActorInstance FindGoodEatTarget(ActorInstance inInstance, ActorWorld inWorld) {
-            RingBuffer<PriorityValue<ActorInstance>> eatBuffer = s_EatTargetBuffer ?? (s_EatTargetBuffer = new RingBuffer<PriorityValue<ActorInstance>>(16, RingBufferMode.Expand));
-            ActorDefinition.ValidEatTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
-            eatBuffer.Clear();
+            RingBuffer<PriorityValue<ActorInstance>> buffer = s_TempTargetBuffer ?? (s_TempTargetBuffer = new RingBuffer<PriorityValue<ActorInstance>>(16, RingBufferMode.Expand));
+            ActorDefinition.ValidInteractionTarget[] validTargets = ActorDefinition.GetEatTargets(inInstance.Definition, inInstance.CurrentState);
+            buffer.Clear();
             Vector3 instancePosition = inInstance.CachedTransform.localPosition;
             Vector3 critterPosition;
             float critterDistance, priority;
 
             foreach (var critter in inWorld.Actors) {
-                if (!IsValidEatTarget(validTargets, critter))
+                if (!IsValidTarget(validTargets, critter))
                     continue;
 
                 critterPosition = critter.CachedTransform.localPosition;
                 critterDistance = Vector3.Distance(instancePosition, critterPosition);
                 priority = (critter.Definition.TargetLimit - critter.IncomingTargetCount) * (5 - critterDistance);
-                eatBuffer.PushBack(new PriorityValue<ActorInstance>(critter, priority));
+                buffer.PushBack(new PriorityValue<ActorInstance>(critter, priority));
             }
 
-            if (eatBuffer.Count == 0) {
+            if (buffer.Count == 0) {
                 return null;
-            } else if (eatBuffer.Count == 1) {
-                return eatBuffer.PopFront();
+            } else if (buffer.Count == 1) {
+                return buffer.PopFront();
             } else if (inInstance.Definition.Eating.EatType == ActorDefinition.EatTypeId.Filter) {
-                ActorInstance actor = RNG.Instance.Choose(eatBuffer);
-                eatBuffer.Clear();
+                ActorInstance actor = RNG.Instance.Choose(buffer);
+                buffer.Clear();
                 return actor;
             } else {
-                eatBuffer.Sort();
-                ActorInstance actor = eatBuffer.PopFront().Value;
-                eatBuffer.Clear();
+                buffer.Sort();
+                ActorInstance actor = buffer.PopFront().Value;
+                buffer.Clear();
                 return actor;
             }
         }
@@ -596,7 +704,7 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static private bool IsValidEatTarget(ActorDefinition.ValidEatTarget[] inTargets, ActorInstance inPossibleTarget) {
+        static private bool IsValidTarget(ActorDefinition.ValidInteractionTarget[] inTargets, ActorInstance inPossibleTarget) {
             if (!ActorInstance.IsValidTarget(inPossibleTarget))
                 return false;
 
@@ -609,6 +717,40 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         #endregion // Eating
+
+        #region Parasite
+
+        static private ActorInstance FindGoodParasiteTarget(ActorInstance inInstance, ActorWorld inWorld) {
+            RingBuffer<PriorityValue<ActorInstance>> buffer = s_TempTargetBuffer ?? (s_TempTargetBuffer = new RingBuffer<PriorityValue<ActorInstance>>(16, RingBufferMode.Expand));
+            ActorDefinition.ValidInteractionTarget[] validTargets = inInstance.Definition.ParasiteTargets;
+            buffer.Clear();
+            float priority;
+
+            foreach (var critter in inWorld.Actors) {
+                if (!IsValidTarget(validTargets, critter))
+                    continue;
+
+                priority = (critter.Definition.TargetLimit - critter.IncomingTargetCount);
+                if (critter.CurrentState == ActorStateId.Alive) {
+                    priority += 5;
+                }
+                priority += RNG.Instance.NextFloat(1, 5);
+                buffer.PushBack(new PriorityValue<ActorInstance>(critter, priority));
+            }
+
+            if (buffer.Count == 0) {
+                return null;
+            } else if (buffer.Count == 1) {
+                return buffer.PopFront();
+            } else {
+                buffer.Sort();
+                ActorInstance actor = buffer.PopFront().Value;
+                buffer.Clear();
+                return actor;
+            }
+        }
+
+        #endregion // Parasite
 
         public void ClearAll() {
             End();

@@ -1,9 +1,7 @@
-using BeauUtil;
 using UnityEngine;
 using EasyAssetStreaming;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Model")]
     public class BFModel : BFBase // yes i know models aren't strictly facts in a scientific sense but this fits into our data model
     {
@@ -47,7 +45,7 @@ namespace Aqua
             return x.Id.CompareTo(y.Id);
         }
 
-        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags)
+        static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
         {
             BFModel fact = (BFModel) inFact;
 

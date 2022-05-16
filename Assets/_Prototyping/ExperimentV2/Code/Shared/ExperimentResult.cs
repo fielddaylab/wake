@@ -47,6 +47,7 @@ namespace ProtoAqua.ExperimentV2
         DeadMatterEatPair = 2 << 8,
         NoInteraction = 2 << 9,
         EatNeedsObserve = 2 << 10,
-        HadObservationsRemaining = 2 << 11
+        HadObservationsRemaining = 2 << 11,
+        ParasiteNeedsObserve = 2 << 12,
     }
 }

@@ -41,4 +41,10 @@ static public class GameTags
 
 	// Tag Climbable
 	public const string Climbable = "Climbable";
+
+	// Tag WaterCurrent
+	public const string WaterCurrent = "WaterCurrent";
+
+	// Tag ThickVegetation
+	public const string ThickVegetation = "ThickVegetation";
 }
