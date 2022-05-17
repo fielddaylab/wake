@@ -9,6 +9,9 @@ namespace Aqua.Character
     public abstract class PlayerBody : CharacterBody
     {
         private readonly HashSet<StringHash32> m_CurrentRegionIds = new HashSet<StringHash32>();
+        [NonSerialized] protected PlayerBodyStatus m_BodyStatus;
+
+        public PlayerBodyStatus BodyStatus { get { return m_BodyStatus; } }
 
         private void FixedUpdate()
         {
@@ -53,6 +56,8 @@ namespace Aqua.Character
     [Flags]
     public enum PlayerBodyStatus : uint {
         Normal = 0,
-        Stunned = 0x01
+        Stunned = 0x01,
+        Slowed = 0x02,
+        PowerEngineEngaged = 0x04,
     }
 }

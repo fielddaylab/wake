@@ -48,38 +48,57 @@ $call ArgueLoad(deathTime)
     $choice .argue.stage1; Stage 1
     $choice .argue.stage2; Stage 2
     $choice .argue.stage3; Stage 3
-    $choice .argue.giveUp; Let me check my notes and get back to you.    
+    $choice .argue.giveUp; Let me check my notes and get back to you.  
 $choose branch
 
 :: argue.stage1
-$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
+        $call ArgueFactSlot(W_WhaleFall.Model.Stages)
+$endif
+{@profWhalen}   What did you observe? Include both the stage model and anything you found.
 $goto .argue.showZombieWormsWrong
 
 :: argue.stage2
-$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
+        $call ArgueFactSlot(W_WhaleFall.Model.Stages)
+$endif
+{@profWhalen}   What did you observe to specify stage 2? Include both the stage model and anything you found.
 $goto .argue.showZombieWorms
 
 :: argue.stage3
-$call ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3) 
-		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm) 
+$if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3)
+		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
+        $call ArgueFactSlot(W_WhaleFall.Model.Stages)
+$endif
+{@profWhalen}   What did you observe that shows you that? Include both the stage model and anything you found.
 $goto .argue.showZombieWormsWrong
 
 :: argue.showZombieWormsWrong
 $call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
-    $answer W_WhaleFall.Population.ZombieWorm, .argue.zombieWormsEarly
-    $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus
-    $answer *, .argue.unrelated
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.zombieWormsEarly
+    $answer incorrect, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-$call ArgueRejectIncorrect()
-{@profWhalen}   Have you seen any zombie worms there?
-                It looks like the worms might be a good marker of the whale fall stage.
-$goto .argue.showZombieWormsWrong
+$if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
+    $branch .argue.unrelatedDetritus
+$else
+    $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
+        $call ArgueRejectIncorrect()
+        {@profWhalen}   This seems possible, but could you connect this evidence with the stage model?
+        $branch .argue.showZombieWormsWrong
+    $else
+        $call ArgueRejectIncorrect()
+        {@profWhalen}   Have you seen any zombie worms there?
+                        It looks like the worms might be a good marker of the whale fall stage.
+        $goto .argue.showZombieWormsWrong
+    $endif
+$endif
+
 
 :: argue.unrelatedDetritus
 $call ArgueRejectIncorrect()
@@ -96,10 +115,9 @@ $call ArgueUnload()
 
 :: argue.showZombieWorms
 $call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
-    $answer W_WhaleFall.Population.ZombieWorm, .argue.complete
-    $answer W_WhaleFall.Population.Detritus, .argue.unrelatedDetritus2
-    $answer *, .argue.unrelated2
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete
+    $answer incorrect, .argue.unrelated2
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
@@ -109,16 +127,28 @@ $call ArgueCancelClaim()
 $call ArgueUnload()
 
 :: argue.unrelated2
-$call ArgueRejectIncorrect()
-{@profWhalen}   Have you seen any zombie worms there?
-                It looks like the worms might be a good marker of the whale fall stage.
-$goto .argue.showZombieWorms
+$if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
+    $call ArgueRejectIncorrect()
+    {@profWhalen}   This seems plausible, but could you connect this evidence with the stage model?
+    $branch .argue.showZombieWorms
+$else
+    $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
+        $branch .argue.unrelatedDetritus2
+    $else
+        $call ArgueRejectIncorrect()
+        {@profWhalen}   Have you seen any zombie worms there?
+                        It looks like the worms might be a good marker of the whale fall stage.
+        $goto .argue.showZombieWorms
+    $endif
+$endif
+
 
 :: argue.unrelatedDetritus2
 $call ArgueRejectIncorrect()
 {@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
-                how do the species' populations compare with the model i gave you? 
+                how do the species' populations compare with the model I gave you?
 $goto .argue.showZombieWorms
+
 
 // END
 

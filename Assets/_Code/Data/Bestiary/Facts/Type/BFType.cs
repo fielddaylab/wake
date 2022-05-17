@@ -57,6 +57,14 @@ namespace Aqua {
             return (s_Flags[(int)inFact.Type] & BFFlags.IsBehavior) != 0;
         }
 
+        static public bool IsSelfTargeting(BFTypeId inTypeId) {
+            return (s_Flags[(int)inTypeId] & BFFlags.SelfTarget) != 0;
+        }
+
+        static public bool IsSelfTargeting(BFBase inFact) {
+            return (s_Flags[(int)inFact.Type] & BFFlags.SelfTarget) != 0;
+        }
+
         static public bool IsEnvironment(BFTypeId inTypeId) {
             return (s_Flags[(int)inTypeId] & BFFlags.EnvironmentFact) != 0;
         }
@@ -220,6 +228,11 @@ namespace Aqua {
         [MethodImpl(256)]
         static public bool HasPair(BFDiscoveredFlags flags) {
             return (flags & BFDiscoveredFlags.HasPair) == BFDiscoveredFlags.HasPair;
+        }
+
+        [MethodImpl(256)]
+        static public bool HasAll(BFDiscoveredFlags flags) {
+            return (flags & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
 
         #endregion // Extensions

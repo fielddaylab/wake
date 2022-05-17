@@ -57,7 +57,7 @@ namespace Aqua.Shop {
         private IEnumerator SelectTableAnimation(ShopTable table) {
             Script.WriteVariable("shop:table", table.Id);
             using(Script.DisableInput()) {
-                yield return Services.Camera.MoveToPosition(table.CameraPose.transform.position, null, 0.3f, Curve.CubeOut, Axis.X);
+                yield return Services.Camera.MoveToPosition(table.CameraPose.transform.position, table.CameraPose.transform.rotation, null, 0.3f, Curve.CubeOut, Axis.X);
                 yield return Services.Camera.MoveToPose(table.CameraPose, 0.2f, Curve.Smooth);
             }
             using(var scriptTable = TempVarTable.Alloc()) {
@@ -69,7 +69,7 @@ namespace Aqua.Shop {
         private IEnumerator DeselectTableAnimation() {
             Script.WriteVariable("shop:table", null);
             using(Script.DisableInput()) {
-                yield return Services.Camera.MoveToPose(m_BasePose, 0.2f, Curve.Smooth, CameraPoseProperties.Position | CameraPoseProperties.Height, Axis.Y);
+                yield return Services.Camera.MoveToPose(m_BasePose, 0.2f, Curve.Smooth, CameraPoseProperties.Position | CameraPoseProperties.Height | CameraPoseProperties.Rotation, Axis.Y);
                 yield return Services.Camera.MoveToPose(m_BasePose, 0.3f, Curve.CubeOut);
             }
         }

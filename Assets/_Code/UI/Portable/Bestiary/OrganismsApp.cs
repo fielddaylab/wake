@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Aqua;
 using BeauPools;
 using BeauRoutine;
@@ -26,10 +27,27 @@ namespace Aqua.Portable {
         private void Awake() {
             GetComponent<BestiaryApp>().Handler = new BestiaryApp.DisplayHandler() {
                 Category = BestiaryDescCategory.Critter,
+                GetEntries = GetEntries,
                 PopulateToggle = PopulateEntryToggle,
                 PopulatePage = PopulateEntryPage,
                 PopulateFacts = PopulateEntryFacts,
             };
+        }
+
+        static private void GetEntries(BestiaryDescCategory category, List<TaggedBestiaryDesc> entries) {
+            var ordering = Services.Tweaks.Get<ScienceTweaks>().CanonicalOrganismOrdering();
+
+            foreach(var organism in ordering) {
+                if (!organism.Tag.IsEmpty && organism.Tag != organism.Entity.StationId() && !Save.Map.HasVisitedLocation(organism.Tag)) {
+                    continue;
+                }
+
+                if (!Save.Bestiary.HasEntity(organism.Entity.Id())) {
+                    continue;
+                }
+
+                entries.Add(organism);
+            }
         }
 
         static private void PopulateEntryToggle(PortableBestiaryToggle toggle, BestiaryDesc entry) {

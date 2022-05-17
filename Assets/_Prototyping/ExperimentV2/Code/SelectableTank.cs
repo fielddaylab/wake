@@ -20,6 +20,7 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 Emoji_Death = "Dead";
         static public readonly StringHash32 Emoji_Eat = "Eat";
         static public readonly StringHash32 Emoji_Reproduce = "Repro";
+        static public readonly StringHash32 Emoji_Parasite = "Parasite";
         static public readonly StringHash32 Emoji_Breath = "Breath";
 
         #endregion // Consts

@@ -12,7 +12,6 @@ namespace Aqua {
         [Header("Produce")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Oxygen;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -38,10 +37,6 @@ namespace Aqua {
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(ProduceVerb);
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
-            if (BFType.HasPair(inFlags))
-            {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
-            }
         }
 
         static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
@@ -55,11 +50,11 @@ namespace Aqua {
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), QualitativeId(fact.m_Relative), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
             else
             {
-                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
 
             return details;
@@ -99,13 +94,11 @@ namespace Aqua {
                 if (pair != null)
                 {
                     float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster, QualCompare.SameRate));
                     bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
             else
             {
-                bChanged |= Ref.Replace(ref m_Relative, QualCompare.Null);
                 bChanged |= Ref.Replace(ref PairId, null);
             }
             return bChanged;

@@ -189,7 +189,11 @@ namespace ProtoAqua.ExperimentV2
                     bounds = inOverrideRegion.Value;
                 } else {
                     bounds = inActor.CachedCollider.bounds;
-                    bounds.extents *= 0.6f;
+                    if (inActor.Definition.IsDistributed) {
+                        bounds.extents *= 0.8f;
+                    } else {
+                        bounds.extents *= 0.6f;
+                    }
                 }
                 emit.position = bounds.center;
 

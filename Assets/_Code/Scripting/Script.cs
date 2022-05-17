@@ -15,7 +15,7 @@ namespace Aqua {
         }
 
         static public bool IsLoading {
-            [MethodImpl(256)] get { return Services.State.IsLoadingScene(); }
+            [MethodImpl(256)] get { return StateUtil.IsLoading; }
         }
 
         static public bool IsPaused {
@@ -23,15 +23,15 @@ namespace Aqua {
         }
 
         static public bool IsPausedOrLoading {
-            [MethodImpl(256)] get { return Services.State.IsLoadingScene() || Services.Pause.IsPaused(); }
+            [MethodImpl(256)] get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.State.IsLoadingScene();
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]

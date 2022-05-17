@@ -106,6 +106,12 @@ namespace Aqua.Modeling {
             ShouldGraphWaterProperty = (WaterPropertyId id) => {
                 return m_RelevantWaterProperties[id] && m_WaterPropertiesWithHistoricalData[id];
             };
+            IsOrganismRelevant = (StringHash32 id) => {
+                return m_RelevantCritterIds.Contains(id) || (Intervention.Target != null && Intervention.Target.Id() == id);
+            };
+            IsWaterPropertyRelevant = (WaterPropertyId id) => {
+                return m_RelevantWaterProperties[id];
+            };
         }
 
         private void Awake() {
@@ -232,6 +238,11 @@ namespace Aqua.Modeling {
             m_State.Conceptual.SimulatedEntities.Clear();
             m_State.Conceptual.SimulatedFacts.Clear();
             FactUtil.GatherSimulatedSubset(m_RelevantCritters, m_State.Conceptual.GraphedEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.SimulatedEntities, m_State.Conceptual.SimulatedFacts);
+        }
+
+        private void GenerateMissingFacts() {
+            m_State.Conceptual.MissingFacts.Clear();
+            FactUtil.GatherMissingFacts(m_State.Environment, IsOrganismRelevant, IsWaterPropertyRelevant, m_ProgressInfo.RequiredFacts, m_State.Conceptual.GraphedEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.MissingFacts);
         }
 
         #region Historical Data
@@ -365,6 +376,7 @@ namespace Aqua.Modeling {
         public void EnsurePlayerProfile() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerReady &= ~DataReadyFlags.Data;
 
@@ -379,6 +391,7 @@ namespace Aqua.Modeling {
         public void EnsurePlayerData() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerDataTask.Cancel();
                 m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
@@ -403,6 +416,7 @@ namespace Aqua.Modeling {
             m_PlayerReady = 0;
 
             GenerateSimulatedSubset();
+            GenerateMissingFacts();
             m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
             
             // prediction data depends on player data
@@ -416,6 +430,7 @@ namespace Aqua.Modeling {
             // if profile is not ready, we also need to rebuild that
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 ClearPredict();
             }
@@ -771,7 +786,7 @@ namespace Aqua.Modeling {
             }
 
             using(Profiling.Time("generating prediction data")) {
-                SimSnapshot initialSnapshot = InitializePredictSnapshot(output, intervention);
+                SimSnapshot initialSnapshot = InitializePredictSnapshot(output, m_HistoricalOutput, (int) info.Sim.SyncTickCount, intervention);
                 Simulation.Prepare(buffer, profile, initialSnapshot);
                 yield return null;
 
@@ -788,11 +803,12 @@ namespace Aqua.Modeling {
         }
 
         /// <summary>
-        /// Initializes the prediction snapshot..
+        /// Initializes the prediction snapshot.
         /// </summary>
-        private SimSnapshot InitializePredictSnapshot(ResultWrapper output, InterventionData intervention) {
+        private SimSnapshot InitializePredictSnapshot(ResultWrapper output, ResultWrapper input, int inputOffset, InterventionData intervention) {
+            SimSnapshot* src = input.Ptr + inputOffset;
             SimSnapshot* ptr = output.Ptr;
-            Simulation.CopyTo(ptr - 1, m_PlayerProfile, ptr, m_PredictProfile);
+            Simulation.CopyTo(src, m_HistoricalProfile, ptr, m_PredictProfile);
             if (intervention.Target) {
                 int index = m_PredictProfile.IndexOfActorType(intervention.Target.Id());
                 if (index >= 0) {
@@ -819,6 +835,8 @@ namespace Aqua.Modeling {
         public readonly Predicate<StringHash32> HasHistoricalPopulation;
         public readonly Predicate<StringHash32> ShouldGraphHistorical;
         public readonly Predicate<WaterPropertyId> ShouldGraphWaterProperty;
+        public readonly Predicate<StringHash32> IsOrganismRelevant;
+        public readonly Predicate<WaterPropertyId> IsWaterPropertyRelevant;
 
         #endregion // Evaluation
     }
