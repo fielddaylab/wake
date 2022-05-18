@@ -5,6 +5,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.UI;
 using UnityEngine;
 
 namespace Aqua.Modeling {
@@ -26,6 +27,20 @@ namespace Aqua.Modeling {
             public Vector2* MinimumIntersectionResult;
         }
 
+        private struct MaskableEntry {
+            public CanvasGroup Group;
+            public PolyRaycastFilter RaycastFilter;
+            public WorldFilterMask Mask;
+            public WorldFilterMask Valid;
+
+            public MaskableEntry(CanvasGroup group, WorldFilterMask mask, WorldFilterMask valid) {
+                Group = group;
+                RaycastFilter = group.GetComponent<PolyRaycastFilter>();
+                Mask = mask;
+                Valid = valid;
+            }
+        }
+
         #endregion // Types
 
         #region Consts
@@ -38,6 +53,10 @@ namespace Aqua.Modeling {
         private const float SolverVelocityThresholdSq = .1f * .1f;
         private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
+        private const WorldFilterMask OrganismValidMask = WorldFilterMask.Organism | WorldFilterMask.Relevant;
+        private const WorldFilterMask ConnectionValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.AnyWaterChem | WorldFilterMask.HasRate | WorldFilterMask.Relevant;
+        private const WorldFilterMask AttachmentValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.HasRate | WorldFilterMask.Relevant | WorldFilterMask.AnyMissing;
+
         #endregion // Consts
 
         #region Inspector
@@ -46,6 +65,7 @@ namespace Aqua.Modeling {
         [SerializeField] private Canvas m_Canvas = null;
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private InputRaycasterLayer m_Input = null;
+        [SerializeField] private PointerListener m_Click = null;
 
         [Header("Water Properties")]
         [SerializeField] private ModelWaterPropertyDisplay m_LightProperty = null;
@@ -103,18 +123,23 @@ namespace Aqua.Modeling {
         [NonSerialized] private StringHash32 m_LastConstructedId;
         [NonSerialized] private BestiaryDesc m_LastConstructedInterventionTarget;
 
+        [NonSerialized] private WorldFilterMask m_FilterAll;
+        [NonSerialized] private WorldFilterMask m_FilterAny  = WorldFilterMask.Any;
+        [NonSerialized] private WorldFilterMask m_MaskInUse = 0;
+
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
         private readonly ModelWaterPropertyDisplay[] m_WaterChemMap = new ModelWaterPropertyDisplay[(int) WaterPropertyId.TRACKED_COUNT];
-        private GraphSolverState m_SolverState;
         private readonly Dictionary<int, int> m_ConnectionCount = new Dictionary<int, int>(32);
+        private readonly RingBuffer<MaskableEntry> m_MaskableElements = new RingBuffer<MaskableEntry>(64, RingBufferMode.Expand);
+        private GraphSolverState m_SolverState;
 
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
 
-        private unsafe ModelWorldDisplay() {
+        private ModelWorldDisplay() {
             m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
         }
 
-        unsafe ~ModelWorldDisplay() {
+        ~ModelWorldDisplay() {
             Unsafe.TryFreeArena(ref m_SolverState.Allocator);
         }
 
@@ -180,6 +205,8 @@ namespace Aqua.Modeling {
                 m_OrganismPool.Reset();
                 m_ConnectionPool.Reset();
                 m_AttachmentPool.Reset();
+                m_MaskableElements.Clear();
+                m_MaskInUse = 0;
                 m_LastConstructedId = null;
             }
         }
@@ -234,6 +261,8 @@ namespace Aqua.Modeling {
             m_AttachmentPool.Reset();
             m_OrganismMap.Clear();
             m_ConnectionCount.Clear();
+            m_MaskableElements.Clear();
+            m_MaskInUse = 0;
             m_Input.Override = false;
             yield return null;
 
@@ -347,7 +376,11 @@ namespace Aqua.Modeling {
             yield return null;
             UpdateInterventionControls();
             yield return null;
+            m_State.Conceptual.GraphedMask = m_MaskInUse;
+            ReevaluateMaskedElements();
+            yield return null;
 
+            m_State.OnGraphChanged?.Invoke(m_MaskInUse);
             m_Input.Override = null;
         }
 
@@ -362,6 +395,8 @@ namespace Aqua.Modeling {
             #if UNITY_EDITOR
             display.gameObject.name = desc.name;
             #endif // UNITY_EDITOR
+
+            AddMaskable(display.CanvasGroup, display.Mask, OrganismValidMask);
 
             return display;
         }
@@ -384,6 +419,8 @@ namespace Aqua.Modeling {
             connection.Fader.SetActive(false);
             connection.Scroll.enabled = false;
             connection.Order = 1;
+            connection.Icon.gameObject.SetActive(true);
+            connection.Icon.sprite = fact.Icon;
 
             #if UNITY_EDITOR
             connection.gameObject.name = fact.name;
@@ -412,6 +449,12 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+
+            if (BFType.HasRate(flags)) {
+                connection.Mask |= WorldFilterMask.HasRate;
+            }
+
+            AddMaskable(connection.CanvasGroup, connection.Mask, ConnectionValidMask);
         }
 
         private unsafe void GenerateConnection(BFBase fact, BestiaryDesc owner, WaterPropertyId property, BFDiscoveredFlags flags) {
@@ -424,6 +467,7 @@ namespace Aqua.Modeling {
 
             int key = GenerateConnectionKey(indexA, indexB);
             if (m_ConnectionCount.ContainsKey(key)) {
+                GetFirstConnectionForKey(key).Fact2 = fact;
                 return;
             }
 
@@ -442,6 +486,7 @@ namespace Aqua.Modeling {
             connection.Fader.SetActive(true);
             connection.Scroll.enabled = true;
             connection.Order = 0;
+            connection.Icon.gameObject.SetActive(false);
 
             #if UNITY_EDITOR
             connection.gameObject.name = fact.name;
@@ -465,6 +510,12 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+
+            if (BFType.HasRate(flags)) {
+                connection.Mask |= WorldFilterMask.HasRate;
+            }
+
+            AddMaskable(connection.CanvasGroup, connection.Mask, ConnectionValidMask);
         }
 
         private unsafe void GenerateAttachment(BFBase fact, BestiaryDesc owner, BFDiscoveredFlags flags) {
@@ -498,6 +549,12 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+
+            if (BFType.HasRate(flags)) {
+                attachment.Mask |= WorldFilterMask.HasRate;
+            }
+
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private unsafe void GenerateAttachment(MissingFactTypes missingType, BestiaryDesc owner) {
@@ -506,6 +563,7 @@ namespace Aqua.Modeling {
             ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
             attachment.Key = GenerateConnectionKey(index, index);
             attachment.Index = (ushort) index;
+            attachment.Missing = missingType;
             attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
             attachment.Arrow.gameObject.SetActive(false);
 
@@ -518,6 +576,8 @@ namespace Aqua.Modeling {
             } else {
                 attachment.Mask = 0;
             }
+
+            attachment.Mask |= WorldFilterMask.Missing;
 
             switch(missingType) {
                 case MissingFactTypes.Repro: {
@@ -545,13 +605,13 @@ namespace Aqua.Modeling {
                 }
 
                 case MissingFactTypes.WaterChem: {
-                    attachment.Mask |= WorldFilterMask.AllWaterChem;
+                    attachment.Mask |= WorldFilterMask.AnyWaterChem;
                     attachment.Icon.sprite = m_MissingChemIcon;
                     break;
                 }
 
                 case MissingFactTypes.WaterChem_Stressed: {
-                    attachment.Mask |= WorldFilterMask.AllWaterChem;
+                    attachment.Mask |= WorldFilterMask.AnyWaterChem;
                     attachment.Icon.sprite = m_MissingChemStressedIcon;
                     break;
                 }
@@ -568,6 +628,8 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private unsafe void GenerateAttachment(MissingFactTypes missingType, WaterPropertyId propertyId) {
@@ -576,6 +638,7 @@ namespace Aqua.Modeling {
             ModelAttachmentDisplay attachment = m_AttachmentPool.Alloc();
             attachment.Key = GenerateConnectionKey(index, index);
             attachment.Index = (ushort) index;
+            attachment.Missing = missingType;
             attachment.AttachmentIndex = IncrementConnectionCount(attachment.Key);
             attachment.Arrow.gameObject.SetActive(false);
 
@@ -589,6 +652,8 @@ namespace Aqua.Modeling {
                 attachment.Mask = 0;
             }
 
+            attachment.Mask |= WorldFilterMask.Missing;
+
             switch(missingType) {
                 case MissingFactTypes.WaterChemHistory: {
                     attachment.Mask |= WorldFilterMask.History;
@@ -596,6 +661,8 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+
+            AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
         private void UpdateOrganismPositions(int count) {
@@ -610,7 +677,7 @@ namespace Aqua.Modeling {
                 allocatedConnections.Sort((x, y) => y.Order - x.Order);
                 int count = allocatedConnections.Count;
                 Vector2 a, b, vecAB, centerAB, cross;
-                float distAB;
+                float distAB, rotZ;
                 int connectionCount;
                 float connectionStart, connectionOffset;
                 ModelConnectionDisplay display;
@@ -635,10 +702,13 @@ namespace Aqua.Modeling {
                         centerAB.x += cross.x * connectionOffset;
                         centerAB.y += cross.y * connectionOffset;
                     }
+
+                    rotZ = Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg;
                     display.Transform.SetSizeDelta(distAB, Axis.X);
                     display.Transform.SetAnchorPos(centerAB);
-                    display.Transform.SetRotation(Mathf.Atan2(vecAB.y, vecAB.x) * Mathf.Rad2Deg, Axis.Z, Space.Self);
+                    display.Transform.SetRotation(rotZ, Axis.Z, Space.Self);
                     display.Transform.SetAsFirstSibling();
+                    display.Icon.transform.SetRotation(-rotZ, Axis.Z, Space.Self);
                 }
             }
         }
@@ -702,6 +772,16 @@ namespace Aqua.Modeling {
 
         private int GetIndex(WaterPropertyId property) {
             return PropertyIndexOffset + (int) property;
+        }
+
+        private ModelConnectionDisplay GetFirstConnectionForKey(int key) {
+            foreach(var connection in m_ConnectionPool.ActiveObjects) {
+                if (connection.Key == key) {
+                    return connection;
+                }
+            }
+
+            return null;
         }
 
         private int IncrementConnectionCount(int key) {
@@ -778,6 +858,49 @@ namespace Aqua.Modeling {
         }
 
         #endregion // Reconstruction
+
+        #region Filters
+
+        public void SetFilters(WorldFilterMask any, WorldFilterMask all, bool force = false) {
+            if (force || all != m_FilterAll || any != m_FilterAny) {
+                m_FilterAll = all;
+                m_FilterAny = any;
+                if (!m_ReconstructHandle.IsRunning()) {
+                    ReevaluateMaskedElements();
+                }
+            }
+        }
+
+        private void AddMaskable(CanvasGroup group, WorldFilterMask mask, WorldFilterMask valid) {
+            m_MaskableElements.PushBack(new MaskableEntry(group, mask, valid));
+            m_MaskInUse |= mask;
+        }
+
+        private void ReevaluateMaskedElements() {
+            float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0f : 0.1f;
+            for(int i = 0, len = m_MaskableElements.Count; i < len; i++) {
+                ref var element = ref m_MaskableElements[i];
+                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, element.Valid)) {
+                    element.Group.alpha = 1;
+                    element.Group.blocksRaycasts = true;
+                    if (element.RaycastFilter) {
+                        element.RaycastFilter.enabled = m_State.Phase == ModelPhases.Concept;
+                    }
+                } else {
+                    element.Group.alpha = hiddenAlpha;
+                    element.Group.blocksRaycasts = false;
+                    if (element.RaycastFilter) {
+                        element.RaycastFilter.enabled = false;
+                    }
+                }
+            }
+        }
+
+        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask valid) {
+            return (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
+        }
+
+        #endregion // Filters
 
         public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext)
         {
@@ -923,24 +1046,28 @@ namespace Aqua.Modeling {
         }
     }
 
-    public struct InterveneUpdateData
-    {
+    public struct InterveneUpdateData {
         public string Organism;
         public int DifferenceValue;
     }
 
+    [Flags]
     public enum WorldFilterMask : uint {
-        Relevant = 0x01,
+        Relevant        = 2 << 0,
+        HasRate         = 2 << 1,
+        Organism        = 2 << 2,
+        Eats            = 2 << 3,
+        Parasites       = 2 << 4,
+        Repro           = 2 << 5,
+        OxygenAndCarbonDioxide = 2 << 6,
+        Light           = 2 << 7,
+        History         = 2 << 8,
+        Missing         = 2 << 9,
 
-        Eats = 0x02,
-        Parasites = 0x04,
-        Repro = 0x08,
-        OxygenAndCarbonDioxide = 0x10,
-        Light = 0x20,
+        AnyBehavior = Eats | Parasites | Repro,
+        AnyWaterChem = OxygenAndCarbonDioxide | Light,
+        AnyMissing = History | Missing,
 
-        History = 0x40,
-
-        AllBehaviors = Eats | Parasites | Repro,
-        AllWaterChem = OxygenAndCarbonDioxide | Light
+        Any = AnyBehavior | AnyWaterChem | AnyMissing | Relevant | Organism | HasRate
     }
 }

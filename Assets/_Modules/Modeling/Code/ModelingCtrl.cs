@@ -6,6 +6,7 @@ using Aqua.Cameras;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine.Scripting;
+using System;
 
 namespace Aqua.Modeling {
 
@@ -16,12 +17,14 @@ namespace Aqua.Modeling {
 
         [SerializeField] private ModelActivityHeader m_Header = null;
         [SerializeField] private ModelEcosystemHeader m_EcosystemHeader = null;
+        [SerializeField] private InlinePopupPanel m_InlinePopup = null;
         [SerializeField] private BestiaryAddPanel m_EcosystemSelect = null;
         [SerializeField] private ModelWorldDisplay m_World = null;
         [SerializeField] private SimulationDataCtrl m_SimDataCtrl = null;
         [SerializeField] private ConceptualModelUI m_ConceptualUI = null;
         [SerializeField] private SimulationUI m_SimulationUI = null;
         [SerializeField] private CameraPose m_ConceptualCamera = null;
+        [SerializeField] private CameraPose m_SimulationCamera = null;
 
         [Header("-- DEBUG --")]
 
@@ -59,6 +62,34 @@ namespace Aqua.Modeling {
 
             m_State.Simulation = m_SimDataCtrl;
 
+            m_State.Display.Status = m_EcosystemHeader.SetStatusText;
+            m_State.Display.TextPopup = (t, c) => {
+                PopupContent content = default;
+                content.Text = Loc.Find(t);
+                content.TextColorOverride = c;
+                m_InlinePopup.Present(content, 0);
+            };
+            m_State.Display.FactsPopup = (f) => {
+                Array.Sort(f, BFType.SortByVisualOrder);
+                BFDiscoveredFlags[] flags = new BFDiscoveredFlags[f.Length];
+                for(int i = 0; i < flags.Length; i++) {
+                    flags[i] = Save.Bestiary.GetDiscoveredFlags(f[i].Id);
+                }
+
+                PopupFacts facts = default;
+                facts.Facts = f;
+                facts.Flags = flags;
+
+                PopupContent content = default;
+                content.Facts = facts;
+
+                m_InlinePopup.Present(content, 0);
+            };
+            m_State.Display.ClearPopup = () => m_InlinePopup.Hide();
+            m_State.Display.FilterNodes = (any, all, force) => {
+                m_World.SetFilters(any, all, force);
+            };
+
             m_ConceptualUI.SetData(m_State, m_ProgressInfo);
             m_SimulationUI.SetData(m_State, m_ProgressInfo);
             m_SimDataCtrl.SetData(m_State, m_ProgressInfo);
@@ -85,6 +116,7 @@ namespace Aqua.Modeling {
             m_State.Phase = phase;
 
             UpdatePhaseVariable(phase);
+            m_InlinePopup.Hide();
 
             // basic state
             if (phase == ModelPhases.Ecosystem) {
@@ -117,9 +149,13 @@ namespace Aqua.Modeling {
                 }
                 m_SimulationUI.Show();
                 m_SimulationUI.SetPhase(phase);
+                if (prevPhase < ModelPhases.Sync && m_SimulationUI.IsShowing()) {
+                    Services.Camera.MoveToPose(m_SimulationCamera, 0.3f, Curve.CubeOut);
+                }
             } else {
                 if (prevPhase >= ModelPhases.Sync) {
                     m_SimDataCtrl.ClearSimulatedData();
+                    Services.Camera.MoveToPose(m_ConceptualCamera, 0.3f, Curve.CubeOut);
                 }
                 m_SimulationUI.Hide();
             }
@@ -238,6 +274,7 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator OnRequestConceptualImport() {
+            m_InlinePopup.Hide();
             return Routine.Start(this, ImportProcess()).Wait();
         }
 
@@ -278,6 +315,7 @@ namespace Aqua.Modeling {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
                     Services.Events.Dispatch(ModelingConsts.Event_Concept_Exported);
                 });
+                m_InlinePopup.Hide();
                 EvaluateConceptStatus();
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("modelSynced");

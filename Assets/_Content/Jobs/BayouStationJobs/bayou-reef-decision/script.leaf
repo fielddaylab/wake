@@ -7,7 +7,9 @@
 @cutscene
 
 // write an intro to your job
-{@profHarper}    This is the intro to the reef-decision job!
+{@profHarper}   Right now there is a giant rig in {h}Site O{/h} with a bunch of coral growing on it.
+                If the rig goes, there can't be any coral. So all the species that depend on coral would go too.
+                We are interested in knowing what would happen to turtle populations if the reef were removed.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -38,17 +40,20 @@ $choice .argue.leaveRig; We should leave the rig
 $choose branch
 
 :: argue.removeRig
-$call ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1) 
+$if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1)
+    $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
+$endif
 {@profHarper} What makes you say that?
-$goto argue.showClaim
+$branch argue.showClaim
 
 :: argue.leaveRig
-$call ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
+$if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
+    $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
+$endif
 {@profHarper} What makes you say that?
-$goto argue.showClaim
+$branch argue.showClaim
 
 :: argue.showClaim
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.complete 
@@ -59,10 +64,13 @@ $choose branch
 :: argue.unrelated
 $call ArgueRejectIncorrect()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+$call ArgueClearFacts()
+$branch .argue.showClaim
 
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
 
 // END
 

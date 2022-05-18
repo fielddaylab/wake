@@ -17,7 +17,6 @@ namespace Aqua
         [Header("Consume")]
         [AutoEnum] public WaterPropertyId Property = WaterPropertyId.Oxygen;
         public float Amount = 0;
-        [SerializeField, HideInInspector] private QualCompare m_Relative;
 
         #endregion // Inspector
 
@@ -47,10 +46,14 @@ namespace Aqua
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
-            if (BFType.HasPair(inFlags))
+            if (!bIsLight)
             {
-                yield return BFFragment.CreateLocAdjective(QualitativeId(fact.m_Relative));
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
+            }
+            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
+            if (bIsLight)
+            {
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
             }
         }
 
@@ -66,11 +69,11 @@ namespace Aqua
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), QualitativeId(fact.m_Relative), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
             }
             else
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
             }
 
             return details;
@@ -110,13 +113,11 @@ namespace Aqua
                 if (pair != null)
                 {
                     float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref m_Relative, MapDescriptor(compare, QualCompare.Slower, QualCompare.Faster, QualCompare.SameRate));
                     bChanged |= Ref.Replace(ref PairId, pair.Id);
                 }
             }
             else
             {
-                bChanged |= Ref.Replace(ref m_Relative, QualCompare.Null);
                 bChanged |= Ref.Replace(ref PairId, null);
             }
             return bChanged;

@@ -88,7 +88,7 @@ namespace ProtoAqua.ExperimentV2 {
             if (bHasFacts) {
                 PopupFacts factSet = new PopupFacts(ArrayUtils.MapFrom(result.Facts, (f) => Assets.Fact(f.Id)),
                     ArrayUtils.MapFrom(result.Facts, (f) => f.Flags));
-                factSet.ShowNew = (b) => IsNew(result, b.Id);
+                factSet.IsNew = (b) => IsNew(result, b.Id);
                 NamedOption[] options = null;
                 if (!IsAnyNew(result)) {
                     options = PopupPanel.DefaultDismiss;

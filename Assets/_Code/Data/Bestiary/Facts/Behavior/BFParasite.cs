@@ -22,6 +22,7 @@ namespace Aqua {
         static public readonly TextId StressesVerb = "words.stresses";
         static private readonly TextId IsStressedByVerb = "words.isStressedBy";
         static private readonly TextId StressesSentence = "factFormat.stresses";
+        static private readonly TextId StressesRateSentence = "factFormat.stresses.rate";
 
         static public void Configure()
         {
@@ -71,11 +72,11 @@ namespace Aqua {
             details.Image = fact.Critter.ImageSet();
             if (BFType.HasRate(inFlags))
             {
-                details.Description = Loc.Format(StressesSentence, inFact.Parent.CommonName(), fact.Ratio, fact.Critter.CommonName());
+                details.Description = Loc.Format(StressesRateSentence, inFact.Parent.CommonName(), fact.Ratio, fact.Critter.CommonName());
             }
             else
             {
-                details.Description = Loc.Format(StressesSentence, inFact.Parent.CommonName(), Loc.Format("words.uncertainQuantity"), fact.Critter.CommonName());
+                details.Description = Loc.Format(StressesSentence, inFact.Parent.CommonName(), fact.Critter.CommonName());
             }
 
             return details;

@@ -64,7 +64,7 @@ namespace Aqua.Modeling {
             m_Icon.sprite = organism.Icon();
             m_Label.SetText(organism.CommonName());
             Index = index;
-            Mask = mask;
+            Mask = mask | WorldFilterMask.Organism;
             m_OnAddRemove = onAddRemove;
             m_Background.SetColor(organism.Color() * 0.5f);
         }

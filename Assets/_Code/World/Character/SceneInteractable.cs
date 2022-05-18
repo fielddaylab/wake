@@ -284,7 +284,7 @@ namespace Aqua.Character {
 
         public void ConfigurePin(RectTransformPinned pinned) {
             Transform pin = null;
-            if (m_PinToPlayer)
+            if (m_PinToPlayer && m_PlayerInside)
                 pin = m_PlayerInside.transform;
             if (!pin)
                 pin = m_PinLocationOverride;

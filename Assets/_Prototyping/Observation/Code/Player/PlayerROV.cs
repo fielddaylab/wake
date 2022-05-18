@@ -226,7 +226,7 @@ namespace ProtoAqua.Observation
                 m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematics.State.Velocity.magnitude / m_Kinematics.Config.MaxSpeed));
             }
 
-            velocityHintData.WeightOffset = m_CameraForwardLookWeight;
+            velocityHintData.WeightOffset = (m_Moving ? 1f : 0.2f) * m_CameraForwardLookWeight;
             velocityHintData.Offset = m_Kinematics.State.Velocity * (m_Moving ? m_CameraForwardLook : m_CameraForwardLookNoMove);
 
             if (m_Moving && m_LastInputData.UseHold && !m_LastInputData.Keyboard.KeyDown)

@@ -1,0 +1,142 @@
+#basePath   job.coral-check-up
+
+:: start
+@trigger    JobStarted
+@cutscene
+$branch common.ringPhone
+
+{@kevin}	 Let's see what range of environmental factors the Tang can tolerate. We'll need the Stress Tank.
+
+
+:: microHint
+@trigger	JobTasksUpdated
+@when		JobTaskTop(findMicro)
+@once
+@cutscene
+{@profCempaka}	Forgive the intrusion, but your AI tells me that according to the stress ranges you've measured,
+				the environmental conditions at Site S should be well within the Blue Tang's comfortable range. 
+				I just wanted to point out that there is something else which could be stressing the Blue Tang: Microorganisms. 
+				I'm going to need you to go back to Site S and scan for microorganisms.
+
+:: scanIck
+@trigger	JobTaskCompleted
+@when		HasEntity(Ick)
+@once
+@cutscene
+{@kevin}	This must be what's stressing the Tang!  We'd better get a population count.
+
+
+:: countIck
+@trigger	JobTaskCompleted
+@when		JobTaskTop(reviseVisual)
+@once
+@cutscene
+{@kevin}	This place is just crawling with Ick.  We've got to get back to the Measurement tank and see how this is affecting the Tang.
+
+:: measureHint1
+@trigger	ExperimentTankViewed
+@when		tankType == "Measurement", JobTaskTop(improveDescribe)
+@once
+@cutscene
+{@kevin}	This may be the only time you need to put two species in a measurement tank just to get the reproduction rate for one of them,
+			but every rule has an exception!  Put in both species, and let's see if we can figure out how fast Blue Tang reproduces when stressed.
+
+:: helpMeasure1
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(improveDescribe), !HasFact(BlueTang.Reproduce.Stressed), !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+@cutscene
+{@kevin}     Use the measurement tank to get the reproduction rate of Blue Tang in the presence of Ick.
+
+:: measureHint2
+@trigger	ExperimentFinished
+@when		HasFact(BlueTang.Reproduce.Stressed), !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+@once
+@cutscene
+{@kevin}	The presence of Ick really slows down Ick reproduction.  What about consumption?  Do Tang eat slower when stressed?
+			You'll need to measure wih all three species: Ick, Blue Tang, and Turf Algae.
+
+:: helpMeasure2
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(improveDescribe), HasFact(BlueTang.Reproduce.Stressed), !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+@cutscene
+{@kevin}     Use the measurement tank to get the rate at which Blue Tang eats Turf Algae in the presence of Ick.
+
+:: measureHint3
+@trigger	ExperimentFinished
+@when		HasFact(BlueTang.Reproduce.Stressed), HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+@once
+@cutscene
+{@kevin}	I calculate that this may be the missing element from our previous model.
+			Let's try to revise your descriptive model in light of the new information just acquired.
+
+:: helpMeasure3
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(improveDescribe), HasFact(BlueTang.Reproduce.Stressed), HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+@cutscene
+{@kevin}	Go to the modeling tool and redo your descriptive model with the new information you have.	 
+
+:: describeComplete
+@trigger	JobTasksUpdated
+@when		JobTaskTop(report)
+@once
+@cutscene
+{@kevin}	This model seems much more aligned to he Professor's observations. Let's go tell them the good news.
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findStress)
+@boostScore -5
+@cutscene
+{@kevin}    Stick some {nameof BlueTang} in the stress tank.
+
+:: catchFindMicro
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findMicro))
+@boostScore -5
+@cutscene
+{@kevin}    Go to Site S and try to scan for microorganisms.
+
+:: catchCountIck
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(CountIck)
+@boostScore -5
+@cutscene
+{@kevin}    Get a population count of the "Ick" microorganism you just found.
+
+:: catchObserveIck
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(ObserveIck)
+@boostScore -5
+@cutscene
+{@kevin}    Stick some {nameof BlueTang} and {nameof Ick} in the Observation Tank to learn about the effect of {nameof Ick} on {nameof BlueTang};
+
+:: catchReviseVisual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reviseVisual)
+@boostScore -5
+@cutscene
+{@kevin}    Remake your visual model based on your new {nameof Ick} data.
+
+:: catchImproveDescribe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(improveDescribe)
+@boostScore -5
+@cutscene
+{@kevin}    Remake your describe model based on your new {nameof Ick} data.
+
+:: catchReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(report)
+@boostScore -5
+@cutscene
+{@kevin}    Present your new model to Prof. Cempaka in the Comms room.
+
+
+
+// ARGUMENTATION
+
+
+:: end

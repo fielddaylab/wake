@@ -1,0 +1,27 @@
+name: Deploy job export to OGD Core
+
+on: 
+  push:
+    paths:
+      - 'DBExport.json'
+  workflow_dispatch:
+
+jobs:
+  deploy-export:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Push to OGD Core
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.OGD_ACCESS_TOKEN }}
+      with:
+        source_file: 'DBExport.json'
+        destination_repo: 'opengamedata/opengamedata-core'
+        destination_branch: 'master'
+        destination_folder: 'games/AQUALAB'
+        user_email: 'nspevacek@wisc.edu'
+        user_name: 'nspevacek'
+        commit_message: 'Deploy updated job export'

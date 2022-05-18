@@ -5,7 +5,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    We need to figure out why Glass Sponges aren't found in the Open Ocean.
+{@kevin}    We need to figure out why Glass Sponges aren't found at Site Z.
 			Usually organisms are missing if they are too stressed to stick around, or something eats them.
 			Let's start by seeing if either of those are true in this case.
 $if !HasEntity(GlassSponge)
@@ -259,7 +259,7 @@ $endif
 
 :: argue.groundwork.predatorClaim
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
-	{@profWhalen}	Haven't we already established this? There are none of these in the Open Ocean.
+	{@profWhalen}	Haven't we already established this? There are no predators that eat Glass Sponges in Site Z.
 	$branch .argue.groundwork.main-question
 $else
 	{@profWhalen}	Have you observed this?

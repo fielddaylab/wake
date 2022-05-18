@@ -62,15 +62,15 @@ namespace Aqua.Profile
 
         public IEnumerable<BestiaryDesc> GetEntities()
         {
-            foreach(var entity in m_ObservedEntities)
-                yield return Assets.Bestiary(entity);
+            foreach(var entityId in m_ObservedEntities)
+                yield return Assets.Bestiary(entityId);
         }
 
         public IEnumerable<BestiaryDesc> GetEntities(BestiaryDescCategory inCategory)
         {
-            foreach(var entity in m_ObservedEntities)
+            foreach(var entityId in m_ObservedEntities)
             {
-                BestiaryDesc desc = Assets.Bestiary(entity);
+                BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                     yield return desc;
             }
@@ -79,12 +79,27 @@ namespace Aqua.Profile
         public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
         {
             int count = 0;
-            foreach(var entity in m_ObservedEntities)
+            foreach(var entityId in m_ObservedEntities)
             {
-                BestiaryDesc desc = Assets.Bestiary(entity);
+                BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                 {
                     outFacts.Add(desc);
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outFacts)
+        {
+            int count = 0;
+            foreach(var entityId in m_ObservedEntities)
+            {
+                BestiaryDesc desc = Assets.Bestiary(entityId);
+                if (desc.HasCategory(inCategory))
+                {
+                    outFacts.Add(new TaggedBestiaryDesc(desc));
                     count++;
                 }
             }

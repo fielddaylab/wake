@@ -116,7 +116,7 @@ namespace ProtoAqua.Observation
             Quaternion now = m_Root.localRotation;
 
             if (now != target) {
-                Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime * Time.timeScale));
+                Quaternion lerp = Quaternion.Slerp(now, target, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime));
                 if (lerp == target) { // quaternion equals operator is fuzzy, so this is an "approximately equals"
                     lerp = target;
                 }
@@ -129,8 +129,8 @@ namespace ProtoAqua.Observation
                 m_BoostParticles.Stop();
             }
 
-            m_PropellerSpeed = Mathf.Lerp(m_PropellerSpeed, m_TargetPropellerSpeed, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime * Time.timeScale));
-            m_Propeller.Rotate(m_PropellerSpeed * Time.deltaTime * Time.timeScale, 0, 0, Space.Self);
+            m_PropellerSpeed = Mathf.Lerp(m_PropellerSpeed, m_TargetPropellerSpeed, TweenUtil.Lerp(m_NormalRotationLerp, 1, Time.deltaTime));
+            m_Propeller.Rotate(m_PropellerSpeed * Time.deltaTime, 0, 0, Space.Self);
         }
 
         private Quaternion CalculateDesiredRotation() {

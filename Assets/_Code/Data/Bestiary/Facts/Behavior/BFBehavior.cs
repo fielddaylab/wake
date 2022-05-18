@@ -13,49 +13,6 @@ namespace Aqua
 
         static protected readonly TextId DetailsHeader = "fact.behavior.header";
 
-        static private readonly TextId[] s_QualitativeWords = new TextId[]
-        {
-            default, "words.less", "words.fewer", "words.more", "words.slower", "words.faster", "words.sameAmount", "words.sameRate"
-        };
-
-        static private readonly TextId[] s_QualitativeWordsCaps = new TextId[]
-        {
-            default, "words.less.cap", "words.fewer.cap", "words.more.cap", "words.slower.cap", "words.faster.cap", "words.sameAmount.cap", "words.sameRate.cap"
-        };
-
-        static protected readonly TextId UncertainLabel = "words.uncertainQuantity";
-        static protected readonly TextId UncertainLabelCap = "words.uncertainQuantity.cap";
-
-        public enum QualCompare : byte
-        {
-            Null,
-
-            Less,
-            Fewer,
-            More,
-
-            Slower,
-            Faster,
-
-            SameAmount,
-            SameRate
-        }
-
-        static protected QualCompare MapDescriptor(float inDifference, QualCompare inLess, QualCompare inMore, QualCompare inEquals)
-        {
-            return Mathf.Approximately(inDifference, 0) ? inEquals : (inDifference > 0 ? inMore : inLess);
-        }
-
-        static public TextId QualitativeId(QualCompare inDescriptor)
-        {
-            return s_QualitativeWords[(int) inDescriptor];
-        }
-
-        static public TextId QualitativeIdCap(QualCompare inDescriptor)
-        {
-            return s_QualitativeWordsCaps[(int) inDescriptor];
-        }
-
         #endregion // Consts
 
         #region Inspector

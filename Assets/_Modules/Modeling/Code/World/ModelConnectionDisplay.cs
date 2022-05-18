@@ -15,10 +15,12 @@ namespace Aqua.Modeling {
         public ScrollTiledRawImage Scroll;
         public Graphic Arrow;
         public GameObject Fader;
+        public Image Icon;
 
         #endregion // Inspector
 
         [NonSerialized] public BFBase Fact;
+        [NonSerialized] public BFBase Fact2;
         [NonSerialized] public int Key;
         [NonSerialized] public ushort IndexA;
         [NonSerialized] public ushort IndexB;
@@ -31,6 +33,7 @@ namespace Aqua.Modeling {
 
         void IPoolAllocHandler.OnFree() {
             Fact = null;
+            Fact2 = null;
         }
     }
 }

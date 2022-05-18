@@ -20,13 +20,15 @@ namespace Aqua.Cameras
         public float Lerp;
 
         public Transform Anchor;
-        public Vector2 Offset;
+        public Vector3 Offset;
+        public Vector3 Look;
 
         public CameraWeightFunction Weight;
         public float WeightOffset;
 
-        internal Vector2 m_CachedPosition;
+        internal Vector3 m_CachedPosition;
         internal float m_CachedWeight;
+        internal Vector3 m_CachedLook;
     }
 
     /// <summary>
@@ -41,9 +43,11 @@ namespace Aqua.Cameras
         public float Lerp;
 
         public Transform Anchor;
-        public Vector2 Offset;
+        public Vector3 Offset;
+        public Vector3 Look;
 
-        internal Vector2 m_CachedPosition;
+        internal Vector3 m_CachedPosition;
+        internal Vector3 m_CachedLook;
     }
 
     /// <summary>
