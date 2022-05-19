@@ -18,6 +18,7 @@ using Leaf.Runtime;
 using EasyAssetStreaming;
 using ScriptableBake;
 using Aqua.Character;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -268,6 +269,16 @@ namespace Aqua
             if (bShowCutscene)
             {
                 Services.UI.ShowLetterbox();
+            }
+
+            if ((inFlags & SceneLoadFlags.StopMusic) != 0)
+            {
+                Services.Audio.StopMusic();
+            }
+
+            if ((inFlags & SceneLoadFlags.SuppressAutoSave) != 0)
+            {
+                AutoSave.Suppress();
             }
 
             if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
@@ -810,6 +821,7 @@ namespace Aqua
         #endregion // Leaf
     }
 
+    [Flags]
     public enum SceneLoadFlags
     {
         [Hidden]
@@ -819,6 +831,8 @@ namespace Aqua
         DoNotModifyHistory = 0x02,
         Cutscene = 0x04,
         DoNotDispatchPreUnload = 0x08,
-        DoNotOverrideEntrance = 0x10
+        DoNotOverrideEntrance = 0x10,
+        StopMusic = 0x20,
+        SuppressAutoSave = 0x40
     }
 }

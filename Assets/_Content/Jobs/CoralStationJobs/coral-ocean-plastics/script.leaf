@@ -13,7 +13,7 @@ $branch common.ringPhone
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
+@when 		scene:name == "Helm", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.

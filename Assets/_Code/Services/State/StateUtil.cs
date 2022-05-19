@@ -10,7 +10,7 @@ namespace Aqua {
 
         private const float FadeDuration = 0.25f;
         private const float PauseDuration = 0.15f;
-        private const string DefaultBackScene = "Ship";
+        private const string DefaultBackScene = "Helm";
 
         static private SceneLoadFlags s_LastFlags;
         static private bool s_IsLoading = false;
@@ -105,6 +105,12 @@ namespace Aqua {
             s_LastFlags = inFlags;
             if ((s_LastFlags & SceneLoadFlags.Cutscene) != 0) {
                 Services.UI.ShowLetterbox();
+            }
+            if ((s_LastFlags & SceneLoadFlags.StopMusic) != 0) {
+                Services.Audio.StopMusic();
+            }
+            if ((s_LastFlags & SceneLoadFlags.SuppressAutoSave) != 0) {
+                AutoSave.Suppress();
             }
             Services.Input.PauseAll();
             Services.Audio.FadeOut(FadeDuration);

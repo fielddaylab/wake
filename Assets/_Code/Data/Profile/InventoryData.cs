@@ -204,7 +204,7 @@ namespace Aqua.Profile
             ioItem.Count = (uint) (ioItem.Count + inValue);
             if (!inbSuppressEvent)
             {
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, ioItem.ItemId);
             }
             return true;
         }
@@ -216,7 +216,7 @@ namespace Aqua.Profile
                 ioItem.Count = (uint) inValue;
                 if (!inbSuppressEvent)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                    Services.Events.Queue(GameEvents.InventoryUpdated, ioItem.ItemId);
                 }
                 return true;
             }
@@ -238,7 +238,7 @@ namespace Aqua.Profile
             if (m_ScannerIds.Add(inId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.ScanLogUpdated, inId);
+                Services.Events.Queue(GameEvents.ScanLogUpdated, inId);
                 return true;
             }
 
@@ -261,7 +261,7 @@ namespace Aqua.Profile
             if (m_UpgradeIds.Add(inUpgradeId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, inUpgradeId);
                 return true;
             }
 
@@ -274,7 +274,7 @@ namespace Aqua.Profile
             if (m_UpgradeIds.Remove(inUpgradeId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, inUpgradeId);
                 return true;
             }
 

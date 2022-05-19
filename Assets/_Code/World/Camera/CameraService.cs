@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using Aqua.Debugging;
 using BeauRoutine;
+using BeauRoutine.Splines;
 using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
@@ -44,6 +45,15 @@ namespace Aqua.Cameras
             static public void Lerp(in CameraState inA, in CameraState inB, ref CameraState outState, float inLerp)
             {
                 outState.Position = Vector3.LerpUnclamped(inA.Position, inB.Position, inLerp);
+                outState.Rotation = Quaternion.SlerpUnclamped(inA.Rotation, inB.Rotation, inLerp);
+                outState.Height = Mathf.LerpUnclamped(inA.Height, inB.Height, inLerp);
+                outState.Zoom = Mathf.LerpUnclamped(inA.Zoom, inB.Zoom, inLerp);
+            }
+
+            static public void Lerp<T>(in CameraState inA, in CameraState inB, ref CameraState outState, float inLerp, T inPositionSpline)
+                where T : ISpline
+            {
+                outState.Position = inPositionSpline.GetPoint(inLerp);
                 outState.Rotation = Quaternion.SlerpUnclamped(inA.Rotation, inB.Rotation, inLerp);
                 outState.Height = Mathf.LerpUnclamped(inA.Height, inB.Height, inLerp);
                 outState.Zoom = Mathf.LerpUnclamped(inA.Zoom, inB.Zoom, inLerp);
@@ -1207,11 +1217,49 @@ namespace Aqua.Cameras
             return m_ScriptedAnimation.Wait();
         }
 
+        /// <summary>
+        /// Moves the camera to a specific pose.
+        /// </summary>
+        public IEnumerator MoveToPose(CameraPose inPose, Vector3 inSplineControlPoint, float inDuration, Curve inCurve = Curve.Smooth, CameraPoseProperties inPropertiesMask = CameraPoseProperties.Default, Axis inAxis = Axis.XYZ, Action inOnComplete = null)
+        {
+            Assert.NotNull(inPose);
+
+            SetAsScripted();
+
+            if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
+                m_FOVPlane.SetTargetPreserveFOV(inPose.Target);
+
+            CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom);
+
+            RecordLatestState(newState);
+
+            if (inDuration <= 0)
+            {
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inPose.Properties & inPropertiesMask, inAxis);
+                m_ScriptedAnimation.Stop();
+                return null;
+            }
+
+            m_ScriptedAnimation.Replace(this, MoveCameraSplineTween(currentState, newState, inSplineControlPoint, inPose.Properties & inPropertiesMask, inDuration, inCurve, inAxis, inOnComplete));
+            return m_ScriptedAnimation.Wait();
+        }
+
         private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Axis inAxis, Action inOnComplete = null)
         {
             return Tween.ZeroToOne((f) => {
                 CameraState newState = default;
                 CameraState.Lerp(inInitialState, inTarget, ref newState, f);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, inAxis & m_Axis);
+            }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
+        }
+
+        private IEnumerator MoveCameraSplineTween(CameraState inInitialState, CameraState inTarget, Vector3 inControlPoint, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Axis inAxis, Action inOnComplete = null)
+        {
+            SimpleSpline spline = new SimpleSpline(inInitialState.Position, inTarget.Position, inControlPoint);
+            return Tween.ZeroToOne((f) => {
+                CameraState newState = default;
+                CameraState.Lerp(inInitialState, inTarget, ref newState, f, spline);
                 ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, inAxis & m_Axis);
             }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
         }

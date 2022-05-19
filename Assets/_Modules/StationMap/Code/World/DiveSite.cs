@@ -80,6 +80,11 @@ namespace Aqua.StationMap
             player.Kinematics.State.Velocity *= 0.4f;
             player.Kinematics.Config.Drag *= 4;
             yield return thread.Wait();
+            if (Script.PopCancel()) {
+                player.Kinematics.Config.Drag /= 4;
+                yield break;
+            }
+            
             Services.Events.Dispatch(Event_Dive);
             Services.UI.ShowLetterbox();
             Services.Events.Dispatch(GameEvents.BeginDive, Assets.Map(inspectable.TargetMapId()).name);

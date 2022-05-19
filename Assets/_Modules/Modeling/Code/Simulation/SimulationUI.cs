@@ -550,7 +550,7 @@ namespace Aqua.Modeling {
             m_AccuracyDisplay.SetActive(false);
             m_SimulateButton.gameObject.SetActive(false);
             RenderSyncPredictDivider();
-            Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Begin);
+            Services.Events.Queue(ModelingConsts.Event_Simulation_Begin);
             Services.Script.TriggerResponse(ModelingConsts.Trigger_GraphStarted);
         }
 

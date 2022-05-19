@@ -14,11 +14,11 @@ $if kevin:seenShipHelm
             You should check the {map-name}Job Board{/map-name}.
 $else
             Is there anywhere we can see available jobs?
-    $if scene:name == "Ship", global:nav.shipRoom == "helm"
+    $if scene:name == "Helm", global:nav.shipRoom == "helm"
             {@player}   Oh, yeah, the {map-name}Job Board{/map-name} is right in front of us!
     $else
             {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm!
-    $endif // scene:name == "Ship", global:nav.shipRoom == "helm"
+    $endif // scene:name == "Helm", global:nav.shipRoom == "helm"
 $endif // kevin:seenShipHelm
 $set    kevin:knowsJobs = true
 
@@ -32,7 +32,7 @@ $set    kevin:knowsJobs = true
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name == "Ship", global:nav.shipRoom == "helm"
+@when       !player:currentJob, scene:name == "Helm", global:nav.shipRoom == "helm"
 @repeat     1
 @cutscene
 {@player}   Hey Kevin... any thoughts on what we should do next? 

@@ -1,8 +1,8 @@
 # basePath   act1
 
 :: atKelpStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "KelpStation"
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "KelpStation"
 @once
 @boostScore 100
 @cutscene
@@ -49,8 +49,8 @@ $call FocusHighlight->Clear()
 // on unlocking world map-name
 
 :: afterUnlockWorldMap
-@trigger    RoomEnter
-@when       roomId == "helm", RoomUnlocked(WorldMap)
+@trigger    ViewEnter
+@when       viewId == "helm", RoomUnlocked(WorldMap)
 @once
 @cutscene
 @boostScore 100
@@ -61,8 +61,8 @@ $call FocusHighlight->Clear()
 // Coral Station
 
 :: atCoralStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "CoralStation"
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "CoralStation"
 @once
 @boostScore 100
 @cutscene
@@ -75,8 +75,8 @@ $branch common.ringPhone
 				I have some jobs listed on the Job Board, let me know if you're interested.
 
 :: atBayouStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "BayouStation"
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "BayouStation"
 @boostScore 100
 @once
 @cutscene
@@ -89,8 +89,8 @@ $branch common.ringPhone
                 I'm looking forward to working with you!
 
 :: atArcticStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "ArcticStation"
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "ArcticStation"
 @boostScore 100
 @once
 @cutscene

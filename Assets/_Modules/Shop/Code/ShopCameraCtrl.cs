@@ -91,7 +91,7 @@ namespace Aqua.Shop {
         }
 
         static private IEnumerator BackToMap() {
-            StateUtil.LoadSceneWithWipe("Ship", ExitEntrance);
+            StateUtil.LoadSceneWithWipe("Helm", ExitEntrance);
             yield return 0.3f;
             Services.UI.HideLetterbox();
             Services.Input.ResumeAll();

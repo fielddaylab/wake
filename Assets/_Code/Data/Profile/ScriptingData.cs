@@ -116,7 +116,7 @@ namespace Aqua.Profile
                     }
             }
 
-            Services.Events.QueueForDispatch(GameEvents.ScriptNodeSeen, inId);
+            Services.Events.Queue(GameEvents.ScriptNodeSeen, inId);
         }
 
         #endregion // Node Visits

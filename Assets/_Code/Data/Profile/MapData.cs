@@ -50,7 +50,7 @@ namespace Aqua.Profile
             {
                 m_CurrentStationId = inNewStationId;
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.StationChanged, inNewStationId);
+                Services.Events.Queue(GameEvents.StationChanged, inNewStationId);
                 return true;
             }
 
@@ -144,7 +144,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Add(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.ViewLockChanged);
                 return true;
             }
 
@@ -156,7 +156,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Remove(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.ViewLockChanged);
                 return true;
             }
 

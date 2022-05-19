@@ -13,7 +13,7 @@ $branch common.ringPhone
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
@@ -102,7 +102,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-turtle-population.got.pop
+@when       scene:name == "Helm", jobs:coral-turtle-population.got.pop
 @once
 @cutscene
 {@player}   We're back. Now what?
@@ -111,7 +111,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
 {@kevin}	Let's get to the Office so we can report over the Comms.

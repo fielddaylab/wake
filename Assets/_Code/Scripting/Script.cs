@@ -1,29 +1,37 @@
 using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Aqua.Character;
+using Aqua.Scripting;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
+using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua {
     static public class Script {
         static public ILeafPlugin Plugin {
-            [MethodImpl(256)] get { return Services.Script; }
+            [MethodImpl(256)]
+            get { return Services.Script; }
         }
 
         static public bool IsLoading {
-            [MethodImpl(256)] get { return StateUtil.IsLoading; }
+            [MethodImpl(256)]
+            get { return StateUtil.IsLoading; }
         }
 
         static public bool IsPaused {
-            [MethodImpl(256)] get { return Services.Pause.IsPaused(); }
+            [MethodImpl(256)]
+            get { return Services.Pause.IsPaused(); }
         }
 
         static public bool IsPausedOrLoading {
-            [MethodImpl(256)] get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
+            [MethodImpl(256)]
+            get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
         static public bool ShouldBlock() {
@@ -40,7 +48,8 @@ namespace Aqua {
         }
 
         static public PlayerBody CurrentPlayer {
-            [MethodImpl(256)] get { return Services.State.Player; }
+            [MethodImpl(256)]
+            get { return Services.State.Player; }
         }
 
         #region Argument Parsing
@@ -58,7 +67,7 @@ namespace Aqua {
         #region Popups
 
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
-            using(PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
+            using (PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
                 allFacts.Sort(BFType.SortByVisualOrder);
                 if (entity.Category() == BestiaryDescCategory.Critter) {
@@ -156,6 +165,97 @@ namespace Aqua {
         }
 
         #endregion // Variables
+
+        #region Inspection
+
+        /// <summary>
+        /// Interacts with an object.
+        /// </summary>
+        static public Routine Interact(ScriptInteractParams inParams, MonoBehaviour inHost = null) {
+            Routine r = Routine.Start(inHost, InteractRoutine(inParams));
+            r.Tick();
+            return r;
+        }
+
+        /// <summary>
+        /// Routine for interacting with an object.
+        /// </summary>
+        static public IEnumerator InteractRoutine(ScriptInteractParams inParams) {
+            Script.PopCancel();
+
+            ScriptThreadHandle thread;
+
+            thread = ScriptObject.Interact(inParams.Source.Parent, !inParams.Available, inParams.Config.TargetId);
+
+            if (!inParams.Available) {
+                SceneInteractable context = inParams.Source as SceneInteractable;
+                if (context) {
+                    ContextButtonDisplay.Locked(context);
+                }
+                IEnumerator locked = inParams.Config.OnLocked?.Invoke(inParams, thread);
+                if (locked != null)
+                    yield return null;
+
+                if (thread.IsRunning())
+                    yield return thread.Wait();
+                yield break;
+            }
+
+            IEnumerator execute = inParams.Config.OnPerform?.Invoke(inParams, thread);
+            if (execute != null)
+                yield return execute;
+            if (thread.IsRunning())
+                yield return thread.Wait();
+
+            if (Script.PopCancel()) {
+                yield break;
+            }
+
+            switch (inParams.Config.Action) {
+                case ScriptInteractAction.Inspect: {
+                        thread = ScriptObject.Inspect(inParams.Source.Parent);
+                        yield return thread.Wait();
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToPreviousScene: {
+                        StateUtil.LoadPreviousSceneWithWipe(inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToMap: {
+                        StateUtil.LoadMapWithWipe(inParams.Config.TargetId, inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToView: {
+                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.GetComponent<ViewLink>());
+                        break;
+                    }
+            }
+        }
+
+        #endregion // Inspection
+
+        #region Cancelling
+
+        static private bool s_CancelInteraction = false;
+
+        /// <summary>
+        /// Retrieves the current cancel flag and resets it.
+        /// </summary>
+        static public bool PopCancel() {
+            bool cancel = s_CancelInteraction;
+            s_CancelInteraction = false;
+            return cancel;
+        }
+
+        [LeafMember("CancelInteract"), Preserve]
+        static public void QueueCancel() {
+            s_CancelInteraction = true;
+        }
+
+        #endregion // Cancelling
 
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);

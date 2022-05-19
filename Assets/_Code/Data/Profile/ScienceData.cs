@@ -93,7 +93,7 @@ namespace Aqua.Profile
                         break;
                     }
                 }
-                Services.Events.QueueForDispatch(GameEvents.ArgueDataUpdated, inArgumentId);
+                Services.Events.Queue(GameEvents.ArgueDataUpdated, inArgumentId);
                 return true;
             }
             
@@ -111,7 +111,7 @@ namespace Aqua.Profile
             {
                 DebugService.Log(LogMask.DataService, "[ScienceData] Player level changed from {0} to {1}", m_CurrentLevel, inNextLevel);
 
-                Services.Events.QueueForDispatch(GameEvents.ScienceLevelUpdated, new ScienceLevelUp() {
+                Services.Events.Queue(GameEvents.ScienceLevelUpdated, new ScienceLevelUp() {
                     OriginalLevel = m_CurrentLevel,
                     LevelAdjustment = (int) inNextLevel - (int) m_CurrentLevel
                 });

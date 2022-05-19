@@ -16,7 +16,7 @@ $call UnlockSite(RS-1A)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(siteA)
+@when 		scene:name == "Helm", JobTaskTop(siteA)
 @cutscene
 {@player}   Any idea where I should go next?
 {@kevin}	Go out to your sub and head over to Site A.

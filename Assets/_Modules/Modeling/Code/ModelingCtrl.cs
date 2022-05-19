@@ -302,7 +302,7 @@ namespace Aqua.Modeling {
 
             m_SimDataCtrl.GeneratePlayerProfile();
 
-            Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
             yield return null;
             EvaluateConceptStatus();
             RefreshPhaseHeader();
@@ -593,6 +593,7 @@ namespace Aqua.Modeling {
         WaterChem_Stressed = 0x020,
         Parasite = 0x040,
         PopulationHistory = 0x080,
-        WaterChemHistory = 0x100
+        WaterChemHistory = 0x100,
+        StressRange = 0x200
     }
 }

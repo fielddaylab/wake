@@ -59,13 +59,13 @@ $call GiveFact(LionfishInvasion.Population.ArtificialReef)
 
 :: helpReturnArgue
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name != "Ship"
+@when		JobTaskTop(argue), scene:name != "Helm"
 @cutscene
 {@kevin}	Get back to the ship so you can make your case.
 
 :: helpReturnArgue2
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name == "Ship"
+@when		JobTaskTop(argue), scene:name == "Helm"
 @cutscene
 {@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 
