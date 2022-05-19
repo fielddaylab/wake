@@ -7,7 +7,7 @@ using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
 
-namespace Aqua
+namespace Aqua.View
 {
     [RequireComponent(typeof(ScriptInspectable))]
     public sealed class ViewLink : ScriptComponent {

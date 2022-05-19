@@ -10,6 +10,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting {
     public delegate IEnumerator ScriptInteractCallback(ScriptInteractParams parameters, ScriptThreadHandle thread);
+    public delegate void ScriptInteractSetupCallback(ref ScriptInteractParams parameters);
 
     public struct ScriptInteractParams {
         public ScriptInteractConfig Config;
@@ -20,6 +21,7 @@ namespace Aqua.Scripting {
 
     [Serializable]
     public struct ScriptInteractConfig {
+        public ScriptInteractSetupCallback PreTrigger;
         public ScriptInteractCallback OnLocked;
         public ScriptInteractCallback OnPerform;
 

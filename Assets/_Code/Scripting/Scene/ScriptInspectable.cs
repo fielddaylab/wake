@@ -73,6 +73,8 @@ namespace Aqua.Scripting {
             } else {
                 Hint = this.EnsureComponent<CursorInteractionHint>();
             }
+
+            Hint.enabled = !Locked;
         }
 
         #endregion // IScriptComponent

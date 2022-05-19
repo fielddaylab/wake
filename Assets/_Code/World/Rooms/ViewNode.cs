@@ -5,8 +5,7 @@ using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
 
-namespace Aqua
-{
+namespace Aqua.View {
     public sealed class ViewNode : MonoBehaviour, IKeyValuePair<StringHash32, ViewNode> {
         public SerializedHash32 Id;
         public CameraPose Camera;
@@ -21,7 +20,7 @@ namespace Aqua
 
         public StringHash32 Key { get { return Id; } }
         public ViewNode Value { get { return this; } }
-    
+
         #endregion // IKeyValuePair
     }
 }

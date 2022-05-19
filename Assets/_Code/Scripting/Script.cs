@@ -3,6 +3,7 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using Aqua.Character;
 using Aqua.Scripting;
+using Aqua.View;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -182,6 +183,8 @@ namespace Aqua {
         /// </summary>
         static public IEnumerator InteractRoutine(ScriptInteractParams inParams) {
             Script.PopCancel();
+
+            inParams.Config.PreTrigger?.Invoke(ref inParams);
 
             ScriptThreadHandle thread;
 

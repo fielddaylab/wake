@@ -7,7 +7,7 @@ using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
 
-namespace Aqua {
+namespace Aqua.View {
     public sealed class ViewManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBaked {
         static public readonly StringHash32 Trigger_ViewEnter = "ViewEnter";
 
