@@ -248,8 +248,12 @@ namespace ProtoAqua.ExperimentV2 {
                 inTank.WaterAudioLoop.Stop();
             }
 
-            inTank.WaterRenderer.SetPosition(newCenter, Axis.Y, Space.Self);
-            inTank.WaterRenderer.SetScale(newHeight, Axis.Y);
+            // match the water level with the water collider
+            Vector3 matchedPos = inTank.WaterTransform3D.position + inTank.WaterCollider3D.center * inTank.WaterTransform3D.localScale.y;
+            float matchedScale = collider3dSize.y * inTank.WaterTransform3D.localScale.y;
+
+            inTank.WaterRenderer.SetPosition(matchedPos, Axis.Y);
+            inTank.WaterRenderer.SetScale(matchedScale, Axis.Y);
 
             if (inKillAnimation) {
                 inTank.WaterTransition.Stop();
