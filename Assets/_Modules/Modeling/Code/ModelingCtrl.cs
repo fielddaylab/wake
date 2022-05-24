@@ -86,8 +86,8 @@ namespace Aqua.Modeling {
                 m_InlinePopup.Present(content, 0);
             };
             m_State.Display.ClearPopup = () => m_InlinePopup.Hide();
-            m_State.Display.FilterNodes = (any, all, force) => {
-                m_World.SetFilters(any, all, force);
+            m_State.Display.FilterNodes = (any, all, none, force) => {
+                m_World.SetFilters(any, all, none, force);
             };
 
             m_ConceptualUI.SetData(m_State, m_ProgressInfo);

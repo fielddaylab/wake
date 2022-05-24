@@ -181,7 +181,7 @@ namespace Aqua.Modeling {
                     m_State.LastKnownAccuracy = 0;
                     RenderAccuracy();
 
-                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, WorldFilterMask.AnyWaterChem, true);
 
                     ModelMissingReasons missing;
                     
@@ -216,7 +216,7 @@ namespace Aqua.Modeling {
                 }
 
                 case ModelPhases.Predict: {
-                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, true);
+                    m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant | WorldFilterMask.Organism, WorldFilterMask.AnyWaterChem, true);
 
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
@@ -229,7 +229,7 @@ namespace Aqua.Modeling {
                 }
             
                 case ModelPhases.Intervene: {
-                    m_State.Display.FilterNodes(WorldFilterMask.Any, 0, true);
+                    m_State.Display.FilterNodes(WorldFilterMask.Any, 0, WorldFilterMask.AnyWaterChem, true);
 
                     m_InterveneButtonGroup.gameObject.SetActive(true);
                     Clear(m_PredictGraph);

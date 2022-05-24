@@ -54,6 +54,7 @@ namespace Aqua.Modeling {
         private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
         private const WorldFilterMask OrganismValidMask = WorldFilterMask.Organism | WorldFilterMask.Relevant;
+        private const WorldFilterMask WaterChemMask = WorldFilterMask.AnyWaterChem | WorldFilterMask.Relevant;
         private const WorldFilterMask ConnectionValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.AnyWaterChem | WorldFilterMask.HasRate | WorldFilterMask.Relevant;
         private const WorldFilterMask AttachmentValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.HasRate | WorldFilterMask.Relevant | WorldFilterMask.AnyMissing;
 
@@ -125,6 +126,7 @@ namespace Aqua.Modeling {
 
         [NonSerialized] private WorldFilterMask m_FilterAll;
         [NonSerialized] private WorldFilterMask m_FilterAny  = WorldFilterMask.Any;
+        [NonSerialized] private WorldFilterMask m_FilterNone  = 0;
         [NonSerialized] private WorldFilterMask m_MaskInUse = 0;
 
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
@@ -265,6 +267,8 @@ namespace Aqua.Modeling {
             m_MaskInUse = 0;
             m_Input.Override = false;
             yield return null;
+
+            AddWaterChemMaskables();
 
             int organismCount = m_State.Conceptual.GraphedEntities.Count;
             if (organismCount == 0) {
@@ -861,10 +865,11 @@ namespace Aqua.Modeling {
 
         #region Filters
 
-        public void SetFilters(WorldFilterMask any, WorldFilterMask all, bool force = false) {
+        public void SetFilters(WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, bool force = false) {
             if (force || all != m_FilterAll || any != m_FilterAny) {
                 m_FilterAll = all;
                 m_FilterAny = any;
+                m_FilterNone = none;
                 if (!m_ReconstructHandle.IsRunning()) {
                     ReevaluateMaskedElements();
                 }
@@ -876,11 +881,19 @@ namespace Aqua.Modeling {
             m_MaskInUse |= mask;
         }
 
+        private void AddWaterChemMaskables() {
+            AddMaskable(m_OxygenProperty.CanvasGroup, WorldFilterMask.OxygenAndCarbonDioxide, WaterChemMask);
+            AddMaskable(m_CarbonDioxideProperty.CanvasGroup, WorldFilterMask.OxygenAndCarbonDioxide, WaterChemMask);
+            AddMaskable(m_LightProperty.CanvasGroup, WorldFilterMask.Light, WaterChemMask);
+            AddMaskable(m_PHProperty.CanvasGroup, WorldFilterMask.PhAndTemp, WaterChemMask);
+            AddMaskable(m_TemperatureProperty.CanvasGroup, WorldFilterMask.PhAndTemp, WaterChemMask);
+        }
+
         private void ReevaluateMaskedElements() {
             float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0f : 0.1f;
             for(int i = 0, len = m_MaskableElements.Count; i < len; i++) {
                 ref var element = ref m_MaskableElements[i];
-                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, element.Valid)) {
+                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, m_FilterNone, element.Valid)) {
                     element.Group.alpha = 1;
                     element.Group.blocksRaycasts = true;
                     if (element.RaycastFilter) {
@@ -896,8 +909,8 @@ namespace Aqua.Modeling {
             }
         }
 
-        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask valid) {
-            return (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
+        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, WorldFilterMask valid) {
+            return (src & all & none) == 0 && (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
         }
 
         #endregion // Filters
@@ -1063,9 +1076,10 @@ namespace Aqua.Modeling {
         Light           = 2 << 7,
         History         = 2 << 8,
         Missing         = 2 << 9,
+        PhAndTemp        = 2 << 10,
 
         AnyBehavior = Eats | Parasites | Repro,
-        AnyWaterChem = OxygenAndCarbonDioxide | Light,
+        AnyWaterChem = OxygenAndCarbonDioxide | Light | PhAndTemp,
         AnyMissing = History | Missing,
 
         Any = AnyBehavior | AnyWaterChem | AnyMissing | Relevant | Organism | HasRate
