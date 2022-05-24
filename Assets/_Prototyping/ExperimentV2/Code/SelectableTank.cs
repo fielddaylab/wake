@@ -47,6 +47,7 @@ namespace ProtoAqua.ExperimentV2
         [Required] public ParticleSystem WaterAmbientParticles;
         [Required] public BoxCollider2D WaterTrigger;
         [Required] public BoxCollider WaterCollider3D;
+        [Required] public Transform WaterTransform3D;
         [Required] public ColorGroup WaterColor;
         [Required] public ParticleSystem WaterDrainParticles;
         public float StartingWaterHeight = 1;
