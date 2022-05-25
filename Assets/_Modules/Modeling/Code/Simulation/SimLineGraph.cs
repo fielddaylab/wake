@@ -1,147 +1,271 @@
 using System;
-using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
-using BeauUtil.Debugger;
 using UnityEngine;
 
 namespace Aqua.Modeling {
     public unsafe class SimLineGraph : MonoBehaviour {
-        #region Inspector
-
-        [SerializeField] private float m_LineThickness = 1;
-        [SerializeField] private GraphLine.Pool m_LinePool = null;
-
-        #endregion // Inspector
-
-        private Dictionary<StringHash32, GraphLine> m_LineMap = new Dictionary<StringHash32, GraphLine>();
-        private Rect m_LastRect;
-
-        public void Clear() {
-            m_LineMap.Clear();
-            m_LinePool.Reset();
+        public struct StressedRegion {
+            public ushort StartIdx;
+            public ushort EndIdx;
         }
 
-        public Rect Range { get { return m_LastRect; } }
-        public Rect BoundedRange(int pointCount) {
-            float maxHeight = 0;
-            foreach(var line in m_LinePool.ActiveObjects) {
-                maxHeight = Math.Max(line.MaximumHeight(pointCount), maxHeight);
-            }
-            Rect r = m_LastRect;
-            r.height = maxHeight;
-            return r;
-        }
+        #region Populating Blocks
 
-        public unsafe Rect LoadOrganisms(SimSnapshot* results, uint resultCount, uint timestampOffset, SimProfile profile, Predicate<StringHash32> predicate) {
-            Assert.True(results != null);
-            Assert.NotNull(profile);
-
-            Rect varRange = new Rect(0, 0, timestampOffset + resultCount - 1, 0);
-
-            using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys)) {
-                GraphLine line;
-
-                int critterCount = profile.ActorCount;
-                uint tickCount = resultCount;
-                SimProfile.ActorInfo* actorInfo;
-
-                // Iterate over critters first, points second
-                // this will reduce the number of lookups to the map considerably
-                for (int critterIdx = 0; critterIdx < critterCount; critterIdx++) {
-                    actorInfo = &profile.Actors[critterIdx];
-                    StringHash32 id = actorInfo->Id;
-                    if (!predicate(id))
-                        continue;
-
-                    BestiaryDesc critterEntry = Assets.Bestiary(id);
-                    BFBody body = critterEntry.FactOfType<BFBody>();
-                    float populationScale = body.MassPerPopulation * body.MassDisplayScale;
-
-                    unusedLines.Remove(id);
-                    if (!m_LineMap.TryGetValue(id, out line)) {
-                        line = m_LinePool.Alloc();
-                        m_LineMap[id] = line;
-                        line.Renderer.color = critterEntry.Color();
-                        line.Renderer.LineThickness = m_LineThickness;
-                    }
-
-                    line.ClearPoints();
-
-                    float mass;
-                    for (int tickIdx = 0; tickIdx < tickCount; ++tickIdx) {
-                        mass = results[tickIdx].Populations[critterIdx] * populationScale;
-                        float stressedRatio = results[tickIdx].StressedRatio[critterIdx] / 128f;
-                        line.AddPoint(timestampOffset + tickIdx, mass);
-
-                        if (mass > varRange.height)
-                            varRange.height = mass;
-                    }
-                }
-
-                foreach (var lineId in unusedLines) {
-                    line = m_LineMap[lineId];
-                    m_LinePool.Free(line);
-                    m_LineMap.Remove(lineId);
+        static public void Populate(SimulationDataCtrl data, ListSlice<SimGraphBlock> blocks, SimGraphBlock.RenderMask mask, Color stressColor) {
+            Vector2* pointBuffer = Frame.AllocArray<Vector2>(Simulation.MaxTicks + 1);
+            StressedRegion* stressBuffer = Frame.AllocArray<StressedRegion>(Simulation.MaxTicks / 2);
+            
+            if ((mask & SimGraphBlock.RenderMask.Historical) != 0) {
+                SimSnapshot* historical = data.RetrieveHistoricalData(out uint countU);
+                int count = (int) countU;
+                for(int i = 0; i < blocks.Length; i++) {
+                    PopulateBlock(historical, count, data.HistoricalProfile, blocks[i], SimGraphBlock.RenderMask.Historical, pointBuffer, stressBuffer, stressColor);
                 }
             }
 
-            return (m_LastRect = varRange);
-        }
-
-        public unsafe Rect LoadProperties(SimSnapshot* results, uint resultCount, uint timestampOffset, Predicate<WaterPropertyId> predicate) {
-            Assert.True(results != null);
-
-            Rect varRange = new Rect(0, 0, timestampOffset + resultCount - 1, 0);
-
-            using(PooledSet<StringHash32> unusedLines = PooledSet<StringHash32>.Create(m_LineMap.Keys)) {
-                GraphLine line;
-
-                int propertyCount = (int) WaterPropertyId.TRACKED_COUNT;
-                uint tickCount = resultCount;
-
-                for (int propertyIdx = 0; propertyIdx < propertyCount; propertyIdx++) {
-                    WaterPropertyId propId = (WaterPropertyId) propertyIdx;
-                    if (!predicate(propId))
-                        continue;
-                    
-                    WaterPropertyDesc propertyEntry = Assets.Property(propId);
-                    StringHash32 id = propertyEntry.Id();
-
-                    unusedLines.Remove(id);
-                    if (!m_LineMap.TryGetValue(id, out line)) {
-                        line = m_LinePool.Alloc();
-                        m_LineMap[id] = line;
-                        line.Renderer.color = propertyEntry.Color();
-                        line.Renderer.LineThickness = m_LineThickness;
-                    }
-
-                    line.ClearPoints();
-
-                    float value;
-                    for (int tickIdx = 0; tickIdx < tickCount; ++tickIdx) {
-                        value = propertyEntry.RemapValue(results[tickIdx].Water[propId]);
-                        line.AddPoint(timestampOffset + tickIdx, value);
-
-                        if (value > varRange.height)
-                            varRange.height = value;
-                    }
-                }
-
-                foreach (var lineId in unusedLines) {
-                    line = m_LineMap[lineId];
-                    m_LinePool.Free(line);
-                    m_LineMap.Remove(lineId);
+            if ((mask & SimGraphBlock.RenderMask.Player) != 0) {
+                SimSnapshot* player = data.RetrievePlayerData(out uint countU);
+                int count = (int) countU;
+                for(int i = 0; i < blocks.Length; i++) {
+                    PopulateBlock(player, count, data.PlayerProfile, blocks[i], SimGraphBlock.RenderMask.Player, pointBuffer, stressBuffer, stressColor);
                 }
             }
 
-            return (m_LastRect = varRange);
-        }
-
-        public void RenderLines(Rect inRange, int inPointCount = -1, bool inbRenderInitialPoint = false) {
-            foreach (var line in m_LinePool.ActiveObjects) {
-                line.Render(inRange, inPointCount, inbRenderInitialPoint);
+            if ((mask & SimGraphBlock.RenderMask.Predict) != 0) {
+                SimSnapshot* predict = data.RetrievePredictData(out uint countU);
+                int count = (int) countU;
+                for(int i = 0; i < blocks.Length; i++) {
+                    PopulateBlock(predict, count, data.PredictProfile, blocks[i], SimGraphBlock.RenderMask.Predict, pointBuffer, stressBuffer, stressColor);
+                }
             }
         }
+
+        static private void PopulateBlock(SimSnapshot* results, int count, SimProfile profile, SimGraphBlock block, SimGraphBlock.RenderMask phase, Vector2* pointBuffer, StressedRegion* stressBuffer, Color stressColor) {
+            switch(phase) {
+                case SimGraphBlock.RenderMask.Historical: {
+                    if (block.PropertyId != WaterPropertyId.NONE) {
+                        block.LastRectHistorical = GenerateWater(results, count, block.PropertyId, block.PrimaryColor, pointBuffer, block.Historical);
+                    } else {
+                        int idx = profile.IndexOfActorType(block.ActorId);
+                        block.LastRectHistorical = GenerateHistoricalPopulation(results, count, idx, block.PrimaryColor, pointBuffer, block.Historical);
+                    }
+                    break;
+                }
+
+                case SimGraphBlock.RenderMask.Player: {
+                    if (block.PropertyId != WaterPropertyId.NONE) {
+                        block.LastRectPlayer = GenerateWater(results, count, block.PropertyId, block.PrimaryColor, pointBuffer, block.Player);
+                    } else {
+                        int idx = profile.IndexOfActorType(block.ActorId);
+                        block.LastRectPlayer = GeneratePlayerPopulation(results, count, idx, block.PrimaryColor, stressColor, pointBuffer, stressBuffer, block.Player);
+                    }
+                    break;
+                }
+
+                case SimGraphBlock.RenderMask.Predict: {
+                    if (block.PropertyId != WaterPropertyId.NONE) {
+                        block.LastRectPredict = GenerateWater(results, count, block.PropertyId, block.PrimaryColor, pointBuffer, block.Predict);
+                    } else {
+                        int idx = profile.IndexOfActorType(block.ActorId);
+                        block.LastRectPredict = GeneratePlayerPopulation(results, count, idx, block.PrimaryColor, stressColor, pointBuffer, stressBuffer, block.Predict);
+                    }
+                    break;
+                }
+            }
+
+            block.AppliedScaleMask &= ~phase;
+        }
+
+        #endregion // Populating Blocks
+
+        #region Rendering Blocks
+
+        static public void Render(int pointCount, ListSlice<SimGraphBlock> blocks, SimGraphBlock.RenderMask mask) {
+            bool showHistorical = pointCount > 1 && (mask & SimGraphBlock.RenderMask.Historical) != 0;
+            bool showPlayer = pointCount > 1 && (mask & SimGraphBlock.RenderMask.Player) != 0;
+            bool showPredict = !showHistorical && !showPlayer && pointCount > 1 && (mask & SimGraphBlock.RenderMask.Predict) != 0;
+
+            for(int i = 0; i < blocks.Length; i++) {
+                SimGraphBlock block = blocks[i];
+
+                bool changed = false;
+                changed |= Ref.Replace(ref block.Historical.PointCount, pointCount);
+                changed |= Ref.Replace(ref block.Player.PointCount, pointCount);
+                changed |= Ref.Replace(ref block.Predict.PointCount, pointCount);
+
+                if (showHistorical && showPlayer) {
+                    Rect bounds = block.LastRectHistorical;
+                    SimMath.CombineBounds(ref bounds, block.LastRectPlayer);
+                    if (bounds != block.LastRect) {
+                        if ((block.AppliedScaleMask & SimGraphBlock.RenderMask.Historical) != 0) {
+                            InvScaleLine(block.Historical, pointCount, block.LastRect);
+                        }
+                        ScaleLine(block.Historical, pointCount, bounds);
+
+                        if ((block.AppliedScaleMask & SimGraphBlock.RenderMask.Player) != 0) {
+                            InvScaleLine(block.Player, pointCount, block.LastRect);
+                        }
+                        ScaleLine(block.Player, pointCount, bounds);
+
+                        block.AppliedScaleMask |= SimGraphBlock.RenderMask.Historical | SimGraphBlock.RenderMask.Player;
+                        block.LastRect = bounds;
+                        changed = true;
+                    }
+                } else if (showHistorical) {
+                    Rect bounds = block.LastRectHistorical;
+                    if (bounds != block.LastRect) {
+                        if ((block.AppliedScaleMask & SimGraphBlock.RenderMask.Historical) != 0) {
+                            InvScaleLine(block.Historical, pointCount, block.LastRect);
+                        }
+                        ScaleLine(block.Historical, pointCount, bounds);
+
+                        block.AppliedScaleMask |= SimGraphBlock.RenderMask.Historical;
+                        block.LastRect = bounds;
+                        changed = true;
+                    }
+                } else if (showPlayer) {
+                    Rect bounds = block.LastRectPlayer;
+                    if (bounds != block.LastRect) {
+                        if ((block.AppliedScaleMask & SimGraphBlock.RenderMask.Player) != 0) {
+                            InvScaleLine(block.Player, pointCount, block.LastRect);
+                        }
+                        ScaleLine(block.Player, pointCount, bounds);
+
+                        block.AppliedScaleMask |= SimGraphBlock.RenderMask.Player;
+                        block.LastRect = bounds;
+                        changed = true;
+                    }
+                } else if (showPredict) {
+                    Rect bounds = block.LastRectPredict;
+                    if (bounds != block.LastRect) {
+                        if ((block.AppliedScaleMask & SimGraphBlock.RenderMask.Predict) != 0) {
+                            InvScaleLine(block.Predict, pointCount, block.LastRect);
+                        }
+                        ScaleLine(block.Predict, pointCount, bounds);
+
+                        block.AppliedScaleMask |= SimGraphBlock.RenderMask.Predict;
+                        block.LastRect = bounds;
+                        changed = true;
+                    }
+                }
+
+                block.Historical.enabled = showHistorical;
+                block.Player.enabled = showPlayer;
+                block.Predict.enabled = showPredict;
+
+                if (changed) {
+                    block.Historical.SubmitChanges();
+                    block.Player.SubmitChanges();
+                    block.Predict.SubmitChanges();
+                }
+            }
+        }
+
+        #endregion // Populating Blocks
+
+        #region Generating Lines
+
+        static public Rect GenerateHistoricalPopulation(SimSnapshot* results, int count, int actorIdx, Color actorColor, Vector2* pointBuffer, GraphLineRenderer renderer) {
+            Rect range = FillPopulationBuffer(results, count, actorIdx, pointBuffer, null, null, false);
+            renderer.Colors = Array.Empty<Color>();
+            renderer.color = actorColor;
+            renderer.EnsurePointBuffer(count);
+            UnsafeExt.MemCpy(pointBuffer, count, renderer.Points);
+            renderer.PointCount = count;
+            return range;
+        }
+
+        static public Rect GeneratePlayerPopulation(SimSnapshot* results, int count, int actorIdx, Color actorColor, Color stressColor, Vector2* pointBuffer, StressedRegion* stressBuffer, GraphLineRenderer renderer) {
+            int stressCount;
+            Rect range = FillPopulationBuffer(results, count, actorIdx, pointBuffer, stressBuffer, &stressCount, false);
+            renderer.EnsureColorBuffer(count);
+            renderer.EnsurePointBuffer(count);
+            UnsafeExt.MemCpy(pointBuffer, count, renderer.Points);
+            Color[] colors = renderer.Colors;
+            for(int i = 0; i < count; i++) {
+                colors[i] = actorColor;
+            }
+            for(int i = 0; i < stressCount; i++) {
+                int start = stressBuffer[i].StartIdx;
+                int end = stressBuffer[i].EndIdx;
+                for(int j = start; j < end; j++) {
+                    colors[j] = stressColor;
+                }
+            }
+            renderer.PointCount = count;
+            return range;
+        }
+
+        static public Rect GenerateWater(SimSnapshot* results, int count, WaterPropertyId waterProperty, Color propertyColor, Vector2* pointBuffer, GraphLineRenderer renderer) {
+            Rect range = FillWaterBuffer(results, count, waterProperty, pointBuffer);
+            renderer.Colors = Array.Empty<Color>();
+            renderer.color = propertyColor;
+            renderer.EnsurePointBuffer(count);
+            UnsafeExt.MemCpy(pointBuffer, count, renderer.Points);
+            renderer.PointCount = count;
+            return range;
+        }
+
+        static private Rect FillPopulationBuffer(SimSnapshot* results, int resultCount, int organismIdx, Vector2* pointBuffer, StressedRegion* stressBuffer, int* stressRegionCount, bool trackStressed) {
+            *stressRegionCount = 0;
+            bool currentStress = false, stress = false;
+
+            Vector2* pointHead = pointBuffer;
+            StressedRegion* stressHead = stressBuffer;
+            
+            for(int i = 0; i < resultCount; i++) {
+                pointHead->x = i;
+                pointHead->y = results->Populations[organismIdx];
+
+                if (trackStressed) {
+                    stress = results->StressedRatio[organismIdx] >= 64; // stressed ratio values are 0 - 128; half is 64
+                    if (stress != currentStress) {
+                        ushort idx = (ushort) Math.Max(0, i - 1);
+                        if (stress) {
+                            stressHead->StartIdx = idx;
+                        } else {
+                            stressHead->EndIdx = idx;
+                            (*stressRegionCount)++;
+                            stressHead++;
+                        }
+                        currentStress = stress;
+                    }
+                }
+
+                results++;
+                pointHead++;
+            }
+
+            if (currentStress) {
+                (*stressRegionCount)++;
+                stressHead->EndIdx = (ushort) (resultCount - 1);
+            }
+
+            return SimMath.CalculateBounds(pointBuffer, resultCount);
+        }
+
+        static private Rect FillWaterBuffer(SimSnapshot* results, int resultCount, WaterPropertyId propertyId, Vector2* pointBuffer) {
+            Vector2* pointHead = pointBuffer;
+            
+            for(int i = 0; i < resultCount; i++) {
+                pointHead->x = i;
+                pointHead->y = results->Water[propertyId];
+
+                results++;
+                pointHead++;
+            }
+
+            return SimMath.CalculateBounds(pointBuffer, resultCount);
+        }
+    
+        static public void ScaleLine(GraphLineRenderer renderer, int count, Rect range) {
+            SimMath.Scale(renderer.Points, count, range);
+        }
+
+        static public void InvScaleLine(GraphLineRenderer renderer, int count, Rect range) {
+            SimMath.InvScale(renderer.Points, count, range);
+        }
+
+        #endregion // Generating Lines
     }
 }

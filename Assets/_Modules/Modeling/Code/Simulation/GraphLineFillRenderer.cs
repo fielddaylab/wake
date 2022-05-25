@@ -39,6 +39,10 @@ namespace Aqua.Modeling {
 
         [NonSerialized] public RingBuffer<Region> Regions = new RingBuffer<Region>(2, RingBufferMode.Expand);
 
+        protected GraphLineFillRenderer() {
+            useLegacyMeshGeneration = false;
+        }
+
         public void SubmitChanges() {
             SetVerticesDirty();
         }
@@ -116,6 +120,7 @@ namespace Aqua.Modeling {
                     vh.AddVert(vertBuffer[1]);
                     vertCount += 2;
 
+                    // render starting triangle
                     if (j > 0 && j == region.StartIdx && region.StartIntersection > 0) {
                         e = Vector2.Lerp(LineA.Points[j - 1], a, region.StartIntersection);
 
@@ -131,7 +136,8 @@ namespace Aqua.Modeling {
                         c = LineB.Points[j + 1];
                         d = LineA.Points[j + 1];
 
-                        if (j + 1 == region.EndIdx) {
+                        // render ending triangle
+                        if (j + 1 == region.EndIdx && j + 1 < pointCutoff) {
                             e = Vector2.Lerp(a, d, region.EndIntersection);
 
                             vertBuffer[2].position = new Vector2(left + e.x * width, bottom + e.y * height);
@@ -141,6 +147,7 @@ namespace Aqua.Modeling {
                             vh.AddTriangle(vertBase, vertBase + 1, vertCount);
                             vertCount++;
                         } else if (j < end - 1) {
+                            // render quad
                             vertBuffer[2].position = new Vector2(left + c.x * width, bottom + c.y * height);
                             vertBuffer[3].position = new Vector2(left + d.x * width, bottom + d.y * height);
 
@@ -273,10 +280,8 @@ namespace Aqua.Modeling {
         #if UNITY_EDITOR
 
         protected override void OnValidate() {
-            if (!Application.IsPlaying(this)) {
-                if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode) {
-                    return;
-                }
+            if (!Frame.IsActive(this)) {
+                return;
             }
             base.OnValidate();
         }

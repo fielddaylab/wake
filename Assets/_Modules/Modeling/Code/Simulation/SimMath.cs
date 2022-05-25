@@ -1,4 +1,6 @@
 using System;
+using BeauUtil;
+using UnityEngine;
 
 namespace Aqua.Modeling {
     
@@ -56,5 +58,128 @@ namespace Aqua.Modeling {
             long fixedC = (fixedA << FixedShift) / fixedB;
             return ToUInt(fixedC);
         }
+
+        #region Graph
+
+        /// <summary>
+        /// Remaps the given data for the given bounds.
+        /// </summary>
+        static public void Scale(Vector2[] data, int count, Rect bounds) {
+            float minX = bounds.xMin, minY = bounds.yMin, invWidth = 1f / bounds.width, invHeight = 1f / bounds.height;
+            for(int i = 0; i < count; i++) {
+                ref Vector2 vec = ref data[i];
+                vec.x = (vec.x - minX) * invWidth;
+                vec.y = (vec.y - minY) * invHeight;
+            }
+        }
+
+        /// <summary>
+        /// Remaps the given data for the given bounds.
+        /// </summary>
+        static public unsafe void Scale(Vector2* data, int count, Rect bounds) {
+            float minX = bounds.xMin, minY = bounds.yMin, invWidth = 1f / bounds.width, invHeight = 1f / bounds.height;
+            for(int i = 0; i < count; i++) {
+                ref Vector2 vec = ref data[i];
+                vec.x = (vec.x - minX) * invWidth;
+                vec.y = (vec.y - minY) * invHeight;
+            }
+        }
+
+        /// <summary>
+        /// Remaps the given data for the inverse of the given bounds.
+        /// </summary>
+        static public void InvScale(Vector2[] data, int count, Rect bounds) {
+            float minX = bounds.xMin, minY = bounds.yMin, width = bounds.width, height = bounds.height;
+            for(int i = 0; i < count; i++) {
+                ref Vector2 vec = ref data[i];
+                vec.x = minX + (vec.x * width);
+                vec.y = minY + (vec.y * height);
+            }
+        }
+
+        /// <summary>
+        /// Remaps the given data for the inverse of the given bounds.
+        /// </summary>
+        static public unsafe void InvScale(Vector2* data, int count, Rect bounds) {
+            float minX = bounds.xMin, minY = bounds.yMin, width = bounds.width, height = bounds.height;
+            for(int i = 0; i < count; i++) {
+                ref Vector2 vec = ref data[i];
+                vec.x = minX + (vec.x * width);
+                vec.y = minY + (vec.y * height);
+            }
+        }
+
+        /// <summary>
+        /// Calculates the bounds for a given set of data.
+        /// </summary>
+        static public Rect CalculateBounds(Vector2[] data, int count) {
+            float xMin = 0, xMax = 0, yMin = 0, yMax = 0;
+            for(int i = 0; i < count; i++) {
+                Vector2 vec = data[i];
+                xMin = Math.Min(vec.x, xMin);
+                yMin = Math.Min(vec.y, yMin);
+                xMax = Math.Min(vec.y, xMax);
+                xMax = Math.Min(vec.y, yMax);
+            }
+            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Calculates the bounds for a given set of data.
+        /// </summary>
+        static public unsafe Rect CalculateBounds(Vector2* data, int count) {
+            float xMin = 0, xMax = 0.001f, yMin = 0, yMax = 0.001f;
+            for(int i = 0; i < count; i++) {
+                Vector2 vec = data[i];
+                xMin = Math.Min(vec.x, xMin);
+                yMin = Math.Min(vec.y, yMin);
+                xMax = Math.Min(vec.y, xMax);
+                xMax = Math.Min(vec.y, yMax);
+            }
+            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Calculates the bounds for a given set of data.
+        /// </summary>
+        static public void CalculateBounds(ref Rect rect, Vector2[] data, int count) {
+            float xMin = rect.xMin, xMax = rect.xMax, yMin = rect.yMin, yMax = rect.yMax;
+            for(int i = 0; i < count; i++) {
+                Vector2 vec = data[i];
+                xMin = Math.Min(vec.x, xMin);
+                yMin = Math.Min(vec.y, yMin);
+                xMax = Math.Min(vec.y, xMax);
+                xMax = Math.Min(vec.y, yMax);
+            }
+            rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Calculates the bounds for a given set of data.
+        /// </summary>
+        static public unsafe void CalculateBounds(ref Rect rect, Vector2* data, int count) {
+            float xMin = rect.xMin, xMax = rect.xMax, yMin = rect.yMin, yMax = rect.yMax;
+            for(int i = 0; i < count; i++) {
+                Vector2 vec = data[i];
+                xMin = Math.Min(vec.x, xMin);
+                yMin = Math.Min(vec.y, yMin);
+                xMax = Math.Min(vec.y, xMax);
+                xMax = Math.Min(vec.y, yMax);
+            }
+            rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Combines two rectangle bounds.
+        /// </summary>
+        static public void CombineBounds(ref Rect rect, Rect combineWith) {
+            float xMin = Math.Min(rect.xMin, combineWith.xMin),
+                yMin = Math.Min(rect.yMin, combineWith.yMin),
+                xMax = Math.Max(rect.xMax, combineWith.xMax),
+                yMax = Math.Max(rect.yMax, combineWith.yMax);
+            rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        #endregion // Graph
     }
 }

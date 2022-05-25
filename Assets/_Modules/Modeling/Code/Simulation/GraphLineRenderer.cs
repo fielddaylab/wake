@@ -43,7 +43,29 @@ namespace Aqua.Modeling {
             get { return m_Texture != null ? m_Texture : base.mainTexture; }
         }
 
+        protected GraphLineRenderer() {
+            useLegacyMeshGeneration = false;
+        }
+
+        public void EnsurePointBuffer(int count) {
+            if (Points == null || Points.Length < count) {
+                count = (int) Unsafe.AlignUp8((uint) count);
+                Array.Resize(ref Points, count);
+            }
+        }
+
+        public void EnsureColorBuffer(int count) {
+            if (Colors == null || Colors.Length < count) {
+                count = (int) Unsafe.AlignUp8((uint) count);
+                Array.Resize(ref Colors, count);
+            }
+        }
+
         public void SubmitChanges() {
+            if (!IsActive()) {
+                return;
+            }
+            
             SetVerticesDirty();
         }
 
@@ -134,10 +156,8 @@ namespace Aqua.Modeling {
         #if UNITY_EDITOR
 
         protected override void OnValidate() {
-            if (!Application.IsPlaying(this)) {
-                if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode) {
-                    return;
-                }
+            if (!Frame.IsActive(this)) {
+                return;
             }
             base.OnValidate();
         }

@@ -18,6 +18,7 @@ namespace Aqua {
 
         static public ushort Index;
         static internal Unsafe.ArenaHandle FrameHeap;
+        static private bool s_HeapInitialized = false;
 
         static internal void IncrementFrame() {
             Index = (ushort) ((Index + 1) % InvalidIndex);
@@ -30,22 +31,24 @@ namespace Aqua {
         static internal void CreateBuffer() {
             DestroyBuffer();
             FrameHeap = Unsafe.CreateArena(HeapSize, "Frame");
-            Log.Msg("[Frame] Initialized per-frame heap {0} bytes", Unsafe.ArenaSize(FrameHeap));
+            Log.Msg("[Frame] Initialized per-frame heap; size={0}", Unsafe.ArenaSize(FrameHeap));
+            s_HeapInitialized = true;
         }
 
         static internal void ResetBuffer() {
-            #if DEVELOPMENT
+            #if UNITY_EDITOR
             int allocSize = HeapSize - Unsafe.ArenaFreeBytes(FrameHeap);
             if (allocSize > 0) {
                 Log.Msg("[Frame] {0} allocated this frame", allocSize);
             }
-            #endif // DEVELOPMENT
+            #endif // UNITY_EDITOR
             Unsafe.ResetArena(FrameHeap);
         }
 
         static internal void DestroyBuffer() {
             if (Unsafe.TryFreeArena(ref FrameHeap)) {
-                Log.Msg("[Frame] Freed per-frame heap");
+                Log.Msg("[Frame] Destroyed per-frame heap");
+                s_HeapInitialized = false;
             }
         }
 
@@ -78,6 +81,48 @@ namespace Aqua {
 
         #endregion // Buffer
 
+        static public bool IsActive(UnityEngine.Object obj) {
+            if (!s_HeapInitialized) {
+                return false;
+            }
+
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(obj) && EditorApplication.isPlayingOrWillChangePlaymode) {
+                return false;
+            }
+            #endif // UNITY_EDITOR
+
+            return true;
+        }
+
+        static public bool IsActive(Behaviour obj) {
+            if (!s_HeapInitialized || !obj.isActiveAndEnabled) {
+                return false;
+            }
+
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(obj) && EditorApplication.isPlayingOrWillChangePlaymode) {
+                return false;
+            }
+            #endif // UNITY_EDITOR
+
+            return true;
+        }
+
+        static public bool IsActive(GameObject obj) {
+            if (!s_HeapInitialized || !obj.activeInHierarchy) {
+                return false;
+            }
+
+            #if UNITY_EDITOR
+            if (!Application.IsPlaying(obj) && EditorApplication.isPlayingOrWillChangePlaymode) {
+                return false;
+            }
+            #endif // UNITY_EDITOR
+
+            return true;
+        }
+
         #if UNITY_EDITOR
 
         [UnityEditor.InitializeOnLoadMethod]
@@ -98,7 +143,6 @@ namespace Aqua {
 
             CreateBuffer();
         }
-
 
         #endif // UNITY_EDITOR
     }
