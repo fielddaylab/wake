@@ -13,13 +13,13 @@ $set    player:seen.drJules = true
 {@drKelp}  Oh, a visitor! Welcome to my research station.
             What a gorgeous old ship! 
 {@player}   Um, thanks. Still getting used to it. 
-{@drKelp}   Who's your jellyfish friend?
+{@drKelp}   Who's your robot friend?
 {@player}    Not "friend," exactly. They're my new passenger. 
              I'm {player-name}. You're Dr. Kelpurnia, right?
 {@drKelp}  Please, call me Kel. 
             What brings you and your not-friend to my little kelpdom?
 {@player}   Well.... I need some cash to pay off my ship.
-            Kevin heard you might have some jobs up for grabs. 
+            V1ctor heard you might have some jobs up for grabs. 
 {@drKelp}  Oh, great! I could use an extra set of hands. 
             Or, you know, tentacles.
             Open your {map-name}Job Board{/map-name} on the dash to get started!
@@ -39,7 +39,7 @@ $goto .tutorial
 
 $call hotbar.kevin->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.kevin)
-    Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
+    Talk to V1ctor by clicking the {h}button with the robot{/h} up here.
     They can help if you get stuck!
 $call hotbar.kevin->ResetSorting()
 $call FocusHighlight->Clear()

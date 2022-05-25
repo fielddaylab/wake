@@ -16,7 +16,7 @@ $set    player:seen.drJules = true
 {@player}	Ok, great! The sub, which is located...um... 
 {@kevin}	Right outside the door. 
 {@player}	Oh, yeah. I knew that. 
-            (Thanks, Kevin.)
+            (Thanks, V1ctor.)
 
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
@@ -102,7 +102,7 @@ $branch common.ringPhone
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1C", jobs:kelp-welcome.got.scans
 @cutscene
-{@player} 	Um... Kevin? Now what? 
+{@player} 	Um... V1ctor? Now what? 
 {@kevin}    We're done here. Head back to the surface! 
 
 // BACK AT STATION
@@ -377,7 +377,7 @@ $call CompleteJob()
 {@drKelp}	Wonderful! Thank you for your help, {player-name}! 
 {@player}   Easy peasy. I was glad to help. 
 {@kevin}    Ahem.
-{@player}   Oh. Uh, Kevin helped too. A little. 
+{@player}   Oh. Uh, V1ctor helped too. A little. 
 {@drKelp}  Don't suppose you'd like another job?
             I've got work available at other research sites.
             You can find them on the {map-name}Job Board{/map-name}!
