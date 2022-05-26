@@ -45,6 +45,7 @@ namespace ProtoAqua.ExperimentV2
         [Header("Water")]
         [Required] public Transform WaterRenderer;
         [Required] public ParticleSystem WaterAmbientParticles;
+        [Required] public MeshRenderer WaterRippleRenderer;
         [Required] public BoxCollider2D WaterTrigger;
         [Required] public BoxCollider WaterCollider3D;
         [Required] public Transform WaterTransform3D;
