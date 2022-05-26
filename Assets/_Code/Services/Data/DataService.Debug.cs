@@ -371,8 +371,8 @@ namespace Aqua
                 () => { 
                     BestiaryDesc entry = Assets.Bestiary(inGroupId);
                     foreach(var fact in entry.PlayerFacts) {
-                        Save.Bestiary.RegisterFact(fact.Id, true);
-                        Save.Bestiary.AddDiscoveredFlags(fact.Id, BFDiscoveredFlags.Rate);
+                        Save.Bestiary.DebugRegisterFactNoEvent(fact.Id, true);
+                        Save.Bestiary.DebugRegisterFactFlagsNoEvent(fact.Id, BFDiscoveredFlags.Rate);
                     }
                 });
             inMenu.AddDivider();
@@ -531,12 +531,12 @@ namespace Aqua
             Log.Warn("[DataService] All local save data has been cleared");
         }
 
-        static internal void UnlockAllDefaults() {
+        static internal void UnlockAllDefaults(bool allFacts) {
             UnlockAllRooms();
             UnlockAllSites();
             UnlockAllStations();
             UnlockAllUpgrades();
-            UnlockAllBestiaryEntries(false);
+            UnlockAllBestiaryEntries(allFacts);
 
             foreach(var map in Services.Assets.Map.Stations()) {
                 Save.Map.RecordVisitedLocation(map.Id());

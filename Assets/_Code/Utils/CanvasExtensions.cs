@@ -23,6 +23,15 @@ namespace Aqua {
             inRect.anchorMax = max;
         }
 
+        static public void SetAnchorsY(this RectTransform inRect, float inY0, float inY1) {
+            Vector2 min = inRect.anchorMin,
+                max = inRect.anchorMax;
+            min.y = inY0;
+            max.y = inY1;
+            inRect.anchorMin = min;
+            inRect.anchorMax = max;
+        }
+
         static public void ResizeXForAspectRatio(this RectTransform inRect, float inWidth, float inHeight) {
             #if UNITY_EDITOR
             if (!Application.IsPlaying(inRect)) {

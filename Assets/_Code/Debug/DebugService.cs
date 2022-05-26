@@ -57,6 +57,7 @@ namespace Aqua.Debugging
 
         [NonSerialized] private uint m_LastKnownStreamingCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
+        [NonSerialized] private long m_UnlockAllLastPress;
 
         private void LateUpdate()
         {
@@ -135,7 +136,15 @@ namespace Aqua.Debugging
                 }
                 else if (m_Input.KeyPressed(KeyCode.Equals))
                 {
-                    DataService.UnlockAllDefaults();
+                    long now = Stopwatch.GetTimestamp();
+                    float timeSince = (float) (now - m_UnlockAllLastPress) / TimeSpan.TicksPerSecond;
+                    if (timeSince < 0.5f) {
+                        DataService.UnlockAllDefaults(true);
+                        SkipCutscene();
+                    } else {
+                        DataService.UnlockAllDefaults(false);
+                    }
+                    m_UnlockAllLastPress = now;
                 }
             }
         }

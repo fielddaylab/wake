@@ -5,31 +5,6 @@ using BeauUtil;
 namespace Aqua {
     static public unsafe class UnsafeExt {
 
-        /// <summary>
-        /// Copies array from one address to another.
-        /// </summary>
-        static public void MemCpy<T>(T* src, int srcCount, T* dst, int dstCount) where T : unmanaged {
-            Buffer.MemoryCopy(src, dst, sizeof(T) * dstCount, sizeof(T) * srcCount);
-        }
-
-        /// <summary>
-        /// Copies from an unsafe buffer to an array.
-        /// </summary>
-        static public void MemCpy<T>(T* src, int srcCount, T[] dst) where T : unmanaged {
-            fixed(T* dstPtr = dst) {
-                Buffer.MemoryCopy(src, dstPtr, sizeof(T) * dst.Length, sizeof(T) * srcCount);
-            }
-        }
-
-        /// <summary>
-        /// Copies from an array to an unsafe buffer.
-        /// </summary>
-        static public void MemCpy<T>(T[] src, int srcCount, T* dst, int dstCount) where T : unmanaged {
-            fixed(T* srcPtr = src) {
-                Buffer.MemoryCopy(srcPtr, dst, sizeof(T) * dstCount, sizeof(T) * srcCount);
-            }
-        }
-
         #region Quicksort
 
         static public void Quicksort<T>(T* buffer, int count) where T : unmanaged {

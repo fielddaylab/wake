@@ -14,7 +14,7 @@ using UnityEditor;
 namespace Aqua {
     static public unsafe class Frame {
         public const ushort InvalidIndex = ushort.MaxValue;
-        private const int HeapSize = 64 * 1024; // 64KB frame heap
+        private const int HeapSize = 256 * 1024; // 256KB frame heap
 
         static public ushort Index;
         static internal Unsafe.ArenaHandle FrameHeap;
@@ -38,8 +38,8 @@ namespace Aqua {
         static internal void ResetBuffer() {
             #if UNITY_EDITOR
             int allocSize = HeapSize - Unsafe.ArenaFreeBytes(FrameHeap);
-            if (allocSize > 0) {
-                Log.Msg("[Frame] {0} allocated this frame", allocSize);
+            if (allocSize > HeapSize * 3 / 4) {
+                Log.Warn("[Frame] {0} allocated this frame!", allocSize);
             }
             #endif // UNITY_EDITOR
             Unsafe.ResetArena(FrameHeap);
@@ -65,7 +65,7 @@ namespace Aqua {
         /// Allocates a struct instance on the heap. This will be automatically freed at the end of the frame.
         /// </summary>
         static public T* Alloc<T>() where T : unmanaged {
-            T* addr = (T*) Unsafe.Alloc(FrameHeap, sizeof(T));
+            T* addr = Unsafe.Alloc<T>(FrameHeap);
             Assert.True(addr != null, "Per-frame heap out of space");
             return addr;
         }
@@ -127,20 +127,22 @@ namespace Aqua {
 
         [UnityEditor.InitializeOnLoadMethod]
         static private void EditorInitialize() {
+            EditorApplication.playModeStateChanged += (s) => {
+                if (s == PlayModeStateChange.ExitingEditMode) {
+                    DestroyBuffer();
+                } else if (s == PlayModeStateChange.EnteredEditMode) {
+                    CreateBuffer();
+                }
+            };
+
+            EditorApplication.quitting += () => DestroyBuffer();
+            AppDomain.CurrentDomain.DomainUnload += (_, __) => DestroyBuffer();
+
             if (EditorApplication.isPlayingOrWillChangePlaymode) {
                 return;
             }
 
-            EditorApplication.playModeStateChanged += (s) => {
-                if (s == PlayModeStateChange.ExitingEditMode) {
-                    DestroyBuffer();
-                }
-            };
-            EditorApplication.quitting += () => DestroyBuffer();
-            AppDomain.CurrentDomain.DomainUnload += (_, __) => DestroyBuffer();
-
             EditorApplication.update += ResetBuffer;
-
             CreateBuffer();
         }
 

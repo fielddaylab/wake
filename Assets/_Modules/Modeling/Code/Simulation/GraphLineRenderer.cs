@@ -16,6 +16,7 @@ namespace Aqua.Modeling {
         public Vector2[] Points = Array.Empty<Vector2>();
         public Color[] Colors = Array.Empty<Color>();
         public int PointCount = 0;
+        public int PointRenderCount = 0;
 
         [Header("Line Properties")]
         [SerializeField] private float m_LineThickness = 1;
@@ -23,6 +24,8 @@ namespace Aqua.Modeling {
         [SerializeField] private float m_TextureWrapWidth = 100;
 
         #endregion // Inspector
+
+        [NonSerialized] private Rect? m_AppliedScale;
 
         public Texture2D Texture {
             get { return m_Texture; }
@@ -61,6 +64,24 @@ namespace Aqua.Modeling {
             }
         }
 
+        public bool InvalidateScale() {
+            return Ref.Replace(ref m_AppliedScale, null);
+        }
+
+        public bool ApplyScale(Rect rect) {
+            if (m_AppliedScale != rect) {
+                if (m_AppliedScale.HasValue) {
+                    SimMath.InvScale(Points, PointCount, m_AppliedScale.Value);
+                }
+                m_AppliedScale = rect;
+                SimMath.Scale(Points, PointCount, rect);
+                SubmitChanges();
+                return true;
+            }
+
+            return false;
+        }
+
         public void SubmitChanges() {
             if (!IsActive()) {
                 return;
@@ -72,11 +93,11 @@ namespace Aqua.Modeling {
         protected override void OnPopulateMesh(VertexHelper vh) {
             vh.Clear();
 
-            if (Points == null || m_LineThickness <= 0) {
+            if (Points == null || m_LineThickness <= 0 || !Frame.IsActive(this)) {
                 return;
             }
 
-            int pointCount = Mathf.Clamp(PointCount, 0, Points.Length);
+            int pointCount = Mathf.Clamp(Math.Min(PointRenderCount, PointCount), 0, Points.Length);
             int segmentCount = pointCount - 1;
             if (segmentCount <= 0) {
                 return;

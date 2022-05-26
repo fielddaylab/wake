@@ -890,7 +890,7 @@ namespace Aqua.Modeling {
         }
 
         private void ReevaluateMaskedElements() {
-            float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0f : 0.1f;
+            const float hiddenAlpha = 0;
             for(int i = 0, len = m_MaskableElements.Count; i < len; i++) {
                 ref var element = ref m_MaskableElements[i];
                 if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, m_FilterNone, element.Valid)) {

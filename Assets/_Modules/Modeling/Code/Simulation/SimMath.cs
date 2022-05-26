@@ -118,8 +118,8 @@ namespace Aqua.Modeling {
                 Vector2 vec = data[i];
                 xMin = Math.Min(vec.x, xMin);
                 yMin = Math.Min(vec.y, yMin);
-                xMax = Math.Min(vec.y, xMax);
-                xMax = Math.Min(vec.y, yMax);
+                xMax = Math.Max(vec.x, xMax);
+                yMax = Math.Max(vec.y, yMax);
             }
             return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
         }
@@ -133,8 +133,8 @@ namespace Aqua.Modeling {
                 Vector2 vec = data[i];
                 xMin = Math.Min(vec.x, xMin);
                 yMin = Math.Min(vec.y, yMin);
-                xMax = Math.Min(vec.y, xMax);
-                xMax = Math.Min(vec.y, yMax);
+                xMax = Math.Max(vec.x, xMax);
+                yMax = Math.Max(vec.y, yMax);
             }
             return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
         }
@@ -148,8 +148,8 @@ namespace Aqua.Modeling {
                 Vector2 vec = data[i];
                 xMin = Math.Min(vec.x, xMin);
                 yMin = Math.Min(vec.y, yMin);
-                xMax = Math.Min(vec.y, xMax);
-                xMax = Math.Min(vec.y, yMax);
+                xMax = Math.Max(vec.x, xMax);
+                yMax = Math.Max(vec.y, yMax);
             }
             rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
         }
@@ -163,8 +163,8 @@ namespace Aqua.Modeling {
                 Vector2 vec = data[i];
                 xMin = Math.Min(vec.x, xMin);
                 yMin = Math.Min(vec.y, yMin);
-                xMax = Math.Min(vec.y, xMax);
-                xMax = Math.Min(vec.y, yMax);
+                xMax = Math.Max(vec.x, xMax);
+                yMax = Math.Max(vec.y, yMax);
             }
             rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
         }
@@ -173,11 +173,18 @@ namespace Aqua.Modeling {
         /// Combines two rectangle bounds.
         /// </summary>
         static public void CombineBounds(ref Rect rect, Rect combineWith) {
-            float xMin = Math.Min(rect.xMin, combineWith.xMin),
-                yMin = Math.Min(rect.yMin, combineWith.yMin),
-                xMax = Math.Max(rect.xMax, combineWith.xMax),
-                yMax = Math.Max(rect.yMax, combineWith.yMax);
-            rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+            Geom.Encapsulate(ref rect, combineWith);
+        }
+
+        /// <summary>
+        /// Finalizes boundaries.
+        /// </summary>
+        static public void FinalizeBounds(ref Rect rect) {
+            GraphingUtils.AxisRangePair pair;
+            pair.X = new GraphingUtils.AxisRangeInfo() { Min = 0, Max = (int) rect.width, TickCount = (uint) rect.width + 1, TickInterval = 1 };
+            pair.Y = GraphingUtils.CalculateAxis(rect.yMin, rect.yMax, 8);
+            pair.Y.SetMinAtOrigin();
+            rect = pair.ToRect();
         }
 
         #endregion // Graph

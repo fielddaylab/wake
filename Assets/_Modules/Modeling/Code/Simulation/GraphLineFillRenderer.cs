@@ -49,6 +49,10 @@ namespace Aqua.Modeling {
 
         [ContextMenu("Refresh")]
         public void LinesDirty() {
+            if (!IsActive()) {
+                return;
+            }
+
             AnalyzeRegions();
             SetVerticesDirty();
         }
@@ -62,7 +66,7 @@ namespace Aqua.Modeling {
         protected override void OnPopulateMesh(VertexHelper vh) {
             vh.Clear();
 
-            if (Regions.Count == 0) {
+            if (Regions.Count == 0 || !Frame.IsActive(this)) {
                 return;
             }
 
@@ -168,11 +172,11 @@ namespace Aqua.Modeling {
         public void AnalyzeRegions() {
             Regions.Clear();
 
-            if (LineA == null || LineA.Points == null || LineB == null || LineB.Points == null) {
+            if (LineA == null || LineA.Points == null || LineB == null || LineB.Points == null || !Frame.IsActive(this)) {
                 return;
             }
 
-            int pointCount = Mathf.Min(LineA.PointCount, LineA.Points.Length, LineB.PointCount, LineB.Points.Length);
+            int pointCount = Mathf.Min(LineA.PointCount, LineA.PointRenderCount, LineA.Points.Length, LineB.PointCount, LineB.PointRenderCount, LineB.Points.Length);
 
             Region* allRegions = Frame.AllocArray<Region>(MaxRegions);
             Region* currentRegionPtr = allRegions;

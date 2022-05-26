@@ -14,7 +14,6 @@ namespace Aqua.Portable
 
         [SerializeField, Required] private RectTransform m_AnimationRoot = null;
         [SerializeField, Required] private Toggle m_Toggle = null;
-        [SerializeField, Required] private RectTransform m_NewIcon = null;
 
         #endregion // Inspector
 
@@ -33,7 +32,6 @@ namespace Aqua.Portable
             m_Menu.OnHideEvent.AddListener(OnMenuClose);
 
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
-            m_NewIcon.gameObject.SetActive(false);
 
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<PortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
@@ -77,15 +75,12 @@ namespace Aqua.Portable
             {
                 m_NewAnim.Replace(this, NewAnim());
             }
-
-            m_NewIcon.gameObject.SetActive(true);
         }
 
         private void OnPortableOpened(PortableRequest inRequest)
         {
             m_NewAnim.Stop();
             m_OriginalAnimState.Apply(m_AnimationRoot);
-            m_NewIcon.gameObject.SetActive(false);
 
             m_Toggle.SetIsOnWithoutNotify(true);
             m_Toggle.interactable = (inRequest.Flags & PortableRequestFlags.DisableClose) == 0;
@@ -123,7 +118,6 @@ namespace Aqua.Portable
             Services.Audio.PostEvent("portable.ping.new");
             yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);
             yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
-            m_NewIcon.gameObject.SetActive(false);
         }
 
         #endregion // Animation
