@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2238691585215529732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2900845772267729116}
+  m_Layer: 9
+  m_Name: Player Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2900845772267729116
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2238691585215529732}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.29, y: -3.11, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 502745485822899956}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &200052920343819261
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,26 +37,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
-        type: 3}
-      propertyPath: m_Size.x
-      value: 15.773659
-      objectReference: {fileID: 0}
-    - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
-        type: 3}
-      propertyPath: m_Size.y
-      value: 9.254543
-      objectReference: {fileID: 0}
-    - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
-        type: 3}
-      propertyPath: m_Offset.x
-      value: 28.010094
-      objectReference: {fileID: 0}
-    - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
-        type: 3}
-      propertyPath: m_Offset.y
-      value: -1.9545473
-      objectReference: {fileID: 0}
     - target: {fileID: 305302807730767113, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_RootOrder
@@ -45,7 +55,7 @@ PrefabInstance:
     - target: {fileID: 305302807730767113, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12.52
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 305302807730767113, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
@@ -85,18 +95,39 @@ PrefabInstance:
     - target: {fileID: 305302807730767118, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Name
-      value: EnterTrigger Variant
+      value: RSEnterTrigger
       objectReference: {fileID: 0}
     - target: {fileID: 953510368763772306, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Facing
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 953510368763772306, guid: 2f3382de17af5654fbd7559791adbc24,
+        type: 3}
+      propertyPath: m_LocationOverride
+      value: 
+      objectReference: {fileID: 2900845772267729116}
+    - target: {fileID: 953510368763772306, guid: 2f3382de17af5654fbd7559791adbc24,
+        type: 3}
+      propertyPath: m_EntranceIdOverride.m_Source
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 953510368763772306, guid: 2f3382de17af5654fbd7559791adbc24,
+        type: 3}
+      propertyPath: m_EntranceIdOverride.m_HashValue
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1626118513678869488, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1626118513678869488, guid: 2f3382de17af5654fbd7559791adbc24,
+        type: 3}
+      propertyPath: m_IconOverride
+      value: 
+      objectReference: {fileID: 6295487860327545124, guid: 4560c101680503f4e965704ca20da316,
+        type: 3}
     - target: {fileID: 1626118513678869488, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_LabelOverride.m_Source
@@ -107,6 +138,11 @@ PrefabInstance:
       propertyPath: m_LabelOverride.m_HashValue
       value: 2516889805
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 953510368763772306, guid: 2f3382de17af5654fbd7559791adbc24, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f3382de17af5654fbd7559791adbc24, type: 3}
+--- !u!4 &502745485822899956 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 305302807730767113, guid: 2f3382de17af5654fbd7559791adbc24,
+    type: 3}
+  m_PrefabInstance: {fileID: 200052920343819261}
+  m_PrefabAsset: {fileID: 0}

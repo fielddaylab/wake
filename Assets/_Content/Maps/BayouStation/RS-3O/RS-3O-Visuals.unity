@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -32186,16 +32186,31 @@ PrefabInstance:
     - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -15.7
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 92281810380583052, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 96596594641782298, guid: 3438d090789b26646963d7757edb32c4,
@@ -32252,6 +32267,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399013926827225430, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 3413748521743238621, guid: 3438d090789b26646963d7757edb32c4,
         type: 3}
@@ -32414,6 +32434,26 @@ PrefabInstance:
       propertyPath: m_BodyType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5377456985550797122, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_Facing
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377456985550797122, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_LocationOverride
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377456985550797122, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_EntranceIdOverride.m_Source
+      value: RS-Bayou
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377456985550797122, guid: 3438d090789b26646963d7757edb32c4,
+        type: 3}
+      propertyPath: m_EntranceIdOverride.m_HashValue
+      value: 635441127
+      objectReference: {fileID: 0}
     - target: {fileID: 5492011077257063614, guid: 3438d090789b26646963d7757edb32c4,
         type: 3}
       propertyPath: m_Layer
@@ -32509,7 +32549,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 3438d090789b26646963d7757edb32c4, type: 3}
 --- !u!1001 &4050967839533210842
 PrefabInstance:
