@@ -14,6 +14,7 @@ using BeauUtil.Debugger;
 using System.Collections.Generic;
 using TMPro;
 using EasyAssetStreaming;
+using EasyBugReporter;
 
 namespace Aqua.Debugging
 {
@@ -57,6 +58,9 @@ namespace Aqua.Debugging
 
         [NonSerialized] private uint m_LastKnownStreamingCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
+        [NonSerialized] private long m_UnlockAllLastPress;
+
+        private DumpSourceCollection m_DumpSources;
 
         private void LateUpdate()
         {
@@ -121,6 +125,10 @@ namespace Aqua.Debugging
                 {
                     SetTimescale(1);
                 }
+                else if (m_Input.KeyPressed(KeyCode.F9) && m_Input.KeyDown(KeyCode.LeftControl))
+                {
+                    BugReporter.DumpContext(m_DumpSources);
+                }
             }
 
             if (m_Input.KeyDown(KeyCode.LeftControl))
@@ -135,7 +143,15 @@ namespace Aqua.Debugging
                 }
                 else if (m_Input.KeyPressed(KeyCode.Equals))
                 {
-                    DataService.UnlockAllDefaults();
+                    long now = Stopwatch.GetTimestamp();
+                    float timeSince = (float) (now - m_UnlockAllLastPress) / TimeSpan.TicksPerSecond;
+                    if (timeSince < 0.5f) {
+                        DataService.UnlockAllDefaults(true);
+                        SkipCutscene();
+                    } else {
+                        DataService.UnlockAllDefaults(false);
+                    }
+                    m_UnlockAllLastPress = now;
                 }
             }
         }
@@ -416,10 +432,20 @@ namespace Aqua.Debugging
             #if DEVELOPMENT
             RootDebugMenu();
             #endif // DEVELOPMENT
+
+            m_DumpSources = new DumpSourceCollection();
+            m_DumpSources.Add(new ScreenshotContext());
+            m_DumpSources.Add(new LogContext(EasyBugReporter.LogMask.Development | EasyBugReporter.LogMask.Log));
+            m_DumpSources.Add(new UnityContext());
+            m_DumpSources.Add(new SystemInfoContext());
+
+            m_DumpSources.Initialize();
         }
 
         protected override void Shutdown()
         {
+            m_DumpSources.Shutdown();
+
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
             Services.Events?.DeregisterAll(this);
         }

@@ -560,19 +560,11 @@ namespace Aqua.Modeling {
         #region Quicksort
 
         static private void Quicksort(WorkingEatInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->SortingOrder);
         }
 
         static private void Quicksort(ActorInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->ActionOrder);
         }
 
         static private int Partition(WorkingEatInfo* buffer, int lower, int higher) {

@@ -681,11 +681,23 @@ namespace Aqua
             //     Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+
+            Frame.CreateBuffer();
+            Routine.Start(this, EndOfFrame());
+        }
+
+        private IEnumerator EndOfFrame() {
+            while(true) {
+                yield return Routine.WaitForEndOfFrame();
+                Frame.ResetBuffer();
+            }
         }
 
         protected override void Shutdown()
         {
             m_SceneLoadRoutine.Stop();
+
+            Frame.DestroyBuffer();
         }
 
         #endregion // IService
