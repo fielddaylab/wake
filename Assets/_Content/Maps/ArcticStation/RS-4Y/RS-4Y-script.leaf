@@ -10,3 +10,28 @@
 {@player}   What| just happened!?
 {@kevin}    It seems like our ship's {h}engine{/h} isn't strong enough to resist the pull of the current!
             Perhaps we need to upgrade our ship and come back later.
+$set jobs:arctic-whalefall.num-attempts = 2
+$set jobs:arctic-whalefall.first-attempt-seen = true
+
+:: emergeAgain
+@trigger    PlayerEnterRegion
+@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X", jobs:arctic-whalefall.first-attempt-seen
+@cutscene
+$if jobs:arctic-whalefall.num-attempts == 2
+    {@player}   That current swept us away again...
+    {@kevin}    I really think we're going to need to upgrade the ship's {h}engine{/h} if we want to get through.
+$else
+    $if jobs:arctic-whalefall.num-attempts == 3
+        {@player}   Ugh. 0 for 3.
+        {@kevin}    {nameof player}!! Are you listening? You need a better {h}engine{/h} if you want to tackle this problem!
+    $else
+        $if jobs:arctic-whalefall.num-attempts > 3
+            {@player}   Argh! Frustration, thy name is current!
+            {@kevin}    Sure, this again.
+                        Listen Shakespeare:
+                        You {h}cannot{/h} scan things in the current until you have upgraded your {h}engine{/h}.
+                        You can swim in circles all day -- it is never going to happen.
+        $endif
+    $endif
+$endif
+$set jobs:arctic-whalefall.num-attempts + 1
