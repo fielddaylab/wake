@@ -228,7 +228,7 @@ namespace Aqua.Scripting
 
         public void Skip()
         {
-            if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice())
+            if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice() && !m_SkipRoutine)
             {
                 if (IsCutscene())
                 {

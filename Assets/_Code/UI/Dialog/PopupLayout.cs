@@ -129,7 +129,7 @@ namespace Aqua {
             if (m_ContentsText) {
                 if (!string.IsNullOrEmpty(inContent.Text)) {
                     m_ContentsText.SetTextFromString(inContent.Text);
-                    m_ContentsText.Graphic.color = inContent.TextColorOverride.GetValueOrDefault(m_DefaultHeaderColor);
+                    m_ContentsText.Graphic.color = inContent.TextColorOverride.GetValueOrDefault(m_DefaultTextColor);
                     m_ContentsText.gameObject.SetActive(true);
                 } else {
                     m_ContentsText.gameObject.SetActive(false);
@@ -183,7 +183,7 @@ namespace Aqua {
         }
 
         private void ConfigureFacts(PopupFacts inFacts) {
-            if (!m_VerticalFactLayout || !m_GridFactLayout) {
+            if (!m_VerticalFactLayout || !m_GridFactLayout || !m_FactPools) {
                 return;
             }
 
