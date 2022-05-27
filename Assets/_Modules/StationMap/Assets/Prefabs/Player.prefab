@@ -4820,12 +4820,12 @@ MonoBehaviour:
   m_Input: {fileID: 2635531021390785891}
   m_MovementParticles: {fileID: 962930143}
   m_MoveParams:
-    MaxSpeed: 3
+    MaxSpeed: 100
     SpeedCurve: 0
-    Acceleration: 3
+    Acceleration: 1
   m_RotateParams:
-    Lerp: 1
-  m_DragEngineOn: 0.5
+    Lerp: 0.2
+  m_DragEngineOn: 3
   m_DragEngineOff: 3
 --- !u!50 &2635531021390785892
 Rigidbody2D:
@@ -5109,7 +5109,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.65
+  m_Radius: 8.3
 --- !u!1 &8794033259080352535
 GameObject:
   m_ObjectHideFlags: 0
@@ -9873,10 +9873,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2635531021390785816}
     m_Modifications:
+    - target: {fileID: 734749284053304436, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 734749284053304436, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189635060856933228, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8189635060856933228, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: m_MinVertexDistance
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189635060950016660, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8189635060950016660, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
@@ -9891,22 +9911,22 @@ PrefabInstance:
     - target: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: ShapeModule.radius.value
-      value: 0.655
+      value: 6.55
       objectReference: {fileID: 0}
     - target: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 1.6
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: InitialModule.startSize.minScalar
-      value: 2.4
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: EmissionModule.rateOverDistance.scalar
-      value: 30
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8189635061094363671, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
@@ -9952,6 +9972,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
