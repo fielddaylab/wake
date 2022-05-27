@@ -18,9 +18,14 @@ namespace Aqua.Modeling {
         [SerializeField] private GameObject m_GraphFader = null;
 
         [Header("Sync")]
+        [SerializeField] private CanvasGroup m_SyncInputGroup = null;
+        [SerializeField] private DivergencePopup m_SyncDivergencePopup = null;
         [SerializeField] private Button m_SimulateButton = null;
         [SerializeField] private GameObject m_AccuracyDisplay = null;
         [SerializeField] private TickDisplay m_AccuracyTicks = null;
+        [SerializeField] private GameObject m_SyncViewGroup = null;
+        [SerializeField] private Toggle m_SyncViewNormalToggle = null;
+        [SerializeField] private Toggle m_SyncViewFillToggle = null;
         
         [Header("Predict")]
         [SerializeField] private Button m_PredictButton = null;
@@ -86,6 +91,21 @@ namespace Aqua.Modeling {
 
             m_InterveneButtonGroup.gameObject.SetActive(false);
             m_InterveneAddToggleGroup.ForceActive(false);
+
+            m_SyncViewGroup.SetActive(false);
+            m_SyncViewNormalToggle.onValueChanged.AddListener(OnSimulateViewToggled);
+            m_SyncViewFillToggle.onValueChanged.AddListener(OnEvaluateViewToggled);
+
+            m_SyncDivergencePopup.Panel.OnHideEvent.AddListener((_) => {
+                m_SyncInputGroup.blocksRaycasts = true;
+            });
+            m_SyncDivergencePopup.Panel.OnShowCompleteEvent.AddListener((_) => {
+                m_SyncInputGroup.blocksRaycasts = false;
+            });
+
+            m_Graph.OnDivergenceClicked = (p) => {
+                m_SyncDivergencePopup.DisplayDivergence(p.Sign);
+            };
         }
 
         private void OnDestroy() {
@@ -156,11 +176,14 @@ namespace Aqua.Modeling {
             m_PredictButton.gameObject.SetActive(phase == ModelPhases.Predict);
             m_InterveneButtonGroup.gameObject.SetActive(phase == ModelPhases.Intervene);
             m_InterveneAddToggleGroup.SetActive(phase == ModelPhases.Intervene);
+            m_SyncViewGroup.SetActive(false);
 
             if (phase != ModelPhases.Predict) {
                 m_InterveneAddPanel.ClearSelection();
                 m_InterveneAddPanel.Hide();
             }
+
+            m_SyncDivergencePopup.Panel.InstantHide();
 
             m_PhaseRoutine.Stop();
             switch(phase) {
@@ -237,6 +260,7 @@ namespace Aqua.Modeling {
             m_Graph.RenderData(0);
             m_State.LastKnownAccuracy = 0;
             RenderAccuracy();
+            m_SyncViewGroup.SetActive(false);
 
             m_State.Simulation.EnsurePlayerData();
             m_SimulateButton.gameObject.SetActive(false);
@@ -251,6 +275,8 @@ namespace Aqua.Modeling {
             m_State.LastKnownAccuracy = m_State.Simulation.CalculateAccuracy(m_ProgressInfo.Sim.SyncTickCount + 1);
             RenderAccuracy();
             m_GraphFader.SetActive(false);
+            m_SyncViewGroup.SetActive(true);
+            m_SyncViewNormalToggle.SetIsOnWithoutNotify(true);
         }
 
         private IEnumerator Sync_Boot() {
@@ -258,6 +284,7 @@ namespace Aqua.Modeling {
             m_State.LastKnownAccuracy = 0;
             RenderAccuracy();
             m_AccuracyTicks.Display(0, m_TargetStars);
+            m_SyncViewGroup.SetActive(false);
 
             m_State.Simulation.EnsureHistorical();
             m_SimulateButton.gameObject.SetActive(false);
@@ -299,6 +326,8 @@ namespace Aqua.Modeling {
             RenderAccuracy();
 
             m_GraphFader.SetActive(false);
+            m_SyncViewGroup.SetActive(true);
+            m_SyncViewNormalToggle.SetIsOnWithoutNotify(true);
 
             yield return 0.4f;
 
@@ -480,6 +509,7 @@ namespace Aqua.Modeling {
 
         protected override void OnShow(bool _) {   
             m_AccuracyDisplay.SetActive(false);
+            m_SyncViewGroup.SetActive(false);
             m_SimulateButton.gameObject.SetActive(false);
             RenderSyncPredictDivider();
             Services.Events.QueueForDispatch(ModelingConsts.Event_Simulation_Begin);
@@ -500,6 +530,22 @@ namespace Aqua.Modeling {
         private void OnSimulateClicked() {
             m_SimulateButton.gameObject.SetActive(false);
             m_PhaseRoutine.Replace(this, Sync_Attempt());
+        }
+
+        private void OnSimulateViewToggled(bool b) {
+            if (!b) {
+                return;
+            }
+
+            m_Graph.RenderData(SimRenderMask.HistoricalPlayer);
+        }
+
+        private void OnEvaluateViewToggled(bool b) {
+            if (!b) {
+                return;
+            }
+
+            m_Graph.RenderData(SimRenderMask.HistoricalPlayerFill);
         }
 
         private void OnPredictClicked() {

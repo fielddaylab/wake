@@ -25,6 +25,7 @@ namespace Aqua.Modeling {
 
         #endregion // Inspector
 
+        [NonSerialized] private Color? m_OverrideColor = null;
         [NonSerialized] private Rect? m_AppliedScale;
 
         public Texture2D Texture {
@@ -40,6 +41,11 @@ namespace Aqua.Modeling {
         public float TextureWrapWidth {
             get { return m_TextureWrapWidth; }
             set { if (Ref.Replace(ref m_TextureWrapWidth, value)) SetVerticesDirty(); }
+        }
+
+        public Color? OverrideColor {
+            get { return m_OverrideColor; }
+            set { if (Ref.Replace(ref m_OverrideColor, value)) SetVerticesDirty(); }
         }
 
         public override Texture mainTexture { 
@@ -149,8 +155,14 @@ namespace Aqua.Modeling {
                 Vector2* segStart = segmentVerts + (i * 4);
                 float uvEnd = uvStart + uvDist[i];
                 
+                Color32 color;
+                if (m_OverrideColor.HasValue) {
+                    color = m_OverrideColor.Value;
+                } else {
+                    color = colorCount == 0 ? this.color : Colors[Mathf.Min(i, colorCount - 1)] * this.color;
+                }
                 vertBuffer[0].color = vertBuffer[1].color
-                    = vertBuffer[2].color = vertBuffer[3].color = colorCount == 0 ? this.color : Colors[Mathf.Min(i, colorCount - 1)] * this.color;
+                    = vertBuffer[2].color = vertBuffer[3].color = color;
 
                 vertBuffer[0].position = segStart[0];
                 vertBuffer[1].position = segStart[1];

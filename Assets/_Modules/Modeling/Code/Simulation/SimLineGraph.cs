@@ -17,15 +17,84 @@ namespace Aqua.Modeling {
         [SerializeField] private Color m_StressColor = Color.red;
         [SerializeField] private SimGraphBlock.Pool m_Blocks = null;
         [SerializeField] private GraphTargetRegion.Pool m_Targets = null;
+        [SerializeField] private GraphStressPoint.Pool m_StressIcons = null;
+        [SerializeField] private GraphDivergencePoint.Pool m_DivergenceIcons = null;
         [SerializeField] private Sprite m_MissingOrganisms = null;
 
         #endregion // Inspector
+
+        public Action<GraphDivergencePoint> OnDivergenceClicked;
 
         private readonly List<SimGraphBlock> m_AllocatedBlocks = new List<SimGraphBlock>();
         private readonly Dictionary<StringHash32, SimGraphBlock> m_AllocatedBlockMap = new Dictionary<StringHash32, SimGraphBlock>();
         private readonly SimGraphBlock[] m_AllocatedWaterMap = new SimGraphBlock[(int) WaterProperties.TrackedMax];
 
         [NonSerialized] private SimGraphBlock m_InterventionBlock;
+        private readonly GenerateStressPointsDelegate StressPointCallback;
+        private readonly GenerateDivergenceDelegate DivergenceCallback;
+
+        private SimLineGraph() {
+            StressPointCallback = (SimGraphBlock block, SimRenderMask phase, StressedRegion* stressRegions, int stressRegionCount) => {
+                if (block.StressPoints != null) {
+                    while(block.StressPoints.TryPopBack(out var b)) {
+                        b.Dispose();
+                    }
+                }
+
+                if (stressRegionCount > 0) {
+                    if (block.StressPoints == null) {
+                        block.StressPoints = new RingBuffer<TempAlloc<GraphStressPoint>>();
+                    }
+
+                    block.StressPointMask = phase;
+
+                    Transform targetParent = phase == SimRenderMask.Player ? block.DescribeGroup.transform : block.PredictGroup.transform;
+
+                    for(int i = 0; i < stressRegionCount; i++) {
+                        StressedRegion region = stressRegions[i];
+                        
+                        if (region.StartIdx != 0) {
+                            var pointAlloc = m_StressIcons.TempAlloc();
+                            var point = pointAlloc.Object;
+                            point.transform.SetParent(targetParent, false);
+                            block.StressPoints.PushBack(pointAlloc);
+                            point.Index = region.StartIdx;
+                            point.Icon.enabled = false;
+                        }
+
+                        {
+                            var pointAlloc = m_StressIcons.TempAlloc();
+                            var point = pointAlloc.Object;
+                            point.transform.SetParent(targetParent, false);
+                            block.StressPoints.PushBack(pointAlloc);
+                            point.Index = region.EndIdx;
+                            point.Icon.enabled = false;
+                        }
+                    }
+                } else {
+                    block.StressPointMask = 0;
+                }
+            };
+        
+            DivergenceCallback = (SimGraphBlock block) => {
+                var temp = m_DivergenceIcons.TempAlloc();
+                var obj = temp.Object;
+                obj.transform.SetParent(block.DescribeGroup.transform, false);
+                obj.Parent = block;
+                obj.gameObject.SetActive(false);
+                block.Divergence = temp;
+            };
+        }
+
+        private void Start() {
+            m_DivergenceIcons.TryInitialize(null, null, 0);
+            
+            Action<GraphDivergencePoint> callbackInvoker = (g) => OnDivergenceClicked?.Invoke(g);
+            m_DivergenceIcons.Config.RegisterOnConstruct((_, i) => {
+                i.OnClick = callbackInvoker;
+            });
+            m_DivergenceIcons.Prewarm();
+        }
 
         public void AllocateBlocks(ModelState state) {
             ClearBlocks();
@@ -58,7 +127,7 @@ namespace Aqua.Modeling {
         }
 
         public void PopulateData(ModelState state, ModelProgressInfo info, SimRenderMask mask) {
-            Populate(state.Simulation, m_AllocatedBlocks, mask, m_StressColor);
+            Populate(state.Simulation, m_AllocatedBlocks, mask, m_StressColor, StressPointCallback, DivergenceCallback);
             if ((mask & SimRenderMask.Intervene) != 0) {
                 PopulateTargets(state, info);
             } else {
@@ -91,6 +160,9 @@ namespace Aqua.Modeling {
             m_Blocks.Reset();
             m_AllocatedBlockMap.Clear();
             m_AllocatedBlocks.Clear();
+            m_StressIcons.Reset();
+            m_DivergenceIcons.Reset();
+            m_Targets.Reset();
             m_InterventionBlock = null;
             Array.Clear(m_AllocatedWaterMap, 0, m_AllocatedWaterMap.Length);
         }
@@ -133,15 +205,15 @@ namespace Aqua.Modeling {
 
         #region Populating Blocks
 
-        static public void Populate(SimulationDataCtrl data, ListSlice<SimGraphBlock> blocks, SimRenderMask mask, Color stressColor) {
+        static public void Populate(SimulationDataCtrl data, ListSlice<SimGraphBlock> blocks, SimRenderMask mask, Color stressColor, GenerateStressPointsDelegate stressCallback, GenerateDivergenceDelegate divergenceCallback) {
             Vector2* pointBuffer = Frame.AllocArray<Vector2>(Simulation.MaxTicks + 1);
-            StressedRegion* stressBuffer = Frame.AllocArray<StressedRegion>(Simulation.MaxTicks / 2);
+            StressedRegion* stressBuffer = Frame.AllocArray<StressedRegion>(Simulation.MaxTicks);
             
             if ((mask & SimRenderMask.Historical) != 0) {
                 SimSnapshot* historical = data.RetrieveHistoricalData(out uint countU);
                 int count = (int) countU;
                 for(int i = 0; i < blocks.Length; i++) {
-                    PopulateBlock(historical, count, data.HistoricalProfile, blocks[i], SimRenderMask.Historical, pointBuffer, stressBuffer, stressColor);
+                    PopulateBlock(historical, count, data.HistoricalProfile, blocks[i], SimRenderMask.Historical, pointBuffer, stressBuffer, stressColor, null);
                 }
             }
 
@@ -149,7 +221,22 @@ namespace Aqua.Modeling {
                 SimSnapshot* player = data.RetrievePlayerData(out uint countU);
                 int count = (int) countU;
                 for(int i = 0; i < blocks.Length; i++) {
-                    PopulateBlock(player, count, data.PlayerProfile, blocks[i], SimRenderMask.Player, pointBuffer, stressBuffer, stressColor);
+                    PopulateBlock(player, count, data.PlayerProfile, blocks[i], SimRenderMask.Player, pointBuffer, stressBuffer, stressColor, stressCallback);
+                }
+            }
+
+            if ((mask & SimRenderMask.HistoricalPlayer) == SimRenderMask.HistoricalPlayer) {
+                for(int i = 0; i < blocks.Length; i++) {
+                    SimGraphBlock block = blocks[i];
+                    if (SimMath.HasDivergence(block.Historical.Points, block.Player.Points, block.Historical.PointCount) && divergenceCallback != null) {
+                        divergenceCallback(blocks[i]);
+                    } else {
+                        Ref.Dispose(ref block.Divergence);
+                    }
+                }
+            } else {
+                for(int i = 0; i < blocks.Length; i++) {
+                    Ref.Dispose(ref blocks[i].Divergence);
                 }
             }
 
@@ -157,12 +244,12 @@ namespace Aqua.Modeling {
                 SimSnapshot* predict = data.RetrievePredictData(out uint countU);
                 int count = (int) countU;
                 for(int i = 0; i < blocks.Length; i++) {
-                    PopulateBlock(predict, count, data.PredictProfile, blocks[i], SimRenderMask.Predict, pointBuffer, stressBuffer, stressColor);
+                    PopulateBlock(predict, count, data.PredictProfile, blocks[i], SimRenderMask.Predict, pointBuffer, stressBuffer, stressColor, stressCallback);
                 }
             }
         }
 
-        static private void PopulateBlock(SimSnapshot* results, int count, SimProfile profile, SimGraphBlock block, SimRenderMask phase, Vector2* pointBuffer, StressedRegion* stressBuffer, Color stressColor) {
+        static private void PopulateBlock(SimSnapshot* results, int count, SimProfile profile, SimGraphBlock block, SimRenderMask phase, Vector2* pointBuffer, StressedRegion* stressBuffer, Color stressColor, GenerateStressPointsDelegate stressCallback) {
             ref Rect dataRange = ref GetDataRegion(block, phase);
             GraphLineRenderer line = GetLine(block, phase);
             if (block.PropertyId != WaterPropertyId.NONE) {
@@ -176,7 +263,11 @@ namespace Aqua.Modeling {
                     }
                     case SimRenderMask.Player:
                     case SimRenderMask.Predict: {
-                        dataRange = GeneratePlayerPopulation(results, count, idx, block.PrimaryColor, stressColor, pointBuffer, stressBuffer, line);
+                        int stressCount;
+                        dataRange = GeneratePlayerPopulation(results, count, idx, block.PrimaryColor, stressColor, pointBuffer, stressBuffer, &stressCount, line);
+                        if (stressCallback != null) {
+                            stressCallback(block, phase, stressBuffer, stressCount);
+                        }
                         break;
                     }
                 }
@@ -282,10 +373,17 @@ namespace Aqua.Modeling {
                 }
 
                 if (showIntervene && block.Intervention != null) {
-                    GraphTargetRegion interveneObj = block.Intervention;
-                    float min = MathUtil.Remap(interveneObj.MinValue, block.LastRect.yMin, block.LastRect.yMax, 0, 1);
-                    float max = MathUtil.Remap(interveneObj.MaxValue, block.LastRect.yMin, block.LastRect.yMax, 0, 1);
-                    interveneObj.Layout.SetAnchorsY(min, max);
+                    RenderIntervention(block.Intervention, block.LastRect);
+                }
+
+                RenderStressPoints(block, mask, pointCount);
+
+                if (showFill) {
+                    block.Historical.OverrideColor = AQColors.DarkerTeal;
+                    block.Player.OverrideColor = AQColors.DarkerTeal;
+                } else {
+                    block.Historical.OverrideColor = null;
+                    block.Player.OverrideColor = null;
                 }
 
                 block.Historical.enabled = showHistorical;
@@ -296,16 +394,48 @@ namespace Aqua.Modeling {
                     block.Intervention.Object.Layout.gameObject.SetActive(showIntervene);
                 }
 
+                GraphDivergencePoint divergence = block.Divergence?.Object;
+                if (divergence != null) {
+                    block.Fill.AnalyzeRegions();
+                    if (showFill && block.Fill.Regions.Count > 0) {
+                        GraphLineFillRenderer.Region region = block.Fill.Regions[0];
+                        divergence.Sign = region.Sign;
+                        ((RectTransform) divergence.transform).SetAnchors(region.Center);
+                        divergence.gameObject.SetActive(true);
+                        divergence.transform.SetAsLastSibling();
+                    } else {
+                        divergence.gameObject.SetActive(false);
+                    }
+                }
+
                 if (changed) {
                     block.Historical.SubmitChanges();
                     block.Player.SubmitChanges();
                     block.Predict.SubmitChanges();
-                    block.Fill.LinesDirty();
                 }
             }
         }
 
-        #endregion // Populating Blocks
+        static private void RenderIntervention(GraphTargetRegion region, Rect rect) {
+            float min = MathUtil.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
+            float max = MathUtil.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
+            region.Layout.SetAnchorsY(min, max);
+        }
+
+        static private void RenderStressPoints(SimGraphBlock block, SimRenderMask mask, int pointCount) {
+            bool enabled = (block.StressPointMask & mask) != 0 && (mask & SimRenderMask.Fill) == 0;
+            if (block.StressPoints != null && block.StressPoints.Count > 0) {
+                GraphLineRenderer line = GetLine(block, block.StressPointMask);
+                for(int i = 0; i < block.StressPoints.Count; i++) {
+                    var point = block.StressPoints[i].Object;
+                    RectTransform r = (RectTransform) point.transform;
+                    r.SetAnchors(line.Points[point.Index]);
+                    point.Icon.enabled = enabled && point.Index < pointCount;
+                }
+            }
+        }
+
+        #endregion // Rendering Blocks
 
         #region Generating Lines
 
@@ -320,9 +450,8 @@ namespace Aqua.Modeling {
             return range;
         }
 
-        static public Rect GeneratePlayerPopulation(SimSnapshot* results, int count, int actorIdx, Color actorColor, Color stressColor, Vector2* pointBuffer, StressedRegion* stressBuffer, GraphLineRenderer renderer) {
-            int stressCount;
-            Rect range = FillPopulationBuffer(results, count, actorIdx, pointBuffer, stressBuffer, &stressCount, false);
+        static public Rect GeneratePlayerPopulation(SimSnapshot* results, int count, int actorIdx, Color actorColor, Color stressColor, Vector2* pointBuffer, StressedRegion* stressBuffer, int* stressCount, GraphLineRenderer renderer) {
+            Rect range = FillPopulationBuffer(results, count, actorIdx, pointBuffer, stressBuffer, stressCount, true);
             renderer.EnsureColorBuffer(count);
             renderer.EnsurePointBuffer(count);
             Unsafe.Copy(pointBuffer, count, renderer.Points);
@@ -330,7 +459,8 @@ namespace Aqua.Modeling {
             for(int i = 0; i < count; i++) {
                 colors[i] = actorColor;
             }
-            for(int i = 0; i < stressCount; i++) {
+            int stressCountFinal = *stressCount;
+            for(int i = 0; i < stressCountFinal; i++) {
                 int start = stressBuffer[i].StartIdx;
                 int end = stressBuffer[i].EndIdx;
                 for(int j = start; j < end; j++) {
@@ -408,5 +538,8 @@ namespace Aqua.Modeling {
         }
 
         #endregion // Generating Lines
+
+        public delegate void GenerateStressPointsDelegate(SimGraphBlock block, SimRenderMask phase, StressedRegion* stressRegions, int stressRegionCount);
+        public delegate void GenerateDivergenceDelegate(SimGraphBlock block);
     }
 }

@@ -35,7 +35,10 @@ namespace Aqua.Modeling {
         [NonSerialized] public Rect LastRectHistorical;
         [NonSerialized] public Rect LastRectPlayer;
         [NonSerialized] public Rect LastRectPredict;
+        [NonSerialized] public SimRenderMask StressPointMask;
+        [NonSerialized] public TempAlloc<GraphDivergencePoint> Divergence;
         [NonSerialized] public TempAlloc<GraphTargetRegion> Intervention;
+        [NonSerialized] public RingBuffer<TempAlloc<GraphStressPoint>> StressPoints;
 
         void IPoolAllocHandler.OnAlloc() {
         }
@@ -47,6 +50,13 @@ namespace Aqua.Modeling {
             LastRectPlayer = default;
             LastRectPredict = default;
             Ref.Dispose(ref Intervention);
+            Ref.Dispose(ref Divergence);
+            if (StressPoints != null) {
+                while(StressPoints.TryPopBack(out var b)) {
+                    b.Dispose();
+                }
+            }
+            IconPin.SetAnchorY(0.5f);
         }
     }
 

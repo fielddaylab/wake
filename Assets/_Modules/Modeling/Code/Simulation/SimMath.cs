@@ -187,6 +187,18 @@ namespace Aqua.Modeling {
             rect = pair.ToRect();
         }
 
+        /// <summary>
+        /// Returns if two sets of points diverge.
+        /// </summary>
+        static public bool HasDivergence(Vector2[] a, Vector2[] b, int count) {
+            for(int i = 0; i < count; i++) {
+                if (!Mathf.Approximately(a[i].y, b[i].y)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion // Graph
     }
 }

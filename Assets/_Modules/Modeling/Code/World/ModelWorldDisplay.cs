@@ -866,7 +866,7 @@ namespace Aqua.Modeling {
         #region Filters
 
         public void SetFilters(WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, bool force = false) {
-            if (force || all != m_FilterAll || any != m_FilterAny) {
+            if (force || all != m_FilterAll || any != m_FilterAny || none != m_FilterNone) {
                 m_FilterAll = all;
                 m_FilterAny = any;
                 m_FilterNone = none;
@@ -910,7 +910,7 @@ namespace Aqua.Modeling {
         }
 
         static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, WorldFilterMask valid) {
-            return (src & all & none) == 0 && (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
+            return (src & none & valid) == 0 && (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
         }
 
         #endregion // Filters
