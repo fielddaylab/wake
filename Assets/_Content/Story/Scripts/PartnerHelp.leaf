@@ -35,7 +35,7 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob, scene:name == "Ship", global:nav.shipRoom == "helm"
 @repeat     1
 @cutscene
-{@player}   Hey V1ctor... any thoughts on what we should do next? 
+{@player}   Hey Kevin... any thoughts on what we should do next? 
 {@kevin}    We should check out the {map-name}Job Board{/map-name}.
 
 :: noJob.atJobBoard.someAvailable
@@ -60,7 +60,7 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob
 @repeat     1
 @cutscene
-{@player}   V1ctor, any help?
+{@player}   Kevin, any help?
 {@kevin}    I'd recommend we see if there are any jobs available.
 
 :: noJob.default.2
@@ -68,14 +68,14 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob
 @repeat     1
 @cutscene
-{@player}   V1ctor, any words of wisdom? I'm a bit stuck.
+{@player}   Kevin, any words of wisdom? I'm a bit stuck.
 {@kevin}    I wonder if there are any jobs available for us to take...
 
 :: undefined.1
 @trigger        RequestPartnerHelp
 @cutscene
 @boostScore -500
-{@player}       {random Uh|Hey}, V1ctor? Any idea what I should be doing?
+{@player}       {random Uh|Hey}, Kevin? Any idea what I should be doing?
 {@kevin #confused}
         Oh, well, uh... I don't have anything specific.
         {#} But I'd look back at what the job-giver had to tell us.

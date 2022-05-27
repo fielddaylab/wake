@@ -37,7 +37,7 @@
 @when       scene:name == "Modeling",modeling:phase == "visual"   
 @cutscene
 @boostScore 100
-{@player}   Got any ideas what to do next, V1ctor?
+{@player}   Got any ideas what to do next, Kevin?
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
     //Player has all required critters
     $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)

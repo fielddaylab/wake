@@ -52,7 +52,7 @@
 @trigger    RequestPartnerHelp
 @when       scene:name == "Modeling",modeling:phase == "visual"   
 @cutscene
-{@player}   Got any idea what I might be missing, V1ctor?
+{@player}   Got any idea what I might be missing, Kevin?
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(MoonJelly),HasEntity(SeaPearl),HasEntity(RedGrouper),HasEntity(LoggerheadTurtle)
     //Player has all required critters
     $if HasFact(MoonJelly.Reproduce),HasFact(LoggerheadTurtle.Reproduce),HasFact(Cyanobacteria.Reproduce),HasFact(AngelFish.Reproduce.Stressed),HasFact(ElkhornCoral.Reproduce),HasFact(RedGrouper.Reproduce)
@@ -105,7 +105,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       scene:name == "Modeling",modeling:phase == "sync"   
 @cutscene
-{@player}   Hey V1ctor, could you help me out here?
+{@player}   Hey Kevin, could you help me out here?
 {@kevin}    Sure thing, let me take a look...
 $if HasFact(AngelFish.PH.Stressed),HasFact(Cyanobacteria.PH.Stressed),HasFact(ElkhornCoral.PH.Stressed),HasFact(SeaPearl.PH.Stressed),HasFact(LoggerheadTurtle.PH.Stressed)
     //player most likely has all stress ranges 
