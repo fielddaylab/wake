@@ -17,28 +17,36 @@ namespace EasyBugReporter {
         static private readonly HtmlDumpWriter DefaultHtmlWriter = new HtmlDumpWriter();
         static private readonly TextDumpWriter DefaultTextWriter = new TextDumpWriter();
 
-        #region Updates
-
         static private GameObject s_HookGO;
         static private bool s_HookInitialized;
 
         static private WorkQueue<DumpWork> s_WorkQueue = new WorkQueue<DumpWork>(MaxQueueSize);
         static private readonly Queue<Action> s_OnEndOfFrameQueue = new Queue<Action>();
         static private StringBuilder s_InMemoryBuilder;
+        static private Action<string> s_OnExceptionAssert;
+        static private bool s_LogCallbackRegistered;
+
+        static private DumpSourceCollection s_DefaultSources;
 
         /// <summary>
-        /// Queues the given callback to occur at the end of the current frame.
+        /// Gets/sets the default DumpSourceCollection used.
         /// </summary>
-        static public void OnEndOfFrame(Action action) {
-            s_OnEndOfFrameQueue.Enqueue(action);
-            EnsureHook();
-        }
-
-        static private void DispatchEndOfFrame() {
-            while(s_OnEndOfFrameQueue.Count > 0) {
-                s_OnEndOfFrameQueue.Dequeue()();
+        static public DumpSourceCollection DefaultSources {
+            get { return s_DefaultSources; }
+            set {
+                if (s_DefaultSources != value) {
+                    if (s_DefaultSources != null) {
+                        s_DefaultSources.Shutdown();
+                    }
+                    s_DefaultSources = value;
+                    if (s_DefaultSources != null) {
+                        s_DefaultSources.Initialize();
+                    }
+                }
             }
         }
+
+        #region Updates
 
         private sealed class HostComponent : MonoBehaviour {
             private Coroutine m_EndOfFrameTick;
@@ -89,6 +97,11 @@ namespace EasyBugReporter {
             if (s_HookGO != null) {
                 GameObject.Destroy(s_HookGO);
                 s_HookGO = null;
+            }
+
+            if (s_LogCallbackRegistered) {
+                Application.logMessageReceived -= LogMessageFilterCallback;
+                s_LogCallbackRegistered = false;
             }
         }
 
@@ -150,7 +163,7 @@ namespace EasyBugReporter {
                     DumpResult result = EndWriting(ref item);
                     item.Collection.Unfreeze();
                     item.OnCompleted?.Invoke(result);
-                    PresentReport(result);
+                    PresentReport(result, item.Flags);
                     s_WorkQueue.Dequeue();
                 }
             }
@@ -188,17 +201,19 @@ namespace EasyBugReporter {
             return result;
         }
 
-        static private void PresentReport(DumpResult result) {
-            if (result.Url != null) {
-                #if UNITY_EDITOR
-                UnityEditor.EditorUtility.OpenWithDefaultApp(result.FilePath);
-                #else
-                Application.OpenURL(result.Url);
-                #endif // UNITY_EDITOR
-            } else {
-                #if UNITY_WEBGL && !UNITY_EDITOR
-                BugReporter_DisplayDocument(result.Contents);
-                #endif // UNITY_WEBGL
+        static private void PresentReport(DumpResult result, DumpFlags flags) {
+            if ((flags & DumpFlags.PresentToUser) != 0) {
+                if (result.Url != null) {
+                    #if UNITY_EDITOR
+                    UnityEditor.EditorUtility.OpenWithDefaultApp(result.FilePath);
+                    #else
+                    Application.OpenURL(result.Url);
+                    #endif // UNITY_EDITOR
+                } else {
+                    #if UNITY_WEBGL && !UNITY_EDITOR
+                    BugReporter_DisplayDocument(result.Contents);
+                    #endif // UNITY_WEBGL
+                }
             }
         }
 
@@ -209,13 +224,38 @@ namespace EasyBugReporter {
         /// <summary>
         /// Dumps context in its default format (HTML) and attempts to display it to the user.
         /// </summary>
+        static public void DumpContext() {
+            DumpContext(s_DefaultSources);
+        }
+
+        /// <summary>
+        /// Dumps context in its default format (HTML) and attempts to display it to the user.
+        /// </summary>
         static public void DumpContext(DumpSourceCollection collection) {
-            DumpContext(collection, DefaultHtmlWriter, null, 0, DumpFormat.Html, null);
+            DumpContext(collection, DefaultHtmlWriter, null, DumpFlags.PresentToUser, DumpFormat.Html, null);
+        }
+
+        /// <summary>
+        /// Dumps context in a specific format to memory.
+        /// </summary>
+        static public void DumpContextToMemory(DumpFormat format, Action<DumpResult> onCompleted) {
+            DumpContextToMemory(s_DefaultSources, format, onCompleted);
+        }
+
+        /// <summary>
+        /// Dumps context in a specific format to memory.
+        /// </summary>
+        static public void DumpContextToMemory(DumpSourceCollection collection, DumpFormat format, Action<DumpResult> onCompleted) {
+            DumpContext(collection, GetDumpWriter(format), null, DumpFlags.InMemory, format, onCompleted);
         }
 
         static internal void DumpContext(DumpSourceCollection collection, IDumpWriter writer, string title, DumpFlags flags, DumpFormat format, Action<DumpResult> onCompleted) {
             DumpWork workItem;
             workItem.Collection = collection;
+
+            if (collection == null) {
+                throw new ArgumentNullException("collection", "Cannot dump context with null DumpSourceCollection");
+            }
 
             IDumpSource[] sources = new IDumpSource[collection.Count];
             collection.CopyTo(sources, 0);
@@ -254,9 +294,20 @@ namespace EasyBugReporter {
 
         static private DumpFlags GetPlatformFlags(DumpFlags flags) {
             #if UNITY_WEBGL && !UNITY_EDITOR
-            flags |= GatherContextFlags.InMemory;
+            flags |= DumpFlags.InMemory;
             #endif // UNITY_WEBGL
             return flags;
+        }
+
+        static private IDumpWriter GetDumpWriter(DumpFormat format) {
+            switch(format) {
+                case DumpFormat.Html:
+                    return DefaultHtmlWriter;
+                case DumpFormat.Text:
+                    return DefaultTextWriter;
+                default:
+                    return null;
+            }
         }
 
         #endregion // Setup
@@ -267,6 +318,7 @@ namespace EasyBugReporter {
         [Flags]
         public enum DumpFlags {
             InMemory = 0x01,
+            PresentToUser = 0x02,
         }
 
         /// <summary>
@@ -279,6 +331,67 @@ namespace EasyBugReporter {
         }
 
         #endregion // Context Gather
+
+        #region End of Frame
+
+        /// <summary>
+        /// Queues the given callback to occur at the end of the current frame.
+        /// </summary>
+        static public void OnEndOfFrame(Action action) {
+            s_OnEndOfFrameQueue.Enqueue(action);
+            EnsureHook();
+        }
+
+        static private void DispatchEndOfFrame() {
+            while(s_OnEndOfFrameQueue.Count > 0) {
+                s_OnEndOfFrameQueue.Dequeue()();
+            }
+        }
+
+        #endregion // End of Frame
+
+        #region On Exception
+
+        /// <summary>
+        /// Registers a callback to be invoked whenever an exception or Unity assert is triggered.
+        /// </summary>
+        static public void OnExceptionOrAssert(Action<string> callback) {
+            if (callback == null) {
+                return;
+            }
+
+            if (!s_LogCallbackRegistered) {
+                Application.logMessageReceived += LogMessageFilterCallback;
+                s_LogCallbackRegistered = true;
+            }
+
+            s_OnExceptionAssert += callback;
+        }
+
+        /// <summary>
+        /// Removes a callback previously registered with OnExceptionOrAssert.
+        /// </summary>
+        static public void RemoveExceptionOrAssertCallback(Action<string> callback) {
+            if (callback == null) {
+                return;
+            }
+
+            s_OnExceptionAssert -= callback;
+            if (s_OnExceptionAssert == null && s_LogCallbackRegistered) {
+                Application.logMessageReceived -= LogMessageFilterCallback;
+                s_LogCallbackRegistered = false;
+            }
+        }
+
+        static private void LogMessageFilterCallback(string logString, string stackTrace, LogType type) {
+            if (type != LogType.Exception && type != LogType.Assert) {
+                return;
+            }
+
+            s_OnExceptionAssert?.Invoke(logString);
+        }
+
+        #endregion // On Exception
 
         #region Utils
 

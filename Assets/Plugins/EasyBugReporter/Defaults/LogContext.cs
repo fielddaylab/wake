@@ -41,7 +41,7 @@ namespace EasyBugReporter {
         private long m_FrozenTS;
         private readonly LogMask m_Mask;
 
-        public LogContext(LogMask mask = DefaultMask, int completeLogWindow = 256, int warningErrorWindow = 64, int failureWindow = 32) {
+        public LogContext(LogMask mask = DefaultMask, int completeLogWindow = 64, int warningErrorWindow = 64, int failureWindow = 32) {
             m_Mask = mask;
             if (mask == 0) {
                 return;

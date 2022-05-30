@@ -482,7 +482,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, BakeFlags.Verbose), 5);
+            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
         }
 
         static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)

@@ -142,6 +142,25 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Calculates the bounds for a given set of data.
         /// </summary>
+        static public unsafe Rect CalculatePositionBounds(Vector2* data, int count) {
+            if (count == 0) {
+                return Rect.MinMaxRect(0, 0, 0.001f, 0.001f);
+            }
+            Vector2 vec = data[0];
+            float xMin = vec.x, xMax = vec.x, yMin = vec.y, yMax = vec.y;
+            for(int i = 1; i < count; i++) {
+                vec = data[i];
+                xMin = Math.Min(vec.x, xMin);
+                yMin = Math.Min(vec.y, yMin);
+                xMax = Math.Max(vec.x, xMax);
+                yMax = Math.Max(vec.y, yMax);
+            }
+            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Calculates the bounds for a given set of data.
+        /// </summary>
         static public void CalculateBounds(ref Rect rect, Vector2[] data, int count) {
             float xMin = rect.xMin, xMax = rect.xMax, yMin = rect.yMin, yMax = rect.yMax;
             for(int i = 0; i < count; i++) {
@@ -167,6 +186,19 @@ namespace Aqua.Modeling {
                 yMax = Math.Max(vec.y, yMax);
             }
             rect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        /// <summary>
+        /// Expands the given boundaries.
+        /// </summary>
+        static public void ScaleBounds(ref Rect rect, float borders, float multiplier) {
+            Vector2 center = rect.center;
+            Vector2 size = rect.size;
+            center.x *= multiplier;
+            center.y *= multiplier;
+            size.x = (size.x + borders * 2f) * multiplier;
+            size.y = (size.y + borders * 2f) * multiplier;
+            rect = new Rect(center - size / 2, size);
         }
 
         /// <summary>

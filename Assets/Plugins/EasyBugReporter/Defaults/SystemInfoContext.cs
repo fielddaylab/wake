@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace EasyBugReporter {
@@ -9,6 +10,10 @@ namespace EasyBugReporter {
         public bool Dump(IDumpWriter writer) {
             writer.BeginSection("System Information", false);
             writer.Text(SystemInfoExt.Report(false));
+            writer.Space();
+            try {
+                writer.KeyValue("Command Line Args", Environment.CommandLine);
+            } catch(Exception) { }
             writer.EndSection();
 
             return true;

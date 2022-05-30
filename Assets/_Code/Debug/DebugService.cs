@@ -60,8 +60,6 @@ namespace Aqua.Debugging
         [NonSerialized] private long m_LastKnownStreamingMem;
         [NonSerialized] private long m_UnlockAllLastPress;
 
-        private DumpSourceCollection m_DumpSources;
-
         private void LateUpdate()
         {
             CheckInput();
@@ -127,7 +125,7 @@ namespace Aqua.Debugging
                 }
                 else if (m_Input.KeyPressed(KeyCode.F9) && m_Input.KeyDown(KeyCode.LeftControl))
                 {
-                    BugReporter.DumpContext(m_DumpSources);
+                    BugReporter.DumpContext();
                 }
             }
 
@@ -433,19 +431,24 @@ namespace Aqua.Debugging
             RootDebugMenu();
             #endif // DEVELOPMENT
 
-            m_DumpSources = new DumpSourceCollection();
-            m_DumpSources.Add(new ScreenshotContext());
-            m_DumpSources.Add(new LogContext(EasyBugReporter.LogMask.Development | EasyBugReporter.LogMask.Log));
-            m_DumpSources.Add(new UnityContext());
-            m_DumpSources.Add(new SystemInfoContext());
+            DumpSourceCollection src = new DumpSourceCollection();
+            src.Add(new ScreenshotContext());
+            src.Add(new LogContext(EasyBugReporter.LogMask.Development | EasyBugReporter.LogMask.Log));
+            src.Add(new UnityContext());
+            src.Add(new SystemInfoContext());
+            BugReporter.DefaultSources = src;
 
-            m_DumpSources.Initialize();
+            // BugReporter.OnExceptionOrAssert((s) => {
+            //     BugReporter.DumpContextToMemory(DumpFormat.Text, (d) => {
+            //         UnityEngine.Debug.LogError(d.Contents);
+            //     });
+            // });
+            // TODO: on exception, maybe log something with analytics?
         }
 
         protected override void Shutdown()
         {
-            m_DumpSources.Shutdown();
-
+            BugReporter.DefaultSources = null;
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
             Services.Events?.DeregisterAll(this);
         }

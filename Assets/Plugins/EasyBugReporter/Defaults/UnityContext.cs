@@ -26,6 +26,9 @@ namespace EasyBugReporter {
                 writer.KeyValue("Loaded Scene", scene.path);
             }
 
+            writer.KeyValue("Current Resolution", string.Format("{0}x{1} full={2}", Screen.width, Screen.height, Screen.fullScreen));
+            writer.KeyValue("Current Framerate Target", Application.targetFrameRate);
+
             writer.EndSection();
 
             writer.BeginSection("World");
