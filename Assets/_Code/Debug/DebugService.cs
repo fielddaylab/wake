@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using TMPro;
 using EasyAssetStreaming;
 using EasyBugReporter;
+using BeauUtil.Variants;
 
 namespace Aqua.Debugging
 {
@@ -543,6 +544,16 @@ namespace Aqua.Debugging
         static public DMInfo RootDebugMenu() { return s_RootMenu ?? (s_RootMenu = new DMInfo("Debug", 16)); }
 
         #endif // DEVELOPMENT
+
+        /// <summary>
+        /// Dumps the given table.
+        /// </summary>
+        static internal void Dump(VariantTable table, IDumpWriter writer) {
+            foreach(var namedPair in table) {
+                TableKeyPair keyPair = new TableKeyPair(table.Name, namedPair.Id);
+                writer.KeyValue(keyPair.ToDebugString(), namedPair.Value.ToDebugString());
+            }
+        }
 
         #endregion // Debug Menu
     }

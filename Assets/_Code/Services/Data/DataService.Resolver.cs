@@ -64,7 +64,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, inId);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, inId);
             }
         }
 

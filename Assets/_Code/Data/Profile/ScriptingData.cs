@@ -3,6 +3,8 @@ using BeauData;
 using BeauUtil;
 using BeauUtil.Variants;
 using Aqua.Scripting;
+using EasyBugReporter;
+using Aqua.Debugging;
 
 namespace Aqua.Profile
 {
@@ -116,7 +118,7 @@ namespace Aqua.Profile
                     }
             }
 
-            Services.Events.QueueForDispatch(GameEvents.ScriptNodeSeen, inId);
+            Services.Events.Queue(GameEvents.ScriptNodeSeen, inId);
         }
 
         #endregion // Node Visits
@@ -161,6 +163,28 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.KeyValue("Act Index", m_ActIndex);
+            
+            writer.Header("Tracked Visited Nodes");
+            foreach(var tracked in m_TrackedVisitedNodes) {
+                writer.Text(tracked.ToDebugString());
+            }
+
+            writer.Header("Recent Nodes");
+            foreach(var id in m_RecentNodeHistory) {
+                writer.Text(id.ToDebugString());
+            }
+
+            writer.BeginSection("Variables", false);
+            DebugService.Dump(GlobalTable, writer);
+            DebugService.Dump(JobsTable, writer);
+            DebugService.Dump(PlayerTable, writer);
+            DebugService.Dump(PartnerTable, writer);
+            DebugService.Dump(WorldTable, writer);
+            writer.EndSection();
         }
 
         #endregion // IProfileChunk

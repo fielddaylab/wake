@@ -264,7 +264,7 @@ namespace ProtoAqua.Observation {
             m_SiteData.TaggedCritters.Add(manifest.Id);
             m_SiteData.OnChanged();
 
-            Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
             MarkAllAsTagged(manifest.Id);
 
             Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);

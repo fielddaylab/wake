@@ -302,7 +302,7 @@ namespace Aqua.Modeling {
 
             m_SimDataCtrl.GeneratePlayerProfile();
 
-            Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_State.SiteData.MapId);
             yield return null;
             EvaluateConceptStatus();
             RefreshPhaseHeader();
