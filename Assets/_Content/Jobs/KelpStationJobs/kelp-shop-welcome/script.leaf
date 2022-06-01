@@ -8,6 +8,15 @@
 {@kevin}    Before we head out, we might wanna upgrade our ship with some of our earnings.
             I hear there's a mechanic right off the dock that can upgrade our ship. Let's check them out!
 
+:: helpAtShopAfterPurchase
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Shop", HasUpgrade(ROVTagger), HasUpgrade(VisualModel)
+@boostScore 1
+@cutscene
+{@player} 	Anything else we need here?
+{@kevin}    Nope, we've got everything we need!
+            Why don't we head back to the ship?
+
 :: helpAtShop
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Shop"
