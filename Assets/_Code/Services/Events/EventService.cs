@@ -472,7 +472,7 @@ namespace Aqua
         /// <summary>
         /// Queues the given event to dispatch at the end of the frame.
         /// </summary>
-        public void QueueForDispatch(StringHash32 inEventId, object inContext = null)
+        public void Queue(StringHash32 inEventId, object inContext = null)
         {
             m_QueuedEvents.PushBack(new QueuedEvent(inEventId, inContext));
         }
@@ -498,10 +498,10 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            FlushQueue();
+            Flush();
         }
 
-        public void FlushQueue()
+        public void Flush()
         {
             QueuedEvent evt;
             while(m_QueuedEvents.TryPopFront(out evt))

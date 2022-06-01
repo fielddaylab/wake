@@ -10,11 +10,15 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Aqua.Cameras
 {
     public class CameraService : ServiceBehaviour, IPauseable
     {
+        private const float DesiredWidth = 1024;
+        private const float DesiredHeight = 660;
+
         #region Types
 
         private struct TargetState
@@ -107,6 +111,7 @@ namespace Aqua.Cameras
         #region Inspector
 
         [SerializeField] private uint m_CacheFrameSkip = 1;
+        [SerializeField] private Color m_ClipOutsideColor = Color.clear;
 
         #endregion // Inspector
 
@@ -129,6 +134,7 @@ namespace Aqua.Cameras
         [NonSerialized] private Ray m_LastCenterRay;
         [NonSerialized] private Matrix4x4 m_LastVPMatrix;
         [NonSerialized] private Matrix4x4 m_LastVPMatrixInv;
+        [NonSerialized] private Rect m_LastScreenAspectClip;
 
         #if DEVELOPMENT
         [NonSerialized] private CameraState m_LastAssignedState;
@@ -177,6 +183,8 @@ namespace Aqua.Cameras
 
         private void LateUpdate()
         {
+            UpdateCameraRenderRegion();
+
             if (m_Paused || Script.IsLoading || Time.timeScale <= 0)
                 return;
 
@@ -662,6 +670,7 @@ namespace Aqua.Cameras
             Assert.NotNull(m_Camera, "No main camera located for scene");
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
+            m_LastScreenAspectClip = default(Rect);
         }
 
         #endregion // Handlers
@@ -1304,6 +1313,75 @@ namespace Aqua.Cameras
 
         #endregion // Positions
 
+        #region Render Regions
+
+        private void UpdateCameraRenderRegion() {
+            float aspect = DesiredWidth / DesiredHeight;
+            float scrW = Screen.width, scrH = Screen.height;
+            float w = scrH * aspect, h = scrH;
+
+            if (w > scrW) {
+                w = scrW;
+                h = w / aspect;
+            } else if (h > scrH) {
+                h = scrH;
+                w = h * aspect;
+            }
+
+            float diffX = 1 - w / scrW,
+                diffY = 1 - h / scrH;
+
+            Rect r = default;
+            r.x = diffX / 2;
+            r.y = diffY / 2;
+            r.width = 1 - diffX;
+            r.height = 1 - diffY;
+
+            if (m_LastScreenAspectClip != r) {
+                m_LastScreenAspectClip = r;
+                if (m_Camera) {
+                    m_Camera.rect = r;
+                }
+                Services.UI.AdjustCameraRegion(r);
+            }
+        }
+
+        private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            float left = m_LastScreenAspectClip.x, bottom = m_LastScreenAspectClip.y;
+            if (left != 0 || bottom != 0) {
+                Color c = m_ClipOutsideColor;
+                float scrW = Screen.width, scrH = Screen.height;
+                // woo boy we're getting into some low-level graphics
+                GL.PushMatrix();
+                GL.LoadOrtho();
+                Rect r = default;
+                if (left != 0) {
+                    r.x = 0;
+                    r.y = 0;
+                    r.width = left * scrW;
+                    r.height = scrH;
+                    GL.Viewport(r);
+                    GL.Clear(false, true, c);
+                    r.x = scrW - r.width;
+                    GL.Viewport(r);
+                    GL.Clear(false, true, c);
+                } else {
+                    r.x = 0;
+                    r.y = 0;
+                    r.width = scrW;
+                    r.height = bottom * scrH;
+                    GL.Viewport(r);
+                    GL.Clear(false, true, c);
+                    r.y = scrH - r.height;
+                    GL.Viewport(r);
+                    GL.Clear(false, true, c);
+                }
+                GL.PopMatrix();
+            }
+        }
+
+        #endregion // Render Regions
+
         #region IPauseable
 
         bool IPauseable.IsPaused()
@@ -1333,10 +1411,14 @@ namespace Aqua.Cameras
 
             SceneHelper.OnSceneLoaded += OnSceneLoaded;
             SceneHelper.OnSceneUnload += OnSceneUnload;
+
+            RenderPipelineManager.beginFrameRendering += OnCameraPreRender;
         }
 
         protected override void Shutdown()
         {
+            RenderPipelineManager.beginFrameRendering -= OnCameraPreRender;
+
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
             SceneHelper.OnSceneUnload -= OnSceneUnload;
             base.Shutdown();

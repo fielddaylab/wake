@@ -6,5 +6,6 @@ namespace Aqua.Profile
     {
         bool HasChanges();
         void MarkChangesPersisted();
+        void Dump(EasyBugReporter.IDumpWriter writer);
     }
 }
