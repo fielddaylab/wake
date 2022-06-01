@@ -423,7 +423,7 @@ namespace Aqua
             }
             if (bChanged)
             {
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Unknown, StringHash32.Null));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Unknown, StringHash32.Null));
             }
         }
 

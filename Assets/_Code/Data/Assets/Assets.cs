@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+#define ENABLE_REVERSE_HASH
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
+
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BeauUtil;
@@ -157,6 +161,15 @@ namespace Aqua {
                     Assert.Fail("Unsupported font weight {0}", inWeight);
                     return s_RegularFont;
             }
+        }
+
+        [MethodImpl(256)]
+        static public string NameOf(StringHash32 inAssetId) {
+            #if ENABLE_REVERSE_HASH
+            return inAssetId.ToDebugString();
+            #else
+            return Assets.Find(inAssetId)?.name;
+            #endif // ENABLE_REVERSE_HASH
         }
     }
 }

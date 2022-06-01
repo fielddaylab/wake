@@ -112,7 +112,7 @@ namespace Aqua {
             using (ioFuture) {
                 m_Layout.Configure(inContent, inPopupFlags);
                 
-                Services.Events.QueueForDispatch(GameEvents.PopupOpened);
+                Services.Events.Queue(GameEvents.PopupOpened);
 
                 ShowOrBounce();
 
@@ -197,7 +197,7 @@ namespace Aqua {
             m_RaycastBlocker.Override = false;
 
             if (WasShowing()) {
-                Services.Events?.QueueForDispatch(GameEvents.PopupClosed);
+                Services.Events?.Queue(GameEvents.PopupClosed);
             }
 
             if (WasShowing()) {

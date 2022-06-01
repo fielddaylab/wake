@@ -8,12 +8,15 @@ using BeauData;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 using UnityEngine;
 
 namespace Aqua.Profile
 {
     public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
+        private const BFDiscoveredFlags TempDiscoveredMask = BFDiscoveredFlags.HasPair;
+
         #region Types
 
         private struct FactData : ISerializedObject, IKeyValuePair<StringHash32, FactData>
@@ -53,7 +56,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Add(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
 
@@ -113,7 +116,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Remove(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
                 return true;
             }
 
@@ -156,7 +159,7 @@ namespace Aqua.Profile
                 }
                 if (bVisible)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
                 }
                 return true;
             }
@@ -225,7 +228,7 @@ namespace Aqua.Profile
                 }
                 
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
             }
 
@@ -250,7 +253,7 @@ namespace Aqua.Profile
 
         public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
-            inFlags &= ~BFDiscoveredFlags.TempMask;
+            inFlags &= ~TempDiscoveredMask;
 
             if (inFlags <= 0)
                 return false;
@@ -281,7 +284,7 @@ namespace Aqua.Profile
             bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
             if (bVisible)
             {
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
             }
 
             m_HasChanges = true;
@@ -290,7 +293,7 @@ namespace Aqua.Profile
 
         public bool RemoveDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
-            inFlags &= ~BFDiscoveredFlags.TempMask;
+            inFlags &= ~TempDiscoveredMask;
 
             if (inFlags <= 0)
                 return false;
@@ -315,7 +318,7 @@ namespace Aqua.Profile
                 bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
                 if (bVisible)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
                 }
 
                 m_HasChanges = true;
@@ -404,6 +407,18 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Bestiary Entities");
+            foreach(var entityId in m_ObservedEntities) {
+                writer.Text(Assets.NameOf(entityId));
+            }
+            
+            writer.Header("Discovered Facts");
+            foreach(var factId in m_ObservedFacts) {
+                writer.KeyValue(Assets.NameOf(factId), GetDiscoveredFlags(factId));
+            }
         }
 
         #endregion // IProfileChunk

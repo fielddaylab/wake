@@ -100,7 +100,7 @@ namespace Aqua.Option
             }
             m_Value.SetText(valueString);
             
-            Services.Events.QueueForDispatch(GameEvents.OptionsUpdated, options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, options);
         }
     }
 }

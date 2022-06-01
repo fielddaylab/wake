@@ -4,7 +4,9 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 using UnityEngine;
+using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua.Profile
 {
@@ -50,7 +52,7 @@ namespace Aqua.Profile
             {
                 m_CurrentStationId = inNewStationId;
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.StationChanged, inNewStationId);
+                Services.Events.Queue(GameEvents.StationChanged, inNewStationId);
                 return true;
             }
 
@@ -144,7 +146,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Add(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.RoomLockChanged);
                 return true;
             }
 
@@ -156,7 +158,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Remove(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.RoomLockChanged);
                 return true;
             }
 
@@ -339,6 +341,33 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Location");
+            writer.KeyValue("Current Map Id", Assets.NameOf(m_CurrentMapId));
+            writer.KeyValue("Current Map Entrance", m_CurrentMapEntranceId.ToDebugString());
+            writer.KeyValue("Current Station Id", Assets.NameOf(m_CurrentStationId));
+
+            writer.Header("Unlocked Stations");
+            foreach(var stationId in m_UnlockedStationIds) {
+                writer.Text(Assets.NameOf(stationId));
+            }
+
+            writer.Header("Unlocked Sites");
+            foreach(var siteId in m_UnlockedSiteIds) {
+                writer.Text(Assets.NameOf(siteId));
+            }
+
+            writer.Header("Unlocked Rooms");
+            foreach(var roomId in m_UnlockedRoomIds) {
+                writer.Text(roomId.ToDebugString());
+            }
+
+            writer.Header("Visited Locations");
+            foreach(var locationId in m_VisitedLocations) {
+                writer.Text(locationId.ToDebugString());
+            }
         }
 
         #endregion // IProfileChunk
