@@ -32,6 +32,7 @@ namespace ProtoAqua.ExperimentV2
         static public readonly StringHash32 ExperimentScreenViewed = "ExperimentScreenViewed";
         static public readonly StringHash32 ExperimentScreenExited = "ExperimentScreenExited";
         static public readonly StringHash32 NewBehaviorObserved = "NewBehaviorObserved";
+        static public readonly StringHash32 NewStressResults = "NewStressResults";
         static public readonly StringHash32 ExperimentIdle = "ExperimentIdle";
     }
 }

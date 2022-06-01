@@ -106,6 +106,12 @@ namespace ProtoAqua.ExperimentV2 {
             ExperimentResult result = new ExperimentResult();
             result.Facts = experimentFacts.ToArray();
 
+            if (result.Facts.Length > 0) {
+                using (var table = TempVarTable.Alloc()) {
+                    Services.Script.TriggerResponse(ExperimentTriggers.NewStressResults, table);
+                }
+            }
+
             return result;
         }
 
