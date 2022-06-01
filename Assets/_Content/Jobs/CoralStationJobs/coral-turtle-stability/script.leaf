@@ -279,6 +279,12 @@ $call ArgueComplete()
 {@profCempaka}	Thank you! Eventually we may need more information to complete this food web.
 $call CompleteJob()
 
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profCempaka}  Ok, that's interesting, but it's not answering my question.
+                Do you have a model of the food web which shows what species turtles are consuming?
+$goto .argue.chooseFacts
+
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
 
