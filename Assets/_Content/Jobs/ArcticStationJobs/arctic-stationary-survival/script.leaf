@@ -16,7 +16,8 @@
 {@kevin}    I think we're ready to show this to {nameof @profWhalen}.
 
 ::helpMe
-@trigger RequestPartnerHelp
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(visualModel)
 @cutscene 
 {@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site X{/h}.
             These can be discovered using your {h}Observation Tank{/h}. 
