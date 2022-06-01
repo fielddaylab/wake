@@ -186,7 +186,7 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 
 :: catchCountPopulations
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(experimentPredatorAll)
+@when		JobTaskTop(countPopulations)
 @boostScore -5
 @cutscene
 {@kevin}	Head back to Site Y and count how many {pluralnameof PterasterObscurus} there are.
