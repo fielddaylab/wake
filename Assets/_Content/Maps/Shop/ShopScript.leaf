@@ -297,7 +297,7 @@ $if player:exp < local:expCost
 $endif
 
 $if local:cashCost > 0
-    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}\
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}?\
     It'll be {cash}{$local:cashCost}{/cash}!
     
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
