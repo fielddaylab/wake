@@ -70,10 +70,10 @@ $endif
 @cutscene
 {@kevin}	Okay! We've finally found something that eats Glass Sponges.
 $if HasFact(Y_IceCrevice.Population.PterasterObscurus)
-	{@kevin}	And we've already proactively counted the population of Pteraster Obscurus at Site Y.
+	{@kevin}	And we've already proactively counted the population of Cushion Stars at Site Y.
 	$branch .predatorComplete
 $else
-	{@kevin}	Let's get a count of the population so we have evidence there are Pteraster Obscuri at Site Z.
+	{@kevin}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Z.
 $endif
 
 :: populationComplete
@@ -347,6 +347,6 @@ $call ArgueCancelClaim()
 // END
 :: argue.final.complete
 $call ArgueComplete()
-{@profWhalen}	Aha! The Pteraster eat the Glass Sponges in Site X before they can make it to Site Z.
+{@profWhalen}	Aha! The Cushion Stars eat the Glass Sponges in Site X before they can make it to Site Z.
 				Nice thinking!
 $call CompleteJob()
