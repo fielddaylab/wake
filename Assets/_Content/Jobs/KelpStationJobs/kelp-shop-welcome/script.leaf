@@ -47,4 +47,6 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     {@drKelp}   No problem!
                 If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
     $call CompleteJob()
+    $set    jobs:common-dive.seen.tagger-intro = false
+    $set    jobs:common-dive.seen.probe-intro = false
 $endif
