@@ -683,7 +683,7 @@ namespace Aqua
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
 
             Frame.CreateBuffer();
-            Routine.Start(this, EndOfFrame());
+            StartCoroutine(EndOfFrame());
         }
 
         private IEnumerator EndOfFrame() {

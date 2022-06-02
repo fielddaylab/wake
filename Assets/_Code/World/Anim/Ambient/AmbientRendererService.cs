@@ -56,7 +56,7 @@ namespace Aqua.Animation
         {
             m_LastTimestamp += Time.deltaTime;
 
-            if (m_Renderers.Count > 0)
+            if (m_Renderers.Count > 0 && Time.timeScale > 0)
             {
                 Process(m_LastTimestamp, m_Renderers, m_Random);
             }
