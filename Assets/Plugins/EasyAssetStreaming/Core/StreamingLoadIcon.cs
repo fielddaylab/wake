@@ -35,7 +35,7 @@ namespace EasyAssetStreaming {
 
         private StreamingLoadIcon() {
             OnUpdated = (c, s) => {
-                bool loading = s == Streaming.AssetStatus.PendingLoad;
+                bool loading = (s & Streaming.AssetStatus.PendingLoad) != 0;
                 if (loading != m_LastKnownLoading) {
                     m_LastKnownLoading = loading;
                     LoadingIcon.SetActive(loading);
