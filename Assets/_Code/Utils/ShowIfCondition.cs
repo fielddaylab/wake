@@ -25,9 +25,9 @@ namespace Aqua
         {
             if (m_ContinuousCheck)
             {
-                Services.Events.Register(GameEvents.InventoryUpdated, Refresh, this)
-                    .Register(GameEvents.VariableSet, Refresh, this)
-                    .Register(GameEvents.CutsceneEnd, Refresh, this);
+                Services.Events.Register(GameEvents.InventoryUpdated, RefreshBlockedByScript, this)
+                    .Register(GameEvents.VariableSet, RefreshBlockedByScript, this)
+                    .Register(GameEvents.CutsceneEnd, RefreshBlockedByScript, this);
             }
 
             Script.OnSceneLoad(Refresh);
@@ -41,12 +41,16 @@ namespace Aqua
             Services.Events?.DeregisterAll(this);
         }
 
-        private void Refresh()
-        {
+        private void RefreshBlockedByScript() {
             if (Script.IsLoading) {
                 return;
             }
-            
+
+            Refresh();
+        }
+
+        private void Refresh()
+        {
             SetState(Services.Data.CheckConditions(m_Conditions));
             if (!m_ContinuousCheck)
                 Destroy(this);
