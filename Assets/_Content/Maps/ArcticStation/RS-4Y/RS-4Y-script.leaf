@@ -1,8 +1,14 @@
 # basePath RS-4Y
 
+:: enableTrigger
+@trigger    SceneStart
+@when       !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X"
+@cutscene
+$set jobs:arctic-whalefall.new-attempt = true // whether the player has exited the scene since last trigger
+
 :: emergeFromTheIce
 @trigger    PlayerEnterRegion
-@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X"
+@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X", jobs:arctic-whalefall.new-attempt
 @triggerPriority   High
 @boostScore 1060 // higher than intro scripts
 @once
@@ -12,10 +18,11 @@
             Perhaps we need to upgrade our ship and come back later.
 $set jobs:arctic-whalefall.num-attempts = 2
 $set jobs:arctic-whalefall.first-attempt-seen = true
+$set jobs:arctic-whalefall.new-attempt = false
 
 :: emergeAgain
 @trigger    PlayerEnterRegion
-@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X", jobs:arctic-whalefall.first-attempt-seen
+@when       regionId == "CurrentExit", !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X", jobs:arctic-whalefall.first-attempt-seen, jobs:arctic-whalefall.new-attempt
 @cutscene
 $if jobs:arctic-whalefall.num-attempts == 2
     {@player}   That current swept us away again...
@@ -35,3 +42,4 @@ $else
     $endif
 $endif
 $set jobs:arctic-whalefall.num-attempts + 1
+$set jobs:arctic-whalefall.new-attempt = false

@@ -46,8 +46,15 @@ $set jobs:kelp-energy-visual-model.saved = false
 @when		scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	This is a visual of all the species that exist at the site.
-			Arrows show any relationships you've discovered from experiments. They point toward the thing doing the consuming
+{@kevin}	Start by clicking the {h}Import New Facts{/h} button to bring all the facts we know about this ecosystem into the model.
+
+:: generic.visual-model.imported
+@trigger	VisualModelUpdated
+@when		scene:name == "Modeling"
+@once
+@cutscene
+{@kevin}	This is a visual model of all the species that exist at the site.
+            Arrows show any relationships you've discovered from experiments. Arrows showing eating relations point toward the thing doing the consuming.
 			If you are in a job, and the Visual Model meets all the requirements, you will be able to save the model.
 	
 :: modelingComplete
