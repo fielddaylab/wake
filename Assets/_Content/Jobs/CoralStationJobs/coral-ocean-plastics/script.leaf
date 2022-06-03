@@ -6,10 +6,19 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	You scanned plastic!? In the Reef? This won't do.
+{@profCempaka}	You scanned plastic!? In the reef? This won't do.
 {@profCempaka}  What will happen if the makes its way to the Reef Edge?
-{@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
-{@player} 	We're on our way!
+$if JobTaskTop(scanReefEdge)
+    {@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
+    {@player}       We're on our way!
+$elseif JobTaskTop(whatTurtlesEat)
+    {@profCempaka}  Experiment in the Observation tank with the organisms you've scanned in the Reef Edge at Site V.
+    {@player}       On it!
+$else
+    {@profCempaka}  Take what you know about the Reef Edge at Site V interactions and construct a food web for the Loggerhead Turtle.
+    {@player}       Copy that!
+$endif
+
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
@@ -42,10 +51,10 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       !jobs:coral-ocean-plastic.task.speciesReefEdge
+@when       JobTaskCompleted(scanReefEdge)
 @once
 @cutscene
-{@kevin}   Seems like we've gotten everything we need from here. Let's report back with our findings.
+{@kevin}   Seems like we've gotten everything we need from here. Let's head back up.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -62,6 +71,13 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @boostScore -5
 @cutscene
 {@kevin}    Using the Observation Tank, figure out what Turtles eat.
+
+:: catchMakeModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeModel)
+@boostScore -5
+@cutscene
+{@kevin}    Head to the Modeling Lab to make a Visual Model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -95,7 +111,7 @@ $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-    $call ArgueFactSlot(ReefEdge.Model.TurtleVisual)
+    $call ArgueFactSlot(ReefEdge.Model.PlasticsVisual)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
@@ -121,7 +137,7 @@ $goto .argue.chooseFactsDummy
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.TurtleVisual, .argue.done
+    $answer ReefEdge.Model.PlasticsVisual, .argue.done
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you

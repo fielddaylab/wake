@@ -64,7 +64,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Id:
     m_Source: ProbeCameraHint
-    m_Hash: 511216951
+    m_HashValue: 511216951
 --- !u!114 &5703693516078522687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +80,8 @@ MonoBehaviour:
   m_Region: {fileID: 5774820918032191211}
   m_Zoom: 1.5
   m_Lerp: 1
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_Look: {x: 0, y: 0, z: 0}
   m_Weight: 0.8
 --- !u!114 &1489049877250343147
 MonoBehaviour:
@@ -108,6 +110,7 @@ GameObject:
   - component: {fileID: 5774820918325110237}
   - component: {fileID: 2568443420038237299}
   - component: {fileID: 4257229457167983756}
+  - component: {fileID: 5822417030316000798}
   m_Layer: 0
   m_Name: ScannableProbe
   m_TagString: Untagged
@@ -285,6 +288,20 @@ MonoBehaviour:
       DurationRandom:
         m_Value: 38
     DistanceZ: 2
+--- !u!114 &5822417030316000798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774820918325110238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1934239d9b5327f499938b4b62abc302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 0
 --- !u!1 &9177811768536949869
 GameObject:
   m_ObjectHideFlags: 0

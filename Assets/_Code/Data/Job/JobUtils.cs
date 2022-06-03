@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Aqua.Profile;
 using BeauUtil;
@@ -5,23 +6,29 @@ using BeauUtil;
 namespace Aqua {
     static public class JobUtils {
 
+        [Flags]
+        public enum JobQueryFlags : uint {
+            IgnoreLocation = 0x01,
+            IncludeCompleted = 0x02,
+        }
+
         /// <summary>
         /// Iterates over all jobs that should be currently visible for the current save state.
         /// </summary>
-        static public IEnumerable<PlayerJob> VisibleJobs(bool ignoreLocation = false) {
-            return VisibleJobs(Save.Current, ignoreLocation);
+        static public IEnumerable<PlayerJob> VisibleJobs(JobQueryFlags queryFlags = 0) {
+            return VisibleJobs(Save.Current, queryFlags);
         }
 
         /// <summary>
         /// Iterates over all jobs that should be currently visible.
         /// </summary>
-        static public IEnumerable<PlayerJob> VisibleJobs(SaveData saveData, bool ignoreLocation = false) {
+        static public IEnumerable<PlayerJob> VisibleJobs(SaveData saveData, JobQueryFlags queryFlags = 0) {
             JobDB db = Services.Assets.Jobs;
             ListSlice<JobDesc> stationJobs = default;
             ListSlice<JobDesc> commonJobs = default;
             StringHash32 stationId = saveData.Map.CurrentStationId();
 
-            if (!ignoreLocation) {
+            if ((queryFlags & JobQueryFlags.IgnoreLocation) == 0) {
                 stationJobs = db.JobsForStation(stationId);
                 commonJobs = db.CommonJobs();
             } else {
@@ -29,22 +36,23 @@ namespace Aqua {
             }
 
             PlayerJob status;
+            JobStatusFlags ignoreWithFlags = (queryFlags & JobQueryFlags.IncludeCompleted) != 0 ? 0 : JobStatusFlags.Completed; 
             
             foreach(var job in stationJobs) {
                 status = GetJobStatus(job, saveData, true);
-                if ((status.Status & JobStatusFlags.Visible) != 0) {
+                if ((status.Status & JobStatusFlags.Visible) != 0 && ((status.Status & ignoreWithFlags) == 0)) {
                     yield return status;
                 }
             }
 
             foreach(var job in commonJobs) {
                 status = GetJobStatus(job, saveData, true);
-                if ((status.Status & JobStatusFlags.Visible) != 0) {
+                if ((status.Status & JobStatusFlags.Visible) != 0 && ((status.Status & ignoreWithFlags) == 0)) {
                     yield return status;
                 }
             }
 
-            if (!ignoreLocation) {
+            if ((queryFlags & JobQueryFlags.IgnoreLocation) == 0) {
                 status = Save.CurrentJob;
                 if (status.IsValid && status.Job.StationId() != stationId) {
                     status = GetJobStatus(status.Job, saveData, false);

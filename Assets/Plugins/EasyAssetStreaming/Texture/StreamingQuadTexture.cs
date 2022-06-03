@@ -401,10 +401,11 @@ namespace EasyAssetStreaming {
                 ApplyTextureAndColor();
             }
 
-            if (Streaming.IsLoaded(m_LoadedTexture)) {
+            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
             } else {
-                OnUpdated?.Invoke(this, bHasTexture ? Streaming.AssetStatus.PendingLoad : Streaming.AssetStatus.Unloaded);
+                OnUpdated?.Invoke(this, status);
             }
         }
 
