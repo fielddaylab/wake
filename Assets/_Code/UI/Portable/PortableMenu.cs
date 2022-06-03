@@ -9,6 +9,8 @@ using BeauUtil.Variants;
 using UnityEngine;
 using UnityEngine.UI;
 using EasyAssetStreaming;
+using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {
@@ -223,6 +225,7 @@ namespace Aqua.Portable {
 
         #endregion // Handlers
 
+        [LeafMember("OpenPortableToApp"), Preserve]
         static public void OpenApp(PortableAppId inId) {
             Services.UI.FindPanel<PortableMenu>().Open(PortableRequest.OpenApp(inId));
         }
@@ -236,5 +239,24 @@ namespace Aqua.Portable {
             Services.UI.FindPanel<PortableMenu>().Open(request);
             return request.Response;
         }
+
+        [LeafMember("ClosePortable"), Preserve]
+        static public void Close() {
+            Services.UI.FindPanel<PortableMenu>().Hide();
+        }
+
+        #region Leaf
+
+        [LeafMember("OpenPortableToEntity"), Preserve]
+        static private void LeafOpenToEntity(StringHash32 inEntityId) {
+            Request(PortableRequest.ShowEntry(inEntityId));
+        }
+
+        [LeafMember("OpenPortableToFact"), Preserve]
+        static private void LeafOpenToFact(StringHash32 inFactId) {
+            Request(PortableRequest.ShowFact(inFactId));
+        }
+
+        #endregion // Leaf
     }
 }
