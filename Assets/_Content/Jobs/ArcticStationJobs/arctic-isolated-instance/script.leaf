@@ -6,7 +6,7 @@
 @cutscene
 
 {@kevin}    We need to figure out why Glass Sponges aren't found at Site Z.
-			Usually organisms are missing if they are too stressed to stick around, or something eats them.
+			Usually organisms are missing if they are too stressed to stick around, or something eats all of them.
 			Let's start by seeing if either of those are true in this case.
 $if !HasEntity(GlassSponge)
 	{@kevin}	But first, make sure to scan the Glass Sponge at Site X so we know what we're dealing with.
@@ -27,8 +27,7 @@ $endif
 @when		JobTaskTop(experimentPredatorZ)
 @once
 @cutscene
-{@kevin}	Okay, let's use the Observation Tank to see which organisms are predators here at Site Z.
-			We should also check whether any of them eat Glass Sponges.
+{@kevin}	Okay, let's use the Observation Tank to see if any of the predators here at Site Z eat Glass Sponges.
 $set jobs:arctic-isolated-instance.stressTriggered = false
 
 :: experimentCompleteZ
@@ -47,7 +46,7 @@ $if !HasFact(PterasterObscurus.Eats.GlassSponge)
 					The most likely next site would be the Ice Crevice floor, maybe we should check there.
 	$else
 		// player has already found Pteraster, just needs to find eat rule
-		{@kevin}	Next let's try dropping in possible predators from nearby sites, like Site X or Z.
+		{@kevin}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
 	$endif
 $else
 	// player has already tested for Pteraster eating Sponges
@@ -147,6 +146,15 @@ $branch .stressDeterminedFirst
 			So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
+
+
+// Put Glass Sponge in tank with predators
+
+// ExperimentHasCritter
+
+
+
+
 // CATCH-ALL GUIDE TEXT
 
 :: catchScanSponge
@@ -163,12 +171,26 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 @cutscene
 {@kevin}	Go to Site Z and scan all the new species.
 
-:: catchExperimentPredatorZ
+:: catchCheckCrab
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(experimentPredatorZ)
+@when		JobTaskTop(checkCrab)
 @boostScore -5
 @cutscene
-{@kevin}	Place the predators from Site Z in the Observation Tank with other organisms from the same site and see what they eat.
+{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+
+:: catchCheckSeal
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(checkSeal)
+@boostScore -5
+@cutscene
+{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+
+:: catchCheckShark
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(checkShark)
+@boostScore -5
+@cutscene
+{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchFindPredator
 @trigger	RequestPartnerHelp
@@ -218,10 +240,9 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profWhalen}	What are your main theories for why we don't see Glass Sponges in the Open Ocean?
+{@profWhalen}	Which of these theories do you think is the reason why we don't see Glass Sponges in the Open Ocean?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
 $choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
-$choice .argue.groundwork.foodClaim; The food source is too low there.
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
@@ -284,12 +305,6 @@ $else
 	$branch .argue.groundwork.main-question
 $endif
 
-	// FOOD
-
-:: argue.groundwork.foodClaim
-{@profWhalen}	There is Detritus everywhere. That can't be right.
-$branch argue.groundwork.main-question
-
 	// BOTH
 	
 :: argue.groundwork.unrelated
@@ -318,7 +333,8 @@ $branch .argue.final.main-question
 :: argue.final.main-question
 {@profWhalen}	Do you think you've found the missing piece explaining why Glass Sponges are not found in the Open Ocean?
 $call ArgueLoad(argueIsolatedInstanceFinal)
-$if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal) 
+$if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal)
+	$call ArgueFactSlot((PterasterObscurus.Eats.GlassSponge)
 	$call ArgueFactSlot(Y_IceCrevice.Population.PterasterObscurus)
 $endif
 $call ArgueDisplayClaim()
@@ -347,6 +363,6 @@ $call ArgueCancelClaim()
 // END
 :: argue.final.complete
 $call ArgueComplete()
-{@profWhalen}	Aha! The Cushion Stars eat the Glass Sponges in Site X before they can make it to Site Z.
+{@profWhalen}	Aha! The Cushion Stars eat the Glass Sponges in Site Y before they can make it to Site Z.
 				Nice thinking!
 $call CompleteJob()
