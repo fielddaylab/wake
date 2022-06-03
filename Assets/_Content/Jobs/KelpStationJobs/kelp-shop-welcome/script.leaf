@@ -25,13 +25,21 @@
 {@kevin}    We're looking to upgrade our ship with some of our earnings.
             Why don't you check out some of the instruments {nameof @merchant} has for sale.
 
+:: gotBothModels
+@trigger    JobTaskCompleted
+@when       JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
+@once
+@cutscene
+{@player}   Okay, got both of them!
+{@kevin}    Nice! Let's head back to the Ship then.
+
 // END
 :: end
 @trigger    SceneStart
 @when       scene:name == "Ship"
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-    {@drKelp}   Hey guys! Just got back from my colleagues and they're excitited to meet you guys.
+    {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.
                 Feel free to pay my colleagues a visit!
 
     $branch common.download
