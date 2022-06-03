@@ -10,41 +10,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4d1f8c9b0daf2f44bfb3f292b4dadff, type: 3}
-  m_Name: MixedKelp.Sim
+  m_Name: KelpForest.Sim
   m_EditorClassIdentifier: 
   Id:
-    m_HashValue: 964010985
-  Parent: {fileID: 11400000, guid: eb1ed085536003f46840c8705ccdb065, type: 2}
+    m_HashValue: 3048181925
+  Parent: {fileID: 11400000, guid: b5149999ba7b2cd4cb10c2759f9b41a5, type: 2}
   Icon: {fileID: 0}
   Mode: 2
   m_IconOverride: {fileID: 0}
   InitialActors:
   - Id:
-      m_Source: GiantKelp
-      m_HashValue: 3510470690
-    Population: 17000
-  - Id:
       m_Source: BullKelp
       m_HashValue: 3363669640
-    Population: 17000
+    Population: 1000
+  - Id:
+      m_Source: Mussel
+      m_HashValue: 605356284
+    Population: 300
   - Id:
       m_Source: SeaOtter
       m_HashValue: 3836809010
-    Population: 100
+    Population: 6
   - Id:
       m_Source: Urchin
       m_HashValue: 1973276590
-    Population: 2000
+    Population: 300
   InitialWater:
     Oxygen: 5.5
-    Temperature: 13
+    Temperature: 7
     Light: 100
-    PH: 8.2
+    PH: 8.1
     CarbonDioxide: 30
-  SyncTickCount: 3
-  PredictTickCount: 1
-  OxygenPerTick: 0
-  CarbonDioxidePerTick: 0
+  SyncTickCount: 5
+  PredictTickCount: 5
+  OxygenPerTick: 4
+  CarbonDioxidePerTick: 4
   EatRateMultiplier: 1
   ReproductionRateMultiplier: 1
   DeathRateMultiplier: 1
