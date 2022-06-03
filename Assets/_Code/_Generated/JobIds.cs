@@ -10,6 +10,7 @@ static public class JobIds
 	static public readonly StringHash32 Kelp_bull_kelp_forest = new StringHash32(0x5E9238A2);
 	static public readonly StringHash32 Kelp_musselfest_solution = new StringHash32(0x5E9DBFDD);
 	static public readonly StringHash32 Kelp_start_refuge = new StringHash32(0x6FB36AAF);
+	static public readonly StringHash32 Kelp_shop_welcome = new StringHash32(0x8460E9DD);
 	static public readonly StringHash32 Kelp_urchin_barren_viz = new StringHash32(0x89B20654);
 	static public readonly StringHash32 Kelp_energy = new StringHash32(0x903BE990);
 	static public readonly StringHash32 Kelp_welcome = new StringHash32(0x92603728);
@@ -27,11 +28,12 @@ static public class JobIds
 	static public readonly StringHash32 Coral_hunting_lions = new StringHash32(0x99E410F2);
 	static public readonly StringHash32 Coral_casting_shade = new StringHash32(0xC3AFF6BA);
 	static public readonly StringHash32 Coral_turtle_population = new StringHash32(0xEE7D2D39);
-	static public readonly StringHash32 Reef_decision = new StringHash32(0x15510D18);
-	static public readonly StringHash32 Hide_n_seek = new StringHash32(0x43AB9A71);
+	static public readonly StringHash32 Coral_tang_checkup = new StringHash32(0xFEDB36CD);
+	static public readonly StringHash32 Bayou_reef_decision = new StringHash32(0x6E8EAD11);
 	static public readonly StringHash32 Turtle_danger = new StringHash32(0x720AABC5);
 	static public readonly StringHash32 Displaced_reef = new StringHash32(0x72DB0EAF);
 	static public readonly StringHash32 Turtle_danger2 = new StringHash32(0x7DCCB5D5);
+	static public readonly StringHash32 Bayou_hide_n_seek = new StringHash32(0xA329BE68);
 	static public readonly StringHash32 Bayou_oxygen_tracking = new StringHash32(0xADC978AC);
 	static public readonly StringHash32 Bayou_shrimp_tastrophe = new StringHash32(0xDFEDE55E);
 	static public readonly StringHash32 Bayou_save_our_shrimp = new StringHash32(0xED435E90);
@@ -53,6 +55,7 @@ static public class JobIds
 		Kelp_bull_kelp_forest,
 		Kelp_musselfest_solution,
 		Kelp_start_refuge,
+		Kelp_shop_welcome,
 		Kelp_urchin_barren_viz,
 		Kelp_energy,
 		Kelp_welcome,
@@ -70,11 +73,12 @@ static public class JobIds
 		Coral_hunting_lions,
 		Coral_casting_shade,
 		Coral_turtle_population,
-		Reef_decision,
-		Hide_n_seek,
+		Coral_tang_checkup,
+		Bayou_reef_decision,
 		Turtle_danger,
 		Displaced_reef,
 		Turtle_danger2,
+		Bayou_hide_n_seek,
 		Bayou_oxygen_tracking,
 		Bayou_shrimp_tastrophe,
 		Bayou_save_our_shrimp,

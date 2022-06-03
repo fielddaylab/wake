@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 {@kevin}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
 $if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
 	$if HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse)

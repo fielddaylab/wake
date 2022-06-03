@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -379,7 +379,7 @@ PrefabInstance:
     - target: {fileID: 56409304757621545, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 124.52496
+      value: 167.20001
       objectReference: {fileID: 0}
     - target: {fileID: 56409304757621545, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -439,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 1015599876088647828, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 37.288406
+      value: 78
       objectReference: {fileID: 0}
     - target: {fileID: 1015599876088647828, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -799,7 +799,7 @@ PrefabInstance:
     - target: {fileID: 4240867273496747505, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 410.1555
+      value: 437.2
       objectReference: {fileID: 0}
     - target: {fileID: 4240867273496747505, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1179,7 +1179,7 @@ PrefabInstance:
     - target: {fileID: 7416246598153847394, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 318.25916
+      value: 295.2
       objectReference: {fileID: 0}
     - target: {fileID: 7416246598153847394, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1405,6 +1405,8 @@ MonoBehaviour:
   m_CrossFadeDuration: 4
   m_FadeOutDuration: 0.5
   m_SyncLayers: 1
+  m_FadeOutCurve: 6
+  m_FadeInCurve: 5
 --- !u!114 &227515946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1784,7 +1786,12 @@ PrefabInstance:
     - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Size.x
-      value: 122
+      value: 137.8753
+      objectReference: {fileID: 0}
+    - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: -3.7042542
       objectReference: {fileID: 0}
     - target: {fileID: 305302807730767113, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
@@ -2218,7 +2225,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1211455358}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.39, y: -5.7, z: 0}
+  m_LocalPosition: {x: -0.02, y: -5.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 711474610}
@@ -2248,7 +2255,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 138, y: 1}
+  m_Size: {x: 139.3, y: 1}
   m_EdgeRadius: 0
 --- !u!61 &1211455361
 BoxCollider2D:
@@ -2274,7 +2281,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 138, y: 1}
+  m_Size: {x: 139.3, y: 1}
   m_EdgeRadius: 0
 --- !u!61 &1211455362
 BoxCollider2D:
@@ -2289,7 +2296,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 69, y: 0}
+  m_Offset: {x: 69.65, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2315,7 +2322,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -69, y: 0}
+  m_Offset: {x: -69.65, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2347,7 +2354,7 @@ MonoBehaviour:
   - {fileID: 1211455360}
   m_EdgeThickness: 1
   m_IsTrigger: 0
-  m_Size: {x: 137, y: 22}
+  m_Size: {x: 138.3, y: 22}
   m_Edges: 15
 --- !u!1 &1251812129
 GameObject:
