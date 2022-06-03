@@ -51,6 +51,7 @@ $endif
 ::giveWhaleEat
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(getPopulationData)
+@once
 @cutscene
 {@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
 $call GiveFact(BowheadWhale.Eats.Diatoms)
@@ -59,6 +60,7 @@ $call GiveFact(BowheadWhale.Eats.IceAlgae)
 ::giveWhaleStress
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(getEnvironmentData)
+@once
 @cutscene
 {@profWhalen}    We already know the water conditions that stress the whales. You can compare this to the water conditions here.
 $call GiveFact(BowheadWhale.Light.Stressed)
