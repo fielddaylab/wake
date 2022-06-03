@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 {@kevin}	Okay -- to prove that the artificial reefs are working, you would need evidence that the artificial reefs are still there,
 			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
 
@@ -18,13 +16,6 @@ $branch common.ringPhone
 @cutscene
 {@kevin} 	We have three things to do while we're down here. Check the job description to see what they are.
 			Let's get to it!
-			
-:: grantPopulation
-@trigger	BestiaryEntryAdded
-@when		HasEntity(ArtificialReef)
-@once
-@cutscene
-$call GiveFact(LionfishInvasion.Population.ArtificialReef)
 
 :: helpEnterSite
 @trigger	RequestPartnerHelp
