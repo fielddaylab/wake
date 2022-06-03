@@ -26,15 +26,15 @@
 
 :: catchSyncModel
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(interventionDecision)
+@when 		JobTaskActive(syncModel)
 @boostScore -5
 @cutscene
-{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Sync Model.
+{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Descriptive Model.
             The model should match the population history you collected.
 
 :: catchVisualize
 @trigger    RequestPartnerHelp
-@when       scene:name == "Modeling",modeling:phase == "visual"   
+@when       scene:name == "Modeling", modeling:phase == "visual", JobTaskTop(syncModel) 
 @cutscene
 @boostScore 100
 {@player}   Got any ideas what to do next, Kevin?
@@ -50,8 +50,12 @@ $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEnt
             {@kevin}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
         $endif
     $else
-        //Missing at least 1 reproduction fact
-        {@kevin}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        $if HasFact(O_OilRig.turtleDanger.Model.Visual)
+            {@kevin}    Head to the next tab to continue building your model.
+        $else
+            //Missing at least 1 reproduction fact
+            {@kevin}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        $endif
     $endif
 $else
     //Player is missing at least 1 critter

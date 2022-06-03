@@ -5,10 +5,15 @@
 @cutscene
 
 {@kevin}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
-			First we need to make sure we have all the pieces.
 $if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
-	{@kevin}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
+	$if HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse)
+		{@kevin}	Looks like you already have everything needed, so we can go right to the {h}Office{/h}.
+	$else
+		{@kevin}	First we need to make sure we have all the pieces.
+		{@kevin}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
+	$endif
 $else
+	{@kevin}	First we need to make sure we have all the pieces.
 	{@kevin}	Go down to Site S and scan everything you can find, especially the Lionfish.
 $endif
 
