@@ -194,6 +194,7 @@ namespace Aqua.Portable {
 
             m_NoSelectionGroup.SetActive(false);
             m_InfoPage.gameObject.SetActive(true);
+            m_EntryScroll.verticalNormalizedPosition = 1;
 
             if (inbSyncToggles) {
                 foreach (var toggle in m_ListPools.AllEntries()) {
@@ -205,6 +206,7 @@ namespace Aqua.Portable {
                 }
             }
 
+            m_InfoPage.FactScroll.verticalNormalizedPosition = 1;
             Handler.PopulatePage(m_InfoPage, inEntry);
             LoadEntryFacts(inEntry);
         }

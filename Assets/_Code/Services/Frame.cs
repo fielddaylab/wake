@@ -14,10 +14,12 @@ using UnityEditor;
 namespace Aqua {
     static public unsafe class Frame {
         public const ushort InvalidIndex = ushort.MaxValue;
-        private const int HeapSize = 256 * 1024; // 256KB frame heap
+        private const int HeapSize = 128 * 1024; // 128KiB frame heap
 
         static public ushort Index;
-        static internal Unsafe.ArenaHandle FrameHeap;
+        
+        static private Unsafe.ArenaHandle s_FrameHeap;
+        static private int s_HeapSize;
         static private bool s_HeapInitialized = false;
 
         static internal void IncrementFrame() {
@@ -28,25 +30,29 @@ namespace Aqua {
 
         // TODO: this is not thread safe :/
 
-        static internal void CreateBuffer() {
+        static internal void CreateBuffer(int size = HeapSize) {
             DestroyBuffer();
-            FrameHeap = Unsafe.CreateArena(HeapSize, "Frame");
-            Log.Msg("[Frame] Initialized per-frame heap; size={0}", Unsafe.ArenaSize(FrameHeap));
+            s_FrameHeap = Unsafe.CreateArena(size, "Frame");
+            s_HeapSize = Unsafe.ArenaSize(s_FrameHeap);
+            Log.Msg("[Frame] Initialized per-frame heap; size={0}", s_HeapSize);
             s_HeapInitialized = true;
         }
 
         static internal void ResetBuffer() {
             #if UNITY_EDITOR
-            int allocSize = HeapSize - Unsafe.ArenaFreeBytes(FrameHeap);
-            if (allocSize > HeapSize * 3 / 4) {
+            if (!s_HeapInitialized) {
+                return;
+            }
+            int allocSize = s_HeapSize - Unsafe.ArenaFreeBytes(s_FrameHeap);
+            if (allocSize > s_HeapSize * 3 / 4) {
                 Log.Warn("[Frame] {0} allocated this frame!", allocSize);
             }
             #endif // UNITY_EDITOR
-            Unsafe.ResetArena(FrameHeap);
+            Unsafe.ResetArena(s_FrameHeap);
         }
 
         static internal void DestroyBuffer() {
-            if (Unsafe.TryFreeArena(ref FrameHeap)) {
+            if (Unsafe.TryFreeArena(ref s_FrameHeap)) {
                 Log.Msg("[Frame] Destroyed per-frame heap");
                 s_HeapInitialized = false;
             }
@@ -56,7 +62,7 @@ namespace Aqua {
         /// Allocates an array. This will be automatically freed at the end of the frame.
         /// </summary>
         static public T* AllocArray<T>(int length) where T : unmanaged {
-            T* addr = Unsafe.AllocArray<T>(FrameHeap, length);
+            T* addr = Unsafe.AllocArray<T>(s_FrameHeap, length);
             Assert.True(addr != null, "Per-frame heap out of space");
             return addr;
         }
@@ -65,7 +71,7 @@ namespace Aqua {
         /// Allocates a struct instance on the heap. This will be automatically freed at the end of the frame.
         /// </summary>
         static public T* Alloc<T>() where T : unmanaged {
-            T* addr = Unsafe.Alloc<T>(FrameHeap);
+            T* addr = Unsafe.Alloc<T>(s_FrameHeap);
             Assert.True(addr != null, "Per-frame heap out of space");
             return addr;
         }
@@ -74,7 +80,7 @@ namespace Aqua {
         /// Allocates an arbitrary buffer on the heap. This will be automatically freed at the end of the frame.
         /// </summary>
         static public void* Alloc(int size) {
-            void* addr = Unsafe.Alloc(FrameHeap, size);
+            void* addr = Unsafe.Alloc(s_FrameHeap, size);
             Assert.True(addr != null, "Per-frame heap out of space");
             return addr;
         }
@@ -130,8 +136,10 @@ namespace Aqua {
             EditorApplication.playModeStateChanged += (s) => {
                 if (s == PlayModeStateChange.ExitingEditMode) {
                     DestroyBuffer();
+                    EditorApplication.update -= ResetBuffer;
                 } else if (s == PlayModeStateChange.EnteredEditMode) {
                     CreateBuffer();
+                    EditorApplication.update += ResetBuffer;
                 }
             };
 

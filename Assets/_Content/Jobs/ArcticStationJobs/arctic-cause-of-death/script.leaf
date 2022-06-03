@@ -8,15 +8,15 @@
 {@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 $if JobTaskCompleted(getPopulationData)
-{@profWhalen}    We know for a fact that these whales eat both diatoms and ice algae.
-$call GiveFact(BowheadWhale.Eats.Diatoms)
-$call GiveFact(BowheadWhale.Eats.IceAlgae)
+    {@profWhalen}   We know for a fact that these whales eat both diatoms and ice algae.
+    $call GiveFact(BowheadWhale.Eats.Diatoms)
+    $call GiveFact(BowheadWhale.Eats.IceAlgae)
 $endif
 $if JobTaskCompleted(getEnvironmentData)
-{@profWhalen}    These should be the water conditions that stress the whales. You can compare this to the water conditions at {h}site W{/h}.
-$call GiveFact(BowheadWhale.Light.Stressed)
-$call GiveFact(BowheadWhale.PH.Stressed)
-$call GiveFact(BowheadWhale.Temperature.Stressed)
+    {@profWhalen}    These should be the water conditions that stress the whales. You can compare this to the water conditions at {h}site W{/h}.
+    $call GiveFact(BowheadWhale.Light.Stressed)
+    $call GiveFact(BowheadWhale.PH.Stressed)
+    $call GiveFact(BowheadWhale.Temperature.Stressed)
 $endif
 
 ::helpLost
@@ -50,7 +50,7 @@ $endif
 
 ::giveWhaleEat
 @trigger    JobTasksUpdated
-@when   JobTaskCompleted(getPopulationData)
+@when   JobTaskCompleted(getHistPopulationData)
 @once
 @cutscene
 {@profWhalen}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
