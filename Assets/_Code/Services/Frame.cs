@@ -14,7 +14,7 @@ using UnityEditor;
 namespace Aqua {
     static public unsafe class Frame {
         public const ushort InvalidIndex = ushort.MaxValue;
-        private const int HeapSize = 256 * 1024; // 256KB frame heap
+        private const int HeapSize = 128 * 1024; // 128KiB frame heap
 
         static public ushort Index;
         
@@ -40,6 +40,9 @@ namespace Aqua {
 
         static internal void ResetBuffer() {
             #if UNITY_EDITOR
+            if (!s_HeapInitialized) {
+                return;
+            }
             int allocSize = s_HeapSize - Unsafe.ArenaFreeBytes(s_FrameHeap);
             if (allocSize > s_HeapSize * 3 / 4) {
                 Log.Warn("[Frame] {0} allocated this frame!", allocSize);
@@ -133,8 +136,10 @@ namespace Aqua {
             EditorApplication.playModeStateChanged += (s) => {
                 if (s == PlayModeStateChange.ExitingEditMode) {
                     DestroyBuffer();
+                    EditorApplication.update -= ResetBuffer;
                 } else if (s == PlayModeStateChange.EnteredEditMode) {
-                    CreateBuffer(HeapSize * 16);
+                    CreateBuffer();
+                    EditorApplication.update += ResetBuffer;
                 }
             };
 
@@ -146,7 +151,7 @@ namespace Aqua {
             }
 
             EditorApplication.update += ResetBuffer;
-            CreateBuffer(HeapSize * 16);
+            CreateBuffer();
         }
 
         #endif // UNITY_EDITOR
