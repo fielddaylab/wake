@@ -5,6 +5,46 @@ using BeauUtil;
 namespace Aqua {
     static public unsafe class UnsafeExt {
 
+        static public string PrePostString(string inText, string inPrefix, string inPostfix) {
+            inPrefix = inPrefix ?? string.Empty;
+            inPostfix = inPostfix ?? string.Empty;
+
+            if (inPrefix.Length + inPostfix.Length <= 0) {
+                return inText;
+            }
+
+            int charBufferSize = inText.Length + inPrefix.Length + inPostfix.Length;
+            char* charBuffer = stackalloc char[charBufferSize];
+
+            char* charHead = charBuffer;
+            int remaining = charBufferSize;
+            
+            int len = inPrefix.Length;
+            if (len > 0) {
+                fixed(char* pre = inPrefix) {
+                    Unsafe.Copy(pre, len, charHead, remaining);
+                    charHead += len;
+                    remaining -= len;
+                }
+            }
+            
+            fixed(char* txt = inText) {
+                len = inText.Length;
+                Unsafe.Copy(txt, len, charHead, remaining);
+                charHead += len;
+                remaining -= len;
+            }
+            
+            len = inPostfix.Length;
+            if (len > 0) {
+                fixed(char* post = inPostfix) {
+                    Unsafe.Copy(post, len, charHead, remaining);
+                }
+            }
+
+            return new string(charBuffer, 0, charBufferSize);
+        }
+
         #region Quicksort
 
         static public void Quicksort<T>(T* buffer, int count) where T : unmanaged {
