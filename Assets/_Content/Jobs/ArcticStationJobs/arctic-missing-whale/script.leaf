@@ -21,38 +21,36 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 @when 		scene:name != "RS-4W", !JobTaskTop(reportBack)
 @cutscene
 {@player} 	What should I be doing again?
-{@kevin}	We need to see if we can locate the Linda.
-            Why don't you check your AQOS to see her last known location.
+$if !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
+    {@kevin}	You'll need to look into Linda's remains. But first, you'll need an engine.
+$else
+    {@kevin}	We need to see if we can locate the Linda.
+                Why don't you check your AQOS to see her last known location?
+$endif
 
 :: enterScene
 @trigger    SceneStart
 @when       scene:name == "RS-4W", JobStartedOrComplete(arctic-missing-whale)
 @once
 @cutscene
-{@kevin}	Look's like we're picking up a faint signal. The tracker is definitely here.
-            Either Linda's here somewhere, or her tracker fell off. 
-// $if !HasUpgrade(ROVTagger)
-//     $branch common.ringPhone
-// 	{@profWhalen} I forgot to mention, I attached this tool to your ship before you left. I often find it comes in handy with the work I do.
-// 	$call GiveUpgrade(ROVTagger)
-// 	{@profWhalen} You should see the {nameof ROVTagger} at the top of your view.  
-// 	{@profWhalen} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-// 	{@profWhalen} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-// 	{@kevin} That's really convenient.
-//     $set    jobs:common-dive.seen.tagger-intro = true
-// $endif
+{@kevin}    Look's like we're picking up a faint signal. The tracker is definitely here.
+            Either Linda's here somewhere, or her tracker fell off.
 			
 :: LookAround
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-4W"
 @cutscene
+{@player}   What should I be doing?
 $if !HasEntity(WhaleTracker)
-{@kevin}    Let's start by seeing if we can find that tracker.	
-$elseif !HasEntity(Detritus)
-{@kevin}    Have you found any evidence of Linda herself?	
-$elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
+{@kevin}    Let's start by seeing if we can find that tracker.
+$elseif !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
+{@kevin}    Well, you can't do much more here until you get an engine.
+            I bet the shop has one in stock.
+$elseif !HasEntity(Detritus)	
+{@kevin}    Have you found any evidence of Linda herself?
+$elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus)
 {@kevin}	Detritus, huh? How much did you scan? A whale amount? 
-$endif        
+$endif
 
 :: gotDetritus
 @trigger    JobTasksUpdated
@@ -117,7 +115,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
     $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
     $call ArgueFactSlot(W_WhaleFall.Population.WhaleTracker) 
 $endif
-{@profWhalen}   Have you found Linda?
+{@profWhalen}   What's your evidence from Site W showing you found Linda?
 $choice .argue.showClaim; Yes
 $choice .argue.cantFind; No
 $choose branch

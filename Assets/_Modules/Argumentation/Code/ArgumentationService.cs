@@ -53,7 +53,7 @@ namespace Aqua.Argumentation {
             if (!m_CurrentCompleted) {
                 Services.Data.BindTable(ArgumentTableId, m_CurrentStatus.Vars);
             }
-            Services.Events.QueueForDispatch(ArgueEvents.Loaded, id);
+            Services.Events.Queue(ArgueEvents.Loaded, id);
             return true;
         }
 
@@ -70,7 +70,7 @@ namespace Aqua.Argumentation {
             Services.UI.HideLetterbox();
 
             if (dispatchEvent) {
-                Services.Events.QueueForDispatch(ArgueEvents.Unloaded);
+                Services.Events.Queue(ArgueEvents.Unloaded);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Aqua.Argumentation {
                 Save.Science.CompleteArgue(m_CurrentId);
                 m_CurrentCompleted = true;
                 m_ClaimSetup = false;
-                Services.Events.QueueForDispatch(ArgueEvents.Completed, m_CurrentId);
+                Services.Events.Queue(ArgueEvents.Completed, m_CurrentId);
                 return true;
             }
 
@@ -183,7 +183,7 @@ namespace Aqua.Argumentation {
             
             m_CurrentStatus.SubmittedFacts[factIdx] = id;
             m_CurrentStatus.OnChanged();
-            Services.Events.QueueForDispatch(ArgueEvents.FactSubmitted, id);
+            Services.Events.Queue(ArgueEvents.FactSubmitted, id);
             return true;
         }
 
@@ -210,7 +210,7 @@ namespace Aqua.Argumentation {
             
             m_CurrentStatus.SubmittedFacts[factIdx] = inFact.Id;
             m_CurrentStatus.OnChanged();
-            Services.Events.QueueForDispatch(ArgueEvents.FactSubmitted, inFact.Id);
+            Services.Events.Queue(ArgueEvents.FactSubmitted, inFact.Id);
             return true;
         }
 
@@ -265,7 +265,7 @@ namespace Aqua.Argumentation {
 
             m_CurrentStatus.SubmittedFacts[factIdx] = default;
             m_CurrentStatus.OnChanged();
-            Services.Events.QueueForDispatch(ArgueEvents.FactRejected, id);
+            Services.Events.Queue(ArgueEvents.FactRejected, id);
             return true;
         }
 
@@ -292,7 +292,7 @@ namespace Aqua.Argumentation {
                 if (!id.IsEmpty && !m_CurrentStatus.ExpectedFacts.Contains(id)) {
                     bChanged = true;
                     m_CurrentStatus.SubmittedFacts[i] = default;
-                    Services.Events.QueueForDispatch(ArgueEvents.FactRejected, id);
+                    Services.Events.Queue(ArgueEvents.FactRejected, id);
                 }
             }
 
@@ -320,7 +320,7 @@ namespace Aqua.Argumentation {
 
             Array.Clear(m_CurrentStatus.SubmittedFacts, 0, m_CurrentStatus.ExpectedFacts.Count);
             m_CurrentStatus.OnChanged();
-            Services.Events.QueueForDispatch(ArgueEvents.FactsCleared);
+            Services.Events.Queue(ArgueEvents.FactsCleared);
             return true;
         }
 
@@ -391,7 +391,7 @@ namespace Aqua.Argumentation {
             m_CurrentStatus.ExpectedFacts.Clear();
             m_CurrentStatus.OnChanged();
             m_ClaimSetup = false;
-            Services.Events.QueueForDispatch(ArgueEvents.ClaimCancelled);
+            Services.Events.Queue(ArgueEvents.ClaimCancelled);
             return true;
         }
 
@@ -465,7 +465,7 @@ namespace Aqua.Argumentation {
             }
 
             Array.Copy(m_RevertSubmitState, m_CurrentStatus.SubmittedFacts, ArgueData.MaxFactsPerClaim);
-            Services.Events.QueueForDispatch(ArgueEvents.FactsRefreshed);
+            Services.Events.Queue(ArgueEvents.FactsRefreshed);
             m_ShouldRevert = false;
         }
 

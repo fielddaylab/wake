@@ -482,7 +482,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, BakeFlags.Verbose), 5);
+            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
         }
 
         static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
@@ -681,11 +681,23 @@ namespace Aqua
             //     Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+
+            Frame.CreateBuffer();
+            StartCoroutine(EndOfFrame());
+        }
+
+        private IEnumerator EndOfFrame() {
+            while(true) {
+                yield return Routine.WaitForEndOfFrame();
+                Frame.ResetBuffer();
+            }
         }
 
         protected override void Shutdown()
         {
             m_SceneLoadRoutine.Stop();
+
+            Frame.DestroyBuffer();
         }
 
         #endregion // IService

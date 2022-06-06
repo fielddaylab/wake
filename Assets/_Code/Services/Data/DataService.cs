@@ -15,11 +15,14 @@ using BeauRoutine;
 using System.Collections;
 using Aqua.Option;
 using UnityEngine;
+using EasyBugReporter;
+
+using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(AssetsService), typeof(EventService))]
-    public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable
+    public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable, IDumpSource
     {
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
@@ -35,8 +38,8 @@ namespace Aqua
         [SerializeField] private string m_ServerAddress = null;
         [SerializeField, Required] private TextAsset m_IdRenames = null;
 
-        [Header("Conversation History")]
-        [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
+        // [Header("Conversation History")]
+        // [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
 
         [Header("Defaults")]
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
@@ -56,7 +59,7 @@ namespace Aqua
         [NonSerialized] private string m_ProfileName;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
-        [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
+        // [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
         [NonSerialized] private bool m_PostLoadQueued;
 
         [NonSerialized] private Future<bool> m_SaveResult;
@@ -235,7 +238,7 @@ namespace Aqua
 
         private bool ClearOldProfile()
         {
-            m_DialogHistory.Clear();
+            // m_DialogHistory.Clear();
             m_SessionTable.Clear();
 
             if (m_CurrentSaveData != null)
@@ -598,12 +601,12 @@ namespace Aqua
 
         public void AddToDialogHistory(in DialogRecord inRecord)
         {
-            m_DialogHistory.PushBack(inRecord);
+            // m_DialogHistory.PushBack(inRecord);
         }
 
         public RingBuffer<DialogRecord> DialogHistory
         {
-            get { return m_DialogHistory; }
+            get { return /* m_DialogHistory */ null; }
         }
 
         #endregion // Dialog History
@@ -660,7 +663,7 @@ namespace Aqua
 
             SavePatcher.InitializeIdPatcher(m_IdRenames);
 
-            m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
+            // m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
 
             OGD.Core.Configure(m_ServerAddress, GameId);
         }
@@ -681,6 +684,22 @@ namespace Aqua
         }
 
         #endregion // ILoadable
+
+        #region IDumpSource
+
+        bool IDumpSource.Dump(EasyBugReporter.IDumpWriter dump) {
+            dump.KeyValue("Profile Name", m_ProfileName);
+            dump.KeyValue("Using Debug Profile", IsDebugProfile());
+            if (m_CurrentSaveData != null) {
+                dump.BeginSection("Save Profile", true);
+                m_CurrentSaveData.Dump(dump);
+                dump.EndSection();
+            }
+
+            return true;
+        }
+
+        #endregion // IDumpSource
 
         #region Utils
 

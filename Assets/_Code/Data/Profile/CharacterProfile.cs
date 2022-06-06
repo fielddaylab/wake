@@ -24,5 +24,9 @@ namespace Aqua.Profile
             ioSerializer.Serialize("displayName", ref DisplayName);
             ioSerializer.Enum("pronouns", ref Pronouns);
         }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            
+        }
     }
 }

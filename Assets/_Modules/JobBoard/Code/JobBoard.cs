@@ -127,7 +127,7 @@ namespace Aqua.JobBoard
         {
             StringHash32 id;
             JobButton button;
-            foreach(var job in JobUtils.VisibleJobs())
+            foreach(var job in JobUtils.VisibleJobs(JobUtils.JobQueryFlags.IncludeCompleted))
             {
                 id = job.JobId;
                 if (!m_JobButtonMap.TryGetValue(id, out button))

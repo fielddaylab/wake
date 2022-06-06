@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -612,13 +612,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 61755834}
   m_MeshRenderer: {fileID: 61755833}
-  m_Url: Textures/Ship/Ship_Body.png
+  m_ColorGroup: {fileID: 61755831}
+  m_Path: Textures/Ship/Ship_Body.png
   m_Material: {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
-  m_Size: {x: 12.377708, y: 10.25}
-  m_Pivot: {x: 0.5, y: 0.44}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 12.377708, y: 10.25}
+  m_Pivot: {x: 0.5, y: 0.44}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!114 &61755831
@@ -813,7 +822,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -890,13 +899,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 84146510}
   m_MeshRenderer: {fileID: 84146509}
-  m_Url: Textures/Ship/Modeling_Window[pt].png
+  m_ColorGroup: {fileID: 84146508}
+  m_Path: Textures/Ship/Modeling_Window[pt].png
   m_Material: {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
-  m_Size: {x: 2.16, y: 2.12}
-  m_Pivot: {x: 0.5, y: 0.5}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 2.16, y: 2.12}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 1170053551
   m_SortingOrder: 1
 --- !u!114 &84146508
@@ -950,7 +968,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 44e373aae73256e4682a95b4775260da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2171,13 +2189,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 584974919}
   m_MeshRenderer: {fileID: 584974918}
-  m_Url: Textures/Ship/Office_Base.png
+  m_ColorGroup: {fileID: 584974917}
+  m_Path: Textures/Ship/Office_Base.png
   m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_Size: {x: 20.48, y: 13.2}
-  m_Pivot: {x: 0.5, y: 0.5}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 20.48, y: 13.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 1170053551
   m_SortingOrder: 0
 --- !u!114 &584974917
@@ -2231,7 +2258,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4868,13 +4895,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 1442271908}
   m_MeshRenderer: {fileID: 1442271906}
-  m_Url: Textures/Ship/ShopEntrance_Temp.png
+  m_ColorGroup: {fileID: 0}
+  m_Path: Textures/Ship/ShopEntrance_Temp.png
   m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_Size: {x: 2, y: 5}
-  m_Pivot: {x: 0.5, y: 0}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 2, y: 5}
+  m_Pivot: {x: 0.5, y: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 1170053551
   m_SortingOrder: 8
 --- !u!23 &1442271906
@@ -4895,7 +4931,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5592,13 +5628,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 1701702620}
   m_MeshRenderer: {fileID: 1701702619}
-  m_Url: Textures/Ship/Helm_Interior.png
+  m_ColorGroup: {fileID: 1701702618}
+  m_Path: Textures/Ship/Helm_Interior.png
   m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_Size: {x: 19.25373, y: 12.5}
-  m_Pivot: {x: 0.5, y: 0.5}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 19.25373, y: 12.5}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 1170053551
   m_SortingOrder: 0
 --- !u!114 &1701702618
@@ -5652,7 +5697,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5923,13 +5968,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 1758551799}
   m_MeshRenderer: {fileID: 1758551798}
-  m_Url: Textures/Ship/Modeling_Base.png
+  m_ColorGroup: {fileID: 1758551797}
+  m_Path: Textures/Ship/Modeling_Base.png
   m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_Size: {x: 20.48, y: 13.2}
-  m_Pivot: {x: 0.5, y: 0.5}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+  m_Visible: 1
+  m_Size: {x: 20.48, y: 13.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
   m_SortingLayer: 1170053551
   m_SortingOrder: 0
 --- !u!114 &1758551797
@@ -5983,7 +6037,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -234,6 +234,135 @@ namespace ScriptableBake {
 
         #endregion // Hierarchy
 
+        #region Static Flags
+
+        #if UNITY_EDITOR
+
+        public delegate StaticEditorFlags ModifyStaticFlagsDelegate(StaticEditorFlags current);
+
+        /// <summary>
+        /// Resets the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void ResetStaticFlags(GameObject go, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, 0);
+            if (recursive) {
+                SetStaticFlagsRecursive(go, 0);
+            }
+        }
+
+        /// <summary>
+        /// Sets the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void SetStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, flags);
+            if (recursive) {
+                SetStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Adds the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void AddStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, GameObjectUtility.GetStaticEditorFlags(go) | flags);
+            if (recursive) {
+                AddStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Removes the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void RemoveStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, GameObjectUtility.GetStaticEditorFlags(go) & ~flags);
+            if (recursive) {
+                RemoveStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Modifies the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void ModifyStaticFlags(GameObject go, ModifyStaticFlagsDelegate modifier, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, modifier(GameObjectUtility.GetStaticEditorFlags(go)));
+            if (recursive) {
+                ModifyStaticFlags(go, modifier);
+            }
+        }
+
+        static private void SetStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, flags);
+                SetStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void AddStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, GameObjectUtility.GetStaticEditorFlags(child) | flags);
+                AddStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void RemoveStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, GameObjectUtility.GetStaticEditorFlags(child) & ~flags);
+                RemoveStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void ModifyStaticFlagsRecursive(GameObject go, ModifyStaticFlagsDelegate modifier) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, modifier(GameObjectUtility.GetStaticEditorFlags(child)));
+                ModifyStaticFlagsRecursive(child, modifier);
+            }
+        }
+
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Static Flags
+
         /// <summary>
         /// Destroys an object.
         /// </summary>

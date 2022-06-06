@@ -8,6 +8,15 @@
 {@kevin}    Before we head out, we might wanna upgrade our ship with some of our earnings.
             I hear there's a mechanic right off the dock that can upgrade our ship. Let's check them out!
 
+:: helpAtShopAfterPurchase
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Shop", HasUpgrade(ROVTagger), HasUpgrade(VisualModel)
+@boostScore 1
+@cutscene
+{@player} 	Anything else we need here?
+{@kevin}    Nope, we've got everything we need!
+            Why don't we head back to the ship?
+
 :: helpAtShop
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Shop"
@@ -16,13 +25,21 @@
 {@kevin}    We're looking to upgrade our ship with some of our earnings.
             Why don't you check out some of the instruments {nameof @merchant} has for sale.
 
+:: gotBothModels
+@trigger    JobTaskCompleted
+@when       JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
+@once
+@cutscene
+{@player}   Okay, got both of them!
+{@kevin}    Nice! Let's head back to the Ship then.
+
 // END
 :: end
 @trigger    SceneStart
 @when       scene:name == "Ship"
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-    {@drKelp}   Hey guys! Just got back from my colleagues and they're excitited to meet you guys.
+    {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.
                 Feel free to pay my colleagues a visit!
 
     $branch common.download
@@ -38,4 +55,7 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     {@drKelp}   No problem!
                 If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
     $call CompleteJob()
+    $set    jobs:common-dive.seen.tagger-intro = false
+    $set    jobs:common-dive.seen.probe-intro = false
+    $set    jobs:common-dive.seen.micro-intro = false
 $endif

@@ -80,8 +80,11 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-$call ArgueRejectIncorrect()
 {@profWhalen} Ok, that's interesting, but it's not answering my question.
+$if ArgueIsFactSubmitted(X_UnderTheIce.Population.Detritus)
+    {@profWhalen} You don't need to tell me the count of detritus, that stuff isn't alive.
+$endif
+$call ArgueRejectIncorrect()
 $goto .argue.showClaim
 
 :: argue.giveUp

@@ -14,6 +14,7 @@
 {@merchant} Oh, welcome! Haven't seen your face before!
             {nameof @merchant} at your service!
             Feel free to browse at your leisure!
+		    When you're done looking around, press the "X" button in the top left to leave.
             
 // inspect shopkeeper
 
@@ -297,7 +298,7 @@ $if player:exp < local:expCost
 $endif
 
 $if local:cashCost > 0
-    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}\
+    {@merchant} {random So, do you want the|Still interested in the} {nameof $local:itemId}?\
     It'll be {cash}{$local:cashCost}{/cash}!
     
     $choice .purchaseAttempt.generic.success, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}

@@ -160,5 +160,12 @@ namespace Aqua {
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);
         }
+
+        // Added by Xander 06/03/22
+        [LeafMember]
+        static public bool IsPlayerOnShip() {
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            return (currentMapId == MapIds.Ship) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation);
+        }
     }
 }

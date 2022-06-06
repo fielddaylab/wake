@@ -15,8 +15,6 @@ namespace Aqua
         [Hidden]
         None = 0,
         [Hidden]
-        HasPair = 0x04,
-        [Hidden]
-        TempMask = HasPair
+        HasPair = 0x04
     }
 }

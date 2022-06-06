@@ -155,7 +155,7 @@ namespace Aqua.Modeling {
         // }
 
         public void Dispose() {
-            Unsafe.TryFreeArena(ref m_Allocator);
+            Unsafe.TryDestroyArena(ref m_Allocator);
             Actors = null;
             Eats = null;
             Parasites = null;
@@ -560,19 +560,11 @@ namespace Aqua.Modeling {
         #region Quicksort
 
         static private void Quicksort(WorkingEatInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->SortingOrder);
         }
 
         static private void Quicksort(ActorInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->ActionOrder);
         }
 
         static private int Partition(WorkingEatInfo* buffer, int lower, int higher) {

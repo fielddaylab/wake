@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 {@kevin}	 We need to develop a sense of why the {nameof TurfAlgae} population has gotten big enough to cover the coral.
 $if !JobTaskCompleted(scanAll)
 	// BRANCH A
@@ -72,7 +70,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(measureEatRate) // BRANCH C
 @cutscene
-{@kevin} 	Use the Measurement Tank to get the rate that {nameof BlueTang} eat {TurfAlgae}.
+{@kevin} 	Use the Measurement Tank to get the rate that {nameof BlueTang} eat {nameof TurfAlgae}.
 
 // MODELING
 

@@ -32,7 +32,7 @@ namespace Aqua
 
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
-        [SerializeField] private Sprite m_Icon = null;
+        [SerializeField] internal Sprite m_Icon = null;
         [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = ColorBank.White;
         [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;

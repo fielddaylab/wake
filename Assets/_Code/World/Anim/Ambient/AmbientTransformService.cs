@@ -77,7 +77,7 @@ namespace Aqua.Animation
         {
             m_LastTimestamp += Time.deltaTime;
 
-            if (m_Transforms.Count > 0)
+            if (m_Transforms.Count > 0 && Time.timeScale > 0)
             {
                 Physics2D.autoSyncTransforms = false;
                 Process(m_LastTimestamp, m_Transforms, m_Random);

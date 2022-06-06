@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 {@kevin}	You'll need to use the {nameof MeasurementTank} to figure out how much Urchins eat.
 			It's in the Experiment Room.
 
@@ -47,25 +45,12 @@ $branch common.ringPhone
 {@kevin}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
-
 :: argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(urchinFarmArgue)
 @cutscene
 $call ArgueLoad(urchinFarmArgue)
-{@drKelp} Which type of kelp will the Urchins eat less of?
-	$choice .argue.giantOrBull; Giant Kelp
-	$choice .argue.giantOrBull; Bull Kelp
-	$choice .argue.either; They are the same
-    $choice .argue.giveUp; Let me get back to you
-$choose branch
-
-:: argue.giantOrBull
-{@drKelp}	How do the rates compare?
-$goto .argue.presentFacts
-
-:: argue.either
-{@drKelp}	What were the rates for Urchins eating Bull and Giant Kelp?
+{@drKelp}	I see you've gotten the hang of using the measurement tank to compare eating rates. How do these rates compare?
 $goto .argue.presentFacts
 
 : argue.giveUp
@@ -73,16 +58,15 @@ $goto .argue.presentFacts
 
 :: argue.presentFacts
 $if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEitherWorkLabel)
-		$call ArgueFactSlot(Urchin.Eats.GiantKelp)
-		$call ArgueFactSlot(Urchin.Eats.BullKelp)
+	$call ArgueFactSlot(Urchin.Eats.GiantKelp)
+	$call ArgueFactSlot(Urchin.Eats.BullKelp)
 $endif
-
 $branch .argue.chooseFacts
 
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $if ArgueAllFactsCorrect()
-	$goto .argue.done
+	$goto .argue.finalClaim
 $else
 	$choice #argueFact; Present facts from AQOS
 		$answer Urchin.Eats.BullKelp, IsFactFullyUpgraded(Urchin.Eats.BullKelp), .argue.bullKelp
@@ -93,7 +77,7 @@ $endif
 
 :: argue.bullKelp
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
-	$goto .argue.done
+	$goto .argue.finalClaim
 $else
 	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof BullKelp}. How about the Giant Kelp? 
 	$goto .argue.chooseFacts
@@ -101,7 +85,7 @@ $endif
 
 :: argue.giantKelp
 $if ArgueIsFactSubmitted(Urchin.Eats.BullKelp)
-	$goto .argue.done
+	$goto .argue.finalClaim
 $else
 	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof GiantKelp}. How about the Bull Kelp? 
 	$goto .argue.chooseFacts
@@ -115,12 +99,23 @@ $goto .argue.chooseFacts
 :: argue.giveUp
 {@drKelp}	Ok, get back to me when you're ready.
 
+:: argue.finalClaim
+{@drKelp} Which type of kelp will the Urchins eat less of?
+	$choice .argue.giantOrBull; Giant Kelp
+	$choice .argue.giantOrBull; Bull Kelp
+	$choice .argue.done; They are the same
+    $choice .argue.giveUp; Let me get back to you
+$choose branch
+
+:: argue.giantOrBull
+{@drKelp} Hmmm. Are you sure? I don't think your data supports that conculsion...
+$goto .argue.finalClaim
+
+//DONE
 :: argue.done
 $call ArgueComplete()
 {@drKelp}	Huh, it actually looks like it doesn't matter. It seems like the rates are the same.
 $call CompleteJob()
-
-//DONE
 
 ::end
 @trigger	JobCompleted

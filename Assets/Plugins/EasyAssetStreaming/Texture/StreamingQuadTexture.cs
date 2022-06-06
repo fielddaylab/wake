@@ -388,7 +388,9 @@ namespace EasyAssetStreaming {
                 return;
             }
 
-            m_MeshRenderer.enabled = m_LoadedTexture && m_Visible;
+            bool bHasTexture = m_LoadedTexture;
+
+            m_MeshRenderer.enabled = bHasTexture && m_Visible;
             #if USING_BEAUUTIL
             if (m_ColorGroup) {
                 m_ColorGroup.Visible = m_MeshRenderer.enabled;
@@ -399,8 +401,12 @@ namespace EasyAssetStreaming {
                 ApplyTextureAndColor();
             }
 
-            if (Streaming.IsLoaded(m_LoadedTexture))
+            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
+            } else {
+                OnUpdated?.Invoke(this, status);
+            }
         }
 
         private void ApplyTextureAndColor() {
@@ -461,6 +467,9 @@ namespace EasyAssetStreaming {
             #endif // USING_BEAUUTIL
 
             if (Streaming.Unload(ref m_LoadedTexture, OnAssetUpdated)) {
+                if (m_MainTexturePropertyId != 0) {
+                    ApplyTextureAndColor();
+                }
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }
             StreamingHelper.DestroyResource(ref m_MeshInstance);

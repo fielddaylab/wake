@@ -54,6 +54,7 @@ namespace Aqua.Modeling {
         private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
         private const WorldFilterMask OrganismValidMask = WorldFilterMask.Organism | WorldFilterMask.Relevant;
+        private const WorldFilterMask WaterChemMask = WorldFilterMask.AnyWaterChem | WorldFilterMask.Relevant;
         private const WorldFilterMask ConnectionValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.AnyWaterChem | WorldFilterMask.HasRate | WorldFilterMask.Relevant;
         private const WorldFilterMask AttachmentValidMask = WorldFilterMask.AnyBehavior | WorldFilterMask.HasRate | WorldFilterMask.Relevant | WorldFilterMask.AnyMissing;
 
@@ -81,6 +82,8 @@ namespace Aqua.Modeling {
 
         [Header("Constants")]
         [SerializeField] private float m_PositionScale = 96;
+        [SerializeField] private float m_CameraHeightScale = 1;
+        [SerializeField] private float m_CameraHeightBoundary = 1f;
         [SerializeField] private float m_ForceMultiplier = 1;
         [SerializeField] private float m_RepulsiveForce = 1024;
         [SerializeField] private float m_SpringForce = 1024;
@@ -120,11 +123,15 @@ namespace Aqua.Modeling {
         private Routine m_ShowHideRoutine;
         private AsyncHandle m_ReconstructHandle;
         private TransformState m_OriginalCanvasState;
+        [NonSerialized] private Rect m_AllNodesCameraRect;
+        [NonSerialized] private Rect m_WaterChemCameraRect;
+        [NonSerialized] private Rect m_VisibleNodesCameraRect;
         [NonSerialized] private StringHash32 m_LastConstructedId;
         [NonSerialized] private BestiaryDesc m_LastConstructedInterventionTarget;
 
         [NonSerialized] private WorldFilterMask m_FilterAll;
         [NonSerialized] private WorldFilterMask m_FilterAny  = WorldFilterMask.Any;
+        [NonSerialized] private WorldFilterMask m_FilterNone  = 0;
         [NonSerialized] private WorldFilterMask m_MaskInUse = 0;
 
         private readonly Dictionary<StringHash32, ModelOrganismDisplay> m_OrganismMap = new Dictionary<StringHash32, ModelOrganismDisplay>();
@@ -140,7 +147,7 @@ namespace Aqua.Modeling {
         }
 
         ~ModelWorldDisplay() {
-            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
+            Unsafe.TryDestroyArena(ref m_SolverState.Allocator);
         }
 
         private void Awake() {
@@ -157,7 +164,7 @@ namespace Aqua.Modeling {
         }
 
         private void OnDestroy() {
-            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
+            Unsafe.TryDestroyArena(ref m_SolverState.Allocator);
         }
 
         private unsafe void InitMemoryArena() {
@@ -175,6 +182,10 @@ namespace Aqua.Modeling {
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.PH] = GetPositionInv(m_PHProperty);
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.Oxygen] = GetPositionInv(m_OxygenProperty);
             m_SolverState.FixedPropertyPositions[(int) WaterPropertyId.CarbonDioxide] = GetPositionInv(m_CarbonDioxideProperty);
+
+            Rect size = SimMath.CalculatePositionBounds(m_SolverState.FixedPropertyPositions, 5);
+            SimMath.ScaleBounds(ref size, m_CameraHeightBoundary, m_CameraHeightScale);
+            m_WaterChemCameraRect = size;
         }
 
         public void SetData(ModelState state) {
@@ -207,6 +218,7 @@ namespace Aqua.Modeling {
                 m_AttachmentPool.Reset();
                 m_MaskableElements.Clear();
                 m_MaskInUse = 0;
+                m_AllNodesCameraRect = default;
                 m_LastConstructedId = null;
             }
         }
@@ -264,7 +276,10 @@ namespace Aqua.Modeling {
             m_MaskableElements.Clear();
             m_MaskInUse = 0;
             m_Input.Override = false;
+            m_AllNodesCameraRect = default;
             yield return null;
+
+            AddWaterChemMaskables();
 
             int organismCount = m_State.Conceptual.GraphedEntities.Count;
             if (organismCount == 0) {
@@ -665,11 +680,38 @@ namespace Aqua.Modeling {
             AddMaskable(attachment.CanvasGroup, attachment.Mask, AttachmentValidMask);
         }
 
-        private void UpdateOrganismPositions(int count) {
+        private unsafe void UpdateOrganismPositions(int count) {
             var allocatedOrganisms = m_OrganismPool.ActiveObjects;
             for(int i = 0; i < count; i++) {
                 PositionOrganism(allocatedOrganisms[i], ref m_SolverState, i);
             }
+
+            Rect size = SimMath.CalculatePositionBounds(m_SolverState.Positions, count);
+            SimMath.ScaleBounds(ref size, m_CameraHeightBoundary, m_CameraHeightScale);
+            m_AllNodesCameraRect = size;
+        }
+
+        private unsafe void RecalculateCameraBounds() {
+            Vector2* pointBuffer = Frame.AllocArray<Vector2>(MaxGraphNodes);
+            int count = 0;
+
+            var allocatedOrganisms = m_OrganismPool.ActiveObjects;
+            for(int i = 0; i < allocatedOrganisms.Count; i++) {
+                if (allocatedOrganisms[i].CanvasGroup.alpha > 0) {
+                    pointBuffer[count++] = m_SolverState.Positions[i];
+                }
+            }
+
+            for(int i = 0; i < 5; i++) {
+                var chem = m_WaterChemMap[i];
+                if (chem.isActiveAndEnabled && chem.CanvasGroup.alpha > 0) {
+                    pointBuffer[count++] = m_SolverState.FixedPropertyPositions[i];
+                }
+            }
+
+            Rect size = SimMath.CalculatePositionBounds(pointBuffer, count);
+            SimMath.ScaleBounds(ref size, m_CameraHeightBoundary, m_CameraHeightScale);
+            m_VisibleNodesCameraRect = size;
         }
 
         private void UpdateConnectionPositions() {
@@ -861,10 +903,11 @@ namespace Aqua.Modeling {
 
         #region Filters
 
-        public void SetFilters(WorldFilterMask any, WorldFilterMask all, bool force = false) {
-            if (force || all != m_FilterAll || any != m_FilterAny) {
+        public void SetFilters(WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, bool force = false) {
+            if (force || all != m_FilterAll || any != m_FilterAny || none != m_FilterNone) {
                 m_FilterAll = all;
                 m_FilterAny = any;
+                m_FilterNone = none;
                 if (!m_ReconstructHandle.IsRunning()) {
                     ReevaluateMaskedElements();
                 }
@@ -876,11 +919,19 @@ namespace Aqua.Modeling {
             m_MaskInUse |= mask;
         }
 
-        private void ReevaluateMaskedElements() {
-            float hiddenAlpha = m_State.Phase == ModelPhases.Concept ? 0f : 0.1f;
+        private void AddWaterChemMaskables() {
+            AddMaskable(m_OxygenProperty.CanvasGroup, WorldFilterMask.OxygenAndCarbonDioxide, WaterChemMask);
+            AddMaskable(m_CarbonDioxideProperty.CanvasGroup, WorldFilterMask.OxygenAndCarbonDioxide, WaterChemMask);
+            AddMaskable(m_LightProperty.CanvasGroup, WorldFilterMask.Light, WaterChemMask);
+            AddMaskable(m_PHProperty.CanvasGroup, WorldFilterMask.PhAndTemp, WaterChemMask);
+            AddMaskable(m_TemperatureProperty.CanvasGroup, WorldFilterMask.PhAndTemp, WaterChemMask);
+        }
+
+        private unsafe void ReevaluateMaskedElements() {
+            const float hiddenAlpha = 0;
             for(int i = 0, len = m_MaskableElements.Count; i < len; i++) {
                 ref var element = ref m_MaskableElements[i];
-                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, element.Valid)) {
+                if (CheckMasks(element.Mask, m_FilterAny, m_FilterAll, m_FilterNone, element.Valid)) {
                     element.Group.alpha = 1;
                     element.Group.blocksRaycasts = true;
                     if (element.RaycastFilter) {
@@ -894,10 +945,12 @@ namespace Aqua.Modeling {
                     }
                 }
             }
+
+            RecalculateCameraBounds();
         }
 
-        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask valid) {
-            return (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
+        static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, WorldFilterMask valid) {
+            return (src & none & valid) == 0 && (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
         }
 
         #endregion // Filters
@@ -1063,9 +1116,10 @@ namespace Aqua.Modeling {
         Light           = 2 << 7,
         History         = 2 << 8,
         Missing         = 2 << 9,
+        PhAndTemp        = 2 << 10,
 
         AnyBehavior = Eats | Parasites | Repro,
-        AnyWaterChem = OxygenAndCarbonDioxide | Light,
+        AnyWaterChem = OxygenAndCarbonDioxide | Light | PhAndTemp,
         AnyMissing = History | Missing,
 
         Any = AnyBehavior | AnyWaterChem | AnyMissing | Relevant | Organism | HasRate

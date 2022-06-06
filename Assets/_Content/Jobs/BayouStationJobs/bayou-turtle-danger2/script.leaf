@@ -26,11 +26,64 @@
 
 :: catchSyncModel
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(interventionDecision)
+@when 		JobTaskActive(syncModel)
 @boostScore -5
 @cutscene
-{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Sync Model.
+{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Descriptive Model.
             The model should match the population history you collected.
+
+:: catchVisualize
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling", modeling:phase == "visual", JobTaskTop(syncModel) 
+@cutscene
+@boostScore 100
+{@player}   Got any ideas what to do next, Kevin?
+$if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
+    //Player has all required critters
+    $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
+        //Has all reproduce facts
+
+        $if HasFact(AngelFish.Eats.SeaPearl.Stressed),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(LoggerheadTurtle.Eats.AngelFish),HasFact(RedGrouper.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.AngelFish)
+            //Has all eat facts
+            {@kevin}    That should be all the rules we need, make sure you have all the rates and let's go!
+        $else
+            {@kevin}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+        $endif
+    $else
+        $if HasFact(O_OilRig.turtleDanger.Model.Visual)
+            {@kevin}    Head to the next tab to continue building your model.
+        $else
+            //Missing at least 1 reproduction fact
+            {@kevin}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        $endif
+    $endif
+$else
+    //Player is missing at least 1 critter
+    {@kevin}    Looks like we're still missing some critters.
+    $if !HasEntity(AngelFish)
+        {@kevin}    Have you tried scanning the Angelfish yet?
+    $else
+        $if !HasEntity(Cyanobacteria)
+            {@kevin}    Have you tried scanning some Cyanobacteria yet?
+        $else
+            $if !HasEntity(ElkhornCoral)
+                {@kevin}    Have you tried scanning some Elkhorn Coral yet?
+            $else
+                $if !HasEntity(SeaPearl)
+                    {@kevin}    Have you tried scanning any Sea Pearls yet?
+                $else
+                    $if !HasEntity(LoggerheadTurtle)
+                        {@kevin}    Have you tried scanning some Loggerhead Turtles yet?
+                    $else
+                        $if !HasEntity(RedGrouper)
+                            {@kevin}    Have you tried scanning some Red Grouper yet?
+                        $endif
+                    $endif
+                $endif
+            $endif
+        $endif
+    $endif
+$endif
 
 :: catchReportBack
 @trigger    RequestPartnerHelp

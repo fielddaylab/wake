@@ -48,6 +48,75 @@
 @cutscene
 {@kevin}    Report back to {nameof profHarper}.
 
+:: catchVisualize
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling",modeling:phase == "visual"   
+@cutscene
+{@player}   Got any idea what I might be missing, Kevin?
+$if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(MoonJelly),HasEntity(SeaPearl),HasEntity(RedGrouper),HasEntity(LoggerheadTurtle)
+    //Player has all required critters
+    $if HasFact(MoonJelly.Reproduce),HasFact(LoggerheadTurtle.Reproduce),HasFact(Cyanobacteria.Reproduce),HasFact(AngelFish.Reproduce.Stressed),HasFact(ElkhornCoral.Reproduce),HasFact(RedGrouper.Reproduce)
+        //Has all reproduce facts
+
+        $if HasFact(LoggerheadTurtle.Eats.MoonJelly),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.Cyanobacteria)
+            //Has all eat facts
+            {@kevin}    That should be all the rules we need, make sure you have all the rates and let's go!
+        $else
+            {@kevin}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+        $endif
+    $else
+        //Missing at least 1 reproduction fact
+        {@kevin}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        {@kevin}    Make sure you get both the stressed and unstressed rates!
+    $endif
+$else
+    //Player is missing at least 1 critter
+    {@kevin}    Looks like we're still missing some critters.
+    $if !HasEntity(AngelFish)
+        {@kevin}    Have you tried scanning the Angelfish yet?
+    $else
+        $if !HasEntity(Cyanobacteria)
+            {@kevin}    Have you tried scanning some Cyanobacteria yet?
+        $else
+            $if !HasEntity(ElkhornCoral)
+                {@kevin}    Have you tried scanning some Elkhorn Coral yet?
+            $else
+                $if !HasEntity(SeaPearl)
+                    {@kevin}    Have you tried scanning any Sea Pearls yet?
+                $else
+                    $if !HasEntity(LoggerheadTurtle)
+                        {@kevin}    Have you tried scanning some Loggerhead Turtles yet?
+                    $else
+                        $if !HasEntity(RedGrouper)
+                            {@kevin}    Have you tried scanning some Red Grouper yet?
+                        $else                 
+                            $if !HasEntity(MoonJelly)
+                                {@kevin}    Have you tried scanning some Moon Jellies yet?
+                            $endif
+                        $endif
+                    $endif
+                $endif
+            $endif
+        $endif
+    $endif
+$endif
+
+:: catchDescribe
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling",modeling:phase == "sync"   
+@cutscene
+{@player}   Hey Kevin, could you help me out here?
+{@kevin}    Sure thing, let me take a look...
+$if HasFact(AngelFish.PH.Stressed),HasFact(Cyanobacteria.PH.Stressed),HasFact(ElkhornCoral.PH.Stressed),HasFact(SeaPearl.PH.Stressed),HasFact(LoggerheadTurtle.PH.Stressed)
+    //player most likely has all stress ranges 
+    {@kevin}    Have you measured the rate of all the interactions on the graph?
+    {@kevin}    If you see any dotted lines, that means you haven't measured that fact yet. 
+    {@kevin}    Head back to the measurement tank if that's the case!
+$else
+    {@kevin}    Did you make sure to get all the stress ranges for the critters in the graph?
+    {@kevin}    Without those, your model won't be able to match the historical data as accurately.
+$endif
+
 // ARGUMENTATION
 
 ::argue.intro

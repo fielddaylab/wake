@@ -305,7 +305,7 @@ namespace Aqua.Modeling {
 
         protected override void OnShow(bool inbInstant) {
             UpdateButtons();
-            Services.Events.QueueForDispatch(ModelingConsts.Event_Concept_Started);
+            Services.Events.Queue(ModelingConsts.Event_Concept_Started);
             Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptStarted);
 
             m_State.Display.FilterNodes(m_CurrentFilter);

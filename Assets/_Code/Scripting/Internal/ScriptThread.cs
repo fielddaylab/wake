@@ -180,7 +180,7 @@ namespace Aqua.Scripting
             m_RecordedDialog = true;
             m_LastKnownChoiceDialog = record;
 
-            Services.Data.AddToDialogHistory(record);
+            // Services.Data.AddToDialogHistory(record);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Aqua.Scripting
             m_LastKnownName = record.Name;
             m_RecordedDialog = false;
 
-            Services.Data.AddToDialogHistory(record);
+            // Services.Data.AddToDialogHistory(record);
         }
 
         #endregion // Records
@@ -228,7 +228,7 @@ namespace Aqua.Scripting
 
         public void Skip()
         {
-            if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice())
+            if ((m_Flags & ScriptFlags.Skip) == 0 && !InChoice() && !m_SkipRoutine)
             {
                 if (IsCutscene())
                 {

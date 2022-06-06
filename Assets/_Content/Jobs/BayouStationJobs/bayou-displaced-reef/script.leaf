@@ -26,6 +26,15 @@ $if !HasUpgrade(ROVTagger)
 	$set    jobs:common-dive.seen.tagger-intro = true
 $endif
 
+:: makeAModel
+@trigger    SceneStart
+@when       JobTaskActive(makeModel), scene:name == "Ship"
+@once
+@cutscene
+{@kevin}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
+$call UnlockRoom("modelingRoom")
+$call UnlockRoom("Modeling")
+
 // CATCH-ALL GUIDE TEXT
 
 :: catchVisitSiteO
@@ -49,6 +58,17 @@ $endif
 @cutscene
 {@kevin}    Count the species at {h}site O{/h}.
 
+:: catchMakeModel
+@trigger    RequestPartnerHelp
+@when       JobTaskActive(makeModel)
+@boostScore -5
+@cutscene
+$if IsPlayerOnShip()
+    {@kevin}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
+$else
+    {@kevin}    Let's head back to our ship!
+$endif
+
 :: catchReportback
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
@@ -57,18 +77,16 @@ $endif
 {@kevin}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
-
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOAnalysis)
 @cutscene
 $call ArgueLoad(siteOAnalysis)
 $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
-		$call ArgueFactSlot(O_OilRig.Population.LoggerheadTurtle)
+    $call ArgueFactSlot(O_OilRig.displacedReef.Model.Viz)
 $endif
-//{@profHarper} Have you collected the population data for the critters at {nameof O_OilRig}?
-{@profHarper} I won't make you show me all the populations you gathered, but...
-{@profHarper} What is the current {nameof LoggerheadTurtle} population at {nameof O_OilRig}, for example?
+
+{@profHarper} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
 $branch .argue.showClaim
 
 :: argue.showClaim
