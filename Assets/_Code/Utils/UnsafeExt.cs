@@ -22,7 +22,7 @@ namespace Aqua {
             int len = inPrefix.Length;
             if (len > 0) {
                 fixed(char* pre = inPrefix) {
-                    Unsafe.Copy(pre, len, charHead, remaining);
+                    Unsafe.CopyArray(pre, len, charHead);
                     charHead += len;
                     remaining -= len;
                 }
@@ -30,7 +30,7 @@ namespace Aqua {
             
             fixed(char* txt = inText) {
                 len = inText.Length;
-                Unsafe.Copy(txt, len, charHead, remaining);
+                Unsafe.CopyArray(txt, len, charHead);
                 charHead += len;
                 remaining -= len;
             }
@@ -38,7 +38,7 @@ namespace Aqua {
             len = inPostfix.Length;
             if (len > 0) {
                 fixed(char* post = inPostfix) {
-                    Unsafe.Copy(post, len, charHead, remaining);
+                    Unsafe.CopyArray(post, len, charHead);
                 }
             }
 

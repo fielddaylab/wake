@@ -296,11 +296,6 @@ namespace Aqua
             inCamera.cullingMask &= ~GameLayers.UI_Mask;
         }
 
-        public void AdjustCameraRegion(Rect inRegion)
-        {
-            m_UICamera.rect = inRegion;
-        }
-
         private void CleanupFromScene(SceneBinding inBinding, object inContext)
         {
             int removedPanelCount = 0;

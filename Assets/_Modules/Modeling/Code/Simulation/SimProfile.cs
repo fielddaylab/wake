@@ -155,7 +155,7 @@ namespace Aqua.Modeling {
         // }
 
         public void Dispose() {
-            Unsafe.TryFreeArena(ref m_Allocator);
+            Unsafe.TryDestroyArena(ref m_Allocator);
             Actors = null;
             Eats = null;
             Parasites = null;

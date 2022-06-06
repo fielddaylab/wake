@@ -133,11 +133,11 @@ namespace Aqua.Modeling {
             m_PlayerOutput = new ResultWrapper(m_Allocator, 2);
             m_PredictProfile = new SimProfile(m_Allocator);
 
-            Log.Msg("Simulation arena spare bytes = {0} / {1}", Unsafe.ArenaFreeBytes(m_Allocator), Unsafe.ArenaSize(m_Allocator));
+            Log.Msg("Simulation arena spare bytes = {0} / {1}", m_Allocator.FreeBytes(), m_Allocator.Size());
         }
 
         private void OnDestroy() {
-            Unsafe.TryFreeArena(ref m_Allocator);
+            Unsafe.TryDestroyArena(ref m_Allocator);
 
             m_HistoricalProfile.Dispose();
             m_PlayerProfile.Dispose();
