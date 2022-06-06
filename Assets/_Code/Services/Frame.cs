@@ -33,7 +33,7 @@ namespace Aqua {
         static internal void CreateBuffer(int size = HeapSize) {
             DestroyBuffer();
             s_FrameHeap = Unsafe.CreateArena(size, "Frame");
-            s_HeapSize = Unsafe.ArenaSize(s_FrameHeap);
+            s_HeapSize = s_FrameHeap.Size();
             Log.Msg("[Frame] Initialized per-frame heap; size={0}", s_HeapSize);
             s_HeapInitialized = true;
         }
@@ -43,7 +43,7 @@ namespace Aqua {
             if (!s_HeapInitialized) {
                 return;
             }
-            int allocSize = s_HeapSize - Unsafe.ArenaFreeBytes(s_FrameHeap);
+            int allocSize = s_HeapSize - s_FrameHeap.FreeBytes();
             if (allocSize > s_HeapSize * 3 / 4) {
                 Log.Warn("[Frame] {0} allocated this frame!", allocSize);
             }
@@ -52,7 +52,7 @@ namespace Aqua {
         }
 
         static internal void DestroyBuffer() {
-            if (Unsafe.TryFreeArena(ref s_FrameHeap)) {
+            if (Unsafe.TryDestroyArena(ref s_FrameHeap)) {
                 Log.Msg("[Frame] Destroyed per-frame heap");
                 s_HeapInitialized = false;
             }
