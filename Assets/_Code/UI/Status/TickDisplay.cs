@@ -28,6 +28,11 @@ namespace Aqua
                 Log.Error("[TickDisplay] Too many ticks {0} to display with {1} objects", inTickCount, m_Ticks.Length);
                 inTickCount = m_Ticks.Length;
             }
+            if (target > m_Ticks.Length)
+            {
+                Log.Error("[TickDisplay] Target value {0} cannot be displayed with {1} objects", target, m_Ticks.Length);
+                target = -1;
+            }
 
             for(int i = 0; i < inTickCount; ++i)
                 m_Ticks[i].color = m_EnabledColor;
@@ -39,8 +44,8 @@ namespace Aqua
             }
 
             if (m_Target != null) {
-                if (target >= 0) {
-                    m_Target.position = m_Ticks[target].transform.position;
+                if (target > 0) {
+                    m_Target.position = m_Ticks[target - 1].transform.position;
                     m_Target.gameObject.SetActive(true);
                 } else {
                     m_Target.gameObject.SetActive(false);
