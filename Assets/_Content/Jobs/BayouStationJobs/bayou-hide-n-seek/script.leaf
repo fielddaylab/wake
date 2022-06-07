@@ -123,8 +123,6 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(jellyTurtle)
 @cutscene
-$call ArgueCancelClaim()
-$call ArgueClearFacts()
 $if !ArgueIsComplete(predictJelly)
     $call ArgueLoad(predictJelly)
     {@profHarper} What will happen to turtle populations in the future?
