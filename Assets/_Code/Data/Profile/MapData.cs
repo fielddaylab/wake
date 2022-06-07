@@ -300,7 +300,7 @@ namespace Aqua.Profile
                 }
             }
 
-            if (ioSerializer.ObjectVersion >= 6)
+            if (ioSerializer.ObjectVersion > 6)
             {
                 ioSerializer.UInt32ProxySet("visitedLocations", ref m_VisitedLocations);
             }

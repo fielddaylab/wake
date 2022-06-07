@@ -26,6 +26,7 @@ namespace Aqua
     {
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
+        private const string DeserializeError = "deserialize-error";
 
         #if DEVELOPMENT
         private const string DebugSaveId = "__DEBUG";
@@ -296,8 +297,8 @@ namespace Aqua
                     
                     if (!bSuccess)
                     {
-                        Log.Error("[DataService] Server profile could not be read...");
-                        ioFuture.Complete(null);
+                        UnityEngine.Debug.LogErrorFormat("[DataService] Server profile '{0}' could not be read...", inUserCode);
+                        ioFuture.Fail(DeserializeError);
                     }
                     else
                     {
@@ -306,7 +307,7 @@ namespace Aqua
                 }
                 else
                 {
-                    Log.Error("[DataService] Failed to find profile on server: {0}", future.GetFailure().Object);
+                    UnityEngine.Debug.LogErrorFormat("[DataService] Failed to find profile on server: {0}", future.GetFailure());
                     ioFuture.Fail(future.GetFailure());
                 }
             }
@@ -506,7 +507,10 @@ namespace Aqua
                 }
             }
 
-            m_SaveResult = Future.CreateLinked<bool, StringHash32>(SaveRoutine, inLocationId, this);
+            m_SaveResult = Future.Create<bool>();
+            Routine saveRoutine = Routine.Start(this, SaveRoutine(m_SaveResult, inLocationId));
+            m_SaveResult.LinkTo(saveRoutine);
+            saveRoutine.Tick();
             return m_SaveResult;
         }
 
@@ -716,17 +720,33 @@ namespace Aqua
             return defaultValue;
         }
 
-        static public OGD.Core.ReturnStatus ReturnStatus(IFuture future, OGD.Core.ReturnStatus defaultValue = OGD.Core.ReturnStatus.Unknown) {
+        static public ErrorStatus ReturnStatus(IFuture future, ErrorStatus defaultValue = ErrorStatus.Unknown) {
             if (future.TryGetFailure(out Future.Failure failure)) {
                 object obj = failure.Object;
                 if (obj is OGD.Core.ReturnStatus) {
-                    return (OGD.Core.ReturnStatus) obj;
+                    return (ErrorStatus) (OGD.Core.ReturnStatus) obj;
                 } else if (obj is OGD.Core.Error) {
-                    return ((OGD.Core.Error) obj).Status;
+                    return (ErrorStatus) ((OGD.Core.Error) obj).Status;
+                } else if (obj == (object) DeserializeError) {
+                    return ErrorStatus.DeserializeError;
                 }
             }
 
             return defaultValue;
+        }
+
+        public enum ErrorStatus
+        {
+            Success,
+            Error_DB,
+            Error_Request,
+            Error_Server,
+
+            Error_Network,
+            Error_Exception,
+            Unknown,
+
+            DeserializeError
         }
 
         #endregion // Utils
