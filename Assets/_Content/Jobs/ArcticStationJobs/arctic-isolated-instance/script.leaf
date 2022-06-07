@@ -31,12 +31,11 @@ $endif
 $set jobs:arctic-isolated-instance.stressTriggered = false
 
 :: experimentCompleteZ
-@trigger	JobTaskCompleted
-@when		taskId == "experimentPredatorZ"
+@trigger	ExperimentFinished
+@when		tankType == "Observation", jobs:arctic-isolated-instance.checkedCrab, jobs:arctic-isolated-instance.checkedSeal, jobs:arctic-isolated-instance.checkedShark
 @once
 @cutscene
-{@kevin}	Cool! Apparently salmon is a popular meal in the arctic.
-			But none of them eat Glass Sponges, huh?
+{@kevin}	None of the obvious predators eat Glass Sponges, huh?
 // if player has not already tested for Pteraster eating Sponges
 $if !HasFact(PterasterObscurus.Eats.GlassSponge)
 	{@kevin}	That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
@@ -147,13 +146,22 @@ $branch .stressDeterminedFirst
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
 
-
 // Put Glass Sponge in tank with predators
 
-// ExperimentHasCritter
 
-
-
+:: checkPredators
+@trigger	ExperimentStarted
+@when		tankType == "Observation"
+@cutscene
+$if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SnowCrab")
+	$set jobs:arctic-isolated-instance.checkedCrab = true
+$endif
+$if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("RibbonSeal")
+	$set jobs:arctic-isolated-instance.checkedSeal = true
+$endif
+$if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SalmonShark")
+	$set jobs:arctic-isolated-instance.checkedShark = true
+$endif
 
 // CATCH-ALL GUIDE TEXT
 
@@ -173,24 +181,31 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 
 :: catchCheckCrab
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkCrab)
+@when		JobTaskTop(checkCrab), !jobs:arctic-isolated-instance.checkedCrab
 @boostScore -5
 @cutscene
 {@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchCheckSeal
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkSeal)
+@when		JobTaskTop(checkSeal), !jobs:arctic-isolated-instance.checkedSeal
 @boostScore -5
 @cutscene
 {@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchCheckShark
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkShark)
+@when		JobTaskTop(checkShark), !jobs:arctic-isolated-instance.checkedShark
 @boostScore -5
 @cutscene
 {@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+
+:: catchChecksBeforeTaskUpdate
+@trigger	RequestPartnerHelp
+@when		!JobTaskCompleted(findPredator)
+@boostScore -6
+@cutscene
+{@kevin}	We can probably wrap up this experiment...
 
 :: catchFindPredator
 @trigger	RequestPartnerHelp
@@ -261,7 +276,7 @@ $else
 	$endif
 	$call ArgueDisplayClaim()
 	$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.groundwork.lightComplete 
+		$answer correct, .argue.groundwork.lightComplete
 		$answer *, .argue.groundwork.unrelated
 	$choice .argue.giveUpArgument; Let me get back to you.
 	$choose branch
