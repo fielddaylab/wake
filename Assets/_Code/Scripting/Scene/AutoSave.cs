@@ -61,7 +61,9 @@ namespace Aqua.Scripting
                 return;
 
             Save.Map.FullSync();
-            OnAutosaveEventPreserveEntrance();
+            m_InstantAutosave.Stop();
+            m_DelayedAutosave.Stop();
+            Services.Data.SaveProfile(Services.State.LastEntranceId, true);
         }
 
         private void OnHint(Mode inMode)
