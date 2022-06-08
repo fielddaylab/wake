@@ -8,7 +8,7 @@ namespace ScriptableBake {
     [AddComponentMenu("ScriptableBake/Reset Static Flags")]
     public sealed class ResetStaticFlags : MonoBehaviour, IBaked {
 
-        public const int Order = -1000001;
+        public const int Order = FlattenHierarchy.Order - 10;
 
         [Tooltip("If true, the full hierarchy beneath this object will have its static flags reset.")]
         public bool Recursive = false;
