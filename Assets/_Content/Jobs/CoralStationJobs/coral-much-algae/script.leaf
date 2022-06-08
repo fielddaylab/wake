@@ -203,6 +203,9 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.incorrectFacts
+$if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
+	{@profCempaka}	Oops! This is a {h}Visual Model{/h}. This isn't the model we're looking for.
+$endif
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 	// A only
 	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
@@ -210,7 +213,7 @@ $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 $else
 	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
-		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Did you model this?
+		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Have you created a {h}Descriptive Model{/h} this?
 		$call ArgueClearFacts()
 		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
 		$goto .argue.chooseFactsSparseFish

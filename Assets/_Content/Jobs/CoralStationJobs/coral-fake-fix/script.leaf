@@ -67,14 +67,14 @@
 @when 		JobTaskActive(findReef)
 @boostScore -5
 @cutscene
-{@kevin}    Look for an artificial reef at Site S.
+{@kevin}    Look for an artificial reef at {h}Site S{/h}.
 
 :: catchScanProbes
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanProbes)
 @boostScore -5
 @cutscene
-{@kevin}    There should be a population probe at Site S. Scan it.
+{@kevin}    There should be a population probe at Site S. We need to collect data from it.
 
 :: catchCountPopulations
 @trigger    RequestPartnerHelp
@@ -99,6 +99,7 @@
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
+$call ArgueCancelClaim()
 {@profCempaka}	Have the artificial reefs increased coral populations?
 	$choice .argue.claimNoHelp; No, the artificial reefs have not helped.
 	$choice .argue.claimHelp; Yes, the artificial reefs helped!
@@ -147,8 +148,8 @@ $else
 		// neither
 		{@profCempaka}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
-        $goto argue.chooseFactsNoHelp
-		// $call ArgueClearFacts()
+		$call ArgueClearFacts()
+        $goto .argue.chooseFactsNoHelp
 		// $call ArgueHideClaim()
 	$endif
 $endif
@@ -162,7 +163,7 @@ $endif
 {@profCempaka}	Can you show me the historic coral populations?
 $call ArgueLoad(coralFakeFixIncorrectArgue)
 $if ArgueSetClaim(coralFakeFixIncorrectArgueClaim, jobs.coral-fake-fix.argue.claimLabelIncorrect)
-			$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
+	$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
@@ -178,8 +179,18 @@ $call ArgueHideClaim()
 $goto .argue.chooseClaim
 
 :: argue.incorrectFactsIncorrect
-{@profCempaka}	These aren't the historic coral populations. Are you reconsidering your claim?
-$call ArgueRejectIncorrect()
-$call ArgueClearFacts()
-$call ArgueHideClaim()
+$if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.ArtificialReef) 
+    {@profCempaka}  Actually, I'm looking for the population history of the {h}{nameof StaghornCoral}{/h}
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    $goto .argue.claimHelp
+$else
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    {@profCempaka}	Hmmm... That's not the fact I was looking for, Are you reconsidering your claim?
+        $choice #argue.argue.chooseClaim; Let me amend my claim
+        $choice .argue.giveUp; Let me get back to you
+        $choose branch
+$endif
+
 $goto .argue.chooseClaim
