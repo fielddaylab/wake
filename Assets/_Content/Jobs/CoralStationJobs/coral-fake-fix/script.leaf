@@ -4,8 +4,8 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	Okay -- to prove that the artificial reefs are working, you would need evidence that the artificial reefs are still there,
-			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
+{@kevin}	Okay -- to prove that the {critter-name}artificial reefs{/critter-name} are working, you would need evidence that they're still there,
+			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to {h}Site S{/h}.
 
 // SCANNING
 
@@ -21,7 +21,7 @@
 @trigger	RequestPartnerHelp
 @when		!HasEntity(ArtificialReef), !JobTaskTop(argue), scene:name != "RS-2S"
 @cutscene
-{@kevin}	Go to Site S to scan the artificial reef and find the current and historical coral population.
+{@kevin}	Go to {h}Site S{/h} to scan the {critter-name}artificial reef{/critter-name} and find the current and historical coral population.
 
 :: helpScanPop
 @trigger	RequestPartnerHelp
@@ -33,7 +33,7 @@
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(countPopulation)
 @cutscene
-{@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and artificial reefs using your Counting tool.
+{@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
 
 :: siteCompleted
 @trigger	JobTasksUpdated
@@ -67,21 +67,21 @@
 @when 		JobTaskActive(findReef)
 @boostScore -5
 @cutscene
-{@kevin}    Look for an artificial reef at {h}Site S{/h}.
+{@kevin}    Look for an {critter-name}artificial reef{/critter-name} at {h}Site S{/h}.
 
 :: catchScanProbes
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanProbes)
 @boostScore -5
 @cutscene
-{@kevin}    There should be a population probe at Site S. We need to collect data from it.
+{@kevin}    There should be a population probe at {h}Site S{/h}. We need to collect data from it.
 
 :: catchCountPopulations
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countPopulations)
 @boostScore -5
 @cutscene
-{@kevin}    Count how much coral and artificial reef is at Site S.
+{@kevin}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} is at {h}Site S{/h}.
 
 :: catchArgue
 @trigger    RequestPartnerHelp
