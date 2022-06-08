@@ -63,7 +63,10 @@ namespace Aqua.Scripting
             Save.Map.FullSync();
             m_InstantAutosave.Stop();
             m_DelayedAutosave.Stop();
-            Services.Data.SaveProfile(Services.State.LastEntranceId, true);
+            if (CanSave())
+            {
+                Services.Data.SaveProfile(Services.State.LastEntranceId, true);
+            }
         }
 
         private void OnHint(Mode inMode)
@@ -160,16 +163,19 @@ namespace Aqua.Scripting
 
         #endregion // Saving
 
+        [LeafMember("AutoSaveNow"), Preserve]
         static public void Force()
         {
             Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Now);
         }
 
+        [LeafMember("AutoSaveHint"), Preserve]
         static public void Hint()
         {
             Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Delayed);
         }
 
+        [LeafMember("AutoSaveSuppress"), Preserve]
         static public void Suppress()
         {
             Services.Events.Dispatch(GameEvents.ProfileAutosaveSuppress);

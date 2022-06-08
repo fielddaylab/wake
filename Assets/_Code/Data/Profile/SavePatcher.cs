@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Aqua.Profile {
     static public class SavePatcher {
-        public const uint CurrentVersion = 2;
+        public const uint CurrentVersion = 3;
 
         static private Dictionary<StringHash32, StringHash32> s_RenameSet = new Dictionary<StringHash32, StringHash32>(32);
 
@@ -21,6 +21,13 @@ namespace Aqua.Profile {
         static private void Patch(SaveData ioData) {
             if (ioData.Version == 0) {
                 UpgradeFromVersion0(ioData);
+                UpgradeFromVersion1(ioData);
+                UpgradeFromVersion2(ioData);
+            } else if (ioData.Version == 1) {
+                UpgradeFromVersion1(ioData);
+                UpgradeFromVersion2(ioData);
+            } else if (ioData.Version == 2) {
+                UpgradeFromVersion2(ioData);
             }
         }
 
@@ -36,6 +43,13 @@ namespace Aqua.Profile {
 
         static private void UpgradeFromVersion1(SaveData ioData) {
 
+        }
+
+        static private void UpgradeFromVersion2(SaveData ioData) {
+            if (ioData.Jobs.CurrentJobId == JobIds.Kelp_welcome && ioData.Jobs.IsTaskComplete("returnToShip")) {
+                ioData.Map.UnlockRoom("Experimentation");
+                ioData.Inventory.AddUpgrade("ObservationTank");
+            }
         }
 
         #region Patching Ids

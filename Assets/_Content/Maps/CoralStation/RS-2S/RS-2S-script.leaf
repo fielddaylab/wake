@@ -1,0 +1,8 @@
+# basePath RS-2V
+
+:: OnScanFishers
+@trigger BestiaryEntryAdded
+@when   entryId == "SpearedLionfish"
+@cutscene
+@once
+$call GiveEntity(Fishers)

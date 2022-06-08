@@ -323,6 +323,7 @@ namespace Aqua.Modeling {
 
             m_Graph.RenderData(SimRenderMask.HistoricalPlayer);
             m_State.LastKnownAccuracy = m_State.Simulation.CalculateAccuracy(m_ProgressInfo.Sim.SyncTickCount + 1);
+            Log.Msg("[SimulationUI] Calculated accuracy: {0}", m_State.LastKnownAccuracy);
             RenderAccuracy();
 
             m_GraphFader.SetActive(false);
@@ -335,7 +336,7 @@ namespace Aqua.Modeling {
 
             OnAnimationFinished?.Invoke();
 
-            if (m_ProgressInfo.Scope != null && m_ProgressInfo.Scope.MinimumSyncAccuracy > 0) {
+            if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
                     Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
                     OnSyncAchieved?.Invoke();
