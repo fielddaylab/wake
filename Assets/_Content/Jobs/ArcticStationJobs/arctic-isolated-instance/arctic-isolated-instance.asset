@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: arctic-isolated-instance
   m_EditorClassIdentifier: 
   m_Category: 0
-  m_Flags: 1
+  m_Flags: 0
   m_NameId:
     m_Source: jobs.arctic-isolated-instance.name
     m_HashValue: 3694663786
@@ -186,6 +186,8 @@ MonoBehaviour:
       m_HashValue: 1850893958
     - m_Source: checkShark
       m_HashValue: 2530837164
+    - m_Source: determineStress
+      m_HashValue: 2715794674
   - Id:
       m_Source: findPredator
       m_HashValue: 427489029
@@ -262,22 +264,6 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: scanSponge
       m_HashValue: 3773120186
-  - Id:
-      m_Source: scanProbe
-      m_HashValue: 2534789426
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.scanProbe
-      m_HashValue: 2053897819
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Z_OpenOcean.Light
-        m_HashValue: 4286225538
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: determineStress
-      m_HashValue: 2715794674
   - Id:
       m_Source: reportFinal
       m_HashValue: 3284742193
@@ -420,74 +406,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0100
   - Id:
-      m_Source: discussFindings
-      m_HashValue: 1442478067
-    IdString: discussFindings
-    Index: 5
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.discussFindings
-      m_HashValue: 1161848886
-    Steps:
-    - Type: 10
-      Target:
-        m_Source: argueIsolatedInstanceGroundwork
-        m_HashValue: 1631352399
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 020003000400
-  - Id:
-      m_Source: findPredator
-      m_HashValue: 427489029
-    IdString: findPredator
-    Index: 6
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.findPredator
-      m_HashValue: 3034372890
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: PterasterObscurus
-        m_HashValue: 1470134365
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0500
-  - Id:
-      m_Source: experimentPredatorAll
-      m_HashValue: 4140043772
-    IdString: experimentPredatorAll
-    Index: 7
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorAll
-      m_HashValue: 3110267969
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: PterasterObscurus.Eats.GlassSponge
-        m_HashValue: 497967974
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0600
-  - Id:
-      m_Source: countPopulations
-      m_HashValue: 1973731072
-    IdString: countPopulations
-    Index: 8
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.countPopulations
-      m_HashValue: 3286445159
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Y_IceCrevice.Population.PterasterObscurus
-        m_HashValue: 3870369418
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0700
-  - Id:
       m_Source: determineStress
       m_HashValue: 2715794674
     IdString: determineStress
-    Index: 9
+    Index: 5
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.determineStress
       m_HashValue: 4061817563
@@ -512,26 +434,74 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: scanProbe
-      m_HashValue: 2534789426
-    IdString: scanProbe
-    Index: 10
+      m_Source: discussFindings
+      m_HashValue: 1442478067
+    IdString: discussFindings
+    Index: 6
     LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.scanProbe
-      m_HashValue: 2053897819
+      m_Source: jobs.arctic-isolated-instance.task.discussFindings
+      m_HashValue: 1161848886
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: argueIsolatedInstanceGroundwork
+        m_HashValue: 1631352399
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200030004000500
+  - Id:
+      m_Source: findPredator
+      m_HashValue: 427489029
+    IdString: findPredator
+    Index: 7
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.findPredator
+      m_HashValue: 3034372890
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: PterasterObscurus
+        m_HashValue: 1470134365
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0600
+  - Id:
+      m_Source: experimentPredatorAll
+      m_HashValue: 4140043772
+    IdString: experimentPredatorAll
+    Index: 8
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.experimentPredatorAll
+      m_HashValue: 3110267969
     Steps:
     - Type: 1
       Target:
-        m_Source: Z_OpenOcean.Light
-        m_HashValue: 4286225538
+        m_Source: PterasterObscurus.Eats.GlassSponge
+        m_HashValue: 497967974
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0900
+    PrerequisiteTaskIndices: 0700
+  - Id:
+      m_Source: countPopulations
+      m_HashValue: 1973731072
+    IdString: countPopulations
+    Index: 9
+    LabelId:
+      m_Source: jobs.arctic-isolated-instance.task.countPopulations
+      m_HashValue: 3286445159
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.PterasterObscurus
+        m_HashValue: 3870369418
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0800
   - Id:
       m_Source: reportFinal
       m_HashValue: 3284742193
     IdString: reportFinal
-    Index: 11
+    Index: 10
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.reportFinal
       m_HashValue: 1351555032
@@ -542,7 +512,7 @@ MonoBehaviour:
         m_HashValue: 2507527403
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 08000900
+    PrerequisiteTaskIndices: 09000500
   m_CashReward: 100
   m_ExpReward: 10
   m_Scripting: {fileID: -1942890987711236906, guid: 124b6ee976f99274fa100ab046bbab73,

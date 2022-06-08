@@ -36,15 +36,21 @@ $set jobs:arctic-isolated-instance.stressTriggered = false
 @once
 @cutscene
 {@kevin}	None of the obvious predators eat Glass Sponges, huh?
-// if player has not already tested for Pteraster eating Sponges
-$if !HasFact(PterasterObscurus.Eats.GlassSponge)
-	{@kevin}	That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
-				Let's check in with Professor Whalen.
+			That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
+$if !JobTaskCompleted(determineStress)
+	{@kevin}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
+				Let's see if testing that gives us a better perspective.
 $else
-	// player has already tested for Pteraster eating Sponges
-	{@kevin}	Must be the {nameof PterasterObscurus} then.
-	$branch .predatorComplete
+	{@kevin}	Let's check in with Professor Whalen.
 $endif
+// if player has not already tested for Pteraster eating Sponges
+//$if !HasFact(PterasterObscurus.Eats.GlassSponge)
+
+//$else
+	// player has already tested for Pteraster eating Sponges
+	//{@kevin}	Must be the {nameof PterasterObscurus} then.
+	//$branch .predatorComplete
+//$endif
 
 	// if player still needs to find the Pteraster
 	//$if !JobTaskCompleted(findPredator)
@@ -70,18 +76,19 @@ $endif
 @cutscene
 {@kevin}	Okay! We've finally found something that eats Glass Sponges.
 $if HasFact(Y_IceCrevice.Population.PterasterObscurus)
-	{@kevin}	And we've already proactively counted the population of Cushion Stars at Site Y.
+	{@kevin}	And we've already counted the population of Cushion Stars at Site Y.
 	$branch .predatorComplete
 $else
-	{@kevin}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Z.
+	{@kevin}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Y.
 $endif
 
 :: populationComplete
 @trigger	JobTaskCompleted
-@when		taskId == "countPopulations", scene:name != "ExperimentV2"
+@when		taskId == "countPopulations", scene:name == "RS-4Y"
 @once
 @cutscene
-{@kevin}	That just about wraps up the predator business!
+{@kevin}	All right! I think that is everything we need to make the case that these {pluralnameof PterasterObscurus} are the reason we don't see {pluralnameof GlassSponge} in Site Z.
+			{h}Site Y{/h} lies between {h}Site X{/h} and {h}Site Z{/h}, so when the {pluralnameof GlassSponge} try to move through, they all get gobbled up by the {pluralnameof PterasterObscurus}!
 $branch .predatorComplete
 
 
@@ -90,7 +97,7 @@ $if !JobTaskCompleted(determineStress)
 	{@kevin}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
 				Let's see if testing that gives us a better perspective.
 $else
-	{@kevin}	So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
+	{@kevin}	Let's go show {nameof profWhalen} what we've found.
 $endif
 
 // STRESS THEORY
@@ -144,11 +151,11 @@ $branch .stressDeterminedFirst
 
 :: stressDeterminedFirst
 {@kevin}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-$if JobTaskCompleted(scanProbe)
+//$if JobTaskCompleted(scanProbe)
 	{@kevin}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
-$else
-	{@kevin}	At some point we'll need to scan Site Y's water chemistry probe.
-$endif
+//$else
+	//{@kevin}	At some point we'll need to scan Site Y's water chemistry probe.
+//$endif
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
 :: stressScannedProbeFinal
@@ -298,7 +305,7 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 	{@profWhalen}	I believe we've already covered this. The light levels seem fine. Something else must be going on.
 	$branch .argue.groundwork.main-question
 $else
-	{@profWhalen}	This seems like it could make sense. Do you have evidence?
+	{@profWhalen}	This seems like it could make sense. Do you have evidence about the current light levels?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
 	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress) 
 		$call ArgueFactSlot(GlassSponge.Light.Stressed)
@@ -350,7 +357,7 @@ $endif
 
 :: argue.groundwork.predatorComplete
 $call ArgueComplete()
-{@profWhalen}	Really? Well, that must not be it then.
+{@profWhalen}	Really? Well, that is good to know. There must be something else going on.
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 	$branch .argue.groundwork.bothComplete
 $else
@@ -394,8 +401,7 @@ $choose branch
 $call ArgueClearFacts()
 $call ArgueHideClaim()
 {@profWhalen}	Hmmmm. I don't see how that is relevant.
-				But you know...
-				I wonder if the fact that Site Y is between Site X and Site Z means anything... 
+				We're looking for a predator of the Glass Sponges and a population count of the predator to prove they live in the area.
 $branch .argue.final.main-question
 
 :: argue.giveUp
