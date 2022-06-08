@@ -39,19 +39,21 @@ $set jobs:arctic-isolated-instance.stressTriggered = false
 // if player has not already tested for Pteraster eating Sponges
 $if !HasFact(PterasterObscurus.Eats.GlassSponge)
 	{@kevin}	That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
-	// if player still needs to find the Pteraster
-	$if !JobTaskCompleted(findPredator)
-		{@kevin}	Let's try scanning for predators at nearby sites.
-					The most likely next site would be the Ice Crevice floor, maybe we should check there.
-	$else
-		// player has already found Pteraster, just needs to find eat rule
-		{@kevin}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
-	$endif
+				Let's check in with Professor Whalen.
 $else
 	// player has already tested for Pteraster eating Sponges
 	{@kevin}	Must be the {nameof PterasterObscurus} then.
 	$branch .predatorComplete
 $endif
+
+	// if player still needs to find the Pteraster
+	//$if !JobTaskCompleted(findPredator)
+		//{@kevin}	Let's try scanning for predators at nearby sites.
+					//The most likely next site would be the Ice Crevice floor, maybe we should check there.
+	//$else
+		// player has already found Pteraster, just needs to find eat rule
+		//{@kevin}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
+	//$endif
 
 
 :: predatorFound
@@ -115,7 +117,7 @@ $branch .stressDeterminedFinal
 $branch .stressDeterminedFinal
 
 :: stressDeterminedFinal
-{@kevin}	Good work. Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
+{@kevin}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
 			So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
 $set jobs:arctic-isolated-instance.stressTriggered = true
 			
@@ -141,8 +143,29 @@ $branch .stressDeterminedFirst
 $branch .stressDeterminedFirst
 
 :: stressDeterminedFirst
-{@kevin}	Good work. Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-			So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
+{@kevin}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
+$if JobTaskCompleted(scanProbe)
+	{@kevin}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
+$else
+	{@kevin}	At some point we'll need to scan Site Y's water chemistry probe.
+$endif
+$set jobs:arctic-isolated-instance.stressTriggered = true
+
+:: stressScannedProbeFinal
+@trigger	BestiaryFactAdded
+@when		factId == "Z_OpenOcean.Light", JobTaskTop(discussFindings)
+@once
+@cutscene
+{@kevin}	So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
+$set jobs:arctic-isolated-instance.stressTriggered = true
+
+:: stressScannedProbeFirst
+@trigger	BestiaryFactAdded
+@when		factId == "Z_OpenOcean.Light", !JobTaskTop(discussFindings)
+@once
+@cutscene
+{@kevin}	Nice, we can compare this against the Glass Sponge stress levels.
+{@kevin}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
 
@@ -207,6 +230,13 @@ $endif
 @cutscene
 {@kevin}	We can probably wrap up this experiment...
 
+:: catchDiscussFindings
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(discussFindings)
+@boostScore -5
+@cutscene
+{@kevin}	Talk to Professor Whalen in the Office.
+
 :: catchFindPredator
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(findPredator)
@@ -235,12 +265,12 @@ $endif
 @cutscene
 {@kevin}	Find the Glass Sponge's stress levels using the Stress Tank.
 
-:: catchDiscussFindings
+:: catchReportFinal
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(discussFindings)
+@when		JobTaskTop(reportFinal)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen in the Office.
+{@kevin}	Talk to Professor Whalen again in the Office.
 
 
 // ARGUMENTATION
@@ -255,7 +285,7 @@ $endif
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profWhalen}	Which of these theories do you think is the reason why we don't see Glass Sponges in the Open Ocean?
+{@profWhalen}	What can you tell me about these theories for why we don't see Glass Sponges in the Open Ocean?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
 $choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
 $choice .argue.giveUp; Let me get back to you.
@@ -268,19 +298,22 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 	{@profWhalen}	I believe we've already covered this. The light levels seem fine. Something else must be going on.
 	$branch .argue.groundwork.main-question
 $else
-	{@profWhalen}	Oh! That would make sense. Do you have evidence?
+	{@profWhalen}	This seems like it could make sense. Do you have evidence?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
 	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress) 
 		$call ArgueFactSlot(GlassSponge.Light.Stressed)
-		//$call ArgueFactSlot(Z_OpenOcean.Light) // need probes?
+		$call ArgueFactSlot(Z_OpenOcean.Light)
 	$endif
 	$call ArgueDisplayClaim()
-	$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.groundwork.lightComplete
-		$answer *, .argue.groundwork.unrelated
-	$choice .argue.giveUpArgument; Let me get back to you.
-	$choose branch
+	$branch .argue.groundwork.chooseLightFacts
 $endif
+
+:: argue.groundwork.chooseLightFacts
+$choice #argueFactSet; Present facts from AQOS
+	$answer correct, .argue.groundwork.lightComplete
+	$answer *, .argue.groundwork.unrelated
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
 
 :: argue.groundwork.lightComplete
 $call ArgueComplete()
@@ -291,6 +324,11 @@ $else
 	$branch .argue.groundwork.main-question
 $endif
 
+:: argue.groundwork.unrelated
+$call ArgueRejectIncorrect()
+{@profWhalen}	Hmm, that doesn't seem to explain everything. Got anything else?
+$branch .argue.groundwork.chooseLightFacts
+
 	// PREDATOR
 
 :: argue.groundwork.predatorClaim
@@ -300,20 +338,19 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
 $else
 	{@profWhalen}	Have you observed this?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkPredator)
-	$if ArgueSetClaim(IsolatedInstanceGroundworkPredatorClaim, jobs.arctic-isolated-instance.argue.claimLabelPredator) 
-		$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)
+
+	$if JobTaskTop(discussFindings)
+		$choice .argue.groundwork.predatorComplete; Actually, none of the Site Z predators ate the sponges.
+		$choice .argue.giveUpArgument; Let me get back to you.
+	$else
+		$choice .argue.giveUpArgument; Still working on it!
 	$endif
-	$call ArgueDisplayClaim()
-	$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.groundwork.predatorComplete 
-		$answer *, .argue.groundwork.unrelated
-	$choice .argue.giveUpArgument; Let me get back to you.
-	$choose branch
+		$choose branch
 $endif
 
 :: argue.groundwork.predatorComplete
 $call ArgueComplete()
-{@profWhalen}	But there are none of those in the Open Ocean. So they can't be eating the Glass Sponges in Site Z.
+{@profWhalen}	Really? Well, that must not be it then.
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 	$branch .argue.groundwork.bothComplete
 $else
@@ -321,20 +358,14 @@ $else
 $endif
 
 	// BOTH
-	
-:: argue.groundwork.unrelated
-$call ArgueRejectIncorrect()
-$call ArgueHideClaim()
-{@profWhalen}    Hmmmm, this doesn't really show what you think it does.
-$branch .argue.groundwork.main-question
 
 :: argue.groundwork.bothComplete
 $call ArgueLoad(argueIsolatedInstanceGroundwork)
 $call ArgueComplete()
 {@profWhalen}	I can see you've done your research, but neither theory fully solves the issue.
-				What are your thoughts?
-$branch argue.final.main-question
-
+				You know, sometimes we have to delve a little deeper to understand an issue -- where we need to read between the lines, if you will.
+				It is possible there are predators {h}between{/h} the sites which eat all the sponges before they can complete their journey.
+				That may be a good place to investigate next.
 
 // ARGUMENT 2: Final (missing) piece
 
@@ -346,10 +377,10 @@ $branch argue.final.main-question
 $branch .argue.final.main-question
 
 :: argue.final.main-question
-{@profWhalen}	Do you think you've found the missing piece explaining why Glass Sponges are not found in the Open Ocean?
+{@profWhalen}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} which may be the reason why Glass Sponges are not found in the Open Ocean?
 $call ArgueLoad(argueIsolatedInstanceFinal)
 $if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal)
-	$call ArgueFactSlot((PterasterObscurus.Eats.GlassSponge)
+	$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)
 	$call ArgueFactSlot(Y_IceCrevice.Population.PterasterObscurus)
 $endif
 $call ArgueDisplayClaim()
@@ -360,7 +391,7 @@ $choice .argue.giveUpArgument; Let me get back to you.
 $choose branch
 
 :: argue.final.unrelated
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 $call ArgueHideClaim()
 {@profWhalen}	Hmmmm. I don't see how that is relevant.
 				But you know...
