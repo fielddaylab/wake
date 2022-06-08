@@ -187,6 +187,9 @@ namespace Aqua.Portable {
                 LoadEntryFacts(null);
                 m_EntryToggleGroup.SetAllTogglesOff();
                 Script.WriteVariable("portable:bestiary.currentEntry", null);
+                if (inbSyncToggles) {
+                    m_EntryScroll.verticalNormalizedPosition = 1;
+                }
                 return;
             }
 
@@ -194,7 +197,6 @@ namespace Aqua.Portable {
 
             m_NoSelectionGroup.SetActive(false);
             m_InfoPage.gameObject.SetActive(true);
-            m_EntryScroll.verticalNormalizedPosition = 1;
 
             if (inbSyncToggles) {
                 foreach (var toggle in m_ListPools.AllEntries()) {
